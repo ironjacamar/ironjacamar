@@ -324,16 +324,16 @@ public class Main
                for (ConfigProperty cp : ra1516.getConfigProperties())
                {
                   raConfigProperties.put(cp.getConfigPropertyName().toString(), 
-                        getValueString(cp.getConfigPropertyValue()));
-
+                                         getValueString(cp.getConfigPropertyValue()));
+                  
                   removeIntrospectedValue(introspected, cp.getConfigPropertyName().toString());
 
                   out.println("  Config-property: " + cp.getConfigPropertyName() + " (" +
-                        cp.getConfigPropertyType() + ")");
+                              cp.getConfigPropertyType() + ")");
                }
             }
 
-            if (!introspected.isEmpty())
+            if (introspected != null && !introspected.isEmpty())
             {
                for (Map.Entry<String, String> entry : introspected.entrySet())
                {
@@ -341,6 +341,9 @@ public class Main
                               entry.getValue() + ")");
                }
             }
+
+            if (introspected == null)
+               out.println("  Unable to resolve introspected config-property's");
             
             int line = 0;
             Set<String> sameClassnameSet = new HashSet<String>();
@@ -407,24 +410,27 @@ public class Main
                   for (ConfigProperty cp : mcf.getConfigProperties())
                   {
                      configProperty.put(cp.getConfigPropertyName().toString(), 
-                           getValueString(cp.getConfigPropertyValue()));
+                                        getValueString(cp.getConfigPropertyValue()));
 
                      removeIntrospectedValue(introspected, cp.getConfigPropertyName().toString());
-
+                     
                      if (needPrint)
                         out.println("  Config-property: " + cp.getConfigPropertyName() + " (" +
-                           cp.getConfigPropertyType() + ")");
+                                    cp.getConfigPropertyType() + ")");
                   }
 
-                  if (!introspected.isEmpty())
+                  if (introspected != null && !introspected.isEmpty())
                   {
                      for (Map.Entry<String, String> entry : introspected.entrySet())
                      {
                         if (needPrint)
                            out.println("  Introspected Config-property: " + entry.getKey() + " (" +
-                                    entry.getValue() + ")");
+                                       entry.getValue() + ")");
                      }
                   }
+
+                  if (introspected == null)
+                     out.println("  Unable to resolve introspected config-property's");
 
                   String poolName = mcf.getConnectionInterface().toString().substring(
                         mcf.getConnectionInterface().toString().lastIndexOf('.') + 1);
@@ -482,28 +488,31 @@ public class Main
                   configProperty = new HashMap<String, String>();
                
                introspected = getIntrospectedProperties(aoClassname, cl);
-
+               
                for (ConfigProperty cp : ao.getConfigProperties())
                {
                   configProperty.put(cp.getConfigPropertyName().toString(), 
-                        getValueString(cp.getConfigPropertyValue()));
-
+                                     getValueString(cp.getConfigPropertyValue()));
+                     
                   removeIntrospectedValue(introspected, cp.getConfigPropertyName().toString());
-
+                  
                   if (needPrint)
                      out.println("  Config-property: " + cp.getConfigPropertyName() + " (" +
-                        cp.getConfigPropertyType() + ")");
+                                 cp.getConfigPropertyType() + ")");
                }
 
-               if (!introspected.isEmpty())
+               if (introspected != null && !introspected.isEmpty())
                {
                   for (Map.Entry<String, String> entry : introspected.entrySet())
                   {
                      if (needPrint)
                         out.println("  Introspected Config-property: " + entry.getKey() + " (" +
-                                 entry.getValue() + ")");
+                                    entry.getValue() + ")");
                   }
                }
+
+               if (introspected == null)
+                  out.println("  Unable to resolve introspected config-property's");
 
                CommonAdminObjectImpl aoImpl = new CommonAdminObjectImpl(configProperty, aoClassname,
                      "java:jboss/eis/ao/" + poolName, poolName, Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT);
@@ -541,12 +550,12 @@ public class Main
                         for (RequiredConfigProperty cp :  ml.getActivationspec().getRequiredConfigProperties())
                         {
                            removeIntrospectedValue(introspected, cp.getConfigPropertyName().toString());
-                        
+                           
                            out.println("  Required-config-property: " + cp.getConfigPropertyName());
                         }
                      }
 
-                     if (!introspected.isEmpty())
+                     if (introspected != null && !introspected.isEmpty())
                      {
                         for (Map.Entry<String, String> entry : introspected.entrySet())
                         {
@@ -554,6 +563,9 @@ public class Main
                                        entry.getValue() + ")");
                         }
                      }
+
+                     if (introspected == null)
+                        out.println("  Unable to resolve introspected config-property's");
                   }
                }
             }
@@ -599,15 +611,15 @@ public class Main
             for (ConfigProperty cp : ra10.getConfigProperties())
             {
                configProperty.put(cp.getConfigPropertyName().toString(), 
-                     getValueString(cp.getConfigPropertyValue()));
-
+                                  getValueString(cp.getConfigPropertyValue()));
+               
                removeIntrospectedValue(introspected, cp.getConfigPropertyName().toString());
-
+               
                out.println("  Config-property: " + cp.getConfigPropertyName() + " (" +
-                     cp.getConfigPropertyType() + ")");
+                           cp.getConfigPropertyType() + ")");
             }
             
-            if (!introspected.isEmpty())
+            if (introspected != null && !introspected.isEmpty())
             {
                for (Map.Entry<String, String> entry : introspected.entrySet())
                {
@@ -615,6 +627,9 @@ public class Main
                               entry.getValue() + ")");
                }
             }
+
+            if (introspected == null)
+               out.println("  Unable to resolve introspected config-property's");
 
             String poolName = classname.substring(classname.lastIndexOf('.') + 1);
             CommonPool pool = null;
@@ -849,12 +864,14 @@ public class Main
     */
    private static Map<String, String> getIntrospectedProperties(String clz, URLClassLoader cl)
    {
-      Map<String, String> result = new TreeMap<String, String>();
+      Map<String, String> result = null;
 
       try
       {
-
          Class<?> c = Class.forName(clz, true, cl);
+
+         result = new TreeMap<String, String>();
+
          Method[] methods = c.getMethods();
 
          if (methods != null)
@@ -906,29 +923,32 @@ public class Main
     */
    private static void removeIntrospectedValue(Map<String, String> m, String name)
    {
-      m.remove(name);
-
-      if (name.length() == 1)
+      if (m != null)
       {
-         name = name.toUpperCase(Locale.US);
-      }
-      else
-      {
-         name = name.substring(0, 1).toUpperCase(Locale.US) + name.substring(1);
-      }
+         m.remove(name);
 
-      m.remove(name);
+         if (name.length() == 1)
+         {
+            name = name.toUpperCase(Locale.US);
+         }
+         else
+         {
+            name = name.substring(0, 1).toUpperCase(Locale.US) + name.substring(1);
+         }
 
-      if (name.length() == 1)
-      {
-         name = name.toLowerCase(Locale.US);
-      }
-      else
-      {
-         name = name.substring(0, 1).toLowerCase(Locale.US) + name.substring(1);
-      }
+         m.remove(name);
 
-      m.remove(name);
+         if (name.length() == 1)
+         {
+            name = name.toLowerCase(Locale.US);
+         }
+         else
+         {
+            name = name.substring(0, 1).toLowerCase(Locale.US) + name.substring(1);
+         }
+
+         m.remove(name);
+      }
    }
 
    /**
