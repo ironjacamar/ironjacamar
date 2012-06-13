@@ -44,9 +44,11 @@ import org.jboss.logging.Logger;
  */
 public class Communication implements Runnable
 {
-
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, SocketTransport.class.getName());
+
+   /** Trace logging */
+   private static boolean trace = log.isTraceEnabled();
 
    /** The socket */
    private final Socket socket;
@@ -62,7 +64,6 @@ public class Communication implements Runnable
     */
    public Communication(SocketTransport transport, Socket socket)
    {
-      super();
       this.socket = socket;
       this.transport = transport;
    }
@@ -75,7 +76,7 @@ public class Communication implements Runnable
       ObjectInputStream ois = null;
       ObjectOutputStream oos = null;
       Long returnValue = 0L;
-      Response response = Response.VOID_OK;
+      Response response = null;
       try
       {
          ois = new ObjectInputStream(socket.getInputStream());
@@ -89,25 +90,57 @@ public class Communication implements Runnable
             case JOIN : {
                String id = ois.readUTF();
                String address = ois.readUTF();
+
+               if (trace)
+                  log.tracef("%s: JOIN(%s, %s)", socket.getInetAddress(), id, address);
+
                transport.getWorkManagers().put(id, address);
-               ((NotificationListener) transport.getDistributedWorkManager().getSelector()).join(id);
+
+               if (transport.getDistributedWorkManager().getPolicy() instanceof NotificationListener)
+               {
+                  ((NotificationListener) transport.getDistributedWorkManager().getPolicy()).join(id);
+               }
+               if (transport.getDistributedWorkManager().getSelector() instanceof NotificationListener)
+               {
+                  ((NotificationListener) transport.getDistributedWorkManager().getSelector()).join(id);
+               }
+
                response = Response.VOID_OK;
                break;
             }
             case LEAVE : {
                String id = ois.readUTF();
-               ((NotificationListener) transport.getDistributedWorkManager().getSelector()).leave(id);
+
+               if (trace)
+                  log.tracef("%s: LEAVE(%s)", socket.getInetAddress(), id);
+
+               if (transport.getDistributedWorkManager().getPolicy() instanceof NotificationListener)
+               {
+                  ((NotificationListener) transport.getDistributedWorkManager().getPolicy()).leave(id);
+               }
+               if (transport.getDistributedWorkManager().getSelector() instanceof NotificationListener)
+               {
+                  ((NotificationListener) transport.getDistributedWorkManager().getSelector()).leave(id);
+               }
+
                response = Response.VOID_OK;
                break;
             }
             case PING : {
                //do nothing, just send an answer.
+               if (trace)
+                  log.tracef("%s: PING()", socket.getInetAddress());
+
                response = Response.VOID_OK;
 
                break;
             }
             case DO_WORK : {
                DistributableWork work = (DistributableWork) ois.readObject();
+
+               if (trace)
+                  log.tracef("%s: DO_WORK(%s)", socket.getInetAddress(), work);
+
                transport.getDistributedWorkManager().localDoWork(work);
                response = Response.VOID_OK;
 
@@ -115,6 +148,10 @@ public class Communication implements Runnable
             }
             case START_WORK : {
                DistributableWork work = (DistributableWork) ois.readObject();
+
+               if (trace)
+                  log.tracef("%s: START_WORK(%s)", socket.getInetAddress(), work);
+
                returnValue = transport.getDistributedWorkManager().localStartWork(work);
                response = Response.LONG_OK;
 
@@ -122,6 +159,10 @@ public class Communication implements Runnable
             }
             case SCHEDULE_WORK : {
                DistributableWork work = (DistributableWork) ois.readObject();
+
+               if (trace)
+                  log.tracef("%s: SCHEDULE_WORK(%s)", socket.getInetAddress(), work);
+
                transport.getDistributedWorkManager().localScheduleWork(work);
                response = Response.VOID_OK;
 
@@ -135,29 +176,41 @@ public class Communication implements Runnable
                break;
          }
 
-         sendResponse(response, returnValue);
-
+         if (response != null)
+         {
+            sendResponse(response, returnValue);
+         }
+         else
+         {
+            sendResponse(Response.GENERIC_EXCEPTION, new Exception("Unknown command: " + commandOrdinalPosition));
+         }
       }
       catch (WorkException we)
       {
+         if (trace)
+            log.tracef("%s: WORK_EXCEPTION(%s)", socket.getInetAddress(), we);
+
          sendResponse(Response.WORK_EXCEPTION, we);
       }
       catch (Throwable t)
       {
+         if (trace)
+            log.tracef("%s: THROWABLE(%s)", socket.getInetAddress(), t);
 
          sendResponse(Response.GENERIC_EXCEPTION, t);
-
       }
       finally
       {
-         try
+         if (ois != null)
          {
-            ois.close();
-
-         }
-         catch (IOException e)
-         {
-            //ignore it
+            try
+            {
+               ois.close();
+            }
+            catch (IOException e)
+            {
+               //ignore it
+            }
          }
       }
    }
@@ -170,9 +223,12 @@ public class Communication implements Runnable
          oos = new ObjectOutputStream(socket.getOutputStream());
          oos.writeInt(response.ordinal());
          oos.writeInt(response.getNumberOfParameter());
-         for (Serializable o : parameters)
+         if (parameters != null)
          {
-            oos.writeObject(o);
+            for (Serializable o : parameters)
+            {
+               oos.writeObject(o);
+            }
          }
 
          oos.flush();
@@ -187,17 +243,17 @@ public class Communication implements Runnable
       }
       finally
       {
-
-         try
+         if (oos != null)
          {
-            oos.close();
-
+            try
+            {
+               oos.close();
+            }
+            catch (IOException e)
+            {
+               //ignore it
+            }
          }
-         catch (IOException e)
-         {
-            //ignore it
-         }
-
       }
    }
 }

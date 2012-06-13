@@ -108,8 +108,14 @@
   <bean name="DistributedWorkManager2Selector" class="org.jboss.jca.core.workmanager.selector.FirstAvailable">
   </bean>
 
-  <!-- DistributedWorkManagerTransport -->
-  <bean name="DistributedWorkManagerTransport" class="org.jboss.jca.core.workmanager.transport.invm.InVM">
+  <!-- DistributedWorkManager1Transport -->
+  <bean name="DistributedWorkManager1Transport" class="org.jboss.jca.core.workmanager.transport.invm.InVM">
+    <incallback method="addDistributedWorkManager"/>
+    <uncallback method="removeDistributedWorkManager"/>
+  </bean>
+
+  <!-- DistributedWorkManager2Transport -->
+  <bean name="DistributedWorkManager2Transport" class="org.jboss.jca.core.workmanager.transport.invm.InVM">
     <incallback method="addDistributedWorkManager"/>
     <uncallback method="removeDistributedWorkManager"/>
   </bean>
@@ -138,7 +144,7 @@
     <property name="Selector"><inject bean="DistributedWorkManager1Selector"/></property>
 
     <!-- The transport -->
-    <property name="Transport"><inject bean="DistributedWorkManagerTransport"/></property>
+    <property name="Transport"><inject bean="DistributedWorkManager1Transport"/></property>
 
     <destroy method="shutdown"/>
   </bean>
@@ -161,13 +167,13 @@
     <property name="CallbackSecurity"><inject bean="Callback"/></property>
 
     <!-- The policy -->
-    <property name="Policy"><inject bean="DistributedWorkManager1Policy"/></property>
+    <property name="Policy"><inject bean="DistributedWorkManager2Policy"/></property>
 
     <!-- The selector -->
-    <property name="Selector"><inject bean="DistributedWorkManager1Selector"/></property>
+    <property name="Selector"><inject bean="DistributedWorkManager2Selector"/></property>
 
     <!-- The transport -->
-    <property name="Transport"><inject bean="DistributedWorkManagerTransport"/></property>
+    <property name="Transport"><inject bean="DistributedWorkManager2Transport"/></property>
 
     <destroy method="shutdown"/>
   </bean>

@@ -60,12 +60,23 @@ public class FirstAvailable extends AbstractSelector
     */
    public String selectDistributedWorkManager(String ownId, DistributableWork work)
    {
+      if (trace)
+         log.tracef("OwnId: %s, Work: %s", ownId, work);
+
       String value = getWorkManager(work);
       if (value != null)
+      {
+         if (trace)
+            log.tracef("WorkManager: %s", value);
+
          return value;
+      }
 
       Map<String, Integer> selectionMap = getSelectionMap(work);
       // No sorting needed
+
+      if (trace)
+         log.tracef("SelectionMap: %s", selectionMap);
 
       for (Map.Entry<String, Integer> entry : selectionMap.entrySet())
       {
@@ -74,9 +85,17 @@ public class FirstAvailable extends AbstractSelector
          {
             Integer free = entry.getValue();
             if (free != null && free.intValue() > 0)
+            {
+               if (trace)
+                  log.tracef("WorkManager: %s", id);
+
                return id;
+            }
          }
       }
+
+      if (trace)
+         log.tracef("WorkManager: None");
 
       return null;
    }

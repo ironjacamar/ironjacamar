@@ -25,6 +25,7 @@ package org.jboss.jca.core.workmanager.transport.remote.socket;
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.workmanager.DistributedWorkManager;
+import org.jboss.jca.core.spi.workmanager.notification.NotificationListener;
 import org.jboss.jca.core.spi.workmanager.transport.Transport;
 import org.jboss.jca.core.workmanager.transport.remote.ProtocolMessages.Request;
 import org.jboss.jca.core.workmanager.transport.remote.ProtocolMessages.Response;
@@ -49,7 +50,7 @@ import org.jboss.logging.Logger;
 import org.jboss.logging.Messages;
 
 /**
- * The in-vm transport
+ * The socket transport
  *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
@@ -85,24 +86,52 @@ public class SocketTransport implements Transport, Runnable
    /** The work manager */
    private Map<String, String> workManagers;
 
-   /** socket time out **/
-   private long timeout;
-
    /**
     * Constructor
     */
    public SocketTransport()
    {
-      this.workManagers = Collections.synchronizedMap(new HashMap<String, String>());
-
       this.dwm = null;
+      this.executorService = null;
+      this.host = null;
+      this.port = 0;
       this.running = new AtomicBoolean(false);
       this.ss = null;
-
+      this.workManagers = Collections.synchronizedMap(new HashMap<String, String>());
    }
 
    /**
-    *
+    * Init
+    */
+   private void init()
+   {
+      if (getWorkManagers() != null)
+      {
+         for (Map.Entry<String, String> entry : getWorkManagers().entrySet())
+         {
+            String id = entry.getKey();
+            String address = entry.getValue();
+
+            if (dwm.getPolicy() instanceof NotificationListener)
+            {
+               NotificationListener nl = (NotificationListener)dwm.getPolicy();
+
+               nl.join(id);
+               nl.updateShortRunningFree(id, 10);
+               nl.updateLongRunningFree(id, 10);
+            }
+            if (dwm.getSelector() instanceof NotificationListener)
+            {
+               NotificationListener nl = (NotificationListener)dwm.getSelector();
+               nl.join(id);
+               nl.updateShortRunningFree(id, 10);
+               nl.updateLongRunningFree(id, 10);
+            }
+         }
+      }
+   }
+
+   /**
     * Start method for bean lifecycle
     *
     * @throws Throwable in case of error
@@ -110,7 +139,6 @@ public class SocketTransport implements Transport, Runnable
    public void start() throws Throwable
    {
       if (!running.get())
-
       {
          InetSocketAddress address = new InetSocketAddress(host, port);
 
@@ -119,17 +147,11 @@ public class SocketTransport implements Transport, Runnable
 
          running.set(true);
 
-         for (Map.Entry<String, String> entry : this.getWorkManagers().entrySet())
-         {
-            sendMessage(entry.getValue(), Request.JOIN, this.getDistributedWorkManager().getId(),
-                    this.getHost() + ":" + this.getPort());
-         }
-
+         getExecutorService().submit(this);
       }
    }
 
    /**
-    *
     * Stop method for bean lifecycle
     *
     * @throws Throwable in case of error
@@ -137,17 +159,12 @@ public class SocketTransport implements Transport, Runnable
    public void stop() throws Throwable
    {
       ss.close();
-      for (Map.Entry<String, String> entry : this.getWorkManagers().entrySet())
-      {
-         sendMessage(entry.getValue(), Request.LEAVE, this.getDistributedWorkManager().getId());
-      }
       running.set(false);
    }
 
    private Long sendMessage(String address, Request request, Serializable... parameters)
       throws WorkException
    {
-
       String[] addressPart = address.split(":");
       Socket socket = null;
       ObjectOutputStream oos = null;
@@ -158,15 +175,17 @@ public class SocketTransport implements Transport, Runnable
          oos = new ObjectOutputStream(socket.getOutputStream());
          oos.writeInt(request.ordinal());
          oos.writeInt(request.getNumberOfParameter());
-         for (Serializable o : parameters)
+         if (parameters != null)
          {
-            oos.writeObject(o);
+            for (Serializable o : parameters)
+            {
+               oos.writeObject(o);
+            }
          }
 
          oos.flush();
 
          return parseResponse(socket);
-
       }
       catch (Throwable t)
       {
@@ -185,17 +204,28 @@ public class SocketTransport implements Transport, Runnable
       }
       finally
       {
-
-         try
+         if (oos != null)
          {
-            oos.close();
-            socket.close();
+            try
+            {
+               oos.close();
+            }
+            catch (IOException e)
+            {
+               //ignore it
+            }
          }
-         catch (IOException e)
+         if (socket != null)
          {
-            //ignore it
+            try
+            {
+               socket.close();
+            }
+            catch (IOException e)
+            {
+               //ignore it
+            }
          }
-
       }
    }
 
@@ -238,21 +268,21 @@ public class SocketTransport implements Transport, Runnable
                }
                throw new WorkException("Unknown response received on socket Transport");
          }
-
       }
       finally
       {
-         try
+         if (ois != null)
          {
-            ois.close();
-
-         }
-         catch (IOException e)
-         {
-            //ignore it
+            try
+            {
+               ois.close();
+            }
+            catch (IOException e)
+            {
+               //ignore it
+            }
          }
       }
-
    }
 
    /**
@@ -262,6 +292,7 @@ public class SocketTransport implements Transport, Runnable
    public void setDistributedWorkManager(DistributedWorkManager dwm)
    {
       this.dwm = dwm;
+      init();
    }
 
    /**
@@ -277,13 +308,17 @@ public class SocketTransport implements Transport, Runnable
     * {@inheritDoc}
     */
    @Override
-   public long ping(String dwm)
+   public long ping(String id)
    {
+      if (trace)
+         log.tracef("PING(%s)", id);
+
       long start = System.currentTimeMillis();
 
       try
       {
-         sendMessage(dwm, Request.PING);
+         String address = workManagers.get(id);
+         sendMessage(address, Request.PING);
       }
       catch (WorkException e1)
       {
@@ -304,10 +339,12 @@ public class SocketTransport implements Transport, Runnable
    @Override
    public void doWork(String id, DistributableWork work) throws WorkException
    {
+      if (trace)
+         log.tracef("DO_WORK(%s, %s)", id, work);
 
-      String dwm = workManagers.get(id);
+      String address = workManagers.get(id);
 
-      sendMessage(dwm, Request.DO_WORK, work);
+      sendMessage(address, Request.DO_WORK, work);
    }
 
    /**
@@ -316,9 +353,12 @@ public class SocketTransport implements Transport, Runnable
    @Override
    public void scheduleWork(String id, DistributableWork work) throws WorkException
    {
-      String dwm = workManagers.get(id);
+      if (trace)
+         log.tracef("SCHEDULE_WORK(%s, %s)", id, work);
 
-      sendMessage(dwm, Request.SCHEDULE_WORK, work);
+      String address = workManagers.get(id);
+
+      sendMessage(address, Request.SCHEDULE_WORK, work);
    }
 
    /**
@@ -327,10 +367,12 @@ public class SocketTransport implements Transport, Runnable
    @Override
    public long startWork(String id, DistributableWork work) throws WorkException
    {
-      String dwm = workManagers.get(id);
+      if (trace)
+         log.tracef("START_WORK(%s, %s)", id, work);
 
-      return sendMessage(dwm, Request.START_WORK, work);
+      String address = workManagers.get(id);
 
+      return sendMessage(address, Request.START_WORK, work);
    }
 
    /**
@@ -411,7 +453,6 @@ public class SocketTransport implements Transport, Runnable
                log.trace(ioe.getMessage());
          }
       }
-
    }
 
    /**
@@ -434,32 +475,10 @@ public class SocketTransport implements Transport, Runnable
       this.workManagers = workManagers;
    }
 
-   /**
-    * Get the timeout.
-    *
-    * @return the timeout.
-    */
-   public long getTimeout()
-   {
-      return timeout;
-   }
-
-   /**
-    * Set the timeout.
-    *
-    * @param timeout The timeout to set.
-    */
-   public void setTimeout(long timeout)
-   {
-      this.timeout = timeout;
-   }
-
    @Override
    public String toString()
    {
       return "SocketTransport [dwm=" + dwm + ", executorService=" + executorService + ", host=" + host + ", port=" +
-             port + ", running=" + running + ", ss=" + ss + ", workManagers=" + workManagers + ", timeout=" +
-             timeout + "]";
+             port + ", running=" + running + ", ss=" + ss + ", workManagers=" + workManagers + "]";
    }
-
 }

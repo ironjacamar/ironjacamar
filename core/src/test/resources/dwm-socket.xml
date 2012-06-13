@@ -124,7 +124,7 @@
 
         <!-- The work managers -->
         <property name="WorkManagers">
-            <map keyClass="java.lang.String" valueClass="java.lang.String">
+            <map class="java.util.Hashtable" keyClass="java.lang.String" valueClass="java.lang.String">
                 <entry>
                     <key>DWM2</key>
                     <value>localhost:1300</value>
@@ -150,7 +150,7 @@
 
         <!-- The work managers -->
         <property name="WorkManagers">
-            <map keyClass="java.lang.String" valueClass="java.lang.String">
+            <map class="java.util.Hashtable" keyClass="java.lang.String" valueClass="java.lang.String">
                 <entry>
                     <key>DWM1</key>
                     <value>localhost:1299</value>
@@ -206,10 +206,10 @@
     <property name="CallbackSecurity"><inject bean="Callback"/></property>
 
     <!-- The policy -->
-    <property name="Policy"><inject bean="DistributedWorkManager1Policy"/></property>
+    <property name="Policy"><inject bean="DistributedWorkManager2Policy"/></property>
 
     <!-- The selector -->
-    <property name="Selector"><inject bean="DistributedWorkManager1Selector"/></property>
+    <property name="Selector"><inject bean="DistributedWorkManager2Selector"/></property>
 
     <!-- The transport -->
     <property name="Transport"><inject bean="DistributedWorkManager2Transport"/></property>

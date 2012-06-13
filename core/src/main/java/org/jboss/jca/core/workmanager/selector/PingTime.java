@@ -62,7 +62,12 @@ public class PingTime extends AbstractSelector
    {
       String value = getWorkManager(work);
       if (value != null)
+      {
+         if (trace)
+            log.tracef("WorkManager: %s", value);
+
          return value;
+      }
 
       Map<String, Integer> selectionMap = getSelectionMap(work);
       String result = null;
@@ -85,6 +90,9 @@ public class PingTime extends AbstractSelector
             }
          }
       }
+
+      if (trace)
+         log.tracef("WorkManager: %s (%s)", result, pingTime);
 
       return result;
    }
