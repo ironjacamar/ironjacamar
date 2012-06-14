@@ -187,6 +187,8 @@ public class DefinitionWizardPage extends WizardPage
                annotationshButton.setSelection(false);
                annotationshButton.setEnabled(false);
                ((CodeGenWizard) getWizard()).getDef().setUseAnnotation(false);
+               ((CodeGenWizard) getWizard()).getDef().setSupportOutbound(true);
+               ((CodeGenWizard) getWizard()).getDef().setSupportInbound(false);
             }
             else
             {
@@ -194,6 +196,8 @@ public class DefinitionWizardPage extends WizardPage
                {"Outbound", "Inbound", "Bidirectional"};
                boundCombo.setItems(newdirect);
                boundCombo.setText("Outbound");
+               ((CodeGenWizard) getWizard()).getDef().setSupportOutbound(true);
+               ((CodeGenWizard) getWizard()).getDef().setSupportInbound(false);
                if (combo.getText().equals("1.6"))
                {
                   annotationshButton.setEnabled(true);
