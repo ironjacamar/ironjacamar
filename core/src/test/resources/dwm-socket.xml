@@ -49,7 +49,8 @@
   </bean>
 
   <!-- DistributedWorkManager1ShortRunningThreadPool -->
-  <bean name="DistributedWorkManager1ShortRunningThreadPool" class="org.jboss.threads.QueueExecutor">
+  <bean name="DistributedWorkManager1ShortRunningThreadPool"
+        class="org.jboss.threads.QueueExecutor">
     <constructor>
       <!-- Core threads -->
       <parameter>20</parameter>
@@ -71,7 +72,8 @@
   </bean>
 
   <!-- DistributedWorkManager2ShortRunningThreadPool -->
-  <bean name="DistributedWorkManager2ShortRunningThreadPool" class="org.jboss.threads.QueueExecutor">
+  <bean name="DistributedWorkManager2ShortRunningThreadPool"
+        class="org.jboss.threads.QueueExecutor">
     <constructor>
       <!-- Core threads -->
       <parameter>20</parameter>
@@ -93,24 +95,28 @@
   </bean>
 
   <!-- DistributedWorkManager1Policy -->
-  <bean name="DistributedWorkManager1Policy" class="org.jboss.jca.core.workmanager.policy.Always">
+  <bean name="DistributedWorkManager1Policy"
+        class="org.jboss.jca.core.workmanager.policy.Always">
   </bean>
 
   <!-- DistributedWorkManager1Selector -->
-  <bean name="DistributedWorkManager1Selector" class="org.jboss.jca.core.workmanager.selector.FirstAvailable">
+  <bean name="DistributedWorkManager1Selector"
+        class="org.jboss.jca.core.workmanager.selector.FirstAvailable">
   </bean>
 
   <!-- DistributedWorkManager2Policy -->
-  <bean name="DistributedWorkManager2Policy" class="org.jboss.jca.core.workmanager.policy.Always">
+  <bean name="DistributedWorkManager2Policy"
+        class="org.jboss.jca.core.workmanager.policy.Always">
   </bean>
 
   <!-- DistributedWorkManager2Selector -->
-  <bean name="DistributedWorkManager2Selector" class="org.jboss.jca.core.workmanager.selector.FirstAvailable">
+  <bean name="DistributedWorkManager2Selector"
+        class="org.jboss.jca.core.workmanager.selector.FirstAvailable">
   </bean>
 
   <!-- DistributedWorkManager1Transport -->
   <bean name="DistributedWorkManager1Transport"
-          class="org.jboss.jca.core.workmanager.transport.remote.socket.SocketTransport">
+        class="org.jboss.jca.core.workmanager.transport.remote.socket.SocketTransport">
         <!-- The executor -->
         <property name="ExecutorService">
             <inject bean="Kernel" property="ExecutorService"/>
@@ -124,7 +130,9 @@
 
         <!-- The work managers -->
         <property name="WorkManagers">
-            <map class="java.util.Hashtable" keyClass="java.lang.String" valueClass="java.lang.String">
+            <map class="java.util.Hashtable" 
+                 keyClass="java.lang.String"
+                 valueClass="java.lang.String">
                 <entry>
                     <key>DWM2</key>
                     <value>localhost:1300</value>
@@ -136,7 +144,7 @@
 
   <!-- DistributedWorkManager2Transport -->
   <bean name="DistributedWorkManager2Transport"
-          class="org.jboss.jca.core.workmanager.transport.remote.socket.SocketTransport">
+        class="org.jboss.jca.core.workmanager.transport.remote.socket.SocketTransport">
         <!-- The executor -->
         <property name="ExecutorService">
             <inject bean="Kernel" property="ExecutorService"/>
@@ -150,7 +158,9 @@
 
         <!-- The work managers -->
         <property name="WorkManagers">
-            <map class="java.util.Hashtable" keyClass="java.lang.String" valueClass="java.lang.String">
+            <map class="java.util.Hashtable" 
+                 keyClass="java.lang.String"
+                 valueClass="java.lang.String">
                 <entry>
                     <key>DWM1</key>
                     <value>localhost:1299</value>
@@ -168,22 +178,34 @@
     <property name="Name">DWM1</property>
 
     <!-- The short running thread pool -->
-    <property name="ShortRunningThreadPool"><inject bean="DistributedWorkManager1ShortRunningThreadPool"/></property>
+    <property name="ShortRunningThreadPool">
+       <inject bean="DistributedWorkManager1ShortRunningThreadPool"/>
+    </property>
 
     <!-- The XA terminator -->
-    <property name="XATerminator"><inject bean="TransactionIntegration" property="XATerminator"/></property>
+    <property name="XATerminator">
+       <inject bean="TransactionIntegration" property="XATerminator"/>
+    </property>
 
     <!-- The callback security module -->
-    <property name="CallbackSecurity"><inject bean="Callback"/></property>
+    <property name="CallbackSecurity">
+       <inject bean="Callback"/>
+    </property>
 
     <!-- The policy -->
-    <property name="Policy"><inject bean="DistributedWorkManager1Policy"/></property>
+    <property name="Policy">
+       <inject bean="DistributedWorkManager1Policy"/>
+    </property>
 
     <!-- The selector -->
-    <property name="Selector"><inject bean="DistributedWorkManager1Selector"/></property>
+    <property name="Selector">
+       <inject bean="DistributedWorkManager1Selector"/>
+    </property>
 
     <!-- The transport -->
-    <property name="Transport"><inject bean="DistributedWorkManager1Transport"/></property>
+    <property name="Transport">
+       <inject bean="DistributedWorkManager1Transport"/>
+    </property>
 
     <destroy method="shutdown"/>
   </bean>
@@ -197,22 +219,34 @@
     <property name="Name">DWM2</property>
 
     <!-- The short running thread pool -->
-    <property name="ShortRunningThreadPool"><inject bean="DistributedWorkManager2ShortRunningThreadPool"/></property>
+    <property name="ShortRunningThreadPool">
+       <inject bean="DistributedWorkManager2ShortRunningThreadPool"/>
+    </property>
 
     <!-- The XA terminator -->
-    <property name="XATerminator"><inject bean="TransactionIntegration" property="XATerminator"/></property>
+    <property name="XATerminator">
+       <inject bean="TransactionIntegration" property="XATerminator"/>
+    </property>
 
     <!-- The callback security module -->
-    <property name="CallbackSecurity"><inject bean="Callback"/></property>
+    <property name="CallbackSecurity">
+       <inject bean="Callback"/>
+    </property>
 
     <!-- The policy -->
-    <property name="Policy"><inject bean="DistributedWorkManager2Policy"/></property>
+    <property name="Policy">
+       <inject bean="DistributedWorkManager2Policy"/>
+    </property>
 
     <!-- The selector -->
-    <property name="Selector"><inject bean="DistributedWorkManager2Selector"/></property>
+    <property name="Selector">
+       <inject bean="DistributedWorkManager2Selector"/>
+    </property>
 
     <!-- The transport -->
-    <property name="Transport"><inject bean="DistributedWorkManager2Transport"/></property>
+    <property name="Transport">
+       <inject bean="DistributedWorkManager2Transport"/>
+    </property>
 
     <destroy method="shutdown"/>
   </bean>
@@ -222,9 +256,15 @@
         interface="org.jboss.jca.core.api.bootstrap.CloneableBootstrapContext"
         class="org.jboss.jca.core.bootstrapcontext.BaseCloneableBootstrapContext">
     <property name="Name">DWM1BC</property>
-    <property name="TransactionSynchronizationRegistry"><inject bean="TransactionSynchronizationRegistry"/></property>
-    <property name="WorkManager"><inject bean="DistributedWorkManager1"/></property>
-    <property name="XATerminator"><inject bean="TransactionIntegration" property="XATerminator"/></property>
+    <property name="TransactionSynchronizationRegistry">
+       <inject bean="TransactionSynchronizationRegistry"/>
+    </property>
+    <property name="WorkManager">
+       <inject bean="DistributedWorkManager1"/>
+    </property>
+    <property name="XATerminator">
+       <inject bean="TransactionIntegration" property="XATerminator"/>
+    </property>
   </bean>
 
   <!-- DistributedBootstrapContext2 -->
@@ -232,9 +272,15 @@
         interface="org.jboss.jca.core.api.bootstrap.CloneableBootstrapContext"
         class="org.jboss.jca.core.bootstrapcontext.BaseCloneableBootstrapContext">
     <property name="Name">DWM2BC</property>
-    <property name="TransactionSynchronizationRegistry"><inject bean="TransactionSynchronizationRegistry"/></property>
-    <property name="WorkManager"><inject bean="DistributedWorkManager2"/></property>
-    <property name="XATerminator"><inject bean="TransactionIntegration" property="XATerminator"/></property>
+    <property name="TransactionSynchronizationRegistry">
+       <inject bean="TransactionSynchronizationRegistry"/>
+    </property>
+    <property name="WorkManager">
+       <inject bean="DistributedWorkManager2"/>
+    </property>
+    <property name="XATerminator">
+       <inject bean="TransactionIntegration" property="XATerminator"/>
+    </property>
   </bean>
 
 </deployment>

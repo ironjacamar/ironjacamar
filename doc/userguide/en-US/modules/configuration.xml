@@ -385,6 +385,98 @@ config/bootstrap/jca.xml
 
       </section>
 
+      <section id="jca_workmanager">
+        <title>Work manager</title>
+
+        <para>
+          IronJacamar features a standard work manager on its default setup using one thread pool for
+          short running jobs, and one thread pool for long running jobs identified by the 
+          <code>HintsContext.LONGRUNNING_HINT</code> with a value of <code>true</code>.
+        </para>
+
+        <para>
+          The configuration of the work manager and the necessary components can be viewed in the <code>jca.xml</code>
+          file.
+        </para>
+
+        <section id="jca_distributed_workmanager">
+          <title>Distributed work manager</title>
+
+          <para>
+            A distributed work manager is a work manager instance, which is able to reschedule work execution on
+            another work manager instance on the network.
+          </para>
+          
+          <para>
+            The distributed work manager has three additional components
+
+            <itemizedlist>
+              <listitem>
+                Policy -- When to distribute the work instance
+              </listitem>
+              <listitem>
+                Selector -- To which work manager instance
+              </listitem>
+              <listitem>
+                Transport -- How the work instance is transferred
+              </listitem>
+            </itemizedlist>
+
+            to control the distribution process.
+          </para>
+
+          <para>
+            Supported policies
+
+            <itemizedlist>
+              <listitem>
+                Never -- <code>org.jboss.jca.core.workmanager.policy.Never</code>
+              </listitem>
+              <listitem>
+                Always -- <code>org.jboss.jca.core.workmanager.policy.Always</code>
+              </listitem>
+            </itemizedlist>
+          </para>
+
+          <para>
+            Supported selectors
+
+            <itemizedlist>
+              <listitem>
+                FirstAvailable -- <code>org.jboss.jca.core.workmanager.selector.FirstAvailable</code>
+              </listitem>
+              <listitem>
+                PingTime -- <code>org.jboss.jca.core.workmanager.selector.PingTime</code>
+              </listitem>
+            </itemizedlist>
+          </para>
+
+          <para>
+            Supported transports
+
+            <itemizedlist>
+              <listitem>
+                InVM -- <code>org.jboss.jca.core.workmanager.transport.invm.InVM</code>
+              </listitem>
+              <listitem>
+                Socket -- <code>org.jboss.jca.core.workmanager.transport.remote.socket.SocketTransport</code>
+              </listitem>
+            </itemizedlist>
+          </para>
+
+          <para>
+            Below is an example of a socket based configuration where two instances (<code>localhost:1299</code> and
+            <code>localhost:1300</code> communicates taken from the IronJacamar test suite.
+          </para>
+
+          <programlisting language="xml">
+<xi:include parse="text" href="../../../core/src/test/resources/dwm-socket.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+          </programlisting>
+
+        </section>
+
+      </section>
+
       <section id="jca_security">
         <title>Security</title>
 
