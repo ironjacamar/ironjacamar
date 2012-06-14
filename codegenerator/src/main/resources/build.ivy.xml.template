@@ -51,14 +51,16 @@
        ================================= -->
   <property name="central.repo" value="http://repo1.maven.org/maven2"/>
   <property name="jboss.repo" value="http://repository.jboss.org/nexus/content/groups/public/"/>
+  <property name="snapshots.repo" value="http://repository.jboss.org/nexus/content/repositories/snapshots/"/>
   <property name="fungal.repo" value="http://jesperpedersen.github.com/fungal/maven2"/>
 
   <!-- ================================= 
        Versions              
        ================================= -->
 
-  <property name="version.junit" value="4.8.1"/>
   <property name="version.ironjacamar" value="@VERSION.IRONJACAMAR@"/>
+  <property name="version.jboss.jandex" value="1.0.3.Final"/>
+  <property name="version.junit" value="4.8.2"/>
 
   <!-- ================================= 
        Bootstrap Ivy

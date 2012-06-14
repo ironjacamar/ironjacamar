@@ -7,15 +7,18 @@
       <ivy pattern="${ivy.cache.dir}/[module]/ivy-[revision].xml"/>
       <artifact pattern="${ivy.cache.dir}/[module]/[artifact]-[revision](-[classifier]).[ext]"/>
     </filesystem>
-    <ibiblio name="jboss" m2compatible="true" usepoms="true" root="${jboss.repo}"
+    <ibiblio name="jboss" m2compatible="true" usepoms="false" root="${jboss.repo}"
              pattern="[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"/>
-    <ibiblio name="central" m2compatible="true" usepoms="true" root="${central.repo}"
+    <ibiblio name="snapshots" m2compatible="true" usepoms="false" root="${snapshots.repo}" useMavenMetadata="true"
              pattern="[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"/>
-    <ibiblio name="fungal" m2compatible="true" usepoms="true" root="${fungal.repo}"
+    <ibiblio name="central" m2compatible="true" usepoms="false" root="${central.repo}"
+             pattern="[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"/>
+    <ibiblio name="fungal" m2compatible="true" usepoms="false" root="${fungal.repo}"
              pattern="[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"/>
     <chain name="default" returnFirst="true">
       <resolver ref="local"/>
       <resolver ref="jboss"/>
+      <resolver ref="snapshots"/>
       <resolver ref="central"/>
       <resolver ref="fungal"/>
     </chain>
