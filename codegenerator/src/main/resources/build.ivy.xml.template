@@ -59,7 +59,6 @@
        ================================= -->
 
   <property name="version.ironjacamar" value="@VERSION.IRONJACAMAR@"/>
-  <property name="version.jboss.jandex" value="1.0.3.Final"/>
   <property name="version.junit" value="4.8.2"/>
 
   <!-- ================================= 

@@ -27,7 +27,6 @@
     <dependency org="org.jboss.ironjacamar" name="ironjacamar-embedded-arquillian" rev="${version.ironjacamar}" conf="test"/>
     <dependency org="org.jboss.ironjacamar" name="ironjacamar-embedded" rev="${version.ironjacamar}" conf="test"/>
     <dependency org="org.jboss.ironjacamar" name="ironjacamar-validator" rev="${version.ironjacamar}" conf="test"/>
-    <dependency org="org.jboss" name="jandex" rev="${version.jboss.jandex}" conf="test"/>
     <dependency org="junit" name="junit" rev="${version.junit}" conf="test"/>
   </dependencies>
 

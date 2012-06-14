@@ -136,7 +136,7 @@
       <artifact name="hornetq-ra" type="jar" conf="hornetq"/>
       <artifact name="hornetq-ra" type="rar" conf="hornetq"/>
     </dependency>
-    <dependency org="org.jboss" name="jandex" rev="${version.jboss.jandex}" conf="common,ironjacamar-common-impl"/>
+    <dependency org="org.jboss" name="jandex" rev="${version.jboss.jandex}" conf="common,ironjacamar-common-impl,ironjacamar-depchain"/>
     <dependency org="org.jboss" name="jboss-common-core" rev="${version.jboss.common}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.jboss" name="jboss-transaction-spi" rev="${version.jboss.ts.spi}" conf="common,ironjacamar-core-api,ironjacamar-core-impl,ironjacamar-depchain,as"/>
     <dependency org="org.jboss.apiviz" name="apiviz" rev="${version.apiviz}" conf="tools,as"/>
