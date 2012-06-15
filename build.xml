@@ -1464,6 +1464,7 @@ mvn install:install-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depc
                  templatefile="${tools.dir}/mvn/pom.template"
                  printIvyInfo="false">
       <mapping conf="${name}-validator-ant" scope="runtime"/>
+      <dependency artifact="${name}-common-impl-papaki" scope="runtime"/>
       <dependency artifact="${name}-validator" scope="runtime"/>
     </ivy:makepom>
 
@@ -1480,6 +1481,7 @@ mvn install:install-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depc
                  templatefile="${tools.dir}/mvn/pom.template"
                  printIvyInfo="false">
       <mapping conf="${name}-validator-cli" scope="runtime"/>
+      <dependency artifact="${name}-common-impl-papaki" scope="runtime"/>
       <dependency artifact="${name}-validator" scope="runtime"/>
     </ivy:makepom>
 
@@ -1496,6 +1498,7 @@ mvn install:install-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depc
                  templatefile="${tools.dir}/mvn/pom.template"
                  printIvyInfo="false">
       <mapping conf="${name}-validator-maven" scope="runtime"/>
+      <dependency artifact="${name}-common-impl-papaki" scope="runtime"/>
       <dependency artifact="${name}-validator" scope="runtime"/>
     </ivy:makepom>
 

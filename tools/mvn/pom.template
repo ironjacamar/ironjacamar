@@ -24,8 +24,8 @@ ${ivy.pom.license}
   </organization>
   <scm>
     <url>http://fisheye.jboss.org/browse/JBossAS/projects/jboss-jca/</url>
-    <connection>http://anonsvn.jboss.org/repos/jbossas/projects/jboss-jca/trunk</connection>
-    <developerConnection>https://svn.jboss.org/repos/jbossas/projects/jboss-jca/trunk</developerConnection>
+    <connection>http://anonsvn.jboss.org/repos/jbossas/projects/jboss-jca/branches/Branch_1_0</connection>
+    <developerConnection>https://svn.jboss.org/repos/jbossas/projects/jboss-jca/branches/Branch_1_0</developerConnection>
   </scm>
   <developers>
     <developer>
