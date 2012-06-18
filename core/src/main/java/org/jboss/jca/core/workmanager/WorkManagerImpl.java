@@ -328,8 +328,11 @@ public class WorkManagerImpl implements WorkManager
       if (trace)
          log.tracef("doWork(%s, %s, %s, %s)", work, startTimeout, execContext, workListener);
 
-      if (shutdown.get())
+      if (isShutdown())
+      {
+         statistics.deltaDoWorkRejected();
          throw new WorkRejectedException(bundle.workmanagerShutdown());
+      }
 
       WorkException exception = null;
       WorkWrapper wrapper = null;
@@ -437,8 +440,11 @@ public class WorkManagerImpl implements WorkManager
    {
       log.tracef("startWork(%s, %s, %s, %s)", work, startTimeout, execContext, workListener);
 
-      if (shutdown.get())
+      if (isShutdown())
+      {
+         statistics.deltaStartWorkRejected();
          throw new WorkRejectedException(bundle.workmanagerShutdown());
+      }
 
       WorkException exception = null;
       WorkWrapper wrapper = null;
@@ -550,8 +556,11 @@ public class WorkManagerImpl implements WorkManager
    {
       log.tracef("scheduleWork(%s, %s, %s, %s)", work, startTimeout, execContext, workListener);
 
-      if (shutdown.get())
+      if (isShutdown())
+      {
+         statistics.deltaScheduleWorkRejected();
          throw new WorkRejectedException(bundle.workmanagerShutdown());
+      }
 
       WorkException exception = null;
       WorkWrapper wrapper = null;
