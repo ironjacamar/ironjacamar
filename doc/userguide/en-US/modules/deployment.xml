@@ -719,6 +719,26 @@ public void close(Object c) throws ResourceException;
 
           </para>
 
+          <para>
+            The following recovery plugins are provided by IronJacamar
+          </para>
+
+          <itemizedlist>
+            <listitem>
+              <code>org.jboss.jca.core.recovery.DefaultRecoveryPlugin</code>: Default recovery plugin
+              that tries to call a <code>close()</code> method on the underlying object
+            </listitem>
+            <listitem>
+              <code>org.jboss.jca.core.recovery.ConfigurableRecoveryPlugin</code>: A recovery plugin
+              where the results of the <code>isValid</code> and <code>close</code> can be specified
+            </listitem>
+            <listitem>
+              <code>org.jboss.jca.core.recovery.ValidatingManagedConnectionFactoryRecoveryPlugin</code>:
+              A recovery plugin that uses the <code>javax.resource.spi.ValidatingManagedConnectionFactory</code>
+              interface to verify the connection
+            </listitem>
+          </itemizedlist>
+
           <note>
             The IronJacamar container will use a default implementation of the recovery SPI if an
             implementation isn't specified by the deployment.
