@@ -30,6 +30,7 @@ import org.jboss.jca.core.spi.security.Callback;
 import org.jboss.jca.core.spi.transaction.xa.XATerminator;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -68,22 +69,22 @@ public class WorkManagerImpl implements WorkManager
 {
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, WorkManagerImpl.class.getName());
-   
+
    /** Whether trace is enabled */
    private static boolean trace = log.isTraceEnabled();
-   
+
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
-   
+
    /**Work run method name*/
    private static final String RUN_METHOD_NAME = "run";
-   
+
    /**Work release method name*/
    private static final String RELEASE_METHOD_NAME = "release";
 
    /**Supported work context set*/
    private static final Set<Class<? extends WorkContext>> SUPPORTED_WORK_CONTEXT_CLASSES = 
-       new HashSet<Class<? extends WorkContext>>(3); 
+         new HashSet<Class<? extends WorkContext>>(3);
 
    /** The id */
    private String id;
@@ -125,7 +126,7 @@ public class WorkManagerImpl implements WorkManager
       SUPPORTED_WORK_CONTEXT_CLASSES.add(SecurityContext.class);
       SUPPORTED_WORK_CONTEXT_CLASSES.add(HintsContext.class);
    }
-   
+
    /**
     * Constructor - by default the WorkManager is running in spec-compliant mode
     */
@@ -139,7 +140,7 @@ public class WorkManagerImpl implements WorkManager
       activeWorkWrappers = new HashSet<WorkWrapper>();
       statistics = new WorkManagerStatisticsImpl();
    }
-   
+
    /**
     * Get the unique id of the work manager
     * @return The value
@@ -295,7 +296,7 @@ public class WorkManagerImpl implements WorkManager
     */
    public WorkManager clone() throws CloneNotSupportedException
    {
-      WorkManagerImpl wm = (WorkManagerImpl)super.clone();
+      WorkManagerImpl wm = (WorkManagerImpl) super.clone();
       wm.setId(getId());
       wm.setName(getName());
       wm.setShortRunningThreadPool(getShortRunningThreadPool());
@@ -304,7 +305,7 @@ public class WorkManagerImpl implements WorkManager
       wm.setSpecCompliant(isSpecCompliant());
       wm.setCallbackSecurity(getCallbackSecurity());
       wm.setStatistics(statistics);
-      
+
       return wm;
    }
 
@@ -315,14 +316,11 @@ public class WorkManagerImpl implements WorkManager
    {
       doWork(work, WorkManager.INDEFINITE, null, null);
    }
-   
+
    /**
     * {@inheritDoc}
     */
-   public void doWork(Work work,
-                      long startTimeout, 
-                      ExecutionContext execContext, 
-                      WorkListener workListener) 
+   public void doWork(Work work, long startTimeout, ExecutionContext execContext, WorkListener workListener)
       throws WorkException
    {
       if (trace)
@@ -345,10 +343,10 @@ public class WorkManagerImpl implements WorkManager
             throw new WorkRejectedException(bundle.startTimeoutIsNegative(startTimeout));
 
          checkAndVerifyWork(work, execContext);
-      
+
          if (execContext == null)
          {
-            execContext = new ExecutionContext();  
+            execContext = new ExecutionContext();
          }
 
          final CountDownLatch completedLatch = new CountDownLatch(1);
@@ -381,7 +379,7 @@ public class WorkManagerImpl implements WorkManager
       catch (ExecutionTimedOutException etoe)
       {
          exception = new WorkRejectedException(etoe);
-         exception.setErrorCode(WorkRejectedException.START_TIMED_OUT);  
+         exception.setErrorCode(WorkRejectedException.START_TIMED_OUT);
       }
       catch (RejectedExecutionException ree)
       {
@@ -420,7 +418,7 @@ public class WorkManagerImpl implements WorkManager
          }
       }
    }
-   
+
    /**
     * {@inheritDoc}
     */
@@ -428,14 +426,11 @@ public class WorkManagerImpl implements WorkManager
    {
       return startWork(work, WorkManager.INDEFINITE, null, null);
    }
-   
+
    /**
     * {@inheritDoc}
     */
-   public long startWork(Work work, 
-                         long startTimeout, 
-                         ExecutionContext execContext, 
-                         WorkListener workListener) 
+   public long startWork(Work work, long startTimeout, ExecutionContext execContext, WorkListener workListener)
       throws WorkException
    {
       log.tracef("startWork(%s, %s, %s, %s)", work, startTimeout, execContext, workListener);
@@ -459,10 +454,10 @@ public class WorkManagerImpl implements WorkManager
          long started = System.currentTimeMillis();
 
          checkAndVerifyWork(work, execContext);
-      
+
          if (execContext == null)
          {
-            execContext = new ExecutionContext();  
+            execContext = new ExecutionContext();
          }
 
          final CountDownLatch startedLatch = new CountDownLatch(1);
@@ -497,7 +492,7 @@ public class WorkManagerImpl implements WorkManager
       catch (ExecutionTimedOutException etoe)
       {
          exception = new WorkRejectedException(etoe);
-         exception.setErrorCode(WorkRejectedException.START_TIMED_OUT);  
+         exception.setErrorCode(WorkRejectedException.START_TIMED_OUT);
       }
       catch (RejectedExecutionException ree)
       {
@@ -536,7 +531,7 @@ public class WorkManagerImpl implements WorkManager
 
       return WorkManager.UNKNOWN;
    }
-   
+
    /**
     * {@inheritDoc}
     */
@@ -544,14 +539,11 @@ public class WorkManagerImpl implements WorkManager
    {
       scheduleWork(work, WorkManager.INDEFINITE, null, null);
    }
-   
+
    /**
     * {@inheritDoc}
     */
-   public void scheduleWork(Work work,
-                            long startTimeout, 
-                            ExecutionContext execContext, 
-                            WorkListener workListener) 
+   public void scheduleWork(Work work, long startTimeout, ExecutionContext execContext, WorkListener workListener)
       throws WorkException
    {
       log.tracef("scheduleWork(%s, %s, %s, %s)", work, startTimeout, execContext, workListener);
@@ -573,10 +565,10 @@ public class WorkManagerImpl implements WorkManager
             throw new WorkRejectedException(bundle.startTimeoutIsNegative(startTimeout));
 
          checkAndVerifyWork(work, execContext);
-      
+
          if (execContext == null)
          {
-            execContext = new ExecutionContext();  
+            execContext = new ExecutionContext();
          }
 
          wrapper = new WorkWrapper(this, work, execContext, workListener, null, null);
@@ -605,7 +597,7 @@ public class WorkManagerImpl implements WorkManager
       catch (ExecutionTimedOutException etoe)
       {
          exception = new WorkRejectedException(etoe);
-         exception.setErrorCode(WorkRejectedException.START_TIMED_OUT);  
+         exception.setErrorCode(WorkRejectedException.START_TIMED_OUT);
       }
       catch (RejectedExecutionException ree)
       {
@@ -711,7 +703,7 @@ public class WorkManagerImpl implements WorkManager
       BlockingExecutor executor = shortRunningExecutor;
       if (work instanceof WorkContextProvider)
       {
-         WorkContextProvider wcProvider = (WorkContextProvider)work;
+         WorkContextProvider wcProvider = (WorkContextProvider) work;
          List<WorkContext> contexts = wcProvider.getWorkContexts();
 
          if (contexts != null && contexts.size() > 0)
@@ -723,7 +715,7 @@ public class WorkManagerImpl implements WorkManager
                WorkContext wc = it.next();
                if (wc instanceof HintsContext)
                {
-                  HintsContext hc = (HintsContext)wc;
+                  HintsContext hc = (HintsContext) wc;
                   if (hc.getHints().containsKey(HintsContext.LONGRUNNING_HINT))
                   {
                      executor = longRunningExecutor;
@@ -737,8 +729,6 @@ public class WorkManagerImpl implements WorkManager
       return executor;
    }
 
-
-
    /**
     * Check and verify work before submitting.
     * @param work the work instance
@@ -749,70 +739,62 @@ public class WorkManagerImpl implements WorkManager
    {
       if (specCompliant)
       {
-         verifyWork(work);  
-      }   
-      
+         verifyWork(work);
+      }
+
       if (work instanceof WorkContextProvider)
       {
-          //Implements WorkContextProvider and not-null ExecutionContext
+         //Implements WorkContextProvider and not-null ExecutionContext
          if (executionContext != null)
          {
             throw new WorkRejectedException(bundle.workExecutionContextMustNullImplementsWorkContextProvider());
-         }          
-      }      
+         }
+      }
    }
-   
+
    /**
     * Verify the given work instance.
     * @param work The work
     * @throws WorkException Thrown if a spec compliant issue is found
     */
    private void verifyWork(Work work) throws WorkException
-   {     
-      if (!validatedWork.contains(work.getClass().getName()))
-      {
-         Class<?> workClass = work.getClass();
-         boolean result = false;
-      
-         result = verifyWorkMethods(workClass, RUN_METHOD_NAME, null, workClass.getName() + 
-                                    ": Run method is not defined");
-     
-         if (!result)
-         {
-            throw new WorkException(bundle.runMethodIsSynchronized(workClass.getName()));
-         }
-      
-         result = verifyWorkMethods(workClass, RELEASE_METHOD_NAME, null, workClass.getName() + 
-                                    ": Release method is not defined");
-      
-         if (!result)
-         {
-            throw new WorkException(bundle.releaseMethodIsSynchronized(workClass.getName()));
-         }
+   {
+      Class<? extends Work> workClass = work.getClass();
+      String className = workClass.getName();
 
-         validatedWork.add(work.getClass().getName());
+      if (!validatedWork.contains(className))
+      {
+
+         if (isWorkMethodSynchronized(workClass, RUN_METHOD_NAME))
+            throw new WorkException(bundle.runMethodIsSynchronized(className));
+
+         if (isWorkMethodSynchronized(workClass, RELEASE_METHOD_NAME))
+            throw new WorkException(bundle.releaseMethodIsSynchronized(className));
+
+         validatedWork.add(className);
       }
    }
-   
-   private boolean verifyWorkMethods(Class<?> workClass, String methodName, 
-                                     Class<?>[] parameterTypes, String errorMessage) throws WorkException
+
+   /**
+    * Checks, if Work implementation class method is synchronized
+    * @param workClass - implementation class
+    * @param methodName - could be "run" or "release"
+    * @return true, if method is synchronized, false elsewhere
+    */
+   private boolean isWorkMethodSynchronized(Class<? extends Work> workClass, String methodName)
    {
-      Method method = null;
       try
       {
-         method = ClassUtil.getClassMethod(workClass, methodName, null);
-         
-         if (ClassUtil.modifiersHasSynchronizedKeyword(method.getModifiers()))
-         {
-            return false;  
-         }
+         Method method = workClass.getMethod(methodName, new Class[0]);
+         if (Modifier.isSynchronized(method.getModifiers()))
+            return true;
       }
-      catch (NoSuchMethodException nsme)
+      catch (NoSuchMethodException e)
       {
-         throw new WorkException(errorMessage);
+         //Never happens, Work implementation should have these methods
       }
-      
-      return true;
+
+      return false;
    }
 
    /**
@@ -829,7 +811,7 @@ public class WorkManagerImpl implements WorkManager
 
          statistics.deltaWorkFailed();
 
-         throw wrapper.getWorkException();  
+         throw wrapper.getWorkException();
       }
 
       statistics.deltaWorkSuccessful();
@@ -845,15 +827,15 @@ public class WorkManagerImpl implements WorkManager
    {
       if (trace)
       {
-         log.trace("Setting up work contexts " + wrapper);  
+         log.trace("Setting up work contexts " + wrapper);
       }
 
       Work work = wrapper.getWork();
-      
+
       //If work is an instanceof WorkContextProvider
       if (work instanceof WorkContextProvider)
       {
-         WorkContextProvider wcProvider = (WorkContextProvider)work;
+         WorkContextProvider wcProvider = (WorkContextProvider) work;
          List<WorkContext> contexts = wcProvider.getWorkContexts();
 
          if (contexts != null && contexts.size() > 0)
@@ -876,11 +858,11 @@ public class WorkManagerImpl implements WorkManager
                   {
                      log.trace("Not supported work context class : " + context.getClass().getName());
                   }
-                  
+
                   fireWorkContextSetupFailed(context, WorkContextErrorCodes.UNSUPPORTED_CONTEXT_TYPE);
-                  
-                  throw new WorkCompletedException(bundle.unsupportedWorkContextClass(context.getClass().getName()), 
-                      WorkContextErrorCodes.UNSUPPORTED_CONTEXT_TYPE);
+
+                  throw new WorkCompletedException(bundle.unsupportedWorkContextClass(context.getClass().getName()),
+                        WorkContextErrorCodes.UNSUPPORTED_CONTEXT_TYPE);
                }
                // Duplicate checks
                else
@@ -896,9 +878,9 @@ public class WorkManagerImpl implements WorkManager
                         }
 
                         fireWorkContextSetupFailed(context, WorkContextErrorCodes.DUPLICATE_CONTEXTS);
-                        
-                        throw new WorkCompletedException(bundle.duplicateTransactionWorkContextClass(
-                              context.getClass().getName()), WorkContextErrorCodes.DUPLICATE_CONTEXTS);
+
+                        throw new WorkCompletedException(bundle.duplicateTransactionWorkContextClass(context.getClass()
+                              .getName()), WorkContextErrorCodes.DUPLICATE_CONTEXTS);
                      }
                      else
                      {
@@ -914,11 +896,11 @@ public class WorkManagerImpl implements WorkManager
                         {
                            log.trace("Duplicate security work context : " + context.getClass().getName());
                         }
-                        
+
                         fireWorkContextSetupFailed(context, WorkContextErrorCodes.DUPLICATE_CONTEXTS);
 
-                        throw new WorkCompletedException(bundle.duplicateSecurityWorkContextClass(
-                              context.getClass().getName()), WorkContextErrorCodes.DUPLICATE_CONTEXTS);
+                        throw new WorkCompletedException(bundle.duplicateSecurityWorkContextClass(context.getClass()
+                              .getName()), WorkContextErrorCodes.DUPLICATE_CONTEXTS);
                      }
                      else
                      {
@@ -936,9 +918,9 @@ public class WorkManagerImpl implements WorkManager
                         }
 
                         fireWorkContextSetupFailed(context, WorkContextErrorCodes.DUPLICATE_CONTEXTS);
-                        
-                        throw new WorkCompletedException(bundle.duplicateHintWorkContextClass(
-                              context.getClass().getName()), WorkContextErrorCodes.DUPLICATE_CONTEXTS);
+
+                        throw new WorkCompletedException(bundle.duplicateHintWorkContextClass(context.getClass()
+                              .getName()), WorkContextErrorCodes.DUPLICATE_CONTEXTS);
                      }
                      else
                      {
@@ -949,22 +931,22 @@ public class WorkManagerImpl implements WorkManager
                   else
                   {
                      fireWorkContextSetupFailed(context, WorkContextErrorCodes.UNSUPPORTED_CONTEXT_TYPE);
-                     
-                     throw new WorkCompletedException(bundle.unsupportedWorkContextClass(context.getClass().getName()), 
-                                                      WorkContextErrorCodes.UNSUPPORTED_CONTEXT_TYPE);
+
+                     throw new WorkCompletedException(bundle.unsupportedWorkContextClass(context.getClass().getName()),
+                           WorkContextErrorCodes.UNSUPPORTED_CONTEXT_TYPE);
                   }
                }
 
                // Add workcontext instance to the work
                wrapper.addWorkContext(contextType, context);
             }
-         }         
-      }      
+         }
+      }
 
       if (trace)
       {
-         log.trace("Setted up work contexts " + wrapper);  
-      }      
+         log.trace("Setted up work contexts " + wrapper);
+      }
    }
 
    /**
@@ -976,10 +958,10 @@ public class WorkManagerImpl implements WorkManager
    {
       if (workContext instanceof WorkContextLifecycleListener)
       {
-         WorkContextLifecycleListener listener = (WorkContextLifecycleListener)workContext;
-         listener.contextSetupFailed(errorCode);   
+         WorkContextLifecycleListener listener = (WorkContextLifecycleListener) workContext;
+         listener.contextSetupFailed(errorCode);
       }
-      
+
    }
 
    /**
