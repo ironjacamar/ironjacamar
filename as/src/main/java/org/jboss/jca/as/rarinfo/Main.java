@@ -378,15 +378,38 @@ public class Main
                      needPrint = false;
                   }
                   
-                  //ValidatingManagedConnectionFactory
                   if (needPrint)
                   {
+                     //ValidatingManagedConnectionFactory
                      try
                      {
                         out.print("  Validating: ");
                         Class<?> clazz = Class.forName(classname, true, cl);
 
                         if (hasInterface(clazz, "javax.resource.spi.ValidatingManagedConnectionFactory"))
+                        {
+                           out.println("Yes");
+                        }
+                        else
+                        {
+                           out.println("No");
+                        }
+                     }
+                     catch (Throwable t)
+                     {
+                        // Nothing we can do
+                        t.printStackTrace(System.err);
+                        out.println("Unknown");
+                     }
+
+                     //CCI
+                     String cfi = mcf.getConnectionFactoryInterface().toString();
+                     try
+                     {
+                        out.print("  CCI: ");
+                        Class<?> clazz = Class.forName(cfi, true, cl);
+
+                        if (hasInterface(clazz, "javax.resource.cci.ConnectionFactory"))
                         {
                            out.println("Yes");
                         }
@@ -840,6 +863,8 @@ public class Main
    
    private static boolean hasInterface(Class<?> clazz, String interfaceName)
    {
+      if (clazz.getName().equals(interfaceName))
+         return true;
       for (Class<?> iface : clazz.getInterfaces())
       {
          if (iface.getName().equals(interfaceName))
