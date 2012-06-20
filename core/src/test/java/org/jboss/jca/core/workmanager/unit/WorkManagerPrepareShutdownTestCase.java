@@ -24,6 +24,8 @@ package org.jboss.jca.core.workmanager.unit;
 
 import org.jboss.jca.core.api.workmanager.WorkManager;
 import org.jboss.jca.core.api.workmanager.WorkManagerStatistics;
+import org.jboss.jca.core.workmanager.spec.chapter10.common.CallbackCount;
+import org.jboss.jca.core.workmanager.spec.chapter10.common.MyWorkAdapter;
 import org.jboss.jca.core.workmanager.spec.chapter10.common.SimpleWork;
 import org.jboss.jca.embedded.arquillian.Inject;
 
@@ -47,7 +49,7 @@ import static org.junit.Assert.*;
 @RunWith(Arquillian.class)
 public class WorkManagerPrepareShutdownTestCase
 {
-   
+
    private static final Logger LOG = Logger.getLogger(WorkManagerPrepareShutdownTestCase.class);
 
    /**
@@ -68,12 +70,16 @@ public class WorkManagerPrepareShutdownTestCase
       assertFalse(workManager.isShutdown());
 
       Work work = new SimpleWork();
+      MyWorkAdapter wa = new MyWorkAdapter();
+      CallbackCount callbackCount = new CallbackCount();
+      wa.setCallbackCount(callbackCount);
+      
       workManager.prepareShutdown();
       assertTrue(workManager.isShutdown());
 
       try
       {
-         workManager.doWork(work);
+         workManager.doWork(work, WorkManager.INDEFINITE, null, wa);
          fail("exception should be thrown");
       }
       catch (WorkRejectedException e)
@@ -82,7 +88,7 @@ public class WorkManagerPrepareShutdownTestCase
       }
       try
       {
-         workManager.startWork(work);
+         workManager.startWork(work, WorkManager.INDEFINITE, null, wa);
          fail("exception should be thrown");
       }
       catch (WorkRejectedException e)
@@ -91,21 +97,21 @@ public class WorkManagerPrepareShutdownTestCase
       }
       try
       {
-         workManager.scheduleWork(work);
+         workManager.scheduleWork(work, WorkManager.INDEFINITE, null, wa);
          fail("exception should be thrown");
       }
       catch (WorkRejectedException e)
       {
          //Expected
       }
-
-      assertEquals(0, stat.getWorkActive());
-      assertEquals(0, stat.getDoWorkAccepted());
-      assertEquals(1, stat.getDoWorkRejected());
-      assertEquals(1, stat.getScheduleWorkRejected());
-      assertEquals(0, stat.getScheduleWorkAccepted());
-      assertEquals(0, stat.getStartWorkAccepted());
-      assertEquals(1, stat.getStartWorkRejected());
+      assertEquals("should be same", 3, callbackCount.getRejectedCount());
+      assertEquals("should be same", 0, stat.getWorkActive());
+      assertEquals("should be same", 0, stat.getDoWorkAccepted());
+      assertEquals("should be same", 1, stat.getDoWorkRejected());
+      assertEquals("should be same", 1, stat.getScheduleWorkRejected());
+      assertEquals("should be same", 0, stat.getScheduleWorkAccepted());
+      assertEquals("should be same", 0, stat.getStartWorkAccepted());
+      assertEquals("should be same", 1, stat.getStartWorkRejected());
       LOG.info(stat.toString());
 
    }

@@ -26,6 +26,8 @@ import javax.resource.spi.work.WorkAdapter;
 import javax.resource.spi.work.WorkEvent;
 import javax.resource.spi.work.WorkException;
 
+import static org.junit.Assert.*;
+
 /**
  * MyWorkAdapter
  */
@@ -34,37 +36,42 @@ public class MyWorkAdapter extends WorkAdapter
 
    /** event source */
    private Object source;
+
    /** event work */
    private Work work;
+
    /** start duration time */
    private long startDuration;
+
    /** exception */
    private WorkException exception;
-   
+
    private CallbackCount callbackCount;
-   
+
    /**
     * accept work 
     *
     * @param e workEvent
     */
    @Override
-   public void workAccepted(WorkEvent e) 
+   public void workAccepted(WorkEvent e)
    {
+      if (e.getType() != WorkEvent.WORK_ACCEPTED)
+         fail("Wrong accepted type");
       source = e.getSource();
       work = e.getWork();
       startDuration = e.getStartDuration();
       exception = e.getException();
-      
+
       if (callbackCount != null)
       {
-         synchronized (this) 
+         synchronized (this)
          {
             callbackCount.setAcceptCount(callbackCount.getAcceptCount() + 1);
          }
       }
 
-      super.workCompleted(e);
+      super.workAccepted(e);
    }
 
    /**
@@ -75,9 +82,12 @@ public class MyWorkAdapter extends WorkAdapter
    @Override
    public void workStarted(WorkEvent e)
    {
+      if (e.getType() != WorkEvent.WORK_STARTED)
+         fail("Wrong started type");
+
       if (callbackCount != null)
       {
-         synchronized (this) 
+         synchronized (this)
          {
             callbackCount.setStartCount(callbackCount.getStartCount() + 1);
          }
@@ -85,7 +95,7 @@ public class MyWorkAdapter extends WorkAdapter
 
       super.workStarted(e);
    }
-   
+
    /**
     * start work 
     *
@@ -94,6 +104,9 @@ public class MyWorkAdapter extends WorkAdapter
    @Override
    public void workRejected(WorkEvent e)
    {
+      if (e.getType() != WorkEvent.WORK_REJECTED)
+         fail("Wrong rejected type");
+
       source = e.getSource();
       work = e.getWork();
       startDuration = e.getStartDuration();
@@ -101,7 +114,7 @@ public class MyWorkAdapter extends WorkAdapter
 
       if (callbackCount != null)
       {
-         synchronized (this) 
+         synchronized (this)
          {
             callbackCount.setRejectedCount(callbackCount.getRejectedCount() + 1);
          }
@@ -109,7 +122,7 @@ public class MyWorkAdapter extends WorkAdapter
 
       super.workRejected(e);
    }
-   
+
    /**
     * complete work 
     *
@@ -118,9 +131,12 @@ public class MyWorkAdapter extends WorkAdapter
    @Override
    public void workCompleted(WorkEvent e)
    {
+      if (e.getType() != WorkEvent.WORK_COMPLETED)
+         fail("Wrong completed type");
+
       if (callbackCount != null)
       {
-         synchronized (this) 
+         synchronized (this)
          {
             callbackCount.setCompletedCount(callbackCount.getCompletedCount() + 1);
          }
@@ -138,7 +154,7 @@ public class MyWorkAdapter extends WorkAdapter
    {
       return source;
    }
-   
+
    /**
     * get event work
     *
@@ -148,7 +164,7 @@ public class MyWorkAdapter extends WorkAdapter
    {
       return work;
    }
-   
+
    /**
     * get start duration time
     *
@@ -158,6 +174,7 @@ public class MyWorkAdapter extends WorkAdapter
    {
       return startDuration;
    }
+
    /**
     * get exception 
     * @return exception
@@ -166,7 +183,7 @@ public class MyWorkAdapter extends WorkAdapter
    {
       return exception;
    }
-   
+
    /**
     * set callback reference
     * @param callbackCount complete count
