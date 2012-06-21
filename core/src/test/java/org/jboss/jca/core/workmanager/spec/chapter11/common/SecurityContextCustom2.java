@@ -31,13 +31,13 @@ import javax.security.auth.callback.CallbackHandler;
  * @version $Rev$ $Date$
  *
  */
-public class SecurityContextCustomFirst extends SecurityContext
+public class SecurityContextCustom2 extends SecurityContext
 {
 
    /**
     * 
     */
-   private static final long serialVersionUID = 9210146619488074381L;
+   private static final long serialVersionUID = 9210146619488074382L;
 
    @Override
    public void setupSecurityContext(CallbackHandler handler, Subject executionSubject, Subject serviceSubject)

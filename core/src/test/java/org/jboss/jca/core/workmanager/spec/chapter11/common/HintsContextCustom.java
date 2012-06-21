@@ -29,7 +29,7 @@ import javax.resource.spi.work.HintsContext;
  * @version $Rev$ $Date$
  *
  */
-public class HintContextCustom extends HintsContext
+public class HintsContextCustom extends HintsContext
 {
 
    /**

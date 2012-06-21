@@ -25,6 +25,8 @@ package org.jboss.jca.core.workmanager.spec.chapter11.common;
 import javax.resource.spi.work.TransactionContext;
 import javax.resource.spi.work.WorkContextLifecycleListener;
 
+import org.jboss.logging.Logger;
+
 /**
  * TransactionContextCustom.
  * @version $Rev$ $Date$
@@ -35,17 +37,22 @@ public class TransactionContextCustom extends TransactionContext implements Work
    /** Serial version UID */
    private static final long serialVersionUID = -3841107265829832325L;
 
+   private static final Logger LOG = Logger.getLogger(TransactionContextCustom.class);
+
    /**contextSetupComplete*/
-   private static boolean contextSetupComplete = false;
+   private boolean contextSetupComplete;
 
    /**contextSetupFailedErrorCode*/
-   private static String contextSetupFailedErrorCode = "";
-   
+   private String contextSetupFailedErrorCode;
+
+   /**timeStamp for context setup operation */
+   private long timeStamp = 0;
+
    /**
     * isContextSetupComplete
     * @return isContextSetupComplete
     */
-   public static boolean isContextSetupComplete()
+   public boolean isContextSetupComplete()
    {
       return contextSetupComplete;
    }
@@ -54,7 +61,7 @@ public class TransactionContextCustom extends TransactionContext implements Work
     * getContextSetupFailedErrorCode
     * @return getContextSetupFailedErrorCode
     */
-   public static String getContextSetupFailedErrorCode()
+   public String getContextSetupFailedErrorCode()
    {
       return contextSetupFailedErrorCode;
    }
@@ -64,7 +71,10 @@ public class TransactionContextCustom extends TransactionContext implements Work
     */
    public void contextSetupComplete()
    {
+      LOG.info("Context Listener: Context setup complete.");
+      contextSetupFailedErrorCode = "";
       contextSetupComplete = true;
+      timeStamp = System.currentTimeMillis();
    }
 
    /**
@@ -73,7 +83,18 @@ public class TransactionContextCustom extends TransactionContext implements Work
     */
    public void contextSetupFailed(String errorCode)
    {
+      LOG.info("Context Listener: Context setup failed.");
       contextSetupFailedErrorCode = errorCode;
       contextSetupComplete = false;
+      timeStamp = System.currentTimeMillis();
+   }
+
+   /**
+    * getter
+    * @return timestamp
+    */
+   public long getTimeStamp()
+   {
+      return timeStamp;
    }
 }

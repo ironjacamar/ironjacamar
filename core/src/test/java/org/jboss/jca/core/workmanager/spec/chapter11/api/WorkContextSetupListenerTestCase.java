@@ -22,15 +22,16 @@
 
 package org.jboss.jca.core.workmanager.spec.chapter11.api;
 
-import org.jboss.jca.core.workmanager.spec.chapter11.common.DuplicateTransactionContextWork;
+import org.jboss.jca.core.workmanager.spec.chapter11.common.ContextWorkAdapter;
 import org.jboss.jca.core.workmanager.spec.chapter11.common.TransactionContextCustom;
-import org.jboss.jca.core.workmanager.spec.chapter11.common.TransactionContextWork;
+import org.jboss.jca.core.workmanager.spec.chapter11.common.UniversalProviderWork;
 import org.jboss.jca.embedded.arquillian.Inject;
 
 import javax.resource.spi.work.WorkContextErrorCodes;
 import javax.resource.spi.work.WorkManager;
 
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.logging.Logger;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,6 +40,11 @@ import static junit.framework.Assert.*;
 
 /**
  * WorkContextSetupListenerTest
+ * 
+ * The WorkManager must make the notifications related to Work accepted and started
+ * events prior to calling the WorkContext setup related notifications. The WorkManager
+ * must make the notifications related to the Work completed events after the WorkContext
+ * setup related notifications.
  *
  * @version $Rev$ $Date$
  * @author gurkanerdogdu
@@ -47,6 +53,8 @@ import static junit.framework.Assert.*;
 @RunWith(Arquillian.class)
 public class WorkContextSetupListenerTestCase
 {
+   private static final Logger LOG = Logger.getLogger(WorkContextSetupListenerTestCase.class);
+
    /**
     * Injecting embedded work manager
     */
@@ -61,13 +69,26 @@ public class WorkContextSetupListenerTestCase
    @Test
    public void testTransactionContextCustomListener() throws Throwable
    {
-      manager.doWork(new TransactionContextWork(), WorkManager.INDEFINITE, null, null);
+      UniversalProviderWork work = new UniversalProviderWork();
+      TransactionContextCustom listener = new TransactionContextCustom();
+      work.addContext(listener);
+      ContextWorkAdapter wa = new ContextWorkAdapter();
+      manager.doWork(work, WorkManager.INDEFINITE, null, wa);
 
-      String errorCode = TransactionContextCustom.getContextSetupFailedErrorCode();
-      boolean complete = TransactionContextCustom.isContextSetupComplete();
+      assertEquals("", listener.getContextSetupFailedErrorCode());
+      assertTrue(listener.isContextSetupComplete());
 
-      assertEquals("", errorCode);
-      assertTrue(complete);
+      LOG.info("1Test//accepted:" + wa.getTimeAccepted() + "//started:" + wa.getTimeStarted() + "//context:"
+            + listener.getTimeStamp() + "//completed:" + wa.getTimeCompleted());
+
+      assertTrue(wa.getTimeAccepted() > 0);
+      assertTrue(wa.getTimeStarted() > 0);
+      assertTrue(listener.getTimeStamp() > 0);
+      assertTrue(wa.getTimeCompleted() > 0);
+
+      assertTrue(wa.getTimeAccepted() <= wa.getTimeStarted());
+      assertTrue(wa.getTimeStarted() <= listener.getTimeStamp());
+      assertTrue(listener.getTimeStamp() <= wa.getTimeCompleted());
    }
 
    /**
@@ -78,19 +99,36 @@ public class WorkContextSetupListenerTestCase
    @Test
    public void testTransactionContextFailedListener() throws Throwable
    {
+      UniversalProviderWork work = new UniversalProviderWork();
+      TransactionContextCustom listener = new TransactionContextCustom();
+      work.addContext(listener);
+      work.addContext(listener); //to be sure, that listener will be fired 
+
+      ContextWorkAdapter wa = new ContextWorkAdapter();
+
       try
       {
-         manager.doWork(new DuplicateTransactionContextWork(), WorkManager.INDEFINITE, null, null);
+         manager.doWork(work, WorkManager.INDEFINITE, null, wa);
       }
       catch (Throwable e)
       {
-         //Swallow
+         //Expected
       }
 
-      String errorCode = TransactionContextCustom.getContextSetupFailedErrorCode();
-      boolean complete = TransactionContextCustom.isContextSetupComplete();
+      assertEquals(WorkContextErrorCodes.DUPLICATE_CONTEXTS, listener.getContextSetupFailedErrorCode());
+      assertFalse(listener.isContextSetupComplete());
 
-      assertEquals(WorkContextErrorCodes.DUPLICATE_CONTEXTS, errorCode);
-      assertFalse(complete);
+      LOG.info("2Test//accepted:" + wa.getTimeAccepted() + "//started:" + wa.getTimeStarted() + "//context:"
+            + listener.getTimeStamp() + "//rejected:" + wa.getTimeRejected());
+
+      //Ignored - need to check spec JCA 1.6 chapter 11.7
+      //assertTrue(wa.getTimeAccepted() > 0);
+      //assertTrue(wa.getTimeStarted() > 0);
+      assertTrue(listener.getTimeStamp() > 0);
+      assertTrue(wa.getTimeRejected() > 0);
+
+      assertTrue(wa.getTimeAccepted() <= wa.getTimeStarted());
+      assertTrue(wa.getTimeStarted() <= listener.getTimeStamp());
+      assertTrue(listener.getTimeStamp() <= wa.getTimeRejected());
    }
 }
