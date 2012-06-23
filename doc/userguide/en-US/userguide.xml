@@ -1,26 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
-              "http://www.oasis-open.org/docbook/xml/4.3/docbookx.dtd" [
-        <!ENTITY dedication SYSTEM "modules/dedication.xml">
-        <!ENTITY preface SYSTEM "modules/preface.xml">
-        <!ENTITY introduction SYSTEM "modules/introduction.xml">
-        <!ENTITY download SYSTEM "modules/download.xml">
-        <!ENTITY nc_installation SYSTEM "modules/installation.xml">
-        <!ENTITY configuration SYSTEM "modules/configuration.xml">
-        <!ENTITY deployment SYSTEM "modules/deployment.xml">
-        <!ENTITY running SYSTEM "modules/running.xml">
-        <!ENTITY validator SYSTEM "modules/validator.xml">
-        <!ENTITY codegenerator SYSTEM "modules/codegenerator.xml">
-        <!ENTITY eclipseplugin SYSTEM "modules/eclipse.xml">
-        <!ENTITY tools SYSTEM "modules/tools.xml">
-        <!ENTITY embedded SYSTEM "modules/embedded.xml">
-        <!ENTITY community SYSTEM "modules/community.xml">
-        <!ENTITY troubleshooting SYSTEM "modules/troubleshooting.xml">
-        <!ENTITY schemas SYSTEM "modules/schemas.xml">
-        <!ENTITY sample SYSTEM "modules/sample.xml">
-        <!ENTITY datasources SYSTEM "modules/datasources.xml">
-        <!ENTITY logging SYSTEM "modules/logging.xml">
-        <!ENTITY licenses SYSTEM "modules/licenses.xml">
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+              "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd" [
         ]>
 <book lang="en">
    <bookinfo>
@@ -36,46 +16,26 @@
 
    </bookinfo>
 
-   &dedication;
-
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="modules/dedication.xml"/>
    <toc></toc>
-
-   &preface;
-
-   &introduction;
-
-   &download;
-
-   &nc_installation;
-
-   &configuration;
-
-   &deployment;
-
-   &running;
-
-   &validator;
-
-   &codegenerator;
-
-   &eclipseplugin;
-
-   &tools;
-
-   &embedded;
-
-   &community;
-
-   &troubleshooting;
-
-   &schemas;
-
-   &sample;
-
-   &datasources;
-
-   &logging;
-
-   &licenses;
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="modules/preface.xml"/>
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="modules/introduction.xml"/>
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="modules/download.xml"/>
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="modules/installation.xml"/>
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="modules/configuration.xml"/>
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="modules/deployment.xml"/>
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="modules/running.xml"/>
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="modules/validator.xml"/>
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="modules/codegenerator.xml"/>
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="modules/eclipse.xml"/>
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="modules/tools.xml"/>
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="modules/embedded.xml"/>
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="modules/community.xml"/>
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="modules/troubleshooting.xml"/>
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="modules/schemas.xml"/>
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="modules/sample.xml"/>
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="modules/datasources.xml"/>
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="modules/logging.xml"/>
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="modules/licenses.xml"/>
 
 </book>

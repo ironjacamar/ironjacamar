@@ -9,7 +9,7 @@
     <title>PosgreSQL</title>
     <programlisting language="xml">
       <xi:include parse="text"
-                  href="../../../common/src/test/resources/ds/example/postgres-ds.xml"
+                  href="../../../../common/src/test/resources/ds/example/postgres-ds.xml"
                   xmlns:xi="http://www.w3.org/2001/XInclude"/>
     </programlisting>
   </section>
@@ -18,7 +18,7 @@
     <title>PosgreSQL XA</title>
     <programlisting language="xml">
       <xi:include parse="text"
-                  href="../../../common/src/test/resources/ds/example/postgres-xa-ds.xml"
+                  href="../../../../common/src/test/resources/ds/example/postgres-xa-ds.xml"
                   xmlns:xi="http://www.w3.org/2001/XInclude"/>
     </programlisting>
   </section>
@@ -27,7 +27,7 @@
     <title>MySQL</title>
     <programlisting language="xml">
       <xi:include parse="text"
-                  href="../../../common/src/test/resources/ds/example/mysql-ds.xml"
+                  href="../../../../common/src/test/resources/ds/example/mysql-ds.xml"
                   xmlns:xi="http://www.w3.org/2001/XInclude"/>
     </programlisting>
   </section>
@@ -36,7 +36,7 @@
     <title>MySQL XA</title>
     <programlisting language="xml">
       <xi:include parse="text"
-                  href="../../../common/src/test/resources/ds/example/mysql-xa-ds.xml"
+                  href="../../../../common/src/test/resources/ds/example/mysql-xa-ds.xml"
                   xmlns:xi="http://www.w3.org/2001/XInclude"/>
     </programlisting>
   </section>
@@ -45,7 +45,7 @@
     <title>H2</title>
     <programlisting language="xml">
       <xi:include parse="text"
-                  href="../../../common/src/test/resources/ds/example/h2-ds.xml"
+                  href="../../../../common/src/test/resources/ds/example/h2-ds.xml"
                   xmlns:xi="http://www.w3.org/2001/XInclude"/>
     </programlisting>
   </section>
@@ -54,7 +54,7 @@
     <title>H2 XA</title>
     <programlisting language="xml">
       <xi:include parse="text"
-                  href="../../../common/src/test/resources/ds/example/h2-xa-ds.xml"
+                  href="../../../../common/src/test/resources/ds/example/h2-xa-ds.xml"
                   xmlns:xi="http://www.w3.org/2001/XInclude"/>
     </programlisting>
   </section>
@@ -63,7 +63,7 @@
     <title>Derby</title>
     <programlisting language="xml">
       <xi:include parse="text"
-                  href="../../../common/src/test/resources/ds/example/derby-ds.xml"
+                  href="../../../../common/src/test/resources/ds/example/derby-ds.xml"
                   xmlns:xi="http://www.w3.org/2001/XInclude"/>
     </programlisting>
   </section>
@@ -72,7 +72,7 @@
     <title>Derby XA</title>
     <programlisting language="xml">
       <xi:include parse="text"
-                  href="../../../common/src/test/resources/ds/example/derby-xa-ds.xml"
+                  href="../../../../common/src/test/resources/ds/example/derby-xa-ds.xml"
                   xmlns:xi="http://www.w3.org/2001/XInclude"/>
     </programlisting>
   </section>
@@ -81,7 +81,7 @@
     <title>Oracle</title>
     <programlisting language="xml">
       <xi:include parse="text"
-                  href="../../../common/src/test/resources/ds/example/oracle-ds.xml"
+                  href="../../../../common/src/test/resources/ds/example/oracle-ds.xml"
                   xmlns:xi="http://www.w3.org/2001/XInclude"/>
     </programlisting>
   </section>
@@ -90,7 +90,7 @@
     <title>Oracle XA</title>
     <programlisting language="xml">
       <xi:include parse="text"
-                  href="../../../common/src/test/resources/ds/example/oracle-xa-ds.xml"
+                  href="../../../../common/src/test/resources/ds/example/oracle-xa-ds.xml"
                   xmlns:xi="http://www.w3.org/2001/XInclude"/>
     </programlisting>
   </section>
@@ -99,7 +99,7 @@
     <title>Microsoft SQLServer</title>
     <programlisting language="xml">
       <xi:include parse="text"
-                  href="../../../common/src/test/resources/ds/example/mssql-ds.xml"
+                  href="../../../../common/src/test/resources/ds/example/mssql-ds.xml"
                   xmlns:xi="http://www.w3.org/2001/XInclude"/>
     </programlisting>
   </section>
@@ -108,7 +108,7 @@
     <title>Microsoft SQLServer XA</title>
     <programlisting language="xml">
       <xi:include parse="text"
-                  href="../../../common/src/test/resources/ds/example/mssql-xa-ds.xml"
+                  href="../../../../common/src/test/resources/ds/example/mssql-xa-ds.xml"
                   xmlns:xi="http://www.w3.org/2001/XInclude"/>
     </programlisting>
   </section>
@@ -117,7 +117,7 @@
     <title>IBM DB2</title>
     <programlisting language="xml">
       <xi:include parse="text"
-                  href="../../../common/src/test/resources/ds/example/db2-ds.xml"
+                  href="../../../../common/src/test/resources/ds/example/db2-ds.xml"
                   xmlns:xi="http://www.w3.org/2001/XInclude"/>
     </programlisting>
   </section>
@@ -126,7 +126,7 @@
     <title>IBM DB2 XA</title>
     <programlisting language="xml">
       <xi:include parse="text"
-                  href="../../../common/src/test/resources/ds/example/db2-xa-ds.xml"
+                  href="../../../../common/src/test/resources/ds/example/db2-xa-ds.xml"
                   xmlns:xi="http://www.w3.org/2001/XInclude"/>
     </programlisting>
   </section>

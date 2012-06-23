@@ -10,7 +10,7 @@
 
     <programlisting language="xml">
       <xi:include parse="text" 
-                  href="../../../common/src/main/resources/schema/connector_1_6.xsd"
+                  href="../../../../common/src/main/resources/schema/connector_1_6.xsd"
                   xmlns:xi="http://www.w3.org/2001/XInclude"/>
     </programlisting>
 
@@ -22,7 +22,7 @@
 
     <programlisting language="xml">
       <xi:include parse="text" 
-                  href="../../../common/src/main/resources/schema/connector_1_5.xsd"
+                  href="../../../../common/src/main/resources/schema/connector_1_5.xsd"
                   xmlns:xi="http://www.w3.org/2001/XInclude"/>
     </programlisting>
 
@@ -35,7 +35,7 @@
     <programlisting language="xml">
       <xi:include parse="text" 
                   encoding="ISO-8859-1"
-                  href="../../../common/src/main/resources/dtd/connector_1_0.dtd"
+                  href="../../../../common/src/main/resources/dtd/connector_1_0.dtd"
                   xmlns:xi="http://www.w3.org/2001/XInclude"/>
     </programlisting>
 
@@ -47,7 +47,7 @@
 
     <programlisting language="xml">
       <xi:include parse="text" 
-                  href="../../../common/src/main/resources/schema/ironjacamar_1_0.xsd"
+                  href="../../../../common/src/main/resources/schema/ironjacamar_1_0.xsd"
                   xmlns:xi="http://www.w3.org/2001/XInclude"/>
 
     </programlisting>
@@ -59,7 +59,7 @@
 
     <programlisting language="xml">
       <xi:include parse="text" 
-                  href="../../../common/src/main/resources/schema/ironjacamar_1_1.xsd"
+                  href="../../../../common/src/main/resources/schema/ironjacamar_1_1.xsd"
                   xmlns:xi="http://www.w3.org/2001/XInclude"/>
 
     </programlisting>
@@ -71,7 +71,7 @@
 
     <programlisting language="xml">
       <xi:include parse="text" 
-                  href="../../../common/src/main/resources/schema/resource-adapters_1_0.xsd"
+                  href="../../../../common/src/main/resources/schema/resource-adapters_1_0.xsd"
                   xmlns:xi="http://www.w3.org/2001/XInclude"/>
     </programlisting>
 
@@ -83,7 +83,7 @@
 
     <programlisting language="xml">
       <xi:include parse="text" 
-                  href="../../../common/src/main/resources/schema/resource-adapters_1_1.xsd"
+                  href="../../../../common/src/main/resources/schema/resource-adapters_1_1.xsd"
                   xmlns:xi="http://www.w3.org/2001/XInclude"/>
     </programlisting>
 
@@ -95,7 +95,7 @@
 
     <programlisting language="xml">
       <xi:include parse="text" 
-                  href="../../../common/src/main/resources/schema/datasources_1_0.xsd"
+                  href="../../../../common/src/main/resources/schema/datasources_1_0.xsd"
                   xmlns:xi="http://www.w3.org/2001/XInclude"/>
     </programlisting>
 
@@ -107,7 +107,7 @@
 
     <programlisting language="xml">
       <xi:include parse="text" 
-                  href="../../../common/src/main/resources/schema/datasources_1_1.xsd"
+                  href="../../../../common/src/main/resources/schema/datasources_1_1.xsd"
                   xmlns:xi="http://www.w3.org/2001/XInclude"/>
     </programlisting>
 

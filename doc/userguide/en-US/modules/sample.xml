@@ -48,77 +48,77 @@ ant test
     <section id="sample_helloworld_resourceadpater">
       <title>HelloWorld Resource Adapter</title>
       <programlisting language="java">
-<xi:include parse="text" href="../../samples/helloworld/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldResourceAdapter.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldResourceAdapter.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
     <section id="sample_helloworld_mcf">
       <title>HelloWorld Managed Connection Factory</title>
       <programlisting language="java">
-<xi:include parse="text" href="../../samples/helloworld/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldManagedConnectionFactory.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldManagedConnectionFactory.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
     <section id="sample_helloworld_mc">
       <title>HelloWorld Managed Connection</title>
       <programlisting language="java">
-<xi:include parse="text" href="../../samples/helloworld/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldManagedConnection.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldManagedConnection.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
     <section id="sample_helloworld_cf">
       <title>HelloWorld Connection Factory</title>
       <programlisting language="java">
-<xi:include parse="text" href="../../samples/helloworld/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnectionFactory.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnectionFactory.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
     <section id="sample_helloworld_cfimpl">
       <title>HelloWorld Connection Factory Implementation</title>
       <programlisting language="java">
-<xi:include parse="text" href="../../samples/helloworld/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnectionFactoryImpl.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnectionFactoryImpl.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
     <section id="sample_helloworld_connection">
       <title>HelloWorld Connection</title>
       <programlisting language="java">
-<xi:include parse="text" href="../../samples/helloworld/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnection.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnection.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
     <section id="sample_helloworld_connectionimpl">
       <title>HelloWorld Connection Implementation</title>
       <programlisting language="java">
-<xi:include parse="text" href="../../samples/helloworld/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnectionImpl.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnectionImpl.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
     <section id="sample_helloworld_metadata">
       <title>HelloWorld Managed Connection MetaData</title>
       <programlisting language="java">
-<xi:include parse="text" href="../../samples/helloworld/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldManagedConnectionMetaData.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldManagedConnectionMetaData.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
     <section id="sample_helloworld_ironjacamarxml">
       <title>HelloWorld ironjacamar.xml</title>
       <programlisting language="java">
-<xi:include parse="text" href="../../samples/helloworld/src/main/resources/META-INF/ironjacamar.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld/src/main/resources/META-INF/ironjacamar.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
     <section id="sample_helloworld_testcase">
       <title>HelloWorld Connection Test Case</title>
       <programlisting language="java">
-<xi:include parse="text" href="../../samples/helloworld/src/test/java/org/jboss/jca/samples/helloworld/ConnectorTestCase.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld/src/test/java/org/jboss/jca/samples/helloworld/ConnectorTestCase.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
     <section id="sample_helloworld_buildxml">
       <title>HelloWorld Ant build.xml</title>
       <programlisting language="xml">
-<xi:include parse="text" href="../../samples/helloworld/build.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld/build.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
@@ -174,91 +174,91 @@ ant test
     <section id="sample_helloworld_native_resourceadpater">
       <title>HelloWorld/Native Resource Adapter</title>
       <programlisting language="java">
-<xi:include parse="text" href="../../samples/helloworld-native/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldResourceAdapter.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld-native/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldResourceAdapter.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
     <section id="sample_helloworld_native_mcf">
       <title>HelloWorld/Native Managed Connection Factory</title>
       <programlisting language="java">
-<xi:include parse="text" href="../../samples/helloworld-native/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldManagedConnectionFactory.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld-native/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldManagedConnectionFactory.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
     <section id="sample_helloworld_native_mc">
       <title>HelloWorld/Native Managed Connection</title>
       <programlisting language="java">
-<xi:include parse="text" href="../../samples/helloworld-native/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldManagedConnection.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld-native/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldManagedConnection.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
     <section id="sample_helloworld_native_cf">
       <title>HelloWorld/Native Connection Factory</title>
       <programlisting language="java">
-<xi:include parse="text" href="../../samples/helloworld-native/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnectionFactory.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld-native/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnectionFactory.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
     <section id="sample_helloworld_native_cfimpl">
       <title>HelloWorld/Native Connection Factory Implementation</title>
       <programlisting language="java">
-<xi:include parse="text" href="../../samples/helloworld-native/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnectionFactoryImpl.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld-native/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnectionFactoryImpl.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
     <section id="sample_helloworld_native_connection">
       <title>HelloWorld/Native Connection</title>
       <programlisting language="java">
-<xi:include parse="text" href="../../samples/helloworld-native/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnection.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld-native/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnection.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
     <section id="sample_helloworld_native_connectionimpl">
       <title>HelloWorld/Native Connection Implementation</title>
       <programlisting language="java">
-<xi:include parse="text" href="../../samples/helloworld-native/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnectionImpl.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld-native/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnectionImpl.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
     <section id="sample_helloworld_native_metadata">
       <title>HelloWorld/Native Managed Connection MetaData</title>
       <programlisting language="java">
-<xi:include parse="text" href="../../samples/helloworld-native/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldManagedConnectionMetaData.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld-native/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldManagedConnectionMetaData.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
     <section id="sample_helloworld_native_ironjacamarxml">
       <title>HelloWorld/Native ironjacamar.xml</title>
       <programlisting language="java">
-<xi:include parse="text" href="../../samples/helloworld-native/src/main/resources/META-INF/ironjacamar.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld-native/src/main/resources/META-INF/ironjacamar.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
     <section id="sample_helloworld_native_c">
       <title>HelloWorld/Native C</title>
       <programlisting language="c">
-<xi:include parse="text" href="../../samples/helloworld-native/helloworld.c" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld-native/helloworld.c" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
     <section id="sample_helloworld_native_testcase">
       <title>HelloWorld/Native Connection Test Case</title>
       <programlisting language="java">
-<xi:include parse="text" href="../../samples/helloworld-native/src/test/java/org/jboss/jca/samples/helloworld/ConnectorTestCase.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld-native/src/test/java/org/jboss/jca/samples/helloworld/ConnectorTestCase.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
     <section id="sample_helloworld_native_buildxml">
       <title>HelloWorld/Native Ant build.xml</title>
       <programlisting language="xml">
-<xi:include parse="text" href="../../samples/helloworld-native/build.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld-native/build.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
     <section id="sample_helloworld_native_cmake">
       <title>HelloWorld/Native cmake</title>
       <programlisting language="text">
-<xi:include parse="text" href="../../samples/helloworld-native/CMakeLists.txt" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld-native/CMakeLists.txt" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
@@ -313,77 +313,77 @@ ant test
     <section id="sample_helloworld_lazy_resourceadpater">
       <title>HelloWorld/Lazy Resource Adapter</title>
       <programlisting language="java">
-<xi:include parse="text" href="../../samples/helloworld-lazy/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldResourceAdapter.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld-lazy/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldResourceAdapter.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
     <section id="sample_helloworld_lazy_mcf">
       <title>HelloWorld/Lazy Managed Connection Factory</title>
       <programlisting language="java">
-<xi:include parse="text" href="../../samples/helloworld-lazy/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldManagedConnectionFactory.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld-lazy/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldManagedConnectionFactory.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
     <section id="sample_helloworld_lazy_mc">
       <title>HelloWorld/Lazy Managed Connection</title>
       <programlisting language="java">
-<xi:include parse="text" href="../../samples/helloworld-lazy/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldManagedConnection.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld-lazy/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldManagedConnection.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
     <section id="sample_helloworld_lazy_cf">
       <title>HelloWorld/Lazy Connection Factory</title>
       <programlisting language="java">
-<xi:include parse="text" href="../../samples/helloworld-lazy/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnectionFactory.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld-lazy/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnectionFactory.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
     <section id="sample_helloworld_lazy_cfimpl">
       <title>HelloWorld/Lazy Connection Factory Implementation</title>
       <programlisting language="java">
-<xi:include parse="text" href="../../samples/helloworld-lazy/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnectionFactoryImpl.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld-lazy/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnectionFactoryImpl.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
     <section id="sample_helloworld_lazy_connection">
       <title>HelloWorld/Lazy Connection</title>
       <programlisting language="java">
-<xi:include parse="text" href="../../samples/helloworld-lazy/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnection.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld-lazy/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnection.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
     <section id="sample_helloworld_lazy_connectionimpl">
       <title>HelloWorld/Lazy Connection Implementation</title>
       <programlisting language="java">
-<xi:include parse="text" href="../../samples/helloworld-lazy/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnectionImpl.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld-lazy/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldConnectionImpl.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
     <section id="sample_helloworld_lazy_metadata">
       <title>HelloWorld/Lazy Managed Connection MetaData</title>
       <programlisting language="java">
-<xi:include parse="text" href="../../samples/helloworld-lazy/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldManagedConnectionMetaData.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld-lazy/src/main/java/org/jboss/jca/samples/helloworld/HelloWorldManagedConnectionMetaData.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
     <section id="sample_helloworld_lazy_ironjacamarxml">
       <title>HelloWorld/Lazy ironjacamar.xml</title>
       <programlisting language="java">
-<xi:include parse="text" href="../../samples/helloworld-lazy/src/main/resources/META-INF/ironjacamar.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld-lazy/src/main/resources/META-INF/ironjacamar.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
     <section id="sample_helloworld_lazy_testcase">
       <title>HelloWorld/Lazy Connection Test Case</title>
       <programlisting language="java">
-<xi:include parse="text" href="../../samples/helloworld-lazy/src/test/java/org/jboss/jca/samples/helloworld/ConnectorTestCase.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld-lazy/src/test/java/org/jboss/jca/samples/helloworld/ConnectorTestCase.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 
     <section id="sample_helloworld_lazy_buildxml">
       <title>HelloWorld/Lazy Ant build.xml</title>
       <programlisting language="xml">
-<xi:include parse="text" href="../../samples/helloworld-lazy/build.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../samples/helloworld-lazy/build.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
       </programlisting>
     </section>
 

@@ -290,7 +290,7 @@ raa.setEnabled(true);
             into the IronJacamar Embedded environment.</para>
 
           <programlisting language="java">
-<xi:include parse="text" href="../../../embedded/src/test/java/org/jboss/jca/embedded/unit/ShrinkWrapTestCase.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../../embedded/src/test/java/org/jboss/jca/embedded/unit/ShrinkWrapTestCase.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
           </programlisting>
           
 
@@ -312,7 +312,7 @@ raa.setEnabled(true);
             lifecycle methods.</para>
 
           <programlisting language="java">
-<xi:include parse="text" href="../../../embedded/src/test/java/org/jboss/jca/embedded/unit/ArquillianTestCase.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../../embedded/src/test/java/org/jboss/jca/embedded/unit/ArquillianTestCase.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
           </programlisting>
 
           <para>The class makes use of the <code>org.jboss.jca.embedded.arquillian.Configuration</code> annotation
@@ -338,7 +338,7 @@ raa.setEnabled(true);
             the management console under the <code>Kernel</code> category.</para>
 
           <programlisting language="java">
-<xi:include parse="text" href="../../../embedded/src/test/java/org/jboss/jca/embedded/unit/InjectTestCase.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../../embedded/src/test/java/org/jboss/jca/embedded/unit/InjectTestCase.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
           </programlisting>
 
         </section>

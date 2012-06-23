@@ -29,6 +29,11 @@
     <!-- copied largely from the work done by Mark Newton for the Seam documentation -->
 
     <xsl:param name="use.simplified.author.group" select="1"/>
+
+    <!-- set this to avoid xslt failing of pressganf style 3.0.0
+    <xsl:param name="use.extensions">0</xsl:param>
+    -->
+
 <!--
     <xsl:param name="callout.graphics.path">
         <xsl:if test="$img.src.path != ''">

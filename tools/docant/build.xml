@@ -52,15 +52,15 @@
        Versions              
        ================================= -->
 
-  <property name="version.docant" value="1.0.0.Final"/>
+  <property name="version.docant" value="1.1.0.Final"/>
 
-  <property name="version.jdocbook-core" value="1.0.4"/>
+  <property name="version.jdocbook-core" value="1.1.0"/>
 
   <property name="version.docbook-xsl" value="1.76.1"/>
   <property name="version.docbook-xsl-old" value="1.72.0"/>
 
-  <property name="version.jbossorg-docbook-xslt" value="1.1.1"/>
-  <property name="version.jbossorg-jdocbook-style" value="1.1.1"/>
+  <property name="version.pressgang-docbook-xslt" value="2.0.2"/>
+  <property name="version.pressgang-jdocbook-style" value="2.0.2"/>
 
   <!-- ================================= 
        Target: init              
@@ -88,7 +88,7 @@
     </copy>
 
     <unzip src="${docant.lib.dir}/docbook/docbook-xsl-${version.docbook-xsl}.zip" dest="${staging.dir}"/>
-    <unzip src="${docant.lib.dir}/style/jbossorg-jdocbook-style-${version.jbossorg-jdocbook-style}.jdocbook-style" dest="${staging.dir}">
+    <unzip src="${docant.lib.dir}/style/pressgang-jdocbook-style-${version.pressgang-jdocbook-style}.jdocbook-style" dest="${staging.dir}">
       <patternset>
         <exclude name="META-INF/**"/>
       </patternset>

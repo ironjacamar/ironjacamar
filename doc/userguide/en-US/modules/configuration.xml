@@ -470,7 +470,7 @@ config/bootstrap/jca.xml
           </para>
 
           <programlisting language="xml">
-<xi:include parse="text" href="../../../core/src/test/resources/dwm-socket.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../../core/src/test/resources/dwm-socket.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
           </programlisting>
 
         </section>
