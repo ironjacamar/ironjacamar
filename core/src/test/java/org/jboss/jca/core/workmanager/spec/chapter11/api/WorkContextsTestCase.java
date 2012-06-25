@@ -30,8 +30,10 @@ import org.jboss.jca.core.workmanager.spec.chapter11.common.UniversalProviderWor
 import org.jboss.jca.core.workmanager.spec.chapter11.common.UnsupportedContext;
 import org.jboss.jca.embedded.arquillian.Inject;
 
+import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.work.ExecutionContext;
 import javax.resource.spi.work.HintsContext;
+import javax.resource.spi.work.SecurityContext;
 import javax.resource.spi.work.TransactionContext;
 import javax.resource.spi.work.WorkCompletedException;
 import javax.resource.spi.work.WorkManager;
@@ -57,6 +59,12 @@ public class WorkContextsTestCase
     */
    @Inject(name = "WorkManager")
    WorkManager manager;
+
+   /**
+    * Injecting default bootstrap context
+    */
+   @Inject(name = "DefaultBootstrapContext")
+   BootstrapContext bootstrapContext;
 
    /**
     * Test api for {@link WorkContextProvider#getWorkContexts()}
@@ -181,5 +189,20 @@ public class WorkContextsTestCase
       manager.doWork(work);
       assertTrue(work.isReleased());
    }
-
+   
+   /**
+    * Supported context should be checked by equals method, so implementations
+    * won't pass
+    */
+   @Test
+   public void testContextSupport()
+   {
+      assertTrue(bootstrapContext.isContextSupported(TransactionContext.class));
+      assertTrue(bootstrapContext.isContextSupported(HintsContext.class));
+      assertTrue(bootstrapContext.isContextSupported(SecurityContext.class));
+      assertFalse(bootstrapContext.isContextSupported(TransactionContextCustom.class));
+      assertFalse(bootstrapContext.isContextSupported(HintsContextCustom.class));
+      assertFalse(bootstrapContext.isContextSupported(SecurityContextCustom.class));
+      assertFalse(bootstrapContext.isContextSupported(UnsupportedContext.class));
+   }
 }
