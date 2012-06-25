@@ -19,37 +19,48 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.core.workmanager.rars.dwm;
+package org.jboss.jca.core.workmanager.rars.wm;
+
+import org.jboss.jca.core.workmanager.spec.chapter11.common.UnsupportedContext;
+
+import java.util.logging.Logger;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.BootstrapContext;
+import javax.resource.spi.Connector;
 import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.ResourceAdapterInternalException;
+import javax.resource.spi.TransactionSupport;
 import javax.resource.spi.endpoint.MessageEndpointFactory;
-import javax.resource.spi.work.WorkManager;
+import javax.resource.spi.work.TransactionContext;
 
 import javax.transaction.xa.XAResource;
 
 /**
- * WorkResourceAdapter
+ * ContextResourceAdapter
  *
  * @version $Revision: $
  */
-public class WorkResourceAdapter implements ResourceAdapter, java.io.Serializable
+@Connector(
+   reauthenticationSupport = false,
+   transactionSupport = TransactionSupport.TransactionSupportLevel.NoTransaction,
+   requiredWorkContexts = {UnsupportedContext.class, TransactionContext.class })
+public class MixedContextResourceAdapter implements ResourceAdapter, java.io.Serializable
 {
+
    /** The serial version UID */
    private static final long serialVersionUID = 1L;
 
-   /** Work manager */
-   private WorkManager workManager;
+   /** The logger */
+   private static Logger log = Logger.getLogger("ContextResourceAdapter");
 
    /**
     * Default constructor
     */
-   public WorkResourceAdapter()
+   public MixedContextResourceAdapter()
    {
-      this.workManager = null;
+
    }
 
    /**
@@ -62,6 +73,7 @@ public class WorkResourceAdapter implements ResourceAdapter, java.io.Serializabl
    public void endpointActivation(MessageEndpointFactory endpointFactory,
       ActivationSpec spec) throws ResourceException
    {
+      log.finest("endpointActivation()");
    }
 
    /**
@@ -73,6 +85,7 @@ public class WorkResourceAdapter implements ResourceAdapter, java.io.Serializabl
    public void endpointDeactivation(MessageEndpointFactory endpointFactory,
       ActivationSpec spec)
    {
+      log.finest("endpointDeactivation()");
    }
 
    /**
@@ -84,7 +97,7 @@ public class WorkResourceAdapter implements ResourceAdapter, java.io.Serializabl
    public void start(BootstrapContext ctx)
       throws ResourceAdapterInternalException
    {
-      this.workManager = ctx.getWorkManager();
+      log.finest("start()");
    }
 
    /**
@@ -93,6 +106,7 @@ public class WorkResourceAdapter implements ResourceAdapter, java.io.Serializabl
     */
    public void stop()
    {
+      log.finest("stop()");
    }
 
    /**
@@ -105,16 +119,8 @@ public class WorkResourceAdapter implements ResourceAdapter, java.io.Serializabl
    public XAResource[] getXAResources(ActivationSpec[] specs)
       throws ResourceException
    {
+      log.finest("getXAResources()");
       return null;
-   }
-
-   /**
-    * Get the work manager
-    * @return The instance
-    */
-   WorkManager getWorkManager()
-   {
-      return workManager;
    }
 
    /** 
@@ -140,9 +146,9 @@ public class WorkResourceAdapter implements ResourceAdapter, java.io.Serializabl
          return false;
       if (other == this)
          return true;
-      if (!(other instanceof WorkResourceAdapter))
+      if (!(other instanceof ContextResourceAdapter))
          return false;
-      WorkResourceAdapter obj = (WorkResourceAdapter)other;
+      MixedContextResourceAdapter obj = (MixedContextResourceAdapter)other;
       return obj.hashCode() == this.hashCode();
    }
 }
