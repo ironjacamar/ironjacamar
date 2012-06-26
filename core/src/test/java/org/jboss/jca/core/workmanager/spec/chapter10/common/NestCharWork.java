@@ -38,7 +38,12 @@ public class NestCharWork implements Work
    /**
     * shared string buffer
     */
-   private static StringBuffer buf = new StringBuffer();
+   private static StringBuffer bufStart = new StringBuffer();
+   /**
+    * shared string buffer
+    */
+   private static StringBuffer bufDo = new StringBuffer();
+
    /**
     * Latch when enter run method
     */
@@ -54,6 +59,7 @@ public class NestCharWork implements Work
    private WorkManager workManager = null;
    private Work nestWork = null;
    private boolean nestDo = false;
+   private boolean nestStart = false;
   
    /**
     * Constructor.
@@ -81,6 +87,7 @@ public class NestCharWork implements Work
     */
    public void run()
    {
+      bufStart.append(name);
       try
       {
          if (nestWork != null && workManager != null)
@@ -89,37 +96,50 @@ public class NestCharWork implements Work
             {
                workManager.doWork(nestWork);
             }
+            if (nestStart)
+            {
+               workManager.startWork(nestWork);
+            }
          }
-         buf.append(name);
+         bufDo.append(name);
          start.await();
       } 
       catch (InterruptedException e)
       {
-         e.printStackTrace();
+         throw new RuntimeException(e.getMessage());
       } 
       catch (WorkException e)
       {
-         e.printStackTrace();
+         throw new RuntimeException(e.getMessage());
       }
       done.countDown(); 
    }
    
    /**
-    * empty string buffer
+    * empty string buffers
     */
-   public void emptyBuffer()
+   public void emptyBuffers()
    {
-      buf = new StringBuffer();
+      bufDo = new StringBuffer();
+      bufStart = new StringBuffer();
    }
    
    /**
     * @return String get string buffer
     */
-   public String getBuffer()
+   public String getBufDo()
    {
-      return buf.toString();
+      return bufDo.toString();
    }
-   
+
+   /**
+    * @return String get string buffer
+    */
+   public String getBufStart()
+   {
+      return bufStart.toString();
+   }
+
    /**
     * @param wm workManager
     */
@@ -142,5 +162,6 @@ public class NestCharWork implements Work
    public void setNestDo(boolean exec)
    {
       nestDo = exec;
+      nestStart = !exec;
    }
 }

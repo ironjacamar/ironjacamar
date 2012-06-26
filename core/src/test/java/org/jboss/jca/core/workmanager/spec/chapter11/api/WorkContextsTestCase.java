@@ -47,7 +47,7 @@ import org.junit.runner.RunWith;
 import static junit.framework.Assert.*;
 
 /**
- * WorkContextHandlingAssignmentTestCase.
+ * WorkContextsTestCase.
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  *
  */

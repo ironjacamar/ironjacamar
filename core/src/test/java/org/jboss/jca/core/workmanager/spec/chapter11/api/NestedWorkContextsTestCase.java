@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2008, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2008-2009, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,37 +19,40 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.core.workmanager.spec.chapter10.api;
 
-import org.jboss.jca.core.workmanager.spec.chapter10.common.NestCharWork;
-import org.jboss.jca.core.workmanager.spec.chapter10.common.ShortRunningWork;
-import org.jboss.jca.embedded.arquillian.Inject;
+package org.jboss.jca.core.workmanager.spec.chapter11.api;
 
 import java.util.concurrent.CountDownLatch;
 
-import javax.resource.spi.work.ExecutionContext;
-import javax.resource.spi.work.WorkCompletedException;
+import org.jboss.jca.core.workmanager.spec.chapter11.common.NestProviderWork;
+import org.jboss.jca.core.workmanager.spec.chapter11.common.SecurityContextCustom;
+import org.jboss.jca.core.workmanager.spec.chapter11.common.TransactionContextCustom;
+import org.jboss.jca.core.workmanager.spec.chapter11.common.UnsupportedContext;
+import org.jboss.jca.embedded.arquillian.Inject;
+
+import javax.resource.spi.work.HintsContext;
+import javax.resource.spi.work.TransactionContext;
+import javax.resource.spi.work.WorkException;
 import javax.resource.spi.work.WorkManager;
-import javax.transaction.xa.Xid;
 
 import org.jboss.arquillian.junit.Arquillian;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.*;
+import static junit.framework.Assert.*;
 
 /**
- * WorkManagerInterfaceTestCase.
- * 
- * Tests for the JCA specific Chapter 10 Section 3.3
- * 
- * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
+ * NestedWorkContextsTestCase.
+ * Because nested Work submissions are allowed in the Connector WorkManager, the
+ * Connector WorkManager must support nested contexts unless the WorkContext
+ * type prohibits them. 
+ *
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
- * @version $Revision: $
+ *
  */
 @RunWith(Arquillian.class)
-public class WorkManagerInterfaceTestCase
+public class NestedWorkContextsTestCase
 {
    /**
     * Injecting embedded work manager
@@ -57,7 +60,6 @@ public class WorkManagerInterfaceTestCase
    @Inject(name = "WorkManager")
    WorkManager workManager;
 
-  
    /**
     * Test for paragraph 3
     * doWork method: this provides a first in, first out (FIFO) execution start 
@@ -70,11 +72,13 @@ public class WorkManagerInterfaceTestCase
 
       final CountDownLatch startA = new CountDownLatch(1);
       final CountDownLatch doneA = new CountDownLatch(1);
-      NestCharWork workA = new NestCharWork("A", startA, doneA);
+      NestProviderWork workA = new NestProviderWork("A", startA, doneA);
+      workA.addContext(new TransactionContext());
       
       final CountDownLatch startB = new CountDownLatch(1);
       final CountDownLatch doneB = new CountDownLatch(1);
-      NestCharWork workB = new NestCharWork("B", startB, doneB);
+      NestProviderWork workB = new NestProviderWork("B", startB, doneB);
+      workB.addContext(new TransactionContextCustom());
       
       workA.emptyBuffers();
       workA.setNestDo(true);
@@ -104,16 +108,18 @@ public class WorkManagerInterfaceTestCase
 
       final CountDownLatch startA = new CountDownLatch(1);
       final CountDownLatch doneA = new CountDownLatch(1);
-      NestCharWork workA = new NestCharWork("A", startA, doneA);
+      NestProviderWork workA = new NestProviderWork("A", startA, doneA);
+      workA.addContext(new SecurityContextCustom());
       
       final CountDownLatch startB = new CountDownLatch(1);
       final CountDownLatch doneB = new CountDownLatch(1);
-      NestCharWork workB = new NestCharWork("B", startB, doneB);
+      NestProviderWork workB = new NestProviderWork("B", startB, doneB);
+      workB.addContext(new HintsContext());
       
       workA.emptyBuffers();
+      workA.setNestDo(false);
       workA.setWorkManager(workManager);
       workA.setWork(workB);
-      workA.setNestDo(false);
       startA.countDown();
       startB.countDown();
       workManager.startWork(workA);
@@ -124,56 +130,54 @@ public class WorkManagerInterfaceTestCase
       assertEquals(workA.getBufStart(), "AB");
    }
    
-   
    /**
-    * Test for bullet 4 Section 3.3.6
-    * When the application server is unable to recreate an execution context if it is  
-    *                      specified for the submitted Work instance, it must throw a
-    *                      WorkCompletedException set to an appropriate error code.
+    * Test unsupported context nested doWork. 
     * @throws Throwable throwable exception 
     */
-   @Test(expected = WorkCompletedException.class)
-   public void testThrowWorkCompletedException() throws Throwable
+   @Test(expected = Throwable.class)
+   public void testDoWorkUnsupportedContext() throws Throwable
    {
-      ExecutionContext ec = new ExecutionContext();
-      ShortRunningWork work = new ShortRunningWork();
-      ec.setXid(new XidImpl());
-      ec.setTransactionTimeout(Long.MAX_VALUE);
 
-      workManager.doWork(work, WorkManager.INDEFINITE, ec, null);
-
-   }
-   /**
-    * Implementation of Xid for test purpose
-    * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
-    *
-    */
-   static class XidImpl implements Xid
-   {
+      final CountDownLatch startA = new CountDownLatch(0);
+      final CountDownLatch doneA = new CountDownLatch(0);
+      NestProviderWork workA = new NestProviderWork("A", startA, doneA);
+      workA.addContext(new TransactionContext());
       
-      /**
-       * {@inheritDoc}
-       */
-      public byte[] getBranchQualifier()
-      {
-         return null;
-      }
+      final CountDownLatch startB = new CountDownLatch(0);
+      final CountDownLatch doneB = new CountDownLatch(0);
+      NestProviderWork workB = new NestProviderWork("B", startB, doneB);
+      workB.addContext(new UnsupportedContext());
+      
+      workA.emptyBuffers();
+      workA.setNestDo(true);
+      workA.setWorkManager(workManager);
+      workA.setWork(workB);
+      workManager.doWork(workA);
+   }
+   
+   
+   /**
+    * Test unsupported context outer startWork
+    * @throws Throwable throwable exception 
+    */
+   @Test(expected = WorkException.class)
+   public void testStartWorkUnsupportedContext() throws Throwable
+   {
 
-      /**
-       * {@inheritDoc}
-       */
-      public int getFormatId()
-      {
-         return 0;
-      }
-      /**
-       * {@inheritDoc}
-       */
-      public byte[] getGlobalTransactionId()
-      {
-         return null;
-      }
-
+      final CountDownLatch startA = new CountDownLatch(0);
+      final CountDownLatch doneA = new CountDownLatch(0);
+      NestProviderWork workA = new NestProviderWork("A", startA, doneA);
+      workA.addContext(new UnsupportedContext());
+      
+      final CountDownLatch startB = new CountDownLatch(0);
+      final CountDownLatch doneB = new CountDownLatch(0);
+      NestProviderWork workB = new NestProviderWork("B", startB, doneB);
+      workB.addContext(new HintsContext());
+      
+      workA.emptyBuffers();
+      workA.setNestDo(false);
+      workA.setWorkManager(workManager);
+      workA.setWork(workB);
+      workManager.startWork(workA);
    }
 }
-
