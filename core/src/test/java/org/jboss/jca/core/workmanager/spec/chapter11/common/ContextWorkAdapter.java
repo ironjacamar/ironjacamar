@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.core.workmanager.spec.chapter11.common;
 
+import javax.resource.spi.work.Work;
 import javax.resource.spi.work.WorkAdapter;
 import javax.resource.spi.work.WorkEvent;
 
@@ -44,6 +45,20 @@ public class ContextWorkAdapter extends WorkAdapter
 
    /**timestamp for check*/
    private long timeCompleted = 0;
+   
+   /**
+    * start string buffer
+    */
+   private StringBuffer start = new StringBuffer();
+   /**
+    * done string buffer
+    */
+   private StringBuffer done = new StringBuffer();
+   /**
+    * reject string buffer
+    */
+   private StringBuffer reject = new StringBuffer();
+
 
    /**
     * accept work 
@@ -71,6 +86,13 @@ public class ContextWorkAdapter extends WorkAdapter
          fail("Wrong started type");
       timeStarted = System.currentTimeMillis();
       super.workStarted(e);
+      Work work = e.getWork();
+      if (work instanceof NestProviderWork)
+      {
+         NestProviderWork nw = (NestProviderWork) work;
+         start.append(nw.getName());
+      }
+
    }
 
    /**
@@ -85,6 +107,13 @@ public class ContextWorkAdapter extends WorkAdapter
          fail("Wrong rejected type");
       timeRejected = System.currentTimeMillis();
       super.workRejected(e);
+      Work work = e.getWork();
+      if (work instanceof NestProviderWork)
+      {
+         NestProviderWork nw = (NestProviderWork) work;
+         reject.append(nw.getName());
+      }
+
    }
 
    /**
@@ -99,6 +128,13 @@ public class ContextWorkAdapter extends WorkAdapter
          fail("Wrong completed type");
       timeCompleted = System.currentTimeMillis();
       super.workCompleted(e);
+      Work work = e.getWork();
+      if (work instanceof NestProviderWork)
+      {
+         NestProviderWork nw = (NestProviderWork) work;
+         done.append(nw.getName());
+      }
+
    }
 
    /**
@@ -136,4 +172,32 @@ public class ContextWorkAdapter extends WorkAdapter
    {
       return timeCompleted;
    }
+   
+   /**
+    * getter
+    * @return start buffer 
+    */
+   public String getStart()
+   {
+      return start.toString();
+   }
+   
+   /**
+    * getter
+    * @return done buffer 
+    */
+   public String getDone()
+   {
+      return done.toString();
+   }
+   
+   /**
+    * getter
+    * @return done buffer 
+    */
+   public String getReject()
+   {
+      return reject.toString();
+   }
+
 }

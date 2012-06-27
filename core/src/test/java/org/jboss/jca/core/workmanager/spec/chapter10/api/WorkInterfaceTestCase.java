@@ -21,13 +21,17 @@
  */
 package org.jboss.jca.core.workmanager.spec.chapter10.api;
 
+import org.jboss.jca.core.workmanager.spec.chapter10.common.ShortRunningWork;
 import org.jboss.jca.core.workmanager.spec.chapter10.common.SynchronizedReleaseWork;
 import org.jboss.jca.core.workmanager.spec.chapter10.common.SynchronizedRunWork;
 import org.jboss.jca.core.workmanager.spec.chapter10.common.UnsynchronizedWork;
 import org.jboss.jca.embedded.arquillian.Inject;
 
+import javax.resource.spi.work.ExecutionContext;
+import javax.resource.spi.work.WorkCompletedException;
 import javax.resource.spi.work.WorkException;
 import javax.resource.spi.work.WorkManager;
+import javax.transaction.xa.Xid;
 
 import org.jboss.arquillian.junit.Arquillian;
 
@@ -39,7 +43,7 @@ import static org.junit.Assert.*;
 /**
  * WorkInterfaceTestCase.
  * 
- * Tests for the JCA specific Chapter 10 Section 3.2
+ * Tests for the JCA specific Chapter 10 Section 3
  * 
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
@@ -95,6 +99,57 @@ public class WorkInterfaceTestCase
       workManager.doWork(usw);
       assertTrue(usw.isRan());
       assertTrue(usw.isReleased());
+   }
+   
+   /**
+    * Test for bullet 4 Section 3.3.6
+    * When the application server is unable to recreate an execution context if it is  
+    *                      specified for the submitted Work instance, it must throw a
+    *                      WorkCompletedException set to an appropriate error code.
+    * @throws Throwable throwable exception 
+    */
+   @Test(expected = WorkCompletedException.class)
+   public void testThrowWorkCompletedException() throws Throwable
+   {
+      ExecutionContext ec = new ExecutionContext();
+      ShortRunningWork work = new ShortRunningWork();
+      ec.setXid(new XidImpl());
+      ec.setTransactionTimeout(Long.MAX_VALUE);
+
+      workManager.doWork(work, WorkManager.INDEFINITE, ec, null);
+
+   }
+   /**
+    * Implementation of Xid for test purpose
+    * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
+    *
+    */
+   static class XidImpl implements Xid
+   {
+      
+      /**
+       * {@inheritDoc}
+       */
+      public byte[] getBranchQualifier()
+      {
+         return null;
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public int getFormatId()
+      {
+         return 0;
+      }
+      /**
+       * {@inheritDoc}
+       */
+      public byte[] getGlobalTransactionId()
+      {
+         return null;
+      }
+
    }
    
 }

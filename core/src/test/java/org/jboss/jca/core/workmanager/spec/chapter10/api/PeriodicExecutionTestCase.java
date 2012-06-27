@@ -28,12 +28,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.resource.spi.BootstrapContext;
+import javax.resource.spi.UnavailableException;
 import javax.resource.spi.work.WorkException;
 import javax.resource.spi.work.WorkManager;
 
 import org.jboss.arquillian.junit.Arquillian;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -68,50 +68,44 @@ public class PeriodicExecutionTestCase
       assertNotNull(bootstrapContext);
       assertNotNull(bootstrapContext.getWorkManager());
       assertTrue(bootstrapContext.getWorkManager() instanceof WorkManager);
-
-      Timer timer = bootstrapContext.createTimer();
-      assertNotNull(timer);
-      final WorkManager workManager = bootstrapContext.getWorkManager();
-      final SimpleWork work = new SimpleWork();
-
-      timer.schedule(new TimerTask()
+      try
       {
-         public void run()
+         Timer timer = bootstrapContext.createTimer();
+         assertNotNull(timer);
+         assertFalse(timer == bootstrapContext.createTimer());
+
+         final WorkManager workManager = bootstrapContext.getWorkManager();
+         final SimpleWork work = new SimpleWork();
+
+         timer.schedule(new TimerTask()
          {
-            try
+            public void run()
             {
-               workManager.scheduleWork(work);
+               try
+               {
+                  workManager.scheduleWork(work);
+               }
+               catch (WorkException we)
+               {
+                  //Expected
+               }
             }
-            catch (WorkException we)
-            {
-               //Expected
-            }
-         }
-      }, 0, 500);
-      Thread.sleep(2000);
-      work.setThrowWorkAException(true);
-      assertTrue("work should start periodically, runs counted:" + work.getCounter(), work.getCounter() > 1);
-   }
-
-   /**
-    * Test for paragraph 3
-    * The application server must throw an UnavailableException if a Timer instance is unavailable; the resource
-    *        adapter may retry later.
-    * @throws Throwable throwable exception 
-    */
-   @Ignore
-   public void testThrowUnavailableException() throws Throwable
-   {
-   }
-
-   /**
-    * Test for paragraph 3
-    *  The application server must throw an java.lang.UnsupportedOperationException, if it does not 
-    *  support the Timer service.
-    * @throws Throwable throwable exception 
-    */
-   @Ignore
-   public void testThrowUnsupportedOperationException() throws Throwable
-   {
+         }, 0, 500);
+         Thread.sleep(2000);
+         work.setThrowWorkAException(true);
+         assertTrue("work should start periodically, runs counted:" + work.getCounter(), work.getCounter() > 1);
+      }
+      catch (UnavailableException e)
+      {
+         //That's OK
+      }
+      catch (UnsupportedOperationException e)
+      {
+         //That's OK
+      }
+      catch (Throwable t)
+      {
+         fail(t.getMessage());
+      }
    }
 }

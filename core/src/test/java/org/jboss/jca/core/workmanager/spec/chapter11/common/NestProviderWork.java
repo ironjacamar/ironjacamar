@@ -22,60 +22,106 @@
 
 package org.jboss.jca.core.workmanager.spec.chapter11.common;
 
-import org.jboss.jca.core.workmanager.spec.chapter10.common.NestCharWork;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-
-import javax.resource.spi.work.WorkContext;
-import javax.resource.spi.work.WorkContextProvider;
+import javax.resource.spi.work.Work;
+import javax.resource.spi.work.WorkAdapter;
+import javax.resource.spi.work.WorkManager;
 
 /**
- * UniversalProviderWork allows to add contexts
+ * NestProviderWork allows to add contexts and nested works
  * 
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  * @version $Rev$ $Date$
  *
  */
-public class NestProviderWork extends NestCharWork implements WorkContextProvider
+public class NestProviderWork extends UniversalProviderWork
 {
    private static final long serialVersionUID = 374498650817259221L;
 
-   private List<WorkContext> ctxs;
+   /**
+    * current thread id
+    */
+   private String name;
+
+   private WorkManager workManager = null;
+
+   private Work nestWork = null;
+
+   private boolean nestDo = false;
+
+   private WorkAdapter wa;
 
    /**
     * Constructor.
-    * @param name this class name
-    * @param start Latch when enter run method
-    * @param done Latch when leave run method
+    * @param n this class name
+    * @param a work adapter
     */
-   public NestProviderWork(String name, CountDownLatch start, CountDownLatch done)
+   public NestProviderWork(String n, WorkAdapter a)
    {
-      super(name, start, done);
+      name = n;
+      wa = a;
    }
 
    /**
-    * Gets an instance of <code>WorkContexts</code> that needs to be used
-    * by the <code>WorkManager</code> to set up the execution context while
-    * executing a <code>Work</code> instance.
+    * release method
+    */
+   public void release()
+   {
+
+   }
+
+   /**
+    * run method
+    */
+   public void run()
+   {
+      try
+      {
+         if (nestWork != null && workManager != null)
+         {
+            if (nestDo)
+               workManager.doWork(nestWork, WorkManager.INDEFINITE, null, wa);
+            else
+               workManager.startWork(nestWork, WorkManager.INDEFINITE, null, wa);
+         }
+      }
+      catch (Throwable e)
+      {
+         throw new RuntimeException(e.getMessage());
+      }
+   }
+
+   /**
+    * @param wm workManager
+    */
+   public void setWorkManager(WorkManager wm)
+   {
+      workManager = wm;
+   }
+
+   /**
+    * @param work work
+    */
+   public void setWork(Work work)
+   {
+      nestWork = work;
+   }
+
+   /**
+    * sets which method to execute nest work
+    * @param exec - doWork if true startWork if false
+    */
+   public void setNestDo(boolean exec)
+   {
+      nestDo = exec;
+   }
+
+   /**
     * 
-    * @return an <code>List</code> of <code>WorkContext</code> instances.
+    * @return name of work
     */
-   public List<WorkContext> getWorkContexts()
+   public String getName()
    {
-      return ctxs;
+      return name;
    }
 
-   /**
-    * Adds work context to the list
-    * @param wc - added work context
-    */
-   public void addContext(WorkContext wc)
-   {
-      if (ctxs == null)
-         ctxs = new ArrayList<WorkContext>();
-      if (wc != null)
-         ctxs.add(wc);
-   }
 }
