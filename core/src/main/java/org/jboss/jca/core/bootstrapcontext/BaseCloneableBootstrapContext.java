@@ -23,6 +23,7 @@
 package org.jboss.jca.core.bootstrapcontext;
 
 import org.jboss.jca.core.api.bootstrap.CloneableBootstrapContext;
+import org.jboss.jca.core.api.workmanager.DistributableContext;
 import org.jboss.jca.core.api.workmanager.WorkManager;
 
 import java.util.HashSet;
@@ -65,11 +66,12 @@ public class BaseCloneableBootstrapContext implements CloneableBootstrapContext
       this.transactionSynchronizationRegistry = null;
       this.workManager = null;
       this.xaTerminator = null;
-      this.supportedContexts = new HashSet<Class>(3);
+      this.supportedContexts = new HashSet<Class>(4);
 
       this.supportedContexts.add(HintsContext.class);
       this.supportedContexts.add(SecurityContext.class);
       this.supportedContexts.add(TransactionContext.class);
+      this.supportedContexts.add(DistributableContext.class);
 
       this.name = null;
    }
@@ -162,6 +164,9 @@ public class BaseCloneableBootstrapContext implements CloneableBootstrapContext
     */
    public boolean isContextSupported(Class<? extends WorkContext> workContextClass)
    {
+      if (workContextClass == null)
+         return false;
+
       return supportedContexts.contains(workContextClass);
    }
 

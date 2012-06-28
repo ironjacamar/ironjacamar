@@ -186,6 +186,15 @@ public class WorkWrapper implements Runnable
    }
 
    /**
+    * Set work exception
+    * @param e The exception
+    */
+   void setWorkException(WorkException e)
+   {
+      exception = e;
+   }
+
+   /**
     * Run
     */
    public void run()
@@ -253,6 +262,12 @@ public class WorkWrapper implements Runnable
       if (trace)
       {
          log.trace("Starting work " + this);  
+      }
+
+      if (workListener != null)
+      {
+         WorkEvent event = new WorkEvent(workManager, WorkEvent.WORK_STARTED, work, null);
+         workListener.workStarted(event);
       }
 
       // Transaction setup
@@ -384,9 +399,6 @@ public class WorkWrapper implements Runnable
          throw new WorkException(bundle.securityContextSetupFailedSinceCallbackSecurityWasNull());
       }
    
-      //Fires Context setup complete
-      fireWorkContextSetupComplete(ctx);
-      
       if (ctx != null)
       {
          Xid xid = ctx.getXid();
@@ -396,12 +408,9 @@ public class WorkWrapper implements Runnable
          }
       }
 
-      if (workListener != null)
-      {
-         WorkEvent event = new WorkEvent(workManager, WorkEvent.WORK_STARTED, work, null);
-         workListener.workStarted(event);
-      }
-
+      //Fires Context setup complete
+      fireWorkContextSetupComplete(ctx);
+      
       if (trace)
       {
          log.trace("Started work " + this);  

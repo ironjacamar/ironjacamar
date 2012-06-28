@@ -109,6 +109,7 @@ public class WorkContextSetupListenerTestCase
       try
       {
          manager.doWork(work, WorkManager.INDEFINITE, null, wa);
+         fail("Exception expected");
       }
       catch (Throwable e)
       {
@@ -119,16 +120,15 @@ public class WorkContextSetupListenerTestCase
       assertFalse(listener.isContextSetupComplete());
 
       LOG.info("2Test//accepted:" + wa.getTimeAccepted() + "//started:" + wa.getTimeStarted() + "//context:"
-            + listener.getTimeStamp() + "//rejected:" + wa.getTimeRejected());
+            + listener.getTimeStamp() + "//completed:" + wa.getTimeCompleted());
 
-      //Ignored - need to check spec JCA 1.6 chapter 11.7
-      //assertTrue(wa.getTimeAccepted() > 0);
-      //assertTrue(wa.getTimeStarted() > 0);
+      assertTrue(wa.getTimeAccepted() > 0);
+      assertTrue(wa.getTimeStarted() > 0);
       assertTrue(listener.getTimeStamp() > 0);
-      assertTrue(wa.getTimeRejected() > 0);
+      assertTrue(wa.getTimeCompleted() > 0);
 
       assertTrue(wa.getTimeAccepted() <= wa.getTimeStarted());
       assertTrue(wa.getTimeStarted() <= listener.getTimeStamp());
-      assertTrue(listener.getTimeStamp() <= wa.getTimeRejected());
+      assertTrue(listener.getTimeStamp() <= wa.getTimeCompleted());
    }
 }
