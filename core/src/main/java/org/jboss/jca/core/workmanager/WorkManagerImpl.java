@@ -309,6 +309,12 @@ public class WorkManagerImpl implements WorkManager
 
          checkAndVerifyWork(work, execContext);
       
+         if (workListener != null)
+         {
+            WorkEvent event = new WorkEvent(this, WorkEvent.WORK_ACCEPTED, work, null);
+            workListener.workAccepted(event);
+         }
+
          if (execContext == null)
          {
             execContext = new ExecutionContext();  
@@ -318,13 +324,7 @@ public class WorkManagerImpl implements WorkManager
 
          wrapper = new WorkWrapper(this, work, execContext, workListener, null, completedLatch);
 
-         setup(wrapper);
-
-         if (workListener != null)
-         {
-            WorkEvent event = new WorkEvent(this, WorkEvent.WORK_ACCEPTED, work, null);
-            workListener.workAccepted(event);
-         }
+         setup(wrapper, workListener);
 
          BlockingExecutor executor = getExecutor(work);
 
@@ -347,6 +347,11 @@ public class WorkManagerImpl implements WorkManager
       catch (RejectedExecutionException ree)
       {
          exception = new WorkRejectedException(ree);
+      }
+      catch (WorkCompletedException wce)
+      {
+         if (wrapper != null)
+            wrapper.setWorkException(wce);
       }
       catch (WorkException we)
       {
@@ -416,6 +421,12 @@ public class WorkManagerImpl implements WorkManager
 
          checkAndVerifyWork(work, execContext);
       
+         if (workListener != null)
+         {
+            WorkEvent event = new WorkEvent(this, WorkEvent.WORK_ACCEPTED, work, null);
+            workListener.workAccepted(event);
+         }
+
          if (execContext == null)
          {
             execContext = new ExecutionContext();  
@@ -425,13 +436,7 @@ public class WorkManagerImpl implements WorkManager
 
          wrapper = new WorkWrapper(this, work, execContext, workListener, startedLatch, null);
 
-         setup(wrapper);
-
-         if (workListener != null)
-         {
-            WorkEvent event = new WorkEvent(this, WorkEvent.WORK_ACCEPTED, work, null);
-            workListener.workAccepted(event);
-         }
+         setup(wrapper, workListener);
 
          BlockingExecutor executor = getExecutor(work);
 
@@ -456,6 +461,11 @@ public class WorkManagerImpl implements WorkManager
       catch (RejectedExecutionException ree)
       {
          exception = new WorkRejectedException(ree);
+      }
+      catch (WorkCompletedException wce)
+      {
+         if (wrapper != null)
+            wrapper.setWorkException(wce);
       }
       catch (WorkException we)
       {
@@ -523,6 +533,12 @@ public class WorkManagerImpl implements WorkManager
 
          checkAndVerifyWork(work, execContext);
       
+         if (workListener != null)
+         {
+            WorkEvent event = new WorkEvent(this, WorkEvent.WORK_ACCEPTED, work, null);
+            workListener.workAccepted(event);
+         }
+
          if (execContext == null)
          {
             execContext = new ExecutionContext();  
@@ -530,13 +546,7 @@ public class WorkManagerImpl implements WorkManager
 
          wrapper = new WorkWrapper(this, work, execContext, workListener, null, null);
 
-         setup(wrapper);
-
-         if (workListener != null)
-         {
-            WorkEvent event = new WorkEvent(this, WorkEvent.WORK_ACCEPTED, work, null);
-            workListener.workAccepted(event);
-         }
+         setup(wrapper, workListener);
 
          BlockingExecutor executor = getExecutor(work);
 
@@ -557,6 +567,11 @@ public class WorkManagerImpl implements WorkManager
       catch (RejectedExecutionException ree)
       {
          exception = new WorkRejectedException(ree);
+      }
+      catch (WorkCompletedException wce)
+      {
+         if (wrapper != null)
+            wrapper.setWorkException(wce);
       }
       catch (WorkException we)
       {
@@ -778,9 +793,10 @@ public class WorkManagerImpl implements WorkManager
     * Setup work context's of the given work instance.
     * 
     * @param wrapper The work wrapper instance
-    * @throws WorkException if any exception occurs
+    * @param workListener The work listener
+    * @throws WorkCompletedException if any exception occurs
     */
-   private void setup(WorkWrapper wrapper) throws WorkException
+   private void setup(WorkWrapper wrapper, WorkListener workListener) throws WorkCompletedException
    {
       if (trace)
       {
@@ -815,11 +831,15 @@ public class WorkManagerImpl implements WorkManager
                   {
                      log.trace("Not supported work context class : " + context.getClass().getName());
                   }
-                  
-                  fireWorkContextSetupFailed(context, WorkContextErrorCodes.UNSUPPORTED_CONTEXT_TYPE);
-                  
-                  throw new WorkCompletedException(bundle.unsupportedWorkContextClass(context.getClass().getName()), 
-                      WorkContextErrorCodes.UNSUPPORTED_CONTEXT_TYPE);
+
+                  WorkCompletedException wce = 
+                     new WorkCompletedException(bundle.unsupportedWorkContextClass(context.getClass().getName()),
+                                                WorkContextErrorCodes.UNSUPPORTED_CONTEXT_TYPE);
+ 
+                  fireWorkContextSetupFailed(context, WorkContextErrorCodes.UNSUPPORTED_CONTEXT_TYPE,
+                                             workListener, work, wce);
+
+                  throw wce;
                }
                // Duplicate checks
                else
@@ -834,10 +854,14 @@ public class WorkManagerImpl implements WorkManager
                            log.trace("Duplicate transaction work context : " + context.getClass().getName());
                         }
 
-                        fireWorkContextSetupFailed(context, WorkContextErrorCodes.DUPLICATE_CONTEXTS);
+                        WorkCompletedException wce =
+                           new WorkCompletedException(bundle.duplicateTransactionWorkContextClass(context.getClass()
+                              .getName()), WorkContextErrorCodes.DUPLICATE_CONTEXTS);
+ 
+                        fireWorkContextSetupFailed(context, WorkContextErrorCodes.DUPLICATE_CONTEXTS,
+                                                   workListener, work, wce);
                         
-                        throw new WorkCompletedException(bundle.duplicateTransactionWorkContextClass(
-                              context.getClass().getName()), WorkContextErrorCodes.DUPLICATE_CONTEXTS);
+                        throw wce;
                      }
                      else
                      {
@@ -854,10 +878,14 @@ public class WorkManagerImpl implements WorkManager
                            log.trace("Duplicate security work context : " + context.getClass().getName());
                         }
                         
-                        fireWorkContextSetupFailed(context, WorkContextErrorCodes.DUPLICATE_CONTEXTS);
-
-                        throw new WorkCompletedException(bundle.duplicateSecurityWorkContextClass(
-                              context.getClass().getName()), WorkContextErrorCodes.DUPLICATE_CONTEXTS);
+                        WorkCompletedException wce =
+                           new WorkCompletedException(bundle.duplicateSecurityWorkContextClass(context.getClass()
+                              .getName()), WorkContextErrorCodes.DUPLICATE_CONTEXTS);
+                        
+                        fireWorkContextSetupFailed(context, WorkContextErrorCodes.DUPLICATE_CONTEXTS,
+                                                   workListener, work, wce);
+                        
+                        throw wce;
                      }
                      else
                      {
@@ -874,10 +902,14 @@ public class WorkManagerImpl implements WorkManager
                            log.trace("Duplicate hint work context : " + context.getClass().getName());
                         }
 
-                        fireWorkContextSetupFailed(context, WorkContextErrorCodes.DUPLICATE_CONTEXTS);
-                        
-                        throw new WorkCompletedException(bundle.duplicateHintWorkContextClass(
-                              context.getClass().getName()), WorkContextErrorCodes.DUPLICATE_CONTEXTS);
+                        WorkCompletedException wce =
+                           new WorkCompletedException(bundle.duplicateHintWorkContextClass(context.getClass()
+                              .getName()), WorkContextErrorCodes.DUPLICATE_CONTEXTS);
+ 
+                        fireWorkContextSetupFailed(context, WorkContextErrorCodes.DUPLICATE_CONTEXTS,
+                                                   workListener, work, wce);
+
+                        throw wce;
                      }
                      else
                      {
@@ -887,10 +919,14 @@ public class WorkManagerImpl implements WorkManager
                   // Normally, this must not be happened!i just safe check!
                   else
                   {
-                     fireWorkContextSetupFailed(context, WorkContextErrorCodes.UNSUPPORTED_CONTEXT_TYPE);
+                     WorkCompletedException wce =
+                        new WorkCompletedException(bundle.unsupportedWorkContextClass(context.getClass().getName()), 
+                                                   WorkContextErrorCodes.UNSUPPORTED_CONTEXT_TYPE);
                      
-                     throw new WorkCompletedException(bundle.unsupportedWorkContextClass(context.getClass().getName()), 
-                                                      WorkContextErrorCodes.UNSUPPORTED_CONTEXT_TYPE);
+                     fireWorkContextSetupFailed(context, WorkContextErrorCodes.UNSUPPORTED_CONTEXT_TYPE,
+                                                workListener, work, wce);
+                     
+                     throw wce;
                   }
                }
 
@@ -910,15 +946,30 @@ public class WorkManagerImpl implements WorkManager
     * Calls listener with given error code.
     * @param listener work context listener
     * @param errorCode error code
+    * @param workListener work listener
+    * @param work work instance
+    * @param exception exception
     */
-   private void fireWorkContextSetupFailed(Object workContext, String errorCode)
+   private void fireWorkContextSetupFailed(Object workContext, String errorCode,
+                                           WorkListener workListener, Work work, WorkException exception)
    {
+      if (workListener != null)
+      {
+         WorkEvent event = new WorkEvent(this, WorkEvent.WORK_STARTED, work, null);
+         workListener.workStarted(event);
+      }
+
       if (workContext instanceof WorkContextLifecycleListener)
       {
          WorkContextLifecycleListener listener = (WorkContextLifecycleListener)workContext;
          listener.contextSetupFailed(errorCode);   
       }
       
+      if (workListener != null)
+      {
+         WorkEvent event = new WorkEvent(this, WorkEvent.WORK_COMPLETED, work, exception);
+         workListener.workCompleted(event);
+      }
    }
 
    /**

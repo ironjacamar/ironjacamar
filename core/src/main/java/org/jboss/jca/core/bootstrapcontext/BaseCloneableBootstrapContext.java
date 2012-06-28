@@ -139,6 +139,9 @@ public class BaseCloneableBootstrapContext implements CloneableBootstrapContext
     */
    public boolean isContextSupported(Class<? extends WorkContext> workContextClass)
    {
+      if (workContextClass == null)
+         return false;
+
       return supportedContexts.contains(workContextClass);
    }
 
