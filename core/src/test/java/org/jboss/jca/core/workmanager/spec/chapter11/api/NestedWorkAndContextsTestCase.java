@@ -29,6 +29,8 @@ import org.jboss.jca.core.workmanager.spec.chapter11.common.TransactionContextCu
 import org.jboss.jca.core.workmanager.spec.chapter11.common.UnsupportedContext;
 import org.jboss.jca.embedded.arquillian.Inject;
 
+import java.util.concurrent.CyclicBarrier;
+
 import javax.resource.spi.work.HintsContext;
 import javax.resource.spi.work.TransactionContext;
 import javax.resource.spi.work.WorkManager;
@@ -103,8 +105,13 @@ public class NestedWorkAndContextsTestCase
       workA.setNestDo(false);
       workA.setWorkManager(workManager);
       workA.setWork(workB);
+      
+      CyclicBarrier barrier = new CyclicBarrier(3);
+      workA.setBarrier(barrier);
+      workB.setBarrier(barrier);
+      
       workManager.startWork(workA, WorkManager.INDEFINITE, null, wa);
-      while (wa.getStart().length() < 2);
+      barrier.await();
       assertEquals(wa.getStart(), "AB");
    }
 

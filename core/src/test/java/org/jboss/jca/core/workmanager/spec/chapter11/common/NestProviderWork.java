@@ -22,6 +22,8 @@
 
 package org.jboss.jca.core.workmanager.spec.chapter11.common;
 
+import java.util.concurrent.CyclicBarrier;
+
 import javax.resource.spi.work.Work;
 import javax.resource.spi.work.WorkAdapter;
 import javax.resource.spi.work.WorkManager;
@@ -50,6 +52,8 @@ public class NestProviderWork extends UniversalProviderWork
 
    private WorkAdapter wa;
 
+   private CyclicBarrier barrier = null;
+
    /**
     * Constructor.
     * @param n this class name
@@ -66,7 +70,17 @@ public class NestProviderWork extends UniversalProviderWork
     */
    public void release()
    {
-
+      if (barrier != null)
+      {
+         try
+         {
+            barrier.await();
+         }
+         catch (Exception e)
+         {
+            throw new RuntimeException(e.getMessage());
+         }
+      }
    }
 
    /**
@@ -122,6 +136,15 @@ public class NestProviderWork extends UniversalProviderWork
    public String getName()
    {
       return name;
+   }
+
+   /**
+    * setter
+    * @param bar - new barrier value
+    */
+   public void setBarrier(CyclicBarrier bar)
+   {
+      barrier = bar;
    }
 
 }

@@ -40,6 +40,7 @@ import javax.resource.spi.work.WorkManager;
 import javax.resource.spi.work.WorkRejectedException;
 
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.threads.QueueExecutor;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -59,6 +60,12 @@ public class WorkContextsTestCase
     */
    @Inject(name = "WorkManager")
    WorkManager manager;
+
+   /**
+    * Injecting thread pool
+    */
+   @Inject(name = "LongRunningThreadPool")
+   QueueExecutor executor;
 
    /**
     * Injecting default bootstrap context
@@ -187,6 +194,7 @@ public class WorkContextsTestCase
       hc.setHint(HintsContext.LONGRUNNING_HINT, true);
       work.addContext(hc);
       manager.doWork(work);
+      assertEquals(1, executor.getCurrentThreadCount());
       assertTrue(work.isReleased());
    }
    

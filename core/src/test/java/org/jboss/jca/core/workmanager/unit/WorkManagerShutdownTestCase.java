@@ -32,6 +32,7 @@ import javax.resource.spi.work.Work;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.logging.Logger;
+import org.jboss.threads.QueueExecutor;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -55,6 +56,12 @@ public class WorkManagerShutdownTestCase
     */
    @Inject(name = "WorkManager")
    WorkManager workManager;
+
+   /**
+    * Injecting thread pool
+    */
+   @Inject(name = "ShortRunningThreadPool")
+   QueueExecutor executor;
 
    /**
     * Test graceful shutdown
@@ -83,6 +90,7 @@ public class WorkManagerShutdownTestCase
       assertFalse(work2.isReleased());
       while (stat.getWorkActive() < 2);
       LOG.info("Before shutdown:" + stat.toString());
+      assertEquals(2, executor.getCurrentThreadCount());
 
       workManager.shutdown();
       assertTrue(workManager.isShutdown());
