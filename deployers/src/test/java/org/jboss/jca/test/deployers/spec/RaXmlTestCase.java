@@ -22,8 +22,6 @@
 
 package org.jboss.jca.test.deployers.spec;
 
-import org.jboss.jca.embedded.dsl.InputStreamDescriptor;
-
 import javax.annotation.Resource;
 import javax.resource.cci.ConnectionFactory;
 
@@ -42,6 +40,7 @@ import static org.junit.Assert.assertNotNull;
  * for activation
  *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  * @version $Revision: $
  */
 @RunWith(Arquillian.class)
@@ -61,11 +60,9 @@ public class RaXmlTestCase
    public static ResourceAdapterArchive createArchive() throws Exception
    {
       String archiveName = "ra16out.rar";
-      String packageName = "org.jboss.jca.test.deployers.spec.rars.ra16out";
-      ResourceAdapterArchive raa = ArquillianJCATestUtils.buidShrinkwrapRa(archiveName, packageName);
+      ResourceAdapterArchive raa = ArquillianJCATestUtils.buidShrinkwrapRa(archiveName,
+            "org.jboss.jca.test.deployers.spec.rars.ra16out");
       raa.addAsManifestResource(archiveName + "/META-INF/ra.xml", "ra.xml");
-      raa.addAsManifestResource("ra16out-ra.xml", "ra16out-ra.xml");
-
       return raa;
    }
 
@@ -74,19 +71,33 @@ public class RaXmlTestCase
     * @return The deployment archive
     * @throws Exception in case of errors
     */
-   @Deployment(order = 2)
+   @Deployment(name = "1", order = 2)
    public static Descriptor createDescriptor() throws Exception
    {
-      ClassLoader cl = Thread.currentThread().getContextClassLoader();
-      InputStreamDescriptor isd = new InputStreamDescriptor("ra16out-ra.xml", 
-                                                            cl.getResourceAsStream("ra16out-ra.xml"));
-      return isd;
+      return ArquillianJCATestUtils.createDescriptor("ra16out-ra.xml");
+   }
+
+   /**
+    * Define the deployment
+    * @return The deployment archive
+    * @throws Exception in case of errors
+    */
+   @Deployment(name = "2", order = 3)
+   public static Descriptor createAnotherDescriptor() throws Exception
+   {
+      return ArquillianJCATestUtils.createDescriptor("ra16out2-ra.xml");
    }
 
    //-------------------------------------------------------------------------------------||
    //---------------------- WHEN  --------------------------------------------------------||
    //-------------------------------------------------------------------------------------||
    //
+   @Resource(mappedName = "java:/eis/ra16out1")
+   private ConnectionFactory connectionFactory1;
+
+   @Resource(mappedName = "java:/eis/ra16out2")
+   private ConnectionFactory connectionFactory2;
+
    @Resource(mappedName = "java:/eis/ra16out-raxml")
    private ConnectionFactory connectionFactory;
 
@@ -102,6 +113,9 @@ public class RaXmlTestCase
    public void testBasic() throws Throwable
    {
       assertNotNull(connectionFactory);
+      assertNotNull(connectionFactory1);
+      assertNotNull(connectionFactory2);
+
    }
 
 }

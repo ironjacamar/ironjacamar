@@ -21,8 +21,6 @@
  */
 package org.jboss.jca.test.deployers.spec.rars.testcases;
 
-import static org.junit.Assert.*;
-
 import org.jboss.jca.common.metadata.ra.ra16.Connector16Impl;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.rar.Endpoint;
@@ -59,6 +57,9 @@ import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import static org.junit.Assert.*;
+
 
 /**
  * Ra16inoutijmultiannoTestCase
