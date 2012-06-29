@@ -247,13 +247,17 @@ public abstract class PropsCodeGen extends AbstractCodeGen
       writeIndent(out, indent + 2);
       out.write("return false;");
       writeEol(out);
-      writeIndent(out, indent + 1);
-      out.write(getClassName(def) + " obj = (" + getClassName(def) + ")other;");
-      writeEol(out);
       
       writeIndent(out, indent + 1);
-      out.write("boolean result = true; ");
+      out.write("boolean result = other.hashCode() == this.hashCode(); ");
       writeEol(out);
+
+      if (getConfigProps(def).size() > 0)
+      {
+         writeIndent(out, indent + 1);
+         out.write(getClassName(def) + " obj = (" + getClassName(def) + ")other;");
+         writeEol(out);
+      }
 
       for (int i = 0; i < getConfigProps(def).size(); i++)
       {
