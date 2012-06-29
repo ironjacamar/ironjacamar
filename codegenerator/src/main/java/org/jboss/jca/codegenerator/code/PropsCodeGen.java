@@ -249,7 +249,7 @@ public abstract class PropsCodeGen extends AbstractCodeGen
       writeEol(out);
       
       writeIndent(out, indent + 1);
-      out.write("boolean result = other.hashCode() == this.hashCode(); ");
+      out.write("boolean result = true;");
       writeEol(out);
 
       if (getConfigProps(def).size() > 0)
