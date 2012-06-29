@@ -219,9 +219,9 @@ public class WorkWrapper implements Runnable
 
          end();
       }
-      catch (Exception e)
+      catch (Throwable t)
       {
-         exception = new WorkCompletedException(e);
+         exception = new WorkCompletedException(t.getMessage(), t);
 
          cancel();
       } 
