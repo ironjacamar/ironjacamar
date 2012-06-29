@@ -83,7 +83,7 @@
     </unzip>
     <move file="${staging.dir}/catalog.xml.in" tofile="${staging.dir}/catalog.xml"/>
 
-    <copy todir="${staging.dir}/ironjacamar-style">
+    <copy todir="${staging.dir}">
       <fileset dir="${docant.dir}/ironjacamar-style"/>
     </copy>
 

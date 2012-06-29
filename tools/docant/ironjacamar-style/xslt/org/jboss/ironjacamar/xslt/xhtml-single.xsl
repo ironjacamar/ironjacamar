@@ -28,11 +28,11 @@
 
     <!-- copied largely from the work done by Mark Newton for the Seam documentation -->
 
-    <xsl:import href="classpath:/xslt/org/jboss/xhtml.xsl"/>
+    <xsl:import href="classpath:/xslt/org/jboss/xhtml-single.xsl"/>
     <xsl:import href="common.xsl"/>
     <xsl:import href="xhtml-common.xsl"/>
-
-    <xsl:param name="html.stylesheet" select="'css/jbossorg.css'"/>
+   
+    <xsl:param name="html.stylesheet" select="'css/ironjacamar.css'"/>
 
 </xsl:stylesheet>
 
