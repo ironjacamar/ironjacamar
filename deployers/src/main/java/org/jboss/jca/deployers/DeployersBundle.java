@@ -112,4 +112,12 @@ public interface DeployersBundle
     */
    @Message(id = 20060, value = "Unable to inject: %s property: %s value: %s")
    public String unableToInject(String clz, String name, String value);
+
+   /**
+    * Invalid work context
+    * @param clz The class name
+    * @return The value
+    */
+   @Message(id = 20061, value = "Invalid required work context: %s")
+   public String invalidRequiredWorkContext(String clz);
 }

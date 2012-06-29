@@ -45,6 +45,7 @@ import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra10.ResourceAdapter10;
 import org.jboss.jca.common.api.metadata.ra.ra16.Activationspec16;
+import org.jboss.jca.common.api.metadata.ra.ra16.Connector16;
 import org.jboss.jca.common.metadata.ra.common.ConfigPropertyImpl;
 import org.jboss.jca.core.api.bootstrap.CloneableBootstrapContext;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
@@ -105,6 +106,7 @@ import javax.resource.spi.ResourceAdapterAssociation;
 import javax.resource.spi.TransactionSupport;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 import javax.resource.spi.security.PasswordCredential;
+import javax.resource.spi.work.WorkContext;
 import javax.security.auth.Subject;
 import javax.transaction.TransactionManager;
 
@@ -1114,6 +1116,32 @@ public abstract class AbstractResourceAdapterDeployer
             // ResourceAdapter
             if (cmd.getVersion() != Version.V_10)
             {
+               if (cmd.getVersion() == Version.V_16)
+               {
+                  Connector16 cmd16 = (Connector16)cmd;
+                  if (cmd16.getRequiredWorkContexts() != null && cmd16.getRequiredWorkContexts().size() > 0)
+                  {
+                     CloneableBootstrapContext bc = getConfiguration().getDefaultBootstrapContext();
+                     for (String requiredWorkContext : cmd16.getRequiredWorkContexts())
+                     {
+                        try
+                        {
+                           Class<? extends WorkContext> rwc = 
+                              (Class<? extends WorkContext>)Class.forName(requiredWorkContext, true, cl);
+
+                           if (!bc.isContextSupported(rwc))
+                           {
+                              throw new DeployException(bundle.invalidRequiredWorkContext(requiredWorkContext));
+                           }
+                        }
+                        catch (Throwable t)
+                        {
+                           throw new DeployException(bundle.invalidRequiredWorkContext(requiredWorkContext), t);
+                        }
+                     }
+                  }
+               }
+
                ResourceAdapter1516 ra1516 = (ResourceAdapter1516) cmd.getResourceadapter();
                if (ra1516 != null && ra1516.getResourceadapterClass() != null)
                {

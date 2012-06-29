@@ -859,6 +859,11 @@
             <entry><code>EXCEPTION</code></entry>
             <entry>Unable to inject</entry>
           </row>
+          <row>
+            <entry>20061</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Invalid required work context</entry>
+          </row>
         </tbody>
       </tgroup>
     </table>
