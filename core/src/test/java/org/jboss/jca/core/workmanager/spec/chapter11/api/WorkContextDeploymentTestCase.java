@@ -52,7 +52,6 @@ import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -65,7 +64,6 @@ import static org.junit.Assert.*;
  *
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  */
-@Ignore("JBJCA-833")
 public class WorkContextDeploymentTestCase
 {
    private static Logger log = Logger.getLogger(WorkContextDeploymentTestCase.class);
