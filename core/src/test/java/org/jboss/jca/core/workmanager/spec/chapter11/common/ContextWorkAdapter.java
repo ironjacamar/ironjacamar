@@ -24,6 +24,7 @@ package org.jboss.jca.core.workmanager.spec.chapter11.common;
 import javax.resource.spi.work.Work;
 import javax.resource.spi.work.WorkAdapter;
 import javax.resource.spi.work.WorkEvent;
+import javax.resource.spi.work.WorkException;
 
 import static org.junit.Assert.*;
 
@@ -46,6 +47,9 @@ public class ContextWorkAdapter extends WorkAdapter
    /**timestamp for check*/
    private long timeCompleted = 0;
    
+   /** exception */
+   private WorkException exception = null;
+
    /**
     * start string buffer
     */
@@ -133,6 +137,7 @@ public class ContextWorkAdapter extends WorkAdapter
       {
          NestProviderWork nw = (NestProviderWork) work;
          done.append(nw.getName());
+         exception = e.getException();
       }
 
    }
@@ -193,11 +198,20 @@ public class ContextWorkAdapter extends WorkAdapter
    
    /**
     * getter
-    * @return done buffer 
+    * @return reject buffer 
     */
    public String getReject()
    {
       return reject.toString();
+   }
+
+   /**
+    * getter
+    * @return exception 
+    */
+   public WorkException getException()
+   {
+      return exception;
    }
 
 }

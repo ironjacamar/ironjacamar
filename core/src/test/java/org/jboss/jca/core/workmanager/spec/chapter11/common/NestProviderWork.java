@@ -53,7 +53,7 @@ public class NestProviderWork extends UniversalProviderWork
    private WorkAdapter wa;
 
    private CyclicBarrier barrier = null;
-
+   
    /**
     * Constructor.
     * @param n this class name

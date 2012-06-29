@@ -37,7 +37,6 @@ import javax.resource.spi.work.WorkManager;
 
 import org.jboss.arquillian.junit.Arquillian;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -116,6 +115,35 @@ public class NestedWorkAndContextsTestCase
    }
 
    /**
+    * Test for paragraph 4
+    * scheduletWork method: this provides a FIFO execution start ordering guarantee, 
+    *                 but no execution completion ordering guarantee.
+    * @throws Throwable throwable exception 
+    */
+   @Test
+   public void testFifoSchedule() throws Throwable
+   {
+      ContextWorkAdapter wa = new ContextWorkAdapter();
+      NestProviderWork workA = new NestProviderWork("A", wa);
+      workA.addContext(new SecurityContextCustom());
+
+      NestProviderWork workB = new NestProviderWork("B", null);
+      workB.addContext(new HintsContext());
+
+      workA.setNestDo(false);
+      workA.setWorkManager(workManager);
+      workA.setWork(workB);
+      
+      CyclicBarrier barrier = new CyclicBarrier(3);
+      workA.setBarrier(barrier);
+      workB.setBarrier(barrier);
+      
+      workManager.scheduleWork(workA, WorkManager.INDEFINITE, null, wa);
+      barrier.await();
+      assertEquals(wa.getStart(), "AB");
+   }
+
+   /**
     * Test unsupported context nested doWork. 
     * @throws Throwable throwable exception 
     */
@@ -139,8 +167,7 @@ public class NestedWorkAndContextsTestCase
     * Test unsupported context nested startWork
     * @throws Throwable throwable exception 
     */
-   @Test(expected = Throwable.class)
-   @Ignore
+   @Test
    public void testStartWorkUnsupportedContext() throws Throwable
    {
       ContextWorkAdapter wa = new ContextWorkAdapter();
@@ -153,6 +180,40 @@ public class NestedWorkAndContextsTestCase
       workA.setNestDo(false);
       workA.setWorkManager(workManager);
       workA.setWork(workB);
+      
+      CyclicBarrier barrier = new CyclicBarrier(2);
+      workA.setBarrier(barrier);
+      workB.setBarrier(barrier);
+
       workManager.startWork(workA, WorkManager.INDEFINITE, null, wa);
+      barrier.await();
+      assertNotNull(wa.getException());
+   }
+
+   /**
+    * Test unsupported context nested scheduleWork
+    * @throws Throwable throwable exception 
+    */
+   @Test
+   public void testScheduleWorkUnsupportedContext() throws Throwable
+   {
+      ContextWorkAdapter wa = new ContextWorkAdapter();
+      NestProviderWork workA = new NestProviderWork("A", wa);
+      workA.addContext(new HintsContext());
+
+      NestProviderWork workB = new NestProviderWork("B", null);
+      workB.addContext(new UnsupportedContext());
+
+      workA.setNestDo(false);
+      workA.setWorkManager(workManager);
+      workA.setWork(workB);
+      
+      CyclicBarrier barrier = new CyclicBarrier(2);
+      workA.setBarrier(barrier);
+      workB.setBarrier(barrier);
+
+      workManager.scheduleWork(workA, WorkManager.INDEFINITE, null, wa);
+      barrier.await();
+      assertNotNull(wa.getException());
    }
 }

@@ -133,47 +133,4 @@ public class WorkContextSetupListenerTestCase
       assertTrue(wa.getTimeStarted() <= listener.getTimeStamp());
       assertTrue(listener.getTimeStamp() <= wa.getTimeCompleted());
    }
-   
-   /**
-    * Test WorkContextLifecycleListener for transaction context.
-    *
-    * @throws Throwable throws any error
-    */
-   @Test
-   @Ignore
-   public void testUnsupportedContextFailedListener() throws Throwable
-   {
-      UniversalProviderWork work = new UniversalProviderWork();
-      TransactionContextCustom listener = new TransactionContextCustom();
-      work.addContext(listener);
-      work.addContext(new UnsupportedContext()); 
-
-      ContextWorkAdapter wa = new ContextWorkAdapter();
-
-      try
-      {
-         manager.doWork(work, WorkManager.INDEFINITE, null, wa);
-         fail("Exception expected");
-      }
-      catch (Throwable e)
-      {
-         //Expected
-      }
-
-      assertEquals(WorkContextErrorCodes.UNSUPPORTED_CONTEXT_TYPE, listener.getContextSetupFailedErrorCode());
-      assertFalse(listener.isContextSetupComplete());
-
-      LOG.info("2Test//accepted:" + wa.getTimeAccepted() + "//started:" + wa.getTimeStarted() + "//context:"
-            + listener.getTimeStamp() + "//completed:" + wa.getTimeCompleted());
-
-      assertTrue(wa.getTimeAccepted() > 0);
-      assertTrue(wa.getTimeStarted() > 0);
-      assertTrue(listener.getTimeStamp() > 0);
-      assertTrue(wa.getTimeCompleted() > 0);
-
-      assertTrue(wa.getTimeAccepted() <= wa.getTimeStarted());
-      assertTrue(wa.getTimeStarted() <= listener.getTimeStamp());
-      assertTrue(listener.getTimeStamp() <= wa.getTimeCompleted());
-   }
-
 }
