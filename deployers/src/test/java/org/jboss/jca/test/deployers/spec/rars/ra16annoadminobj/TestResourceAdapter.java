@@ -48,9 +48,7 @@ import javax.resource.spi.TransactionSupport;
       reauthenticationSupport = true,
       authMechanisms = { @AuthenticationMechanism(credentialInterface = CredentialInterface.PasswordCredential) },
       securityPermissions = { @SecurityPermission(permissionSpec = "permissionSpec") },
-      transactionSupport = TransactionSupport.TransactionSupportLevel.LocalTransaction,
-      requiredWorkContexts = { TestWorkContext.class })
-
+      transactionSupport = TransactionSupport.TransactionSupportLevel.LocalTransaction)
 public class TestResourceAdapter extends BaseResourceAdapter
 {
    @ConfigProperty(type = String.class, defaultValue = "JCA")
