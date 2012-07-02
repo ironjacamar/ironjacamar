@@ -120,6 +120,11 @@
             <entry>SecurityContext setup failed since CallbackSecurity::Domain was empty</entry>
           </row>
           <row>
+            <entry>265</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>ResourceAdapterAssociation failed</entry>
+          </row>
+          <row>
             <entry>301</entry>
             <entry><code>INFO</code></entry>
             <entry>Registered a null handle for managed connection</entry>

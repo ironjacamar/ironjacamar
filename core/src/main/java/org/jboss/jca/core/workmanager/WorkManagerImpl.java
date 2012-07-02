@@ -38,6 +38,8 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.resource.spi.ResourceAdapter;
+import javax.resource.spi.ResourceAdapterAssociation;
 import javax.resource.spi.work.ExecutionContext;
 import javax.resource.spi.work.HintsContext;
 import javax.resource.spi.work.SecurityContext;
@@ -108,6 +110,9 @@ public class WorkManagerImpl implements WorkManager
    /** Security module for callback */
    private Callback callbackSecurity;
 
+   /** Resource adapter */
+   private ResourceAdapter resourceAdapter;
+
    /** Shutdown */
    private AtomicBoolean shutdown;
 
@@ -131,6 +136,7 @@ public class WorkManagerImpl implements WorkManager
       name = null;
       specCompliant = true;
       validatedWork = new HashSet<String>();
+      resourceAdapter = null;
       shutdown = new AtomicBoolean(false);
       activeWorkWrappers = new HashSet<WorkWrapper>();
    }
@@ -163,6 +169,24 @@ public class WorkManagerImpl implements WorkManager
    public void setName(String v)
    {
       name = v;
+   }
+
+   /**
+    * Get the resource adapter
+    * @return The value
+    */
+   public ResourceAdapter getResourceAdapter()
+   {
+      return resourceAdapter;
+   }
+
+   /**
+    * Set the resource adapter
+    * @param v The value
+    */
+   public void setResourceAdapter(ResourceAdapter v)
+   {
+      resourceAdapter = v;
    }
 
    /**
@@ -794,17 +818,30 @@ public class WorkManagerImpl implements WorkManager
     * 
     * @param wrapper The work wrapper instance
     * @param workListener The work listener
-    * @throws WorkCompletedException if any exception occurs
+    * @throws WorkCompletedException if any work context related exceptions occurs
+    * @throws WorkException if any exception occurs
     */
-   private void setup(WorkWrapper wrapper, WorkListener workListener) throws WorkCompletedException
+   private void setup(WorkWrapper wrapper, WorkListener workListener) throws WorkCompletedException, WorkException
    {
       if (trace)
-      {
-         log.trace("Setting up work contexts " + wrapper);  
-      }
+         log.tracef("Setting up work: %s, work listener: %s", wrapper, workListener);
 
       Work work = wrapper.getWork();
       
+      //If work is an instanceof ResourceAdapterAssociation
+      if (resourceAdapter != null && work instanceof ResourceAdapterAssociation)
+      {
+         try
+         {
+            ResourceAdapterAssociation raa = (ResourceAdapterAssociation)work;
+            raa.setResourceAdapter(resourceAdapter);
+         }
+         catch (Throwable t)
+         {
+            throw new WorkException(bundle.resourceAdapterAssociationFailed(work.getClass().getName()), t);
+         }
+      }
+
       //If work is an instanceof WorkContextProvider
       if (work instanceof WorkContextProvider)
       {
@@ -934,11 +971,6 @@ public class WorkManagerImpl implements WorkManager
                wrapper.addWorkContext(contextType, context);
             }
          }         
-      }      
-
-      if (trace)
-      {
-         log.trace("Setted up work contexts " + wrapper);  
       }      
    }
 

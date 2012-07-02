@@ -152,6 +152,14 @@ public interface CoreBundle
    @Message(id = 264, value = "SecurityContext setup failed since CallbackSecurity::Domain was empty")
    public String securityContextSetupFailedSinceCallbackSecurityDomainWasEmpty();
    
+   /**
+    * ResourceAdapterAssociation failed
+    * @param clz The class name
+    * @return The value
+    */
+   @Message(id = 265, value = "ResourceAdapterAssociation failed for %s")
+   public String resourceAdapterAssociationFailed(String clz);
+   
    // CONNECTION MANAGER LISTENER (300)
 
    /**

@@ -25,6 +25,7 @@ package org.jboss.jca.core.api.bootstrap;
 import org.jboss.jca.core.api.workmanager.WorkManager;
 
 import javax.resource.spi.BootstrapContext;
+import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.XATerminator;
 import javax.transaction.TransactionSynchronizationRegistry;
 
@@ -35,6 +36,12 @@ import javax.transaction.TransactionSynchronizationRegistry;
  */
 public interface CloneableBootstrapContext extends Cloneable, BootstrapContext
 {
+   /**
+    * Set the resource adapter
+    * @param ra The handle
+    */
+   public void setResourceAdapter(ResourceAdapter ra);
+
    /**
     * Set the transaction synchronization registry
     * @param tsr The handle
