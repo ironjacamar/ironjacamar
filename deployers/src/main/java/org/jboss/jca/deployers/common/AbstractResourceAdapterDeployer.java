@@ -345,6 +345,8 @@ public abstract class AbstractResourceAdapterDeployer
          if (cbc == null)
             cbc = getConfiguration().getDefaultBootstrapContext().clone();
 
+         cbc.setResourceAdapter(resourceAdapter);
+
          start.invoke(resourceAdapter, new Object[]{cbc});
       }
       catch (InvocationTargetException ite)

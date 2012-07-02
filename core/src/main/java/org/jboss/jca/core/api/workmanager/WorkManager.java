@@ -26,6 +26,8 @@ import org.jboss.jca.core.spi.graceful.GracefulShutdown;
 import org.jboss.jca.core.spi.security.Callback;
 import org.jboss.jca.core.spi.transaction.xa.XATerminator;
 
+import javax.resource.spi.ResourceAdapter;
+
 import org.jboss.threads.BlockingExecutor;
 
 /**
@@ -50,6 +52,12 @@ public interface WorkManager extends javax.resource.spi.work.WorkManager, Gracef
     * @param v The value
     */
    public void setName(String v);
+
+   /**
+    * Set the resource adapter
+    * @param ra The handle
+    */
+   public void setResourceAdapter(ResourceAdapter ra);
 
    /**
     * Retrieve the executor for short running tasks

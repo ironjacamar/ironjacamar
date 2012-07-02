@@ -30,6 +30,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Timer;
 
+import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.XATerminator;
 import javax.resource.spi.work.HintsContext;
 import javax.resource.spi.work.SecurityContext;
@@ -92,6 +93,16 @@ public class BaseCloneableBootstrapContext implements CloneableBootstrapContext
    public void setName(String v)
    {
       name = v;
+   }
+
+   /**
+    * Set the resource adapter
+    * @param ra The handle
+    */
+   public void setResourceAdapter(ResourceAdapter ra)
+   {
+      if (workManager != null)
+         workManager.setResourceAdapter(ra);
    }
 
    /**

@@ -42,7 +42,6 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -57,7 +56,6 @@ import static org.junit.Assert.*;
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  */
 @RunWith(Arquillian.class)
-@Ignore("JBJCA-833")
 public class WorkResourceAdapterAssociationTestCase
 {
    private static Logger log = Logger.getLogger(WorkResourceAdapterAssociationTestCase.class);
@@ -97,6 +95,6 @@ public class WorkResourceAdapterAssociationTestCase
       AssociationWork work = new AssociationWork();
       ra.doWork(work);
       log.info("//////ra:" + ra + "//work:" + work.getResourceAdapter());
-      assertTrue(ra == work.getResourceAdapter());
+      assertTrue(ra.equals(work.getResourceAdapter()));
    }
 }
