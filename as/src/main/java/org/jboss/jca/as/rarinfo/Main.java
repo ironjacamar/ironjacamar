@@ -112,6 +112,11 @@ public class Main
    private static final String tempdir = System.getProperty("java.io.tmpdir");
    private static final String subdir = "/jca/";
    private static Set<Class<?>> validTypes;
+   
+   private static final String ARGS_CP = "-classpath";
+   private static final String ARGS_STDOUT = "--stdout";
+   
+   
 
    private static File root = null;
    
@@ -144,32 +149,40 @@ public class Main
     */
    public static void main(String[] args)
    {
+      final int argsLength = args.length;
       PrintStream out = null;
       try
       {
-         if (args.length < 1 || args.length == 2 || args.length > 3)
+         if (argsLength < 1)
          {
             usage();
             System.exit(OTHER);
          }
-         
          String rarFile = "";
          String[] cps = null;
-         if (args.length == 1 && args[0].endsWith("rar"))
+         boolean stdout = false;
+         
+         for (int i = 0; i < argsLength; i++)
          {
-            rarFile = args[0];
+            String arg = args[i];
+            if (arg.equals(ARGS_CP))
+            {
+               cps = args[++i].split(System.getProperty("path.separator"));
+            }
+            else if (arg.equals(ARGS_STDOUT))
+            {
+               stdout = true;
+            }
+            else if (arg.endsWith("rar"))
+            {
+               rarFile = arg;
+            }
+            else
+            {
+               usage();
+               System.exit(OTHER);
+            }
          }
-         else if (args.length == 3 && args[0].equals("-classpath") && args[2].endsWith("rar"))
-         {
-            rarFile = args[2];
-            cps = args[1].split(System.getProperty("path.separator"));
-         }
-         else
-         {
-            usage();
-            System.exit(OTHER);
-         }
-
          ZipFile zipFile = new ZipFile(rarFile);
 
          boolean hasRaXml = false;
@@ -178,7 +191,7 @@ public class Main
 
          ArrayList<String> names = new ArrayList<String>();
          ArrayList<String> xmls = new ArrayList<String>();
-         Enumeration zipEntries = zipFile.entries();
+         Enumeration<? extends ZipEntry> zipEntries = zipFile.entries();
 
          while (zipEntries.hasMoreElements())
          {
@@ -216,7 +229,14 @@ public class Main
 
          URLClassLoader cl = loadClass(rarFile, cps);
          
-         out = new PrintStream(rarFile.substring(0, rarFile.length() - 4) + REPORT_FILE);
+         if (stdout)
+         {
+            out = System.out;
+         }
+         else
+         {
+            out = new PrintStream(rarFile.substring(0, rarFile.length() - 4) + REPORT_FILE);
+         }
          out.println("Archive:\t" + rarFile);
          
          String version;
@@ -939,7 +959,7 @@ public class Main
     * @param type The type
     * @return True if valid; otherwise false
     */
-   private static boolean isValidType(Class type)
+   private static boolean isValidType(Class<?> type)
    {
       return validTypes.contains(type);
    }
@@ -1169,6 +1189,6 @@ public class Main
     */
    private static void usage()
    {
-      System.out.println("Usage:  ./rar-info.sh [-classpath <lib>[:<lib>]*] <file>");
+      System.out.println("Usage:  ./rar-info.sh [-classpath <lib>[:<lib>]*] [--stdout] <file>");
    }
 }
