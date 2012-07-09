@@ -115,7 +115,7 @@ public class Main
    
    private static final String ARGS_CP = "-classpath";
    private static final String ARGS_STDOUT = "--stdout";
-   
+   private static final String ARGS_OUT = "-o";
    
 
    private static File root = null;
@@ -161,6 +161,7 @@ public class Main
          String rarFile = "";
          String[] cps = null;
          boolean stdout = false;
+         String reportFile = "";
          
          for (int i = 0; i < argsLength; i++)
          {
@@ -172,6 +173,10 @@ public class Main
             else if (arg.equals(ARGS_STDOUT))
             {
                stdout = true;
+            }
+            else if (arg.equals(ARGS_OUT))
+            {
+               reportFile = args[++i];
             }
             else if (arg.endsWith("rar"))
             {
@@ -232,6 +237,10 @@ public class Main
          if (stdout)
          {
             out = System.out;
+         }
+         else if (!reportFile.isEmpty())
+         {
+            out = new PrintStream(reportFile);
          }
          else
          {
@@ -1189,6 +1198,6 @@ public class Main
     */
    private static void usage()
    {
-      System.out.println("Usage:  ./rar-info.sh [-classpath <lib>[:<lib>]*] [--stdout] <file>");
+      System.out.println("Usage:  ./rar-info.sh [-classpath <lib>[:<lib>]*] [--stdout] [-o <reportFile>] <file>");
    }
 }
