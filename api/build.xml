@@ -70,7 +70,7 @@
   <!-- ================================= 
        Target: docs
        ================================= -->
-  <target name="docs" depends="compile">
+  <target name="docs">
     <mkdir dir="${target.dir}/docs/spec"/>
     <javadoc packagenames="javax.*"
              sourcepath="src/main/java"
