@@ -153,7 +153,7 @@
   <!-- ================================= 
        Target: docs
        ================================= -->
-  <target name="docs" depends="compile">
+  <target name="docs">
     <mkdir dir="${target.dir}/docs/adapters"/>
     <javadoc packagenames="org.*"
              sourcepath="src/main/java"

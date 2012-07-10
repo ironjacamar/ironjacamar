@@ -100,7 +100,7 @@
   <!-- ================================= 
        Target: docs
        ================================= -->
-  <target name="docs" depends="compile">
+  <target name="docs">
     <mkdir dir="${target.dir}/docs/embedded"/>
     <javadoc packagenames="org.*"
              sourcepath="src/main/java"
