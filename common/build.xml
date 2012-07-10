@@ -170,8 +170,8 @@
              additionalparam="-author -version"
              classpath="${build.common.dir}"
              classpathref="main.lib.path.id"
-             bottom="Copyright &#169; 2008 Red Hat Middleware LLC (http://www.jboss.com/)">
-      <link offline="true" href="http://java.sun.com/j2se/5/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
+             bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
+      <link offline="true" href="http://docs.oracle.com/javase/6/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
     </javadoc>
     <copy todir="${target.dir}/docs/common" overwrite="true">
       <fileset dir="${tools.dir}/api"/>
@@ -181,7 +181,7 @@
   <!-- ================================= 
        Target: test
        ================================= -->
-  <target name="test" depends="jars, prepare-test">
+  <target name="test" depends="prepare-test">
     <mkdir dir="${reports.dir}" />
     <mkdir dir="${reports.dir}/common" />
     
@@ -231,7 +231,7 @@
   <!-- ================================= 
        Target: one-test
        ================================= -->
-  <target name="one-test" depends="jars, prepare-test">
+  <target name="one-test" depends="prepare-test">
     <mkdir dir="${reports.dir}" />
     <mkdir dir="${reports.dir}/common" />
     
@@ -358,13 +358,13 @@
              additionalparam="-author -version"
              classpath="${build.common.dir}"
              classpathref="main.lib.path.id"
-             bottom="Copyright &#169; 2008 Red Hat Middleware LLC (http://www.jboss.com/)">
+             bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
 
       <packageset dir="src/main/java" defaultexcludes="yes">
         <include name="**/common/api/**"/>
       </packageset>
 
-      <link offline="true" href="http://java.sun.com/j2se/5/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
+      <link offline="true" href="http://docs.oracle.com/javase/6/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
     </javadoc>
     <copy todir="${build.common.dir}/docs/api" overwrite="true">
       <fileset dir="${tools.dir}/api"/>
@@ -396,13 +396,13 @@
              additionalparam="-author -version"
              classpath="${build.common.dir}"
              classpathref="main.lib.path.id"
-             bottom="Copyright &#169; 2008 Red Hat Middleware LLC (http://www.jboss.com/)">
+             bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
 
       <packageset dir="src/main/java" defaultexcludes="yes">
         <include name="**/common/spi/**"/>
       </packageset>
 
-      <link offline="true" href="http://java.sun.com/j2se/5/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
+      <link offline="true" href="http://docs.oracle.com/javase/6/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
     </javadoc>
     <copy todir="${build.common.dir}/docs/spi" overwrite="true">
       <fileset dir="${tools.dir}/api"/>
@@ -434,7 +434,7 @@
              additionalparam="-author -version"
              classpath="${build.common.dir}"
              classpathref="main.lib.path.id"
-             bottom="Copyright &#169; 2008 Red Hat Middleware LLC (http://www.jboss.com/)">
+             bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
 
       <packageset dir="src/main/java" defaultexcludes="yes">
         <exclude name="**/common/api/**"/>
@@ -442,7 +442,7 @@
         <exclude name="**/papaki/**"/>
       </packageset>
 
-      <link offline="true" href="http://java.sun.com/j2se/5/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
+      <link offline="true" href="http://docs.oracle.com/javase/6/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
     </javadoc>
     <copy todir="${build.common.dir}/docs/impl" overwrite="true">
       <fileset dir="${tools.dir}/api"/>
@@ -492,13 +492,13 @@
              additionalparam="-author -version"
              classpath="${build.common.dir}"
              classpathref="main.lib.path.id"
-             bottom="Copyright &#169; 2008 Red Hat Middleware LLC (http://www.jboss.com/)">
+             bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
 
       <packageset dir="src/main/java" defaultexcludes="yes">
         <include name="**/papaki/**"/>
       </packageset>
 
-      <link offline="true" href="http://java.sun.com/j2se/5/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
+      <link offline="true" href="http://docs.oracle.com/javase/6/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
     </javadoc>
     <copy todir="${build.common.dir}/docs/papaki" overwrite="true">
       <fileset dir="${tools.dir}/api"/>

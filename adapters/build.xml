@@ -168,8 +168,8 @@
              additionalparam="-author -version"
              classpath="${build.adapters.dir}/impl"
              classpathref="main.lib.path.id"
-             bottom="Copyright &#169; 2010 Red Hat Middleware LLC (http://www.jboss.com/)">
-      <link offline="true" href="http://java.sun.com/j2se/5/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
+             bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
+      <link offline="true" href="http://docs.oracle.com/javase/6/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
     </javadoc>
     <copy todir="${target.dir}/docs/adapters" overwrite="true">
       <fileset dir="${tools.dir}/api"/>
@@ -179,7 +179,7 @@
   <!-- ================================= 
        Target: test
        ================================= -->
-  <target name="test" depends="jars, prepare-test">
+  <target name="test" depends="prepare-test">
     <mkdir dir="${reports.dir}"/>
     <mkdir dir="${reports.dir}/adapters"/>
 
@@ -233,7 +233,7 @@
   <!-- ================================= 
        Target: one-test
        ================================= -->
-  <target name="one-test" depends="jars, prepare-test">
+  <target name="one-test" depends="prepare-test">
     <mkdir dir="${reports.dir}"/>
     <mkdir dir="${reports.dir}/adapters"/>
 
@@ -344,13 +344,12 @@
              additionalparam="-author -version"
              classpath="${build.adapters.dir}"
              classpathref="main.lib.path.id"
-             bottom="Copyright &#169; 2008 Red Hat Middleware LLC (http://www.jboss.com/)">
-
+             bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
       <packageset dir="src/main/java" defaultexcludes="yes">
         <include name="**/adapters/jdbc/**"/>
       </packageset>
 
-      <link offline="true" href="http://java.sun.com/j2se/5/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
+      <link offline="true" href="http://docs.oracle.com/javase/6/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
     </javadoc>
     <copy todir="${build.adapters.dir}/docs/jdbc" overwrite="true">
       <fileset dir="${tools.dir}/api"/>
@@ -457,13 +456,13 @@
              additionalparam="-author -version"
              classpath="${build.adapters.dir}"
              classpathref="main.lib.path.id"
-             bottom="Copyright &#169; 2008 Red Hat Middleware LLC (http://www.jboss.com/)">
+             bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
 
       <packageset dir="src/main/java" defaultexcludes="yes">
         <include name="**/adapters/mail/**"/>
       </packageset>
 
-      <link offline="true" href="http://java.sun.com/j2se/5/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
+      <link offline="true" href="http://docs.oracle.com/javase/6/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
     </javadoc>
     <copy todir="${build.adapters.dir}/docs/mail" overwrite="true">
       <fileset dir="${tools.dir}/api"/>

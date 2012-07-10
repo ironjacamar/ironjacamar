@@ -115,8 +115,8 @@
              additionalparam="-author -version"
              classpath="${build.embedded.dir}/impl"
              classpathref="main.lib.path.id"
-             bottom="Copyright &#169; 2008-2009 Red Hat Middleware LLC (http://www.jboss.com/)">
-      <link offline="true" href="http://java.sun.com/j2se/5/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
+             bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
+      <link offline="true" href="http://docs.oracle.com/javase/6/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
     </javadoc>
     <copy todir="${target.dir}/docs/embedded" overwrite="true">
       <fileset dir="${tools.dir}/api"/>
@@ -144,20 +144,12 @@
       <fileset dir="src/test/resources"/>
     </copy>
 
-    <ant target="test-jars"/>
-
-  </target>
-
-  <!-- ================================= 
-       Target: test-jars 
-       ================================= -->
-  <target name="test-jars">
   </target>
 
   <!-- ================================= 
        Target: test
        ================================= -->
-  <target name="test" depends="jars, prepare-test">
+  <target name="test" depends="prepare-test">
     <mkdir dir="${reports.dir}"/>
     <mkdir dir="${reports.dir}/embedded"/>
 
@@ -206,7 +198,7 @@
   <!-- ================================= 
        Target: one-test
        ================================= -->
-  <target name="one-test" depends="jars, prepare-test">
+  <target name="one-test" depends="prepare-test">
     <mkdir dir="${reports.dir}"/>
     <mkdir dir="${reports.dir}/embedded"/>
 
@@ -293,13 +285,13 @@
              additionalparam="-author -version"
              classpath="${build.embedded.dir}"
              classpathref="main.lib.path.id"
-             bottom="Copyright &#169; 2008 Red Hat Middleware LLC (http://www.jboss.com/)">
+             bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
 
       <packageset dir="src/main/java" defaultexcludes="yes">
         <exclude name="**/embedded/arquillian/**"/>
       </packageset>
 
-      <link offline="true" href="http://java.sun.com/j2se/5/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
+      <link offline="true" href="http://docs.oracle.com/javase/6/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
     </javadoc>
     <copy todir="${build.embedded.dir}/docs/embedded" overwrite="true">
       <fileset dir="${tools.dir}/api"/>
@@ -331,13 +323,13 @@
              additionalparam="-author -version"
              classpath="${build.embedded.dir}"
              classpathref="main.lib.path.id"
-             bottom="Copyright &#169; 2008 Red Hat Middleware LLC (http://www.jboss.com/)">
+             bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
 
       <packageset dir="src/main/java" defaultexcludes="yes">
         <include name="**/embedded/arquillian/**"/>
       </packageset>
 
-      <link offline="true" href="http://java.sun.com/j2se/5/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
+      <link offline="true" href="http://docs.oracle.com/javase/6/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
     </javadoc>
     <copy todir="${build.embedded.dir}/docs/arquillian" overwrite="true">
       <fileset dir="${tools.dir}/api"/>
