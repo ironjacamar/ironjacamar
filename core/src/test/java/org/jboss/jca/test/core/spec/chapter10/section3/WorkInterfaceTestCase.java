@@ -26,6 +26,7 @@ import org.jboss.jca.embedded.EmbeddedFactory;
 import org.jboss.jca.test.core.spec.chapter10.common.LongRunningWork;
 import org.jboss.jca.test.core.spec.chapter10.common.ShortRunningWork;
 import org.jboss.jca.test.core.spec.chapter10.common.SynchronizedWork;
+import org.jboss.jca.test.core.spec.chapter10.common.TestWorkException;
 import org.jboss.jca.test.core.spec.chapter10.common.UnsynchronizedWork;
 
 import java.net.URL;
@@ -98,7 +99,7 @@ public class WorkInterfaceTestCase
       {
          assertNotNull(e);
          assertTrue(e instanceof WorkCompletedException);
-         assertTrue(e.getMessage().indexOf("TestWorkException") > 0);
+         assertTrue(e.getCause() instanceof TestWorkException);
       }
    }
    
