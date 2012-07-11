@@ -1423,7 +1423,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
        */
       CONNECTOR("connector");
 
-      private final String name;
+      private String name;
 
       /**
        *
@@ -1461,6 +1461,17 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
       }
 
       /**
+       * Set the value
+       * @param v The name
+       * @return The value
+       */
+      Tag value(String v)
+      {
+         name = v;
+         return this;
+      }
+
+      /**
       *
       * Static method to get enum instance given localName string
       *
@@ -1470,7 +1481,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
       public static Tag forName(String localName)
       {
          final Tag element = MAP.get(localName);
-         return element == null ? UNKNOWN : element;
+         return element == null ? UNKNOWN.value(localName) : element;
       }
 
    }

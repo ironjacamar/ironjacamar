@@ -86,7 +86,7 @@ public interface Credential extends JCAMetadata, ValidatableMetadata
        */
       SECURITY_DOMAIN("security-domain");
 
-      private final String name;
+      private String name;
 
       /**
        *
@@ -132,6 +132,17 @@ public interface Credential extends JCAMetadata, ValidatableMetadata
       }
 
       /**
+       * Set the value
+       * @param v The name
+       * @return The value
+       */
+      Tag value(String v)
+      {
+         name = v;
+         return this;
+      }
+
+      /**
       *
       * Static method to get enum instance given localName XsdString
       *
@@ -141,7 +152,7 @@ public interface Credential extends JCAMetadata, ValidatableMetadata
       public static Tag forName(String localName)
       {
          final Tag element = MAP.get(localName);
-         return element == null ? UNKNOWN : element;
+         return element == null ? UNKNOWN.value(localName) : element;
       }
 
    }

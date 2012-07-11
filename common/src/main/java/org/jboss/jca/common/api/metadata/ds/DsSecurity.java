@@ -77,7 +77,7 @@ public interface DsSecurity extends Credential
        */
       REAUTH_PLUGIN("reauth-plugin");
 
-      private final String name;
+      private String name;
 
       /**
        *
@@ -123,6 +123,17 @@ public interface DsSecurity extends Credential
       }
 
       /**
+       * Set the value
+       * @param v The name
+       * @return The value
+       */
+      Tag value(String v)
+      {
+         name = v;
+         return this;
+      }
+
+      /**
       *
       * Static method to get enum instance given localName XsdString
       *
@@ -132,7 +143,7 @@ public interface DsSecurity extends Credential
       public static Tag forName(String localName)
       {
          final Tag element = MAP.get(localName);
-         return element == null ? UNKNOWN : element;
+         return element == null ? UNKNOWN.value(localName) : element;
       }
 
    }

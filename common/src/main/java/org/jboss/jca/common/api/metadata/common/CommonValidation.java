@@ -83,7 +83,7 @@ public interface CommonValidation extends JCAMetadata
       */
       USE_FAST_FAIL("use-fast-fail");
 
-      private final String name;
+      private String name;
 
       /**
        *
@@ -129,6 +129,17 @@ public interface CommonValidation extends JCAMetadata
       }
 
       /**
+       * Set the value
+       * @param v The name
+       * @return The value
+       */
+      Tag value(String v)
+      {
+         name = v;
+         return this;
+      }
+
+      /**
       *
       * Static method to get enum instance given localName XsdString
       *
@@ -138,7 +149,7 @@ public interface CommonValidation extends JCAMetadata
       public static Tag forName(String localName)
       {
          final Tag element = MAP.get(localName);
-         return element == null ? UNKNOWN : element;
+         return element == null ? UNKNOWN.value(localName) : element;
       }
 
    }

@@ -64,7 +64,7 @@ public interface ResourceAdapters extends JCAMetadata
        */
       RESOURCE_ADAPTER("resource-adapter");
 
-      private final String name;
+      private String name;
 
       /**
        *
@@ -110,6 +110,17 @@ public interface ResourceAdapters extends JCAMetadata
       }
 
       /**
+       * Set the value
+       * @param v The name
+       * @return The value
+       */
+      Tag value(String v)
+      {
+         name = v;
+         return this;
+      }
+
+      /**
       *
       * Static method to get enum instance given localName string
       *
@@ -119,7 +130,7 @@ public interface ResourceAdapters extends JCAMetadata
       public static Tag forName(String localName)
       {
          final Tag element = MAP.get(localName);
-         return element == null ? UNKNOWN : element;
+         return element == null ? UNKNOWN.value(localName) : element;
       }
 
    }

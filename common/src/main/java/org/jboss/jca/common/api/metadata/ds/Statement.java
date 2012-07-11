@@ -129,7 +129,7 @@ public interface Statement extends JCAMetadata, ValidatableMetadata
       */
       SHARE_PREPARED_STATEMENTS("share-prepared-statements");
 
-      private final String name;
+      private String name;
 
       /**
        *
@@ -175,6 +175,17 @@ public interface Statement extends JCAMetadata, ValidatableMetadata
       }
 
       /**
+       * Set the value
+       * @param v The name
+       * @return The value
+       */
+      Tag value(String v)
+      {
+         name = v;
+         return this;
+      }
+
+      /**
       *
       * Static method to get enum instance given localName XsdString
       *
@@ -184,7 +195,7 @@ public interface Statement extends JCAMetadata, ValidatableMetadata
       public static Tag forName(String localName)
       {
          final Tag element = MAP.get(localName);
-         return element == null ? UNKNOWN : element;
+         return element == null ? UNKNOWN.value(localName) : element;
       }
 
    }
