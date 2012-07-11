@@ -124,7 +124,7 @@ public interface ConfigProperty16 extends ConfigProperty
        */
       CONFIG_PROPERTY_CONFIDENTIAL("config-property-confidential");
 
-      private final String name;
+      private String name;
 
       /**
        *
@@ -170,6 +170,17 @@ public interface ConfigProperty16 extends ConfigProperty
       }
 
       /**
+       * Set the value
+       * @param v The name
+       * @return The value
+       */
+      Tag value(String v)
+      {
+         name = v;
+         return this;
+      }
+
+      /**
       *
       * Static method to get enum instance given localName string
       *
@@ -179,7 +190,7 @@ public interface ConfigProperty16 extends ConfigProperty
       public static Tag forName(String localName)
       {
          final Tag element = MAP.get(localName);
-         return element == null ? UNKNOWN : element;
+         return element == null ? UNKNOWN.value(localName) : element;
       }
 
    }
@@ -193,13 +204,17 @@ public interface ConfigProperty16 extends ConfigProperty
     */
    public enum Attribute
    {
+      /** unknown attribute
+       *
+       */
+      UNKNOWN(null),
 
       /** id attribute
        *
        */
       ID("id");
 
-      private final String name;
+      private String name;
 
       /**
        *
@@ -228,6 +243,44 @@ public interface ConfigProperty16 extends ConfigProperty
       public String toString()
       {
          return name;
+      }
+
+      private static final Map<String, Attribute> MAP;
+
+      static
+      {
+         final Map<String, Attribute> map = new HashMap<String, Attribute>();
+         for (Attribute element : values())
+         {
+            final String name = element.getLocalName();
+            if (name != null)
+               map.put(name, element);
+         }
+         MAP = map;
+      }
+
+      /**
+       * Set the value
+       * @param v The name
+       * @return The value
+       */
+      Attribute value(String v)
+      {
+         name = v;
+         return this;
+      }
+
+      /**
+      *
+      * Static method to get enum instance given localName XsdString
+      *
+      * @param localName a XsdString used as localname (typically tag name as defined in xsd)
+      * @return the enum instance
+      */
+      public static Attribute forName(String localName)
+      {
+         final Attribute element = MAP.get(localName);
+         return element == null ? UNKNOWN.value(localName) : element;
       }
    }
 }

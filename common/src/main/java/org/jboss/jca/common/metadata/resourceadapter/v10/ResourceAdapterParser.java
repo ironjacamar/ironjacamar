@@ -273,7 +273,7 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
        */
       RESOURCE_ADAPTERS("resource-adapters");
 
-      private final String name;
+      private String name;
 
       /**
        *
@@ -311,6 +311,17 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
       }
 
       /**
+       * Set the value
+       * @param v The name
+       * @return The value
+       */
+      Tag value(String v)
+      {
+         name = v;
+         return this;
+      }
+
+      /**
       *
       * Static method to get enum instance given localName string
       *
@@ -320,7 +331,7 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
       public static Tag forName(String localName)
       {
          final Tag element = MAP.get(localName);
-         return element == null ? UNKNOWN : element;
+         return element == null ? UNKNOWN.value(localName) : element;
       }
 
    }

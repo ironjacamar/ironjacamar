@@ -87,7 +87,7 @@ public interface CommonConnDef extends org.jboss.jca.common.api.metadata.common.
       /** recovery tag */
       RECOVERY("recovery");
 
-      private final String name;
+      private String name;
 
       /**
        *
@@ -133,6 +133,17 @@ public interface CommonConnDef extends org.jboss.jca.common.api.metadata.common.
       }
 
       /**
+       * Set the value
+       * @param v The name
+       * @return The value
+       */
+      Tag value(String v)
+      {
+         name = v;
+         return this;
+      }
+
+      /**
       *
       * Static method to get enum instance given localName XsdString
       *
@@ -142,7 +153,7 @@ public interface CommonConnDef extends org.jboss.jca.common.api.metadata.common.
       public static Tag forName(String localName)
       {
          final Tag element = MAP.get(localName);
-         return element == null ? UNKNOWN : element;
+         return element == null ? UNKNOWN.value(localName) : element;
       }
 
    }
@@ -197,7 +208,7 @@ public interface CommonConnDef extends org.jboss.jca.common.api.metadata.common.
       */
       ENLISTMENT("enlistment");
 
-      private final String name;
+      private String name;
 
       /**
        *
@@ -243,6 +254,17 @@ public interface CommonConnDef extends org.jboss.jca.common.api.metadata.common.
       }
 
       /**
+       * Set the value
+       * @param v The name
+       * @return The value
+       */
+      Attribute value(String v)
+      {
+         name = v;
+         return this;
+      }
+
+      /**
       *
       * Static method to get enum instance given localName XsdString
       *
@@ -252,7 +274,7 @@ public interface CommonConnDef extends org.jboss.jca.common.api.metadata.common.
       public static Attribute forName(String localName)
       {
          final Attribute element = MAP.get(localName);
-         return element == null ? UNKNOWN : element;
+         return element == null ? UNKNOWN.value(localName) : element;
       }
    }
 }

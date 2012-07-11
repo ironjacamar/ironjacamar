@@ -564,7 +564,7 @@ public class DsParser extends org.jboss.jca.common.metadata.ds.v10.DsParser impl
        */
       DATASOURCES("datasources");
 
-      private final String name;
+      private String name;
 
       /**
        *
@@ -602,6 +602,17 @@ public class DsParser extends org.jboss.jca.common.metadata.ds.v10.DsParser impl
       }
 
       /**
+       * Set the value
+       * @param v The name
+       * @return The value
+       */
+      Tag value(String v)
+      {
+         name = v;
+         return this;
+      }
+
+      /**
       *
       * Static method to get enum instance given localName string
       *
@@ -611,7 +622,7 @@ public class DsParser extends org.jboss.jca.common.metadata.ds.v10.DsParser impl
       public static Tag forName(String localName)
       {
          final Tag element = MAP.get(localName);
-         return element == null ? UNKNOWN : element;
+         return element == null ? UNKNOWN.value(localName) : element;
       }
    }
 }

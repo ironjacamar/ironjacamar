@@ -111,7 +111,7 @@ public interface CommonPool extends JCAMetadata, ValidatableMetadata
        */
       FLUSH_STRATEGY("flush-strategy");
 
-      private final String name;
+      private String name;
 
       /**
        * Create a new Tag.
@@ -156,6 +156,17 @@ public interface CommonPool extends JCAMetadata, ValidatableMetadata
       }
 
       /**
+       * Set the value
+       * @param v The name
+       * @return The value
+       */
+      Tag value(String v)
+      {
+         name = v;
+         return this;
+      }
+
+      /**
       *
       * Static method to get enum instance given localName XsdString
       *
@@ -165,7 +176,7 @@ public interface CommonPool extends JCAMetadata, ValidatableMetadata
       public static Tag forName(String localName)
       {
          final Tag element = MAP.get(localName);
-         return element == null ? UNKNOWN : element;
+         return element == null ? UNKNOWN.value(localName) : element;
       }
    }
 }

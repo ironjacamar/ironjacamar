@@ -97,7 +97,7 @@ public interface CommonAdminObject extends JCAMetadata
        */
       CONFIG_PROPERTY("config-property");
 
-      private final String name;
+      private String name;
 
       /**
        *
@@ -143,6 +143,17 @@ public interface CommonAdminObject extends JCAMetadata
       }
 
       /**
+       * Set the value
+       * @param v The name
+       * @return The value
+       */
+      Tag value(String v)
+      {
+         name = v;
+         return this;
+      }
+
+      /**
       *
       * Static method to get enum instance given localName XsdString
       *
@@ -152,7 +163,7 @@ public interface CommonAdminObject extends JCAMetadata
       public static Tag forName(String localName)
       {
          final Tag element = MAP.get(localName);
-         return element == null ? UNKNOWN : element;
+         return element == null ? UNKNOWN.value(localName) : element;
       }
 
    }
@@ -195,7 +206,7 @@ public interface CommonAdminObject extends JCAMetadata
       */
       USE_JAVA_CONTEXT("use-java-context");
 
-      private final String name;
+      private String name;
 
       /**
        *
@@ -241,6 +252,17 @@ public interface CommonAdminObject extends JCAMetadata
       }
 
       /**
+       * Set the value
+       * @param v The name
+       * @return The value
+       */
+      Attribute value(String v)
+      {
+         name = v;
+         return this;
+      }
+
+      /**
       *
       * Static method to get enum instance given localName XsdString
       *
@@ -250,7 +272,7 @@ public interface CommonAdminObject extends JCAMetadata
       public static Attribute forName(String localName)
       {
          final Attribute element = MAP.get(localName);
-         return element == null ? UNKNOWN : element;
+         return element == null ? UNKNOWN.value(localName) : element;
       }
    }
 }

@@ -122,7 +122,7 @@ public interface Validation extends org.jboss.jca.common.api.metadata.common.Com
       */
       EXCEPTION_SORTER("exception-sorter");
 
-      private final String name;
+      private String name;
 
       /**
        *
@@ -168,6 +168,17 @@ public interface Validation extends org.jboss.jca.common.api.metadata.common.Com
       }
 
       /**
+       * Set the value
+       * @param v The name
+       * @return The value
+       */
+      Tag value(String v)
+      {
+         name = v;
+         return this;
+      }
+
+      /**
       *
       * Static method to get enum instance given localName XsdString
       *
@@ -177,7 +188,7 @@ public interface Validation extends org.jboss.jca.common.api.metadata.common.Com
       public static Tag forName(String localName)
       {
          final Tag element = MAP.get(localName);
-         return element == null ? UNKNOWN : element;
+         return element == null ? UNKNOWN.value(localName) : element;
       }
 
    }

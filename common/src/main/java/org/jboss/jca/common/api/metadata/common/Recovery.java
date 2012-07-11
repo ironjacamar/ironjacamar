@@ -229,7 +229,7 @@ public class Recovery implements JCAMetadata, ValidatableMetadata
 
       RECOVER_PLUGIN("recover-plugin");
 
-      private final String name;
+      private String name;
 
       /**
        *
@@ -275,6 +275,17 @@ public class Recovery implements JCAMetadata, ValidatableMetadata
       }
 
       /**
+       * Set the value
+       * @param v The name
+       * @return The value
+       */
+      Tag value(String v)
+      {
+         name = v;
+         return this;
+      }
+
+      /**
       *
       * Static method to get enum instance given localName XsdString
       *
@@ -284,7 +295,7 @@ public class Recovery implements JCAMetadata, ValidatableMetadata
       public static Tag forName(String localName)
       {
          final Tag element = MAP.get(localName);
-         return element == null ? UNKNOWN : element;
+         return element == null ? UNKNOWN.value(localName) : element;
       }
 
    }
@@ -298,13 +309,17 @@ public class Recovery implements JCAMetadata, ValidatableMetadata
     */
    public enum Attribute
    {
+      /** unknown attribute
+      *
+      */
+      UNKNOWN(null),
 
-      /** class-name attribute
+      /** no-recovery attribute
       *
       */
       NO_RECOVERY("no-recovery");
 
-      private final String name;
+      private String name;
 
       /**
        *
@@ -333,6 +348,44 @@ public class Recovery implements JCAMetadata, ValidatableMetadata
       public String toString()
       {
          return name;
+      }
+
+      private static final Map<String, Attribute> MAP;
+
+      static
+      {
+         final Map<String, Attribute> map = new HashMap<String, Attribute>();
+         for (Attribute element : values())
+         {
+            final String name = element.getLocalName();
+            if (name != null)
+               map.put(name, element);
+         }
+         MAP = map;
+      }
+
+      /**
+       * Set the value
+       * @param v The name
+       * @return The value
+       */
+      Attribute value(String v)
+      {
+         name = v;
+         return this;
+      }
+
+      /**
+      *
+      * Static method to get enum instance given localName XsdString
+      *
+      * @param localName a XsdString used as localname (typically tag name as defined in xsd)
+      * @return the enum instance
+      */
+      public static Attribute forName(String localName)
+      {
+         final Attribute element = MAP.get(localName);
+         return element == null ? UNKNOWN.value(localName) : element;
       }
    }
 }
