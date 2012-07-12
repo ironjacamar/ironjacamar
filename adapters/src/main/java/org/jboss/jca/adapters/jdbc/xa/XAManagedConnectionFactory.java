@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2012, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -24,7 +24,8 @@ package org.jboss.jca.adapters.jdbc.xa;
 
 import org.jboss.jca.adapters.jdbc.BaseWrapperManagedConnectionFactory;
 import org.jboss.jca.adapters.jdbc.classloading.TCClassLoaderPlugin;
-import org.jboss.jca.adapters.jdbc.spi.URLSelectorStrategy;
+import org.jboss.jca.adapters.jdbc.spi.URLXASelectorStrategy;
+import org.jboss.jca.adapters.jdbc.spi.XAData;
 
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
@@ -74,7 +75,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
 
    private String urlProperty;
 
-   private URLSelectorStrategy xadsSelector;
+   private URLXASelectorStrategy xadsSelector;
 
    /**
     * Constructor
@@ -95,24 +96,10 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
    /**
     * Set the URL property
     * @param urlProperty The value
-    * @exception ResourceException Thrown in case of an error
     */
-   public void setURLProperty(String urlProperty) throws ResourceException
+   public void setURLProperty(String urlProperty)
    {
       this.urlProperty = urlProperty;
-      initSelector();
-   }
-
-   /**
-    * Set the URL delimiter
-    * @param urlDelimiter The value
-    * @exception ResourceException Thrown in case of an error
-    */
-   @Override
-   public void setURLDelimiter(String urlDelimiter) throws ResourceException
-   {
-      this.urlDelimiter = urlDelimiter;
-      initSelector();
    }
 
    /**
@@ -198,7 +185,9 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
    @SuppressWarnings("unchecked")
    private void initSelector() throws ResourceException
    {
-      if (urlProperty != null && urlProperty.length() > 0)
+      boolean trace = log.isTraceEnabled();
+
+      if (urlProperty != null && !urlProperty.trim().equals(""))
       {
          String urlsStr = xaProps.get(urlProperty);
          if (urlsStr != null && urlsStr.trim().length() > 0 &&
@@ -206,49 +195,110 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
          {
             List<XAData> xaDataList = new ArrayList<XAData>(2);
 
-            // copy xaProps
-            // ctor doesn't work because iteration won't include defaults
-            // Properties xaPropsCopy = new Properties(xaProps);
             Properties xaPropsCopy = new Properties();
             for (Map.Entry<String, String> entry : xaProps.entrySet())
             {
                xaPropsCopy.put(entry.getKey(), entry.getValue());
             }
 
-            int urlStart = 0;
-            int urlEnd = urlsStr.indexOf(urlDelimiter);
-            while (urlEnd > 0)
+            String[] data = urlsStr.split(urlDelimiter);
+            if (data != null)
             {
-               String url = urlsStr.substring(urlStart, urlEnd);
-               xaPropsCopy.setProperty(urlProperty, url);
-               XADataSource xads = createXaDataSource(xaPropsCopy);
-               xaDataList.add(new XAData(xads, url));
-               urlStart = ++urlEnd;
-               urlEnd = urlsStr.indexOf(urlDelimiter, urlEnd);
-               log.debug("added XA HA connection url: " + url);
-            }
+               for (String url : data)
+               {
+                  xaPropsCopy.setProperty(urlProperty, url);
+                  XADataSource xads = createXaDataSource(xaPropsCopy);
+                  xaDataList.add(new XAData(xads, url));
 
-            if (urlStart != urlsStr.length())
-            {
-               String url = urlsStr.substring(urlStart, urlsStr.length());
-               xaPropsCopy.setProperty(urlProperty, url);
-               XADataSource xads = createXaDataSource(xaPropsCopy);
-               xaDataList.add(new XAData(xads, url));
-               log.debug("added XA HA connection url: " + url);
+                  if (trace)
+                     log.trace("added XA HA connection url: " + url);
+               }
             }
 
             if (getUrlSelectorStrategyClassName() == null)
             {
-               xadsSelector = new XADataSelector(xaDataList);
-               log.debug("Default URLSelectorStrategy is being used : " + xadsSelector);
+               xadsSelector = new URLXASelector();
+               xadsSelector.init(xaDataList);
+               log.debug("Default URLXASelectorStrategy is being used : " + xadsSelector);
             }
             else
             {
-               xadsSelector = (URLSelectorStrategy)loadClass(getUrlSelectorStrategyClassName(), xaDataList);
-               log.debug("Customized URLSelectorStrategy is being used : " + xadsSelector);
+               xadsSelector = initUrlSelectorClass(getUrlSelectorStrategyClassName(), xaDataList);
+               log.debug("Customized URLXASelectorStrategy is being used : " + xadsSelector);
             }
          }
       }
+   }
+
+   /**
+    * Init the URLXASelectStrategy
+    * @param className The class name
+    * @param urls The list with urls
+    * @return The URL selector strategy
+    */
+   private URLXASelectorStrategy initUrlSelectorClass(String className, List<XAData> xaDatas)
+   {
+      URLXASelectorStrategy result = null;
+
+      if (className == null || className.trim().equals(""))
+      {
+         log.error("Unable to load undefined URLXASelectStrategy");
+         return null;
+      }
+
+      Class<?> clz = null;
+      try
+      {
+         clz = Class.forName(className, true, getClassLoaderPlugin().getClassLoader());
+      }
+      catch (ClassNotFoundException cnfe)
+      {
+         // Not found
+      }
+
+      if (clz == null)
+      {
+         try
+         {
+            clz = Class.forName(className, true, new TCClassLoaderPlugin().getClassLoader());
+         }
+         catch (ClassNotFoundException cnfe)
+         {
+            // Not found
+         }
+      }
+
+      if (clz == null)
+      {
+         try
+         {
+            clz = Class.forName(className, true, XAManagedConnectionFactory.class.getClassLoader());
+         }
+         catch (ClassNotFoundException cnfe)
+         {
+            log.error("Unable to load: " + className);
+         }
+      }
+
+      if (clz == null)
+      {
+         log.error("Unable to load defined URLXASelectStrategy: " + className);
+         return null;
+      }
+
+      try
+      {
+         result = (URLXASelectorStrategy)clz.newInstance();
+
+         Method init = clz.getMethod("init", new Class[] {List.class});
+         init.invoke(result, new Object[] {xaDatas});
+      }
+      catch (Throwable t)
+      {
+         log.error("URLXASelectStrategy:" + t.getMessage(), t);
+      }
+
+      return result;
    }
 
    @SuppressWarnings("unchecked")
@@ -294,7 +344,6 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
             throw new ResourceException("Class not found for XADataSource " + getXADataSourceClass(), cnfe);
          }
       }
-
 
       try
       {
@@ -380,18 +429,20 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
    public synchronized ManagedConnection createManagedConnection(Subject subject, ConnectionRequestInfo cri)
       throws javax.resource.ResourceException
    {
+      if (urlProperty != null && !urlProperty.trim().equals("") && xadsSelector == null)
+         initSelector();
+
       if (xadsSelector == null)
       {
          return getXAManagedConnection(subject, cri);
       }
 
-      // try to get a connection as many times as many urls we have in the list
-      for (int i = 0; i < xadsSelector.getCustomSortedUrls().size(); ++i)
+      while (xadsSelector.hasMore())
       {
-         XAData xaData = (XAData)xadsSelector.getUrlObject();
+         XAData xaData = xadsSelector.active();
 
          if (log.isTraceEnabled())
-            log.trace("Trying to create an XA connection to " + xaData.url);
+            log.trace("Trying to create an XA connection to " + xaData.getUrl());
 
          try
          {
@@ -399,14 +450,16 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
          }
          catch (ResourceException e)
          {
-            log.warn("Failed to create an XA connection to " + xaData.url + ": " + e.getMessage());
-            xadsSelector.failedUrlObject(xaData);
+            log.warn("Failed to create an XA connection to " + xaData.getUrl() + ": " + e.getMessage());
+            xadsSelector.fail(xaData);
          }
       }
 
+      xadsSelector.reset();
+
       // we have supposedly tried all the urls
       throw new ResourceException("Could not create connection using any of the URLs: " +
-                                  xadsSelector.getAllUrlObjects());
+                                  xadsSelector.getData());
    }
 
    /**
@@ -537,8 +590,8 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
    {
       if (xadsSelector != null)
       {
-         XAData xada = (XAData)xadsSelector.getUrlObject();
-         return xada.xads;
+         XAData xada = xadsSelector.active();
+         return xada.getXADataSource();
       }
 
       if (xads == null)
@@ -648,153 +701,5 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
       sb.append("]");
 
       return sb.toString();
-   }
- 
-   /**
-    * Default implementation
-    */
-   public static class XADataSelector implements URLSelectorStrategy
-   {
-      private final List<XAData> xaDataList;
-      private int xaDataIndex;
-      private XAData xaData;
-
-      /**
-       * Constructor
-       * @param xaDataList The XAData instances
-       */
-      public XADataSelector(List<XAData> xaDataList)
-      {
-         if (xaDataList == null || xaDataList.size() == 0)
-         {
-            throw new IllegalStateException("Expected non-empty list of XADataSource/URL pairs but got: " + xaDataList);
-         }
-
-         this.xaDataList = xaDataList;
-      }
-
-      /**
-       * Get the XAData
-       * @return The value
-       */
-      public synchronized XAData getXAData()
-      {
-         if (xaData == null)
-         {
-            if (xaDataIndex == xaDataList.size())
-            {
-               xaDataIndex = 0;
-            }
-
-            xaData = xaDataList.get(xaDataIndex++);
-         }
-
-         return xaData;
-      }
-
-      /**
-       * Fail XAData
-       * @param xads The value
-       */
-      public synchronized void failedXAData(XAData xads)
-      {
-         if (xads.equals(this.xaData))
-         {
-            this.xaData = null;
-         }
-      }
-
-      /**
-       * Get all the custom URL objects
-       * @return The value
-       */
-      public List<XAData> getCustomSortedUrls()
-      {
-         return xaDataList;
-      }
-
-      /**
-       * Fail an URL objects
-       * @param urlObject The value
-       */
-      public void failedUrlObject(Object urlObject)
-      {
-         failedXAData((XAData)urlObject);
-      }
-
-      /**
-       * Get all the URL objects
-       * @return The value
-       */
-      public List<XAData> getAllUrlObjects()
-      {
-         return xaDataList;
-      }
-
-      /**
-       * Get the URL object
-       * @return The value
-       */
-      public Object getUrlObject()
-      {
-         return getXAData();
-      }
-   }
-
-   private static class XAData
-   {
-      private final XADataSource xads;
-      private final String url;
-
-      public XAData(final XADataSource xads, final String url)
-      {
-         this.xads = xads;
-         this.url = url;
-      }
-
-      public XADataSource getXads()
-      {
-         return xads;
-      }
-
-      public String getUrl()
-      {
-         return url;
-      }
-
-      @Override
-      public boolean equals(Object o)
-      {
-         if (this == o)
-         {
-            return true;
-         }
-
-         if (!(o instanceof XAData))
-         {
-            return false;
-         }
-
-         final XAData xaData = (XAData)o;
-
-         if (!url.equals(xaData.url))
-         {
-            return false;
-         }
-
-         return true;
-      }
-
-      @Override
-      public int hashCode()
-      {
-         return url.hashCode();
-      }
-
-      @Override
-      public String toString()
-      {
-         return "[XA URL=" + url + "]";
-      }
    }
 }

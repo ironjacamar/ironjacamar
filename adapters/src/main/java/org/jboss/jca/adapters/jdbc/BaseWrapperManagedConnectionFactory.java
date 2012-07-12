@@ -29,7 +29,6 @@ import org.jboss.jca.adapters.jdbc.extensions.novendor.NullValidConnectionChecke
 import org.jboss.jca.adapters.jdbc.spi.ClassLoaderPlugin;
 import org.jboss.jca.adapters.jdbc.spi.ExceptionSorter;
 import org.jboss.jca.adapters.jdbc.spi.StaleConnectionChecker;
-import org.jboss.jca.adapters.jdbc.spi.URLSelectorStrategy;
 import org.jboss.jca.adapters.jdbc.spi.ValidConnectionChecker;
 import org.jboss.jca.adapters.jdbc.spi.reauth.ReauthPlugin;
 import org.jboss.jca.adapters.jdbc.statistics.JdbcStatisticsPlugin;
@@ -41,8 +40,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.Serializable;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.sql.Connection;
@@ -201,8 +198,6 @@ public abstract class BaseWrapperManagedConnectionFactory
 
    /** URL selector strategy class name */
    protected String urlSelectorStrategyClassName;
-
-   private URLSelectorStrategy urlSelectorStrategy;
 
    private Boolean validateOnMatch = Boolean.TRUE;
 
@@ -627,15 +622,6 @@ public abstract class BaseWrapperManagedConnectionFactory
    }
 
    /**
-    * Get the url delimiter
-    * @return The value
-    */
-   public String getURLDelimiter()
-   {
-      return urlDelimiter;
-   }
-
-   /**
     * Set the spy value
     * @param v The value
     */
@@ -827,11 +813,19 @@ public abstract class BaseWrapperManagedConnectionFactory
    }
 
    /**
+    * Get the url delimiter
+    * @return The value
+    */
+   public String getURLDelimiter()
+   {
+      return urlDelimiter;
+   }
+
+   /**
     * Set the url delimiter.
     * @param urlDelimiter The value
-    * @exception ResourceException Thrown in case of an error
     */
-   public void setURLDelimiter(String urlDelimiter) throws ResourceException
+   public void setURLDelimiter(String urlDelimiter)
    {
       this.urlDelimiter = urlDelimiter;
    }
@@ -852,80 +846,6 @@ public abstract class BaseWrapperManagedConnectionFactory
    public void setUrlSelectorStrategyClassName(String urlSelectorStrategyClassName)
    {
       this.urlSelectorStrategyClassName = urlSelectorStrategyClassName;
-   }
-
-   /**
-    * Get the url selector strategy
-    * @return The value
-    */
-   public URLSelectorStrategy getUrlSelectorStrategy()
-   {
-      return urlSelectorStrategy;
-   }
-
-   /**
-    * Load the URLSelectStrategy
-    * @param className The class name
-    * @param constructorParameter The parameter
-    * @return The URL selector strategy
-    */
-   public Object loadClass(String className, Object constructorParameter)
-   {
-      Object result = null;
-
-      if (className == null || className.trim().equals(""))
-      {
-         log.error("Unable to load undefined URLSelectStrategy");
-         return null;
-      }
-
-      Class<?> clz = null;
-      try
-      {
-         clz = Class.forName(className, true, getClassLoaderPlugin().getClassLoader());
-      }
-      catch (ClassNotFoundException cnfe)
-      {
-         // Not found
-      }
-
-      if (clz == null)
-      {
-         try
-         {
-            clz = Class.forName(className, true, new TCClassLoaderPlugin().getClassLoader());
-         }
-         catch (ClassNotFoundException cnfe)
-         {
-            // Not found
-         }
-      }
-
-      if (clz == null)
-      {
-         try
-         {
-            clz = Class.forName(className, true, BaseWrapperManagedConnectionFactory.class.getClassLoader());
-         }
-         catch (ClassNotFoundException cnfe)
-         {
-            log.error("Unable to load: " + className);
-         }
-      }
-
-      try
-      {
-         Class<?> param[] = {java.util.List.class};
-         Constructor<?> constructor = clz.getDeclaredConstructor(param);
-         Object consParameter[] = {constructorParameter};
-         result = constructor.newInstance(consParameter);
-      }
-      catch (Throwable t)
-      {
-         log.error("URLSelectStrategy:" + t.getMessage(), t);
-      }
-
-      return result;
    }
 
    /**

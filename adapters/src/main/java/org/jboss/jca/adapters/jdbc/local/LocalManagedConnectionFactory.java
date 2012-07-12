@@ -23,17 +23,18 @@
 package org.jboss.jca.adapters.jdbc.local;
 
 import org.jboss.jca.adapters.jdbc.BaseWrapperManagedConnectionFactory;
+import org.jboss.jca.adapters.jdbc.classloading.TCClassLoaderPlugin;
 import org.jboss.jca.adapters.jdbc.spi.URLSelectorStrategy;
 import org.jboss.jca.adapters.jdbc.util.Injection;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -226,6 +227,9 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
          log.trace("Using properties: " + logCopy);
       }
 
+      if (getURLDelimiter() != null && !getURLDelimiter().trim().equals("") && urlSelector == null)
+         initUrlSelector();
+
       if (urlSelector != null)
       {
          return getHALocalManagedConnection(props, copy);
@@ -282,18 +286,13 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       throws ResourceException
    {
       boolean trace = log.isTraceEnabled();
-      
-      if (driverClass == null || driverClass.trim().equals(""))
-         throw new ResourceException("HALocalManagedConnection only supported with <driver-class>");
 
-      // try to get a connection as many times as many urls we have in the list
-      for (int i = 0; i < urlSelector.getCustomSortedUrls().size(); ++i)
+      while (urlSelector.hasMore())
       {
-         String url = (String)urlSelector.getUrlObject();
+         String url = urlSelector.active();
+
          if (trace)
-         {
-            log.trace("Trying to create a connection to " + url);
-         }
+            log.tracef("Trying to create a connection to %s", url);
 
          Connection con = null;
          try
@@ -303,7 +302,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
             if (con == null)
             {
                log.warn("Wrong driver class [" + d.getClass() + "] for this connection URL: " + url);
-               urlSelector.failedUrlObject(url);
+               urlSelector.fail(url);
             }
             else
             {
@@ -324,160 +323,120 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
                }
             }
             log.warn("Failed to create connection for " + url + ": " + e.getMessage());
-            urlSelector.failedUrlObject(url);
+            urlSelector.fail(url);
          }
       }
 
+      // Reset the URL selector for next iteration
+      urlSelector.reset();
+
       // we have supposedly tried all the urls
       throw new ResourceException("Could not create connection using any of the URLs: " +
-                                  urlSelector.getAllUrlObjects());
-   }
-
-   /**
-    * Set the URL delimiter
-    * @param urlDelimiter The value
-    */
-   @Override
-   public void setURLDelimiter(String urlDelimiter) //throws ResourceException
-   {
-      super.urlDelimiter = urlDelimiter;
-      if (getConnectionURL() != null)
-      {
-         initUrlSelector();
-      }
+                                  urlSelector.getData());
    }
 
    /**
     * Init URL selector
     */
-   protected void initUrlSelector() //throws ResourceException
+   protected void initUrlSelector()
    {
       boolean trace = log.isTraceEnabled();
-
       List<String> urlsList = new ArrayList<String>();
-      String urlsStr = getConnectionURL();
-      String url;
-      int urlStart = 0;
-      int urlEnd = urlsStr.indexOf(urlDelimiter);
 
-      while (urlEnd > 0)
+      String[] data = getConnectionURL().split(urlDelimiter);
+
+      if (data != null)
       {
-         url = urlsStr.substring(urlStart, urlEnd);
-         urlsList.add(url);
-         urlStart = ++urlEnd;
-         urlEnd = urlsStr.indexOf(urlDelimiter, urlEnd);
-
-         if (trace)
-            log.trace("added HA connection url: " + url);
-      }
-
-      if (urlStart != urlsStr.length())
-      {
-         url = urlsStr.substring(urlStart, urlsStr.length());
-         urlsList.add(url);
-
-         if (trace)
-            log.trace("added HA connection url: " + url);
+         for (String url : data)
+         {
+            urlsList.add(url);
+            if (trace)
+               log.trace("added HA connection url: " + url);
+         }
       }
 
       if (getUrlSelectorStrategyClassName() == null)
       {
-         this.urlSelector = new URLSelector(urlsList);
+         this.urlSelector = new URLSelector();
+         this.urlSelector.init(urlsList);
          log.debug("Default URLSelectorStrategy is being used : " + urlSelector);
       }
       else
       {
-         this.urlSelector = (URLSelectorStrategy)loadClass(getUrlSelectorStrategyClassName(), urlsList);
+         this.urlSelector = initUrlSelectorClass(getUrlSelectorStrategyClassName(), urlsList);
          log.debug("Customized URLSelectorStrategy is being used : " + urlSelector);
       }
    }
 
    /**
-    * Default implementation
+    * Init the URLSelectStrategy
+    * @param className The class name
+    * @param urls The list with urls
+    * @return The URL selector strategy
     */
-   public static class URLSelector implements URLSelectorStrategy
+   private URLSelectorStrategy initUrlSelectorClass(String className, List<String> urls)
    {
-      private final List<String> urls;
-      private int urlIndex;
-      private String url;
+      URLSelectorStrategy result = null;
 
-      /**
-       * Constructor
-       * @param urls The urls
-       */
-      public URLSelector(List<String> urls)
+      if (className == null || className.trim().equals(""))
       {
-         if (urls == null || urls.size() == 0)
-         {
-            throw new IllegalStateException("Expected non-empty list of connection URLs but got: " + urls);
-         }
-         this.urls = Collections.unmodifiableList(urls);
+         log.error("Unable to load undefined URLSelectStrategy");
+         return null;
       }
 
-      /**
-       * Get the url
-       * @return The value
-       */
-      public synchronized String getUrl()
+      Class<?> clz = null;
+      try
       {
-         if (url == null)
-         {
-            if (urlIndex == urls.size())
-            {
-               urlIndex = 0;
-            }
-            url = urls.get(urlIndex++);
-         }
-         return url;
+         clz = Class.forName(className, true, getClassLoaderPlugin().getClassLoader());
+      }
+      catch (ClassNotFoundException cnfe)
+      {
+         // Not found
       }
 
-      /**
-       * Failed an url
-       * @param url The value
-       */
-      public synchronized void failedUrl(String url)
+      if (clz == null)
       {
-         if (url.equals(this.url))
+         try
          {
-            this.url = null;
+            clz = Class.forName(className, true, new TCClassLoaderPlugin().getClassLoader());
+         }
+         catch (ClassNotFoundException cnfe)
+         {
+            // Not found
          }
       }
 
-      /**
-       * Get all the custom url objects
-       * @return The value
-       */
-      public List<?> getCustomSortedUrls()
+      if (clz == null)
       {
-         return urls;
+         try
+         {
+            clz = Class.forName(className, true, LocalManagedConnectionFactory.class.getClassLoader());
+         }
+         catch (ClassNotFoundException cnfe)
+         {
+            log.error("Unable to load: " + className);
+         }
       }
 
-      /**
-       * Fail an url object
-       * @param urlObject The value
-       */
-      public void failedUrlObject(Object urlObject)
+      if (clz == null)
       {
-         failedUrl((String)urlObject);
+         log.error("Unable to load defined URLSelectStrategy: " + className);
+         return null;
       }
 
-      /**
-       * Get all the url objects
-       * @return The value
-       */
-      public List<?> getAllUrlObjects()
+      try
       {
-         return urls;
+         result = (URLSelectorStrategy)clz.newInstance();
+
+         Method init = clz.getMethod("init", new Class[] {List.class});
+         init.invoke(result, new Object[] {urls});
+      }
+      catch (Throwable t)
+      {
+         log.error("URLSelectStrategy:" + t.getMessage(), t);
       }
 
-      /**
-       * Get the url object
-       * @return The value
-       */
-      public Object getUrlObject()
-      {
-         return getUrl();
-      }
+      return result;
    }
 
    /**
