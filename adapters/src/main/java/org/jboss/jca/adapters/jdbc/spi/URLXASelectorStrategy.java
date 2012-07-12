@@ -25,35 +25,35 @@ package org.jboss.jca.adapters.jdbc.spi;
 import java.util.List;
 
 /**
- * URLSelectorStrategy
+ * URLXASelectorStrategy
  *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public interface URLSelectorStrategy 
+public interface URLXASelectorStrategy 
 {
    /**
-    * Init the plugin with the URLs
-    * @param urls The URLs
+    * Init the plugin with the XAData entries
+    * @param xds The value
     */
-   public void init(List<String> urls);
+   public void init(List<XAData> xds);
 
    /**
-    * Does the plugin has more valid URLs ?
+    * Does the plugin has more valid XAData entries ?
     * @return True, if more are available, otherwise false
     */
    public boolean hasMore();
 
    /**
-    * Get the active URL
+    * Get the active XAData entry
     * @return The value
     */
-   public String active();
+   public XAData active();
 
    /**
-    * Fail an URL - e.g. mark it as bad
-    * @param url The URL
+    * Fail a XAData entry - e.g. mark it as bad
+    * @param xd The value
     */
-   public void fail(String url);
+   public void fail(XAData xd);
 
    /**
     * Reset the plugin
