@@ -113,7 +113,7 @@
   <property name="version.dom4j" value="1.6.1"/>
   <property name="version.mockito" value="1.9.0"/>
   <property name="version.eclipse.ecj" value="3.5.1"/>
-  <property name="version.fungal" value="0.11.0.Beta10"/>
+  <property name="version.fungal" value="0.11.0.Beta11"/>
   <property name="version.h2" value="1.3.159"/>
   <property name="version.hibernate-validator" value="4.2.0.Final"/>
   <property name="version.hornetq" value="2.2.2.Final"/>
