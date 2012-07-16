@@ -271,4 +271,11 @@
     <depends>ConnectionValidator</depends>
   </bean>
 
+  <!-- Remote deployer -->
+  <bean name="RemoteDeployer" 
+        class="org.jboss.jca.deployers.fungal.remote.RemoteDeployer">
+    <property name="Kernel"><inject bean="Kernel"/></property>
+    <property name="RemoteDirectory">${iron.jacamar.home}${/}deploy${/}remote</property>
+  </bean>
+
 </deployment>
