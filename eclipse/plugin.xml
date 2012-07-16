@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <!--
    <extension
          point="org.eclipse.ui.commands">
       <category
@@ -9,12 +8,12 @@
             id="ironjacamar-eclipse.commands.category">
       </category>
       <command
-            name="Validate Command"
+            name="Validate"
             categoryId="ironjacamar-eclipse.commands.category"
             id="ironjacamar-eclipse.commands.validateCommand">
       </command>
       <command
-            name="Deploy Command"
+            name="Deploy"
             categoryId="ironjacamar-eclipse.commands.category"
             id="ironjacamar-eclipse.commands.deployCommand">
       </command>
@@ -48,11 +47,11 @@
    <extension
          point="org.eclipse.ui.menus">
       <menuContribution
-            locationURI="menu:org.eclipse.ui.main.menu?after=additions">
+            locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
          <menu
-               label="Build Menu"
+               label="IronJacamar"
                mnemonic="M"
-               id="ironjacamar-eclipse.menus.buildMenu">
+               id="ironjacamar-eclipse.popup.ironjacamar">
             <command
                   commandId="ironjacamar-eclipse.commands.validateCommand"
                   mnemonic="V"
@@ -84,7 +83,7 @@
          </toolbar>
       </menuContribution>
    </extension>
-   -->
+
    <extension
          point="org.eclipse.ui.newWizards">
       <category
