@@ -78,7 +78,8 @@ public class URLXASelector implements URLXASelectorStrategy
       if (currentIndex == data.size())
          currentIndex = 0;
 
-      return data.get(currentIndex);
+      current = data.get(currentIndex);
+      return current;
    }
 
    /**
@@ -86,7 +87,7 @@ public class URLXASelector implements URLXASelectorStrategy
     */
    public void fail(XAData xd)
    {
-      if (current.equals(xd))
+      if (current != null && current.equals(xd))
          current = null;
    }
 
