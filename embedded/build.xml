@@ -65,7 +65,7 @@
          indexMetaInf="true"
          update="true"
          level="9"
-         excludes="META-INF/services/**,**/arquillian/**,**/*.java">
+         excludes="META-INF/services/**,arquillian.xml,**/arquillian/**,**/*.java">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Embedded"/>
         <attribute name="Implementation-Version" value="${version}"/>
@@ -81,15 +81,31 @@
     </copy>
 
     <jar destfile="${target.dir}/${name}-embedded-arquillian.jar"
-         basedir="${build.embedded.dir}/impl"
          index="true"
          indexMetaInf="true"
          update="true"
-         level="9"
-         includes="META-INF/**,**/arquillian/**"
-         excludes="**/*.xml,**/*.java">
+         level="9">
+      <fileset dir="${build.embedded.dir}/impl"
+               includes="META-INF/**,**/arquillian/**">
+      </fileset>
       <manifest>
-        <attribute name="Implementation-Title" value="IronJacamar Embedded"/>
+        <attribute name="Implementation-Title" value="IronJacamar Embedded Arquillian"/>
+        <attribute name="Implementation-Version" value="${version}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+    </jar>
+
+    <jar destfile="${target.dir}/${name}-embedded-arquillian-byteman.jar"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9">
+      <fileset dir="${build.embedded.dir}/impl"
+               includes="arquillian.xml">
+      </fileset>
+      <manifest>
+        <attribute name="Implementation-Title" value="IronJacamar Embedded Arquillian Byteman"/>
         <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
@@ -170,7 +186,10 @@
       
       <classpath>
         <pathelement location="${build.embedded.dir}/test"/>
-        <fileset dir="${target.dir}" includes="*.jar"/>
+        <fileset dir="${target.dir}">
+          <include name="**/*"/>
+          <exclude name="**/*byteman*"/>
+        </fileset>
         <fileset dir="${lib.dir}/common" includes="*.jar" />
         <fileset dir="${lib.dir}/embedded" includes="*.jar" />
         <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
@@ -188,6 +207,49 @@
         
         <fileset dir="${build.embedded.dir}/test">
           <include name="**/*TestCase.class"/>
+          <exclude name="**/*BMTestCase.class"/>
+        </fileset>
+      </batchtest>
+
+    </junit>
+
+    <junit dir="src/test"
+           printsummary="${junit.printsummary}"
+           haltonerror="${junit.haltonerror}"
+           haltonfailure="${junit.haltonfailure}"
+           fork="${junit.fork}"
+           timeout="${junit.timeout}">
+      
+      <jvmarg line="${junit.jvm.options}"/>
+      <sysproperty key="archives.dir" value="${build.embedded.dir}"/>
+      <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
+      <sysproperty key="log4j.defaultInitOverride" value="true"/>
+      <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
+      <sysproperty key="test.dir" value="${test.dir}"/>
+      <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
+      
+      <classpath>
+        <pathelement location="${build.embedded.dir}/test"/>
+        <fileset dir="${target.dir}" includes="*.jar"/>
+        <fileset dir="${lib.dir}/common" includes="*.jar" />
+        <fileset dir="${lib.dir}/embedded" includes="*.jar" />
+        <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
+        <fileset dir="${lib.dir}/byteman" includes="*.jar" />
+        <fileset dir="${lib.dir}/sjc" includes="*.jar" />
+        <fileset dir="${lib.dir}/test" includes="*.jar" />
+        <fileset dir="${java.home}/../lib/" includes="tools.jar" />
+      </classpath>
+      
+      <formatter type="plain"/>
+      <formatter type="xml"/>
+      
+      <batchtest todir="${reports.dir}/embedded"
+                 haltonerror="${junit.batchtest.haltonerror}"
+                 haltonfailure="${junit.batchtest.haltonfailure}"
+                 fork="${junit.batchtest.fork}">
+        
+        <fileset dir="${build.embedded.dir}/test">
+          <include name="**/*BMTestCase.class"/>
         </fileset>
       </batchtest>
 
@@ -223,8 +285,10 @@
         <fileset dir="${lib.dir}/common" includes="*.jar" />
         <fileset dir="${lib.dir}/embedded" includes="*.jar" />
         <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
+        <fileset dir="${lib.dir}/byteman" includes="*.jar" />
         <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
+        <fileset dir="${java.home}/../lib/" includes="tools.jar" />
       </classpath>
       
       <formatter type="plain"/>
@@ -266,6 +330,21 @@
          includes="**/embedded/arquillian/**">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Embedded Arquillian - Sources"/>
+        <attribute name="Implementation-Version" value="${version}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+    </jar>
+
+    <jar destfile="${target.dir}/${name}-embedded-arquillian-byteman-sources.jar"
+         basedir="src/main/java"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9"
+         includes="*">
+      <manifest>
+        <attribute name="Implementation-Title" value="IronJacamar Embedded Arquillian Byteman - Sources"/>
         <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
@@ -343,6 +422,21 @@
          level="9">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Embedded Arquillian - JavaDoc"/>
+        <attribute name="Implementation-Version" value="${version}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+    </jar>
+
+    <mkdir dir="${build.embedded.dir}/docs/byteman"/>
+    <jar destfile="${target.dir}/${name}-embedded-arquillian-byteman-javadoc.jar"
+         basedir="${build.embedded.dir}/docs/byteman"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9">
+      <manifest>
+        <attribute name="Implementation-Title" value="IronJacamar Embedded Arquillian Byteman - JavaDoc"/>
         <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>

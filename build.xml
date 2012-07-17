@@ -109,7 +109,9 @@
   <property name="version.apache-log4j" value="1.2.16"/>
   <property name="version.apache-logging" value="1.1.0.jboss"/>
   <property name="version.apiviz" value="1.3.1.GA"/>
-  <property name="version.arquillian" value="1.0.0.Final"/>
+  <property name="version.arquillian" value="1.0.1.Final"/>
+  <property name="version.arquillian.byteman" value="1.0.0.Alpha2"/>
+  <property name="version.byteman" value="2.0.4"/>
   <property name="version.dom4j" value="1.6.1"/>
   <property name="version.mockito" value="1.9.0"/>
   <property name="version.eclipse.ecj" value="3.5.1"/>
@@ -128,7 +130,7 @@
   <property name="version.jboss.netty" value="3.2.1.Final"/>
   <property name="version.jboss.picketbox" value="4.0.8.Final"/>
   <property name="version.jboss.security" value="2.1.0.20090318"/>
-  <property name="version.jboss.shrinkwrap" value="1.0.0"/>
+  <property name="version.jboss.shrinkwrap" value="1.0.1"/>
   <property name="version.jboss.shrinkwrap.descriptors" value="2.0.0-alpha-1"/>
   <property name="version.jboss.slf4j.logmanager" value="1.0.0.GA"/>
   <property name="version.jboss.stdio" value="1.0.1.GA"/>
@@ -159,6 +161,9 @@
       <include name="**/*.jar"/>
     </fileset>
     <fileset dir="${lib.dir}/arquillian">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="${lib.dir}/byteman">
       <include name="**/*.jar"/>
     </fileset>
     <fileset dir="${lib.dir}/jetty">
@@ -203,6 +208,9 @@
     <fileset dir="${lib.dir}/arquillian">
       <include name="**/*.jar"/>
     </fileset>
+    <fileset dir="${lib.dir}/byteman">
+      <include name="**/*.jar"/>
+    </fileset>
     <fileset dir="${lib.dir}/mail">
       <include name="**/*.jar"/>
     </fileset>
@@ -229,6 +237,9 @@
       <include name="**/*.jar"/>
     </fileset>
     <fileset dir="${lib.dir}/arquillian">
+      <include name="**/*.jar"/>
+    </fileset>
+    <fileset dir="${lib.dir}/byteman">
       <include name="**/*.jar"/>
     </fileset>
     <fileset dir="${lib.dir}/jetty">
@@ -298,7 +309,7 @@
 
   <target name="resolve" depends="init,resolve-as" unless="as">
     <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" 
-                  conf="common,sjc,embedded,arquillian,jetty,hornetq,mail,test,tools"
+                  conf="common,sjc,embedded,byteman,arquillian,jetty,hornetq,mail,test,tools"
                   sync="true"/>
   </target>
   
@@ -558,6 +569,9 @@
         <fileset dir="${lib.dir}/arquillian">
           <include name="*.jar"/>
         </fileset>
+        <fileset dir="${lib.dir}/byteman">
+          <include name="*.jar"/>
+        </fileset>
         <fileset dir="${lib.dir}/jetty">
           <include name="*.jar"/>
         </fileset>
@@ -588,6 +602,7 @@
       <class location="${target.dir}/${name}-deployers-fungal.jar" />
       <class location="${target.dir}/${name}-embedded.jar" />
       <class location="${target.dir}/${name}-embedded-arquillian.jar" />
+      <class location="${target.dir}/${name}-embedded-arquillian-byteman.jar" />
       <class location="${target.dir}/${name}-sjc.jar" />
       <class location="${target.dir}/${name}-spec-api.jar" />
       <class location="${target.dir}/${name}-validator.jar" />
@@ -613,6 +628,9 @@
         <fileset dir="${lib.dir}/arquillian">
           <include name="*.jar"/>
         </fileset>
+        <fileset dir="${lib.dir}/byteman">
+          <include name="*.jar"/>
+        </fileset>
         <fileset dir="${lib.dir}/jetty">
           <include name="*.jar"/>
         </fileset>
@@ -643,6 +661,7 @@
       <class location="${target.dir}/${name}-deployers-fungal.jar" />
       <class location="${target.dir}/${name}-embedded.jar" />
       <class location="${target.dir}/${name}-embedded-arquillian.jar" />
+      <class location="${target.dir}/${name}-embedded-arquillian-byteman.jar" />
       <class location="${target.dir}/${name}-sjc.jar" />
       <class location="${target.dir}/${name}-spec-api.jar" />
       <class location="${target.dir}/${name}-validator.jar" />
@@ -690,6 +709,7 @@
     <copy todir="${build.dir}/instrumented">
       <fileset dir="${target.dir}">
         <include name="${name}-core-api.jar"/>
+        <include name="${name}-embedded-arquillian-byteman.jar"/>
       </fileset>
     </copy>
 
@@ -714,12 +734,14 @@
         <fileset dir="${lib.dir}/common" includes="*.jar" />
         <fileset dir="${lib.dir}/embedded" includes="*.jar" />
         <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
+        <fileset dir="${lib.dir}/byteman" includes="*.jar" />
         <fileset dir="${lib.dir}/jetty" includes="*.jar" />
         <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
         <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/mail" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
         <fileset dir="${lib.dir}/tools" includes="*.jar" />
+        <fileset dir="${java.home}/../lib/" includes="tools.jar" />
       </classpath>
       <classpath refid="cobertura.lib.path.id" />
       
@@ -753,12 +775,14 @@
         <fileset dir="${lib.dir}/common" includes="*.jar" />
         <fileset dir="${lib.dir}/embedded" includes="*.jar" />
         <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
+        <fileset dir="${lib.dir}/byteman" includes="*.jar" />
         <fileset dir="${lib.dir}/jetty" includes="*.jar" />
         <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
         <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/mail" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
         <fileset dir="${lib.dir}/tools" includes="*.jar" />
+        <fileset dir="${java.home}/../lib/" includes="tools.jar" />
       </classpath>
       <classpath refid="cobertura.lib.path.id" />
       
@@ -792,12 +816,14 @@
         <fileset dir="${lib.dir}/common" includes="*.jar" />
         <fileset dir="${lib.dir}/embedded" includes="*.jar" />
         <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
+        <fileset dir="${lib.dir}/byteman" includes="*.jar" />
         <fileset dir="${lib.dir}/jetty" includes="*.jar" />
         <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
         <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/mail" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
         <fileset dir="${lib.dir}/tools" includes="*.jar" />
+        <fileset dir="${java.home}/../lib/" includes="tools.jar" />
       </classpath>
       <classpath refid="cobertura.lib.path.id" />
       
@@ -809,7 +835,7 @@
         </fileset>
       </batchtest>
     </junit>
-
+ 
     <junit dir="embedded/src/test"
            printsummary="${junit.printsummary}"
            haltonerror="${junit.haltonerror}"
@@ -831,12 +857,14 @@
         <fileset dir="${lib.dir}/common" includes="*.jar" />
         <fileset dir="${lib.dir}/embedded" includes="*.jar" />
         <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
+        <fileset dir="${lib.dir}/byteman" includes="*.jar" />
         <fileset dir="${lib.dir}/jetty" includes="*.jar" />
         <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
         <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/mail" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
         <fileset dir="${lib.dir}/tools" includes="*.jar" />
+        <fileset dir="${java.home}/../lib/" includes="tools.jar" />
       </classpath>
       <classpath refid="cobertura.lib.path.id" />
       
@@ -870,12 +898,14 @@
         <fileset dir="${lib.dir}/common" includes="*.jar" />
         <fileset dir="${lib.dir}/embedded" includes="*.jar" />
         <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
+        <fileset dir="${lib.dir}/byteman" includes="*.jar" />
         <fileset dir="${lib.dir}/jetty" includes="*.jar" />
         <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
         <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/mail" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
         <fileset dir="${lib.dir}/tools" includes="*.jar" />
+        <fileset dir="${java.home}/../lib/" includes="tools.jar" />
       </classpath>
       <classpath refid="cobertura.lib.path.id" />
       
@@ -909,12 +939,14 @@
         <fileset dir="${lib.dir}/common" includes="*.jar" />
         <fileset dir="${lib.dir}/embedded" includes="*.jar" />
         <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
+        <fileset dir="${lib.dir}/byteman" includes="*.jar" />
         <fileset dir="${lib.dir}/jetty" includes="*.jar" />
         <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
         <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/mail" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
         <fileset dir="${lib.dir}/tools" includes="*.jar" />
+        <fileset dir="${java.home}/../lib/" includes="tools.jar" />
       </classpath>
       <classpath refid="cobertura.lib.path.id" />
       
@@ -950,12 +982,14 @@
         <fileset dir="${lib.dir}/common" includes="*.jar" />
         <fileset dir="${lib.dir}/embedded" includes="*.jar" />
         <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
+        <fileset dir="${lib.dir}/byteman" includes="*.jar" />
         <fileset dir="${lib.dir}/jetty" includes="*.jar" />
         <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
         <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/mail" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
         <fileset dir="${lib.dir}/tools" includes="*.jar" />
+        <fileset dir="${java.home}/../lib/" includes="tools.jar" />
       </classpath>
       <classpath refid="cobertura.lib.path.id" />
       
@@ -1286,7 +1320,7 @@ VERSION=${version}
     <fail message="IronJacamar doesn't support JDK 7+ artifacts" if="HAVE_JDK_1.7"/>
   
     <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" 
-                  conf="${name}-as,${name}-codegenerator,${name}-deployers-fungal,${name}-embedded,${name}-embedded-arquillian,${name}-spec-api,${name}-validator-ant,${name}-validator-cli,jdbc-local,jdbc-xa,mail"
+                  conf="${name}-as,${name}-codegenerator,${name}-deployers-fungal,${name}-embedded,${name}-embedded-arquillian,${name}-embedded-arquillian-byteman,${name}-spec-api,${name}-validator-ant,${name}-validator-cli,jdbc-local,jdbc-xa,mail"
                   sync="true"/>
 
     <!-- ironjacamar-as -->
@@ -1388,6 +1422,23 @@ mvn install:install-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depc
 
     <deploy-file file="deploy.sh" artifact="${name}-embedded-arquillian" extension="jar"/>
     <install-file file="install.sh" artifact="${name}-embedded-arquillian" extension="jar"/>
+
+    <!-- ironjacamar-embedded-arquillian-byteman -->
+    <delete file="${target.dir}/${name}-embedded-arquillian-byteman.xml"/>
+    <ivy:makepom artifactName="${name}-embedded-arquillian-byteman" 
+                 conf="${name}-embedded-arquillian-byteman"
+                 ivyfile="${basedir}/ivy.xml" 
+                 pomfile="${target.dir}/${name}-embedded-arquillian-byteman.xml"
+                 headerFile="${tools.dir}/mvn/HEADER"
+                 templatefile="${tools.dir}/mvn/pom.template"
+                 printIvyInfo="false">
+      <mapping conf="${name}-embedded-arquillian-byteman" scope="runtime"/>
+      <dependency artifact="${name}-embedded" scope="runtime"/>
+      <dependency artifact="${name}-embedded-arquillian" scope="runtime"/>
+    </ivy:makepom>
+
+    <deploy-file file="deploy.sh" artifact="${name}-embedded-arquillian-byteman" extension="jar"/>
+    <install-file file="install.sh" artifact="${name}-embedded-arquillian-byteman" extension="jar"/>
 
     <!-- ironjacamar-validator-ant -->
     <delete file="${target.dir}/${name}-validator-ant.xml"/>

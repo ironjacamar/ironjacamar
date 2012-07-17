@@ -114,6 +114,7 @@
     <mkdir dir="${target.dir}/sjc/lib"/>
     <mkdir dir="${target.dir}/sjc/lib/embedded"/>
     <mkdir dir="${target.dir}/sjc/lib/embedded/arquillian"/>
+    <mkdir dir="${target.dir}/sjc/lib/embedded/arquillian/byteman"/>
     <mkdir dir="${target.dir}/sjc/lib/endorsed"/>
     <mkdir dir="${target.dir}/sjc/lib/jetty"/>
     <mkdir dir="${target.dir}/sjc/log"/>
@@ -197,6 +198,12 @@
       </fileset>
     </copy>
 
+    <copy todir="${target.dir}/sjc/lib/embedded/arquillian/byteman">
+      <fileset dir="${target.dir}">
+        <include name="${name}-embedded-arquillian-byteman.jar"/>
+      </fileset>
+    </copy>
+
     <copy todir="${target.dir}/sjc/lib">
       <fileset dir="${lib.dir}/common">
         <include name="*.jar"/>
@@ -226,6 +233,12 @@
     <copy todir="${target.dir}/sjc/lib/embedded/arquillian">
       <fileset dir="${lib.dir}/test">
         <include name="junit.jar"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${target.dir}/sjc/lib/embedded/arquillian/byteman">
+      <fileset dir="${lib.dir}/byteman">
+        <include name="*.jar"/>
       </fileset>
     </copy>
 

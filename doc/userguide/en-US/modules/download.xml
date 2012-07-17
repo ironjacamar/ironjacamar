@@ -149,6 +149,12 @@ ironjacamar-1.0.0.Final.tar.gz
               </entry>
             </row>
             <row>
+              <entry><code>ironjacamar-embedded-arquillian-byteman</code></entry>
+              <entry>
+                The Arquillian/Byteman extension for the embedded module
+              </entry>
+            </row>
+            <row>
               <entry><code>ironjacamar-jdbc</code></entry>
               <entry>
                 The core library for the JDBC resource adapters

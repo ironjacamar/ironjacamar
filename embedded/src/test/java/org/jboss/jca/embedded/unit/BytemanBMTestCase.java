@@ -1,6 +1,6 @@
-/*/*
+/*
  * JBoss, Home of Professional Open Source.
- * Copyright 2011, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2012, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -22,53 +22,55 @@
 
 package org.jboss.jca.embedded.unit;
 
-import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.embedded.arquillian.Configuration;
-import org.jboss.jca.embedded.arquillian.Inject;
+import org.jboss.jca.embedded.dsl.InputStreamDescriptor;
 import org.jboss.jca.embedded.rars.simple.TestConnection;
 import org.jboss.jca.embedded.rars.simple.TestConnectionFactory;
 
 import java.util.UUID;
 
 import javax.annotation.Resource;
+import javax.resource.ResourceException;
 
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.extension.byteman.api.BMRule;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
+import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
- * Unit test for Arquillian integration and injecting
+ * Unit test for Byteman integration
  * 
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 @RunWith(Arquillian.class)
-@Configuration(autoActivate = true)
-public class InjectTestCase
+@Configuration(autoActivate = false)
+public class BytemanBMTestCase
 {
    // --------------------------------------------------------------------------------||
    // Class Members ------------------------------------------------------------------||
    // --------------------------------------------------------------------------------||
 
-   private static Logger log = Logger.getLogger(InjectTestCase.class);
+   private static Logger log = Logger.getLogger(BytemanBMTestCase.class);
 
    /**
     * Define the deployment
     * @return The deployment archive
     */
-   @Deployment
+   @Deployment(order = 1)
    public static ResourceAdapterArchive createDeployment()
    {
       ResourceAdapterArchive raa =
-         ShrinkWrap.create(ResourceAdapterArchive.class, "ArquillianTest.rar");
+         ShrinkWrap.create(ResourceAdapterArchive.class, "byteman.rar");
 
       JavaArchive ja = ShrinkWrap.create(JavaArchive.class, UUID.randomUUID().toString() + ".jar");
       ja.addPackage(TestConnection.class.getPackage());
@@ -79,26 +81,58 @@ public class InjectTestCase
       return raa;
    }
 
+   /**
+    * Define the activation
+    * @return The deployment archive
+    */
+   @Deployment(order = 2)
+   public static Descriptor createDescriptor()
+   {
+      ClassLoader cl = BytemanBMTestCase.class.getClassLoader();
+      InputStreamDescriptor isd = new InputStreamDescriptor("byteman-ra.xml", 
+                                                            cl.getResourceAsStream("byteman-ra.xml"));
+      return isd;
+   }
+
    //-------------------------------------------------------------------------------------||
    // Tests ------------------------------------------------------------------------------||
    //-------------------------------------------------------------------------------------||
 
-   @Resource(mappedName = "java:/eis/ArquillianTest")
+   @Resource(mappedName = "java:/eis/BytemanTest")
    private TestConnectionFactory connectionFactory;
- 
-   @Inject(name = "MDR")
-   private MetadataRepository mdr;
-  
+
    /**
-    * Basic
+    * Byteman
     * @exception Throwable Thrown if case of an error
     */
    @Test
-   public void testBasic() throws Throwable
+   @BMRule(name = "Throw exception on allocateConnection",
+           targetClass = "org.jboss.jca.core.connectionmanager.AbstractConnectionManager",
+           targetMethod = "allocateConnection",
+           action = "throw new javax.resource.ResourceException()")
+   public void testByteman() throws Throwable
    {
       assertNotNull(connectionFactory);
-      assertNotNull(mdr);
-      assertNotNull(mdr.getResourceAdapters());
-      assertTrue(mdr.getResourceAdapters().size() == 1);
+
+      TestConnection c = null;
+      try
+      {
+         c = connectionFactory.getConnection();
+         fail("Got a connection");
+      }
+      catch (ResourceException re)
+      {
+         // Ok
+      }
+      catch (Throwable t)
+      {
+         fail(t.getMessage());
+         throw t;
+      }
+      finally
+      {
+         if (c != null)
+            c.close();
+      }
    }
 }

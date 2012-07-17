@@ -1,0 +1,9 @@
+<resource-adapters>
+  <resource-adapter>
+    <archive>byteman.rar</archive>
+    <connection-definitions>
+      <connection-definition class-name="org.jboss.jca.embedded.rars.simple.TestManagedConnectionFactory"
+                             jndi-name="java:/eis/BytemanTest" pool-name="BytemanTest"/>
+    </connection-definitions>
+  </resource-adapter>
+</resource-adapters>
