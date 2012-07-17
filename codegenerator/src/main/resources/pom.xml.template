@@ -76,6 +76,12 @@
     </dependency>    
     <dependency>
       <groupId>org.jboss.ironjacamar</groupId>
+      <artifactId>ironjacamar-embedded-arquillian-byteman</artifactId>
+      <version>${version.org.jboss.ironjacamar}</version>
+      <scope>test</scope>
+    </dependency>    
+    <dependency>
+      <groupId>org.jboss.ironjacamar</groupId>
       <artifactId>ironjacamar-embedded</artifactId>
       <version>${version.org.jboss.ironjacamar}</version>
       <scope>test</scope>
