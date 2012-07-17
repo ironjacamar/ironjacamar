@@ -77,7 +77,8 @@ public class URLSelector implements URLSelectorStrategy
       if (currentIndex == urls.size())
          currentIndex = 0;
 
-      return urls.get(currentIndex);
+      currentUrl = urls.get(currentIndex);
+      return currentUrl;
    }
 
    /**
@@ -85,7 +86,7 @@ public class URLSelector implements URLSelectorStrategy
     */
    public void fail(String url)
    {
-      if (currentUrl.equals(url))
+      if (currentUrl != null && currentUrl.equals(url))
          currentUrl = null;
    }
 
