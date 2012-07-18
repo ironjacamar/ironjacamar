@@ -691,6 +691,15 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       shutdown.set(true);
       IdleRemover.getInstance().unregisterPool(this);
       ConnectionValidator.getInstance().unregisterPool(this);
+
+      if (checkedOut.size() > 0)
+      {
+         for (ConnectionListener cl : checkedOut)
+         {
+            log.destroyingActiveConnection(pool.getName(), cl.getManagedConnection());
+         }
+      }
+
       flush(true);
    }
 
