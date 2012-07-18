@@ -367,6 +367,14 @@ public interface CoreLogger extends BasicLogger
    @Message(id = 614, value = "Exception during createSubject() %s")
    public void exceptionDuringCreateSubject(String description, @Cause Throwable t);   
 
+   /**
+    * Going to destroy connection listener during shutdown
+    * @param poolName The pool name
+    * @param mc The managed connection
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 615, value = "Destroying active connection in pool: %s (%s)")
+   public void destroyingActiveConnection(String poolName, Object mc);
    
    // NAMING (700)
 

@@ -167,6 +167,8 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
    {
       if (userTransactionRegistry != null)
          userTransactionRegistry.addListener(this);
+
+      log.debugf("start: %s", this.toString());
    }
 
    /**
@@ -174,6 +176,8 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
     */
    public void stop()
    {
+      log.debugf("stop: %s", this.toString());
+
       if (userTransactionRegistry != null)
          userTransactionRegistry.removeListener(this);
    }
@@ -591,5 +595,28 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
    final ThreadLocal<LinkedList<Object>> getCurrentObjects()
    {
       return currentObjects;
+   }
+
+   /**
+    * String representation
+    * @return The string
+    */
+   @Override
+   public String toString()
+   {
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("CachedConnectionManagerImpl@").append(Integer.toHexString(System.identityHashCode(this)));
+      sb.append("[debug=").append(debug);
+      sb.append(" error=").append(error);
+      sb.append(" transactionManager=").append(transactionManager);
+      sb.append(" transactionSynchronizationRegistry=").append(transactionSynchronizationRegistry);
+      sb.append(" userTransactionRegistry=").append(userTransactionRegistry);
+      sb.append(" currentObjects=").append(currentObjects.get());
+      sb.append(" objectToConnectionManagerMap=").append(objectToConnectionManagerMap);
+      sb.append(" connectionStackTraces=").append(connectionStackTraces);
+      sb.append("]");
+
+      return sb.toString();
    }
 }
