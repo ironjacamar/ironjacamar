@@ -126,7 +126,7 @@ class Util
          }
          catch (NamingException e)
          {
-            log.trace("Unable to remove context " + pname, e);
+            log.tracef("Unable to remove context: %s (%s)", pname, e);
             break;
          }
       }
