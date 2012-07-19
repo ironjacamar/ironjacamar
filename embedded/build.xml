@@ -213,6 +213,11 @@
 
     </junit>
 
+    <ant target="byteman-test"/>
+
+  </target>
+
+  <target name="byteman-test" unless="IBM">
     <junit dir="src/test"
            printsummary="${junit.printsummary}"
            haltonerror="${junit.haltonerror}"
@@ -252,9 +257,7 @@
           <include name="**/*BMTestCase.class"/>
         </fileset>
       </batchtest>
-
     </junit>
-    
   </target>
 
   <!-- ================================= 

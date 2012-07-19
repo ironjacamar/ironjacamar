@@ -28,6 +28,8 @@
   <available classname="java.lang.management.LockInfo" property="HAVE_JDK_1.6"/>
   <available classname="java.util.concurrent.ForkJoinPool" property="HAVE_JDK_1.7"/>
 
+  <available classname="com.ibm.tools.attach.javaSE.Attachment" property="IBM"/>
+
   <!-- ================================= 
        Project              
        ================================= -->
