@@ -366,8 +366,13 @@
           </row>
           <row>
             <entry>614</entry>
-            <entry><code>WARN</code></entry>
+            <entry><code>ERROR</code></entry>
             <entry>Exception during createSubject()</entry>
+          </row>
+          <row>
+            <entry>615</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Destroying active connection in pool</entry>
           </row>
           <row>
             <entry>651</entry>
