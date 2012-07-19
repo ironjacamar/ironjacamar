@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
@@ -201,18 +202,16 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
                xaPropsCopy.put(entry.getKey(), entry.getValue());
             }
 
-            String[] data = urlsStr.split(urlDelimiter);
-            if (data != null)
+            StringTokenizer st = new StringTokenizer(urlsStr, urlDelimiter);
+            while (st.hasMoreTokens())
             {
-               for (String url : data)
-               {
-                  xaPropsCopy.setProperty(urlProperty, url);
-                  XADataSource xads = createXaDataSource(xaPropsCopy);
-                  xaDataList.add(new XAData(xads, url));
+               String url = st.nextToken();
+               xaPropsCopy.setProperty(urlProperty, url);
+               XADataSource xads = createXaDataSource(xaPropsCopy);
+               xaDataList.add(new XAData(xads, url));
 
-                  if (trace)
-                     log.trace("added XA HA connection url: " + url);
-               }
+               if (trace)
+                  log.trace("added XA HA connection url: " + url);
             }
 
             if (getUrlSelectorStrategyClassName() == null)

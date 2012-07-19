@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.resource.ResourceException;
@@ -343,16 +344,13 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       boolean trace = log.isTraceEnabled();
       List<String> urlsList = new ArrayList<String>();
 
-      String[] data = getConnectionURL().split(urlDelimiter);
-
-      if (data != null)
+      StringTokenizer st = new StringTokenizer(getConnectionURL(), urlDelimiter);
+      while (st.hasMoreTokens())
       {
-         for (String url : data)
-         {
-            urlsList.add(url);
-            if (trace)
-               log.trace("added HA connection url: " + url);
-         }
+         String url = st.nextToken();
+         urlsList.add(url);
+         if (trace)
+            log.trace("added HA connection url: " + url);
       }
 
       if (getUrlSelectorStrategyClassName() == null)
