@@ -588,7 +588,7 @@ public class McCodeGen extends AbstractCodeGen
       if (def.getSupportTransaction().equals("NoTransaction"))
       {
          writeIndent(out, indent + 1);
-         out.write("throw new NotSupportedException(\"LocalTransaction not supported\");");
+         out.write("throw new NotSupportedException(\"getLocalTransaction() not supported\");");
       }
       else
       {
@@ -626,7 +626,7 @@ public class McCodeGen extends AbstractCodeGen
       if (def.getSupportTransaction().equals("NoTransaction"))
       {
          writeIndent(out, indent + 1);
-         out.write("throw new NotSupportedException(\"GetXAResource not supported not supported\");");
+         out.write("throw new NotSupportedException(\"getXAResource() not supported\");");
       }
       else
       {
