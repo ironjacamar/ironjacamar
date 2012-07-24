@@ -436,13 +436,17 @@ public abstract class AbstractDsDeployer
       PoolFactory pf = new PoolFactory();
       PoolStrategy strategy = PoolStrategy.ONE_POOL;
 
+      boolean allowMultipleUsers = false;
       if (ds.getPool() != null && ds.getPool() instanceof org.jboss.jca.common.api.metadata.ds.v11.DsPool)
       {
          org.jboss.jca.common.api.metadata.ds.v11.DsPool dsPool =
             (org.jboss.jca.common.api.metadata.ds.v11.DsPool)ds.getPool();
 
          if (dsPool.isAllowMultipleUsers() != null && dsPool.isAllowMultipleUsers().booleanValue())
+         {
             strategy = PoolStrategy.POOL_BY_CRI;
+            allowMultipleUsers = true;
+         }
       }
 
       // Security
@@ -456,7 +460,14 @@ public abstract class AbstractDsDeployer
          }
          else if (ds.getSecurity().getSecurityDomain() != null)
          {
-            strategy = PoolStrategy.POOL_BY_SUBJECT;
+            if (!allowMultipleUsers)
+            {
+               strategy = PoolStrategy.POOL_BY_SUBJECT;
+            }
+            else
+            {
+               strategy = PoolStrategy.POOL_BY_SUBJECT_AND_CRI;
+            }
             securityDomain = ds.getSecurity().getSecurityDomain();
          }
       }
@@ -620,13 +631,17 @@ public abstract class AbstractDsDeployer
       PoolFactory pf = new PoolFactory();
       PoolStrategy strategy = PoolStrategy.ONE_POOL;
 
+      boolean allowMultipleUsers = false;
       if (ds.getXaPool() != null && ds.getXaPool() instanceof org.jboss.jca.common.api.metadata.ds.v11.DsXaPool)
       {
          org.jboss.jca.common.api.metadata.ds.v11.DsXaPool dsXaPool =
             (org.jboss.jca.common.api.metadata.ds.v11.DsXaPool)ds.getXaPool();
 
          if (dsXaPool.isAllowMultipleUsers() != null && dsXaPool.isAllowMultipleUsers().booleanValue())
+         {
             strategy = PoolStrategy.POOL_BY_CRI;
+            allowMultipleUsers = true;
+         }
       }
 
       // Security
@@ -640,7 +655,14 @@ public abstract class AbstractDsDeployer
          }
          else if (ds.getSecurity().getSecurityDomain() != null)
          {
-            strategy = PoolStrategy.POOL_BY_SUBJECT;
+            if (!allowMultipleUsers)
+            {
+               strategy = PoolStrategy.POOL_BY_SUBJECT;
+            }
+            else
+            {
+               strategy = PoolStrategy.POOL_BY_SUBJECT_AND_CRI;
+            }
             securityDomain = ds.getSecurity().getSecurityDomain();
          }
       }
