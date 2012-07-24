@@ -511,8 +511,10 @@
     </copy>
     <delete dir="${build.dir}/eclipse"/>
 
-    <zip destfile="${name}-${major}.${minor}.${patch}.${type}.zip"
-         basedir="${build.dir}"/>
+    <zip destfile="${name}-${major}.${minor}.${patch}.${type}.zip">
+      <zipfileset dir="${build.dir}" filemode="755" includes="**/*.sh"/>
+      <zipfileset dir="${build.dir}" includes="**/*" excludes="**/*.sh"/>
+    </zip>
     
     <tar destfile="${name}-${major}.${minor}.${patch}.${type}.tar">
       <tarfileset dir="${build.dir}" filemode="755" includes="**/*.sh"/>
