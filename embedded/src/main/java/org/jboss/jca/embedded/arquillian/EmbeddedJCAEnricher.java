@@ -36,7 +36,7 @@ import org.jboss.logging.Logger;
  *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class EmbeddedJCAEnricher implements TestEnricher
+class EmbeddedJCAEnricher implements TestEnricher
 {
    /** The logger */
    private static Logger log = Logger.getLogger(EmbeddedJCAEnricher.class);

@@ -48,7 +48,7 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
  *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class EmbeddedJCAContainer implements DeployableContainer<EmbeddedJCAContainerConfiguration>
+class EmbeddedJCAContainer implements DeployableContainer<EmbeddedJCAContainerConfiguration>
 {
    /** The logger */
    private static Logger log = Logger.getLogger(EmbeddedJCAContainer.class);
@@ -70,7 +70,7 @@ public class EmbeddedJCAContainer implements DeployableContainer<EmbeddedJCACont
    /**
     * Constructor
     */
-   public EmbeddedJCAContainer()
+   EmbeddedJCAContainer()
    {
       this.embedded = null;
    }

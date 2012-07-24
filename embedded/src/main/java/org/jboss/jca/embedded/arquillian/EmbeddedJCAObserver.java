@@ -33,7 +33,7 @@ import org.jboss.logging.Logger;
  *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class EmbeddedJCAObserver
+class EmbeddedJCAObserver
 {
    /** The logger */
    private static Logger log = Logger.getLogger(EmbeddedJCAObserver.class);
@@ -44,7 +44,7 @@ public class EmbeddedJCAObserver
    /**
     * Constructor
     */
-   public EmbeddedJCAObserver()
+   EmbeddedJCAObserver()
    {
    }
 

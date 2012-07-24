@@ -31,14 +31,13 @@ import org.jboss.arquillian.test.spi.TestEnricher;
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  * @version $Revision: $
  */
-public class EmbeddedJCALoadableExtension implements LoadableExtension
+class EmbeddedJCALoadableExtension implements LoadableExtension
 {
    /**
     * Constructor
     */
-   public EmbeddedJCALoadableExtension()
+   EmbeddedJCALoadableExtension()
    {
-      
    }
 
    /**

@@ -29,12 +29,12 @@ import org.jboss.arquillian.container.spi.client.container.ContainerConfiguratio
  * 
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class EmbeddedJCAContainerConfiguration implements ContainerConfiguration
+class EmbeddedJCAContainerConfiguration implements ContainerConfiguration
 {
    /**
     * Constructor
     */
-   public EmbeddedJCAContainerConfiguration()
+   EmbeddedJCAContainerConfiguration()
    {
    }
 

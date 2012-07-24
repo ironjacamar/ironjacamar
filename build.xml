@@ -111,7 +111,7 @@
   <property name="version.apache-log4j" value="1.2.16"/>
   <property name="version.apache-logging" value="1.1.0.jboss"/>
   <property name="version.apiviz" value="1.3.1.GA"/>
-  <property name="version.arquillian" value="1.0.1.Final"/>
+  <property name="version.arquillian" value="1.0.2.Final"/>
   <property name="version.arquillian.byteman" value="1.0.0.Alpha2"/>
   <property name="version.byteman" value="2.0.4"/>
   <property name="version.dom4j" value="1.6.1"/>
