@@ -3,7 +3,7 @@
 <!-- See http://www.jboss.org/community/wiki/Multiple1PC for information about datasource -->
 <!-- $Id: hsqldb-ds.xml 97536 2009-12-08 14:05:07Z jesper.pedersen $ -->
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
+  xsi:noNamespaceSchemaLocation="http://www.jboss.org/ironjacamar/schema/datasources_1_0.xsd">
   <!-- ******************************************************************* -->
   <!-- MISS OF jndi-name ATTRIBUTE IS CAUSING THE FAIL OF RELATED TEST -->
   <!-- ******************************************************************* -->

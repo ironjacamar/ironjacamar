@@ -2,7 +2,7 @@
 <!-- ===================================================================== -->
 <!-- See http://www.jboss.org/community/wiki/Multiple1PC for information about datasource -->
 <!-- ===================================================================== -->
-<datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.jboss.org/jee/schema/ironjacamar/datasources_1_0.xsd">
+<datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.jboss.org/ironjacamar/schema/datasources_1_0.xsd">
   <datasource jndi-name="PostgresDS" pool-name="PostgresDS">
     <connection-url>jdbc:postgresql://[servername]:[port]/[database name]</connection-url>
     <driver-class>org.postgresql.Driver</driver-class>
