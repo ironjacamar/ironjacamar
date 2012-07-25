@@ -951,7 +951,7 @@ public abstract class BaseWrapperManagedConnectionFactory
       props.putAll(connectionProps);
       if (subject != null)
       {
-         if (SubjectActions.addMatchingProperties(subject, props, this))
+         if (SubjectActions.addMatchingProperties(subject, cri, props, this))
             return props;
 
          throw new ResourceException("No matching credentials in Subject!");
@@ -1175,6 +1175,8 @@ public abstract class BaseWrapperManagedConnectionFactory
    {
       private final Subject subject;
 
+      private final ConnectionRequestInfo cri;
+
       private final Properties props;
 
       private final ManagedConnectionFactory mcf;
@@ -1182,12 +1184,14 @@ public abstract class BaseWrapperManagedConnectionFactory
       /**
        * Constructor
        * @param subject The subject
+       * @param cri The connection request info
        * @param props The properties
        * @param mcf The managed connection factory
        */
-      SubjectActions(Subject subject, Properties props, ManagedConnectionFactory mcf)
+      SubjectActions(Subject subject, ConnectionRequestInfo cri, Properties props, ManagedConnectionFactory mcf)
       {
          this.subject = subject;
+         this.cri = cri;
          this.props = props;
          this.mcf = mcf;
       }
@@ -1210,6 +1214,17 @@ public abstract class BaseWrapperManagedConnectionFactory
                   if (cred.getPassword() != null)
                      props.setProperty("password", new String(cred.getPassword()));
 
+                  if (cri != null)
+                  {
+                     WrappedConnectionRequestInfo lcri = (WrappedConnectionRequestInfo)cri;
+
+                     if (lcri.getUserName() != null)
+                        props.setProperty("user", lcri.getUserName());
+
+                     if (lcri.getPassword() != null)
+                        props.setProperty("password", lcri.getPassword());
+                  }
+
                   return Boolean.TRUE;
                }
             }
@@ -1220,13 +1235,14 @@ public abstract class BaseWrapperManagedConnectionFactory
       /**
        * Add matching properties
        * @param subject The subject
+       * @param cri The connection request info
        * @param props The properties
        * @param mcf The managed connection factory
        * @return The result
        */
-      static boolean addMatchingProperties(Subject subject, Properties props, ManagedConnectionFactory mcf)
+      static boolean addMatchingProperties(Subject subject, ConnectionRequestInfo cri, Properties props, ManagedConnectionFactory mcf)
       {
-         SubjectActions action = new SubjectActions(subject, props, mcf);
+         SubjectActions action = new SubjectActions(subject, cri, props, mcf);
          Boolean matched = AccessController.doPrivileged(action);
          return matched.booleanValue();
       }
