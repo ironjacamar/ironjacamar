@@ -21,25 +21,29 @@
  */
 package org.jboss.jca.common.metadata.ds;
 
-import org.jboss.jca.common.api.metadata.ds.DataSources;
 import org.jboss.jca.common.metadata.ds.v11.DsParser;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-
-import org.jboss.logging.Logger;
-
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
  * Test case for parsing XML representation based upon metadata model's toString
  *
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  */
-public class DsParserXMLTestCase
+public class DsParserXMLTestCase extends DsParserTestBase
 {
-   private static Logger log = Logger.getLogger(DsParserXMLTestCase.class);
+   /**
+   *
+   * beforeClass method
+   *
+   * @throws Exception in casae of error
+   */
+   @BeforeClass
+   public static void beforeClass() throws Exception
+   {
+      parser = new DsParser();
+   }
 
    /**
     * shouldParseXMLRepresentation
@@ -48,36 +52,6 @@ public class DsParserXMLTestCase
    @Test
    public void shouldParseXMLRepresentation() throws Exception
    {
-      FileInputStream is = null;
-      ByteArrayInputStream bais = null;
-
-      //given
-      ClassLoader cl = Thread.currentThread().getContextClassLoader();
-      File xmlFile = new File(cl.getResource("ds/unit/all-ds.xml").toURI());
-      try
-      {
-         is = new FileInputStream(xmlFile);
-
-         DsParser parser = new DsParser();
-
-         //when
-         DataSources ds1 = parser.parse(is);
-
-         String xmlRepresentation = ds1.toString();
-
-         log.debug(xmlRepresentation);
-
-         bais = new ByteArrayInputStream(xmlRepresentation.getBytes("UTF-8"));
-
-         DataSources ds2 = parser.parse(bais);
-      }
-      finally
-      {
-         if (is != null)
-            is.close();
-
-         if (bais != null)
-            bais.close();
-      }
+      parseDsFromFile("ds/unit/complex-ds.xml");
    }
 }

@@ -166,6 +166,66 @@ public class CommonPoolImpl implements CommonPool
       if (this.flushStrategy == null)
          throw new ValidateException(bundle.nullValue(Tag.FLUSH_STRATEGY.getLocalName()));
    }
+   @Override
+   public int hashCode()
+   {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((minPoolSize == null) ? 0 : minPoolSize.hashCode());
+      result = prime * result + ((maxPoolSize == null) ? 0 : maxPoolSize.hashCode());
+      result = prime * result + ((prefill == null) ? 0 : prefill.hashCode());
+      result = prime * result + ((useStrictMin == null) ? 0 : useStrictMin.hashCode());
+      result = prime * result + ((flushStrategy == null) ? 0 : flushStrategy.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj)
+   {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (!(obj instanceof CommonPoolImpl))
+         return false;
+      CommonPoolImpl other = (CommonPoolImpl) obj;
+      if (minPoolSize == null)
+      {
+         if (other.minPoolSize != null)
+            return false;
+      }
+      else if (!minPoolSize.equals(other.minPoolSize))
+         return false;
+      if (maxPoolSize == null)
+      {
+         if (other.maxPoolSize != null)
+            return false;
+      }
+      else if (!maxPoolSize.equals(other.maxPoolSize))
+         return false;
+      if (prefill == null)
+      {
+         if (other.prefill != null)
+            return false;
+      }
+      else if (!prefill.equals(other.prefill))
+         return false;
+      if (useStrictMin == null)
+      {
+         if (other.useStrictMin != null)
+            return false;
+      }
+      else if (!useStrictMin.equals(other.useStrictMin))
+         return false;
+      if (flushStrategy == null)
+      {
+         if (other.flushStrategy != null)
+            return false;
+      }
+      else if (!flushStrategy.equals(other.flushStrategy))
+         return false;
+      return true;
+   }
 
    /**
     * {@inheritDoc}
