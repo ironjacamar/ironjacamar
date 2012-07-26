@@ -410,26 +410,7 @@ public class Main
                   if (needPrint)
                   {
                      //ValidatingManagedConnectionFactory
-                     try
-                     {
-                        out.print("  Validating: ");
-                        Class<?> clazz = Class.forName(classname, true, cl);
-
-                        if (hasInterface(clazz, "javax.resource.spi.ValidatingManagedConnectionFactory"))
-                        {
-                           out.println("Yes");
-                        }
-                        else
-                        {
-                           out.println("No");
-                        }
-                     }
-                     catch (Throwable t)
-                     {
-                        // Nothing we can do
-                        t.printStackTrace(System.err);
-                        out.println("Unknown");
-                     }
+                     hasValidatingMcfInterface(out, classname, cl);
 
                      //CCI
                      String cfi = mcf.getConnectionFactoryInterface().toString();
@@ -445,6 +426,10 @@ public class Main
                         else
                         {
                            out.println("No");
+                           
+                           outputMethodInfo(out, cfi, cl);
+                           
+                           outputMethodInfo(out, mcf.getConnectionInterface().toString(), cl);
                         }
                      }
                      catch (Throwable t)
@@ -636,24 +621,11 @@ public class Main
             transSupport = ra10.getTransactionSupport();
             
             //ValidatingManagedConnectionFactory
-            try
-            {
-               Class<?> clazz = Class.forName(classname, true, cl);
-               out.print("  Validating: ");
-
-               if (hasInterface(clazz, "javax.resource.spi.ValidatingManagedConnectionFactory"))
-               {
-                  out.println("Yes");
-               }
-               else
-               {
-                  out.println("No");
-               }
-            }
-            catch (Exception e)
-            {
-               // Nothing we can do
-            }
+            hasValidatingMcfInterface(out, classname, cl);
+            
+            outputMethodInfo(out, ra10.getConnectionFactoryInterface().toString(), cl);
+            
+            outputMethodInfo(out, ra10.getConnectionInterface().toString(), cl);
             
             Map<String, String> configProperty = null;
             if (ra10.getConfigProperties() != null)
@@ -737,6 +709,81 @@ public class Main
             }
          }
          cleanupTempFiles();
+      }
+   }
+
+   private static void outputMethodInfo(PrintStream out, String className, URLClassLoader cl) 
+      throws ClassNotFoundException
+   {
+      Class<?> cf = Class.forName(className, true, cl);
+      out.println("  " + singleName(className) + " (" + className + "):");
+      
+      Method[] methods = cf.getMethods();
+      for (Method method : methods)
+      {
+         // Output return type, method name, parameters, exceptions
+         out.print("    " + singleName(method.getReturnType().getCanonicalName()) + " " + 
+            method.getName() + "(");
+         Class<?>[] params = method.getParameterTypes();
+         for (int i = 0; i < params.length; i++)
+         {
+            out.print(singleName(params[i].getCanonicalName()));
+            if (i + 1 < params.length)
+               out.print(", ");
+         }
+         out.print(") ");
+         Class<?>[] exceptions = method.getExceptionTypes();
+         if (exceptions.length > 0)
+         {
+            out.print("throws ");
+            for (int i = 0; i < exceptions.length; i++)
+            {
+               out.print(singleName(exceptions[i].getCanonicalName()));
+               if (i + 1 < exceptions.length)
+                  out.print(", ");
+            }
+         }
+         out.println();
+      }
+   }
+   
+   private static String singleName(String className)
+   {
+      int lastPos = className.lastIndexOf(".");
+      if (lastPos < 0)
+         return className;
+      else
+         return className.substring(lastPos + 1);
+   }
+
+   /**
+    * hasValidatingMcfInterface
+    * 
+    * @param out output stream
+    * @param classname classname
+    * @param cl classloader
+    */
+   private static void hasValidatingMcfInterface(PrintStream out, String classname, URLClassLoader cl)
+   {
+      try
+      {
+         out.print("  Validating: ");
+         Class<?> clazz = Class.forName(classname, true, cl);
+
+         if (hasInterface(clazz, "javax.resource.spi.ValidatingManagedConnectionFactory"))
+         {
+            out.println("Yes");
+         }
+         else
+         {
+            out.println("No");
+         }
+      }
+      catch (Throwable t)
+      {
+         // Nothing we can do
+         t.printStackTrace(System.err);
+         out.println("Unknown");
       }
    }
    
