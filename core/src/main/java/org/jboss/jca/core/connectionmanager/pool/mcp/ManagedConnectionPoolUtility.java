@@ -102,7 +102,8 @@ class ManagedConnectionPoolUtility
       sb.append("  StrictMin: ").append(pc.isStrictMin()).append(newLine);
       sb.append("  UseFastFail: ").append(pc.isUseFastFail()).append(newLine);
 
-      sb.append("Available:").append(newLine);
+      int availableSize = (available != null ? available.size() : 0);
+      sb.append("Available (").append(availableSize).append("):").append(newLine);
       if (available != null)
       {
          for (ConnectionListener cl : available)
@@ -112,7 +113,8 @@ class ManagedConnectionPoolUtility
          }
       }
 
-      sb.append("InUse:").append(newLine);
+      int inUseSize = (inUse != null ? inUse.size() : 0);
+      sb.append("InUse (").append(inUseSize).append("):").append(newLine);
       if (inUse != null)
       {
          for (ConnectionListener cl : inUse)
