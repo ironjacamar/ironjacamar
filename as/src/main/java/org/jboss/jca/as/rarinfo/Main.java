@@ -708,6 +708,8 @@ public class Main
          RaImpl raImpl = new RaImpl(rarFile, transSupport, connDefs, adminObjects, raConfigProperties);
          raImpl.buildResourceAdapterImpl();
 
+         outputMenifest("META-INF/MANIFEST.MF", out);
+         
          outputXmlDesc(xmls, out);
 
          outputRaDesc(raImpl, out);
@@ -737,7 +739,21 @@ public class Main
          cleanupTempFiles();
       }
    }
+   
+   private static void outputMenifest(String meniFile, PrintStream out) throws FileNotFoundException, IOException
+   {
+      out.println();
+      out.println(meniFile + ":");
+      for (int i = 0; i <= meniFile.length(); i++)
+      {
+         out.print("-");
+      }
+      out.println();
 
+      outToFile(meniFile, out);
+
+   }
+   
    private static void outputXmlDesc(ArrayList<String> xmls, PrintStream out) throws FileNotFoundException, IOException
    {
       for (String xmlfile : xmls)
@@ -750,37 +766,42 @@ public class Main
          }
          out.println();
          
-         Reader in = null;
+         outToFile(xmlfile, out);
+      }
+   }
+
+   private static void outToFile(String fileName, PrintStream out) throws FileNotFoundException, IOException
+   {
+      Reader in = null;
+      try
+      {
+         in = new FileReader(root.getAbsolutePath() + File.separator + fileName);
+
+         char[] buffer = new char[4096];
+         for (;;)
+         {
+            int nBytes = in.read(buffer);
+            if (nBytes <= 0)
+               break;
+
+            for (int i = 0; i < nBytes; i++)
+            {
+               if (buffer[i] != 13)
+                  out.print(buffer[i]);
+            }
+         }
+         out.flush();
+      }
+      finally
+      {
          try
          {
-            in = new FileReader(root.getAbsolutePath() + File.separator + xmlfile);
-
-            char[] buffer = new char[4096];
-            for (;;)
-            {
-               int nBytes = in.read(buffer);
-               if (nBytes <= 0)
-                  break;
-
-               for (int i = 0; i < nBytes; i++)
-               {
-                  if (buffer[i] != 13)
-                     out.print(buffer[i]);
-               }
-            }
-            out.flush();
+            if (in != null)
+               in.close();
          }
-         finally
+         catch (IOException ignore)
          {
-            try
-            {
-               if (in != null)
-                  in.close();
-            }
-            catch (IOException ignore)
-            {
-               // Ignore
-            }
+            // Ignore
          }
       }
    }
