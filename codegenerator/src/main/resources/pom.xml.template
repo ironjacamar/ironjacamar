@@ -6,7 +6,7 @@
   <groupId>${pom.package.name}</groupId>
   <artifactId>${pom.module.name}</artifactId>
   <packaging>jar</packaging>
-  <version>0.1</version>
+  <version>0.0.1-SNAPSHOT</version>
   <url>http://repository.jboss.org</url>
   <properties>
     <version.org.jboss.ironjacamar>@VERSION.IRONJACAMAR@</version.org.jboss.ironjacamar>
@@ -120,10 +120,10 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.3.2</version>
+        <version>2.5.1</version>
         <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
+          <source>1.6</source>
+          <target>1.6</target>
         </configuration>
       </plugin>
 
