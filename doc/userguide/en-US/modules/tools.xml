@@ -56,13 +56,16 @@
           Overview of the managed connection factory classes
         </listitem>
         <listitem>
+          The connectory factory and connection API if common client interface isn't used
+        </listitem>
+        <listitem>
           Overview of the admin object classes
         </listitem>
         <listitem>
           Overview of the activation specification classes
         </listitem>
         <listitem>
-          Metadata included
+          Metadata included, including the <code>MANIFEST.MF</code> file
         </listitem>
         <listitem>
           A sample deployment descriptor
