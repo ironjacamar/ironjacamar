@@ -427,9 +427,12 @@ public class Main
                         {
                            out.println("No");
                            
-                           outputMethodInfo(out, cfi, cl);
+                           out.println("  ConnectionFactory (" + classname + "):");
+                           outputMethodInfo(out, clazz, cl);
                            
-                           outputMethodInfo(out, mcf.getConnectionInterface().toString(), cl);
+                           Class<?> ci = Class.forName(mcf.getConnectionInterface().toString(), true, cl);
+                           out.println("  Connection (" + mcf.getConnectionInterface().toString() + "):");
+                           outputMethodInfo(out, ci, cl);
                         }
                      }
                      catch (Throwable t)
@@ -623,9 +626,13 @@ public class Main
             //ValidatingManagedConnectionFactory
             hasValidatingMcfInterface(out, classname, cl);
             
-            outputMethodInfo(out, ra10.getConnectionFactoryInterface().toString(), cl);
+            Class<?> cfi = Class.forName(classname, true, cl);
+            out.println("  ConnectionFactory (" + classname + "):");
+            outputMethodInfo(out, cfi, cl);
             
-            outputMethodInfo(out, ra10.getConnectionInterface().toString(), cl);
+            Class<?> ci = Class.forName(ra10.getConnectionInterface().toString(), true, cl);
+            out.println("  Connection (" + ra10.getConnectionInterface().toString() + "):");
+            outputMethodInfo(out, ci, cl);
             
             Map<String, String> configProperty = null;
             if (ra10.getConfigProperties() != null)
@@ -712,13 +719,10 @@ public class Main
       }
    }
 
-   private static void outputMethodInfo(PrintStream out, String className, URLClassLoader cl) 
+   private static void outputMethodInfo(PrintStream out, Class<?> clazz, URLClassLoader cl) 
       throws ClassNotFoundException
    {
-      Class<?> cf = Class.forName(className, true, cl);
-      out.println("  " + singleName(className) + " (" + className + "):");
-      
-      Method[] methods = cf.getMethods();
+      Method[] methods = clazz.getMethods();
       for (Method method : methods)
       {
          // Output return type, method name, parameters, exceptions
