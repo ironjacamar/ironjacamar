@@ -22,28 +22,34 @@
 package org.jboss.jca.common.metadata.ds;
 
 import org.jboss.jca.common.api.metadata.ds.DataSources;
-import org.jboss.jca.common.api.validator.ValidateException;
 import org.jboss.jca.common.metadata.ds.v11.DsParser;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+
+import org.jboss.util.file.FileSuffixFilter;
 
 import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.experimental.theories.DataPoints;
+import org.junit.experimental.theories.Theories;
+import org.junit.experimental.theories.Theory;
+import org.junit.runner.RunWith;
+
+import static org.junit.Assert.*;
 
 /**
  *
- * A DsParserForMinimalFileTestCase.
+ * Tests wrong ds configurations
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public class DsParserForValidatorExceptionTestCase
+@RunWith(Theories.class)
+public class DsParserForValidatorExceptionTestCase extends DsParserTestBase
 {
 
-   private static DsParser parser;
+   /** Datapoints for junit Theory **/
+   @DataPoints
+   public static File[] xmlFiles;
 
    /**
    *
@@ -54,373 +60,33 @@ public class DsParserForValidatorExceptionTestCase
    @BeforeClass
    public static void beforeClass() throws Exception
    {
+      File directory = new File(DsParserExampleTestCase.class.getClassLoader().getResource("ds/wrong").toURI());
+      xmlFiles = directory.listFiles(new FileSuffixFilter("-ds.xml"));
       parser = new DsParser();
       //this property is set just to make possible property substitution defined in test resources.
       //but property substitution is not the goal of this test case see DsParserForTemplateReplaceTestCase for that
       System.setProperty("jboss.server.data.dir", "/tmp");
    }
-
+   
    /**
-    *
-    * shouldThrowValidateExceptionIfNoDriverHasBeenSpecified
-    *
-    * @throws Exception test passes if a {@link ValidateException} has been
-    * thrown
+    * shouldNotParseAnyExample
+    * @param xmlFile the file on which apply this theory
+    * @throws Exception in case of error
     */
-   @Test(expected = ValidateException.class)
-   public void shouldThrowValidateExceptionIfNoDriverHasBeenSpecified() throws Exception
+   @Theory
+   public void shouldNotParseAnyExample(final File xmlFile) throws Exception
    {
-
-      //given
-      File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/no-driver-class-ds.xml")
-         .toURI());
-      //when
-      doParse(xmlFile);
-      //then throw ValidateException
-   }
-
-   /**
-   *
-   * shouldThrowValidateExceptionIfNoConnectionUrlHasBeenSpecified
-   *
-   * @throws Exception test passes if a {@link ValidateException} has been
-   * thrown
-   */
-   @Test(expected = ValidateException.class)
-   public void shouldThrowValidateExceptionIfNoConnectionUrlHasBeenSpecified() throws Exception
-   {
-
-      //given
-      File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/no-connection-url-ds.xml").toURI());
-      //when
-      doParse(xmlFile);
-      //then throw ValidateException
-   }
-
-   /**
-   *
-   * shouldThrowValidateExceptionIfNoJndiNameHasBeenSpecified
-   *
-   * @throws Exception test passes if a {@link ValidateException} has been
-   * thrown
-   */
-   @Test(expected = ValidateException.class)
-   public void shouldThrowValidateExceptionIfNoJndiNameHasBeenSpecified() throws Exception
-   {
-
-      //given
-      File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/no-jndi-name-ds.xml")
-         .toURI());
-      //when
-      doParse(xmlFile);
-      //then throw ValidateException
-   }
-
-   /**
-   *
-   * shouldThrowValidateExceptionIfNoPoolHasBeenSpecified
-   *
-   * @throws Exception test passes if a {@link ValidateException} has been
-   * thrown
-   */
-   @Test(expected = ValidateException.class)
-   public void shouldThrowValidateExceptionIfNoPoolHasBeenSpecified() throws Exception
-   {
-
-      //given
-      File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/no-pool-name-ds.xml")
-         .toURI());
-      //when
-      doParse(xmlFile);
-      //then throw ValidateException
-   }
-
-   private void doParse(File xmlFile) throws FileNotFoundException, Exception, IOException, ValidateException
-   {
-      FileInputStream is = null;
-
       try
       {
-         is = new FileInputStream(xmlFile);
-         //when
-         DataSources ds = parser.parse(is);
-
+         log.info(xmlFile.toString());
+         DataSources ds = doParse(xmlFile);
+         fail(xmlFile.toString() + " Excetion during parsing phase expected.");
       }
-      finally
+      catch (Exception e)
       {
-         if (is != null)
-            is.close();
+         log.info(e.getMessage());
+         //expected
       }
-   }
-
-   /**
-   *
-   * shouldThrowValidateExceptionIfallocationRetryNegative
-   *
-   * @throws Exception test passes if a {@link ValidateException} has been
-   * thrown
-   */
-   @Test(expected = ValidateException.class)
-   public void shouldThrowValidateExceptionIfallocationRetryNegative() throws Exception
-   {
-
-      //given
-      File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/allocation-retry-negative-ds.xml").toURI());
-      //when
-      doParse(xmlFile);
-      //then throw ValidateException
-   }
-
-   /**
-   *
-   * shouldThrowValidateExceptionIfallocationRetryWaitMillisNegative
-   *
-   * @throws Exception test passes if a {@link ValidateException} has been
-   * thrown
-   */
-   @Test(expected = ValidateException.class)
-   public void shouldThrowValidateExceptionIfallocationRetryWaitMillisNegative() throws Exception
-   {
-
-      //given
-      File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/allocation-retry-wait-millis-negative-ds.xml").toURI());
-      //when
-      doParse(xmlFile);
-      //then throw ValidateException
-   }
-
-   /**
-   *
-   * shouldThrowValidateExceptionIfBlockingTimeoutMillisNegative
-   *
-   * @throws Exception test passes if a {@link ValidateException} has been
-   * thrown
-   */
-   @Test(expected = ValidateException.class)
-   public void shouldThrowValidateExceptionIfBlockingTimeoutMillisNegative() throws Exception
-   {
-
-      //given
-      File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/blocking-timeout-millis-negative-ds.xml").toURI());
-      //when
-      doParse(xmlFile);
-      //then throw ValidateException
-   }
-
-   /**
-   *
-   * shouldThrowValidateExceptionIfIdleTimeoutMinutesNegative
-   *
-   * @throws Exception test passes if a {@link ValidateException} has been
-   * thrown
-   */
-   @Test(expected = ValidateException.class)
-   public void shouldThrowValidateExceptionIfIdleTimeoutMinutesNegative() throws Exception
-   {
-
-      //given
-      File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/idle-timeout-minutes-negative-ds.xml").toURI());
-      //when
-      doParse(xmlFile);
-      //then throw ValidateException
-   }
-
-   /**
-   *
-   * shouldThrowValidateExceptionIfnoconnectionurl
-   *
-   * @throws Exception test passes if a {@link ValidateException} has been
-   * thrown
-   */
-   @Test(expected = ValidateException.class)
-   public void shouldThrowValidateExceptionIfnoconnectionurl() throws Exception
-   {
-
-      //given
-      File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/no-connection-url-ds.xml").toURI());
-      //when
-      doParse(xmlFile);
-      //then throw ValidateException
-   }
-
-   /**
-   *
-   * shouldThrowValidateExceptionIfqueryTimeoutNegative
-   *
-   * @throws Exception test passes if a {@link ValidateException} has been
-   * thrown
-   */
-   @Test(expected = ValidateException.class)
-   public void shouldThrowValidateExceptionIfqueryTimeoutNegative() throws Exception
-   {
-
-      //given
-      File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/query-timeout-negative-ds.xml").toURI());
-      //when
-      doParse(xmlFile);
-      //then throw ValidateException
-   }
-
-   /**
-   *
-   * shouldThrowValidateExceptionIfuseTryLockNegative
-   *
-   * @throws Exception test passes if a {@link ValidateException} has been
-   * thrown
-   */
-   @Test(expected = ValidateException.class)
-   public void shouldThrowValidateExceptionIfuseTryLockNegative() throws Exception
-   {
-
-      //given
-      File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/use-try-lock-negative-ds.xml").toURI());
-      //when
-      doParse(xmlFile);
-      //then throw ValidateException
-   }
-
-   /**
-   *
-   * shouldThrowValidateExceptionIfxaresourcetimeoutNegative
-   *
-   * @throws Exception test passes if a {@link ValidateException} has been
-   * thrown
-   */
-   @Test(expected = ValidateException.class)
-   public void shouldThrowValidateExceptionIfxaresourcetimeoutNegative() throws Exception
-   {
-
-      //given
-      File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/xa-resource-timeout-negative-ds.xml").toURI());
-      //when
-      doParse(xmlFile);
-      //then throw ValidateException
-   }
-
-   /**
-   *
-   * shouldThrowValidateExceptionIfpreparedStatementCacheSizeNegative
-   *
-   * @throws Exception test passes if a {@link ValidateException} has been
-   * thrown
-   */
-   @Test(expected = ValidateException.class)
-   public void shouldThrowValidateExceptionIfpreparedStatementCacheSizeNegative() throws Exception
-   {
-
-      //given
-      File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/prepared-statement-cache-size-negative-ds.xml").toURI());
-      //when
-      doParse(xmlFile);
-      //then throw ValidateException
-   }
-
-   /**
-   *
-   * shouldThrowValidateExceptionIfbackgroundValidationMinutesNegative
-   *
-   * @throws Exception test passes if a {@link ValidateException} has been
-   * thrown
-   */
-   @Test(expected = ValidateException.class)
-   public void shouldThrowValidateExceptionIfbackgroundValidationMinutesNegative() throws Exception
-   {
-
-      //given
-      File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/background-validation-minutes-negative-ds.xml").toURI());
-      //when
-      doParse(xmlFile);
-      //then throw ValidateException
-   }
-
-   /**
-   *
-   * shouldThrowValidateExceptionIfExceptionSorterClassNameMissing
-   *
-   * @throws Exception test passes if a {@link ValidateException} has been
-   * thrown
-   */
-   @Test(expected = ValidateException.class)
-   public void shouldThrowValidateExceptionIfExceptionSorterClassNameMissing() throws Exception
-   {
-
-      //given
-      File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/exception-sorter-class-name-missing-ds.xml").toURI());
-      //when
-      doParse(xmlFile);
-      //then throw ValidateException
-   }
-
-   /**
-   *
-   * shouldThrowValidateExceptionIfStaleConnectionCheckerClassNameMissing
-   *
-   * @throws Exception test passes if a {@link ValidateException} has been
-   * thrown
-   */
-   @Test(expected = ValidateException.class)
-   public void shouldThrowValidateExceptionIfStaleConnectionCheckerClassNameMissing() throws Exception
-   {
-
-      //given
-      File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/stale-connection-checker-class-name-missing-ds.xml").toURI());
-      //when
-      doParse(xmlFile);
-      //then throw ValidateException
-   }
-
-   /**
-   *
-   * shouldThrowValidateExceptionIfValidationCheckerClassNameMissing
-   *
-   * @throws Exception test passes if a {@link ValidateException} has been
-   * thrown
-   */
-   @Test(expected = ValidateException.class)
-   public void shouldThrowValidateExceptionIfValidationCheckerClassNameMissing() throws Exception
-   {
-
-      //given
-      File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/validation-checker-class-name-missing-ds.xml").toURI());
-      //when
-      doParse(xmlFile);
-      //then throw ValidateException
-   }
-
-   /**
-   *
-   * shouldThrowValidateExceptionIfValidationCheckerClassNameMissing
-   *
-   * @throws Exception test passes if a {@link ValidateException} has not been
-   * thrown
-   */
-   @Test()
-   public void shouldNotThrowValidateExceptionWithJeremysFile() throws Exception
-   {
-
-      //given
-      File xmlFile = new File(Thread.currentThread().getContextClassLoader().getResource("ds/unit/jeremy-ds.xml")
-         .toURI());
-      //when
-      doParse(xmlFile);
-      //then don't throw ValidateException
    }
 
 }

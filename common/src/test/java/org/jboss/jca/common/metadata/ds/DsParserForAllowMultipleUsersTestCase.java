@@ -26,14 +26,7 @@ import org.jboss.jca.common.api.metadata.ds.v11.DataSource;
 import org.jboss.jca.common.api.metadata.ds.v11.DsPool;
 import org.jboss.jca.common.api.metadata.ds.v11.DsXaPool;
 import org.jboss.jca.common.api.metadata.ds.v11.XaDataSource;
-import org.jboss.jca.common.api.validator.ValidateException;
-import org.jboss.jca.common.metadata.ParserException;
 import org.jboss.jca.common.metadata.ds.v11.DsParser;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -48,10 +41,8 @@ import static org.junit.Assert.assertThat;
  * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  *
  */
-public class DsParserForAllowMultipleUsersTestCase
+public class DsParserForAllowMultipleUsersTestCase extends DsParserTestBase
 {
-
-   private static DsParser parser;
 
    /**
     *
@@ -75,12 +66,7 @@ public class DsParserForAllowMultipleUsersTestCase
    public void shouldHaveAllowMultipleUsersEnabled() throws Exception
    {
 
-      //given
-      File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/allow-multiple-users-ds.xml")
-         .toURI());
-      //when
-      DataSources dses = doParse(xmlFile);
+      DataSources dses = parseDsFromFile("ds/unit/allow-multiple-users-ds.xml");
       //then
       DataSource ds = (DataSource)dses.getDataSource().get(0);
       DsPool dsPool = ds.getPool();
@@ -92,23 +78,5 @@ public class DsParserForAllowMultipleUsersTestCase
       DsXaPool dsXaPool = xads.getXaPool();
       boolean actualXaAllowMultipleUsers = dsXaPool.isAllowMultipleUsers();
       assertThat(actualXaAllowMultipleUsers, is(true));
-   }
-
-   private DataSources doParse(File xmlFile) 
-      throws FileNotFoundException, ParserException, IOException, ValidateException, Exception
-   {
-      FileInputStream is = null;
-
-      try
-      {
-         is = new FileInputStream(xmlFile);
-         //when
-         return parser.parse(is);
-      }
-      finally
-      {
-         if (is != null)
-            is.close();
-      }
    }
 }

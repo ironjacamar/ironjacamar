@@ -25,7 +25,6 @@ import org.jboss.jca.common.api.metadata.ds.DataSources;
 import org.jboss.jca.common.metadata.ds.v11.DsParser;
 
 import java.io.File;
-import java.io.FileInputStream;
 
 import org.jboss.util.file.FileSuffixFilter;
 
@@ -36,8 +35,7 @@ import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  *
@@ -47,10 +45,8 @@ import static org.junit.Assert.fail;
  *
  */
 @RunWith(Theories.class)
-public class DsParserExampleTestCase
+public class DsParserExampleTestCase extends DsParserTestBase
 {
-
-   private static DsParser parser;
 
    /** Datapoints for junit Theory **/
    @DataPoints
@@ -71,7 +67,7 @@ public class DsParserExampleTestCase
       //this property is set just to make possible property substitution defined in test resources.
       //but property substitution is not the goal of this test case see DsParserForTemplateReplaceTestCase for that
       System.setProperty("jboss.server.data.dir", "/tmp");
-
+      System.setProperty("ironjacamar.home", "/tmp");
    }
 
 
@@ -83,29 +79,16 @@ public class DsParserExampleTestCase
    @Theory
    public void shouldParseAnyExample(final File xmlFile) throws Exception
    {
-      FileInputStream is = null;
-
-      //given
       try
       {
-         is = new FileInputStream(xmlFile);
-         //when
-         DataSources ds = parser.parse(is);
-         //then
+         log.info(xmlFile.toString());
+         DataSources ds = doReParse(xmlFile);
          assertThat(ds.getDataSource().size() + ds.getXaDataSource().size(), is(1));
-
       }
-      catch (Exception e)
+      catch (Throwable t)
       {
-         e.printStackTrace();
-         fail("got an exception for file" + xmlFile.toString() + " with message: " + e.getMessage());
+         fail(xmlFile.toString() + t.getMessage());
       }
-      finally
-      {
-         if (is != null)
-            is.close();
-      }
-
    }
 
 }

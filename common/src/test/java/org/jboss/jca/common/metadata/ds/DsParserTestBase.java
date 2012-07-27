@@ -64,8 +64,6 @@ public abstract class DsParserTestBase
    public static void beforeClass() throws Exception
    {
       parser = new DsParser();
-      System.setProperty("jboss.server.data.dir", "/tmp");
-
    }
 
    /**
