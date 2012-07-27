@@ -342,13 +342,13 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
          sb.append("=\"").append(useJavaContext).append("\"");
       }
 
-      if (spy)
+      if (spy != null)
          sb.append(" ").append(DataSource.Attribute.SPY).append("=\"").append(spy).append("\"");
 
-      if (useCcm)
+      if (useCcm != null)
          sb.append(" ").append(DataSource.Attribute.USE_CCM).append("=\"").append(useCcm).append("\"");
 
-      if (jta)
+      if (jta != null)
          sb.append(" ").append(DataSource.Attribute.JTA).append("=\"").append(jta).append("\"");
 
       sb.append(">");

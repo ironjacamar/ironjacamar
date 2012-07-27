@@ -141,7 +141,7 @@ public class CommonXaPoolImpl extends CommonPoolImpl implements CommonXaPool
    public int hashCode()
    {
       final int prime = 31;
-      int result = 1;
+      int result = super.hashCode();
       result = prime * result + ((interleaving == null) ? 0 : interleaving.hashCode());
       result = prime * result + ((isSameRmOverride == null) ? 0 : isSameRmOverride.hashCode());
       result = prime * result + ((noTxSeparatePool == null) ? 0 : noTxSeparatePool.hashCode());
@@ -155,8 +155,8 @@ public class CommonXaPoolImpl extends CommonPoolImpl implements CommonXaPool
    {
       if (this == obj)
          return true;
-      if (obj == null)
-         return false;
+      if (!super.equals(obj))
+          return false;
       if (!(obj instanceof CommonXaPoolImpl))
          return false;
       CommonXaPoolImpl other = (CommonXaPoolImpl) obj;

@@ -265,10 +265,10 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
          sb.append("=\"").append(useJavaContext).append("\"");
       }
 
-      if (spy)
+      if (spy != null)
          sb.append(" ").append(XaDataSource.Attribute.SPY).append("=\"").append(spy).append("\"");
 
-      if (useCcm)
+      if (useCcm != null)
          sb.append(" ").append(XaDataSource.Attribute.USE_CCM).append("=\"").append(useCcm).append("\"");
 
       sb.append(">");
