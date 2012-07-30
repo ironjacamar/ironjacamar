@@ -732,10 +732,12 @@ public abstract class BaseWrapperManagedConnectionFactory
          throw new IllegalStateException("ReauthPlugin class name not defined");
       
       Class<?> clz = null;
+      ClassLoader usedCl = null;
 
       try
       {
          clz = Class.forName(reauthPluginClassName, true, getClassLoaderPlugin().getClassLoader());
+         usedCl = getClassLoaderPlugin().getClassLoader();
       }
       catch (ClassNotFoundException cnfe)
       {
@@ -747,6 +749,7 @@ public abstract class BaseWrapperManagedConnectionFactory
          try
          {
             clz = Class.forName(reauthPluginClassName, true, new TCClassLoaderPlugin().getClassLoader());
+            usedCl = new TCClassLoaderPlugin().getClassLoader();
          }
          catch (ClassNotFoundException cnfe)
          {
@@ -760,6 +763,7 @@ public abstract class BaseWrapperManagedConnectionFactory
          {
             clz = Class.forName(reauthPluginClassName, true, 
                                 BaseWrapperManagedConnectionFactory.class.getClassLoader());
+            usedCl = BaseWrapperManagedConnectionFactory.class.getClassLoader();
          }
          catch (ClassNotFoundException cnfe)
          {
@@ -795,7 +799,7 @@ public abstract class BaseWrapperManagedConnectionFactory
             }
          }
 
-         reauthPlugin.initialize(BaseWrapperManagedConnectionFactory.class.getClassLoader());
+         reauthPlugin.initialize(usedCl);
       }
       catch (Throwable t)
       {

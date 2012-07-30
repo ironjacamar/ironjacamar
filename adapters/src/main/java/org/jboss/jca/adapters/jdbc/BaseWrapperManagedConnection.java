@@ -775,7 +775,15 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
 
       if (Boolean.TRUE.equals(mcf.getReauthEnabled()))
       {
-         if (!props.getProperty("user").equals(newProps.getProperty("user")))
+         // Same credentials
+         if (props.equals(newProps))
+         {
+            return;
+         }
+
+         // Check for changes
+         if (!props.getProperty("user").equals(newProps.getProperty("user")) ||
+             !props.getProperty("password").equals(newProps.getProperty("password")))
          {
             try
             {
