@@ -21,7 +21,7 @@
                         select 1
                     </new-connection-sql>
                     <transaction-isolation>
-                        TRANSACTION_READ_COMMITTED
+                        2
                     </transaction-isolation>
                     <url-delimiter>
                         :

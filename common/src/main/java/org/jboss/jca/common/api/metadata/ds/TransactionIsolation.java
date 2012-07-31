@@ -21,57 +21,98 @@
  */
 package org.jboss.jca.common.api.metadata.ds;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  *
  * A TransactionIsolation.
  * Define constants used as the possible
-        transaction isolation levels
-        in transaction-isolation type.
-        Include: TRANSACTION_READ_UNCOMMITTED
-        TRANSACTION_READ_COMMITTED
-        TRANSACTION_REPEATABLE_READ TRANSACTION_SERIALIZABLE
-        TRANSACTION_NONE
-
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ *        transaction isolation levels
+ *       in transaction-isolation type.
+ *       Include: TRANSACTION_READ_UNCOMMITTED
+ *       TRANSACTION_READ_COMMITTED
+ *       TRANSACTION_REPEATABLE_READ TRANSACTION_SERIALIZABLE
+ *       TRANSACTION_NONE
  *
+ * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public enum TransactionIsolation
 {
    /**
     * TRANSACTION_READ_UNCOMMITTED,
-
     */
-   TRANSACTION_READ_UNCOMMITTED("TRANSACTION_READ_UNCOMMITTED"),
+   TRANSACTION_READ_UNCOMMITTED("TRANSACTION_READ_UNCOMMITTED", 1),
+
    /**
     * TRANSACTION_READ_COMMITTED,
-
     */
-   TRANSACTION_READ_COMMITTED("TRANSACTION_READ_COMMITTED"),
+   TRANSACTION_READ_COMMITTED("TRANSACTION_READ_COMMITTED", 2),
+
    /**
     * TRANSACTION_REPEATABLE_READ,
-
     */
-   TRANSACTION_REPEATABLE_READ("TRANSACTION_REPEATABLE_READ"),
+   TRANSACTION_REPEATABLE_READ("TRANSACTION_REPEATABLE_READ", 4),
+
    /**
     * TRANSACTION_SERIALIZABLE,
-
     */
-   TRANSACTION_SERIALIZABLE("TRANSACTION_SERIALIZABLE"),
+   TRANSACTION_SERIALIZABLE("TRANSACTION_SERIALIZABLE", 8),
+
    /**
     * TRANSACTION_NONE;
-
     */
-   TRANSACTION_NONE("TRANSACTION_NONE");
+   TRANSACTION_NONE("TRANSACTION_NONE", 0);
 
-   private String value;
+   private static final Map<String, TransactionIsolation> MAP;
+   private String name;
+   private int constant;
 
    /**
     * Constructor
-    * @param v The value
+    * @param n The name
+    * @param c The constant
     */
-   TransactionIsolation(String v)
+   TransactionIsolation(String n, int c)
    {
-      this.value = v;
+      this.name = n;
+      this.constant = c;
+   }
+
+   static
+   {
+      final Map<String, TransactionIsolation> map = new HashMap<String, TransactionIsolation>();
+      for (TransactionIsolation v : values())
+      {
+         String name = v.name();
+         if (name != null)
+         {
+            map.put(name, v);
+            map.put(Integer.toString(v.getConstant()), v);
+         }
+      }
+      MAP = map;
+   }
+
+   /**
+    * Get the constant
+    * @return The value
+    */
+   int getConstant()
+   {
+      return constant;
+   }
+
+   /**
+    * Static method to get enum instance
+    *
+    * @param v The value
+    * @return The enum instance
+    */
+   public static TransactionIsolation forName(String v)
+   {
+      return MAP.get(v);
    }
 
    /**
@@ -79,6 +120,6 @@ public enum TransactionIsolation
     */
    public String toString()
    {
-      return value;
+      return name;
    }
 }

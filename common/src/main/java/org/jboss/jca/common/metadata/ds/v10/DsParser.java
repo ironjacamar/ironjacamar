@@ -425,7 +425,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      break;
                   }
                   case TRANSACTION_ISOLATION : {
-                     transactionIsolation = TransactionIsolation.valueOf(elementAsString(reader));
+                     transactionIsolation = TransactionIsolation.forName(elementAsString(reader));
                      break;
                   }
                   case SECURITY : {
@@ -664,7 +664,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      break;
                   }
                   case TRANSACTION_ISOLATION : {
-                     transactionIsolation = TransactionIsolation.valueOf(elementAsString(reader));
+                     transactionIsolation = TransactionIsolation.forName(elementAsString(reader));
                      break;
                   }
                   case SECURITY : {
