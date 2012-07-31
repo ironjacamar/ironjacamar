@@ -92,7 +92,7 @@ public class DsPoolImpl extends CommonPoolImpl implements DsPool
          return true;
       if (obj == null)
          return false;
-      if (!(obj instanceof DsXaPoolImpl))
+      if (!(obj instanceof DsPoolImpl))
          return false;
       if (!super.equals(obj))
          return false;
