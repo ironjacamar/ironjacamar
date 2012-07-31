@@ -373,7 +373,8 @@ public class WorkManagerImpl implements WorkManager
 
          final CountDownLatch completedLatch = new CountDownLatch(1);
 
-         wrapper = new WorkWrapper(this, work, execContext, workListener, null, completedLatch);
+         wrapper = new WorkWrapper(this, work, execContext, workListener, null, completedLatch,
+                                   System.currentTimeMillis());
 
          setup(wrapper, workListener);
 
@@ -477,7 +478,8 @@ public class WorkManagerImpl implements WorkManager
 
          final CountDownLatch startedLatch = new CountDownLatch(1);
 
-         wrapper = new WorkWrapper(this, work, execContext, workListener, startedLatch, null);
+         wrapper = new WorkWrapper(this, work, execContext, workListener, startedLatch, null,
+                                   System.currentTimeMillis());
 
          setup(wrapper, workListener);
 
@@ -579,7 +581,8 @@ public class WorkManagerImpl implements WorkManager
             execContext = new ExecutionContext();
          }
 
-         wrapper = new WorkWrapper(this, work, execContext, workListener, null, null);
+         wrapper = new WorkWrapper(this, work, execContext, workListener, null, null,
+                                   System.currentTimeMillis());
 
          setup(wrapper, workListener);
 
