@@ -19,7 +19,6 @@
       <recover-credential>
          <user-name>myUserName</user-name>
          <password>myPassword</password>
-         <security-domain>mySecurityDomain</security-domain>
       </recover-credential>
       <recover-plugin class-name="myClassName">
          <config-property name="MyProperty">MyPropertyValue</config-property>

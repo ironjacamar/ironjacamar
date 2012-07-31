@@ -94,7 +94,6 @@ public class DsParserForRecoveryTestCase
       Extension plugin = recovery.getRecoverPlugin();
       assertThat(security.getUserName(), is("myUserName"));
       assertThat(security.getPassword(), is("myPassword"));
-      assertThat(security.getSecurityDomain(), is("mySecurityDomain"));
       assertThat(plugin.getClassName(), is("myClassName"));
       assertThat(plugin.getConfigPropertiesMap().size(), is(1));
       assertThat(plugin.getConfigPropertiesMap().get("MyProperty"), is("MyPropertyValue"));
