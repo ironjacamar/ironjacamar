@@ -21,22 +21,25 @@
  */
 package org.jboss.jca.common.metadata.common;
 
+import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.api.metadata.common.Credential;
 import org.jboss.jca.common.api.validator.ValidateException;
 
+import org.jboss.logging.Messages;
 
 /**
- *
- * A SecurityImpl.
+ * Credential implementation
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
- *
+ * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class CredentialImpl implements Credential
 {
-
    /** The serialVersionUID */
    private static final long serialVersionUID = -5842402120520191086L;
+
+   /** The bundle */
+   private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
    private final String userName;
 
@@ -142,6 +145,12 @@ public class CredentialImpl implements Credential
    @Override
    public void validate() throws ValidateException
    {
-      //always valid, no data ara mandatory
+      if (userName != null)
+      {
+         if (securityDomain != null)
+         {
+            throw new ValidateException(bundle.invalidSecurityConfiguration());
+         }
+      }
    }
 }
