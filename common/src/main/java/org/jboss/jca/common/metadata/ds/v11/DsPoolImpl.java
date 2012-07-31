@@ -73,6 +73,44 @@ public class DsPoolImpl extends CommonPoolImpl implements DsPool
    /**
     * {@inheritDoc}
     */
+   @Override
+   public int hashCode()
+   {
+      final int prime = 31;
+      int result = super.hashCode();
+      result = prime * result + ((allowMultipleUsers == null) ? 0 : allowMultipleUsers.hashCode());
+      return result;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public boolean equals(Object obj)
+   {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (!(obj instanceof DsXaPoolImpl))
+         return false;
+      if (!super.equals(obj))
+         return false;
+
+      DsPoolImpl other = (DsPoolImpl) obj;
+      if (allowMultipleUsers == null)
+      {
+         if (other.allowMultipleUsers != null)
+            return false;
+      }
+      else if (!allowMultipleUsers.equals(other.allowMultipleUsers))
+         return false;
+      return true;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public String toString()
    {
       StringBuilder sb = new StringBuilder(1024);
