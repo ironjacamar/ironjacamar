@@ -89,8 +89,8 @@ public class WorkWrapper implements Runnable
    /** The work manager */
    private WorkManagerImpl workManager;
 
-   /** The blocked time */
-   private long blockedTime;
+   /** The start time */
+   private long startTime;
 
    /** Any exception */
    private WorkException exception;
@@ -110,6 +110,7 @@ public class WorkWrapper implements Runnable
     * @param workListener the WorkListener
     * @param startedLatch The latch for when work has started
     * @param completedLatch The latch for when work has completed
+    * @param startTime The start time
     * @throws IllegalArgumentException for null work, execution context or a negative start timeout
     */
    public WorkWrapper(WorkManagerImpl workManager, 
@@ -117,7 +118,8 @@ public class WorkWrapper implements Runnable
                       ExecutionContext executionContext, 
                       WorkListener workListener,
                       CountDownLatch startedLatch,
-                      CountDownLatch completedLatch)
+                      CountDownLatch completedLatch,
+                      long startTime)
    {
       super();
 
@@ -132,6 +134,7 @@ public class WorkWrapper implements Runnable
       this.workListener = workListener;
       this.startedLatch = startedLatch;
       this.completedLatch = completedLatch;
+      this.startTime = startTime;
       this.workContexts = null;
    }
    
@@ -266,7 +269,11 @@ public class WorkWrapper implements Runnable
 
       if (workListener != null)
       {
-         WorkEvent event = new WorkEvent(workManager, WorkEvent.WORK_STARTED, work, null);
+         long duration = System.currentTimeMillis() - startTime;
+         if (duration < 0)
+            duration = javax.resource.spi.work.WorkManager.UNKNOWN;
+
+         WorkEvent event = new WorkEvent(workManager, WorkEvent.WORK_STARTED, work, null, duration);
          workListener.workStarted(event);
       }
 
