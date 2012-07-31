@@ -107,7 +107,7 @@ public class DeployHandler extends AbstractIronJacamarHandler
          DeployJob deployJob = new DeployJob(project, rarFile);
          deployJob.schedule();
       }
-      return Status.OK_STATUS;
+      return null;
    }
    
    /**

@@ -27,6 +27,7 @@ import org.jboss.jca.codegenerator.JCA10Profile;
 import org.jboss.jca.codegenerator.JCA15Profile;
 import org.jboss.jca.codegenerator.JCA16Profile;
 import org.jboss.jca.eclipse.Activator;
+import org.jboss.jca.eclipse.IronJacamarProjectNature;
 import org.jboss.jca.eclipse.preferences.PreferenceConstants;
 
 import java.io.File;
@@ -227,9 +228,10 @@ public class CodeGenWizard extends Wizard implements INewWizard
 
       IProjectDescription description = project.getDescription();
       String[] natures = description.getNatureIds();
-      String[] newNatures = new String[natures.length + 1];
+      String[] newNatures = new String[natures.length + 2];
       System.arraycopy(natures, 0, newNatures, 0, natures.length);
       newNatures[natures.length] = JavaCore.NATURE_ID;
+      newNatures[natures.length + 1] = IronJacamarProjectNature.NATURE_ID;
       description.setNatureIds(newNatures);
       project.setDescription(description, progressMonitor);
 

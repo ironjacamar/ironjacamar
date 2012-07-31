@@ -14,7 +14,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.debug.core,
  org.eclipse.ui.console,
  org.eclipse.ant.launching,
- org.eclipse.m2e.launching;resolution:=optional
+ org.eclipse.m2e.launching;resolution:=optional,
+ org.eclipse.core.expressions;bundle-version="3.4.300"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6,
  CDC-1.0/Foundation-1.0
 Bundle-ActivationPolicy: lazy

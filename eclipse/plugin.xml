@@ -23,10 +23,20 @@
       <handler
             commandId="ironjacamar-eclipse.commands.validateCommand"
             class="org.jboss.jca.eclipse.command.ValidateHandler">
+         <activeWhen>
+            <reference
+                  definitionId="org.jboss.jca.eclipse.IronJacamarProjectNature.definition">
+            </reference>
+         </activeWhen>
       </handler>
       <handler
             commandId="ironjacamar-eclipse.commands.deployCommand"
             class="org.jboss.jca.eclipse.command.DeployHandler">
+         <activeWhen>
+            <reference
+                  definitionId="org.jboss.jca.eclipse.IronJacamarProjectNature.definition">
+            </reference>
+         </activeWhen>
       </handler>
    </extension>
    <extension
@@ -62,6 +72,12 @@
                   mnemonic="D"
                   id="ironjacamar-eclipse.menus.deployCommand">
             </command>
+            <visibleWhen
+                  checkEnabled="false">
+               <reference
+                     definitionId="org.jboss.jca.eclipse.IronJacamarProjectNature.definition">
+               </reference>
+            </visibleWhen>
          </menu>
       </menuContribution>
       <menuContribution
@@ -113,6 +129,34 @@
       <initializer
             class="org.jboss.jca.eclipse.preferences.PreferenceInitializer">
       </initializer>
+   </extension>
+   <extension
+         id="IronJacamarProjectNature"
+         name="IronJacamar project nature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.jboss.jca.eclipse.IronJacamarProjectNature">
+         </run>
+      </runtime>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.definitions">
+      <definition
+            id="org.jboss.jca.eclipse.IronJacamarProjectNature.definition">
+            <with
+                  variable="selection">
+               <iterate
+                     ifEmpty="false">
+                  <adapt type="org.eclipse.core.resources.IResource">
+                      <test
+                            property="org.eclipse.core.resources.projectNature"
+                            value="org.jboss.jca.eclipse.IronJacamarProjectNature">
+                      </test>
+                  </adapt>
+               </iterate>
+            </with>
+      </definition>
    </extension>
 
 </plugin>
