@@ -392,6 +392,7 @@ public class LegacyDsParser extends AbstractParser
                   }
                   case USER_NAME : {
                      userName = elementAsString(reader);
+                     securityDomain = null;
                      break;
                   }
                   case MAX_POOL_SIZE : {
@@ -642,6 +643,7 @@ public class LegacyDsParser extends AbstractParser
                   }
                   case USER_NAME : {
                      userName = elementAsString(reader);
+                     securityDomain = null;
                      break;
                   }
                   case MAX_POOL_SIZE : {

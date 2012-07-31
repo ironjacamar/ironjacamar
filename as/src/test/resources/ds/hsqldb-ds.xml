@@ -75,7 +75,7 @@
       -->
 
       <!-- Use the security domain defined in conf/login-config.xml -->
-      <security-domain>HsqlDbRealm</security-domain>
+      <!-- <security-domain>HsqlDbRealm</security-domain> -->
 
       <!-- Use the security domain defined in conf/login-config.xml or the
            getConnection(user, pw) for logins. The security domain takes precedence.
