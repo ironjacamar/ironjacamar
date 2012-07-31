@@ -175,7 +175,7 @@ public class DsParser extends org.jboss.jca.common.metadata.ds.v10.DsParser impl
                      break;
                   }
                   case TRANSACTION_ISOLATION : {
-                     transactionIsolation = TransactionIsolation.valueOf(elementAsString(reader));
+                     transactionIsolation = TransactionIsolation.forName(elementAsString(reader));
                      break;
                   }
                   case SECURITY : {
@@ -340,7 +340,7 @@ public class DsParser extends org.jboss.jca.common.metadata.ds.v10.DsParser impl
                      break;
                   }
                   case TRANSACTION_ISOLATION : {
-                     transactionIsolation = TransactionIsolation.valueOf(elementAsString(reader));
+                     transactionIsolation = TransactionIsolation.forName(elementAsString(reader));
                      break;
                   }
                   case SECURITY : {
