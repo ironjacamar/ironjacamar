@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:noNamespaceSchemaLocation="http://www.jboss.org/ironjacamar/schema/datasources_1_1.xsd"> 
-                 <datasource jndi-name="java:jboss/datasources/complexDs" pool-name="complexDs_Pool" jta="false" use-java-context="true" spy="false" use-ccm="true">
+                 <datasource jndi-name="java:jboss/datasources/complexDs" enabled="false" pool-name="complexDs_Pool" jta="false" use-java-context="true" spy="false" use-ccm="true">
                     <connection-url>
                         jdbc:h2:mem:test;DB_CLOSE_DELAY=-1
                     </connection-url>
@@ -11,8 +11,11 @@
                     <datasource-class>
                         org.jboss.as.connector.subsystems.datasources.ModifiableDataSource
                     </datasource-class>
-                    <connection-property name="char.encoding">
-                        UTF-8
+                    <connection-property name="name1">
+                        Property1
+                    </connection-property>
+                    <connection-property name="name2">
+                        Property2
                     </connection-property>
                     <driver>
                         h2
@@ -55,13 +58,15 @@
                             sa
                         </password>
                         <reauth-plugin class-name="someClass1">
-                        <config-property name="name">Property1</config-property>
-			</reauth-plugin>
+                        <config-property name="name1">Property1</config-property>
+                        <config-property name="name2">Property2</config-property>
+						</reauth-plugin>
                     </security>
                     <validation>
                         <valid-connection-checker class-name="someClass2">
-                        <config-property name="name">Property2</config-property>
-			</valid-connection-checker>
+                        <config-property name="name2">Property2</config-property>
+                        <config-property name="name1">Property1</config-property>
+						</valid-connection-checker>
                         <check-valid-connection-sql>
                             select 1
                         </check-valid-connection-sql>
@@ -78,16 +83,18 @@
                             true
                         </use-fast-fail>
                         <stale-connection-checker class-name="someClass3">
-                        <config-property name="name">Property3</config-property>
-			</stale-connection-checker>
+                        <config-property name="name1">Property1</config-property>
+                        <config-property name="name2">Property2</config-property>
+						</stale-connection-checker>
                         <exception-sorter class-name="someClass4">
-                        <config-property name="name">Property4</config-property>
-			</exception-sorter>
+                        <config-property name="name1">Property1</config-property>
+                        <config-property name="name2">Property2</config-property>
+						</exception-sorter>
                     </validation>
                     <timeout>
-			<blocking-timeout-millis>20000</blocking-timeout-millis>
-			<idle-timeout-minutes>4</idle-timeout-minutes>
-			<set-tx-query-timeout/>
+						<blocking-timeout-millis>20000</blocking-timeout-millis>
+						<idle-timeout-minutes>4</idle-timeout-minutes>
+						<set-tx-query-timeout/>
                         <query-timeout>
                             120
                         </query-timeout>
@@ -105,19 +112,22 @@
                         <prepared-statement-cache-size>
                             30
                         </prepared-statement-cache-size>
-			<share-prepared-statements/>
+						<share-prepared-statements/>
                         <track-statements>nowarn</track-statements>
                     </statement>
                 </datasource>
-                <xa-datasource jndi-name="java:jboss/xa-datasources/complexXaDs" pool-name="complexXaDs_Pool" use-java-context="true" spy="false" use-ccm="true" jta="false">
-                    <xa-datasource-property name="URL">
-                        jdbc:h2:mem:test
+                <xa-datasource jndi-name="java:jboss/xa-datasources/complexXaDs" pool-name="complexXaDs_Pool" use-java-context="true" spy="false" use-ccm="true" enabled="true">
+                    <xa-datasource-property name="name1">
+                        Property1
+                    </xa-datasource-property>
+                    <xa-datasource-property name="name2">
+                        Property2
                     </xa-datasource-property>
                     <xa-datasource-class>
                         org.jboss.as.connector.subsystems.datasources.ModifiableXaDataSource
                     </xa-datasource-class>
                     <driver>
-                        h2
+                        pg
                     </driver>
                     <url-delimiter>
                         :
@@ -145,13 +155,14 @@
                             true
                         </use-strict-min>
                         <flush-strategy>
-                            EntirePool
+                            IdleConnections
                         </flush-strategy>
+                        <allow-multiple-users/>
                         <is-same-rm-override>
                             true
                         </is-same-rm-override>
-			<interleaving/>
-			<no-tx-separate-pools/>
+						<interleaving/>
+						<no-tx-separate-pools/>
                         <pad-xid>
                             true
                         </pad-xid>
@@ -160,15 +171,13 @@
                         </wrap-xa-resource>
                     </xa-pool>
                     <security>
-                        <user-name>
-                            sa
-                        </user-name>
-                        <password>
-                            sa
-                        </password>
+                        <security-domain>
+                          HsqlDbRealm
+                        </security-domain>
                         <reauth-plugin class-name="someClass1">
-                        <config-property name="name">Property1</config-property>
-			</reauth-plugin>
+                        	<config-property name="name1">Property1</config-property>
+							<config-property name="name2">Property2</config-property>
+						</reauth-plugin>
                     </security>
                     <recovery no-recovery="false">
                         <recover-credential>
@@ -177,14 +186,15 @@
                             </security-domain>
                         </recover-credential>
                         <recover-plugin class-name="someClass5">
-                        <config-property name="name">Property5</config-property>
-                        <config-property name="name1">Property6</config-property>
-			</recover-plugin>
+                        <config-property name="name1">Property1</config-property>
+                        <config-property name="name2">Property2</config-property>
+						</recover-plugin>
                     </recovery>
                     <validation>
                         <valid-connection-checker class-name="someClass2">
-                        <config-property name="name">Property2</config-property>
-			</valid-connection-checker>
+                        <config-property name="name1">Property1</config-property>
+                        <config-property name="name2">Property2</config-property>
+						</valid-connection-checker>
                         <check-valid-connection-sql>
                             select 1
                         </check-valid-connection-sql>
@@ -201,16 +211,18 @@
                             true
                         </use-fast-fail>
                         <stale-connection-checker class-name="someClass3">
-                        <config-property name="name">Property3</config-property>
-			</stale-connection-checker>
+                        <config-property name="name1">Property1</config-property>
+                        <config-property name="name2">Property2</config-property>
+						</stale-connection-checker>
                         <exception-sorter class-name="someClass4">
-                        <config-property name="name">Property4</config-property>
-			</exception-sorter>
+                        <config-property name="name1">Property1</config-property>
+                        <config-property name="name2">Property2</config-property>
+						</exception-sorter>
                     </validation>
                     <timeout>
-			<blocking-timeout-millis>20000</blocking-timeout-millis>
-			<idle-timeout-minutes>4</idle-timeout-minutes>
-			<set-tx-query-timeout/>
+						<blocking-timeout-millis>20000</blocking-timeout-millis>
+						<idle-timeout-minutes>4</idle-timeout-minutes>
+						<set-tx-query-timeout/>
                         <query-timeout>
                             120
                         </query-timeout>
@@ -231,15 +243,21 @@
                         <prepared-statement-cache-size>
                             30
                         </prepared-statement-cache-size>
-			<share-prepared-statements/>
-			<track-statements>nowarn</track-statements>
+						<share-prepared-statements/>
+						<track-statements>true</track-statements>
                     </statement>
 		  </xa-datasource>
                 <drivers>
                     <driver name="h2" module="com.h2database.h2">
-                        <xa-datasource-class>
+                        <datasource-class>
                             org.h2.jdbcx.JdbcDataSource
+                        </datasource-class>
+                    </driver>
+                    <driver name="pg" module="org.pg.postgres" major-version="9" minor-version="1">
+                        <xa-datasource-class>
+                            org.pg.JdbcDataSource
                         </xa-datasource-class>
+                        <driver-class>org.pg.Driver</driver-class>
                     </driver>
                 </drivers>
  </datasources>

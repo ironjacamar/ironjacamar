@@ -22,14 +22,8 @@
 package org.jboss.jca.common.metadata.ds;
 
 import org.jboss.jca.common.api.metadata.ds.DataSources;
-import org.jboss.jca.common.api.validator.ValidateException;
 import org.jboss.jca.common.metadata.ParserException;
 import org.jboss.jca.common.metadata.ds.v11.DsParser;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -44,10 +38,8 @@ import static org.junit.Assert.assertThat;
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public class DsParserForTemplateReplaceTestCase
+public class DsParserForTemplateReplaceTestCase extends DsParserTestBase
 {
-
-   private static DsParser parser;
 
    /**
    *
@@ -77,13 +69,8 @@ public class DsParserForTemplateReplaceTestCase
    public void shouldReplaceTemplateElementFromSystemProperty() throws Exception
    {
 
-      //given
-      File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/replace-max-pool-ds.xml")
-         .toURI());
-      //when
-      DataSources ds = doParse(xmlFile);
-      //then
+      DataSources ds = parseDsFromFile("ds/unit/replace-max-pool-ds.xml");
+
       Integer actualMaxPoolSize = ds.getDataSource().get(0).getPool().getMaxPoolSize();
       assertThat(actualMaxPoolSize, is(10));
    }
@@ -98,13 +85,8 @@ public class DsParserForTemplateReplaceTestCase
    public void shouldReplaceTemplateAttributeFromSystemProperty() throws Exception
    {
 
-      //given
-      File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/replace-jndi-name-ds.xml")
-         .toURI());
-      //when
-      DataSources ds = doParse(xmlFile);
-      //then
+      DataSources ds = parseDsFromFile("ds/unit/replace-jndi-name-ds.xml");
+
       String actualJndiName = ds.getDataSource().get(0).getJndiName();
       assertThat(actualJndiName, is("java:/H2DS"));
    }
@@ -119,13 +101,8 @@ public class DsParserForTemplateReplaceTestCase
    public void shouldReplaceTemplatePartialAttributeFromSystemProperty() throws Exception
    {
 
-      //given
-      File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/replace-jndi-name-partial-ds.xml")
-         .toURI());
-      //when
-      DataSources ds = doParse(xmlFile);
-      //then
+      DataSources ds = parseDsFromFile("ds/unit/replace-jndi-name-partial-ds.xml");
+
       String actualJndiName = ds.getDataSource().get(0).getJndiName();
       assertThat(actualJndiName, is("java:/H2DS"));
    }
@@ -140,13 +117,8 @@ public class DsParserForTemplateReplaceTestCase
    public void shouldReplaceTemplateTwoPartsAttributeFromSystemProperty() throws Exception
    {
 
-      //given
-      File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/replace-jndi-name-twoparts-ds.xml")
-         .toURI());
-      //when
-      DataSources ds = doParse(xmlFile);
-      //then
+      DataSources ds = parseDsFromFile("ds/unit/replace-jndi-name-twoparts-ds.xml");
+
       String actualJndiName = ds.getDataSource().get(0).getJndiName();
       assertThat(actualJndiName, is("java:/H2DS"));
    }
@@ -161,13 +133,8 @@ public class DsParserForTemplateReplaceTestCase
    public void shouldReplaceTemplateAttributeWitNullIfSystemPropertyNotSet() throws Exception
    {
 
-      //given
-      File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/replace-jndi-name-wrong-property-ds.xml")
-         .toURI());
-      //when
-      DataSources ds = doParse(xmlFile);
-      //then
+      DataSources ds = parseDsFromFile("ds/unit/replace-jndi-name-wrong-property-ds.xml");
+
       String actualJndiName = ds.getDataSource().get(0).getJndiName();
       assertThat(actualJndiName, is(""));
 
@@ -183,13 +150,8 @@ public class DsParserForTemplateReplaceTestCase
    public void shouldReplaceOnlyRightTemplateOnTwoPartsWithOneWrongAttributeIfSystemPropertyNotSet() throws Exception
    {
 
-      //given
-      File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/replace-jndi-name-twoparts-onewrong-ds.xml")
-         .toURI());
-      //when
-      DataSources ds = doParse(xmlFile);
-      //then
+      DataSources ds = parseDsFromFile("ds/unit/replace-jndi-name-twoparts-onewrong-ds.xml");
+
       String actualJndiName = ds.getDataSource().get(0).getJndiName();
       assertThat(actualJndiName, is("H2DS"));
 
@@ -205,33 +167,8 @@ public class DsParserForTemplateReplaceTestCase
    public void shouldThrowParserExceptionOnWrongSystemPropertyNotSetForNumberValue() throws Exception
    {
 
-      //given
-      File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-         .getResource("ds/unit/replace-max-pool-wrong-ds.xml")
-         .toURI());
-      //when
-      DataSources ds = doParse(xmlFile);
-      //then throw ParserException
+      DataSources ds = parseDsFromFile("ds/unit/replace-max-pool-wrong-ds.xml");
 
    }
-
-   private DataSources doParse(File xmlFile) throws FileNotFoundException, Exception, IOException, ValidateException
-   {
-      FileInputStream is = null;
-
-      try
-      {
-         is = new FileInputStream(xmlFile);
-         //when
-         return parser.parse(is);
-
-      }
-      finally
-      {
-         if (is != null)
-            is.close();
-      }
-   }
-
 
 }
