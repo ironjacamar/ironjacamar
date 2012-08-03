@@ -159,7 +159,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       this.permits = new Semaphore(maxSize, true, statistics);
 
       // Schedule managed connection pool for prefill
-      if (pc.isPrefill() && p instanceof PrefillPool && pc.getMinSize() > 0)
+      if ((pc.isPrefill() || pc.isStrictMin()) && p instanceof PrefillPool && pc.getMinSize() > 0)
       {
          PoolFiller.fillPool(this);
       }
@@ -565,7 +565,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          // We destroyed something, check the minimum.
          if (!shutdown.get() &&
              poolConfiguration.getMinSize() > 0 &&
-             poolConfiguration.isPrefill() &&
+             (poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) &&
              pool instanceof PrefillPool)
          {
             PoolFiller.fillPool(this);
@@ -625,30 +625,28 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
          if (!shutdown.get())
          {
-            if (!poolConfiguration.isStrictMin())
-            {
-               boolean emptyManagedConnectionPool = false;
+            // Let prefill and use-strict-min be the same
+            boolean emptyManagedConnectionPool = false;
 
-               if (poolConfiguration.isPrefill() && pool instanceof PrefillPool)
+            if ((poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) && pool instanceof PrefillPool)
+            {
+               if (poolConfiguration.getMinSize() > 0)
                {
-                  if (poolConfiguration.getMinSize() > 0)
-                  {
-                     PoolFiller.fillPool(this);
-                  }
-                  else
-                  {
-                     emptyManagedConnectionPool = true;
-                  }
+                  PoolFiller.fillPool(this);
                }
                else
                {
                   emptyManagedConnectionPool = true;
                }
-
-               // Empty pool
-               if (emptyManagedConnectionPool)
-                  pool.emptyManagedConnectionPool(this);
             }
+            else
+            {
+               emptyManagedConnectionPool = true;
+            }
+
+            // Empty pool
+            if (emptyManagedConnectionPool)
+               pool.emptyManagedConnectionPool(this);
          }
       }
    }
@@ -684,7 +682,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       if (poolConfiguration.getMinSize() <= 0)
          return;
 
-      if (!poolConfiguration.isPrefill())
+      if (!(poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()))
          return;
 
       if (!(pool instanceof PrefillPool))
@@ -913,7 +911,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             if (anyDestroyed &&
                 !shutdown.get() &&
                 poolConfiguration.getMinSize() > 0 &&
-                poolConfiguration.isPrefill() &&
+                (poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) &&
                 pool instanceof PrefillPool)
             {
                PoolFiller.fillPool(this);
