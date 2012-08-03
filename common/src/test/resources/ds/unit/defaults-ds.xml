@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.jboss.org/ironjacamar/schema/datasources_1_1.xsd"> 
+                 <datasource jndi-name="java:jboss/datasources/complexDs"  pool-name="complexDs_Pool">
+                    <connection-url>
+                        jdbc:h2:mem:test;DB_CLOSE_DELAY=-1
+                    </connection-url>
+                    <driver-class>
+                        org.hsqldb.jdbcDriver
+                    </driver-class>
+                    <datasource-class>
+                        org.jboss.as.connector.subsystems.datasources.ModifiableDataSource
+                    </datasource-class>
+                </datasource>
+                <xa-datasource jndi-name="java:jboss/xa-datasources/complexXaDs" pool-name="complexXaDs_Pool">
+                    <xa-datasource-property name="name1">
+                        Property1
+                    </xa-datasource-property>
+                   <xa-datasource-class>
+                        org.jboss.as.connector.subsystems.datasources.ModifiableXaDataSource
+                    </xa-datasource-class>
+                    
+                    <xa-pool>
+                        <min-pool-size>
+                            1
+                        </min-pool-size>
+                    </xa-pool>
+                    <recovery >
+                        <recover-credential>
+                            <security-domain>
+                                HsqlDbRealm
+                            </security-domain>
+                        </recover-credential>
+                    </recovery>
+		  </xa-datasource>
+ </datasources>

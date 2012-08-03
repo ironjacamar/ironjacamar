@@ -78,9 +78,9 @@ public class DsParserXMLTestCase extends DsParserTestBase
       assertEquals(ds.getPoolName(), "complexDs_Pool");
       assertFalse(ds.isJTA());
       assertFalse(ds.isEnabled());
-      assertTrue(ds.isUseJavaContext());
-      assertFalse(ds.isSpy());
-      assertTrue(ds.isUseCcm());
+      assertFalse(ds.isUseJavaContext());
+      assertTrue(ds.isSpy());
+      assertFalse(ds.isUseCcm());
       assertEquals(ds.getConnectionUrl(), "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
       assertEquals(ds.getDriverClass(), "org.hsqldb.jdbcDriver");
       assertEquals(ds.getDataSourceClass(), "org.jboss.as.connector.subsystems.datasources.ModifiableDataSource");
@@ -135,7 +135,7 @@ public class DsParserXMLTestCase extends DsParserTestBase
       assertEquals((long) statement.getPreparedStatementsCacheSize(), 30L);
       assertEquals(statement.getTrackStatements(), Statement.TrackStatementsEnum.NOWARN);
 
-      //      Xa Ds part
+      // Xa Ds part
       XADataSourceImpl xads = (XADataSourceImpl) dss.getXaDataSource().get(0);
       assertNotNull(xads);
 
@@ -164,7 +164,7 @@ public class DsParserXMLTestCase extends DsParserTestBase
       assertTrue(poolXa.isSameRmOverride());
       assertTrue(poolXa.isInterleaving());
       assertTrue(poolXa.isPadXid());
-      assertTrue(poolXa.isWrapXaResource());
+      assertFalse(poolXa.isWrapXaResource());
       assertTrue(poolXa.isNoTxSeparatePool());
 
       security = (DsSecurityImpl) xads.getSecurity();
@@ -214,7 +214,6 @@ public class DsParserXMLTestCase extends DsParserTestBase
       List<Driver> drivers = dss.getDrivers();
       assertEquals(drivers.size(), 2);
       Driver driver = dss.getDriver("h2");
-      log.info("driver:" + driver);
       assertNotNull(driver);
       assertNull(driver.getDriverClass());
       assertNull(driver.getMajorVersion());
@@ -233,6 +232,41 @@ public class DsParserXMLTestCase extends DsParserTestBase
       assertEquals(driver.getXaDataSourceClass(), "org.pg.JdbcDataSource");
    }
 
+   /**
+    * Checks, if some properties are set by default
+    * @throws Exception in case of error
+    */
+   @Test
+   public void checkDefaultValues() throws Exception
+   {
+      DataSources dss = parseDsFromFile("ds/unit/defaults-ds.xml");
+
+      //Ds part
+      DataSourceImpl ds = (DataSourceImpl) dss.getDataSource().get(0);
+      assertNotNull(ds);
+      assertTrue(ds.isJTA());
+      assertTrue(ds.isEnabled());
+      assertTrue(ds.isUseJavaContext());
+      assertFalse(ds.isSpy());
+      assertTrue(ds.isUseCcm());
+
+      //XaDs part
+      XADataSourceImpl xads = (XADataSourceImpl) dss.getXaDataSource().get(0);
+      assertNotNull(xads);
+      assertTrue(xads.isUseJavaContext());
+      assertFalse(xads.isSpy());
+      assertTrue(xads.isUseCcm());
+      assertTrue(xads.isEnabled());
+
+      DsXaPoolImpl poolXa = (DsXaPoolImpl) xads.getXaPool();
+      assertNotNull(poolXa);
+      assertFalse(poolXa.isPadXid());
+      assertTrue(poolXa.isWrapXaResource());
+      
+      Recovery recovery = xads.getRecovery();
+      assertFalse(recovery.getNoRecovery());
+
+   }
    /**
     * Checks, that all properties are proceeded correctly 
     * @param map containing properties

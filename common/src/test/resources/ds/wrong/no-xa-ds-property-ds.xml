@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ===================================================================== -->
+<!-- NO xa-datasource-property elements -->
+<!-- ===================================================================== -->
+<datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="http://www.jboss.org/ironjacamar/schema/datasources_1_0.xsd">
+  <xa-datasource jndi-name="XAOracleDS" pool-name="XAOracleDS">
+    <xa-datasource-class>oracle.jdbc.xa.client.OracleXADataSource</xa-datasource-class>
+  </xa-datasource>
+</datasources>
