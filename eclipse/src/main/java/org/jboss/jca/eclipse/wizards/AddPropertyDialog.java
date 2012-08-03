@@ -21,6 +21,10 @@
  */
 package org.jboss.jca.eclipse.wizards;
 
+import org.jboss.jca.codegenerator.ConfigPropType;
+
+import java.util.List;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -63,6 +67,8 @@ public class AddPropertyDialog extends Dialog
    private Text valueText;
 
    private String[] initialValues;
+   
+   private List<ConfigPropType> propList;
 
    /**
     * AddPropertyDialog 
@@ -114,18 +120,20 @@ public class AddPropertyDialog extends Dialog
 
       final Combo combo = new Combo(comp, SWT.DROP_DOWN | SWT.READ_ONLY);
       combo.setItems(items);
-      combo.setText("String");
+      
       type = initialValues[1];
       if (type.equals(""))
       {
          type = "String";
       }
+      combo.setText(type);
 
       combo.addSelectionListener(new SelectionAdapter()
       {
          public void widgetSelected(SelectionEvent e)
          {
             type = combo.getText();
+            updateButtons();
          }
       });
 
@@ -203,7 +211,71 @@ public class AddPropertyDialog extends Dialog
    {
       String name = nameText.getText().trim();
       String value = valueText.getText().trim();
-      getButton(IDialogConstants.OK_ID).setEnabled((name.length() > 0) && (value.length() > 0));
+      
+      boolean validated = true;
+      validated = validated && (name.length() > 0) && (value.length()) > 0;
+      validated = validated && name.matches("[a-zA-Z_][a-zA-Z_0-9]*");
+      if (propList != null)
+      {
+         for (ConfigPropType conf : propList)
+         {
+            if (name.equals(conf.getName()) && !name.equals(initialValues[0]))
+            {
+               validated = false;
+               break;
+            }
+         }
+      }
+      if (type.equals("Boolean"))
+      {
+         validated = validated && (value.toLowerCase().equals("true") || value.toLowerCase().equals("false"));
+      }
+      if (type.equals("Integer") || type.equals("Short"))
+      {
+         try
+         {
+            Integer.parseInt(value);
+         }
+         catch (NumberFormatException e)
+         {
+            validated = false;
+         }
+      }
+      if (type.equals("Double"))
+      {
+         try
+         {
+            Double.parseDouble(value);
+         }
+         catch (NumberFormatException e)
+         {
+            validated = false;
+         }
+      }
+      if (type.equals("Long"))
+      {
+         try
+         {
+            Long.parseLong(value);
+         }
+         catch (NumberFormatException e)
+         {
+            validated = false;
+         }
+      }
+      if (type.equals("Float"))
+      {
+         try
+         {
+            Float.parseFloat(value);
+         }
+         catch (NumberFormatException e)
+         {
+            validated = false;
+         }
+      }
+
+      getButton(IDialogConstants.OK_ID).setEnabled(validated);
    }
 
    /**
@@ -214,5 +286,23 @@ public class AddPropertyDialog extends Dialog
    {
       super.create();
       updateButtons();
+   }
+
+   /**
+    * getPropList
+    * @return the propList
+    */
+   public List<ConfigPropType> getPropList()
+   {
+      return propList;
+   }
+
+   /**
+    * setPropList
+    * @param propList the propList to set
+    */
+   public void setPropList(List<ConfigPropType> propList)
+   {
+      this.propList = propList;
    }
 }

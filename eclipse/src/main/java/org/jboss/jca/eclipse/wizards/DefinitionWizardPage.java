@@ -307,7 +307,12 @@ public class DefinitionWizardPage extends WizardPage
          updateStatus("Package name must be specified");
          return;
       }
-
+      if (packageText.getText().indexOf('.') < 0)
+      {
+         updateStatus("Package name should be 2 level at least, like org.jboss");
+         return;
+      }
+      
       updateStatus(null);
 
       return;

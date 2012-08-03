@@ -281,9 +281,12 @@ public class RaWizardPage extends WizardPage
     */
    private void addProperty()
    {
+      List<ConfigPropType> propList = ((CodeGenWizard) getWizard()).getDef().getRaConfigProps();
+
       String title = "Add";
-      AddPropertyDialog dialog = new AddPropertyDialog(propsTableViewer.getControl().getShell(), title, new String[]
-      {"", "", ""});
+      AddPropertyDialog dialog = new AddPropertyDialog(propsTableViewer.getControl().getShell(), title, 
+         new String[]{"", "", ""});
+      dialog.setPropList(propList);
       if (dialog.open() == Window.CANCEL)
       {
          return;
@@ -291,13 +294,6 @@ public class RaWizardPage extends WizardPage
 
       String[] pair = dialog.getNameValuePair();
       String name = pair[0];
-      /*
-      if (!overwrite(name)) {
-          return;
-      }
-      */
-
-      List<ConfigPropType> propList = ((CodeGenWizard) getWizard()).getDef().getRaConfigProps();
 
       ConfigPropType prop = new ConfigPropType();
       prop.setName(name);
@@ -314,9 +310,11 @@ public class RaWizardPage extends WizardPage
       IStructuredSelection selection = (IStructuredSelection) propsTableViewer.getSelection();
       ConfigPropType prop = (ConfigPropType) selection.getFirstElement();
 
+      List<ConfigPropType> propList = ((CodeGenWizard) getWizard()).getDef().getRaConfigProps();
       String title = "Edit";
       AddPropertyDialog dialog = new AddPropertyDialog(propsTableViewer.getControl().getShell(), title, new String[]
       {prop.getName(), prop.getType(), prop.getValue()});
+      dialog.setPropList(propList);
 
       if (dialog.open() == Window.CANCEL)
       {
@@ -325,13 +323,7 @@ public class RaWizardPage extends WizardPage
 
       String[] pair = dialog.getNameValuePair();
       String name = pair[0];
-      /*
-      if (!name.equals(originalName)) {
-          if (!overwrite(name)){
-              return;
-          }
-      }
-      */
+
       prop.setName(name);
       prop.setType(pair[1]);
       prop.setValue(pair[2]);
@@ -429,7 +421,12 @@ public class RaWizardPage extends WizardPage
          updateStatus("ResourceAdapter class name must be specified");
          return;
       }
-
+      if (!raText.getText().matches("[a-zA-Z_][a-zA-Z_0-9]*"))
+      {
+         updateStatus("ResourceAdapter class name must be validated");
+         return;
+      }
+      
       updateStatus(null);
       return;
 

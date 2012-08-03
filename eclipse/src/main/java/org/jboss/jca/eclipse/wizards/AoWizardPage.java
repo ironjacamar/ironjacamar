@@ -293,9 +293,12 @@ public class AoWizardPage extends WizardPage
     */
    private void addProperty()
    {
+      List<ConfigPropType> propList = aoDef.getAoConfigProps();
+
       String title = "Add";
       AddPropertyDialog dialog = new AddPropertyDialog(propsTableViewer.getControl().getShell(), title, new String[]
       {"", "", ""});
+      dialog.setPropList(propList);
       if (dialog.open() == Window.CANCEL)
       {
          return;
@@ -303,13 +306,6 @@ public class AoWizardPage extends WizardPage
 
       String[] pair = dialog.getNameValuePair();
       String name = pair[0];
-      /*
-      if (!overwrite(name)) {
-          return;
-      }
-      */
-
-      List<ConfigPropType> propList = aoDef.getAoConfigProps();
 
       ConfigPropType prop = new ConfigPropType();
       prop.setName(name);
@@ -326,9 +322,11 @@ public class AoWizardPage extends WizardPage
       IStructuredSelection selection = (IStructuredSelection) propsTableViewer.getSelection();
       ConfigPropType prop = (ConfigPropType) selection.getFirstElement();
 
+      List<ConfigPropType> propList = aoDef.getAoConfigProps();
       String title = "Edit";
       AddPropertyDialog dialog = new AddPropertyDialog(propsTableViewer.getControl().getShell(), title, new String[]
       {prop.getName(), prop.getType(), prop.getValue()});
+      dialog.setPropList(propList);
 
       if (dialog.open() == Window.CANCEL)
       {
@@ -337,13 +335,7 @@ public class AoWizardPage extends WizardPage
 
       String[] pair = dialog.getNameValuePair();
       String name = pair[0];
-      /*
-      if (!name.equals(originalName)) {
-          if (!overwrite(name)){
-              return;
-          }
-      }
-      */
+
       prop.setName(name);
       prop.setType(pair[1]);
       prop.setValue(pair[2]);
@@ -438,6 +430,16 @@ public class AoWizardPage extends WizardPage
       if (aoText.getText().length() == 0)
       {
          updateStatus("Admin object class name must be specified");
+         return;
+      }
+      if (!aoText.getText().matches("[a-zA-Z_][a-zA-Z_0-9]*"))
+      {
+         updateStatus("Admin object interface name must be validated");
+         return;
+      }
+      if (!aoImplText.getText().matches("[a-zA-Z_][a-zA-Z_0-9]*"))
+      {
+         updateStatus("Admin object class name must be validated");
          return;
       }
 

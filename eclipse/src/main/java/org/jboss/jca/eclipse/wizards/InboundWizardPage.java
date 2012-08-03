@@ -274,9 +274,12 @@ public class InboundWizardPage extends WizardPage
     */
    private void addProperty()
    {
+      List<ConfigPropType> propList = ((CodeGenWizard) getWizard()).getDef().getAsConfigProps();
+      
       String title = "Add";
       AddPropertyDialog dialog = new AddPropertyDialog(propsTableViewer.getControl().getShell(), title, new String[]
       {"", "", ""});
+      dialog.setPropList(propList);
       if (dialog.open() == Window.CANCEL)
       {
          return;
@@ -284,13 +287,6 @@ public class InboundWizardPage extends WizardPage
 
       String[] pair = dialog.getNameValuePair();
       String name = pair[0];
-      /*
-      if (!overwrite(name)) {
-          return;
-      }
-      */
-
-      List<ConfigPropType> propList = ((CodeGenWizard) getWizard()).getDef().getAsConfigProps();
 
       ConfigPropType prop = new ConfigPropType();
       prop.setName(name);
@@ -307,9 +303,11 @@ public class InboundWizardPage extends WizardPage
       IStructuredSelection selection = (IStructuredSelection) propsTableViewer.getSelection();
       ConfigPropType prop = (ConfigPropType) selection.getFirstElement();
 
+      List<ConfigPropType> propList = ((CodeGenWizard) getWizard()).getDef().getAsConfigProps();
       String title = "Edit";
       AddPropertyDialog dialog = new AddPropertyDialog(propsTableViewer.getControl().getShell(), title, new String[]
       {prop.getName(), prop.getType(), prop.getValue()});
+      dialog.setPropList(propList);
 
       if (dialog.open() == Window.CANCEL)
       {
@@ -318,13 +316,7 @@ public class InboundWizardPage extends WizardPage
 
       String[] pair = dialog.getNameValuePair();
       String name = pair[0];
-      /*
-      if (!name.equals(originalName)) {
-          if (!overwrite(name)){
-              return;
-          }
-      }
-      */
+
       prop.setName(name);
       prop.setType(pair[1]);
       prop.setValue(pair[2]);
@@ -417,7 +409,22 @@ public class InboundWizardPage extends WizardPage
 
       if (mlText.getText().length() == 0)
       {
-         updateStatus("ResourceAdapter class name must be specified");
+         updateStatus("Message Listener class name must be specified");
+         return;
+      }
+      if (!mlText.getText().matches("[a-zA-Z_][a-zA-Z_0-9]*"))
+      {
+         updateStatus("Message Listener interface name must be validated");
+         return;
+      }
+      if (!asText.getText().matches("[a-zA-Z_][a-zA-Z_0-9]*"))
+      {
+         updateStatus("ActivationSpec class name must be validated");
+         return;
+      }
+      if (!acText.getText().matches("[a-zA-Z_][a-zA-Z_0-9]*"))
+      {
+         updateStatus("Activation class name must be validated");
          return;
       }
 

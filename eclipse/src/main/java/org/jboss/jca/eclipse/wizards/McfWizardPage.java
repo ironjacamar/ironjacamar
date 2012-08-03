@@ -435,9 +435,12 @@ public class McfWizardPage extends WizardPage
     */
    private void addProperty()
    {
+      List<ConfigPropType> propList = mcfDef.getMcfConfigProps();
+
       String title = "Add";
       AddPropertyDialog dialog = new AddPropertyDialog(propsTableViewer.getControl().getShell(), title, new String[]
       {"", "", ""});
+      dialog.setPropList(propList);
       if (dialog.open() == Window.CANCEL)
       {
          return;
@@ -445,13 +448,6 @@ public class McfWizardPage extends WizardPage
 
       String[] pair = dialog.getNameValuePair();
       String name = pair[0];
-      /*
-      if (!overwrite(name)) {
-          return;
-      }
-      */
-
-      List<ConfigPropType> propList = mcfDef.getMcfConfigProps();
 
       ConfigPropType prop = new ConfigPropType();
       prop.setName(name);
@@ -460,7 +456,6 @@ public class McfWizardPage extends WizardPage
       ((PropsContentProvider) propsTableViewer.getContentProvider()).add(prop);
       propList.add(prop);
       container.update();
-
    }
 
    private void edit()
@@ -468,9 +463,11 @@ public class McfWizardPage extends WizardPage
       IStructuredSelection selection = (IStructuredSelection) propsTableViewer.getSelection();
       ConfigPropType prop = (ConfigPropType) selection.getFirstElement();
 
+      List<ConfigPropType> propList = mcfDef.getMcfConfigProps();
       String title = "Edit";
       AddPropertyDialog dialog = new AddPropertyDialog(propsTableViewer.getControl().getShell(), title, new String[]
       {prop.getName(), prop.getType(), prop.getValue()});
+      dialog.setPropList(propList);
 
       if (dialog.open() == Window.CANCEL)
       {
@@ -479,20 +476,13 @@ public class McfWizardPage extends WizardPage
 
       String[] pair = dialog.getNameValuePair();
       String name = pair[0];
-      /*
-      if (!name.equals(originalName)) {
-          if (!overwrite(name)){
-              return;
-          }
-      }
-      */
+
       prop.setName(name);
       prop.setType(pair[1]);
       prop.setValue(pair[2]);
       ((PropsContentProvider) propsTableViewer.getContentProvider()).update(prop);
 
       container.update();
-
    }
 
    private void remove(TableViewer viewer)
@@ -580,7 +570,37 @@ public class McfWizardPage extends WizardPage
 
       if (mcfText.getText().length() == 0)
       {
-         updateStatus("ResourceAdapter class name must be specified");
+         updateStatus("Management connection factory class name must be specified");
+         return;
+      }
+      if (!mcfText.getText().matches("[a-zA-Z_][a-zA-Z_0-9]*"))
+      {
+         updateStatus("Management connection factory class name must be validated");
+         return;
+      }
+      if (!mcText.getText().matches("[a-zA-Z_][a-zA-Z_0-9]*"))
+      {
+         updateStatus("Management connection class name must be validated");
+         return;
+      }
+      if (!cfText.getText().matches("[a-zA-Z_][a-zA-Z_0-9]*"))
+      {
+         updateStatus("Connection factory interface name must be validated");
+         return;
+      }
+      if (!cfImplText.getText().matches("[a-zA-Z_][a-zA-Z_0-9]*"))
+      {
+         updateStatus("Connection factory class name must be validated");
+         return;
+      }
+      if (!connText.getText().matches("[a-zA-Z_][a-zA-Z_0-9]*"))
+      {
+         updateStatus("Connection interface name must be validated");
+         return;
+      }
+      if (!connImplText.getText().matches("[a-zA-Z_][a-zA-Z_0-9]*"))
+      {
+         updateStatus("Connection class name must be validated");
          return;
       }
 
