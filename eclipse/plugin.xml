@@ -17,6 +17,11 @@
             categoryId="ironjacamar-eclipse.commands.category"
             id="ironjacamar-eclipse.commands.deployCommand">
       </command>
+      <command
+            name="Remote Deploy"
+            categoryId="ironjacamar-eclipse.commands.category"
+            id="ironjacamar-eclipse.commands.remoteDeployCommand">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -38,6 +43,15 @@
             </reference>
          </activeWhen>
       </handler>
+      <handler
+            commandId="ironjacamar-eclipse.commands.remoteDeployCommand"
+            class="org.jboss.jca.eclipse.command.RemoteDeployHandler">
+         <activeWhen>
+            <reference
+                  definitionId="org.jboss.jca.eclipse.IronJacamarProjectNature.definition">
+            </reference>
+         </activeWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
@@ -51,6 +65,12 @@
             commandId="ironjacamar-eclipse.commands.deployCommand"
             contextId="org.eclipse.ui.contexts.window"
             sequence="M1+7"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>
+      <key
+            commandId="ironjacamar-eclipse.commands.remoteDeployCommand"
+            contextId="org.eclipse.ui.contexts.window"
+            sequence="M1+8"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </key>
    </extension>
@@ -71,6 +91,11 @@
                   commandId="ironjacamar-eclipse.commands.deployCommand"
                   mnemonic="D"
                   id="ironjacamar-eclipse.menus.deployCommand">
+            </command>
+            <command
+                  commandId="ironjacamar-eclipse.commands.remoteDeployCommand"
+                  mnemonic="D"
+                  id="ironjacamar-eclipse.menus.remoteDeployCommand">
             </command>
             <visibleWhen
                   checkEnabled="false">
@@ -95,6 +120,12 @@
                   icon="icons/deploy_icon_16px.png"
                   tooltip="Deploy Ironjacamar project"
                   id="ironjacamar-eclipse.toolbars.deployCommand">
+            </command>
+            <command
+                  commandId="ironjacamar-eclipse.commands.remoteDeployCommand"
+                  icon="icons/deploy_icon_16px.png"
+                  tooltip="Deploy Ironjacamar to remote server"
+                  id="ironjacamar-eclipse.toolbars.remoteDeployCommand">
             </command>
          </toolbar>
       </menuContribution>

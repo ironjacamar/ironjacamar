@@ -28,6 +28,8 @@ import java.io.File;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
+import org.eclipse.jface.preference.IntegerFieldEditor;
+import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -70,7 +72,7 @@ public class IronJacamarPreferencePage extends FieldEditorPreferencePage
    };
    
    private DirectoryFieldEditor ijHomeFieldEditor;
-
+   
    /**
     * IronJacamarPreferencePage
     */
@@ -92,6 +94,16 @@ public class IronJacamarPreferencePage extends FieldEditorPreferencePage
       ijHomeFieldEditor = new DirectoryFieldEditor(PreferenceConstants.JCA_HOME_PATH, "IronJacamar home:", 
          getFieldEditorParent());
       addField(ijHomeFieldEditor);
+      
+      StringFieldEditor remoteHostFieldEditor = new StringFieldEditor(PreferenceConstants.JCA_REMOTE_HOST, 
+            "Remote IronJacamar Host:", getFieldEditorParent());
+      remoteHostFieldEditor.setStringValue("localhost");
+      IntegerFieldEditor remotePortFieldEditor = new IntegerFieldEditor(PreferenceConstants.JCA_REMOTE_PORT, 
+            "Remote IronJacamar Port:", getFieldEditorParent());
+      remotePortFieldEditor.setStringValue(String.valueOf(PreferenceConstants.DEFAULT_PORT));
+      addField(remoteHostFieldEditor);
+      addField(remotePortFieldEditor);
+      
    }
 
    /** init

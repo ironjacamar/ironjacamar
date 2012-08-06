@@ -59,6 +59,8 @@
       <fileset dir="${target.dir}"
                includes="ironjacamar-codegenerator.jar ironjacamar-common*.jar
                ironjacamar-core*.jar ironjacamar-sjc.jar ironjacamar-spec-api.jar"/>
+      <fileset dir="${lib.dir}/sjc"
+               includes="fungal.jar"/>
     </copy>
 
     <mkdir dir="${build.eclipse.dir}" />

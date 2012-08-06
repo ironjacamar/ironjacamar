@@ -40,7 +40,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -155,10 +154,10 @@ public class DeployHandler extends AbstractIronJacamarHandler
             {
                copyToFile.delete(true, monitor);
             }
-            logMessageToConsole("Deploying " + rarFile.getFullPath() + " to " + destion.toOSString(), null);
+            logMessageToConsole("Deploying " + rarFile.getFullPath() + " to " + destion.toOSString());
             project.refreshLocal(IResource.DEPTH_INFINITE, monitor); // refresh to make it visible
             rarFile.copy(copyToFile.getFullPath(), true, monitor);
-            logMessageToConsole(rarFile.getFullPath() + " is deployed successfully!", null);
+            logMessageToConsole(rarFile.getFullPath() + " is deployed successfully!");
          }
          catch (CoreException e)
          {
@@ -188,21 +187,6 @@ public class DeployHandler extends AbstractIronJacamarHandler
       }
    }
    
-   /**
-    * Enable the command handler
-    */
-   private void enableHandler ()
-   {
-      Display.getDefault().asyncExec(new Runnable()
-      {
-         
-         @Override
-         public void run()
-         {
-            setBaseEnabled(true);
-         }
-      });
-   }
    
    @Override
    protected void onBuildFinished(IProject project)

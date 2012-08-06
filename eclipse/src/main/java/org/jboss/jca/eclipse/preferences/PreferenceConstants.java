@@ -29,4 +29,13 @@ public class PreferenceConstants
 
    /** path of ironjacamar home */
    public static final String JCA_HOME_PATH = "pathPreference";
+   
+   /** host of remote IronJacamar */
+   public static final String JCA_REMOTE_HOST = "remoteHostPreference";
+   
+   /** port of remote IronJacamar */
+   public static final String JCA_REMOTE_PORT = "remotePortPreference";
+   
+   /** default port of remote IronJacamar */
+   public static final int DEFAULT_PORT = 1202;
 }

@@ -27,4 +27,5 @@ Bundle-ClassPath: .,
  libs/ironjacamar-core-api.jar,
  libs/ironjacamar-core-impl.jar,
  libs/ironjacamar-sjc.jar,
- libs/ironjacamar-spec-api.jar
+ libs/ironjacamar-spec-api.jar,
+ libs/fungal.jar

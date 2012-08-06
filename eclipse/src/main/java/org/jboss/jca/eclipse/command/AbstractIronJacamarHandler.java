@@ -165,14 +165,56 @@ public abstract class AbstractIronJacamarHandler extends AbstractHandler
     */
    String getIJHome ()
    {
-      IPreferenceStore prefStore = Activator.getDefault().getPreferenceStore();
-      String ijHome = prefStore.getString(PreferenceConstants.JCA_HOME_PATH);
-      String dfijHome = prefStore.getDefaultString(PreferenceConstants.JCA_HOME_PATH);
-      if (ijHome != null && ijHome.length() > 0)
+      return getPrefenceValue(PreferenceConstants.JCA_HOME_PATH);
+   }
+   
+   /**
+    * Gets host of remote IronJacamar.
+    * 
+    * @return host of remote IronJacamar or empty string if not set
+    */
+   String getRemoteIronJacamarHost()
+   {
+      String host = getPrefenceValue(PreferenceConstants.JCA_REMOTE_HOST);
+      if (host == null || host.length() == 0)
       {
-         return ijHome;
+         return "localhost";
       }
-      return dfijHome;
+      return host;
+   }
+   
+   /**
+    * Gets Preference string value by the preference name.
+    * 
+    * @param prefName the preference name
+    * @return string value of the preference
+    */
+   private String getPrefenceValue(String prefName)
+   {
+      IPreferenceStore prefStore = Activator.getDefault().getPreferenceStore();
+      String value = prefStore.getString(prefName);
+      String deValue = prefStore.getDefaultString(prefName);
+      if (value != null && value.length() > 0)
+      {
+         return value;
+      }
+      return deValue;
+   }
+   
+   /**
+    * Gets port of remote IronJacamar.
+    * 
+    * @return port of remote IronJacamar or {@link PreferenceConstants.DEFAULT_PORT} if not set
+    */
+   int getRemoteIronJacamarPort()
+   {
+      IPreferenceStore prefStore = Activator.getDefault().getPreferenceStore();
+      int port = prefStore.getInt(PreferenceConstants.JCA_REMOTE_PORT);
+      if (port == 0)
+      {
+         port = PreferenceConstants.DEFAULT_PORT;
+      }
+      return port;
    }
 
    /**
@@ -239,7 +281,7 @@ public abstract class AbstractIronJacamarHandler extends AbstractHandler
          ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
          launchManager.addLaunchListener(buildLaunchListener);
          buildLaunchListener.buildLaunch = wc.launch(ILaunchManager.RUN_MODE, null);
-         logMessageToConsole("Start to build RAR file for project: " + project.getFullPath(), null);
+         logMessageToConsole("Start to build RAR file for project: " + project.getFullPath());
       }
       catch (CoreException e)
       {
@@ -350,10 +392,20 @@ public abstract class AbstractIronJacamarHandler extends AbstractHandler
    }
    
    /**
+    * Logs message to <strong>IronJacamar</strong> console using font color: <b>blue</b>.
+    * 
+    * @param msg message to log
+    */
+   protected void logMessageToConsole (String msg)
+   {
+      logMessageToConsole(msg, new Color(null, 0, 0, 255));
+   }
+   
+   /**
     * Logs message to <strong>IronJacamar</strong> console.
     * 
     * @param msg the message to log
-    * @param fontColor the font Color in the console, <b>Blue</b> if null.
+    * @param fontColor the font Color in the console.
     */
    protected void logMessageToConsole (String msg, final Color fontColor)
    {
@@ -368,14 +420,7 @@ public abstract class AbstractIronJacamarHandler extends AbstractHandler
             @Override
             public void run()
             {
-               if (fontColor != null)
-               {
-                  output.setColor(fontColor);
-               }
-               else
-               {
-                  output.setColor(new Color(null, 0, 0, 255));
-               }
+               output.setColor(fontColor);
             }
          });
          output.write("\n" + msg + "\n");
@@ -395,6 +440,22 @@ public abstract class AbstractIronJacamarHandler extends AbstractHandler
             ;
          }
       }
+   }
+   
+   /**
+    * Enable the command handler
+    */
+   protected void enableHandler ()
+   {
+      Display.getDefault().asyncExec(new Runnable()
+      {
+         
+         @Override
+         public void run()
+         {
+            setBaseEnabled(true);
+         }
+      });
    }
    
    /**
