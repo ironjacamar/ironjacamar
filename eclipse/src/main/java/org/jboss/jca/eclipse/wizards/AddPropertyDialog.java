@@ -241,6 +241,17 @@ public class AddPropertyDialog extends Dialog
             validated = false;
          }
       }
+      if (type.equals("Short"))
+      {
+         try
+         {
+            Short.parseShort(value);
+         }
+         catch (NumberFormatException e)
+         {
+            validated = false;
+         }
+      }
       if (type.equals("Double"))
       {
          try
@@ -274,7 +285,24 @@ public class AddPropertyDialog extends Dialog
             validated = false;
          }
       }
-
+      if (type.equals("Byte"))
+      {
+         try
+         {
+            Byte.parseByte(value);
+         }
+         catch (NumberFormatException e)
+         {
+            validated = false;
+         }
+      }
+      if (type.equals("Character"))
+      {
+         char[] c = value.toCharArray();
+         if (c.length > 1)
+            validated = false;
+      }
+      
       getButton(IDialogConstants.OK_ID).setEnabled(validated);
    }
 
