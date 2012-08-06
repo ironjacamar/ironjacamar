@@ -20,7 +20,9 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.deployers.fungal.remote;
+package org.jboss.jca.deployers.fungal.external;
+
+import org.jboss.jca.deployers.fungal.RAActivator;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -37,16 +39,19 @@ import com.github.fungal.api.remote.Command;
 public class RemoteDeploy implements Command
 {
    private MainDeployer mainDeployer;
+   private RAActivator activator;
    private File directory;
 
    /**
     * Constructor
     * @param mainDeployer The main deployer
+    * @param activator The RA activator
     * @param directory The directory to use
     */
-   public RemoteDeploy(MainDeployer mainDeployer, File directory)
+   public RemoteDeploy(MainDeployer mainDeployer, RAActivator activator, File directory)
    {
       this.mainDeployer = mainDeployer;
+      this.activator = activator;
       this.directory = directory;
    }
 
@@ -72,6 +77,7 @@ public class RemoteDeploy implements Command
     */
    public Serializable invoke(Serializable[] args)
    {
+      boolean activatorEnabled = activator.isEnabled();
       try
       {
          if (args == null || args.length != 2)
@@ -87,6 +93,8 @@ public class RemoteDeploy implements Command
          byte[] bytes = (byte[])args[1];
          
          File deployment = new File(directory, name);
+
+         activator.setEnabled(false);
 
          if (deployment.exists())
          {
@@ -124,6 +132,10 @@ public class RemoteDeploy implements Command
       catch (Throwable t)
       {
          return t;
+      }
+      finally
+      {
+         activator.setEnabled(activatorEnabled);
       }
 
       return Boolean.TRUE;

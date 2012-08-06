@@ -271,11 +271,19 @@
     <depends>ConnectionValidator</depends>
   </bean>
 
+  <!-- Local deployer -->
+  <bean name="LocalDeployer" 
+        class="org.jboss.jca.deployers.fungal.external.LocalDeployer">
+    <property name="Kernel"><inject bean="Kernel"/></property>
+    <depends>RAActivator</depends>
+  </bean>
+
   <!-- Remote deployer -->
   <bean name="RemoteDeployer" 
-        class="org.jboss.jca.deployers.fungal.remote.RemoteDeployer">
+        class="org.jboss.jca.deployers.fungal.external.RemoteDeployer">
     <property name="Kernel"><inject bean="Kernel"/></property>
-    <property name="RemoteDirectory">${iron.jacamar.home}${/}deploy${/}remote</property>
+    <property name="Directory">${iron.jacamar.home}${/}remote</property>
+    <depends>RAActivator</depends>
   </bean>
 
 </deployment>

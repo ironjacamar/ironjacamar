@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.deployers.fungal.remote;
+package org.jboss.jca.deployers.fungal.external;
 
 import java.io.File;
 import java.io.Serializable;

@@ -20,9 +20,10 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.deployers.fungal.remote;
+package org.jboss.jca.deployers.fungal.external;
 
 import org.jboss.jca.deployers.DeployersLogger;
+import org.jboss.jca.deployers.fungal.RAActivator;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,7 +45,7 @@ public class RemoteDeployer
 
    private Kernel kernel;
    private Communicator communicator;
-   private String remoteDirectory;
+   private String directory;
 
    private RemoteDeploy remoteDeploy;
    private RemoteUndeploy remoteUndeploy;
@@ -57,7 +58,7 @@ public class RemoteDeployer
    {
       this.kernel = null;
       this.communicator = null;
-      this.remoteDirectory = null;
+      this.directory = null;
 
       this.remoteDeploy = null;
       this.remoteUndeploy = null;
@@ -77,9 +78,9 @@ public class RemoteDeployer
     * Set the remote directory
     * @param v The value
     */
-   public void setRemoteDirectory(String v)
+   public void setDirectory(String v)
    {
-      remoteDirectory = v;
+      directory = v;
    }
 
    /**
@@ -90,20 +91,21 @@ public class RemoteDeployer
    {
       communicator = kernel.getBean("Communicator", Communicator.class);
 
-      if (remoteDirectory == null || remoteDirectory.trim().equals(""))
-         throw new IllegalStateException("RemoteDirectory must be defined");
+      if (directory == null || directory.trim().equals(""))
+         throw new IllegalStateException("Directory must be defined");
 
-      File rd = new File(remoteDirectory);
+      File rd = new File(directory);
       if (!rd.exists())
       {
          if (!rd.mkdirs())
-            throw new IOException("RemoteDirectory couldn't be created");
+            throw new IOException("Directory couldn't be created");
       }
 
       MainDeployer mainDeployer = kernel.getMainDeployer();
+      RAActivator activator = kernel.getBean("RAActivator", RAActivator.class);
 
-      remoteDeploy = new RemoteDeploy(mainDeployer, rd);
-      remoteUndeploy = new RemoteUndeploy(mainDeployer, rd);
+      remoteDeploy = new RemoteDeploy(mainDeployer, activator, rd);
+      remoteUndeploy = new RemoteUndeploy(mainDeployer, activator, rd);
       remoteList = new RemoteList(rd);
 
       communicator.registerCommand(remoteDeploy);
@@ -129,8 +131,8 @@ public class RemoteDeployer
             communicator.unregisterCommand(remoteDeploy);
       }
 
-      // Clean up remoteDirectory
-      File rd = new File(remoteDirectory);
+      // Clean up directory
+      File rd = new File(directory);
       if (rd.exists())
       {
          File[] files = rd.listFiles();
