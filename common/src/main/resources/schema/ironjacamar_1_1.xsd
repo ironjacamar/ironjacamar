@@ -269,7 +269,7 @@
 
   <xs:complexType name="connection-definitionsType">
     <xs:sequence>
-      <xs:element name="connection-definition" type="connection-defintionType" minOccurs="1" maxOccurs="unbounded">
+      <xs:element name="connection-definition" type="connection-definitionType" minOccurs="1" maxOccurs="unbounded">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
@@ -281,7 +281,7 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="connection-defintionType">
+  <xs:complexType name="connection-definitionType">
     <xs:sequence>
       <xs:element name="config-property" type="config-propertyType" minOccurs="0" maxOccurs="unbounded">
         <xs:annotation>

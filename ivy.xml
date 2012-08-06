@@ -106,6 +106,8 @@
     <dependency org="com.github.fungal" name="fungal" rev="${version.fungal}" conf="sjc,ironjacamar-depchain,ironjacamar-deployers-fungal,ironjacamar-embedded"/>
     <dependency org="com.github.fungal" name="fungal-cli" rev="${version.fungal}" conf="sjc,ironjacamar-depchain"/>
     <dependency org="com.h2database" name="h2" rev="${version.h2}" conf="test"/>
+<!--    <dependency org="com.sun.codemodel" name="codemodel" rev="2.4" conf="tools"/> -->
+    <dependency org="com.sun.xml.dtd-parser" name="dtd-parser" rev="${version.dtd-parser}" conf="tools"/>
     <dependency org="dom4j" name="dom4j" rev="${version.dom4j}" conf="jetty,tools"/>
     <dependency org="javax.el" name="javax.el-api" rev="${version.jetty.el}" conf="jetty"/>
     <dependency org="javax.mail" name="mail" rev="${version.mail-api}" conf="mail"/>
@@ -115,8 +117,11 @@
     <dependency org="jdepend" name="jdepend" rev="${version.jdepend}" conf="tools"/>
     <dependency org="junit" name="junit" rev="${version.junit}" conf="test"/>
     <dependency org="log4j" name="log4j" rev="${version.apache-log4j}" conf="common,ironjacamar-depchain"/>
+    <dependency org="net.sf.saxon" name="saxon" rev="${version.saxon}" conf="tools"/>
+    <dependency org="net.sf.saxon" name="saxon-dom" rev="${version.saxon}" conf="tools"/>
     <dependency org="org.apache" name="jasper" rev="${version.jasper}" conf="jetty"/>
     <dependency org="org.apache.ant" name="ant" rev="${version.ant}" conf="tools,ironjacamar-validator-ant"/>
+<!--    <dependency org="org.apache.commons" name="commons-lang3" rev="3.1" conf="tools"/> -->
     <dependency org="org.apache.maven" name="maven-plugin-api" rev="${version.maven}" conf="tools,ironjacamar-validator-maven"/>
     <dependency org="org.eclipse.jdt.core.compiler" name="ecj" rev="${version.eclipse.ecj}" conf="jetty"/>
     <dependency org="org.eclipse.jetty" name="jetty-continuation" rev="${version.jetty}" conf="jetty"/>
@@ -170,9 +175,9 @@
     <dependency org="org.jboss.netty" name="netty" rev="${version.jboss.netty}" conf="hornetq"/>
     <dependency org="org.jboss.shrinkwrap" name="shrinkwrap-api" rev="${version.jboss.shrinkwrap}" conf="embedded,ironjacamar-depchain,ironjacamar-embedded,ironjacamar-embedded-arquillian"/>
     <dependency org="org.jboss.shrinkwrap.descriptors" name="shrinkwrap-descriptors-api-base" rev="${version.jboss.shrinkwrap.descriptors}" conf="embedded,ironjacamar-depchain"/>
-    <dependency org="org.jboss.shrinkwrap.descriptors" name="shrinkwrap-descriptors-api-javaee" rev="${version.jboss.shrinkwrap.descriptors}" conf="embedded,ironjacamar-depchain"/>
+    <dependency org="org.jboss.shrinkwrap.descriptors" name="shrinkwrap-descriptors-ant" rev="${version.jboss.shrinkwrap.descriptors}" conf="tools"/>
     <dependency org="org.jboss.shrinkwrap.descriptors" name="shrinkwrap-descriptors-impl-base" rev="${version.jboss.shrinkwrap.descriptors}" conf="embedded,ironjacamar-depchain"/>
-    <dependency org="org.jboss.shrinkwrap.descriptors" name="shrinkwrap-descriptors-impl-javaee" rev="${version.jboss.shrinkwrap.descriptors}" conf="embedded,ironjacamar-depchain"/>
+    <dependency org="org.jboss.shrinkwrap.descriptors" name="shrinkwrap-descriptors-metadata-parser" rev="${version.jboss.shrinkwrap.descriptors}" conf="tools"/>
     <dependency org="org.jboss.shrinkwrap.descriptors" name="shrinkwrap-descriptors-spi" rev="${version.jboss.shrinkwrap.descriptors}" conf="embedded,ironjacamar-depchain"/>
     <dependency org="org.jboss.shrinkwrap" name="shrinkwrap-impl-base" rev="${version.jboss.shrinkwrap}" conf="embedded,ironjacamar-depchain"/>
     <dependency org="org.jboss.shrinkwrap" name="shrinkwrap-spi" rev="${version.jboss.shrinkwrap}" conf="embedded,ironjacamar-depchain"/>

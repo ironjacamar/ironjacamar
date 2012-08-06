@@ -40,6 +40,186 @@
        Target: compile
        ================================= -->
   <target name="compile" depends="init">
+    <taskdef name="metadata-parser"
+             classname="org.jboss.shrinkwrap.descriptor.extension.ant.task.MetadataParserTask"
+             classpathref="main.lib.path.id"/>
+
+    <metadata-parser verbose="false"
+                     classpathref="main.lib.path.id">
+      <path pathToApi="${build.embedded.dir}/src/main/java"
+            pathToImpl="${build.embedded.dir}/src/main/java"
+            pathToServices="${build.embedded.dir}/src/main/resources/META-INF/services"/>
+      <descriptors>
+        <descriptor pathToXsd="common/src/main/resources/dtd/connector_1_0.dtd"
+                    nameSpace="j2ee"
+                    packageApi="org.jboss.shrinkwrap.descriptor.api.connector10"
+                    packageImpl="org.jboss.shrinkwrap.descriptor.impl.connector10"
+                    descriptorName="ConnectorDescriptor"
+                    elementName="connector"
+                    elementType="j2ee:connector"/>
+      </descriptors>
+    </metadata-parser>
+
+    <metadata-parser verbose="false"
+                     classpathref="main.lib.path.id">
+      <path pathToApi="${build.embedded.dir}/src/main/java"
+            pathToImpl="${build.embedded.dir}/src/main/java"
+            pathToServices="${build.embedded.dir}/src/main/resources/META-INF/services"/>
+      <descriptors>
+        <descriptor pathToXsd="common/src/main/resources/schema/j2ee_1_4.xsd"
+                    nameSpace="j2ee"
+                    packageApi="org.jboss.shrinkwrap.descriptor.api.j2ee14"
+                    packageImpl="org.jboss.shrinkwrap.descriptor.impl.j2ee14"
+                    generateClasses="true"/>
+        <descriptor pathToXsd="common/src/main/resources/schema/connector_1_5.xsd"
+                    nameSpace="j2ee"
+                    packageApi="org.jboss.shrinkwrap.descriptor.api.connector15"
+                    packageImpl="org.jboss.shrinkwrap.descriptor.impl.connector15"
+                    descriptorName="ConnectorDescriptor"
+                    elementName="connector"
+                    elementType="j2ee:connectorType">
+          <namespaces>
+            <property name="xmlns" value="http://java.sun.com/xml/ns/j2ee"/>
+            <property name="xmlns:xsi" value="http://www.w3.org/2001/XMLSchema-instance"/>
+            <property name="xsi:schemaLocation" value="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/connector_1_5.xsd"/>
+          </namespaces>
+        </descriptor>
+      </descriptors>
+    </metadata-parser>
+
+    <metadata-parser verbose="false"
+                     classpathref="main.lib.path.id">
+      <path pathToApi="${build.embedded.dir}/src/main/java"
+            pathToImpl="${build.embedded.dir}/src/main/java"
+            pathToServices="${build.embedded.dir}/src/main/resources/META-INF/services"/>
+      <descriptors>
+        <descriptor pathToXsd="common/src/main/resources/schema/javaee_6.xsd"
+                    nameSpace="javaee"
+                    packageApi="org.jboss.shrinkwrap.descriptor.api.javaee6"
+                    packageImpl="org.jboss.shrinkwrap.descriptor.impl.javaee6"
+                    generateClasses="true"/>
+        <descriptor pathToXsd="common/src/main/resources/schema/connector_1_6.xsd"
+                    nameSpace="javaee"
+                    packageApi="org.jboss.shrinkwrap.descriptor.api.connector16"
+                    packageImpl="org.jboss.shrinkwrap.descriptor.impl.connector16"
+                    descriptorName="ConnectorDescriptor"
+                    elementName="connector"
+                    elementType="javaee:connectorType">
+          <namespaces>
+            <property name="xmlns" value="http://java.sun.com/xml/ns/javaee"/>
+            <property name="xmlns:xsi" value="http://www.w3.org/2001/XMLSchema-instance"/>
+            <property name="xsi:schemaLocation" value="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/connector_1_6.xsd"/>
+          </namespaces>
+        </descriptor>
+      </descriptors>
+    </metadata-parser>
+
+    <metadata-parser verbose="false"
+                     classpathref="main.lib.path.id">
+      <path pathToApi="${build.embedded.dir}/src/main/java"
+            pathToImpl="${build.embedded.dir}/src/main/java"
+            pathToServices="${build.embedded.dir}/src/main/resources/META-INF/services"/>
+      <descriptors>
+        <descriptor pathToXsd="common/src/main/resources/schema/ironjacamar_1_0.xsd"
+                    nameSpace="ironjacamar"
+                    packageApi="org.jboss.jca.embedded.dsl.ironjacamar10.api"
+                    packageImpl="org.jboss.jca.embedded.dsl.ironjacamar10.impl"
+                    descriptorName="IronjacamarDescriptor"
+                    elementName="ironjacamar"
+                    elementType="ironjacamar:ironjacamarType"/>
+      </descriptors>
+    </metadata-parser>
+
+    <metadata-parser verbose="false"
+                     classpathref="main.lib.path.id">
+      <path pathToApi="${build.embedded.dir}/src/main/java"
+            pathToImpl="${build.embedded.dir}/src/main/java"
+            pathToServices="${build.embedded.dir}/src/main/resources/META-INF/services"/>
+      <descriptors>
+        <descriptor pathToXsd="common/src/main/resources/schema/ironjacamar_1_1.xsd"
+                    nameSpace="ironjacamar"
+                    packageApi="org.jboss.jca.embedded.dsl.ironjacamar11.api"
+                    packageImpl="org.jboss.jca.embedded.dsl.ironjacamar11.impl"
+                    descriptorName="IronjacamarDescriptor"
+                    elementName="ironjacamar"
+                    elementType="ironjacamar:ironjacamarType"/>
+      </descriptors>
+    </metadata-parser>
+
+    <metadata-parser verbose="false"
+                     classpathref="main.lib.path.id">
+      <path pathToApi="${build.embedded.dir}/src/main/java"
+            pathToImpl="${build.embedded.dir}/src/main/java"
+            pathToServices="${build.embedded.dir}/src/main/resources/META-INF/services"/>
+      <descriptors>
+        <descriptor pathToXsd="common/src/main/resources/schema/resource-adapters_1_0.xsd"
+                    nameSpace="resource-adapters"
+                    packageApi="org.jboss.jca.embedded.dsl.resourceadapters10.api"
+                    packageImpl="org.jboss.jca.embedded.dsl.resourceadapters10.impl"
+                    descriptorName="ResourceAdaptersDescriptor"
+                    elementName="resource-adapters"
+                    elementType="resource-adapters:resource-adaptersType"/>
+      </descriptors>
+    </metadata-parser>
+
+    <metadata-parser verbose="false"
+                     classpathref="main.lib.path.id">
+      <path pathToApi="${build.embedded.dir}/src/main/java"
+            pathToImpl="${build.embedded.dir}/src/main/java"
+            pathToServices="${build.embedded.dir}/src/main/resources/META-INF/services"/>
+      <descriptors>
+        <descriptor pathToXsd="common/src/main/resources/schema/resource-adapters_1_1.xsd"
+                    nameSpace="resource-adapters"
+                    packageApi="org.jboss.jca.embedded.dsl.resourceadapters11.api"
+                    packageImpl="org.jboss.jca.embedded.dsl.resourceadapters11.impl"
+                    descriptorName="ResourceAdaptersDescriptor"
+                    elementName="resource-adapters"
+                    elementType="resource-adapters:resource-adaptersType"/>
+      </descriptors>
+    </metadata-parser>
+
+    <metadata-parser verbose="false"
+                     classpathref="main.lib.path.id">
+      <path pathToApi="${build.embedded.dir}/src/main/java"
+            pathToImpl="${build.embedded.dir}/src/main/java"
+            pathToServices="${build.embedded.dir}/src/main/resources/META-INF/services"/>
+      <descriptors>
+        <descriptor pathToXsd="common/src/main/resources/schema/datasources_1_0.xsd"
+                    nameSpace="datasources"
+                    packageApi="org.jboss.jca.embedded.dsl.datasources10.api"
+                    packageImpl="org.jboss.jca.embedded.dsl.datasources10.impl"
+                    descriptorName="DatasourcesDescriptor"
+                    elementName="datasources"
+                    elementType="datasources:datasourcesType"/>
+      </descriptors>
+    </metadata-parser>
+
+    <metadata-parser verbose="false"
+                     classpathref="main.lib.path.id">
+      <path pathToApi="${build.embedded.dir}/src/main/java"
+            pathToImpl="${build.embedded.dir}/src/main/java"
+            pathToServices="${build.embedded.dir}/src/main/resources/META-INF/services"/>
+      <descriptors>
+        <descriptor pathToXsd="common/src/main/resources/schema/datasources_1_1.xsd"
+                    nameSpace="datasources"
+                    packageApi="org.jboss.jca.embedded.dsl.datasources11.api"
+                    packageImpl="org.jboss.jca.embedded.dsl.datasources11.impl"
+                    descriptorName="DatasourcesDescriptor"
+                    elementName="datasources"
+                    elementType="datasources:datasourcesType"/>
+      </descriptors>
+    </metadata-parser>
+
+    <javac srcdir="${build.embedded.dir}/src/main/java"
+           destdir="${build.embedded.dir}/impl"
+           classpathref="main.lib.path.id"
+           debug="${javac.debug}"
+           deprecation="${javac.deprecation}"
+           optimize="${javac.optimize}"
+           includeAntRuntime="false">
+      <compilerarg value="-Xlint"/>
+    </javac> 
+
     <javac srcdir="src/main"
            destdir="${build.embedded.dir}/impl"
            classpathref="main.lib.path.id"
@@ -49,6 +229,7 @@
            includeAntRuntime="false">
       <compilerarg value="-Xlint"/>
     </javac> 
+
   </target>
 
   <!-- ================================= 
@@ -60,7 +241,6 @@
                includes="*.xml,*.properties"/>
     </copy>
     <jar destfile="${target.dir}/${name}-embedded.jar"
-         basedir="${build.embedded.dir}/impl"
          index="true"
          indexMetaInf="true"
          update="true"
@@ -72,6 +252,9 @@
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
+      <fileset dir="${build.embedded.dir}/impl"
+               excludes="META-INF/services/**,**/arquillian/**,**/*.java"/>
+      <fileset dir="${build.embedded.dir}/src/main/resources"/>
     </jar>
 
     <mkdir dir="${build.embedded.dir}/impl/META-INF"/>
@@ -119,7 +302,6 @@
   <target name="docs">
     <mkdir dir="${target.dir}/docs/embedded"/>
     <javadoc packagenames="org.*"
-             sourcepath="src/main/java"
              destdir="${target.dir}/docs/embedded"
              doclet="org.jboss.apiviz.APIviz"
              docletpathref="main.lib.path.id"
@@ -132,6 +314,9 @@
              classpath="${build.embedded.dir}/impl"
              classpathref="main.lib.path.id"
              bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
+      <fileset dir="src/main/java"/>
+      <fileset dir="${build.embedded.dir}/src/main/java"
+               excludes="**/impl/**"/>
       <link offline="true" href="http://docs.oracle.com/javase/6/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
     </javadoc>
     <copy todir="${target.dir}/docs/embedded" overwrite="true">
@@ -310,18 +495,19 @@
   <target name="artifacts" depends="jars">
 
     <jar destfile="${target.dir}/${name}-embedded-sources.jar"
-         basedir="src/main/java"
          index="true"
          indexMetaInf="true"
          update="true"
-         level="9"
-         excludes="**/embedded/arquillian/**">
+         level="9">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Embedded - Sources"/>
         <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
+      <fileset dir="src/main/java"
+               excludes="**/embedded/arquillian/**"/>
+      <fileset dir="${build.embedded.dir}/src/main/java"/>
     </jar>
 
     <jar destfile="${target.dir}/${name}-embedded-arquillian-sources.jar"
@@ -356,7 +542,8 @@
 
     <mkdir dir="${build.embedded.dir}/docs"/>
     <mkdir dir="${build.embedded.dir}/docs/embedded"/>
-    <javadoc destdir="${build.embedded.dir}/docs/embedded"
+    <javadoc packagenames="org.*"
+             destdir="${build.embedded.dir}/docs/embedded"
              doclet="org.jboss.apiviz.APIviz"
              docletpathref="main.lib.path.id"
              author="true"
@@ -365,14 +552,13 @@
              doctitle="IronJacamar Embedded"
              use="true"
              additionalparam="-author -version"
-             classpath="${build.embedded.dir}"
+             classpath="${build.embedded.dir}/impl"
              classpathref="main.lib.path.id"
              bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
-
-      <packageset dir="src/main/java" defaultexcludes="yes">
-        <exclude name="**/embedded/arquillian/**"/>
-      </packageset>
-
+      <fileset dir="src/main/java"
+               excludes="**/arquillian/**"/>
+      <fileset dir="${build.embedded.dir}/src/main/java"
+               excludes="**/impl/**"/>
       <link offline="true" href="http://docs.oracle.com/javase/6/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
     </javadoc>
     <copy todir="${build.embedded.dir}/docs/embedded" overwrite="true">

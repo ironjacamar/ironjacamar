@@ -23,13 +23,13 @@
         into a testing or a production environment will benefit developers.</para>
 
       <para>In order to enhance the experience with working with the embedded configuration the container 
-        integrates with the <ulink url="http://www.jboss.org/community/wiki/ShrinkWrap">ShrinkWrap</ulink>
-        and <ulink url="http://community.jboss.org/en/arquillian">Arquillian</ulink> frameworks.</para>
+        integrates with the <ulink url="http://www.jboss.org/shrinkwrap">ShrinkWrap</ulink>
+        and <ulink url="http://arquillian.org/">Arquillian</ulink> frameworks.</para>
 
    </section>
 
-   <section id="embedded_deployment">
-      <title>Deployment</title>
+   <section id="embedded_configuration">
+      <title>Configuration</title>
 
       <para>You will need all the JAR files located in the</para>
 
@@ -56,16 +56,24 @@ $IRON_JACAMAR_HOME/lib/embedded/arquillian
 
       <para>directory as well.</para>
 
+      <para>The Arquillian/Byteman integration is located in the</para>
+
+      <programlisting>
+$IRON_JACAMAR_HOME/lib/embedded/arquillian/byteman
+      </programlisting>
+
+      <para>directory.</para>
+
       <para>Furthermore you will need to configure Java Naming and Directory Interface (JNDI) and logging
         using for example property files.</para>
 
-      <para><code>jndi.properties</code> file:</para>
+      <para>Sample <code>jndi.properties</code> file:</para>
       <programlisting>
 java.naming.factory.initial=org.jnp.interfaces.LocalOnlyContextFactory
 java.naming.factory.url.pkgs=org.jboss.naming:org.jnp.interfaces
       </programlisting>
 
-      <para><code>logging.properties</code> file:</para>
+      <para>Sample <code>logging.properties</code> file:</para>
       <programlisting>
 # Additional logger names to configure (root logger is always configured)
 loggers=org.jboss.jca,org.jboss,org.jnp,com.arjuna
@@ -109,11 +117,17 @@ formatter.PATTERN.pattern=%d{HH:mm:ss,SSS} %-5p [%c{1}] %m%n
 
       <para>These files needs to be available to the application classloader.</para>
 
-      <para>The code generator will generate a test suite based on the Arquillian functionality, so
-        that environment can be used as a starting point for your own integration.</para>
+      <important>
+        <para>
+          The IronJacamar code generator will generate a test suite based on the Arquillian functionality, so
+          that setup can be used as a starting point for your own integration.
+        </para>
 
-      <para>This setup will show you how to use dependencies from the JBoss Nexus Maven repository instead
-        if you choose the Maven or Ant+Ivy based build environment.</para>
+        <para>
+          The setup will also show you how to use dependencies from the JBoss Nexus Maven repository instead
+          if you choose the Maven or Ant+Ivy based build environment.
+        </para>
+      </important>
 
       <note>Note that, if you want to be able to deploy datasources you will need to deploy the <code>jdbc-local.rar</code>
         for <code>&lt;datasource&gt;</code> support, or <code>jdbc-xa.rar</code>
@@ -135,10 +149,133 @@ formatter.PATTERN.pattern=%d{HH:mm:ss,SSS} %-5p [%c{1}] %m%n
       <section id="embedded_usage_simple">
         <title>Simple usage</title>
 
-        <para>The code sample below shows a simple usage of deploying a pre-assembled resource adapter archive
-          into the IronJacamar Embedded environment.</para>
+        <para>The IronJacamar Embedded container environment supports the following open source
+          testing projects:</para>
 
-        <programlisting language="java">
+        <orderedlist>
+          <listitem>
+            <ulink url="http://arquillian.org/">Arquillian</ulink>
+          </listitem>
+          <listitem>
+            <ulink url="http://www.jboss.org/shrinkwrap">ShrinkWrap</ulink>
+          </listitem>
+        </orderedlist>
+
+        <para>These extensions allow the developer to use the embedded platform with greater ease
+          as there doesn't have to be a physical representation of the resource adapter archive located
+          to the disk.</para>
+
+        <para>The Arquillian integration furthermore allows the developer to leave all the embedded container
+          setup to the integration layer instead.</para>
+          
+        <para>
+          See the <ulink url="http://arquillian.org/">Arquillian</ulink> and
+          <ulink url="http://www.jboss.org/shrinkwrap">ShrinkWrap</ulink> web sites for a detailed description of
+          the projects and additional documentation.
+        </para>
+
+        <section id="embedded_usage_simple_arquillian_shrinkwrap">
+          <title>Arquillian and ShrinkWrap</title>
+
+          <para>The code sample below shows an usage of deploying a ShrinkWrap resource adapter archive
+            into the IronJacamar Embedded environment using Arquillian.</para>
+
+          <programlisting language="java">
+<xi:include parse="text" href="../../../../embedded/src/test/java/org/jboss/jca/embedded/unit/ArquillianTestCase.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+          </programlisting>
+
+          <para>The class makes use of the <code>org.jboss.jca.embedded.arquillian.Configuration</code> annotation
+             in order to specify that the deployed archive should be auto activated through the <code>RAActivator</code>
+             bean.</para>
+
+          <note>Note that, the name for the <code>ResourceAdapterArchive</code> must end with the
+             <code>.rar</code> extension.</note>
+
+        </section>
+
+        <section id="embedded_usage_simple_arquillian_shrinkwrap_descriptors">
+          <title>Arquillian and ShrinkWrap/Descriptors</title>
+
+          <para>
+            The code sample below shows how to use Arquillian to deploy a ShrinkWrap resource adapter archive
+            and activate the resource adapter using the ShrinkWrap/Descriptors API.
+          </para>
+
+          <para>
+            This example uses the <code>org.jboss.jca.embedded.arquillian.Configuration</code> annotation
+            to explicit say not to auto activate the resource adapter archive.
+          </para>
+
+          <programlisting language="java">
+<xi:include parse="text" href="../../../../embedded/src/test/java/org/jboss/jca/embedded/unit/ShrinkWrapDescriptorsTestCase.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+          </programlisting>
+
+        </section>
+
+        <section id="embedded_usage_simple_arquillian_byteman">
+          <title>Arquillian and Byteman</title>
+
+          <para>The code sample below shows how to use Arquillian to deploy a ShrinkWrap resource adapter archive
+            and change the <code>allocateConnection</code> of <code>org.jboss.jca.core.connectionmanager.AbstractConnectionManager</code>
+            to throw a <code>ResourceException</code> when the method is called.</para>
+
+          <para>The framework used to provide this functionality is called Byteman, which allows developers to change
+            behavior of a method to for example throw an exception. This is called fault injection and can be used to 
+            increase code coverage of your project.</para>
+
+          <programlisting language="java">
+<xi:include parse="text" href="../../../../embedded/src/test/java/org/jboss/jca/embedded/unit/BytemanBMTestCase.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+          </programlisting>
+
+          <para>
+            See the <ulink url="http://www.jboss.org/byteman">Byteman</ulink> web site for a detailed description of
+            the project and additional documentation.
+          </para>
+
+        </section>
+
+        <section id="embedded_usage_simple_ironjacamar">
+          <title>IronJacamar integration</title>
+
+          <para>The code sample below shows how to use Arquillian to deploy a ShrinkWrap resource adapter archive
+            and inject the IronJacamar metadata repository into the test case such that assertions can be made.</para>
+
+          <para>The IronJacamar container features various components that makes up the entire Java EE Connector Architecture
+            container. The available list of components can be viewed in the configuration of the container or through
+            the management console under the <code>Kernel</code> category.</para>
+
+          <programlisting language="java">
+<xi:include parse="text" href="../../../../embedded/src/test/java/org/jboss/jca/embedded/unit/InjectTestCase.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+          </programlisting>
+
+        </section>
+
+      </section>
+
+      <section id="embedded_usage_advanced">
+        <title>Advanced usage</title>
+
+        <section id="embedded_usage_advanced_shrinkwrap">
+          <title>ShrinkWrap</title>
+
+          <para>The code sample below shows an advanced usage of deploying a ShrinkWrap resource adapter archive
+            into the IronJacamar Embedded environment.</para>
+
+          <programlisting language="java">
+<xi:include parse="text" href="../../../../embedded/src/test/java/org/jboss/jca/embedded/unit/ShrinkWrapTestCase.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+          </programlisting>
+          
+          <note>Note that, the name for the <code>ResourceAdapterArchive</code> must end with the
+            <code>.rar</code> extension.</note>
+        </section>
+
+        <section id="embedded_usage_advanced_embedded">
+          <title>Embedded</title>
+
+          <para>The code sample below shows a simple usage of deploying a pre-assembled resource adapter archive
+            into the IronJacamar Embedded environment.</para>
+
+            <programlisting language="java">
 import org.jboss.jca.embedded.Embedded;
 import org.jboss.jca.embedded.EmbeddedFactory;
 
@@ -168,8 +305,7 @@ public class MyTestCase
    @Test
    public void testDeployment() throws Throwable
    {
-      URL archive = getURL("myresourceadapter.rar");
- 
+      URL archive = MyTestCase.class.getResource("myresourceadapter.rar");
       Context context = null;
  
       try
@@ -219,14 +355,13 @@ public class MyTestCase
       embedded.shutdown();
    }
 }
-        </programlisting>
-
-
-          <note>Note that, the url for the archive must end with the <code>.rar</code> extension
-            - either representing a file or a directory.</note>
-
-
-        <para>See the IronJacamar Embedded API documentation for additional functionality.</para>
+            </programlisting>
+            
+            <note>Note that, the url for the archive must end with the <code>.rar</code> extension
+              - either representing a file or a directory.</note>
+            
+            <para>See the IronJacamar Embedded API documentation for additional functionality.</para>
+        </section>
 
         <section id="embedded_usage_automaticactivation">
           <title>Automatic activation of archives</title>
@@ -261,91 +396,6 @@ raa.setEnabled(true);
 
       </section>
 
-      <section id="embedded_usage_advanced">
-        <title>Advanced usage</title>
-
-        <para>The IronJacamar Embedded container environment supports the following open source
-          testing projects:</para>
-
-        <orderedlist>
-          <listitem>
-            <ulink url="http://www.jboss.org/shrinkwrap">ShrinkWrap</ulink>
-          </listitem>
-          <listitem>
-            <ulink url="http://www.jboss.org/arquillian">Arquillian</ulink>
-          </listitem>
-        </orderedlist>
-
-        <para>These extensions allow the developer to use the embedded platform with greater ease
-          as there doesn't have to be a physical representation of the resource adapter archive located
-          to the disk.</para>
-
-        <para>The Arquillian integration furthermore allows the developer to leave all the embedded container
-          setup to the integration instead.</para>
-
-        <section id="embedded_usage_advanced_shrinkwrap">
-          <title>ShrinkWrap integration</title>
-
-          <para>The code sample below shows an advanced usage of deploying a dynamic ShrinkWrap resource adapter archive
-            into the IronJacamar Embedded environment.</para>
-
-          <programlisting language="java">
-<xi:include parse="text" href="../../../../embedded/src/test/java/org/jboss/jca/embedded/unit/ShrinkWrapTestCase.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
-          </programlisting>
-          
-
-          <note>Note that, the name for the <code>ResourceAdapterArchive</code> must end with the
-            <code>.rar</code> extension.</note>
-
-          <para>See the <ulink url="http://www.jboss.org/shrinkwrap">
-              ShrinkWrap</ulink> web site for a full description of the project and additional documentation.</para>
-
-        </section>
-
-        <section id="embedded_usage_advanced_arquillian">
-          <title>Arquillian integration</title>
-
-          <para>The code sample below shows an advanced usage of deploying a dynamic ShrinkWrap resource adapter archive
-            into the IronJacamar Embedded environment using Arquillian.</para>
-
-          <para>This setup allows the developer to skip the entire IronJacamar Embedded container setup and handling of its
-            lifecycle methods.</para>
-
-          <programlisting language="java">
-<xi:include parse="text" href="../../../../embedded/src/test/java/org/jboss/jca/embedded/unit/ArquillianTestCase.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
-          </programlisting>
-
-          <para>The class makes use of the <code>org.jboss.jca.embedded.arquillian.Configuration</code> annotation
-             in order to specify that the deployed archive should be auto activated through the <code>RAActivator</code>
-             bean.</para>
-
-          <note>Note that, the name for the <code>ResourceAdapterArchive</code> must end with the
-             <code>.rar</code> extension.</note>
-
-          <para>See the <ulink url="http://www.jboss.org/arquillian">
-              Arquillian</ulink> web site for a full description of the project and additional documentation.</para>
-
-        </section>
-
-        <section id="embedded_usage_advanced_ironjacamar">
-          <title>IronJacamar integration</title>
-
-          <para>The code sample below shows how to use Arquillian to deploy a dynamic ShrinkWrap resource adapter archive
-            and inject the IronJacamar metadata repository into the test case such that assertions can be made.</para>
-
-          <para>The IronJacamar container features various components that makes up the entire Java EE Connector Architecture
-            container. The available list of components can be viewed in the configuration of the container or through
-            the management console under the <code>Kernel</code> category.</para>
-
-          <programlisting language="java">
-<xi:include parse="text" href="../../../../embedded/src/test/java/org/jboss/jca/embedded/unit/InjectTestCase.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
-          </programlisting>
-
-        </section>
-
-      </section>
-
    </section>
-
 
 </chapter>

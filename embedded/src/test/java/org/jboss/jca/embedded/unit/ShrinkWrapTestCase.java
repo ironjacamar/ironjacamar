@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2012, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -48,11 +48,9 @@ import static org.junit.Assert.*;
  * using ShrinkWrap
  * 
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
- * @version $Revision: $
  */
 public class ShrinkWrapTestCase
 {
-
    // --------------------------------------------------------------------------------||
    // Class Members ------------------------------------------------------------------||
    // --------------------------------------------------------------------------------||
@@ -69,38 +67,6 @@ public class ShrinkWrapTestCase
    // --------------------------------------------------------------------------------||
    // Tests --------------------------------------------------------------------------||
    // --------------------------------------------------------------------------------||
-
-   /**
-    * Null ShrinkWrap ResourceAdapterArchive test case
-    * @exception Throwable Thrown if case of an error
-    */
-   @Test
-   public void testNull() throws Throwable
-   {
-      ResourceAdapterArchive raa = null; 
-
-      try
-      {
-         embedded.deploy(raa);
-         fail("Null deployment successful");
-      }
-      catch (Throwable t)
-      {
-         // Ok
-      }
-      finally
-      {
-         try
-         {
-            embedded.undeploy(raa);
-            fail("Null undeployment successful");
-         }
-         catch (Throwable t)
-         {
-            // Ok
-         }
-      }
-   }
 
    /**
     * Basic ShrinkWrap ResourceAdapterArchive test case

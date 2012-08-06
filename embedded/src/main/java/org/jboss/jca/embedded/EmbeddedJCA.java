@@ -211,8 +211,12 @@ class EmbeddedJCA implements Embedded
       if (descriptor.getDescriptorName() == null)
          throw new IllegalArgumentException("Descriptor name is null");
 
-      if (!(descriptor instanceof InputStreamDescriptor))
-         throw new IllegalArgumentException("Only InputStreamDescriptor is supported");
+      if (!(descriptor instanceof InputStreamDescriptor ||
+            descriptor instanceof org.jboss.jca.embedded.dsl.datasources10.api.DatasourcesDescriptor ||
+            descriptor instanceof org.jboss.jca.embedded.dsl.datasources11.api.DatasourcesDescriptor ||
+            descriptor instanceof org.jboss.jca.embedded.dsl.resourceadapters10.api.ResourceAdaptersDescriptor ||
+            descriptor instanceof org.jboss.jca.embedded.dsl.resourceadapters11.api.ResourceAdaptersDescriptor))
+         throw new IllegalArgumentException("Unsupported descriptor: " + descriptor.getClass().getName());
 
       if (!started)
          throw new IllegalStateException("Container not started");
@@ -340,8 +344,12 @@ class EmbeddedJCA implements Embedded
       if (descriptor.getDescriptorName() == null)
          throw new IllegalArgumentException("Descriptor name is null");
 
-      if (!(descriptor instanceof InputStreamDescriptor))
-         throw new IllegalArgumentException("Only InputStreamDescriptor is supported");
+      if (!(descriptor instanceof InputStreamDescriptor ||
+            descriptor instanceof org.jboss.jca.embedded.dsl.datasources10.api.DatasourcesDescriptor ||
+            descriptor instanceof org.jboss.jca.embedded.dsl.datasources11.api.DatasourcesDescriptor ||
+            descriptor instanceof org.jboss.jca.embedded.dsl.resourceadapters10.api.ResourceAdaptersDescriptor ||
+            descriptor instanceof org.jboss.jca.embedded.dsl.resourceadapters11.api.ResourceAdaptersDescriptor))
+         throw new IllegalArgumentException("Unsupported descriptor: " + descriptor.getClass().getName());
 
       if (!started)
          throw new IllegalStateException("Container not started");

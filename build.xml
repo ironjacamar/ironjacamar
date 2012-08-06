@@ -115,6 +115,7 @@
   <property name="version.arquillian.byteman" value="1.0.0.Alpha2"/>
   <property name="version.byteman" value="2.0.4"/>
   <property name="version.dom4j" value="1.6.1"/>
+  <property name="version.dtd-parser" value="1.1"/>
   <property name="version.mockito" value="1.9.0"/>
   <property name="version.eclipse.ecj" value="3.5.1"/>
   <property name="version.fungal" value="0.11.0.Beta12"/>
@@ -133,7 +134,7 @@
   <property name="version.jboss.picketbox" value="4.0.8.Final"/>
   <property name="version.jboss.security" value="2.1.0.20090318"/>
   <property name="version.jboss.shrinkwrap" value="1.0.1"/>
-  <property name="version.jboss.shrinkwrap.descriptors" value="2.0.0-alpha-1"/>
+  <property name="version.jboss.shrinkwrap.descriptors" value="2.0.0-alpha-4"/>
   <property name="version.jboss.slf4j.logmanager" value="1.0.0.GA"/>
   <property name="version.jboss.stdio" value="1.0.1.GA"/>
   <property name="version.jboss.threads" value="2.0.0.GA"/>
@@ -148,6 +149,7 @@
   <property name="version.junit" value="4.10"/>
   <property name="version.mail-api" value="1.4.4"/>
   <property name="version.maven" value="2.2.1"/>
+  <property name="version.saxon" value="8.7"/>
   <property name="version.slf4j" value="1.6.1"/>
   <property name="version.transaction.api" value="1.0.1.Final"/>
   <property name="version.validation-api" value="1.0.0.GA"/>
