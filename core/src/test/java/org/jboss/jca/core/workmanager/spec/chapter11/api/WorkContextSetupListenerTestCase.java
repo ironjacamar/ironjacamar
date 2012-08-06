@@ -25,7 +25,6 @@ package org.jboss.jca.core.workmanager.spec.chapter11.api;
 import org.jboss.jca.core.workmanager.spec.chapter11.common.ContextWorkAdapter;
 import org.jboss.jca.core.workmanager.spec.chapter11.common.TransactionContextCustom;
 import org.jboss.jca.core.workmanager.spec.chapter11.common.UniversalProviderWork;
-import org.jboss.jca.core.workmanager.spec.chapter11.common.UnsupportedContext;
 import org.jboss.jca.embedded.arquillian.Inject;
 
 import javax.resource.spi.work.WorkContextErrorCodes;
@@ -34,7 +33,6 @@ import javax.resource.spi.work.WorkManager;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.logging.Logger;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
