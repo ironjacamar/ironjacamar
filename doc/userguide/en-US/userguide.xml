@@ -30,6 +30,7 @@
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="modules/eclipse.xml"/>
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="modules/tools.xml"/>
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="modules/embedded.xml"/>
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="modules/eis.xml"/>
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="modules/community.xml"/>
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="modules/troubleshooting.xml"/>
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="modules/schemas.xml"/>

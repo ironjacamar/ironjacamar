@@ -109,6 +109,7 @@
     <mkdir dir="${target.dir}/sjc/doc/as"/>
     <mkdir dir="${target.dir}/sjc/doc/codegenerator"/>
     <mkdir dir="${target.dir}/sjc/doc/datasources"/>
+    <mkdir dir="${target.dir}/sjc/doc/eis"/>
     <mkdir dir="${target.dir}/sjc/doc/validator"/>
     <mkdir dir="${target.dir}/sjc/doc/licenses"/>
     <mkdir dir="${target.dir}/sjc/lib"/>
@@ -182,6 +183,7 @@
         <exclude name="${name}-embedded-arquillian.jar"/>
         <exclude name="${name}-embedded.jar"/>
         <exclude name="${name}-sjc.jar"/>
+        <exclude name="${name}-test-eis.jar"/>
         <exclude name="${name}-web-console.jar"/>
       </fileset>
     </copy>
@@ -283,6 +285,12 @@
     <copy todir="${target.dir}/sjc/doc/datasources" flatten="true">
       <fileset dir="../common/src/test/resources/ds/example">
         <include name="*.xml"/>
+      </fileset>
+    </copy>
+
+    <copy todir="${target.dir}/sjc/doc/eis" flatten="true">
+      <fileset dir="${target.dir}">
+        <include name="${name}-test-eis.jar"/>
       </fileset>
     </copy>
 

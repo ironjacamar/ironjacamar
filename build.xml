@@ -342,6 +342,7 @@
     <ant dir="sjc" inheritRefs="true" target="jars"/>
     <ant dir="codegenerator" inheritRefs="true" target="jars"/>
     <ant dir="as" inheritRefs="true" target="jars"/>
+    <ant dir="eis" inheritRefs="true" target="jars"/>
   </target>
   
   <!-- ================================= 
@@ -362,6 +363,7 @@
     <ant dir="sjc" inheritRefs="true" target="docs"/>
     <ant dir="codegenerator" inheritRefs="true" target="docs"/>
     <ant dir="as" inheritRefs="true" target="docs"/>
+    <ant dir="eis" inheritRefs="true" target="docs"/>
   </target>
   
   <!-- ================================= 
@@ -391,6 +393,7 @@
     <ant dir="codegenerator" inheritRefs="true" target="prepare-test"/>
     <ant dir="adapters" inheritRefs="true" target="prepare-test"/>
     <ant dir="as" inheritRefs="true" target="prepare-test"/>
+    <ant dir="eis" inheritRefs="true" target="prepare-test"/>
   </target>
   
   <!-- ================================= 
@@ -404,6 +407,7 @@
     <ant dir="validator" inheritRefs="true" target="test"/>
     <ant dir="adapters" inheritRefs="true" target="test"/>
     <ant dir="as" inheritRefs="true" target="test"/>
+    <ant dir="eis" inheritRefs="true" target="test"/>
   </target>
   
   <!-- ================================= 
@@ -444,6 +448,7 @@
     <ant dir="embedded" inheritRefs="true" target="artifacts"/>
     <ant dir="codegenerator" inheritRefs="true" target="artifacts"/>
     <ant dir="as" inheritRefs="true" target="artifacts"/>
+    <ant dir="eis" inheritRefs="true" target="artifacts"/>
   </target>
   
   <!-- ================================= 
@@ -1328,7 +1333,7 @@ VERSION=${version}
     <fail message="IronJacamar doesn't support JDK 7+ artifacts" if="HAVE_JDK_1.7"/>
   
     <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" 
-                  conf="${name}-as,${name}-codegenerator,${name}-deployers-fungal,${name}-embedded,${name}-embedded-arquillian,${name}-embedded-arquillian-byteman,${name}-spec-api,${name}-validator-ant,${name}-validator-cli,jdbc-local,jdbc-xa,mail"
+                  conf="${name}-as,${name}-codegenerator,${name}-deployers-fungal,${name}-embedded,${name}-embedded-arquillian,${name}-embedded-arquillian-byteman,${name}-spec-api,${name}-test-eis,${name}-validator-ant,${name}-validator-cli,jdbc-local,jdbc-xa,mail"
                   sync="true"/>
 
     <!-- ironjacamar-as -->
@@ -1448,6 +1453,21 @@ mvn install:install-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depc
     <deploy-file file="deploy.sh" artifact="${name}-embedded-arquillian-byteman" extension="jar"/>
     <install-file file="install.sh" artifact="${name}-embedded-arquillian-byteman" extension="jar"/>
 
+    <!-- ironjacamar-test-eis -->
+    <delete file="${target.dir}/${name}-test-eis.xml"/>
+    <ivy:makepom artifactName="${name}-test-eis" 
+                 conf="${name}-test-eis"
+                 ivyfile="${basedir}/ivy.xml" 
+                 pomfile="${target.dir}/${name}-test-eis.xml"
+                 headerFile="${tools.dir}/mvn/HEADER"
+                 templatefile="${tools.dir}/mvn/pom.template"
+                 printIvyInfo="false">
+      <mapping conf="${name}-test-eis" scope="runtime"/>
+    </ivy:makepom>
+
+    <deploy-file file="deploy.sh" artifact="${name}-test-eis" extension="jar"/>
+    <install-file file="install.sh" artifact="${name}-test-eis" extension="jar"/>
+
     <!-- ironjacamar-validator-ant -->
     <delete file="${target.dir}/${name}-validator-ant.xml"/>
     <ivy:makepom artifactName="${name}-validator-ant" 
@@ -1462,7 +1482,7 @@ mvn install:install-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depc
     </ivy:makepom>
 
     <deploy-file file="deploy.sh" artifact="${name}-validator-ant" extension="jar"/>
-    <install-file file="install.sh" artifact="${name}-validator" extension="jar"/>
+    <install-file file="install.sh" artifact="${name}-validator-ant" extension="jar"/>
 
     <!-- ironjacamar-validator-cli -->
     <delete file="${target.dir}/${name}-validator-cli.xml"/>

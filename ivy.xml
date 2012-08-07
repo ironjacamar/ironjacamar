@@ -33,7 +33,7 @@
     </description>
   </info>
 
-  <configurations defaultconfmapping="common->default;sjc->default;embedded->default;arquillian->default;byteman->default;jetty->default;test->default;mail->default;;tools->default;ironjacamar-as->default;ironjacamar-codegenerator->default;ironjacamar-common-api->default;ironjacamar-common-impl->default;ironjacamar-common-spi->default;ironjacamar-core-api->default;ironjacamar-core-impl->default;ironjacamar-depchain->default;ironjacamar-deployers-common->default;ironjacamar-deployers-fungal->default;ironjacamar-embedded->default;ironjacamar-embedded-arquillian->default;ironjacamar-embedded-arquillian-byteman->default;ironjacamar.jdbc->default;ironjacamar-spec-api->default;ironjacamar-validator->default;ironjacamar-validator-ant->default;ironjacamar-validator-cli->default;ironjacamar-validator-maven->default;jdbc-local->default;jdbc-xa->default;hornetq->default;as->default">
+  <configurations defaultconfmapping="common->default;sjc->default;embedded->default;arquillian->default;byteman->default;jetty->default;test->default;mail->default;;tools->default;ironjacamar-as->default;ironjacamar-codegenerator->default;ironjacamar-common-api->default;ironjacamar-common-impl->default;ironjacamar-common-spi->default;ironjacamar-core-api->default;ironjacamar-core-impl->default;ironjacamar-depchain->default;ironjacamar-deployers-common->default;ironjacamar-deployers-fungal->default;ironjacamar-embedded->default;ironjacamar-embedded-arquillian->default;ironjacamar-embedded-arquillian-byteman->default;ironjacamar.jdbc->default;ironjacamar-spec-api->default;ironjacamar-test-eis->default;ironjacamar-validator->default;ironjacamar-validator-ant->default;ironjacamar-validator-cli->default;ironjacamar-validator-maven->default;jdbc-local->default;jdbc-xa->default;hornetq->default;as->default">
     <conf name="arquillian" transitive="false"/>
     <conf name="byteman" transitive="false"/>
     <conf name="common" transitive="false"/>
@@ -61,6 +61,7 @@
     <conf name="ironjacamar-embedded-arquillian-byteman" transitive="false"/>
     <conf name="ironjacamar-jdbc" transitive="false"/>
     <conf name="ironjacamar-spec-api" transitive="false"/>
+    <conf name="ironjacamar-test-eis" transitive="false"/>
     <conf name="ironjacamar-validator" transitive="false"/>
     <conf name="ironjacamar-validator-ant" transitive="false"/>
     <conf name="ironjacamar-validator-cli" transitive="false"/>
@@ -86,6 +87,7 @@
     <artifact name="ironjacamar-embedded" type="jar"/>
     <artifact name="ironjacamar-jdbc" type="jar"/>
     <artifact name="ironjacamar-spec-api" type="jar"/>
+    <artifact name="ironjacamar-test-eis" type="jar"/>
     <artifact name="ironjacamar-validator" type="jar"/>
     <artifact name="ironjacamar-validator-cli" type="jar"/>
     <artifact name="ironjacamar-validator-ant" type="jar"/>

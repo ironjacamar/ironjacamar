@@ -88,6 +88,12 @@
     </dependency>    
     <dependency>
       <groupId>org.jboss.ironjacamar</groupId>
+      <artifactId>ironjacamar-test-eis</artifactId>
+      <version>${version.org.jboss.ironjacamar}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jboss.ironjacamar</groupId>
       <artifactId>ironjacamar-validator</artifactId>
       <version>${version.org.jboss.ironjacamar}</version>
       <scope>test</scope>

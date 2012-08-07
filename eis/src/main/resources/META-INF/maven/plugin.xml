@@ -1,0 +1,87 @@
+<plugin>
+  <description></description>
+  <groupId>org.jboss.ironjacamar</groupId>
+  <artifactId>ironjacamar-test-eis</artifactId>
+  <version>@VERSION.IRONJACAMAR@</version>
+  <goalPrefix>ironjacamar</goalPrefix>
+  <isolatedRealm>false</isolatedRealm>
+  <inheritedByDefault>true</inheritedByDefault>
+  <mojos>
+    <mojo>
+      <goal>start</goal>
+      <description>Starts the EIS test server</description>
+      <requiresDirectInvocation>false</requiresDirectInvocation>
+      <requiresProject>false</requiresProject>
+      <requiresReports>false</requiresReports>
+      <aggregator>false</aggregator>
+      <requiresOnline>false</requiresOnline>
+      <inheritedByDefault>true</inheritedByDefault>
+      <phase>test</phase>
+      <implementation>org.jboss.jca.test.eis.maven.Start</implementation>
+      <language>java</language>
+      <instantiationStrategy>per-lookup</instantiationStrategy>
+      <executionStrategy>once-per-session</executionStrategy>
+      <parameters>
+        <parameter>
+          <name>host</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>The host name</description>
+        </parameter>
+        <parameter>
+          <name>port</name>
+          <type>int</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>The port number</description>
+        </parameter>
+        <parameter>
+          <name>handler</name>
+          <type>java.lang.String</type>
+          <required>true</required>
+          <editable>true</editable>
+          <description>The handler implementation</description>
+        </parameter>
+        <parameter>
+          <name>classpath</name>
+          <type>java.util.List</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>The java.io.File's to add to the classpath</description>
+        </parameter>
+      </parameters>
+    </mojo>
+    <mojo>
+      <goal>stop</goal>
+      <description>Stops the EIS test server</description>
+      <requiresDirectInvocation>false</requiresDirectInvocation>
+      <requiresProject>false</requiresProject>
+      <requiresReports>false</requiresReports>
+      <aggregator>false</aggregator>
+      <requiresOnline>false</requiresOnline>
+      <inheritedByDefault>true</inheritedByDefault>
+      <phase>test</phase>
+      <implementation>org.jboss.jca.test.eis.maven.Stop</implementation>
+      <language>java</language>
+      <instantiationStrategy>per-lookup</instantiationStrategy>
+      <executionStrategy>once-per-session</executionStrategy>
+      <parameters>
+        <parameter>
+          <name>host</name>
+          <type>java.lang.String</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>The host name</description>
+        </parameter>
+        <parameter>
+          <name>port</name>
+          <type>int</type>
+          <required>false</required>
+          <editable>true</editable>
+          <description>The port number</description>
+        </parameter>
+      </parameters>
+    </mojo>
+  </mojos>
+</plugin>

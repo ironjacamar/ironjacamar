@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="eis">
+   <title>EIS test server</title>
+
+   <para>
+     Testing an Enterprise Information System can be a complex task, as their installation
+     can quite complex and specific to a certain platform architecture.
+   </para>
+   
+   <para>
+     As Java developers, and resource adapter developers in particularly, we are interested
+     in a setup that will allow us to test the resource adapter against the EIS with as little
+     difficulty as possible.
+   </para>
+   
+   <para>
+     Having access to a component that easy integrates into our testing environment, and
+     acts as the EIS in question is of benefit.
+   </para>
+   
+   <section id="eis_overview">
+      <title>Overview</title>
+   
+      <para>
+        The IronJacamar EIS test server provides a framework for emulating an Enterprise Information System
+        such that no installation is needed.
+      </para>
+   
+      <para>
+        The EIS test server contains the following interface
+      </para>
+
+      <programlisting language="java">
+<xi:include parse="text" href="../../../../eis/src/main/java/org/jboss/jca/test/eis/Handler.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+      </programlisting>
+
+      <para>
+        which represents a session between the resource adapter and the EIS.
+      </para>
+
+      <para>
+        The <code>java.io.InputStream</code> is the incoming communication coming from the resource adapter, and
+        the <code>java.io.OutputStream</code> is the EIS' response to the request.
+      </para>
+      
+      <para>
+        Once the method returns the socket between the resource adapter and the EIS is closed.
+      </para>
+
+      <para>
+        This means that the implementation of the <code>Handler</code> interface will represent the binary
+        protocol between the resource adapter and the EIS. To the resource adapter it will look as it is
+        communicating with the real Enterprise Information System installation.
+      </para>
+
+   </section>
+
+   <section id="eis_ant">
+      <title>Apache Ant</title>
+
+      <para>
+        The Apache Ant tasks for starting and stopping the EIS test server are defined as the following
+      </para>
+
+      <programlisting>
+<![CDATA[
+<taskdef name="start"
+         classname="org.jboss.jca.test.eis.ant.Start"
+         classpathref="main.lib.path.id"/>
+
+<taskdef name="stop"
+         classname="org.jboss.jca.test.eis.ant.Stop"
+         classpathref="main.lib.path.id"/>
+]]>
+      </programlisting>
+
+      <para>
+        where <code>main.lib.path.id</code> contains the <code>ironjacamar-test-eis.jar</code> file.
+      </para>
+
+      <para>
+        The <code>start</code> task is used, like
+      </para>
+
+      <programlisting>
+<![CDATA[
+<start host="localhost" port="1400"
+       handler="org.jboss.jca.test.eis.EchoHandler">
+  <classpath>
+    <pathelement location="${build.eis.dir}/test"/>
+  </classpath>
+</start>
+]]>
+      </programlisting>
+
+      <para>
+        which starts the EIS test server on <code>localhost</code> using port <code>1400</code> with an
+        implementation of the <code>Handler</code> interface of <code>org.jboss.jca.test.eis.EchoHandler</code>
+        and a classpath of <code>${build.eis.dir}/test</code>.
+      </para>
+
+      <para>
+        The <code>stop</code> task is used, like
+      </para>
+
+      <programlisting>
+<![CDATA[
+<stop host="localhost" port="1400"/>
+]]>
+      </programlisting>
+
+      <para>
+        which stops the EIS test server on <code>localhost</code> using port <code>1400</code>.
+      </para>
+
+      <para>
+        Between the <code>start</code> and <code>stop</code> tasks the resource adapters unit tests
+        can be executed.
+      </para>
+      
+   </section>
+
+   <section id="eis_maven">
+      <title>Apache Maven</title>
+
+   </section>
+
+</chapter>

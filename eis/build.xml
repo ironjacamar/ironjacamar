@@ -1,0 +1,292 @@
+<!--
+ * JBoss, Home of Professional Open Source.
+ * Copyright 2008, Red Hat Middleware LLC, and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+-->
+<project name="ironjacamar-eis" 
+         default="compile" 
+         xmlns:ivy="antlib:org.apache.ivy.ant">
+
+  <!-- ================================= 
+       Properties              
+       ================================= -->
+  <property name="build.eis.dir" value="${build.dir}/eis" />
+
+  <!-- ================================= 
+       Target: compile
+       ================================= -->
+  <target name="compile">
+    <mkdir dir="${build.eis.dir}" />
+
+    <javac srcdir="src/main"
+           destdir="${build.eis.dir}"
+           classpathref="main.lib.path.id"
+           debug="${javac.debug}"
+           deprecation="${javac.deprecation}"
+           optimize="${javac.optimize}"
+           includeAntRuntime="false">
+      <compilerarg value="-proc:none"/>
+    </javac> 
+
+  </target>
+
+  <!-- ================================= 
+       Target: jars
+       ================================= -->
+  <target name="jars" depends="compile">
+    <copy todir="${build.eis.dir}">
+      <fileset dir="src/main/resources/"
+               includes="**/*"/>
+      <filterset>
+        <filter token="VERSION.IRONJACAMAR" value="${version}"/>
+      </filterset>
+    </copy>
+
+    <jar destfile="${target.dir}/${name}-test-eis.jar"
+         basedir="${build.eis.dir}"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9"
+         excludes="**/*.java">
+      <manifest>
+        <attribute name="Main-Class" value="org.jboss.jca.test.eis.impl.EISServer"/>
+        <attribute name="Implementation-Title" value="IronJacamar Test EIS Server"/>
+        <attribute name="Implementation-Version" value="${version}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+    </jar>
+
+  </target>
+
+  <!-- ================================= 
+       Target: docs
+       ================================= -->
+  <target name="docs">
+    <mkdir dir="${target.dir}/docs/spec"/>
+    <javadoc packagenames="org.*"
+             sourcepath="src/main/java"
+             destdir="${target.dir}/docs/eis"
+             doclet="org.jboss.apiviz.APIviz"
+             docletpathref="main.lib.path.id"
+             author="true"
+             version="true"
+             windowtitle="IronJacamar Test EIS Server"
+             doctitle="IronJacamar Test EIS Server"
+             use="true"
+             additionalparam="-author -version"
+             classpath="${build.eis.dir}"
+             classpathref="main.lib.path.id"
+             bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
+      <link offline="true" href="http://docs.oracle.com/javase/6/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
+    </javadoc>
+    <copy todir="${target.dir}/docs/spec" overwrite="true">
+      <fileset dir="${tools.dir}/api"/>
+    </copy>
+  </target>
+
+
+  <!-- ================================= 
+       Target: test
+       ================================= -->
+  <target name="test" depends="prepare-test">
+    <mkdir dir="${reports.dir}"/>
+    <mkdir dir="${reports.dir}/eis"/>
+
+    <taskdef name="start"
+             classname="org.jboss.jca.test.eis.ant.Start"
+             classpathref="main.lib.path.id"/>
+    <taskdef name="stop"
+             classname="org.jboss.jca.test.eis.ant.Stop"
+             classpathref="main.lib.path.id"/>
+
+    <start host="localhost" port="1400"
+           handler="org.jboss.jca.test.eis.EchoHandler">
+      <classpath>
+        <pathelement location="${build.eis.dir}/test"/>
+      </classpath>
+    </start>
+
+    <junit dir="src/test"
+           printsummary="${junit.printsummary}"
+           haltonerror="${junit.haltonerror}"
+           haltonfailure="${junit.haltonfailure}"
+           fork="${junit.fork}"
+           timeout="${junit.timeout}">
+      
+      <jvmarg line="${junit.jvm.options}"/>
+      <sysproperty key="archives.dir" value="${build.eis.dir}"/>
+      <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
+      <sysproperty key="log4j.defaultInitOverride" value="true"/>
+      <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
+      <sysproperty key="test.dir" value="${test.dir}"/>
+      <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
+      
+      <classpath>
+        <pathelement location="${build.eis.dir}/test"/>
+        <fileset dir="${target.dir}" includes="*.jar"/>
+        <fileset dir="${lib.dir}/common" includes="*.jar" />
+        <fileset dir="${lib.dir}/embedded" includes="*.jar" />
+        <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
+        <fileset dir="${lib.dir}/sjc" includes="*.jar" />
+        <fileset dir="${lib.dir}/test" includes="*.jar" />
+      </classpath>
+      
+      <formatter type="plain"/>
+      <formatter type="xml"/>
+      
+      <batchtest todir="${reports.dir}/eis"
+                 haltonerror="${junit.batchtest.haltonerror}"
+                 haltonfailure="${junit.batchtest.haltonfailure}"
+                 fork="${junit.batchtest.fork}">
+        
+        <fileset dir="${build.eis.dir}/test">
+          <include name="**/*TestCase.class"/>
+        </fileset>
+      </batchtest>
+
+    </junit>
+
+    <stop host="localhost" port="1400"/>
+    
+  </target>
+
+
+  <!-- ================================= 
+       Target: one-test
+       ================================= -->
+  <target name="one-test" depends="prepare-test">
+    <mkdir dir="${reports.dir}"/>
+    <mkdir dir="${reports.dir}/eis"/>
+
+    <junit dir="src/test"
+           printsummary="${junit.printsummary}"
+           haltonerror="${junit.haltonerror}"
+           haltonfailure="${junit.haltonfailure}"
+           fork="${junit.fork}"
+           timeout="${junit.timeout}">
+      
+      <jvmarg line="${junit.jvm.options}"/>
+      <sysproperty key="archives.dir" value="${build.eis.dir}"/>
+      <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
+      <sysproperty key="log4j.defaultInitOverride" value="true"/>
+      <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
+      <sysproperty key="test.dir" value="${test.dir}"/>
+      <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
+      
+      <classpath>
+        <pathelement location="${build.eis.dir}/test"/>
+        <fileset dir="${target.dir}" includes="*.jar"/>
+        <fileset dir="${lib.dir}/common" includes="*.jar" />
+        <fileset dir="${lib.dir}/embedded" includes="*.jar" />
+        <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
+        <fileset dir="${lib.dir}/sjc" includes="*.jar" />
+        <fileset dir="${lib.dir}/test" includes="*.jar" />
+      </classpath>
+      
+      <formatter type="plain"/>
+      <formatter type="xml"/>
+      
+      <test todir="${reports.dir}/eis" name="${test}"
+                 haltonerror="${junit.batchtest.haltonerror}"
+                 haltonfailure="${junit.batchtest.haltonfailure}"
+                 fork="${junit.batchtest.fork}"/>
+    </junit>
+  </target>
+
+  <!-- ================================= 
+       Target: prepare-test
+       ================================= -->
+  <target name="prepare-test">
+    <mkdir dir="${build.eis.dir}" />
+    <mkdir dir="${build.eis.dir}/test" />
+
+    <javac srcdir="src/test"
+           destdir="${build.eis.dir}/test"
+           classpathref="test.lib.path.id"
+           debug="${javac.debug}"
+           deprecation="${javac.deprecation}"
+           optimize="${javac.optimize}"
+           includeAntRuntime="false">
+      <compilerarg value="-Xlint"/>
+    </javac> 
+
+    <copy todir="${build.eis.dir}/test">
+      <fileset dir="src/test/resources"/>
+    </copy>
+  </target>
+
+  <!-- ================================= 
+       Target: artifacts
+       ================================= -->
+  <target name="artifacts" depends="jars">
+
+    <jar destfile="${target.dir}/${name}-test-eis-sources.jar"
+         basedir="src/main/java"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9">
+      <manifest>
+        <attribute name="Implementation-Title" value="IronJacamar Test EIS Server - Sources"/>
+        <attribute name="Implementation-Version" value="${version}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+    </jar>
+
+    <mkdir dir="${build.eis.dir}/docs"/>
+    <javadoc packagenames="org.*"
+             sourcepath="src/main/java"
+             destdir="${build.eis.dir}/docs"
+             doclet="org.jboss.apiviz.APIviz"
+             docletpathref="main.lib.path.id"
+             author="true"
+             version="true"
+             windowtitle="IronJacamar Test EIS Server"
+             doctitle="IronJacamar Test EIS Server"
+             use="true"
+             additionalparam="-author -version"
+             classpath="${build.eis.dir}"
+             classpathref="main.lib.path.id"
+             bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
+      <link offline="true" href="http://docs.oracle.com/javase/6/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
+    </javadoc>
+    <copy todir="${build.eis.dir}/docs" overwrite="true">
+      <fileset dir="${tools.dir}/api"/>
+    </copy>
+
+    <jar destfile="${target.dir}/${name}-test-eis-javadoc.jar"
+         basedir="${build.eis.dir}/docs"
+         index="true"
+         indexMetaInf="true"
+         update="true"
+         level="9">
+      <manifest>
+        <attribute name="Implementation-Title" value="IronJacamar Test EIS Server - JavaDoc"/>
+        <attribute name="Implementation-Version" value="${version}"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
+      </manifest>
+    </jar>
+
+  </target>
+
+</project>

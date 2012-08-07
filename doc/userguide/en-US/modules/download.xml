@@ -167,6 +167,12 @@ ironjacamar-1.0.0.Final.tar.gz
               </entry>
             </row>
             <row>
+              <entry><code>ironjacamar-test-eis</code></entry>
+              <entry>
+                The Enterprise Information System test server
+              </entry>
+            </row>
+            <row>
               <entry><code>ironjacamar-validator</code></entry>
               <entry>
                 The validator module
