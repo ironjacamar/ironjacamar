@@ -1244,7 +1244,8 @@ public abstract class BaseWrapperManagedConnectionFactory
        * @param mcf The managed connection factory
        * @return The result
        */
-      static boolean addMatchingProperties(Subject subject, ConnectionRequestInfo cri, Properties props, ManagedConnectionFactory mcf)
+      static boolean addMatchingProperties(Subject subject, ConnectionRequestInfo cri,
+                                           Properties props, ManagedConnectionFactory mcf)
       {
          SubjectActions action = new SubjectActions(subject, cri, props, mcf);
          Boolean matched = AccessController.doPrivileged(action);
