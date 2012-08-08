@@ -123,6 +123,62 @@
    <section id="eis_maven">
       <title>Apache Maven</title>
 
+      <para>
+        The Apache Maven mojos for starting and stopping the EIS test server are defined as the following
+      </para>
+
+      <programlisting>
+       <![CDATA[
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.jboss.ironjacamar</groupId>
+      <artifactId>ironjacamar-test-eis</artifactId>
+      <!-- The version of the plugin you want to use -->
+      <version>1.1.0.Final</version>
+      <executions>
+        <execution>
+          <goals>
+            <goal>start</goal>
+          </goals>
+        </execution>
+      </executions>
+      <configuration>
+        <host>localhost</host>
+        <port>1400</port>
+        <handler>org.jboss.jca.test.eis.EchoHandler</handler>
+        <classpath>
+          <param>${build.eis.dir}/test</param>
+        </classpath>
+      </configuration>
+    </plugin>
+    <plugin>
+      <groupId>org.jboss.ironjacamar</groupId>
+      <artifactId>ironjacamar-test-eis</artifactId>
+      <!-- The version of the plugin you want to use -->
+      <version>1.1.0.Final</version>
+      <executions>
+        <execution>
+          <goals>
+            <goal>stop</goal>
+          </goals>
+        </execution>
+      </executions>
+      <configuration>
+        <host>localhost</host>
+        <port>1400</port>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>        
+        ]]>
+      </programlisting>
+
+      <para>
+        The <code>start</code> mojo will run in the <code>process-test-classes</code> phase, and the
+        <code>stop</code> mojo will run in the <code>test</code> phase.
+      </para>
+
    </section>
 
 </chapter>
