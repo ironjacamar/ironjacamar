@@ -31,12 +31,11 @@ import org.jboss.shrinkwrap.descriptor.api.DescriptorExportException;
 
 /**
  * An InputStream descriptor. 
- *
- * Note, that this class will close the passed InputStream once one of the export methods
+ * <p/>
+ * Note, that this class will close the passed <code>InputStream</code> once one of the export methods
  * have been called.
  * 
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
- * @version $Revision: $
  */
 public class InputStreamDescriptor implements Descriptor
 {
@@ -44,7 +43,7 @@ public class InputStreamDescriptor implements Descriptor
    private final InputStream is;
 
    /**
-    * Create an InputStream Descriptor.
+    * Create an InputStreamDescriptor
     * @param name The descriptor name
     * @param is The input stream
     */
@@ -61,8 +60,7 @@ public class InputStreamDescriptor implements Descriptor
    }
 
    /**
-    * Get the name
-    * @return The value
+    * {@inheritDoc}
     */
    public String getDescriptorName()
    {

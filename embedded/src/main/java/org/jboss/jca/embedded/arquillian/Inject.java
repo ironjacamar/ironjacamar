@@ -29,8 +29,21 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Inject
- *
+ * The <code>Inject</code> annotation allows injection of
+ * IronJacamar beans into the test case.
+ * <p/>
+ * The list of beans available can be seen in the configuration
+ * files, or through the <code>Kernel</code> bean in the management
+ * console
+ * <p/>
+ * Example:
+ * <blockquote>
+ *  <pre>
+ *   &#64;Inject(name = "MDR")
+ *   private MetadataRepository mdr;
+ *  </pre>
+ * </blockquote>
+ * 
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 @Documented
@@ -38,6 +51,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(ElementType.FIELD)
 public @interface Inject
 {
-   /** Name of the embedded resource */
+   /** Name of the bean */
    public String name();
 }

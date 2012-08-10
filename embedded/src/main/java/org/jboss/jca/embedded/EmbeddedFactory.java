@@ -37,6 +37,7 @@ public class EmbeddedFactory
 
    /**
     * Create an instance of the embedded container
+    * with a certified configuration
     * @return The instance
     */
    public static Embedded create()
@@ -46,7 +47,7 @@ public class EmbeddedFactory
 
    /**
     * Create an instance of the embedded container
-    * @param fullProfile Should a full JCA 1.6 profile be initialized
+    * @param fullProfile Should a full JCA 1.6 profile be used
     * @return The instance
     */
    public static Embedded create(boolean fullProfile)

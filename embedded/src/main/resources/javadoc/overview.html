@@ -1,0 +1,171 @@
+<body>
+  <h1>IronJacamar Embedded</h1>
+
+  <p>
+    The IronJacamar Embedded configuration allows developers to use a Java EE Connector Architecture
+    container inside their application, or use it for a unit testing infrastructure.
+  </p>
+
+  <p>
+    IronJacamar Embedded provides a full Java EE Connector Architecture standalone environment, as
+    defined by Section 3.5 in the <a href="http://jcp.org/en/jsr/detail?id=322">specification</a>.
+  </p>
+
+  <p>
+    Furthermore it provides integration to the following technologies:
+
+    <ul>
+      <li><a href="http://arquillian.org/">Arquillian</a></li>
+      <li><a href="http://www.jboss.org/shrinkwrap">ShrinkWrap</a></li>
+      <li><a href="http://www.jboss.org/byteman">Byteman</a></li>
+    </ul>
+  </p>
+
+  <p>
+    See the <a href="http://docs.jboss.org/ironjacamar/userguide/1.1/en-US/html/embedded.html">user guide</a>
+    for furher information.
+  </p>
+
+  <h2>Package overview</h2>
+
+  <p>
+    The IronJacamar Embedded configuration contains different packages, which
+    focuses on different parts of the setup.
+  </p>
+
+  <h3>org.jboss.jca.embedded</h3>
+
+  <p>
+    This is the main package of the embedded platform with core classes.
+  </p>
+  
+  <p>
+    This package should be considered advanced usage.
+  </p>
+
+  <h3>org.jboss.jca.embedded.arquillian</h3>
+
+  <p>
+    This package contains the classes to control configuration and integration 
+    of IronJacamar Embedded with Arquillian.
+  </p>
+
+  <h3>org.jboss.jca.embedded.dsl</h3>
+
+  <p>
+    This package contains generic classes for DSL integration.
+  </p>
+    
+  <h3>org.jboss.jca.embedded.dsl.datasources10.api</h3>
+
+  <p>
+    This package contains the ShrinkWrap/Descriptors API for a datasources_1_0.xsd deployment.
+  </p>
+
+  <p>
+    The schema can be found here: <a href="http://docs.jboss.org/ironjacamar/schema/datasources_1_0.xsd">http://docs.jboss.org/ironjacamar/schema/datasources_1_0.xsd</a>
+  </p>
+
+  <h3>org.jboss.jca.embedded.dsl.datasources11.api</h3>
+
+  <p>
+    This package contains the ShrinkWrap/Descriptors API for a datasources_1_1.xsd deployment.
+  </p>
+
+  <p>
+    The schema can be found here: <a href="http://docs.jboss.org/ironjacamar/schema/datasources_1_1.xsd">http://docs.jboss.org/ironjacamar/schema/datasources_1_1.xsd</a>
+  </p>
+
+  <h3>org.jboss.jca.embedded.dsl.ironjacamar10.api</h3>
+
+  <p>
+    This package contains the ShrinkWrap/Descriptors API for an ironjacamar_1_0.xsd deployment.
+  </p>
+
+  <p>
+    The schema can be found here: <a href="http://docs.jboss.org/ironjacamar/schema/ironjacamar_1_0.xsd">http://docs.jboss.org/ironjacamar/schema/ironjacamar_1_0.xsd</a>
+  </p>
+
+  <h3>org.jboss.jca.embedded.dsl.ironjacamar11.api</h3>
+
+  <p>
+    This package contains the ShrinkWrap/Descriptors API for an ironjacamar_1_1.xsd deployment.
+  </p>
+
+  <p>
+    The schema can be found here: <a href="http://docs.jboss.org/ironjacamar/schema/ironjacamar_1_1.xsd">http://docs.jboss.org/ironjacamar/schema/ironjacamar_1_1.xsd</a>
+  </p>
+
+  <h3>org.jboss.jca.embedded.dsl.resourceadapters10.api</h3>
+
+  <p>
+    This package contains the ShrinkWrap/Descriptors API for a resource-adapters_1_0.xsd deployment.
+  </p>
+
+  <p>
+    The schema can be found here: <a href="http://docs.jboss.org/ironjacamar/schema/resource-adapters_1_0.xsd">http://docs.jboss.org/ironjacamar/schema/resource-adapters_1_0.xsd</a>
+  </p>
+
+  <h3>org.jboss.jca.embedded.dsl.resourceadapters11.api</h3>
+
+  <p>
+    This package contains the ShrinkWrap/Descriptors API for a resource-adapters_1_1.xsd deployment.
+  </p>
+
+  <p>
+    The schema can be found here: <a href="http://docs.jboss.org/ironjacamar/schema/resource-adapters_1_1.xsd">http://docs.jboss.org/ironjacamar/schema/resource-adapters_1_1.xsd</a>
+  </p>
+
+  <h3>org.jboss.shrinkwrap.descriptor.api.connector10</h3>
+
+  <p>
+    This package contains the ShrinkWrap/Descriptors API for a Java EE Connector Architecture 1.0 descriptor.
+  </p>
+
+  <p>
+    The schema can be found here: <a href="http://docs.jboss.org/ironjacamar/schema/connector_1_0.dtd">http://docs.jboss.org/ironjacamar/schema/connector_1_0.dtd</a>
+  </p>
+
+  <h3>org.jboss.shrinkwrap.descriptor.api.connector15</h3>
+
+  <p>
+    This package contains the ShrinkWrap/Descriptors API for a Java EE Connector Architecture 1.5 descriptor.
+  </p>
+
+  <p>
+    The schema can be found here: <a href="http://docs.jboss.org/ironjacamar/schema/connector_1_5.xsd">http://docs.jboss.org/ironjacamar/schema/connector_1_5.xsd</a>
+  </p>
+
+  <h3>org.jboss.shrinkwrap.descriptor.api.connector16</h3>
+
+  <p>
+    This package contains the ShrinkWrap/Descriptors API for a Java EE Connector Architecture 1.6 descriptor.
+  </p>
+
+  <p>
+    The schema can be found here: <a href="http://docs.jboss.org/ironjacamar/schema/connector_1_6.xsd">http://docs.jboss.org/ironjacamar/schema/connector_1_6.xsd</a>
+  </p>
+
+  <h3>org.jboss.shrinkwrap.descriptor.api.j2ee14</h3>
+
+  <p>
+    This package contains the ShrinkWrap/Descriptors API for the Java EE 1.4 descriptor, which is used by the Java EE Connector Architecture 1.5
+    descriptor.
+  </p>
+
+  <p>
+    The schema can be found here: <a href="http://docs.jboss.org/ironjacamar/schema/j2ee_1_4.xsd">http://docs.jboss.org/ironjacamar/schema/j2ee_1_4.xsd</a>
+  </p>
+
+  <h3>org.jboss.shrinkwrap.descriptor.api.javaee6</h3>
+
+  <p>
+    This package contains the ShrinkWrap/Descriptors API for the Java EE 6 descriptor, which is used by the Java EE Connector Architecture 1.6
+    descriptor.
+  </p>
+
+  <p>
+    The schema can be found here: <a href="http://docs.jboss.org/ironjacamar/schema/javaee_6.xsd">http://docs.jboss.org/ironjacamar/schema/javaee_6.xsd</a>
+  </p>
+
+</body>

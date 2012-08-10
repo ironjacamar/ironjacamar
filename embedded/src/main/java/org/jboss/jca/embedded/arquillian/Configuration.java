@@ -29,7 +29,15 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Configuration
+ * The <code>Configuration</code> annotation allows for configuration of the
+ * IronJacamar/Arquillian integration
+ * <p/>
+ * Example:
+ * <blockquote>
+ *  <pre>
+ *   &#64;Configuration(autoActivate = false)
+ *  </pre>
+ * </blockquote>
  *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
@@ -38,6 +46,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(ElementType.TYPE)
 public @interface Configuration
 {
-   /** Auto activate deployments */
+   /** Should deployments be auto activated if possible */
    public boolean autoActivate() default true;
 }
