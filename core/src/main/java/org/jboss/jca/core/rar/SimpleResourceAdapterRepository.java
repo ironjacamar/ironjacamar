@@ -165,7 +165,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
    /**
     * {@inheritDoc}
     */
-   public ResourceAdapter getResourceAdapter(String uniqueId) throws NotFoundException
+   public synchronized ResourceAdapter getResourceAdapter(String uniqueId) throws NotFoundException
    {
       if (uniqueId == null)
          throw new IllegalArgumentException("UniqueId is null");
@@ -195,7 +195,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
    /**
     * {@inheritDoc}
     */
-   public Set<String> getResourceAdapters(Class<?> messageListenerType)
+   public synchronized Set<String> getResourceAdapters(Class<?> messageListenerType)
    {
       if (messageListenerType == null)
          throw new IllegalArgumentException("MessageListenerType is null");

@@ -58,7 +58,7 @@ public class SimpleMetadataRepository implements MetadataRepository
    private ConcurrentMap<String, File> raRoots;
 
    /** IronJacamar metadata */
-   private Map<String, IronJacamar> ironJacamar;
+   private ConcurrentMap<String, IronJacamar> ironJacamar;
 
    /** JNDI mappings */
    private ConcurrentMap<String, Map<String, List<String>>> jndiMappings;
@@ -70,7 +70,7 @@ public class SimpleMetadataRepository implements MetadataRepository
    {
       this.raTemplates = new ConcurrentHashMap<String, Connector>();
       this.raRoots = new ConcurrentHashMap<String, File>();
-      this.ironJacamar = new HashMap<String, IronJacamar>();
+      this.ironJacamar = new ConcurrentHashMap<String, IronJacamar>();
       this.jndiMappings = new ConcurrentHashMap<String, Map<String, List<String>>>();
    }
 
@@ -223,7 +223,7 @@ public class SimpleMetadataRepository implements MetadataRepository
       Map<String, List<String>> mappings = jndiMappings.get(uniqueId);
       if (mappings == null)
       {
-         Map<String, List<String>> newMappings = new HashMap<String, List<String>>(1);
+         Map<String, List<String>> newMappings = Collections.synchronizedMap(new HashMap<String, List<String>>(1));
          mappings = jndiMappings.putIfAbsent(uniqueId, newMappings);
 
          if (mappings == null)
@@ -235,7 +235,7 @@ public class SimpleMetadataRepository implements MetadataRepository
       List<String> l = mappings.get(clz);
 
       if (l == null)
-         l = new ArrayList<String>(1);
+         l = Collections.synchronizedList(new ArrayList<String>(1));
 
       l.add(jndi);
       mappings.put(clz, l);
