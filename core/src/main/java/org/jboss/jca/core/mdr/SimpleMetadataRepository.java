@@ -58,7 +58,7 @@ public class SimpleMetadataRepository implements MetadataRepository
    private ConcurrentMap<String, File> raRoots;
 
    /** IronJacamar metadata */
-   private ConcurrentMap<String, IronJacamar> ironJacamar;
+   private Map<String, IronJacamar> ironJacamar;
 
    /** JNDI mappings */
    private ConcurrentMap<String, Map<String, List<String>>> jndiMappings;
@@ -70,7 +70,7 @@ public class SimpleMetadataRepository implements MetadataRepository
    {
       this.raTemplates = new ConcurrentHashMap<String, Connector>();
       this.raRoots = new ConcurrentHashMap<String, File>();
-      this.ironJacamar = new ConcurrentHashMap<String, IronJacamar>();
+      this.ironJacamar = Collections.synchronizedMap(new HashMap<String, IronJacamar>());
       this.jndiMappings = new ConcurrentHashMap<String, Map<String, List<String>>>();
    }
 
