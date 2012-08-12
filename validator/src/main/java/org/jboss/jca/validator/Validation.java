@@ -158,6 +158,13 @@ public class Validation
          validateClasses.addAll(createActivationSpec(cmd, failures, validator.getResourceBundle(), cl));
          validateClasses.addAll(createAdminObject(cmd, failures, validator.getResourceBundle(), cl));
 
+         if (validateClassesInPackage(root))
+         {
+            Failure failure = new Failure(Severity.WARNING, "20.2", 
+                  validator.getResourceBundle().getString("pak.cip"));
+            failures.add(failure);
+         }
+
          List<Failure> classFailures = validator.validate(validateClasses);
          if (classFailures != null && classFailures.size() > 0)
             failures.addAll(classFailures);
@@ -607,4 +614,21 @@ public class Validation
       }
       return list.toArray(new URL[list.size()]);
    }
+   
+   private static boolean validateClassesInPackage(File root)
+   {
+      boolean hasClass = false;
+      File[] files = root.listFiles();
+      for (File file : files)
+      {
+         if (file.getName().lastIndexOf(".class") > 0)
+            return true;
+         if (file.isDirectory())
+            hasClass = validateClassesInPackage(file);
+         if (hasClass)
+            return true;
+      }
+      return hasClass;
+   }
+
 }
