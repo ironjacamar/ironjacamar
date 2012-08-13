@@ -121,7 +121,7 @@
   <property name="version.fungal" value="0.11.0.Beta13"/>
   <property name="version.h2" value="1.3.159"/>
   <property name="version.hibernate-validator" value="4.2.0.Final"/>
-  <property name="version.hornetq" value="2.2.2.Final"/>
+  <property name="version.hornetq" value="2.2.19.Final"/>
   <property name="version.jboss.common" value="2.2.17.GA"/>
   <property name="version.jboss.jandex" value="1.0.3.Final"/>
   <property name="version.jboss.jaspi.api" value="1.0.1.Final"/>
