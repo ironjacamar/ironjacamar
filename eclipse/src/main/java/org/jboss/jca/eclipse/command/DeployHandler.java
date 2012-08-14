@@ -23,19 +23,29 @@ package org.jboss.jca.eclipse.command;
 
 import org.jboss.jca.eclipse.Activator;
 
+import com.github.fungal.spi.deployers.DeployException;
+
+import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.ISelection;
@@ -43,15 +53,11 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
 
-
 /**
- * <code>DeployHandler</code> will copy the generated RAR file to the 
- * <i>deploy</i> directory of <strong>IronJacamar</strong> home.
- * 
- * @see org.eclipse.core.commands.IHandler
- * @see org.eclipse.core.commands.AbstractHandler
+ * <code>DeployHandler</code> will deploy the generated RAR file to <strong>IronJacamar</strong> server.
  * 
  * @author <a href="mailto:lgao@redhat.com">Lin Gao</a>
+ *
  */
 public class DeployHandler extends AbstractIronJacamarHandler
 {
@@ -70,8 +76,10 @@ public class DeployHandler extends AbstractIronJacamarHandler
     * @return Object null
     * @throws ExecutionException ExecutionException
     */
+   @Override
    public Object execute(ExecutionEvent event) throws ExecutionException
    {
+      
       setBaseEnabled(false);
       ISelection selection = HandlerUtil.getCurrentSelection(event);
       
@@ -103,27 +111,24 @@ public class DeployHandler extends AbstractIronJacamarHandler
       }
       else
       {
-         DeployJob deployJob = new DeployJob(project, rarFile);
+         DeployJob deployJob = new DeployJob(rarFile);
          deployJob.schedule();
       }
       return null;
    }
    
    /**
-    * <code>DeployJob</code> will copy the RAR file to deploy directory in IronJacamar project home.
+    * <code>RemoteDeployJob</code> will transfer the RAR file to remote <strong>IronJacamar</strong> server.
     * 
     * It assumes that the RAR has been generated already.
     */
    private class DeployJob extends Job
    {
-      private final IProject project;
-      
       private final IFile rarFile;
       
-      private DeployJob(IProject prj, IFile file)
+      private DeployJob(IFile file)
       {
-         super("Deplying " + file.getFullPath());
-         this.project = prj;
+         super("Deplying " + file.getFullPath() + " to IronJacamar server");
          this.rarFile = file;
       }
       
@@ -131,63 +136,206 @@ public class DeployHandler extends AbstractIronJacamarHandler
       protected IStatus run(final IProgressMonitor monitor)
       {
          monitor.beginTask(getName(), 1);
-         // Copy it to IronJacamar/deploy directory
-         String ijHome = getIJHome();
-         if (ijHome == null || ijHome.isEmpty())
-         {
-            monitor.worked(1);
-            String msg = "No IronJacamar Home found, please specify IronJacamar Home first";
-            logMessageToConsole(msg, new Color(null, 255, 0, 0));
-            return new Status(IStatus.ERROR, Activator.PLUGIN_ID, msg);
-         }
-         // IronJacamar home is external resource than current workspace, using link source for access.
-         IFolder dstFolder = project.getFolder("deploy");
+         String host = getRemoteIronJacamarHost();
+         int port = getRemoteIronJacamarPort();
          try
          {
-            IPath destion = Path.fromOSString(ijHome + File.separator + "deploy");
-            if (!dstFolder.exists())
+            if (deploy(rarFile, monitor))
             {
-               dstFolder.createLink(destion, IResource.NONE, monitor);
+               String msg = "Deploy " + rarFile.getFullPath() + " to server " + host + ":" + port + 
+                     " successfully!";
+               logMessageToConsole(msg);
+               return new Status(IStatus.INFO, Activator.PLUGIN_ID, msg);
             }
-            IFile copyToFile = dstFolder.getFile(rarFile.getName());
-            if (copyToFile != null && copyToFile.exists())
-            {
-               copyToFile.delete(true, monitor);
-            }
-            logMessageToConsole("Deploying " + rarFile.getFullPath() + " to " + destion.toOSString());
-            project.refreshLocal(IResource.DEPTH_INFINITE, monitor); // refresh to make it visible
-            rarFile.copy(copyToFile.getFullPath(), true, monitor);
-            logMessageToConsole(rarFile.getFullPath() + " is deployed successfully!");
+            
+            String msg = "Can not deploy " + rarFile.getFullPath() + " to server " + host + ":" + port;
+            logMessageToConsole(msg, new Color(null, 255, 0, 0));
+            return new Status(IStatus.WARNING, Activator.PLUGIN_ID, msg);
+            
          }
-         catch (CoreException e)
+         catch (Throwable t)
          {
-            e.printStackTrace();
-            return new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Can not deploy the RAR file: " + 
-                               rarFile.getFullPath(), e);
+            if (t instanceof DeployException)
+            {
+               t = t.getCause();
+            }
+            return new Status(IStatus.ERROR, Activator.PLUGIN_ID, 
+                  "Can not deploy " + rarFile.getFullPath() + " to server", t);
          }
          finally
          {
             monitor.worked(1);
             enableHandler();
-            try
+         }
+      }
+      
+      /**
+       * Deploy RAR file to IronJacamar server.
+       * 
+       * @param rarFile The RAR file
+       * @param monitor the IProgressMonitor
+       * @return true if the deployment succeeds, false otherwise
+       * @throws UnknownHostException on unknown host
+       * @throws IOException on any I/O exception
+       * @throws ClassNotFoundException on any class path exception
+       * @throws Throwable on failure of deployment
+       */
+      private boolean deploy(IFile rarFile, IProgressMonitor monitor) throws UnknownHostException,
+      IOException, ClassNotFoundException, Throwable
+      {
+         String msg = "Deploy " + rarFile.getName() + " to IronJacamar server.";
+         monitor.subTask(msg);
+         logMessageToConsole(msg);
+         Socket socket = null;
+         ObjectOutputStream output = null;
+         ObjectInputStream input = null;
+         try
+         {
+            socket = connectToServer();
+            output = new ObjectOutputStream(socket.getOutputStream());
+            sendCommand(output, rarFile);
+            output.flush();
+            
+            input = new ObjectInputStream(socket.getInputStream());
+            Serializable result = (Serializable)input.readObject();
+            if (result instanceof Throwable)
             {
-               if (dstFolder != null && dstFolder.exists())
-               {
-                  dstFolder.delete(true, monitor);
-               }
+               throw (Throwable)result;
             }
-            catch (CoreException e)
+            else if (result instanceof Boolean)
             {
-               e.printStackTrace();
+               return (Boolean)result;
+            }
+            throw new IllegalStateException("Wrong type of return value: " + result);
+         }
+         finally
+         {
+            close(input);
+            close(output);
+            if (socket != null)
+            {
+               socket.close();
             }
          }
- 
-         return new Status(IStatus.INFO, Activator.PLUGIN_ID, "RAR File: " + 
-                  rarFile.getFullPath() + " has been deployed.");
+      }
+
+      /**
+       * Sends deploy command to IronJacamar server.
+       * 
+       * @param output the OutputStream retrieved from connected Socket.
+       * @param rarFile the RAR file which needs to be deployed.
+       * @throws IOException on any I/O exception
+       */
+      private void sendCommand(ObjectOutputStream output, IFile rarFile) throws IOException
+      {
+         if (isLocalIronJacamar())
+         {
+            output.writeUTF("local-deploy");
+            output.writeInt(1);
+            output.writeObject(rarFile.getLocationURI().toURL());
+         }
+         else
+         {
+            output.writeUTF("remote-deploy");
+            output.writeInt(2);
+            output.writeObject(rarFile.getName());
+            byte[] fileContent = readRarFileContent(rarFile);
+            output.writeObject(fileContent);
+         }
+         
+      }
+      
+      /**
+       * Checks whether current IronJacamar is located in local machine or remote machine.
+       * 
+       * @return true if current IronJacamar is located at local machine, false otherwise.
+       * @throws UnknownHostException on unknown host
+       */
+      private boolean isLocalIronJacamar() throws UnknownHostException
+      {
+         String ijHost = getRemoteIronJacamarHost();
+         InetAddress ijAddr = InetAddress.getByName(ijHost);
+         if (ijAddr.isLoopbackAddress())
+         {
+            return true;
+         }
+         String localHostName = InetAddress.getLocalHost().getHostName();
+         if (localHostName.equals(ijHost))
+         {
+            return true;
+         }
+         String ijIP = ijAddr.getHostAddress();
+         InetAddress localIPs[] = InetAddress.getAllByName(localHostName);
+         for (InetAddress localIP: localIPs)
+         {
+            if (ijIP.equals(localIP.getHostAddress()))
+            {
+               return true;
+            }
+         }
+         
+         return false;
+      }
+
+      /**
+       * Connects to remote IronJacamar server
+       * 
+       * @return the Socket which represents the connection
+       * @throws UnknownHostException on unknown host
+       * @throws IOException on any I/O exception
+       */
+      private Socket connectToServer() throws UnknownHostException, IOException
+      {
+         String host = getRemoteIronJacamarHost();
+         int port = getRemoteIronJacamarPort();
+         return new Socket(host, port);
+      }
+      
+      /**
+       * Closes the Closeable.
+       * 
+       * @param closeable the Closeable
+       * @throws IOException on any I/O exception
+       */
+      private void close(Closeable closeable) throws IOException
+      {
+         if (null != closeable)
+         {
+            closeable.close();
+         }
+      }
+
+      /**
+       * Reads RAR file content to a byte array.
+       *  
+       * @param rarFile the RAR file
+       * @return byte array
+       * @throws IOException on any I/O exception
+       */
+      private byte[] readRarFileContent(IFile rarFile) throws IOException
+      {
+         File file = rarFile.getLocation().toFile();
+         InputStream in = null;
+         ByteArrayOutputStream output = new ByteArrayOutputStream();
+         try
+         {
+            in = new FileInputStream(file);
+            byte[] buf = new byte[2048];
+            int readLength = 0;
+            while ((readLength = in.read(buf, 0, buf.length)) > -1)
+            {
+               output.write(buf, 0, readLength);
+            }
+            return output.toByteArray();
+         }
+         finally
+         {
+            close(in);
+            close(output);
+         }
       }
    }
-   
-   
+
    @Override
    protected void onBuildFinished(IProject project)
    {
@@ -197,7 +345,7 @@ public class DeployHandler extends AbstractIronJacamarHandler
          IFile rarFile = lookupRarFile(project);
          if (rarFile != null && rarFile.exists())
          {
-            DeployJob deployJob = new DeployJob(project, rarFile);
+            DeployJob deployJob = new DeployJob(rarFile);
             deployJob.schedule();
          }
          else

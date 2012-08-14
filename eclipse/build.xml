@@ -36,6 +36,10 @@
       <include name="**/*.jar"/>
     </fileset>
 
+    <fileset dir="${lib.dir}/sjc">
+      <include name="fungal.jar"/>
+    </fileset>
+
     <fileset dir="${eclipse.home}/plugins/">
       <include name="org.eclipse.ui*.jar"/>
       <include name="org.eclipse.jdt*.jar"/>

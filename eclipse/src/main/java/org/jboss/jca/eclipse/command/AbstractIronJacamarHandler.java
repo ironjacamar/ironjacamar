@@ -268,6 +268,7 @@ public abstract class AbstractIronJacamarHandler extends AbstractHandler
    
    /**
     * Builds RAR file of specified <strong>IronJacamar</strong> Project.
+    * After the building is finished. it will invoke <code>onBuildFinished</code> method.
     * 
     * @param project the <strong>IronJacamar</strong> Project
     * @throws ExecutionException any exception
