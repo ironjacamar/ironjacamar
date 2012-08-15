@@ -273,8 +273,8 @@
     <fileset dir="${tools.dir}/findbugs/lib"/>
   </path>
 
-  <path id="cobertura.lib.path.id">
-    <fileset dir="${tools.dir}/cobertura/lib"/>
+  <path id="jacoco.lib.path.id">
+    <fileset dir="${tools.dir}/jacoco/lib"/>
   </path>
 
   <path id="tattletale.lib.path.id">
@@ -687,16 +687,22 @@
   </target>
 
   <!-- ================================= 
-       Target: cobertura
+       Target: jacoco
        ================================= -->
-  <target name="cobertura" depends="prepare-test">
-    <taskdef resource="tasks.properties"
-             classpathref="cobertura.lib.path.id"/>
+  <target name="jacoco" depends="prepare-test">
+    <taskdef name="jacoco-coverage" classname="org.jacoco.ant.CoverageTask">
+      <classpath path="${basedir}/tools/jacoco/lib/jacocoant.jar"/>
+    </taskdef>
+    <taskdef name="jacoco-report" classname="org.jacoco.ant.ReportTask">
+      <classpath path="${basedir}/tools/jacoco/lib/jacocoant.jar"/>
+    </taskdef>
 
-    <mkdir dir="${reports.dir}/cobertura" />
-    <mkdir dir="${reports.dir}/cobertura/tests" />
+    <mkdir dir="${reports.dir}/jacoco"/>
+    <mkdir dir="${reports.dir}/jacoco/tests"/>
+    <mkdir dir="${reports.dir}/jacoco/html"/>
+    <mkdir dir="${reports.dir}/jacoco/xml"/>
 
-    <delete file="${reports.dir}/cobertura/cobertura.ser"/>
+    <delete file="${reports.dir}/jacoco/jacoco.exec"/>
     <delete dir="${build.dir}/instrumented"/>
     
     <mkdir dir="${build.dir}/instrumented" />
@@ -712,378 +718,348 @@
       </fileset>
     </copy>
 
-    <cobertura-instrument todir="${build.dir}/instrumented"
-                          datafile="${reports.dir}/cobertura/cobertura.ser">
-      <fileset dir="${target.dir}">
-        <include name="ironjacamar*.jar" />
-      </fileset>
-    </cobertura-instrument>
+    <jacoco-coverage destfile="${reports.dir}/jacoco/jacoco.exec">
+      <junit dir="common/src/test"
+             printsummary="${junit.printsummary}"
+             haltonerror="${junit.haltonerror}"
+             haltonfailure="${junit.haltonfailure}"
+             fork="yes"
+             timeout="${junit.timeout}">
+      
+        <jvmarg line="${junit.jvm.options}"/>
+        <sysproperty key="test.dir" value="${test.dir}"/>
+        <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
+        <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
+        <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
+        <sysproperty key="log4j.defaultInitOverride" value="true"/>
 
-    <copy todir="${build.dir}/instrumented">
-      <fileset dir="${target.dir}">
-        <include name="${name}-core-api.jar"/>
-        <include name="${name}-embedded-arquillian-byteman.jar"/>
-      </fileset>
-    </copy>
+        <classpath>
+          <fileset dir="${build.dir}/instrumented" includes="*.jar" />
+          <pathelement location="${build.dir}/common/test"/>
+          <fileset dir="${lib.dir}/common" includes="*.jar" />
+          <fileset dir="${lib.dir}/embedded" includes="*.jar" />
+          <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
+          <fileset dir="${lib.dir}/byteman" includes="*.jar" />
+          <fileset dir="${lib.dir}/jetty" includes="*.jar" />
+          <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
+          <fileset dir="${lib.dir}/sjc" includes="*.jar" />
+          <fileset dir="${lib.dir}/mail" includes="*.jar" />
+          <fileset dir="${lib.dir}/test" includes="*.jar" />
+          <fileset dir="${lib.dir}/tools" includes="*.jar" />
+          <fileset dir="${java.home}/../lib/" includes="tools.jar" />
+        </classpath>
+        <classpath refid="jacoco.lib.path.id" />
+        
+        <formatter type="xml"/>
+        
+        <batchtest todir="${reports.dir}/jacoco/tests">
+          <fileset dir="${build.dir}/common/test">
+            <include name="**/*TestCase.class"/>
+          </fileset>
+        </batchtest>
+      </junit>
+    </jacoco-coverage>
 
-    <junit dir="common/src/test"
-           printsummary="${junit.printsummary}"
-           haltonerror="${junit.haltonerror}"
-           haltonfailure="${junit.haltonfailure}"
-           fork="yes"
-           timeout="${junit.timeout}">
+    <jacoco-coverage destfile="${reports.dir}/jacoco/jacoco.exec">
+      <junit dir="core/src/test"
+             printsummary="${junit.printsummary}"
+             haltonerror="${junit.haltonerror}"
+             haltonfailure="${junit.haltonfailure}"
+             fork="yes"
+             timeout="${junit.timeout}">
       
-      <jvmarg line="${junit.jvm.options}"/>
-      <sysproperty key="test.dir" value="${test.dir}"/>
-      <sysproperty key="net.sourceforge.cobertura.datafile" file="${reports.dir}/cobertura/cobertura.ser" />
-      <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
-      <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
-      <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
-      <sysproperty key="log4j.defaultInitOverride" value="true"/>
+        <jvmarg line="${junit.jvm.options}"/>
+        <sysproperty key="test.dir" value="${test.dir}"/>
+        <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
+        <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
+        <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
+        <sysproperty key="log4j.defaultInitOverride" value="true"/>
 
-      <classpath>
-        <fileset dir="${build.dir}/instrumented" includes="*.jar" />
-        <pathelement location="${build.dir}/common/test"/>
-        <fileset dir="${lib.dir}/common" includes="*.jar" />
-        <fileset dir="${lib.dir}/embedded" includes="*.jar" />
-        <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
-        <fileset dir="${lib.dir}/byteman" includes="*.jar" />
-        <fileset dir="${lib.dir}/jetty" includes="*.jar" />
-        <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
-        <fileset dir="${lib.dir}/sjc" includes="*.jar" />
-        <fileset dir="${lib.dir}/mail" includes="*.jar" />
-        <fileset dir="${lib.dir}/test" includes="*.jar" />
-        <fileset dir="${lib.dir}/tools" includes="*.jar" />
-        <fileset dir="${java.home}/../lib/" includes="tools.jar" />
-      </classpath>
-      <classpath refid="cobertura.lib.path.id" />
+        <classpath>
+          <fileset dir="${build.dir}/instrumented" includes="*.jar" />
+          <pathelement location="${build.dir}/core/test"/>
+          <fileset dir="${lib.dir}/common" includes="*.jar" />
+          <fileset dir="${lib.dir}/embedded" includes="*.jar" />
+          <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
+          <fileset dir="${lib.dir}/byteman" includes="*.jar" />
+          <fileset dir="${lib.dir}/jetty" includes="*.jar" />
+          <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
+          <fileset dir="${lib.dir}/sjc" includes="*.jar" />
+          <fileset dir="${lib.dir}/mail" includes="*.jar" />
+          <fileset dir="${lib.dir}/test" includes="*.jar" />
+          <fileset dir="${lib.dir}/tools" includes="*.jar" />
+          <fileset dir="${java.home}/../lib/" includes="tools.jar" />
+        </classpath>
+        <classpath refid="jacoco.lib.path.id" />
       
-      <formatter type="xml"/>
-      
-      <batchtest todir="${reports.dir}/cobertura/tests">
-        <fileset dir="${build.dir}/common/test">
-          <include name="**/*TestCase.class"/>
-        </fileset>
-      </batchtest>
-    </junit>
+        <formatter type="xml"/>
+        
+        <batchtest todir="${reports.dir}/jacoco/tests">
+          <fileset dir="${build.dir}/core/test">
+            <include name="**/*TestCase.class"/>
+          </fileset>
+        </batchtest>
+      </junit>
+    </jacoco-coverage>
 
-    <junit dir="core/src/test"
-           printsummary="${junit.printsummary}"
-           haltonerror="${junit.haltonerror}"
-           haltonfailure="${junit.haltonfailure}"
-           fork="yes"
-           timeout="${junit.timeout}">
-      
-      <jvmarg line="${junit.jvm.options}"/>
-      <sysproperty key="test.dir" value="${test.dir}"/>
-      <sysproperty key="net.sourceforge.cobertura.datafile" file="${reports.dir}/cobertura/cobertura.ser" />
-      <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
-      <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
-      <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
-      <sysproperty key="log4j.defaultInitOverride" value="true"/>
-
-      <classpath>
-        <fileset dir="${build.dir}/instrumented" includes="*.jar" />
-        <pathelement location="${build.dir}/core/test"/>
-        <fileset dir="${lib.dir}/common" includes="*.jar" />
-        <fileset dir="${lib.dir}/embedded" includes="*.jar" />
-        <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
-        <fileset dir="${lib.dir}/byteman" includes="*.jar" />
-        <fileset dir="${lib.dir}/jetty" includes="*.jar" />
-        <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
-        <fileset dir="${lib.dir}/sjc" includes="*.jar" />
-        <fileset dir="${lib.dir}/mail" includes="*.jar" />
-        <fileset dir="${lib.dir}/test" includes="*.jar" />
-        <fileset dir="${lib.dir}/tools" includes="*.jar" />
-        <fileset dir="${java.home}/../lib/" includes="tools.jar" />
-      </classpath>
-      <classpath refid="cobertura.lib.path.id" />
-      
-      <formatter type="xml"/>
-      
-      <batchtest todir="${reports.dir}/cobertura/tests">
-        <fileset dir="${build.dir}/core/test">
-          <include name="**/*TestCase.class"/>
-        </fileset>
-      </batchtest>
-    </junit>
-
-    <junit dir="deployers/src/test"
-           printsummary="${junit.printsummary}"
-           haltonerror="${junit.haltonerror}"
-           haltonfailure="${junit.haltonfailure}"
-           fork="yes"
-           timeout="${junit.timeout}">
-      
-      <jvmarg line="${junit.jvm.options}"/>
-      <sysproperty key="archives.dir" value="${build.dir}/deployers"/>
-      <sysproperty key="test.dir" value="${test.dir}"/>
-      <sysproperty key="net.sourceforge.cobertura.datafile" file="${reports.dir}/cobertura/cobertura.ser" />
-      <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
-      <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
-      <sysproperty key="log4j.defaultInitOverride" value="true"/>
-
-      <classpath>
-        <fileset dir="${build.dir}/instrumented" includes="*.jar" />
-        <pathelement location="${build.dir}/deployers/test"/>
-        <fileset dir="${lib.dir}/common" includes="*.jar" />
-        <fileset dir="${lib.dir}/embedded" includes="*.jar" />
-        <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
-        <fileset dir="${lib.dir}/byteman" includes="*.jar" />
-        <fileset dir="${lib.dir}/jetty" includes="*.jar" />
-        <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
-        <fileset dir="${lib.dir}/sjc" includes="*.jar" />
-        <fileset dir="${lib.dir}/mail" includes="*.jar" />
-        <fileset dir="${lib.dir}/test" includes="*.jar" />
-        <fileset dir="${lib.dir}/tools" includes="*.jar" />
-        <fileset dir="${java.home}/../lib/" includes="tools.jar" />
-      </classpath>
-      <classpath refid="cobertura.lib.path.id" />
-      
-      <formatter type="xml"/>
-      
-      <batchtest todir="${reports.dir}/cobertura/tests">
-        <fileset dir="${build.dir}/deployers/test">
-          <include name="**/*TestCase.class"/>
-        </fileset>
-      </batchtest>
-    </junit>
+    <jacoco-coverage destfile="${reports.dir}/jacoco/jacoco.exec">
+      <junit dir="deployers/src/test"
+             printsummary="${junit.printsummary}"
+             haltonerror="${junit.haltonerror}"
+             haltonfailure="${junit.haltonfailure}"
+             fork="yes"
+             timeout="${junit.timeout}">
+        
+        <jvmarg line="${junit.jvm.options}"/>
+        <sysproperty key="archives.dir" value="${build.dir}/deployers"/>
+        <sysproperty key="test.dir" value="${test.dir}"/>
+        <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
+        <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
+        <sysproperty key="log4j.defaultInitOverride" value="true"/>
+        
+        <classpath>
+          <fileset dir="${build.dir}/instrumented" includes="*.jar" />
+          <pathelement location="${build.dir}/deployers/test"/>
+          <fileset dir="${lib.dir}/common" includes="*.jar" />
+          <fileset dir="${lib.dir}/embedded" includes="*.jar" />
+          <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
+          <fileset dir="${lib.dir}/byteman" includes="*.jar" />
+          <fileset dir="${lib.dir}/jetty" includes="*.jar" />
+          <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
+          <fileset dir="${lib.dir}/sjc" includes="*.jar" />
+          <fileset dir="${lib.dir}/mail" includes="*.jar" />
+          <fileset dir="${lib.dir}/test" includes="*.jar" />
+          <fileset dir="${lib.dir}/tools" includes="*.jar" />
+          <fileset dir="${java.home}/../lib/" includes="tools.jar" />
+        </classpath>
+        <classpath refid="jacoco.lib.path.id" />
+        
+        <formatter type="xml"/>
+        
+        <batchtest todir="${reports.dir}/jacoco/tests">
+          <fileset dir="${build.dir}/deployers/test">
+            <include name="**/*TestCase.class"/>
+          </fileset>
+        </batchtest>
+      </junit>
+    </jacoco-coverage>
  
-    <junit dir="embedded/src/test"
-           printsummary="${junit.printsummary}"
-           haltonerror="${junit.haltonerror}"
-           haltonfailure="${junit.haltonfailure}"
-           fork="yes"
-           timeout="${junit.timeout}">
-      
-      <jvmarg line="${junit.jvm.options}"/>
-      <sysproperty key="test.dir" value="${test.dir}"/>
-      <sysproperty key="net.sourceforge.cobertura.datafile" file="${reports.dir}/cobertura/cobertura.ser" />
-      <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
-      <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
-      <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
-      <sysproperty key="log4j.defaultInitOverride" value="true"/>
+    <jacoco-coverage destfile="${reports.dir}/jacoco/jacoco.exec"
+                     excludes="org.jboss.jca.embedded.dsl.datasources10.api.*:org.jboss.jca.embedded.dsl.datasources10.impl.*:org.jboss.jca.embedded.dsl.datasources11.api.*:org.jboss.jca.embedded.dsl.datasources11.impl.*:org.jboss.jca.embedded.dsl.ironjacamar10.api.*:org.jboss.jca.embedded.dsl.ironjacamar10.impl.*:org.jboss.jca.embedded.dsl.ironjacamar11.api.*:org.jboss.jca.embedded.dsl.ironjacamar11.impl.*:org.jboss.jca.embedded.dsl.resourceadapters10.api.*:org.jboss.jca.embedded.dsl.resourceadapters10.impl.*:org.jboss.jca.embedded.dsl.resourceadapters11.api.*:org.jboss.jca.embedded.dsl.resourceadapters11.impl.*:org.jboss.shrinkwrap.descriptor.api.connector15.*:org.jboss.shrinkwrap.descriptor.api.connector16.*:org.jboss.shrinkwrap.descriptor.api.j2ee14.*:org.jboss.shrinkwrap.descriptor.api.javaee6.*:org.jboss.shrinkwrap.descriptor.impl.connector10.*:org.jboss.shrinkwrap.descriptor.impl.connector15.*:org.jboss.shrinkwrap.descriptor.impl.connector16.*:org.jboss.shrinkwrap.descriptor.impl.j2ee14.*:org.jboss.shrinkwrap.descriptor.impl.javaee6.*">
+      <junit dir="embedded/src/test"
+             printsummary="${junit.printsummary}"
+             haltonerror="${junit.haltonerror}"
+             haltonfailure="${junit.haltonfailure}"
+             fork="yes"
+             timeout="${junit.timeout}">
+        
+        <jvmarg line="${junit.jvm.options}"/>
+        <sysproperty key="test.dir" value="${test.dir}"/>
+        <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
+        <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
+        <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
+        <sysproperty key="log4j.defaultInitOverride" value="true"/>
+        
+        <classpath>
+          <fileset dir="${build.dir}/instrumented" includes="*.jar" />
+          <pathelement location="${build.dir}/embedded/test"/>
+          <fileset dir="${lib.dir}/common" includes="*.jar" />
+          <fileset dir="${lib.dir}/embedded" includes="*.jar" />
+          <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
+          <fileset dir="${lib.dir}/byteman" includes="*.jar" />
+          <fileset dir="${lib.dir}/jetty" includes="*.jar" />
+          <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
+          <fileset dir="${lib.dir}/sjc" includes="*.jar" />
+          <fileset dir="${lib.dir}/mail" includes="*.jar" />
+          <fileset dir="${lib.dir}/test" includes="*.jar" />
+          <fileset dir="${lib.dir}/tools" includes="*.jar" />
+          <fileset dir="${java.home}/../lib/" includes="tools.jar" />
+        </classpath>
+        <classpath refid="jacoco.lib.path.id" />
+        
+        <formatter type="xml"/>
+        
+        <batchtest todir="${reports.dir}/jacoco/tests">
+          <fileset dir="${build.dir}/embedded/test">
+            <include name="**/*TestCase.class"/>
+          </fileset>
+        </batchtest>
+      </junit>
+    </jacoco-coverage>
 
-      <classpath>
-        <fileset dir="${build.dir}/instrumented" includes="*.jar" />
-        <pathelement location="${build.dir}/embedded/test"/>
-        <fileset dir="${lib.dir}/common" includes="*.jar" />
-        <fileset dir="${lib.dir}/embedded" includes="*.jar" />
-        <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
-        <fileset dir="${lib.dir}/byteman" includes="*.jar" />
-        <fileset dir="${lib.dir}/jetty" includes="*.jar" />
-        <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
-        <fileset dir="${lib.dir}/sjc" includes="*.jar" />
-        <fileset dir="${lib.dir}/mail" includes="*.jar" />
-        <fileset dir="${lib.dir}/test" includes="*.jar" />
-        <fileset dir="${lib.dir}/tools" includes="*.jar" />
-        <fileset dir="${java.home}/../lib/" includes="tools.jar" />
-      </classpath>
-      <classpath refid="cobertura.lib.path.id" />
-      
-      <formatter type="xml"/>
-      
-      <batchtest todir="${reports.dir}/cobertura/tests">
-        <fileset dir="${build.dir}/embedded/test">
-          <include name="**/*TestCase.class"/>
-        </fileset>
-      </batchtest>
-    </junit>
+    <jacoco-coverage destfile="${reports.dir}/jacoco/jacoco.exec">
+      <junit dir="validator/src/test"
+             printsummary="${junit.printsummary}"
+             haltonerror="${junit.haltonerror}"
+             haltonfailure="${junit.haltonfailure}"
+             fork="yes"
+             timeout="${junit.timeout}">
+        
+        <jvmarg line="${junit.jvm.options}"/>
+        <sysproperty key="test.dir" value="${test.dir}"/>
+        <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
+        <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
+        <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
+        <sysproperty key="log4j.defaultInitOverride" value="true"/>
 
-    <junit dir="validator/src/test"
-           printsummary="${junit.printsummary}"
-           haltonerror="${junit.haltonerror}"
-           haltonfailure="${junit.haltonfailure}"
-           fork="yes"
-           timeout="${junit.timeout}">
-      
-      <jvmarg line="${junit.jvm.options}"/>
-      <sysproperty key="test.dir" value="${test.dir}"/>
-      <sysproperty key="net.sourceforge.cobertura.datafile" file="${reports.dir}/cobertura/cobertura.ser" />
-      <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
-      <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
-      <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
-      <sysproperty key="log4j.defaultInitOverride" value="true"/>
+        <classpath>
+          <fileset dir="${build.dir}/instrumented" includes="*.jar" />
+          <pathelement location="${build.dir}/validator/test"/>
+          <fileset dir="${lib.dir}/common" includes="*.jar" />
+          <fileset dir="${lib.dir}/embedded" includes="*.jar" />
+          <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
+          <fileset dir="${lib.dir}/byteman" includes="*.jar" />
+          <fileset dir="${lib.dir}/jetty" includes="*.jar" />
+          <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
+          <fileset dir="${lib.dir}/sjc" includes="*.jar" />
+          <fileset dir="${lib.dir}/mail" includes="*.jar" />
+          <fileset dir="${lib.dir}/test" includes="*.jar" />
+          <fileset dir="${lib.dir}/tools" includes="*.jar" />
+          <fileset dir="${java.home}/../lib/" includes="tools.jar" />
+        </classpath>
+        <classpath refid="jacoco.lib.path.id" />
+        
+        <formatter type="xml"/>
+        
+        <batchtest todir="${reports.dir}/jacoco/tests">
+          <fileset dir="${build.dir}/validator/test">
+            <include name="**/*TestCase.class"/>
+          </fileset>
+        </batchtest>
+      </junit>
+    </jacoco-coverage>
 
-      <classpath>
-        <fileset dir="${build.dir}/instrumented" includes="*.jar" />
-        <pathelement location="${build.dir}/validator/test"/>
-        <fileset dir="${lib.dir}/common" includes="*.jar" />
-        <fileset dir="${lib.dir}/embedded" includes="*.jar" />
-        <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
-        <fileset dir="${lib.dir}/byteman" includes="*.jar" />
-        <fileset dir="${lib.dir}/jetty" includes="*.jar" />
-        <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
-        <fileset dir="${lib.dir}/sjc" includes="*.jar" />
-        <fileset dir="${lib.dir}/mail" includes="*.jar" />
-        <fileset dir="${lib.dir}/test" includes="*.jar" />
-        <fileset dir="${lib.dir}/tools" includes="*.jar" />
-        <fileset dir="${java.home}/../lib/" includes="tools.jar" />
-      </classpath>
-      <classpath refid="cobertura.lib.path.id" />
-      
-      <formatter type="xml"/>
-      
-      <batchtest todir="${reports.dir}/cobertura/tests">
-        <fileset dir="${build.dir}/validator/test">
-          <include name="**/*TestCase.class"/>
-        </fileset>
-      </batchtest>
-    </junit>
+    <jacoco-coverage destfile="${reports.dir}/jacoco/jacoco.exec">
+      <junit dir="codegenerator/src/test"
+             printsummary="${junit.printsummary}"
+             haltonerror="${junit.haltonerror}"
+             haltonfailure="${junit.haltonfailure}"
+             fork="yes"
+             timeout="${junit.timeout}">
+        
+        <jvmarg line="${junit.jvm.options}"/>
+        <sysproperty key="test.dir" value="${test.dir}"/>
+        <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
+        <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
+        <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
+        <sysproperty key="log4j.defaultInitOverride" value="true"/>
+        
+        <classpath>
+          <fileset dir="${build.dir}/instrumented" includes="*.jar" />
+          <pathelement location="${build.dir}/codegenerator/test"/>
+          <fileset dir="${lib.dir}/common" includes="*.jar" />
+          <fileset dir="${lib.dir}/embedded" includes="*.jar" />
+          <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
+          <fileset dir="${lib.dir}/byteman" includes="*.jar" />
+          <fileset dir="${lib.dir}/jetty" includes="*.jar" />
+          <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
+          <fileset dir="${lib.dir}/sjc" includes="*.jar" />
+          <fileset dir="${lib.dir}/mail" includes="*.jar" />
+          <fileset dir="${lib.dir}/test" includes="*.jar" />
+          <fileset dir="${lib.dir}/tools" includes="*.jar" />
+          <fileset dir="${java.home}/../lib/" includes="tools.jar" />
+        </classpath>
+        <classpath refid="jacoco.lib.path.id" />
+        
+        <formatter type="xml"/>
+        
+        <batchtest todir="${reports.dir}/jacoco/tests">
+          <fileset dir="${build.dir}/codegenerator/test">
+            <include name="**/*TestCase.class"/>
+          </fileset>
+        </batchtest>
+      </junit>
+    </jacoco-coverage>
 
-    <junit dir="codegenerator/src/test"
-           printsummary="${junit.printsummary}"
-           haltonerror="${junit.haltonerror}"
-           haltonfailure="${junit.haltonfailure}"
-           fork="yes"
-           timeout="${junit.timeout}">
-      
-      <jvmarg line="${junit.jvm.options}"/>
-      <sysproperty key="test.dir" value="${test.dir}"/>
-      <sysproperty key="net.sourceforge.cobertura.datafile" file="${reports.dir}/cobertura/cobertura.ser" />
-      <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
-      <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
-      <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
-      <sysproperty key="log4j.defaultInitOverride" value="true"/>
+    <jacoco-coverage destfile="${reports.dir}/jacoco/jacoco.exec">
+      <junit dir="adapters/src/test"
+             printsummary="${junit.printsummary}"
+             haltonerror="${junit.haltonerror}"
+             haltonfailure="${junit.haltonfailure}"
+             fork="yes"
+             timeout="${junit.timeout}">
+        
+        <jvmarg line="${junit.jvm.options}"/>
+        <sysproperty key="test.dir" value="${test.dir}"/>
+        <sysproperty key="archives.dir" value="${build.dir}/adapters"/>
+        <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
+        <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
+        <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
+        <sysproperty key="log4j.defaultInitOverride" value="true"/>
+        
+        <classpath>
+          <fileset dir="${build.dir}/instrumented" includes="*.jar" />
+          <pathelement location="${build.dir}/adapters/"/>
+          <pathelement location="${build.dir}/adapters/test"/>
+          <fileset dir="${lib.dir}/common" includes="*.jar" />
+          <fileset dir="${lib.dir}/embedded" includes="*.jar" />
+          <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
+          <fileset dir="${lib.dir}/byteman" includes="*.jar" />
+          <fileset dir="${lib.dir}/jetty" includes="*.jar" />
+          <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
+          <fileset dir="${lib.dir}/sjc" includes="*.jar" />
+          <fileset dir="${lib.dir}/mail" includes="*.jar" />
+          <fileset dir="${lib.dir}/test" includes="*.jar" />
+          <fileset dir="${lib.dir}/tools" includes="*.jar" />
+          <fileset dir="${java.home}/../lib/" includes="tools.jar" />
+        </classpath>
+        <classpath refid="jacoco.lib.path.id" />
+        
+        <formatter type="xml"/>
+        
+        <batchtest todir="${reports.dir}/jacoco/tests">
+          <fileset dir="${build.dir}/adapters/test">
+            <include name="**/*TestCase.class"/>
+          </fileset>
+        </batchtest>
+      </junit>
+    </jacoco-coverage>
 
-      <classpath>
-        <fileset dir="${build.dir}/instrumented" includes="*.jar" />
-        <pathelement location="${build.dir}/codegenerator/test"/>
-        <fileset dir="${lib.dir}/common" includes="*.jar" />
-        <fileset dir="${lib.dir}/embedded" includes="*.jar" />
-        <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
-        <fileset dir="${lib.dir}/byteman" includes="*.jar" />
-        <fileset dir="${lib.dir}/jetty" includes="*.jar" />
-        <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
-        <fileset dir="${lib.dir}/sjc" includes="*.jar" />
-        <fileset dir="${lib.dir}/mail" includes="*.jar" />
-        <fileset dir="${lib.dir}/test" includes="*.jar" />
-        <fileset dir="${lib.dir}/tools" includes="*.jar" />
-        <fileset dir="${java.home}/../lib/" includes="tools.jar" />
-      </classpath>
-      <classpath refid="cobertura.lib.path.id" />
-      
-      <formatter type="xml"/>
-      
-      <batchtest todir="${reports.dir}/cobertura/tests">
-        <fileset dir="${build.dir}/codegenerator/test">
-          <include name="**/*TestCase.class"/>
-        </fileset>
-      </batchtest>
-    </junit>
+    <jacoco-report>
+      <executiondata>
+        <file file="${reports.dir}/jacoco/jacoco.exec"/>
+      </executiondata>
+      <structure name="IronJacamar">
+        <classfiles>
+          <fileset dir="${build.dir}/instrumented" includes="*.jar" />
+        </classfiles>
+        <sourcefiles encoding="UTF-8">
+          <fileset dir="api/src/main/java">
+            <include name="**/*.java" />
+          </fileset>
+          <fileset dir="adapters/src/main/java">
+            <include name="**/*.java" />
+          </fileset>
+          <fileset dir="codegenerator/src/main/java">
+            <include name="**/*.java" />
+          </fileset>
+          <fileset dir="common/src/main/java">
+            <include name="**/*.java" />
+          </fileset>
+          <fileset dir="core/src/main/java">
+            <include name="**/*.java" />
+          </fileset>
+          <fileset dir="deployers/src/main/java">
+            <include name="**/*.java" />
+          </fileset>
+          <fileset dir="embedded/src/main/java">
+            <include name="**/*.java" />
+          </fileset>
+          <fileset dir="sjc/src/main/java">
+            <include name="**/*.java" />
+          </fileset>
+          <fileset dir="validator/src/main/java">
+            <include name="**/*.java" />
+          </fileset>
+          <fileset dir="web/src/main/java">
+            <include name="**/*.java" />
+          </fileset>
+        </sourcefiles>
+      </structure>
+      <html destdir="${reports.dir}/jacoco/html"/>
+      <xml destfile="${reports.dir}/jacoco/xml/jacoco.xml"/>
+    </jacoco-report>
 
-    <junit dir="adapters/src/test"
-           printsummary="${junit.printsummary}"
-           haltonerror="${junit.haltonerror}"
-           haltonfailure="${junit.haltonfailure}"
-           fork="yes"
-           timeout="${junit.timeout}">
-      
-      <jvmarg line="${junit.jvm.options}"/>
-      <sysproperty key="test.dir" value="${test.dir}"/>
-      <sysproperty key="archives.dir" value="${build.dir}/adapters"/>
-      <sysproperty key="net.sourceforge.cobertura.datafile" file="${reports.dir}/cobertura/cobertura.ser" />
-      <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
-      <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
-      <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
-      <sysproperty key="log4j.defaultInitOverride" value="true"/>
-
-      <classpath>
-        <fileset dir="${build.dir}/instrumented" includes="*.jar" />
-        <pathelement location="${build.dir}/adapters/"/>
-        <pathelement location="${build.dir}/adapters/test"/>
-        <fileset dir="${lib.dir}/common" includes="*.jar" />
-        <fileset dir="${lib.dir}/embedded" includes="*.jar" />
-        <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
-        <fileset dir="${lib.dir}/byteman" includes="*.jar" />
-        <fileset dir="${lib.dir}/jetty" includes="*.jar" />
-        <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
-        <fileset dir="${lib.dir}/sjc" includes="*.jar" />
-        <fileset dir="${lib.dir}/mail" includes="*.jar" />
-        <fileset dir="${lib.dir}/test" includes="*.jar" />
-        <fileset dir="${lib.dir}/tools" includes="*.jar" />
-        <fileset dir="${java.home}/../lib/" includes="tools.jar" />
-      </classpath>
-      <classpath refid="cobertura.lib.path.id" />
-      
-      <formatter type="xml"/>
-      
-      <batchtest todir="${reports.dir}/cobertura/tests">
-        <fileset dir="${build.dir}/adapters/test">
-          <include name="**/*TestCase.class"/>
-        </fileset>
-      </batchtest>
-    </junit>
-
-    <cobertura-report format="html" 
-                      destdir="${reports.dir}/cobertura/html" 
-                      datafile="${reports.dir}/cobertura/cobertura.ser">
-      <fileset dir="api/src/main/java">
-        <include name="**/*.java" />
-      </fileset>
-      <fileset dir="adapters/src/main/java">
-        <include name="**/*.java" />
-      </fileset>
-      <fileset dir="codegenerator/src/main/java">
-        <include name="**/*.java" />
-      </fileset>
-      <fileset dir="common/src/main/java">
-        <include name="**/*.java" />
-      </fileset>
-      <fileset dir="core/src/main/java">
-        <include name="**/*.java" />
-      </fileset>
-      <fileset dir="deployers/src/main/java">
-        <include name="**/*.java" />
-      </fileset>
-      <fileset dir="embedded/src/main/java">
-        <include name="**/*.java" />
-      </fileset>
-      <fileset dir="sjc/src/main/java">
-        <include name="**/*.java" />
-      </fileset>
-      <fileset dir="validator/src/main/java">
-        <include name="**/*.java" />
-      </fileset>
-      <fileset dir="web/src/main/java">
-        <include name="**/*.java" />
-      </fileset>
-    </cobertura-report>
-
-    <cobertura-report format="xml" 
-                      destdir="${reports.dir}/cobertura/xml" 
-                      datafile="${reports.dir}/cobertura/cobertura.ser">
-      <fileset dir="api/src/main/java">
-        <include name="**/*.java" />
-      </fileset>
-      <fileset dir="adapters/src/main/java">
-        <include name="**/*.java" />
-      </fileset>
-      <fileset dir="codegenerator/src/main/java">
-        <include name="**/*.java" />
-      </fileset>
-      <fileset dir="common/src/main/java">
-        <include name="**/*.java" />
-      </fileset>
-      <fileset dir="core/src/main/java">
-        <include name="**/*.java" />
-      </fileset>
-      <fileset dir="deployers/src/main/java">
-        <include name="**/*.java" />
-      </fileset>
-      <fileset dir="embedded/src/main/java">
-        <include name="**/*.java" />
-      </fileset>
-      <fileset dir="sjc/src/main/java">
-        <include name="**/*.java" />
-      </fileset>
-      <fileset dir="validator/src/main/java">
-        <include name="**/*.java" />
-      </fileset>
-      <fileset dir="web/src/main/java">
-        <include name="**/*.java" />
-      </fileset>
-    </cobertura-report>
   </target>
 
   <!-- ================================= 

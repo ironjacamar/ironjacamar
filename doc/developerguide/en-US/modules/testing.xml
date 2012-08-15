@@ -300,27 +300,27 @@ reports/findbugs
 
     </section>
 
-    <section id="cobertura">
-      <title>Cobertura</title>
-      <para>Cobertura generates a test suite matrix for your project which helps you identify
+    <section id="jacoco">
+      <title>JaCoCo</title>
+      <para>JaCoCo generates a test suite matrix for your project which helps you identify
         where you need additional test coverage.</para>
 
       <para>The reports that the tool provides makes sure that the IronJacamar project has the correct test coverage.</para>
 
-      <para>The goal is to have as high code coverage as possible in all areas. The Cobertura report is
+      <para>The goal is to have as high code coverage as possible in all areas. The JaCoco report is
         generated using</para>
 
       <programlisting>
-ant cobertura
+ant jacoco
       </programlisting>
 
       <para>The report is generated into</para>
 
       <programlisting>
-reports/cobertura
+reports/jacoco
       </programlisting>
 
-      <para>The home of Cobertura is located here: <ulink url="http://cobertura.sourceforge.net/"/>.</para>
+      <para>The home of JaCoCo is located here: <ulink url="http://www.eclemma.org/jacoco/"/>.</para>
 
     </section>
 

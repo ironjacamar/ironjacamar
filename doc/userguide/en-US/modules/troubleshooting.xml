@@ -32,7 +32,7 @@
 ant clean test
 ant clean checkstyle
 ant clean findbugs
-ant clean cobertura
+ant clean jacoco
       </programlisting>
 
       <para>All these should show that,</para>
@@ -48,7 +48,7 @@ ant clean cobertura
           There isn't any bug reports from the Findbugs environment
         </listitem>
         <listitem>
-          There is full code coverage based on the Cobertura report
+          There is full code coverage based on the JaCoCo report
         </listitem>
       </orderedlist>
 
