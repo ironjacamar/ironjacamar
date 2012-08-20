@@ -63,14 +63,60 @@ public class DsParserXMLTestCase extends DsParserTestBase
    }
 
    /**
+    * Checks, if some properties are set by default
+    * @throws Exception in case of error
+    */
+   @Test
+   public void checkDefaultValues() throws Exception
+   {
+      DataSources dss = parseDsFromFile("ds/unit/defaults-ds.xml");
+
+      //Ds part
+      DataSourceImpl ds = (DataSourceImpl) dss.getDataSource().get(0);
+      assertNotNull(ds);
+      assertTrue(ds.isJTA());
+      assertTrue(ds.isEnabled());
+      assertTrue(ds.isUseJavaContext());
+      assertFalse(ds.isSpy());
+      assertTrue(ds.isUseCcm());
+
+      //XaDs part
+      XADataSourceImpl xads = (XADataSourceImpl) dss.getXaDataSource().get(0);
+      assertNotNull(xads);
+      assertTrue(xads.isUseJavaContext());
+      assertFalse(xads.isSpy());
+      assertTrue(xads.isUseCcm());
+      assertTrue(xads.isEnabled());
+
+      DsXaPoolImpl poolXa = (DsXaPoolImpl) xads.getXaPool();
+      assertNotNull(poolXa);
+      assertFalse(poolXa.isPadXid());
+      assertTrue(poolXa.isWrapXaResource());
+      
+      Recovery recovery = xads.getRecovery();
+      assertFalse(recovery.getNoRecovery());
+
+   }
+
+   /**
     * shouldParseXMLRepresentation
     * @throws Exception in case of error
     */
    @Test
    public void shouldParseXMLRepresentation() throws Exception
    {
-      DataSources dss = parseDsFromFile("ds/unit/complex-ds.xml");
+      DataSources dss = doParse(getFile("ds/unit/complex-ds.xml"));
+      checkDataSources(dss);
+      checkDataSources(reParse(dss));
+   }
 
+   /**
+    * Checks, if DataSources parameters are correctly parsed
+    * @param dss checked DataSources object
+    * @throws Exception in case of error
+    */
+   public void checkDataSources(DataSources dss) throws Exception
+   {
       //Ds part
       DataSourceImpl ds = (DataSourceImpl) dss.getDataSource().get(0);
       assertNotNull(ds);
@@ -230,43 +276,9 @@ public class DsParserXMLTestCase extends DsParserTestBase
       assertNull(driver.getDataSourceClass());
       assertEquals(driver.getModule(), "org.pg.postgres");
       assertEquals(driver.getXaDataSourceClass(), "org.pg.JdbcDataSource");
-   }
-
-   /**
-    * Checks, if some properties are set by default
-    * @throws Exception in case of error
-    */
-   @Test
-   public void checkDefaultValues() throws Exception
-   {
-      DataSources dss = parseDsFromFile("ds/unit/defaults-ds.xml");
-
-      //Ds part
-      DataSourceImpl ds = (DataSourceImpl) dss.getDataSource().get(0);
-      assertNotNull(ds);
-      assertTrue(ds.isJTA());
-      assertTrue(ds.isEnabled());
-      assertTrue(ds.isUseJavaContext());
-      assertFalse(ds.isSpy());
-      assertTrue(ds.isUseCcm());
-
-      //XaDs part
-      XADataSourceImpl xads = (XADataSourceImpl) dss.getXaDataSource().get(0);
-      assertNotNull(xads);
-      assertTrue(xads.isUseJavaContext());
-      assertFalse(xads.isSpy());
-      assertTrue(xads.isUseCcm());
-      assertTrue(xads.isEnabled());
-
-      DsXaPoolImpl poolXa = (DsXaPoolImpl) xads.getXaPool();
-      assertNotNull(poolXa);
-      assertFalse(poolXa.isPadXid());
-      assertTrue(poolXa.isWrapXaResource());
-      
-      Recovery recovery = xads.getRecovery();
-      assertFalse(recovery.getNoRecovery());
 
    }
+
    /**
     * Checks, that all properties are proceeded correctly 
     * @param map containing properties

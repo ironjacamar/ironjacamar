@@ -102,23 +102,12 @@ public abstract class DsParserTestBase
     */
    protected DataSources doReParse(File xmlFile) throws Exception
    {
-      ByteArrayInputStream bais = null;
-      try
-      {
-         DataSources ds = doParse(xmlFile);
-         String xmlRepresentation = ds.toString();
-         bais = new ByteArrayInputStream(xmlRepresentation.getBytes("UTF-8"));
-         DataSources ds1 = parser.parse(bais);
-         assertEquals("Strings are not equal.\n" + xmlRepresentation + "\n" + ds1.toString(), xmlRepresentation,
-               ds1.toString());
-         assertTrue("DS Objects are not equal:\n" + ds1.toString() + "\n" + ds.toString(), ds1.equals(ds));
-         return ds;
-      }
-      finally
-      {
-         if (bais != null)
-            bais.close();
-      }
+      DataSources ds = doParse(xmlFile);
+      DataSources ds1 = reParse(ds);
+      assertEquals("Strings are not equal.\n" + ds.toString() + "\n" + ds1.toString(), ds.toString(),
+            ds1.toString());
+      assertTrue("DS Objects are not equal:\n" + ds1.toString() + "\n" + ds.toString(), ds1.equals(ds));
+      return ds;
    }
 
    /**
@@ -138,13 +127,33 @@ public abstract class DsParserTestBase
     * Returns DS object as a result of parsing file from resource folder
     * 
     * @param fileName to parse
-    * 
     * @return resulting DS
-    * 
     * @throws Exception in case of error
     */
    protected DataSources parseDsFromFile(String fileName) throws Exception
    {
       return doReParse(getFile(fileName));
+   }
+
+   /**
+    * Re-parses DataSources from toString() presentation
+    * @param ds DataSources object to re-parse
+    * @return re-parsed DataSources object
+    * @throws Exception in case of error
+    */
+   protected DataSources reParse(DataSources ds) throws Exception
+   {
+      ByteArrayInputStream bais = null;
+      try
+      {
+         bais = new ByteArrayInputStream(ds.toString().getBytes("UTF-8"));
+         return parser.parse(bais);
+      }
+      finally
+      {
+         if (bais != null)
+            bais.close();
+      }
+
    }
 }
