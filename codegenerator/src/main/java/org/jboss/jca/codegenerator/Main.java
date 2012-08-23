@@ -643,6 +643,34 @@ public class Main
             else
                def.setGenMbean(true);
          }
+         
+         //generate eis test server support
+         System.out.print(rb.getString("gen.eis") + " " + rb.getString("yesno") + " [N]: ");
+         String genEis = in.readLine();
+         if (genEis == null)
+            def.setSupportEis(false);
+         else
+         {
+            if (genEis.equals("Y") || genEis.equals("y") || genEis.equals("Yes"))
+               def.setSupportEis(true);
+            else
+               def.setSupportEis(false);
+         }
+
+         if (def.isSupportEis())
+         {
+            //add default host and post for eis server
+            if (def.getMcfDefs().get(0).getMcfConfigProps() == null);
+            {
+               def.getMcfDefs().get(0).setMcfConfigProps(new ArrayList<ConfigPropType>());
+            }
+            List<ConfigPropType> props = def.getMcfDefs().get(0).getMcfConfigProps();
+            
+            ConfigPropType host = new ConfigPropType("host", "String", "localhost", false);
+            props.add(host);
+            ConfigPropType port = new ConfigPropType("port", "Integer", "1400", false);
+            props.add(port);
+         }
       }
       
       //build environment
@@ -702,6 +730,10 @@ public class Main
       String binPath = path + File.separatorChar + ".." + File.separatorChar + ".." + File.separatorChar + 
          ".." + File.separatorChar + "bin";
       Utils.copyFolder(binPath, targetPath, "jar");
+      
+      String eisPath = path + File.separatorChar + ".." + File.separatorChar + ".." + File.separatorChar + 
+            ".." + File.separatorChar + "doc" + File.separatorChar + "eis";
+      Utils.copyFolder(eisPath, targetPath, "jar");
    }
 
    /**

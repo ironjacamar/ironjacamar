@@ -132,6 +132,10 @@ public class Definition
    @XmlElement(name = "RaSerial")
    private boolean raSerial = true;
    
+   /** Support EIS test server generation or not  */
+   @XmlElement(name = "SupportEis")
+   private boolean supportEis = false;
+   
    /**
     * Set the version.
     * 
@@ -716,6 +720,24 @@ public class Definition
    public boolean isRaSerial()
    {
       return raSerial;
+   }
+
+   /**
+    * get supportEis
+    * @return the supportEis
+    */
+   public boolean isSupportEis()
+   {
+      return supportEis;
+   }
+
+   /**
+    * set supportEis
+    * @param supportEis the supportEis to set
+    */
+   public void setSupportEis(boolean supportEis)
+   {
+      this.supportEis = supportEis;
    }
 
 }

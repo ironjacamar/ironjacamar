@@ -148,7 +148,7 @@
         <port>1400</port>
         <handler>org.jboss.jca.test.eis.EchoHandler</handler>
         <classpath>
-          <param>${build.eis.dir}/test</param>
+          <param>target/test-classes</param>
         </classpath>
       </configuration>
     </plugin>

@@ -95,6 +95,33 @@ public class McCodeGen extends AbstractCodeGen
       writeEol(out);
       writeEol(out);
       
+      if (def.isSupportEis())
+      {
+         writeIndent(out, indent);
+         out.write("/** Socket */");
+         writeEol(out);
+         writeIndent(out, indent);
+         out.write("private Socket socket;");
+         writeEol(out);
+         writeEol(out);
+         
+         writeIndent(out, indent);
+         out.write("/** The output stream */");
+         writeEol(out);
+         writeIndent(out, indent);
+         out.write("private ObjectOutputStream oos = null;");
+         writeEol(out);
+         writeEol(out);
+         
+         writeIndent(out, indent);
+         out.write("/** The input stream */");
+         writeEol(out);
+         writeIndent(out, indent);
+         out.write("private ObjectInputStream ois = null;");
+         writeEol(out);
+         writeEol(out);
+      }
+      
       //constructor
       writeIndent(out, indent);
       out.write("/**");
@@ -111,6 +138,10 @@ public class McCodeGen extends AbstractCodeGen
       
       writeIndent(out, indent);
       out.write("public " + getClassName(def) + "(" + def.getMcfDefs().get(getNumOfMcf()).getMcfClass() + " mcf)");
+      if (def.isSupportEis())
+      {
+         out.write(" throws ResourceException");
+      }
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
       out.write("this.mcf = mcf;");
@@ -123,6 +154,31 @@ public class McCodeGen extends AbstractCodeGen
       writeEol(out);
       writeIndent(out, indent + 1);
       out.write("this.connection = null;");
+      
+      if (def.isSupportEis())
+      {
+         writeEol(out);
+         writeIndent(out, indent + 1);
+         out.write("try");
+         writeLeftCurlyBracket(out, indent + 1);
+         writeIndent(out, indent + 2);
+         out.write("this.socket = new Socket(mcf.getHost(), mcf.getPort().intValue());");
+         writeEol(out);
+         writeIndent(out, indent + 2);
+         out.write("this.oos = new ObjectOutputStream(socket.getOutputStream());");
+         writeEol(out);
+         writeIndent(out, indent + 2);
+         out.write("this.ois = new ObjectInputStream(socket.getInputStream());");
+         writeRightCurlyBracket(out, indent + 1);
+         writeEol(out);
+         writeIndent(out, indent + 1);
+         out.write("catch (Throwable t)");
+         writeLeftCurlyBracket(out, indent + 1);
+         writeIndent(out, indent + 2);
+         out.write("throw new ResourceException(t.getMessage(), t);");
+         writeRightCurlyBracket(out, indent + 1);
+      }
+
       writeRightCurlyBracket(out, indent);
       writeEol(out);
       
@@ -147,12 +203,27 @@ public class McCodeGen extends AbstractCodeGen
    public void writeImport(Definition def, Writer out) throws IOException
    {
       out.write("package " + def.getRaPackage() + ";");
-
       writeEol(out);
       writeEol(out);
+      
+      if (def.isSupportEis())
+      {
+         out.write("import java.io.IOException;");
+         writeEol(out);
+         out.write("import java.io.ObjectInputStream;");
+         writeEol(out);
+         out.write("import java.io.ObjectOutputStream;");
+         writeEol(out);
+      }
       out.write("import java.io.PrintWriter;");
       writeEol(out);
-      writeEol(out);
+      
+      if (def.isSupportEis())
+      {
+         out.write("import java.net.Socket;");
+         writeEol(out);
+      }
+      
       out.write("import java.util.ArrayList;");
       writeEol(out);
       out.write("import java.util.Collections;");
@@ -367,6 +438,47 @@ public class McCodeGen extends AbstractCodeGen
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
       out.write("log.finest(\"destroy()\");");
+      
+      if (def.isSupportEis())
+      {
+         writeEol(out);
+         writeIndent(out, indent + 1);
+         out.write("if (socket != null)");
+         writeLeftCurlyBracket(out, indent + 1);
+         writeIndent(out, indent + 2);
+         out.write("try");
+         writeLeftCurlyBracket(out, indent + 2);
+         writeIndent(out, indent + 3);
+         out.write("ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());");
+         writeEol(out);
+         writeIndent(out, indent + 3);
+         out.write("oos.writeUTF(\"close\");");
+         writeEol(out);
+         writeIndent(out, indent + 3);
+         out.write("oos.flush();");
+         writeRightCurlyBracket(out, indent + 2);
+         writeIndent(out, indent + 2);
+         out.write("catch (Throwable t)");
+         writeLeftCurlyBracket(out, indent + 2);
+         writeIndent(out, indent + 3);
+         out.write("// Nothing");
+         writeRightCurlyBracket(out, indent + 2);
+         
+         writeIndent(out, indent + 2);
+         out.write("try");
+         writeLeftCurlyBracket(out, indent + 2);
+         writeIndent(out, indent + 3);
+         out.write("socket.close();");
+         writeRightCurlyBracket(out, indent + 2);
+         writeIndent(out, indent + 2);
+         out.write("catch (IOException ioe)");
+         writeLeftCurlyBracket(out, indent + 2);
+         writeIndent(out, indent + 3);
+         out.write("// Ignore");
+         writeRightCurlyBracket(out, indent + 2);
+         writeRightCurlyBracket(out, indent + 1);
+      }
+      
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }
@@ -788,5 +900,76 @@ public class McCodeGen extends AbstractCodeGen
          out.write("log.finest(\"callMe()\");");
          writeRightCurlyBracket(out, indent);
       }
+
+      if (def.isSupportEis())
+         writeEcho(def, out, indent);
+   }
+   
+   /**
+    * Output echo method
+    * @param def definition
+    * @param out Writer
+    * @param indent space number
+    * @throws IOException ioException
+    */
+   private void writeEcho(Definition def, Writer out, int indent) throws IOException
+   {
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Echo");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @param s The string");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * @return The string");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+
+      writeIndent(out, indent);
+      out.write("public String echo(String s)");
+      writeLeftCurlyBracket(out, indent);
+      
+      writeIndent(out, indent + 1);
+      out.write("try");
+      writeLeftCurlyBracket(out, indent + 1);
+      writeIndent(out, indent + 2);
+      out.write("if (oos == null)");
+      writeEol(out);
+      writeIndent(out, indent + 3);
+      out.write("oos = new ObjectOutputStream(socket.getOutputStream());");
+      writeEol(out);
+      writeIndent(out, indent + 2);
+      out.write("oos.writeUTF(\"echo\");");
+      writeEol(out);
+      writeIndent(out, indent + 2);
+      out.write("oos.writeUTF(s);");
+      writeEol(out);
+      writeIndent(out, indent + 2);
+      out.write("oos.flush();");
+      writeEol(out);
+      writeEol(out);
+      writeIndent(out, indent + 2);
+
+      out.write("if (ois == null)");
+      writeEol(out);
+      writeIndent(out, indent + 3);
+      out.write("ois = new ObjectInputStream(socket.getInputStream());");
+      writeEol(out);
+      writeIndent(out, indent + 2);
+      out.write("return ois.readUTF();");
+      writeRightCurlyBracket(out, indent + 1);
+      writeIndent(out, indent + 1);
+      out.write("catch (Throwable t)");
+      writeLeftCurlyBracket(out, indent + 1);
+      writeIndent(out, indent + 2);
+      out.write("return null;");
+      writeRightCurlyBracket(out, indent + 1);
+      writeRightCurlyBracket(out, indent);
    }
 }

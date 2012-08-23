@@ -65,9 +65,27 @@ public class BuildIvyXmlGen extends AbstractXmlGen
             defName = def.getRaPackage();
       }
       
+      StringBuilder strStartTask = new StringBuilder();
+      if (def.isSupportEis())
+      {
+         strStartTask.append("    <start host=\"localhost\" port=\"1400\"\n");
+         strStartTask.append("      handler=\"" + def.getRaPackage() + ".EchoHandler\">\n");
+         strStartTask.append("      <classpath>\n");
+         strStartTask.append("        <pathelement location=\"${build.dir}/test\"/>\n");
+         strStartTask.append("      </classpath>\n");
+         strStartTask.append("    </start>\n");
+      }
+      StringBuilder strStopTask = new StringBuilder();
+      if (def.isSupportEis())
+      {
+         strStopTask.append("    <stop host=\"localhost\" port=\"1400\"/>\n");
+      }
+      
       Map<String, String> map = new HashMap<String, String>();
       map.put("def.name", defName.toLowerCase(Locale.US));
       map.put("mbean.class", def.getRaPackage() + ".mbean." + def.getMbeanInterfaceClass());
+      map.put("start.task", strStartTask.toString());
+      map.put("stop.task", strStopTask.toString());
       
       Template template = new SimpleTemplate(buildString);
       template.process(map, out);

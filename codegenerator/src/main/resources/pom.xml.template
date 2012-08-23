@@ -159,9 +159,30 @@
             </configuration>
         </execution></executions>
       </plugin>
+      
+${start.goal}
+    <!-- socket had been closed
+    <plugin>
+      <groupId>org.jboss.ironjacamar</groupId>
+      <artifactId>ironjacamar-test-eis</artifactId>
 
+      <version>${version.org.jboss.ironjacamar}</version>
+      <executions>
+        <execution>
+          <goals>
+            <goal>stop</goal>
+          </goals>
+        </execution>
+      </executions>
+      <configuration>
+        <host>localhost</host>
+        <port>1400</port>
+      </configuration>
+    </plugin>
+    -->
     </plugins>
   </build> 
+  
   <repositories>
     <repository>
       <id>jboss</id>

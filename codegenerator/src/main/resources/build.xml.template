@@ -105,6 +105,13 @@
   <target name="test" depends="rar, prepare-test">
     <mkdir dir="${basedir}/reports"/>
 
+    <taskdef name="start"
+             classname="org.jboss.jca.test.eis.ant.Start"
+             classpathref="test.lib.path.id"/>
+    <taskdef name="stop"
+             classname="org.jboss.jca.test.eis.ant.Stop"
+             classpathref="test.lib.path.id"/>
+${start.task}
     <junit dir="src/test"
            printsummary="${junit.printsummary}"
            haltonerror="${junit.haltonerror}"
@@ -142,6 +149,7 @@
 
     </junit>
     
+${stop.task}
   </target>
   
   <!-- ================================= 

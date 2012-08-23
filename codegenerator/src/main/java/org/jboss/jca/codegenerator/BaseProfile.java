@@ -90,7 +90,15 @@ public class BaseProfile implements Profile
          generateMBeanCode(def);
          generateMbeanXml(def, def.getOutputDir());
       }
+      
+      if (def.isSupportEis() &&
+         def.isSupportOutbound() &&
+         !def.getMcfDefs().get(0).isUseCciConnection())
+      {
+         generateEisCode(def);
+      }      
    }
+
 
    /**
     * generate resource adapter code
@@ -181,7 +189,7 @@ public class BaseProfile implements Profile
          generatePackageHtml(def, def.getOutputDir(), "mbean");
       }
    }
-   
+
    /**
     * generate class code
     * @param def Definition 
@@ -549,6 +557,36 @@ public class BaseProfile implements Profile
          
          copyTestResourceFiles(def.getOutputDir(), "logging.properties");
          copyTestResourceFiles(def.getOutputDir(), "jndi.properties");
+      }
+      catch (IOException ioe)
+      {
+         ioe.printStackTrace();
+      }
+      catch (Exception e)
+      {
+         e.printStackTrace();
+      }
+   }
+
+   /**
+    * generate Eis test server
+    * @param def Definition
+    */
+   void generateEisCode(Definition def)
+   {
+      try
+      {
+         String clazzName = this.getClass().getPackage().getName() + ".code.TestEisCodeGen";
+         String javaFile = "EchoHandler.java";
+         FileWriter fw = Utils.createTestFile(javaFile, def.getRaPackage(), def.getOutputDir());
+
+         Class<?> clazz = Class.forName(clazzName, true, Thread.currentThread().getContextClassLoader());
+         AbstractCodeGen codeGen = (AbstractCodeGen)clazz.newInstance();
+         
+         codeGen.generate(def, fw);
+         
+         fw.flush();
+         fw.close();
       }
       catch (IOException ioe)
       {

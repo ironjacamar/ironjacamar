@@ -58,9 +58,37 @@ public class PomXmlGen extends AbstractXmlGen
       {
          moduleName = def.getRaPackage();
       }
+      
+      StringBuilder strStartGoal = new StringBuilder();
+      if (def.isSupportEis())
+      {
+         strStartGoal.append("       <plugin>\n");
+         strStartGoal.append("         <groupId>org.jboss.ironjacamar</groupId>\n");
+         strStartGoal.append("         <artifactId>ironjacamar-test-eis</artifactId>\n");
+         strStartGoal.append("         <version>${version.org.jboss.ironjacamar}</version>\n");
+         strStartGoal.append("         <executions>\n");
+         strStartGoal.append("           <execution>\n");
+         strStartGoal.append("             <goals>\n");
+         strStartGoal.append("               <goal>start</goal>\n");
+         strStartGoal.append("             </goals>\n");
+         strStartGoal.append("           </execution>\n");
+         strStartGoal.append("         </executions>\n");
+         strStartGoal.append("         <configuration>\n");
+         strStartGoal.append("           <host>localhost</host>\n");
+         strStartGoal.append("           <port>1400</port>\n");
+         strStartGoal.append("           <handler>" + def.getRaPackage() + ".EchoHandler</handler>\n");
+         strStartGoal.append("           <classpath>\n");
+         strStartGoal.append("             <param>target/test-classes</param>\n");
+         strStartGoal.append("           </classpath>\n");
+         strStartGoal.append("         </configuration>\n");
+         strStartGoal.append("       </plugin>\n");
+      }
+      
       Map<String, String> map = new HashMap<String, String>();
       map.put("pom.package.name", packageName);
       map.put("pom.module.name", moduleName);
+      map.put("start.goal", strStartGoal.toString());
+      
       Template template = new SimpleTemplate(buildString);
       template.process(map, out);
    }
