@@ -124,6 +124,7 @@
         <fileset dir="${lib.dir}" includes="**/*.jar" />
         <fileset dir="${build.dir}" includes="*.jar" />
         <pathelement location="${build.dir}/test"/>
+        <fileset dir="${java.home}/../lib/" includes="tools.jar" />
       </classpath>
       
       <formatter type="plain"/>
