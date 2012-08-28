@@ -48,9 +48,13 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
 
    private TransactionSupportEnum transactionSupport;
 
+   private String tsId;
+
    private final ArrayList<AuthenticationMechanism> authenticationMechanism;
 
    private final Boolean reauthenticationSupport;
+
+   private String rsId;
 
    private final String id;
 
@@ -59,11 +63,13 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
     * @param transactionSupport transaction supported form this RA. Valid ones are defined by an enum
     * @param authenticationMechanism list of authentication mechanism supported
     * @param reauthenticationSupport not mandatary boolean value
+    * @param tsId transaction support element ID
+    * @param rsId reauthentication support element ID
     * @param id XML ID
     */
    public OutboundResourceAdapterImpl(List<ConnectionDefinition> connectionDefinition,
-      TransactionSupportEnum transactionSupport, List<AuthenticationMechanism> authenticationMechanism,
-      Boolean reauthenticationSupport, String id)
+         TransactionSupportEnum transactionSupport, List<AuthenticationMechanism> authenticationMechanism,
+         Boolean reauthenticationSupport, String id, String tsId, String rsId)
    {
       super();
       if (connectionDefinition != null)
@@ -87,6 +93,22 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
       }
       this.reauthenticationSupport = reauthenticationSupport;
       this.id = id;
+      this.rsId = rsId;
+      this.tsId = tsId;
+   }
+
+   /**
+    * @param connectionDefinition list of connection definitions
+    * @param transactionSupport transaction supported form this RA. Valid ones are defined by an enum
+    * @param authenticationMechanism list of authentication mechanism supported
+    * @param reauthenticationSupport not mandatary boolean value
+    * @param id XML ID
+    */
+   public OutboundResourceAdapterImpl(List<ConnectionDefinition> connectionDefinition,
+         TransactionSupportEnum transactionSupport, List<AuthenticationMechanism> authenticationMechanism,
+         Boolean reauthenticationSupport, String id)
+   {
+      this(connectionDefinition, transactionSupport, authenticationMechanism, reauthenticationSupport, id, null, null);
    }
 
    /**
@@ -178,6 +200,8 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
       result = prime * result + ((id == null) ? 0 : id.hashCode());
       result = prime * result + ((transactionSupport == null) ? 0 : transactionSupport.hashCode());
       result = prime * result + ((reauthenticationSupport == null) ? 0 : reauthenticationSupport.hashCode());
+      result = prime * result + ((tsId == null) ? 0 : tsId.hashCode());
+      result = prime * result + ((rsId == null) ? 0 : rsId.hashCode());
       return result;
    }
 
@@ -250,6 +274,29 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
       {
          return false;
       }
+      if (tsId == null)
+      {
+         if (other.tsId != null)
+         {
+            return false;
+         }
+      }
+      else if (!tsId.equals(other.tsId))
+      {
+         return false;
+      }
+      if (rsId == null)
+      {
+         if (other.rsId != null)
+         {
+            return false;
+         }
+      }
+      else if (!rsId.equals(other.rsId))
+      {
+         return false;
+      }
+
       return true;
    }
 
@@ -278,7 +325,8 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
 
       if (transactionSupport != null)
       {
-         sb.append("<").append(OutboundResourceAdapter.Tag.TRANSACTION_SUPPORT).append(">");
+         sb.append("<").append(OutboundResourceAdapter.Tag.TRANSACTION_SUPPORT)
+               .append(tsId == null ? "" : " id=\"" + tsId + "\"").append(">");
          sb.append(transactionSupport);
          sb.append("</").append(OutboundResourceAdapter.Tag.TRANSACTION_SUPPORT).append(">");
       }
@@ -293,7 +341,8 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
 
       if (reauthenticationSupport != null)
       {
-         sb.append("<").append(OutboundResourceAdapter.Tag.REAUTHENTICATION_SUPPORT).append(">");
+         sb.append("<").append(OutboundResourceAdapter.Tag.REAUTHENTICATION_SUPPORT)
+               .append(rsId == null ? "" : " id=\"" + rsId + "\"").append(">");
          sb.append(reauthenticationSupport);
          sb.append("</").append(OutboundResourceAdapter.Tag.REAUTHENTICATION_SUPPORT).append(">");
       }
@@ -315,9 +364,9 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
       if (this.getConnectionDefinitions() == null || this.getConnectionDefinitions().size() == 0)
          return false;
       ConnectionDefinition cdm = this.getConnectionDefinitions().get(0);
-      if (cdm.getManagedConnectionFactoryClass() == null || cdm.getConnectionFactoryInterface() == null ||
-          cdm.getConnectionFactoryImplClass() == null || cdm.getConnectionInterface() == null ||
-          cdm.getConnectionImplClass() == null)
+      if (cdm.getManagedConnectionFactoryClass() == null || cdm.getConnectionFactoryInterface() == null
+            || cdm.getConnectionFactoryImplClass() == null || cdm.getConnectionInterface() == null
+            || cdm.getConnectionImplClass() == null)
          return false;
 
       return true;
@@ -332,9 +381,7 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
 
          String newId = this.id == null ? input.id : this.id;
 
-         List<ConnectionDefinition> newConnDef = new ArrayList<ConnectionDefinition>(
-                                                                                     this.connectionDefinition
-                                                                                        .size());
+         List<ConnectionDefinition> newConnDef = new ArrayList<ConnectionDefinition>(this.connectionDefinition.size());
 
          newConnDef.addAll(this.connectionDefinition);
          for (ConnectionDefinition rcd : input.connectionDefinition)
@@ -342,8 +389,8 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
             boolean isNew = true;
             for (ConnectionDefinition lcd : this.connectionDefinition)
             {
-               if (lcd.getManagedConnectionFactoryClass() == null ||
-                   rcd.getManagedConnectionFactoryClass().equals(lcd.getManagedConnectionFactoryClass()))
+               if (lcd.getManagedConnectionFactoryClass() == null
+                     || rcd.getManagedConnectionFactoryClass().equals(lcd.getManagedConnectionFactoryClass()))
                {
                   newConnDef.remove(lcd);
                   newConnDef.add(lcd.merge(rcd));
@@ -355,14 +402,14 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
          }
 
          TransactionSupportEnum newTransactionSupport = this.transactionSupport == null
-            ? input.transactionSupport
-            : this.transactionSupport;
+               ? input.transactionSupport
+               : this.transactionSupport;
 
          boolean newReauthenticationSupport = this.reauthenticationSupport || input.reauthenticationSupport;
-         List<AuthenticationMechanism> newAuthenticationMechanism = MergeUtil.mergeList(
-            this.authenticationMechanism, input.authenticationMechanism);
+         List<AuthenticationMechanism> newAuthenticationMechanism = MergeUtil.mergeList(this.authenticationMechanism,
+               input.authenticationMechanism);
          return new OutboundResourceAdapterImpl(newConnDef, newTransactionSupport, newAuthenticationMechanism,
-                                                newReauthenticationSupport, newId);
+               newReauthenticationSupport, newId);
       }
       else
       {
@@ -374,7 +421,7 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
    public CopyableMetaData copy()
    {
       return new OutboundResourceAdapterImpl(CopyUtil.cloneList(connectionDefinition), transactionSupport,
-                                             CopyUtil.cloneList(authenticationMechanism), reauthenticationSupport,
-                                             CopyUtil.cloneString(id));
+            CopyUtil.cloneList(authenticationMechanism), reauthenticationSupport, CopyUtil.cloneString(id),
+            CopyUtil.cloneString(tsId), CopyUtil.cloneString(rsId));
    }
 }

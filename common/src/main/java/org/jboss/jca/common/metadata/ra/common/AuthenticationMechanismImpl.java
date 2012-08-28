@@ -24,6 +24,7 @@ package org.jboss.jca.common.metadata.ra.common;
 import org.jboss.jca.common.api.metadata.CopyUtil;
 import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.ra.AuthenticationMechanism;
+import org.jboss.jca.common.api.metadata.ra.AuthenticationMechanism.Tag;
 import org.jboss.jca.common.api.metadata.ra.CredentialInterfaceEnum;
 import org.jboss.jca.common.api.metadata.ra.LocalizedXsdString;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
@@ -50,6 +51,48 @@ public class AuthenticationMechanismImpl implements AuthenticationMechanism
 
    private final String id;
 
+   private final String cIId;
+
+   /**
+    * @param description description attribute in xml
+    * @param authenticationMechanismType specifies type of an authentication mechanism.
+            The example values are:
+
+            <authentication-mechanism-type>BasicPassword
+            </authentication-mechanism-type>
+
+            <authentication-mechanism-type>Kerbv5
+            </authentication-mechanism-type>
+
+            Any additional security mechanisms are outside the
+            scope of the Connector architecture specification.
+    * @param credentialInterface enumeration representing credentialInterface.
+    * @param id xml ID
+    * @param cid credential interface id
+    */
+   public AuthenticationMechanismImpl(List<LocalizedXsdString> description, XsdString authenticationMechanismType,
+         CredentialInterfaceEnum credentialInterface, String id, String cid)
+   {
+      super();
+      if (description != null)
+      {
+         this.description = new ArrayList<LocalizedXsdString>(description.size());
+         this.description.addAll(description);
+         for (LocalizedXsdString d: this.description)
+            d.setTag(Tag.DESCRIPTION.toString());
+      }
+      else
+      {
+         this.description = new ArrayList<LocalizedXsdString>(0);
+      }
+      this.authenticationMechanismType = authenticationMechanismType;
+      if (!XsdString.isNull(this.authenticationMechanismType))
+         this.authenticationMechanismType.setTag(Tag.AUTHENTICATION_MECHANISM_TYPE.toString());
+      this.credentialInterface = credentialInterface;
+      this.id = id;
+      cIId = cid;
+   }
+
    /**
     * @param description description attribute in xml
     * @param authenticationMechanismType specifies type of an authentication mechanism.
@@ -69,19 +112,7 @@ public class AuthenticationMechanismImpl implements AuthenticationMechanism
    public AuthenticationMechanismImpl(List<LocalizedXsdString> description, XsdString authenticationMechanismType,
          CredentialInterfaceEnum credentialInterface, String id)
    {
-      super();
-      if (description != null)
-      {
-         this.description = new ArrayList<LocalizedXsdString>(description.size());
-         this.description.addAll(description);
-      }
-      else
-      {
-         this.description = new ArrayList<LocalizedXsdString>(0);
-      }
-      this.authenticationMechanismType = authenticationMechanismType;
-      this.credentialInterface = credentialInterface;
-      this.id = id;
+      this(description, authenticationMechanismType, credentialInterface, id, null);
    }
 
    /**
@@ -131,6 +162,7 @@ public class AuthenticationMechanismImpl implements AuthenticationMechanism
       result = prime * result + ((credentialInterface == null) ? 0 : credentialInterface.hashCode());
       result = prime * result + ((description == null) ? 0 : description.hashCode());
       result = prime * result + ((id == null) ? 0 : id.hashCode());
+      result = prime * result + ((cIId == null) ? 0 : cIId.hashCode());
       return result;
    }
 
@@ -192,6 +224,17 @@ public class AuthenticationMechanismImpl implements AuthenticationMechanism
       {
          return false;
       }
+      if (cIId == null)
+      {
+         if (other.cIId != null)
+         {
+            return false;
+         }
+      }
+      else if (!cIId.equals(other.cIId))
+      {
+         return false;
+      }
       return true;
    }
 
@@ -209,14 +252,17 @@ public class AuthenticationMechanismImpl implements AuthenticationMechanism
       if (id != null)
          sb.append(" ").append(AuthenticationMechanism.Attribute.ID).append("=\"").append(id).append("\"");
       sb.append(">");
-        
-      // description
 
-      sb.append("<").append(AuthenticationMechanism.Tag.AUTHENTICATION_MECHANISM_TYPE).append(">");
+      if (description != null)
+      {
+         for (LocalizedXsdString s : description)
+            sb.append(s);
+      }
+
       sb.append(authenticationMechanismType);
-      sb.append("</").append(AuthenticationMechanism.Tag.AUTHENTICATION_MECHANISM_TYPE).append(">");
 
-      sb.append("<").append(AuthenticationMechanism.Tag.CREDENTIAL_INTERFACE).append(">");
+      sb.append("<").append(AuthenticationMechanism.Tag.CREDENTIAL_INTERFACE)
+            .append(cIId == null ? "" : " id=\"" + cIId + "\"").append(">");
       sb.append(credentialInterface);
       sb.append("</").append(AuthenticationMechanism.Tag.CREDENTIAL_INTERFACE).append(">");
 
@@ -229,8 +275,8 @@ public class AuthenticationMechanismImpl implements AuthenticationMechanism
    public CopyableMetaData copy()
    {
       return new AuthenticationMechanismImpl(CopyUtil.cloneList(description),
-            CopyUtil.clone(authenticationMechanismType), credentialInterface,
-            CopyUtil.cloneString(id));
+            CopyUtil.clone(authenticationMechanismType), credentialInterface, CopyUtil.cloneString(id),
+            CopyUtil.cloneString(cIId));
    }
 
 }

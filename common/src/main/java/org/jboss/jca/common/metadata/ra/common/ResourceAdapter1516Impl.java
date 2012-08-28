@@ -31,7 +31,9 @@ import org.jboss.jca.common.api.metadata.ra.InboundResourceAdapter;
 import org.jboss.jca.common.api.metadata.ra.MergeableMetadata;
 import org.jboss.jca.common.api.metadata.ra.OutboundResourceAdapter;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
+import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516.Tag;
 import org.jboss.jca.common.api.metadata.ra.SecurityPermission;
+import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.validator.ValidateException;
 
 import java.util.ArrayList;
@@ -53,7 +55,7 @@ public class ResourceAdapter1516Impl extends AbstractResourceAdapetrImpl impleme
    /** The bundle */
    private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
-   private final String resourceadapterClass;
+   private final XsdString resourceadapterClass;
 
    private final OutboundResourceAdapter outboundResourceadapter;
 
@@ -75,11 +77,30 @@ public class ResourceAdapter1516Impl extends AbstractResourceAdapetrImpl impleme
     * @param id XML ID
     */
    public ResourceAdapter1516Impl(String resourceadapterClass, List<? extends ConfigProperty> configProperties,
-      OutboundResourceAdapter outboundResourceadapter, InboundResourceAdapter inboundResourceadapter,
-      List<AdminObject> adminobjects, List<SecurityPermission> securityPermissions, String id)
+         OutboundResourceAdapter outboundResourceadapter, InboundResourceAdapter inboundResourceadapter,
+         List<AdminObject> adminobjects, List<SecurityPermission> securityPermissions, String id)
+   {
+      this(new XsdString(resourceadapterClass, null), configProperties, outboundResourceadapter,
+            inboundResourceadapter, adminobjects, securityPermissions, id);
+   }
+
+   /**
+    * @param resourceadapterClass full qualified name of the class
+    * @param configProperties confi properties for this RA
+    * @param outboundResourceadapter outbound RA
+    * @param inboundResourceadapter inbound RA
+    * @param adminobjects list of admin objects of this RA
+    * @param securityPermissions supported security permissions
+    * @param id XML ID
+    */
+   public ResourceAdapter1516Impl(XsdString resourceadapterClass, List<? extends ConfigProperty> configProperties,
+         OutboundResourceAdapter outboundResourceadapter, InboundResourceAdapter inboundResourceadapter,
+         List<AdminObject> adminobjects, List<SecurityPermission> securityPermissions, String id)
    {
       super();
       this.resourceadapterClass = resourceadapterClass;
+      if (!XsdString.isNull(this.resourceadapterClass))
+         this.resourceadapterClass.setTag(Tag.RESOURCEADAPTER_CLASS.toString());
       if (configProperties != null)
       {
          this.configProperties = new ArrayList<ConfigProperty>(configProperties.size());
@@ -118,7 +139,9 @@ public class ResourceAdapter1516Impl extends AbstractResourceAdapetrImpl impleme
    @Override
    public String getResourceadapterClass()
    {
-      return resourceadapterClass;
+      if (XsdString.isNull(resourceadapterClass))
+         return null;
+      return resourceadapterClass.getValue();
    }
 
    /**
@@ -276,11 +299,7 @@ public class ResourceAdapter1516Impl extends AbstractResourceAdapetrImpl impleme
       sb.append(">");
 
       if (resourceadapterClass != null)
-      {
-         sb.append("<").append(ResourceAdapter1516.Tag.RESOURCEADAPTER_CLASS).append(">");
          sb.append(resourceadapterClass);
-         sb.append("</").append(ResourceAdapter1516.Tag.RESOURCEADAPTER_CLASS).append(">");
-      }
 
       if (configProperties != null)
       {
@@ -325,11 +344,12 @@ public class ResourceAdapter1516Impl extends AbstractResourceAdapetrImpl impleme
       if (this.getOutboundResourceadapter() != null && this.getOutboundResourceadapter().validationAsBoolean())
          inboundOrOutbound = true;
 
-      if (this.getInboundResourceadapter() != null && this.getInboundResourceadapter().validationAsBoolean() &&
-          this.getResourceadapterClass() != null)
+      if (this.getInboundResourceadapter() != null && this.getInboundResourceadapter().validationAsBoolean()
+            && this.getResourceadapterClass() != null)
          inboundOrOutbound = true;
 
-      if (!inboundOrOutbound && (this.resourceadapterClass == null || this.resourceadapterClass.trim().equals("")))
+      if (!inboundOrOutbound
+            && (this.resourceadapterClass == null || this.resourceadapterClass.getValue().trim().equals("")))
          throw new ValidateException(bundle.invalidMetadataForResourceAdapter());
    }
 
@@ -341,24 +361,23 @@ public class ResourceAdapter1516Impl extends AbstractResourceAdapetrImpl impleme
          ResourceAdapter1516Impl inputRA = (ResourceAdapter1516Impl) jmd;
 
          InboundResourceAdapter newInboundResourceadapter = this.inboundResourceadapter == null
-            ? inputRA.inboundResourceadapter
-            : this.inboundResourceadapter.merge(inputRA.inboundResourceadapter);
+               ? inputRA.inboundResourceadapter
+               : this.inboundResourceadapter.merge(inputRA.inboundResourceadapter);
 
          OutboundResourceAdapter newOutboundResourceadapter = this.outboundResourceadapter == null
-            ? inputRA.outboundResourceadapter
-            : this.outboundResourceadapter.merge(inputRA.outboundResourceadapter);
+               ? inputRA.outboundResourceadapter
+               : this.outboundResourceadapter.merge(inputRA.outboundResourceadapter);
          List<SecurityPermission> newSecurityPermission = MergeUtil.mergeList(this.securityPermissions,
-            inputRA.securityPermissions);
+               inputRA.securityPermissions);
          List<? extends ConfigProperty> newConfigProperties = MergeUtil.mergeConfigList(this.configProperties,
-            inputRA.configProperties);
+               inputRA.configProperties);
          List<AdminObject> newAdminobjects = MergeUtil.mergeList(this.adminobjects, inputRA.adminobjects);
          String newId = this.id == null ? inputRA.id : this.id;
-         String newResourceadapterClass = this.resourceadapterClass == null
-            ? inputRA.resourceadapterClass
-            : this.resourceadapterClass;
-         return new ResourceAdapter1516Impl(newResourceadapterClass, newConfigProperties,
-                                            newOutboundResourceadapter, newInboundResourceadapter,
-                                            newAdminobjects, newSecurityPermission, newId);
+         XsdString newResourceadapterClass = this.resourceadapterClass == null
+               ? inputRA.resourceadapterClass
+               : this.resourceadapterClass;
+         return new ResourceAdapter1516Impl(newResourceadapterClass, newConfigProperties, newOutboundResourceadapter,
+               newInboundResourceadapter, newAdminobjects, newSecurityPermission, newId);
       }
       else
       {
@@ -369,11 +388,9 @@ public class ResourceAdapter1516Impl extends AbstractResourceAdapetrImpl impleme
    @Override
    public CopyableMetaData copy()
    {
-      return new ResourceAdapter1516Impl(CopyUtil.cloneString(resourceadapterClass),
-                                         CopyUtil.cloneList(configProperties),
-                                         CopyUtil.clone(outboundResourceadapter),
-                                         CopyUtil.clone(inboundResourceadapter), CopyUtil.cloneList(adminobjects),
-                                         CopyUtil.cloneList(securityPermissions), CopyUtil.cloneString(id));
+      return new ResourceAdapter1516Impl(CopyUtil.clone(resourceadapterClass), CopyUtil.cloneList(configProperties),
+            CopyUtil.clone(outboundResourceadapter), CopyUtil.clone(inboundResourceadapter),
+            CopyUtil.cloneList(adminobjects), CopyUtil.cloneList(securityPermissions), CopyUtil.cloneString(id));
 
    }
 }

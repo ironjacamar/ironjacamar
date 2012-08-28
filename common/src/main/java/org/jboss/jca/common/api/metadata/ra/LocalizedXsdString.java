@@ -24,7 +24,6 @@ package org.jboss.jca.common.api.metadata.ra;
 import org.jboss.jca.common.api.metadata.CopyUtil;
 import org.jboss.jca.common.api.metadata.CopyableMetaData;
 
-
 /**
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
  *
@@ -35,29 +34,41 @@ public class LocalizedXsdString extends XsdString implements LocalizedMetadata
     */
    private static final long serialVersionUID = -7778684576336929347L;
 
-   private final String lang;
+   private String lang;
 
    /**
+    * @param value value of the String
+    * @param id XML ID
+    * @param lang language
+    * @param tag name
+    */
+   public LocalizedXsdString(String value, String id, String lang, String tag)
+   {
+      super(value, id, tag);
+      this.lang = lang;
+   }
+
+   /**
+    * Constructor for default language 
+    *
     * @param value value of the String
     * @param id XML ID
     * @param lang language
     */
    public LocalizedXsdString(String value, String id, String lang)
    {
-      super(value, id);
-      this.lang = lang;
+      this(value, id, lang, null);
    }
 
    /**
-    * Constructor for default language "en"
+    * Constructor for default language without tag
     *
     * @param value value of the String
     * @param id XML ID
     */
    public LocalizedXsdString(String value, String id)
    {
-      super(value, id);
-      this.lang = "en";
+      this(value, id, null, null);
    }
 
    /**
@@ -67,6 +78,16 @@ public class LocalizedXsdString extends XsdString implements LocalizedMetadata
    public String getLang()
    {
       return lang;
+   }
+
+   /**
+    * {@inheritDoc}
+    *
+    * @see IdDecoratedMetadata#getId()
+    */
+   public void setLang(String lng)
+   {
+      lang = lng;
    }
 
    /**
@@ -126,14 +147,18 @@ public class LocalizedXsdString extends XsdString implements LocalizedMetadata
    @Override
    public String toString()
    {
-      return value;
+      if (tag == null)
+         return value;
+      else
+         return "<" + tag + (id == null ? "" : " id=\"" + id + "\"") + (lang == null ? "" : " lang=\"" + lang + "\"")
+               + ">" + value + "</" + tag + ">";
    }
 
    @Override
    public CopyableMetaData copy()
    {
       return new LocalizedXsdString(CopyUtil.cloneString(value), CopyUtil.cloneString(id),
-            CopyUtil.cloneString(lang));
+            CopyUtil.cloneString(lang), CopyUtil.cloneString(tag));
    }
 
 }

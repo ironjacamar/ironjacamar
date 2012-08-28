@@ -93,7 +93,7 @@ public class Merger
             {
                ConfigProperty16 c16 = (ConfigProperty16) c;
                XsdString newValue = new XsdString(ijProperties.get(c.getConfigPropertyName().getValue()), c
-                  .getConfigPropertyName().getId());
+                  .getConfigPropertyValue().getId(), c.getConfigPropertyValue().getTag());
                ConfigProperty16 newProp = new ConfigProperty16Impl(c.getDescriptions(), c.getConfigPropertyName(),
                                                                    c.getConfigPropertyType(), newValue,
                                                                    c16.getConfigPropertyIgnore(),
@@ -104,7 +104,7 @@ public class Merger
             else
             {
                XsdString newValue = new XsdString(ijProperties.get(c.getConfigPropertyName().getValue()), c
-                  .getConfigPropertyName().getId());
+                  .getConfigPropertyValue().getId(), c.getConfigPropertyValue().getTag());
                ConfigProperty newProp = new ConfigPropertyImpl(c.getDescriptions(), c.getConfigPropertyName(),
                                                                c.getConfigPropertyType(), newValue, c.getId());
                mergedProperties.add(newProp);

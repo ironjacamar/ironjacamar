@@ -26,26 +26,20 @@
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:schemaLocation="http://www.jboss.org/ironjacamar/schema 
              http://www.jboss.org/ironjacamar/schema/ironjacamar_1_0.xsd">
-  <config-property name="stringProperty">string</config-property>
-  <config-property name="intProperty">1</config-property>
 
   <transaction-support>NoTransaction</transaction-support>
   
   <connection-definitions>
     <connection-definition class-name="org.jboss.jca.test.deployers.spec.rars.ra16inoutijmultianno.TestManagedConnectionFactory" jndi-name="java:/eis/TestConnectionFactory" pool-name="TestConnectionFactory">
-      <config-property name="byteProperty">2</config-property>
     </connection-definition>
     <connection-definition class-name="org.jboss.jca.test.deployers.spec.rars.ra16inoutijmultianno.Test2ManagedConnectionFactory" jndi-name="java:/eis/Test2ConnectionFactory" pool-name="Test2ConnectionFactory">
-      <config-property name="doubleProperty">3.14</config-property>
     </connection-definition>
   </connection-definitions>
 
   <admin-objects>
     <admin-object class-name="org.jboss.jca.test.deployers.spec.rars.ra16inoutijmultianno.TestAdminObjectImpl" jndi-name="java:/eis/ao/TestAdminObjectInterface">
-      <config-property name="floatProperty">1.1</config-property>
     </admin-object>
     <admin-object class-name="org.jboss.jca.test.deployers.spec.rars.ra16inoutijmultianno.Test1AdminObjectImpl" jndi-name="java:/eis/ao/Test1AdminObjectInterface">
-      <config-property name="booleanProperty">true</config-property>
     </admin-object>
   </admin-objects>
 

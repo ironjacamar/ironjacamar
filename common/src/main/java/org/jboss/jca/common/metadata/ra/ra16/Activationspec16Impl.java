@@ -114,9 +114,7 @@ public class Activationspec16Impl extends Activationspec15Impl implements Activa
          sb.append(" ").append(Activationspec16.Attribute.ID).append("=\"").append(id).append("\"");
       sb.append(">");
 
-      sb.append("<").append(Activationspec16.Tag.ACTIVATIONSPEC_CLASS).append(">");
       sb.append(activationspecClass);
-      sb.append("</").append(Activationspec16.Tag.ACTIVATIONSPEC_CLASS).append(">");
 
       if (requiredConfigProperty != null)
       {

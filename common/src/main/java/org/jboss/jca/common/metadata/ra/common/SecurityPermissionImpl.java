@@ -25,6 +25,7 @@ import org.jboss.jca.common.api.metadata.CopyUtil;
 import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.ra.LocalizedXsdString;
 import org.jboss.jca.common.api.metadata.ra.SecurityPermission;
+import org.jboss.jca.common.api.metadata.ra.SecurityPermission.Tag;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 
 import java.util.ArrayList;
@@ -59,12 +60,17 @@ public class SecurityPermissionImpl implements SecurityPermission
       {
          this.description = new ArrayList<LocalizedXsdString>(description.size());
          this.description.addAll(description);
+         for (LocalizedXsdString d: this.description)
+            d.setTag(Tag.DESCRIPTION.toString());
+
       }
       else
       {
          this.description = new ArrayList<LocalizedXsdString>(0);
       }
       this.securityPermissionSpec = securityPermissionSpec;
+      if (!XsdString.isNull(this.securityPermissionSpec))
+         this.securityPermissionSpec.setTag(Tag.SECURITY_PERMISSION_SPEC.toString());
       this.id = id;
    }
 
@@ -180,11 +186,13 @@ public class SecurityPermissionImpl implements SecurityPermission
          sb.append(" ").append(SecurityPermission.Attribute.ID).append("=\"").append(id).append("\"");
       sb.append(">");
 
-      // description
+      if (description != null)
+      {
+         for (LocalizedXsdString s : description)
+            sb.append(s);
+      }
 
-      sb.append("<").append(SecurityPermission.Tag.SECURITY_PERMISSION_SPEC).append(">");
       sb.append(securityPermissionSpec);
-      sb.append("</").append(SecurityPermission.Tag.SECURITY_PERMISSION_SPEC).append(">");
 
       sb.append("</security-permission>");
       

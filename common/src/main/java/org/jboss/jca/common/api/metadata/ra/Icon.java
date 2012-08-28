@@ -21,7 +21,6 @@
  */
 package org.jboss.jca.common.api.metadata.ra;
 
-
 import org.jboss.jca.common.api.metadata.CopyUtil;
 import org.jboss.jca.common.api.metadata.CopyableMetaData;
 
@@ -38,11 +37,11 @@ public class Icon implements IdDecoratedMetadata, LocalizedMetadata, CopyableMet
     */
    private static final long serialVersionUID = 7809751095477978996L;
 
-   private final Path smallIcon;
+   private final XsdString smallIcon;
 
-   private final Path largeIcon;
+   private final XsdString largeIcon;
 
-   private final String lang;
+   private String lang;
 
    private final String id;
 
@@ -52,11 +51,15 @@ public class Icon implements IdDecoratedMetadata, LocalizedMetadata, CopyableMet
     * @param lang .
     * @param id .
     */
-   public Icon(Path smallIcon, Path largeIcon, String lang, String id)
+   public Icon(XsdString smallIcon, XsdString largeIcon, String lang, String id)
    {
       super();
       this.smallIcon = smallIcon;
+      if (!XsdString.isNull(this.smallIcon))
+         this.smallIcon.setTag(Tag.SMALL_ICON.toString());
       this.largeIcon = largeIcon;
+      if (!XsdString.isNull(this.largeIcon))
+         this.largeIcon.setTag(Tag.LARGE_ICON.toString());
       this.lang = lang;
       this.id = id;
    }
@@ -66,28 +69,23 @@ public class Icon implements IdDecoratedMetadata, LocalizedMetadata, CopyableMet
     * @param largeIcon .
     * @param id .
     */
-   public Icon(Path smallIcon, Path largeIcon, String id)
+   public Icon(XsdString smallIcon, XsdString largeIcon, String id)
    {
-      super();
-      this.smallIcon = smallIcon;
-      this.largeIcon = largeIcon;
-      this.lang = "en";
-      this.id = id;
+      this(smallIcon, largeIcon, null, id);
    }
 
    /**
     * @return smallIcon
     */
-   public Path getSmallIcon()
+   public XsdString getSmallIcon()
    {
       return smallIcon;
    }
 
-
    /**
     * @return largeIcon
     */
-   public Path getLargeIcon()
+   public XsdString getLargeIcon()
    {
       return largeIcon;
    }
@@ -110,6 +108,16 @@ public class Icon implements IdDecoratedMetadata, LocalizedMetadata, CopyableMet
    public String getId()
    {
       return id;
+   }
+
+   /**
+    * {@inheritDoc}
+    *
+    * @see IdDecoratedMetadata#getId()
+    */
+   public void setLang(String lng)
+   {
+      lang = lng;
    }
 
    /**
@@ -205,7 +213,8 @@ public class Icon implements IdDecoratedMetadata, LocalizedMetadata, CopyableMet
    @Override
    public String toString()
    {
-      return "Icon [smallIcon=" + smallIcon + ", largeIcon=" + largeIcon + ", lang=" + lang + ", id=" + id + "]";
+      return "<icon" + (id == null ? "" : " id=\"" + id + "\"") + (lang == null ? "" : " lang=\"" + lang + "\"") + ">"
+            + (smallIcon == null ? "" : smallIcon) + (largeIcon == null ? "" : largeIcon) + "</icon>";
    }
 
    /**
@@ -215,7 +224,7 @@ public class Icon implements IdDecoratedMetadata, LocalizedMetadata, CopyableMet
    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
    *
    */
-   public enum Tag
+   public enum Tag 
    {
       /** always first
        *
@@ -310,7 +319,7 @@ public class Icon implements IdDecoratedMetadata, LocalizedMetadata, CopyableMet
     * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
     *
     */
-   public enum Attribute
+   public enum Attribute 
    {
       /** unknown attribute
        *
@@ -400,6 +409,7 @@ public class Icon implements IdDecoratedMetadata, LocalizedMetadata, CopyableMet
    @Override
    public CopyableMetaData copy()
    {
-      return new Icon(CopyUtil.clone(smallIcon), CopyUtil.clone(largeIcon), CopyUtil.cloneString(id));
+      return new Icon(CopyUtil.clone(smallIcon), CopyUtil.clone(largeIcon), 
+            CopyUtil.cloneString(lang), CopyUtil.cloneString(id));
    }
 }

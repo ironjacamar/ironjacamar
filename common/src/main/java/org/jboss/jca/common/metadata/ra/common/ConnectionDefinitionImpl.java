@@ -26,6 +26,7 @@ import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.MergeUtil;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
+import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition.Tag;
 import org.jboss.jca.common.api.metadata.ra.MergeableMetadata;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 
@@ -71,8 +72,6 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
       XsdString connectionfactoryImplClass, XsdString connectionInterface, XsdString connectionImplClass, String id)
    {
       super();
-      this.managedconnectionfactoryClass = managedconnectionfactoryClass;
-
       if (configProperty != null)
       {
          this.configProperties = new ArrayList<ConfigProperty>(configProperty.size());
@@ -82,10 +81,21 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
       {
          this.configProperties = new ArrayList<ConfigProperty>(0);
       }
+      this.managedconnectionfactoryClass = managedconnectionfactoryClass;
+      if (!XsdString.isNull(this.managedconnectionfactoryClass))
+         this.managedconnectionfactoryClass.setTag(Tag.MANAGEDCONNECTIONFACTORY_CLASS.toString());
       this.connectionfactoryInterface = connectionfactoryInterface;
+      if (!XsdString.isNull(this.connectionfactoryInterface))
+         this.connectionfactoryInterface.setTag(Tag.CONNECTIONFACTORY_INTERFACE.toString());
       this.connectionfactoryImplClass = connectionfactoryImplClass;
+      if (!XsdString.isNull(this.connectionfactoryImplClass))
+         this.connectionfactoryImplClass.setTag(Tag.CONNECTIONFACTORY_IMPL_CLASS.toString());
       this.connectionInterface = connectionInterface;
+      if (!XsdString.isNull(this.connectionInterface))
+         this.connectionInterface.setTag(Tag.CONNECTION_INTERFACE.toString());
       this.connectionImplClass = connectionImplClass;
+      if (!XsdString.isNull(this.connectionImplClass))
+         this.connectionImplClass.setTag(Tag.CONNECTION_IMPL_CLASS.toString());
       this.id = id;
    }
 
@@ -305,9 +315,7 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
          sb.append(" ").append(ConnectionDefinition.Attribute.ID).append("=\"").append(id).append("\"");
       sb.append(">");
 
-      sb.append("<" + ConnectionDefinition.Tag.MANAGEDCONNECTIONFACTORY_CLASS + ">");
       sb.append(managedconnectionfactoryClass);
-      sb.append("</" + ConnectionDefinition.Tag.MANAGEDCONNECTIONFACTORY_CLASS + ">");
 
       if (configProperties != null)
       {
@@ -317,21 +325,13 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
          }
       }
 
-      sb.append("<" + ConnectionDefinition.Tag.CONNECTIONFACTORY_INTERFACE + ">");
       sb.append(connectionfactoryInterface);
-      sb.append("</" + ConnectionDefinition.Tag.CONNECTIONFACTORY_INTERFACE + ">");
 
-      sb.append("<" + ConnectionDefinition.Tag.CONNECTIONFACTORY_IMPL_CLASS + ">");
       sb.append(connectionfactoryImplClass);
-      sb.append("</" + ConnectionDefinition.Tag.CONNECTIONFACTORY_IMPL_CLASS + ">");
 
-      sb.append("<" + ConnectionDefinition.Tag.CONNECTION_INTERFACE + ">");
       sb.append(connectionInterface);
-      sb.append("</" + ConnectionDefinition.Tag.CONNECTION_INTERFACE + ">");
 
-      sb.append("<" + ConnectionDefinition.Tag.CONNECTION_IMPL_CLASS + ">");
       sb.append(connectionImplClass);
-      sb.append("</" + ConnectionDefinition.Tag.CONNECTION_IMPL_CLASS + ">");
 
       sb.append("</connection-definition>");
 

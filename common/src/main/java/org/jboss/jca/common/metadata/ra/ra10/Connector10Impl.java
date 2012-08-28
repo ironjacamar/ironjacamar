@@ -32,6 +32,7 @@ import org.jboss.jca.common.api.metadata.ra.MergeableMetadata;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra10.Connector10;
+import org.jboss.jca.common.api.metadata.ra.ra10.Connector10.Tag;
 import org.jboss.jca.common.api.metadata.ra.ra10.ResourceAdapter10;
 import org.jboss.jca.common.metadata.ra.common.ConnectorAbstractmpl;
 
@@ -48,9 +49,38 @@ public final class Connector10Impl extends ConnectorAbstractmpl implements Conne
     */
    private static final long serialVersionUID = -6095735191032372517L;
 
-   private final XsdString resourceadapterVersion;
+   private final XsdString version;
+
+   private final XsdString specVersion;
 
    /**
+    * @param description descriptions of this connector
+    * @param displayName name to display for this connecotro
+    * @param icon icon representing this connectore
+    * @param vendorName vendor name
+    * @param eisType eis type
+    * @param resourceadapterVersion version number for the RA
+    * @param license license information
+    * @param resourceadapter full qualified name of the resource adapter
+    * @param id XML ID
+    * @param specVersion parameter
+    */
+   public Connector10Impl(XsdString vendorName, XsdString eisType, XsdString resourceadapterVersion,
+         LicenseType license, ResourceAdapter resourceadapter, List<LocalizedXsdString> description,
+         List<LocalizedXsdString> displayName, List<Icon> icon, String id, XsdString specVersion)
+   {
+      super(vendorName, eisType, license, resourceadapter, description, displayName, icon, id);
+      this.version = resourceadapterVersion;
+      if (!XsdString.isNull(this.version))
+         this.version.setTag(Tag.VERSION.toString());
+      this.specVersion = specVersion;
+      if (!XsdString.isNull(this.specVersion))
+         this.specVersion.setTag(Tag.SPEC_VERSION.toString());
+   }
+
+   /**
+    * constructor with default spec version 
+    * 
     * @param description descriptions of this connector
     * @param displayName name to display for this connecotro
     * @param icon icon representing this connectore
@@ -63,11 +93,10 @@ public final class Connector10Impl extends ConnectorAbstractmpl implements Conne
     */
    public Connector10Impl(XsdString vendorName, XsdString eisType, XsdString resourceadapterVersion,
          LicenseType license, ResourceAdapter resourceadapter, List<LocalizedXsdString> description,
-         List<LocalizedXsdString> displayName,
-         List<Icon> icon, String id)
+         List<LocalizedXsdString> displayName, List<Icon> icon, String id)
    {
-      super(vendorName, eisType, license, resourceadapter, description, displayName, icon, id);
-      this.resourceadapterVersion = resourceadapterVersion;
+      this(vendorName, eisType, resourceadapterVersion, license, resourceadapter, description, 
+            displayName, icon, id, new XsdString("1.0", null));
    }
 
    /**
@@ -86,9 +115,9 @@ public final class Connector10Impl extends ConnectorAbstractmpl implements Conne
     *
     * @return the specVersion.
     */
-   public Version getSpecVersion()
+   public XsdString getSpecVersion()
    {
-      return Version.V_10;
+      return specVersion;
    }
 
    @Override
@@ -96,6 +125,8 @@ public final class Connector10Impl extends ConnectorAbstractmpl implements Conne
    {
       final int prime = 31;
       int result = super.hashCode();
+      result = prime * result + ((version == null) ? 0 : version.hashCode());
+      result = prime * result + ((specVersion == null) ? 0 : specVersion.hashCode());
       return result;
    }
 
@@ -108,44 +139,42 @@ public final class Connector10Impl extends ConnectorAbstractmpl implements Conne
          return false;
       if (!(obj instanceof Connector10Impl))
          return false;
-
-      return super.equals((Connector10Impl) obj);
+      Connector10Impl other = (Connector10Impl) obj;
+      if (version == null)
+      {
+         if (other.version != null)
+            return false;
+      }
+      else if (!version.equals(other.version))
+         return false;
+      if (specVersion == null)
+      {
+         if (other.specVersion != null)
+            return false;
+      }
+      else if (!specVersion.equals(other.specVersion))
+         return false;
+      return true;
    }
 
    @Override
    public String toString()
    {
-      StringBuilder sb = new StringBuilder(1024);
+      StringBuilder sb = new StringBuilder();
 
       sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-      sb.append("<").append("connector").append(">");
+      sb.append("<").append("connector");
+      if (id != null)
+         sb.append(" " + Connector10.Attribute.ID + "=\"" + id + "\"");
+      sb.append(">");
 
-      // description, displayName, icon
+      sb.append(super.toString());
 
-      if (!XsdString.isNull(vendorName))
-      {
-         sb.append("<" + Connector10.Tag.VENDOR_NAME + ">");
-         sb.append(vendorName);
-         sb.append("</" + Connector10.Tag.VENDOR_NAME + ">");
-      }
+      if (!XsdString.isNull(version))
+         sb.append(version);
 
-      sb.append("<" + Connector10.Tag.SPEC_VERSION + ">");
-      sb.append("1.0");
-      sb.append("</" + Connector10.Tag.SPEC_VERSION + ">");
-
-      if (!XsdString.isNull(eisType))
-      {
-         sb.append("<" + Connector10.Tag.EIS_TYPE + ">");
-         sb.append(eisType);
-         sb.append("</" + Connector10.Tag.EIS_TYPE + ">");
-      }
-
-      sb.append("<" + Connector10.Tag.VERSION + ">");
-      sb.append(resourceadapterVersion);
-      sb.append("</" + Connector10.Tag.VERSION + ">");
-
-      if (license != null)
-         sb.append(license);
+      if (!XsdString.isNull(specVersion))
+         sb.append(specVersion);
 
       sb.append(resourceadapter);
 
@@ -157,11 +186,10 @@ public final class Connector10Impl extends ConnectorAbstractmpl implements Conne
    @Override
    public CopyableMetaData copy()
    {
-      return new Connector10Impl(CopyUtil.clone(vendorName),
-            CopyUtil.clone(eisType), CopyUtil.clone(resourceadapterVersion), CopyUtil.clone(license),
-            CopyUtil.clone(resourceadapter),
-            CopyUtil.cloneList(description), CopyUtil.cloneList(displayName), CopyUtil.cloneList(icon),
-            CopyUtil.cloneString(id));
+      return new Connector10Impl(CopyUtil.clone(vendorName), CopyUtil.clone(eisType), CopyUtil.clone(version),
+            CopyUtil.clone(license), CopyUtil.clone(resourceadapter), CopyUtil.cloneList(description),
+            CopyUtil.cloneList(displayName), CopyUtil.cloneList(icon), CopyUtil.cloneString(id),
+            CopyUtil.clone(specVersion));
    }
 
    @Override
@@ -171,21 +199,16 @@ public final class Connector10Impl extends ConnectorAbstractmpl implements Conne
       if (inputMd instanceof Connector10Impl)
       {
          Connector10Impl input10 = (Connector10Impl) inputMd;
-         XsdString newResourceadapterVersion = XsdString.isNull(this.resourceadapterVersion)
-               ? input10.resourceadapterVersion : this.resourceadapterVersion;
+         XsdString newResourceadapterVersion = XsdString.isNull(this.version) ? input10.version : this.version;
          XsdString newEisType = XsdString.isNull(this.eisType) ? input10.eisType : this.eisType;
          List<Icon> newIcons = MergeUtil.mergeList(this.icon, input10.icon);
          LicenseType newLicense = this.license == null ? input10.license : this.license.merge(input10.license);
-         List<LocalizedXsdString> newDescriptions = MergeUtil.mergeList(this.description,
-               input10.description);
-         List<LocalizedXsdString> newDisplayNames = MergeUtil.mergeList(this.displayName,
-               input10.displayName);
-         XsdString newVendorName = XsdString.isNull(this.vendorName)
-               ? input10.vendorName : this.vendorName;;
+         List<LocalizedXsdString> newDescriptions = MergeUtil.mergeList(this.description, input10.description);
+         List<LocalizedXsdString> newDisplayNames = MergeUtil.mergeList(this.displayName, input10.displayName);
+         XsdString newVendorName = XsdString.isNull(this.vendorName) ? input10.vendorName : this.vendorName;;
          ResourceAdapter10 newResourceadapter = this.resourceadapter == null
                ? (ResourceAdapter10) input10.resourceadapter
-               : ((ResourceAdapter10) this.resourceadapter)
-                     .merge((ResourceAdapter10) input10.resourceadapter);
+               : ((ResourceAdapter10) this.resourceadapter).merge((ResourceAdapter10) input10.resourceadapter);
          return new Connector10Impl(newVendorName, newEisType, newResourceadapterVersion, newLicense,
                newResourceadapter, newDescriptions, newDisplayNames, newIcons, null);
       }

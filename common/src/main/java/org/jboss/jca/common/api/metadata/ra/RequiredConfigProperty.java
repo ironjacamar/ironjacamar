@@ -59,12 +59,17 @@ public class RequiredConfigProperty implements IdDecoratedMetadata, CopyableMeta
       {
          this.description = new ArrayList<LocalizedXsdString>(description.size());
          this.description.addAll(description);
+         for (LocalizedXsdString d: this.description)
+            d.setTag(Tag.DESCRIPTION.toString());
+
       }
       else
       {
          this.description = new ArrayList<LocalizedXsdString>(0);
       }
       this.configPropertyName = configPropertyName;
+      if (!XsdString.isNull(this.configPropertyName))
+         this.configPropertyName.setTag(Tag.CONFIG_PROPERTY_NAME.toString());
       this.id = id;
    }
 
@@ -183,14 +188,11 @@ public class RequiredConfigProperty implements IdDecoratedMetadata, CopyableMeta
          sb.append(" ").append(Attribute.ID).append("=\"").append(id).append("\"");
       sb.append(">");
 
-      // description
+      for (LocalizedXsdString d: description)
+         sb.append(d);
 
       if (!XsdString.isNull(configPropertyName))
-      {
-         sb.append("<").append(Tag.CONFIG_PROPERTY_NAME).append(">");
          sb.append(configPropertyName);
-         sb.append("</").append(Tag.CONFIG_PROPERTY_NAME).append(">");
-      }
 
       sb.append("</required-config-property>");
 

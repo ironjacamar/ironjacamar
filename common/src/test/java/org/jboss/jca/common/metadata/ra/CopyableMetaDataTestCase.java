@@ -29,7 +29,7 @@ import java.io.FileInputStream;
 import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 /**
  *
@@ -60,6 +60,7 @@ public class CopyableMetaDataTestCase
          Connector connector = parser.parse(is);
          Connector newConnector = (Connector) connector.copy();
          //then
+         assertEquals(connector.toString(), newConnector.toString());
          assertThat(connector == newConnector, is(false));
          assertThat(connector.equals(newConnector), is(true));
          assertThat(connector.hashCode(), is(newConnector.hashCode()));
@@ -95,6 +96,7 @@ public class CopyableMetaDataTestCase
          Connector connector = parser.parse(is);
          Connector newConnector = (Connector) connector.copy();
          //then
+         assertEquals(connector.toString(), newConnector.toString());
          assertThat(connector == newConnector, is(false));
          assertThat(connector.equals(newConnector), is(true));
          assertThat(connector.hashCode(), is(newConnector.hashCode()));
@@ -127,6 +129,7 @@ public class CopyableMetaDataTestCase
          Connector connector = parser.parse(is);
          Connector newConnector = (Connector) connector.copy();
          //then
+         assertEquals(connector.toString(), newConnector.toString());
          assertThat(connector == newConnector, is(false));
          assertThat(connector.equals(newConnector), is(true));
          assertThat(connector.hashCode(), is(newConnector.hashCode()));
@@ -160,6 +163,7 @@ public class CopyableMetaDataTestCase
          Connector connector = parser.parse(is);
          Connector newConnector = (Connector) connector.copy();
          //then
+         assertEquals(connector.toString(), newConnector.toString());
          assertThat(connector == newConnector, is(false));
          assertThat(connector.equals(newConnector), is(true));
          assertThat(connector.hashCode(), is(newConnector.hashCode()));

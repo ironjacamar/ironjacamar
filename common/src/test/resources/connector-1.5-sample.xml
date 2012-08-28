@@ -2,83 +2,61 @@
 <connector xmlns="http://java.sun.com/xml/ns/j2ee"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/connector_1_5.xsd" version="1.5" id="ID001">
-    <vendor-name>
-    </vendor-name>
-    <eis-type>
-    </eis-type>
-    <resourceadapter-version>
-    </resourceadapter-version>
+    <description id="ID001A">something</description>
+    <description id="ID001B" lang="en">something</description>
+    <description id="ID001C" lang="de">something</description>
+    <display-name>something</display-name>
+    <display-name lang="de">something</display-name>
+    <icon id="ID001D">
+    	<large-icon id="ID001E">large.gif</large-icon>
+    	<small-icon id="ID001F">small.gif</small-icon>
+    </icon>
+    <icon id="ID001E" lang="de"/>
+    <vendor-name id="ID002">something</vendor-name>
+    <eis-type id="ID004">something</eis-type>
+    <resourceadapter-version id="ID006A">5</resourceadapter-version>
     <license id="ID003">
-        <description>
-        </description>
-        <description>
-        </description>
-        <license-required>
-        </license-required>
+        <description id="ID003A">something</description>
+        <description lang="de">something</description>
+        <license-required id="ID003B">false</license-required>
     </license>
     <resourceadapter id="ID005">
-        <resourceadapter-class>
-        </resourceadapter-class>
+        <resourceadapter-class id="ID005A">Class1</resourceadapter-class>
         <config-property id="ID007">
-            <description>
-            </description>
-            <description>
-            </description>
-            <config-property-name>
-            </config-property-name>
-            <config-property-type>
-            </config-property-type>
-            <config-property-value>
-            </config-property-value>
+   			<description id="ID007B" lang="en">something</description>
+   			<description id="ID007C" lang="de">something</description>
+            <config-property-name id="ID006">aaa</config-property-name>
+            <config-property-type>java.lang.Short</config-property-type>
+            <config-property-value>12</config-property-value>
         </config-property>
         <config-property id="ID009">
-            <description>
-            </description>
-            <description>
-            </description>
-            <config-property-name>
-            </config-property-name>
-            <config-property-type>
-            </config-property-type>
-            <config-property-value>
-            </config-property-value>
+   			<description id="ID009B" lang="en">something</description>
+   			<description id="ID009C" lang="de">something</description>
+            <config-property-name>bbb</config-property-name>
+            <config-property-type>java.lang.Integer</config-property-type>
+            <config-property-value>35674</config-property-value>
         </config-property>
         <outbound-resourceadapter id="ID011">
             <connection-definition id="ID013">
-                <managedconnectionfactory-class>
-                </managedconnectionfactory-class>
+                <managedconnectionfactory-class id="ID013A">Class2</managedconnectionfactory-class>
                 <config-property id="ID015">
-                    <description>
-                    </description>
-                    <description>
-                    </description>
-                    <config-property-name>
-                    </config-property-name>
-                    <config-property-type>
-                    </config-property-type>
-                    <config-property-value>
-                    </config-property-value>
+                    <description>something</description>
+                    <description id="ID014">something</description>
+                    <config-property-name>ccc</config-property-name>
+                    <config-property-type>java.lang.Character</config-property-type>
+                    <config-property-value>c</config-property-value>
                 </config-property>
                 <config-property id="ID017">
-                    <description>
-                    </description>
-                    <description>
-                    </description>
-                    <config-property-name>
-                    </config-property-name>
-                    <config-property-type>
-                    </config-property-type>
-                    <config-property-value>
-                    </config-property-value>
+                    <description lang="ru">12345</description>
+                    <description> </description>
+                    <config-property-name>dddd</config-property-name>
+                    <config-property-type>java.lang.Byte</config-property-type>
+                    <config-property-value>24</config-property-value>
                 </config-property>
-                <connectionfactory-interface>
-                </connectionfactory-interface>
-                <connectionfactory-impl-class>
-                </connectionfactory-impl-class>
-                <connection-interface>
-                </connection-interface>
-                <connection-impl-class>
-                </connection-impl-class>
+                <connectionfactory-interface id="ID017A">Interface1</connectionfactory-interface>
+                <connectionfactory-impl-class id="ID017B">Class3</connectionfactory-impl-class>
+                <connection-interface id="ID017C">Interface2</connection-interface>
+                <connection-impl-class id="ID017D">Class4</connection-impl-class>
             </connection-definition>
             <connection-definition id="ID019">
                 <managedconnectionfactory-class>
@@ -116,15 +94,14 @@
                 <connection-impl-class>
                 </connection-impl-class>
             </connection-definition>
-            <transaction-support>NoTransaction</transaction-support>
+            <transaction-support id="ID024">NoTransaction</transaction-support>
             <authentication-mechanism id="ID025">
                 <description>
                 </description>
-                <description>
+                <description lang="en">a
                 </description>
-                <authentication-mechanism-type>
-                </authentication-mechanism-type>
-                <credential-interface>javax.resource.spi.security.PasswordCredential</credential-interface>
+                <authentication-mechanism-type id="ID025A">type</authentication-mechanism-type>
+                <credential-interface id="ID025B">javax.resource.spi.security.PasswordCredential</credential-interface>
             </authentication-mechanism>
             <authentication-mechanism id="ID027">
                 <description>
@@ -133,19 +110,23 @@
                 </description>
                 <authentication-mechanism-type>
                 </authentication-mechanism-type>
-                <credential-interface>javax.resource.spi.security.PasswordCredential</credential-interface>
+                <credential-interface>javax.resource.spi.security.GenericCredential</credential-interface>
             </authentication-mechanism>
-            <reauthentication-support>
-            </reauthentication-support>
+            <reauthentication-support id="ID028">false</reauthentication-support>
         </outbound-resourceadapter>
         <inbound-resourceadapter id="ID029">
             <messageadapter id="ID031">
                 <messagelistener id="ID033">
-                    <messagelistener-type>
+                    <messagelistener-type id="ID034">type
                     </messagelistener-type>
                     <activationspec id="ID035">
-                        <activationspec-class>
+                        <activationspec-class>class6
                         </activationspec-class>
+                        <required-config-property id="ID034A">
+                           	<description id="ID035B" lang="en">something</description>
+   							<description id="ID035C" lang="de">something</description>
+                        	<config-property-name>bbb</config-property-name>
+                        </required-config-property>
                     </activationspec>
                 </messagelistener>
                 <messagelistener id="ID037">
@@ -154,25 +135,26 @@
                     <activationspec id="ID039">
                         <activationspec-class>
                         </activationspec-class>
+                        <required-config-property></required-config-property>
                     </activationspec>
                 </messagelistener>
             </messageadapter>
         </inbound-resourceadapter>
         <adminobject id="ID041">
-            <adminobject-interface>
+            <adminobject-interface id="ID041A">Interface5
             </adminobject-interface>
-            <adminobject-class>
+            <adminobject-class id="ID042">class7
             </adminobject-class>
             <config-property id="ID043">
                 <description>
                 </description>
                 <description>
                 </description>
-                <config-property-name>
+                <config-property-name>eee
                 </config-property-name>
-                <config-property-type>
+                <config-property-type>java.lang.Double
                 </config-property-type>
-                <config-property-value>
+                <config-property-value>3.14
                 </config-property-value>
             </config-property>
             <config-property id="ID045">
@@ -180,12 +162,10 @@
                 </description>
                 <description>
                 </description>
-                <config-property-name>
+                <config-property-name>sss
                 </config-property-name>
-                <config-property-type>
+                <config-property-type>java.lang.Float
                 </config-property-type>
-                <config-property-value>
-                </config-property-value>
             </config-property>
         </adminobject>
         <adminobject id="ID047">
@@ -223,7 +203,7 @@
             </description>
             <description>
             </description>
-            <security-permission-spec>
+            <security-permission-spec id="ID054">spec1
             </security-permission-spec>
         </security-permission>
         <security-permission id="ID055">

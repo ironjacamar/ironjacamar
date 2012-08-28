@@ -24,6 +24,7 @@ package org.jboss.jca.common.metadata.ra.common;
 import org.jboss.jca.common.api.metadata.CopyUtil;
 import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.ra.AdminObject;
+import org.jboss.jca.common.api.metadata.ra.AdminObject.Tag;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 
@@ -60,7 +61,11 @@ public class AdminObjectImpl implements AdminObject
    {
       super();
       this.adminobjectInterface = adminobjectInterface;
+      if (!XsdString.isNull(this.adminobjectInterface))
+         this.adminobjectInterface.setTag(Tag.ADMINOBJECT_INTERFACE.toString());
       this.adminobjectClass = adminobjectClass;
+      if (!XsdString.isNull(this.adminobjectClass))
+         this.adminobjectClass.setTag(Tag.ADMINOBJECT_CLASS.toString());
       if (configProperty != null)
       {
          this.configProperties = new ArrayList<ConfigProperty>(configProperty.size());
@@ -194,13 +199,9 @@ public class AdminObjectImpl implements AdminObject
          sb.append(" ").append(AdminObject.Attribute.ID).append("=\"").append(id).append("\"");
       sb.append(">");
 
-      sb.append("<").append(AdminObject.Tag.ADMINOBJECT_INTERFACE).append(">");
       sb.append(adminobjectInterface);
-      sb.append("</").append(AdminObject.Tag.ADMINOBJECT_INTERFACE).append(">");
 
-      sb.append("<").append(AdminObject.Tag.ADMINOBJECT_CLASS).append(">");
       sb.append(adminobjectClass);
-      sb.append("</").append(AdminObject.Tag.ADMINOBJECT_CLASS).append(">");
 
       if (configProperties != null)
       {
