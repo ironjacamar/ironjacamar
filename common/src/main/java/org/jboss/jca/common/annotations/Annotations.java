@@ -38,7 +38,6 @@ import org.jboss.jca.common.api.metadata.ra.LicenseType;
 import org.jboss.jca.common.api.metadata.ra.LocalizedXsdString;
 import org.jboss.jca.common.api.metadata.ra.MessageListener;
 import org.jboss.jca.common.api.metadata.ra.OutboundResourceAdapter;
-import org.jboss.jca.common.api.metadata.ra.Path;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.SecurityPermission;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
@@ -368,11 +367,11 @@ public class Annotations
                                         (conAnnotation.largeIcon() == null ? 0 : conAnnotation.largeIcon().length));
          for (String smallIconAnnotation : conAnnotation.smallIcon())
          {
-            icons.add(new Icon(Path.valueOf(smallIconAnnotation), null, null));
+            icons.add(new Icon(new XsdString(smallIconAnnotation, null), null, null));
          }
          for (String largeIconAnnotation : conAnnotation.largeIcon())
          {
-            icons.add(new Icon(Path.valueOf(largeIconAnnotation), null, null));
+            icons.add(new Icon(null, new XsdString(largeIconAnnotation, null),  null));
          }
       }
 

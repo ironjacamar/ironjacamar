@@ -1,195 +1,238 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <connector xmlns="http://java.sun.com/xml/ns/javaee"
- xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/j2ee/connector_1_6.xsd" version="1.6" metadata-complete="false" id="ID001">
-    <module-name id="ID003">module-name0</module-name>
-        <description xml:lang="en-US" id="ID005">description0</description>
-        <description xml:lang="en-US" id="ID007">description1</description>
-        <display-name xml:lang="en-US" id="ID009">display-name0</display-name>
-        <display-name xml:lang="en-US" id="ID011">display-name1</display-name>
-        <icon xml:lang="en-US" id="ID013">
-            <small-icon id="ID015">small-icon0</small-icon>
-            <large-icon id="ID017">large-icon0</large-icon>
-        </icon>
-        <icon xml:lang="en-US" id="ID019">
-            <small-icon id="ID021">small-icon1</small-icon>
-            <large-icon id="ID023">large-icon1</large-icon>
-        </icon>
-    <vendor-name id="ID025">vendor-name0</vendor-name>
-    <eis-type id="ID027">eis-type0</eis-type>
-    <resourceadapter-version id="ID029">resourceadapter-version0</resourceadapter-version>
-    <license id="ID031">
-        <description xml:lang="en-US" id="ID033">description2</description>
-        <description xml:lang="en-US" id="ID035">description3</description>
-        <license-required id="ID037">false</license-required>
-    </license>
-    <resourceadapter id="ID039">
-        <resourceadapter-class id="ID041">resourceadapter-class0</resourceadapter-class>
-        <config-property id="ID043">
-            <description xml:lang="en-US" id="ID045">description4</description>
-            <description xml:lang="en-US" id="ID047">description5</description>
-            <config-property-name id="ID049">config-property-name0</config-property-name>
-            <config-property-type id="ID051">java.lang.Boolean</config-property-type>
-            <config-property-value id="ID053">config-property-value0</config-property-value>
-            <config-property-ignore id="ID055">false</config-property-ignore>
-            <config-property-supports-dynamic-updates id="ID057">false</config-property-supports-dynamic-updates>
-            <config-property-confidential id="ID059">false</config-property-confidential>
-        </config-property>
-        <config-property id="ID061">
-            <description xml:lang="en-US" id="ID063">description6</description>
-            <description xml:lang="en-US" id="ID065">description7</description>
-            <config-property-name id="ID067">config-property-name1</config-property-name>
-            <config-property-type id="ID069">java.lang.Boolean</config-property-type>
-            <config-property-value id="ID071">config-property-value1</config-property-value>
-            <config-property-ignore id="ID073">false</config-property-ignore>
-            <config-property-supports-dynamic-updates id="ID075">false</config-property-supports-dynamic-updates>
-            <config-property-confidential id="ID077">false</config-property-confidential>
-        </config-property>
-        <outbound-resourceadapter id="ID079">
-            <connection-definition id="ID081">
-                <managedconnectionfactory-class id="ID083">managedconnectionfactory-class0</managedconnectionfactory-class>
-                <config-property id="ID085">
-                    <description xml:lang="en-US" id="ID087">description8</description>
-                    <description xml:lang="en-US" id="ID089">description9</description>
-                    <config-property-name id="ID091">config-property-name2</config-property-name>
-                    <config-property-type id="ID093">java.lang.Boolean</config-property-type>
-                    <config-property-value id="ID095">config-property-value2</config-property-value>
-                    <config-property-ignore id="ID097">false</config-property-ignore>
-                    <config-property-supports-dynamic-updates id="ID099">false</config-property-supports-dynamic-updates>
-                    <config-property-confidential id="ID101">false</config-property-confidential>
-                </config-property>
-                <config-property id="ID103">
-                    <description xml:lang="en-US" id="ID105">description10</description>
-                    <description xml:lang="en-US" id="ID107">description11</description>
-                    <config-property-name id="ID109">config-property-name3</config-property-name>
-                    <config-property-type id="ID111">java.lang.Boolean</config-property-type>
-                    <config-property-value id="ID113">config-property-value3</config-property-value>
-                    <config-property-ignore id="ID115">false</config-property-ignore>
-                    <config-property-supports-dynamic-updates id="ID117">false</config-property-supports-dynamic-updates>
-                    <config-property-confidential id="ID119">false</config-property-confidential>
-                </config-property>
-                <connectionfactory-interface id="ID121">connectionfactory-interface0</connectionfactory-interface>
-                <connectionfactory-impl-class id="ID123">connectionfactory-impl-class0</connectionfactory-impl-class>
-                <connection-interface id="ID125">connection-interface0</connection-interface>
-                <connection-impl-class id="ID127">connection-impl-class0</connection-impl-class>
-            </connection-definition>
-            <connection-definition id="ID129">
-                <managedconnectionfactory-class id="ID131">managedconnectionfactory-class1</managedconnectionfactory-class>
-                <config-property id="ID133">
-                    <description xml:lang="en-US" id="ID135">description12</description>
-                    <description xml:lang="en-US" id="ID137">description13</description>
-                    <config-property-name id="ID139">config-property-name4</config-property-name>
-                    <config-property-type id="ID141">java.lang.Boolean</config-property-type>
-                    <config-property-value id="ID143">config-property-value4</config-property-value>
-                    <config-property-ignore id="ID145">false</config-property-ignore>
-                    <config-property-supports-dynamic-updates id="ID147">false</config-property-supports-dynamic-updates>
-                    <config-property-confidential id="ID149">false</config-property-confidential>
-                </config-property>
-                <config-property id="ID151">
-                    <description xml:lang="en-US" id="ID153">description14</description>
-                    <description xml:lang="en-US" id="ID155">description15</description>
-                    <config-property-name id="ID157">config-property-name5</config-property-name>
-                    <config-property-type id="ID159">java.lang.Boolean</config-property-type>
-                    <config-property-value id="ID161">config-property-value5</config-property-value>
-                    <config-property-ignore id="ID163">false</config-property-ignore>
-                    <config-property-supports-dynamic-updates id="ID165">false</config-property-supports-dynamic-updates>
-                    <config-property-confidential id="ID167">false</config-property-confidential>
-                </config-property>
-                <connectionfactory-interface id="ID169">connectionfactory-interface1</connectionfactory-interface>
-                <connectionfactory-impl-class id="ID171">connectionfactory-impl-class1</connectionfactory-impl-class>
-                <connection-interface id="ID173">connection-interface1</connection-interface>
-                <connection-impl-class id="ID175">connection-impl-class1</connection-impl-class>
-            </connection-definition>
-            <transaction-support id="ID177">NoTransaction</transaction-support>
-            <authentication-mechanism id="ID179">
-                <description xml:lang="en-US" id="ID181">description16</description>
-                <description xml:lang="en-US" id="ID183">description17</description>
-                <authentication-mechanism-type id="ID185">authentication-mechanism-type0</authentication-mechanism-type>
-                <credential-interface id="ID187">javax.resource.spi.security.PasswordCredential</credential-interface>
-            </authentication-mechanism>
-            <authentication-mechanism id="ID189">
-                <description xml:lang="en-US" id="ID191">description18</description>
-                <description xml:lang="en-US" id="ID193">description19</description>
-                <authentication-mechanism-type id="ID195">authentication-mechanism-type1</authentication-mechanism-type>
-                <credential-interface id="ID197">javax.resource.spi.security.PasswordCredential</credential-interface>
-            </authentication-mechanism>
-            <reauthentication-support id="ID199">false</reauthentication-support>
-        </outbound-resourceadapter>
-        <inbound-resourceadapter id="ID201">
-            <messageadapter id="ID203">
-                <messagelistener id="ID205">
-                    <messagelistener-type id="ID207">messagelistener-type0</messagelistener-type>
-                    <activationspec id="ID209">
-                        <activationspec-class id="ID211">activationspec-class0</activationspec-class>
-                    </activationspec>
-                </messagelistener>
-                <messagelistener id="ID213">
-                    <messagelistener-type id="ID215">messagelistener-type1</messagelistener-type>
-                    <activationspec id="ID217">
-                        <activationspec-class id="ID219">activationspec-class1</activationspec-class>
-                    </activationspec>
-                </messagelistener>
-            </messageadapter>
-        </inbound-resourceadapter>
-        <adminobject id="ID221">
-            <adminobject-interface id="ID223">adminobject-interface0</adminobject-interface>
-            <adminobject-class id="ID225">adminobject-class0</adminobject-class>
-            <config-property id="ID227">
-                <description xml:lang="en-US" id="ID229">description20</description>
-                <description xml:lang="en-US" id="ID231">description21</description>
-                <config-property-name id="ID233">config-property-name6</config-property-name>
-                <config-property-type id="ID235">java.lang.Boolean</config-property-type>
-                <config-property-value id="ID237">config-property-value6</config-property-value>
-                <config-property-ignore id="ID239">false</config-property-ignore>
-                <config-property-supports-dynamic-updates id="ID241">false</config-property-supports-dynamic-updates>
-                <config-property-confidential id="ID243">false</config-property-confidential>
-            </config-property>
-            <config-property id="ID245">
-                <description xml:lang="en-US" id="ID247">description22</description>
-                <description xml:lang="en-US" id="ID249">description23</description>
-                <config-property-name id="ID251">config-property-name7</config-property-name>
-                <config-property-type id="ID253">java.lang.Boolean</config-property-type>
-                <config-property-value id="ID255">config-property-value7</config-property-value>
-                <config-property-ignore id="ID257">false</config-property-ignore>
-                <config-property-supports-dynamic-updates id="ID259">false</config-property-supports-dynamic-updates>
-                <config-property-confidential id="ID261">false</config-property-confidential>
-            </config-property>
-        </adminobject>
-        <adminobject id="ID263">
-            <adminobject-interface id="ID265">adminobject-interface1</adminobject-interface>
-            <adminobject-class id="ID267">adminobject-class1</adminobject-class>
-            <config-property id="ID269">
-                <description xml:lang="en-US" id="ID271">description24</description>
-                <description xml:lang="en-US" id="ID273">description25</description>
-                <config-property-name id="ID275">config-property-name8</config-property-name>
-                <config-property-type id="ID277">java.lang.Boolean</config-property-type>
-                <config-property-value id="ID279">config-property-value8</config-property-value>
-                <config-property-ignore id="ID281">false</config-property-ignore>
-                <config-property-supports-dynamic-updates id="ID283">false</config-property-supports-dynamic-updates>
-                <config-property-confidential id="ID285">false</config-property-confidential>
-            </config-property>
-            <config-property id="ID287">
-                <description xml:lang="en-US" id="ID289">description26</description>
-                <description xml:lang="en-US" id="ID291">description27</description>
-                <config-property-name id="ID293">config-property-name9</config-property-name>
-                <config-property-type id="ID295">java.lang.Boolean</config-property-type>
-                <config-property-value id="ID297">config-property-value9</config-property-value>
-                <config-property-ignore id="ID299">false</config-property-ignore>
-                <config-property-supports-dynamic-updates id="ID301">false</config-property-supports-dynamic-updates>
-                <config-property-confidential id="ID303">false</config-property-confidential>
-            </config-property>
-        </adminobject>
-        <security-permission id="ID305">
-            <description xml:lang="en-US" id="ID307">description28</description>
-            <description xml:lang="en-US" id="ID309">description29</description>
-            <security-permission-spec id="ID311">security-permission-spec0</security-permission-spec>
-        </security-permission>
-        <security-permission id="ID313">
-            <description xml:lang="en-US" id="ID315">description30</description>
-            <description xml:lang="en-US" id="ID317">description31</description>
-            <security-permission-spec id="ID319">security-permission-spec1</security-permission-spec>
-        </security-permission>
-    </resourceadapter>
-    <required-work-context id="ID321">required-work-context0</required-work-context>
-    <required-work-context id="ID323">required-work-context1</required-work-context>
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/connector_1_6.xsd"
+	version="1.6" metadata-complete="false" id="ID001">
+	<module-name id="ID003">module-name0</module-name>
+	<description xml:lang="en-US" id="ID005">description0</description>
+	<description xml:lang="de" id="ID007">description1</description>
+	<display-name xml:lang="en-US" id="ID009">display-name0</display-name>
+	<display-name xml:lang="de" id="ID011">display-name1</display-name>
+	<icon xml:lang="en-US" id="ID013">
+		<small-icon id="ID015">small-icon0</small-icon>
+		<large-icon id="ID017">large-icon0</large-icon>
+	</icon>
+	<icon xml:lang="de" id="ID019">
+		<small-icon id="ID021">small-icon1</small-icon>
+		<large-icon id="ID023">large-icon1</large-icon>
+	</icon>
+	<vendor-name id="ID025">vendor-name0</vendor-name>
+	<eis-type id="ID027">eis-type0</eis-type>
+	<resourceadapter-version id="ID029">resourceadapter-version0</resourceadapter-version>
+	<license id="ID031">
+		<description xml:lang="en-US" id="ID033">description2</description>
+		<description xml:lang="de" id="ID035">description3</description>
+		<license-required id="ID037">false</license-required>
+	</license>
+	<resourceadapter id="ID039">
+		<resourceadapter-class id="ID041">resourceadapter-class0</resourceadapter-class>
+		<config-property id="ID043">
+			<description xml:lang="en-US" id="ID045">description4</description>
+			<description xml:lang="de" id="ID047">description5</description>
+			<config-property-name id="ID049">config-property-name0</config-property-name>
+			<config-property-type id="ID051">java.lang.Boolean</config-property-type>
+			<config-property-value id="ID053">true</config-property-value>
+			<config-property-ignore id="ID055">false</config-property-ignore>
+			<config-property-supports-dynamic-updates
+				id="ID057">false</config-property-supports-dynamic-updates>
+			<config-property-confidential id="ID059">false</config-property-confidential>
+		</config-property>
+		<config-property id="ID061">
+			<description xml:lang="en-US" id="ID063">description6</description>
+			<description xml:lang="en-US" id="ID065">description7</description>
+			<config-property-name id="ID067">config-property-name1</config-property-name>
+			<config-property-type id="ID069">java.lang.String</config-property-type>
+			<config-property-value id="ID071">config-property-value1</config-property-value>
+			<config-property-ignore id="ID073">true</config-property-ignore>
+			<config-property-supports-dynamic-updates
+				id="ID075">false</config-property-supports-dynamic-updates>
+			<config-property-confidential id="ID077">false</config-property-confidential>
+		</config-property>
+		<outbound-resourceadapter id="ID079">
+			<connection-definition id="ID081">
+				<managedconnectionfactory-class id="ID083">managedconnectionfactory-class0</managedconnectionfactory-class>
+				<config-property id="ID085">
+					<description xml:lang="en-US" id="ID087">description8</description>
+					<description xml:lang="en-US" id="ID089">description9</description>
+					<config-property-name id="ID091">config-property-name2</config-property-name>
+					<config-property-type id="ID093">java.lang.Float</config-property-type>
+					<config-property-value id="ID095">5</config-property-value>
+					<config-property-ignore id="ID097">false</config-property-ignore>
+					<config-property-supports-dynamic-updates
+						id="ID099">true</config-property-supports-dynamic-updates>
+					<config-property-confidential id="ID101">false</config-property-confidential>
+				</config-property>
+				<config-property id="ID103">
+					<description xml:lang="en-US" id="ID105">description10</description>
+					<description xml:lang="de" id="ID107">description11</description>
+					<config-property-name id="ID109">config-property-name3</config-property-name>
+					<config-property-type id="ID111">java.lang.Integer</config-property-type>
+					<config-property-value id="ID113">3</config-property-value>
+					<config-property-ignore id="ID115">false</config-property-ignore>
+					<config-property-supports-dynamic-updates
+						id="ID117">false</config-property-supports-dynamic-updates>
+					<config-property-confidential id="ID119">true</config-property-confidential>
+				</config-property>
+				<connectionfactory-interface id="ID121">connectionfactory-interface0</connectionfactory-interface>
+				<connectionfactory-impl-class id="ID123">connectionfactory-impl-class0</connectionfactory-impl-class>
+				<connection-interface id="ID125">connection-interface0</connection-interface>
+				<connection-impl-class id="ID127">connection-impl-class0</connection-impl-class>
+			</connection-definition>
+			<connection-definition id="ID129">
+				<managedconnectionfactory-class id="ID131">managedconnectionfactory-class1</managedconnectionfactory-class>
+				<config-property id="ID133">
+					<description xml:lang="en-US" id="ID135">description12</description>
+					<description xml:lang="en-US" id="ID137">description13</description>
+					<config-property-name id="ID139">config-property-name4</config-property-name>
+					<config-property-type id="ID141">java.lang.String</config-property-type>
+					<config-property-value id="ID143">config-property-value4</config-property-value>
+					<config-property-ignore id="ID145">false</config-property-ignore>
+					<config-property-supports-dynamic-updates
+						id="ID147">false</config-property-supports-dynamic-updates>
+					<config-property-confidential id="ID149">false</config-property-confidential>
+				</config-property>
+				<config-property id="ID151">
+					<description xml:lang="en-US" id="ID153">description14</description>
+					<description xml:lang="en-US" id="ID155">description15</description>
+					<config-property-name id="ID157">config-property-name5</config-property-name>
+					<config-property-type id="ID159">java.lang.String</config-property-type>
+					<config-property-value id="ID161">config-property-value5</config-property-value>
+					<config-property-ignore id="ID163">false</config-property-ignore>
+					<config-property-supports-dynamic-updates
+						id="ID165">false</config-property-supports-dynamic-updates>
+					<config-property-confidential id="ID167">false</config-property-confidential>
+				</config-property>
+				<connectionfactory-interface id="ID169">connectionfactory-interface1</connectionfactory-interface>
+				<connectionfactory-impl-class id="ID171">connectionfactory-impl-class1</connectionfactory-impl-class>
+				<connection-interface id="ID173">connection-interface1</connection-interface>
+				<connection-impl-class id="ID175">connection-impl-class1</connection-impl-class>
+			</connection-definition>
+			<transaction-support id="ID177">NoTransaction</transaction-support>
+			<authentication-mechanism id="ID179">
+				<description xml:lang="en-US" id="ID181">description16</description>
+				<description xml:lang="de" id="ID183">description17</description>
+				<authentication-mechanism-type id="ID185">authentication-mechanism-type0</authentication-mechanism-type>
+				<credential-interface id="ID187">javax.resource.spi.security.PasswordCredential</credential-interface>
+			</authentication-mechanism>
+			<authentication-mechanism id="ID189">
+				<description xml:lang="en-US" id="ID191">description18</description>
+				<description xml:lang="en-US" id="ID193">description19</description>
+				<authentication-mechanism-type id="ID195">authentication-mechanism-type1</authentication-mechanism-type>
+				<credential-interface id="ID197">org.ietf.jgss.GSSCredential</credential-interface>
+			</authentication-mechanism>
+			<reauthentication-support id="ID199">false</reauthentication-support>
+		</outbound-resourceadapter>
+		<inbound-resourceadapter id="ID201">
+			<messageadapter id="ID203">
+				<messagelistener id="ID205">
+					<messagelistener-type id="ID207">messagelistener-type0</messagelistener-type>
+					<activationspec id="ID209">
+						<activationspec-class id="ID211">activationspec-class0</activationspec-class>
+						<config-property id="ID1331">
+							<description xml:lang="en-US" id="ID1351">description12</description>
+							<description xml:lang="en-US" id="ID1371">description13</description>
+							<config-property-name id="ID1391">config-property-name4</config-property-name>
+							<config-property-type id="ID1411">java.lang.String</config-property-type>
+							<config-property-value id="ID1431">config-property-value4</config-property-value>
+							<config-property-ignore id="ID1451">false</config-property-ignore>
+							<config-property-supports-dynamic-updates
+								id="ID1471">false</config-property-supports-dynamic-updates>
+							<config-property-confidential id="ID1491">false</config-property-confidential>
+						</config-property>
+						<config-property id="ID151">
+							<description xml:lang="en-US" id="ID1531">description14</description>
+							<description xml:lang="en-US" id="ID1551">description15</description>
+							<config-property-name id="ID1571">config-property-name5</config-property-name>
+							<config-property-type id="ID1591">java.lang.String</config-property-type>
+							<config-property-value id="ID1611">config-property-value5</config-property-value>
+							<config-property-ignore id="ID1631">false</config-property-ignore>
+							<config-property-supports-dynamic-updates
+								id="ID1651">false</config-property-supports-dynamic-updates>
+							<config-property-confidential id="ID1671">false</config-property-confidential>
+						</config-property>
+						<required-config-property>
+							<description xml:lang="en-US" id="ID1532">description14</description>
+							<description xml:lang="de" id="ID1552">description15</description>
+							<config-property-name id="ID1554">config-property-name5</config-property-name>
+						</required-config-property>
+						<required-config-property>
+							<description xml:lang="en-US" id="ID1533">description14</description>
+							<description xml:lang="de" id="ID1553">description15</description>
+							<config-property-name>config-property-name4</config-property-name>
+						</required-config-property>
+					</activationspec>
+				</messagelistener>
+				<messagelistener id="ID213">
+					<messagelistener-type id="ID215">messagelistener-type1</messagelistener-type>
+					<activationspec id="ID217">
+						<activationspec-class id="ID219">activationspec-class1</activationspec-class>
+					</activationspec>
+				</messagelistener>
+			</messageadapter>
+		</inbound-resourceadapter>
+		<adminobject id="ID221">
+			<adminobject-interface id="ID223">adminobject-interface0</adminobject-interface>
+			<adminobject-class id="ID225">adminobject-class0</adminobject-class>
+			<config-property id="ID227">
+				<description xml:lang="en-US" id="ID229">description20</description>
+				<description xml:lang="en-US" id="ID231">description21</description>
+				<config-property-name id="ID233">config-property-name6</config-property-name>
+				<config-property-type id="ID235">java.lang.String</config-property-type>
+				<config-property-value id="ID237">config-property-value6</config-property-value>
+				<config-property-ignore id="ID239">false</config-property-ignore>
+				<config-property-supports-dynamic-updates
+					id="ID241">false</config-property-supports-dynamic-updates>
+				<config-property-confidential id="ID243">false</config-property-confidential>
+			</config-property>
+			<config-property id="ID245">
+				<description xml:lang="en-US" id="ID247">description22</description>
+				<description xml:lang="en-US" id="ID249">description23</description>
+				<config-property-name id="ID251">config-property-name7</config-property-name>
+				<config-property-type id="ID253">java.lang.String</config-property-type>
+				<config-property-value id="ID255">config-property-value7</config-property-value>
+				<config-property-ignore id="ID257">false</config-property-ignore>
+				<config-property-supports-dynamic-updates
+					id="ID259">false</config-property-supports-dynamic-updates>
+				<config-property-confidential id="ID261">false</config-property-confidential>
+			</config-property>
+		</adminobject>
+		<adminobject id="ID263">
+			<adminobject-interface id="ID265">adminobject-interface1</adminobject-interface>
+			<adminobject-class id="ID267">adminobject-class1</adminobject-class>
+			<config-property id="ID269">
+				<description xml:lang="en-US" id="ID271">description24</description>
+				<description xml:lang="en-US" id="ID273">description25</description>
+				<config-property-name id="ID275">config-property-name8</config-property-name>
+				<config-property-type id="ID277">java.lang.String</config-property-type>
+				<config-property-value id="ID279">config-property-value8</config-property-value>
+				<config-property-ignore id="ID281">false</config-property-ignore>
+				<config-property-supports-dynamic-updates
+					id="ID283">false</config-property-supports-dynamic-updates>
+				<config-property-confidential id="ID285">false</config-property-confidential>
+			</config-property>
+			<config-property id="ID287">
+				<description xml:lang="en-US" id="ID289">description26</description>
+				<description xml:lang="en-US" id="ID291">description27</description>
+				<config-property-name id="ID293">config-property-name9</config-property-name>
+				<config-property-type id="ID295">java.lang.String</config-property-type>
+				<config-property-value id="ID297">config-property-value9</config-property-value>
+				<config-property-ignore id="ID299">false</config-property-ignore>
+				<config-property-supports-dynamic-updates
+					id="ID301">false</config-property-supports-dynamic-updates>
+				<config-property-confidential id="ID303">false</config-property-confidential>
+			</config-property>
+		</adminobject>
+		<security-permission id="ID305">
+			<description xml:lang="en-US" id="ID307">description28</description>
+			<description xml:lang="de" id="ID309">description29</description>
+			<security-permission-spec id="ID311">security-permission-spec0</security-permission-spec>
+		</security-permission>
+		<security-permission id="ID313">
+			<description xml:lang="en-US" id="ID315">description30</description>
+			<description xml:lang="en-US" id="ID317">description31</description>
+			<security-permission-spec id="ID319">security-permission-spec1</security-permission-spec>
+		</security-permission>
+	</resourceadapter>
+	<required-work-context id="ID321">required-work-context0</required-work-context>
+	<required-work-context id="ID323">required-work-context1</required-work-context>
 </connector>

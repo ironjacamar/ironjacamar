@@ -75,8 +75,8 @@ public interface CommonBundle
     * @param element The element
     * @return The value
     */
-   @Message(id = 10056, value = "%s isn't a valid boolean for element %s. " + 
-            "We accept only \"true\" or \"false\" as boolean value")
+   @Message(id = 10056, value = "%s isn't a valid boolean for element %s. "
+         + "We accept only \"true\" or \"false\" as boolean value")
    public String elementAsBoolean(String value, String element);
 
    /**
@@ -85,8 +85,8 @@ public interface CommonBundle
     * @param element The element
     * @return The value
     */
-   @Message(id = 10057, value = "%s isn't a valid boolean for attribute %s. " + 
-            "We accept only \"true\" or \"false\" as boolean value")
+   @Message(id = 10057, value = "%s isn't a valid boolean for attribute %s. "
+         + "We accept only \"true\" or \"false\" as boolean value")
    public String attributeAsBoolean(String value, String element);
 
    /**
@@ -229,7 +229,8 @@ public interface CommonBundle
     * Invalid metadata for resource adapter 
     * @return The value
     */
-   @Message(id = 10075, value = "The resource adapter metadata must contain either an outbound or inbound configuration")
+   @Message(id = 10075, value = "The resource adapter metadata must contain " +
+         "either an outbound or inbound configuration")
    public String invalidMetadataForResourceAdapter();
 
    /**

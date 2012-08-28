@@ -32,6 +32,7 @@ import org.jboss.jca.common.api.metadata.ra.MergeableMetadata;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra15.Connector15;
+import org.jboss.jca.common.api.metadata.ra.ra15.Connector15.Tag;
 import org.jboss.jca.common.metadata.ra.common.ConnectorAbstractmpl;
 
 import java.util.List;
@@ -71,6 +72,8 @@ public class Connector15Impl extends ConnectorAbstractmpl implements Connector15
    {
       super(vendorName, eisType, license, resourceadapter, description, displayName, icon, id);
       this.resourceadapterVersion = resourceadapterVersion;
+      if (!XsdString.isNull(this.resourceadapterVersion))
+         this.resourceadapterVersion.setTag(Tag.RESOURCEADPTER_VERSION.toString());
    }
 
    /**
@@ -122,6 +125,15 @@ public class Connector15Impl extends ConnectorAbstractmpl implements Connector15
       return true;
    }
 
+   /**
+    * Xml output of default properties values for inherited classes 
+    * @return xml
+    */
+   protected String defaultPropertiesToString()
+   {
+      return super.toString();
+   }
+   
    @Override
    public String toString()
    {
@@ -134,31 +146,10 @@ public class Connector15Impl extends ConnectorAbstractmpl implements Connector15
          sb.append(" " + Connector15.Attribute.ID + "=\"" + id + "\"");
       sb.append(">");
 
-      // description, displayName, icon
-
-      if (!XsdString.isNull(vendorName))
-      {
-         sb.append("<" + Connector15.Tag.VENDOR_NAME + ">");
-         sb.append(vendorName);
-         sb.append("</" + Connector15.Tag.VENDOR_NAME + ">");
-      }
-
-      if (!XsdString.isNull(eisType))
-      {
-         sb.append("<" + Connector15.Tag.EIS_TYPE + ">");
-         sb.append(eisType);
-         sb.append("</" + Connector15.Tag.EIS_TYPE + ">");
-      }
+      sb.append(super.toString());
 
       if (!XsdString.isNull(resourceadapterVersion))
-      {
-         sb.append("<" + Connector15.Tag.RESOURCEADPTER_VERSION + ">");
          sb.append(resourceadapterVersion);
-         sb.append("</" + Connector15.Tag.RESOURCEADPTER_VERSION + ">");
-      }
-
-      if (license != null)
-         sb.append(license);
 
       sb.append(resourceadapter);
 
@@ -170,7 +161,7 @@ public class Connector15Impl extends ConnectorAbstractmpl implements Connector15
    @Override
    public CopyableMetaData copy()
    {
-      return new Connector15Impl(CopyUtil.clone(resourceadapterVersion), CopyUtil.clone(resourceadapterVersion),
+      return new Connector15Impl(CopyUtil.clone(vendorName), CopyUtil.clone(eisType),
             CopyUtil.clone(resourceadapterVersion), CopyUtil.clone(license),
             CopyUtil.clone((ResourceAdapter1516) resourceadapter), CopyUtil.cloneList(description),
             CopyUtil.cloneList(displayName),

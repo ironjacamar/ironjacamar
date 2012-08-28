@@ -1262,7 +1262,7 @@ public class Main
       if (value == null || value == XsdString.NULL_XSDSTRING)
          return "";
       else
-         return value.toString();
+         return value.getValue();//toString();
    }
 
    /**

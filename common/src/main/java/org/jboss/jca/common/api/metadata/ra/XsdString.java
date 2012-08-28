@@ -24,8 +24,6 @@ package org.jboss.jca.common.api.metadata.ra;
 import org.jboss.jca.common.api.metadata.CopyUtil;
 import org.jboss.jca.common.api.metadata.CopyableMetaData;
 
-
-
 /**
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
  *
@@ -36,7 +34,7 @@ public class XsdString implements IdDecoratedMetadata, CopyableMetaData
    /**
     * A NULL immutable instance
     */
-   public static final XsdString NULL_XSDSTRING = new XsdString(null, null);
+   public static final XsdString NULL_XSDSTRING = new XsdString(null, null, null);
 
    /**
     */
@@ -53,14 +51,32 @@ public class XsdString implements IdDecoratedMetadata, CopyableMetaData
    protected final String id;
 
    /**
+    * tag name
+    */
+   protected String tag;
+
+   /**
+    * @param value the actual String value
+    * @param id XML ID
+    * @param tag name
+    */
+   public XsdString(String value, String id, String tag)
+   {
+      super();
+      this.value = value;
+      this.id = id;
+      this.tag = tag;
+   }
+
+   /**
+    * Constructor without tag name
+    * 
     * @param value the actual String value
     * @param id XML ID
     */
    public XsdString(String value, String id)
    {
-      super();
-      this.value = value;
-      this.id = id;
+      this(value, id, null);
    }
 
    /**
@@ -85,6 +101,26 @@ public class XsdString implements IdDecoratedMetadata, CopyableMetaData
    /**
     * {@inheritDoc}
     *
+    * @see IdDecoratedMetadata#getId()
+    */
+   public String getTag()
+   {
+      return tag;
+   }
+   
+   /**
+    * {@inheritDoc}
+    *
+    * @see IdDecoratedMetadata#getId()
+    */
+   public void setTag(String tg)
+   {
+      tag = tg;
+   }
+
+   /**
+    * {@inheritDoc}
+    *
     * @see java.lang.Object#hashCode()
     */
    @Override
@@ -94,6 +130,7 @@ public class XsdString implements IdDecoratedMetadata, CopyableMetaData
       int result = 1;
       result = prime * result + ((id == null) ? 0 : id.hashCode());
       result = prime * result + ((value == null) ? 0 : value.hashCode());
+      result = prime * result + ((tag == null) ? 0 : tag.hashCode());
       return result;
    }
 
@@ -118,17 +155,28 @@ public class XsdString implements IdDecoratedMetadata, CopyableMetaData
          return false;
       }
       XsdString other = (XsdString) obj;
-      //      if (id == null)
-      //      {
-      //         if (other.id != null)
-      //         {
-      //            return false;
-      //         }
-      //      }
-      //      else if (!id.equals(other.id))
-      //      {
-      //         return false;
-      //      }
+      if (id == null)
+      {
+         if (other.id != null)
+         {
+            return false;
+         }
+      }
+      else if (!id.equals(other.id))
+      {
+         return false;
+      }
+      if (tag == null)
+      {
+         if (other.tag != null)
+         {
+            return false;
+         }
+      }
+      else if (!tag.equals(other.tag))
+      {
+         return false;
+      }
       if (value == null)
       {
          if (other.value != null)
@@ -151,7 +199,10 @@ public class XsdString implements IdDecoratedMetadata, CopyableMetaData
    @Override
    public String toString()
    {
-      return value;
+      if (tag == null)
+         return value;
+      else
+         return "<" + tag + (id == null ? "" : " id=\"" + id + "\"") + ">" + value + "</" + tag + ">";
    }
 
    /**
@@ -168,6 +219,6 @@ public class XsdString implements IdDecoratedMetadata, CopyableMetaData
    @Override
    public CopyableMetaData copy()
    {
-      return new XsdString(CopyUtil.cloneString(value), CopyUtil.cloneString(id));
+      return new XsdString(CopyUtil.cloneString(value), CopyUtil.cloneString(id), CopyUtil.cloneString(tag));
    }
 }

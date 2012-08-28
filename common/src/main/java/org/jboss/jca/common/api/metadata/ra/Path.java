@@ -38,6 +38,7 @@ public class Path implements JCAMetadata, CopyableMetaData
    private static final long serialVersionUID = 3452844893341380928L;
 
    private final String value;
+   
 
    /**
     * @param value Path String

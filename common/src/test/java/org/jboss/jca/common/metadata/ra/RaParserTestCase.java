@@ -35,7 +35,7 @@ import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 /**
  *
@@ -54,26 +54,10 @@ public class RaParserTestCase
    public void shouldParseConnector16() throws Exception
    {
 
-      FileInputStream is = null;
-      try
-      {
-         //given
-         File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-               .getResource("connector-1.6-sample.xml").toURI());
-         is = new FileInputStream(xmlFile);
-         RaParser parser = new RaParser();
-         //when
-         Connector connector = parser.parse(is);
-         //then
-         assertThat(connector, instanceOf(Connector16.class));
-         assertThat(connector.getVersion(), is(Version.V_16));
-      }
-      finally
-      {
-         if (is != null)
-            is.close();
-      }
+      Connector connector = parseXML("connector-1.6-sample.xml");
 
+      assertThat(connector, instanceOf(Connector16.class));
+      assertThat(connector.getVersion(), is(Version.V_16));
    }
 
    /**
@@ -83,27 +67,10 @@ public class RaParserTestCase
    @Test
    public void shouldParseConnector15() throws Exception
    {
+      Connector connector = parseXML("connector-1.5-sample.xml");
 
-      FileInputStream is = null;
-      try
-      {
-         //given
-         File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-               .getResource("connector-1.5-sample.xml").toURI());
-         is = new FileInputStream(xmlFile);
-         RaParser parser = new RaParser();
-         //when
-         Connector connector = parser.parse(is);
-         //then
-         assertThat(connector, instanceOf(Connector15.class));
-         assertThat(connector.getVersion(), is(Version.V_15));
-      }
-      finally
-      {
-         if (is != null)
-            is.close();
-      }
-
+      assertThat(connector, instanceOf(Connector15.class));
+      assertThat(connector.getVersion(), is(Version.V_15));
    }
 
    /**
@@ -113,28 +80,10 @@ public class RaParserTestCase
    @Test
    public void shouldParseConnector16MoreComplex() throws Exception
    {
-      FileInputStream is = null;
-      try
-      {
-         //given
-         File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-               .getResource("ra.xml").toURI());
-         is = new FileInputStream(xmlFile);
-         RaParser parser = new RaParser();
-         //when
-         Connector connector = parser.parse(is);
-         //then
-         assertThat(connector, instanceOf(Connector16.class));
-         assertThat(connector.getVersion(), is(Version.V_16));
+      Connector connector = parseXML("ra.xml");
 
-
-      }
-      finally
-      {
-         if (is != null)
-            is.close();
-      }
-
+      assertThat(connector, instanceOf(Connector16.class));
+      assertThat(connector.getVersion(), is(Version.V_16));
    }
 
    /**
@@ -144,57 +93,41 @@ public class RaParserTestCase
    @Test
    public void shouldParseConnector10() throws Exception
    {
-      FileInputStream is = null;
-      try
-      {
-         //given
-         File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-               .getResource("connector-1.0-sample.xml").toURI());
-         is = new FileInputStream(xmlFile);
-         RaParser parser = new RaParser();
-         //when
-         Connector connector = parser.parse(is);
-         //then
-         assertThat(connector, instanceOf(Connector10.class));
-         assertThat(connector.getVersion(), is(Version.V_10));
-      }
-      finally
-      {
-         if (is != null)
-            is.close();
-      }
+      Connector connector = parseXML("connector-1.0-sample.xml");
 
+      assertThat(connector, instanceOf(Connector10.class));
+      assertThat(connector.getVersion(), is(Version.V_10));
    }
 
    /**
-    * Parse of XML representation
+    * Parses XML representation
+    * @param fileName containing XML
+    * @return connector object
     * @throws Exception in case of error
     */
-   @Test
-   public void shouldParseXMLRepresentation() throws Exception
+   public Connector parseXML(String fileName) throws Exception
    {
       FileInputStream is = null;
       ByteArrayInputStream bais = null;
       try
       {
          //given
-         File xmlFile = new File(Thread.currentThread().getContextClassLoader()
-               .getResource("ra.xml").toURI());
+         File xmlFile = new File(Thread.currentThread().getContextClassLoader().getResource(fileName).toURI());
          is = new FileInputStream(xmlFile);
          RaParser parser = new RaParser();
          //when
          Connector connector1 = parser.parse(is);
 
          String xmlRepresentation = connector1.toString();
+         System.out.println(xmlRepresentation);
          bais = new ByteArrayInputStream(xmlRepresentation.getBytes("UTF-8"));
          Connector connector2 = parser.parse(bais);
 
          //then
-         assertThat(connector1, instanceOf(Connector16.class));
-         assertThat(connector1.getVersion(), is(Version.V_16));
-
-         assertThat(connector2, instanceOf(Connector16.class));
-         assertThat(connector2.getVersion(), is(Version.V_16));
+         assertEquals(connector1.getClass(), connector2.getClass());
+         assertEquals(xmlRepresentation, connector2.toString());
+         assertEquals(connector1, connector2);
+         return connector1;
       }
       finally
       {

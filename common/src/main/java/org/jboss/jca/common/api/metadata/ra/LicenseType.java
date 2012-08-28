@@ -21,8 +21,6 @@
  */
 package org.jboss.jca.common.api.metadata.ra;
 
-
-
 import org.jboss.jca.common.api.metadata.CopyUtil;
 import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.MergeUtil;
@@ -50,18 +48,23 @@ public class LicenseType implements IdDecoratedMetadata, MergeableMetadata<Licen
 
    private final String id;
 
+   private final String licReqId;
+
    /**
     * @param description description of the license
     * @param licenseRequired mandatory boolena value
     * @param id XML ID
+    * @param lrid id of licenseRequired element
     */
-   public LicenseType(List<LocalizedXsdString> description, boolean licenseRequired, String id)
+   public LicenseType(List<LocalizedXsdString> description, boolean licenseRequired, String id, String lrid)
    {
       super();
       if (description != null)
       {
          this.description = new ArrayList<LocalizedXsdString>(description.size());
          this.description.addAll(description);
+         for (LocalizedXsdString d: this.description)
+            d.setTag(Tag.DESCRIPTION.toString());
       }
       else
       {
@@ -69,6 +72,17 @@ public class LicenseType implements IdDecoratedMetadata, MergeableMetadata<Licen
       }
       this.licenseRequired = licenseRequired;
       this.id = id;
+      licReqId = lrid;
+   }
+
+   /**
+    * @param description description of the license
+    * @param licenseRequired mandatory boolena value
+    * @param id XML ID
+    */
+   public LicenseType(List<LocalizedXsdString> description, boolean licenseRequired, String id)
+   {
+      this(description, licenseRequired, id, null);
    }
 
    /**
@@ -111,6 +125,8 @@ public class LicenseType implements IdDecoratedMetadata, MergeableMetadata<Licen
       result = prime * result + ((description == null) ? 0 : description.hashCode());
       result = prime * result + ((id == null) ? 0 : id.hashCode());
       result = prime * result + (licenseRequired ? 1231 : 1237);
+      result = prime * result + ((licReqId == null) ? 0 : licReqId.hashCode());
+
       return result;
    }
 
@@ -143,6 +159,17 @@ public class LicenseType implements IdDecoratedMetadata, MergeableMetadata<Licen
          }
       }
       else if (!description.equals(other.description))
+      {
+         return false;
+      }
+      if (licReqId == null)
+      {
+         if (other.licReqId != null)
+         {
+            return false;
+         }
+      }
+      else if (!licReqId.equals(other.licReqId))
       {
          return false;
       }
@@ -182,14 +209,11 @@ public class LicenseType implements IdDecoratedMetadata, MergeableMetadata<Licen
       if (description != null)
       {
          for (LocalizedXsdString s : description)
-         {
-            sb.append("<").append(Tag.DESCRIPTION).append(">");
             sb.append(s);
-            sb.append("</").append(Tag.DESCRIPTION).append(">");            
-         }
       }
 
-      sb.append("<").append(Tag.LICENSE_REQUIRED).append(">");
+      sb.append("<").append(Tag.LICENSE_REQUIRED).append(licReqId == null ? "" : " id=\"" + licReqId + "\"")
+            .append(">");
       sb.append(licenseRequired);
       sb.append("</").append(Tag.LICENSE_REQUIRED).append(">");
 
@@ -205,7 +229,7 @@ public class LicenseType implements IdDecoratedMetadata, MergeableMetadata<Licen
     * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
     *
     */
-   public enum Tag
+   public enum Tag 
    {
       /** always first
        *
@@ -300,7 +324,7 @@ public class LicenseType implements IdDecoratedMetadata, MergeableMetadata<Licen
     * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
     *
     */
-   public enum Attribute
+   public enum Attribute 
    {
       /** unknown attribute
        *
@@ -391,8 +415,7 @@ public class LicenseType implements IdDecoratedMetadata, MergeableMetadata<Licen
 
          boolean newLicenseRequired = this.licenseRequired || inputLicense.licenseRequired;
          String newId = this.id == null ? inputLicense.id : this.id;
-         List<LocalizedXsdString> newDescription = MergeUtil.mergeList(this.description,
-               inputLicense.description);
+         List<LocalizedXsdString> newDescription = MergeUtil.mergeList(this.description, inputLicense.description);
          return new LicenseType(newDescription, newLicenseRequired, newId);
       }
       else
@@ -404,7 +427,8 @@ public class LicenseType implements IdDecoratedMetadata, MergeableMetadata<Licen
    @Override
    public CopyableMetaData copy()
    {
-      return new LicenseType(CopyUtil.cloneList(description), licenseRequired, CopyUtil.cloneString(id));
+      return new LicenseType(CopyUtil.cloneList(description), licenseRequired, CopyUtil.cloneString(id),
+            CopyUtil.cloneString(licReqId));
    }
 
 }

@@ -24,6 +24,7 @@ package org.jboss.jca.common.metadata.ra.common;
 import org.jboss.jca.common.api.metadata.CopyUtil;
 import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.ra.MessageListener;
+import org.jboss.jca.common.api.metadata.ra.MessageListener.Tag;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra15.Activationspec15;
 
@@ -55,6 +56,8 @@ public class MessageListenerImpl implements MessageListener
    {
       super();
       this.messagelistenerType = messagelistenerType;
+      if (!XsdString.isNull(this.messagelistenerType))
+         this.messagelistenerType.setTag(Tag.MESSAGELISTENER_TYPE.toString());
       this.activationspec = activationspec;
       this.id = id;
    }
@@ -172,9 +175,7 @@ public class MessageListenerImpl implements MessageListener
          sb.append(" ").append(MessageListener.Attribute.ID).append("=\"").append(id).append("\"");
       sb.append(">");
 
-      sb.append("<").append(MessageListener.Tag.MESSAGELISTENER_TYPE).append(">");
       sb.append(messagelistenerType);
-      sb.append("</").append(MessageListener.Tag.MESSAGELISTENER_TYPE).append(">");
 
       sb.append(activationspec);
 

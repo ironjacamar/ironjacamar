@@ -26,6 +26,7 @@ import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.ra.RequiredConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra15.Activationspec15;
+import org.jboss.jca.common.api.metadata.ra.ra15.Activationspec15.Tag;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -72,6 +73,8 @@ public class Activationspec15Impl implements Activationspec15
    {
       super();
       this.activationspecClass = activationspecClass;
+      if (!XsdString.isNull(this.activationspecClass))
+         this.activationspecClass.setTag(Tag.ACTIVATIONSPEC_CLASS.toString());
       if (requiredConfigProperty != null)
       {
          this.requiredConfigProperty = new ArrayList<RequiredConfigProperty>(requiredConfigProperty.size());
@@ -169,9 +172,7 @@ public class Activationspec15Impl implements Activationspec15
          sb.append(" ").append(Activationspec15.Attribute.ID).append("=\"").append(id).append("\"");
       sb.append(">");
 
-      sb.append("<").append(Activationspec15.Tag.ACTIVATIONSPEC_CLASS).append(">");
       sb.append(activationspecClass);
-      sb.append("</").append(Activationspec15.Tag.ACTIVATIONSPEC_CLASS).append(">");
 
       if (requiredConfigProperty != null)
       {

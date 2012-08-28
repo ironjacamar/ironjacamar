@@ -30,6 +30,7 @@ import org.jboss.jca.common.api.metadata.ra.LocalizedXsdString;
 import org.jboss.jca.common.api.metadata.ra.MergeableMetadata;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
+import org.jboss.jca.common.api.metadata.ra.ra10.Connector10.Tag;
 import org.jboss.jca.common.api.validator.ValidateException;
 
 import java.util.ArrayList;
@@ -37,6 +38,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jboss.logging.Messages;
+
+
 
 /**
  *
@@ -112,7 +115,12 @@ public abstract class ConnectorAbstractmpl implements Connector
    {
       super();
       this.vendorName = vendorName;
+      if (!XsdString.isNull(this.vendorName))
+         this.vendorName.setTag(Tag.VENDOR_NAME.toString());
+      
       this.eisType = eisType;
+      if (!XsdString.isNull(this.eisType))
+         this.eisType.setTag(Tag.EIS_TYPE.toString());
       this.license = license;
       this.resourceadapter = resourceadapter;
       this.id = id;
@@ -120,6 +128,8 @@ public abstract class ConnectorAbstractmpl implements Connector
       {
          this.description = new ArrayList<LocalizedXsdString>(description.size());
          this.description.addAll(description);
+         for (LocalizedXsdString d: this.description)
+            d.setTag(Tag.DESCRIPTION.toString());
       }
       else
       {
@@ -128,7 +138,10 @@ public abstract class ConnectorAbstractmpl implements Connector
       if (displayName != null)
       {
          this.displayName = new ArrayList<LocalizedXsdString>(displayName.size());
-         this.displayName.addAll(description);
+         this.displayName.addAll(displayName);
+         for (LocalizedXsdString d: this.displayName)
+            d.setTag(Tag.DISPLAY_NAME.toString());
+
       }
       else
       {
@@ -237,6 +250,8 @@ public abstract class ConnectorAbstractmpl implements Connector
       result = prime * result + ((license == null) ? 0 : license.hashCode());
       result = prime * result + ((resourceadapter == null) ? 0 : resourceadapter.hashCode());
       result = prime * result + ((vendorName == null) ? 0 : vendorName.hashCode());
+      result = prime * result + ((description == null) ? 0 : description.hashCode());
+      result = prime * result + ((displayName == null) ? 0 : displayName.hashCode());
       return result;
    }
 
@@ -285,6 +300,20 @@ public abstract class ConnectorAbstractmpl implements Connector
       }
       else if (!vendorName.equals(other.vendorName))
          return false;
+      if (description == null)
+      {
+         if (other.description != null)
+            return false;
+      }
+      else if (!description.equals(other.description))
+         return false;
+      if (displayName == null)
+      {
+         if (other.displayName != null)
+            return false;
+      }
+      else if (!displayName.equals(other.displayName))
+         return false;
       return true;
    }
 
@@ -323,5 +352,30 @@ public abstract class ConnectorAbstractmpl implements Connector
    /**
     * {@inheritDoc}
     */
-   public abstract String toString();
+   public String toString()
+   {
+      StringBuilder sb = new StringBuilder();
+
+      for (LocalizedXsdString d:description)
+         sb.append(d);
+
+      for (LocalizedXsdString n:displayName)
+         sb.append(n);
+      
+      for (Icon i:icon)
+         sb.append(i);
+
+      if (!XsdString.isNull(vendorName))
+         sb.append(vendorName);
+
+      if (!XsdString.isNull(eisType))
+         sb.append(eisType);
+      
+      if (license != null)
+         sb.append(license);
+      
+      //id and resourceadapter are in implementing class
+      
+      return sb.toString();
+   }
 }

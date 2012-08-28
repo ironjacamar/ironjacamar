@@ -36,7 +36,6 @@ import org.jboss.jca.common.api.metadata.ra.LocalizedXsdString;
 import org.jboss.jca.common.api.metadata.ra.MessageListener;
 import org.jboss.jca.common.api.metadata.ra.Messageadapter;
 import org.jboss.jca.common.api.metadata.ra.OutboundResourceAdapter;
-import org.jboss.jca.common.api.metadata.ra.Path;
 import org.jboss.jca.common.api.metadata.ra.RequiredConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.SecurityPermission;
@@ -197,6 +196,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
       XsdString vendorName = NULL_XSDSTRING;
       ArrayList<LocalizedXsdString> displayName = new ArrayList<LocalizedXsdString>();
       XsdString resourceadapterVersion = NULL_XSDSTRING;
+      XsdString specVersion = NULL_XSDSTRING;
       while (reader.hasNext())
       {
          switch (reader.nextTag())
@@ -204,14 +204,20 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
             case END_ELEMENT : {
                if (Tag.forName(reader.getLocalName()) == Tag.CONNECTOR)
                {
-
                   //trimming collections
                   icon.trimToSize();
                   description.trimToSize();
+                  //erase lang attribute 
+                  for (Icon i : icon)
+                     i.setLang(null);
+                  for (LocalizedXsdString d : description)
+                     d.setLang(null);
+                  for (LocalizedXsdString n : displayName)
+                     n.setLang(null);
 
                   //building and returning object
-                  return new Connector10Impl(vendorName, eisType, resourceadapterVersion, license,
-                                             resourceadapter, description, displayName, icon, id);
+                  return new Connector10Impl(vendorName, eisType, resourceadapterVersion, license, resourceadapter,
+                        description, displayName, icon, id, specVersion);
 
                }
                else
@@ -247,11 +253,17 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                      break;
                   }
                   case DESCRIPTION : {
-                     description.add(elementAsLocalizedXsdString(reader));
+                     if (description.size() > 0)
+                        throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
+                     else
+                        description.add(elementAsLocalizedXsdString(reader));
                      break;
                   }
                   case DISPLAY_NAME : {
-                     displayName.add(elementAsLocalizedXsdString(reader));
+                     if (displayName.size() > 0)
+                        throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
+                     else
+                        displayName.add(elementAsLocalizedXsdString(reader));
                      break;
                   }
                   case ICON : {
@@ -259,8 +271,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                      break;
                   }
                   case SPEC_VERSION : {
-                     //ignore
-                     elementAsLocalizedXsdString(reader);
+                     specVersion = elementAsXsdString(reader);
                      break;
                   }
                   default :
@@ -295,7 +306,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
 
                   //building and returning object
                   return new Connector15Impl(vendorName, eisType, resourceadapterVersion, license, resourceadapter,
-                                             description, displayName, icon, id);
+                        description, displayName, icon, id);
 
                }
                else
@@ -355,7 +366,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
    private Connector parseConnector16(XMLStreamReader reader) throws XMLStreamException, ParserException
    {
       boolean metadataComplete = Boolean.valueOf(reader.getAttributeValue(null,
-         Connector16.Attribute.METADATA_COMPLETE.getLocalName()));;
+            Connector16.Attribute.METADATA_COMPLETE.getLocalName()));;
       LicenseType license = null;
       String id = reader.getAttributeValue(null, Connector16.Attribute.ID.getLocalName());;
       ArrayList<Icon> icon = new ArrayList<Icon>();
@@ -364,8 +375,8 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
       XsdString eisType = NULL_XSDSTRING;
       ResourceAdapter1516 resourceadapter = null;
       XsdString vendorName = NULL_XSDSTRING;
-      String moduleName = null;
-      ArrayList<String> requiredWorkContext = new ArrayList<String>();
+      XsdString moduleName = null;
+      ArrayList<XsdString> requiredWorkContext = new ArrayList<XsdString>();
       XsdString resourceadapterVersion = NULL_XSDSTRING;
       while (reader.hasNext())
       {
@@ -382,8 +393,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                   requiredWorkContext.trimToSize();
                   //building and returning object
                   return new Connector16Impl(moduleName, vendorName, eisType, resourceadapterVersion, license,
-                                             resourceadapter, requiredWorkContext, metadataComplete, description,
-                                             displayName, icon, id);
+                        resourceadapter, requiredWorkContext, metadataComplete, description, displayName, icon, id);
 
                }
                else
@@ -400,7 +410,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                switch (Connector16.Tag.forName(reader.getLocalName()))
                {
                   case MODULE_NAME : {
-                     moduleName = reader.getElementText().trim();
+                     moduleName = elementAsXsdString(reader);
                      break;
                   }
                   case VENDOR_NAME : {
@@ -424,7 +434,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                      break;
                   }
                   case REQUIRED_WORK_CONTEXT : {
-                     requiredWorkContext.add(reader.getElementText().trim());
+                     requiredWorkContext.add(elementAsXsdString(reader));
                      break;
                   }
                   case DESCRIPTION : {
@@ -451,12 +461,12 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
 
    private Icon parseIcon(XMLStreamReader reader) throws XMLStreamException, ParserException
    {
-      Path largeIcon = null;
-      Path smallIcon = null;
+      XsdString largeIcon = null;
+      XsdString smallIcon = null;
 
       //getting attributes
       String id = reader.getAttributeValue(null, Icon.Attribute.ID.getLocalName());
-      String lang = reader.getAttributeValue(null, Icon.Attribute.ID.getLocalName());
+      String lang = reader.getAttributeValue(null, Icon.Attribute.LANG.getLocalName());
 
       while (reader.hasNext())
       {
@@ -483,11 +493,11 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                switch (Icon.Tag.forName(reader.getLocalName()))
                {
                   case SMALL_ICON : {
-                     smallIcon = Path.valueOf(reader.getElementText().trim());
+                     smallIcon = elementAsXsdString(reader);
                      break;
                   }
                   case LARGE_ICON : {
-                     largeIcon = Path.valueOf(reader.getElementText().trim());
+                     largeIcon = elementAsXsdString(reader);
                      break;
                   }
 
@@ -501,11 +511,10 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
       throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
-   private ResourceAdapter1516 parseResourceAdapter(XMLStreamReader reader) throws XMLStreamException,
-      ParserException
+   private ResourceAdapter1516 parseResourceAdapter(XMLStreamReader reader) throws XMLStreamException, ParserException
    {
       ArrayList<ConfigProperty> configProperty = new ArrayList<ConfigProperty>();
-      String resourceadapterClass = null;
+      XsdString resourceadapterClass = null;
       OutboundResourceAdapter outboundResourceadapter = null;
       ArrayList<SecurityPermission> securityPermission = new ArrayList<SecurityPermission>();
       InboundResourceAdapter inboundResourceadapter = null;
@@ -525,7 +534,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
 
                   //building and returning object
                   return new ResourceAdapter1516Impl(resourceadapterClass, configProperty, outboundResourceadapter,
-                                                     inboundResourceadapter, adminobject, securityPermission, id);
+                        inboundResourceadapter, adminobject, securityPermission, id);
 
                }
                else
@@ -542,7 +551,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                switch (ResourceAdapter1516.Tag.forName(reader.getLocalName()))
                {
                   case RESOURCEADAPTER_CLASS : {
-                     resourceadapterClass = reader.getElementText().trim();
+                     resourceadapterClass = elementAsXsdString(reader);
                      break;
                   }
                   case CONFIG_PROPERTY : {
@@ -577,8 +586,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
       throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
-   private ResourceAdapter10 parseResourceAdapter10(XMLStreamReader reader) throws XMLStreamException,
-      ParserException
+   private ResourceAdapter10 parseResourceAdapter10(XMLStreamReader reader) throws XMLStreamException, ParserException
    {
       XsdString managedConnectionFactoryClass = NULL_XSDSTRING;
       XsdString connectionFactoryInterface = NULL_XSDSTRING;
@@ -591,6 +599,8 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
       Boolean reauthenticationSupport = null;
       ArrayList<SecurityPermission> securityPermission = new ArrayList<SecurityPermission>();
       String id = reader.getAttributeValue(null, ResourceAdapter1516.Attribute.ID.getLocalName());
+      String rsId = null;
+      String tsId = null;
       while (reader.hasNext())
       {
          switch (reader.nextTag())
@@ -605,9 +615,9 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
 
                   //building and returning object
                   return new ResourceAdapter10Impl(managedConnectionFactoryClass, connectionFactoryInterface,
-                                                   connectionFactoryImplClass, connectionInterface,
-                                                   connectionImplClass, transactionSupport, authenticationMechanism,
-                                                   configProperties, reauthenticationSupport, securityPermission, id);
+                        connectionFactoryImplClass, connectionInterface, connectionImplClass, transactionSupport,
+                        authenticationMechanism, configProperties, reauthenticationSupport, securityPermission, id,
+                        tsId, rsId);
 
                }
                else
@@ -652,6 +662,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                      break;
                   }
                   case REAUTHENTICATION_SUPPORT : {
+                     rsId = reader.getAttributeValue(null, "id");
                      reauthenticationSupport = elementAsBoolean(reader);
                      break;
                   }
@@ -660,6 +671,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                      break;
                   }
                   case TRANSACTION_SUPPORT : {
+                     tsId = reader.getAttributeValue(null, "id");
                      transactionSupport = TransactionSupportEnum.valueOf(reader.getElementText().trim());
                      break;
                   }
@@ -675,7 +687,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
    }
 
    private InboundResourceAdapter parseInboundResourceadapter(XMLStreamReader reader) throws XMLStreamException,
-      ParserException
+         ParserException
    {
       Messageadapter messageadapter = null;
       String id = reader.getAttributeValue(null, InboundResourceAdapter.Attribute.ID.getLocalName());
@@ -686,8 +698,8 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (ResourceAdapter1516.Tag.forName(reader.getLocalName()) ==
-                   ResourceAdapter1516.Tag.INBOUND_RESOURCEADAPTER)
+               if (ResourceAdapter1516.Tag.forName(reader.getLocalName()) == 
+                     ResourceAdapter1516.Tag.INBOUND_RESOURCEADAPTER)
                {
 
                   //building and returning object
@@ -731,8 +743,8 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (InboundResourceAdapter.Tag.forName(reader.getLocalName()) ==
-                   InboundResourceAdapter.Tag.MESSAGEADAPTER)
+               if (InboundResourceAdapter.Tag.forName(reader.getLocalName()) == 
+                     InboundResourceAdapter.Tag.MESSAGEADAPTER)
                {
                   //trimming collections
                   messagelistener.trimToSize();
@@ -886,7 +898,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
    }
 
    private RequiredConfigProperty parseRequiredConfigProperty(XMLStreamReader reader) throws XMLStreamException,
-      ParserException
+         ParserException
    {
       XsdString configPropertyName = NULL_XSDSTRING;
       ArrayList<LocalizedXsdString> description = new ArrayList<LocalizedXsdString>();
@@ -940,7 +952,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
    }
 
    private OutboundResourceAdapter parseOutboundResourceadapter(XMLStreamReader reader) throws XMLStreamException,
-      ParserException
+         ParserException
    {
       Boolean reauthenticationSupport = null;
       TransactionSupportEnum transactionSupport = null;
@@ -948,14 +960,16 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
       ArrayList<AuthenticationMechanism> authenticationMechanism = new ArrayList<AuthenticationMechanism>();
       //getting attributes
       String id = reader.getAttributeValue(null, OutboundResourceAdapter.Attribute.ID.getLocalName());
+      String tsId = null;
+      String rsId = null;
 
       while (reader.hasNext())
       {
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (ResourceAdapter1516.Tag.forName(reader.getLocalName()) ==
-                   ResourceAdapter1516.Tag.OUTBOUND_RESOURCEADAPTER)
+               if (ResourceAdapter1516.Tag.forName(reader.getLocalName()) == 
+                     ResourceAdapter1516.Tag.OUTBOUND_RESOURCEADAPTER)
                {
 
                   //trimming collections
@@ -964,7 +978,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
 
                   //building and returning object
                   return new OutboundResourceAdapterImpl(connectionDefinition, transactionSupport,
-                                                         authenticationMechanism, reauthenticationSupport, id);
+                        authenticationMechanism, reauthenticationSupport, id, tsId, rsId);
 
                }
                else
@@ -988,10 +1002,12 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                      break;
                   }
                   case TRANSACTION_SUPPORT : {
+                     tsId = reader.getAttributeValue(null, "id");
                      transactionSupport = TransactionSupportEnum.valueOf(reader.getElementText().trim());
                      break;
                   }
                   case REAUTHENTICATION_SUPPORT : {
+                     rsId = reader.getAttributeValue(null, "id");
                      reauthenticationSupport = elementAsBoolean(reader);
                      break;
                   }
@@ -1006,7 +1022,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
    }
 
    private ConnectionDefinition parseConncetionDefinition(XMLStreamReader reader) throws XMLStreamException,
-      ParserException
+         ParserException
    {
       XsdString managedconnectionfactoryClass = NULL_XSDSTRING;
       ArrayList<ConfigProperty> configProperty = new ArrayList<ConfigProperty>();
@@ -1022,8 +1038,8 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (OutboundResourceAdapter.Tag.forName(reader.getLocalName()) ==
-                   OutboundResourceAdapter.Tag.CONNECTION_DEFINITION)
+               if (OutboundResourceAdapter.Tag.forName(reader.getLocalName()) == 
+                     OutboundResourceAdapter.Tag.CONNECTION_DEFINITION)
                {
 
                   //trimming collections
@@ -1031,8 +1047,8 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
 
                   //building and returning object
                   return new ConnectionDefinitionImpl(managedconnectionfactoryClass, configProperty,
-                                                      connectionfactoryInterface, connectionfactoryImplClass,
-                                                      connectionInterface, connectionImplClass, id);
+                        connectionfactoryInterface, connectionfactoryImplClass, connectionInterface,
+                        connectionImplClass, id);
 
                }
                else
@@ -1082,10 +1098,11 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
    }
 
    private AuthenticationMechanism parseAuthenticationMechanism(XMLStreamReader reader) throws XMLStreamException,
-      ParserException
+         ParserException
    {
       XsdString authenticationMechanismType = NULL_XSDSTRING;
       CredentialInterfaceEnum credentialInterface = null;
+      String cIId = null;
       ArrayList<LocalizedXsdString> description = new ArrayList<LocalizedXsdString>();
 
       //getting attributes
@@ -1096,8 +1113,8 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (OutboundResourceAdapter.Tag.forName(reader.getLocalName()) ==
-                   OutboundResourceAdapter.Tag.AUTHENTICATION_MECHANISM)
+               if (OutboundResourceAdapter.Tag.forName(reader.getLocalName()) == 
+                     OutboundResourceAdapter.Tag.AUTHENTICATION_MECHANISM)
                {
 
                   //trimming collections
@@ -1105,8 +1122,8 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
 
                   //building and returning object
 
-                  return new AuthenticationMechanismImpl(description, authenticationMechanismType,
-                                                         credentialInterface, id);
+                  return new AuthenticationMechanismImpl(description, authenticationMechanismType, credentialInterface,
+                        id, cIId);
 
                }
                else
@@ -1126,6 +1143,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                      break;
                   }
                   case CREDENTIAL_INTERFACE : {
+                     cIId = reader.getAttributeValue(null, "id");
                      credentialInterface = CredentialInterfaceEnum.forName(reader.getElementText().trim());
                      break;
                   }
@@ -1209,6 +1227,9 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
       XsdString configPropertyName = NULL_XSDSTRING;
       Boolean configPropertySupportsDynamicUpdates = null;
       Boolean configPropertyConfidential = null;
+      String ignoreId = null;
+      String updatesId = null;
+      String confidId = null;
 
       //getting attributes
       String id = reader.getAttributeValue(null, ConfigProperty16.Attribute.ID.getLocalName());
@@ -1225,18 +1246,17 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
 
                   //building and returning object
 
-                  if (configPropertyIgnore != null || configPropertySupportsDynamicUpdates != null ||
-                      configPropertyConfidential != null)
+                  if (configPropertyIgnore != null || configPropertySupportsDynamicUpdates != null
+                        || configPropertyConfidential != null)
                   {
                      return new ConfigProperty16Impl(description, configPropertyName, configPropertyType,
-                                                     configPropertyValue, configPropertyIgnore,
-                                                     configPropertySupportsDynamicUpdates,
-                                                     configPropertyConfidential, id);
+                           configPropertyValue, configPropertyIgnore, configPropertySupportsDynamicUpdates,
+                           configPropertyConfidential, id, null, ignoreId, updatesId, confidId);
                   }
                   else
                   {
                      return new ConfigPropertyImpl(description, configPropertyName, configPropertyType,
-                                                   configPropertyValue, id);
+                           configPropertyValue, id);
                   }
 
                }
@@ -1269,14 +1289,17 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                      break;
                   }
                   case CONFIG_PROPERTY_IGNORE : {
+                     ignoreId = reader.getAttributeValue(null, "id");
                      configPropertyIgnore = elementAsBoolean(reader);
                      break;
                   }
                   case CONFIG_PROPERTY_CONFIDENTIAL : {
+                     confidId = reader.getAttributeValue(null, "id");
                      configPropertyConfidential = elementAsBoolean(reader);
                      break;
                   }
                   case CONFIG_PROPERTY_SUPPORT_DYNAMIC_UPDATE : {
+                     updatesId = reader.getAttributeValue(null, "id");
                      configPropertySupportsDynamicUpdates = elementAsBoolean(reader);
                      break;
                   }
@@ -1291,7 +1314,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
    }
 
    private SecurityPermission parseSecurityPermission(XMLStreamReader reader) throws XMLStreamException,
-      ParserException
+         ParserException
    {
       ArrayList<LocalizedXsdString> description = new ArrayList<LocalizedXsdString>();
       XsdString securityPermissionSpec = NULL_XSDSTRING;
@@ -1304,8 +1327,8 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (ResourceAdapter1516.Tag.forName(reader.getLocalName()) ==
-                   ResourceAdapter1516.Tag.SECURITY_PERMISSION)
+               if (ResourceAdapter1516.Tag.forName(reader.getLocalName()) == 
+                     ResourceAdapter1516.Tag.SECURITY_PERMISSION)
                {
                   //trimming collections
                   description.trimToSize();
@@ -1348,6 +1371,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
    {
       String id = reader.getAttributeValue(null, LicenseType.Attribute.ID.getLocalName());;
       boolean licenseRequired = false;
+      String lrid = null;
       ArrayList<LocalizedXsdString> description = new ArrayList<LocalizedXsdString>();
 
       while (reader.hasNext())
@@ -1358,7 +1382,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                if (Connector16.Tag.forName(reader.getLocalName()) == Connector16.Tag.LICENSE)
                {
                   description.trimToSize();
-                  return new LicenseType(description, licenseRequired, id);
+                  return new LicenseType(description, licenseRequired, id, lrid);
 
                }
                else
@@ -1374,6 +1398,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                switch (LicenseType.Tag.forName(reader.getLocalName()))
                {
                   case LICENSE_REQUIRED : {
+                     lrid = reader.getAttributeValue(null, "id");
                      licenseRequired = elementAsBoolean(reader);
                      break;
                   }
@@ -1394,14 +1419,14 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
    private XsdString elementAsXsdString(XMLStreamReader reader) throws XMLStreamException
    {
       String id = reader.getAttributeValue(null, "id");
-      return new XsdString(reader.getElementText().trim(), id);
+      return new XsdString(reader.getElementText().trim(), id, reader.getLocalName());
    }
 
    private LocalizedXsdString elementAsLocalizedXsdString(XMLStreamReader reader) throws XMLStreamException
    {
       String id = reader.getAttributeValue(null, "id");
       String lang = reader.getAttributeValue(null, "lang");
-      return new LocalizedXsdString(reader.getElementText().trim(), id, lang);
+      return new LocalizedXsdString(reader.getElementText().trim(), id, lang, reader.getLocalName());
    }
 
    /**
@@ -1411,7 +1436,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
    *
    */
-   public enum Tag
+   public enum Tag 
    {
       /** always first
        *

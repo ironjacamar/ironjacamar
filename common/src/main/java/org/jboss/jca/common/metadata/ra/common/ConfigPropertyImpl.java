@@ -21,10 +21,10 @@
  */
 package org.jboss.jca.common.metadata.ra.common;
 
-
 import org.jboss.jca.common.api.metadata.CopyUtil;
 import org.jboss.jca.common.api.metadata.CopyableMetaData;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
+import org.jboss.jca.common.api.metadata.ra.ConfigProperty.Tag;
 import org.jboss.jca.common.api.metadata.ra.LocalizedXsdString;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 
@@ -87,14 +87,22 @@ public class ConfigPropertyImpl implements ConfigProperty
       {
          this.description = new ArrayList<LocalizedXsdString>(description.size());
          this.description.addAll(description);
+         for (LocalizedXsdString d: this.description)
+            d.setTag(Tag.DESCRIPTION.toString());
       }
       else
       {
          this.description = new ArrayList<LocalizedXsdString>(0);
       }
       this.configPropertyName = configPropertyName;
+      if (!XsdString.isNull(this.configPropertyName))
+         this.configPropertyName.setTag(Tag.CONFIG_PROPERTY_NAME.toString());
       this.configPropertyType = configPropertyType;
+      if (!XsdString.isNull(this.configPropertyType))
+         this.configPropertyType.setTag(Tag.CONFIG_PROPERTY_TYPE.toString());
       this.configPropertyValue = configPropertyValue;
+      if (!XsdString.isNull(this.configPropertyValue))
+         this.configPropertyValue.setTag(Tag.CONFIG_PROPERTY_VALUE.toString());
       this.id = id;
    }
 
@@ -133,7 +141,6 @@ public class ConfigPropertyImpl implements ConfigProperty
    {
       return configPropertyValue;
    }
-
 
    @Override
    public String getId()
@@ -199,6 +206,14 @@ public class ConfigPropertyImpl implements ConfigProperty
       }
       else if (!configPropertyValue.equals(other.configPropertyValue))
          return false;
+      if (description == null)
+      {
+         if (other.description != null)
+            return false;
+      }
+      else if (!description.equals(other.description))
+         return false;
+
       if (id == null)
       {
          if (other.id != null)
@@ -219,21 +234,16 @@ public class ConfigPropertyImpl implements ConfigProperty
          sb.append(" ").append(ConfigProperty.Attribute.ID).append("=\"").append(id).append("\"");
       sb.append(">");
 
-      // description
+      for (LocalizedXsdString d : description)
+         sb.append(d);
 
-      sb.append("<").append(ConfigProperty.Tag.CONFIG_PROPERTY_NAME).append(">");
       sb.append(configPropertyName);
-      sb.append("</").append(ConfigProperty.Tag.CONFIG_PROPERTY_NAME).append(">");
 
-      sb.append("<").append(ConfigProperty.Tag.CONFIG_PROPERTY_TYPE).append(">");
       sb.append(configPropertyType);
-      sb.append("</").append(ConfigProperty.Tag.CONFIG_PROPERTY_TYPE).append(">");
 
       if (!XsdString.isNull(configPropertyValue))
       {
-         sb.append("<").append(ConfigProperty.Tag.CONFIG_PROPERTY_VALUE).append(">");
          sb.append(configPropertyValue);
-         sb.append("</").append(ConfigProperty.Tag.CONFIG_PROPERTY_VALUE).append(">");
       }
 
       sb.append("</config-property>");

@@ -28,6 +28,7 @@ import org.jboss.jca.common.api.metadata.MergeUtil;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ra.AuthenticationMechanism;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
+import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition.Tag;
 import org.jboss.jca.common.api.metadata.ra.MergeableMetadata;
 import org.jboss.jca.common.api.metadata.ra.SecurityPermission;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
@@ -66,42 +67,58 @@ public class ResourceAdapter10Impl extends AbstractResourceAdapetrImpl implement
 
    private TransactionSupportEnum transactionSupport;
 
+   private final String tsId;
+
    private final ArrayList<AuthenticationMechanism> authenticationMechanism;
 
    private final Boolean reauthenticationSupport;
+
+   private final String rsId;
 
    private final ArrayList<SecurityPermission> securityPermissions;
 
    private final String id;
 
    /**
-    *
-    * Create a new ResourceAdapter10.
-    *
-    * @param managedConnectionFactoryClass class name
-    * @param connectionFactoryInterface interface name
-    * @param connectionFactoryImplClass class name
-    * @param connectionInterface interface name
-    * @param connectionImplClass class name
-    * @param transactionSupport how transactions are supported
-    * @param authenticationMechanism how authentication is performed
-    * @param configProperties list of configs
-    * @param reauthenticationSupport true if reautentication is supported
-    * @param securityPermissions what security permissions are supported
-    * @param id the id attribute in xml file
-    */
+   *
+   * Create a new ResourceAdapter10.
+   *
+   * @param managedConnectionFactoryClass class name
+   * @param connectionFactoryInterface interface name
+   * @param connectionFactoryImplClass class name
+   * @param connectionInterface interface name
+   * @param connectionImplClass class name
+   * @param transactionSupport how transactions are supported
+   * @param authenticationMechanism how authentication is performed
+   * @param configProperties list of configs
+   * @param reauthenticationSupport true if reautentication is supported
+   * @param securityPermissions what security permissions are supported
+   * @param id the id attribute in xml file
+   * @param tsId transaction support element ID
+   * @param rsId reauthentication support element ID
+   */
    public ResourceAdapter10Impl(XsdString managedConnectionFactoryClass, XsdString connectionFactoryInterface,
          XsdString connectionFactoryImplClass, XsdString connectionInterface, XsdString connectionImplClass,
          TransactionSupportEnum transactionSupport, List<AuthenticationMechanism> authenticationMechanism,
          List<ConfigProperty> configProperties, Boolean reauthenticationSupport,
-         List<SecurityPermission> securityPermissions, String id)
+         List<SecurityPermission> securityPermissions, String id, String tsId, String rsId)
    {
       super();
       this.managedConnectionFactoryClass = managedConnectionFactoryClass;
+      if (!XsdString.isNull(this.managedConnectionFactoryClass))
+         this.managedConnectionFactoryClass.setTag(Tag.MANAGEDCONNECTIONFACTORY_CLASS.toString());
       this.connectionFactoryInterface = connectionFactoryInterface;
+      if (!XsdString.isNull(this.connectionFactoryInterface))
+         this.connectionFactoryInterface.setTag(Tag.CONNECTIONFACTORY_INTERFACE.toString());
       this.connectionFactoryImplClass = connectionFactoryImplClass;
+      if (!XsdString.isNull(this.connectionFactoryImplClass))
+         this.connectionFactoryImplClass.setTag(Tag.CONNECTIONFACTORY_IMPL_CLASS.toString());
       this.connectionInterface = connectionInterface;
+      if (!XsdString.isNull(this.connectionInterface))
+         this.connectionInterface.setTag(Tag.CONNECTION_INTERFACE.toString());
       this.connectionImplClass = connectionImplClass;
+      if (!XsdString.isNull(this.connectionImplClass))
+         this.connectionImplClass.setTag(Tag.CONNECTION_IMPL_CLASS.toString());
       this.transactionSupport = transactionSupport;
       if (authenticationMechanism != null)
       {
@@ -132,6 +149,35 @@ public class ResourceAdapter10Impl extends AbstractResourceAdapetrImpl implement
          this.securityPermissions = new ArrayList<SecurityPermission>(0);
       }
       this.id = id;
+      this.tsId = tsId;
+      this.rsId = rsId;
+   }
+
+   /**
+   *
+   * Create a new ResourceAdapter10.
+   *
+   * @param managedConnectionFactoryClass class name
+   * @param connectionFactoryInterface interface name
+   * @param connectionFactoryImplClass class name
+   * @param connectionInterface interface name
+   * @param connectionImplClass class name
+   * @param transactionSupport how transactions are supported
+   * @param authenticationMechanism how authentication is performed
+   * @param configProperties list of configs
+   * @param reauthenticationSupport true if reautentication is supported
+   * @param securityPermissions what security permissions are supported
+   * @param id the id attribute in xml file
+   */
+   public ResourceAdapter10Impl(XsdString managedConnectionFactoryClass, XsdString connectionFactoryInterface,
+         XsdString connectionFactoryImplClass, XsdString connectionInterface, XsdString connectionImplClass,
+         TransactionSupportEnum transactionSupport, List<AuthenticationMechanism> authenticationMechanism,
+         List<ConfigProperty> configProperties, Boolean reauthenticationSupport,
+         List<SecurityPermission> securityPermissions, String id)
+   {
+      this(managedConnectionFactoryClass, connectionFactoryInterface, connectionFactoryImplClass, connectionInterface,
+            connectionImplClass, transactionSupport, authenticationMechanism, configProperties,
+            reauthenticationSupport, securityPermissions, id, null, null);
    }
 
    /**
@@ -268,6 +314,8 @@ public class ResourceAdapter10Impl extends AbstractResourceAdapetrImpl implement
       result = prime * result + ((connectionImplClass == null) ? 0 : connectionImplClass.hashCode());
       result = prime * result + ((connectionInterface == null) ? 0 : connectionInterface.hashCode());
       result = prime * result + ((id == null) ? 0 : id.hashCode());
+      result = prime * result + ((rsId == null) ? 0 : rsId.hashCode());
+      result = prime * result + ((tsId == null) ? 0 : tsId.hashCode());
       result = prime * result
             + ((managedConnectionFactoryClass == null) ? 0 : managedConnectionFactoryClass.hashCode());
       result = prime * result + ((reauthenticationSupport == null) ? 0 : reauthenticationSupport.hashCode());
@@ -335,6 +383,20 @@ public class ResourceAdapter10Impl extends AbstractResourceAdapetrImpl implement
       }
       else if (!id.equals(other.id))
          return false;
+      if (rsId == null)
+      {
+         if (other.rsId != null)
+            return false;
+      }
+      else if (!rsId.equals(other.rsId))
+         return false;
+      if (tsId == null)
+      {
+         if (other.tsId != null)
+            return false;
+      }
+      else if (!tsId.equals(other.tsId))
+         return false;
       if (managedConnectionFactoryClass == null)
       {
          if (other.managedConnectionFactoryClass != null)
@@ -365,31 +427,24 @@ public class ResourceAdapter10Impl extends AbstractResourceAdapetrImpl implement
    public String toString()
    {
       StringBuilder sb = new StringBuilder(1024);
-      sb.append("<").append("resourceadapter").append(">");
+      sb.append("<").append("resourceadapter");
+      if (id != null)
+         sb.append(" " + ResourceAdapter10.Attribute.ID + "=\"" + id + "\"");
+      sb.append(">");
 
-      sb.append("<" + ResourceAdapter10.Tag.MANAGEDCONNECTIONFACTORY_CLASS + ">");
       sb.append(managedConnectionFactoryClass);
-      sb.append("</" + ResourceAdapter10.Tag.MANAGEDCONNECTIONFACTORY_CLASS + ">");
 
-      sb.append("<" + ResourceAdapter10.Tag.CONNECTIONFACTORY_INTERFACE + ">");
       sb.append(connectionFactoryInterface);
-      sb.append("</" + ResourceAdapter10.Tag.CONNECTIONFACTORY_INTERFACE + ">");
 
-      sb.append("<" + ResourceAdapter10.Tag.CONNECTIONFACTORY_IMPL_CLASS + ">");
       sb.append(connectionFactoryImplClass);
-      sb.append("</" + ResourceAdapter10.Tag.CONNECTIONFACTORY_IMPL_CLASS + ">");
 
-      sb.append("<" + ResourceAdapter10.Tag.CONNECTION_INTERFACE + ">");
       sb.append(connectionInterface);
-      sb.append("</" + ResourceAdapter10.Tag.CONNECTION_INTERFACE + ">");
 
-      sb.append("<" + ResourceAdapter10.Tag.CONNECTION_IMPL_CLASS + ">");
       sb.append(connectionImplClass);
-      sb.append("</" + ResourceAdapter10.Tag.CONNECTION_IMPL_CLASS + ">");
 
-      sb.append("<" + ResourceAdapter10.Tag.TRANSACTION_SUPPORT + ">");
+      sb.append("<" + Tag.TRANSACTION_SUPPORT).append(tsId == null ? "" : " id=\"" + tsId + "\"").append(">");
       sb.append(transactionSupport);
-      sb.append("</" + ResourceAdapter10.Tag.TRANSACTION_SUPPORT + ">");
+      sb.append("</" + Tag.TRANSACTION_SUPPORT + ">");
 
       if (configProperties != null)
       {
@@ -409,9 +464,9 @@ public class ResourceAdapter10Impl extends AbstractResourceAdapetrImpl implement
 
       if (reauthenticationSupport != null)
       {
-         sb.append("<" + ResourceAdapter10.Tag.REAUTHENTICATION_SUPPORT + ">");
+         sb.append("<" + Tag.REAUTHENTICATION_SUPPORT).append(rsId == null ? "" : " id=\"" + rsId + "\"").append(">");
          sb.append(reauthenticationSupport);
-         sb.append("</" + ResourceAdapter10.Tag.REAUTHENTICATION_SUPPORT + ">");
+         sb.append("</" + Tag.REAUTHENTICATION_SUPPORT + ">");
       }
 
       if (securityPermissions != null)
@@ -443,11 +498,11 @@ public class ResourceAdapter10Impl extends AbstractResourceAdapetrImpl implement
    public CopyableMetaData copy()
    {
       return new ResourceAdapter10Impl(CopyUtil.clone(managedConnectionFactoryClass),
-            CopyUtil.clone(connectionFactoryInterface),
-            CopyUtil.clone(connectionFactoryImplClass), CopyUtil.clone(connectionInterface),
-            CopyUtil.clone(connectionImplClass), transactionSupport,
-            CopyUtil.cloneList(authenticationMechanism), CopyUtil.cloneList(configProperties),
-            reauthenticationSupport, CopyUtil.cloneList(securityPermissions), CopyUtil.cloneString(id));
+            CopyUtil.clone(connectionFactoryInterface), CopyUtil.clone(connectionFactoryImplClass),
+            CopyUtil.clone(connectionInterface), CopyUtil.clone(connectionImplClass), transactionSupport,
+            CopyUtil.cloneList(authenticationMechanism), CopyUtil.cloneList(configProperties), reauthenticationSupport,
+            CopyUtil.cloneList(securityPermissions), CopyUtil.cloneString(id), CopyUtil.cloneString(tsId),
+            CopyUtil.cloneString(rsId));
    }
 
    @Override

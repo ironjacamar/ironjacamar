@@ -1,89 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
- 
+  <!DOCTYPE connector PUBLIC
+	"-//Sun Microsystems, Inc.//DTD Connector 1.0//EN"
+	"http://java.sun.com/dtd/connector_1_0.dtd">
+
 <connector id="ID000">
-    <display-name id="ID001">
-    </display-name>
-    <description id="ID002">
-    </description>
+    <description id="ID002">something</description>
+    <display-name id="ID001">something</display-name>
     <icon id="ID003">
-        <small-icon id="ID004">
-        </small-icon>
-        <large-icon id="ID005">
-        </large-icon>
+        <small-icon id="ID004">small.gif</small-icon>
+        <large-icon id="ID005">large.gif</large-icon>
     </icon>
-    <vendor-name id="ID006">
-    </vendor-name>
-    <spec-version id="ID007">
-    </spec-version>
-    <eis-type id="ID008">
-    </eis-type>
-    <version id="ID009">
-    </version>
+    <vendor-name id="ID006">something</vendor-name>
+    <spec-version id="ID007">1.0</spec-version>
+    <eis-type id="ID008">something</eis-type>
+    <version id="ID009">1.0</version>
     <license id="ID010">
-        <description id="ID011">
-        </description>
-        <license-required id="ID012">
-        </license-required>
+        <description id="ID011">something</description>
+        <license-required id="ID012">true</license-required>
     </license>
     <resourceadapter id="ID013">
-        <managedconnectionfactory-class id="ID014">
-        </managedconnectionfactory-class>
-        <connectionfactory-interface id="ID015">
-        </connectionfactory-interface>
-        <connectionfactory-impl-class id="ID016">
-        </connectionfactory-impl-class>
-        <connection-interface id="ID017">
-        </connection-interface>
-        <connection-impl-class id="ID018">
-        </connection-impl-class>
+        <managedconnectionfactory-class id="ID014">Class1</managedconnectionfactory-class>
+        <connectionfactory-interface id="ID015">Interface1</connectionfactory-interface>
+        <connectionfactory-impl-class id="ID016">Class2</connectionfactory-impl-class>
+        <connection-interface id="ID017">Interface2</connection-interface>
+        <connection-impl-class id="ID018">Class3</connection-impl-class>
         <transaction-support id="ID019">NoTransaction</transaction-support>
         <config-property id="ID020">
-            <description id="ID021">
-            </description>
-            <config-property-name id="ID022">
-            </config-property-name>
-            <config-property-type id="ID023">
-            </config-property-type>
-            <config-property-value id="ID024">
-            </config-property-value>
+            <description id="ID021">something</description>
+            <config-property-name id="ID022">aaa</config-property-name>
+            <config-property-type id="ID023">java.lang.String</config-property-type>
+            <config-property-value id="ID024">aaa</config-property-value>
         </config-property>
         <config-property id="ID025">
-            <description id="ID026">
-            </description>
-            <config-property-name id="ID027">
-            </config-property-name>
-            <config-property-type id="ID028">
-            </config-property-type>
-            <config-property-value id="ID029">
-            </config-property-value>
+            <description id="ID026">something</description>
+            <config-property-name id="ID027">bbb</config-property-name>
+            <config-property-type id="ID028">java.lang.Boolean</config-property-type>
+            <config-property-value id="ID029">false</config-property-value>
         </config-property>
         <authentication-mechanism id="ID030">
-            <description id="ID031">
-            </description>
-            <authentication-mechanism-type id="ID032">
-            </authentication-mechanism-type>
+            <description id="ID031">something</description>
+            <authentication-mechanism-type id="ID032">BasicPassword</authentication-mechanism-type>
             <credential-interface id="ID033">javax.resource.spi.security.PasswordCredential</credential-interface>
         </authentication-mechanism>
         <authentication-mechanism id="ID034">
-            <description id="ID035">
-            </description>
-            <authentication-mechanism-type id="ID036">
-            </authentication-mechanism-type>
-            <credential-interface id="ID037">javax.resource.spi.security.PasswordCredential</credential-interface>
+            <description id="ID035">something</description>
+            <authentication-mechanism-type id="ID036">Kerbv5</authentication-mechanism-type>
+            <credential-interface id="ID037">javax.resource.spi.security.GenericCredential</credential-interface>
         </authentication-mechanism>
-        <reauthentication-support id="ID038">
-        </reauthentication-support>
+        <reauthentication-support id="ID038">true</reauthentication-support>
         <security-permission id="ID039">
-            <description id="ID040">
-            </description>
-            <security-permission-spec id="ID041">
-            </security-permission-spec>
+            <description id="ID040">something</description>
+            <security-permission-spec id="ID041">something</security-permission-spec>
         </security-permission>
         <security-permission id="ID042">
-            <description id="ID043">
-            </description>
-            <security-permission-spec id="ID044">
-            </security-permission-spec>
+            <description id="ID043">something</description>
+            <security-permission-spec id="ID044">something_else</security-permission-spec>
         </security-permission>
     </resourceadapter>
 </connector>
