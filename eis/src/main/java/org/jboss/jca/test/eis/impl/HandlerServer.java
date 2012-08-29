@@ -153,7 +153,8 @@ public class HandlerServer implements Runnable
          }
          catch (IOException ioe)
          {
-            ioe.printStackTrace(System.err);
+            if (running.get())
+               ioe.printStackTrace(System.err);
          }
       }
    }
