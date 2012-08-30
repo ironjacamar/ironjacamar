@@ -352,13 +352,13 @@ public class Main
                raConfigProperties = new HashMap<String, String>();
                for (ConfigProperty cp : ra1516.getConfigProperties())
                {
-                  raConfigProperties.put(cp.getConfigPropertyName().toString(), 
+                  raConfigProperties.put(getValueString(cp.getConfigPropertyName()), 
                                          getValueString(cp.getConfigPropertyValue()));
                   
-                  removeIntrospectedValue(introspected, cp.getConfigPropertyName().toString());
+                  removeIntrospectedValue(introspected, getValueString(cp.getConfigPropertyName()));
 
-                  out.println("  Config-property: " + cp.getConfigPropertyName() + " (" +
-                              cp.getConfigPropertyType() + ")");
+                  out.println("  Config-property: " + getValueString(cp.getConfigPropertyName()) + " (" +
+                              getValueString(cp.getConfigPropertyType()) + ")");
                }
             }
 
@@ -390,7 +390,7 @@ public class Main
                transSupport = ra1516.getOutboundResourceadapter().getTransactionSupport();
                for (ConnectionDefinition mcf : ra1516.getOutboundResourceadapter().getConnectionDefinitions())
                {
-                  classname = mcf.getManagedConnectionFactoryClass().toString();
+                  classname = getValueString(mcf.getManagedConnectionFactoryClass());
                   if (!sameClassnameSet.contains(classname))
                   {
                      sameClassnameSet.add(classname);
@@ -413,7 +413,7 @@ public class Main
                      hasValidatingMcfInterface(out, classname, cl);
 
                      //CCI
-                     String cfi = mcf.getConnectionFactoryInterface().toString();
+                     String cfi = getValueString(mcf.getConnectionFactoryInterface());
                      try
                      {
                         out.print("  CCI: ");
@@ -430,8 +430,8 @@ public class Main
                            out.println("  ConnectionFactory (" + classname + "):");
                            outputMethodInfo(out, clazz, cl);
                            
-                           Class<?> ci = Class.forName(mcf.getConnectionInterface().toString(), true, cl);
-                           out.println("  Connection (" + mcf.getConnectionInterface().toString() + "):");
+                           Class<?> ci = Class.forName(getValueString(mcf.getConnectionInterface()), true, cl);
+                           out.println("  Connection (" + getValueString(mcf.getConnectionInterface()) + "):");
                            outputMethodInfo(out, ci, cl);
                         }
                      }
@@ -451,14 +451,14 @@ public class Main
 
                   for (ConfigProperty cp : mcf.getConfigProperties())
                   {
-                     configProperty.put(cp.getConfigPropertyName().toString(), 
+                     configProperty.put(getValueString(cp.getConfigPropertyName()), 
                                         getValueString(cp.getConfigPropertyValue()));
 
-                     removeIntrospectedValue(introspected, cp.getConfigPropertyName().toString());
+                     removeIntrospectedValue(introspected, getValueString(cp.getConfigPropertyName()));
                      
                      if (needPrint)
-                        out.println("  Config-property: " + cp.getConfigPropertyName() + " (" +
-                                    cp.getConfigPropertyType() + ")");
+                        out.println("  Config-property: " + getValueString(cp.getConfigPropertyName()) + " (" +
+                                    getValueString(cp.getConfigPropertyType()) + ")");
                   }
 
                   if (introspected != null && !introspected.isEmpty())
@@ -474,8 +474,8 @@ public class Main
                   if (introspected == null)
                      out.println("  Unable to resolve introspected config-property's");
 
-                  String poolName = mcf.getConnectionInterface().toString().substring(
-                        mcf.getConnectionInterface().toString().lastIndexOf('.') + 1);
+                  String poolName = getValueString(mcf.getConnectionInterface()).substring(
+                     getValueString(mcf.getConnectionInterface()).lastIndexOf('.') + 1);
                   CommonPool pool = null;
                   if (transSupport.equals(TransactionSupportEnum.XATransaction))
                   {
@@ -507,7 +507,7 @@ public class Main
             }
             for (AdminObject ao : ra1516.getAdminObjects())
             {
-               String aoClassname = ao.getAdminobjectClass().toString();
+               String aoClassname = getValueString(ao.getAdminobjectClass());
                if (!sameClassnameSet.contains(aoClassname))
                {
                   sameClassnameSet.add(aoClassname);
@@ -533,14 +533,14 @@ public class Main
                
                for (ConfigProperty cp : ao.getConfigProperties())
                {
-                  configProperty.put(cp.getConfigPropertyName().toString(), 
+                  configProperty.put(getValueString(cp.getConfigPropertyName()), 
                                      getValueString(cp.getConfigPropertyValue()));
                      
-                  removeIntrospectedValue(introspected, cp.getConfigPropertyName().toString());
+                  removeIntrospectedValue(introspected, getValueString(cp.getConfigPropertyName()));
                   
                   if (needPrint)
-                     out.println("  Config-property: " + cp.getConfigPropertyName() + " (" +
-                                 cp.getConfigPropertyType() + ")");
+                     out.println("  Config-property: " + getValueString(cp.getConfigPropertyName()) + " (" +
+                                 getValueString(cp.getConfigPropertyType()) + ")");
                }
 
                if (introspected != null && !introspected.isEmpty())
@@ -573,7 +573,7 @@ public class Main
                for (MessageListener ml : 
                   ra1516.getInboundResourceadapter().getMessageadapter().getMessagelisteners())
                {
-                  String asClassname = ml.getActivationspec().getActivationspecClass().toString();
+                  String asClassname = getValueString(ml.getActivationspec().getActivationspecClass());
                   if (!sameClassnameSet.contains(asClassname))
                   {
                      sameClassnameSet.add(asClassname);
@@ -591,9 +591,9 @@ public class Main
                      {
                         for (RequiredConfigProperty cp :  ml.getActivationspec().getRequiredConfigProperties())
                         {
-                           removeIntrospectedValue(introspected, cp.getConfigPropertyName().toString());
+                           removeIntrospectedValue(introspected, getValueString(cp.getConfigPropertyName()));
                            
-                           out.println("  Required-config-property: " + cp.getConfigPropertyName());
+                           out.println("  Required-config-property: " + getValueString(cp.getConfigPropertyName()));
                         }
                      }
 
@@ -620,7 +620,7 @@ public class Main
             ResourceAdapter10 ra10 = (ResourceAdapter10)ra;
             out.println("Class: " + ra10.getManagedConnectionFactoryClass());
             
-            classname = ra10.getManagedConnectionFactoryClass().toString();
+            classname = getValueString(ra10.getManagedConnectionFactoryClass());
             transSupport = ra10.getTransactionSupport();
             
             //ValidatingManagedConnectionFactory
@@ -630,8 +630,8 @@ public class Main
             out.println("  ConnectionFactory (" + classname + "):");
             outputMethodInfo(out, cfi, cl);
             
-            Class<?> ci = Class.forName(ra10.getConnectionInterface().toString(), true, cl);
-            out.println("  Connection (" + ra10.getConnectionInterface().toString() + "):");
+            Class<?> ci = Class.forName(getValueString(ra10.getConnectionInterface()), true, cl);
+            out.println("  Connection (" + getValueString(ra10.getConnectionInterface()) + "):");
             outputMethodInfo(out, ci, cl);
             
             Map<String, String> configProperty = null;
@@ -643,13 +643,13 @@ public class Main
 
             for (ConfigProperty cp : ra10.getConfigProperties())
             {
-               configProperty.put(cp.getConfigPropertyName().toString(), 
+               configProperty.put(getValueString(cp.getConfigPropertyName()), 
                                   getValueString(cp.getConfigPropertyValue()));
                
-               removeIntrospectedValue(introspected, cp.getConfigPropertyName().toString());
+               removeIntrospectedValue(introspected, getValueString(cp.getConfigPropertyName()));
                
-               out.println("  Config-property: " + cp.getConfigPropertyName() + " (" +
-                           cp.getConfigPropertyType() + ")");
+               out.println("  Config-property: " + getValueString(cp.getConfigPropertyName()) + " (" +
+                           getValueString(cp.getConfigPropertyType()) + ")");
             }
             
             if (introspected != null && !introspected.isEmpty())
@@ -1262,7 +1262,7 @@ public class Main
       if (value == null || value == XsdString.NULL_XSDSTRING)
          return "";
       else
-         return value.getValue();//toString();
+         return value.getValue();
    }
 
    /**
