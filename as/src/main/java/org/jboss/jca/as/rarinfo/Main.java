@@ -427,7 +427,7 @@ public class Main
                         {
                            out.println("No");
                            
-                           out.println("  ConnectionFactory (" + classname + "):");
+                           out.println("  ConnectionFactory (" + cfi + "):");
                            outputMethodInfo(out, clazz, cl);
                            
                            Class<?> ci = Class.forName(getValueString(mcf.getConnectionInterface()), true, cl);
@@ -517,6 +517,7 @@ public class Main
                   }
                   line++;
                   out.println("Class: " + aoClassname);
+                  out.println("  Interface: " + getValueString(ao.getAdminobjectInterface()));
                   needPrint = true;
                }
                else
@@ -583,6 +584,7 @@ public class Main
                      }
                      line++;
                      out.println("Class: " + asClassname);
+                     out.println("  Message-listener: " + getValueString(ml.getMessagelistenerType()));
 
                      introspected = getIntrospectedProperties(asClassname, cl);
 
