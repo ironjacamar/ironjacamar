@@ -267,7 +267,7 @@ public class CodeGenWizard extends Wizard implements INewWizard
          File lib = new File(libDir);
          expandFilePath(lib, ijJars, "");
          ijJars.add("/../bin/ironjacamar-sjc.jar");
-         
+         ijJars.add("/../doc/eis/ironjacamar-test-eis.jar");
       }
       else
       {
