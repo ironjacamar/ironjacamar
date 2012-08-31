@@ -85,7 +85,8 @@ public class SocketTransport extends AbstractRemoteTransport<String> implements 
    /**
     * Init
     */
-   private void init()
+   @Override
+   protected void init()
    {
       if (getWorkManagers() != null)
       {

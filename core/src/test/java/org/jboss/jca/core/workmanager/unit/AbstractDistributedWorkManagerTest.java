@@ -39,18 +39,31 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class AbstractDistributedWorkManagerTestCase
+/**
+ *
+ * A AbstractDistributedWorkManagerTest.
+ *
+ * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ *
+ */
+public class AbstractDistributedWorkManagerTest
 {
 
    private static Logger log = Logger.getLogger(DistributedWorkManagerJGroupsTestCase.class);
    @Resource(mappedName = "java:/eis/WorkConnectionFactory")
    private WorkConnectionFactory wcf;
+
+   /** injected DistributedWorkManager1 */
    @Inject(name = "DistributedWorkManager1")
    protected DistributedWorkManager dwm1;
+
    @Inject(name = "DistributedBootstrapContext1")
    private BootstrapContext dbc1;
+
+   /** injected DistributedWorkManager2 */
    @Inject(name = "DistributedWorkManager2")
    protected DistributedWorkManager dwm2;
+
    @Inject(name = "DistributedBootstrapContext2")
    private BootstrapContext dbc2;
 
@@ -90,13 +103,18 @@ public class AbstractDistributedWorkManagerTestCase
       assertNotNull(wcf);
 
       WorkConnection wc = wcf.getConnection();
-      wc.doWork(new MyWork());
-      wc.doWork(new MyDistributableWork());
+      try
+      {
+         wc.doWork(new MyWork());
+         wc.doWork(new MyDistributableWork());
 
-      assertEquals(1, dwm1.getStatistics().getWorkSuccessful());
-      assertEquals(1, dwm2.getStatistics().getWorkSuccessful());
-
-      wc.close();
+         assertEquals(1, dwm1.getStatistics().getWorkSuccessful());
+         assertEquals(1, dwm2.getStatistics().getWorkSuccessful());
+      }
+      finally
+      {
+         wc.close();
+      }
    }
 
    /**
@@ -164,7 +182,12 @@ public class AbstractDistributedWorkManagerTestCase
       }
    }
 
-   public AbstractDistributedWorkManagerTestCase()
+   /**
+    *
+    * Create a new AbstractDistributedWorkManagerTest.
+    *
+    */
+   public AbstractDistributedWorkManagerTest()
    {
       super();
    }

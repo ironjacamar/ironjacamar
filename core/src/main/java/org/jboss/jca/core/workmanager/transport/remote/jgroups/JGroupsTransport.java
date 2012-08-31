@@ -23,7 +23,7 @@
 package org.jboss.jca.core.workmanager.transport.remote.jgroups;
 
 import org.jboss.jca.core.CoreBundle;
-import org.jboss.jca.core.spi.workmanager.notification.NotificationListener;
+import org.jboss.jca.core.workmanager.DistributedWorkManagerImpl;
 import org.jboss.jca.core.workmanager.transport.remote.AbstractRemoteTransport;
 import org.jboss.jca.core.workmanager.transport.remote.ProtocolMessages.Request;
 import org.jboss.jca.core.workmanager.transport.remote.ProtocolMessages.ResponseValues;
@@ -35,12 +35,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.resource.spi.work.DistributableWork;
 import javax.resource.spi.work.WorkException;
 
 import org.jboss.logging.Messages;
-import org.jboss.threads.BlockingExecutor;
 
 import org.jgroups.Address;
 import org.jgroups.JChannel;
@@ -102,28 +102,30 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
    {
       try
       {
-         methods.put(JOIN_METHOD, JGroupsTransport.class.getMethod("join", String.class, Address.class));
+         methods.put(JOIN_METHOD, AbstractRemoteTransport.class.getMethod("join", String.class, Address.class));
 
-         methods.put(LEAVE_METHOD, JGroupsTransport.class.getMethod("leave", String.class));
+         methods.put(LEAVE_METHOD, AbstractRemoteTransport.class.getMethod("leave", String.class));
 
-         methods.put(PING_METHOD, JGroupsTransport.class.getMethod("localPing"));
+         methods.put(PING_METHOD, AbstractRemoteTransport.class.getMethod("localPing"));
 
-         methods.put(DO_WORK_METHOD, JGroupsTransport.class.getMethod("localDoWork", DistributableWork.class));
+         methods.put(DO_WORK_METHOD, AbstractRemoteTransport.class.getMethod("localDoWork", DistributableWork.class));
 
-         methods.put(START_WORK_METHOD, JGroupsTransport.class.getMethod("localStartWork", DistributableWork.class));
+         methods.put(START_WORK_METHOD,
+            AbstractRemoteTransport.class.getMethod("localStartWork", DistributableWork.class));
 
          methods.put(SCHEDULE_WORK_METHOD,
-            JGroupsTransport.class.getMethod("localScheduleWork", DistributableWork.class));
+            AbstractRemoteTransport.class.getMethod("localScheduleWork", DistributableWork.class));
 
-         methods.put(GET_SHORTRUNNING_FREE_METHOD, JGroupsTransport.class.getMethod("localGetShortRunningFree"));
+         methods.put(GET_SHORTRUNNING_FREE_METHOD,
+            AbstractRemoteTransport.class.getMethod("localGetShortRunningFree"));
 
-         methods.put(GET_LONGRUNNING_FREE_METHOD, JGroupsTransport.class.getMethod("localGetLongRunningFree"));
+         methods.put(GET_LONGRUNNING_FREE_METHOD, AbstractRemoteTransport.class.getMethod("localGetLongRunningFree"));
 
          methods.put(UPDATE_SHORTRUNNING_FREE_METHOD,
-            JGroupsTransport.class.getMethod("localUpdateShortRunningFree", String.class, Long.class));
+            AbstractRemoteTransport.class.getMethod("localUpdateShortRunningFree", String.class, Long.class));
 
          methods.put(UPDATE_LONGRUNNING_FREE_METHOD,
-            JGroupsTransport.class.getMethod("localUpdateLongRunningFree", String.class, Long.class));
+            AbstractRemoteTransport.class.getMethod("localUpdateLongRunningFree", String.class, Long.class));
 
       }
       catch (NoSuchMethodException e)
@@ -143,6 +145,31 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
 
    }
 
+   @Override
+   protected void init()
+   {
+      try
+      {
+         ((DistributedWorkManagerImpl) dwm).setId(channel.getAddressAsString());
+         disp = new RpcDispatcher(channel, null, this, this);
+
+         disp.setMethodLookup(new MethodLookup()
+         {
+
+            @Override
+            public Method findMethod(short key)
+            {
+               return methods.get(key);
+            }
+         });
+
+         channel.connect("clusterName");
+      }
+      catch (Exception e)
+      {
+         log.error("Error", e);
+      }
+   }
    /**
     * Start method for bean lifecycle
     *
@@ -150,23 +177,9 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
     */
    public void start() throws Throwable
    {
-      disp = new RpcDispatcher(channel, null, this, this);
 
-      disp.setMethodLookup(new MethodLookup()
-      {
 
-         @Override
-         public Method findMethod(short key)
-         {
-            return methods.get(key);
-         }
-      });
 
-      channel.connect("clusterName");
-
-      Thread.sleep(1000);
-
-      sendMessage(null, Request.JOIN, channel.getAddressAsString(), channel.getAddress());
 
    }
 
@@ -177,7 +190,7 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
     */
    public void stop() throws Throwable
    {
-      sendMessage(null, Request.LEAVE, channel.getAddressAsString());
+      //sendMessage(null, Request.LEAVE, dwm.getId());
 
       disp.stop();
 
@@ -191,7 +204,7 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
    {
       Long returnValue = -1L;
 
-      log.tracef("%s: sending message2=%s", channel.getAddressAsString(), request);
+      log.tracef("%s: sending message2=%s to %s", channel.getAddressAsString(), request, destAddress);
       RequestOptions opts = new RequestOptions(ResponseMode.GET_ALL, 10000);
       try
       {
@@ -325,204 +338,6 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
       }
    }
 
-   /**
-    *
-    * join
-    *
-    * @param id the id
-    * @param address the address
-    */
-   public void join(String id, Address address)
-   {
-
-      if (trace)
-         log.tracef("%s: JOIN(%s, %s)", channel.getAddressAsString(), id, address);
-
-      this.getWorkManagers().put(id, address);
-
-      if (this.getDistributedWorkManager().getPolicy() instanceof NotificationListener)
-      {
-         ((NotificationListener) this.getDistributedWorkManager().getPolicy()).join(id);
-      }
-      if (this.getDistributedWorkManager().getSelector() instanceof NotificationListener)
-      {
-         ((NotificationListener) this.getDistributedWorkManager().getSelector()).join(id);
-      }
-
-   }
-
-   /**
-    *
-    * leave
-    *
-    * @param id the id
-    */
-   public void leave(String id)
-   {
-      if (trace)
-         log.tracef("%s: LEAVE(%s)", channel.getAddressAsString(), id);
-
-      this.getWorkManagers().remove(id);
-
-      if (this.getDistributedWorkManager().getPolicy() instanceof NotificationListener)
-      {
-         ((NotificationListener) this.getDistributedWorkManager().getPolicy()).leave(id);
-      }
-      if (this.getDistributedWorkManager().getSelector() instanceof NotificationListener)
-      {
-         ((NotificationListener) this.getDistributedWorkManager().getSelector()).leave(id);
-      }
-   }
-
-   /**
-    *
-    * localPing
-    *
-    * @return the ping value
-    */
-   public Long localPing()
-   {
-      //do nothing, just send an answer.
-      if (trace)
-         log.tracef("%s: PING()", channel.getAddressAsString());
-      return 0L;
-   }
-
-   /**
-    *
-    * localDoWork
-    *
-    * @param work the work
-    * @throws WorkException in case of error
-    */
-   public void localDoWork(DistributableWork work) throws WorkException
-   {
-      if (trace)
-         log.tracef("%s: DO_WORK(%s)", channel.getAddressAsString(), work);
-
-      this.getDistributedWorkManager().localDoWork(work);
-   }
-
-   /**
-    *
-    * localStartWork
-    *
-    * @param work the work
-    * @return the start value
-    * @throws WorkException in case of error
-    */
-   public Long localStartWork(DistributableWork work) throws WorkException
-   {
-      if (trace)
-         log.tracef("%s: START_WORK(%s)", channel.getAddressAsString(), work);
-
-      return this.getDistributedWorkManager().localStartWork(work);
-   }
-
-   /**
-    *
-    * localScheduleWork
-    *
-    * @param work the work
-    * @throws WorkException in case of error
-    */
-   public void localScheduleWork(DistributableWork work) throws WorkException
-   {
-      if (trace)
-         log.tracef("%s: SCHEDULE_WORK(%s)", channel.getAddressAsString(), work);
-
-      this.getDistributedWorkManager().localScheduleWork(work);
-   }
-
-   /**
-    *
-    * localGetShortRunningFree
-    *
-    * @return the free count
-    */
-   public Long localGetShortRunningFree()
-   {
-      if (trace)
-         log.tracef("%s: GET_SHORTRUNNING_FREE(%s)", channel.getAddressAsString());
-
-      BlockingExecutor executor = this.getDistributedWorkManager().getShortRunningThreadPool();
-      if (executor != null)
-      {
-         return executor.getNumberOfFreeThreads();
-      }
-      else
-      {
-         return 0L;
-      }
-   }
-
-   /**
-    *
-    * localGetLongRunningFree
-    *
-    * @return the free count
-    */
-   public Long localGetLongRunningFree()
-   {
-      if (trace)
-         log.tracef("%s: GET_LONGRUNNING_FREE(%s)", channel.getAddressAsString());
-
-      BlockingExecutor executor = this.getDistributedWorkManager().getLongRunningThreadPool();
-      if (executor != null)
-      {
-         return executor.getNumberOfFreeThreads();
-      }
-      else
-      {
-         return 0L;
-      }
-   }
-
-   /**
-    * localUpdateLongRunningFree
-    *
-    * @param id the id
-    * @param freeCount the free count
-    */
-   public void localUpdateLongRunningFree(String id, Long freeCount)
-   {
-      if (trace)
-         log.tracef("%s: UPDATE_LONGRUNNING_FREE(%s, %d)", channel.getAddressAsString(), id, freeCount);
-
-      if (this.getDistributedWorkManager().getPolicy() instanceof NotificationListener)
-      {
-         ((NotificationListener) this.getDistributedWorkManager().getPolicy()).updateLongRunningFree(
-            id, freeCount);
-      }
-      if (this.getDistributedWorkManager().getSelector() instanceof NotificationListener)
-      {
-         ((NotificationListener) this.getDistributedWorkManager().getSelector()).updateLongRunningFree(
-            id, freeCount);
-      }
-   }
-
-   /**
-    * localUpdateShortRunningFree
-    *
-    * @param id the id
-    * @param freeCount the free count
-    */
-   public void localUpdateShortRunningFree(String id, Long freeCount)
-   {
-      if (trace)
-         log.tracef("%s: UPDATE_SHORTRUNNING_FREE(%s, %d)", channel.getAddressAsString(), id, freeCount);
-
-      if (this.getDistributedWorkManager().getPolicy() instanceof NotificationListener)
-      {
-         ((NotificationListener) this.getDistributedWorkManager().getPolicy()).updateShortRunningFree(
-            id, freeCount);
-      }
-      if (this.getDistributedWorkManager().getSelector() instanceof NotificationListener)
-      {
-         ((NotificationListener) this.getDistributedWorkManager().getSelector())
-            .updateShortRunningFree(id, freeCount);
-      }
-   }
 
    @Override
    public String toString()
@@ -572,10 +387,32 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
    }
 
    @Override
-   public void viewAccepted(View arg0)
+   public void viewAccepted(View view)
    {
       log.tracef("java.net.preferIPv4Stack=%s", System.getProperty("java.net.preferIPv4Stack"));
-      log.tracef("viewAccepted called w/ View=%s", arg0);
+      log.tracef("viewAccepted called w/ View=%s", view);
+      synchronized (this)
+      {
+         for (Entry<String, Address> entry : workManagers.entrySet())
+         {
+            if (!view.containsMember(entry.getValue()))
+            {
+               leave(entry.getKey());
+            }
+         }
+         for (Address address : view.getMembers())
+         {
+            if (!workManagers.containsKey(address.toString()))
+            {
+               join(address.toString(), address);
+               Long shortRunning = getShortRunningFree(address.toString());
+               Long longRunning = getShortRunningFree(address.toString());
+
+               localUpdateShortRunningFree(address.toString(), shortRunning);
+               localUpdateLongRunningFree(address.toString(), longRunning);
+            }
+         }
+      }
 
    }
 

@@ -107,7 +107,7 @@ public class WorkManagerImpl implements WorkManager
    private XATerminator xaTerminator;
 
    /** Validated work instances */
-   private Set<String> validatedWork;
+   private final Set<String> validatedWork;
 
    /** Security module for callback */
    private Callback callbackSecurity;
@@ -116,10 +116,10 @@ public class WorkManagerImpl implements WorkManager
    private ResourceAdapter resourceAdapter;
 
    /** Shutdown */
-   private AtomicBoolean shutdown;
+   private final AtomicBoolean shutdown;
 
    /** Active work wrappers */
-   private Set<WorkWrapper> activeWorkWrappers;
+   private final Set<WorkWrapper> activeWorkWrappers;
 
    /** Statistics */
    private WorkManagerStatisticsImpl statistics;
@@ -164,7 +164,7 @@ public class WorkManagerImpl implements WorkManager
     * Set the unique id of the work manager
     * @param v The value
     */
-   void setId(String v)
+   public void setId(String v)
    {
       id = v;
    }

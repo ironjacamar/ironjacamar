@@ -139,7 +139,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
       }
       else
       {
-         transport.updateLongRunningFree(getId(), getShortRunningThreadPool().getNumberOfFreeThreads() - 1);
+         transport.updateShortRunningFree(getId(), getShortRunningThreadPool().getNumberOfFreeThreads() - 1);
       }
       super.doWork(work, WorkManager.INDEFINITE, null, null);
    }
@@ -155,7 +155,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
       }
       else
       {
-         transport.updateLongRunningFree(getId(), getShortRunningThreadPool().getNumberOfFreeThreads() - 1);
+         transport.updateShortRunningFree(getId(), getShortRunningThreadPool().getNumberOfFreeThreads() - 1);
       }
       super.scheduleWork(work, WorkManager.INDEFINITE, null, null);
    }
@@ -171,7 +171,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
       }
       else
       {
-         transport.updateLongRunningFree(getId(), getShortRunningThreadPool().getNumberOfFreeThreads() - 1);
+         transport.updateShortRunningFree(getId(), getShortRunningThreadPool().getNumberOfFreeThreads() - 1);
       }
       return super.startWork(work, WorkManager.INDEFINITE, null, null);
    }
@@ -276,6 +276,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
     * @exception CloneNotSupportedException Thrown if the copy operation isn't supported
     *
     */
+   @Override
    public org.jboss.jca.core.api.workmanager.WorkManager clone() throws CloneNotSupportedException
    {
       DistributedWorkManager wm = (DistributedWorkManager)super.clone();

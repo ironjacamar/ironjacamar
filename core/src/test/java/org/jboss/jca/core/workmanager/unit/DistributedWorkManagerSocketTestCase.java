@@ -46,7 +46,7 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Arquillian.class)
 @Configuration(autoActivate = false)
-public class DistributedWorkManagerSocketTestCase extends AbstractDistributedWorkManagerTestCase
+public class DistributedWorkManagerSocketTestCase extends AbstractDistributedWorkManagerTest
 {
 
 

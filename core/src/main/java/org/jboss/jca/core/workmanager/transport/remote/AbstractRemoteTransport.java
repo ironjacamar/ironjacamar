@@ -30,12 +30,16 @@ import org.jboss.jca.core.workmanager.transport.remote.jgroups.JGroupsTransport;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 
 import javax.resource.spi.work.DistributableWork;
 import javax.resource.spi.work.WorkException;
 
 import org.jboss.logging.Logger;
+import org.jboss.threads.BlockingExecutor;
+
+import org.jgroups.Address;
 
 /**
  *
@@ -89,7 +93,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
    /**
     * Init
     */
-   private void init()
+   protected void init()
    {
       if (getWorkManagers() != null)
       {
@@ -233,9 +237,16 @@ public abstract class AbstractRemoteTransport<T> implements Transport
          log.tracef("UPDATE_LONG_RUNNING_FREE(%s,%d) from %s", id, freeCount, dwm.getId());
       try
       {
-         for (T address : workManagers.values())
+         for (Entry<String, T> entry : workManagers.entrySet())
          {
-            sendMessage(address, Request.UPDATE_LONGRUNNING_FREE, id, freeCount);
+            if (entry.getKey().equals(dwm.getId()))
+            {
+               localUpdateLongRunningFree(id, freeCount);
+            }
+            else
+            {
+               sendMessage(entry.getValue(), Request.UPDATE_LONGRUNNING_FREE, id, freeCount);
+            }
          }
       }
       catch (WorkException e1)
@@ -247,6 +258,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
       }
 
    }
+
 
    /**
     * {@inheritDoc}
@@ -328,6 +340,203 @@ public abstract class AbstractRemoteTransport<T> implements Transport
    public void setWorkManagers(Map<String, T> workManagers)
    {
       this.workManagers = workManagers;
+   }
+
+   /**
+   *
+   * join
+   *
+   * @param id the id
+   * @param address the address
+   */
+   public void join(String id, Address address)
+   {
+
+      if (trace)
+         log.tracef("JOIN(%s, %s)", id, address);
+
+      this.getWorkManagers().put(id, (T) address);
+
+      if (this.getDistributedWorkManager().getPolicy() instanceof NotificationListener)
+      {
+         ((NotificationListener) this.getDistributedWorkManager().getPolicy()).join(id);
+      }
+      if (this.getDistributedWorkManager().getSelector() instanceof NotificationListener)
+      {
+         ((NotificationListener) this.getDistributedWorkManager().getSelector()).join(id);
+      }
+
+   }
+
+   /**
+    *
+    * leave
+    *
+    * @param id the id
+    */
+   public void leave(String id)
+   {
+      if (trace)
+         log.tracef("LEAVE(%s)", id);
+
+      this.getWorkManagers().remove(id);
+
+      if (this.getDistributedWorkManager().getPolicy() instanceof NotificationListener)
+      {
+         ((NotificationListener) this.getDistributedWorkManager().getPolicy()).leave(id);
+      }
+      if (this.getDistributedWorkManager().getSelector() instanceof NotificationListener)
+      {
+         ((NotificationListener) this.getDistributedWorkManager().getSelector()).leave(id);
+      }
+   }
+
+   /**
+    *
+    * localPing
+    *
+    * @return the ping value
+    */
+   public Long localPing()
+   {
+      //do nothing, just send an answer.
+      if (trace)
+         log.tracef("LOCAL_PING()");
+      return 0L;
+   }
+
+   /**
+    *
+    * localDoWork
+    *
+    * @param work the work
+    * @throws WorkException in case of error
+    */
+   public void localDoWork(DistributableWork work) throws WorkException
+   {
+      if (trace)
+         log.tracef("LOCAL_DO_WORK(%s)", work);
+
+      this.getDistributedWorkManager().localDoWork(work);
+   }
+
+   /**
+    *
+    * localStartWork
+    *
+    * @param work the work
+    * @return the start value
+    * @throws WorkException in case of error
+    */
+   public Long localStartWork(DistributableWork work) throws WorkException
+   {
+      if (trace)
+         log.tracef("LOCAL_START_WORK(%s)", work);
+
+      return this.getDistributedWorkManager().localStartWork(work);
+   }
+
+   /**
+    *
+    * localScheduleWork
+    *
+    * @param work the work
+    * @throws WorkException in case of error
+    */
+   public void localScheduleWork(DistributableWork work) throws WorkException
+   {
+      if (trace)
+         log.tracef("LOCAL_SCHEDULE_WORK(%s)", work);
+
+      this.getDistributedWorkManager().localScheduleWork(work);
+   }
+
+   /**
+    *
+    * localGetShortRunningFree
+    *
+    * @return the free count
+    */
+   public Long localGetShortRunningFree()
+   {
+      if (trace)
+         log.tracef("LOCAL_GET_SHORTRUNNING_FREE()");
+
+      BlockingExecutor executor = this.getDistributedWorkManager().getShortRunningThreadPool();
+      if (executor != null)
+      {
+         return executor.getNumberOfFreeThreads();
+      }
+      else
+      {
+         return 0L;
+      }
+   }
+
+   /**
+    *
+    * localGetLongRunningFree
+    *
+    * @return the free count
+    */
+   public Long localGetLongRunningFree()
+   {
+
+      BlockingExecutor executor = this.getDistributedWorkManager().getLongRunningThreadPool();
+      if (executor != null)
+      {
+         return executor.getNumberOfFreeThreads();
+      }
+      else
+      {
+         return 0L;
+      }
+   }
+
+   /**
+    * localUpdateLongRunningFree
+    *
+    * @param id the id
+    * @param freeCount the free count
+    */
+   public void localUpdateLongRunningFree(String id, Long freeCount)
+   {
+      if (trace)
+         log.tracef("LOCAL_UPDATE_LONGRUNNING_FREE(%s, %d)", id, freeCount);
+
+      if (this.getDistributedWorkManager().getPolicy() instanceof NotificationListener)
+      {
+         ((NotificationListener) this.getDistributedWorkManager().getPolicy()).updateLongRunningFree(
+            id, freeCount);
+      }
+      if (this.getDistributedWorkManager().getSelector() instanceof NotificationListener)
+      {
+         ((NotificationListener) this.getDistributedWorkManager().getSelector()).updateLongRunningFree(
+            id, freeCount);
+      }
+   }
+
+   /**
+    * localUpdateShortRunningFree
+    *
+    * @param id the id
+    * @param freeCount the free count
+    */
+   public void localUpdateShortRunningFree(String id, Long freeCount)
+   {
+      if (trace)
+         log.tracef("LOCAL_UPDATE_SHORTRUNNING_FREE(%s, %d)", id, freeCount);
+
+      if (this.getDistributedWorkManager().getPolicy() instanceof NotificationListener)
+      {
+         ((NotificationListener) this.getDistributedWorkManager().getPolicy()).updateShortRunningFree(
+            id, freeCount);
+      }
+      if (this.getDistributedWorkManager().getSelector() instanceof NotificationListener)
+      {
+         ((NotificationListener) this.getDistributedWorkManager().getSelector())
+            .updateShortRunningFree(id, freeCount);
+      }
    }
 
 }
