@@ -24,6 +24,7 @@ package org.jboss.jca.core.workmanager.selector;
 
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
+import org.jboss.jca.core.workmanager.WorkManagerUtil;
 
 import java.util.Map;
 
@@ -33,14 +34,14 @@ import org.jboss.logging.Logger;
 import org.jboss.logging.Messages;
 
 /**
- * The first available selector
+ * The ping time selector
  *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class FirstAvailable extends AbstractSelector
+public class MaxFreeThreads extends AbstractSelector
 {
    /** The logger */
-   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, FirstAvailable.class.getName());
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, MaxFreeThreads.class.getName());
 
    /** Whether trace is enabled */
    private static boolean trace = log.isTraceEnabled();
@@ -48,21 +49,19 @@ public class FirstAvailable extends AbstractSelector
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
 
-   /**
+    /**
     * Constructor
     */
-   public FirstAvailable()
+   public MaxFreeThreads()
    {
    }
 
    /**
     * {@inheritDoc}
     */
+   @Override
    public String selectDistributedWorkManager(String ownId, DistributableWork work)
    {
-      if (trace)
-         log.tracef("OwnId: %s, Work: %s", ownId, work);
-
       String value = getWorkManager(work);
       if (value != null)
       {
@@ -73,10 +72,8 @@ public class FirstAvailable extends AbstractSelector
       }
 
       Map<String, Long> selectionMap = getSelectionMap(work);
-      // No sorting needed
-
-      if (trace)
-         log.tracef("SelectionMap: %s", selectionMap);
+      String result = null;
+      long freeThread = 0L;
 
       for (Map.Entry<String, Long> entry : selectionMap.entrySet())
       {
@@ -86,17 +83,30 @@ public class FirstAvailable extends AbstractSelector
             Long free = entry.getValue();
             if (free != null && free.intValue() > 0)
             {
-               if (trace)
-                  log.tracef("WorkManager: %s", id);
+               long l = 0L;
+               if (WorkManagerUtil.isLongRunning(work))
+               {
+                  l = dwm.getTransport().getLongRunningFree(id);
+               }
+               else
+               {
+                  l = dwm.getTransport().getShortRunningFree(id);
+               }
 
-               return id;
+               if (l > freeThread)
+               {
+                  result = id;
+                  freeThread = l;
+               }
             }
          }
       }
 
       if (trace)
-         log.tracef("WorkManager: None");
+         log.tracef("WorkManager: %s (%s)", result, freeThread);
 
-      return null;
+      return result;
    }
+
+
 }

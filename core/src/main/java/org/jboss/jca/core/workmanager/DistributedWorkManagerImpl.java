@@ -39,7 +39,7 @@ import org.jboss.logging.Messages;
 
 /**
  * The distributed work manager implementation.
- * 
+ *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class DistributedWorkManagerImpl extends WorkManagerImpl implements DistributedWorkManager
@@ -50,7 +50,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
 
    /** Whether trace is enabled */
    private static boolean trace = log.isTraceEnabled();
-   
+
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
 
@@ -133,6 +133,14 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
     */
    public void localDoWork(Work work) throws WorkException
    {
+      if (WorkManagerUtil.isLongRunning(work))
+      {
+         transport.updateLongRunningFree(getId(), getLongRunningThreadPool().getNumberOfFreeThreads() - 1);
+      }
+      else
+      {
+         transport.updateLongRunningFree(getId(), getShortRunningThreadPool().getNumberOfFreeThreads() - 1);
+      }
       super.doWork(work, WorkManager.INDEFINITE, null, null);
    }
 
@@ -141,6 +149,14 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
     */
    public void localScheduleWork(Work work) throws WorkException
    {
+      if (WorkManagerUtil.isLongRunning(work))
+      {
+         transport.updateLongRunningFree(getId(), getLongRunningThreadPool().getNumberOfFreeThreads() - 1);
+      }
+      else
+      {
+         transport.updateLongRunningFree(getId(), getShortRunningThreadPool().getNumberOfFreeThreads() - 1);
+      }
       super.scheduleWork(work, WorkManager.INDEFINITE, null, null);
    }
 
@@ -149,6 +165,14 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
     */
    public long localStartWork(Work work) throws WorkException
    {
+      if (WorkManagerUtil.isLongRunning(work))
+      {
+         transport.updateLongRunningFree(getId(), getLongRunningThreadPool().getNumberOfFreeThreads() - 1);
+      }
+      else
+      {
+         transport.updateLongRunningFree(getId(), getShortRunningThreadPool().getNumberOfFreeThreads() - 1);
+      }
       return super.startWork(work, WorkManager.INDEFINITE, null, null);
    }
 
@@ -184,7 +208,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
          }
       }
    }
-   
+
    /**
     * {@inheritDoc}
     */
@@ -212,7 +236,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
          return localStartWork(work);
       }
    }
-   
+
    /**
     * {@inheritDoc}
     */
@@ -250,7 +274,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
     * Clone the WorkManager implementation
     * @return A copy of the implementation
     * @exception CloneNotSupportedException Thrown if the copy operation isn't supported
-    *  
+    *
     */
    public org.jboss.jca.core.api.workmanager.WorkManager clone() throws CloneNotSupportedException
    {

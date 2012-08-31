@@ -40,7 +40,7 @@ import javax.resource.spi.work.WorkContextProvider;
 
 /**
  * The never distribute policy
- * 
+ *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public abstract class AbstractPolicy implements Policy, NotificationListener
@@ -49,10 +49,10 @@ public abstract class AbstractPolicy implements Policy, NotificationListener
    protected DistributedWorkManager dwm;
 
    /** Short running */
-   protected Map<String, Integer> shortRunning;
+   protected Map<String, Long> shortRunning;
 
    /** Long running */
-   protected Map<String, Integer> longRunning;
+   protected Map<String, Long> longRunning;
 
    /**
     * Constructor
@@ -60,8 +60,8 @@ public abstract class AbstractPolicy implements Policy, NotificationListener
    public AbstractPolicy()
    {
       this.dwm = null;
-      this.shortRunning = Collections.synchronizedMap(new HashMap<String, Integer>());
-      this.longRunning = Collections.synchronizedMap(new HashMap<String, Integer>());
+      this.shortRunning = Collections.synchronizedMap(new HashMap<String, Long>());
+      this.longRunning = Collections.synchronizedMap(new HashMap<String, Long>());
    }
 
    /**
@@ -93,17 +93,17 @@ public abstract class AbstractPolicy implements Policy, NotificationListener
    /**
     * {@inheritDoc}
     */
-   public void updateShortRunningFree(String id, int free)
+   public void updateShortRunningFree(String id, long free)
    {
-      shortRunning.put(id, Integer.valueOf(free));
+      shortRunning.put(id, Long.valueOf(free));
    }
 
    /**
     * {@inheritDoc}
     */
-   public void updateLongRunningFree(String id, int free)
+   public void updateLongRunningFree(String id, long free)
    {
-      longRunning.put(id, Integer.valueOf(free));
+      longRunning.put(id, Long.valueOf(free));
    }
 
    /**

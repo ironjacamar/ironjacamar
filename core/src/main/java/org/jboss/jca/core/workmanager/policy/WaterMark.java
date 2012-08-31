@@ -20,12 +20,11 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.core.workmanager.selector;
+package org.jboss.jca.core.workmanager.policy;
 
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
-
-import java.util.Map;
+import org.jboss.jca.core.workmanager.WorkManagerUtil;
 
 import javax.resource.spi.work.DistributableWork;
 
@@ -33,14 +32,14 @@ import org.jboss.logging.Logger;
 import org.jboss.logging.Messages;
 
 /**
- * The first available selector
+ * The always distribute policy
  *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class FirstAvailable extends AbstractSelector
+public class WaterMark extends AbstractPolicy
 {
    /** The logger */
-   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, FirstAvailable.class.getName());
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, WaterMark.class.getName());
 
    /** Whether trace is enabled */
    private static boolean trace = log.isTraceEnabled();
@@ -48,55 +47,70 @@ public class FirstAvailable extends AbstractSelector
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
 
+   private int watermark = 0;
+
    /**
     * Constructor
     */
-   public FirstAvailable()
+   public WaterMark()
    {
    }
 
    /**
     * {@inheritDoc}
     */
-   public String selectDistributedWorkManager(String ownId, DistributableWork work)
+   @Override
+   public boolean shouldDistribute(DistributableWork work)
    {
       if (trace)
-         log.tracef("OwnId: %s, Work: %s", ownId, work);
+         log.tracef("Work=%s", work);
 
-      String value = getWorkManager(work);
-      if (value != null)
+      Boolean override = getShouldDistribute(work);
+      if (override != null)
+         return override.booleanValue();
+      synchronized (this)
       {
-         if (trace)
-            log.tracef("WorkManager: %s", value);
-
-         return value;
-      }
-
-      Map<String, Long> selectionMap = getSelectionMap(work);
-      // No sorting needed
-
-      if (trace)
-         log.tracef("SelectionMap: %s", selectionMap);
-
-      for (Map.Entry<String, Long> entry : selectionMap.entrySet())
-      {
-         String id = entry.getKey();
-         if (!ownId.equals(id))
+         int currentFreeThread;
+         if (WorkManagerUtil.isLongRunning(work) && dwm.getLongRunningThreadPool() != null)
          {
-            Long free = entry.getValue();
-            if (free != null && free.intValue() > 0)
+            if (dwm.getLongRunningThreadPool().getNumberOfFreeThreads() > watermark)
             {
-               if (trace)
-                  log.tracef("WorkManager: %s", id);
-
-               return id;
+               return false;
+            }
+            else
+            {
+               return true;
+            }
+         }
+         else
+         {
+            if (dwm.getShortRunningThreadPool().getNumberOfFreeThreads() > watermark)
+            {
+               return false;
+            }
+            else
+            {
+               return true;
             }
          }
       }
+   }
 
-      if (trace)
-         log.tracef("WorkManager: None");
+    /**
+     * getWatermark
+     * @return the watermark value
+     */
+   public int getWatermark()
+   {
+      return watermark;
+   }
 
-      return null;
+    /**
+     * setWatermark
+     * @param value the watermark value
+     */
+   public void setWatermark(int value)
+   {
+      this.watermark = value;
    }
 }

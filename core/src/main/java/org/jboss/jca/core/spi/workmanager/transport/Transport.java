@@ -47,6 +47,36 @@ public interface Transport
    public long ping(String dwm);
 
    /**
+    * Get The number of free thread in short running pool from a distributed work manager
+    * @param dwm The id
+    * @return The number of free thread in short running pool
+    */
+   public long getShortRunningFree(String dwm);
+
+   /**
+   * Get The number of free thread in long running pool from a distributed work manager
+   * @param dwm The id
+   * @return The number of free thread in long running pool
+   */
+   public long getLongRunningFree(String dwm);
+
+   /**
+    * Update The number of free thread in short running pool from a distributed work manager
+    *
+    * @param id The id
+    * @param freeCount the number of freeThread
+    */
+   public void updateShortRunningFree(String id, long freeCount);
+
+   /**
+    * Update The number of free thread in long running pool from a distributed work manager
+    *
+    * @param id The id
+    * @param freeCount the number of freeThread
+    */
+   public void updateLongRunningFree(String id, long freeCount);
+
+   /**
     * doWork
     * @param id The work manager id
     * @param work The work

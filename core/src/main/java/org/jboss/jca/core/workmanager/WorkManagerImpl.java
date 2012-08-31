@@ -33,7 +33,6 @@ import org.jboss.jca.core.spi.transaction.xa.XATerminator;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
@@ -65,7 +64,7 @@ import org.jboss.threads.ExecutionTimedOutException;
 
 /**
  * The work manager implementation.
- * 
+ *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class WorkManagerImpl implements WorkManager
@@ -86,7 +85,7 @@ public class WorkManagerImpl implements WorkManager
    private static final String RELEASE_METHOD_NAME = "release";
 
    /**Supported work context set*/
-   private static final Set<Class<? extends WorkContext>> SUPPORTED_WORK_CONTEXT_CLASSES = 
+   private static final Set<Class<? extends WorkContext>> SUPPORTED_WORK_CONTEXT_CLASSES =
          new HashSet<Class<? extends WorkContext>>(4);
 
    /** The id */
@@ -318,8 +317,9 @@ public class WorkManagerImpl implements WorkManager
     * Clone the WorkManager implementation
     * @return A copy of the implementation
     * @exception CloneNotSupportedException Thrown if the copy operation isn't supported
-    *  
+    *
     */
+   @Override
    public WorkManager clone() throws CloneNotSupportedException
    {
       WorkManagerImpl wm = (WorkManagerImpl) super.clone();
@@ -663,7 +663,7 @@ public class WorkManagerImpl implements WorkManager
 
       checkAndVerifyWork(work, execContext);
    }
-   
+
    /**
     * {@inheritDoc}
     */
@@ -730,29 +730,9 @@ public class WorkManagerImpl implements WorkManager
    private BlockingExecutor getExecutor(Work work)
    {
       BlockingExecutor executor = shortRunningExecutor;
-      if (work instanceof WorkContextProvider)
+      if (WorkManagerUtil.isLongRunning(work))
       {
-         WorkContextProvider wcProvider = (WorkContextProvider) work;
-         List<WorkContext> contexts = wcProvider.getWorkContexts();
-
-         if (contexts != null && contexts.size() > 0)
-         {
-            boolean found = false;
-            Iterator<WorkContext> it = contexts.iterator();
-            while (!found && it.hasNext())
-            {
-               WorkContext wc = it.next();
-               if (wc instanceof HintsContext)
-               {
-                  HintsContext hc = (HintsContext) wc;
-                  if (hc.getHints().containsKey(HintsContext.LONGRUNNING_HINT))
-                  {
-                     executor = longRunningExecutor;
-                     found = true;
-                  }
-               }
-            }
-         }
+         executor = longRunningExecutor;
       }
 
       return executor;
@@ -827,7 +807,7 @@ public class WorkManagerImpl implements WorkManager
    }
 
    /**
-    * Checks work completed status. 
+    * Checks work completed status.
     * @param wrapper work wrapper instance
     * @throws {@link WorkException} if work is completed with an exception
     */
@@ -848,7 +828,7 @@ public class WorkManagerImpl implements WorkManager
 
    /**
     * Setup work context's of the given work instance.
-    * 
+    *
     * @param wrapper The work wrapper instance
     * @param workListener The work listener
     * @throws WorkCompletedException if any work context related exceptions occurs
@@ -902,7 +882,7 @@ public class WorkManagerImpl implements WorkManager
                      log.trace("Not supported work context class : " + context.getClass().getName());
                   }
 
-                  WorkCompletedException wce = 
+                  WorkCompletedException wce =
                      new WorkCompletedException(bundle.unsupportedWorkContextClass(context.getClass().getName()),
                                                 WorkContextErrorCodes.UNSUPPORTED_CONTEXT_TYPE);
 
@@ -997,7 +977,7 @@ public class WorkManagerImpl implements WorkManager
 
    /**
     * Calls listener with given error code.
-    * @param listener work context listener
+    * @param workContext work context listener
     * @param errorCode error code
     * @param workListener work listener
     * @param work work instance
@@ -1027,7 +1007,7 @@ public class WorkManagerImpl implements WorkManager
 
    /**
     * Returns true if contexts is a transaction context.
-    * 
+    *
     * @param workContextType context type
     * @return true if contexts is a transaction context
     */
@@ -1043,7 +1023,7 @@ public class WorkManagerImpl implements WorkManager
 
    /**
     * Returns true if contexts is a security context.
-    * 
+    *
     * @param workContextType context type
     * @return true if contexts is a security context
     */
@@ -1059,7 +1039,7 @@ public class WorkManagerImpl implements WorkManager
 
    /**
     * Returns true if contexts is a hint context.
-    * 
+    *
     * @param workContextType context type
     * @return true if contexts is a hint context
     */
@@ -1076,7 +1056,7 @@ public class WorkManagerImpl implements WorkManager
    /**
     * Returns work context class if given work context is supported by server,
     * returns null instance otherwise.
-    * 
+    *
     * @param <T> work context class
     * @param adaptorWorkContext adaptor supplied work context class
     * @return work context class

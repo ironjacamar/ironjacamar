@@ -52,6 +52,10 @@ public class ProtocolMessages
       UPDATE_SHORTRUNNING_FREE(2, String.class, Integer.class),
       /** update long running free */
       UPDATE_LONGRUNNING_FREE(2, String.class, Integer.class),
+      /** get short running free */
+      GET_SHORTRUNNING_FREE(0),
+      /** get long running free */
+      GET_LONGRUNNING_FREE(0),
 
       /** PING */
       PING(0),

@@ -39,20 +39,21 @@ import javax.resource.spi.work.WorkException;
 
 import org.jboss.logging.Logger;
 import org.jboss.logging.Messages;
+import org.jboss.threads.BlockingExecutor;
 
 /**
  * The in-vm transport
- * 
+ *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class InVM implements Transport
 {
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, InVM.class.getName());
-   
+
    /** Whether trace is enabled */
    private static boolean trace = log.isTraceEnabled();
-   
+
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
 
@@ -60,7 +61,7 @@ public class InVM implements Transport
    protected DistributedWorkManager dwm;
 
    /** The work manager */
-   private Map<String, DistributedWorkManager> workManagers;
+   private final Map<String, DistributedWorkManager> workManagers;
 
    /**
     * Constructor
@@ -89,6 +90,71 @@ public class InVM implements Transport
 
       return 0L;
    }
+
+   @Override
+   public long getShortRunningFree(String dwm)
+   {
+      if (!workManagers.keySet().contains(dwm))
+         return 0L;
+      BlockingExecutor executor = workManagers.get(dwm).getShortRunningThreadPool();
+      if (executor != null)
+      {
+         return executor.getNumberOfFreeThreads();
+      }
+      else
+      {
+         return 0L;
+      }
+   }
+
+   @Override
+   public long getLongRunningFree(String dwm)
+   {
+      if (!workManagers.keySet().contains(dwm))
+         return 0L;
+      BlockingExecutor executor = workManagers.get(dwm).getLongRunningThreadPool();
+
+      if (executor != null)
+      {
+         return executor.getNumberOfFreeThreads();
+      }
+      else
+      {
+         return 0L;
+      }
+   }
+
+   @Override
+   public void updateShortRunningFree(String id, long freeCount)
+   {
+      if (dwm.getPolicy() instanceof NotificationListener)
+      {
+         ((NotificationListener) dwm.getPolicy()).updateShortRunningFree(
+                 id, freeCount);
+      }
+      if (dwm.getSelector() instanceof NotificationListener)
+      {
+         ((NotificationListener) dwm.getSelector()).updateShortRunningFree(
+                 id, freeCount);
+      }
+
+   }
+
+   @Override
+   public void updateLongRunningFree(String id, long freeCount)
+   {
+      if (dwm.getPolicy() instanceof NotificationListener)
+      {
+         ((NotificationListener) dwm.getPolicy()).updateLongRunningFree(
+                 id, freeCount);
+      }
+      if (dwm.getSelector() instanceof NotificationListener)
+      {
+         ((NotificationListener) dwm.getSelector()).updateLongRunningFree(
+                 id, freeCount);
+      }
+   }
+
 
    /**
     * {@inheritDoc}

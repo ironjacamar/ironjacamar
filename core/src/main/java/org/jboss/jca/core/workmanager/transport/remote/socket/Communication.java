@@ -37,6 +37,7 @@ import javax.resource.spi.work.DistributableWork;
 import javax.resource.spi.work.WorkException;
 
 import org.jboss.logging.Logger;
+import org.jboss.threads.BlockingExecutor;
 
 /**
  * The communication between client and server
@@ -164,6 +165,84 @@ public class Communication implements Runnable
                   log.tracef("%s: SCHEDULE_WORK(%s)", socket.getInetAddress(), work);
 
                transport.getDistributedWorkManager().localScheduleWork(work);
+               response = Response.VOID_OK;
+
+               break;
+            }
+            case GET_SHORTRUNNING_FREE : {
+               if (trace)
+                  log.tracef("%s: GET_SHORTRUNNING_FREE(%s)", socket.getInetAddress());
+
+               BlockingExecutor executor = transport.getDistributedWorkManager().getShortRunningThreadPool();
+               if (executor != null)
+               {
+                  returnValue = executor.getNumberOfFreeThreads();
+               }
+               else
+               {
+                  returnValue = 0L;
+               }
+               response = Response.LONG_OK;
+
+               break;
+            }
+            case GET_LONGRUNNING_FREE : {
+               if (trace)
+                  log.tracef("%s: GET_LONGRUNNING_FREE(%s)", socket.getInetAddress());
+
+               BlockingExecutor executor = transport.getDistributedWorkManager().getLongRunningThreadPool();
+               if (executor != null)
+               {
+                  returnValue = executor.getNumberOfFreeThreads();
+               }
+               else
+               {
+                  returnValue = 0L;
+               }
+               response = Response.LONG_OK;
+
+               break;
+            }
+            case UPDATE_SHORTRUNNING_FREE : {
+               String id = ois.readUTF();
+               int freeCount = ois.readInt();
+
+               if (trace)
+                  log.tracef("%s: UPDATE_SHORTRUNNING_FREE(%s, %d)", socket.getInetAddress(), id, freeCount);
+
+               if (transport.getDistributedWorkManager().getPolicy() instanceof NotificationListener)
+               {
+                  ((NotificationListener) transport.getDistributedWorkManager().getPolicy()).updateShortRunningFree(
+                     id, freeCount);
+               }
+               if (transport.getDistributedWorkManager().getSelector() instanceof NotificationListener)
+               {
+                  ((NotificationListener) transport.getDistributedWorkManager().getSelector())
+                     .updateShortRunningFree(id, freeCount);
+               }
+
+               response = Response.VOID_OK;
+
+               break;
+            }
+            case UPDATE_LONGRUNNING_FREE : {
+               String id = ois.readUTF();
+               int freeCount = ois.readInt();
+
+               if (trace)
+                  log.tracef("%s: UPDATE_LONGRUNNING_FREE(%s, %d)", socket.getInetAddress(), id, freeCount);
+
+               if (transport.getDistributedWorkManager().getPolicy() instanceof NotificationListener)
+               {
+                  ((NotificationListener) transport.getDistributedWorkManager().getPolicy()).updateLongRunningFree(
+                     id, freeCount);
+               }
+               if (transport.getDistributedWorkManager().getSelector() instanceof NotificationListener)
+               {
+                  ((NotificationListener) transport.getDistributedWorkManager().getSelector()).updateLongRunningFree(
+                     id, freeCount);
+               }
+
                response = Response.VOID_OK;
 
                break;

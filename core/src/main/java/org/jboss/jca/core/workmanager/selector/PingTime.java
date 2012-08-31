@@ -34,17 +34,17 @@ import org.jboss.logging.Messages;
 
 /**
  * The ping time selector
- * 
+ *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class PingTime extends AbstractSelector
 {
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, PingTime.class.getName());
-   
+
    /** Whether trace is enabled */
    private static boolean trace = log.isTraceEnabled();
-   
+
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
 
@@ -69,16 +69,16 @@ public class PingTime extends AbstractSelector
          return value;
       }
 
-      Map<String, Integer> selectionMap = getSelectionMap(work);
+      Map<String, Long> selectionMap = getSelectionMap(work);
       String result = null;
       long pingTime = Long.MAX_VALUE;
 
-      for (Map.Entry<String, Integer> entry : selectionMap.entrySet())
+      for (Map.Entry<String, Long> entry : selectionMap.entrySet())
       {
          String id = entry.getKey();
          if (!ownId.equals(id))
          {
-            Integer free = entry.getValue();
+            Long free = entry.getValue();
             if (free != null && free.intValue() > 0)
             {
                long l = dwm.getTransport().ping(id);

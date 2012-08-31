@@ -21,6 +21,7 @@
 -->
 <ivysettings>
   <property name="ivy.checksums" value="" override="true"/>
+  <property name="m2-pattern" value="${user.home}/.m2/repository/[organisation]/[module]/[revision]/[module]-[revision](-[classifier]).[ext]" override="false" />
   <settings defaultResolver="default"/>
   <caches defaultCacheDir="${user.home}/.ivy2/cache"
           artifactPattern="[organisation]/[module]/[type]s/[artifact]-[revision](-[classifier]).[ext]"/>
@@ -28,6 +29,10 @@
     <filesystem name="local">
       <ivy pattern="${ivy.cache.dir}/[module]/ivy-[revision].xml"/>
       <artifact pattern="${ivy.cache.dir}/[module]/[artifact]-[revision](-[classifier]).[ext]"/>
+    </filesystem>
+    <filesystem name="local-mvn" m2compatible="true">
+      <ivy pattern="${m2-pattern}"/>
+      <artifact pattern="${m2-pattern}"/>
     </filesystem>
     <ibiblio name="jboss" m2compatible="true" usepoms="false" root="${jboss.repo}"
              pattern="[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"/>
@@ -39,6 +44,7 @@
              pattern="[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]"/>
     <chain name="default" returnFirst="true">
       <resolver ref="local"/>
+      <resolver ref="local-mvn"/>
       <resolver ref="jboss"/>
       <resolver ref="snapshots"/>
       <resolver ref="central"/>

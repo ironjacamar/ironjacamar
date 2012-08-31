@@ -44,12 +44,12 @@ public interface NotificationListener
     * @param id The work manager id
     * @param free The number of free threads
     */
-   public void updateShortRunningFree(String id, int free);
+   public void updateShortRunningFree(String id, long free);
 
    /**
     * Update the long thread pool information for a distributed work manager
     * @param id The work manager id
     * @param free The number of free threads
     */
-   public void updateLongRunningFree(String id, int free);
+   public void updateLongRunningFree(String id, long free);
 }

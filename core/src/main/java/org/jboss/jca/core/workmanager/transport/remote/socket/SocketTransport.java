@@ -333,6 +333,90 @@ public class SocketTransport implements Transport, Runnable
 
    }
 
+   @Override
+   public long getShortRunningFree(String dwm)
+   {
+      if (trace)
+         log.tracef("GET_SHORT_RUNNING_FREE(%s)", dwm);
+      try
+      {
+         String address = workManagers.get(dwm);
+         return sendMessage(address, Request.GET_SHORTRUNNING_FREE);
+      }
+      catch (WorkException e1)
+      {
+         if (log.isDebugEnabled())
+         {
+            log.debug("Error", e1);
+         }
+         return 0L;
+      }
+
+   }
+
+   @Override
+   public long getLongRunningFree(String dwm)
+   {
+      if (trace)
+         log.tracef("GET_SHORT_RUNNING_FREE(%s)", dwm);
+      try
+      {
+         String address = workManagers.get(dwm);
+         return sendMessage(address, Request.GET_LONGRUNNING_FREE);
+      }
+      catch (WorkException e1)
+      {
+         if (log.isDebugEnabled())
+         {
+            log.debug("Error", e1);
+         }
+         return 0L;
+      }
+   }
+
+   @Override
+   public void updateShortRunningFree(String id, long freeCount)
+   {
+      if (trace)
+         log.tracef("UPDATE_SHORT_RUNNING_FREE(%s,%d) from %s", id, freeCount, dwm.getId());
+      try
+      {
+         for (String address : workManagers.values())
+         {
+            sendMessage(address, Request.UPDATE_SHORTRUNNING_FREE, id, freeCount);
+         }
+      }
+      catch (WorkException e1)
+      {
+         if (log.isDebugEnabled())
+         {
+            log.debug("Error", e1);
+         }
+      }
+   }
+
+   @Override
+   public void updateLongRunningFree(String id, long freeCount)
+   {
+      if (trace)
+         log.tracef("UPDATE_LONG_RUNNING_FREE(%s,%d) from %s", id, freeCount, dwm.getId());
+      try
+      {
+         for (String address : workManagers.values())
+         {
+            sendMessage(address, Request.UPDATE_LONGRUNNING_FREE, id, freeCount);
+         }
+      }
+      catch (WorkException e1)
+      {
+         if (log.isDebugEnabled())
+         {
+            log.debug("Error", e1);
+         }
+      }
+
+   }
+
    /**
     * {@inheritDoc}
     */
