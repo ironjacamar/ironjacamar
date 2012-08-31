@@ -13,6 +13,6 @@
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/jetty/jetty-servlet.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/jetty/jetty-util.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-common-core.jar"/>
-	<classpathentry kind="lib" path="/ironjacamar-parent/lib/jetty/servlet-api-2.5.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/jetty/javax.servlet-api.jar"/>
 	<classpathentry kind="output" path="eclipse-target/classes"/>
 </classpath>
