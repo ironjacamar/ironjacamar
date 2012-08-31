@@ -148,7 +148,6 @@
   <property name="version.jasper" value="glassfish_2.1.0.v201004190952"/>
   <property name="version.jgroups" value="3.1.0.Final"/>
   <property name="version.junit" value="4.10"/>
-  <property name="version.mail-api" value="1.4.4"/>
   <property name="version.maven" value="2.2.1"/>
   <property name="version.saxon" value="8.7"/>
   <property name="version.slf4j" value="1.6.1"/>
@@ -178,9 +177,6 @@
       <include name="**/*.jar"/>
     </fileset>
     <fileset dir="${lib.dir}/sjc">
-      <include name="**/*.jar"/>
-    </fileset>
-    <fileset dir="${lib.dir}/mail">
       <include name="**/*.jar"/>
     </fileset>
     <fileset dir="${lib.dir}/tools">
@@ -214,9 +210,6 @@
       <include name="**/*.jar"/>
     </fileset>
     <fileset dir="${lib.dir}/byteman">
-      <include name="**/*.jar"/>
-    </fileset>
-    <fileset dir="${lib.dir}/mail">
       <include name="**/*.jar"/>
     </fileset>
     <fileset dir="${lib.dir}/hornetq">
@@ -254,9 +247,6 @@
       <include name="**/*.jar"/>
     </fileset>
     <fileset dir="${lib.dir}/sjc">
-      <include name="**/*.jar"/>
-    </fileset>
-    <fileset dir="${lib.dir}/mail">
       <include name="**/*.jar"/>
     </fileset>
     <fileset dir="${lib.dir}/test">
@@ -314,7 +304,7 @@
 
   <target name="resolve" depends="init,resolve-as" unless="as">
     <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" 
-                  conf="common,sjc,embedded,byteman,arquillian,jetty,hornetq,mail,test,tools"
+                  conf="common,sjc,embedded,byteman,arquillian,jetty,hornetq,test,tools"
                   sync="true"/>
   </target>
   
@@ -595,9 +585,6 @@
         <fileset dir="${lib.dir}/sjc">
           <include name="*.jar"/>
         </fileset>
-        <fileset dir="${lib.dir}/mail">
-          <include name="*.jar"/>
-        </fileset>
         <fileset dir="${lib.dir}/test">
           <include name="*.jar"/>
         </fileset>
@@ -652,9 +639,6 @@
           <include name="*.jar"/>
         </fileset>
         <fileset dir="${lib.dir}/sjc">
-          <include name="*.jar"/>
-        </fileset>
-        <fileset dir="${lib.dir}/mail">
           <include name="*.jar"/>
         </fileset>
         <fileset dir="${lib.dir}/test">
@@ -744,7 +728,6 @@
           <fileset dir="${lib.dir}/jetty" includes="*.jar" />
           <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
           <fileset dir="${lib.dir}/sjc" includes="*.jar" />
-          <fileset dir="${lib.dir}/mail" includes="*.jar" />
           <fileset dir="${lib.dir}/test" includes="*.jar" />
           <fileset dir="${lib.dir}/tools" includes="*.jar" />
           <fileset dir="${java.home}/../lib/" includes="tools.jar" />
@@ -786,7 +769,6 @@
           <fileset dir="${lib.dir}/jetty" includes="*.jar" />
           <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
           <fileset dir="${lib.dir}/sjc" includes="*.jar" />
-          <fileset dir="${lib.dir}/mail" includes="*.jar" />
           <fileset dir="${lib.dir}/test" includes="*.jar" />
           <fileset dir="${lib.dir}/tools" includes="*.jar" />
           <fileset dir="${java.home}/../lib/" includes="tools.jar" />
@@ -828,7 +810,6 @@
           <fileset dir="${lib.dir}/jetty" includes="*.jar" />
           <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
           <fileset dir="${lib.dir}/sjc" includes="*.jar" />
-          <fileset dir="${lib.dir}/mail" includes="*.jar" />
           <fileset dir="${lib.dir}/test" includes="*.jar" />
           <fileset dir="${lib.dir}/tools" includes="*.jar" />
           <fileset dir="${java.home}/../lib/" includes="tools.jar" />
@@ -871,7 +852,6 @@
           <fileset dir="${lib.dir}/jetty" includes="*.jar" />
           <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
           <fileset dir="${lib.dir}/sjc" includes="*.jar" />
-          <fileset dir="${lib.dir}/mail" includes="*.jar" />
           <fileset dir="${lib.dir}/test" includes="*.jar" />
           <fileset dir="${lib.dir}/tools" includes="*.jar" />
           <fileset dir="${java.home}/../lib/" includes="tools.jar" />
@@ -913,7 +893,6 @@
           <fileset dir="${lib.dir}/jetty" includes="*.jar" />
           <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
           <fileset dir="${lib.dir}/sjc" includes="*.jar" />
-          <fileset dir="${lib.dir}/mail" includes="*.jar" />
           <fileset dir="${lib.dir}/test" includes="*.jar" />
           <fileset dir="${lib.dir}/tools" includes="*.jar" />
           <fileset dir="${java.home}/../lib/" includes="tools.jar" />
@@ -955,7 +934,6 @@
           <fileset dir="${lib.dir}/jetty" includes="*.jar" />
           <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
           <fileset dir="${lib.dir}/sjc" includes="*.jar" />
-          <fileset dir="${lib.dir}/mail" includes="*.jar" />
           <fileset dir="${lib.dir}/test" includes="*.jar" />
           <fileset dir="${lib.dir}/tools" includes="*.jar" />
           <fileset dir="${java.home}/../lib/" includes="tools.jar" />
@@ -999,7 +977,6 @@
           <fileset dir="${lib.dir}/jetty" includes="*.jar" />
           <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
           <fileset dir="${lib.dir}/sjc" includes="*.jar" />
-          <fileset dir="${lib.dir}/mail" includes="*.jar" />
           <fileset dir="${lib.dir}/test" includes="*.jar" />
           <fileset dir="${lib.dir}/tools" includes="*.jar" />
           <fileset dir="${java.home}/../lib/" includes="tools.jar" />
@@ -1310,7 +1287,7 @@ VERSION=${version}
     <fail message="IronJacamar doesn't support JDK 7+ artifacts" if="HAVE_JDK_1.7"/>
   
     <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" 
-                  conf="${name}-as,${name}-codegenerator,${name}-deployers-fungal,${name}-embedded,${name}-embedded-arquillian,${name}-embedded-arquillian-byteman,${name}-spec-api,${name}-test-eis,${name}-validator-ant,${name}-validator-cli,jdbc-local,jdbc-xa,mail"
+                  conf="${name}-as,${name}-codegenerator,${name}-deployers-fungal,${name}-embedded,${name}-embedded-arquillian,${name}-embedded-arquillian-byteman,${name}-spec-api,${name}-test-eis,${name}-validator-ant,${name}-validator-cli,jdbc-local,jdbc-xa"
                   sync="true"/>
 
     <!-- ironjacamar-as -->
@@ -1522,21 +1499,6 @@ mvn install:install-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depc
 
     <deploy-file file="deploy.sh" artifact="jdbc-xa" extension="rar"/>
     <install-file file="install.sh" artifact="jdbc-xa" extension="rar"/>
-
-    <!-- mail -->
-    <delete file="${target.dir}/mail.xml"/>
-    <ivy:makepom artifactName="mail" 
-                 conf="mail"
-                 ivyfile="${basedir}/ivy.xml" 
-                 pomfile="${target.dir}/mail.xml"
-                 headerFile="${tools.dir}/mvn/HEADER"
-                 templatefile="${tools.dir}/mvn/pom.template"
-                 printIvyInfo="false">
-      <mapping conf="mail" scope="runtime"/>
-    </ivy:makepom>
-
-    <deploy-file file="deploy.sh" artifact="mail" extension="rar"/>
-    <install-file file="install.sh" artifact="mail" extension="rar"/>
 
     <chmod file="${target.dir}/deploy.sh" perm="755"/>
     <chmod file="${target.dir}/install.sh" perm="755"/>

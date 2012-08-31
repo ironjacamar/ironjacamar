@@ -41,20 +41,7 @@
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
            optimize="${javac.optimize}"
-           excludes="**/jdk6/**,**/jdk7/**,**/mail/**"
-           includeAntRuntime="false">
-      <compilerarg value="-Xlint"/>
-    </javac> 
-  </target>
-
-  <target name="compile-mail" unless="as">
-    <javac srcdir="src/main"
-           destdir="${build.adapters.dir}/impl"
-           classpathref="main.lib.path.id"
-           debug="${javac.debug}"
-           deprecation="${javac.deprecation}"
-           optimize="${javac.optimize}"
-           includes="**/mail/**"
+           excludes="**/jdk6/**,**/jdk7/**"
            includeAntRuntime="false">
       <compilerarg value="-Xlint"/>
     </javac> 
@@ -86,7 +73,7 @@
     </javac> 
   </target>
 
-  <target name="compile" depends="compile-base,compile-mail,compile-jdk6,compile-jdk7">
+  <target name="compile" depends="compile-base,compile-jdk6,compile-jdk7">
   </target>
 
   <!-- ================================= 
@@ -126,25 +113,6 @@
       <fileset dir="src/main/resources/jdbc/xa"/>
     </jar>
 
-    <jar destfile="${build.adapters.dir}/${name}-mail.jar"
-         basedir="${build.adapters.dir}/impl"
-         index="true"
-         indexMetaInf="true"
-         update="true"
-         level="9"
-         includes="**/mail/**">
-      <manifest>
-        <attribute name="Implementation-Title" value="IronJacamar Mail Resource Adapter"/>
-        <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
-        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
-      </manifest>
-    </jar>
-
-    <jar destfile="${target.dir}/mail.rar">
-      <filelist dir="${build.adapters.dir}" files="${name}-mail.jar"/> 
-      <fileset dir="src/main/resources/mail"/>
-    </jar>
   </target>
 
   <target name="jars" depends="jars-base,jars-rar">
@@ -401,21 +369,6 @@
       </manifest>
     </jar>
 
-    <jar destfile="${target.dir}/mail-sources.jar"
-         basedir="src/main/java"
-         index="true"
-         indexMetaInf="true"
-         update="true"
-         level="9"
-         includes="**/adapters/mail/**">
-      <manifest>
-        <attribute name="Implementation-Title" value="IronJacamar Adapters Mail - Sources"/>
-        <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
-        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
-      </manifest>
-    </jar>
-
     <jar destfile="${target.dir}/jdbc-local-javadoc.jar"
          basedir="${build.adapters.dir}/docs/jdbc"
          index="true"
@@ -438,44 +391,6 @@
          level="9">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Adapters JDBC - JavaDoc"/>
-        <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
-        <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
-      </manifest>
-    </jar>
-
-    <mkdir dir="${build.adapters.dir}/docs/mail"/>
-    <javadoc destdir="${build.adapters.dir}/docs/mail"
-             doclet="org.jboss.apiviz.APIviz"
-             docletpathref="main.lib.path.id"
-             author="true"
-             version="true"
-             windowtitle="IronJacamar Mail Adapter - API"
-             doctitle="IronJacamar Mail Adapter - API"
-             use="true"
-             additionalparam="-author -version"
-             classpath="${build.adapters.dir}"
-             classpathref="main.lib.path.id"
-             bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
-
-      <packageset dir="src/main/java" defaultexcludes="yes">
-        <include name="**/adapters/mail/**"/>
-      </packageset>
-
-      <link offline="true" href="http://docs.oracle.com/javase/6/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
-    </javadoc>
-    <copy todir="${build.adapters.dir}/docs/mail" overwrite="true">
-      <fileset dir="${tools.dir}/api"/>
-    </copy>
-
-    <jar destfile="${target.dir}/mail-javadoc.jar"
-         basedir="${build.adapters.dir}/docs/mail"
-         index="true"
-         indexMetaInf="true"
-         update="true"
-         level="9">
-      <manifest>
-        <attribute name="Implementation-Title" value="IronJacamar Adapters Mail - JavaDoc"/>
         <attribute name="Implementation-Version" value="${version}"/>
         <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
