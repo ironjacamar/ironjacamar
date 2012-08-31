@@ -189,6 +189,7 @@
     <dependency org="org.jboss.spec.javax.transaction" name="jboss-transaction-api_1.1_spec" rev="${version.transaction.api}" conf="common,ironjacamar-core-api,ironjacamar-core-impl,ironjacamar-depchain,ironjacamar-deployers-fungal,ironjacamar-spec-api,ironjacamar-jdbc,as"/>
     <dependency org="org.jboss.stdio" name="jboss-stdio" rev="${version.jboss.stdio}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.jboss.threads" name="jboss-threads" rev="${version.jboss.threads}" conf="common,ironjacamar-core-api,ironjacamar-core-impl,ironjacamar-depchain,as"/>
+    <dependency org="org.jgroups" name="jgroups" rev="${version.jgroups}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.mockito" name="mockito-all" rev="${version.mockito}" conf="test"/>
     <dependency org="org.picketbox" name="picketbox" rev="${version.jboss.picketbox}" conf="common,ironjacamar-depchain,ironjacamar-core-impl,as"/>
     <dependency org="org.slf4j" name="jcl-over-slf4j" rev="${version.slf4j}" conf="common,ironjacamar-depchain"/>

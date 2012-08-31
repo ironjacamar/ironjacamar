@@ -147,7 +147,7 @@
            fork="${junit.fork}"
            timeout="${junit.timeout}">
       
-      <jvmarg line="${junit.jvm.options}"/>
+      <jvmarg line="${junit.jvm.options} -Djava.net.preferIPv4Stack=true -Djgroups.bind_addr=127.0.0.1"/>
       <sysproperty key="test.dir" value="${test.dir}"/>
       <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
       <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
@@ -197,12 +197,13 @@
            fork="${junit.fork}"
            timeout="${junit.timeout}">
       
-      <jvmarg line="${junit.jvm.options}"/>
+      <jvmarg line="${junit.jvm.options} -Djava.net.preferIPv4Stack=true -Djgroups.bind_addr=127.0.0.1"/>
       <sysproperty key="test.dir" value="${test.dir}"/>
       <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
       <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
       <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
       <sysproperty key="log4j.defaultInitOverride" value="true"/>
+      <env key="java.net.preferIPv4Stack" value="true"/>
       
       <classpath>
         <pathelement location="${build.core.dir}/test"/>

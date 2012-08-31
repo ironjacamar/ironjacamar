@@ -22,33 +22,20 @@
 
 package org.jboss.jca.core.workmanager.unit;
 
-import org.jboss.jca.core.api.workmanager.DistributedWorkManager;
-import org.jboss.jca.core.workmanager.rars.dwm.WorkConnection;
 import org.jboss.jca.core.workmanager.rars.dwm.WorkConnectionFactory;
 import org.jboss.jca.embedded.arquillian.Configuration;
-import org.jboss.jca.embedded.arquillian.Inject;
 import org.jboss.jca.embedded.dsl.InputStreamDescriptor;
 
 import java.util.UUID;
 
-import javax.annotation.Resource;
-import javax.resource.spi.BootstrapContext;
-import javax.resource.spi.work.DistributableWork;
-import javax.resource.spi.work.Work;
-
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
-import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * DistributedWorkManagerTestCase.
@@ -59,24 +46,9 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(Arquillian.class)
 @Configuration(autoActivate = false)
-public class DistributedWorkManagerSocketTestCase
+public class DistributedWorkManagerSocketTestCase extends AbstractDistributedWorkManagerTestCase
 {
-   private static Logger log = Logger.getLogger(DistributedWorkManagerSocketTestCase.class);
 
-   @Resource(mappedName = "java:/eis/WorkConnectionFactory")
-   private WorkConnectionFactory wcf;
-
-   @Inject(name = "DistributedWorkManager1")
-   private DistributedWorkManager dwm1;
-
-   @Inject(name = "DistributedBootstrapContext1")
-   private BootstrapContext dbc1;
-
-   @Inject(name = "DistributedWorkManager2")
-   private DistributedWorkManager dwm2;
-
-   @Inject(name = "DistributedBootstrapContext2")
-   private BootstrapContext dbc2;
 
    // --------------------------------------------------------------------------------||
    // Deployments --------------------------------------------------------------------||
@@ -127,112 +99,5 @@ public class DistributedWorkManagerSocketTestCase
       return isd;
    }
 
-   // --------------------------------------------------------------------------------||
-   // Tests --------------------------------------------------------------------------||
-   // --------------------------------------------------------------------------------||
 
-   /**
-    * Test that the used distributed work managers are an instance of the
-    * <code>javax.resource.spi.work.DistributableWorkManager</code> interface
-    * @throws Throwable throwable exception
-    */
-   @Test
-   public void testInstanceOf() throws Throwable
-   {
-      assertNotNull(dwm1);
-      assertTrue(dwm1 instanceof javax.resource.spi.work.DistributableWorkManager);
-
-      assertNotNull(dwm2);
-      assertTrue(dwm2 instanceof javax.resource.spi.work.DistributableWorkManager);
-   }
-
-   /**
-    * Test that the used distributed work managers are configured
-    * @throws Throwable throwable exception
-    */
-   @Test
-   public void testConfigured() throws Throwable
-   {
-      assertNotNull(dwm1);
-      assertNotNull(dwm1.getPolicy());
-      assertNotNull(dwm1.getSelector());
-      assertNotNull(dwm1.getTransport());
-
-      assertNotNull(dwm2);
-      assertNotNull(dwm2.getPolicy());
-      assertNotNull(dwm2.getSelector());
-      assertNotNull(dwm2.getTransport());
-
-      assertNotNull(dbc1);
-      assertNotNull(dbc2);
-   }
-
-   /**
-    * Test that a work instance can be executed
-    * @throws Throwable throwable exception
-    */
-   @Test
-   public void testExecuted() throws Throwable
-   {
-      assertNotNull(wcf);
-
-      WorkConnection wc = wcf.getConnection();
-      wc.doWork(new MyWork());
-      wc.doWork(new MyDistributableWork());
-
-      assertEquals(1, dwm1.getStatistics().getWorkSuccessful());
-      assertEquals(1, dwm2.getStatistics().getWorkSuccessful());
-
-      wc.close();
-   }
-
-   // --------------------------------------------------------------------------------||
-   // Helper classes -----------------------------------------------------------------||
-   // --------------------------------------------------------------------------------||
-   /**
-    * Work
-    */
-   public static class MyWork implements Work
-   {
-      /**
-       * {@inheritDoc}
-       */
-      public void run()
-      {
-         log.info("MyWork: run");
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      public void release()
-      {
-         log.info("MyWork: release");
-      }
-   }
-
-   /**
-    * DistributableWork
-    */
-   public static class MyDistributableWork implements DistributableWork
-   {
-      /** Serial version uid */
-      private static final long serialVersionUID = 1L;
-
-      /**
-       * {@inheritDoc}
-       */
-      public void run()
-      {
-         log.info("MyDistributableWork: run");
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      public void release()
-      {
-         log.info("MyDistributableWork: release");
-      }
-   }
 }

@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.core.workmanager.transport.remote;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
 import javax.resource.spi.work.DistributableWork;
@@ -145,6 +146,103 @@ public class ProtocolMessages
       {
          return Arrays.copyOf(typeOfParameters, typeOfParameters.length);
       }
+   }
+
+   /**
+    *
+    * A ResponseValue.
+    *
+    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    *
+    */
+   public static class ResponseValues implements Serializable
+   {
+      private final Response response;
+
+      private final Serializable[] values;
+
+      /**
+       * Create a new ResponseValue.
+       *
+       * @param response the response
+       * @param values values to return
+       */
+      public ResponseValues(Response response, Serializable... values)
+      {
+         super();
+         this.response = response;
+         this.values = values;
+      }
+
+      /**
+       * Get the response.
+       *
+       * @return the response.
+       */
+      public final Response getResponse()
+      {
+         return response;
+      }
+
+      /**
+       * Get the value.
+       *
+       * @return the value.
+       */
+      public final Serializable[] getValues()
+      {
+         return values;
+      }
+
+   }
+
+   /**
+   *
+   * A ResponseValue.
+   *
+   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   *
+   */
+   public static class RequestValues implements Serializable
+   {
+      private final Request request;
+
+      private final Serializable[] values;
+
+
+      /**
+       * Create a new RequestValue.
+       *
+       * @param request the request
+       * @param values params to send with request
+       */
+      public RequestValues(Request request, Serializable... values)
+      {
+         super();
+         this.request = request;
+         this.values = values;
+      }
+
+      /**
+       * Get the value.
+       *
+       * @return the value.
+       */
+      public final Serializable[] getValues()
+      {
+         return values;
+      }
+
+      /**
+       * Get the request.
+       *
+       * @return the request.
+       */
+      public final Request getRequest()
+      {
+         return request;
+      }
+
    }
 
 

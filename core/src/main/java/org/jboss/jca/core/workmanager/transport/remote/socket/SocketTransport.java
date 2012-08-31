@@ -23,10 +23,9 @@
 package org.jboss.jca.core.workmanager.transport.remote.socket;
 
 import org.jboss.jca.core.CoreBundle;
-import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.workmanager.DistributedWorkManager;
 import org.jboss.jca.core.spi.workmanager.notification.NotificationListener;
-import org.jboss.jca.core.spi.workmanager.transport.Transport;
+import org.jboss.jca.core.workmanager.transport.remote.AbstractRemoteTransport;
 import org.jboss.jca.core.workmanager.transport.remote.ProtocolMessages.Request;
 import org.jboss.jca.core.workmanager.transport.remote.ProtocolMessages.Response;
 
@@ -43,10 +42,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.resource.spi.work.DistributableWork;
 import javax.resource.spi.work.WorkException;
 
-import org.jboss.logging.Logger;
 import org.jboss.logging.Messages;
 
 /**
@@ -54,22 +51,10 @@ import org.jboss.logging.Messages;
  *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class SocketTransport implements Transport, Runnable
+public class SocketTransport extends AbstractRemoteTransport<String> implements Runnable
 {
-   /** The logger */
-   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, SocketTransport.class.getName());
-
-   /** Whether trace is enabled */
-   private static boolean trace = log.isTraceEnabled();
-
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
-
-   /** Distributed work manager instance */
-   protected DistributedWorkManager dwm;
-
-   /** The kernel executorService*/
-   private ExecutorService executorService;
 
    /** The bind address */
    private String host;
@@ -82,9 +67,6 @@ public class SocketTransport implements Transport, Runnable
 
    /** The server socket */
    private ServerSocket ss;
-
-   /** The work manager */
-   private Map<String, String> workManagers;
 
    /**
     * Constructor
@@ -110,7 +92,6 @@ public class SocketTransport implements Transport, Runnable
          for (Map.Entry<String, String> entry : getWorkManagers().entrySet())
          {
             String id = entry.getKey();
-            String address = entry.getValue();
 
             if (dwm.getPolicy() instanceof NotificationListener)
             {
@@ -162,7 +143,8 @@ public class SocketTransport implements Transport, Runnable
       running.set(false);
    }
 
-   private Long sendMessage(String address, Request request, Serializable... parameters)
+   @Override
+   protected Long sendMessage(String address, Request request, Serializable... parameters)
       throws WorkException
    {
       String[] addressPart = address.split(":");
@@ -238,7 +220,6 @@ public class SocketTransport implements Transport, Runnable
          ois = new ObjectInputStream(socket.getInputStream());
 
          int commandOrdinalPosition = ois.readInt();
-         int numberOfParameter = ois.readInt();
          Response response = Response.values()[commandOrdinalPosition];
 
          switch (response)
@@ -295,169 +276,6 @@ public class SocketTransport implements Transport, Runnable
       init();
    }
 
-   /**
-    * get The distributed work manager
-    * @return the ditributed work manager
-    */
-   public DistributedWorkManager getDistributedWorkManager()
-   {
-      return dwm;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public long ping(String id)
-   {
-      if (trace)
-         log.tracef("PING(%s)", id);
-
-      long start = System.currentTimeMillis();
-
-      try
-      {
-         String address = workManagers.get(id);
-         sendMessage(address, Request.PING);
-      }
-      catch (WorkException e1)
-      {
-         if (log.isDebugEnabled())
-         {
-            log.debug("Error", e1);
-         }
-         return Long.MAX_VALUE;
-      }
-
-      return System.currentTimeMillis() - start;
-
-   }
-
-   @Override
-   public long getShortRunningFree(String dwm)
-   {
-      if (trace)
-         log.tracef("GET_SHORT_RUNNING_FREE(%s)", dwm);
-      try
-      {
-         String address = workManagers.get(dwm);
-         return sendMessage(address, Request.GET_SHORTRUNNING_FREE);
-      }
-      catch (WorkException e1)
-      {
-         if (log.isDebugEnabled())
-         {
-            log.debug("Error", e1);
-         }
-         return 0L;
-      }
-
-   }
-
-   @Override
-   public long getLongRunningFree(String dwm)
-   {
-      if (trace)
-         log.tracef("GET_SHORT_RUNNING_FREE(%s)", dwm);
-      try
-      {
-         String address = workManagers.get(dwm);
-         return sendMessage(address, Request.GET_LONGRUNNING_FREE);
-      }
-      catch (WorkException e1)
-      {
-         if (log.isDebugEnabled())
-         {
-            log.debug("Error", e1);
-         }
-         return 0L;
-      }
-   }
-
-   @Override
-   public void updateShortRunningFree(String id, long freeCount)
-   {
-      if (trace)
-         log.tracef("UPDATE_SHORT_RUNNING_FREE(%s,%d) from %s", id, freeCount, dwm.getId());
-      try
-      {
-         for (String address : workManagers.values())
-         {
-            sendMessage(address, Request.UPDATE_SHORTRUNNING_FREE, id, freeCount);
-         }
-      }
-      catch (WorkException e1)
-      {
-         if (log.isDebugEnabled())
-         {
-            log.debug("Error", e1);
-         }
-      }
-   }
-
-   @Override
-   public void updateLongRunningFree(String id, long freeCount)
-   {
-      if (trace)
-         log.tracef("UPDATE_LONG_RUNNING_FREE(%s,%d) from %s", id, freeCount, dwm.getId());
-      try
-      {
-         for (String address : workManagers.values())
-         {
-            sendMessage(address, Request.UPDATE_LONGRUNNING_FREE, id, freeCount);
-         }
-      }
-      catch (WorkException e1)
-      {
-         if (log.isDebugEnabled())
-         {
-            log.debug("Error", e1);
-         }
-      }
-
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void doWork(String id, DistributableWork work) throws WorkException
-   {
-      if (trace)
-         log.tracef("DO_WORK(%s, %s)", id, work);
-
-      String address = workManagers.get(id);
-
-      sendMessage(address, Request.DO_WORK, work);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void scheduleWork(String id, DistributableWork work) throws WorkException
-   {
-      if (trace)
-         log.tracef("SCHEDULE_WORK(%s, %s)", id, work);
-
-      String address = workManagers.get(id);
-
-      sendMessage(address, Request.SCHEDULE_WORK, work);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public long startWork(String id, DistributableWork work) throws WorkException
-   {
-      if (trace)
-         log.tracef("START_WORK(%s, %s)", id, work);
-
-      String address = workManagers.get(id);
-
-      return sendMessage(address, Request.START_WORK, work);
-   }
 
    /**
     * Get the host.
@@ -504,6 +322,7 @@ public class SocketTransport implements Transport, Runnable
     *
     * @return the executorService.
     */
+   @Override
    public ExecutorService getExecutorService()
    {
       return executorService;
@@ -514,6 +333,7 @@ public class SocketTransport implements Transport, Runnable
     *
     * @param executorService The executorService to set.
     */
+   @Override
    public void setExecutorService(ExecutorService executorService)
    {
       this.executorService = executorService;
@@ -539,25 +359,6 @@ public class SocketTransport implements Transport, Runnable
       }
    }
 
-   /**
-    * Get the workManagers.
-    *
-    * @return the workManagers.
-    */
-   public Map<String, String> getWorkManagers()
-   {
-      return workManagers;
-   }
-
-   /**
-    * Set the workManagers.
-    *
-    * @param workManagers The workManagers to set.
-    */
-   public void setWorkManagers(Map<String, String> workManagers)
-   {
-      this.workManagers = workManagers;
-   }
 
    @Override
    public String toString()

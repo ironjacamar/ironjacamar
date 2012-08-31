@@ -28,6 +28,7 @@ import org.jboss.jca.embedded.dsl.InputStreamDescriptor;
 
 import java.util.UUID;
 
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -35,6 +36,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
 import org.junit.runner.RunWith;
+
 
 /**
  * DistributedWorkManagerTestCase.
@@ -45,9 +47,9 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Arquillian.class)
 @Configuration(autoActivate = false)
-public class DistributedWorkManagerTestCase extends AbstractDistributedWorkManagerTestCase
+public class DistributedWorkManagerJGroupsTestCase extends AbstractDistributedWorkManagerTestCase
 {
-
+   
 
    // --------------------------------------------------------------------------------||
    // Deployments --------------------------------------------------------------------||
@@ -61,8 +63,8 @@ public class DistributedWorkManagerTestCase extends AbstractDistributedWorkManag
    public static InputStreamDescriptor createDistributedWorkManagerDeployment()
    {
       ClassLoader cl = Thread.currentThread().getContextClassLoader();
-      InputStreamDescriptor isd = new InputStreamDescriptor("dwm.xml",
-                                                            cl.getResourceAsStream("dwm.xml"));
+      InputStreamDescriptor isd = new InputStreamDescriptor("dwm-jgroups.xml",
+                                                            cl.getResourceAsStream("dwm-jgroups.xml"));
       return isd;
    }
 
@@ -98,5 +100,8 @@ public class DistributedWorkManagerTestCase extends AbstractDistributedWorkManag
       return isd;
    }
 
+   // --------------------------------------------------------------------------------||
+   // Tests --------------------------------------------------------------------------||
+   // --------------------------------------------------------------------------------||
 
 }

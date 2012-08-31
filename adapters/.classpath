@@ -24,5 +24,10 @@
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-transaction-api_1.1_spec.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jbossjta-integration.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jbossjta.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/embedded/shrinkwrap-descriptors-api-base.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/embedded/shrinkwrap-descriptors-impl-base.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/embedded/shrinkwrap-descriptors-spi.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/embedded/shrinkwrap-impl-base.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/embedded/shrinkwrap-spi.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
