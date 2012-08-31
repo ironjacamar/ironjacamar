@@ -37,9 +37,20 @@
   </target>
 
   <!-- ================================= 
-       Target: compile
+       Target: check
        ================================= -->
-  <target name="compile" depends="init">
+  <target name="check">
+    <uptodate property="embedded.uptodate" targetfile="${target.dir}/${name}-embedded.jar" >
+      <srcfiles dir= "src/main" includes="**/*"/>
+      <srcfiles dir= "../common/src/main/resources/dtd/" includes="**/*"/>
+      <srcfiles dir= "../common/src/main/resources/schema/" includes="**/*"/>
+    </uptodate>
+  </target>
+
+   <!-- ================================= 
+        Target: compile
+        ================================= -->
+  <target name="compile" depends="init,check" unless="embedded.uptodate">
     <taskdef name="metadata-parser"
              classname="org.jboss.shrinkwrap.descriptor.extension.ant.task.MetadataParserTask"
              classpathref="main.lib.path.id"/>
@@ -235,7 +246,7 @@
   <!-- ================================= 
        Target: jars 
        ================================= -->
-  <target name="jars" depends="compile">
+  <target name="jars" depends="compile" unless="embedded.uptodate">
     <copy todir="${build.embedded.dir}/impl">
       <fileset dir="src/main/resources"
                includes="*.xml,*.properties"/>

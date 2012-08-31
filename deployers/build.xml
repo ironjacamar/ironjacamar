@@ -29,9 +29,25 @@
   <property name="build.deployers.dir" value="${build.dir}/deployers" />
 
   <!-- ================================= 
+       Target: check
+       ================================= -->
+  <target name="check">
+    <uptodate property="deployers._uptodate" targetfile="${target.dir}/${name}-deployers-common.jar" >
+      <srcfiles dir= "src/main" includes="**/*"/>
+    </uptodate>
+
+    <condition property="deployers.uptodate" value="true">
+      <or>
+        <isset property="deployers._uptodate"/>
+        <isset property="as"/>
+      </or>
+    </condition>
+  </target>
+
+  <!-- ================================= 
        Target: compile
        ================================= -->
-  <target name="compile-fungal" unless="as">
+  <target name="compile-fungal" unless="deployers.uptodate">
     <javac srcdir="src/main"
            destdir="${build.deployers.dir}/impl"
            classpathref="main.lib.path.id"
@@ -46,7 +62,7 @@
     </javac>
   </target>
 
-  <target name="compile-base">
+  <target name="compile-base" unless="deployers.uptodate">
     <mkdir dir="${build.deployers.dir}" />
     <mkdir dir="${build.deployers.dir}/impl" />
     <javac srcdir="src/main"
@@ -63,7 +79,7 @@
     </javac>
   </target>
 
-  <target name="compile" depends="compile-base,compile-fungal">
+  <target name="compile" depends="check,compile-base,compile-fungal" unless="deployers.uptodate">
     <javac srcdir="${build.deployers.dir}/impl"
            destdir="${build.deployers.dir}/impl"
            classpathref="main.lib.path.id"
@@ -73,7 +89,6 @@
            includeAntRuntime="false">
       <compilerarg value="-Xlint"/>
     </javac> 
-
   </target>
 
   <!-- ================================= 

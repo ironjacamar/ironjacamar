@@ -28,10 +28,19 @@
        ================================= -->
   <property name="build.api.dir" value="${build.dir}/api" />
 
-  <!-- ================================= 
+   <!-- ================================= 
+       Target: check
+       ================================= -->
+  <target name="check">
+    <uptodate property="api.uptodate" targetfile="${target.dir}/${name}-spec-api.jar" >
+      <srcfiles dir= "src/main" includes="**/*.java"/>
+    </uptodate>
+  </target>
+
+   <!-- ================================= 
        Target: compile
        ================================= -->
-  <target name="compile">
+  <target name="compile" depends="check" unless="api.uptodate">
     <mkdir dir="${build.api.dir}" />
 
     <javac srcdir="src"
@@ -49,7 +58,7 @@
   <!-- ================================= 
        Target: jars
        ================================= -->
-  <target name="jars" depends="compile">
+  <target name="jars" depends="compile" unless="api.uptodate">
     <jar destfile="${target.dir}/${name}-spec-api.jar"
          basedir="${build.api.dir}"
          index="true"

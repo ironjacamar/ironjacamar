@@ -29,9 +29,39 @@
   <property name="build.adapters.dir" value="${build.dir}/adapters" />
 
   <!-- ================================= 
+       Target: check
+       ================================= -->
+  <target name="check">
+    <uptodate property="adapters._uptodate" targetfile="${target.dir}/${name}-jdbc.jar" >
+      <srcfiles dir= "src/main" includes="**/*"/>
+    </uptodate>
+
+    <condition property="adapters.uptodate" value="true">
+      <or>
+        <isset property="adapters._uptodate"/>
+        <isset property="as"/>
+      </or>
+    </condition>
+
+    <condition property="jdk6" value="true">
+      <or>
+        <isset property="adapters._uptodate"/>
+        <isset property="HAVE_JDK_1.7"/>
+      </or>
+    </condition>
+
+    <condition property="jdk7" value="true">
+      <and>
+        <isset property="adapters._uptodate"/>
+        <isset property="HAVE_JDK_1.7"/>
+      </and>
+    </condition>
+  </target>
+
+  <!-- ================================= 
        Target: compile
        ================================= -->
-  <target name="compile-base"> 
+  <target name="compile-base" unless="adapters.uptodate">
     <mkdir dir="${build.adapters.dir}" />
     <mkdir dir="${build.adapters.dir}/impl" />
 
@@ -47,7 +77,7 @@
     </javac> 
   </target>
 
-  <target name="compile-jdk6" unless="HAVE_JDK_1.7">
+  <target name="compile-jdk6" unless="jdk6">
     <javac srcdir="src/main"
            destdir="${build.adapters.dir}/impl"
            classpathref="main.lib.path.id"
@@ -60,7 +90,7 @@
     </javac> 
   </target>
 
-  <target name="compile-jdk7" if="HAVE_JDK_1.7">
+  <target name="compile-jdk7" if="jdk7">
     <javac srcdir="src/main"
            destdir="${build.adapters.dir}/impl"
            classpathref="main.lib.path.id"
@@ -73,7 +103,7 @@
     </javac> 
   </target>
 
-  <target name="compile" depends="compile-base,compile-jdk6,compile-jdk7">
+  <target name="compile" depends="check,compile-base,compile-jdk6,compile-jdk7" unless="adapters.uptodate">
   </target>
 
   <!-- ================================= 

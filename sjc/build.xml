@@ -37,9 +37,18 @@
   </target>
 
   <!-- ================================= 
+       Target: check
+       ================================= -->
+  <target name="check">
+    <uptodate property="sjc.uptodate" targetfile="${target.dir}/${name}-sjc.jar" >
+      <srcfiles dir= "src/main" includes="**/*"/>
+    </uptodate>
+  </target>
+
+  <!-- ================================= 
        Target: compile
        ================================= -->
-  <target name="compile" depends="init">
+  <target name="compile" depends="init,check" unless="sjc.uptodate">
     <javac srcdir="src/main"
            destdir="${build.sjc.dir}/impl"
            classpathref="main.lib.path.id"

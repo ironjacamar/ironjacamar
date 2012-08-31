@@ -29,9 +29,18 @@
   <property name="build.codegenerator.dir" value="${build.dir}/codegenerator" />
 
   <!-- ================================= 
+       Target: check
+       ================================= -->
+  <target name="check">
+    <uptodate property="codegenerator.uptodate" targetfile="${target.dir}/${name}-codegenerator.jar" >
+      <srcfiles dir= "src/main" includes="**/*"/>
+    </uptodate>
+  </target>
+
+  <!-- ================================= 
        Target: compile
        ================================= -->
-  <target name="compile">
+  <target name="compile" depends="check" unless="codegenerator.uptodate">
     <mkdir dir="${build.codegenerator.dir}" />
     <mkdir dir="${build.codegenerator.dir}/impl" />
 

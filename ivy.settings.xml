@@ -28,7 +28,7 @@
   <resolvers>
     <filesystem name="local">
       <ivy pattern="${ivy.cache.dir}/[module]/ivy-[revision].xml"/>
-      <artifact pattern="${ivy.cache.dir}/[module]/[artifact]-[revision](-[classifier]).[ext]"/>
+      <artifact pattern="${ivy.cache.dir}/[organisation]/[module]/[artifact]-[revision](-[classifier]).[ext]"/>
     </filesystem>
     <filesystem name="local-mvn" m2compatible="true">
       <ivy pattern="${m2-pattern}"/>

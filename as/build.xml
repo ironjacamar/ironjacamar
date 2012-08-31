@@ -29,9 +29,18 @@
   <property name="build.as.dir" value="${build.dir}/as" />
 
   <!-- ================================= 
+       Target: check
+       ================================= -->
+  <target name="check">
+    <uptodate property="as.uptodate" targetfile="${target.dir}/${name}-as.jar" >
+      <srcfiles dir= "src/main" includes="**/*"/>
+    </uptodate>
+  </target>
+
+  <!-- ================================= 
        Target: compile
        ================================= -->
-  <target name="compile">
+  <target name="compile" depends="check" unless="as.uptodate">
     <mkdir dir="${build.as.dir}" />
 
     <javac srcdir="src/main"

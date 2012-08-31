@@ -37,9 +37,18 @@
   </target>
 
   <!-- ================================= 
+       Target: check
+       ================================= -->
+  <target name="check">
+    <uptodate property="web.uptodate" targetfile="${target.dir}/${name}-web.jar" >
+      <srcfiles dir= "src/main" includes="**/*"/>
+    </uptodate>
+  </target>
+
+  <!-- ================================= 
        Target: compile
        ================================= -->
-  <target name="compile" depends="init">
+  <target name="compile" depends="init,check" unless="web.uptodate">
     <javac srcdir="src/main"
            destdir="${build.web.dir}/impl"
            classpathref="main.lib.path.id"

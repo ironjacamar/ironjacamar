@@ -29,9 +29,18 @@
   <property name="build.common.dir" value="${build.dir}/common" />
   
   <!-- ================================= 
-       compile
+       Target: check
        ================================= -->
-  <target name="compile">
+  <target name="check">
+    <uptodate property="common.uptodate" targetfile="${target.dir}/${name}-common-impl.jar" >
+      <srcfiles dir= "src/main" includes="**/*"/>
+    </uptodate>
+  </target>
+
+   <!-- ================================= 
+        Target: compile
+        ================================= -->
+  <target name="compile" depends="check" unless="common.uptodate">
     <mkdir dir="${build.common.dir}" />
     
     <javac srcdir="src/main"
