@@ -99,7 +99,10 @@
     </javac> 
   </target>
 
-  <target name="compile" depends="check,compile-base,compile-jdk6,compile-jdk7" unless="adapters.uptodate">
+  <target name="compile" depends="check" unless="adapters.uptodate">
+    <ant inheritRefs="true" target="compile-base"/>
+    <ant inheritRefs="true" target="compile-jdk6"/>
+    <ant inheritRefs="true" target="compile-jdk7"/>
   </target>
 
   <!-- ================================= 
