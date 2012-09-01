@@ -577,7 +577,7 @@ public class BaseProfile implements Profile
       try
       {
          String clazzName = this.getClass().getPackage().getName() + ".code.TestEisCodeGen";
-         String javaFile = "EchoHandler.java";
+         String javaFile = def.getDefaultValue() + "Handler.java";
          FileWriter fw = Utils.createTestFile(javaFile, def.getRaPackage(), def.getOutputDir());
 
          Class<?> clazz = Class.forName(clazzName, true, Thread.currentThread().getContextClassLoader());

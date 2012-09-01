@@ -74,12 +74,7 @@ public class TestEisCodeGen extends AbstractCodeGen
       writeEol(out);
       out.write("import java.io.InputStream;");
       writeEol(out);
-      out.write("import java.io.ObjectInputStream;");
-      writeEol(out);
-      out.write("import java.io.ObjectOutputStream;");
-      writeEol(out);
       out.write("import java.io.OutputStream;");
-
       writeEol(out);
       writeEol(out);
    }
@@ -92,7 +87,7 @@ public class TestEisCodeGen extends AbstractCodeGen
    @Override
    public String getClassName(Definition def)
    {
-      return "EchoHandler";
+      return def.getDefaultValue() + "Handler";
    }
    
    /**
@@ -119,65 +114,7 @@ public class TestEisCodeGen extends AbstractCodeGen
       writeLeftCurlyBracket(out, indent);
       
       writeIndent(out, indent + 1);
-      out.write("try");
-      writeLeftCurlyBracket(out, indent + 1);
-
-      writeIndent(out, indent + 2);
-      out.write("ObjectInputStream ois = new ObjectInputStream(is);");
-      writeIndent(out, indent + 2);
-      writeEol(out);
-      writeIndent(out, indent + 2);
-      out.write("ObjectOutputStream oos = new ObjectOutputStream(os);");
-      writeEol(out);
-      writeIndent(out, indent + 2);
-      out.write("boolean done = false;");
-      writeEol(out);
-      writeEol(out);
-      
-      writeIndent(out, indent + 2);
-      out.write("while (!done)");
-      writeLeftCurlyBracket(out, indent + 2);
-      writeIndent(out, indent + 3);
-      out.write("String command = ois.readUTF();");
-      writeEol(out);
-      writeIndent(out, indent + 3);
-      out.write("if (\"echo\".equals(command))");
-      writeLeftCurlyBracket(out, indent + 3);
-      writeIndent(out, indent + 4);
-      out.write("String s = ois.readUTF();");
-      writeEol(out);
-      writeIndent(out, indent + 4);
-      out.write("oos.writeUTF(s);");
-      writeEol(out);
-      writeIndent(out, indent + 4);
-      out.write("oos.flush();");
-      writeRightCurlyBracket(out, indent + 3);
-      
-      writeIndent(out, indent + 3);
-      out.write("else if (\"close\".equals(command))");
-      writeLeftCurlyBracket(out, indent + 3);
-      writeIndent(out, indent + 4);
-      out.write("done = true;");
-      writeRightCurlyBracket(out, indent + 3);
-      
-      writeIndent(out, indent + 3);
-      out.write("else");
-      writeLeftCurlyBracket(out, indent + 3);
-      writeIndent(out, indent + 4);
-      out.write("// Unknown command - terminate");
-      writeEol(out);
-      writeIndent(out, indent + 4);
-      out.write("done = true;");
-      writeRightCurlyBracket(out, indent + 3);
-      writeRightCurlyBracket(out, indent + 2);
-      writeRightCurlyBracket(out, indent + 1);
-      
-      writeIndent(out, indent + 1);
-      out.write("catch (Throwable t)");
-      writeLeftCurlyBracket(out, indent + 1);
-      writeIndent(out, indent + 2);
-      out.write("// Nothing");
-      writeRightCurlyBracket(out, indent + 1);
+      out.write("// TODO: Implement me");
       writeRightCurlyBracket(out, indent);
    }
 }

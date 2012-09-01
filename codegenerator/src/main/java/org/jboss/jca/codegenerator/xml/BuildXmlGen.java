@@ -69,7 +69,8 @@ public class BuildXmlGen extends AbstractXmlGen
       if (def.isSupportEis())
       {
          strStartTask.append("    <start host=\"localhost\" port=\"1400\"\n");
-         strStartTask.append("      handler=\"" + def.getRaPackage() + ".EchoHandler\">\n");
+         strStartTask.append("      handler=\"" + def.getRaPackage() + "." + 
+            def.getDefaultValue() + "Handler\">\n");
          strStartTask.append("      <classpath>\n");
          strStartTask.append("        <pathelement location=\"${build.dir}/test\"/>\n");
          strStartTask.append("      </classpath>\n");

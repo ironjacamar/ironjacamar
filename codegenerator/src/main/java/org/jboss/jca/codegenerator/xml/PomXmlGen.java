@@ -76,7 +76,8 @@ public class PomXmlGen extends AbstractXmlGen
          strStartGoal.append("         <configuration>\n");
          strStartGoal.append("           <host>localhost</host>\n");
          strStartGoal.append("           <port>1400</port>\n");
-         strStartGoal.append("           <handler>" + def.getRaPackage() + ".EchoHandler</handler>\n");
+         strStartGoal.append("           <handler>" + def.getRaPackage() + "." + 
+            def.getDefaultValue() + "Handler</handler>\n");
          strStartGoal.append("           <classpath>\n");
          strStartGoal.append("             <param>target/test-classes</param>\n");
          strStartGoal.append("           </classpath>\n");

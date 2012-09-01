@@ -252,9 +252,6 @@ public class ConnImplCodeGen extends AbstractCodeGen
          writeRightCurlyBracket(out, indent);
       }
 
-      if (def.isSupportEis())
-         writeEcho(def, out, indent);
-      
       writeEol(out);
       writeIndent(out, indent);
       out.write("/**");
@@ -270,40 +267,6 @@ public class ConnImplCodeGen extends AbstractCodeGen
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
       out.write("mc.closeHandle(this);");
-      writeRightCurlyBracket(out, indent);
-   }
-   
-   /**
-    * Output echo method
-    * @param def definition
-    * @param out Writer
-    * @param indent space number
-    * @throws IOException ioException
-    */
-   private void writeEcho(Definition def, Writer out, int indent) throws IOException
-   {
-      writeIndent(out, indent);
-      out.write("/**");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * Echo");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * @param s The string");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * @return The string");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" */");
-      writeEol(out);
-
-      writeIndent(out, indent);
-      out.write("public String echo(String s)");
-      writeLeftCurlyBracket(out, indent);
-      
-      writeIndent(out, indent + 1);
-      out.write("return mc.echo(s);");
       writeRightCurlyBracket(out, indent);
    }
 }

@@ -131,9 +131,6 @@ public class ConnInterfaceCodeGen extends AbstractCodeGen
          writeIndent(out, indent);
          out.write("public void callMe();");
       }
-
-      if (def.isSupportEis())
-         writeEcho(def, out, indent);
       
       writeEol(out);
       writeIndent(out, indent);
@@ -175,34 +172,5 @@ public class ConnInterfaceCodeGen extends AbstractCodeGen
    public String getClassName(Definition def)
    {
       return def.getMcfDefs().get(getNumOfMcf()).getConnInterfaceClass();
-   }
-   
-   /**
-    * Output echo method
-    * @param def definition
-    * @param out Writer
-    * @param indent space number
-    * @throws IOException ioException
-    */
-   private void writeEcho(Definition def, Writer out, int indent) throws IOException
-   {
-      writeIndent(out, indent);
-      out.write("/**");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * Echo");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * @param s The string");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * @return The string");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" */");
-      writeEol(out);
-
-      writeIndent(out, indent);
-      out.write("public String echo(String s);");
    }
 }

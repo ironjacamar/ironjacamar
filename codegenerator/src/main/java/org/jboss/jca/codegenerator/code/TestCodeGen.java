@@ -75,11 +75,6 @@ public class TestCodeGen extends AbstractCodeGen
             writeTestBasic(def, out, indent, num + 1);
          }
       }
-      
-      if (def.isSupportEis())
-      {
-         writeTestEcho(def, out, indent, 1);
-      }
 
       writeRightCurlyBracket(out, 0);
    }
@@ -421,77 +416,5 @@ public class TestCodeGen extends AbstractCodeGen
          writeRightCurlyBracket(out, indent);
          writeEol(out);
       }
-   }
-   
-   /**
-    * Output test echo method
-    * @param def definition
-    * @param out Writer
-    * @param indent space number
-    * @param num number of mcf
-    * @throws IOException ioException
-    */
-   private void writeTestEcho(Definition def, Writer out, int indent, int num) throws IOException
-   {
-      writeIndent(out, indent);
-      out.write("/**");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * Test echo");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" *");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" * @exception Throwable Thrown if case of an error");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write(" */");
-      writeEol(out);
-
-      writeIndent(out, indent);
-      out.write("@Test");
-      writeEol(out);
-      writeIndent(out, indent);
-      out.write("public void testEcho() throws Throwable");
-      writeLeftCurlyBracket(out, indent);
-      
-      writeIndent(out, indent + 1);
-      out.write("assertNotNull(connectionFactory" + num + ");");
-      writeEol(out);
-      writeIndent(out, indent + 1);
-      out.write(def.getMcfDefs().get(num - 1).getConnInterfaceClass() + " c = null;");
-      writeEol(out);
-      writeIndent(out, indent + 1);
-      out.write("try");
-      writeLeftCurlyBracket(out, indent + 1);
-      
-      writeIndent(out, indent + 2);
-      out.write("c = connectionFactory" + num + ".getConnection();");
-      writeEol(out);
-      writeIndent(out, indent + 2);
-      out.write("String s = \"Hello World!\";");
-      writeEol(out);
-      writeIndent(out, indent + 2);
-      out.write("assertEquals(s, c.echo(s));");
-      writeEol(out);
-      writeEol(out);
-      writeIndent(out, indent + 2);
-      out.write("s = \"Hello again!\";");
-      writeEol(out);
-      writeIndent(out, indent + 2);
-      out.write("assertEquals(s, c.echo(s));");
-      writeRightCurlyBracket(out, indent);
-      
-      writeIndent(out, indent + 1);
-      out.write("finally");
-      writeLeftCurlyBracket(out, indent + 1);
-      writeIndent(out, indent + 2);
-      out.write("if (c != null)");
-      writeEol(out);
-      writeIndent(out, indent + 3);
-      out.write("c.close();");
-      writeRightCurlyBracket(out, indent + 1);
-      writeRightCurlyBracket(out, indent);
    }
 }
