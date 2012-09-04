@@ -431,9 +431,22 @@ config/bootstrap/jca.xml
             <itemizedlist>
               <listitem>
                 Never -- <code>org.jboss.jca.core.workmanager.policy.Never</code>
+                <para>
+                  Never the distribute the <code>Work</code> instance to another node.
+                </para>
               </listitem>
               <listitem>
                 Always -- <code>org.jboss.jca.core.workmanager.policy.Always</code>
+                <para>
+                  Always the distribute the <code>Work</code> instance to another node.
+                </para>
+              </listitem>
+              <listitem>
+                WaterMark -- <code>org.jboss.jca.core.workmanager.policy.WaterMark</code>
+                <para>
+                  Distribute the <code>Work</code> instance to another node based on how many
+                  free worker threads the current node has available.
+                </para>
               </listitem>
             </itemizedlist>
           </para>
@@ -444,9 +457,21 @@ config/bootstrap/jca.xml
             <itemizedlist>
               <listitem>
                 FirstAvailable -- <code>org.jboss.jca.core.workmanager.selector.FirstAvailable</code>
+                <para>
+                  Select the first available node in the list
+                </para>
               </listitem>
               <listitem>
                 PingTime -- <code>org.jboss.jca.core.workmanager.selector.PingTime</code>
+                <para>
+                  Select the node with the lowest ping time
+                </para>
+              </listitem>
+              <listitem>
+                MaxFreeThreads -- <code>org.jboss.jca.core.workmanager.selector.MaxFreeThreads</code>
+                <para>
+                  Select the node with highest number of free worker threads
+                </para>
               </listitem>
             </itemizedlist>
           </para>
@@ -457,9 +482,21 @@ config/bootstrap/jca.xml
             <itemizedlist>
               <listitem>
                 InVM -- <code>org.jboss.jca.core.workmanager.transport.invm.InVM</code>
+                <para>
+                  Communication between work manager instances within the JVM 
+                </para>
               </listitem>
               <listitem>
                 Socket -- <code>org.jboss.jca.core.workmanager.transport.remote.socket.SocketTransport</code>
+                <para>
+                  Communication based on <code>java.net.Socket</code>, and hence TCP/IP 
+                </para>
+              </listitem>
+              <listitem>
+                JGroups -- <code>org.jboss.jca.core.workmanager.transport.remote.jgroups.JGroupsTransport</code>
+                <para>
+                  Communication based on the JGroups framework, and hence UDP (by default) 
+                </para>
               </listitem>
             </itemizedlist>
           </para>
