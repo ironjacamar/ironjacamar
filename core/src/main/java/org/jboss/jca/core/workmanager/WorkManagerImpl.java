@@ -1088,4 +1088,58 @@ public class WorkManagerImpl implements WorkManager
 
       return null;
    }
+
+   /**
+    * String representation
+    * @return The string
+    */
+   @Override
+   public String toString()
+   {
+      StringBuilder sb = new StringBuilder();
+
+      sb.append(getClass().getName()).append("@").append(Integer.toHexString(System.identityHashCode(this)));
+      sb.append("[id=").append(getId());
+      sb.append(" name=").append(name);
+      sb.append(" specCompliant=").append(specCompliant);
+      sb.append(" shortRunningExecutor=").append(shortRunningExecutor);
+      sb.append(" longRunningExecutor=").append(longRunningExecutor);
+      sb.append(" xaTerminator=").append(xaTerminator);
+      sb.append(" validatedWork=").append(validatedWork);
+      sb.append(" callbackSecurity=").append(callbackSecurity);
+      sb.append(" resourceAdapter=").append(resourceAdapter);
+      sb.append(" shutdown=").append(shutdown);
+      sb.append(" activeWorkWrappers=[");
+      synchronized (activeWorkWrappers)
+      {
+         if (activeWorkWrappers != null && activeWorkWrappers.size() > 0)
+         {
+            Iterator<WorkWrapper> it = activeWorkWrappers.iterator();
+
+            while (it.hasNext())
+            {
+               WorkWrapper ww = it.next();
+               sb.append("WorkWrapper@").append(Integer.toHexString(System.identityHashCode(ww)));
+
+               if (it.hasNext())
+                  sb.append(", ");
+            }
+         }
+      }
+      sb.append("]");
+
+      toString(sb);
+
+      sb.append("]");
+
+      return sb.toString();
+   }
+
+   /**
+    * Additional string representation
+    * @param sb The string builder
+    */
+   public void toString(StringBuilder sb)
+   {
+   }
 }
