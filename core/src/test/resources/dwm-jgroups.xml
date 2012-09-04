@@ -122,14 +122,14 @@
   <!-- DistributedWorkManager1Transport -->
   <bean name="DistributedWorkManager1Transport"
         class="org.jboss.jca.core.workmanager.transport.remote.jgroups.JGroupsTransport">
+        <!-- The clusterName -->
+        <property name="ClusterName">myCluster</property>
+
         <!-- The channel -->
         <property name="Channel">
             <inject bean="JGroupsConfiguration" property="Channel"/>
         </property> 
-        <!-- The clusterName -->
-        <property name="ClusterName">myCluster</property>
   </bean>
-
 
   <!-- JGroupsConfiguration -->
   <bean name="JGroupsConfiguration2"
@@ -139,12 +139,13 @@
   <!-- DistributedWorkManager2Transport -->
   <bean name="DistributedWorkManager2Transport"
         class="org.jboss.jca.core.workmanager.transport.remote.jgroups.JGroupsTransport">
+        <!-- The clusterName -->
+        <property name="ClusterName">myCluster</property>
+
         <!-- The channel -->
         <property name="Channel">
             <inject bean="JGroupsConfiguration2" property="Channel"/>
         </property> 
-        <!-- The clusterName -->
-        <property name="ClusterName">myCluster</property>
   </bean>
 
   <!-- DistributedWorkManager1 -->

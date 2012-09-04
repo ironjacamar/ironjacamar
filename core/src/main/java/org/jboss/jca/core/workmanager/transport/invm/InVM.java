@@ -224,9 +224,8 @@ public class InVM implements Transport
          NotificationListener listener = (NotificationListener)policy;
          listener.join(dwm.getId());
 
-         // TODO
-         listener.updateShortRunningFree(dwm.getId(), 10);
-         listener.updateLongRunningFree(dwm.getId(), 10);
+         listener.updateShortRunningFree(dwm.getId(), getShortRunningFree(dwm.getId()));
+         listener.updateLongRunningFree(dwm.getId(), getLongRunningFree(dwm.getId()));
       }
 
       Selector selector = this.dwm.getSelector();
@@ -235,9 +234,8 @@ public class InVM implements Transport
          NotificationListener listener = (NotificationListener)selector;
          listener.join(dwm.getId());
 
-         // TODO
-         listener.updateShortRunningFree(dwm.getId(), 10);
-         listener.updateLongRunningFree(dwm.getId(), 10);
+         listener.updateShortRunningFree(dwm.getId(), getShortRunningFree(dwm.getId()));
+         listener.updateLongRunningFree(dwm.getId(), getLongRunningFree(dwm.getId()));
       }
    }
 
@@ -277,7 +275,7 @@ public class InVM implements Transport
       StringBuilder sb = new StringBuilder();
 
       sb.append("InVM@").append(Integer.toHexString(System.identityHashCode(this)));
-      sb.append("[workManagers=").append(workManagers);
+      sb.append("[workManagers=").append(workManagers.keySet());
       sb.append("]");
 
       return sb.toString();

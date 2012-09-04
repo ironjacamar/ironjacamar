@@ -26,9 +26,10 @@ import org.jboss.jca.core.api.workmanager.DistributedWorkManager;
 import org.jboss.jca.core.spi.workmanager.notification.NotificationListener;
 import org.jboss.jca.core.spi.workmanager.transport.Transport;
 import org.jboss.jca.core.workmanager.transport.remote.ProtocolMessages.Request;
-import org.jboss.jca.core.workmanager.transport.remote.jgroups.JGroupsTransport;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
@@ -39,37 +40,19 @@ import javax.resource.spi.work.WorkException;
 import org.jboss.logging.Logger;
 import org.jboss.threads.BlockingExecutor;
 
-import org.jgroups.Address;
-
 /**
- *
- * A AbstractRemoteTransport.
+ * An abstract transport for remote communication
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  * @param <T> the type
- *
  */
 public abstract class AbstractRemoteTransport<T> implements Transport
 {
-
    /** The logger */
-   protected static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, JGroupsTransport.class.getName());
-
-   /**
-    *
-    * send a messagge using specific protocol. Method overridden in specific protocol implementation classes
-    *
-    * @param address the address
-    * @param request the request
-    * @param parameters the parameters
-    * @return the returned long value. Can be null if requested operation return a void
-    * @throws WorkException in case of problem with the work
-    */
-   protected abstract Long sendMessage(T address, Request request, Serializable... parameters)
-      throws WorkException;
+   protected static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, AbstractRemoteTransport.class.getName());
 
    /** Whether trace is enabled */
-   private static boolean trace = log.isTraceEnabled();
+   protected static boolean trace = log.isTraceEnabled();
 
    /** Distributed work manager instance */
    protected DistributedWorkManager dwm;
@@ -81,13 +64,13 @@ public abstract class AbstractRemoteTransport<T> implements Transport
    protected Map<String, T> workManagers;
 
    /**
-    *
-    * Create a new AbstractRemoteTransport.
-    *
+    * Constructor
     */
    public AbstractRemoteTransport()
    {
-      super();
+      this.dwm = null;
+      this.executorService = null;
+      this.workManagers = Collections.synchronizedMap(new HashMap<String, T>());
    }
 
    /**
@@ -106,15 +89,15 @@ public abstract class AbstractRemoteTransport<T> implements Transport
                NotificationListener nl = (NotificationListener) dwm.getPolicy();
 
                nl.join(id);
-               nl.updateShortRunningFree(id, 10);
-               nl.updateLongRunningFree(id, 10);
+               nl.updateShortRunningFree(id, getShortRunningFree(id));
+               nl.updateLongRunningFree(id, getLongRunningFree(id));
             }
             if (dwm.getSelector() instanceof NotificationListener)
             {
                NotificationListener nl = (NotificationListener) dwm.getSelector();
                nl.join(id);
-               nl.updateShortRunningFree(id, 10);
-               nl.updateLongRunningFree(id, 10);
+               nl.updateShortRunningFree(id, getShortRunningFree(id));
+               nl.updateLongRunningFree(id, getLongRunningFree(id));
             }
          }
       }
@@ -148,8 +131,10 @@ public abstract class AbstractRemoteTransport<T> implements Transport
       if (trace)
          log.tracef("PING(%s)", id);
 
-      long start = System.currentTimeMillis();
+      if (dwm.getId().equals(id))
+         return localPing();
 
+      long start = System.currentTimeMillis();
       try
       {
          T address = workManagers.get(id);
@@ -165,17 +150,20 @@ public abstract class AbstractRemoteTransport<T> implements Transport
       }
 
       return System.currentTimeMillis() - start;
-
    }
 
    @Override
-   public long getShortRunningFree(String dwm)
+   public long getShortRunningFree(String id)
    {
       if (trace)
-         log.tracef("GET_SHORT_RUNNING_FREE(%s)", dwm);
+         log.tracef("GET_SHORT_RUNNING_FREE(%s)", id);
+
+      if (dwm.getId().equals(id))
+         return localGetShortRunningFree();
+
       try
       {
-         T address = workManagers.get(dwm);
+         T address = workManagers.get(id);
          return sendMessage(address, Request.GET_SHORTRUNNING_FREE);
       }
       catch (WorkException e1)
@@ -186,17 +174,20 @@ public abstract class AbstractRemoteTransport<T> implements Transport
          }
          return 0L;
       }
-
    }
 
    @Override
-   public long getLongRunningFree(String dwm)
+   public long getLongRunningFree(String id)
    {
       if (trace)
-         log.tracef("GET_SHORT_RUNNING_FREE(%s)", dwm);
+         log.tracef("GET_LONGRUNNING_FREE(%s)", id);
+
+      if (dwm.getId().equals(id))
+         return localGetLongRunningFree();
+
       try
       {
-         T address = workManagers.get(dwm);
+         T address = workManagers.get(id);
          return sendMessage(address, Request.GET_LONGRUNNING_FREE);
       }
       catch (WorkException e1)
@@ -216,9 +207,16 @@ public abstract class AbstractRemoteTransport<T> implements Transport
          log.tracef("UPDATE_SHORT_RUNNING_FREE(%s,%d) from %s", id, freeCount, dwm.getId());
       try
       {
-         for (T address : workManagers.values())
+         for (Entry<String, T> entry : workManagers.entrySet())
          {
-            sendMessage(address, Request.UPDATE_SHORTRUNNING_FREE, id, freeCount);
+            if (entry.getKey().equals(dwm.getId()))
+            {
+               localUpdateShortRunningFree(id, freeCount);
+            }
+            else
+            {
+               sendMessage(entry.getValue(), Request.UPDATE_SHORTRUNNING_FREE, id, freeCount);
+            }
          }
       }
       catch (WorkException e1)
@@ -256,9 +254,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
             log.debug("Error", e1);
          }
       }
-
    }
-
 
    /**
     * {@inheritDoc}
@@ -343,19 +339,18 @@ public abstract class AbstractRemoteTransport<T> implements Transport
    }
 
    /**
-   *
-   * join
-   *
-   * @param id the id
-   * @param address the address
-   */
-   public void join(String id, Address address)
+    *
+    * join
+    *
+    * @param id the id
+    * @param address the address
+    */
+   public void join(String id, T address)
    {
-
       if (trace)
          log.tracef("JOIN(%s, %s)", id, address);
 
-      this.getWorkManagers().put(id, (T) address);
+      this.getWorkManagers().put(id, address);
 
       if (this.getDistributedWorkManager().getPolicy() instanceof NotificationListener)
       {
@@ -481,6 +476,8 @@ public abstract class AbstractRemoteTransport<T> implements Transport
     */
    public Long localGetLongRunningFree()
    {
+      if (trace)
+         log.tracef("LOCAL_GET_LONGRUNNING_FREE()");
 
       BlockingExecutor executor = this.getDistributedWorkManager().getLongRunningThreadPool();
       if (executor != null)
@@ -539,4 +536,15 @@ public abstract class AbstractRemoteTransport<T> implements Transport
       }
    }
 
+   /**
+    * send a messagge using specific protocol. Method overridden in specific protocol implementation classes
+    *
+    * @param address the address
+    * @param request the request
+    * @param parameters the parameters
+    * @return the returned long value. Can be null if requested operation return a void
+    * @throws WorkException in case of problem with the work
+    */
+   protected abstract Long sendMessage(T address, Request request, Serializable... parameters)
+      throws WorkException;
 }

@@ -111,7 +111,7 @@ public class ProtocolMessages
       /** VOID_OK*/
       VOID_OK(0),
       /** LONG return */
-      LONG_OK(1, Integer.class),
+      LONG_OK(1, Long.class),
       /** WORK_EXCEPTION */
       WORK_EXCEPTION(1, WorkException.class),
       /** GENERIC_EXCEPTION */
@@ -157,6 +157,9 @@ public class ProtocolMessages
     */
    public static class ResponseValues implements Serializable
    {
+      /** Serial version uid */
+      private static final long serialVersionUID = 1L;
+
       private final Response response;
 
       private final Serializable[] values;
@@ -205,10 +208,12 @@ public class ProtocolMessages
    */
    public static class RequestValues implements Serializable
    {
+      /** Serial version uid */
+      private static final long serialVersionUID = 1L;
+
       private final Request request;
 
       private final Serializable[] values;
-
 
       /**
        * Create a new RequestValue.

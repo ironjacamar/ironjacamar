@@ -40,16 +40,14 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
- *
- * A AbstractDistributedWorkManagerTest.
+ * An abstract distributed workmanager test
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
- *
  */
 public class AbstractDistributedWorkManagerTest
 {
+   private static Logger log = Logger.getLogger(AbstractDistributedWorkManagerTest.class);
 
-   private static Logger log = Logger.getLogger(DistributedWorkManagerJGroupsTestCase.class);
    @Resource(mappedName = "java:/eis/WorkConnectionFactory")
    private WorkConnectionFactory wcf;
 
@@ -100,6 +98,9 @@ public class AbstractDistributedWorkManagerTest
    @Test
    public void testExecuted() throws Throwable
    {
+      log.infof("DWM1: %s", dwm1);
+      log.infof("DWM2: %s", dwm2);
+
       assertNotNull(wcf);
 
       WorkConnection wc = wcf.getConnection();
@@ -125,6 +126,9 @@ public class AbstractDistributedWorkManagerTest
    @Test
    public void testInstanceOf() throws Throwable
    {
+      log.infof("DWM1: %s", dwm1);
+      log.infof("DWM2: %s", dwm2);
+
       assertNotNull(dwm1);
       assertTrue(dwm1 instanceof javax.resource.spi.work.DistributableWorkManager);
 
@@ -145,7 +149,7 @@ public class AbstractDistributedWorkManagerTest
        */
       public void run()
       {
-         log.info("MyWork: run");
+         System.out.println("MyWork: run");
       }
 
       /**
@@ -153,7 +157,7 @@ public class AbstractDistributedWorkManagerTest
        */
       public void release()
       {
-         log.info("MyWork: release");
+         System.out.println("MyWork: release");
       }
    }
 
@@ -170,7 +174,7 @@ public class AbstractDistributedWorkManagerTest
        */
       public void run()
       {
-         log.info("MyDistributableWork: run");
+         System.out.println("MyDistributableWork: run");
       }
 
       /**
@@ -178,18 +182,7 @@ public class AbstractDistributedWorkManagerTest
        */
       public void release()
       {
-         log.info("MyDistributableWork: release");
+         System.out.println("MyDistributableWork: release");
       }
    }
-
-   /**
-    *
-    * Create a new AbstractDistributedWorkManagerTest.
-    *
-    */
-   public AbstractDistributedWorkManagerTest()
-   {
-      super();
-   }
-
 }

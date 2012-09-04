@@ -23,7 +23,6 @@
 package org.jboss.jca.core.workmanager.transport.remote.socket;
 
 import org.jboss.jca.core.CoreLogger;
-import org.jboss.jca.core.spi.workmanager.notification.NotificationListener;
 import org.jboss.jca.core.workmanager.transport.remote.ProtocolMessages.Request;
 import org.jboss.jca.core.workmanager.transport.remote.ProtocolMessages.Response;
 
@@ -37,7 +36,6 @@ import javax.resource.spi.work.DistributableWork;
 import javax.resource.spi.work.WorkException;
 
 import org.jboss.logging.Logger;
-import org.jboss.threads.BlockingExecutor;
 
 /**
  * The communication between client and server
@@ -82,48 +80,37 @@ public class Communication implements Runnable
       {
          ois = new ObjectInputStream(socket.getInputStream());
          int commandOrdinalPosition = ois.readInt();
-         int numberOfParameter = ois.readInt();
+         int numberOfParameters = ois.readInt();
+         Serializable[] parameters = new Serializable[numberOfParameters];
+
+         for (int i = 0; i < numberOfParameters; i++)
+         {
+            Serializable parameter = (Serializable)ois.readObject();
+            parameters[i] = parameter;
+         }
 
          Request command = Request.values()[commandOrdinalPosition];
 
          switch (command)
          {
             case JOIN : {
-               String id = ois.readUTF();
-               String address = ois.readUTF();
+               String id = (String)parameters[0];
+               String address = (String)parameters[1];
 
                if (trace)
                   log.tracef("%s: JOIN(%s, %s)", socket.getInetAddress(), id, address);
 
-               transport.getWorkManagers().put(id, address);
-
-               if (transport.getDistributedWorkManager().getPolicy() instanceof NotificationListener)
-               {
-                  ((NotificationListener) transport.getDistributedWorkManager().getPolicy()).join(id);
-               }
-               if (transport.getDistributedWorkManager().getSelector() instanceof NotificationListener)
-               {
-                  ((NotificationListener) transport.getDistributedWorkManager().getSelector()).join(id);
-               }
-
+               transport.join(id, address);
                response = Response.VOID_OK;
                break;
             }
             case LEAVE : {
-               String id = ois.readUTF();
+               String id = (String)parameters[0];
 
                if (trace)
                   log.tracef("%s: LEAVE(%s)", socket.getInetAddress(), id);
 
-               if (transport.getDistributedWorkManager().getPolicy() instanceof NotificationListener)
-               {
-                  ((NotificationListener) transport.getDistributedWorkManager().getPolicy()).leave(id);
-               }
-               if (transport.getDistributedWorkManager().getSelector() instanceof NotificationListener)
-               {
-                  ((NotificationListener) transport.getDistributedWorkManager().getSelector()).leave(id);
-               }
-
+               transport.leave(id);
                response = Response.VOID_OK;
                break;
             }
@@ -137,7 +124,7 @@ public class Communication implements Runnable
                break;
             }
             case DO_WORK : {
-               DistributableWork work = (DistributableWork) ois.readObject();
+               DistributableWork work = (DistributableWork)parameters[0];
 
                if (trace)
                   log.tracef("%s: DO_WORK(%s)", socket.getInetAddress(), work);
@@ -148,7 +135,7 @@ public class Communication implements Runnable
                break;
             }
             case START_WORK : {
-               DistributableWork work = (DistributableWork) ois.readObject();
+               DistributableWork work = (DistributableWork)parameters[0];
 
                if (trace)
                   log.tracef("%s: START_WORK(%s)", socket.getInetAddress(), work);
@@ -159,7 +146,7 @@ public class Communication implements Runnable
                break;
             }
             case SCHEDULE_WORK : {
-               DistributableWork work = (DistributableWork) ois.readObject();
+               DistributableWork work = (DistributableWork)parameters[0];
 
                if (trace)
                   log.tracef("%s: SCHEDULE_WORK(%s)", socket.getInetAddress(), work);
@@ -171,78 +158,42 @@ public class Communication implements Runnable
             }
             case GET_SHORTRUNNING_FREE : {
                if (trace)
-                  log.tracef("%s: GET_SHORTRUNNING_FREE(%s)", socket.getInetAddress());
+                  log.tracef("%s: GET_SHORTRUNNING_FREE()", socket.getInetAddress());
 
-               BlockingExecutor executor = transport.getDistributedWorkManager().getShortRunningThreadPool();
-               if (executor != null)
-               {
-                  returnValue = executor.getNumberOfFreeThreads();
-               }
-               else
-               {
-                  returnValue = 0L;
-               }
+               returnValue = transport.localGetShortRunningFree();
                response = Response.LONG_OK;
 
                break;
             }
             case GET_LONGRUNNING_FREE : {
                if (trace)
-                  log.tracef("%s: GET_LONGRUNNING_FREE(%s)", socket.getInetAddress());
+                  log.tracef("%s: GET_LONGRUNNING_FREE()", socket.getInetAddress());
 
-               BlockingExecutor executor = transport.getDistributedWorkManager().getLongRunningThreadPool();
-               if (executor != null)
-               {
-                  returnValue = executor.getNumberOfFreeThreads();
-               }
-               else
-               {
-                  returnValue = 0L;
-               }
+               returnValue = transport.localGetLongRunningFree();
                response = Response.LONG_OK;
 
                break;
             }
             case UPDATE_SHORTRUNNING_FREE : {
-               String id = ois.readUTF();
-               int freeCount = ois.readInt();
+               String id = (String)parameters[0];
+               Long freeCount = (Long)parameters[1];
 
                if (trace)
                   log.tracef("%s: UPDATE_SHORTRUNNING_FREE(%s, %d)", socket.getInetAddress(), id, freeCount);
 
-               if (transport.getDistributedWorkManager().getPolicy() instanceof NotificationListener)
-               {
-                  ((NotificationListener) transport.getDistributedWorkManager().getPolicy()).updateShortRunningFree(
-                     id, freeCount);
-               }
-               if (transport.getDistributedWorkManager().getSelector() instanceof NotificationListener)
-               {
-                  ((NotificationListener) transport.getDistributedWorkManager().getSelector())
-                     .updateShortRunningFree(id, freeCount);
-               }
-
+               transport.localUpdateShortRunningFree(id, freeCount);
                response = Response.VOID_OK;
 
                break;
             }
             case UPDATE_LONGRUNNING_FREE : {
-               String id = ois.readUTF();
-               int freeCount = ois.readInt();
+               String id = (String)parameters[0];
+               Long freeCount = (Long)parameters[1];
 
                if (trace)
                   log.tracef("%s: UPDATE_LONGRUNNING_FREE(%s, %d)", socket.getInetAddress(), id, freeCount);
 
-               if (transport.getDistributedWorkManager().getPolicy() instanceof NotificationListener)
-               {
-                  ((NotificationListener) transport.getDistributedWorkManager().getPolicy()).updateLongRunningFree(
-                     id, freeCount);
-               }
-               if (transport.getDistributedWorkManager().getSelector() instanceof NotificationListener)
-               {
-                  ((NotificationListener) transport.getDistributedWorkManager().getSelector()).updateLongRunningFree(
-                     id, freeCount);
-               }
-
+               transport.localUpdateLongRunningFree(id, freeCount);
                response = Response.VOID_OK;
 
                break;

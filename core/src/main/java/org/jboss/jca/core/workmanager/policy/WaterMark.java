@@ -73,25 +73,11 @@ public class WaterMark extends AbstractPolicy
          int currentFreeThread;
          if (WorkManagerUtil.isLongRunning(work) && dwm.getLongRunningThreadPool() != null)
          {
-            if (dwm.getLongRunningThreadPool().getNumberOfFreeThreads() > watermark)
-            {
-               return false;
-            }
-            else
-            {
-               return true;
-            }
+            return !(dwm.getLongRunningThreadPool().getNumberOfFreeThreads() > watermark);
          }
          else
          {
-            if (dwm.getShortRunningThreadPool().getNumberOfFreeThreads() > watermark)
-            {
-               return false;
-            }
-            else
-            {
-               return true;
-            }
+            return !(dwm.getShortRunningThreadPool().getNumberOfFreeThreads() > watermark);
          }
       }
    }

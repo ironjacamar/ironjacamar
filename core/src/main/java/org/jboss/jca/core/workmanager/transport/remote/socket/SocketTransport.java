@@ -23,8 +23,6 @@
 package org.jboss.jca.core.workmanager.transport.remote.socket;
 
 import org.jboss.jca.core.CoreBundle;
-import org.jboss.jca.core.api.workmanager.DistributedWorkManager;
-import org.jboss.jca.core.spi.workmanager.notification.NotificationListener;
 import org.jboss.jca.core.workmanager.transport.remote.AbstractRemoteTransport;
 import org.jboss.jca.core.workmanager.transport.remote.ProtocolMessages.Request;
 import org.jboss.jca.core.workmanager.transport.remote.ProtocolMessages.Response;
@@ -36,10 +34,6 @@ import java.io.Serializable;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.resource.spi.work.WorkException;
@@ -73,44 +67,11 @@ public class SocketTransport extends AbstractRemoteTransport<String> implements 
     */
    public SocketTransport()
    {
-      this.dwm = null;
-      this.executorService = null;
+      super();
       this.host = null;
       this.port = 0;
       this.running = new AtomicBoolean(false);
       this.ss = null;
-      this.workManagers = Collections.synchronizedMap(new HashMap<String, String>());
-   }
-
-   /**
-    * Init
-    */
-   @Override
-   protected void init()
-   {
-      if (getWorkManagers() != null)
-      {
-         for (Map.Entry<String, String> entry : getWorkManagers().entrySet())
-         {
-            String id = entry.getKey();
-
-            if (dwm.getPolicy() instanceof NotificationListener)
-            {
-               NotificationListener nl = (NotificationListener)dwm.getPolicy();
-
-               nl.join(id);
-               nl.updateShortRunningFree(id, 10);
-               nl.updateLongRunningFree(id, 10);
-            }
-            if (dwm.getSelector() instanceof NotificationListener)
-            {
-               NotificationListener nl = (NotificationListener)dwm.getSelector();
-               nl.join(id);
-               nl.updateShortRunningFree(id, 10);
-               nl.updateLongRunningFree(id, 10);
-            }
-         }
-      }
    }
 
    /**
@@ -140,8 +101,10 @@ public class SocketTransport extends AbstractRemoteTransport<String> implements 
     */
    public void stop() throws Throwable
    {
-      ss.close();
       running.set(false);
+
+      if (ss != null)
+         ss.close();
    }
 
    @Override
@@ -182,7 +145,9 @@ public class SocketTransport extends AbstractRemoteTransport<String> implements 
          }
          else
          {
-            throw new WorkException(t);
+            WorkException we = new WorkException(t.getMessage());
+            we.initCause(t);
+            throw we;
          }
       }
       finally
@@ -221,27 +186,32 @@ public class SocketTransport extends AbstractRemoteTransport<String> implements 
          ois = new ObjectInputStream(socket.getInputStream());
 
          int commandOrdinalPosition = ois.readInt();
+         int numberOfParameters = ois.readInt();
+         Serializable[] parameters = new Serializable[numberOfParameters];
+
+         for (int i = 0; i < numberOfParameters; i++)
+         {
+            Serializable parameter = (Serializable)ois.readObject();
+            parameters[i] = parameter;
+         }
+
          Response response = Response.values()[commandOrdinalPosition];
 
          switch (response)
          {
             case VOID_OK : {
                return 0L;
-
             }
             case LONG_OK : {
-               return ois.readLong();
-
+               return (Long)parameters[0];
             }
             case WORK_EXCEPTION : {
-               WorkException we = (WorkException) ois.readObject();
+               WorkException we = (WorkException)parameters[0];
                throw we;
-
             }
             case GENERIC_EXCEPTION : {
-               Throwable t = (Throwable) ois.readObject();
+               Throwable t = (Throwable)parameters[0];
                throw t;
-
             }
             default :
                if (log.isDebugEnabled())
@@ -266,17 +236,6 @@ public class SocketTransport extends AbstractRemoteTransport<String> implements 
          }
       }
    }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void setDistributedWorkManager(DistributedWorkManager dwm)
-   {
-      this.dwm = dwm;
-      init();
-   }
-
 
    /**
     * Get the host.
@@ -318,28 +277,6 @@ public class SocketTransport extends AbstractRemoteTransport<String> implements 
       this.port = port;
    }
 
-   /**
-    * Get the executorService.
-    *
-    * @return the executorService.
-    */
-   @Override
-   public ExecutorService getExecutorService()
-   {
-      return executorService;
-   }
-
-   /**
-    * Set the executorService.
-    *
-    * @param executorService The executorService to set.
-    */
-   @Override
-   public void setExecutorService(ExecutorService executorService)
-   {
-      this.executorService = executorService;
-   }
-
    @Override
    public void run()
    {
@@ -360,11 +297,9 @@ public class SocketTransport extends AbstractRemoteTransport<String> implements 
       }
    }
 
-
    @Override
    public String toString()
    {
-      return "SocketTransport [dwm=" + dwm + ", executorService=" + executorService + ", host=" + host + ", port=" +
-             port + ", running=" + running + ", ss=" + ss + ", workManagers=" + workManagers + "]";
+      return "SocketTransport [host=" + host + ", port=" + port + ", running=" + running + ", ss=" + ss + "]";
    }
 }

@@ -31,7 +31,6 @@ import org.jboss.jca.core.workmanager.transport.remote.ProtocolMessages.Response
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,16 +64,12 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
 
    /** The JChannel used by this transport **/
-
    private JChannel channel;
 
    /** the cluster name to join **/
    private String clusterName;
 
    private RpcDispatcher disp;
-
-   /** Trace logging */
-   private static boolean trace = log.isTraceEnabled();
 
    private static final short JOIN_METHOD = 1;
 
@@ -102,7 +97,7 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
    {
       try
       {
-         methods.put(JOIN_METHOD, AbstractRemoteTransport.class.getMethod("join", String.class, Address.class));
+         methods.put(JOIN_METHOD, JGroupsTransport.class.getMethod("join", String.class, Address.class));
 
          methods.put(LEAVE_METHOD, AbstractRemoteTransport.class.getMethod("leave", String.class));
 
@@ -126,7 +121,6 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
 
          methods.put(UPDATE_LONGRUNNING_FREE_METHOD,
             AbstractRemoteTransport.class.getMethod("localUpdateLongRunningFree", String.class, Long.class));
-
       }
       catch (NoSuchMethodException e)
       {
@@ -139,10 +133,10 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
     */
    public JGroupsTransport()
    {
-      this.dwm = null;
-      this.executorService = null;
-      this.workManagers = Collections.synchronizedMap(new HashMap<String, Address>());
-
+      super();
+      this.channel = null;
+      this.clusterName = null;
+      this.disp = null;
    }
 
    @Override
@@ -155,7 +149,6 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
 
          disp.setMethodLookup(new MethodLookup()
          {
-
             @Override
             public Method findMethod(short key)
             {
@@ -163,13 +156,24 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
             }
          });
 
-         channel.connect("clusterName");
+         channel.connect(clusterName);
       }
-      catch (Exception e)
+      catch (Throwable t)
       {
-         log.error("Error", e);
+         log.errorf("Error during init: %s", t.getMessage(), t);
       }
    }
+
+   /**
+    * Delegator
+    * @param id The id
+    * @param address The address
+    */
+   public void join(String id, Address address)
+   {
+      super.join(id, address);
+   }
+
    /**
     * Start method for bean lifecycle
     *
@@ -177,10 +181,6 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
     */
    public void start() throws Throwable
    {
-
-
-
-
    }
 
    /**
@@ -195,7 +195,6 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
       disp.stop();
 
       channel.close();
-
    }
 
    @Override
@@ -204,7 +203,9 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
    {
       Long returnValue = -1L;
 
-      log.tracef("%s: sending message2=%s to %s", channel.getAddressAsString(), request, destAddress);
+      if (trace)
+         log.tracef("%s: sending message2=%s to %s", channel.getAddressAsString(), request, destAddress);
+
       RequestOptions opts = new RequestOptions(ResponseMode.GET_ALL, 10000);
       try
       {
@@ -314,14 +315,15 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
                break;
          }
       }
-      catch (Exception e)
+      catch (Throwable t)
       {
-         throw new WorkException(e);
+         WorkException we = new WorkException(t.getMessage());
+         we.initCause(t);
+         throw we;
       }
+
       return returnValue;
-
    }
-
 
    private void throwWorkExceptionIfHasExption(RspList<ResponseValues> rspList) throws WorkException
    {
@@ -331,10 +333,11 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
          {
             if (rsp.hasException())
             {
-               throw new WorkException(rsp.getException());
+               WorkException we = new WorkException(rsp.getException().getMessage());
+               we.initCause(rsp.getException());
+               throw we;
             }
          }
-
       }
    }
 
@@ -342,8 +345,7 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
    @Override
    public String toString()
    {
-      return "JGroupsTransport [channel=" + channel + ", clustername=" + clusterName +
-             ", dwm=" + dwm + ", executorService=" + executorService + ", workManagers=" + workManagers + "]";
+      return "JGroupsTransport [channel=" + channel + ", clustername=" + clusterName + "]";
    }
 
    /**
@@ -351,7 +353,7 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
     *
     * @return the channel.
     */
-   public final JChannel getChannel()
+   public JChannel getChannel()
    {
       return channel;
    }
@@ -361,7 +363,7 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
     *
     * @param channel The channel to set.
     */
-   public final void setChannel(JChannel channel)
+   public void setChannel(JChannel channel)
    {
       this.channel = channel;
    }
@@ -371,7 +373,7 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
     *
     * @return the clustername.
     */
-   public final String getClusterName()
+   public String getClusterName()
    {
       return clusterName;
    }
@@ -381,7 +383,7 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
     *
     * @param clustername The clustername to set.
     */
-   public final void setClusterName(String clustername)
+   public void setClusterName(String clustername)
    {
       this.clusterName = clustername;
    }
@@ -389,8 +391,12 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
    @Override
    public void viewAccepted(View view)
    {
-      log.tracef("java.net.preferIPv4Stack=%s", System.getProperty("java.net.preferIPv4Stack"));
-      log.tracef("viewAccepted called w/ View=%s", view);
+      if (trace)
+      {
+         log.tracef("java.net.preferIPv4Stack=%s", System.getProperty("java.net.preferIPv4Stack"));
+         log.tracef("viewAccepted called w/ View=%s", view);
+      }
+
       synchronized (this)
       {
          for (Entry<String, Address> entry : workManagers.entrySet())
@@ -413,28 +419,26 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
             }
          }
       }
-
    }
 
    @Override
    public void block()
    {
-      log.tracef("Block called");
-
+      if (trace)
+         log.tracef("block called");
    }
 
    @Override
-   public void suspect(Address arg0)
+   public void suspect(Address address)
    {
-      log.tracef("suspect called w/ Adress=%s", arg0);
-
+      if (trace)
+         log.tracef("suspect called w/ Adress=%s", address);
    }
 
    @Override
    public void unblock()
    {
-      log.tracef("UnBlock called");
-
+      if (trace)
+         log.tracef("unblock called");
    }
-
 }

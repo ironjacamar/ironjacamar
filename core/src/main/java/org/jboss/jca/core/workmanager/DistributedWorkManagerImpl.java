@@ -286,4 +286,15 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
 
       return wm;
    }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void toString(StringBuilder sb)
+   {
+      sb.append(" policy=").append(policy);
+      sb.append(" selector=").append(selector);
+      sb.append(" transport=").append(transport);
+   }
 }
