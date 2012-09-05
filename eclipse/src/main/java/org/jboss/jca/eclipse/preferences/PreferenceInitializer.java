@@ -21,7 +21,11 @@
  */
 package org.jboss.jca.eclipse.preferences;
 
+import org.jboss.jca.eclipse.Activator;
+
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
+import org.eclipse.jface.preference.IPreferenceStore;
+
 
 /**
  * Class used to initialize default preference values.
@@ -36,6 +40,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer
     */
    public void initializeDefaultPreferences()
    {
-      //IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+      IPreferenceStore store = Activator.getDefault().getPreferenceStore();
+      store.setDefault(PreferenceConstants.JCA_REMOTE_HOST, "localhost");
+      store.setDefault(PreferenceConstants.JCA_REMOTE_PORT, PreferenceConstants.DEFAULT_PORT);
    }
 }

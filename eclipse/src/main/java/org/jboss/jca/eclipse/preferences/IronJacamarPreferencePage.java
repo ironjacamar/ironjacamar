@@ -97,10 +97,8 @@ public class IronJacamarPreferencePage extends FieldEditorPreferencePage
       
       StringFieldEditor remoteHostFieldEditor = new StringFieldEditor(PreferenceConstants.JCA_REMOTE_HOST, 
             "Remote IronJacamar Host:", getFieldEditorParent());
-      remoteHostFieldEditor.setStringValue("localhost");
       IntegerFieldEditor remotePortFieldEditor = new IntegerFieldEditor(PreferenceConstants.JCA_REMOTE_PORT, 
             "Remote IronJacamar Port:", getFieldEditorParent());
-      remotePortFieldEditor.setStringValue(String.valueOf(PreferenceConstants.DEFAULT_PORT));
       addField(remoteHostFieldEditor);
       addField(remotePortFieldEditor);
       
