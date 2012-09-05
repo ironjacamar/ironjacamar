@@ -23,8 +23,6 @@ package org.jboss.jca.eclipse.command;
 
 import org.jboss.jca.eclipse.Activator;
 
-import com.github.fungal.spi.deployers.DeployException;
-
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
@@ -37,6 +35,8 @@ import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+
+import com.github.fungal.spi.deployers.DeployException;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
