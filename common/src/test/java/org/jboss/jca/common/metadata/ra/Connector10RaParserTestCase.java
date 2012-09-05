@@ -105,7 +105,7 @@ public class Connector10RaParserTestCase extends RaParserTestBase
       checkXsdString(ra10.getConnectionImplClass(), "Class3", "ID018", "connection-impl-class");
 
       assertEquals(ra10.getTransactionSupport(), TransactionSupportEnum.NoTransaction);
-      assertEquals("ID019", ra10.getTsId());
+      assertEquals("ID019", ra10.getTransactionSupportId());
 
       List<? extends ConfigProperty> cps = ra10.getConfigProperties();
       assertEquals(2, cps.size());
@@ -122,7 +122,7 @@ public class Connector10RaParserTestCase extends RaParserTestBase
          CredentialInterfaceEnum.GenericCredential, new LocalizedXsdString("something", "ID035"));
 
       assertEquals(true, ra10.getReauthenticationSupport());
-      assertEquals("ID038", ra10.getRsId());
+      assertEquals("ID038", ra10.getReauthenticationSupportId());
 
       List<SecurityPermission> sps = ra10.getSecurityPermissions();
       assertEquals(2, sps.size());

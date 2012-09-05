@@ -172,7 +172,7 @@ public abstract class RaParserTestBase extends ParserTestBase
     * @param descriptions list
     */
    protected void checkAuthenticationMechanism(AuthenticationMechanism am, String id, String amId, String amType,
-         String ciid, CredentialInterfaceEnum ci, LocalizedXsdString... descriptions)
+      String ciid, CredentialInterfaceEnum ci, LocalizedXsdString... descriptions)
    {
       assertEquals(id, am.getId());
       assertEquals(createDescriptions(descriptions), am.getDescriptions());
@@ -200,8 +200,8 @@ public abstract class RaParserTestBase extends ParserTestBase
     * @param descriptions list
     */
    protected void checkConfigProperty(ConfigProperty cp, String id, String nameId, String name, String typeId,
-         String type, String valueId, String value, String ignoreId, Boolean ignore, String upId, Boolean upd,
-         String confId, Boolean conf, LocalizedXsdString... descriptions)
+      String type, String valueId, String value, String ignoreId, Boolean ignore, String upId, Boolean upd,
+      String confId, Boolean conf, LocalizedXsdString... descriptions)
    {
 
       assertEquals(id, cp.getId());
@@ -221,11 +221,11 @@ public abstract class RaParserTestBase extends ParserTestBase
          ConfigProperty16Impl cp16 = (ConfigProperty16Impl) cp;
          assertTrue(cp16.getAttachedClassName() == null);
          assertEquals(ignore, cp16.getConfigPropertyIgnore());
-         assertEquals(ignoreId, cp16.getIgnoreId());
+         assertEquals(ignoreId, cp16.getConfigPropertyIgnoreId());
          assertEquals(upd, cp16.getConfigPropertySupportsDynamicUpdates());
-         assertEquals(upId, cp16.getUpdatesId());
+         assertEquals(upId, cp16.getConfigPropertySupportsDynamicUpdatesId());
          assertEquals(conf, cp16.getConfigPropertyConfidential());
-         assertEquals(confId, cp16.getConfidId());
+         assertEquals(confId, cp16.getConfigPropertyConfidentialId());
 
       }
    }
@@ -243,10 +243,10 @@ public abstract class RaParserTestBase extends ParserTestBase
     * @param descriptions list
     */
    protected void checkConfigProperty(ConfigProperty cp, String id, String nameId, String name, String typeId,
-         String type, String valueId, String value, LocalizedXsdString... descriptions)
+      String type, String valueId, String value, LocalizedXsdString... descriptions)
    {
       checkConfigProperty(cp, id, nameId, name, typeId, type, valueId, value, null, null, null, null, null, null,
-            descriptions);
+         descriptions);
    }
 
    /**
@@ -258,7 +258,7 @@ public abstract class RaParserTestBase extends ParserTestBase
     * @param descriptions list
     */
    protected void checkSecurityPermission(SecurityPermission sp, String id, String spsId, String sps,
-         LocalizedXsdString... descriptions)
+      LocalizedXsdString... descriptions)
    {
       assertEquals(id, sp.getId());
       assertEquals(createDescriptions(descriptions), sp.getDescriptions());
@@ -274,7 +274,7 @@ public abstract class RaParserTestBase extends ParserTestBase
     * @param descriptions list
     */
    protected void checkRequiredConfigProperty(RequiredConfigProperty rcp, String id, String nameId, String name,
-         LocalizedXsdString... descriptions)
+      LocalizedXsdString... descriptions)
    {
       assertEquals(id, rcp.getId());
       assertEquals(createDescriptions(descriptions), rcp.getDescriptions());

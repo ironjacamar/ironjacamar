@@ -166,7 +166,7 @@ public class Connector15RaParserTestCase extends RaParserTestBase
          new LocalizedXsdString("", null));
 
       assertEquals(out.getTransactionSupport(), TransactionSupportEnum.LocalTransaction);
-      assertEquals("ID024", out.getTsId());
+      assertEquals("ID024", out.getTransactionSupportId());
 
       List<AuthenticationMechanism> ams = out.getAuthenticationMechanisms();
       assertEquals(2, ams.size());
@@ -178,7 +178,7 @@ public class Connector15RaParserTestCase extends RaParserTestBase
          new LocalizedXsdString("", null), new LocalizedXsdString("", null));
 
       assertEquals(false, out.getReauthenticationSupport());
-      assertEquals("ID028", out.getRsId());
+      assertEquals("ID028", out.getReauthenticationSupportId());
 
       InboundResourceAdapter in = ra.getInboundResourceadapter();
       assertEquals("ID029", in.getId());

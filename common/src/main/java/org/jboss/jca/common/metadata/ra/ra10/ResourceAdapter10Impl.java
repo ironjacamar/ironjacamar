@@ -67,13 +67,13 @@ public class ResourceAdapter10Impl extends AbstractResourceAdapetrImpl implement
 
    private TransactionSupportEnum transactionSupport;
 
-   private final String tsId;
+   private final String transactionSupportId;
 
    private final ArrayList<AuthenticationMechanism> authenticationMechanism;
 
    private final Boolean reauthenticationSupport;
 
-   private final String rsId;
+   private final String reauthenticationSupportId;
 
    private final ArrayList<SecurityPermission> securityPermissions;
 
@@ -94,14 +94,15 @@ public class ResourceAdapter10Impl extends AbstractResourceAdapetrImpl implement
    * @param reauthenticationSupport true if reautentication is supported
    * @param securityPermissions what security permissions are supported
    * @param id the id attribute in xml file
-   * @param tsId transaction support element ID
-   * @param rsId reauthentication support element ID
+   * @param transactionSupportId transaction support element ID
+   * @param reauthenticationSupportId reauthentication support element ID
    */
    public ResourceAdapter10Impl(XsdString managedConnectionFactoryClass, XsdString connectionFactoryInterface,
-         XsdString connectionFactoryImplClass, XsdString connectionInterface, XsdString connectionImplClass,
-         TransactionSupportEnum transactionSupport, List<AuthenticationMechanism> authenticationMechanism,
-         List<ConfigProperty> configProperties, Boolean reauthenticationSupport,
-         List<SecurityPermission> securityPermissions, String id, String tsId, String rsId)
+      XsdString connectionFactoryImplClass, XsdString connectionInterface, XsdString connectionImplClass,
+      TransactionSupportEnum transactionSupport, List<AuthenticationMechanism> authenticationMechanism,
+      List<ConfigProperty> configProperties, Boolean reauthenticationSupport,
+      List<SecurityPermission> securityPermissions, String id, String transactionSupportId,
+      String reauthenticationSupportId)
    {
       super();
       this.managedConnectionFactoryClass = managedConnectionFactoryClass;
@@ -149,8 +150,8 @@ public class ResourceAdapter10Impl extends AbstractResourceAdapetrImpl implement
          this.securityPermissions = new ArrayList<SecurityPermission>(0);
       }
       this.id = id;
-      this.tsId = tsId;
-      this.rsId = rsId;
+      this.transactionSupportId = transactionSupportId;
+      this.reauthenticationSupportId = reauthenticationSupportId;
    }
 
    /**
@@ -170,14 +171,14 @@ public class ResourceAdapter10Impl extends AbstractResourceAdapetrImpl implement
    * @param id the id attribute in xml file
    */
    public ResourceAdapter10Impl(XsdString managedConnectionFactoryClass, XsdString connectionFactoryInterface,
-         XsdString connectionFactoryImplClass, XsdString connectionInterface, XsdString connectionImplClass,
-         TransactionSupportEnum transactionSupport, List<AuthenticationMechanism> authenticationMechanism,
-         List<ConfigProperty> configProperties, Boolean reauthenticationSupport,
-         List<SecurityPermission> securityPermissions, String id)
+      XsdString connectionFactoryImplClass, XsdString connectionInterface, XsdString connectionImplClass,
+      TransactionSupportEnum transactionSupport, List<AuthenticationMechanism> authenticationMechanism,
+      List<ConfigProperty> configProperties, Boolean reauthenticationSupport,
+      List<SecurityPermission> securityPermissions, String id)
    {
       this(managedConnectionFactoryClass, connectionFactoryInterface, connectionFactoryImplClass, connectionInterface,
-            connectionImplClass, transactionSupport, authenticationMechanism, configProperties,
-            reauthenticationSupport, securityPermissions, id, null, null);
+           connectionImplClass, transactionSupport, authenticationMechanism, configProperties, reauthenticationSupport,
+           securityPermissions, id, null, null);
    }
 
    /**
@@ -303,23 +304,23 @@ public class ResourceAdapter10Impl extends AbstractResourceAdapetrImpl implement
    }
 
    /**
-    * Get the tsid.
+    * Get the transactionSupportId.
     *
-    * @return the tsid.
+    * @return the transactionSupportId.
     */
-   public String getTsId()
+   public String getTransactionSupportId()
    {
-      return tsId;
+      return transactionSupportId;
    }
 
    /**
-    * Get the rsid.
+    * Get the reauthenticationSupportId.
     *
-    * @return the rsid.
+    * @return the reauthenticationSupportId.
     */
-   public String getRsId()
+   public String getReauthenticationSupportId()
    {
-      return rsId;
+      return reauthenticationSupportId;
    }
 
    @Override
@@ -334,10 +335,10 @@ public class ResourceAdapter10Impl extends AbstractResourceAdapetrImpl implement
       result = prime * result + ((connectionImplClass == null) ? 0 : connectionImplClass.hashCode());
       result = prime * result + ((connectionInterface == null) ? 0 : connectionInterface.hashCode());
       result = prime * result + ((id == null) ? 0 : id.hashCode());
-      result = prime * result + ((rsId == null) ? 0 : rsId.hashCode());
-      result = prime * result + ((tsId == null) ? 0 : tsId.hashCode());
-      result = prime * result
-            + ((managedConnectionFactoryClass == null) ? 0 : managedConnectionFactoryClass.hashCode());
+      result = prime * result + ((reauthenticationSupportId == null) ? 0 : reauthenticationSupportId.hashCode());
+      result = prime * result + ((transactionSupportId == null) ? 0 : transactionSupportId.hashCode());
+      result = prime * result +
+               ((managedConnectionFactoryClass == null) ? 0 : managedConnectionFactoryClass.hashCode());
       result = prime * result + ((reauthenticationSupport == null) ? 0 : reauthenticationSupport.hashCode());
       result = prime * result + ((securityPermissions == null) ? 0 : securityPermissions.hashCode());
       result = prime * result + ((transactionSupport == null) ? 0 : transactionSupport.hashCode());
@@ -403,19 +404,19 @@ public class ResourceAdapter10Impl extends AbstractResourceAdapetrImpl implement
       }
       else if (!id.equals(other.id))
          return false;
-      if (rsId == null)
+      if (reauthenticationSupportId == null)
       {
-         if (other.rsId != null)
+         if (other.reauthenticationSupportId != null)
             return false;
       }
-      else if (!rsId.equals(other.rsId))
+      else if (!reauthenticationSupportId.equals(other.reauthenticationSupportId))
          return false;
-      if (tsId == null)
+      if (transactionSupportId == null)
       {
-         if (other.tsId != null)
+         if (other.transactionSupportId != null)
             return false;
       }
-      else if (!tsId.equals(other.tsId))
+      else if (!transactionSupportId.equals(other.transactionSupportId))
          return false;
       if (managedConnectionFactoryClass == null)
       {
@@ -462,7 +463,8 @@ public class ResourceAdapter10Impl extends AbstractResourceAdapetrImpl implement
 
       sb.append(connectionImplClass);
 
-      sb.append("<" + Tag.TRANSACTION_SUPPORT).append(tsId == null ? "" : " id=\"" + tsId + "\"").append(">");
+      sb.append("<" + Tag.TRANSACTION_SUPPORT)
+         .append(transactionSupportId == null ? "" : " id=\"" + transactionSupportId + "\"").append(">");
       sb.append(transactionSupport);
       sb.append("</" + Tag.TRANSACTION_SUPPORT + ">");
 
@@ -484,7 +486,8 @@ public class ResourceAdapter10Impl extends AbstractResourceAdapetrImpl implement
 
       if (reauthenticationSupport != null)
       {
-         sb.append("<" + Tag.REAUTHENTICATION_SUPPORT).append(rsId == null ? "" : " id=\"" + rsId + "\"").append(">");
+         sb.append("<" + Tag.REAUTHENTICATION_SUPPORT)
+            .append(reauthenticationSupportId == null ? "" : " id=\"" + reauthenticationSupportId + "\"").append(">");
          sb.append(reauthenticationSupport);
          sb.append("</" + Tag.REAUTHENTICATION_SUPPORT + ">");
       }
@@ -505,8 +508,9 @@ public class ResourceAdapter10Impl extends AbstractResourceAdapetrImpl implement
    @Override
    public void validate() throws ValidateException
    {
-      if (this.getManagedConnectionFactoryClass() == null || this.getManagedConnectionFactoryClass().getValue() == null
-            || this.getManagedConnectionFactoryClass().getValue().trim().equals(""))
+      if (this.getManagedConnectionFactoryClass() == null ||
+          this.getManagedConnectionFactoryClass().getValue() == null ||
+          this.getManagedConnectionFactoryClass().getValue().trim().equals(""))
       {
 
          throw new ValidateException(bundle.missingValue("managed-connection-factory-class"));
@@ -518,11 +522,14 @@ public class ResourceAdapter10Impl extends AbstractResourceAdapetrImpl implement
    public CopyableMetaData copy()
    {
       return new ResourceAdapter10Impl(CopyUtil.clone(managedConnectionFactoryClass),
-            CopyUtil.clone(connectionFactoryInterface), CopyUtil.clone(connectionFactoryImplClass),
-            CopyUtil.clone(connectionInterface), CopyUtil.clone(connectionImplClass), transactionSupport,
-            CopyUtil.cloneList(authenticationMechanism), CopyUtil.cloneList(configProperties), reauthenticationSupport,
-            CopyUtil.cloneList(securityPermissions), CopyUtil.cloneString(id), CopyUtil.cloneString(tsId),
-            CopyUtil.cloneString(rsId));
+                                       CopyUtil.clone(connectionFactoryInterface),
+                                       CopyUtil.clone(connectionFactoryImplClass), CopyUtil.clone(connectionInterface),
+                                       CopyUtil.clone(connectionImplClass), transactionSupport,
+                                       CopyUtil.cloneList(authenticationMechanism),
+                                       CopyUtil.cloneList(configProperties), reauthenticationSupport,
+                                       CopyUtil.cloneList(securityPermissions), CopyUtil.cloneString(id),
+                                       CopyUtil.cloneString(transactionSupportId),
+                                       CopyUtil.cloneString(reauthenticationSupportId));
    }
 
    @Override
@@ -532,36 +539,37 @@ public class ResourceAdapter10Impl extends AbstractResourceAdapetrImpl implement
       {
          ResourceAdapter10Impl inputMD = (ResourceAdapter10Impl) jmd;
          List<ConfigProperty> newconfigProperties = MergeUtil
-               .mergeList(this.configProperties, inputMD.configProperties);
+            .mergeList(this.configProperties, inputMD.configProperties);
          XsdString newManagedConnectionFactoryClass = XsdString.isNull(this.managedConnectionFactoryClass)
-               ? inputMD.managedConnectionFactoryClass
-               : this.managedConnectionFactoryClass;
+            ? inputMD.managedConnectionFactoryClass
+            : this.managedConnectionFactoryClass;
          XsdString newconnectionInterface = XsdString.isNull(this.connectionInterface)
-               ? inputMD.connectionInterface
-               : this.connectionInterface;
+            ? inputMD.connectionInterface
+            : this.connectionInterface;
          List<AuthenticationMechanism> newauthenticationMechanism = MergeUtil.mergeList(this.authenticationMechanism,
-               inputMD.authenticationMechanism);
+            inputMD.authenticationMechanism);
          Boolean newreauthenticationSupport = this.reauthenticationSupport == null
-               ? inputMD.reauthenticationSupport
-               : this.reauthenticationSupport;
+            ? inputMD.reauthenticationSupport
+            : this.reauthenticationSupport;
          TransactionSupportEnum newtransactionSupport = this.transactionSupport == null
-               ? inputMD.transactionSupport
-               : this.transactionSupport;
+            ? inputMD.transactionSupport
+            : this.transactionSupport;
          XsdString newconnectionImplClass = XsdString.isNull(this.connectionImplClass)
-               ? inputMD.connectionImplClass
-               : this.connectionImplClass;
+            ? inputMD.connectionImplClass
+            : this.connectionImplClass;
          XsdString newConnectionFactoryInterface = XsdString.isNull(this.connectionFactoryInterface)
-               ? inputMD.connectionFactoryInterface
-               : this.connectionFactoryInterface;
+            ? inputMD.connectionFactoryInterface
+            : this.connectionFactoryInterface;
          List<SecurityPermission> newsecurityPermissions = MergeUtil.mergeList(this.securityPermissions,
-               inputMD.securityPermissions);
+            inputMD.securityPermissions);
          XsdString newconnectionFactoryImplClass = XsdString.isNull(this.connectionFactoryImplClass)
-               ? inputMD.connectionFactoryImplClass
-               : this.connectionFactoryImplClass;
+            ? inputMD.connectionFactoryImplClass
+            : this.connectionFactoryImplClass;
          return new ResourceAdapter10Impl(newManagedConnectionFactoryClass, newConnectionFactoryInterface,
-               newconnectionFactoryImplClass, newconnectionInterface, newconnectionImplClass, newtransactionSupport,
-               newauthenticationMechanism, newconfigProperties, newreauthenticationSupport, newsecurityPermissions,
-               null);
+                                          newconnectionFactoryImplClass, newconnectionInterface,
+                                          newconnectionImplClass, newtransactionSupport, newauthenticationMechanism,
+                                          newconfigProperties, newreauthenticationSupport, newsecurityPermissions, 
+                                          null);
       }
       else
       {

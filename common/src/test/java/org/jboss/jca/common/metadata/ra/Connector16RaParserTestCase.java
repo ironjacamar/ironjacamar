@@ -127,13 +127,13 @@ public class Connector16RaParserTestCase extends RaParserTestBase
       List<? extends ConfigProperty> cps = ra.getConfigProperties();
       assertEquals(2, cps.size());
       checkConfigProperty(cps.get(0), "ID043", "ID049", "config-property-name0", "ID051", "java.lang.Boolean", "ID053",
-         "true", "ID055", false, "ID057", false, "ID059", false,
-         new LocalizedXsdString("description4", "ID045", "en-US"),
+         "true", "ID055", false, "ID057", false, "ID059", false, new LocalizedXsdString("description4", "ID045",
+                                                                                        "en-US"),
          new LocalizedXsdString("description5", "ID047", "de"));
       checkConfigProperty(cps.get(1), "ID061", "ID067", "config-property-name1", "ID069", "java.lang.String", "ID071",
-         "config-property-value1", "ID073", true, "ID075", false, "ID077",
-         false, new LocalizedXsdString("description6", "ID063", "en-US"),
-         new LocalizedXsdString("description7", "ID065", "en-US"));
+         "config-property-value1", "ID073", true, "ID075", false, "ID077", false,
+         new LocalizedXsdString("description6", "ID063", "en-US"), new LocalizedXsdString("description7", "ID065",
+                                                                                          "en-US"));
 
       OutboundResourceAdapterImpl out = (OutboundResourceAdapterImpl) ra.getOutboundResourceadapter();
       assertEquals("ID079", out.getId());
@@ -154,13 +154,11 @@ public class Connector16RaParserTestCase extends RaParserTestBase
       cps = cd.getConfigProperties();
       assertEquals(2, cps.size());
       checkConfigProperty(cps.get(0), "ID085", "ID091", "config-property-name2", "ID093", "java.lang.Float", "ID095",
-         "5", "ID097", false, "ID099", true, "ID101", false,
-         new LocalizedXsdString("description8", "ID087", "en-US"), new LocalizedXsdString("description9", "ID089",
-                                                                                          "en-US"));
+         "5", "ID097", false, "ID099", true, "ID101", false, new LocalizedXsdString("description8", "ID087", "en-US"),
+         new LocalizedXsdString("description9", "ID089", "en-US"));
       checkConfigProperty(cps.get(1), "ID103", "ID109", "config-property-name3", "ID111", "java.lang.Integer", "ID113",
-         "3", "ID115", false, "ID117", false, "ID119", true,
-         new LocalizedXsdString("description10", "ID105", "en-US"), new LocalizedXsdString("description11", "ID107",
-                                                                                           "de"));
+         "3", "ID115", false, "ID117", false, "ID119", true, new LocalizedXsdString("description10", "ID105", "en-US"),
+         new LocalizedXsdString("description11", "ID107", "de"));
 
       cd = cds.get(1);
       assertEquals("ID129", cd.getId());
@@ -176,16 +174,16 @@ public class Connector16RaParserTestCase extends RaParserTestBase
       cps = cd.getConfigProperties();
       assertEquals(2, cps.size());
       checkConfigProperty(cps.get(0), "ID133", "ID139", "config-property-name4", "ID141", "java.lang.String", "ID143",
-         "config-property-value4", "ID145", false, "ID147", false, "ID149",
-         false, new LocalizedXsdString("description12", "ID135", "en-US"),
-         new LocalizedXsdString("description13", "ID137", "en-US"));
+         "config-property-value4", "ID145", false, "ID147", false, "ID149", false,
+         new LocalizedXsdString("description12", "ID135", "en-US"), new LocalizedXsdString("description13", "ID137",
+                                                                                           "en-US"));
       checkConfigProperty(cps.get(1), "ID151", "ID157", "config-property-name5", "ID159", "java.lang.String", "ID161",
-         "config-property-value5", "ID163", false, "ID165", false, "ID167",
-         false, new LocalizedXsdString("description14", "ID153", "en-US"),
-         new LocalizedXsdString("description15", "ID155", "en-US"));
+         "config-property-value5", "ID163", false, "ID165", false, "ID167", false,
+         new LocalizedXsdString("description14", "ID153", "en-US"), new LocalizedXsdString("description15", "ID155",
+                                                                                           "en-US"));
 
       assertEquals(out.getTransactionSupport(), TransactionSupportEnum.NoTransaction);
-      assertEquals("ID177", out.getTsId());
+      assertEquals("ID177", out.getTransactionSupportId());
 
       List<AuthenticationMechanism> ams = out.getAuthenticationMechanisms();
       assertEquals(2, ams.size());
@@ -197,7 +195,7 @@ public class Connector16RaParserTestCase extends RaParserTestBase
          new LocalizedXsdString("description19", "ID193", "en-US"));
 
       assertEquals(true, out.getReauthenticationSupport());
-      assertEquals("ID199", out.getRsId());
+      assertEquals("ID199", out.getReauthenticationSupportId());
 
       InboundResourceAdapter in = ra.getInboundResourceadapter();
       assertEquals("ID201", in.getId());
@@ -217,13 +215,13 @@ public class Connector16RaParserTestCase extends RaParserTestBase
       cps = as.getConfigProperties();
       assertEquals(2, cps.size());
       checkConfigProperty(cps.get(0), "ID1331", "ID1391", "config-property-name4", "ID1411", "java.lang.String",
-         "ID1431", "config-property-value4", "ID1451", false, "ID1471", false, "ID1491",
-         false, new LocalizedXsdString("description12", "ID1351", "en-US"),
-         new LocalizedXsdString("description13", "ID1371", "en-US"));
+         "ID1431", "config-property-value4", "ID1451", false, "ID1471", false, "ID1491", false,
+         new LocalizedXsdString("description12", "ID1351", "en-US"), new LocalizedXsdString("description13", "ID1371",
+                                                                                            "en-US"));
       checkConfigProperty(cps.get(1), "ID1511", "ID1571", "config-property-name5", "ID1591", "java.lang.String",
-         "ID1611", "config-property-value5", "ID1631", false, "ID1651", false, "ID1671",
-         false, new LocalizedXsdString("description14", "ID1531", "en-US"),
-         new LocalizedXsdString("description15", "ID1551", "en-US"));
+         "ID1611", "config-property-value5", "ID1631", false, "ID1651", false, "ID1671", false,
+         new LocalizedXsdString("description14", "ID1531", "en-US"), new LocalizedXsdString("description15", "ID1551",
+                                                                                            "en-US"));
 
       List<RequiredConfigProperty> rcps = as.getRequiredConfigProperties();
       assertEquals(2, rcps.size());
@@ -253,13 +251,13 @@ public class Connector16RaParserTestCase extends RaParserTestBase
       cps = ao.getConfigProperties();
       assertEquals(2, cps.size());
       checkConfigProperty(cps.get(0), "ID227", "ID233", "config-property-name6", "ID235", "java.lang.String", "ID237",
-         "config-property-value6", "ID239", false, "ID241", false, "ID243",
-         false, new LocalizedXsdString("description20", "ID229", "en-US"),
-         new LocalizedXsdString("description21", "ID231", "en-US"));
+         "config-property-value6", "ID239", false, "ID241", false, "ID243", false,
+         new LocalizedXsdString("description20", "ID229", "en-US"), new LocalizedXsdString("description21", "ID231",
+                                                                                           "en-US"));
       checkConfigProperty(cps.get(1), "ID245", "ID251", "config-property-name7", "ID253", "java.lang.String", "ID255",
-         "config-property-value7", "ID257", false, "ID259", false, "ID261",
-         false, new LocalizedXsdString("description22", "ID247", "en-US"),
-         new LocalizedXsdString("description23", "ID249", "en-US"));
+         "config-property-value7", "ID257", false, "ID259", false, "ID261", false,
+         new LocalizedXsdString("description22", "ID247", "en-US"), new LocalizedXsdString("description23", "ID249",
+                                                                                           "en-US"));
 
       ao = aos.get(1);
       assertEquals("ID263", ao.getId());
@@ -269,13 +267,13 @@ public class Connector16RaParserTestCase extends RaParserTestBase
       cps = ao.getConfigProperties();
       assertEquals(2, cps.size());
       checkConfigProperty(cps.get(0), "ID269", "ID275", "config-property-name8", "ID277", "java.lang.String", "ID279",
-         "config-property-value8", "ID281", false, "ID283", false, "ID285",
-         false, new LocalizedXsdString("description24", "ID271", "en-US"),
-         new LocalizedXsdString("description25", "ID273", "en-US"));
+         "config-property-value8", "ID281", false, "ID283", false, "ID285", false,
+         new LocalizedXsdString("description24", "ID271", "en-US"), new LocalizedXsdString("description25", "ID273",
+                                                                                           "en-US"));
       checkConfigProperty(cps.get(1), "ID287", "ID293", "config-property-name9", "ID295", "java.lang.String", "ID297",
-         "config-property-value9", "ID299", false, "ID301", false, "ID303",
-         false, new LocalizedXsdString("description26", "ID289", "en-US"),
-         new LocalizedXsdString("description27", "ID291", "en-US"));
+         "config-property-value9", "ID299", false, "ID301", false, "ID303", false,
+         new LocalizedXsdString("description26", "ID289", "en-US"), new LocalizedXsdString("description27", "ID291",
+                                                                                           "en-US"));
 
       List<SecurityPermission> sps = ra.getSecurityPermissions();
       assertEquals(2, sps.size());

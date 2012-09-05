@@ -46,11 +46,11 @@ public class ConfigProperty16Impl extends ConfigPropertyImpl implements ConfigPr
 
    private final Boolean configPropertyConfidential;
 
-   private final String ignoreId;
+   private final String configPropertyIgnoreId;
 
-   private final String updatesId;
+   private final String configPropertySupportsDynamicUpdatesId;
 
-   private final String confidId;
+   private final String configPropertyConfidentialId;
 
    private final String attachedClassName;
 
@@ -81,11 +81,11 @@ public class ConfigProperty16Impl extends ConfigPropertyImpl implements ConfigPr
     * @param id XML ID
     */
    public ConfigProperty16Impl(List<LocalizedXsdString> description, XsdString configPropertyName,
-         XsdString configPropertyType, XsdString configPropertyValue, Boolean configPropertyIgnore,
-         Boolean configPropertySupportsDynamicUpdates, Boolean configPropertyConfidential, String id)
+      XsdString configPropertyType, XsdString configPropertyValue, Boolean configPropertyIgnore,
+      Boolean configPropertySupportsDynamicUpdates, Boolean configPropertyConfidential, String id)
    {
       this(description, configPropertyName, configPropertyType, configPropertyValue, configPropertyIgnore,
-            configPropertySupportsDynamicUpdates, configPropertyConfidential, id, null);
+           configPropertySupportsDynamicUpdates, configPropertyConfidential, id, null);
    }
 
    /**
@@ -116,12 +116,12 @@ public class ConfigProperty16Impl extends ConfigPropertyImpl implements ConfigPr
     * @param attachedClassName className of the class where the property is defined by annoptation
     */
    public ConfigProperty16Impl(List<LocalizedXsdString> description, XsdString configPropertyName,
-         XsdString configPropertyType, XsdString configPropertyValue, Boolean configPropertyIgnore,
-         Boolean configPropertySupportsDynamicUpdates, Boolean configPropertyConfidential, String id,
-         String attachedClassName)
+      XsdString configPropertyType, XsdString configPropertyValue, Boolean configPropertyIgnore,
+      Boolean configPropertySupportsDynamicUpdates, Boolean configPropertyConfidential, String id,
+      String attachedClassName)
    {
       this(description, configPropertyName, configPropertyType, configPropertyValue, configPropertyIgnore,
-            configPropertySupportsDynamicUpdates, configPropertyConfidential, id, attachedClassName, null, null, null);
+           configPropertySupportsDynamicUpdates, configPropertyConfidential, id, attachedClassName, null, null, null);
    }
 
    /**
@@ -150,23 +150,24 @@ public class ConfigProperty16Impl extends ConfigPropertyImpl implements ConfigPr
     *  property as confidential.
     * @param id XML ID
     * @param attachedClassName className of the class where the property is defined by annoptation
-    * @param ignoreId ID of configPropertyIgnore element
-    * @param updatesId ID of configPropertySupportsDynemycUpdates element
-    * @param confidId ID of configPropertyConfidential element
+    * @param configPropertyIgnoreId ID of configPropertyIgnore element
+    * @param configPropertySupportsDynamicUpdatesId ID of configPropertySupportsDynemycUpdates element
+    * @param configPropertyConfidentialId ID of configPropertyConfidential element
     */
    public ConfigProperty16Impl(List<LocalizedXsdString> description, XsdString configPropertyName,
-         XsdString configPropertyType, XsdString configPropertyValue, Boolean configPropertyIgnore,
-         Boolean configPropertySupportsDynamicUpdates, Boolean configPropertyConfidential, String id,
-         String attachedClassName, String ignoreId, String updatesId, String confidId)
+      XsdString configPropertyType, XsdString configPropertyValue, Boolean configPropertyIgnore,
+      Boolean configPropertySupportsDynamicUpdates, Boolean configPropertyConfidential, String id,
+      String attachedClassName, String configPropertyIgnoreId, String configPropertySupportsDynamicUpdatesId,
+      String configPropertyConfidentialId)
    {
       super(description, configPropertyName, configPropertyType, configPropertyValue, id);
       this.configPropertyIgnore = configPropertyIgnore;
       this.configPropertySupportsDynamicUpdates = configPropertySupportsDynamicUpdates;
       this.configPropertyConfidential = configPropertyConfidential;
       this.attachedClassName = attachedClassName;
-      this.ignoreId = ignoreId;
-      this.confidId = confidId;
-      this.updatesId = updatesId;
+      this.configPropertyIgnoreId = configPropertyIgnoreId;
+      this.configPropertyConfidentialId = configPropertyConfidentialId;
+      this.configPropertySupportsDynamicUpdatesId = configPropertySupportsDynamicUpdatesId;
    }
 
    /**
@@ -207,30 +208,30 @@ public class ConfigProperty16Impl extends ConfigPropertyImpl implements ConfigPr
    }
 
    /**
-    * get ignoreId
-    * @return ignoreId
+    * get configPropertyIgnoreId
+    * @return configPropertyIgnoreId
     */
-   public String getIgnoreId()
+   public String getConfigPropertyIgnoreId()
    {
-      return ignoreId;
+      return configPropertyIgnoreId;
    }
 
    /**
-    * get confidId
-    * @return confidId
+    * get configPropertyConfidentialId
+    * @return configPropertyConfidentialId
     */
-   public String getConfidId()
+   public String getConfigPropertyConfidentialId()
    {
-      return confidId;
+      return configPropertyConfidentialId;
    }
 
    /**
-    * get updatesId
-    * @return updatesId
+    * get configPropertySupportsDynamicUpdatesId
+    * @return configPropertySupportsDynamicUpdatesId
     */
-   public String getUpdatesId()
+   public String getConfigPropertySupportsDynamicUpdatesId()
    {
-      return updatesId;
+      return configPropertySupportsDynamicUpdatesId;
    }
 
    @Override
@@ -241,11 +242,14 @@ public class ConfigProperty16Impl extends ConfigPropertyImpl implements ConfigPr
       result = prime * result + ((attachedClassName == null) ? 0 : attachedClassName.hashCode());
       result = prime * result + ((configPropertyConfidential == null) ? 0 : configPropertyConfidential.hashCode());
       result = prime * result + ((configPropertyIgnore == null) ? 0 : configPropertyIgnore.hashCode());
-      result = prime * result
-            + ((configPropertySupportsDynamicUpdates == null) ? 0 : configPropertySupportsDynamicUpdates.hashCode());
-      result = prime * result + ((ignoreId == null) ? 0 : ignoreId.hashCode());
-      result = prime * result + ((updatesId == null) ? 0 : updatesId.hashCode());
-      result = prime * result + ((confidId == null) ? 0 : confidId.hashCode());
+      result = prime * result +
+               ((configPropertySupportsDynamicUpdates == null) ? 0 : configPropertySupportsDynamicUpdates.hashCode());
+      result = prime * result + ((configPropertyIgnoreId == null) ? 0 : configPropertyIgnoreId.hashCode());
+      result = prime *
+               result +
+               ((configPropertySupportsDynamicUpdatesId == null) ? 0 : configPropertySupportsDynamicUpdatesId
+                  .hashCode());
+      result = prime * result + ((configPropertyConfidentialId == null) ? 0 : configPropertyConfidentialId.hashCode());
 
       return result;
    }
@@ -288,26 +292,26 @@ public class ConfigProperty16Impl extends ConfigPropertyImpl implements ConfigPr
       }
       else if (!configPropertySupportsDynamicUpdates.equals(other.configPropertySupportsDynamicUpdates))
          return false;
-      if (ignoreId == null)
+      if (configPropertyIgnoreId == null)
       {
-         if (other.ignoreId != null)
+         if (other.configPropertyIgnoreId != null)
             return false;
       }
-      else if (!ignoreId.equals(other.ignoreId))
+      else if (!configPropertyIgnoreId.equals(other.configPropertyIgnoreId))
          return false;
-      if (updatesId == null)
+      if (configPropertySupportsDynamicUpdatesId == null)
       {
-         if (other.updatesId != null)
+         if (other.configPropertySupportsDynamicUpdatesId != null)
             return false;
       }
-      else if (!updatesId.equals(other.updatesId))
+      else if (!configPropertySupportsDynamicUpdatesId.equals(other.configPropertySupportsDynamicUpdatesId))
          return false;
-      if (confidId == null)
+      if (configPropertyConfidentialId == null)
       {
-         if (other.confidId != null)
+         if (other.configPropertyConfidentialId != null)
             return false;
       }
-      else if (!confidId.equals(other.confidId))
+      else if (!configPropertyConfidentialId.equals(other.configPropertyConfidentialId))
          return false;
 
       return true;
@@ -341,15 +345,18 @@ public class ConfigProperty16Impl extends ConfigPropertyImpl implements ConfigPr
       if (configPropertyIgnore != null)
       {
          sb.append("<").append(ConfigProperty16.Tag.CONFIG_PROPERTY_IGNORE)
-               .append(ignoreId == null ? "" : " id=\"" + ignoreId + "\"").append(">");
+            .append(configPropertyIgnoreId == null ? "" : " id=\"" + configPropertyIgnoreId + "\"").append(">");
          sb.append(configPropertyIgnore);
          sb.append("</").append(ConfigProperty16.Tag.CONFIG_PROPERTY_IGNORE).append(">");
       }
 
       if (configPropertySupportsDynamicUpdates != null)
       {
-         sb.append("<").append(ConfigProperty16.Tag.CONFIG_PROPERTY_SUPPORT_DYNAMIC_UPDATE)
-               .append(updatesId == null ? "" : " id=\"" + updatesId + "\"").append(">");
+         sb.append("<")
+            .append(ConfigProperty16.Tag.CONFIG_PROPERTY_SUPPORT_DYNAMIC_UPDATE)
+            .append(
+               configPropertySupportsDynamicUpdatesId == null ? "" : " id=\"" + configPropertySupportsDynamicUpdatesId +
+                                                                     "\"").append(">");
          sb.append(configPropertySupportsDynamicUpdates);
          sb.append("</").append(ConfigProperty16.Tag.CONFIG_PROPERTY_SUPPORT_DYNAMIC_UPDATE).append(">");
       }
@@ -357,7 +364,8 @@ public class ConfigProperty16Impl extends ConfigPropertyImpl implements ConfigPr
       if (configPropertyConfidential != null)
       {
          sb.append("<").append(ConfigProperty16.Tag.CONFIG_PROPERTY_CONFIDENTIAL)
-               .append(confidId == null ? "" : " id=\"" + confidId + "\"").append(">");
+            .append(configPropertyConfidentialId == null ? "" : " id=\"" + configPropertyConfidentialId + "\"")
+            .append(">");
          sb.append(configPropertyConfidential);
          sb.append("</").append(ConfigProperty16.Tag.CONFIG_PROPERTY_CONFIDENTIAL).append(">");
       }
@@ -371,10 +379,13 @@ public class ConfigProperty16Impl extends ConfigPropertyImpl implements ConfigPr
    public CopyableMetaData copy()
    {
       return new ConfigProperty16Impl(CopyUtil.cloneList(description), CopyUtil.clone(configPropertyName),
-            CopyUtil.clone(configPropertyType), CopyUtil.clone(configPropertyValue), configPropertyIgnore,
-            configPropertySupportsDynamicUpdates, configPropertyConfidential, CopyUtil.cloneString(id),
-            CopyUtil.cloneString(attachedClassName), CopyUtil.cloneString(ignoreId), CopyUtil.cloneString(updatesId),
-            CopyUtil.cloneString(confidId));
+                                      CopyUtil.clone(configPropertyType), CopyUtil.clone(configPropertyValue),
+                                      configPropertyIgnore, configPropertySupportsDynamicUpdates,
+                                      configPropertyConfidential, CopyUtil.cloneString(id),
+                                      CopyUtil.cloneString(attachedClassName),
+                                      CopyUtil.cloneString(configPropertyIgnoreId),
+                                      CopyUtil.cloneString(configPropertySupportsDynamicUpdatesId),
+                                      CopyUtil.cloneString(configPropertyConfidentialId));
    }
 
 }
