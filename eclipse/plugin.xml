@@ -62,11 +62,11 @@
                label="IronJacamar"
                mnemonic="M"
                id="ironjacamar-eclipse.popup.ironjacamar">
-            <command
+            <!--command
                   commandId="ironjacamar-eclipse.commands.validateCommand"
                   mnemonic="V"
                   id="ironjacamar-eclipse.menus.validateCommand">
-            </command>
+            </command-->
             <command
                   commandId="ironjacamar-eclipse.commands.deployCommand"
                   mnemonic="D"
@@ -84,12 +84,12 @@
             locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
          <toolbar
                id="ironjacamar-eclipse.toolbars.buildToolbar">
-            <command
+            <!--command
                   commandId="ironjacamar-eclipse.commands.validateCommand"
                   icon="icons/validation_icon_16px.png"
                   tooltip="Validate Ironjacamar project"
                   id="ironjacamar-eclipse.toolbars.validateCommand">
-            </command>
+            </command-->
             <command
                   commandId="ironjacamar-eclipse.commands.deployCommand"
                   icon="icons/deploy_icon_16px.png"
