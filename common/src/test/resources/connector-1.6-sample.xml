@@ -120,7 +120,7 @@
 				<authentication-mechanism-type id="ID195">authentication-mechanism-type1</authentication-mechanism-type>
 				<credential-interface id="ID197">org.ietf.jgss.GSSCredential</credential-interface>
 			</authentication-mechanism>
-			<reauthentication-support id="ID199">false</reauthentication-support>
+			<reauthentication-support id="ID199">true</reauthentication-support>
 		</outbound-resourceadapter>
 		<inbound-resourceadapter id="ID201">
 			<messageadapter id="ID203">
@@ -139,7 +139,7 @@
 								id="ID1471">false</config-property-supports-dynamic-updates>
 							<config-property-confidential id="ID1491">false</config-property-confidential>
 						</config-property>
-						<config-property id="ID151">
+						<config-property id="ID1511">
 							<description xml:lang="en-US" id="ID1531">description14</description>
 							<description xml:lang="en-US" id="ID1551">description15</description>
 							<config-property-name id="ID1571">config-property-name5</config-property-name>
@@ -150,7 +150,7 @@
 								id="ID1651">false</config-property-supports-dynamic-updates>
 							<config-property-confidential id="ID1671">false</config-property-confidential>
 						</config-property>
-						<required-config-property>
+						<required-config-property id="ID1530">
 							<description xml:lang="en-US" id="ID1532">description14</description>
 							<description xml:lang="de" id="ID1552">description15</description>
 							<config-property-name id="ID1554">config-property-name5</config-property-name>

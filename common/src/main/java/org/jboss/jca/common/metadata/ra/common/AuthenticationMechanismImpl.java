@@ -147,6 +147,14 @@ public class AuthenticationMechanismImpl implements AuthenticationMechanism
    {
       return id;
    }
+   /**
+    * get ciid
+    * @return ciid
+    */
+   public String getCIId()
+   {
+      return cIId;
+   }
 
    /**
     * {@inheritDoc}

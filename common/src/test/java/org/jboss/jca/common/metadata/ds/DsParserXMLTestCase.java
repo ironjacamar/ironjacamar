@@ -29,6 +29,7 @@ import org.jboss.jca.common.api.metadata.ds.DataSources;
 import org.jboss.jca.common.api.metadata.ds.Driver;
 import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
+import org.jboss.jca.common.metadata.ParserTestBase;
 import org.jboss.jca.common.metadata.ds.v11.DataSourceImpl;
 import org.jboss.jca.common.metadata.ds.v11.DsParser;
 import org.jboss.jca.common.metadata.ds.v11.DsPoolImpl;
@@ -48,7 +49,7 @@ import static org.junit.Assert.*;
  *
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  */
-public class DsParserXMLTestCase extends DsParserTestBase
+public class DsParserXMLTestCase extends ParserTestBase
 {
    /**
    *
@@ -69,7 +70,7 @@ public class DsParserXMLTestCase extends DsParserTestBase
    @Test
    public void checkDefaultValues() throws Exception
    {
-      DataSources dss = parseDsFromFile("ds/unit/defaults-ds.xml");
+      DataSources dss = (DataSources)parseOjbectsFromFile("ds/unit/defaults-ds.xml");
 
       //Ds part
       DataSourceImpl ds = (DataSourceImpl) dss.getDataSource().get(0);
@@ -105,9 +106,11 @@ public class DsParserXMLTestCase extends DsParserTestBase
    @Test
    public void shouldParseXMLRepresentation() throws Exception
    {
-      DataSources dss = doParse(getFile("ds/unit/complex-ds.xml"));
+      DataSources dss = (DataSources)doParse(getFile("ds/unit/complex-ds.xml"));
       checkDataSources(dss);
-      checkDataSources(reParse(dss));
+      DataSources ds1 = (DataSources)reParse(dss);
+      checkEquals(dss, ds1);
+      checkDataSources(ds1);
    }
 
    /**

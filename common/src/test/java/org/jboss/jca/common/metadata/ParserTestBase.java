@@ -19,18 +19,15 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.ds;
+package org.jboss.jca.common.metadata;
 
-import org.jboss.jca.common.api.metadata.ds.DataSources;
-import org.jboss.jca.common.metadata.ds.v10.DsParser;
+import org.jboss.jca.common.api.metadata.JCAMetadata;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 
 import org.jboss.logging.Logger;
-
-import org.junit.BeforeClass;
 
 import static org.junit.Assert.*;
 
@@ -41,41 +38,30 @@ import static org.junit.Assert.*;
  *
  */
 
-public abstract class DsParserTestBase
+public abstract class ParserTestBase
 {
 
    /**
     * parser
     */
-   protected static DsParser parser;
+   protected static MetadataParser parser;
 
    /**
     *  logger
     */
-   protected static Logger log = Logger.getLogger(DsParserTestBase.class);
+   protected static Logger log = Logger.getLogger(ParserTestBase.class);
+
 
    /**
-    *
-    * beforeClass method
-    *
-    * @throws Exception in casae of file not found
-    */
-   @BeforeClass
-   public static void beforeClass() throws Exception
-   {
-      parser = new DsParser();
-   }
-
-   /**
-    * gets DataSources from file
+    * gets JCA Metadata object from file
     * 
     * @param xmlFile - to parse
     * 
-    * @return resulting DS
+    * @return resulting object
     * 
     * @throws Exception in case of error
     */
-   protected DataSources doParse(File xmlFile) throws Exception
+   protected JCAMetadata doParse(File xmlFile) throws Exception
    {
       FileInputStream is = null;
 
@@ -92,21 +78,19 @@ public abstract class DsParserTestBase
    }
 
    /**
-    * Parses DS, then tries to re-parse it, using its xml representation, 
-    * compares resulting DS with re-parsed one
+    * Parses metadata, then tries to re-parse it, using its xml representation, 
+    * compares resulting metadata with re-parsed one
     * 
     * @param xmlFile to parse
-    * @return resulting DS 
+    * @return resulting metadata 
     *
     * @throws Exception in case of error
     */
-   protected DataSources doReParse(File xmlFile) throws Exception
+   protected JCAMetadata doReParse(File xmlFile) throws Exception
    {
-      DataSources ds = doParse(xmlFile);
-      DataSources ds1 = reParse(ds);
-      assertEquals("Strings are not equal.\n" + ds.toString() + "\n" + ds1.toString(), ds.toString(),
-            ds1.toString());
-      assertTrue("DS Objects are not equal:\n" + ds1.toString() + "\n" + ds.toString(), ds1.equals(ds));
+      JCAMetadata ds = doParse(xmlFile);
+      JCAMetadata ds1 = reParse(ds);
+      checkEquals(ds, ds1);
       return ds;
    }
 
@@ -124,24 +108,24 @@ public abstract class DsParserTestBase
    }
 
    /**
-    * Returns DS object as a result of parsing file from resource folder
+    * Returns metadata object as a result of parsing file from resource folder
     * 
     * @param fileName to parse
-    * @return resulting DS
+    * @return resulting object
     * @throws Exception in case of error
     */
-   protected DataSources parseDsFromFile(String fileName) throws Exception
+   protected JCAMetadata parseOjbectsFromFile(String fileName) throws Exception
    {
       return doReParse(getFile(fileName));
    }
 
    /**
-    * Re-parses DataSources from toString() presentation
-    * @param ds DataSources object to re-parse
-    * @return re-parsed DataSources object
+    * Re-parses JCAMetadata from toString() presentation
+    * @param ds JCAMetadata object to re-parse
+    * @return re-parsed JCAMetadata object
     * @throws Exception in case of error
     */
-   protected DataSources reParse(DataSources ds) throws Exception
+   protected JCAMetadata reParse(JCAMetadata ds) throws Exception
    {
       ByteArrayInputStream bais = null;
       try
@@ -155,5 +139,20 @@ public abstract class DsParserTestBase
             bais.close();
       }
 
+   }
+   
+   /**
+    * Checks if objects of metadata and their string representation are equal
+    * @param m1 - first object
+    * @param m2 - second object
+    */
+   protected void checkEquals(JCAMetadata m1, JCAMetadata m2)
+   {
+      String metadatas = m1.toString() + "\n" + m2.toString();
+      log.info("Check equals:" + metadatas);
+      assertEquals("Strings are not equal.\n" + metadatas, m1.toString(),
+            m2.toString());
+      assertTrue("Objects are not equal:\n" + metadatas, m1.equals(m2));
+ 
    }
 }

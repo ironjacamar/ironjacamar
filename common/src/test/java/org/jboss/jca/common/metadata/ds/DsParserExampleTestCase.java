@@ -22,6 +22,7 @@
 package org.jboss.jca.common.metadata.ds;
 
 import org.jboss.jca.common.api.metadata.ds.DataSources;
+import org.jboss.jca.common.metadata.ParserTestBase;
 import org.jboss.jca.common.metadata.ds.v11.DsParser;
 
 import java.io.File;
@@ -45,7 +46,7 @@ import static org.junit.Assert.*;
  *
  */
 @RunWith(Theories.class)
-public class DsParserExampleTestCase extends DsParserTestBase
+public class DsParserExampleTestCase extends ParserTestBase
 {
 
    /** Datapoints for junit Theory **/
@@ -82,7 +83,7 @@ public class DsParserExampleTestCase extends DsParserTestBase
       try
       {
          log.info(xmlFile.toString());
-         DataSources ds = doReParse(xmlFile);
+         DataSources ds = (DataSources)doReParse(xmlFile);
          assertThat(ds.getDataSource().size() + ds.getXaDataSource().size(), is(1));
       }
       catch (Throwable t)

@@ -302,6 +302,26 @@ public class ResourceAdapter10Impl extends AbstractResourceAdapetrImpl implement
       return id;
    }
 
+   /**
+    * Get the tsid.
+    *
+    * @return the tsid.
+    */
+   public String getTsId()
+   {
+      return tsId;
+   }
+
+   /**
+    * Get the rsid.
+    *
+    * @return the rsid.
+    */
+   public String getRsId()
+   {
+      return rsId;
+   }
+
    @Override
    public int hashCode()
    {

@@ -114,6 +114,15 @@ public class LicenseType implements IdDecoratedMetadata, MergeableMetadata<Licen
 
    /**
     * {@inheritDoc}
+    * @return licReqId;
+    */
+   public String getLicReqId()
+   {
+      return licReqId;
+   }
+
+   /**
+    * {@inheritDoc}
     *
     * @see java.lang.Object#hashCode()
     */

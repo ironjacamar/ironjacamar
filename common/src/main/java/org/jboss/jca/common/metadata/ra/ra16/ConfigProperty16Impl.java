@@ -206,6 +206,33 @@ public class ConfigProperty16Impl extends ConfigPropertyImpl implements ConfigPr
       return configPropertyConfidential;
    }
 
+   /**
+    * get ignoreId
+    * @return ignoreId
+    */
+   public String getIgnoreId()
+   {
+      return ignoreId;
+   }
+
+   /**
+    * get confidId
+    * @return confidId
+    */
+   public String getConfidId()
+   {
+      return confidId;
+   }
+
+   /**
+    * get updatesId
+    * @return updatesId
+    */
+   public String getUpdatesId()
+   {
+      return updatesId;
+   }
+
    @Override
    public int hashCode()
    {

@@ -11,7 +11,7 @@
     	<large-icon id="ID001E">large.gif</large-icon>
     	<small-icon id="ID001F">small.gif</small-icon>
     </icon>
-    <icon id="ID001E" lang="de"/>
+    <icon id="ID001G" lang="de"/>
     <vendor-name id="ID002">something</vendor-name>
     <eis-type id="ID004">something</eis-type>
     <resourceadapter-version id="ID006A">5</resourceadapter-version>
@@ -46,7 +46,7 @@
                     <config-property-type>java.lang.Character</config-property-type>
                     <config-property-value>c</config-property-value>
                 </config-property>
-                <config-property id="ID017">
+                <config-property id="ID016">
                     <description lang="ru">12345</description>
                     <description> </description>
                     <config-property-name>dddd</config-property-name>
@@ -94,7 +94,7 @@
                 <connection-impl-class>
                 </connection-impl-class>
             </connection-definition>
-            <transaction-support id="ID024">NoTransaction</transaction-support>
+            <transaction-support id="ID024">LocalTransaction</transaction-support>
             <authentication-mechanism id="ID025">
                 <description>
                 </description>
@@ -122,10 +122,15 @@
                     <activationspec id="ID035">
                         <activationspec-class>class6
                         </activationspec-class>
-                        <required-config-property id="ID034A">
+                        <required-config-property id="ID035A">
                            	<description id="ID035B" lang="en">something</description>
    							<description id="ID035C" lang="de">something</description>
-                        	<config-property-name>bbb</config-property-name>
+                        	<config-property-name id="ID035D">bbb</config-property-name>
+                        </required-config-property>
+                        <required-config-property>
+                           	<description>something</description>
+   							<description/>
+                        	<config-property-name>ccc</config-property-name>
                         </required-config-property>
                     </activationspec>
                 </messagelistener>

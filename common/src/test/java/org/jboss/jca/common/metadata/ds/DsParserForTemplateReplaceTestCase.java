@@ -23,6 +23,7 @@ package org.jboss.jca.common.metadata.ds;
 
 import org.jboss.jca.common.api.metadata.ds.DataSources;
 import org.jboss.jca.common.metadata.ParserException;
+import org.jboss.jca.common.metadata.ParserTestBase;
 import org.jboss.jca.common.metadata.ds.v11.DsParser;
 
 import org.junit.BeforeClass;
@@ -38,7 +39,7 @@ import static org.junit.Assert.assertThat;
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public class DsParserForTemplateReplaceTestCase extends DsParserTestBase
+public class DsParserForTemplateReplaceTestCase extends ParserTestBase
 {
 
    /**
@@ -69,7 +70,7 @@ public class DsParserForTemplateReplaceTestCase extends DsParserTestBase
    public void shouldReplaceTemplateElementFromSystemProperty() throws Exception
    {
 
-      DataSources ds = parseDsFromFile("ds/unit/replace-max-pool-ds.xml");
+      DataSources ds = (DataSources)parseOjbectsFromFile("ds/unit/replace-max-pool-ds.xml");
 
       Integer actualMaxPoolSize = ds.getDataSource().get(0).getPool().getMaxPoolSize();
       assertThat(actualMaxPoolSize, is(10));
@@ -85,7 +86,7 @@ public class DsParserForTemplateReplaceTestCase extends DsParserTestBase
    public void shouldReplaceTemplateAttributeFromSystemProperty() throws Exception
    {
 
-      DataSources ds = parseDsFromFile("ds/unit/replace-jndi-name-ds.xml");
+      DataSources ds = (DataSources)parseOjbectsFromFile("ds/unit/replace-jndi-name-ds.xml");
 
       String actualJndiName = ds.getDataSource().get(0).getJndiName();
       assertThat(actualJndiName, is("java:/H2DS"));
@@ -101,7 +102,7 @@ public class DsParserForTemplateReplaceTestCase extends DsParserTestBase
    public void shouldReplaceTemplatePartialAttributeFromSystemProperty() throws Exception
    {
 
-      DataSources ds = parseDsFromFile("ds/unit/replace-jndi-name-partial-ds.xml");
+      DataSources ds = (DataSources)parseOjbectsFromFile("ds/unit/replace-jndi-name-partial-ds.xml");
 
       String actualJndiName = ds.getDataSource().get(0).getJndiName();
       assertThat(actualJndiName, is("java:/H2DS"));
@@ -117,7 +118,7 @@ public class DsParserForTemplateReplaceTestCase extends DsParserTestBase
    public void shouldReplaceTemplateTwoPartsAttributeFromSystemProperty() throws Exception
    {
 
-      DataSources ds = parseDsFromFile("ds/unit/replace-jndi-name-twoparts-ds.xml");
+      DataSources ds = (DataSources)parseOjbectsFromFile("ds/unit/replace-jndi-name-twoparts-ds.xml");
 
       String actualJndiName = ds.getDataSource().get(0).getJndiName();
       assertThat(actualJndiName, is("java:/H2DS"));
@@ -133,7 +134,7 @@ public class DsParserForTemplateReplaceTestCase extends DsParserTestBase
    public void shouldReplaceTemplateAttributeWitNullIfSystemPropertyNotSet() throws Exception
    {
 
-      DataSources ds = parseDsFromFile("ds/unit/replace-jndi-name-wrong-property-ds.xml");
+      DataSources ds = (DataSources)parseOjbectsFromFile("ds/unit/replace-jndi-name-wrong-property-ds.xml");
 
       String actualJndiName = ds.getDataSource().get(0).getJndiName();
       assertThat(actualJndiName, is(""));
@@ -150,7 +151,7 @@ public class DsParserForTemplateReplaceTestCase extends DsParserTestBase
    public void shouldReplaceOnlyRightTemplateOnTwoPartsWithOneWrongAttributeIfSystemPropertyNotSet() throws Exception
    {
 
-      DataSources ds = parseDsFromFile("ds/unit/replace-jndi-name-twoparts-onewrong-ds.xml");
+      DataSources ds = (DataSources)parseOjbectsFromFile("ds/unit/replace-jndi-name-twoparts-onewrong-ds.xml");
 
       String actualJndiName = ds.getDataSource().get(0).getJndiName();
       assertThat(actualJndiName, is("H2DS"));
@@ -167,7 +168,7 @@ public class DsParserForTemplateReplaceTestCase extends DsParserTestBase
    public void shouldThrowParserExceptionOnWrongSystemPropertyNotSetForNumberValue() throws Exception
    {
 
-      DataSources ds = parseDsFromFile("ds/unit/replace-max-pool-wrong-ds.xml");
+      DataSources ds = (DataSources)parseOjbectsFromFile("ds/unit/replace-max-pool-wrong-ds.xml");
 
    }
 

@@ -22,6 +22,7 @@
 package org.jboss.jca.common.metadata.ds;
 
 import org.jboss.jca.common.api.metadata.ds.DataSources;
+import org.jboss.jca.common.metadata.ParserTestBase;
 import org.jboss.jca.common.metadata.ds.v11.DsParser;
 
 import java.io.File;
@@ -44,7 +45,7 @@ import static org.junit.Assert.*;
  *
  */
 @RunWith(Theories.class)
-public class DsParserForValidatorExceptionTestCase extends DsParserTestBase
+public class DsParserForValidatorExceptionTestCase extends ParserTestBase
 {
 
    /** Datapoints for junit Theory **/
@@ -79,7 +80,7 @@ public class DsParserForValidatorExceptionTestCase extends DsParserTestBase
       try
       {
          log.info(xmlFile.toString());
-         DataSources ds = doParse(xmlFile);
+         DataSources ds = (DataSources)doParse(xmlFile);
          fail(xmlFile.toString() + " Excetion during parsing phase expected.");
       }
       catch (Exception e)
