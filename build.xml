@@ -24,10 +24,7 @@
          basedir="." 
          xmlns:ivy="antlib:org.apache.ivy.ant">
 
-  <available classname="java.lang.Enum" property="HAVE_JDK_1.5"/>
-  <available classname="java.lang.management.LockInfo" property="HAVE_JDK_1.6"/>
   <available classname="java.util.concurrent.ForkJoinPool" property="HAVE_JDK_1.7"/>
-
   <available classname="com.ibm.tools.attach.javaSE.Attachment" property="IBM"/>
 
   <!-- ================================= 
@@ -43,6 +40,11 @@
     <isset property="snapshot"/>
   </condition>
   <property name="version" value="${major}.${minor}.${patch}.${type}"/>
+
+  <condition property="jdk_version" value="JDK7">
+    <isset property="HAVE_JDK_1.7"/>
+  </condition>
+  <property name="jdk_version" value="N/A"/>
 
   <!-- ================================= 
        Maven repository settings
@@ -285,7 +287,7 @@
        Target: init              
        ================================= -->
   <target name="init" depends="init-as-path">
-    <fail message="IronJacamar requires JDK6+" unless="HAVE_JDK_1.6"/>
+    <fail message="IronJacamar requires JDK7+" unless="HAVE_JDK_1.7"/>
   
     <ivy:settings file="${basedir}/ivy.settings.xml"/>
 
@@ -524,6 +526,8 @@
     
     <delete file="${name}-${major}.${minor}.${patch}.${type}.tar"/>
     
+    <echo message="IronJacamar ${version} built with ${jdk_version}" />
+
   </target>
 
   <!-- ================================= 

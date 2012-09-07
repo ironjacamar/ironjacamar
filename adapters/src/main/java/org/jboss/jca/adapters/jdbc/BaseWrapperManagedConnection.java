@@ -66,9 +66,6 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
 {
    private static final WrappedConnectionFactory WRAPPED_CONNECTION_FACTORY;
 
-   /** JDBC 4 factory */
-   private static final String JDBC4_FACTORY = "org.jboss.jca.adapters.jdbc.jdk6.WrappedConnectionFactoryJDK6";
-
    /** JDBC 4.1 factory */
    private static final String JDBC41_FACTORY = "org.jboss.jca.adapters.jdbc.jdk7.WrappedConnectionFactoryJDK7";
 
@@ -131,18 +128,11 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
       Class<?> connectionFactory = null;
       try
       {
-         connectionFactory = BaseWrapperManagedConnection.class.forName(JDBC4_FACTORY);
+         connectionFactory = BaseWrapperManagedConnection.class.forName(JDBC41_FACTORY);
       }
-      catch (ClassNotFoundException e)
+      catch (ClassNotFoundException cnfe)
       {
-         try
-         {
-            connectionFactory = BaseWrapperManagedConnection.class.forName(JDBC41_FACTORY);
-         }
-         catch (ClassNotFoundException cnfe)
-         {
-            throw new RuntimeException("Unabled to load wrapped connection factory", cnfe);
-         }
+         throw new RuntimeException("Unabled to load wrapped connection factory", cnfe);
       }
 
       try

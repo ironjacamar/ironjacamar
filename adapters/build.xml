@@ -43,12 +43,6 @@
       </or>
     </condition>
 
-    <condition property="jdk6" value="true">
-      <not>
-        <isset property="HAVE_JDK_1.7"/>
-      </not>
-    </condition>
-
     <condition property="jdk7" value="true">
       <isset property="HAVE_JDK_1.7"/>
     </condition>
@@ -67,20 +61,7 @@
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
            optimize="${javac.optimize}"
-           excludes="**/jdk6/**,**/jdk7/**"
-           includeAntRuntime="false">
-      <compilerarg value="-Xlint"/>
-    </javac> 
-  </target>
-
-  <target name="compile-jdk6" if="jdk6">
-    <javac srcdir="src/main"
-           destdir="${build.adapters.dir}/impl"
-           classpathref="main.lib.path.id"
-           debug="${javac.debug}"
-           deprecation="${javac.deprecation}"
-           optimize="${javac.optimize}"
-           includes="**/jdk6/**"
+           excludes="**/jdk7/**"
            includeAntRuntime="false">
       <compilerarg value="-Xlint"/>
     </javac> 
@@ -101,7 +82,6 @@
 
   <target name="compile" depends="check" unless="adapters.uptodate">
     <ant inheritRefs="true" target="compile-base"/>
-    <ant inheritRefs="true" target="compile-jdk6"/>
     <ant inheritRefs="true" target="compile-jdk7"/>
   </target>
 

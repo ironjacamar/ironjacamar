@@ -660,7 +660,7 @@ public class Main
          if (def.isSupportEis())
          {
             //add default host and post for eis server
-            if (def.getMcfDefs().get(0).getMcfConfigProps() == null);
+            if (def.getMcfDefs().get(0).getMcfConfigProps() == null)
             {
                def.getMcfDefs().get(0).setMcfConfigProps(new ArrayList<ConfigPropType>());
             }
