@@ -232,7 +232,11 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
                   case CONFIG_PROPERTY : {
                      if (configProperties == null)
                         configProperties = new HashMap<String, String>();
-                     configProperties.put(attributeAsString(reader, "name"), elementAsString(reader));
+                     String n = attributeAsString(reader, "name");
+                     if (n == null || n.trim().equals(""))
+                        throw new ParserException(bundle.requiredAttributeMissing("name", reader.getLocalName()));
+                     else
+                        configProperties.put(n, elementAsString(reader));
                      break;
 
                   }

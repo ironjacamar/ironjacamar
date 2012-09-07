@@ -294,8 +294,8 @@ public abstract class AbstractParser
    protected CommonPool parsePool(XMLStreamReader reader) throws XMLStreamException, ParserException,
       ValidateException
    {
-      Integer minPoolSize = null;
-      Integer maxPoolSize = null;
+      Integer minPoolSize = Defaults.MIN_POOL_SIZE;;
+      Integer maxPoolSize = Defaults.MAX_POOL_SIZE;
       Boolean prefill = Defaults.PREFILL;
       Boolean useStrictMin = Defaults.USE_STRICT_MIN;
       FlushStrategy flushStrategy = Defaults.FLUSH_STRATEGY;

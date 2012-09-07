@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ironjacamar xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="../../../../main/resources/schema/ironjacamar_1_0.xsd">
+	<connection-definitions>
+		<connection-definition class-name="token"
+			jndi-name="token" enabled="true" pool-name="aSAPXcess">
+		</connection-definition>
+	</connection-definitions>
+	<admin-objects>
+		<admin-object class-name="token" enabled="true"
+			jndi-name="token" use-java-context="false">
+			<config-property>a</config-property>
+		</admin-object>
+	</admin-objects>
+</ironjacamar>

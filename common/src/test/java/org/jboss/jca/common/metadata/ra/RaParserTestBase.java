@@ -23,21 +23,18 @@ package org.jboss.jca.common.metadata.ra;
 
 import org.jboss.jca.common.api.metadata.ra.AuthenticationMechanism;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
-import org.jboss.jca.common.api.metadata.ra.Connector;
 import org.jboss.jca.common.api.metadata.ra.CredentialInterfaceEnum;
 import org.jboss.jca.common.api.metadata.ra.LocalizedXsdString;
 import org.jboss.jca.common.api.metadata.ra.RequiredConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.SecurityPermission;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
-import org.jboss.jca.common.metadata.ParserTestBase;
+import org.jboss.jca.common.metadata.XMLParserTestBase;
 import org.jboss.jca.common.metadata.ra.common.AuthenticationMechanismImpl;
 import org.jboss.jca.common.metadata.ra.common.ConfigPropertyImpl;
 import org.jboss.jca.common.metadata.ra.ra16.ConfigProperty16Impl;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.junit.Test;
 
 import static org.junit.Assert.*;
 
@@ -48,46 +45,14 @@ import static org.junit.Assert.*;
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  *
  */
-public abstract class RaParserTestBase extends ParserTestBase
+public abstract class RaParserTestBase extends XMLParserTestBase
 {
-   /**
-    * file name for parsing
-    */
-   protected static String connectorFileName;
 
    static
    {
       parser = new RaParser();
    }
 
-   /**
-    * shouldParseConnector
-    * @throws Exception in case of error
-    */
-   @Test
-   public void shouldParseConnector() throws Exception
-   {
-
-      Connector connector = (Connector) doParse(getFile(connectorFileName));
-      log.info("Connector:" + connector);
-      checkConnector(connector);
-      Connector connector1 = (Connector) reParse(connector);
-      log.info("Connector1:" + connector1);
-      checkConnector(connector1);
-      checkEquals(connector, connector1);
-      Connector connector2 = (Connector) connector.copy();
-      log.info("Connector2:" + connector2);
-      checkConnector(connector2);
-      checkEquals(connector, connector2);
-      checkEquals(connector1, connector2);
-   }
-
-   /**
-    * this methos should be implemented by subclass
-    * 
-    * @param connector to check
-    */
-   public abstract void checkConnector(Connector connector);
 
    /**
     * 

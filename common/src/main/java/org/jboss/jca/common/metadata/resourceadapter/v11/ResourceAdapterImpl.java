@@ -114,8 +114,6 @@ public class ResourceAdapterImpl extends CommonIronJacamarImpl implements Resour
          return false;
       if (!(obj instanceof ResourceAdapterImpl))
          return false;
-      if (!super.equals(obj))
-         return false;
 
       ResourceAdapterImpl other = (ResourceAdapterImpl) obj;
       if (id == null)

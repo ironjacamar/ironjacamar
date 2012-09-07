@@ -157,7 +157,11 @@ public abstract class CommonIronJacamarParser extends org.jboss.jca.common.metad
                switch (CommonConnDef.Tag.forName(reader.getLocalName()))
                {
                   case CONFIG_PROPERTY : {
-                     configProperties.put(attributeAsString(reader, "name"), elementAsString(reader));
+                     String n = attributeAsString(reader, "name");
+                     if (n == null || n.trim().equals(""))
+                        throw new ParserException(bundle.requiredAttributeMissing("name", reader.getLocalName()));
+                     else
+                        configProperties.put(n, elementAsString(reader));
                      break;
                   }
                   case SECURITY : {

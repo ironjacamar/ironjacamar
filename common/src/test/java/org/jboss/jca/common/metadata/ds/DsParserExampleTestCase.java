@@ -21,37 +21,21 @@
  */
 package org.jboss.jca.common.metadata.ds;
 
-import org.jboss.jca.common.api.metadata.ds.DataSources;
 import org.jboss.jca.common.metadata.ParserTestBase;
 import org.jboss.jca.common.metadata.ds.v11.DsParser;
 
-import java.io.File;
-
-import org.jboss.util.file.FileSuffixFilter;
-
 import org.junit.BeforeClass;
-import org.junit.experimental.theories.DataPoints;
-import org.junit.experimental.theories.Theories;
-import org.junit.experimental.theories.Theory;
-import org.junit.runner.RunWith;
-
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  *
- * A RaParserTestCase.
+ * DsParserExampleTestCase
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  *
  */
-@RunWith(Theories.class)
 public class DsParserExampleTestCase extends ParserTestBase
 {
-
-   /** Datapoints for junit Theory **/
-   @DataPoints
-   public static File[] xmlFiles;
 
    /**
     *
@@ -62,8 +46,6 @@ public class DsParserExampleTestCase extends ParserTestBase
    @BeforeClass
    public static void beforeClass() throws Exception
    {
-      File directory = new File(DsParserExampleTestCase.class.getClassLoader().getResource("ds/example").toURI());
-      xmlFiles = directory.listFiles(new FileSuffixFilter("-ds.xml"));
       parser = new DsParser();
       //this property is set just to make possible property substitution defined in test resources.
       //but property substitution is not the goal of this test case see DsParserForTemplateReplaceTestCase for that
@@ -71,25 +53,16 @@ public class DsParserExampleTestCase extends ParserTestBase
       System.setProperty("ironjacamar.home", "/tmp");
    }
 
-
    /**
-    * shouldParseAnyExample
-    * @param xmlFile the file on which apply this theory
+    * 
+    * test examples in ds resource subdirectory
+    * 
     * @throws Exception in case of error
     */
-   @Theory
-   public void shouldParseAnyExample(final File xmlFile) throws Exception
+   @Test
+   public void testExamples() throws Exception
    {
-      try
-      {
-         log.info(xmlFile.toString());
-         DataSources ds = (DataSources)doReParse(xmlFile);
-         assertThat(ds.getDataSource().size() + ds.getXaDataSource().size(), is(1));
-      }
-      catch (Throwable t)
-      {
-         fail(xmlFile.toString() + t.getMessage());
-      }
+      testSubSystem("ds");
    }
 
 }

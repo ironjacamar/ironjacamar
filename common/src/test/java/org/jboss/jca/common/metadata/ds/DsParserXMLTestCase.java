@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.common.metadata.ds;
 
+import org.jboss.jca.common.api.metadata.JCAMetadata;
 import org.jboss.jca.common.api.metadata.common.Credential;
 import org.jboss.jca.common.api.metadata.common.Extension;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
@@ -29,7 +30,7 @@ import org.jboss.jca.common.api.metadata.ds.DataSources;
 import org.jboss.jca.common.api.metadata.ds.Driver;
 import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
-import org.jboss.jca.common.metadata.ParserTestBase;
+import org.jboss.jca.common.metadata.XMLParserTestBase;
 import org.jboss.jca.common.metadata.ds.v11.DataSourceImpl;
 import org.jboss.jca.common.metadata.ds.v11.DsParser;
 import org.jboss.jca.common.metadata.ds.v11.DsPoolImpl;
@@ -49,7 +50,7 @@ import static org.junit.Assert.*;
  *
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  */
-public class DsParserXMLTestCase extends ParserTestBase
+public class DsParserXMLTestCase extends XMLParserTestBase
 {
    /**
    *
@@ -61,6 +62,7 @@ public class DsParserXMLTestCase extends ParserTestBase
    public static void beforeClass() throws Exception
    {
       parser = new DsParser();
+      parsedFileName = "ds/unit/complex-ds.xml";
    }
 
    /**
@@ -99,27 +101,10 @@ public class DsParserXMLTestCase extends ParserTestBase
 
    }
 
-   /**
-    * shouldParseXMLRepresentation
-    * @throws Exception in case of error
-    */
-   @Test
-   public void shouldParseXMLRepresentation() throws Exception
+   @Override
+   public void checkMetadata(JCAMetadata result)
    {
-      DataSources dss = (DataSources)doParse(getFile("ds/unit/complex-ds.xml"));
-      checkDataSources(dss);
-      DataSources ds1 = (DataSources)reParse(dss);
-      checkEquals(dss, ds1);
-      checkDataSources(ds1);
-   }
-
-   /**
-    * Checks, if DataSources parameters are correctly parsed
-    * @param dss checked DataSources object
-    * @throws Exception in case of error
-    */
-   public void checkDataSources(DataSources dss) throws Exception
-   {
+      DataSources dss = (DataSources) result;
       //Ds part
       DataSourceImpl ds = (DataSourceImpl) dss.getDataSource().get(0);
       assertNotNull(ds);

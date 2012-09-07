@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<resource-adapters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="../../../../main/resources/schema/resource-adapter_1_0.xsd">
+  <resource-adapter>
+    <archive>token</archive>
+    <config-property name="RAProperty">RAValue</config-property>
+    <transaction-support>NoTransaction</transaction-support>
+    <connection-definitions>
+      <connection-definition class-name="token" enabled="true" jndi-name="java:/test" pool-name="test">
+        <config-property name="CDProperty">CDValue</config-property>
+        <xa-pool>
+          <min-pool-size>0</min-pool-size>
+          <max-pool-size>64</max-pool-size>
+        </xa-pool>
+        <security>
+          <application/>
+        </security>
+        <timeout>
+          <blocking-timeout-millis>5000</blocking-timeout-millis>
+          <idle-timeout-minutes>15</idle-timeout-minutes>
+        </timeout>
+        <recovery>
+          <recover-credential>
+            <security-domain>mySecurityDomain</security-domain>
+          </recover-credential>
+          <recover-plugin class-name="myClassName">
+            <config-property name="MyProperty">MyPropertyValue</config-property>
+          </recover-plugin>
+        </recovery>
+      </connection-definition>
+    </connection-definitions>
+    <admin-objects>
+      <admin-object class-name="token" enabled="true" jndi-name="token" use-java-context="false">
+        <config-property name="AOProperty">AOValue</config-property>
+      </admin-object>
+    </admin-objects>
+  </resource-adapter>
+</resource-adapters>

@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.common.metadata.ra;
 
+import org.jboss.jca.common.api.metadata.JCAMetadata;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ra.AuthenticationMechanism;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
@@ -57,16 +58,13 @@ public class Connector10RaParserTestCase extends RaParserTestBase
    @BeforeClass
    public static void setUp()
    {
-      connectorFileName = "connector-1.0-sample.xml";
+      parsedFileName = "ra/unit/connector-1.0-sample.xml";
    }
 
-   /**
-    * checks connector 1.0
-    * @param connector to check
-    */
    @Override
-   public void checkConnector(Connector connector)
+   public void checkMetadata(JCAMetadata result)
    {
+      Connector connector = (Connector) result;
       assertTrue(connector instanceof Connector10Impl);
       assertEquals(connector.getVersion(), Version.V_10);
 

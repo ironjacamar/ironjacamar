@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ironjacamar xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="../../../../main/resources/schema/ironjacamar_1_0.xsd">
+		<admin-objects>
+			<admin-object jndi-name="java:jboss/name9" />
+		</admin-objects>
+</ironjacamar>

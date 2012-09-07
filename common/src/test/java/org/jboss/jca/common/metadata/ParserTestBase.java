@@ -28,11 +28,12 @@ import java.io.File;
 import java.io.FileInputStream;
 
 import org.jboss.logging.Logger;
+import org.jboss.util.file.FileSuffixFilter;
 
 import static org.junit.Assert.*;
 
 /**
- * A base class for DS parsing tests
+ * A base class for parsing tests
  * 
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  *
@@ -50,7 +51,6 @@ public abstract class ParserTestBase
     *  logger
     */
    protected static Logger log = Logger.getLogger(ParserTestBase.class);
-
 
    /**
     * gets JCA Metadata object from file
@@ -140,7 +140,7 @@ public abstract class ParserTestBase
       }
 
    }
-   
+
    /**
     * Checks if objects of metadata and their string representation are equal
     * @param m1 - first object
@@ -149,10 +149,82 @@ public abstract class ParserTestBase
    protected void checkEquals(JCAMetadata m1, JCAMetadata m2)
    {
       String metadatas = m1.toString() + "\n" + m2.toString();
-      log.info("Check equals:" + metadatas);
-      assertEquals("Strings are not equal.\n" + metadatas, m1.toString(),
-            m2.toString());
+      assertEquals("Strings are not equal.\n" + metadatas, m1.toString(), m2.toString());
       assertTrue("Objects are not equal:\n" + metadatas, m1.equals(m2));
- 
+
    }
+
+   /**
+    * get xml files from resource subdirectory
+    * @param directory - name of subdirectory
+    * @return array of Files
+    * @throws Exception in case of error
+    */
+   protected File[] getXmlFiles(String directory) throws Exception
+   {
+      File dir = new File(ParserTestBase.class.getClassLoader().getResource(directory).toURI());
+      return dir.listFiles(new FileSuffixFilter(".xml"));
+
+   }
+
+   /**
+    * shouldNotParseAnyExample
+    * @param directory - name of subdirectory, containing files
+    * @throws Exception in case of error
+    */
+   protected void shouldNotParseAnyExample(String directory) throws Exception
+   {
+      File[] xmlFiles = getXmlFiles(directory);
+      for (File xmlFile : xmlFiles)
+      {
+         try
+         {
+            log.info(xmlFile.toString());
+            JCAMetadata md = doParse(xmlFile);
+            fail("Parsing Exception expected. Got:\n" + md);
+         }
+         catch (Exception e)
+         {
+            log.info(e.getMessage());
+            //expected
+         }
+      }
+   }
+
+   /**
+    * shouldParseAnyExample
+    * @param directory - name of subdirectory, containing files
+    * @throws Exception in case of error
+    */
+   protected void shouldParseAnyExample(String directory) throws Exception
+   {
+      File[] xmlFiles = getXmlFiles(directory);
+      for (File xmlFile : xmlFiles)
+      {
+         try
+         {
+            log.info(xmlFile.toString());
+            assertNotNull(doReParse(xmlFile));
+         }
+         catch (Throwable t)
+         {
+            fail(xmlFile.toString() + t.getMessage());
+         }
+      }
+   }
+
+   /**
+    * 
+    * Used for parsing both correct and incorrect examples of some JCA subsystem:
+    * datasources, connector, ironjacamar and resource-adapters
+    * 
+    * @param name of subsystem resource directory
+    * @throws Exception in case of error
+    */
+   protected void testSubSystem(String name) throws Exception
+   {
+      shouldParseAnyExample(name + "/example");
+      shouldNotParseAnyExample(name + "/wrong");
+   }
+
 }
