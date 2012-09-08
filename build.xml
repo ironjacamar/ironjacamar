@@ -1288,8 +1288,6 @@ VERSION=${version}
   </target>
 
   <target name="nexus" depends="clean,artifacts,nexus-base" unless="as">
-    <fail message="IronJacamar doesn't support JDK 7+ artifacts" if="HAVE_JDK_1.7"/>
-  
     <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" 
                   conf="${name}-as,${name}-codegenerator,${name}-deployers-fungal,${name}-embedded,${name}-embedded-arquillian,${name}-embedded-arquillian-byteman,${name}-spec-api,${name}-test-eis,${name}-validator-ant,${name}-validator-cli,jdbc-local,jdbc-xa"
                   sync="true"/>
