@@ -21,7 +21,11 @@
  */
 package org.jboss.jca.common.metadata.common;
 
+import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.api.metadata.common.CommonValidation;
+import org.jboss.jca.common.api.validator.ValidateException;
+
+import org.jboss.logging.Messages;
 
 /**
  *
@@ -36,6 +40,9 @@ public class CommonValidationImpl implements CommonValidation
    /** The serialVersionUID */
    private static final long serialVersionUID = 2158460908861877316L;
 
+   /** The bundle */
+   private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
+
    /** backgroundValidation **/
    protected final Boolean backgroundValidation;
 
@@ -46,18 +53,21 @@ public class CommonValidationImpl implements CommonValidation
    protected final Boolean useFastFail;
 
    /**
-    * Create a new SValidationImpl.
+    * Create a new CommonValidationImpl.
     *
     * @param backgroundValidation backgroundValidation
     * @param backgroundValidationMillis backgroundValidationMillis
     * @param useFastFail useFastFail
+    * @throws ValidateException in case of error
     */
    public CommonValidationImpl(Boolean backgroundValidation, Long backgroundValidationMillis, Boolean useFastFail)
+      throws ValidateException
    {
       super();
       this.backgroundValidation = backgroundValidation;
       this.backgroundValidationMillis = backgroundValidationMillis;
       this.useFastFail = useFastFail;
+      partialCommonValidate();
    }
 
    /**
@@ -169,5 +179,16 @@ public class CommonValidationImpl implements CommonValidation
       sb.append("</validation>");
       
       return sb.toString();
+   }
+   /**
+    * 
+    * Validation 
+    * 
+    * @throws ValidateException in case of error
+    */
+   private void partialCommonValidate() throws ValidateException
+   {
+      if (this.backgroundValidationMillis != null && this.backgroundValidationMillis < 0)
+         throw new ValidateException(bundle.invalidNegative(Tag.BACKGROUND_VALIDATION_MILLIS.getLocalName()));
    }
 }

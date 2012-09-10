@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <resource-adapters xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="../../../main/resources/schema/resource-adapter_1_0.xsd">
+	xsi:noNamespaceSchemaLocation="../../../../main/resources/schema/resource-adapters_1_0.xsd">
 	<resource-adapter>
 		<archive>some.rar</archive>
 		<bootstrap-context>someContext</bootstrap-context>

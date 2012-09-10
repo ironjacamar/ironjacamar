@@ -152,11 +152,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                switch (CommonConnDef.Tag.forName(reader.getLocalName()))
                {
                   case CONFIG_PROPERTY : {
-                     String n = attributeAsString(reader, "name");
-                     if (n == null || n.trim().equals(""))
-                        throw new ParserException(bundle.requiredAttributeMissing("name", reader.getLocalName()));
-                     else
-                        configProperties.put(n, elementAsString(reader));
+                     parseConfigProperty(configProperties, reader);
                      break;
                   }
                   case SECURITY : {
@@ -202,10 +198,13 @@ public abstract class CommonIronJacamarParser extends AbstractParser
     * Parse validation
     * @param reader The reader
     * @return The result
-    * @exception XMLStreamException XMLStreamException
-    * @exception ParserException ParserException
+    * @throws XMLStreamException XMLStreamException
+    * @throws ParserException ParserException
+    * @throws ValidateException ValidateException
     */
-   protected CommonValidation parseValidation(XMLStreamReader reader) throws XMLStreamException, ParserException
+   protected CommonValidation parseValidation(XMLStreamReader reader) throws XMLStreamException, 
+      ParserException, 
+      ValidateException
    {
       Boolean useFastFail = Boolean.FALSE;
       Boolean backgroundValidation = Boolean.FALSE;
@@ -408,11 +407,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                switch (CommonAdminObject.Tag.forName(reader.getLocalName()))
                {
                   case CONFIG_PROPERTY : {
-                     String n = attributeAsString(reader, "name");
-                     if (n == null || n.trim().equals(""))
-                        throw new ParserException(bundle.requiredAttributeMissing("name", reader.getLocalName()));
-                     else
-                        configProperties.put(n, elementAsString(reader));
+                     parseConfigProperty(configProperties, reader);
                      break;
                   }
                   default :

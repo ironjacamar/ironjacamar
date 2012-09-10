@@ -7,12 +7,16 @@
 		<connection-definitions>
 			<connection-definition class-name="token"
 				jndi-name="token" enabled="true" pool-name="aSAPXcess">
+				<recovery>
+					<recover-plugin class-name="AAA">
+						<config-property>a</config-property>
+					</recover-plugin>
+				</recovery>
 			</connection-definition>
 		</connection-definitions>
 		<admin-objects>
 			<admin-object class-name="token" enabled="true"
-				use-java-context="false" jndi-name="">
-				<config-property name="token" />
+				jndi-name="token" use-java-context="false">
 			</admin-object>
 		</admin-objects>
 	</resource-adapter>

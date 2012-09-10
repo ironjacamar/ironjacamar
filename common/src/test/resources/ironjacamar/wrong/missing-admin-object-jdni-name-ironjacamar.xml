@@ -9,7 +9,7 @@
 	</connection-definitions>
 	<admin-objects>
 		<admin-object class-name="token" enabled="true"
-			use-java-context="false">
+			use-java-context="false" jndi-name="">
 			<config-property name="token" />
 		</admin-object>
 	</admin-objects>

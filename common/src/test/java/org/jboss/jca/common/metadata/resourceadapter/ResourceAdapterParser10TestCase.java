@@ -70,7 +70,7 @@ public class ResourceAdapterParser10TestCase extends XMLParserTestBase
 
    /**
     * 
-    * checks, if all ResourceAdapters 1.1 properties set correctly
+    * checks, if all ResourceAdapters 1.0 properties set correctly
     * {inheritDoc}
     * @param result of parsing
     */

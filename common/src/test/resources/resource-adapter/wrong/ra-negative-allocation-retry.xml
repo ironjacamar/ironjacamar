@@ -4,14 +4,19 @@
 	xsi:noNamespaceSchemaLocation="../../../../main/resources/schema/resource-adapters_1_0.xsd">
 	<resource-adapter>
 		<archive>token</archive>
+		<transaction-support>NoTransaction</transaction-support>
 		<connection-definitions>
 			<connection-definition class-name="token"
-				jndi-name="token" enabled="true" pool-name="aSAPXcess">
+				enabled="true" jndi-name="aSAPXcess" pool-name="aSAPXcess">
+				<config-property name="LogConfigFile">ASAP_SAP_1_0.xml</config-property>
+				<timeout>
+					<allocation-retry>-5</allocation-retry>
+				</timeout>
 			</connection-definition>
 		</connection-definitions>
 		<admin-objects>
 			<admin-object class-name="token" enabled="true"
-				use-java-context="false" jndi-name="">
+				jndi-name="token" use-java-context="false">
 				<config-property name="token" />
 			</admin-object>
 		</admin-objects>

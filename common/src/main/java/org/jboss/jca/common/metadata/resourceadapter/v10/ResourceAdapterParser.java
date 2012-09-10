@@ -232,13 +232,8 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
                   case CONFIG_PROPERTY : {
                      if (configProperties == null)
                         configProperties = new HashMap<String, String>();
-                     String n = attributeAsString(reader, "name");
-                     if (n == null || n.trim().equals(""))
-                        throw new ParserException(bundle.requiredAttributeMissing("name", reader.getLocalName()));
-                     else
-                        configProperties.put(n, elementAsString(reader));
+                     parseConfigProperty(configProperties, reader);
                      break;
-
                   }
                   case TRANSACTION_SUPPORT : {
                      transactionSupport = TransactionSupportEnum.valueOf(elementAsString(reader));
