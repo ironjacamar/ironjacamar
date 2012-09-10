@@ -48,11 +48,12 @@ import java.util.Map;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
+import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
+
 import org.jboss.logging.Logger;
 import org.jboss.logging.Messages;
 
-import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
-import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
 /**
  *
@@ -792,7 +793,7 @@ public abstract class AbstractParser
                   case CONFIG_PROPERTY : {
                      if (properties == null)
                         properties = new HashMap<String, String>();
-                     properties.put(attributeAsString(reader, "name"), elementAsString(reader));
+                     parseConfigProperty(properties, reader);
                      break;
                   }
                   default :
@@ -803,6 +804,26 @@ public abstract class AbstractParser
          }
       }
       throw new ParserException(bundle.unexpectedEndOfDocument());
+   }
+   
+   /**
+    * 
+    * Adds config property to the map
+    * 
+    * @param configProperties map
+    * @param reader XMLStream reader
+    * @throws XMLStreamException in case of error
+    * @throws ParserException in case of error
+    */
+   protected void parseConfigProperty(Map<String, String> configProperties, XMLStreamReader reader)
+      throws XMLStreamException,
+      ParserException
+   {
+      String n = attributeAsString(reader, "name");
+      if (n == null || n.trim().equals(""))
+         throw new ParserException(bundle.requiredAttributeMissing("name", reader.getLocalName()));
+      else
+         configProperties.put(n, elementAsString(reader));
    }
 
    private static class SecurityActions

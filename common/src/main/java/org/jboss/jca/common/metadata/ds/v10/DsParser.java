@@ -57,10 +57,10 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.jboss.logging.Messages;
-
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
+
+import org.jboss.logging.Messages;
 
 /**
  *
@@ -397,7 +397,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                switch (org.jboss.jca.common.api.metadata.ds.v10.XaDataSource.Tag.forName(reader.getLocalName()))
                {
                   case XA_DATASOURCE_PROPERTY : {
-                     xaDataSourceProperty.put(attributeAsString(reader, "name"), elementAsString(reader));
+                     parseConfigProperty(xaDataSourceProperty, reader);
                      break;
                   }
                   case XA_DATASOURCE_CLASS : {
@@ -628,7 +628,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                switch (org.jboss.jca.common.api.metadata.ds.v10.DataSource.Tag.forName(reader.getLocalName()))
                {
                   case CONNECTION_PROPERTY : {
-                     connectionProperties.put(attributeAsString(reader, "name"), elementAsString(reader));
+                     parseConfigProperty(connectionProperties, reader);
                      break;
                   }
                   case CONNECTION_URL : {

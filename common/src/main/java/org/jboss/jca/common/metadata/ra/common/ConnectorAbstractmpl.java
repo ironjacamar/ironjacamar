@@ -39,8 +39,6 @@ import java.util.List;
 
 import org.jboss.logging.Messages;
 
-
-
 /**
  *
  * A Connector.
@@ -110,14 +108,14 @@ public abstract class ConnectorAbstractmpl implements Connector
     * @param id id attribute in xml file
     */
    protected ConnectorAbstractmpl(XsdString vendorName, XsdString eisType, LicenseType license,
-         ResourceAdapter resourceadapter, List<LocalizedXsdString> description, List<LocalizedXsdString> displayName,
-         List<Icon> icon, String id)
+      ResourceAdapter resourceadapter, List<LocalizedXsdString> description, List<LocalizedXsdString> displayName,
+      List<Icon> icon, String id)
    {
       super();
       this.vendorName = vendorName;
       if (!XsdString.isNull(this.vendorName))
          this.vendorName.setTag(Tag.VENDOR_NAME.toString());
-      
+
       this.eisType = eisType;
       if (!XsdString.isNull(this.eisType))
          this.eisType.setTag(Tag.EIS_TYPE.toString());
@@ -128,7 +126,7 @@ public abstract class ConnectorAbstractmpl implements Connector
       {
          this.description = new ArrayList<LocalizedXsdString>(description.size());
          this.description.addAll(description);
-         for (LocalizedXsdString d: this.description)
+         for (LocalizedXsdString d : this.description)
             d.setTag(Tag.DESCRIPTION.toString());
       }
       else
@@ -139,7 +137,7 @@ public abstract class ConnectorAbstractmpl implements Connector
       {
          this.displayName = new ArrayList<LocalizedXsdString>(displayName.size());
          this.displayName.addAll(displayName);
-         for (LocalizedXsdString d: this.displayName)
+         for (LocalizedXsdString d : this.displayName)
             d.setTag(Tag.DISPLAY_NAME.toString());
 
       }
@@ -356,13 +354,13 @@ public abstract class ConnectorAbstractmpl implements Connector
    {
       StringBuilder sb = new StringBuilder();
 
-      for (LocalizedXsdString d:description)
+      for (LocalizedXsdString d : description)
          sb.append(d);
 
-      for (LocalizedXsdString n:displayName)
+      for (LocalizedXsdString n : displayName)
          sb.append(n);
-      
-      for (Icon i:icon)
+
+      for (Icon i : icon)
          sb.append(i);
 
       if (!XsdString.isNull(vendorName))
@@ -370,12 +368,12 @@ public abstract class ConnectorAbstractmpl implements Connector
 
       if (!XsdString.isNull(eisType))
          sb.append(eisType);
-      
+
       if (license != null)
          sb.append(license);
-      
+
       //id and resourceadapter are in implementing class
-      
+
       return sb.toString();
    }
 }

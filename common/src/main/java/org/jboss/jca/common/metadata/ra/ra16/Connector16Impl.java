@@ -116,7 +116,7 @@ public final class Connector16Impl extends Connector15Impl implements Connector1
       {
          this.requiredWorkContexts = new ArrayList<XsdString>(requiredWorkContexts.size());
          this.requiredWorkContexts.addAll(requiredWorkContexts);
-         for (XsdString wc: this.requiredWorkContexts)
+         for (XsdString wc : this.requiredWorkContexts)
             wc.setTag(Connector16.Tag.REQUIRED_WORK_CONTEXT.toString());
       }
       else

@@ -149,7 +149,8 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
    public void validate() throws ValidateException
    {
       if (this.backgroundValidationMillis != null && this.backgroundValidationMillis < 0)
-         throw new ValidateException(bundle.invalidNegative(Validation.Tag.BACKGROUND_VALIDATION_MILLIS.getLocalName()));
+         throw new ValidateException(
+            bundle.invalidNegative(Validation.Tag.BACKGROUND_VALIDATION_MILLIS.getLocalName()));
 
       if (this.validConnectionChecker != null)
          try

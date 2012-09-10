@@ -78,7 +78,7 @@ public class AuthenticationMechanismImpl implements AuthenticationMechanism
       {
          this.description = new ArrayList<LocalizedXsdString>(description.size());
          this.description.addAll(description);
-         for (LocalizedXsdString d: this.description)
+         for (LocalizedXsdString d : this.description)
             d.setTag(Tag.DESCRIPTION.toString());
       }
       else
