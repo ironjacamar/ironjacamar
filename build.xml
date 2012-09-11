@@ -24,7 +24,6 @@
          basedir="." 
          xmlns:ivy="antlib:org.apache.ivy.ant">
 
-  <available classname="java.lang.Enum" property="HAVE_JDK_1.5"/>
   <available classname="java.lang.management.LockInfo" property="HAVE_JDK_1.6"/>
   <available classname="java.util.concurrent.ForkJoinPool" property="HAVE_JDK_1.7"/>
 
@@ -41,6 +40,11 @@
     <isset property="snapshot"/>
   </condition>
   <property name="version" value="${major}.${minor}.${patch}.${type}"/>
+
+  <condition property="jdk_version" value="JDK7">
+    <isset property="HAVE_JDK_1.7"/>
+  </condition>
+  <property name="jdk_version" value="JDK6"/>
 
   <!-- ================================= 
        Maven repository settings
@@ -508,6 +512,8 @@
     
     <delete file="${name}-${major}.${minor}.${patch}.${type}.tar"/>
     
+    <echo message="IronJacamar ${version} built with ${jdk_version}" />
+
   </target>
 
   <!-- ================================= 
