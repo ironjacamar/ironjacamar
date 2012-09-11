@@ -72,6 +72,32 @@ public class ResourceAdaptersImpl implements ResourceAdapters
       return Collections.unmodifiableList(resourceAdapters);
    }
 
+   @Override
+   public int hashCode()
+   {
+      return 37 + ((resourceAdapters == null) ? 0 : resourceAdapters.hashCode());
+   }
+
+   @Override
+   public boolean equals(Object obj)
+   {
+      if (this == obj)
+         return true;
+      if (!(obj instanceof ResourceAdaptersImpl))
+         return false;
+
+      ResourceAdaptersImpl other = (ResourceAdaptersImpl) obj;
+      if (resourceAdapters == null)
+      {
+         if (other.resourceAdapters != null)
+            return false;
+      }
+      else if (!resourceAdapters.equals(other.resourceAdapters))
+         return false;
+
+      return true;
+   }
+
    /**
     * {@inheritDoc}
     */
