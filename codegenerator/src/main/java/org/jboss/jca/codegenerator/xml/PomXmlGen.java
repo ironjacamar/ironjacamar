@@ -60,6 +60,7 @@ public class PomXmlGen extends AbstractXmlGen
       }
       
       StringBuilder strStartGoal = new StringBuilder();
+      StringBuilder strStopGoal = new StringBuilder();
       if (def.isSupportEis())
       {
          strStartGoal.append("       <plugin>\n");
@@ -83,12 +84,30 @@ public class PomXmlGen extends AbstractXmlGen
          strStartGoal.append("           </classpath>\n");
          strStartGoal.append("         </configuration>\n");
          strStartGoal.append("       </plugin>\n");
+         
+         strStopGoal.append("       <plugin>\n");
+         strStopGoal.append("         <groupId>org.jboss.ironjacamar</groupId>\n");
+         strStopGoal.append("         <artifactId>ironjacamar-test-eis</artifactId>\n");
+         strStopGoal.append("         <version>${version.org.jboss.ironjacamar}</version>\n");
+         strStopGoal.append("         <executions>\n");
+         strStopGoal.append("           <execution>\n");
+         strStopGoal.append("             <goals>\n");
+         strStopGoal.append("               <goal>stop</goal>\n");
+         strStopGoal.append("             </goals>\n");
+         strStopGoal.append("           </execution>\n");
+         strStopGoal.append("         </executions>\n");
+         strStopGoal.append("         <configuration>\n");
+         strStopGoal.append("           <host>localhost</host>\n");
+         strStopGoal.append("           <port>1400</port>\n");
+         strStopGoal.append("         </configuration>\n");
+         strStopGoal.append("       </plugin>\n");
       }
       
       Map<String, String> map = new HashMap<String, String>();
       map.put("pom.package.name", packageName);
       map.put("pom.module.name", moduleName);
       map.put("start.goal", strStartGoal.toString());
+      map.put("stop.goal", strStopGoal.toString());
       
       Template template = new SimpleTemplate(buildString);
       template.process(map, out);
