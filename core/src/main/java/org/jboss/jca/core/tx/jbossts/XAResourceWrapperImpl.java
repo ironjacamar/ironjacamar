@@ -60,6 +60,9 @@ public class XAResourceWrapperImpl implements org.jboss.jca.core.spi.transaction
    /** Product version */
    private String jndiName;
    
+   /** Cached hashCode() */
+   private transient int cachedHashCode;
+
    /**
     * Creates a new wrapper instance.
     * @param resource xaresource
@@ -234,6 +237,100 @@ public class XAResourceWrapperImpl implements org.jboss.jca.core.spi.transaction
          return xid;
       else
          return new XidWrapperImpl(xid, pad, jndiName);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean equals(Object object)
+   {
+      if (object == this)
+         return true;
+
+      if (object == null || !(object instanceof XAResourceWrapperImpl))
+         return false;  
+
+      XAResourceWrapperImpl other = (XAResourceWrapperImpl)object;
+      if (xaResource != null)
+      {
+         if (!xaResource.equals(other.xaResource))
+            return false;
+      }
+      else
+      {
+         if (other.xaResource != null)
+            return false;
+      }
+
+      if (pad != other.pad)
+         return false;
+
+      if (overrideRmValue != null)
+      {
+         if (!overrideRmValue.equals(other.overrideRmValue))
+            return false;
+      }
+      else
+      {
+         if (other.overrideRmValue != null)
+            return false;
+      }
+
+      if (productName != null)
+      {
+         if (!productName.equals(other.productName))
+            return false;
+      }
+      else
+      {
+         if (other.productName != null)
+            return false;
+      }
+
+      if (productVersion != null)
+      {
+         if (!productVersion.equals(other.productVersion))
+            return false;
+      }
+      else
+      {
+         if (other.productVersion != null)
+            return false;
+      }
+
+      if (jndiName != null)
+      {
+         if (!jndiName.equals(other.jndiName))
+            return false;
+      }
+      else
+      {
+         if (other.jndiName != null)
+            return false;
+      }
+
+      return true;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public int hashCode()
+   {
+      if (cachedHashCode == 0)
+      {
+         int result = 31;
+         result += xaResource != null ? 7 * xaResource.hashCode() : 7;
+         result += pad ? 7 : 1;
+         result += overrideRmValue != null ? 7 * overrideRmValue.hashCode() : 7;
+         result += productName != null ? 7 * productName.hashCode() : 7;
+         result += productVersion != null ? 7 * productVersion.hashCode() : 7;
+         result += jndiName != null ? 7 * jndiName.hashCode() : 7;
+
+         cachedHashCode = result;
+      }
+
+      return cachedHashCode;
    }
 
    /**
