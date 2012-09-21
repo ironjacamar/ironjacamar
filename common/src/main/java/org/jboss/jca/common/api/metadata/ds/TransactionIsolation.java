@@ -22,8 +22,6 @@
 package org.jboss.jca.common.api.metadata.ds;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  *
@@ -211,6 +209,7 @@ public class TransactionIsolation implements Comparable<TransactionIsolation>, S
    /**
     * Custom transaction levels
     * @param n The name
+    * @return The value
     */
    public static TransactionIsolation customLevel(String n)
    {
