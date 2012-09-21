@@ -19,36 +19,19 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.api.metadata.resourceadapter.v11;
-
-import org.jboss.jca.common.api.metadata.common.v11.CommonIronJacamar;
-import org.jboss.jca.common.api.metadata.common.v11.WorkManager;
+package org.jboss.jca.common.api.metadata.ironjacamar.v10;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
- * A ResourceAdapter.
+ * A IronJacamar.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  *
  */
-public interface ResourceAdapter extends org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter,
-                                         CommonIronJacamar
+public interface IronJacamar extends org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar
 {
-   /**
-    * Get the id
-    *
-    * @return the value.
-    */
-   public String getId();
-
-   /**
-    * Get the WorkManager
-    * @return The value
-    */
-   public WorkManager getWorkManager();
 
    /**
    *
@@ -70,11 +53,6 @@ public interface ResourceAdapter extends org.jboss.jca.common.api.metadata.resou
       CONFIG_PROPERTY("config-property"),
 
       /**
-       * archive tag
-       */
-      ARCHIVE("archive"),
-
-      /**
        * bean-validation-groups tag
        */
       BEAN_VALIDATION_GROUPS("bean-validation-groups"),
@@ -93,17 +71,10 @@ public interface ResourceAdapter extends org.jboss.jca.common.api.metadata.resou
        * transaction-support tag
        */
       TRANSACTION_SUPPORT("transaction-support"),
-
-      /**
-       * workmanager tag
-       */
-      WORKMANAGER("workmanager"),
-
       /**
        * connection-definitions tag
        */
       CONNECTION_DEFINITIONS("connection-definitions"),
-
       /**
        * connection-definition tag
        */
@@ -189,93 +160,5 @@ public interface ResourceAdapter extends org.jboss.jca.common.api.metadata.resou
       }
 
    }
-
-   /**
-    *
-    * A Attribute.
-    *
-    * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
-    *
-    */
-   public enum Attribute
-   {
-
-      /** always first
-      *
-      */
-      UNKNOWN(null),
-      /** id attribute
-       *
-       */
-      ID("id");
-
-      private String name;
-
-      /**
-       *
-       * Create a new Tag.
-       *
-       * @param name a name
-       */
-      Attribute(final String name)
-      {
-         this.name = name;
-      }
-
-      /**
-       * Get the local name of this element.
-       *
-       * @return the local name
-       */
-      public String getLocalName()
-      {
-         return name;
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      public String toString()
-      {
-         return name;
-      }
-
-      private static final Map<String, Attribute> MAP;
-
-      static
-      {
-         final Map<String, Attribute> map = new HashMap<String, Attribute>();
-         for (Attribute element : values())
-         {
-            final String name = element.getLocalName();
-            if (name != null)
-               map.put(name, element);
-         }
-         MAP = map;
-      }
-
-      /**
-       * Set the value
-       * @param v The name
-       * @return The value
-       */
-      Attribute value(String v)
-      {
-         name = v;
-         return this;
-      }
-
-      /**
-      *
-      * Static method to get enum instance given localName XsdString
-      *
-      * @param localName a XsdString used as localname (typically tag name as defined in xsd)
-      * @return the enum instance
-      */
-      public static Attribute forName(String localName)
-      {
-         final Attribute element = MAP.get(localName);
-         return element == null ? UNKNOWN.value(localName) : element;
-      }
-   }
 }
+

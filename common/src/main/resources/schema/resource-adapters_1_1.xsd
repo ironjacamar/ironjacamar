@@ -75,6 +75,15 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="workmanager" type="workmanagerType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+              Specifies the settings for the WorkManager used by this resource adapter
+             ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
       <xs:element name="connection-definitions" type="connection-definitionsType" minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation>
@@ -689,5 +698,159 @@
       </xs:element>
     </xs:sequence>
    </xs:complexType>
+
+  <xs:complexType name="workmanagerType">
+    <xs:sequence>
+      <xs:element name="security" type="workmanagerSecurityType" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+              Defines the security model used by the WorkManager instance
+             ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="workmanagerSecurityType">
+    <xs:sequence>
+      <xs:element name="mapping-required" type="xs:boolean" minOccurs="1" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+              Defines if a mapping is required for security credentials. A value of false means
+              "Case 1" as defined in section 16.4.3, and a value of true means "Case 2" as
+              defined in section 16.4.4.
+             ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="domain" type="xs:token" minOccurs="1" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+              Defines the name of the security domain that should be used
+             ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="default-principal" type="xs:token" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+              Defines a default principal name that should be added to the used Subject instance
+             ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="default-groups" type="workmanagerSecurityGroupsType" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+              Defines a default groups that should be added to the used Subject instance
+             ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="mappings" type="workmanagerSecurityMappingsType" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+              Defines the mappings that should be applied for Case 2
+             ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="workmanagerSecurityGroupsType">
+    <xs:sequence>
+      <xs:element name="group" type="xs:token" minOccurs="1" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+              The name of the group
+             ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="workmanagerSecurityMappingsType">
+    <xs:sequence>
+      <xs:element name="users" type="workmanagerSecurityMappingsUsersType" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+              The mappings for the users
+             ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="groups" type="workmanagerSecurityMappingsGroupsType" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+              The mappings for the groups
+             ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="workmanagerSecurityMappingsUsersType">
+    <xs:sequence>
+      <xs:element name="map" type="workmanagerSecurityMappingType" minOccurs="1" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+              A user mapping
+             ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="workmanagerSecurityMappingsGroupsType">
+    <xs:sequence>
+      <xs:element name="map" type="workmanagerSecurityMappingType" minOccurs="1" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+              A group mapping
+             ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="workmanagerSecurityMappingType">
+    <xs:sequence>
+    </xs:sequence>
+    <xs:attribute name="from" type="xs:token" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          <![CDATA[[
+            Specify the original value
+           ]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+    <xs:attribute name="to" type="xs:token" use="required">
+      <xs:annotation>
+        <xs:documentation>
+          <![CDATA[[
+            Specify the mapped value
+           ]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
+  </xs:complexType>
 
 </xs:schema>

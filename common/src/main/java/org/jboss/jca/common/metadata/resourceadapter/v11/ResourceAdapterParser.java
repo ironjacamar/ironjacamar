@@ -25,6 +25,7 @@ import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.common.v11.CommonConnDef;
+import org.jboss.jca.common.api.metadata.common.v11.WorkManager;
 import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapters;
 import org.jboss.jca.common.api.metadata.resourceadapter.v11.ResourceAdapter;
 import org.jboss.jca.common.api.validator.ValidateException;
@@ -178,6 +179,7 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
       String archive = null;
       TransactionSupportEnum transactionSupport = null;
       HashMap<String, String> configProperties = null;
+      WorkManager workmanager = null;
 
       int attributeSize = reader.getAttributeCount();
       for (int i = 0; i < attributeSize; i++)
@@ -202,7 +204,7 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
                if (ResourceAdapters.Tag.forName(reader.getLocalName()) == ResourceAdapters.Tag.RESOURCE_ADAPTER)
                {
                   return new ResourceAdapterImpl(id, archive, transactionSupport, connectionDefinitions, adminObjects,
-                                                 configProperties, beanValidationGroups, bootstrapContext);
+                                                 configProperties, beanValidationGroups, bootstrapContext, workmanager);
                }
                else
                {
@@ -257,6 +259,10 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
                   }
                   case ARCHIVE : {
                      archive = elementAsString(reader);
+                     break;
+                  }
+                  case WORKMANAGER : {
+                     workmanager = parseWorkManager(reader);
                      break;
                   }
                   default :

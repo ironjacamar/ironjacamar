@@ -25,7 +25,7 @@ import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.common.v10.CommonConnDef;
-import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
+import org.jboss.jca.common.api.metadata.ironjacamar.v10.IronJacamar;
 import org.jboss.jca.common.api.validator.ValidateException;
 import org.jboss.jca.common.metadata.MetadataParser;
 import org.jboss.jca.common.metadata.ParserException;

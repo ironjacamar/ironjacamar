@@ -28,11 +28,17 @@ import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
 import org.jboss.jca.common.api.metadata.common.CommonValidation;
 import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.metadata.common.v11.CommonConnDef;
+import org.jboss.jca.common.api.metadata.common.v11.WorkManager;
+import org.jboss.jca.common.api.metadata.common.v11.WorkManagerSecurity;
+import org.jboss.jca.common.api.metadata.ironjacamar.v11.IronJacamar;
 import org.jboss.jca.common.api.metadata.resourceadapter.v11.ResourceAdapter;
 import org.jboss.jca.common.api.validator.ValidateException;
 import org.jboss.jca.common.metadata.ParserException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -187,6 +193,184 @@ public abstract class CommonIronJacamarParser extends org.jboss.jca.common.metad
                   }
                   case RECOVERY : {
                      recovery = parseRecovery(reader);
+                     break;
+                  }
+                  default :
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
+               }
+               break;
+            }
+         }
+      }
+      throw new ParserException(bundle.unexpectedEndOfDocument());
+   }
+
+   /**
+    * Parse workmanager element
+    * @param reader The reader
+    * @return The value
+    * @exception XMLStreamException XMLStreamException
+    * @exception ParserException ParserException
+    * @exception ValidateException ValidateException
+    */
+   protected WorkManager parseWorkManager(XMLStreamReader reader) throws XMLStreamException, ParserException,
+      ValidateException
+   {
+      WorkManagerSecurity security = null;
+
+      while (reader.hasNext())
+      {
+         switch (reader.nextTag())
+         {
+            case END_ELEMENT : {
+               if (IronJacamar.Tag.forName(reader.getLocalName()) == IronJacamar.Tag.WORKMANAGER)
+               {
+                  return new WorkManagerImpl(security);
+               }
+               else
+               {
+                  if (IronJacamar.Tag.forName(reader.getLocalName()) == IronJacamar.Tag.UNKNOWN)
+                  {
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
+                  }
+               }
+               break;
+            }
+            case START_ELEMENT : {
+               switch (WorkManager.Tag.forName(reader.getLocalName()))
+               {
+                  case SECURITY : {
+                     security = parseWorkManagerSecurity(reader);
+                     break;
+                  }
+                  default :
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
+               }
+               break;
+            }
+         }
+      }
+      throw new ParserException(bundle.unexpectedEndOfDocument());
+   }
+
+   /**
+    * Parse workmanager's security element
+    * @param reader The reader
+    * @return The value
+    * @exception XMLStreamException XMLStreamException
+    * @exception ParserException ParserException
+    * @exception ValidateException ValidateException
+    */
+   protected WorkManagerSecurity parseWorkManagerSecurity(XMLStreamReader reader) throws XMLStreamException,
+      ParserException, ValidateException
+   {
+      boolean mappingRequired = false;
+      String domain = null;
+      String defaultPrincipal = null;
+      List<String> defaultGroups = null;
+      Map<String, String> userMappings = null;
+      Map<String, String> groupMappings = null;
+
+      boolean userMappingEnabled = false;
+
+      while (reader.hasNext())
+      {
+         switch (reader.nextTag())
+         {
+            case END_ELEMENT : {
+               if (WorkManager.Tag.forName(reader.getLocalName()) == WorkManager.Tag.SECURITY)
+               {
+                  return new WorkManagerSecurityImpl(mappingRequired, domain,
+                                                     defaultPrincipal, defaultGroups,
+                                                     userMappings, groupMappings);
+               }
+               else
+               {
+                  if (WorkManagerSecurity.Tag.forName(reader.getLocalName()) == WorkManagerSecurity.Tag.UNKNOWN)
+                  {
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
+                  }
+               }
+               break;
+            }
+            case START_ELEMENT : {
+               switch (WorkManagerSecurity.Tag.forName(reader.getLocalName()))
+               {
+                  case DEFAULT_GROUPS :
+                  case MAPPINGS : {
+                     // Skip
+                     break;
+                  }
+                  case MAPPING_REQUIRED : {
+                     mappingRequired = elementAsBoolean(reader);
+                     break;
+                  }
+                  case DOMAIN : {
+                     domain = elementAsString(reader);
+                     break;
+                  }
+                  case DEFAULT_PRINCIPAL : {
+                     defaultPrincipal = elementAsString(reader);
+                     break;
+                  }
+                  case GROUP : {
+                     if (defaultGroups == null)
+                        defaultGroups = new ArrayList<String>(1);
+
+                     defaultGroups.add(elementAsString(reader));
+                     break;
+                  }
+                  case USERS : {
+                     userMappingEnabled = true;
+                     break;
+                  }
+                  case GROUPS : {
+                     userMappingEnabled = false;
+                     break;
+                  }
+                  case MAP : {
+                     if (userMappingEnabled)
+                     {
+                        if (userMappings == null)
+                           userMappings = new HashMap<String, String>();
+
+                        String from = attributeAsString(reader, WorkManagerSecurity.Attribute.FROM.getLocalName());
+
+                        if (from == null || from.trim().equals(""))
+                           throw new ParserException(
+                              bundle.requiredAttributeMissing(WorkManagerSecurity.Attribute.FROM.getLocalName(),
+                                                              reader.getLocalName()));
+
+                        String to = attributeAsString(reader, WorkManagerSecurity.Attribute.TO.getLocalName());
+
+                        if (to == null || to.trim().equals(""))
+                           throw new ParserException(
+                              bundle.requiredAttributeMissing(WorkManagerSecurity.Attribute.TO.getLocalName(),
+                                                              reader.getLocalName()));
+
+                        userMappings.put(from, to);
+                     }
+                     else
+                     {
+                        if (groupMappings == null)
+                           groupMappings = new HashMap<String, String>();
+
+                        String from = attributeAsString(reader, WorkManagerSecurity.Attribute.FROM.getLocalName());
+
+                        if (from == null || from.trim().equals(""))
+                           throw new ParserException(
+                              bundle.requiredAttributeMissing(WorkManagerSecurity.Attribute.FROM.getLocalName(),
+                                                              reader.getLocalName()));
+
+                        String to = attributeAsString(reader, WorkManagerSecurity.Attribute.TO.getLocalName());
+
+                        if (to == null || to.trim().equals(""))
+                           throw new ParserException(
+                              bundle.requiredAttributeMissing(WorkManagerSecurity.Attribute.TO.getLocalName(),
+                                                              reader.getLocalName()));
+
+                        groupMappings.put(from, to);
+                     }
                      break;
                   }
                   default :

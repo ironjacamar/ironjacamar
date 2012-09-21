@@ -24,7 +24,7 @@ package org.jboss.jca.common.metadata.ironjacamar.v10;
 import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.common.v10.CommonConnDef;
-import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
+import org.jboss.jca.common.api.metadata.ironjacamar.v10.IronJacamar;
 import org.jboss.jca.common.metadata.common.v10.CommonIronJacamarImpl;
 
 import java.util.Iterator;

@@ -24,6 +24,7 @@ package org.jboss.jca.common.metadata.resourceadapter.v11;
 import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.common.v11.CommonConnDef;
+import org.jboss.jca.common.api.metadata.common.v11.WorkManager;
 import org.jboss.jca.common.api.metadata.resourceadapter.v11.ResourceAdapter;
 import org.jboss.jca.common.metadata.common.v11.CommonIronJacamarImpl;
 
@@ -41,13 +42,16 @@ import java.util.Map;
 public class ResourceAdapterImpl extends CommonIronJacamarImpl implements ResourceAdapter
 {
    /** The serialVersionUID */
-   private static final long serialVersionUID = 7607776873201143875L;
+   //private static final long serialVersionUID = 7607776873201143875L;
 
    /** archive */
    protected final String archive;
 
    /** id */
    protected final String id;
+
+   /** workmanager */
+   protected final WorkManager workmanager;
 
    /**
     *
@@ -61,16 +65,19 @@ public class ResourceAdapterImpl extends CommonIronJacamarImpl implements Resour
     * @param configProperties configProperties
     * @param beanValidationGroups beanValidationGroups
     * @param bootstrapContext bootstrapContext
+    * @param workmanager workmanager
     */
    public ResourceAdapterImpl(String id, String archive, TransactionSupportEnum transactionSupport,
-      List<CommonConnDef> connectionDefinitions, List<CommonAdminObject> adminObjects,
-      Map<String, String> configProperties, List<String> beanValidationGroups, String bootstrapContext)
+                              List<CommonConnDef> connectionDefinitions, List<CommonAdminObject> adminObjects,
+                              Map<String, String> configProperties, List<String> beanValidationGroups,
+                              String bootstrapContext, WorkManager workmanager)
    {
       super(transactionSupport, configProperties, adminObjects, connectionDefinitions, beanValidationGroups,
             bootstrapContext);
 
       this.id = id;
       this.archive = archive;
+      this.workmanager = workmanager;
    }
 
    /**
@@ -95,6 +102,14 @@ public class ResourceAdapterImpl extends CommonIronJacamarImpl implements Resour
       return archive;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   public WorkManager getWorkManager()
+   {
+      return workmanager;
+   }
+
    @Override
    public int hashCode()
    {
@@ -102,6 +117,7 @@ public class ResourceAdapterImpl extends CommonIronJacamarImpl implements Resour
       int result = super.hashCode();
       result = prime * result + ((id == null) ? 0 : id.hashCode());
       result = prime * result + ((archive == null) ? 0 : archive.hashCode());
+      result = prime * result + ((workmanager == null) ? 0 : workmanager.hashCode());
       return result;
    }
 
@@ -129,6 +145,13 @@ public class ResourceAdapterImpl extends CommonIronJacamarImpl implements Resour
             return false;
       }
       else if (!archive.equals(other.archive))
+         return false;
+      if (workmanager == null)
+      {
+         if (other.workmanager != null)
+            return false;
+      }
+      else if (!workmanager.equals(other.workmanager))
          return false;
 
       return true;
@@ -192,6 +215,11 @@ public class ResourceAdapterImpl extends CommonIronJacamarImpl implements Resour
          sb.append("</").append(ResourceAdapter.Tag.TRANSACTION_SUPPORT).append(">");
       }
 
+      if (workmanager != null)
+      {
+         sb.append(workmanager);
+      }
+
       if (connectionDefinitions != null && connectionDefinitions.size() > 0)
       {
          sb.append("<").append(ResourceAdapter.Tag.CONNECTION_DEFINITIONS).append(">");
@@ -217,4 +245,3 @@ public class ResourceAdapterImpl extends CommonIronJacamarImpl implements Resour
       return sb.toString();
    }
 }
-

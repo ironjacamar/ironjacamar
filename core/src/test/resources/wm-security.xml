@@ -1,0 +1,79 @@
+<deployment>
+
+  <!-- ThreadGroup -->
+  <bean name="WorkManagerSecurityThreadGroup"
+        class="java.lang.ThreadGroup">
+    <constructor>
+      <parameter>wm-sec</parameter>
+    </constructor>
+    <ignoreStop/>
+    <ignoreDestroy/>
+  </bean>
+
+  <!-- ThreadFactory -->
+  <bean name="WorkManagerSecurityThreadFactory"
+        interface="java.util.concurrent.ThreadFactory"
+        class="org.jboss.threads.JBossThreadFactory">
+    <constructor>
+      <parameter><inject bean="WorkManagerSecurityThreadGroup"/></parameter>
+      <parameter>false</parameter>
+      <parameter>5</parameter>
+      <parameter>work</parameter>
+      <parameter><null/></parameter>
+      <parameter><null/></parameter>
+    </constructor>
+  </bean>
+
+  <!-- ShortRunningThreadPool -->
+  <bean name="WorkManagerSecurityShortRunningThreadPool" class="org.jboss.threads.QueueExecutor">
+    <constructor>
+      <!-- Core threads -->
+      <parameter>20</parameter>
+      <!-- Max threads -->
+      <parameter>100</parameter>
+      <!-- 60 seconds keepalive -->
+      <parameter>60</parameter>
+      <parameter><inject bean="KeepAliveTimeUnit"/></parameter>
+      <!-- Queue size -->
+      <parameter>1024</parameter>
+      <!-- Thread factory -->
+      <parameter><inject bean="WorkManagerSecurityThreadFactory"/></parameter>
+      <!-- Blocking -->
+      <parameter>true</parameter>
+      <!-- Handoff executor -->
+      <parameter><inject bean="RejectingExecutor"/></parameter>
+    </constructor>
+    <destroy method="shutdown"/>
+  </bean>
+
+  <!-- WorkManager -->
+  <bean name="WorkManagerSecurity" 
+        interface="org.jboss.jca.core.api.workmanager.WorkManager"
+        class="org.jboss.jca.core.workmanager.WorkManagerImpl">
+
+    <!-- The name -->
+    <property name="Name">WMSec</property>
+
+    <!-- The short running thread pool -->
+    <property name="ShortRunningThreadPool"><inject bean="WorkManagerSecurityShortRunningThreadPool"/></property>
+
+    <!-- The XA terminator -->
+    <property name="XATerminator"><inject bean="TransactionIntegration" property="XATerminator"/></property>
+
+    <!-- The callback security module -->
+    <property name="CallbackSecurity"><inject bean="Callback"/></property>
+
+    <destroy method="shutdown"/>
+  </bean>
+  
+  <!-- BootstrapContext -->
+  <bean name="BootstrapContextSecurity" 
+        interface="org.jboss.jca.core.api.bootstrap.CloneableBootstrapContext"
+        class="org.jboss.jca.core.bootstrapcontext.BaseCloneableBootstrapContext">
+    <property name="Name">BCSec</property>
+    <property name="TransactionSynchronizationRegistry"><inject bean="TransactionSynchronizationRegistry"/></property>
+    <property name="WorkManager"><inject bean="WorkManagerSecurity"/></property>
+    <property name="XATerminator"><inject bean="TransactionIntegration" property="XATerminator"/></property>
+  </bean>
+
+</deployment>

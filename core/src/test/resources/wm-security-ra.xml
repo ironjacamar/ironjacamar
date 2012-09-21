@@ -1,0 +1,32 @@
+<resource-adapters>
+
+  <resource-adapter>
+    <archive>work.rar</archive>
+    <bootstrap-context>BCSec</bootstrap-context>
+    <transaction-support>NoTransaction</transaction-support>
+    <workmanager>
+      <security>
+        <mapping-required>true</mapping-required>
+        <domain>other</domain>
+        <default-principal>default_principal</default-principal>
+        <default-groups>
+          <group>default_group</group>
+        </default-groups>
+        <mappings>
+          <users>
+            <map from="eis" to="jca"/>
+          </users>
+          <groups>
+            <map from="eis" to="jca"/>
+          </groups>
+        </mappings>
+      </security>
+    </workmanager>
+    <connection-definitions>
+      <connection-definition class-name="org.jboss.jca.core.workmanager.rars.dwm.WorkManagedConnectionFactory" 
+                             jndi-name="java:/eis/WorkConnectionFactory" pool-name="WorkConnectionFactory">
+      </connection-definition>
+    </connection-definitions>
+  </resource-adapter>
+
+</resource-adapters>

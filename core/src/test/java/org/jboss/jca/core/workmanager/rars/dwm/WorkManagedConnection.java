@@ -39,6 +39,7 @@ import javax.resource.spi.work.ExecutionContext;
 import javax.resource.spi.work.Work;
 import javax.resource.spi.work.WorkException;
 import javax.resource.spi.work.WorkListener;
+import javax.resource.spi.work.WorkManager;
 
 import javax.security.auth.Subject;
 import javax.transaction.xa.XAResource;
@@ -217,6 +218,15 @@ public class WorkManagedConnection implements ManagedConnection
    public ManagedConnectionMetaData getMetaData() throws ResourceException
    {
       return new WorkManagedConnectionMetaData();
+   }
+
+   /**
+    * Get the WorkManager instance
+    * @return The value
+    */
+   WorkManager getWorkManager()
+   {
+      return ((WorkResourceAdapter)mcf.getResourceAdapter()).getWorkManager();
    }
 
    /**

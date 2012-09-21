@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2008, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2012, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,44 +19,60 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.api.metadata.resourceadapter.v11;
-
-import org.jboss.jca.common.api.metadata.common.v11.CommonIronJacamar;
-import org.jboss.jca.common.api.metadata.common.v11.WorkManager;
+package org.jboss.jca.common.api.metadata.common.v11;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
+ * WorkManager security settings
  *
- * A ResourceAdapter.
- *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
- *
+ * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public interface ResourceAdapter extends org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter,
-                                         CommonIronJacamar
+public interface WorkManagerSecurity
 {
    /**
-    * Get the id
-    *
-    * @return the value.
-    */
-   public String getId();
-
-   /**
-    * Get the WorkManager
+    * Is mapping required
     * @return The value
     */
-   public WorkManager getWorkManager();
+   public boolean isMappingRequired();
 
    /**
-   *
-   * A Tag.
-   *
-   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
-   *
-   */
+    * Get the domain
+    * @return The value
+    */
+   public String getDomain();
+
+   /**
+    * Get the default principal
+    * @return The value
+    */
+   public String getDefaultPrincipal();
+
+   /**
+    * Get the default groups
+    * @return The value
+    */
+   public List<String> getDefaultGroups();
+
+   /**
+    * Get the user mapping
+    * @return The value
+    */
+   public Map<String, String> getUserMappings();
+
+   /**
+    * Get the group mapping
+    * @return The value
+    */
+   public Map<String, String> getGroupMappings();
+
+   /**
+    * A Tag.
+    *
+    * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+    */
    public enum Tag
    {
       /** always first
@@ -64,60 +80,50 @@ public interface ResourceAdapter extends org.jboss.jca.common.api.metadata.resou
        */
       UNKNOWN(null),
 
-      /** config-property tag
-      *
-      */
-      CONFIG_PROPERTY("config-property"),
+      /**
+       * mapping-required tag
+       */
+      MAPPING_REQUIRED("mapping-required"),
 
       /**
-       * archive tag
+       * domain tag
        */
-      ARCHIVE("archive"),
+      DOMAIN("domain"),
 
       /**
-       * bean-validation-groups tag
+       * default-principal tag
        */
-      BEAN_VALIDATION_GROUPS("bean-validation-groups"),
+      DEFAULT_PRINCIPAL("default-principal"),
 
       /**
-       * bean-validation-group tag
+       * default-groups tag
        */
-      BEAN_VALIDATION_GROUP("bean-validation-group"),
+      DEFAULT_GROUPS("default-groups"),
 
       /**
-       * bootstrap-context tag
+       * group tag
        */
-      BOOTSTRAP_CONTEXT("bootstrap-context"),
+      GROUP("group"),
 
       /**
-       * transaction-support tag
+       * mappings tag
        */
-      TRANSACTION_SUPPORT("transaction-support"),
+      MAPPINGS("mappings"),
 
       /**
-       * workmanager tag
+       * users tag
        */
-      WORKMANAGER("workmanager"),
+      USERS("users"),
 
       /**
-       * connection-definitions tag
+       * groups tag
        */
-      CONNECTION_DEFINITIONS("connection-definitions"),
+      GROUPS("groups"),
 
       /**
-       * connection-definition tag
+       * map tag
        */
-      CONNECTION_DEFINITION("connection-definition"),
-
-      /**
-       * admin-objects tag
-       */
-      ADMIN_OBJECTS("admin-objects"),
-
-      /**
-       * admin-objects tag
-       */
-      ADMIN_OBJECT("admin-object");
+      MAP("map");
 
       private String name;
 
@@ -150,7 +156,7 @@ public interface ResourceAdapter extends org.jboss.jca.common.api.metadata.resou
          return name;
       }
 
-      private static final Map<String, Tag> MAP;
+      private static final Map<String, Tag> MAPE;
 
       static
       {
@@ -161,7 +167,7 @@ public interface ResourceAdapter extends org.jboss.jca.common.api.metadata.resou
             if (name != null)
                map.put(name, element);
          }
-         MAP = map;
+         MAPE = map;
       }
 
       /**
@@ -184,37 +190,31 @@ public interface ResourceAdapter extends org.jboss.jca.common.api.metadata.resou
       */
       public static Tag forName(String localName)
       {
-         final Tag element = MAP.get(localName);
+         final Tag element = MAPE.get(localName);
          return element == null ? UNKNOWN.value(localName) : element;
       }
-
    }
 
    /**
-    *
-    * A Attribute.
+    * An Attribute.
     *
     * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
-    *
     */
    public enum Attribute
    {
-
-      /** always first
-      *
-      */
+      /** always first */
       UNKNOWN(null),
-      /** id attribute
-       *
-       */
-      ID("id");
+
+      /** from */
+      FROM("from"),
+
+      /** to */
+      TO("to");
 
       private String name;
 
       /**
-       *
-       * Create a new Tag.
-       *
+       * Constructor
        * @param name a name
        */
       Attribute(final String name)
@@ -223,8 +223,7 @@ public interface ResourceAdapter extends org.jboss.jca.common.api.metadata.resou
       }
 
       /**
-       * Get the local name of this element.
-       *
+       * Get the local name of this attribute
        * @return the local name
        */
       public String getLocalName()
@@ -266,12 +265,11 @@ public interface ResourceAdapter extends org.jboss.jca.common.api.metadata.resou
       }
 
       /**
-      *
-      * Static method to get enum instance given localName XsdString
-      *
-      * @param localName a XsdString used as localname (typically tag name as defined in xsd)
-      * @return the enum instance
-      */
+       * Static method to get enum instance given localName XsdString
+       *
+       * @param localName a XsdString used as localname (typically tag name as defined in xsd)
+       * @return the enum instance
+       */
       public static Attribute forName(String localName)
       {
          final Attribute element = MAP.get(localName);

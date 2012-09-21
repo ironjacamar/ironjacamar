@@ -24,7 +24,8 @@ package org.jboss.jca.common.metadata.ironjacamar.v11;
 import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.common.v11.CommonConnDef;
-import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
+import org.jboss.jca.common.api.metadata.common.v11.WorkManager;
+import org.jboss.jca.common.api.metadata.ironjacamar.v11.IronJacamar;
 import org.jboss.jca.common.metadata.common.v11.CommonIronJacamarImpl;
 
 import java.util.Iterator;
@@ -36,13 +37,15 @@ import java.util.Map;
  * A concrete IronJacamarImpl.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
- *
+ * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class IronJacamarImpl extends CommonIronJacamarImpl implements IronJacamar
 {
-
    /** The serialVersionUID */
    private static final long serialVersionUID = -8994120864846088078L;
+
+   /** The WorkManager */
+   private WorkManager workManager;
 
    /**
     *
@@ -54,13 +57,23 @@ public class IronJacamarImpl extends CommonIronJacamarImpl implements IronJacama
     * @param connectionDefinitions connectionDefinitions
     * @param beanValidationGroups beanValidationGroups
     * @param bootstrapContext bootstrapContext
+    * @param workManager workManager
     */
    public IronJacamarImpl(TransactionSupportEnum transactionSupport, Map<String, String> configProperties,
-      List<CommonAdminObject> adminObjects, List<CommonConnDef> connectionDefinitions,
-      List<String> beanValidationGroups, String bootstrapContext)
+                          List<CommonAdminObject> adminObjects, List<CommonConnDef> connectionDefinitions,
+                          List<String> beanValidationGroups, String bootstrapContext, WorkManager workManager)
    {
       super(transactionSupport, configProperties, adminObjects, connectionDefinitions, beanValidationGroups,
             bootstrapContext);
+      this.workManager = workManager;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public WorkManager getWorkManager()
+   {
+      return workManager;
    }
 
    /**
@@ -111,6 +124,11 @@ public class IronJacamarImpl extends CommonIronJacamarImpl implements IronJacama
          sb.append("<").append(IronJacamar.Tag.TRANSACTION_SUPPORT).append(">");
          sb.append(transactionSupport);
          sb.append("</").append(IronJacamar.Tag.TRANSACTION_SUPPORT).append(">");
+      }
+
+      if (workManager != null)
+      {
+         sb.append(workManager);
       }
 
       if (connectionDefinitions != null && connectionDefinitions.size() > 0)

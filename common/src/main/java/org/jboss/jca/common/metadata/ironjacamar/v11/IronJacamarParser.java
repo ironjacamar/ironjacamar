@@ -25,7 +25,8 @@ import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.common.v11.CommonConnDef;
-import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
+import org.jboss.jca.common.api.metadata.common.v11.WorkManager;
+import org.jboss.jca.common.api.metadata.ironjacamar.v11.IronJacamar;
 import org.jboss.jca.common.api.validator.ValidateException;
 import org.jboss.jca.common.metadata.MetadataParser;
 import org.jboss.jca.common.metadata.ParserException;
@@ -128,6 +129,7 @@ public class IronJacamarParser extends CommonIronJacamarParser implements Metada
       String bootstrapContext = null;
       TransactionSupportEnum transactionSupport = null;
       HashMap<String, String> configProperties = null;
+      WorkManager workManager = null;
 
       while (reader.hasNext())
       {
@@ -136,8 +138,9 @@ public class IronJacamarParser extends CommonIronJacamarParser implements Metada
             case END_ELEMENT : {
                if (Tag.forName(reader.getLocalName()) == Tag.IRONJACAMAR)
                {
-                  return new IronJacamarImpl(transactionSupport, configProperties, adminObjects,
-                                             connectionDefinitions, beanValidationGroups, bootstrapContext);
+                  return new 
+                     IronJacamarImpl(transactionSupport, configProperties, adminObjects,
+                                     connectionDefinitions, beanValidationGroups, bootstrapContext, workManager);
                }
                else
                {
@@ -163,11 +166,14 @@ public class IronJacamarParser extends CommonIronJacamarParser implements Metada
                      adminObjects.add(parseAdminObjects(reader));
                      break;
                   }
-
                   case CONNECTION_DEFINITION : {
                      if (connectionDefinitions == null)
                         connectionDefinitions = new ArrayList<CommonConnDef>();
                      connectionDefinitions.add(parseConnectionDefinitions(reader));
+                     break;
+                  }
+                  case WORKMANAGER : {
+                     workManager = parseWorkManager(reader);
                      break;
                   }
                   case BEAN_VALIDATION_GROUP : {
@@ -189,7 +195,6 @@ public class IronJacamarParser extends CommonIronJacamarParser implements Metada
                      else
                         configProperties.put(n, elementAsString(reader));
                      break;
-
                   }
                   case TRANSACTION_SUPPORT : {
                      transactionSupport = TransactionSupportEnum.valueOf(elementAsString(reader));

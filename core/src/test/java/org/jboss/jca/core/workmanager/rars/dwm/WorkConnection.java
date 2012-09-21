@@ -25,12 +25,19 @@ import javax.resource.spi.work.ExecutionContext;
 import javax.resource.spi.work.Work;
 import javax.resource.spi.work.WorkException;
 import javax.resource.spi.work.WorkListener;
+import javax.resource.spi.work.WorkManager;
 
 /**
  * WorkConnection
  */
 public interface WorkConnection
 {
+   /**
+    * Get the WorkManager instance
+    * @return The value
+    */
+   public WorkManager getWorkManager();
+
    /**
     * doWork
     * @param work The instance

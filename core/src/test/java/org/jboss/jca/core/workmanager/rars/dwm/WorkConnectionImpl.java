@@ -25,6 +25,7 @@ import javax.resource.spi.work.ExecutionContext;
 import javax.resource.spi.work.Work;
 import javax.resource.spi.work.WorkException;
 import javax.resource.spi.work.WorkListener;
+import javax.resource.spi.work.WorkManager;
 
 /**
  * WorkConnectionImpl
@@ -46,6 +47,14 @@ public class WorkConnectionImpl implements WorkConnection
    {
       this.mc = mc;
       this.mcf = mcf;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public WorkManager getWorkManager()
+   {
+      return mc.getWorkManager();
    }
 
    /**

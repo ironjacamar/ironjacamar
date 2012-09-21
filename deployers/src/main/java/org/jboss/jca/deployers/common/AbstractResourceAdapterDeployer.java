@@ -34,6 +34,7 @@ import org.jboss.jca.common.api.metadata.common.Credential;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
+import org.jboss.jca.common.api.metadata.common.v11.WorkManagerSecurity;
 import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
 import org.jboss.jca.common.api.metadata.ra.AdminObject;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
@@ -57,7 +58,9 @@ import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
 import org.jboss.jca.core.connectionmanager.pool.api.PrefillPool;
 import org.jboss.jca.core.recovery.DefaultRecoveryPlugin;
+import org.jboss.jca.core.security.CallbackImpl;
 import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
+import org.jboss.jca.core.spi.security.Callback;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
 import org.jboss.jca.core.util.Injection;
@@ -319,13 +322,14 @@ public abstract class AbstractResourceAdapterDeployer
 
    /**
     * Start the resource adapter
-    * @param resourceAdapter resourceAdapter resourceAdapter The resource adapter
-    * @param bootstrapIdentifier bootstrapIdentifier bootstrapIdentifier The bootstrap context identifier;
-    * may be <code>null</code>
+    * @param resourceAdapter The resource adapter
+    * @param bootstrapIdentifier The bootstrap context identifier; may be <code>null</code>
+    * @param cb The callback
     * @throws DeployException DeployException Thrown if the resource adapter cant be started
     */
    @SuppressWarnings("unchecked")
-   protected void startContext(ResourceAdapter resourceAdapter, String bootstrapIdentifier) throws DeployException
+   protected void startContext(ResourceAdapter resourceAdapter, String bootstrapIdentifier, Callback cb)
+      throws DeployException
    {
       try
       {
@@ -346,6 +350,9 @@ public abstract class AbstractResourceAdapterDeployer
             cbc = getConfiguration().getDefaultBootstrapContext().clone();
 
          cbc.setResourceAdapter(resourceAdapter);
+
+         if (cb != null)
+            ((org.jboss.jca.core.api.workmanager.WorkManager)cbc.getWorkManager()).setCallbackSecurity(cb);
 
          start.invoke(resourceAdapter, new Object[]{cbc});
       }
@@ -1096,6 +1103,7 @@ public abstract class AbstractResourceAdapterDeployer
          List<Object> aos = new ArrayList<Object>();
          List<String> aoJndiNames = new ArrayList<String>();
          List<XAResourceRecovery> recoveryModules = new ArrayList<XAResourceRecovery>(1);
+         Callback callback = null;
 
          // Check metadata for JNDI information and activate explicit
          boolean activateDeployment = checkActivation(cmd, ijmd);
@@ -1111,6 +1119,37 @@ public abstract class AbstractResourceAdapterDeployer
          // Load native libraries
          if (activateDeployment)
             loadNativeLibraries(root);
+
+         // Setup WorkManager security
+         if ((ijmd != null && ijmd instanceof org.jboss.jca.common.api.metadata.ironjacamar.v11.IronJacamar) ||
+             (raxml != null && raxml instanceof org.jboss.jca.common.api.metadata.resourceadapter.v11.ResourceAdapter))
+         {
+            WorkManagerSecurity ws = null;
+
+            if (ijmd != null)
+            {
+               org.jboss.jca.common.api.metadata.ironjacamar.v11.IronJacamar ij11 =
+                  (org.jboss.jca.common.api.metadata.ironjacamar.v11.IronJacamar)ijmd;
+
+               if (ij11.getWorkManager() != null && ij11.getWorkManager().getSecurity() != null)
+               {
+                  ws = ij11.getWorkManager().getSecurity();
+               }
+            }
+
+            if (raxml != null)
+            {
+               org.jboss.jca.common.api.metadata.resourceadapter.v11.ResourceAdapter raxml11 =
+                  (org.jboss.jca.common.api.metadata.resourceadapter.v11.ResourceAdapter)raxml;
+
+               if (raxml11.getWorkManager() != null && raxml11.getWorkManager().getSecurity() != null)
+               {
+                  ws = raxml11.getWorkManager().getSecurity();
+               }
+            }
+
+            callback = createCallback(ws);
+         }
 
          // Create objects and inject values
          if (cmd != null)
@@ -2218,7 +2257,7 @@ public abstract class AbstractResourceAdapterDeployer
                   bootstrapIdentifier = ijmd.getBootstrapContext();
                }
 
-               startContext(resourceAdapter, bootstrapIdentifier);
+               startContext(resourceAdapter, bootstrapIdentifier, callback);
 
                // Register with ResourceAdapterRepository
                resourceAdapterKey = registerResourceAdapterToResourceAdapterRepository(resourceAdapter);
@@ -2423,6 +2462,29 @@ public abstract class AbstractResourceAdapterDeployer
       }
 
       return result;
+   }
+
+   /**
+    * Get a callback implementation
+    * @param ws The WorkManager security settings
+    * @return The value
+    */
+   private Callback createCallback(WorkManagerSecurity ws)
+   {
+      if (ws != null)
+      {
+         boolean mr = ws.isMappingRequired();
+         String d = ws.getDomain();
+         String dp = ws.getDefaultPrincipal();
+         String[] dgs = ws.getDefaultGroups() != null ? 
+            ws.getDefaultGroups().toArray(new String[ws.getDefaultGroups().size()]) : null;
+         Map<String, String> ps = ws.getUserMappings();
+         Map<String, String> gs = ws.getGroupMappings();
+
+         return new CallbackImpl(mr, d, dp, dgs, ps, gs);
+      }
+
+      return null;
    }
 
    /**
