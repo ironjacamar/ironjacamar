@@ -175,7 +175,12 @@ public class DsParser extends org.jboss.jca.common.metadata.ds.v10.DsParser impl
                      break;
                   }
                   case TRANSACTION_ISOLATION : {
-                     transactionIsolation = TransactionIsolation.forName(elementAsString(reader));
+                     String str = elementAsString(reader);
+                     transactionIsolation = TransactionIsolation.forName(str);
+                     if (transactionIsolation == null)
+                     {
+                        transactionIsolation = TransactionIsolation.customLevel(str);
+                     }
                      break;
                   }
                   case SECURITY : {
@@ -340,7 +345,12 @@ public class DsParser extends org.jboss.jca.common.metadata.ds.v10.DsParser impl
                      break;
                   }
                   case TRANSACTION_ISOLATION : {
-                     transactionIsolation = TransactionIsolation.forName(elementAsString(reader));
+                     String str = elementAsString(reader);
+                     transactionIsolation = TransactionIsolation.forName(str);
+                     if (transactionIsolation == null)
+                     {
+                        transactionIsolation = TransactionIsolation.customLevel(str);
+                     }
                      break;
                   }
                   case SECURITY : {
