@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.common.api.metadata.ds;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,34 +39,40 @@ import java.util.Map;
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
  * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public enum TransactionIsolation
+public class TransactionIsolation implements Comparable<TransactionIsolation>, Serializable
 {
-   /**
-    * TRANSACTION_READ_UNCOMMITTED,
-    */
-   TRANSACTION_READ_UNCOMMITTED("TRANSACTION_READ_UNCOMMITTED", 1),
+   private static final long serialVersionUID = 1L;
 
    /**
-    * TRANSACTION_READ_COMMITTED,
+    * TRANSACTION_READ_UNCOMMITTED
     */
-   TRANSACTION_READ_COMMITTED("TRANSACTION_READ_COMMITTED", 2),
+   public static final TransactionIsolation TRANSACTION_READ_UNCOMMITTED =
+      new TransactionIsolation("TRANSACTION_READ_UNCOMMITTED", 1);
+
+   /**
+    * TRANSACTION_READ_COMMITTED
+    */
+   public static final TransactionIsolation TRANSACTION_READ_COMMITTED =
+      new TransactionIsolation("TRANSACTION_READ_COMMITTED", 2);
 
    /**
     * TRANSACTION_REPEATABLE_READ,
     */
-   TRANSACTION_REPEATABLE_READ("TRANSACTION_REPEATABLE_READ", 4),
+   public static final TransactionIsolation TRANSACTION_REPEATABLE_READ =
+      new TransactionIsolation("TRANSACTION_REPEATABLE_READ", 4);
 
    /**
     * TRANSACTION_SERIALIZABLE,
     */
-   TRANSACTION_SERIALIZABLE("TRANSACTION_SERIALIZABLE", 8),
+   public static final TransactionIsolation TRANSACTION_SERIALIZABLE =
+      new TransactionIsolation("TRANSACTION_SERIALIZABLE", 8);
 
    /**
     * TRANSACTION_NONE;
     */
-   TRANSACTION_NONE("TRANSACTION_NONE", 0);
+   public static final TransactionIsolation TRANSACTION_NONE =
+      new TransactionIsolation("TRANSACTION_NONE", 0);
 
-   private static final Map<String, TransactionIsolation> MAP;
    private String name;
    private int constant;
 
@@ -80,39 +87,73 @@ public enum TransactionIsolation
       this.constant = c;
    }
 
-   static
+   /**
+    * {@inheritDoc}
+    */
+   public int compareTo(TransactionIsolation o)
    {
-      final Map<String, TransactionIsolation> map = new HashMap<String, TransactionIsolation>();
-      for (TransactionIsolation v : values())
-      {
-         String name = v.name();
-         if (name != null)
-         {
-            map.put(name, v);
-            map.put(Integer.toString(v.getConstant()), v);
-         }
-      }
-      MAP = map;
+      return ordinal() - o.ordinal();
    }
 
    /**
-    * Get the constant
+    * Name
     * @return The value
     */
-   int getConstant()
+   public String name()
+   {
+      return name;
+   }
+
+   /**
+    * Ordinal
+    * @return The value
+    */
+   public int ordinal()
    {
       return constant;
    }
 
    /**
-    * Static method to get enum instance
-    *
-    * @param v The value
-    * @return The enum instance
+    * {@inheritDoc}
     */
-   public static TransactionIsolation forName(String v)
+   public int hashCode()
    {
-      return MAP.get(v);
+      int result = 31;
+
+      result += 7 * name.hashCode();
+      result += 7 * constant;
+
+      return result;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean equals(Object o)
+   {
+      if (this == o)
+         return true;
+
+      if (o == null || !(o instanceof TransactionIsolation))
+         return false;
+
+      TransactionIsolation ti = (TransactionIsolation)o;
+
+      if (name != null)
+      {
+         if (!name.equals(ti.name))
+            return false;
+      }
+      else
+      {
+         if (ti.name != null)
+            return false;
+      }
+
+      if (constant != ti.constant)
+         return false;
+
+      return true;
    }
 
    /**
@@ -121,5 +162,58 @@ public enum TransactionIsolation
    public String toString()
    {
       return name;
+   }
+
+   /**
+    * Static method to get an instance
+    *
+    * @param v The value
+    * @return The instance
+    */
+   public static TransactionIsolation forName(String v)
+   {
+      if (v != null && !v.trim().equals(""))
+      {
+         if ("TRANSACTION_READ_UNCOMMITTED".equalsIgnoreCase(v) || "1".equalsIgnoreCase(v))
+         {
+            return TRANSACTION_READ_UNCOMMITTED;
+         }
+         else if ("TRANSACTION_READ_COMMITTED".equalsIgnoreCase(v) || "2".equalsIgnoreCase(v))
+         {
+            return TRANSACTION_READ_COMMITTED;
+         }
+         else if ("TRANSACTION_REPEATABLE_READ".equalsIgnoreCase(v) || "4".equalsIgnoreCase(v))
+         {
+            return TRANSACTION_REPEATABLE_READ;
+         }
+         else if ("TRANSACTION_SERIALIZABLE".equalsIgnoreCase(v) || "8".equalsIgnoreCase(v))
+         {
+            return TRANSACTION_SERIALIZABLE;
+         }
+         else if ("TRANSACTION_NONE".equalsIgnoreCase(v) || "0".equalsIgnoreCase(v))
+         {
+            return TRANSACTION_NONE;
+         }
+      }
+      return null;
+   }
+
+   /**
+    * Static method to get an instance
+    * @param v The value
+    * @return The instance
+    */
+   public static TransactionIsolation valueOf(String v)
+   {
+      return forName(v);
+   }
+
+   /**
+    * Custom transaction levels
+    * @param n The name
+    */
+   public static TransactionIsolation customLevel(String n)
+   {
+      return new TransactionIsolation(n, Integer.MIN_VALUE);
    }
 }
