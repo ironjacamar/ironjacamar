@@ -27,6 +27,7 @@ import org.jboss.jca.core.CoreLogger;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -365,6 +366,10 @@ public class WorkWrapper implements Runnable
             if (workManager.getCallbackSecurity().getDefaultPrincipal() != null)
             {
                Principal defaultPrincipal = workManager.getCallbackSecurity().getDefaultPrincipal();
+
+               if (trace)
+                  log.tracef("Adding default principal: %s", defaultPrincipal);
+
                CallerPrincipalCallback cpc =
                   new CallerPrincipalCallback(executionSubject, defaultPrincipal);
 
@@ -374,6 +379,10 @@ public class WorkWrapper implements Runnable
             if (workManager.getCallbackSecurity().getDefaultGroups() != null)
             {
                String[] defaultGroups = workManager.getCallbackSecurity().getDefaultGroups();
+
+               if (trace)
+                  log.tracef("Adding default groups: %s", Arrays.toString(defaultGroups));
+
                GroupPrincipalCallback gpc = 
                   new GroupPrincipalCallback(executionSubject, defaultGroups);
 

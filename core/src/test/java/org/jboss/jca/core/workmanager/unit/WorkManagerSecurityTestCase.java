@@ -30,8 +30,10 @@ import org.jboss.jca.embedded.arquillian.Configuration;
 import org.jboss.jca.embedded.arquillian.Inject;
 import org.jboss.jca.embedded.dsl.InputStreamDescriptor;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.annotation.Resource;
@@ -46,7 +48,9 @@ import javax.security.auth.callback.CallbackHandler;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.logging.Logger;
+import org.jboss.security.SecurityContextAssociation;
 import org.jboss.security.SimplePrincipal;
+import org.jboss.security.identity.plugins.SimpleRole;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
@@ -183,6 +187,16 @@ public class WorkManagerSecurityTestCase
       {
          MyWork myWork = new MyWork();
          wc.doWork(myWork);
+
+         log.infof("Principals=%s", myWork.getPrincipals());
+         
+         assertNotNull("principals-not-null", myWork.getPrincipals());
+         assertTrue("principals-contains", myWork.getPrincipals().contains(new SimplePrincipal("default_principal")));
+
+         log.infof("Roles=%s", myWork.getRoles());
+         
+         assertNotNull("roles-not-null", myWork.getRoles());
+         assertArrayEquals("roles-equals", new String[] {"default_group"}, myWork.getRoles());
       }
       finally
       {
@@ -200,12 +214,16 @@ public class WorkManagerSecurityTestCase
    public static class MyWork implements Work, WorkContextProvider
    {
       private static final long serialVersionUID = 1L;
+      private Set<Principal> principals;
+      private String[] roles;
 
       /**
        * Constructor
        */
       public MyWork()
       {
+         this.principals = null;
+         this.roles = null;
       }
 
       /**
@@ -223,7 +241,37 @@ public class WorkManagerSecurityTestCase
        */
       public void run()
       {
-         System.out.println("MyWork: run");
+         log.info("MyWork: run");
+
+         org.jboss.security.SecurityContext securityContext = SecurityContextAssociation.getSecurityContext();
+         if (securityContext != null && securityContext.getSubjectInfo() != null)
+         {
+            log.infof("SecurityContext=%s", securityContext);
+
+            Subject subject = securityContext.getSubjectInfo().getAuthenticatedSubject();
+            if (subject != null)
+            {
+               log.infof("Subject=%s", subject);
+               log.infof("Private credentials=%s", subject.getPrivateCredentials());
+               log.infof("Public credentials=%s", subject.getPublicCredentials());
+
+               if (subject.getPrincipals() != null && subject.getPrincipals().size() > 0)
+               {
+                  principals = subject.getPrincipals();
+               }
+
+               org.jboss.security.identity.RoleGroup pbRoles = securityContext.getUtil().getRoles();
+               if (pbRoles != null)
+               {
+                  List<String> l = new ArrayList<String>(pbRoles.getRoles().size());
+                  for (org.jboss.security.identity.Role role : pbRoles.getRoles())
+                  {
+                     l.add(role.getRoleName());
+                  }
+                  roles = l.toArray(new String[l.size()]);
+               }
+            }
+         }
       }
 
       /**
@@ -231,7 +279,25 @@ public class WorkManagerSecurityTestCase
        */
       public void release()
       {
-         System.out.println("MyWork: release");
+         log.info("MyWork: release");
+      }
+
+      /**
+       * Get the principals
+       * @return The value
+       */
+      public Set<Principal> getPrincipals()
+      {
+         return principals;
+      }
+
+      /**
+       * Get the roles
+       * @return The value
+       */
+      public String[] getRoles()
+      {
+         return roles;
       }
    }
 
@@ -255,8 +321,8 @@ public class WorkManagerSecurityTestCase
        */
       public void setupSecurityContext(CallbackHandler handler, Subject executionSubject, Subject serviceSubject)
       {
-         System.out.println("MySecurityContext: setupSecurityContext(" + handler + ", " + executionSubject + ", " +
-                            serviceSubject + ")");
+         log.info("MySecurityContext: setupSecurityContext(" + handler + ", " + executionSubject + ", " +
+                  serviceSubject + ")");
       }
    }
 }
