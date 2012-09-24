@@ -202,9 +202,6 @@ public class WorkWrapper implements Runnable
     */
    public void run()
    {
-      if (trace)
-         log.trace("Starting work " + this);  
-
       ClassLoader oldCL = SecurityActions.getThreadContextClassLoader();
       SecurityActions.setThreadContextClassLoader(work.getClass().getClassLoader());
 
@@ -252,7 +249,7 @@ public class WorkWrapper implements Runnable
             completedLatch.countDown();
 
          if (trace)
-            log.trace("Executed work " + this);
+            log.tracef("Executed work: %s", this);
       }
    }
 
@@ -263,9 +260,7 @@ public class WorkWrapper implements Runnable
    protected void start() throws WorkException
    {
       if (trace)
-      {
-         log.trace("Starting work " + this);  
-      }
+         log.tracef("Starting work: %s", this);  
 
       if (workListener != null)
       {
@@ -419,9 +414,7 @@ public class WorkWrapper implements Runnable
       fireWorkContextSetupComplete(ctx);
       
       if (trace)
-      {
-         log.trace("Started work " + this);  
-      }
+         log.tracef("Started work: %s", this);  
    }
 
    /**
@@ -430,9 +423,7 @@ public class WorkWrapper implements Runnable
    protected void end()
    {
       if (trace)
-      {
-         log.trace("Ending work " + this);  
-      }
+         log.tracef("Ending work: %s", this);  
 
       ExecutionContext ctx = getWorkContext(TransactionContext.class);
       if (ctx == null)
@@ -450,9 +441,7 @@ public class WorkWrapper implements Runnable
       }
 
       if (trace)
-      {
-         log.trace("Ended work " + this);  
-      }
+         log.tracef("Ended work: %s", this);  
    }
 
    /**
@@ -461,7 +450,7 @@ public class WorkWrapper implements Runnable
    protected void cancel()
    {
       if (trace)
-         log.trace("Cancel work " + this);  
+         log.tracef("Cancel work: %s", this);  
 
       ExecutionContext ctx = getWorkContext(TransactionContext.class);
       if (ctx == null)
@@ -479,7 +468,7 @@ public class WorkWrapper implements Runnable
       }
 
       if (trace)
-         log.trace("Canceled work " + this);  
+         log.tracef("Canceled work: %s", this);  
    }
 
    /**
