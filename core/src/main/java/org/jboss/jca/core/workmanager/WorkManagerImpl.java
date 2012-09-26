@@ -668,6 +668,15 @@ public class WorkManagerImpl implements WorkManager
    /**
     * {@inheritDoc}
     */
+   public boolean cancelShutdown()
+   {
+      shutdown.set(false);
+      return true;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public void prepareShutdown()
    {
       shutdown.set(true);

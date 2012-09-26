@@ -30,6 +30,12 @@ package org.jboss.jca.core.spi.graceful;
 public interface GracefulShutdown
 {
    /**
+    * Cancel shutdown
+    * @return True if the shutdown was canceled; false otherwise
+    */
+   public boolean cancelShutdown();
+
+   /**
     * Signal the component to prepare for shutdown
     */
    public void prepareShutdown();
