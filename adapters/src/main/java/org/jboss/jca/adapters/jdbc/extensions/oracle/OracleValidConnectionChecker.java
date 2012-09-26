@@ -32,26 +32,22 @@ import java.sql.SQLException;
 import org.jboss.logging.Logger;
 
 /**
- * Implements check valid connection sql
+ * Implements a valid connection checker for Oracle
  *
  * @author <a href="mailto:adrian@jboss.org">Adrian Brock</a>
- * @version $Revision: 105425 $
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class OracleValidConnectionChecker implements ValidConnectionChecker, Serializable
 {
-   private static final long serialVersionUID = 5379340663276548636L;
+   private static final long serialVersionUID = 1937054230333286884L;
 
    private static Logger log = Logger.getLogger(OracleValidConnectionChecker.class);
-
-   // The timeout in seconds (apparently the timeout is ignored?)
-   private Integer pingTimeOut;
 
    /**
     * Constructor
     */
    public OracleValidConnectionChecker()
    {
-      pingTimeOut = Integer.valueOf(5);
    }
 
    /**
@@ -60,14 +56,12 @@ public class OracleValidConnectionChecker implements ValidConnectionChecker, Ser
    @Override
    public SQLException isValidConnection(Connection c)
    {
-      Object[] params = new Object[] {pingTimeOut};
-
       try
       {
-         Method ping = c.getClass().getMethod("pingDatabase", new Class<?>[] {Integer.TYPE});
+         Method ping = c.getClass().getMethod("pingDatabase", (Class<?>[])null);
          ping.setAccessible(true);
 
-         Integer status = (Integer) ping.invoke(c, params);
+         Integer status = (Integer) ping.invoke(c, (Object[])null);
 
          // Error
          if (status == null || status.intValue() < 0)
@@ -81,25 +75,5 @@ public class OracleValidConnectionChecker implements ValidConnectionChecker, Ser
 
       // OK
       return null;
-   }
-
-   /**
-    * Get the pingTimeOut.
-    *
-    * @return the pingTimeOut.
-    */
-   public Integer getPingTimeOut()
-   {
-      return pingTimeOut;
-   }
-
-   /**
-    * Set the pingTimeOut.
-    *
-    * @param pingTimeOut The pingTimeOut to set.
-    */
-   public void setPingTimeOut(Integer pingTimeOut)
-   {
-      this.pingTimeOut = pingTimeOut;
    }
 }
