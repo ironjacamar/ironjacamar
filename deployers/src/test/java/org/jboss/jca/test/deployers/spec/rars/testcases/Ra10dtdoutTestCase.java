@@ -22,9 +22,15 @@
 
 package org.jboss.jca.test.deployers.spec.rars.testcases;
 
-import org.jboss.jca.test.deployers.spec.ArquillianJCATestUtils;
+import org.jboss.jca.common.metadata.ra.ra10.Connector10Impl;
+import org.jboss.jca.core.spi.mdr.MetadataRepository;
+import org.jboss.jca.embedded.arquillian.Inject;
+import org.jboss.jca.test.deployers.spec.DeploymentTestBase;
 import org.jboss.jca.test.deployers.spec.rars.BaseCciConnectionFactory;
 import org.jboss.jca.test.deployers.spec.rars.ra10dtdout.TestManagedConnectionFactory;
+
+import java.util.Iterator;
+import java.util.Set;
 
 import javax.annotation.Resource;
 import javax.resource.cci.ConnectionFactory;
@@ -47,45 +53,76 @@ import static org.junit.Assert.*;
  * @version $Revision: $
  */
 @RunWith(Arquillian.class)
-public class Ra10dtdoutTestCase
+public class Ra10dtdoutTestCase extends DeploymentTestBase
 {
-
-   //-------------------------------------------------------------------------------------||
-   //---------------------- GIVEN --------------------------------------------------------||
-   //-------------------------------------------------------------------------------------||
    /**
-    * Define the deployment
-    * @return The deployment archive
-    * @throws Exception in case of errors
+    * 
+    * create deployment 
+    * 
+    * @param archiveName 
+    * @return archive
+    * @throws Exception in case of error
     */
-   @Deployment
-   public static ResourceAdapterArchive createDeployment() throws Exception
+   public static ResourceAdapterArchive createDeployment(String archiveName) throws Exception
    {
-      String archiveName = "ra10dtdout.rar";
-      String packageName = "org.jboss.jca.test.deployers.spec.rars.ra10dtdout";
-      ResourceAdapterArchive raa = ArquillianJCATestUtils.buidShrinkwrapRa(archiveName, packageName);
+      ResourceAdapterArchive raa = buidShrinkwrapRa(archiveName,
+         getPackageName(TestManagedConnectionFactory.class));
       raa.addAsManifestResource(archiveName + "/META-INF/ra.xml", "ra.xml");
 
       return raa;
    }
 
-   //-------------------------------------------------------------------------------------||
-   //---------------------- WHEN  --------------------------------------------------------||
-   //-------------------------------------------------------------------------------------||
-   //
-   @Resource(mappedName = "java:/eis/ra10dtdout")
-   private ConnectionFactory connectionFactory;
-
-   //-------------------------------------------------------------------------------------||
-   //---------------------- THEN  --------------------------------------------------------||
-   //-------------------------------------------------------------------------------------||
+   /**
+    * MDR
+    */
+   @Inject(name = "MDR")
+   private MetadataRepository mdr;
 
    /**
-    * Basic
-    * @exception Throwable Thrown if case of an error
+    * 
+    * first deployment
+    * 
+    * @return archive
+    * @throws Exception in case of error
     */
-   @Test
-   public void testBasic() throws Throwable
+   @Deployment(order = 1)
+   public static ResourceAdapterArchive deployment1() throws Exception
+   {
+      return createDeployment("ra10dtdout.rar");
+   }
+
+   /**
+    * 
+    * second deployment
+    * 
+    * @return archive
+    * @throws Exception in case of error
+    */
+   @Deployment(name = "d2", order = 2)
+   public static ResourceAdapterArchive deployment2() throws Exception
+   {
+      return createDeployment("ra10dtdoutoverwrite.rar");
+   }
+
+   /**
+    * connection factories, registered after deployment
+    */
+   @Resource(mappedName = "java:/eis/ra10dtdout")
+   private ConnectionFactory connectionFactory1;
+
+   @Resource(mappedName = "java:/eis/ra10dtdoutoverwrite")
+   private ConnectionFactory connectionFactory2;
+
+   /**
+    * 
+    * Tests connection factory and properties of ManagedConnectionFactory
+    * 
+    * @param connectionFactory to test
+    * @param aaa property value
+    * @param bbb property value
+    * @throws Exception in case of error
+    */
+   public void testBasic(ConnectionFactory connectionFactory, String aaa, boolean bbb) throws Exception
    {
       assertNotNull(connectionFactory);
       assertNotNull(connectionFactory.getConnection());
@@ -94,8 +131,65 @@ public class Ra10dtdoutTestCase
       assertNotNull(cf.getMcf());
       assertTrue(cf.getMcf() instanceof TestManagedConnectionFactory);
       TestManagedConnectionFactory mcf = (TestManagedConnectionFactory) cf.getMcf();
-      assertEquals("bbb", mcf.getAaa());
-      assertTrue(mcf.getBbb());
+      assertEquals(aaa, mcf.getAaa());
+      assertEquals(bbb, mcf.getBbb());
    }
 
+   /**
+    * 
+    * first connection factory test
+    * 
+    * @throws Exception in case of error
+    */
+   @Test
+   public void first() throws Exception
+   {
+      testBasic(connectionFactory1, "bbb", true);
+   }
+
+   /**
+    * 
+    * second connection factory test
+    * 
+    * @throws Exception in case of error
+    */
+   @Test
+   public void second() throws Exception
+   {
+      testBasic(connectionFactory2, "aaa", false);
+   }
+
+   /**
+    * Test metadata
+    *     
+    * @throws Exception in case of error
+    */
+   @Test
+   public void testMetaData() throws Exception
+   {
+      assertNotNull(mdr);
+      Set<String> ids = mdr.getResourceAdapters();
+
+      assertNotNull(ids);
+      assertEquals(2, ids.size());
+
+      Iterator<String> it = ids.iterator();
+      while (it.hasNext())
+         checkMetadata(it.next());
+   }
+
+   /**
+    * 
+    * checks, if metadata is of appropriate type
+    * 
+    * @param piId - metadata name
+    * @throws Exception in case of error
+    */
+   public void checkMetadata(String piId) throws Exception
+   {
+      assertNotNull(piId);
+      assertNotNull(mdr.getResourceAdapter(piId));
+      assertTrue(mdr.getResourceAdapter(piId) instanceof Connector10Impl);
+
+   }
 }
