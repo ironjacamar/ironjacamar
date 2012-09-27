@@ -39,6 +39,56 @@ public class TestManagedConnectionFactory extends BaseManagedConnectionFactory
 {
    private static final long serialVersionUID = 1L;
    private static Logger log = Logger.getLogger(TestManagedConnectionFactory.class);
+   
+   /**
+    * Config properties
+    */
+   private String aaa = "bbb";
+   private Boolean bbb = true;
+
+   /**
+    * 
+    * setter
+    * 
+    * @param value for aaa
+    */
+   public void setAaa(String value)
+   {
+      aaa = value;
+   }
+
+   /**
+    * 
+    * getter
+    * 
+    * @return aaa
+    */
+   public String getAaa()
+   {
+      return aaa;
+   }
+
+   /**
+    * 
+    * setter
+    * 
+    * @param value for bbb
+    */
+   public void setBbb(boolean value)
+   {
+      bbb = value;
+   }
+
+   /**
+    * 
+    * getter
+    * 
+    * @return bbb
+    */
+   public Boolean getBbb()
+   {
+      return bbb;
+   }
 
    /**
     * Creates a Connection Factory instance. 
@@ -51,7 +101,7 @@ public class TestManagedConnectionFactory extends BaseManagedConnectionFactory
    public Object createConnectionFactory(ConnectionManager cxManager) throws ResourceException
    {
       log.debug("call createConnectionFactory");
-      return new BaseCciConnectionFactory();
+      return new BaseCciConnectionFactory(this);
    }
 
    /**

@@ -29,7 +29,7 @@ import javax.resource.cci.ConnectionFactory;
 import javax.resource.cci.ConnectionSpec;
 import javax.resource.cci.RecordFactory;
 import javax.resource.cci.ResourceAdapterMetaData;
-
+import javax.resource.spi.ManagedConnectionFactory;
 
 /**
  * BaseCciConnectionFactory
@@ -49,6 +49,43 @@ public class BaseCciConnectionFactory implements ConnectionFactory
     * Reference
     */
    private Reference reference;
+
+   /**
+    * ManagedConnectionFactory
+    */
+   private ManagedConnectionFactory mcf;
+
+   /**
+    * 
+    * Create a new BaseCciConnectionFactory.
+    * 
+    * @param cf ManagedConnectionFactory, which creates this
+    */
+   public BaseCciConnectionFactory(ManagedConnectionFactory cf)
+   {
+      mcf = cf;
+   }
+
+   /**
+    * 
+    * Create a new BaseCciConnectionFactory.
+    *
+    */
+   public BaseCciConnectionFactory()
+   {
+      mcf = null;
+   }
+
+   /**
+    * 
+    * get ManagedConnectionFactory
+    * 
+    * @return ManagedConnectionFactory
+    */
+   public ManagedConnectionFactory getMcf()
+   {
+      return mcf;
+   }
 
    /* getConnection
     * @see javax.resource.cci.ConnectionFactory#getConnection()
@@ -105,7 +142,5 @@ public class BaseCciConnectionFactory implements ConnectionFactory
    {
       this.reference = reference;
    }
-
-
 
 }
