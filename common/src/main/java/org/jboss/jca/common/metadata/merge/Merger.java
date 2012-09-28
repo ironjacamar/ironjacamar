@@ -178,7 +178,7 @@ public class Merger
             List<AdminObject> newAdminObjects = new ArrayList<AdminObject>(ra1516.getAdminObjects().size());
             for (AdminObject adminObj : ra1516.getAdminObjects())
             {
-               AdminObject newAdminObj = adminObj;
+               AdminObject newAdminObj = (AdminObject) adminObj.copy();
                if (ij.getAdminObjects() != null)
                {
                   for (CommonAdminObject commonAdminObj : ij.getAdminObjects())
@@ -188,9 +188,14 @@ public class Merger
                      {
                         newAdminObj = mergeAdminObject(commonAdminObj, newAdminObj);
                      }
+                     newAdminObjects.add(newAdminObj);
+                     newAdminObj = (AdminObject) adminObj.copy();
                   }
                }
-               newAdminObjects.add(newAdminObj);
+               else
+               {
+                  newAdminObjects.add(newAdminObj);
+               }
 
             }
             ((ResourceAdapter1516Impl) ra1516).forceAdminObjectsContent(newAdminObjects);
@@ -203,12 +208,13 @@ public class Merger
                .getOutboundResourceadapter().getConnectionDefinitions().size());
             for (ConnectionDefinition conDef : ra1516.getOutboundResourceadapter().getConnectionDefinitions())
             {
-               ConnectionDefinition newConDef = conDef;
+               ConnectionDefinition newConDef = (ConnectionDefinition) conDef.copy();
                if (ij.getConnectionDefinitions() != null)
                {
                   if (ij.getConnectionDefinitions().size() == 1 && ij.getConnectionDefinitions().get(0).isEnabled())
                   {
                      newConDef = mergeConDef(ij.getConnectionDefinitions().get(0), newConDef);
+                     newConDefs.add(newConDef);
                   }
                   else
                   {
@@ -218,10 +224,16 @@ public class Merger
                         {
                            newConDef = mergeConDef(commonConDef, newConDef);
                         }
+                        newConDefs.add(newConDef);
+                        newConDef = (ConnectionDefinition) conDef.copy();
                      }
                   }
                }
-               newConDefs.add(newConDef);
+               else
+               {
+                  newConDefs.add(newConDef);
+               }
+
 
             }
             ((OutboundResourceAdapterImpl) ra1516.getOutboundResourceadapter())
@@ -732,7 +744,7 @@ public class Merger
                case DATASOURCECLASS : {
                   if (ds != null && ds.getDataSourceClass() != null)
                   {
-                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, 
+                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype,
                                                                                      ds.getDataSourceClass()));
                   }
                   break;

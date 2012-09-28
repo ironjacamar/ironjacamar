@@ -329,7 +329,7 @@ public class MergerTestCase
          Merger mf = new Merger();
          Connector merged = mf.mergeConnectorWithCommonIronJacamar(ij, connector);
          //then
-         ConfigProperty expectedConfigProp = new ConfigPropertyImpl(null, 
+         ConfigProperty expectedConfigProp = new ConfigPropertyImpl(null,
                new XsdString("StringRAR", null, "config-property-name"),
                new XsdString("java.lang.String", null, "config-property-type"),
                new XsdString("XMLOVERRIDE", null, "config-property-value"), null);
@@ -398,11 +398,11 @@ public class MergerTestCase
          Connector merged2 = mf.mergeConnectorWithCommonIronJacamar(ij2, connector);
          merged2 = mf.mergeConnectorWithCommonIronJacamar(ij1, connector);
          //then
-         ConfigProperty expectedConfigProp = new ConfigPropertyImpl(null, 
+         ConfigProperty expectedConfigProp = new ConfigPropertyImpl(null,
                new XsdString("StringRAR", null, "config-property-name"),
                new XsdString("java.lang.String", null, "config-property-type"),
                new XsdString("XMLOVERRIDE", null, "config-property-value"), null);
-         ConfigProperty expectedConfigProp2 = new ConfigPropertyImpl(null, 
+         ConfigProperty expectedConfigProp2 = new ConfigPropertyImpl(null,
                new XsdString("StringRAR2", null, "config-property-name"),
                new XsdString("java.lang.String", null, "config-property-type"),
                new XsdString("XMLOVERRIDE", null, "config-property-value"), null);
@@ -475,7 +475,7 @@ public class MergerTestCase
          Merger mf = new Merger();
          Connector merged = mf.mergeConnectorWithCommonIronJacamar(ij, connector);
 
-         ConfigProperty expectedConfigProp = new ConfigPropertyImpl(null, 
+         ConfigProperty expectedConfigProp = new ConfigPropertyImpl(null,
                new XsdString("StringRAR", null, "config-property-name"),
                new XsdString("java.lang.String", null, "config-property-type"),
                new XsdString("XMLOVERRIDE", null, "config-property-value"), null);
@@ -554,7 +554,7 @@ public class MergerTestCase
          Merger mf = new Merger();
          Connector merged = mf.mergeConnectorWithCommonIronJacamar(ij, connector);
          //then
-         ConfigProperty expectedConfigProp = new ConfigPropertyImpl(null, 
+         ConfigProperty expectedConfigProp = new ConfigPropertyImpl(null,
                new XsdString("StringRAR", null, "config-property-name"),
                new XsdString("java.lang.String", null, "config-property-type"),
                new XsdString("XMLOVERRIDE", null, "config-property-value"), null);
@@ -614,16 +614,16 @@ public class MergerTestCase
          Merger mf = new Merger();
          Connector merged = mf.mergeConnectorWithCommonIronJacamar(ij, connector);
          //then
-         ConfigProperty exConf1 = new ConfigPropertyImpl(null, 
+         ConfigProperty exConf1 = new ConfigPropertyImpl(null,
                new XsdString("LogConfigFile", null, "config-property-name"),
                new XsdString("java.lang.String", null, "config-property-type"),
                new XsdString("ASAP_SAP_1_0.xml", null, "config-property-value"), null);
-         ConfigProperty exConf2 = new ConfigPropertyImpl(null, 
+         ConfigProperty exConf2 = new ConfigPropertyImpl(null,
                new XsdString("RootLogContext", null, "config-property-name"),
                new XsdString("java.lang.String", null, "config-property-type"),
                new XsdString("ASAP_SAP_1_0", null, "config-property-value"), null);
-               
-         ConfigProperty exConf3 = new ConfigPropertyImpl(null, 
+
+         ConfigProperty exConf3 = new ConfigPropertyImpl(null,
                new XsdString("LogLevel", null, "config-property-name"),
                new XsdString("java.lang.String", null, "config-property-type"),
                new XsdString("WARN", null, "config-property-value"), null);
@@ -686,16 +686,16 @@ public class MergerTestCase
          Merger mf = new Merger();
          Connector merged = mf.mergeConnectorWithCommonIronJacamar(ij, connector);
          //then
-         ConfigProperty exConf1 = new ConfigPropertyImpl(null, 
+         ConfigProperty exConf1 = new ConfigPropertyImpl(null,
                new XsdString("LogConfigFile", null, "config-property-name"),
                new XsdString("java.lang.String", null, "config-property-type"),
                new XsdString("ASAP_SAP_1_0.xml", null, "config-property-value"), null);
-         ConfigProperty exConf2 = new ConfigPropertyImpl(null, 
+         ConfigProperty exConf2 = new ConfigPropertyImpl(null,
                new XsdString("RootLogContext", null, "config-property-name"),
                new XsdString("java.lang.String", null, "config-property-type"),
                new XsdString("ASAP_SAP_1_0", null, "config-property-value"), null);
-               
-         ConfigProperty exConf3 = new ConfigPropertyImpl(null, 
+
+         ConfigProperty exConf3 = new ConfigPropertyImpl(null,
                new XsdString("LogLevel", null, "config-property-name"),
                new XsdString("java.lang.String", null, "config-property-type"),
                new XsdString("WARN", null, "config-property-value"), null);
@@ -758,19 +758,33 @@ public class MergerTestCase
          Merger mf = new Merger();
          Connector merged = mf.mergeConnectorWithCommonIronJacamar(ij, connector);
          //then
-         ConfigProperty exConf1 = new ConfigPropertyImpl(null, 
+         ConfigProperty exConf1 = new ConfigPropertyImpl(null,
                new XsdString("LogConfigFile", null, "config-property-name"),
                new XsdString("java.lang.String", null, "config-property-type"),
                new XsdString("ASAP_SAP_1_0.xml", null, "config-property-value"), null);
-         ConfigProperty exConf2 = new ConfigPropertyImpl(null, 
+         ConfigProperty exConf2 = new ConfigPropertyImpl(null,
                new XsdString("RootLogContext", null, "config-property-name"),
                new XsdString("java.lang.String", null, "config-property-type"),
                new XsdString("ASAP_SAP_1_0", null, "config-property-value"), null);
-               
-         ConfigProperty exConf3 = new ConfigPropertyImpl(null, 
+
+         ConfigProperty exConf3 = new ConfigPropertyImpl(null,
                new XsdString("LogLevel", null, "config-property-name"),
                new XsdString("java.lang.String", null, "config-property-type"),
                new XsdString("WARN", null, "config-property-value"), null);
+
+         ConfigProperty exConf1Default = new ConfigPropertyImpl(null,
+            new XsdString("LogConfigFile", null, "config-property-name"),
+            new XsdString("java.lang.String", null, "config-property-type"),
+            new XsdString("default", null, "config-property-value"), null);
+         ConfigProperty exConf2Default = new ConfigPropertyImpl(null,
+            new XsdString("RootLogContext", null, "config-property-name"),
+            new XsdString("java.lang.String", null, "config-property-type"),
+            new XsdString("default", null, "config-property-value"), null);
+
+         ConfigProperty exConf3Default = new ConfigPropertyImpl(null,
+            new XsdString("LogLevel", null, "config-property-name"),
+            new XsdString("java.lang.String", null, "config-property-type"),
+            new XsdString("default", null, "config-property-value"), null);
 
          assertThat(merged, notNullValue());
          assertThat(connector.getResourceadapter().getConfigProperties().size(), is(1));
@@ -781,11 +795,15 @@ public class MergerTestCase
          assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getOutboundResourceadapter(),
             is(((ResourceAdapter1516) connector.getResourceadapter()).getOutboundResourceadapter()));
          assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getOutboundResourceadapter()
-            .getConnectionDefinitions().size(), is(1));
+            .getConnectionDefinitions().size(), is(2));
          List<ConfigProperty> conDefProps = (List<ConfigProperty>) ((ResourceAdapter1516) merged.getResourceadapter())
             .getOutboundResourceadapter().getConnectionDefinitions().get(0).getConfigProperties();
          assertThat(conDefProps.size(), is(3));
-         assertThat(conDefProps, hasItems(exConf1, exConf2, exConf3)); //, exConf4, exConf5));
+         assertThat(conDefProps, hasItems(exConf1Default, exConf2Default, exConf3));
+         List<ConfigProperty> conDef2Props = (List<ConfigProperty>) ((ResourceAdapter1516) merged.getResourceadapter())
+            .getOutboundResourceadapter().getConnectionDefinitions().get(1).getConfigProperties();
+         assertThat(conDef2Props.size(), is(3));
+         assertThat(conDef2Props, hasItems(exConf1, exConf2, exConf3Default));
          assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getInboundResourceadapter(),
             equalTo(((ResourceAdapter1516) connector.getResourceadapter()).getInboundResourceadapter()));
       }
@@ -830,16 +848,16 @@ public class MergerTestCase
          Merger mf = new Merger();
          Connector merged = mf.mergeConnectorWithCommonIronJacamar(ij, connector);
          //then
-         ConfigProperty exConf1 = new ConfigPropertyImpl(null, 
+         ConfigProperty exConf1 = new ConfigPropertyImpl(null,
                new XsdString("LogConfigFile", null, "config-property-name"),
                new XsdString("java.lang.String", null, "config-property-type"),
                new XsdString("default", null, "config-property-value"), null);
-         ConfigProperty exConf2 = new ConfigPropertyImpl(null, 
+         ConfigProperty exConf2 = new ConfigPropertyImpl(null,
                new XsdString("RootLogContext", null, "config-property-name"),
                new XsdString("java.lang.String", null, "config-property-type"),
                new XsdString("default", null, "config-property-value"), null);
-               
-         ConfigProperty exConf3 = new ConfigPropertyImpl(null, 
+
+         ConfigProperty exConf3 = new ConfigPropertyImpl(null,
                new XsdString("LogLevel", null, "config-property-name"),
                new XsdString("java.lang.String", null, "config-property-type"),
                new XsdString("default", null, "config-property-value"), null);
@@ -902,16 +920,16 @@ public class MergerTestCase
          Merger mf = new Merger();
          Connector merged = mf.mergeConnectorWithCommonIronJacamar(ij, connector);
          //then
-         ConfigProperty exConf1 = new ConfigPropertyImpl(null, 
+         ConfigProperty exConf1 = new ConfigPropertyImpl(null,
                new XsdString("LogConfigFile", null, "config-property-name"),
                new XsdString("java.lang.String", null, "config-property-type"),
                new XsdString("default", null, "config-property-value"), null);
-         ConfigProperty exConf2 = new ConfigPropertyImpl(null, 
+         ConfigProperty exConf2 = new ConfigPropertyImpl(null,
                new XsdString("RootLogContext", null, "config-property-name"),
                new XsdString("java.lang.String", null, "config-property-type"),
                new XsdString("default", null, "config-property-value"), null);
-               
-         ConfigProperty exConf3 = new ConfigPropertyImpl(null, 
+
+         ConfigProperty exConf3 = new ConfigPropertyImpl(null,
                new XsdString("LogLevel", null, "config-property-name"),
                new XsdString("java.lang.String", null, "config-property-type"),
                new XsdString("default", null, "config-property-value"), null);
@@ -925,7 +943,7 @@ public class MergerTestCase
          assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getOutboundResourceadapter(),
             is(((ResourceAdapter1516) connector.getResourceadapter()).getOutboundResourceadapter()));
          assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getOutboundResourceadapter()
-            .getConnectionDefinitions().size(), is(1));
+            .getConnectionDefinitions().size(), is(2));
          List<ConfigProperty> conDefProps = (List<ConfigProperty>) ((ResourceAdapter1516) merged.getResourceadapter())
             .getOutboundResourceadapter().getConnectionDefinitions().get(0).getConfigProperties();
          assertThat(conDefProps.size(), is(3));
@@ -973,7 +991,7 @@ public class MergerTestCase
          Merger mf = new Merger();
          Connector merged = mf.mergeConnectorWithCommonIronJacamar(ij, connector);
          //then
-         ConfigProperty expectedConfigProp = new ConfigPropertyImpl(null, 
+         ConfigProperty expectedConfigProp = new ConfigPropertyImpl(null,
                new XsdString("StringAdmin", null, "config-property-name"),
                new XsdString("java.lang.String", null, "config-property-type"),
                new XsdString("OVERRIDEXML", null, "config-property-value"), null);
@@ -1026,22 +1044,33 @@ public class MergerTestCase
          Merger mf = new Merger();
          Connector merged = mf.mergeConnectorWithCommonIronJacamar(ij, connector);
          //then
-         ConfigProperty expectedConfigProp = new ConfigPropertyImpl(null, 
+         ConfigProperty expectedConfigProp = new ConfigPropertyImpl(null,
                new XsdString("StringAdmin", null, "config-property-name"),
                new XsdString("java.lang.String", null, "config-property-type"),
                new XsdString("OVERRIDEXML", null, "config-property-value"), null);
-         ConfigProperty expectedConfigProp2 = new ConfigPropertyImpl(null, 
+         ConfigProperty expectedConfigProp2 = new ConfigPropertyImpl(null,
                new XsdString("StringAdmin2", null, "config-property-name"),
                new XsdString("java.lang.String", null, "config-property-type"),
                new XsdString("OVERRIDEXML", null, "config-property-value"), null);
+         ConfigProperty expectedConfigPropDefault = new ConfigPropertyImpl(null,
+               new XsdString("StringAdmin", null, "config-property-name"),
+               new XsdString("java.lang.String", null, "config-property-type"),
+               new XsdString("default", null, "config-property-value"), null);
+         ConfigProperty expectedConfigProp2Default = new ConfigPropertyImpl(null,
+               new XsdString("StringAdmin2", null, "config-property-name"),
+               new XsdString("java.lang.String", null, "config-property-type"),
+               new XsdString("default", null, "config-property-value"), null);
          assertThat(merged, notNullValue());
          assertThat(connector.getResourceadapter().getConfigProperties().size(), is(1));
-         assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getAdminObjects().size(), is(1));
+         assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getAdminObjects().size(), is(2));
          assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getAdminObjects().get(0)
             .getConfigProperties().size(), is(2));
          assertThat(
             (List<ConfigProperty>) ((ResourceAdapter1516) merged.getResourceadapter()).getAdminObjects().get(0)
-               .getConfigProperties(), hasItems(expectedConfigProp, expectedConfigProp2));
+               .getConfigProperties(), hasItems(expectedConfigProp, expectedConfigProp2Default));
+         assertThat(
+            (List<ConfigProperty>) ((ResourceAdapter1516) merged.getResourceadapter()).getAdminObjects().get(1)
+               .getConfigProperties(), hasItems(expectedConfigPropDefault, expectedConfigProp2));
       }
       finally
       {
@@ -1083,7 +1112,7 @@ public class MergerTestCase
          Merger mf = new Merger();
          Connector merged = mf.mergeConnectorWithCommonIronJacamar(ij, connector);
          //then
-         ConfigProperty expectedConfigProp = new ConfigPropertyImpl(null, 
+         ConfigProperty expectedConfigProp = new ConfigPropertyImpl(null,
                new XsdString("StringAdmin", null, "config-property-name"),
                new XsdString("java.lang.String", null, "config-property-type"),
                new XsdString("default", null, "config-property-value"), null);
@@ -1136,7 +1165,7 @@ public class MergerTestCase
          Merger mf = new Merger();
          Connector merged = mf.mergeConnectorWithCommonIronJacamar(ij, connector);
          //then
-         ConfigProperty expectedConfigProp = new ConfigPropertyImpl(null, 
+         ConfigProperty expectedConfigProp = new ConfigPropertyImpl(null,
                new XsdString("StringAdmin", null, "config-property-name"),
                new XsdString("java.lang.String", null, "config-property-type"),
                new XsdString("default", null, "config-property-value"), null);
