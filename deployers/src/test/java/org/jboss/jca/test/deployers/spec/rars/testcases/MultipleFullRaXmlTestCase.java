@@ -39,7 +39,11 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 
 /**
  * Test cases for deploying resource adapter archives (.RAR) using -ra.xml files
@@ -80,7 +84,7 @@ public class MultipleFullRaXmlTestCase
    public static Descriptor createDescriptor() throws Exception
    {
       ClassLoader cl = Thread.currentThread().getContextClassLoader();
-      InputStreamDescriptor isd = new InputStreamDescriptor("multiple-full-ra.xml", 
+      InputStreamDescriptor isd = new InputStreamDescriptor("multiple-full-ra.xml",
                                                             cl.getResourceAsStream("multiple-full-ra.xml"));
       return isd;
    }
@@ -92,11 +96,19 @@ public class MultipleFullRaXmlTestCase
    @Resource(mappedName = "java:/eis/MultipleConnectionFactory1")
    private MultipleConnectionFactory1 connectionFactory1;
 
+   @Resource(mappedName = "java:/eis/MultipleConnectionFactory1b")
+   private MultipleConnectionFactory1 connectionFactory1b;
+
+
    @Resource(mappedName = "java:/eis/MultipleConnectionFactory2")
    private MultipleConnectionFactory2 connectionFactory2;
 
    @Resource(mappedName = "java:/eis/MultipleAdminObject1")
    private MultipleAdminObject1 adminObject1;
+
+   @Resource(mappedName = "java:/eis/MultipleAdminObject1b")
+   private MultipleAdminObject1 adminObject1b;
+
 
    @Resource(mappedName = "java:/eis/MultipleAdminObject2")
    private MultipleAdminObject2 adminObject2;
@@ -113,8 +125,27 @@ public class MultipleFullRaXmlTestCase
    public void testBasic() throws Throwable
    {
       assertNotNull(connectionFactory1);
+      assertNotNull(connectionFactory1b);
+      assertThat(connectionFactory1.getMcf().getName(), equalTo("A1"));
+      assertThat(connectionFactory1b.getMcf().getName(), equalTo("A2"));
+      assertThat(connectionFactory1.getMcf().getSecond(), equalTo("value"));
+      assertThat(connectionFactory1b.getMcf().getSecond(), is(nullValue()));
+      assertThat(connectionFactory1.getMcf().getThird(), equalTo("myValue"));
+      assertThat(connectionFactory1b.getMcf().getThird(), equalTo("default"));
+
       assertNotNull(connectionFactory2);
+      assertThat(connectionFactory2.getMcf().getName(), equalTo("B"));
       assertNotNull(adminObject1);
+      assertNotNull(adminObject1b);
       assertNotNull(adminObject2);
+      assertThat(adminObject1.getName(), equalTo("C1"));
+      assertThat(adminObject1b.getName(), equalTo("C2"));
+      assertThat(adminObject1.getSecond(), equalTo("value"));
+      assertThat(adminObject1b.getSecond(), is(nullValue()));
+      assertThat(adminObject1.getThird(), equalTo("myValue"));
+      assertThat(adminObject1b.getThird(), equalTo("default"));
+
+      assertThat(adminObject2.getName(), equalTo("D"));
+
    }
 }

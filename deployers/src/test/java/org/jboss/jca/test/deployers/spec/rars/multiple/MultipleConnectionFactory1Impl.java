@@ -25,7 +25,6 @@ import java.util.logging.Logger;
 
 import javax.naming.NamingException;
 import javax.naming.Reference;
-
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionManager;
 
@@ -70,7 +69,7 @@ public class MultipleConnectionFactory1Impl implements MultipleConnectionFactory
       this.connectionManager = cxManager;
    }
 
-   /** 
+   /**
     * Get connection from factory
     *
     * @return MultipleConnection1 instance
@@ -108,5 +107,15 @@ public class MultipleConnectionFactory1Impl implements MultipleConnectionFactory
       this.reference = reference;
    }
 
+   /**
+    * Get the mcf.
+    *
+    * @return the mcf.
+    */
+   @Override
+   public MultipleManagedConnectionFactory1 getMcf()
+   {
+      return mcf;
+   }
 
 }

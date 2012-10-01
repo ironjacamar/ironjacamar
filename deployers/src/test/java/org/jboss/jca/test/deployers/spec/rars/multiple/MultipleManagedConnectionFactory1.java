@@ -24,7 +24,6 @@ package org.jboss.jca.test.deployers.spec.rars.multiple;
 import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.Set;
-
 import java.util.logging.Logger;
 
 import javax.resource.ResourceException;
@@ -34,7 +33,6 @@ import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.ResourceAdapterAssociation;
-
 import javax.security.auth.Subject;
 
 /**
@@ -60,6 +58,12 @@ public class MultipleManagedConnectionFactory1 implements ManagedConnectionFacto
    /** Name */
    private String name;
 
+   /** Second */
+   private String second;
+
+   /** Third */
+   private String third;
+
    /**
     * Default constructor
     */
@@ -68,7 +72,7 @@ public class MultipleManagedConnectionFactory1 implements ManagedConnectionFacto
 
    }
 
-   /** 
+   /**
     * Set name
     * @param name The value
     */
@@ -77,7 +81,7 @@ public class MultipleManagedConnectionFactory1 implements ManagedConnectionFacto
       this.name = name;
    }
 
-   /** 
+   /**
     * Get name
     * @return The value
     */
@@ -87,7 +91,7 @@ public class MultipleManagedConnectionFactory1 implements ManagedConnectionFacto
    }
 
    /**
-    * Creates a Connection Factory instance. 
+    * Creates a Connection Factory instance.
     *
     * @param cxManager ConnectionManager to be associated with created EIS connection factory instance
     * @return EIS-specific Connection Factory instance or javax.resource.cci.ConnectionFactory instance
@@ -100,7 +104,7 @@ public class MultipleManagedConnectionFactory1 implements ManagedConnectionFacto
    }
 
    /**
-    * Creates a Connection Factory instance. 
+    * Creates a Connection Factory instance.
     *
     * @return EIS-specific Connection Factory instance or javax.resource.cci.ConnectionFactory instance
     * @throws ResourceException Generic exception
@@ -116,7 +120,7 @@ public class MultipleManagedConnectionFactory1 implements ManagedConnectionFacto
     * @param subject Caller's security information
     * @param cxRequestInfo Additional resource adapter specific connection request information
     * @throws ResourceException generic exception
-    * @return ManagedConnection instance 
+    * @return ManagedConnection instance
     */
    public ManagedConnection createManagedConnection(Subject subject,
          ConnectionRequestInfo cxRequestInfo) throws ResourceException
@@ -126,13 +130,13 @@ public class MultipleManagedConnectionFactory1 implements ManagedConnectionFacto
    }
 
    /**
-    * Returns a matched connection from the candidate set of connections. 
+    * Returns a matched connection from the candidate set of connections.
     *
     * @param connectionSet Candidate connection set
     * @param subject Caller's security information
     * @param cxRequestInfo Additional resource adapter specific connection request information
     * @throws ResourceException generic exception
-    * @return ManagedConnection if resource adapter finds an acceptable match otherwise null 
+    * @return ManagedConnection if resource adapter finds an acceptable match otherwise null
     */
    public ManagedConnection matchManagedConnections(Set connectionSet,
          Subject subject, ConnectionRequestInfo cxRequestInfo) throws ResourceException
@@ -198,7 +202,7 @@ public class MultipleManagedConnectionFactory1 implements ManagedConnectionFacto
       this.ra = ra;
    }
 
-   /** 
+   /**
     * Returns a hash code value for the object.
     * @return A hash code value for this object.
     */
@@ -213,7 +217,7 @@ public class MultipleManagedConnectionFactory1 implements ManagedConnectionFacto
       return result;
    }
 
-   /** 
+   /**
     * Indicates whether some other object is equal to this one.
     * @param other The reference object with which to compare.
     * @return true if this object is the same as the obj argument, false otherwise.
@@ -228,7 +232,7 @@ public class MultipleManagedConnectionFactory1 implements ManagedConnectionFacto
       if (!(other instanceof MultipleManagedConnectionFactory1))
          return false;
       MultipleManagedConnectionFactory1 obj = (MultipleManagedConnectionFactory1)other;
-      boolean result = true; 
+      boolean result = true;
       if (result)
       {
          if (name == null)
@@ -239,5 +243,44 @@ public class MultipleManagedConnectionFactory1 implements ManagedConnectionFacto
       return result;
    }
 
+   /**
+    * Get the second.
+    *
+    * @return the second.
+    */
+   public String getSecond()
+   {
+      return second;
+   }
+
+   /**
+    * Set the second.
+    *
+    * @param second The second to set.
+    */
+   public void setSecond(String second)
+   {
+      this.second = second;
+   }
+
+   /**
+    * Get the third.
+    *
+    * @return the third.
+    */
+   public String getThird()
+   {
+      return third;
+   }
+
+   /**
+    * Set the third.
+    *
+    * @param third The third to set.
+    */
+   public void setThird(String third)
+   {
+      this.third = third;
+   }
 
 }

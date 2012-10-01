@@ -49,7 +49,17 @@
                <config-property-type>java.lang.String</config-property-type>
                <config-property-value></config-property-value>
             </config-property>
-
+            <config-property>
+               <config-property-name>Second</config-property-name>
+               <config-property-type>java.lang.String</config-property-type>
+               <config-property-value></config-property-value>
+            </config-property>
+            <config-property>
+               <config-property-name>Third</config-property-name>
+               <config-property-type>java.lang.String</config-property-type>
+               <config-property-value>default</config-property-value>
+            </config-property>
+            
             <connectionfactory-interface>org.jboss.jca.test.deployers.spec.rars.multiple.MultipleConnectionFactory1</connectionfactory-interface>
             <connectionfactory-impl-class>org.jboss.jca.test.deployers.spec.rars.multiple.MultipleConnectionFactory1Impl</connectionfactory-impl-class>
             <connection-interface>org.jboss.jca.test.deployers.spec.rars.multiple.MultipleConnection1</connection-interface>
@@ -79,7 +89,17 @@
             <config-property-type>java.lang.String</config-property-type>
             <config-property-value></config-property-value>
          </config-property>
-
+         <config-property>
+            <config-property-name>Second</config-property-name>
+            <config-property-type>java.lang.String</config-property-type>
+            <config-property-value></config-property-value>
+         </config-property>
+         <config-property>
+               <config-property-name>Third</config-property-name>
+               <config-property-type>java.lang.String</config-property-type>
+               <config-property-value>default</config-property-value>
+         </config-property>
+         
       </adminobject>
       <adminobject>
          <adminobject-interface>org.jboss.jca.test.deployers.spec.rars.multiple.MultipleAdminObject2</adminobject-interface>
