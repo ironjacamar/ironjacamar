@@ -33,12 +33,14 @@ import javax.resource.ResourceException;
  */
 public interface MultipleConnectionFactory1 extends Serializable, Referenceable
 {
-   /** 
+   /**
     * Get connection from factory
     *
     * @return MultipleConnection1 instance
     * @exception ResourceException Thrown if a connection can't be obtained
     */
    public MultipleConnection1 getConnection() throws ResourceException;
+
+   public MultipleManagedConnectionFactory1 getMcf();
 
 }

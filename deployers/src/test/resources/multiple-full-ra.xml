@@ -11,7 +11,14 @@
       <connection-definition class-name="org.jboss.jca.test.deployers.spec.rars.multiple.MultipleManagedConnectionFactory1" 
                              enabled="true" jndi-name="java:/eis/MultipleConnectionFactory1"
                              pool-name="MultipleConnectionFactory1">
-        <config-property name="Name">A</config-property>
+        <config-property name="Name">A1</config-property>
+        <config-property name="Second">value</config-property>
+        <config-property name="Third">myValue</config-property>
+      </connection-definition>
+      <connection-definition class-name="org.jboss.jca.test.deployers.spec.rars.multiple.MultipleManagedConnectionFactory1" 
+                             enabled="true" jndi-name="java:/eis/MultipleConnectionFactory1b"
+                             pool-name="MultipleConnectionFactory1b">
+        <config-property name="Name">A2</config-property>
       </connection-definition>
       
       <connection-definition class-name="org.jboss.jca.test.deployers.spec.rars.multiple.MultipleManagedConnectionFactory2" 
@@ -25,11 +32,17 @@
     <admin-objects>
       <admin-object class-name="org.jboss.jca.test.deployers.spec.rars.multiple.MultipleAdminObject1Impl" 
                     jndi-name="java:/eis/MultipleAdminObject1">
-        <config-property name="Name">C</config-property>
+        <config-property name="Name">C1</config-property>
+        <config-property name="Second">value</config-property>
+        <config-property name="Third">myValue</config-property>
+      </admin-object>
+      <admin-object class-name="org.jboss.jca.test.deployers.spec.rars.multiple.MultipleAdminObject1Impl" 
+                    jndi-name="java:/eis/MultipleAdminObject1b">
+        <config-property name="Name">C2</config-property>
       </admin-object>
       <admin-object class-name="org.jboss.jca.test.deployers.spec.rars.multiple.MultipleAdminObject2Impl" 
                     jndi-name="java:/eis/MultipleAdminObject2">
-        <config-property name="Name">D</config-property>
+       <config-property name="Name">D</config-property>
       </admin-object>
     </admin-objects>
     

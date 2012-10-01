@@ -31,5 +31,6 @@
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/embedded/shrinkwrap-descriptors-api-base.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/embedded/shrinkwrap-descriptors-impl-base.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/embedded/shrinkwrap-descriptors-spi.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-embedded"/>
 	<classpathentry kind="output" path="eclipse-target/classes"/>
 </classpath>

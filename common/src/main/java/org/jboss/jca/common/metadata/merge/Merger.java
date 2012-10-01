@@ -145,6 +145,15 @@ public class Merger
     * if null {@link DefaultConnectionDefinitionMatcher} is used
    * @return The merged {@link Connector}
    */
+   /**
+    * FIXME Comment this
+    *
+    * @param ij
+    * @param conn
+    * @param adminMatcher
+    * @param connDefMatcher
+    * @return
+    */
    public Connector mergeConnectorWithCommonIronJacamar(CommonIronJacamar ij, Connector conn,
       ExtensionMatcher<AdminObject, CommonAdminObject> adminMatcher,
       ExtensionMatcher<ConnectionDefinition, CommonConnDef> connDefMatcher)
@@ -178,24 +187,11 @@ public class Merger
             List<AdminObject> newAdminObjects = new ArrayList<AdminObject>(ra1516.getAdminObjects().size());
             for (AdminObject adminObj : ra1516.getAdminObjects())
             {
-               AdminObject newAdminObj = (AdminObject) adminObj.copy();
-               if (ij.getAdminObjects() != null)
-               {
-                  for (CommonAdminObject commonAdminObj : ij.getAdminObjects())
 
-                  {
-                     if (adminMatcher.match(adminObj, commonAdminObj))
-                     {
-                        newAdminObj = mergeAdminObject(commonAdminObj, newAdminObj);
-                     }
-                     newAdminObjects.add(newAdminObj);
-                     newAdminObj = (AdminObject) adminObj.copy();
-                  }
-               }
-               else
-               {
-                  newAdminObjects.add(newAdminObj);
-               }
+
+               AdminObject newAdminObj = adminObj;
+
+               newAdminObjects.add(newAdminObj);
 
             }
             ((ResourceAdapter1516Impl) ra1516).forceAdminObjectsContent(newAdminObjects);
@@ -208,32 +204,10 @@ public class Merger
                .getOutboundResourceadapter().getConnectionDefinitions().size());
             for (ConnectionDefinition conDef : ra1516.getOutboundResourceadapter().getConnectionDefinitions())
             {
-               ConnectionDefinition newConDef = (ConnectionDefinition) conDef.copy();
-               if (ij.getConnectionDefinitions() != null)
-               {
-                  if (ij.getConnectionDefinitions().size() == 1 && ij.getConnectionDefinitions().get(0).isEnabled())
-                  {
-                     newConDef = mergeConDef(ij.getConnectionDefinitions().get(0), newConDef);
-                     newConDefs.add(newConDef);
-                  }
-                  else
-                  {
-                     for (CommonConnDef commonConDef : ij.getConnectionDefinitions())
-                     {
-                        if (connDefMatcher.match(conDef, commonConDef))
-                        {
-                           newConDef = mergeConDef(commonConDef, newConDef);
-                        }
-                        newConDefs.add(newConDef);
-                        newConDef = (ConnectionDefinition) conDef.copy();
-                     }
-                  }
-               }
-               else
-               {
-                  newConDefs.add(newConDef);
-               }
 
+               ConnectionDefinition newConDef = conDef;
+
+               newConDefs.add(newConDef);
 
             }
             ((OutboundResourceAdapterImpl) ra1516.getOutboundResourceadapter())

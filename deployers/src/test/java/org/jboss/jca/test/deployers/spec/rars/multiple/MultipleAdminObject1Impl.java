@@ -25,7 +25,6 @@ import java.io.Serializable;
 
 import javax.naming.NamingException;
 import javax.naming.Reference;
-
 import javax.resource.Referenceable;
 import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.ResourceAdapterAssociation;
@@ -50,6 +49,12 @@ public class MultipleAdminObject1Impl implements MultipleAdminObject1,
    /** Name */
    private String name;
 
+   /** Second **/
+   private String second;
+
+   /** Third **/
+   private String third;
+
    /**
     * Default constructor
     */
@@ -58,7 +63,7 @@ public class MultipleAdminObject1Impl implements MultipleAdminObject1,
 
    }
 
-   /** 
+   /**
     * Set name
     * @param name The value
     */
@@ -67,7 +72,7 @@ public class MultipleAdminObject1Impl implements MultipleAdminObject1,
       this.name = name;
    }
 
-   /** 
+   /**
     * Get name
     * @return The value
     */
@@ -119,7 +124,7 @@ public class MultipleAdminObject1Impl implements MultipleAdminObject1,
       this.reference = reference;
    }
 
-   /** 
+   /**
     * Returns a hash code value for the object.
     * @return A hash code value for this object.
     */
@@ -134,7 +139,7 @@ public class MultipleAdminObject1Impl implements MultipleAdminObject1,
       return result;
    }
 
-   /** 
+   /**
     * Indicates whether some other object is equal to this one.
     * @param other The reference object with which to compare.
     * @return true if this object is the same as the obj argument, false otherwise.
@@ -148,8 +153,8 @@ public class MultipleAdminObject1Impl implements MultipleAdminObject1,
          return true;
       if (!(other instanceof MultipleAdminObject1Impl))
          return false;
-      MultipleAdminObject1Impl obj = (MultipleAdminObject1Impl)other;
-      boolean result = true; 
+      MultipleAdminObject1 obj = (MultipleAdminObject1)other;
+      boolean result = true;
       if (result)
       {
          if (name == null)
@@ -160,5 +165,48 @@ public class MultipleAdminObject1Impl implements MultipleAdminObject1,
       return result;
    }
 
+   /**
+    * Get the value.
+    *
+    * @return the value.
+    */
+   @Override
+   public String getSecond()
+   {
+      return second;
+   }
+
+   /**
+    * Set the value.
+    *
+    * @param value The value to set.
+    */
+   @Override
+   public void setSecond(String value)
+   {
+      this.second = value;
+   }
+
+   /**
+    * Get the third.
+    *
+    * @return the third.
+    */
+   @Override
+   public String getThird()
+   {
+      return third;
+   }
+
+   /**
+    * Set the third.
+    *
+    * @param third The third to set.
+    */
+   @Override
+   public void setThird(String third)
+   {
+      this.third = third;
+   }
 
 }

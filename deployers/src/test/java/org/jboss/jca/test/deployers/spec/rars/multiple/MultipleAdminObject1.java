@@ -33,17 +33,42 @@ import javax.resource.Referenceable;
 public interface MultipleAdminObject1 extends Referenceable, Serializable
 {
 
-   /** 
+   /**
     * Set name
     * @param name The value
     */
    public void setName(String name);
 
-   /** 
+   /**
     * Get name
     * @return The value
     */
    public String getName();
 
+   /**
+    * Set second value
+    * @param value The value
+    */
+   public void setSecond(String value);
+
+   /**
+    * Get second value
+    * @return The value
+    */
+   public String getSecond();
+
+   /**
+    * Set the third.
+    *
+    * @param third The third to set.
+    */
+   public void setThird(String third);
+
+   /**
+    * Get the third.
+    *
+    * @return the third.
+    */
+   public String getThird();
 
 }
