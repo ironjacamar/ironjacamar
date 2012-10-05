@@ -68,13 +68,13 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
    /** Whether debug is enabled */
    private boolean debug;
-   
+
    /** Whether trace is enabled */
    private boolean trace;
-   
+
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
-   
+
    /** The managed connection factory */
    private ManagedConnectionFactory mcf;
 
@@ -93,7 +93,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    /** The pool */
    private Pool pool;
 
-   /** 
+   /**
     * Copy of the maximum size from the pooling parameters.
     * Dynamic changes to this value are not compatible with
     * the semaphore which cannot change be dynamically changed.
@@ -107,14 +107,14 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    private Semaphore permits;
 
    /** The map of connection listeners which has a permit */
-   private ConcurrentMap<ConnectionListener, ConnectionListener> clPermits =
+   private final ConcurrentMap<ConnectionListener, ConnectionListener> clPermits =
       new ConcurrentHashMap<ConnectionListener, ConnectionListener>();
 
    /** The checked out connections */
-   private ArrayList<ConnectionListener> checkedOut = new ArrayList<ConnectionListener>();
+   private final ArrayList<ConnectionListener> checkedOut = new ArrayList<ConnectionListener>();
 
    /** Whether the pool has been shutdown */
-   private AtomicBoolean shutdown = new AtomicBoolean(false);
+   private final AtomicBoolean shutdown = new AtomicBoolean(false);
 
    /** Statistics */
    private ManagedConnectionPoolStatisticsImpl statistics;
@@ -209,12 +209,14 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          //Register removal support
          IdleRemover.getInstance().registerPool(this, poolConfiguration.getIdleTimeoutMinutes() * 1000L * 60);
       }
-      
+
       if (poolConfiguration.isBackgroundValidation() && poolConfiguration.getBackgroundValidationMillis() > 0)
       {
-         log.debug("Registering for background validation at interval " + 
-                   poolConfiguration.getBackgroundValidationMillis());
-         
+
+         if (debug)
+            log.debug("Registering for background validation at interval " +
+                      poolConfiguration.getBackgroundValidationMillis());
+
          //Register validation
          ConnectionValidator.getInstance().registerPool(this, poolConfiguration.getBackgroundValidationMillis());
       }
@@ -322,7 +324,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                      cl = null;
                   }
 
-                  // We made it here, something went wrong and we should validate 
+                  // We made it here, something went wrong and we should validate
                   // if we should continue attempting to acquire a connection
                   if (poolConfiguration.isUseFastFail())
                   {
@@ -331,7 +333,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                                "acquire connection from pool and a new connection will be created immeadiately");
                      break;
                   }
-               
+
                }
             }
             while (cls.size() > 0);
@@ -341,6 +343,11 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             {
                // No, the pool was empty, so we have to make a new one.
                cl = createConnectionEventListener(subject, cri);
+
+               if ((poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) &&
+                   pool instanceof PrefillPool &&
+                   poolConfiguration.getMinSize() > 0)
+                  PoolFiller.fillPool(this);
 
                synchronized (cls)
                {
@@ -817,9 +824,9 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
     * @return True if connections should be removed; otherwise false
     */
    private boolean shouldRemove()
-   {      
+   {
       boolean remove = true;
-      
+
       if (poolConfiguration.isStrictMin())
       {
          // Add 1 to min-pool-size since it is strict
@@ -828,10 +835,10 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          if (trace)
             log.trace("StrictMin is active. Current connection will be removed is " + remove);
       }
-      
+
       return remove;
    }
-   
+
    /**
     * {@inheritDoc}
     */
