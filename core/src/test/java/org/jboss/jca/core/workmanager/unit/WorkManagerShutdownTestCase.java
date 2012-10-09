@@ -22,9 +22,9 @@
 
 package org.jboss.jca.core.workmanager.unit;
 
+import org.jboss.jca.arquillian.embedded.Inject;
 import org.jboss.jca.core.api.workmanager.WorkManager;
 import org.jboss.jca.core.api.workmanager.WorkManagerStatistics;
-import org.jboss.jca.embedded.arquillian.Inject;
 
 import java.util.concurrent.CountDownLatch;
 

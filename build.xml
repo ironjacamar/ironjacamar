@@ -331,6 +331,7 @@
 
   <target name="jars" depends="resolve,jars-base" unless="as">
     <ant dir="embedded" inheritRefs="true" target="jars"/>
+    <ant dir="arquillian" inheritRefs="true" target="jars"/>
     <ant dir="web" inheritRefs="true" target="jars"/>
     <ant dir="sjc" inheritRefs="true" target="jars"/>
     <ant dir="codegenerator" inheritRefs="true" target="jars"/>
@@ -352,6 +353,7 @@
 
   <target name="docs" depends="jars,docs-base" unless="as">
     <ant dir="embedded" inheritRefs="true" target="docs"/>
+    <ant dir="arquillian" inheritRefs="true" target="docs"/>
     <ant dir="web" inheritRefs="true" target="docs"/>
     <ant dir="sjc" inheritRefs="true" target="docs"/>
     <ant dir="codegenerator" inheritRefs="true" target="docs"/>
@@ -381,6 +383,7 @@
     <ant dir="common" inheritRefs="true" target="prepare-test"/>
     <ant dir="core" inheritRefs="true" target="prepare-test"/>
     <ant dir="embedded" inheritRefs="true" target="prepare-test"/>
+    <ant dir="arquillian" inheritRefs="true" target="prepare-test"/>
     <ant dir="deployers" inheritRefs="true" target="prepare-test"/>
     <ant dir="validator" inheritRefs="true" target="prepare-test"/>
     <ant dir="codegenerator" inheritRefs="true" target="prepare-test"/>
@@ -396,6 +399,7 @@
     <ant dir="common" inheritRefs="true" target="test"/>
     <ant dir="core" inheritRefs="true" target="test"/>
     <ant dir="embedded" inheritRefs="true" target="test"/>
+    <ant dir="arquillian" inheritRefs="true" target="test"/>
     <ant dir="deployers" inheritRefs="true" target="test"/>
     <ant dir="validator" inheritRefs="true" target="test"/>
     <ant dir="adapters" inheritRefs="true" target="test"/>
@@ -439,6 +443,7 @@
 
   <target name="artifacts" depends="resolve,artifacts-base" unless="as">
     <ant dir="embedded" inheritRefs="true" target="artifacts"/>
+    <ant dir="arquillian" inheritRefs="true" target="artifacts"/>
     <ant dir="codegenerator" inheritRefs="true" target="artifacts"/>
     <ant dir="as" inheritRefs="true" target="artifacts"/>
     <ant dir="eis" inheritRefs="true" target="artifacts"/>
@@ -606,8 +611,8 @@
       <class location="${target.dir}/${name}-deployers-common.jar" />
       <class location="${target.dir}/${name}-deployers-fungal.jar" />
       <class location="${target.dir}/${name}-embedded.jar" />
-      <class location="${target.dir}/${name}-embedded-arquillian.jar" />
-      <class location="${target.dir}/${name}-embedded-arquillian-byteman.jar" />
+      <class location="${target.dir}/${name}-arquillian-embedded.jar" />
+      <class location="${target.dir}/${name}-arquillian-embedded-byteman.jar" />
       <class location="${target.dir}/${name}-sjc.jar" />
       <class location="${target.dir}/${name}-spec-api.jar" />
       <class location="${target.dir}/${name}-validator.jar" />
@@ -662,8 +667,8 @@
       <class location="${target.dir}/${name}-deployers-common.jar" />
       <class location="${target.dir}/${name}-deployers-fungal.jar" />
       <class location="${target.dir}/${name}-embedded.jar" />
-      <class location="${target.dir}/${name}-embedded-arquillian.jar" />
-      <class location="${target.dir}/${name}-embedded-arquillian-byteman.jar" />
+      <class location="${target.dir}/${name}-arquillian-embedded.jar" />
+      <class location="${target.dir}/${name}-arquillian-embedded-byteman.jar" />
       <class location="${target.dir}/${name}-sjc.jar" />
       <class location="${target.dir}/${name}-spec-api.jar" />
       <class location="${target.dir}/${name}-validator.jar" />
@@ -873,6 +878,47 @@
     </jacoco-coverage>
 
     <jacoco-coverage destfile="${reports.dir}/jacoco/jacoco.exec">
+      <junit dir="arquillian/src/test"
+             printsummary="${junit.printsummary}"
+             haltonerror="${junit.haltonerror}"
+             haltonfailure="${junit.haltonfailure}"
+             fork="yes"
+             timeout="${junit.timeout}">
+      
+        <jvmarg line="${junit.jvm.options}"/>
+        <sysproperty key="test.dir" value="${test.dir}"/>
+        <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
+        <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
+        <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
+        <sysproperty key="log4j.defaultInitOverride" value="true"/>
+
+        <classpath>
+          <fileset dir="${build.dir}/instrumented" includes="*.jar" />
+          <pathelement location="${build.dir}/arquillian/test"/>
+          <fileset dir="${lib.dir}/common" includes="*.jar" />
+          <fileset dir="${lib.dir}/embedded" includes="*.jar" />
+          <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
+          <fileset dir="${lib.dir}/byteman" includes="*.jar" />
+          <fileset dir="${lib.dir}/jetty" includes="*.jar" />
+          <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
+          <fileset dir="${lib.dir}/sjc" includes="*.jar" />
+          <fileset dir="${lib.dir}/test" includes="*.jar" />
+          <fileset dir="${lib.dir}/tools" includes="*.jar" />
+          <fileset dir="${java.home}/../lib/" includes="tools.jar" />
+        </classpath>
+        <classpath refid="jacoco.lib.path.id" />
+        
+        <formatter type="xml"/>
+        
+        <batchtest todir="${reports.dir}/jacoco/tests">
+          <fileset dir="${build.dir}/arquillian/test">
+            <include name="**/*TestCase.class"/>
+          </fileset>
+        </batchtest>
+      </junit>
+    </jacoco-coverage>
+
+    <jacoco-coverage destfile="${reports.dir}/jacoco/jacoco.exec">
       <junit dir="validator/src/test"
              printsummary="${junit.printsummary}"
              haltonerror="${junit.haltonerror}"
@@ -1010,6 +1056,9 @@
             <include name="**/*.java" />
           </fileset>
           <fileset dir="adapters/src/main/java">
+            <include name="**/*.java" />
+          </fileset>
+          <fileset dir="arquillian/src/main/java">
             <include name="**/*.java" />
           </fileset>
           <fileset dir="codegenerator/src/main/java">
@@ -1289,7 +1338,7 @@ VERSION=${version}
 
   <target name="nexus" depends="clean,artifacts,nexus-base" unless="as">
     <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" 
-                  conf="${name}-as,${name}-codegenerator,${name}-deployers-fungal,${name}-embedded,${name}-embedded-arquillian,${name}-embedded-arquillian-byteman,${name}-spec-api,${name}-test-eis,${name}-validator-ant,${name}-validator-cli,jdbc-local,jdbc-xa"
+                  conf="${name}-as,${name}-codegenerator,${name}-deployers-fungal,${name}-embedded,${name}-arquillian-embedded,${name}-arquillian-embedded-byteman,${name}-spec-api,${name}-test-eis,${name}-validator-ant,${name}-validator-cli,jdbc-local,jdbc-xa"
                   sync="true"/>
 
     <!-- ironjacamar-as -->
@@ -1376,38 +1425,38 @@ mvn install:install-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depc
     <deploy-file file="deploy.sh" artifact="${name}-embedded" extension="jar"/>
     <install-file file="install.sh" artifact="${name}-embedded" extension="jar"/>
 
-    <!-- ironjacamar-embedded-arquillian -->
-    <delete file="${target.dir}/${name}-embedded-arquillian.xml"/>
-    <ivy:makepom artifactName="${name}-embedded-arquillian" 
-                 conf="${name}-embedded-arquillian"
+    <!-- ironjacamar-arquillian-embedded -->
+    <delete file="${target.dir}/${name}-arquillian-embedded.xml"/>
+    <ivy:makepom artifactName="${name}-arquillian-embedded" 
+                 conf="${name}-arquillian-embedded"
                  ivyfile="${basedir}/ivy.xml" 
-                 pomfile="${target.dir}/${name}-embedded-arquillian.xml"
+                 pomfile="${target.dir}/${name}-arquillian-embedded.xml"
                  headerFile="${tools.dir}/mvn/HEADER"
                  templatefile="${tools.dir}/mvn/pom.template"
                  printIvyInfo="false">
-      <mapping conf="${name}-embedded-arquillian" scope="runtime"/>
+      <mapping conf="${name}-arquillian-embedded" scope="runtime"/>
       <dependency artifact="${name}-embedded" scope="runtime"/>
     </ivy:makepom>
 
-    <deploy-file file="deploy.sh" artifact="${name}-embedded-arquillian" extension="jar"/>
-    <install-file file="install.sh" artifact="${name}-embedded-arquillian" extension="jar"/>
+    <deploy-file file="deploy.sh" artifact="${name}-arquillian-embedded" extension="jar"/>
+    <install-file file="install.sh" artifact="${name}-arquillian-embedded" extension="jar"/>
 
-    <!-- ironjacamar-embedded-arquillian-byteman -->
-    <delete file="${target.dir}/${name}-embedded-arquillian-byteman.xml"/>
-    <ivy:makepom artifactName="${name}-embedded-arquillian-byteman" 
-                 conf="${name}-embedded-arquillian-byteman"
+    <!-- ironjacamar-arquillian-embedded-byteman -->
+    <delete file="${target.dir}/${name}-arquillian-embedded-byteman.xml"/>
+    <ivy:makepom artifactName="${name}-arquillian-embedded-byteman" 
+                 conf="${name}-arquillian-embedded-byteman"
                  ivyfile="${basedir}/ivy.xml" 
-                 pomfile="${target.dir}/${name}-embedded-arquillian-byteman.xml"
+                 pomfile="${target.dir}/${name}-arquillian-embedded-byteman.xml"
                  headerFile="${tools.dir}/mvn/HEADER"
                  templatefile="${tools.dir}/mvn/pom.template"
                  printIvyInfo="false">
-      <mapping conf="${name}-embedded-arquillian-byteman" scope="runtime"/>
+      <mapping conf="${name}-arquillian-embedded-byteman" scope="runtime"/>
       <dependency artifact="${name}-embedded" scope="runtime"/>
-      <dependency artifact="${name}-embedded-arquillian" scope="runtime"/>
+      <dependency artifact="${name}-arquillian-embedded" scope="runtime"/>
     </ivy:makepom>
 
-    <deploy-file file="deploy.sh" artifact="${name}-embedded-arquillian-byteman" extension="jar"/>
-    <install-file file="install.sh" artifact="${name}-embedded-arquillian-byteman" extension="jar"/>
+    <deploy-file file="deploy.sh" artifact="${name}-arquillian-embedded-byteman" extension="jar"/>
+    <install-file file="install.sh" artifact="${name}-arquillian-embedded-byteman" extension="jar"/>
 
     <!-- ironjacamar-test-eis -->
     <delete file="${target.dir}/${name}-test-eis.xml"/>

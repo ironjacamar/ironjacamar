@@ -22,12 +22,12 @@
 
 package org.jboss.jca.core.workmanager.unit;
 
+import org.jboss.jca.arquillian.embedded.Configuration;
+import org.jboss.jca.arquillian.embedded.Inject;
 import org.jboss.jca.core.api.workmanager.WorkManager;
 import org.jboss.jca.core.spi.security.Callback;
 import org.jboss.jca.core.workmanager.rars.dwm.WorkConnection;
 import org.jboss.jca.core.workmanager.rars.dwm.WorkConnectionFactory;
-import org.jboss.jca.embedded.arquillian.Configuration;
-import org.jboss.jca.embedded.arquillian.Inject;
 import org.jboss.jca.embedded.dsl.InputStreamDescriptor;
 
 import java.security.Principal;

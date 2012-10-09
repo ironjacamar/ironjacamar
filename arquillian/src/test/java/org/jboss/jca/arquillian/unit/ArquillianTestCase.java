@@ -20,57 +20,54 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.embedded.unit;
+package org.jboss.jca.arquillian.unit;
 
-import org.jboss.jca.embedded.arquillian.Configuration;
-import org.jboss.jca.embedded.dsl.InputStreamDescriptor;
-import org.jboss.jca.embedded.rars.simple.TestConnection;
-import org.jboss.jca.embedded.rars.simple.TestConnectionFactory;
+import org.jboss.jca.arquillian.embedded.Configuration;
+import org.jboss.jca.arquillian.rars.simple.TestConnection;
+import org.jboss.jca.arquillian.rars.simple.TestConnectionFactory;
 
 import java.util.UUID;
 
 import javax.annotation.Resource;
-import javax.resource.ResourceException;
 
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.extension.byteman.api.BMRule;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
-import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 /**
- * Unit test for Byteman integration
+ * Unit test for Arquillian integration
  * 
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 @RunWith(Arquillian.class)
-@Configuration(autoActivate = false)
-public class BytemanBMTestCase
+@Configuration(autoActivate = true)
+public class ArquillianTestCase
 {
    // --------------------------------------------------------------------------------||
    // Class Members ------------------------------------------------------------------||
    // --------------------------------------------------------------------------------||
 
-   private static Logger log = Logger.getLogger(BytemanBMTestCase.class);
+   private static Logger log = Logger.getLogger(ArquillianTestCase.class);
+
+   private static String deploymentName = "ArquillianTest";
 
    /**
     * Define the deployment
     * @return The deployment archive
     */
-   @Deployment(order = 1)
+   @Deployment
    public static ResourceAdapterArchive createDeployment()
    {
       ResourceAdapterArchive raa =
-         ShrinkWrap.create(ResourceAdapterArchive.class, "byteman.rar");
+         ShrinkWrap.create(ResourceAdapterArchive.class, deploymentName + ".rar");
 
       JavaArchive ja = ShrinkWrap.create(JavaArchive.class, UUID.randomUUID().toString() + ".jar");
       ja.addPackage(TestConnection.class.getPackage());
@@ -81,58 +78,26 @@ public class BytemanBMTestCase
       return raa;
    }
 
-   /**
-    * Define the activation
-    * @return The deployment archive
-    */
-   @Deployment(order = 2)
-   public static Descriptor createDescriptor()
-   {
-      ClassLoader cl = BytemanBMTestCase.class.getClassLoader();
-      InputStreamDescriptor isd = new InputStreamDescriptor("byteman-ra.xml", 
-                                                            cl.getResourceAsStream("byteman-ra.xml"));
-      return isd;
-   }
-
    //-------------------------------------------------------------------------------------||
    // Tests ------------------------------------------------------------------------------||
    //-------------------------------------------------------------------------------------||
 
-   @Resource(mappedName = "java:/eis/BytemanTest")
+   @Resource(mappedName = "java:/eis/ArquillianTest")
    private TestConnectionFactory connectionFactory;
-
+   
    /**
-    * Byteman
+    * Basic
     * @exception Throwable Thrown if case of an error
     */
    @Test
-   @BMRule(name = "Throw exception on allocateConnection",
-           targetClass = "org.jboss.jca.core.connectionmanager.AbstractConnectionManager",
-           targetMethod = "allocateConnection",
-           action = "throw new javax.resource.ResourceException()")
-   public void testByteman() throws Throwable
+   public void testBasic() throws Throwable
    {
       assertNotNull(connectionFactory);
 
-      TestConnection c = null;
-      try
-      {
-         c = connectionFactory.getConnection();
-         fail("Got a connection");
-      }
-      catch (ResourceException re)
-      {
-         // Ok
-      }
-      catch (Throwable t)
-      {
-         fail(t.getMessage());
-         throw t;
-      }
-      finally
-      {
-         if (c != null)
-            c.close();
-      }
+      TestConnection c = connectionFactory.getConnection();
+      assertNotNull(c);
+
+      c.callMe();
+      c.close();
    }
 }

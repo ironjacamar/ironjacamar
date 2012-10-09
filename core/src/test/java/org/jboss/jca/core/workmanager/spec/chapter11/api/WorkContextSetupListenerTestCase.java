@@ -22,10 +22,10 @@
 
 package org.jboss.jca.core.workmanager.spec.chapter11.api;
 
+import org.jboss.jca.arquillian.embedded.Inject;
 import org.jboss.jca.core.workmanager.spec.chapter11.common.ContextWorkAdapter;
 import org.jboss.jca.core.workmanager.spec.chapter11.common.TransactionContextCustom;
 import org.jboss.jca.core.workmanager.spec.chapter11.common.UniversalProviderWork;
-import org.jboss.jca.embedded.arquillian.Inject;
 
 import javax.resource.spi.work.WorkContextErrorCodes;
 import javax.resource.spi.work.WorkManager;

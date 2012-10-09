@@ -21,10 +21,10 @@
  */
 package org.jboss.jca.core.workmanager.unit;
 
+import org.jboss.jca.arquillian.embedded.Inject;
 import org.jboss.jca.core.api.workmanager.DistributedWorkManager;
 import org.jboss.jca.core.workmanager.rars.dwm.WorkConnection;
 import org.jboss.jca.core.workmanager.rars.dwm.WorkConnectionFactory;
-import org.jboss.jca.embedded.arquillian.Inject;
 
 import javax.annotation.Resource;
 import javax.resource.spi.BootstrapContext;

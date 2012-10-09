@@ -21,11 +21,10 @@
  */
 package org.jboss.jca.core.workmanager.spec.chapter10.api;
 
+import org.jboss.jca.arquillian.embedded.Inject;
 import org.jboss.jca.core.api.workmanager.WorkManager;
 import org.jboss.jca.core.workmanager.spec.chapter10.common.LongRunningWork;
 import org.jboss.jca.core.workmanager.spec.chapter10.common.PriorityWork;
-import org.jboss.jca.embedded.arquillian.Inject;
-
 
 import java.util.ArrayList;
 import java.util.List;

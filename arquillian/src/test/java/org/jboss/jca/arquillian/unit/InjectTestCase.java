@@ -1,6 +1,6 @@
-/*
+/*/*
  * JBoss, Home of Professional Open Source.
- * Copyright 2012, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2011, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -20,11 +20,13 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.embedded.unit;
+package org.jboss.jca.arquillian.unit;
 
-import org.jboss.jca.embedded.arquillian.Configuration;
-import org.jboss.jca.embedded.rars.simple.TestConnection;
-import org.jboss.jca.embedded.rars.simple.TestConnectionFactory;
+import org.jboss.jca.arquillian.embedded.Configuration;
+import org.jboss.jca.arquillian.embedded.Inject;
+import org.jboss.jca.arquillian.rars.simple.TestConnection;
+import org.jboss.jca.arquillian.rars.simple.TestConnectionFactory;
+import org.jboss.jca.core.spi.mdr.MetadataRepository;
 
 import java.util.UUID;
 
@@ -41,23 +43,22 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
- * Unit test for Arquillian integration
+ * Unit test for Arquillian integration and injecting
  * 
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 @RunWith(Arquillian.class)
 @Configuration(autoActivate = true)
-public class ArquillianTestCase
+public class InjectTestCase
 {
    // --------------------------------------------------------------------------------||
    // Class Members ------------------------------------------------------------------||
    // --------------------------------------------------------------------------------||
 
-   private static Logger log = Logger.getLogger(ArquillianTestCase.class);
-
-   private static String deploymentName = "ArquillianTest";
+   private static Logger log = Logger.getLogger(InjectTestCase.class);
 
    /**
     * Define the deployment
@@ -67,7 +68,7 @@ public class ArquillianTestCase
    public static ResourceAdapterArchive createDeployment()
    {
       ResourceAdapterArchive raa =
-         ShrinkWrap.create(ResourceAdapterArchive.class, deploymentName + ".rar");
+         ShrinkWrap.create(ResourceAdapterArchive.class, "ArquillianTest.rar");
 
       JavaArchive ja = ShrinkWrap.create(JavaArchive.class, UUID.randomUUID().toString() + ".jar");
       ja.addPackage(TestConnection.class.getPackage());
@@ -84,7 +85,10 @@ public class ArquillianTestCase
 
    @Resource(mappedName = "java:/eis/ArquillianTest")
    private TestConnectionFactory connectionFactory;
-   
+ 
+   @Inject(name = "MDR")
+   private MetadataRepository mdr;
+  
    /**
     * Basic
     * @exception Throwable Thrown if case of an error
@@ -93,11 +97,8 @@ public class ArquillianTestCase
    public void testBasic() throws Throwable
    {
       assertNotNull(connectionFactory);
-
-      TestConnection c = connectionFactory.getConnection();
-      assertNotNull(c);
-
-      c.callMe();
-      c.close();
+      assertNotNull(mdr);
+      assertNotNull(mdr.getResourceAdapters());
+      assertTrue(mdr.getResourceAdapters().size() == 1);
    }
 }

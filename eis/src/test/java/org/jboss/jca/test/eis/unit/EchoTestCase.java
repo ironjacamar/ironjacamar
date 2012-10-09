@@ -22,7 +22,7 @@
 
 package org.jboss.jca.test.eis.unit;
 
-import org.jboss.jca.embedded.arquillian.Configuration;
+import org.jboss.jca.arquillian.embedded.Configuration;
 import org.jboss.jca.test.eis.rars.echo.EchoConnection;
 import org.jboss.jca.test.eis.rars.echo.EchoConnectionFactory;
 

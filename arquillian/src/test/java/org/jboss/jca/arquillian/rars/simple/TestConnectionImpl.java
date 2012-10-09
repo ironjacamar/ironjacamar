@@ -19,33 +19,51 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.embedded.arquillian;
+package org.jboss.jca.arquillian.rars.simple;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import java.util.logging.Logger;
 
 /**
- * The <code>Configuration</code> annotation allows for configuration of the
- * IronJacamar/Arquillian integration
- * <p/>
- * Example:
- * <blockquote>
- *  <pre>
- *   &#64;Configuration(autoActivate = false)
- *  </pre>
- * </blockquote>
+ * TestConnectionImpl
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @version $Revision: $
  */
-@Documented
-@Retention(RUNTIME)
-@Target(ElementType.TYPE)
-public @interface Configuration
+public class TestConnectionImpl implements TestConnection
 {
-   /** Should deployments be auto activated if possible */
-   public boolean autoActivate() default true;
+   /** The logger */
+   private static Logger log = Logger.getLogger("TestConnectionImpl");
+
+   /** ManagedConnection */
+   private TestManagedConnection mc;
+
+   /** ManagedConnectionFactory */
+   private TestManagedConnectionFactory mcf;
+
+   /**
+    * Default constructor
+    * @param mc TestManagedConnection
+    * @param mcf TestManagedConnectionFactory
+    */
+   public TestConnectionImpl(TestManagedConnection mc, TestManagedConnectionFactory mcf)
+   {
+      this.mc = mc;
+      this.mcf = mcf;
+   }
+
+   /**
+    * Call me
+    */
+   public void callMe()
+   {
+      mc.callMe();
+   }
+
+   /**
+    * Close
+    */
+   public void close()
+   {
+      mc.closeHandle(this);
+   }
+
 }

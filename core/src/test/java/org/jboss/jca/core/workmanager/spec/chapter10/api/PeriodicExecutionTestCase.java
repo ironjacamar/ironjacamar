@@ -21,8 +21,8 @@
  */
 package org.jboss.jca.core.workmanager.spec.chapter10.api;
 
+import org.jboss.jca.arquillian.embedded.Inject;
 import org.jboss.jca.core.workmanager.spec.chapter10.common.SimpleWork;
-import org.jboss.jca.embedded.arquillian.Inject;
 
 import java.util.Timer;
 import java.util.TimerTask;

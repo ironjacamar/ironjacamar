@@ -24,10 +24,10 @@ package org.jboss.jca.core.workmanager.unit;
 
 import org.jboss.jca.core.api.workmanager.WorkManager;
 import org.jboss.jca.core.api.workmanager.WorkManagerStatistics;
+import org.jboss.jca.arquillian.embedded.Inject;
 import org.jboss.jca.core.workmanager.spec.chapter10.common.CallbackCount;
 import org.jboss.jca.core.workmanager.spec.chapter10.common.MyWorkAdapter;
 import org.jboss.jca.core.workmanager.spec.chapter10.common.SimpleWork;
-import org.jboss.jca.embedded.arquillian.Inject;
 
 import javax.resource.spi.work.Work;
 import javax.resource.spi.work.WorkRejectedException;

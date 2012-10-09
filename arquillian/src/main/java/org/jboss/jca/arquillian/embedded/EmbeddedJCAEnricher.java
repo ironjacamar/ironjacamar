@@ -19,7 +19,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.embedded.arquillian;
+package org.jboss.jca.arquillian.embedded;
 
 import org.jboss.jca.embedded.Embedded;
 
@@ -74,7 +74,7 @@ class EmbeddedJCAEnricher implements TestEnricher
    {
       List<Field> annotatedFields =
          SecurityActions.getFieldsWithAnnotation(testCase.getClass(),
-                                                 org.jboss.jca.embedded.arquillian.Inject.class);
+                                                 org.jboss.jca.arquillian.embedded.Inject.class);
 
       if (trace)
          log.tracef("Fields: %s", annotatedFields);
@@ -86,11 +86,11 @@ class EmbeddedJCAEnricher implements TestEnricher
             if (trace)
                log.tracef("Injecting field: %s", field);
 
-            org.jboss.jca.embedded.arquillian.Inject annotation = null;
+            org.jboss.jca.arquillian.embedded.Inject annotation = null;
             try
             {
                field.setAccessible(true);
-               annotation = field.getAnnotation(org.jboss.jca.embedded.arquillian.Inject.class);
+               annotation = field.getAnnotation(org.jboss.jca.arquillian.embedded.Inject.class);
                field.set(testCase, resolveResource(field, annotation));
             }
             catch (IllegalAccessException iae)
@@ -102,7 +102,7 @@ class EmbeddedJCAEnricher implements TestEnricher
    }
 
    @SuppressWarnings("unchecked")
-   private Object resolveResource(Field field, org.jboss.jca.embedded.arquillian.Inject annotation)
+   private Object resolveResource(Field field, org.jboss.jca.arquillian.embedded.Inject annotation)
    {
       try
       {

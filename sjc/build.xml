@@ -189,7 +189,8 @@
         <exclude name="${name}-as.jar"/>
         <exclude name="${name}-codegenerator.jar"/>
         <exclude name="${name}-eclipse.jar"/>
-        <exclude name="${name}-embedded-arquillian.jar"/>
+        <exclude name="${name}-arquillian-embedded.jar"/>
+        <exclude name="${name}-arquillian-embedded-byteman.jar"/>
         <exclude name="${name}-embedded.jar"/>
         <exclude name="${name}-sjc.jar"/>
         <exclude name="${name}-test-eis.jar"/>
@@ -205,13 +206,13 @@
 
     <copy todir="${target.dir}/sjc/lib/embedded/arquillian">
       <fileset dir="${target.dir}">
-        <include name="${name}-embedded-arquillian.jar"/>
+        <include name="${name}-arquillian-embedded.jar"/>
       </fileset>
     </copy>
 
     <copy todir="${target.dir}/sjc/lib/embedded/arquillian/byteman">
       <fileset dir="${target.dir}">
-        <include name="${name}-embedded-arquillian-byteman.jar"/>
+        <include name="${name}-arquillian-embedded-byteman.jar"/>
       </fileset>
     </copy>
 

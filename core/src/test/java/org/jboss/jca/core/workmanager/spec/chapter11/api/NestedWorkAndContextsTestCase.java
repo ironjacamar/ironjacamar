@@ -22,12 +22,12 @@
 
 package org.jboss.jca.core.workmanager.spec.chapter11.api;
 
+import org.jboss.jca.arquillian.embedded.Inject;
 import org.jboss.jca.core.workmanager.spec.chapter11.common.ContextWorkAdapter;
 import org.jboss.jca.core.workmanager.spec.chapter11.common.NestProviderWork;
 import org.jboss.jca.core.workmanager.spec.chapter11.common.SecurityContextCustom;
 import org.jboss.jca.core.workmanager.spec.chapter11.common.TransactionContextCustom;
 import org.jboss.jca.core.workmanager.spec.chapter11.common.UnsupportedContext;
-import org.jboss.jca.embedded.arquillian.Inject;
 
 import java.util.concurrent.CyclicBarrier;
 

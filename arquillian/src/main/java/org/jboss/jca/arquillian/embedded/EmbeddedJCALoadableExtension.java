@@ -19,30 +19,33 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.embedded.arquillian;
+package org.jboss.jca.arquillian.embedded;
 
-import org.jboss.arquillian.container.spi.ConfigurationException;
-import org.jboss.arquillian.container.spi.client.container.ContainerConfiguration;
+import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
+import org.jboss.arquillian.core.spi.LoadableExtension;
+import org.jboss.arquillian.test.spi.TestEnricher;
 
 /**
- * {@link ContainerConfiguration} implementation specific to the EmbeddedJCA container
- * 
+ * Arquillian {@link LoadableExtension} adaptor for Embedded JCA
+ *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-class EmbeddedJCAContainerConfiguration implements ContainerConfiguration
+class EmbeddedJCALoadableExtension implements LoadableExtension
 {
    /**
     * Constructor
     */
-   EmbeddedJCAContainerConfiguration()
+   EmbeddedJCALoadableExtension()
    {
    }
 
    /**
     * {@inheritDoc}
-    *
     */
-   public void validate() throws ConfigurationException
+   public void register(ExtensionBuilder builder)
    {
+      builder.service(DeployableContainer.class, EmbeddedJCAContainer.class);
+      builder.service(TestEnricher.class, EmbeddedJCAEnricher.class);
+      builder.observer(EmbeddedJCAObserver.class);
    }
 }

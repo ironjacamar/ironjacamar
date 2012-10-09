@@ -21,11 +21,10 @@
  */
 package org.jboss.jca.core.workmanager.spec.chapter10.api;
 
+import org.jboss.jca.arquillian.embedded.Inject;
 import org.jboss.jca.core.workmanager.spec.chapter10.common.LongRunningWork;
 import org.jboss.jca.core.workmanager.spec.chapter10.common.ShortRunningWork;
 import org.jboss.jca.core.workmanager.spec.chapter10.common.SimpleWork;
-
-import org.jboss.jca.embedded.arquillian.Inject;
 import org.jboss.jca.embedded.dsl.InputStreamDescriptor;
 
 import java.util.concurrent.CountDownLatch;

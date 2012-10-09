@@ -22,9 +22,9 @@
 
 package org.jboss.jca.test.deployers.spec.rars.testcases;
 
+import org.jboss.jca.arquillian.embedded.Inject;
 import org.jboss.jca.common.metadata.ra.ra10.Connector10Impl;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
-import org.jboss.jca.embedded.arquillian.Inject;
 import org.jboss.jca.test.deployers.spec.DeploymentTestBase;
 import org.jboss.jca.test.deployers.spec.rars.BaseCciConnectionFactory;
 import org.jboss.jca.test.deployers.spec.rars.ra10dtdout.TestManagedConnectionFactory;

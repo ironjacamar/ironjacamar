@@ -21,6 +21,18 @@
     </dependency>
     <dependency>
       <groupId>org.jboss.ironjacamar</groupId>
+      <artifactId>ironjacamar-arquillian-embedded</artifactId>
+      <version>${version.org.jboss.ironjacamar}</version>
+      <scope>test</scope>
+    </dependency>    
+    <dependency>
+      <groupId>org.jboss.ironjacamar</groupId>
+      <artifactId>ironjacamar-arquillian-embedded-byteman</artifactId>
+      <version>${version.org.jboss.ironjacamar}</version>
+      <scope>test</scope>
+    </dependency>    
+    <dependency>
+      <groupId>org.jboss.ironjacamar</groupId>
       <artifactId>ironjacamar-common-api</artifactId>
       <version>${version.org.jboss.ironjacamar}</version>
       <scope>test</scope>
@@ -65,18 +77,6 @@
     <dependency>
       <groupId>org.jboss.ironjacamar</groupId>
       <artifactId>ironjacamar-deployers-fungal</artifactId>
-      <version>${version.org.jboss.ironjacamar}</version>
-      <scope>test</scope>
-    </dependency>    
-    <dependency>
-      <groupId>org.jboss.ironjacamar</groupId>
-      <artifactId>ironjacamar-embedded-arquillian</artifactId>
-      <version>${version.org.jboss.ironjacamar}</version>
-      <scope>test</scope>
-    </dependency>    
-    <dependency>
-      <groupId>org.jboss.ironjacamar</groupId>
-      <artifactId>ironjacamar-embedded-arquillian-byteman</artifactId>
       <version>${version.org.jboss.ironjacamar}</version>
       <scope>test</scope>
     </dependency>    

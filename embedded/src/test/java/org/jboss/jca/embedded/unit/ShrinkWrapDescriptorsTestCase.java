@@ -22,7 +22,7 @@
 
 package org.jboss.jca.embedded.unit;
 
-import org.jboss.jca.embedded.arquillian.Configuration;
+import org.jboss.jca.arquillian.embedded.Configuration;
 import org.jboss.jca.embedded.dsl.resourceadapters11.api.ConnectionDefinitionsType;
 import org.jboss.jca.embedded.dsl.resourceadapters11.api.ResourceAdapterType;
 import org.jboss.jca.embedded.dsl.resourceadapters11.api.ResourceAdaptersDescriptor;

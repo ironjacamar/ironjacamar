@@ -22,8 +22,8 @@
 
 package org.jboss.jca.core.workmanager.unit;
 
+import org.jboss.jca.arquillian.embedded.Configuration;
 import org.jboss.jca.core.workmanager.rars.dwm.WorkConnectionFactory;
-import org.jboss.jca.embedded.arquillian.Configuration;
 import org.jboss.jca.embedded.dsl.InputStreamDescriptor;
 
 import java.util.UUID;

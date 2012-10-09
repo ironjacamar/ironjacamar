@@ -33,7 +33,7 @@
     </description>
   </info>
 
-  <configurations defaultconfmapping="common->default;sjc->default;embedded->default;arquillian->default;byteman->default;jetty->default;test->default;tools->default;ironjacamar-as->default;ironjacamar-codegenerator->default;ironjacamar-common-api->default;ironjacamar-common-impl->default;ironjacamar-common-spi->default;ironjacamar-core-api->default;ironjacamar-core-impl->default;ironjacamar-depchain->default;ironjacamar-deployers-common->default;ironjacamar-deployers-fungal->default;ironjacamar-embedded->default;ironjacamar-embedded-arquillian->default;ironjacamar-embedded-arquillian-byteman->default;ironjacamar.jdbc->default;ironjacamar-spec-api->default;ironjacamar-test-eis->default;ironjacamar-validator->default;ironjacamar-validator-ant->default;ironjacamar-validator-cli->default;ironjacamar-validator-maven->default;jdbc-local->default;jdbc-xa->default;hornetq->default;as->default">
+  <configurations defaultconfmapping="common->default;sjc->default;embedded->default;arquillian->default;byteman->default;jetty->default;test->default;tools->default;ironjacamar-as->default;ironjacamar-codegenerator->default;ironjacamar-common-api->default;ironjacamar-common-impl->default;ironjacamar-common-spi->default;ironjacamar-core-api->default;ironjacamar-core-impl->default;ironjacamar-depchain->default;ironjacamar-deployers-common->default;ironjacamar-deployers-fungal->default;ironjacamar-embedded->default;ironjacamar-arquillian-embedded->default;ironjacamar-arquillian-embedded-byteman->default;ironjacamar.jdbc->default;ironjacamar-spec-api->default;ironjacamar-test-eis->default;ironjacamar-validator->default;ironjacamar-validator-ant->default;ironjacamar-validator-cli->default;ironjacamar-validator-maven->default;jdbc-local->default;jdbc-xa->default;hornetq->default;as->default">
     <conf name="arquillian" transitive="false"/>
     <conf name="byteman" transitive="false"/>
     <conf name="common" transitive="false"/>
@@ -45,6 +45,8 @@
     <conf name="tools" transitive="false"/>
     <conf name="as" transitive="false"/>
 
+    <conf name="ironjacamar-arquillian-embedded" transitive="false"/>
+    <conf name="ironjacamar-arquillian-embedded-byteman" transitive="false"/>
     <conf name="ironjacamar-as" transitive="false"/>
     <conf name="ironjacamar-codegenerator" transitive="false"/>
     <conf name="ironjacamar-common-api" transitive="false"/>
@@ -56,8 +58,6 @@
     <conf name="ironjacamar-deployers-common" transitive="false"/>
     <conf name="ironjacamar-deployers-fungal" transitive="false"/>
     <conf name="ironjacamar-embedded" transitive="false"/>
-    <conf name="ironjacamar-embedded-arquillian" transitive="false"/>
-    <conf name="ironjacamar-embedded-arquillian-byteman" transitive="false"/>
     <conf name="ironjacamar-jdbc" transitive="false"/>
     <conf name="ironjacamar-spec-api" transitive="false"/>
     <conf name="ironjacamar-test-eis" transitive="false"/>
@@ -70,6 +70,8 @@
   </configurations>
 
   <publications>
+    <artifact name="ironjacamar-arquillian-embedded" type="jar"/>
+    <artifact name="ironjacamar-arquillian-embedded-byteman" type="jar"/>
     <artifact name="ironjacamar-as" type="jar"/>
     <artifact name="ironjacamar-codegenerator" type="jar"/>
     <artifact name="ironjacamar-common-api" type="jar"/>
@@ -80,8 +82,6 @@
     <artifact name="ironjacamar-depchain" type="pom"/>
     <artifact name="ironjacamar-deployers-common" type="jar"/>
     <artifact name="ironjacamar-deployers-fungal" type="jar"/>
-    <artifact name="ironjacamar-embedded-arquillian" type="jar"/>
-    <artifact name="ironjacamar-embedded-arquillian-byteman" type="jar"/>
     <artifact name="ironjacamar-embedded" type="jar"/>
     <artifact name="ironjacamar-jdbc" type="jar"/>
     <artifact name="ironjacamar-spec-api" type="jar"/>
@@ -146,32 +146,32 @@
     <dependency org="org.jboss" name="jboss-common-core" rev="${version.jboss.common}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.jboss" name="jboss-transaction-spi" rev="${version.jboss.ts.spi}" conf="common,ironjacamar-core-api,ironjacamar-core-impl,ironjacamar-depchain,as"/>
     <dependency org="org.jboss.apiviz" name="apiviz" rev="${version.apiviz}" conf="tools,as"/>
-    <dependency org="org.jboss.arquillian.config" name="arquillian-config-api" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-embedded-arquillian"/>
-    <dependency org="org.jboss.arquillian.config" name="arquillian-config-impl-base" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-embedded-arquillian"/>
-    <dependency org="org.jboss.arquillian.config" name="arquillian-config-spi" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-embedded-arquillian"/>
-    <dependency org="org.jboss.arquillian.container" name="arquillian-container-impl-base" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-embedded-arquillian"/>
-    <dependency org="org.jboss.arquillian.container" name="arquillian-container-spi" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-embedded-arquillian"/>
-    <dependency org="org.jboss.arquillian.container" name="arquillian-container-test-api" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-embedded-arquillian"/>
-    <dependency org="org.jboss.arquillian.container" name="arquillian-container-test-impl-base" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-embedded-arquillian"/>
-    <dependency org="org.jboss.arquillian.container" name="arquillian-container-test-spi" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-embedded-arquillian"/>
-    <dependency org="org.jboss.arquillian.core" name="arquillian-core-api" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-embedded-arquillian"/>
-    <dependency org="org.jboss.arquillian.core" name="arquillian-core-impl-base" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-embedded-arquillian"/>
-    <dependency org="org.jboss.arquillian.core" name="arquillian-core-spi" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-embedded-arquillian"/>
-    <dependency org="org.jboss.arquillian.extension" name="arquillian-extension-byteman" rev="${version.arquillian.byteman}" conf="byteman,ironjacamar-depchain,ironjacamar-embedded-arquillian-byteman"/>
-    <dependency org="org.jboss.arquillian.junit" name="arquillian-junit-container" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-embedded-arquillian"/>
-    <dependency org="org.jboss.arquillian.junit" name="arquillian-junit-core" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-embedded-arquillian"/>
-    <dependency org="org.jboss.arquillian.test" name="arquillian-test-api" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-embedded-arquillian"/>
-    <dependency org="org.jboss.arquillian.test" name="arquillian-test-impl-base" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-embedded-arquillian"/>
-    <dependency org="org.jboss.arquillian.test" name="arquillian-test-spi" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-embedded-arquillian"/>
-    <dependency org="org.jboss.arquillian.testenricher" name="arquillian-testenricher-resource" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-embedded-arquillian"/>
-    <dependency org="org.jboss.byteman" name="byteman" rev="${version.byteman}" conf="byteman,ironjacamar-depchain,ironjacamar-embedded-arquillian-byteman"/>
-    <dependency org="org.jboss.byteman" name="byteman-bmunit" rev="${version.byteman}" conf="byteman,ironjacamar-depchain,ironjacamar-embedded-arquillian-byteman"/>
-    <dependency org="org.jboss.byteman" name="byteman-submit" rev="${version.byteman}" conf="byteman,ironjacamar-depchain,ironjacamar-embedded-arquillian-byteman"/>
+    <dependency org="org.jboss.arquillian.config" name="arquillian-config-api" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-arquillian-embedded"/>
+    <dependency org="org.jboss.arquillian.config" name="arquillian-config-impl-base" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-arquillian-embedded"/>
+    <dependency org="org.jboss.arquillian.config" name="arquillian-config-spi" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-arquillian-embedded"/>
+    <dependency org="org.jboss.arquillian.container" name="arquillian-container-impl-base" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-arquillian-embedded"/>
+    <dependency org="org.jboss.arquillian.container" name="arquillian-container-spi" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-arquillian-embedded"/>
+    <dependency org="org.jboss.arquillian.container" name="arquillian-container-test-api" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-arquillian-embedded"/>
+    <dependency org="org.jboss.arquillian.container" name="arquillian-container-test-impl-base" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-arquillian-embedded"/>
+    <dependency org="org.jboss.arquillian.container" name="arquillian-container-test-spi" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-arquillian-embedded"/>
+    <dependency org="org.jboss.arquillian.core" name="arquillian-core-api" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-arquillian-embedded"/>
+    <dependency org="org.jboss.arquillian.core" name="arquillian-core-impl-base" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-arquillian-embedded"/>
+    <dependency org="org.jboss.arquillian.core" name="arquillian-core-spi" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-arquillian-embedded"/>
+    <dependency org="org.jboss.arquillian.extension" name="arquillian-extension-byteman" rev="${version.arquillian.byteman}" conf="byteman,ironjacamar-depchain,ironjacamar-arquillian-embedded-byteman"/>
+    <dependency org="org.jboss.arquillian.junit" name="arquillian-junit-container" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-arquillian-embedded"/>
+    <dependency org="org.jboss.arquillian.junit" name="arquillian-junit-core" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-arquillian-embedded"/>
+    <dependency org="org.jboss.arquillian.test" name="arquillian-test-api" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-arquillian-embedded"/>
+    <dependency org="org.jboss.arquillian.test" name="arquillian-test-impl-base" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-arquillian-embedded"/>
+    <dependency org="org.jboss.arquillian.test" name="arquillian-test-spi" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-arquillian-embedded"/>
+    <dependency org="org.jboss.arquillian.testenricher" name="arquillian-testenricher-resource" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-arquillian-embedded"/>
+    <dependency org="org.jboss.byteman" name="byteman" rev="${version.byteman}" conf="byteman,ironjacamar-depchain,ironjacamar-arquillian-embedded-byteman"/>
+    <dependency org="org.jboss.byteman" name="byteman-bmunit" rev="${version.byteman}" conf="byteman,ironjacamar-depchain,ironjacamar-arquillian-embedded-byteman"/>
+    <dependency org="org.jboss.byteman" name="byteman-submit" rev="${version.byteman}" conf="byteman,ironjacamar-depchain,ironjacamar-arquillian-embedded-byteman"/>
     <dependency org="org.jboss.jbossts" name="jbossjta" rev="${version.jboss.ts}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.jboss.jbossts" name="jbossjta-integration" rev="${version.jboss.ts}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.jboss.naming" name="jnpserver" rev="${version.jboss.naming}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.jboss.netty" name="netty" rev="${version.jboss.netty}" conf="hornetq"/>
-    <dependency org="org.jboss.shrinkwrap" name="shrinkwrap-api" rev="${version.jboss.shrinkwrap}" conf="embedded,ironjacamar-depchain,ironjacamar-embedded,ironjacamar-embedded-arquillian"/>
+    <dependency org="org.jboss.shrinkwrap" name="shrinkwrap-api" rev="${version.jboss.shrinkwrap}" conf="embedded,ironjacamar-depchain,ironjacamar-embedded,ironjacamar-arquillian-embedded"/>
     <dependency org="org.jboss.shrinkwrap.descriptors" name="shrinkwrap-descriptors-api-base" rev="${version.jboss.shrinkwrap.descriptors}" conf="embedded,ironjacamar-depchain"/>
     <dependency org="org.jboss.shrinkwrap.descriptors" name="shrinkwrap-descriptors-ant" rev="${version.jboss.shrinkwrap.descriptors}" conf="tools"/>
     <dependency org="org.jboss.shrinkwrap.descriptors" name="shrinkwrap-descriptors-impl-base" rev="${version.jboss.shrinkwrap.descriptors}" conf="embedded,ironjacamar-depchain"/>

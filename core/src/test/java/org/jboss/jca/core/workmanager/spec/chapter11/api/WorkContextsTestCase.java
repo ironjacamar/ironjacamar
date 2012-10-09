@@ -22,13 +22,13 @@
 
 package org.jboss.jca.core.workmanager.spec.chapter11.api;
 
+import org.jboss.jca.arquillian.embedded.Inject;
 import org.jboss.jca.core.workmanager.spec.chapter11.common.HintsContextCustom;
 import org.jboss.jca.core.workmanager.spec.chapter11.common.SecurityContextCustom;
 import org.jboss.jca.core.workmanager.spec.chapter11.common.SecurityContextCustom2;
 import org.jboss.jca.core.workmanager.spec.chapter11.common.TransactionContextCustom;
 import org.jboss.jca.core.workmanager.spec.chapter11.common.UniversalProviderWork;
 import org.jboss.jca.core.workmanager.spec.chapter11.common.UnsupportedContext;
-import org.jboss.jca.embedded.arquillian.Inject;
 
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.work.ExecutionContext;

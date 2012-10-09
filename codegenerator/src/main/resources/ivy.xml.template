@@ -16,6 +16,8 @@
 
   <dependencies>
     <dependency org="org.jboss.ironjacamar" name="ironjacamar-spec-api" rev="${version.ironjacamar}" conf="compile"/>
+    <dependency org="org.jboss.ironjacamar" name="ironjacamar-arquillian-embedded" rev="${version.ironjacamar}" conf="test"/>
+    <dependency org="org.jboss.ironjacamar" name="ironjacamar-arquillian-embedded-byteman" rev="${version.ironjacamar}" conf="test"/>
     <dependency org="org.jboss.ironjacamar" name="ironjacamar-common-api" rev="${version.ironjacamar}" conf="test"/>
     <dependency org="org.jboss.ironjacamar" name="ironjacamar-common-impl" rev="${version.ironjacamar}" conf="test"/>
     <dependency org="org.jboss.ironjacamar" name="ironjacamar-common-spi" rev="${version.ironjacamar}" conf="test"/>
@@ -24,8 +26,6 @@
     <dependency org="org.jboss.ironjacamar" name="ironjacamar-depchain" rev="${version.ironjacamar}" conf="test"/>
     <dependency org="org.jboss.ironjacamar" name="ironjacamar-deployers-common" rev="${version.ironjacamar}" conf="test"/>
     <dependency org="org.jboss.ironjacamar" name="ironjacamar-deployers-fungal" rev="${version.ironjacamar}" conf="test"/>
-    <dependency org="org.jboss.ironjacamar" name="ironjacamar-embedded-arquillian" rev="${version.ironjacamar}" conf="test"/>
-    <dependency org="org.jboss.ironjacamar" name="ironjacamar-embedded-arquillian-byteman" rev="${version.ironjacamar}" conf="test"/>
     <dependency org="org.jboss.ironjacamar" name="ironjacamar-embedded" rev="${version.ironjacamar}" conf="test"/>
     <dependency org="org.jboss.ironjacamar" name="ironjacamar-test-eis" rev="${version.ironjacamar}" conf="test"/>
     <dependency org="org.jboss.ironjacamar" name="ironjacamar-validator" rev="${version.ironjacamar}" conf="test"/>

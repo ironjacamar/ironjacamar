@@ -26,7 +26,7 @@ import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.rar.Endpoint;
 import org.jboss.jca.core.spi.rar.MessageListener;
 import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
-import org.jboss.jca.embedded.arquillian.Inject;
+import org.jboss.jca.arquillian.embedded.Inject;
 import org.jboss.jca.test.deployers.spec.rars.ra16inoutijmultianno.Test1AdminObjectInterface;
 import org.jboss.jca.test.deployers.spec.rars.ra16inoutijmultianno.Test2ActivationSpec;
 import org.jboss.jca.test.deployers.spec.rars.ra16inoutijmultianno.Test2Connection;
