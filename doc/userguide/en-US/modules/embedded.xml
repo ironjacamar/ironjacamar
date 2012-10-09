@@ -181,7 +181,7 @@ formatter.PATTERN.pattern=%d{HH:mm:ss,SSS} %-5p [%c{1}] %m%n
             into the IronJacamar Embedded environment using Arquillian.</para>
 
           <programlisting language="java">
-<xi:include parse="text" href="../../../../embedded/src/test/java/org/jboss/jca/embedded/unit/ArquillianTestCase.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../../arquillian/src/test/java/org/jboss/jca/arquillian/unit/ArquillianTestCase.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
           </programlisting>
 
           <para>The class makes use of the <code>org.jboss.jca.embedded.arquillian.Configuration</code> annotation
@@ -224,7 +224,7 @@ formatter.PATTERN.pattern=%d{HH:mm:ss,SSS} %-5p [%c{1}] %m%n
             increase code coverage of your project.</para>
 
           <programlisting language="java">
-<xi:include parse="text" href="../../../../embedded/src/test/java/org/jboss/jca/embedded/unit/BytemanBMTestCase.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../../arquillian/src/test/java/org/jboss/jca/arquillian/unit/BytemanBMTestCase.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
           </programlisting>
 
           <para>
@@ -245,7 +245,7 @@ formatter.PATTERN.pattern=%d{HH:mm:ss,SSS} %-5p [%c{1}] %m%n
             the management console under the <code>Kernel</code> category.</para>
 
           <programlisting language="java">
-<xi:include parse="text" href="../../../../embedded/src/test/java/org/jboss/jca/embedded/unit/InjectTestCase.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+<xi:include parse="text" href="../../../../arquillian/src/test/java/org/jboss/jca/arquillian/unit/InjectTestCase.java" xmlns:xi="http://www.w3.org/2001/XInclude"/>
           </programlisting>
 
         </section>
