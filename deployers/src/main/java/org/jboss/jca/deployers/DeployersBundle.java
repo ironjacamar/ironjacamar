@@ -120,4 +120,36 @@ public interface DeployersBundle
     */
    @Message(id = 20061, value = "Invalid required work context: %s")
    public String invalidRequiredWorkContext(String clz);
+
+   /**
+    * Invalid connection factory interface
+    * @param clz The class name
+    * @return The value
+    */
+   @Message(id = 20062, value = "Invalid connection factory interface: %s")
+   public String invalidConnectionFactoryInterface(String clz);
+
+   /**
+    * Invalid connection factory implementation
+    * @param clz The class name
+    * @return The value
+    */
+   @Message(id = 20063, value = "Invalid connection factory implementation: %s")
+   public String invalidConnectionFactoryImplementation(String clz);
+
+   /**
+    * Invalid connection interface
+    * @param clz The class name
+    * @return The value
+    */
+   @Message(id = 20064, value = "Invalid connection interface: %s")
+   public String invalidConnectionInterface(String clz);
+
+   /**
+    * Invalid connection implementation
+    * @param clz The class name
+    * @return The value
+    */
+   @Message(id = 20065, value = "Invalid connection implementation: %s")
+   public String invalidConnectionImplementation(String clz);
 }

@@ -874,6 +874,26 @@
             <entry><code>EXCEPTION</code></entry>
             <entry>Invalid required work context</entry>
           </row>
+          <row>
+            <entry>20062</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Invalid connection factory interface</entry>
+          </row>
+          <row>
+            <entry>20063</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Invalid connection factory implementation</entry>
+          </row>
+          <row>
+            <entry>20064</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Invalid connection interface</entry>
+          </row>
+          <row>
+            <entry>20065</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Invalid connection implementation</entry>
+          </row>
         </tbody>
       </tgroup>
     </table>

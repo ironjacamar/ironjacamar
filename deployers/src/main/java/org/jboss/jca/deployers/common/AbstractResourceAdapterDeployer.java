@@ -552,6 +552,30 @@ public abstract class AbstractResourceAdapterDeployer
    }
 
    /**
+    * Verify a class definition
+    * @param clz The class name
+    * @param cl The class loader
+    * @return True if found, otherwise false
+    */
+   private boolean verifyClass(String clz, ClassLoader cl)
+   {
+      if (clz != null)
+      {
+         try
+         {
+            Class<?> c = Class.forName(clz, true, cl);
+            return true;
+         }
+         catch (Throwable t)
+         {
+            // Nothing we can do
+         }
+      }
+
+      return false;
+   }
+
+   /**
     * Find the metadata for an admin object
     * @param clz The fully quilified class name for the admin object
     * @param aos The admin object classes
@@ -1273,6 +1297,22 @@ public abstract class AbstractResourceAdapterDeployer
 
                if (activateDeployment && connectionDefinitions != null)
                {
+                  String vClz = ra10.getConnectionFactoryInterface().getValue();
+                  if (!verifyClass(vClz, cl))
+                     throw new DeployException(bundle.invalidConnectionFactoryInterface(vClz));
+                  
+                  vClz = ra10.getConnectionFactoryImplClass().getValue();
+                  if (!verifyClass(vClz, cl))
+                     throw new DeployException(bundle.invalidConnectionFactoryImplementation(vClz));
+                  
+                  vClz = ra10.getConnectionInterface().getValue();
+                  if (!verifyClass(vClz, cl))
+                     throw new DeployException(bundle.invalidConnectionInterface(vClz));
+                  
+                  vClz = ra10.getConnectionImplClass().getValue();
+                  if (!verifyClass(vClz, cl))
+                     throw new DeployException(bundle.invalidConnectionImplementation(vClz));
+
                   for (CommonConnDef connectionDefinition : connectionDefinitions)
                   {
                      log.debugf("Activating: %s", connectionDefinition);
@@ -1666,6 +1706,22 @@ public abstract class AbstractResourceAdapterDeployer
                            if (activateDeployment && connectionDefinitions != null)
                            {
                               log.debugf("ConnectionDefinitions: %s", connectionDefinitions.size());
+
+                              String vClz = cdMeta.getConnectionFactoryInterface().getValue();
+                              if (!verifyClass(vClz, cl))
+                                 throw new DeployException(bundle.invalidConnectionFactoryInterface(vClz));
+                              
+                              vClz = cdMeta.getConnectionFactoryImplClass().getValue();
+                              if (!verifyClass(vClz, cl))
+                                 throw new DeployException(bundle.invalidConnectionFactoryImplementation(vClz));
+                  
+                              vClz = cdMeta.getConnectionInterface().getValue();
+                              if (!verifyClass(vClz, cl))
+                                 throw new DeployException(bundle.invalidConnectionInterface(vClz));
+                              
+                              vClz = cdMeta.getConnectionImplClass().getValue();
+                              if (!verifyClass(vClz, cl))
+                                 throw new DeployException(bundle.invalidConnectionImplementation(vClz));
 
                               for (CommonConnDef connectionDefinition : connectionDefinitions)
                               {
