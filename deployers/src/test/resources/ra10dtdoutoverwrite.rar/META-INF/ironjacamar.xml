@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ironjacamar>
+	<transaction-support>NoTransaction</transaction-support>
+	<connection-definitions>
+		<connection-definition jndi-name="java:/ij-activation2">
+			<pool>
+				<prefill>false</prefill>
+				<use-strict-min>false</use-strict-min>
+			</pool>
+			<config-property name="first">ddd</config-property>
+			<config-property name="second">4</config-property>
+		</connection-definition>
+	</connection-definitions>
+</ironjacamar>

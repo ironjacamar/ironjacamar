@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2012, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,16 +19,21 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.test.deployers.spec.rars.ra10dtdout;
-
-import org.jboss.jca.test.deployers.spec.rars.BaseManagedConnection;
+package org.jboss.jca.deployers.test.rars.inout;
 
 /**
- * TestManagedConnection
- * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
+ * SimpleConnection1
+ *
  * @version $Revision: $
  */
-public class TestManagedConnection extends BaseManagedConnection
+public interface SimpleConnection1
 {
-
+   /**
+    * Call me
+    */
+   public void callMe();
+   /**
+    * Close
+    */
+   public void close();
 }

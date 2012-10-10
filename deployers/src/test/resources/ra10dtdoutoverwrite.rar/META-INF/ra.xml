@@ -20,23 +20,23 @@
         <license-required id="ID012">true</license-required>
     </license>
     <resourceadapter id="ID013">
-        <managedconnectionfactory-class id="ID014">org.jboss.jca.test.deployers.spec.rars.ra10dtdout.TestManagedConnectionFactory</managedconnectionfactory-class>
-        <connectionfactory-interface id="ID015">javax.resource.spi.ManagedConnection</connectionfactory-interface>
-        <connectionfactory-impl-class id="ID016">org.jboss.jca.test.deployers.spec.rars.ra10dtdout.TestManagedConnection</connectionfactory-impl-class>
-        <connection-interface id="ID017">org.jboss.jca.test.deployers.spec.rars.TestConnectionInterface</connection-interface>
-        <connection-impl-class id="ID018">org.jboss.jca.test.deployers.spec.rars.TestConnection</connection-impl-class>
+        <managedconnectionfactory-class id="ID014">org.jboss.jca.deployers.test.rars.inout.SimpleManagedConnectionFactory1</managedconnectionfactory-class>
+        <connectionfactory-interface id="ID015">org.jboss.jca.deployers.test.rars.inout.SimpleConnectionFactory1</connectionfactory-interface>
+        <connectionfactory-impl-class id="ID016">org.jboss.jca.deployers.test.rars.inout.SimpleConnectionFactoryImpl1</connectionfactory-impl-class>
+        <connection-interface id="ID017">org.jboss.jca.deployers.test.rars.inout.SimpleConnection1</connection-interface>
+        <connection-impl-class id="ID018">org.jboss.jca.deployers.test.rars.inout.SimpleConnectionImpl1</connection-impl-class>
         <transaction-support id="ID019">NoTransaction</transaction-support>
         <config-property id="ID020">
             <description id="ID021">something</description>
-            <config-property-name id="ID022">aaa</config-property-name>
+            <config-property-name id="ID022">first</config-property-name>
             <config-property-type id="ID023">java.lang.String</config-property-type>
-            <config-property-value id="ID024">aaa</config-property-value>
+            <config-property-value id="ID024">bbb</config-property-value>
         </config-property>
         <config-property id="ID025">
             <description id="ID026">something</description>
-            <config-property-name id="ID027">bbb</config-property-name>
-            <config-property-type id="ID028">java.lang.Boolean</config-property-type>
-            <config-property-value id="ID029">false</config-property-value>
+            <config-property-name id="ID027">second</config-property-name>
+            <config-property-type id="ID028">java.lang.Byte</config-property-type>
+            <config-property-value id="ID029">5</config-property-value>
         </config-property>
         <authentication-mechanism id="ID030">
             <description id="ID031">something</description>

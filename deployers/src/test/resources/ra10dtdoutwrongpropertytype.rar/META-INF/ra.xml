@@ -22,7 +22,12 @@
 		<connectionfactory-impl-class>org.jboss.jca.deployers.test.rars.inout.SimpleConnectionFactoryImpl</connectionfactory-impl-class>
 		<connection-interface>org.jboss.jca.deployers.test.rars.inout.SimpleConnection</connection-interface>
 		<connection-impl-class>org.jboss.jca.deployers.test.rars.inout.SimpleConnectionImpl</connection-impl-class>
-
+		<config-property id="ID025">
+			<description id="ID026">something</description>
+			<config-property-name id="ID027">second</config-property-name>
+			<config-property-type id="ID028">java.lang.Boolean</config-property-type>
+			<config-property-value id="ID029">true</config-property-value>
+		</config-property>
 		<transaction-support>LocalTransaction</transaction-support>
 		<authentication-mechanism id="amid">
 			<description>authentication-mechanism</description>

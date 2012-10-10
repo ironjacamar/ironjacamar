@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<resource-adapters>
+	<resource-adapter id="ID1">
+		<archive>ra10dtdoutoverwrite.rar</archive>
+		<transaction-support>NoTransaction</transaction-support>
+		<connection-definitions>
+			<connection-definition jndi-name="java:/ra-activation2">
+				<pool>
+					<prefill>false</prefill>
+					<use-strict-min>false</use-strict-min>
+				</pool>
+				<config-property name="first">fff</config-property>
+				<config-property name="second">3</config-property>
+			</connection-definition>
+		</connection-definitions>
+	</resource-adapter>
+</resource-adapters>

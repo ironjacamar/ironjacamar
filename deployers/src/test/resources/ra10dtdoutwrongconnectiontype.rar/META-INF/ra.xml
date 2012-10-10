@@ -21,19 +21,7 @@
 		<connectionfactory-interface>org.jboss.jca.deployers.test.rars.inout.SimpleConnectionFactory</connectionfactory-interface>
 		<connectionfactory-impl-class>org.jboss.jca.deployers.test.rars.inout.SimpleConnectionFactoryImpl</connectionfactory-impl-class>
 		<connection-interface>org.jboss.jca.deployers.test.rars.inout.SimpleConnection</connection-interface>
-		<connection-impl-class>org.jboss.jca.deployers.test.rars.inout.SimpleConnectionImpl</connection-impl-class>
-
-		<transaction-support>LocalTransaction</transaction-support>
-		<authentication-mechanism id="amid">
-			<description>authentication-mechanism</description>
-			<authentication-mechanism-type>BasicPassword</authentication-mechanism-type>
-			<credential-interface>javax.resource.spi.security.PasswordCredential</credential-interface>
-		</authentication-mechanism>
-		<reauthentication-support>false</reauthentication-support>
-		<security-permission>
-			<description></description>
-			<security-permission-spec>sa</security-permission-spec>
-		</security-permission>
+		<connection-impl-class>org.jboss.jca.deployers.test.rars.inout.SimpleConnectionImpl1</connection-impl-class>
 
 	</resourceadapter>
 </connector>
