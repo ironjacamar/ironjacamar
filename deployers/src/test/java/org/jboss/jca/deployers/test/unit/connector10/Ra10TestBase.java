@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.deployers.test.cases.connector10;
+package org.jboss.jca.deployers.test.unit.connector10;
 
 import org.jboss.jca.arquillian.embedded.Inject;
 import org.jboss.jca.common.metadata.ra.ra10.Connector10Impl;
