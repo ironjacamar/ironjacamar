@@ -195,6 +195,42 @@ public class BadDeploymentsTestCase extends Ra10TestBase
 
    /**
     * 
+    * testCFWithoutDefConstructor
+    * 
+    * @throws Exception  in case of error
+    */
+   @Test(expected = Exception.class)
+   public void testCFWithoutDefConstructor() throws Exception
+   {
+      testArchive("ra10dtdoutwrongmcf1");
+   }
+
+   /**
+    * 
+    * testMCFWithoutEqualsMethod
+    * 
+    * @throws Exception  in case of error
+    */
+   @Test(expected = Exception.class)
+   public void testMCFWithoutEqualsMethod() throws Exception
+   {
+      testArchive("ra10dtdoutwrongmcf2");
+   }
+
+   /**
+    * 
+    * testMCFWithoutHashCodeMethod
+    * 
+    * @throws Exception  in case of error
+    */
+   @Test(expected = Exception.class)
+   public void testMCFWithoutHashCodeMethod() throws Exception
+   {
+      testArchive("ra10dtdoutwrongmcf3");
+   }
+
+   /**
+    * 
     * testRaWithWrongConnectionFactoryType
     * 
     * @throws Exception  in case of error

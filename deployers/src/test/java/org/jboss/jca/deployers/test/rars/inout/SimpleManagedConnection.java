@@ -74,6 +74,14 @@ public class SimpleManagedConnection implements ManagedConnection
       this.listeners = Collections.synchronizedList(new ArrayList<ConnectionEventListener>(1));
       this.connection = null;
    }
+   /**
+    * Default constructor
+    * @param mcf mcf
+    */
+   public SimpleManagedConnection()
+   {
+
+   }
 
    /**
     * Creates a new connection handle for the underlying physical connection 
