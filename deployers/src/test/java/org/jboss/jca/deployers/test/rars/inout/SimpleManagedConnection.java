@@ -76,7 +76,6 @@ public class SimpleManagedConnection implements ManagedConnection
    }
    /**
     * Default constructor
-    * @param mcf mcf
     */
    public SimpleManagedConnection()
    {

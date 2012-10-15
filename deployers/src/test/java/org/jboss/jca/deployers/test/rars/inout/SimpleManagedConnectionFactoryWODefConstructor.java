@@ -42,7 +42,10 @@ import javax.security.auth.Subject;
  *
  * @version $Revision: $
  */
-public class SimpleManagedConnectionFactoryWODefConstructor implements ManagedConnectionFactory, ResourceAdapterAssociation
+public class SimpleManagedConnectionFactoryWODefConstructor
+   implements
+      ManagedConnectionFactory,
+      ResourceAdapterAssociation
 {
 
    /** The serial version UID */
@@ -144,8 +147,8 @@ public class SimpleManagedConnectionFactoryWODefConstructor implements ManagedCo
     * @throws ResourceException generic exception
     * @return ManagedConnection instance 
     */
-   public ManagedConnection createManagedConnection(Subject subject,
-         ConnectionRequestInfo cxRequestInfo) throws ResourceException
+   public ManagedConnection createManagedConnection(Subject subject, ConnectionRequestInfo cxRequestInfo)
+      throws ResourceException
    {
       log.finest("createManagedConnection()");
       return new SimpleManagedConnection();
@@ -160,15 +163,15 @@ public class SimpleManagedConnectionFactoryWODefConstructor implements ManagedCo
     * @throws ResourceException generic exception
     * @return ManagedConnection if resource adapter finds an acceptable match otherwise null 
     */
-   public ManagedConnection matchManagedConnections(Set connectionSet,
-         Subject subject, ConnectionRequestInfo cxRequestInfo) throws ResourceException
+   public ManagedConnection matchManagedConnections(Set connectionSet, Subject subject,
+      ConnectionRequestInfo cxRequestInfo) throws ResourceException
    {
       log.finest("matchManagedConnections()");
       ManagedConnection result = null;
       Iterator it = connectionSet.iterator();
       while (result == null && it.hasNext())
       {
-         ManagedConnection mc = (ManagedConnection)it.next();
+         ManagedConnection mc = (ManagedConnection) it.next();
          if (mc instanceof SimpleManagedConnection)
          {
             result = mc;
@@ -257,8 +260,8 @@ public class SimpleManagedConnectionFactoryWODefConstructor implements ManagedCo
          return true;
       if (!(other instanceof SimpleManagedConnectionFactoryWODefConstructor))
          return false;
-      SimpleManagedConnectionFactoryWODefConstructor obj = (SimpleManagedConnectionFactoryWODefConstructor)other;
-      boolean result = true; 
+      SimpleManagedConnectionFactoryWODefConstructor obj = (SimpleManagedConnectionFactoryWODefConstructor) other;
+      boolean result = true;
       if (result)
       {
          if (first == null)
