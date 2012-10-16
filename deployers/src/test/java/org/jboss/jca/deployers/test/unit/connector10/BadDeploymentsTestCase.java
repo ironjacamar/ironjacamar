@@ -236,7 +236,6 @@ public class BadDeploymentsTestCase extends Ra10TestBase
     * @throws Exception  in case of error
     */
    @Test(expected = Exception.class)
-   @Ignore("JBJCA-904")
    public void testRaWithWrongConnectionFactoryType() throws Exception
    {
       testArchive("ra10dtdoutwrongconnectionfactorytype");
@@ -249,7 +248,6 @@ public class BadDeploymentsTestCase extends Ra10TestBase
     * @throws Exception  in case of error
     */
    @Test(expected = Exception.class)
-   @Ignore("JBJCA-904")
    public void testRaWithWrongConnectionFactoryImpl() throws Exception
    {
       testArchive("ra10dtdoutwrongconnectionfactoryimpl");
@@ -262,7 +260,6 @@ public class BadDeploymentsTestCase extends Ra10TestBase
     * @throws Exception  in case of error
     */
    @Test(expected = Exception.class)
-   @Ignore("JBJCA-904")
    public void testRaWithWrongConnectionType() throws Exception
    {
       testArchive("ra10dtdoutwrongconnectiontype");
@@ -275,7 +272,6 @@ public class BadDeploymentsTestCase extends Ra10TestBase
     * @throws Exception  in case of error
     */
    @Test(expected = Exception.class)
-   @Ignore("JBJCA-904")
    public void testRaWithWrongConnectionImpl() throws Exception
    {
       testArchive("ra10dtdoutwrongconnectionimpl");

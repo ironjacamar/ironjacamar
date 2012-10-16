@@ -152,4 +152,22 @@ public interface DeployersBundle
     */
    @Message(id = 20065, value = "Invalid connection implementation: %s")
    public String invalidConnectionImplementation(String clz);
+
+   /**
+    * Connection factory implementation doesn't implement connection factory interface
+    * @param intClz The interface class name
+    * @param implClz The implementation class name
+    * @return The value
+    */
+   @Message(id = 20066, value = "Connection factory implementation (%s) doesn't implement connection factory interface (%s)")
+   public String invalidConnectionFactoryImplementationDueToInterface(String intClz, String implClz);
+
+   /**
+    * Connection implementation doesn't implement connection interface
+    * @param intClz The interface class name
+    * @param implClz The implementation class name
+    * @return The value
+    */
+   @Message(id = 20067, value = "Connection implementation (%s) doesn't implement connection interface (%s)")
+   public String invalidConnectionImplementationDueToInterface(String intClz, String implClz);
 }
