@@ -894,6 +894,16 @@
             <entry><code>EXCEPTION</code></entry>
             <entry>Invalid connection implementation</entry>
           </row>
+          <row>
+            <entry>20066</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Connection factory implementation doesn't implement interface</entry>
+          </row>
+          <row>
+            <entry>20067</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Connection implementation doesn't implement interface</entry>
+          </row>
         </tbody>
       </tgroup>
     </table>

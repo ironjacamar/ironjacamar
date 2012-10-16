@@ -576,6 +576,33 @@ public abstract class AbstractResourceAdapterDeployer
    }
 
    /**
+    * Verify that a class implements a certain interface
+    * @param interfaceClz The interface class name
+    * @param implClz The implementation class name
+    * @param cl The class loader
+    * @return True if correct, otherwise false
+    */
+   private boolean verifyInstance(String interfaceClz, String implClz, ClassLoader cl)
+   {
+      if (interfaceClz != null && implClz != null)
+      {
+         try
+         {
+            Class<?> interfaceDef = Class.forName(interfaceClz, true, cl);
+            Class<?> implDef = Class.forName(implClz, true, cl);
+
+            return interfaceDef.isAssignableFrom(implDef);
+         }
+         catch (Throwable t)
+         {
+            // Nothing we can do
+         }
+      }
+
+      return false;
+   }
+
+   /**
     * Find the metadata for an admin object
     * @param clz The fully quilified class name for the admin object
     * @param aos The admin object classes
@@ -1297,22 +1324,29 @@ public abstract class AbstractResourceAdapterDeployer
 
                if (activateDeployment && connectionDefinitions != null)
                {
-                  String vClz = ra10.getConnectionFactoryInterface().getValue();
-                  if (!verifyClass(vClz, cl))
-                     throw new DeployException(bundle.invalidConnectionFactoryInterface(vClz));
+                  String cfIntClz = ra10.getConnectionFactoryInterface().getValue();
+                  if (!verifyClass(cfIntClz, cl))
+                     throw new DeployException(bundle.invalidConnectionFactoryInterface(cfIntClz));
                   
-                  vClz = ra10.getConnectionFactoryImplClass().getValue();
-                  if (!verifyClass(vClz, cl))
-                     throw new DeployException(bundle.invalidConnectionFactoryImplementation(vClz));
-                  
-                  vClz = ra10.getConnectionInterface().getValue();
-                  if (!verifyClass(vClz, cl))
-                     throw new DeployException(bundle.invalidConnectionInterface(vClz));
-                  
-                  vClz = ra10.getConnectionImplClass().getValue();
-                  if (!verifyClass(vClz, cl))
-                     throw new DeployException(bundle.invalidConnectionImplementation(vClz));
+                  String cfImplClz = ra10.getConnectionFactoryImplClass().getValue();
+                  if (!verifyClass(cfImplClz, cl))
+                     throw new DeployException(bundle.invalidConnectionFactoryImplementation(cfImplClz));
 
+                  if (!verifyInstance(cfIntClz, cfImplClz, cl))
+                     throw new DeployException(bundle.
+                        invalidConnectionFactoryImplementationDueToInterface(cfImplClz, cfIntClz));
+                  
+                  String cIntClz = ra10.getConnectionInterface().getValue();
+                  if (!verifyClass(cIntClz, cl))
+                     throw new DeployException(bundle.invalidConnectionInterface(cIntClz));
+                  
+                  String cImplClz = ra10.getConnectionImplClass().getValue();
+                  if (!verifyClass(cImplClz, cl))
+                     throw new DeployException(bundle.invalidConnectionImplementation(cImplClz));
+
+                  if (!verifyInstance(cIntClz, cImplClz, cl))
+                     throw new DeployException(bundle.invalidConnectionImplementationDueToInterface(cImplClz, cIntClz));
+                  
                   for (CommonConnDef connectionDefinition : connectionDefinitions)
                   {
                      log.debugf("Activating: %s", connectionDefinition);
@@ -1706,22 +1740,31 @@ public abstract class AbstractResourceAdapterDeployer
                            if (activateDeployment && connectionDefinitions != null)
                            {
                               log.debugf("ConnectionDefinitions: %s", connectionDefinitions.size());
-
-                              String vClz = cdMeta.getConnectionFactoryInterface().getValue();
-                              if (!verifyClass(vClz, cl))
-                                 throw new DeployException(bundle.invalidConnectionFactoryInterface(vClz));
                               
-                              vClz = cdMeta.getConnectionFactoryImplClass().getValue();
-                              if (!verifyClass(vClz, cl))
-                                 throw new DeployException(bundle.invalidConnectionFactoryImplementation(vClz));
+                              String cfIntClz = cdMeta.getConnectionFactoryInterface().getValue();
+                              if (!verifyClass(cfIntClz, cl))
+                                 throw new DeployException(bundle.invalidConnectionFactoryInterface(cfIntClz));
                   
-                              vClz = cdMeta.getConnectionInterface().getValue();
-                              if (!verifyClass(vClz, cl))
-                                 throw new DeployException(bundle.invalidConnectionInterface(vClz));
+                              String cfImplClz = cdMeta.getConnectionFactoryImplClass().getValue();
+                              if (!verifyClass(cfImplClz, cl))
+                                 throw new DeployException(bundle.invalidConnectionFactoryImplementation(cfImplClz));
+
+                              if (!verifyInstance(cfIntClz, cfImplClz, cl))
+                                 throw new DeployException(bundle.
+                                    invalidConnectionFactoryImplementationDueToInterface(cfImplClz, cfIntClz));
                               
-                              vClz = cdMeta.getConnectionImplClass().getValue();
-                              if (!verifyClass(vClz, cl))
-                                 throw new DeployException(bundle.invalidConnectionImplementation(vClz));
+                              String cIntClz = cdMeta.getConnectionInterface().getValue();
+                              if (!verifyClass(cIntClz, cl))
+                                 throw new DeployException(bundle.invalidConnectionInterface(cIntClz));
+                              
+                              String cImplClz = cdMeta.getConnectionImplClass().getValue();
+                              if (!verifyClass(cImplClz, cl))
+                                 throw new DeployException(bundle.invalidConnectionImplementation(cImplClz));
+                              
+                              if (!verifyInstance(cIntClz, cImplClz, cl))
+                                 throw new 
+                                    DeployException(bundle.invalidConnectionImplementationDueToInterface(cImplClz,
+                                                                                                         cIntClz));
 
                               for (CommonConnDef connectionDefinition : connectionDefinitions)
                               {
