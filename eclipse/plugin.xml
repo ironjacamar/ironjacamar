@@ -17,6 +17,11 @@
             categoryId="ironjacamar-eclipse.commands.category"
             id="ironjacamar-eclipse.commands.deployCommand">
       </command>
+      <command
+            name="RAGenerateDeploy"
+            categoryId="ironjacamar-eclipse.commands.category"
+            id="ironjacamar-eclipse.commands.raGenerateDeployCommand">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -38,6 +43,15 @@
             </reference>
          </activeWhen>
       </handler>
+      <handler
+            commandId="ironjacamar-eclipse.commands.raGenerateDeployCommand"
+            class="org.jboss.jca.eclipse.command.RAGenerateDeployHandler">
+         <activeWhen>
+            <reference
+                  definitionId="org.jboss.jca.eclipse.IronJacamarProjectNature.definition">
+            </reference>
+         </activeWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
@@ -53,6 +67,12 @@
             sequence="M1+7"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </key>
+      <key
+            commandId="ironjacamar-eclipse.commands.raGenerateDeployCommand"
+            contextId="org.eclipse.ui.contexts.window"
+            sequence="M1+8"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -62,15 +82,20 @@
                label="IronJacamar"
                mnemonic="M"
                id="ironjacamar-eclipse.popup.ironjacamar">
-            <!--command
+            <command
                   commandId="ironjacamar-eclipse.commands.validateCommand"
                   mnemonic="V"
                   id="ironjacamar-eclipse.menus.validateCommand">
-            </command-->
+            </command>
             <command
                   commandId="ironjacamar-eclipse.commands.deployCommand"
                   mnemonic="D"
                   id="ironjacamar-eclipse.menus.deployCommand">
+            </command>
+            <command
+                  commandId="ironjacamar-eclipse.commands.raGenerateDeployCommand"
+                  mnemonic="D"
+                  id="ironjacamar-eclipse.menus.raGenerateDeployCommand">
             </command>
             <visibleWhen
                   checkEnabled="false">
@@ -84,17 +109,23 @@
             locationURI="toolbar:org.eclipse.ui.main.toolbar?after=additions">
          <toolbar
                id="ironjacamar-eclipse.toolbars.buildToolbar">
-            <!--command
+            <command
                   commandId="ironjacamar-eclipse.commands.validateCommand"
                   icon="icons/validation_icon_16px.png"
                   tooltip="Validate Ironjacamar project"
                   id="ironjacamar-eclipse.toolbars.validateCommand">
-            </command-->
+            </command>
             <command
                   commandId="ironjacamar-eclipse.commands.deployCommand"
                   icon="icons/deploy_icon_16px.png"
                   tooltip="Deploy Ironjacamar project"
                   id="ironjacamar-eclipse.toolbars.deployCommand">
+            </command>
+            <command
+                  commandId="ironjacamar-eclipse.commands.raGenerateDeployCommand"
+                  icon="icons/deploy_icon_16px.png"
+                  tooltip="Generate *-ra.xml and deploy it"
+                  id="ironjacamar-eclipse.toolbars.raGenerateDeployCommand">
             </command>
          </toolbar>
       </menuContribution>

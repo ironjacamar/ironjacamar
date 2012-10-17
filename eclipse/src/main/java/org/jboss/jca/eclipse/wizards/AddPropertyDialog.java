@@ -69,6 +69,8 @@ public class AddPropertyDialog extends Dialog
    private String[] initialValues;
    
    private List<ConfigPropType> propList;
+   
+   private final boolean readOnly;
 
    /**
     * AddPropertyDialog 
@@ -78,9 +80,23 @@ public class AddPropertyDialog extends Dialog
     */
    public AddPropertyDialog(Shell shell, String title, String[] initialValues)
    {
+      this(shell, title, initialValues, false);
+   }
+   
+   /**
+    * AddPropertyDialog 
+    * 
+    * @param shell shell
+    * @param title dialog title
+    * @param initialValues initialValues
+    * @param readOnly if the dialog works as readOnly
+    */
+   public AddPropertyDialog(Shell shell, String title, String[] initialValues, boolean readOnly)
+   {
       super(shell);
       this.title = title;
       this.initialValues = initialValues;
+      this.readOnly = readOnly;
    }
 
    /** (non-Javadoc)
@@ -97,7 +113,15 @@ public class AddPropertyDialog extends Dialog
       nameLabel.setText("Name");
       nameLabel.setFont(comp.getFont());
 
-      nameText = new Text(comp, SWT.BORDER | SWT.SINGLE);
+      if (readOnly)
+      {
+         nameText = new Text(comp, SWT.BORDER | SWT.SINGLE | SWT.READ_ONLY);
+         nameText.setBackground(comp.getBackground());
+      }
+      else
+      {
+         nameText = new Text(comp, SWT.BORDER | SWT.SINGLE);
+      }
       nameText.setText(initialValues[0]);
       GridData gd = new GridData(GridData.FILL_HORIZONTAL);
       gd.widthHint = 300;
@@ -136,6 +160,10 @@ public class AddPropertyDialog extends Dialog
             updateButtons();
          }
       });
+      if (readOnly)
+      {
+         combo.setEnabled(false);
+      }
 
       valueLabel = new Label(comp, SWT.NONE);
       valueLabel.setText("Value");

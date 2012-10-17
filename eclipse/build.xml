@@ -65,6 +65,8 @@
                ironjacamar-core*.jar ironjacamar-sjc.jar ironjacamar-spec-api.jar"/>
       <fileset dir="${lib.dir}/sjc"
                includes="fungal.jar"/>
+      <fileset dir="${lib.dir}/common"
+               includes="jboss-logging.jar jandex.jar"/>
     </copy>
 
     <mkdir dir="${build.eclipse.dir}" />

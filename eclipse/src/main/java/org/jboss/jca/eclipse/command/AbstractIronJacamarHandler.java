@@ -23,7 +23,6 @@ package org.jboss.jca.eclipse.command;
 
 
 import org.jboss.jca.eclipse.Activator;
-import org.jboss.jca.eclipse.preferences.PreferenceConstants;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -46,7 +45,6 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.graphics.Color;
@@ -158,65 +156,6 @@ public abstract class AbstractIronJacamarHandler extends AbstractHandler
       return null;
    }
    
-   /**
-    * Gets IronJacamar Home directory.
-    * 
-    * @return IronJacamar home directory if set or empty string
-    */
-   String getIJHome ()
-   {
-      return getPrefenceValue(PreferenceConstants.JCA_HOME_PATH);
-   }
-   
-   /**
-    * Gets host of remote IronJacamar.
-    * 
-    * @return host of remote IronJacamar or empty string if not set
-    */
-   String getRemoteIronJacamarHost()
-   {
-      String host = getPrefenceValue(PreferenceConstants.JCA_REMOTE_HOST);
-      if (host == null || host.length() == 0)
-      {
-         return "localhost";
-      }
-      return host;
-   }
-   
-   /**
-    * Gets Preference string value by the preference name.
-    * 
-    * @param prefName the preference name
-    * @return string value of the preference
-    */
-   private String getPrefenceValue(String prefName)
-   {
-      IPreferenceStore prefStore = Activator.getDefault().getPreferenceStore();
-      String value = prefStore.getString(prefName);
-      String deValue = prefStore.getDefaultString(prefName);
-      if (value != null && value.length() > 0)
-      {
-         return value;
-      }
-      return deValue;
-   }
-   
-   /**
-    * Gets port of remote IronJacamar.
-    * 
-    * @return port of remote IronJacamar or {@link PreferenceConstants.DEFAULT_PORT} if not set
-    */
-   int getRemoteIronJacamarPort()
-   {
-      IPreferenceStore prefStore = Activator.getDefault().getPreferenceStore();
-      int port = prefStore.getInt(PreferenceConstants.JCA_REMOTE_PORT);
-      if (port == 0)
-      {
-         port = PreferenceConstants.DEFAULT_PORT;
-      }
-      return port;
-   }
-
    /**
     * Launches building for IronJacamar Project.
     * 

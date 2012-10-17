@@ -22,8 +22,8 @@
 package org.jboss.jca.eclipse.command;
 
 import org.jboss.jca.eclipse.Activator;
-
-import com.github.fungal.spi.deployers.DeployException;
+import org.jboss.jca.eclipse.command.raui.ConnectorHelper;
+import org.jboss.jca.eclipse.command.raui.RAGenerateWizard;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -36,40 +36,29 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.swt.graphics.Color;
+import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
- * <code>DeployHandler</code> will deploy the generated RAR file to <strong>IronJacamar</strong> server.
+ * This generates *-ra.xml according to selected RAR file and some input values in the wizard dialog,
+ * then deploy the *-ra.xml to IronJacamar server.
  * 
  * @author <a href="mailto:lgao@redhat.com">Lin Gao</a>
  *
  */
-public class DeployHandler extends AbstractIronJacamarHandler
+public class RAGenerateDeployHandler extends AbstractIronJacamarHandler
 {
-   /**
-    * The Constructor
-    */
-   public DeployHandler()
-   {  
-   }
 
-   /**
-    * the command has been executed, so extract the needed information
-    * from the application context.
-    * 
-    * @param event ExecutionEvent
-    * @return Object null
-    * @throws ExecutionException ExecutionException
-    */
    @Override
-   public Object execute(ExecutionEvent event) throws ExecutionException
+   public Object execute(final ExecutionEvent event) throws ExecutionException
    {
-      
-      setBaseEnabled(false);
       ISelection selection = HandlerUtil.getCurrentSelection(event);
-      
+
       // check current selected project
       final IProject project = getSelectedProject(selection);
       if (project == null)
@@ -77,11 +66,8 @@ public class DeployHandler extends AbstractIronJacamarHandler
          setBaseEnabled(true);
          throw new ExecutionException("There is no IronJacamar project selected.");
       }
-      
-      // lookup generated rar file
-      IFile rarFile = lookupRarFile(project);
-      
-      // rar is not generated, build it first
+
+      final IFile rarFile = lookupRarFile(project);
       if (rarFile == null || !rarFile.exists())
       {
          try
@@ -98,64 +84,51 @@ public class DeployHandler extends AbstractIronJacamarHandler
       }
       else
       {
-         DeployJob deployJob = new DeployJob(rarFile);
-         deployJob.schedule();
+         openRAgenerationWizard(HandlerUtil.getActiveShell(event), rarFile, project);
       }
       return null;
    }
    
    /**
-    * <code>RemoteDeployJob</code> will transfer the RAR file to remote <strong>IronJacamar</strong> server.
+    * Opens the wizard dialog to generate the -ra.xml
     * 
-    * It assumes that the RAR has been generated already.
+    * @param shell the Shell
+    * @param rarFile the RAR file
+    * @param project the Project
     */
-   private class DeployJob extends Job
+   private void openRAgenerationWizard(final Shell shell, final IFile rarFile, final IProject project)
    {
-      private final IFile rarFile;
-      
-      private DeployJob(IFile file)
+      // Parse Connector from RAR file, then open the wizard dialog.
+      Job parseConnectorJob = new Job("Paring connector from " + rarFile.getFullPath())
       {
-         super("Deplying " + file.getFullPath() + " to IronJacamar server");
-         this.rarFile = file;
-      }
-      
-      @Override
-      protected IStatus run(final IProgressMonitor monitor)
-      {
-         monitor.beginTask(getName(), 1);
-         IronJacamarDeployHelper deployHelper = new IronJacamarDeployHelper();
-         String host = deployHelper.getRemoteIronJacamarHost();
-         int port = deployHelper.getRemoteIronJacamarPort();
-         try
+
+         @Override
+         protected IStatus run(IProgressMonitor monitor)
          {
-            if (deployHelper.deploy(rarFile, monitor))
+            try
             {
-               String msg = "Deploy " + rarFile.getFullPath() + " to server " + host + ":" + port + 
-                     " successfully!";
-               logMessageToConsole(msg);
-               return new Status(IStatus.INFO, Activator.PLUGIN_ID, msg);
+               final ConnectorHelper connectorHelper = new ConnectorHelper();
+               connectorHelper.parseConnectorData(rarFile);
+               Display.getDefault().asyncExec(new Runnable()
+               {
+
+                  @Override
+                  public void run()
+                  {
+                     WizardDialog wizard = new WizardDialog(shell,
+                           new RAGenerateWizard(rarFile, connectorHelper, project));
+                     wizard.open();
+                  }
+               });
             }
-            
-            String msg = "Can not deploy " + rarFile.getFullPath() + " to server " + host + ":" + port;
-            logMessageToConsole(msg, new Color(null, 255, 0, 0));
-            return new Status(IStatus.WARNING, Activator.PLUGIN_ID, msg);
-            
-         }
-         catch (Throwable t)
-         {
-            if (t instanceof DeployException)
+            catch (Exception e)
             {
-               t = t.getCause();
+               return new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Can not parse Connector information", e);
             }
-            return new Status(IStatus.ERROR, Activator.PLUGIN_ID, 
-                  "Can not deploy " + rarFile.getFullPath() + " to server", t);
+            return Status.OK_STATUS;
          }
-         finally
-         {
-            monitor.worked(1);
-            enableHandler();
-         }
-      }
+      };
+      parseConnectorJob.schedule();
    }
 
    @Override
@@ -167,12 +140,7 @@ public class DeployHandler extends AbstractIronJacamarHandler
          IFile rarFile = lookupRarFile(project);
          if (rarFile != null && rarFile.exists())
          {
-            DeployJob deployJob = new DeployJob(rarFile);
-            deployJob.schedule();
-         }
-         else
-         {
-            enableHandler();
+            openRAgenerationWizard(getActiveShell(), rarFile, project);
          }
       }
       catch (CoreException e)
@@ -180,4 +148,15 @@ public class DeployHandler extends AbstractIronJacamarHandler
          e.printStackTrace();
       }
    }
+   
+   private Shell getActiveShell()
+   {
+      IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+      if (null != activeWindow)
+      {
+         return activeWindow.getShell();
+      }
+      return null;
+   }
+
 }

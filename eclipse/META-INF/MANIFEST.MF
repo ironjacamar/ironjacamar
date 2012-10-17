@@ -28,4 +28,6 @@ Bundle-ClassPath: .,
  libs/ironjacamar-core-impl.jar,
  libs/ironjacamar-sjc.jar,
  libs/ironjacamar-spec-api.jar,
- libs/fungal.jar
+ libs/fungal.jar,
+ libs/jboss-logging.jar,
+ libs/jandex.jar
