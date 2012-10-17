@@ -20,7 +20,7 @@
 
 		<connectionfactory-interface>org.jboss.jca.deployers.test.rars.inout.SimpleConnectionFactory</connectionfactory-interface>
 		<connectionfactory-impl-class>org.jboss.jca.deployers.test.rars.inout.SimpleConnectionFactoryImpl</connectionfactory-impl-class>
-		<connection-interface>org.jboss.jca.deployers.test.rars.inout.SimpleConnection</connection-interface>
+		<connection-interface>org.jboss.jca.deployers.test.rars.inout.SimpleConnection1</connection-interface>
 		<connection-impl-class>org.jboss.jca.deployers.test.rars.inout.SimpleConnectionImpl1</connection-impl-class>
 
 	</resourceadapter>

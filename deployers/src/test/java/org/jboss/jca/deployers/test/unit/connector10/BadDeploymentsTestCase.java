@@ -22,6 +22,11 @@
 
 package org.jboss.jca.deployers.test.unit.connector10;
 
+import org.jboss.jca.deployers.test.rars.inout.SimpleConnection;
+import org.jboss.jca.deployers.test.rars.inout.SimpleConnectionFactory;
+import org.jboss.jca.deployers.test.rars.inout.SimpleConnectionFactoryImpl;
+import org.jboss.jca.deployers.test.rars.inout.SimpleConnectionImpl;
+import org.jboss.jca.deployers.test.rars.inout.SimpleManagedConnectionFactory;
 import org.jboss.jca.embedded.Embedded;
 import org.jboss.jca.embedded.EmbeddedFactory;
 
@@ -36,8 +41,8 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * Test cases for deploying bad resource adapter archives 
- *
+ * Test cases for deploying bad resource adapter archives
+ * 
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  * @version $Revision: $
  */
@@ -51,7 +56,8 @@ public class BadDeploymentsTestCase extends Ra10TestBase
 
    /**
     * Lifecycle start, before the suite is executed
-    * @throws Throwable throwable exception 
+    * 
+    * @throws Throwable throwable exception
     */
    @BeforeClass
    public static void beforeClass() throws Throwable
@@ -65,7 +71,8 @@ public class BadDeploymentsTestCase extends Ra10TestBase
 
    /**
     * Lifecycle stop, after the suite is executed
-    * @throws Throwable throwable exception 
+    * 
+    * @throws Throwable throwable exception
     */
    @AfterClass
    public static void afterClass() throws Throwable
@@ -78,7 +85,24 @@ public class BadDeploymentsTestCase extends Ra10TestBase
    }
 
    /**
-    * Deploys .rar archive and tries to look up for name of connection factory
+    * 
+    * Creates archive with strict defined classes
+    * 
+    * @param archiveName to build
+    * @return archive
+    * @throws Exception in case of error
+    */
+   public ResourceAdapterArchive createStrictDeployment(String archiveName) throws Exception
+   {
+      ResourceAdapterArchive rar = buidShrinkwrapRa(archiveName, SimpleConnection.class, SimpleConnectionImpl.class,
+         SimpleConnectionFactory.class, SimpleConnectionFactoryImpl.class, SimpleManagedConnectionFactory.class);
+      addRaXml(rar);
+      return rar;
+   }
+
+   /**
+    * Deploys .rar archive
+    * 
     * @param raa - archive
     * @param d - activation descriptor
     * @throws Exception in case of error
@@ -139,6 +163,18 @@ public class BadDeploymentsTestCase extends Ra10TestBase
 
    /**
     * 
+    * test strict archive
+    * 
+    * @param name of archive
+    * @throws Exception in case of error
+    */
+   public void testStrictArchive(String name) throws Exception
+   {
+      testDeployment(createStrictDeployment(name + ".rar"), null);
+   }
+
+   /**
+    * 
     * test archive with ironjacamar and -ra.xml descriptor activation
     * 
     * @param name of archive
@@ -161,7 +197,7 @@ public class BadDeploymentsTestCase extends Ra10TestBase
     * 
     * testRaWithWrongProperty
     * 
-    * @throws Exception  in case of error
+    * @throws Exception in case of error
     */
    @Test(expected = Exception.class)
    public void testRaWithWrongProperty() throws Exception
@@ -173,7 +209,7 @@ public class BadDeploymentsTestCase extends Ra10TestBase
     * 
     * testRaWithWrongPropertyType
     * 
-    * @throws Exception  in case of error
+    * @throws Exception in case of error
     */
    @Test(expected = Exception.class)
    public void testRaWithWrongPropertyType() throws Exception
@@ -185,7 +221,7 @@ public class BadDeploymentsTestCase extends Ra10TestBase
     * 
     * testRaWithWrongPropertyValue
     * 
-    * @throws Exception  in case of error
+    * @throws Exception in case of error
     */
    @Test(expected = Exception.class)
    public void testRaWithWrongPropertyValue() throws Exception
@@ -197,7 +233,7 @@ public class BadDeploymentsTestCase extends Ra10TestBase
     * 
     * testCFWithoutDefConstructor
     * 
-    * @throws Exception  in case of error
+    * @throws Exception in case of error
     */
    @Test(expected = Exception.class)
    public void testCFWithoutDefConstructor() throws Exception
@@ -209,7 +245,7 @@ public class BadDeploymentsTestCase extends Ra10TestBase
     * 
     * testMCFWithoutEqualsMethod
     * 
-    * @throws Exception  in case of error
+    * @throws Exception in case of error
     */
    @Test(expected = Exception.class)
    public void testMCFWithoutEqualsMethod() throws Exception
@@ -221,7 +257,7 @@ public class BadDeploymentsTestCase extends Ra10TestBase
     * 
     * testMCFWithoutHashCodeMethod
     * 
-    * @throws Exception  in case of error
+    * @throws Exception in case of error
     */
    @Test(expected = Exception.class)
    public void testMCFWithoutHashCodeMethod() throws Exception
@@ -233,7 +269,7 @@ public class BadDeploymentsTestCase extends Ra10TestBase
     * 
     * testRaWithWrongConnectionFactoryType
     * 
-    * @throws Exception  in case of error
+    * @throws Exception in case of error
     */
    @Test(expected = Exception.class)
    public void testRaWithWrongConnectionFactoryType() throws Exception
@@ -245,7 +281,7 @@ public class BadDeploymentsTestCase extends Ra10TestBase
     * 
     * testRaWithWrongConnectionFactoryImpl
     * 
-    * @throws Exception  in case of error
+    * @throws Exception in case of error
     */
    @Test(expected = Exception.class)
    public void testRaWithWrongConnectionFactoryImpl() throws Exception
@@ -257,7 +293,7 @@ public class BadDeploymentsTestCase extends Ra10TestBase
     * 
     * testRaWithWrongConnectionType
     * 
-    * @throws Exception  in case of error
+    * @throws Exception in case of error
     */
    @Test(expected = Exception.class)
    public void testRaWithWrongConnectionType() throws Exception
@@ -269,7 +305,7 @@ public class BadDeploymentsTestCase extends Ra10TestBase
     * 
     * testRaWithWrongConnectionImpl
     * 
-    * @throws Exception  in case of error
+    * @throws Exception in case of error
     */
    @Test(expected = Exception.class)
    public void testRaWithWrongConnectionImpl() throws Exception
@@ -279,9 +315,195 @@ public class BadDeploymentsTestCase extends Ra10TestBase
 
    /**
     * 
+    * testRaLackMcf
+    * 
+    * @throws Exception in case of error
+    */
+   @Test(expected = Exception.class)
+   public void testRaLackMcf() throws Exception
+   {
+      testArchive("ra10dtdoutlackmcf");
+   }
+
+   /**
+    * 
+    * testRaLackConnectionFactoryType
+    * 
+    * @throws Exception in case of error
+    */
+   @Test(expected = Exception.class)
+   public void testRaLackConnectionFactoryType() throws Exception
+   {
+      testArchive("ra10dtdoutlackconnectionfactorytype");
+   }
+
+   /**
+    * 
+    * testRaLackConnectionFactoryImpl
+    * 
+    * @throws Exception in case of error
+    */
+   @Test(expected = Exception.class)
+   public void testRaLackConnectionFactoryImpl() throws Exception
+   {
+      testArchive("ra10dtdoutlackconnectionfactoryimpl");
+   }
+
+   /**
+    * 
+    * testRaLackConnectionType
+    * 
+    * @throws Exception in case of error
+    */
+   @Test(expected = Exception.class)
+   public void testRaLackConnectionType() throws Exception
+   {
+      testArchive("ra10dtdoutlackconnectiontype");
+   }
+
+   /**
+    * 
+    * testRaLackConnectionImpl
+    * 
+    * @throws Exception in case of error
+    */
+   @Test(expected = Exception.class)
+   public void testRaLackConnectionImpl() throws Exception
+   {
+      testArchive("ra10dtdoutlackconnectionimpl");
+   }
+
+   /**
+    * 
+    * testRaWithWrongConnectionFactoryTypeAndImpl
+    * 
+    * @throws Exception in case of error
+    */
+   @Test(expected = Exception.class)
+   @Ignore
+   public void testRaWithWrongConnectionFactoryTypeAndImpl() throws Exception
+   {
+      testArchive("ra10dtdoutwrongconnectionfactorytypeandimpl");
+   }
+
+   /**
+    * 
+    * testRaWithWrongConnectionTypeAndImpl
+    * 
+    * @throws Exception in case of error
+    */
+   @Test(expected = Exception.class)
+   @Ignore
+   public void testRaWithWrongConnectionTypeAndImpl() throws Exception
+   {
+      testArchive("ra10dtdoutwrongconnectiontypeandimpl");
+   }
+
+   /**
+    * 
+    * testStrictRaWrongMCF
+    * 
+    * @throws Exception in case of error
+    */
+   @Test(expected = Exception.class)
+   @Ignore
+   public void testStrictRaWrongMCF() throws Exception
+   {
+      testStrictArchive("ra10dtdoutwrongmcf");
+   }
+
+   /**
+    * 
+    * testStrictRaAbsolutelyWrong
+    * 
+    * @throws Exception in case of error
+    */
+   @Test(expected = Exception.class)
+   @Ignore
+   public void testStrictRaAbsolutelyWrong() throws Exception
+   {
+      testStrictArchive("ra10dtdoutoverwrite");
+   }
+
+   /**
+    * 
+    * testStrictRaWithWrongConnectionFactoryType
+    * 
+    * @throws Exception in case of error
+    */
+   @Test(expected = Exception.class)
+   public void testStrictRaWithWrongConnectionFactoryType() throws Exception
+   {
+      testStrictArchive("ra10dtdoutwrongconnectionfactorytype");
+   }
+
+   /**
+    * 
+    * testStrictRaWithWrongConnectionFactoryImpl
+    * 
+    * @throws Exception in case of error
+    */
+   @Test(expected = Exception.class)
+   public void testStrictRaWithWrongConnectionFactoryImpl() throws Exception
+   {
+      testStrictArchive("ra10dtdoutwrongconnectionfactoryimpl");
+   }
+
+   /**
+    * 
+    * testStrictRaWithWrongConnectionType
+    * 
+    * @throws Exception in case of error
+    */
+   @Test(expected = Exception.class)
+   public void testStrictRaWithWrongConnectionType() throws Exception
+   {
+      testStrictArchive("ra10dtdoutwrongconnectiontype");
+   }
+
+   /**
+    * 
+    * testStrictRaWithWrongConnectionImpl
+    * 
+    * @throws Exception in case of error
+    */
+   @Test(expected = Exception.class)
+   public void testStrictRaWithWrongConnectionImpl() throws Exception
+   {
+      testStrictArchive("ra10dtdoutwrongconnectionimpl");
+   }
+
+   /**
+    * 
+    * testStrictRaWithWrongConnectionFactoryTypeAndImpl
+    * 
+    * @throws Exception in case of error
+    */
+   @Test(expected = Exception.class)
+   @Ignore
+   public void testStrictRaWithWrongConnectionFactoryTypeAndImpl() throws Exception
+   {
+      testStrictArchive("ra10dtdoutwrongconnectionfactorytypeandimpl");
+   }
+
+   /**
+    * 
+    * testStrictRaWithWrongConnectionTypeAndImpl
+    * 
+    * @throws Exception in case of error
+    */
+   @Test(expected = Exception.class)
+   @Ignore
+   public void testStrictRaWithWrongConnectionTypeAndImpl() throws Exception
+   {
+      testStrictArchive("ra10dtdoutwrongconnectiontypeandimpl");
+   }
+
+   /**
+    * 
     * testIjWithWrongProperty
     * 
-    * @throws Exception  in case of error
+    * @throws Exception in case of error
     */
    @Test(expected = Exception.class)
    public void testIjWithWrongProperty() throws Exception
@@ -293,7 +515,7 @@ public class BadDeploymentsTestCase extends Ra10TestBase
     * 
     * testIjWithWrongPropertyValue
     * 
-    * @throws Exception  in case of error
+    * @throws Exception in case of error
     */
    @Test(expected = Exception.class)
    public void testIjWithWrongPropertyValue() throws Exception
@@ -305,7 +527,7 @@ public class BadDeploymentsTestCase extends Ra10TestBase
     * 
     * testActivationWithWrongProperty
     * 
-    * @throws Exception  in case of error
+    * @throws Exception in case of error
     */
    @Test(expected = Exception.class)
    public void testActivationWithWrongProperty() throws Exception
@@ -317,7 +539,7 @@ public class BadDeploymentsTestCase extends Ra10TestBase
     * 
     * testActivationWithWrongPropertyValue
     * 
-    * @throws Exception  in case of error
+    * @throws Exception in case of error
     */
    @Test(expected = Exception.class)
    public void testActivationWithWrongPropertyValue() throws Exception
@@ -329,7 +551,7 @@ public class BadDeploymentsTestCase extends Ra10TestBase
     * 
     * testActivationIJWithWrongProperty
     * 
-    * @throws Exception  in case of error
+    * @throws Exception in case of error
     */
    @Test(expected = Exception.class)
    public void testActivationIJWithWrongProperty() throws Exception
@@ -342,7 +564,7 @@ public class BadDeploymentsTestCase extends Ra10TestBase
     * 
     * testActivationIJWithWrongPropertyValue
     * 
-    * @throws Exception  in case of error
+    * @throws Exception in case of error
     */
    @Test(expected = Exception.class)
    public void testActivationIJWithWrongPropertyValue() throws Exception

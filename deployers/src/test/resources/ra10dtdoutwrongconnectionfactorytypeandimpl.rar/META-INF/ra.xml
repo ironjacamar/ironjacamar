@@ -18,10 +18,10 @@
 
 		<managedconnectionfactory-class>org.jboss.jca.deployers.test.rars.inout.SimpleManagedConnectionFactory</managedconnectionfactory-class>
 
-		<connectionfactory-interface>org.jboss.jca.deployers.test.rars.inout.SimpleConnectionFactory</connectionfactory-interface>
-		<connectionfactory-impl-class>org.jboss.jca.deployers.test.rars.inout.SimpleConnectionFactoryImpl</connectionfactory-impl-class>
+		<connectionfactory-interface>org.jboss.jca.deployers.test.rars.inout.SimpleConnectionFactory1</connectionfactory-interface>
+		<connectionfactory-impl-class>org.jboss.jca.deployers.test.rars.inout.SimpleConnectionFactoryImpl1</connectionfactory-impl-class>
 		<connection-interface>org.jboss.jca.deployers.test.rars.inout.SimpleConnection</connection-interface>
-		<connection-impl-class>org.jboss.jca.deployers.test.rars.inout.SimpleConnectionImpl1</connection-impl-class>
+		<connection-impl-class>org.jboss.jca.deployers.test.rars.inout.SimpleConnectionImpl</connection-impl-class>
 
 	</resourceadapter>
 </connector>
