@@ -955,7 +955,7 @@ public abstract class BaseWrapperManagedConnectionFactory
       props.putAll(connectionProps);
       if (subject != null)
       {
-         if (SubjectActions.addMatchingProperties(subject, cri, props, this))
+         if (SubjectActions.addMatchingProperties(subject, cri, props, userName, password, this))
             return props;
 
          throw new ResourceException("No matching credentials in Subject!");
@@ -1183,6 +1183,10 @@ public abstract class BaseWrapperManagedConnectionFactory
 
       private final Properties props;
 
+      private final String userName;
+
+      private final String password;
+
       private final ManagedConnectionFactory mcf;
 
       /**
@@ -1190,13 +1194,18 @@ public abstract class BaseWrapperManagedConnectionFactory
        * @param subject The subject
        * @param cri The connection request info
        * @param props The properties
+       * @param userName The user name
+       * @param password The password
        * @param mcf The managed connection factory
        */
-      SubjectActions(Subject subject, ConnectionRequestInfo cri, Properties props, ManagedConnectionFactory mcf)
+      SubjectActions(Subject subject, ConnectionRequestInfo cri, Properties props,
+                     String userName, String password, ManagedConnectionFactory mcf)
       {
          this.subject = subject;
          this.cri = cri;
          this.props = props;
+         this.userName = userName;
+         this.password = password;
          this.mcf = mcf;
       }
 
@@ -1213,10 +1222,15 @@ public abstract class BaseWrapperManagedConnectionFactory
             {
                if (cred.getManagedConnectionFactory().equals(mcf))
                {
+                  boolean pwd = false;
+
                   props.setProperty("user", (cred.getUserName() == null) ? "" : cred.getUserName());
 
                   if (cred.getPassword() != null)
+                  {
                      props.setProperty("password", new String(cred.getPassword()));
+                     pwd = true;
+                  }
 
                   if (cri != null)
                   {
@@ -1226,7 +1240,26 @@ public abstract class BaseWrapperManagedConnectionFactory
                         props.setProperty("user", lcri.getUserName());
 
                      if (lcri.getPassword() != null)
+                     {
                         props.setProperty("password", lcri.getPassword());
+                        pwd = true;
+                     }
+                  }
+
+                  if (userName != null)
+                  {
+                     props.setProperty("user", userName);
+
+                     if (password != null)
+                     {
+                        props.setProperty("password", password);
+                        pwd = true;
+                     }
+                  }
+
+                  if (!pwd || props.getProperty("password") == null)
+                  {
+                     props.setProperty("password", "");
                   }
 
                   return Boolean.TRUE;
@@ -1241,12 +1274,15 @@ public abstract class BaseWrapperManagedConnectionFactory
        * @param subject The subject
        * @param cri The connection request info
        * @param props The properties
+       * @param userName The user name
+       * @param password The password
        * @param mcf The managed connection factory
        * @return The result
        */
-      static boolean addMatchingProperties(Subject subject, ConnectionRequestInfo cri, Properties props, ManagedConnectionFactory mcf)
+      static boolean addMatchingProperties(Subject subject, ConnectionRequestInfo cri, Properties props,
+                                           String userName, String password, ManagedConnectionFactory mcf)
       {
-         SubjectActions action = new SubjectActions(subject, cri, props, mcf);
+         SubjectActions action = new SubjectActions(subject, cri, props, userName, password, mcf);
          Boolean matched = AccessController.doPrivileged(action);
          return matched.booleanValue();
       }
