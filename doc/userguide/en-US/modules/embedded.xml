@@ -234,6 +234,33 @@ formatter.PATTERN.pattern=%d{HH:mm:ss,SSS} %-5p [%c{1}] %m%n
 
         </section>
 
+        <section id="embedded_usage_simple_arquillian_resource">
+          <title>Arquillian and @ArquillianResource</title>
+
+          <para>The Arquillian integration allows the internally used <code>org.jboss.jca.embedded.Embedded</code> or
+            <code>javax.naming.Context</code> instances to be injected into the test case using</para>
+
+          <programlisting language="java">
+<![CDATA[
+import org.jboss.jca.embedded.Embedded;
+import javax.naming.Context;
+import org.jboss.arquillian.test.api.ArquillianResource;
+
+@RunWith(Arquillian.class)
+public class ResourceProviderTestCase
+{
+   @ArquillianResource
+   private Embedded embedded;
+
+   @ArquillianResource
+   private Context context;
+]]>
+          </programlisting>
+
+          <para>This will allow direct access to the APIs inside the test case.</para>
+
+        </section>
+
         <section id="embedded_usage_simple_ironjacamar">
           <title>IronJacamar integration</title>
 

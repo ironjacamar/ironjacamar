@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2012, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -21,34 +21,62 @@
  */
 package org.jboss.jca.arquillian.embedded;
 
-import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
-import org.jboss.arquillian.core.spi.LoadableExtension;
-import org.jboss.arquillian.test.spi.TestEnricher;
+import java.lang.annotation.Annotation;
+
+import javax.naming.Context;
+
+import org.jboss.arquillian.core.api.Instance;
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
+import org.jboss.logging.Logger;
 
 /**
- * Arquillian {@link LoadableExtension} adaptor for Embedded JCA
+ * Arquillian {@link ResourceProvider} resource provider for a javax.naming.Context
  *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-class EmbeddedJCALoadableExtension implements LoadableExtension
+class EmbeddedJCAContextResourceProvider implements ResourceProvider
 {
+   /** The logger */
+   private static Logger log = Logger.getLogger(EmbeddedJCAContextResourceProvider.class);
+
+   /** Trace logging */
+   private static boolean trace = log.isTraceEnabled();
+
+   /** Context */
+   @org.jboss.arquillian.core.api.annotation.Inject
+   private Instance<Context> contextInst;
+
    /**
     * Constructor
     */
-   EmbeddedJCALoadableExtension()
+   EmbeddedJCAContextResourceProvider()
    {
    }
 
    /**
     * {@inheritDoc}
     */
-   public void register(ExtensionBuilder builder)
+   @Override
+   public Object lookup(ArquillianResource resource, Annotation... annotations)
    {
-      builder.service(DeployableContainer.class, EmbeddedJCAContainer.class);
-      builder.service(TestEnricher.class, EmbeddedJCAEnricher.class);
-      builder.service(ResourceProvider.class, EmbeddedJCAEmbeddedResourceProvider.class);
-      builder.service(ResourceProvider.class, EmbeddedJCAContextResourceProvider.class);
-      builder.observer(EmbeddedJCAObserver.class);
+      return contextInst.get();
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public boolean canProvide(Class<?> type)
+   {
+      if (type != null)
+      {
+         if (Context.class.isAssignableFrom(type))
+         {
+            return true;
+         }
+      }
+
+      return false;
    }
 }
