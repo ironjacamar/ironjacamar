@@ -258,7 +258,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
          @Override
          public void modifyText(ModifyEvent e)
          {
-            if (isGeneralInputValid())
+            if (checkGeneralInput())
             {
                connFactoryConfig.setMcfJndiName(jndiText.getText().trim());
             }
@@ -320,7 +320,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
          @Override
          public void widgetSelected(SelectionEvent e)
          {
-            if (isGeneralInputValid())
+            if (checkGeneralInput())
             {
                if (useJavaCtx ^ useJavaCtxBtn.getSelection())
                {
@@ -397,7 +397,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
          @Override
          public void modifyText(ModifyEvent e)
          {
-            if (isPoolInputValid())
+            if (checkPoolInput())
             {
                String minPool = minPoolSizeText.getText().trim();
                if (!minPool.isEmpty())
@@ -432,7 +432,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
          @Override
          public void modifyText(ModifyEvent e)
          {
-            if (isPoolInputValid())
+            if (checkPoolInput())
             {
                String maxPool = maxPoolSizeText.getText().trim();
                if (!maxPool.isEmpty())
@@ -595,6 +595,11 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
             {
                getPoolConfig().setInterleaving(null);
             }
+            if (!interLeavingBtn.getSelection())
+            { 
+               // it is boolean-presenceType
+               getPoolConfig().setInterleaving(null);
+            }
             checkPoolFlushStrategy();
          }
       });
@@ -616,6 +621,11 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
             }
             else
             {
+               getPoolConfig().setNoTxSeparatePool(null);
+            }
+            if (!noTxSeparatePoolBtn.getSelection())
+            {
+               // it is boolean-presenceType
                getPoolConfig().setNoTxSeparatePool(null);
             }
             checkPoolFlushStrategy();
@@ -734,6 +744,11 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
                getSecurityConfig().setSecurityDomainAndApp(null);
                securityDomainText.setEnabled(false);
                securityDomainAndAppText.setEnabled(false);
+            }
+            else
+            {
+               // it is boolean-presenceType
+               getSecurityConfig().setApplication(null);
             }
          }
       });
@@ -880,7 +895,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
          @Override
          public void modifyText(ModifyEvent e)
          {
-            if (isTimeoutInputValid())
+            if (checkTimeoutInput())
             {
                String newBlockTimeout = blockingTimeoutText.getText().trim();
                if (!newBlockTimeout.isEmpty())
@@ -914,7 +929,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
          @Override
          public void modifyText(ModifyEvent e)
          {
-            if (isTimeoutInputValid())
+            if (checkTimeoutInput())
             {
                String newIdleTimeout = idleTimeoutText.getText().trim();
                if (!newIdleTimeout.isEmpty())
@@ -948,7 +963,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
          @Override
          public void modifyText(ModifyEvent e)
          {
-            if (isTimeoutInputValid())
+            if (checkTimeoutInput())
             {
                String newAllocateRetry = allocateRetryText.getText().trim();
                if (!newAllocateRetry.isEmpty())
@@ -982,7 +997,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
          @Override
          public void modifyText(ModifyEvent e)
          {
-            if (isTimeoutInputValid())
+            if (checkTimeoutInput())
             {
                String alloRetryWait = allocateRetryWaitText.getText().trim();
                if (!alloRetryWait.isEmpty())
@@ -1016,7 +1031,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
          @Override
          public void modifyText(ModifyEvent e)
          {
-            if (isTimeoutInputValid())
+            if (checkTimeoutInput())
             {
                String xaResourceTimeoutStr = xaResTimeoutText.getText().trim();
                if (!xaResourceTimeoutStr.isEmpty())
@@ -1112,7 +1127,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
          @Override
          public void modifyText(ModifyEvent e)
          {
-            if (isValidationInputValid())
+            if (checkValidationInput())
             {
                String bgValidationMills = backgroundValidText.getText().trim();
                if (!bgValidationMills.isEmpty())
@@ -1810,7 +1825,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
     * 
     * @return true if all input are OK, otherwise, false.
     */
-   private boolean isGeneralInputValid()
+   private boolean checkGeneralInput()
    {
       // general tab
       String jndiName = jndiText.getText().trim();
@@ -1840,7 +1855,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
     * 
     * @return true if all input are OK, otherwise false.
     */
-   private boolean isPoolInputValid()
+   private boolean checkPoolInput()
    {
       String minPool = minPoolSizeText.getText().trim();
       String maxPool = maxPoolSizeText.getText().trim();
@@ -1898,17 +1913,19 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
    private void checkPoolFlushStrategy()
    {
       FlushStrategy initialFlushStrategy = getPoolFlushStrategy(getPool());
+      FlushStrategy flushStrategy = initialFlushStrategy;
       if (!FlushStrategy.forName(this.flushStrategyCombo.getText()).equals(initialFlushStrategy))
       {
-         getPoolConfig().setFlushStrategy(FlushStrategy.forName(this.flushStrategyCombo.getText()));
+         flushStrategy = FlushStrategy.forName(this.flushStrategyCombo.getText());
       }
       if (getPoolConfig().getMinPoolSize() != null || getPoolConfig().getMaxPoolSize() != null 
-            || getPoolConfig().getInterleaving() != null || getPoolConfig().getNoTxSeparatePool() != null 
-            || getPoolConfig().getOverrideIsSameRM() != null || getPoolConfig().getPadXid() != null 
-            || getPoolConfig().getPrefill() != null || getPoolConfig().getUseStrictMin() != null)
+            || getPoolConfig().isInterleaving() != null || getPoolConfig().isNoTxSeparatePool() != null 
+            || getPoolConfig().isOverrideIsSameRM() != null || getPoolConfig().isPadXid() != null 
+            || getPoolConfig().isPrefill() != null || getPoolConfig().isUseStrictMin() != null 
+            || getPoolConfig().isWrapXaResource() != null)
       {
          // FlushStrategy can not be null if any of other property is not null.
-         getPoolConfig().setFlushStrategy(initialFlushStrategy);
+         getPoolConfig().setFlushStrategy(flushStrategy);
       }
       else
       {
@@ -1921,7 +1938,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
     * 
     * @return true if all input are OK, otherwise false.
     */
-   private boolean isTimeoutInputValid()
+   private boolean checkTimeoutInput()
    {
       String blockingTimeoutStr = this.blockingTimeoutText.getText().trim();
       String idleTimeoutStr = this.idleTimeoutText.getText().trim();
@@ -2014,7 +2031,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
     * 
     * @return true if are input are OK, otherwise false.
     */
-   private boolean isValidationInputValid()
+   private boolean checkValidationInput()
    {
       String bgValidationMills = backgroundValidText.getText().trim();
       String bgValidationMillsErr = checkPositiveLong(bgValidationMills, "Backgound Validation Millis");

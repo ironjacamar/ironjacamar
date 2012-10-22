@@ -338,7 +338,7 @@ public class ConnectionFactoryConfig
        * Get prefill
        * @return The prefill
        */
-      public Boolean getPrefill()
+      public Boolean isPrefill()
       {
          return prefill;
       }
@@ -354,7 +354,7 @@ public class ConnectionFactoryConfig
        * Get useStrictMin
        * @return The useStrictMin
        */
-      public Boolean getUseStrictMin()
+      public Boolean isUseStrictMin()
       {
          return useStrictMin;
       }
@@ -402,7 +402,7 @@ public class ConnectionFactoryConfig
        * Get overrideIsSameRM
        * @return The overrideIsSameRM
        */
-      public Boolean getOverrideIsSameRM()
+      public Boolean isOverrideIsSameRM()
       {
          return overrideIsSameRM;
       }
@@ -418,7 +418,7 @@ public class ConnectionFactoryConfig
        * Get interleaving
        * @return The interleaving
        */
-      public Boolean getInterleaving()
+      public Boolean isInterleaving()
       {
          return interleaving;
       }
@@ -434,7 +434,7 @@ public class ConnectionFactoryConfig
        * Get createSubPool
        * @return The createSubPool
        */
-      public Boolean getNoTxSeparatePool()
+      public Boolean isNoTxSeparatePool()
       {
          return noTxSeparatePool;
       }
@@ -450,7 +450,7 @@ public class ConnectionFactoryConfig
        * Get xidPad
        * @return The xidPad
        */
-      public Boolean getPadXid()
+      public Boolean isPadXid()
       {
          return padXid;
       }

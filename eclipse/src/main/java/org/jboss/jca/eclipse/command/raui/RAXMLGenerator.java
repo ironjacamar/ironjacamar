@@ -346,9 +346,9 @@ public class RAXMLGenerator
       {
          return null;
       }
-      if (poolConfig.getInterleaving() == null && poolConfig.getNoTxSeparatePool() == null 
-            && poolConfig.getOverrideIsSameRM() == null && poolConfig.getPadXid() == null 
-            && poolConfig.getPrefill() == null && poolConfig.getUseStrictMin() == null 
+      if (poolConfig.isInterleaving() == null && poolConfig.isNoTxSeparatePool() == null 
+            && poolConfig.isOverrideIsSameRM() == null && poolConfig.isPadXid() == null 
+            && poolConfig.isPrefill() == null && poolConfig.isUseStrictMin() == null 
             && poolConfig.getFlushStrategy() == null && poolConfig.getMaxPoolSize() == null 
             && poolConfig.getMinPoolSize() == null)
       {
@@ -357,19 +357,19 @@ public class RAXMLGenerator
       CommonPool pool = null;
       Integer minPoolSize = poolConfig.getMinPoolSize();
       Integer maxPoolSize = poolConfig.getMaxPoolSize();
-      Boolean prefill = poolConfig.getPrefill();
-      Boolean useStrictMin = poolConfig.getUseStrictMin();
+      Boolean prefill = poolConfig.isPrefill();
+      Boolean useStrictMin = poolConfig.isUseStrictMin();
       FlushStrategy flushStrategy = poolConfig.getFlushStrategy();
       try
       {
          if (poolConfig.getDefineXA() != null && poolConfig.getDefineXA())
          {
             // xa
-            Boolean isSameRmOverride = poolConfig.getOverrideIsSameRM();
-            Boolean interleaving = poolConfig.getInterleaving();
-            Boolean padXid = poolConfig.getPadXid();
+            Boolean isSameRmOverride = poolConfig.isOverrideIsSameRM();
+            Boolean interleaving = poolConfig.isInterleaving();
+            Boolean padXid = poolConfig.isPadXid();
             Boolean wrapXaResource = poolConfig.isWrapXaResource();
-            Boolean noTxSeparatePool = poolConfig.getNoTxSeparatePool();
+            Boolean noTxSeparatePool = poolConfig.isNoTxSeparatePool();
             pool = new CommonXaPoolImpl(minPoolSize, maxPoolSize, prefill, useStrictMin, 
                   flushStrategy, isSameRmOverride, interleaving, padXid, wrapXaResource, noTxSeparatePool);
          }
