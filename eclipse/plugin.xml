@@ -111,19 +111,19 @@
                id="ironjacamar-eclipse.toolbars.buildToolbar">
             <command
                   commandId="ironjacamar-eclipse.commands.validateCommand"
-                  icon="icons/validation_icon_16px.png"
-                  tooltip="Validate Ironjacamar project"
+                  icon="icons/validation_icon_16px.gif"
+                  tooltip="Validate Ironjacamar rar file"
                   id="ironjacamar-eclipse.toolbars.validateCommand">
             </command>
             <command
                   commandId="ironjacamar-eclipse.commands.deployCommand"
-                  icon="icons/deploy_icon_16px.png"
+                  icon="icons/deploy_icon_16px.gif"
                   tooltip="Deploy Ironjacamar project"
                   id="ironjacamar-eclipse.toolbars.deployCommand">
             </command>
             <command
                   commandId="ironjacamar-eclipse.commands.raGenerateDeployCommand"
-                  icon="icons/deploy_icon_16px.png"
+                  icon="icons/deploy_icon_16px.gif"
                   tooltip="Generate *-ra.xml and deploy it"
                   id="ironjacamar-eclipse.toolbars.raGenerateDeployCommand">
             </command>
