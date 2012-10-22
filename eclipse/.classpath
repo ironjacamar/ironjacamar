@@ -17,5 +17,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-core"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-sjc"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-api"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-validator"/>
 	<classpathentry kind="output" path="eclipse-target/classes"/>
 </classpath>

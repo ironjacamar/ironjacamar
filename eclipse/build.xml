@@ -62,7 +62,7 @@
     <copy todir="libs/">
       <fileset dir="${target.dir}"
                includes="ironjacamar-codegenerator.jar ironjacamar-common*.jar
-               ironjacamar-core*.jar ironjacamar-sjc.jar ironjacamar-spec-api.jar"/>
+               ironjacamar-core*.jar ironjacamar-sjc.jar ironjacamar-spec-api.jar ironjacamar-validator.jar"/>
       <fileset dir="${lib.dir}/sjc"
                includes="fungal.jar"/>
       <fileset dir="${lib.dir}/common"

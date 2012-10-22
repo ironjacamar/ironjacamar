@@ -21,6 +21,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6,
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
  libs/ironjacamar-codegenerator.jar,
+ libs/ironjacamar-validator.jar,
  libs/ironjacamar-common-api.jar,
  libs/ironjacamar-common-impl.jar,
  libs/ironjacamar-common-spi.jar,

@@ -21,12 +21,22 @@
  */
 package org.jboss.jca.eclipse.command;
 
-import org.eclipse.core.commands.AbstractHandler;
+import org.jboss.jca.eclipse.Activator;
+import org.jboss.jca.validator.Validation;
+
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * Our sample handler extends AbstractHandler, an IHandler base class.
@@ -34,8 +44,9 @@ import org.eclipse.ui.handlers.HandlerUtil;
  * @see org.eclipse.core.commands.IHandler
  * @see org.eclipse.core.commands.AbstractHandler
  */
-public class ValidateHandler extends AbstractHandler
+public class ValidateHandler extends AbstractIronJacamarHandler
 {
+   private IWorkbenchWindow window = null;
    /**
     * The constructor.
     */
@@ -51,10 +62,92 @@ public class ValidateHandler extends AbstractHandler
     * @return Object null
     * @throws ExecutionException ExecutionException
     */
+   @Override
    public Object execute(ExecutionEvent event) throws ExecutionException
    {
-      IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
-      MessageDialog.openInformation(window.getShell(), "Ironjacamar-eclipse", "Ironjacamar Validation");
+      window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
+
+      setBaseEnabled(false);
+      ISelection selection = HandlerUtil.getCurrentSelection(event);
+      
+      // check current selected project
+      final IProject project = getSelectedProject(selection);
+      if (project == null)
+      {
+         setBaseEnabled(true);
+         throw new ExecutionException("There is no IronJacamar project selected.");
+      }
+      
+      // lookup generated rar file
+      IFile rarFile = lookupRarFile(project);
+      
+      // rar is not generated, build it first
+      if (rarFile == null || !rarFile.exists())
+      {
+         try
+         {
+            buildRar(project);
+         }
+         catch (ExecutionException e)
+         {
+            setBaseEnabled(true);
+            IStatus errStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Can not build project", e.getCause());
+            StatusManager.getManager().handle(errStatus, StatusManager.SHOW);
+            throw e;
+         }
+      }
+      else
+      {
+         validate(rarFile);
+      }
       return null;
+   }
+   
+   private void validate(IFile rarFile)
+   {
+      int result = -1;
+      try
+      {
+         result = Validation.validate(rarFile.getLocationURI().toURL(), ".");
+      }
+      catch (Exception e)
+      {
+         e.printStackTrace();
+         result = -2;
+      }
+
+      if (result == 0)
+      {
+         MessageDialog.openInformation(window.getShell(), 
+            "Ironjacamar-eclipse", "The rar file is validated");
+      }
+      else
+      {
+         MessageDialog.openInformation(window.getShell(), 
+            "Ironjacamar-eclipse", "The rar file isn't Validated");
+      }
+      enableHandler();
+   }
+
+   @Override
+   protected void onBuildFinished(IProject project)
+   {
+      try
+      {
+         project.refreshLocal(IResource.DEPTH_INFINITE, null);
+         IFile rarFile = lookupRarFile(project);
+         if (rarFile != null && rarFile.exists())
+         {
+            validate(rarFile);
+         }
+         else
+         {
+            enableHandler();
+         }
+      }
+      catch (CoreException e)
+      {
+         e.printStackTrace();
+      }
    }
 }
