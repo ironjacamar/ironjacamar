@@ -85,6 +85,7 @@ public class RAGenerateAOPage extends AbstractRAGenerateWizardPage
       setTitle("Information about Admin Object");
       setDescription("Configure Admin Object: " + this.aoClsName);
       this.aoConfig = new AdminObjectConfig();
+      
       // class name and jndi name are required.
       this.aoConfig.setClssName(aoClsName);
       this.aoConfig.setJndiName(getInitialJndiName());
@@ -139,7 +140,7 @@ public class RAGenerateAOPage extends AbstractRAGenerateWizardPage
          public void modifyText(ModifyEvent e)
          {
             String jndiName = jndiText.getText().trim();
-            if (isInputValid())
+            if (checkInput())
             {
                aoConfig.setJndiName(jndiName);
             }
@@ -206,7 +207,7 @@ public class RAGenerateAOPage extends AbstractRAGenerateWizardPage
          @Override
          public void widgetSelected(SelectionEvent e)
          {
-            if (isInputValid())
+            if (checkInput())
             {
                if (useJavaCtx ^ useJavaCtxBtn.getSelection())
                {
@@ -221,7 +222,7 @@ public class RAGenerateAOPage extends AbstractRAGenerateWizardPage
       });
       
       // config properties
-      final TableViewer configPropTabViewer = 
+      final Composite configPropPanel = 
             createConfigPropertyTableViewer(whole, this.connectorHelper.getConfigProps(this.intialAOConfigProperties));
       
       // active or not
@@ -231,7 +232,8 @@ public class RAGenerateAOPage extends AbstractRAGenerateWizardPage
          public void widgetSelected(SelectionEvent e)
          {
             boolean active = activeBtn.getSelection();
-            generalGrp.setEnabled(active);
+            setCompositeEnabled(generalGrp, active);
+            setCompositeEnabled(configPropPanel, active);
             List<AdminObjectConfig> aoConfigs = raConfig.getAdminObjectConfigs();
             if (active)
             {
@@ -239,18 +241,20 @@ public class RAGenerateAOPage extends AbstractRAGenerateWizardPage
                {
                   aoConfigs.add(aoConfig);
                }
+               checkInput();
             }
             else
             {
                aoConfigs.remove(aoConfig);
+               updateStatus(null);
             }
-            configPropTabViewer.getTable().setEnabled(active);
             whole.update();
          }
 
       });
       activeBtn.setSelection(isInitialActive());
-      
+      setCompositeEnabled(generalGrp, isInitialActive());
+      setCompositeEnabled(configPropPanel, isInitialActive());
       setControl(whole);
    }
    
@@ -259,7 +263,7 @@ public class RAGenerateAOPage extends AbstractRAGenerateWizardPage
     * 
     * @return true if all input are OK, otherwise, false.
     */
-   private boolean isInputValid()
+   private boolean checkInput()
    {
       String jndiName = jndiText.getText().trim();
       boolean useJavaCtx = this.useJavaCtxBtn.getSelection();
@@ -290,6 +294,7 @@ public class RAGenerateAOPage extends AbstractRAGenerateWizardPage
       if (configProps == null)
       {
          configProps = new ArrayList<ConfigPropType>();
+         aoConfig.setConfigProps(configProps);
       }
       if (!configProps.contains(prop))
       {
@@ -336,7 +341,7 @@ public class RAGenerateAOPage extends AbstractRAGenerateWizardPage
       {
          return this.commonAO.isEnabled();
       }
-      return Boolean.valueOf(false);
+      return Boolean.valueOf(true);
    }
    
    /**
@@ -349,7 +354,7 @@ public class RAGenerateAOPage extends AbstractRAGenerateWizardPage
       {
          return this.commonAO.isUseJavaContext();
       }
-      return Boolean.valueOf(false);
+      return Boolean.valueOf(true);
    }
    
    

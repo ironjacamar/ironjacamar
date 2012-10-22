@@ -395,7 +395,7 @@ public class RAXMLGenerator
                config.getJndiName(), config.getPoolName(), config.isEnabled(), config.isUseJavaCtx());
          result.add(commonAO);
       }
-      return result.isEmpty() ? null : result;
+      return result;
    }
    
    /**

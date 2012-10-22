@@ -78,7 +78,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
    private final String mcfClsName;
    
    /** The TableViewer in general tab */
-   private TableViewer generalTabViewer;
+   private Composite generalConfigPropertiesPanel;
    
    private Button xaPoolBtn;
    
@@ -357,7 +357,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       });
       
       // config properties
-      this.generalTabViewer = createConfigPropertyTableViewer(whole, 
+      this.generalConfigPropertiesPanel = createConfigPropertyTableViewer(whole, 
             this.connectorHelper.getConfigProps(this.connDef.getConfigProperties()));
       
       return whole;
@@ -1403,7 +1403,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
    @Override
    protected void onConfigPropUpdated(TableViewer configPropsTableView, ConfigPropType prop)
    {
-      if (configPropsTableView.equals(this.generalTabViewer))
+      if (configPropsTableView.getTable().getParent().equals(this.generalConfigPropertiesPanel))
       {
          // config properties in the general tab
          List<ConfigPropType> configProps = connFactoryConfig.getMcfConfigProps();
@@ -1468,7 +1468,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       {
          return this.initialConnDef.isEnabled();
       }
-      return Boolean.valueOf(false);
+      return Boolean.valueOf(true);
    }
    
    private Boolean isMcfUseJavaCtx()
@@ -1477,7 +1477,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       {
          return this.initialConnDef.isUseJavaContext();
       }
-      return Boolean.valueOf(false);
+      return Boolean.valueOf(true);
    }
    
    private Boolean isMcfUseCCM()
@@ -1486,7 +1486,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       {
          return this.initialConnDef.isUseCcm();
       }
-      return Boolean.valueOf(false);
+      return Boolean.valueOf(true);
    }
    
    private Integer getMinPoolSize(CommonPool pool)
@@ -1576,7 +1576,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       {
          return xaPool.isWrapXaResource();
       }
-      return Boolean.valueOf(false); 
+      return Boolean.valueOf(true); 
    }
    
    private ConnectionFactoryConfig.PoolConfig getPoolConfig()

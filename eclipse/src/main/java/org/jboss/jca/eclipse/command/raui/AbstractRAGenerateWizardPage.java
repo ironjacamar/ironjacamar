@@ -45,6 +45,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -146,9 +147,9 @@ public abstract class AbstractRAGenerateWizardPage extends WizardPage
     * 
     * @param parent the parent, which requires the numOfColumns of the layout is 1
     * @param initialValues initial values
-    * @return the TableViewer which holds the config properties
+    * @return the Composite which holds all config-property related components.
     */
-   TableViewer createConfigPropertyTableViewer(Composite parent, List<ConfigPropType> initialValues)
+   Composite createConfigPropertyTableViewer(Composite parent, List<ConfigPropType> initialValues)
    {
       Label configPropLabel = new Label(parent, SWT.NULL);
       configPropLabel.setText("Set Config Properties:");
@@ -196,8 +197,6 @@ public abstract class AbstractRAGenerateWizardPage extends WizardPage
             String[] pair = dialog.getNameValuePair();
             if (!pair[2].equals(prop.getValue()) && pair[2].length() > 0)
             {
-               // TODO check whether changed against initial vlaues
-               
                prop.setValue(pair[2]);
                configContentProvider.update(prop);
                configPropContainer.update();
@@ -222,7 +221,30 @@ public abstract class AbstractRAGenerateWizardPage extends WizardPage
             configContentProvider.add(configProp);
          }
       }
-      return configPropsTableView;
+      return configPropContainer;
+   }
+   
+   /**
+    * Enable/Disable the composite and its sub components.
+    * 
+    * @param composite the Composite
+    * @param enabled enabled or disabled
+    */
+   protected void setCompositeEnabled(Composite composite, boolean enabled)
+   {
+      if (composite == null)
+      {
+         return;
+      }
+      composite.setEnabled(enabled);
+      for (Control control : composite.getChildren())
+      {
+         control.setEnabled(enabled);
+         if (control instanceof Composite)
+         {
+            setCompositeEnabled((Composite)control, enabled);
+         }
+      }
    }
    
    /**
