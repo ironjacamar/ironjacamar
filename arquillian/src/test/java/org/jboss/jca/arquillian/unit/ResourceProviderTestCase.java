@@ -67,6 +67,8 @@ public class ResourceProviderTestCase
    public void testBasic() throws Throwable
    {
       assertNotNull(embedded);
+      assertNotNull(embedded.lookup("Kernel", Object.class));
       assertNotNull(context);
+      assertNotNull(context.lookup("java:/UserTransaction"));
    }
 }
