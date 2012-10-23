@@ -13,14 +13,14 @@
             id="ironjacamar-eclipse.commands.validateCommand">
       </command>
       <command
-            name="Deploy"
             categoryId="ironjacamar-eclipse.commands.category"
-            id="ironjacamar-eclipse.commands.deployCommand">
-      </command>
-      <command
-            name="RAGenerateDeploy"
-            categoryId="ironjacamar-eclipse.commands.category"
-            id="ironjacamar-eclipse.commands.raGenerateDeployCommand">
+            id="ironjacamar-eclipse.commands.deployCommand"
+            name="Deploy">
+         <commandParameter
+               id="ironjacamar-eclipse.params.deployment"
+               name="ironjacamar-eclipse.params.deployment"
+               optional="true">
+         </commandParameter>
       </command>
    </extension>
    <extension
@@ -43,15 +43,6 @@
             </reference>
          </activeWhen>
       </handler>
-      <handler
-            commandId="ironjacamar-eclipse.commands.raGenerateDeployCommand"
-            class="org.jboss.jca.eclipse.command.RAGenerateDeployHandler">
-         <activeWhen>
-            <reference
-                  definitionId="org.jboss.jca.eclipse.IronJacamarProjectNature.definition">
-            </reference>
-         </activeWhen>
-      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
@@ -67,12 +58,6 @@
             sequence="M1+7"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
       </key>
-      <key
-            commandId="ironjacamar-eclipse.commands.raGenerateDeployCommand"
-            contextId="org.eclipse.ui.contexts.window"
-            sequence="M1+8"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
-      </key>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -84,19 +69,32 @@
                id="ironjacamar-eclipse.popup.ironjacamar">
             <command
                   commandId="ironjacamar-eclipse.commands.validateCommand"
-                  mnemonic="V"
-                  id="ironjacamar-eclipse.menus.validateCommand">
+                  icon="icons/validation_icon_16px.gif"
+                  id="ironjacamar-eclipse.menus.validateCommand"
+                  mnemonic="V">
             </command>
-            <command
-                  commandId="ironjacamar-eclipse.commands.deployCommand"
-                  mnemonic="D"
-                  id="ironjacamar-eclipse.menus.deployCommand">
-            </command>
-            <command
-                  commandId="ironjacamar-eclipse.commands.raGenerateDeployCommand"
-                  mnemonic="D"
-                  id="ironjacamar-eclipse.menus.raGenerateDeployCommand">
-            </command>
+            <menu
+                  icon="icons/deploy_icon_16px.gif"
+                  label="Deploy">
+               <command
+                     commandId="ironjacamar-eclipse.commands.deployCommand"
+                     label="Deploy rar"
+                     tooltip="Deploy the generated RAR file to IronJacamar server">
+                  <parameter
+                        name="ironjacamar-eclipse.params.deployment"
+                        value="ironjacamar-eclipse.params.deploy-rar">
+                  </parameter>
+               </command>
+               <command
+                     commandId="ironjacamar-eclipse.commands.deployCommand"
+                     label="Deploy -ra.xml"
+                     tooltip="Generate the -ra.xml file and deploy it to IronJacamar server">
+                  <parameter
+                        name="ironjacamar-eclipse.params.deployment"
+                        value="ironjacamar-eclipse.params.deploy-ra.xml">
+                  </parameter>
+               </command>
+            </menu>
             <visibleWhen
                   checkEnabled="false">
                <reference
@@ -118,16 +116,36 @@
             <command
                   commandId="ironjacamar-eclipse.commands.deployCommand"
                   icon="icons/deploy_icon_16px.gif"
-                  tooltip="Deploy Ironjacamar project"
-                  id="ironjacamar-eclipse.toolbars.deployCommand">
-            </command>
-            <command
-                  commandId="ironjacamar-eclipse.commands.raGenerateDeployCommand"
-                  icon="icons/deploy_icon_16px.gif"
-                  tooltip="Generate *-ra.xml and deploy it"
-                  id="ironjacamar-eclipse.toolbars.raGenerateDeployCommand">
+                  id="ironjacamar-eclipse.toolbars.deployCommand"
+                  style="pulldown"
+                  tooltip="Deploy Ironjacamar project">
+               <parameter
+                     name="ironjacamar-eclipse.params.deployment"
+                     value="ironjacamar-eclipse.params.deploy-rar">
+               </parameter>
             </command>
          </toolbar>
+      </menuContribution>
+      <menuContribution
+            locationURI="menu:ironjacamar-eclipse.toolbars.deployCommand">
+         <command
+               commandId="ironjacamar-eclipse.commands.deployCommand"
+               label="Deploy rar"
+               tooltip="Deploy the generated RAR file to IronJacamar server">
+            <parameter
+                  name="ironjacamar-eclipse.params.deployment"
+                  value="ironjacamar-eclipse.params.deploy-rar">
+            </parameter>
+         </command>
+         <command
+               commandId="ironjacamar-eclipse.commands.deployCommand"
+               label="Deploy -ra.xml"
+               tooltip="Generate the -ra.xml file and deploy it to IronJacamar server">
+            <parameter
+                  name="ironjacamar-eclipse.params.deployment"
+                  value="ironjacamar-eclipse.params.deploy-ra.xml">
+            </parameter>
+         </command>
       </menuContribution>
    </extension>
 

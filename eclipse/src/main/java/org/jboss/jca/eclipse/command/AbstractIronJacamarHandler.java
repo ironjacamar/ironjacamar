@@ -49,6 +49,9 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IOConsole;
@@ -399,7 +402,24 @@ public abstract class AbstractIronJacamarHandler extends AbstractHandler
    }
    
    /**
+    * Gets active shell.
+    * 
+    * @return the Shell
+    */
+   protected Shell getActiveShell()
+   {
+      IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+      if (null != activeWindow)
+      {
+         return activeWindow.getShell();
+      }
+      return null;
+   }
+   
+   /**
     * Things to do after the building is finished. No matter succeeds or fails.
+    * 
+    * This is called in background thread, any GUI thread access should not be called directly.
     * 
     * @param project the <strong>IronJacamar</strong> Project
     */

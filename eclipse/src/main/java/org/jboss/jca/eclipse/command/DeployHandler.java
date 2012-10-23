@@ -22,6 +22,8 @@
 package org.jboss.jca.eclipse.command;
 
 import org.jboss.jca.eclipse.Activator;
+import org.jboss.jca.eclipse.command.raui.ConnectorHelper;
+import org.jboss.jca.eclipse.command.raui.RAGenerateWizard;
 
 import com.github.fungal.spi.deployers.DeployException;
 
@@ -36,7 +38,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -48,6 +53,15 @@ import org.eclipse.ui.statushandlers.StatusManager;
  */
 public class DeployHandler extends AbstractIronJacamarHandler
 {
+   
+   private static final String PARAM_NAME = "ironjacamar-eclipse.params.deployment";
+   
+   private static final String PARAM_DEPLOY_RAR = "ironjacamar-eclipse.params.deploy-rar";
+   
+   private static final String PARAM_DEPLOY_RAXML = "ironjacamar-eclipse.params.deploy-ra.xml";
+   
+   private String deployment;
+   
    /**
     * The Constructor
     */
@@ -66,8 +80,9 @@ public class DeployHandler extends AbstractIronJacamarHandler
    @Override
    public Object execute(ExecutionEvent event) throws ExecutionException
    {
-      
+      this.deployment = event.getParameter(PARAM_NAME);
       setBaseEnabled(false);
+      
       ISelection selection = HandlerUtil.getCurrentSelection(event);
       
       // check current selected project
@@ -98,10 +113,72 @@ public class DeployHandler extends AbstractIronJacamarHandler
       }
       else
       {
+         startDeployment(rarFile, project);
+      }
+      return null;
+   }
+   
+   private void startDeployment(IFile rarFile, IProject project)
+   {
+      if (PARAM_DEPLOY_RAR.equals(deployment))
+      {
          DeployJob deployJob = new DeployJob(rarFile);
          deployJob.schedule();
       }
-      return null;
+      else if (PARAM_DEPLOY_RAXML.equals(deployment))
+      {
+         openRAgenerationWizard(getActiveShell(), rarFile, project);
+      }
+      else
+      {
+         throw new IllegalStateException("Unkown parameter: " + deployment);
+      }
+   }
+   
+   /**
+    * Opens the wizard dialog to generate the -ra.xml
+    * 
+    * @param shell the Shell
+    * @param rarFile the RAR file
+    * @param project the Project
+    */
+   private void openRAgenerationWizard(final Shell shell, final IFile rarFile, final IProject project)
+   {
+      // Parse Connector from RAR file, then open the wizard dialog.
+      Job parseConnectorJob = new Job("Paring connector from " + rarFile.getFullPath())
+      {
+
+         @Override
+         protected IStatus run(IProgressMonitor monitor)
+         {
+            try
+            {
+               final ConnectorHelper connectorHelper = new ConnectorHelper();
+               connectorHelper.parseConnectorData(rarFile);
+               Display.getDefault().asyncExec(new Runnable()
+               {
+
+                  @Override
+                  public void run()
+                  {
+                     WizardDialog wizard = new WizardDialog(shell,
+                           new RAGenerateWizard(rarFile, connectorHelper, project));
+                     wizard.open();
+                  }
+               });
+            }
+            catch (Exception e)
+            {
+               return new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Can not parse Connector information", e);
+            }
+            finally
+            {
+               enableHandler();
+            }
+            return Status.OK_STATUS;
+         }
+      };
+      parseConnectorJob.schedule();
    }
    
    /**
@@ -167,8 +244,7 @@ public class DeployHandler extends AbstractIronJacamarHandler
          IFile rarFile = lookupRarFile(project);
          if (rarFile != null && rarFile.exists())
          {
-            DeployJob deployJob = new DeployJob(rarFile);
-            deployJob.schedule();
+            startDeployment(rarFile, project);
          }
          else
          {
