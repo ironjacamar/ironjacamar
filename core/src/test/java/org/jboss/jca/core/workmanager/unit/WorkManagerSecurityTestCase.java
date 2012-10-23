@@ -50,7 +50,6 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.logging.Logger;
 import org.jboss.security.SecurityContextAssociation;
 import org.jboss.security.SimplePrincipal;
-import org.jboss.security.identity.plugins.SimpleRole;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
