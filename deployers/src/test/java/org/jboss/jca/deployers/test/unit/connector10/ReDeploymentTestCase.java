@@ -22,6 +22,7 @@
 
 package org.jboss.jca.deployers.test.unit.connector10;
 
+import org.jboss.jca.deployers.test.DeploymentTestBase;
 import org.jboss.jca.deployers.test.rars.inout.SimpleConnectionFactory1;
 import org.jboss.jca.embedded.Embedded;
 import org.jboss.jca.embedded.EmbeddedFactory;
@@ -45,7 +46,7 @@ import static org.junit.Assert.*;
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  * @version $Revision: $
  */
-public class ReDeploymentTestCase extends Ra10TestBase
+public class ReDeploymentTestCase extends DeploymentTestBase
 {
 
    /*
@@ -94,7 +95,7 @@ public class ReDeploymentTestCase extends Ra10TestBase
    {
       InitialContext context = new InitialContext();
       SimpleConnectionFactory1 cf = (SimpleConnectionFactory1) context.lookup(cfName);
-      testBasic1(cf, first,  second);
+      testSimpleCF1(cf, first,  second);
       if (context != null)
       {
          try

@@ -48,10 +48,10 @@ public class SimpleAdminObjectImpl implements SimpleAdminObject,
    private Reference reference;
 
    /** first */
-   private String first;
+   private String first = "ao";
 
    /** second */
-   private Double second;
+   private Double second = 3.14;
 
    /**
     * Default constructor

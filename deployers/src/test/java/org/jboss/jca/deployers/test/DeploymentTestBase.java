@@ -21,8 +21,23 @@
  */
 package org.jboss.jca.deployers.test;
 
+import org.jboss.jca.arquillian.embedded.Inject;
+import org.jboss.jca.core.spi.mdr.MetadataRepository;
+import org.jboss.jca.deployers.test.rars.inout.SimpleAdminObject;
+import org.jboss.jca.deployers.test.rars.inout.SimpleAdminObjectImpl;
+import org.jboss.jca.deployers.test.rars.inout.SimpleConnection;
+import org.jboss.jca.deployers.test.rars.inout.SimpleConnection1;
+import org.jboss.jca.deployers.test.rars.inout.SimpleConnectionFactory;
+import org.jboss.jca.deployers.test.rars.inout.SimpleConnectionFactory1;
+import org.jboss.jca.deployers.test.rars.inout.SimpleConnectionFactoryImpl;
+import org.jboss.jca.deployers.test.rars.inout.SimpleConnectionFactoryImpl1;
+import org.jboss.jca.deployers.test.rars.inout.SimpleManagedConnectionFactory;
+import org.jboss.jca.deployers.test.rars.inout.SimpleManagedConnectionFactory1;
+import org.jboss.jca.deployers.test.rars.inout.SimpleResourceAdapter;
 import org.jboss.jca.embedded.dsl.InputStreamDescriptor;
 
+import java.util.Iterator;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -31,6 +46,8 @@ import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
+
+import static org.junit.Assert.*;
 
 /**
  * DeploymentTestBase - base class for tests with deployments
@@ -42,6 +59,12 @@ public abstract class DeploymentTestBase
 {
    /** The logger */
    protected static Logger log = Logger.getLogger("DeploymentTestBase");
+
+   /**
+    * MDR
+    */
+   @Inject(name = "MDR")
+   protected MetadataRepository mdr;
 
    /**
     * Build a shrinkwrap rar adding all necessary classes
@@ -188,4 +211,190 @@ public abstract class DeploymentTestBase
       InputStreamDescriptor isd = new InputStreamDescriptor(descriptorName, cl.getResourceAsStream(fileName));
       return isd;
    }
+
+   /**
+    * 
+    * create deployment 
+    * 
+    * @param archiveName 
+    * @return archive
+    * @throws Exception in case of error
+    */
+   public static ResourceAdapterArchive createDeployment(String archiveName) throws Exception
+   {
+      ResourceAdapterArchive raa = buidShrinkwrapRa(archiveName, SimpleManagedConnectionFactory.class.getPackage());
+      addRaXml(raa);
+
+      return raa;
+   }
+
+   /**
+    * 
+    * Creates deployment with ironjacamar.xml activation
+    * 
+    * @param dirName name of directory, where resources are placed
+    * @param rarName name of created archive
+    * @return archive 
+    * @throws Exception in case of error
+    */
+   public static ResourceAdapterArchive createIJDeployment(String dirName, String rarName) throws Exception
+   {
+      ResourceAdapterArchive rar = createDeployment(dirName);
+      addIJXml(rar);
+
+      return ShrinkWrap.create(ResourceAdapterArchive.class, rarName).merge(rar);
+   }
+
+   /**
+    * Test metadata
+    * 
+    * 
+    * @param size of metadata expected    
+    * @throws Exception in case of error
+    */
+   public void testMetaData(int size) throws Exception
+   {
+      assertNotNull(mdr);
+      Set<String> ids = mdr.getResourceAdapters();
+
+      assertNotNull(ids);
+      assertEquals(size, ids.size());
+
+      Iterator<String> it = ids.iterator();
+      while (it.hasNext())
+      {
+         String piId = it.next();
+         assertNotNull(piId);
+         assertNotNull(mdr.getResourceAdapter(piId));
+
+         checkMetadata(piId);
+      }
+   }
+
+   /**
+    * 
+    * checks, if metadata is of appropriate type
+    * 
+    * @param piId - metadata name
+    * @throws Exception in case of error
+    */
+   public void checkMetadata(String piId) throws Exception
+   {
+      //to override
+   }
+
+   /**
+    * 
+    * Tests connection factory and properties of ManagedConnectionFactory
+    * 
+    * @param connectionFactory to test
+    * @param first property value
+    * @param second property value
+    * @return ManagedConnectionFactory
+    * @throws Exception in case of error
+    */
+   public SimpleManagedConnectionFactory testSimpleCF(SimpleConnectionFactory connectionFactory, String first,
+      char second) throws Exception
+   {
+      SimpleManagedConnectionFactory mcf = null;
+      assertNotNull(connectionFactory);
+      SimpleConnection con = null;
+      try
+      {
+         con = connectionFactory.getConnection();
+         assertNotNull(con);
+         assertTrue(connectionFactory instanceof SimpleConnectionFactoryImpl);
+         SimpleConnectionFactoryImpl cf = (SimpleConnectionFactoryImpl) connectionFactory;
+         assertNotNull(cf.getMCF());
+         assertTrue(cf.getMCF() instanceof SimpleManagedConnectionFactory);
+         mcf = (SimpleManagedConnectionFactory) cf.getMCF();
+         assertEquals(first, mcf.getFirst());
+         assertEquals(second, (char) mcf.getSecond());
+      }
+      catch (Exception e)
+      {
+         e.printStackTrace();
+         fail(e.getMessage());
+      }
+      finally
+      {
+         if (con != null)
+            con.close();
+      }
+      return mcf;
+   }
+
+   /**
+    * 
+    * Tests connection factory and properties of ManagedConnectionFactory
+    * 
+    * @param connectionFactory to test
+    * @param first property value
+    * @param second property value
+    * @return ManagedConnectionFactory
+    * @throws Exception in case of error
+    */
+   public SimpleManagedConnectionFactory1 testSimpleCF1(SimpleConnectionFactory1 connectionFactory, String first,
+      byte second) throws Exception
+   {
+      SimpleManagedConnectionFactory1 mcf = null;
+      assertNotNull(connectionFactory);
+      SimpleConnection1 con = null;
+      try
+      {
+         con = connectionFactory.getConnection();
+         assertNotNull(con);
+         assertTrue(connectionFactory instanceof SimpleConnectionFactoryImpl1);
+         SimpleConnectionFactoryImpl1 cf = (SimpleConnectionFactoryImpl1) connectionFactory;
+         assertNotNull(cf.getMCF());
+         assertTrue(cf.getMCF() instanceof SimpleManagedConnectionFactory1);
+         mcf = (SimpleManagedConnectionFactory1) cf.getMCF();
+         assertEquals(first, mcf.getFirst());
+         assertEquals(second, (byte) mcf.getSecond());
+      }
+      catch (Exception e)
+      {
+         e.printStackTrace();
+         fail(e.getMessage());
+      }
+      finally
+      {
+         if (con != null)
+            con.close();
+      }
+      return mcf;
+   }
+
+   /**
+    * 
+    * tests SimpleAdminObjectImpl properties
+    * 
+    * @param ao SimpleAdminObject 
+    * @param first property should be equal
+    * @param second property should be equal
+    */
+   public void testSimpleAO(SimpleAdminObject ao, String first, double second)
+   {
+      assertNotNull(ao);
+      assertTrue(ao instanceof SimpleAdminObjectImpl);
+      SimpleAdminObjectImpl aoi = (SimpleAdminObjectImpl) ao;
+      assertEquals(first, aoi.getFirst());
+      assertEquals(second, (double) aoi.getSecond(), 0);
+   }
+
+   /**
+    * 
+    * tests SimpleResourceAdapter properites
+    * 
+    * @param ra SimpleResourceAdapter
+    * @param first property should be equal
+    * @param second property should be equal
+    */
+   public void testSimpleRA(SimpleResourceAdapter ra, String first, boolean second)
+   {
+      assertNotNull(ra);
+      assertEquals(first, ra.getFirst());
+      assertEquals(second, ra.getSecond());
+   }
+
 }

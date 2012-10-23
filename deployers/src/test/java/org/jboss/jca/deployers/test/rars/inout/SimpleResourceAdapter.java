@@ -54,10 +54,10 @@ public class SimpleResourceAdapter implements ResourceAdapter, java.io.Serializa
    private Map<SimpleActivationSpec, SimpleActivation> activations;
 
    /** first */
-   private String first;
+   private String first = "ra";
 
    /** second */
-   private Boolean second;
+   private Boolean second = true;
 
    /**
     * Default constructor

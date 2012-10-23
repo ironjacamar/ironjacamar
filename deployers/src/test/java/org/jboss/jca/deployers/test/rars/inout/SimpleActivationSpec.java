@@ -42,10 +42,10 @@ public class SimpleActivationSpec implements ActivationSpec
    private ResourceAdapter ra;
 
    /** first */
-   private String first;
+   private String first = "as";
 
    /** second */
-   private Integer second;
+   private Integer second = 43;
 
    /**
     * Default constructor

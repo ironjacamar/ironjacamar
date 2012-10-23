@@ -22,6 +22,8 @@
 
 package org.jboss.jca.deployers.test.unit.connector10;
 
+import org.jboss.jca.common.metadata.ra.ra10.Connector10Impl;
+import org.jboss.jca.deployers.test.DeploymentTestBase;
 import org.jboss.jca.deployers.test.rars.inout.SimpleConnectionFactory;
 import org.jboss.jca.deployers.test.rars.inout.SimpleConnectionFactory1;
 
@@ -46,8 +48,20 @@ import static org.junit.Assert.*;
  * @version $Revision: $
  */
 @RunWith(Arquillian.class)
-public class ActivationTestCase extends Ra10TestBase
+public class ActivationTestCase extends DeploymentTestBase
 {
+   /**
+    * 
+    * checks, if metadata is of appropriate type
+    * 
+    * @param piId - metadata name
+    * @throws Exception in case of error
+    */
+   @Override
+   public void checkMetadata(String piId) throws Exception
+   {
+      assertTrue(mdr.getResourceAdapter(piId) instanceof Connector10Impl);
+   }
 
    /**
     * 
@@ -189,7 +203,7 @@ public class ActivationTestCase extends Ra10TestBase
    @Test
    public void first() throws Exception
    {
-      testBasic(connectionFactory1, "aaa", 'c');
+      testSimpleCF(connectionFactory1, "aaa", 'c');
    }
 
    /**
@@ -201,7 +215,7 @@ public class ActivationTestCase extends Ra10TestBase
    @Test
    public void second() throws Exception
    {
-      testBasic1(connectionFactory2, "bbb", (byte) 5);
+      testSimpleCF1(connectionFactory2, "bbb", (byte) 5);
    }
 
    /**
@@ -213,7 +227,7 @@ public class ActivationTestCase extends Ra10TestBase
    @Test
    public void third() throws Exception
    {
-      testBasic(connectionFactory3, "ccc", 'a');
+      testSimpleCF(connectionFactory3, "ccc", 'a');
    }
 
    /**
@@ -225,7 +239,7 @@ public class ActivationTestCase extends Ra10TestBase
    @Test
    public void forth() throws Exception
    {
-      testBasic1(connectionFactory4, "ddd", (byte) 4);
+      testSimpleCF1(connectionFactory4, "ddd", (byte) 4);
    }
 
    /**
@@ -237,7 +251,7 @@ public class ActivationTestCase extends Ra10TestBase
    @Test
    public void fifth() throws Exception
    {
-      testBasic(connectionFactory5, "eee", 'e');
+      testSimpleCF(connectionFactory5, "eee", 'e');
    }
 
    /**
@@ -249,7 +263,7 @@ public class ActivationTestCase extends Ra10TestBase
    @Test
    public void sixth() throws Exception
    {
-      testBasic1(connectionFactory6, "fff", (byte) 3);
+      testSimpleCF1(connectionFactory6, "fff", (byte) 3);
    }
 
    /**
@@ -261,7 +275,7 @@ public class ActivationTestCase extends Ra10TestBase
    @Test
    public void seventh() throws Exception
    {
-      testBasic(connectionFactory7, "eee", 'e');
+      testSimpleCF(connectionFactory7, "eee", 'e');
    }
 
    /**
@@ -273,7 +287,7 @@ public class ActivationTestCase extends Ra10TestBase
    @Test
    public void eighth() throws Exception
    {
-      testBasic1(connectionFactory8, "fff", (byte) 3);
+      testSimpleCF1(connectionFactory8, "fff", (byte) 3);
    }
 
    /**

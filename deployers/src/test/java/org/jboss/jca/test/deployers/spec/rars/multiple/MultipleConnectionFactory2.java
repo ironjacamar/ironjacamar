@@ -41,6 +41,12 @@ public interface MultipleConnectionFactory2 extends Serializable, Referenceable
     */
    public MultipleConnection2 getConnection() throws ResourceException;
 
+   /**
+    * 
+    * get MCF
+    * 
+    * @return MCF 
+    */
    public MultipleManagedConnectionFactory2 getMcf();
 
 }
