@@ -13,10 +13,10 @@
 			<config-property name="first">ccc</config-property>
 			<config-property name="second">a</config-property>
 		</connection-definition>
-			</connection-definitions>
-		
-		<admin-object jndi-name="java:/ao/ijwc-activation">
-			<config-property name="first">aoao</config-property>
-			<config-property name="second">0.99</config-property>
-		</admin-object>
+	</connection-definitions>
+
+	<admin-object jndi-name="java:/ao/ijwc-activation">
+		<config-property name="first">aoao</config-property>
+		<config-property name="second">0.99</config-property>
+	</admin-object>
 </ironjacamar>

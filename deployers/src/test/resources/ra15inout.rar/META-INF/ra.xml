@@ -37,7 +37,8 @@
 		</inbound-resourceadapter>
 		<adminobject>
 			<adminobject-interface>
-				org.jboss.jca.deployers.test.rars.inout.SimpleAdminObject</adminobject-interface>
+				org.jboss.jca.deployers.test.rars.inout.SimpleAdminObject
+			</adminobject-interface>
 			<adminobject-class>org.jboss.jca.deployers.test.rars.inout.SimpleAdminObjectImpl</adminobject-class>
 		</adminobject>
 	</resourceadapter>

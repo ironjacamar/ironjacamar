@@ -5,7 +5,8 @@
 	<config-property name="second">false</config-property>
 	<transaction-support>LocalTransaction</transaction-support>
 	<connection-definitions>
-		<connection-definition jndi-name="java:/ij-activation" class-name="org.jboss.jca.deployers.test.rars.inout.SimpleManagedConnectionFactory">
+		<connection-definition jndi-name="java:/ij-activation"
+			class-name="org.jboss.jca.deployers.test.rars.inout.SimpleManagedConnectionFactory">
 			<pool>
 				<prefill>false</prefill>
 				<use-strict-min>false</use-strict-min>
@@ -13,10 +14,11 @@
 			<config-property name="first">ccc</config-property>
 			<config-property name="second">a</config-property>
 		</connection-definition>
-			</connection-definitions>
-		
-		<admin-object jndi-name="java:/ao/ij-activation" class-name="org.jboss.jca.deployers.test.rars.inout.SimpleAdminObjectImpl">
-			<config-property name="first">aoao</config-property>
-			<config-property name="second">0.99</config-property>
-		</admin-object>
+	</connection-definitions>
+
+	<admin-object jndi-name="java:/ao/ij-activation"
+		class-name="org.jboss.jca.deployers.test.rars.inout.SimpleAdminObjectImpl">
+		<config-property name="first">aoao</config-property>
+		<config-property name="second">0.99</config-property>
+	</admin-object>
 </ironjacamar>
