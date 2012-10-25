@@ -50,6 +50,15 @@ copy ironjacamar-eclipse.jar %ECLIPSE_HOME%\plugins
     <para>
       Open Window-&gt;Preferences and go to the IronJacamar category.
 
+    </para>
+
+    <mediaobject>
+      <imageobject>
+        <imagedata fileref="images/eclipse-configuration.png" align="center"/>
+      </imageobject>
+    </mediaobject>
+
+    <para>
       You must point the IronJacamar home setting to the root directory of the IronJacamar installation, like
     </para>
 
@@ -60,6 +69,38 @@ copy ironjacamar-eclipse.jar %ECLIPSE_HOME%\plugins
     <para>
       in order to configure the plugin.
     </para>
+
+    <para>
+      If you have started the IronJacamar server, please configure the server host and port.
+    </para>
+
+  </section>
+
+  <section id="eclipse_toolbar">
+    <title>Eclipse Toolbar</title>
+    <para>
+      IronJacamar Eclipse plugin provides a toolbar.
+    </para>
+
+    <mediaobject>
+      <imageobject>
+        <imagedata fileref="images/eclipse-toolbar.png" align="center"/>
+      </imageobject>
+    </mediaobject>
+
+  </section>
+
+  <section id="eclipse_menu">
+    <title>Eclipse Menu</title>
+    <para>
+      IronJacamar Eclipse plugin provides a context menu.
+    </para>
+
+    <mediaobject>
+      <imageobject>
+        <imagedata fileref="images/eclipse-menu.png" align="center"/>
+      </imageobject>
+    </mediaobject>
 
   </section>
 
@@ -74,5 +115,219 @@ copy ironjacamar-eclipse.jar %ECLIPSE_HOME%\plugins
       Choose "IronJacamar 1.1 project" and follow the instructions to generate your resource adapter.
     </para>
     
+    <mediaobject>
+      <imageobject>
+        <imagedata fileref="images/eclipse-new-project.png" align="center"/>
+      </imageobject>
+    </mediaobject>
+
+    <section id="eclipse_project_name">
+      <title>Input project name and package name</title>
+     
+    <mediaobject>
+      <imageobject>
+        <imagedata fileref="images/eclipse-new-project-name.png" align="center"/>
+      </imageobject>
+    </mediaobject>
+
+      <para>    
+        Input the project name and package name in this page. You can also select the JCA specification version and the Outbound/Inbound communication type.
+      </para>    
+
+    </section>
+
+    <section id="eclipse_project_ra">
+      <title>Include a ResourceAdapter</title>
+     
+    <mediaobject>
+      <imageobject>
+        <imagedata fileref="images/eclipse-new-project-ra.png" align="center"/>
+      </imageobject>
+    </mediaobject>
+
+      <para>    
+        You can select to include a ResourceAdapter class if JCA profile version is 1.5 or 1.6
+      </para>    
+
+    </section>
+
+    <section id="eclipse_project_outbound">
+      <title>Create Outbound ResoureAdapter</title>
+     
+    <mediaobject>
+      <imageobject>
+        <imagedata fileref="images/eclipse-new-project-outbound.png" align="center"/>
+      </imageobject>
+    </mediaobject>
+
+      <para>    
+        If you select to generate the Outbound ResourceAdapter, it will prompt you to input to create all Outbound components.
+      </para>    
+
+    </section>
+
+    <section id="eclipse_project_inbound">
+      <title>Create Inbound ResoureAdapter</title>
+     
+    <mediaobject>
+      <imageobject>
+        <imagedata fileref="images/eclipse-new-project-inbound.png" align="center"/>
+      </imageobject>
+    </mediaobject>
+
+      <para>    
+        If you select to generate the Inbound ResourceAdapter, it will prompt you to input to create all Inbound components.
+      </para>    
+
+    </section>
+
+    <section id="eclipse_project_ao">
+      <title>Create AdminObject</title>
+     
+    <mediaobject>
+      <imageobject>
+        <imagedata fileref="images/eclipse-new-project-ao.png" align="center"/>
+      </imageobject>
+    </mediaobject>
+
+      <para>    
+        You can select to include an AdminObject.
+      </para>    
+
+    </section>
+
+    <section id="eclipse_project_build">
+      <title>Select build environment</title>
+     
+    <mediaobject>
+      <imageobject>
+        <imagedata fileref="images/eclipse-new-project-build.png" align="center"/>
+      </imageobject>
+    </mediaobject>
+
+      <para>    
+        In this page, you need to select the build environment. Currently IronJacamar supports Ant, Ant + Ivy and Maven as the build environment. If the Ant is selected, all jars will be copied from your IronJacamar server.
+      </para>    
+
+      <note>
+        <para>    
+          Please make sure you have installed the M2E plugin if you select Maven as your build environment.
+        </para>    
+      </note>
+
+    </section>
+
+  </section>
+
+  <section id="eclipse_validate">
+    <title>Validate IronJacamar project</title>
+
+    <para>
+      Select the IronJacamar project you just created. The Validate command in the toolbar will be enabled. Click on the command to validate current IronJacamar project.
+    </para>
+
+    <para>
+      The other way to validate the IronJacamar project is to right click on the project, and select IronJacamar-&gt;Validate.
+    </para>
+
+  </section>
+
+  <section id="eclipse_deploy">
+    <title>Deploy IronJacamar project</title>
+
+    <para>
+      IronJacamar Eclipse plugin provides deploy function to IronJacamar server.
+    </para>
+
+    <note>
+      <para>
+        Before any deploy operation, the IronJacamar server needs to be started first, otherwise it will lead to an error dialog. Please refer to <link linkend="startingthecontainer">this</link> for detail on how to start the IronJacamar server
+      </para>
+    </note>
+
+    <section id="eclipse_deploy_rar">
+      <title>Deploy RAR file to IronJacamar server</title>
+
+      <para>
+        Select the IronJacamar project you just created. The Deploy drop down command in the toolbar will be enabled. Click on the command and select 'Deploy rar'.
+      </para>
+
+      <para>
+        The other way to deploy the RAR file is to right click on the project, and select IronJacamar-&gt;Deploy-&gt;Deploy rar from context menu
+      </para>
+
+      <para>
+        The command will build the RAR file first if it does not exist, then try to connect the IronJacamar server to deploy it.
+      </para>
+
+    </section>
+
+    <section id="eclipse_deploy_raxml">
+      <title>Generate the -ra.xml and deploy it to IronJacamar server</title>
+
+      <para>
+        Select the IronJacamar project you just created. The Deploy drop down command in the toolbar will be enabled. Click on the command and select 'Deploy -ra.xml'.
+      </para>
+
+      <para>
+        The other way to generate the -ra.xml file is to right click on the project, and select IronJacamar-&gt;Deploy-&gt;Deploy -ra.xml from context menu.
+      </para>
+
+      <para>
+        The command will build the RAR file first if it does not exist, then pop up a wizard to generate the -ra.xml according to the RAR file.
+      </para>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/eclipse-ra-general.png" align="center"/>
+        </imageobject>
+      </mediaobject>
+
+      <para>
+        There is a wizard page for each ManagedConnectionFactory if it has.
+      </para>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/eclipse-ra-mcf.png" align="center"/>
+        </imageobject>
+      </mediaobject>
+
+      <para>
+        The ManagedConnectionFactory can be actived if select the Active it button
+      </para>
+
+
+      <para>
+        There is a wizard page for each AdminObject if it has.
+      </para>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/eclipse-ra-ao.png" align="center"/>
+        </imageobject>
+      </mediaobject>
+
+      <para>
+        The AdminObject can be actived if select the Active it button.
+      </para>
+
+      <para>
+        There is a miscellaneous page also.
+      </para>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/eclipse-ra-mess.png" align="center"/>
+        </imageobject>
+      </mediaobject>
+
+      <para>
+        If the Deploy RAR first is selected, it will try to deploy the RAR to IronJacamar server first, then deploy the generated -ra.xml file.
+      </para>
+
+    </section>
+
+
   </section>
 </chapter>
