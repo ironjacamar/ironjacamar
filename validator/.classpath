@@ -13,6 +13,7 @@
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/embedded/shrinkwrap-api.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-api"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-common"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-embedded"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/target/ironjacamar-embedded.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/embedded/shrinkwrap-descriptors-api-base.jar"/>
 	<classpathentry kind="output" path="eclipse-target/classes"/>
 </classpath>

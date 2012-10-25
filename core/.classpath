@@ -17,7 +17,6 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/test/mockito-all.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/test/h2.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-embedded"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/picketbox.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/arquillian/arquillian-container-test-api.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/arquillian/arquillian-junit-core.jar"/>
@@ -40,5 +39,8 @@
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jbossjta-integration.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jbossjta.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jgroups.jar" sourcepath="/dati/project/RH/JGroups/src"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/target/ironjacamar-embedded.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-arquillian"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/arquillian/arquillian-test-api.jar"/>
 	<classpathentry kind="output" path="eclipse-target/classes"/>
 </classpath>

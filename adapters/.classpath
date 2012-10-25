@@ -14,12 +14,10 @@
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/test/h2.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/test/junit.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/test/mockito-all.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-embedded"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/embedded/shrinkwrap-api.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/arquillian/arquillian-container-test-api.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/arquillian/arquillian-junit-core.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-deployer"/>
-	<classpathentry kind="lib" path="/ironjacamar-parent/lib/mail/mail.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-transaction-spi.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-transaction-api_1.1_spec.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jbossjta-integration.jar"/>
@@ -29,5 +27,6 @@
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/embedded/shrinkwrap-descriptors-spi.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/embedded/shrinkwrap-impl-base.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/embedded/shrinkwrap-spi.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/target/ironjacamar-embedded.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

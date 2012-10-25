@@ -27,6 +27,5 @@
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/embedded/shrinkwrap-impl-base.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/sjc/fungal.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/sjc/fungal-cli.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-deployer"/>
 	<classpathentry kind="output" path="eclipse-target/classes"/>
 </classpath>
