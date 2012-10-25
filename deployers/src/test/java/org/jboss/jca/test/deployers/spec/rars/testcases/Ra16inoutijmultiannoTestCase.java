@@ -55,6 +55,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -122,6 +123,7 @@ public class Ra16inoutijmultiannoTestCase
     * @exception Throwable Thrown if case of an error
     */
    @Test
+   @Ignore
    public void testGetConnection1() throws Throwable
    {
       assertNotNull(connectionFactory1);

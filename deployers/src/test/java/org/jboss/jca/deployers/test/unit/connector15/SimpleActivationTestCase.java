@@ -34,8 +34,6 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.*;
-
 /**
  * 
  * An ActivationTestCase. Deploy archive without ironjacamar.xml. 

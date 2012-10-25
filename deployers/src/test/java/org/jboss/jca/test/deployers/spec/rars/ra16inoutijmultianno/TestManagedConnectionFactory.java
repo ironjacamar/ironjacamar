@@ -28,7 +28,6 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.resource.ResourceException;
-import javax.resource.spi.ConfigProperty;
 import javax.resource.spi.ConnectionDefinition;
 import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ConnectionRequestInfo;
@@ -48,7 +47,8 @@ import javax.security.auth.Subject;
    connectionFactoryImpl = TestConnectionFactoryImpl.class,
    connection = TestConnection.class,
    connectionImpl = TestConnectionImpl.class)
-public class TestManagedConnectionFactory implements ManagedConnectionFactory, ResourceAdapterAssociation
+public class TestManagedConnectionFactory extends TestManagedConnectionFactoryParent 
+   implements ManagedConnectionFactory, ResourceAdapterAssociation
 {
 
    /** The serial version UID */
@@ -63,9 +63,6 @@ public class TestManagedConnectionFactory implements ManagedConnectionFactory, R
    /** The logwriter */
    private PrintWriter logwriter;
 
-   /** byteProperty */
-   @ConfigProperty(defaultValue = "2")
-   private Byte byteProperty;
 
    /**
     * Default constructor
@@ -75,23 +72,6 @@ public class TestManagedConnectionFactory implements ManagedConnectionFactory, R
 
    }
 
-   /** 
-    * Set byteProperty
-    * @param byteProperty The value
-    */
-   public void setByteProperty(Byte byteProperty)
-   {
-      this.byteProperty = byteProperty;
-   }
-
-   /** 
-    * Get byteProperty
-    * @return The value
-    */
-   public Byte getByteProperty()
-   {
-      return byteProperty;
-   }
 
    /**
     * Creates a Connection Factory instance. 

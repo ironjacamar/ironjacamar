@@ -35,8 +35,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.*;
-
 /**
  * 
  * Deployment with ironjacamar.xml file, containing connection-definition and
