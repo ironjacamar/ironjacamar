@@ -73,7 +73,7 @@ public class InboundWizardPage extends WizardPage
 
    private TableViewer propsTableViewer;
 
-   private final PropsLabelProvider labelProvider = new PropsLabelProvider();
+   private final RequiredPropsLabelProvider labelProvider = new RequiredPropsLabelProvider();
 
    private Button editButton;
 
@@ -278,20 +278,22 @@ public class InboundWizardPage extends WizardPage
       
       String title = "Add";
       AddPropertyDialog dialog = new AddPropertyDialog(propsTableViewer.getControl().getShell(), title, new String[]
-      {"", "", ""});
+      {"", "", "", "true"}, false, true);
       dialog.setPropList(propList);
+      dialog.setVersion(((CodeGenWizard) getWizard()).getDef().getVersion());
       if (dialog.open() == Window.CANCEL)
       {
          return;
       }
 
-      String[] pair = dialog.getNameValuePair();
+      String[] pair = dialog.getRequiredNameValuePair();
       String name = pair[0];
 
       ConfigPropType prop = new ConfigPropType();
       prop.setName(name);
       prop.setType(pair[1]);
       prop.setValue(pair[2]);
+      prop.setRequired(Boolean.parseBoolean(pair[3]));
       ((PropsContentProvider) propsTableViewer.getContentProvider()).add(prop);
       propList.add(prop);
       container.update();
@@ -306,20 +308,21 @@ public class InboundWizardPage extends WizardPage
       List<ConfigPropType> propList = ((CodeGenWizard) getWizard()).getDef().getAsConfigProps();
       String title = "Edit";
       AddPropertyDialog dialog = new AddPropertyDialog(propsTableViewer.getControl().getShell(), title, new String[]
-      {prop.getName(), prop.getType(), prop.getValue()});
+      {prop.getName(), prop.getType(), prop.getValue(), Boolean.toString(prop.isRequired())}, false, true);
       dialog.setPropList(propList);
-
+      dialog.setVersion(((CodeGenWizard) getWizard()).getDef().getVersion());
       if (dialog.open() == Window.CANCEL)
       {
          return;
       }
 
-      String[] pair = dialog.getNameValuePair();
+      String[] pair = dialog.getRequiredNameValuePair();
       String name = pair[0];
 
       prop.setName(name);
       prop.setType(pair[1]);
       prop.setValue(pair[2]);
+      prop.setRequired(Boolean.parseBoolean(pair[3]));
       ((PropsContentProvider) propsTableViewer.getContentProvider()).update(prop);
 
       container.update();
@@ -361,9 +364,9 @@ public class InboundWizardPage extends WizardPage
    private TableViewer createTableViewer(Composite parent)
    {
       String fTableColumnHeaders[] =
-      {"Name", "Type", "Value"};
+      {"Name", "Type", "Value", "Required"};
       final ColumnLayoutData[] fTableColumnLayouts =
-      {new ColumnWeightData(30), new ColumnWeightData(40), new ColumnWeightData(30)};
+      {new ColumnWeightData(30), new ColumnWeightData(40), new ColumnWeightData(30), new ColumnWeightData(20)};
 
       Table table = new Table(parent, SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
       GridData data = new GridData(GridData.FILL_BOTH);

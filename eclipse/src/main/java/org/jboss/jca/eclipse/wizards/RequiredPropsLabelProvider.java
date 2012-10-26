@@ -23,66 +23,14 @@ package org.jboss.jca.eclipse.wizards;
 
 import org.jboss.jca.codegenerator.ConfigPropType;
 
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
-
 /**
  * Label provider for type elements
  * 
  * @author Jeff Zhang
  * @version $Revision: $
  */
-public class PropsLabelProvider extends LabelProvider implements ITableLabelProvider
+public class RequiredPropsLabelProvider extends PropsLabelProvider
 {
-
-   /**
-    * Method declared on IBaseLabelProvider.
-    */
-   @Override
-   public void dispose()
-   {
-   }
-
-   /**
-    * Method declared on ITableLabelProvider.
-    * 
-    * @param element object
-    * @param columnIndex integer
-    * @return Image image reference
-    */
-   @Override
-   public Image getColumnImage(Object element, int columnIndex)
-   {
-      if (columnIndex != 0)
-      {
-         return null;
-      }
-
-      return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
-   }
-
-   /**
-    * Method declared on ITableLabelProvider.
-    * 
-    * @param element object
-    * @param columnIndex integer
-    * @return String column text
-    */
-   @Override
-   public String getColumnText(Object element, int columnIndex)
-   {
-
-      if (element instanceof ConfigPropType)
-      {
-         return getPropertyText((ConfigPropType) element, columnIndex);
-      }
-      return element.toString();
-   }
-
    /**
     * getPropertyText
     * 
@@ -90,6 +38,7 @@ public class PropsLabelProvider extends LabelProvider implements ITableLabelProv
     * @param columnIndex int
     * @return string
     */
+   @Override
    protected String getPropertyText(ConfigPropType property, int columnIndex)
    {
       switch (columnIndex)
@@ -100,6 +49,8 @@ public class PropsLabelProvider extends LabelProvider implements ITableLabelProv
             return property.getType();
          case 2 :
             return property.getValue();
+         case 3 :
+            return Boolean.toString(property.isRequired());
       }
       return "";
    }

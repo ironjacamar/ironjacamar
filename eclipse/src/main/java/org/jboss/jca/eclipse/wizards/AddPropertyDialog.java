@@ -34,6 +34,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -72,6 +73,12 @@ public class AddPropertyDialog extends Dialog
    
    private final boolean readOnly;
 
+   private boolean required;
+   
+   private boolean propertyRequired;
+   
+   private String version;
+   
    /**
     * AddPropertyDialog 
     * @param shell shell
@@ -97,6 +104,23 @@ public class AddPropertyDialog extends Dialog
       this.title = title;
       this.initialValues = initialValues;
       this.readOnly = readOnly;
+   }
+   
+   
+   /**
+    * AddPropertyDialog 
+    * 
+    * @param shell shell
+    * @param title dialog title
+    * @param initialValues initialValues
+    * @param readOnly if the dialog works as readOnly
+    * @param required include require properties
+    */
+   public AddPropertyDialog(Shell shell, String title, String[] initialValues, boolean readOnly,
+         boolean required)
+   {
+      this(shell, title, initialValues, false);
+      this.required = required;
    }
 
    /** (non-Javadoc)
@@ -182,6 +206,31 @@ public class AddPropertyDialog extends Dialog
             updateButtons();
          }
       });
+      
+      if (required)
+      {
+         Label requiredLabel = new Label(comp, SWT.NONE);
+         requiredLabel.setText("Required");
+         requiredLabel.setFont(comp.getFont());
+         
+         propertyRequired = Boolean.parseBoolean(initialValues[3]);
+         final Button requiredButton = new Button(comp, SWT.CHECK);
+         requiredButton.setSelection(propertyRequired);
+         if (version.equals("1.6"))
+         {
+            requiredButton.addSelectionListener(new SelectionAdapter()
+            {
+               public void widgetSelected(SelectionEvent event)
+               {
+                  propertyRequired = requiredButton.getSelection();
+               }
+            });
+         }
+         else
+         {
+            requiredButton.setEnabled(false);
+         }
+      }
 
       return comp;
    }
@@ -197,6 +246,17 @@ public class AddPropertyDialog extends Dialog
       return new String[] {name, type, value};
    }
 
+   /**
+    * Return the name/value pair entered in this dialog.  If the cancel button was hit,
+    * both will be <code>null</code>.
+    * 
+    * @return arrays of String
+    */
+   public String[] getRequiredNameValuePair()
+   {
+      return new String[] {name, type, value, Boolean.toString(propertyRequired)};
+   }
+   
    /** (non-Javadoc)
     * 
     * @param buttonId buttonId
@@ -360,5 +420,13 @@ public class AddPropertyDialog extends Dialog
    public void setPropList(List<ConfigPropType> propList)
    {
       this.propList = propList;
+   }
+
+   /**
+    * @param version the version to set
+    */
+   public void setVersion(String version)
+   {
+      this.version = version;
    }
 }
