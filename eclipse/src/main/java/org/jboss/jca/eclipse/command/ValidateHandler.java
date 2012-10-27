@@ -21,22 +21,16 @@
  */
 package org.jboss.jca.eclipse.command;
 
-import org.jboss.jca.eclipse.Activator;
 import org.jboss.jca.validator.Validation;
 
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.HandlerUtil;
-import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * Our sample handler extends AbstractHandler, an IHandler base class.
@@ -82,21 +76,7 @@ public class ValidateHandler extends AbstractIronJacamarHandler
       IFile rarFile = lookupRarFile(project);
       
       // rar is not generated, build it first
-      if (rarFile == null || !rarFile.exists())
-      {
-         try
-         {
-            buildRar(project);
-         }
-         catch (ExecutionException e)
-         {
-            setBaseEnabled(true);
-            IStatus errStatus = new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Can not build project", e.getCause());
-            StatusManager.getManager().handle(errStatus, StatusManager.SHOW);
-            throw e;
-         }
-      }
-      else
+      if (rarFile != null)
       {
          validate(rarFile);
       }
@@ -132,22 +112,6 @@ public class ValidateHandler extends AbstractIronJacamarHandler
    @Override
    protected void onBuildFinished(IProject project)
    {
-      try
-      {
-         project.refreshLocal(IResource.DEPTH_INFINITE, null);
-         IFile rarFile = lookupRarFile(project);
-         if (rarFile != null && rarFile.exists())
-         {
-            validate(rarFile);
-         }
-         else
-         {
-            enableHandler();
-         }
-      }
-      catch (CoreException e)
-      {
-         e.printStackTrace();
-      }
+      enableHandler();
    }
 }

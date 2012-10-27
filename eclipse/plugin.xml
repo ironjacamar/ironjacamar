@@ -29,9 +29,17 @@
             commandId="ironjacamar-eclipse.commands.validateCommand"
             class="org.jboss.jca.eclipse.command.ValidateHandler">
          <activeWhen>
-            <reference
+           <and>
+             <iterate>
+                <adapt type="org.eclipse.core.resources.IResource">
+                   <test property="org.eclipse.core.resources.name" 
+                         value="*.rar"/>
+                </adapt>
+             </iterate>
+             <reference
                   definitionId="org.jboss.jca.eclipse.IronJacamarProjectNature.definition">
-            </reference>
+             </reference>
+          </and>
          </activeWhen>
       </handler>
       <handler
