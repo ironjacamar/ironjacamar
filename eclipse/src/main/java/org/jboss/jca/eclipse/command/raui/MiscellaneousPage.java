@@ -49,8 +49,8 @@ public class MiscellaneousPage extends AbstractRAGenerateWizardPage
    {
       super("MiscellaneousPage");
       this.wizard = wizard;
-      this.setTitle("Miscellaneous Configuration");
-      this.setDescription("Setting Miscellaneous Configuration");
+      this.setTitle(getString("ra.generate.misc.title"));
+      this.setDescription(getString("ra.generate.misc.description"));
    }
 
    @Override
@@ -70,7 +70,7 @@ public class MiscellaneousPage extends AbstractRAGenerateWizardPage
 
       // deploy rar first ?
       Label label = new Label(container, SWT.NULL);
-      label.setText("Deploy RAR First");
+      label.setText(getString("ra.generate.misc.deploy.rar.first"));
       final Button deployRARBtn = new Button(container, SWT.CHECK);
       deployRARBtn.setSelection(false);
       deployRARBtn.addSelectionListener(new SelectionAdapter()

@@ -82,8 +82,8 @@ public class RAGenerateAOPage extends AbstractRAGenerateWizardPage
       this.connectorHelper = wizard.getConnectorHelper();
       this.raConfig = wizard.getRaConfig();
       this.commonAO = this.connectorHelper.getCommonAdminObject(ao);
-      setTitle("Information about Admin Object");
-      setDescription("Configure Admin Object: " + this.aoClsName);
+      setTitle(getString("ra.generate.ao.title"));
+      setDescription(getString("ra.generate.ao.description", this.aoClsName));
       this.aoConfig = new AdminObjectConfig();
       
       // class name and jndi name are required.
@@ -112,24 +112,24 @@ public class RAGenerateAOPage extends AbstractRAGenerateWizardPage
       
       // activate it?
       Label label = new Label(container, SWT.NULL);
-      label.setText("Active it");
+      label.setText(getString("ra.generate.active.label"));
       
       final Button activeBtn = new Button(container, SWT.CHECK);
       
       
       final Group generalGrp = new Group(whole, SWT.SHADOW_IN);
-      generalGrp.setText("General Information");
+      generalGrp.setText(getString("ra.generate.general.group"));
       generalGrp.setLayout(getLayout());
 
       // class name
       label = new Label(generalGrp, SWT.NULL);
-      label.setText("Class Name:");
+      label.setText(getString("ra.generate.class.name"));
       Label clsNameLabel = new Label(generalGrp, SWT.NULL);
       clsNameLabel.setText(this.aoClsName);
       
       // jndi name
       label = new Label(generalGrp, SWT.NULL);
-      label.setText("Jndi Name:");
+      label.setText(getString("ra.generate.jndi.name"));
       final String jndi = this.getInitialJndiName();
       
       jndiText = createText(generalGrp, jndi);
@@ -149,7 +149,7 @@ public class RAGenerateAOPage extends AbstractRAGenerateWizardPage
       
       // pool name
       label = new Label(generalGrp, SWT.NULL);
-      label.setText("Pool Name:");
+      label.setText(getString("ra.generate.pool.name"));
       final String poolName = this.getInitialPoolName();
       final Text poolNameText = createText(generalGrp, poolName);
       poolNameText.addModifyListener(new ModifyListener()
@@ -175,7 +175,7 @@ public class RAGenerateAOPage extends AbstractRAGenerateWizardPage
       
       // enabled
       label = new Label(generalGrp, SWT.NULL);
-      label.setText("Enabled:");
+      label.setText(getString("ra.generate.enabled"));
       final Boolean enabled = this.isInitialEnabled();
       
       final Button enableBtn = new Button(generalGrp, SWT.BORDER | SWT.CHECK);
@@ -198,7 +198,7 @@ public class RAGenerateAOPage extends AbstractRAGenerateWizardPage
       
       // use java context
       label = new Label(generalGrp, SWT.NULL);
-      label.setText("Use Java Context:");
+      label.setText(getString("ra.generate.use.java.context"));
       final Boolean useJavaCtx = this.isInitialUseJavaCtx();
       useJavaCtxBtn = new Button(generalGrp, SWT.BORDER | SWT.CHECK);
       useJavaCtxBtn.setSelection(useJavaCtx);
@@ -223,7 +223,9 @@ public class RAGenerateAOPage extends AbstractRAGenerateWizardPage
       
       // config properties
       final Composite configPropPanel = 
-            createConfigPropertyTableViewer(whole, this.connectorHelper.getConfigProps(this.intialAOConfigProperties));
+            createConfigPropertyTableViewer(whole, 
+                  this.connectorHelper.getConfigProps(this.intialAOConfigProperties), 
+                  getString("ra.generate.ao.config.props"));
       
       // active or not
       activeBtn.addSelectionListener(new SelectionAdapter()
@@ -232,8 +234,8 @@ public class RAGenerateAOPage extends AbstractRAGenerateWizardPage
          public void widgetSelected(SelectionEvent e)
          {
             boolean active = activeBtn.getSelection();
-            setCompositeEnabled(generalGrp, active);
-            setCompositeEnabled(configPropPanel, active);
+            generalGrp.setEnabled(active);
+            configPropPanel.setEnabled(active);
             List<AdminObjectConfig> aoConfigs = raConfig.getAdminObjectConfigs();
             if (active)
             {
@@ -253,8 +255,8 @@ public class RAGenerateAOPage extends AbstractRAGenerateWizardPage
 
       });
       activeBtn.setSelection(isInitialActive());
-      setCompositeEnabled(generalGrp, isInitialActive());
-      setCompositeEnabled(configPropPanel, isInitialActive());
+      generalGrp.setEnabled(isInitialActive());
+      configPropPanel.setEnabled(isInitialActive());
       setControl(whole);
    }
    
@@ -271,7 +273,7 @@ public class RAGenerateAOPage extends AbstractRAGenerateWizardPage
       {
          if (useJavaCtx && !jndiName.startsWith("java:/"))
          {
-            updateStatus("Jndi Name needs start with 'java:/'");
+            updateStatus(getString("ra.generate.error.jndi.start.with.java"));
             return false;
          }
          else
@@ -282,7 +284,7 @@ public class RAGenerateAOPage extends AbstractRAGenerateWizardPage
       }
       else
       {
-         updateStatus("Jndi Name of AdminObject can not be empty.");
+         updateStatus(getString("ra.generate.error.jndi.name.empty"));
          return false;
       }
    }

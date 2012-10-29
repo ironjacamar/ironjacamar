@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.eclipse.command.raui;
 
+import org.jboss.jca.eclipse.ResourceBundles;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -33,6 +35,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+
 /**
  * Dialog used to add or edit bean validation group.
  * 
@@ -42,6 +45,8 @@ import org.eclipse.swt.widgets.Text;
 public class BeanValidateGroupDialog extends Dialog
 {
    private final String initialValue;
+   
+   private ResourceBundles res = ResourceBundles.getInstance();
    
    private String title = null;
    
@@ -68,7 +73,7 @@ public class BeanValidateGroupDialog extends Dialog
       ((GridLayout) comp.getLayout()).numColumns = 2;
       
       Label label = new Label(comp, SWT.NULL);
-      label.setText("Bean Validate Group");
+      label.setText(res.getString("ra.generate.general.bean.validate.group.dialog.label"));
       
       final Text beanValidateGrpText = new Text(comp, SWT.SINGLE | SWT.BORDER);
       GridData data = new GridData(GridData.FILL_BOTH);

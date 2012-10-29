@@ -66,11 +66,11 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage
     */
    public RAGenerateBasicPage(RAGenerateWizard wizard)
    {
-      super("Setting basic information");
+      super("RAGenerateBasicPage");
       this.raConfig = wizard.getRaConfig();
       this.connectorHelper = wizard.getConnectorHelper();;
-      setTitle("General information of " + wizard.getRAXMLFileName());
-      setDescription("Configure generation information for " + wizard.getRAXMLFileName());
+      setTitle(getString("ra.generate.general.title", wizard.getRAXMLFileName()));
+      setDescription(getString("ra.generate.general.description", wizard.getRAXMLFileName()));
    }
 
    @Override
@@ -82,7 +82,7 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage
       layout.numColumns = 1;
 
       final Group generalGrp = new Group(whole, SWT.SHADOW_IN);
-      generalGrp.setText("General Information");
+      generalGrp.setText(getString("ra.generate.general.group"));
       
       layout = new GridLayout();
       generalGrp.setLayout(layout);
@@ -92,13 +92,13 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage
 
       // archive
       Label label = new Label(generalGrp, SWT.NULL);
-      label.setText("Archive:");
+      label.setText(getString("ra.generate.general.archive.label"));
       Label archiveLavel = new Label(generalGrp, SWT.NULL);
       archiveLavel.setText(raConfig.getArchive());
 
       // transaction support
       label = new Label(generalGrp, SWT.NULL);
-      label.setText("Transaction Support:");
+      label.setText(getString("ra.generate.general.transaction"));
       final String[] items =
       {TransactionSupportEnum.NoTransaction.name(), TransactionSupportEnum.LocalTransaction.name(),
             TransactionSupportEnum.XATransaction.name()};
@@ -128,7 +128,7 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage
 
       // bootstrap-context
       label = new Label(generalGrp, SWT.NULL);
-      label.setText("Bootstrap Context:");
+      label.setText(getString("ra.generate.general.bootstrap"));
       final Text bootStrapContext = new Text(generalGrp, SWT.BORDER | SWT.SINGLE);
       GridData data = new GridData();
       data.widthHint = 300;
@@ -153,7 +153,7 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage
       });
 
       Label beanValidLabel = new Label(whole, SWT.NULL);
-      beanValidLabel.setText("Set Bean Validation Groups:");
+      beanValidLabel.setText(getString("ra.generate.general.bean.validate.group"));
       
       final Composite beanValidContainer = new Composite(whole, SWT.NONE);
       GridLayout beanValidLayout = new GridLayout();
@@ -163,7 +163,7 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage
       beanValidContainer.setLayout(beanValidLayout);
       
       // bean validation groups
-      String fTableColumnHeaders[] = {"Bean Validation Groups"};
+      String fTableColumnHeaders[] = {getString("ra.generate.general.bean.validate.group.table.header")};
       final ColumnLayoutData[] fTableColumnLayouts = {new ColumnWeightData(300)};
 
       final TableViewer beanValidTableViewer = 
@@ -179,14 +179,14 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage
       buttonGroup.setLayout(layoutBtns);
       buttonGroup.setLayoutData(new GridData(GridData.FILL_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL));
       buttonGroup.setFont(buttonGroup.getFont());
-      final Button addBtn = createPushButton(buttonGroup, "Add");
+      final Button addBtn = createPushButton(buttonGroup, getString("command.add.name"));
       addBtn.addSelectionListener(new SelectionAdapter()
       {
          @Override
          public void widgetSelected(SelectionEvent e)
          {
             BeanValidateGroupDialog dialog = new BeanValidateGroupDialog(beanValidTableViewer.getControl().getShell(), 
-                  "Add Bean Validation Group", null);
+                  getString("ra.generate.general.bean.validate.group.dialog.add.title"), null);
             if (dialog.open() == Window.CANCEL)
             {
                return;
@@ -199,7 +199,7 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage
             beanValidContainer.update();
          }
       });
-      final Button editBtn = createPushButton(buttonGroup, "Edit");
+      final Button editBtn = createPushButton(buttonGroup, getString("command.edit.name"));
       editBtn.setEnabled(false);
       editBtn.addSelectionListener(new SelectionAdapter()
       {
@@ -209,7 +209,7 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage
             IStructuredSelection selection = (IStructuredSelection) beanValidTableViewer.getSelection();
             String initialValue = (String)selection.getFirstElement();
             BeanValidateGroupDialog dialog = new BeanValidateGroupDialog(beanValidTableViewer.getControl().getShell(), 
-                  "Edit Bean Validation Group", initialValue);
+                  getString("ra.generate.general.bean.validate.group.dialog.edit.title"), initialValue);
             if (dialog.open() == Window.CANCEL)
             {
                return;
@@ -222,7 +222,7 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage
             beanValidContainer.update();
          }
       });
-      final Button delBtn = createPushButton(buttonGroup, "Remove");
+      final Button delBtn = createPushButton(buttonGroup, getString("command.remove.name"));
       delBtn.setEnabled(false);
       delBtn.addSelectionListener(new SelectionAdapter()
       {
@@ -245,13 +245,16 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage
          @Override
          public void selectionChanged(SelectionChangedEvent event)
          {
-            editBtn.setEnabled(beanValidTableViewer.getSelection() != null);
-            delBtn.setEnabled(beanValidTableViewer.getSelection() != null);
+            editBtn.setEnabled(beanValidTableViewer.getSelection() != null 
+                  && !beanValidTableViewer.getSelection().isEmpty());
+            delBtn.setEnabled(beanValidTableViewer.getSelection() != null 
+                  && !beanValidTableViewer.getSelection().isEmpty());
          }
       });
 
       // config properties
-      createConfigPropertyTableViewer(whole, this.connectorHelper.getConfigProperties());
+      createConfigPropertyTableViewer(whole, this.connectorHelper.getConfigProperties(), 
+            getString("ra.generate.general.ra.config.props"));
       setControl(whole);
    }
    

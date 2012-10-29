@@ -22,7 +22,7 @@
 package org.jboss.jca.eclipse.command.raui;
 
 import org.jboss.jca.codegenerator.ConfigPropType;
-
+import org.jboss.jca.eclipse.ResourceBundles;
 import org.jboss.jca.eclipse.wizards.AddPropertyDialog;
 import org.jboss.jca.eclipse.wizards.PropsContentProvider;
 import org.jboss.jca.eclipse.wizards.PropsLabelProvider;
@@ -45,7 +45,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -58,6 +57,8 @@ import org.eclipse.swt.widgets.Text;
 public abstract class AbstractRAGenerateWizardPage extends WizardPage
 {
    private PropsLabelProvider labelProvider = new PropsLabelProvider();
+   
+   private ResourceBundles res = ResourceBundles.getInstance();
 
    /**
     * The constructor
@@ -116,7 +117,7 @@ public abstract class AbstractRAGenerateWizardPage extends WizardPage
    private TableViewer createConfigPropertyTableViewerInner(Composite parent)
    {
       String fTableColumnHeaders[] =
-      {"Name", "Type", "Value"};
+      {getString("config.props.name"), getString("config.props.type"), getString("config.props.value")};
       final ColumnLayoutData[] fTableColumnLayouts =
       {new ColumnWeightData(30), new ColumnWeightData(40), new ColumnWeightData(30)};
       TableViewer tableViewer = createTableViewer(parent, fTableColumnHeaders, fTableColumnLayouts);
@@ -147,12 +148,13 @@ public abstract class AbstractRAGenerateWizardPage extends WizardPage
     * 
     * @param parent the parent, which requires the numOfColumns of the layout is 1
     * @param initialValues initial values
+    * @param label label of the table title
     * @return the Composite which holds all config-property related components.
     */
-   Composite createConfigPropertyTableViewer(Composite parent, List<ConfigPropType> initialValues)
+   Composite createConfigPropertyTableViewer(Composite parent, List<ConfigPropType> initialValues, String label)
    {
       Label configPropLabel = new Label(parent, SWT.NULL);
-      configPropLabel.setText("Set Config Properties:");
+      configPropLabel.setText(label);
       
       final Composite configPropContainer = new Composite(parent, SWT.NULL);
       GridLayout configPropLayout = new GridLayout();
@@ -173,7 +175,7 @@ public abstract class AbstractRAGenerateWizardPage extends WizardPage
       buttonGroup.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, true, true));
       buttonGroup.setFont(buttonGroup.getFont());
       
-      final Button editPropsBtn = createPushButton(buttonGroup, "Edit");
+      final Button editPropsBtn = createPushButton(buttonGroup, getString("command.edit.name"));
       GridData btnData = new GridData();
       btnData.widthHint = 60;
       editPropsBtn.setLayoutData(btnData);
@@ -186,21 +188,24 @@ public abstract class AbstractRAGenerateWizardPage extends WizardPage
          {
             IStructuredSelection selection = (IStructuredSelection)configPropsTableView.getSelection();
             ConfigPropType prop = (ConfigPropType) selection.getFirstElement();
-            
-            String type = prop.getType().substring(prop.getType().lastIndexOf(".") + 1);
-            String initialValues[] = new String[]{prop.getName(), type, prop.getValue()};
-            AddPropertyDialog dialog = new AddPropertyDialog(getShell(), "Edit", initialValues, true);
-            if (dialog.open() == Window.CANCEL)
+            if (prop != null)
             {
-               return;
-            }
-            String[] pair = dialog.getNameValuePair();
-            if (!pair[2].equals(prop.getValue()) && pair[2].length() > 0)
-            {
-               prop.setValue(pair[2]);
-               configContentProvider.update(prop);
-               configPropContainer.update();
-               onConfigPropUpdated(configPropsTableView, prop);
+               String type = prop.getType().substring(prop.getType().lastIndexOf(".") + 1);
+               String initialValues[] = new String[]{prop.getName(), type, prop.getValue()};
+               AddPropertyDialog dialog = new AddPropertyDialog(getShell(), 
+                     getString("command.edit.name"), initialValues, true);
+               if (dialog.open() == Window.CANCEL)
+               {
+                  return;
+               }
+               String[] pair = dialog.getNameValuePair();
+               if (!pair[2].equals(prop.getValue()) && pair[2].length() > 0)
+               {
+                  prop.setValue(pair[2]);
+                  configContentProvider.update(prop);
+                  configPropContainer.update();
+                  onConfigPropUpdated(configPropsTableView, prop);
+               }
             }
          }
 
@@ -211,7 +216,8 @@ public abstract class AbstractRAGenerateWizardPage extends WizardPage
          @Override
          public void selectionChanged(SelectionChangedEvent event)
          {
-            editPropsBtn.setEnabled(configPropsTableView.getSelection() != null);
+            editPropsBtn.setEnabled(configPropsTableView.getSelection() != null 
+                  && !configPropsTableView.getSelection().isEmpty());
          }
       });
       if (initialValues != null)
@@ -222,29 +228,6 @@ public abstract class AbstractRAGenerateWizardPage extends WizardPage
          }
       }
       return configPropContainer;
-   }
-   
-   /**
-    * Enable/Disable the composite and its sub components.
-    * 
-    * @param composite the Composite
-    * @param enabled enabled or disabled
-    */
-   protected void setCompositeEnabled(Composite composite, boolean enabled)
-   {
-      if (composite == null)
-      {
-         return;
-      }
-      composite.setEnabled(enabled);
-      for (Control control : composite.getChildren())
-      {
-         control.setEnabled(enabled);
-         if (control instanceof Composite)
-         {
-            setCompositeEnabled((Composite)control, enabled);
-         }
-      }
    }
    
    /**
@@ -301,5 +284,28 @@ public abstract class AbstractRAGenerateWizardPage extends WizardPage
       setErrorMessage(message);
       setPageComplete(message == null);
    }
-
+   
+   /**
+    * Returns string message according to the key.
+    * 
+    * @param key the key of the message
+    * @return the string message or null
+    */
+   protected String getString(String key)
+   {
+      return this.res.getString(key);
+   }
+   
+   /**
+    * Returns string message according to the key.
+    * 
+    * @param key the key of the message
+    * @param params parameters used to format the message
+    * @return the string message or null
+    */
+   protected String getString(String key, Object... params)
+   {
+      return this.res.getString(key, params);
+   }
+   
 }
