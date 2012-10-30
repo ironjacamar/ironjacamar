@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.eclipse.command;
 
+import org.jboss.jca.eclipse.ResourceBundles;
 import org.jboss.jca.validator.Validation;
 
 import org.eclipse.core.commands.ExecutionEvent;
@@ -41,6 +42,9 @@ import org.eclipse.ui.handlers.HandlerUtil;
 public class ValidateHandler extends AbstractIronJacamarHandler
 {
    private IWorkbenchWindow window = null;
+   
+   private ResourceBundles pluginPrb = ResourceBundles.getInstance();
+
    /**
     * The constructor.
     */
@@ -99,12 +103,12 @@ public class ValidateHandler extends AbstractIronJacamarHandler
       if (result == 0)
       {
          MessageDialog.openInformation(window.getShell(), 
-            "Ironjacamar-eclipse", "The rar file is validated");
+            "Ironjacamar-eclipse", pluginPrb.getString("rar.validate.success"));
       }
       else
       {
          MessageDialog.openInformation(window.getShell(), 
-            "Ironjacamar-eclipse", "The rar file isn't Validated");
+            "Ironjacamar-eclipse", pluginPrb.getString("rar.validate.fail"));
       }
       enableHandler();
    }

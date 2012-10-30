@@ -22,6 +22,7 @@
 package org.jboss.jca.eclipse.wizards;
 
 import org.jboss.jca.codegenerator.ConfigPropType;
+import org.jboss.jca.eclipse.ResourceBundles;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,6 +79,8 @@ public class RaWizardPage extends WizardPage
    
    private Button raSerialButton;
 
+   private ResourceBundles pluginPrb = ResourceBundles.getInstance();
+
    /**
     * Constructor for SampleNewWizardPage.
     * 
@@ -86,8 +89,8 @@ public class RaWizardPage extends WizardPage
    public RaWizardPage(ISelection selection)
    {
       super("wizardPage");
-      setTitle("Resource Adapter Information");
-      setDescription("Input information about resource adapter.");
+      setTitle(pluginPrb.getString("codegen.ra.title"));
+      setDescription(pluginPrb.getString("codegen.ra.desc"));
       this.selection = selection;
    }
 
@@ -115,7 +118,7 @@ public class RaWizardPage extends WizardPage
       layout.verticalSpacing = 9;
 
       Label label = new Label(raContainer, SWT.NULL);
-      label.setText(((CodeGenWizard) getWizard()).getResourceString("use.ra") + ":");
+      label.setText(((CodeGenWizard) getWizard()).getCodegenResourceString("use.ra") + ":");
       final Button raButton = new Button(raContainer, SWT.CHECK);
       
       raButton.setSelection(true);
@@ -141,7 +144,7 @@ public class RaWizardPage extends WizardPage
       }
 
       label = new Label(raContainer, SWT.NULL);
-      label.setText(((CodeGenWizard) getWizard()).getResourceString("ra.class.name") + ":");
+      label.setText(((CodeGenWizard) getWizard()).getCodegenResourceString("ra.class.name") + ":");
       raText = new Text(raContainer, SWT.BORDER | SWT.SINGLE);
       GridData gd = new GridData(GridData.FILL_HORIZONTAL);
       gd.widthHint = 600;
@@ -191,7 +194,7 @@ public class RaWizardPage extends WizardPage
       });
 
       label = new Label(raContainer, SWT.NULL);
-      label.setText(((CodeGenWizard) getWizard()).getResourceString("ra.serial") + ":");
+      label.setText(((CodeGenWizard) getWizard()).getCodegenResourceString("ra.serial") + ":");
       raSerialButton = new Button(raContainer, SWT.CHECK);
 
       raSerialButton.setSelection(true);
@@ -205,7 +208,7 @@ public class RaWizardPage extends WizardPage
       });
       
       label = new Label(raContainer, SWT.NULL);
-      label.setText(((CodeGenWizard) getWizard()).getResourceString("ra.config.properties") + ":");
+      label.setText(((CodeGenWizard) getWizard()).getCodegenResourceString("ra.config.properties") + ":");
 
       container = new Composite(wholeContainer, SWT.NULL);
       layout = new GridLayout();
@@ -418,12 +421,12 @@ public class RaWizardPage extends WizardPage
 
       if (raText.getText().length() == 0)
       {
-         updateStatus("ResourceAdapter class name must be specified");
+         updateStatus(pluginPrb.getString("codegen.ra.ra.defined"));
          return;
       }
       if (!raText.getText().matches("[a-zA-Z_][a-zA-Z_0-9]*"))
       {
-         updateStatus("ResourceAdapter class name must be validated");
+         updateStatus(pluginPrb.getString("codegen.ra.ra.validated"));
          return;
       }
       

@@ -23,6 +23,7 @@ package org.jboss.jca.eclipse.wizards;
 
 import org.jboss.jca.codegenerator.AdminObjectType;
 import org.jboss.jca.codegenerator.ConfigPropType;
+import org.jboss.jca.eclipse.ResourceBundles;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,6 +81,8 @@ public class AoWizardPage extends WizardPage
 
    private AdminObjectType aoDef;
 
+   private ResourceBundles pluginPrb = ResourceBundles.getInstance();
+
    /**
     * Constructor for AoWizardPage.
     * 
@@ -88,8 +91,8 @@ public class AoWizardPage extends WizardPage
    public AoWizardPage(ISelection selection)
    {
       super("wizardPage");
-      setTitle("Create Admin Object");
-      setDescription("Input admin object information.");
+      setTitle(pluginPrb.getString("codegen.ao.title"));
+      setDescription(pluginPrb.getString("codegen.ao.desc"));
       this.selection = selection;
 
    }
@@ -126,14 +129,14 @@ public class AoWizardPage extends WizardPage
       layout.verticalSpacing = 9;
 
       Label label = new Label(inContainer, SWT.NULL);
-      label.setText(((CodeGenWizard) getWizard()).getResourceString("gen.adminobject") + ":");
+      label.setText(((CodeGenWizard) getWizard()).getCodegenResourceString("gen.adminobject") + ":");
       final Button aoButton = new Button(inContainer, SWT.CHECK);
 
       aoButton.setSelection(true);
       ((CodeGenWizard) getWizard()).getDef().setGenAdminObject(true);
 
       label = new Label(inContainer, SWT.NULL);
-      label.setText(((CodeGenWizard) getWizard()).getResourceString("adminobject.raa") + ":");
+      label.setText(((CodeGenWizard) getWizard()).getCodegenResourceString("adminobject.raa") + ":");
 
       final Button raaButton = new Button(inContainer, SWT.CHECK);
 
@@ -150,7 +153,7 @@ public class AoWizardPage extends WizardPage
       });
 
       label = new Label(inContainer, SWT.NULL);
-      label.setText(((CodeGenWizard) getWizard()).getResourceString("adminobject.interface.name") + ":");
+      label.setText(((CodeGenWizard) getWizard()).getCodegenResourceString("adminobject.interface.name") + ":");
 
       aoButton.addSelectionListener(new SelectionAdapter()
       {
@@ -192,7 +195,7 @@ public class AoWizardPage extends WizardPage
       });
 
       label = new Label(inContainer, SWT.NULL);
-      label.setText(((CodeGenWizard) getWizard()).getResourceString("adminobject.class.name") + ":");
+      label.setText(((CodeGenWizard) getWizard()).getCodegenResourceString("adminobject.class.name") + ":");
 
       aoImplText = new Text(inContainer, SWT.BORDER | SWT.SINGLE);
       aoImplText.setBounds(5, 5, 600, 10);
@@ -213,7 +216,7 @@ public class AoWizardPage extends WizardPage
       });
 
       label = new Label(inContainer, SWT.NULL);
-      label.setText(((CodeGenWizard) getWizard()).getResourceString("adminobject.config.properties") + ":");
+      label.setText(((CodeGenWizard) getWizard()).getCodegenResourceString("adminobject.config.properties") + ":");
 
       container = new Composite(wholeContainer, SWT.NULL);
       layout = new GridLayout();
@@ -429,17 +432,18 @@ public class AoWizardPage extends WizardPage
 
       if (aoText.getText().length() == 0)
       {
-         updateStatus("Admin object class name must be specified");
+         updateStatus(pluginPrb.getString("codegen.ao.classname.defined"));
          return;
       }
       if (!aoText.getText().matches("[a-zA-Z_][a-zA-Z_0-9]*"))
       {
-         updateStatus("Admin object interface name must be validated");
+         updateStatus(pluginPrb.getString("codegen.ao.interface.validated"));
+
          return;
       }
       if (!aoImplText.getText().matches("[a-zA-Z_][a-zA-Z_0-9]*"))
       {
-         updateStatus("Admin object class name must be validated");
+         updateStatus(pluginPrb.getString("codegen.ao.classname.validated"));
          return;
       }
 

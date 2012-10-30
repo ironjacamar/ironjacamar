@@ -22,6 +22,7 @@
 package org.jboss.jca.eclipse.wizards;
 
 import org.jboss.jca.codegenerator.ConfigPropType;
+import org.jboss.jca.eclipse.ResourceBundles;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,6 +82,8 @@ public class InboundWizardPage extends WizardPage
 
    private Button addButton;
 
+   private ResourceBundles pluginPrb = ResourceBundles.getInstance();
+
    /**
     * Constructor for SampleNewWizardPage.
     * 
@@ -89,8 +92,8 @@ public class InboundWizardPage extends WizardPage
    public InboundWizardPage(ISelection selection)
    {
       super("wizardPage");
-      setTitle("Create Inbound");
-      setDescription("Input inbound information.");
+      setTitle(pluginPrb.getString("codegen.in.title"));
+      setDescription(pluginPrb.getString("codegen.in.desc"));
       this.selection = selection;
 
    }
@@ -120,7 +123,7 @@ public class InboundWizardPage extends WizardPage
       }
 
       Label label = new Label(inContainer, SWT.NULL);
-      label.setText(((CodeGenWizard) getWizard()).getResourceString("ml.interface.name") + ":");
+      label.setText(((CodeGenWizard) getWizard()).getCodegenResourceString("ml.interface.name") + ":");
 
       mlText = new Text(inContainer, SWT.BORDER | SWT.SINGLE);
       GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -145,7 +148,7 @@ public class InboundWizardPage extends WizardPage
       });
 
       label = new Label(inContainer, SWT.NULL);
-      label.setText(((CodeGenWizard) getWizard()).getResourceString("as.class.name") + ":");
+      label.setText(((CodeGenWizard) getWizard()).getCodegenResourceString("as.class.name") + ":");
 
       asText = new Text(inContainer, SWT.BORDER | SWT.SINGLE);
       gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -169,7 +172,7 @@ public class InboundWizardPage extends WizardPage
       });
 
       label = new Label(inContainer, SWT.NULL);
-      label.setText(((CodeGenWizard) getWizard()).getResourceString("as.config.properties") + ":");
+      label.setText(((CodeGenWizard) getWizard()).getCodegenResourceString("as.config.properties") + ":");
 
       container = new Composite(wholeContainer, SWT.NULL);
       layout = new GridLayout();
@@ -194,7 +197,7 @@ public class InboundWizardPage extends WizardPage
       layout.verticalSpacing = 9;
 
       label = new Label(inContainer, SWT.NULL);
-      label.setText(((CodeGenWizard) getWizard()).getResourceString("acti.class.name") + ":");
+      label.setText(((CodeGenWizard) getWizard()).getCodegenResourceString("acti.class.name") + ":");
 
       acText = new Text(inContainer, SWT.BORDER | SWT.SINGLE);
       gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -412,22 +415,22 @@ public class InboundWizardPage extends WizardPage
 
       if (mlText.getText().length() == 0)
       {
-         updateStatus("Message Listener class name must be specified");
+         updateStatus(pluginPrb.getString("codegen.in.ml.defined"));
          return;
       }
       if (!mlText.getText().matches("[a-zA-Z_][a-zA-Z_0-9]*"))
       {
-         updateStatus("Message Listener interface name must be validated");
+         updateStatus(pluginPrb.getString("codegen.in.ml.validated"));
          return;
       }
       if (!asText.getText().matches("[a-zA-Z_][a-zA-Z_0-9]*"))
       {
-         updateStatus("ActivationSpec class name must be validated");
+         updateStatus(pluginPrb.getString("codegen.in.as.validated"));
          return;
       }
       if (!acText.getText().matches("[a-zA-Z_][a-zA-Z_0-9]*"))
       {
-         updateStatus("Activation class name must be validated");
+         updateStatus(pluginPrb.getString("codegen.in.ac.validated"));
          return;
       }
 

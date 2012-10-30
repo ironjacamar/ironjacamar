@@ -22,6 +22,7 @@
 package org.jboss.jca.eclipse.preferences;
 
 import org.jboss.jca.eclipse.Activator;
+import org.jboss.jca.eclipse.ResourceBundles;
 
 import java.io.File;
 
@@ -50,6 +51,8 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 public class IronJacamarPreferencePage extends FieldEditorPreferencePage 
    implements IWorkbenchPreferencePage
 {
+   private ResourceBundles pluginPrb = ResourceBundles.getInstance();
+
    private static String[] libs = {
       "ironjacamar-core-api.jar",
       "ironjacamar-core-impl.jar",
@@ -80,7 +83,7 @@ public class IronJacamarPreferencePage extends FieldEditorPreferencePage
    {
       super(GRID);
       setPreferenceStore(Activator.getDefault().getPreferenceStore());
-      setDescription("General settings for IronJacamar development:");
+      setDescription(pluginPrb.getString("ijhome.desc"));
    }
 
    /**
@@ -96,9 +99,9 @@ public class IronJacamarPreferencePage extends FieldEditorPreferencePage
       addField(ijHomeFieldEditor);
       
       StringFieldEditor remoteHostFieldEditor = new StringFieldEditor(PreferenceConstants.JCA_REMOTE_HOST, 
-            "Remote IronJacamar Host:", getFieldEditorParent());
+            pluginPrb.getString("ijhome.host"), getFieldEditorParent());
       IntegerFieldEditor remotePortFieldEditor = new IntegerFieldEditor(PreferenceConstants.JCA_REMOTE_PORT, 
-            "Remote IronJacamar Port:", getFieldEditorParent());
+            pluginPrb.getString("ijhome.port"), getFieldEditorParent());
       addField(remoteHostFieldEditor);
       addField(remotePortFieldEditor);
       
@@ -162,7 +165,7 @@ public class IronJacamarPreferencePage extends FieldEditorPreferencePage
       
       if (!isHome)
       {
-         setErrorMessage("IronJacamar home directory not valid");
+         setErrorMessage(pluginPrb.getString("ijhome.defined"));
          setValid(false);
       }
       else

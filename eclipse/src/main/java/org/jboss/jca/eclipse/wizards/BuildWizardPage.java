@@ -22,6 +22,7 @@
 package org.jboss.jca.eclipse.wizards;
 
 import org.jboss.jca.eclipse.Activator;
+import org.jboss.jca.eclipse.ResourceBundles;
 import org.jboss.jca.eclipse.preferences.PreferenceConstants;
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -52,6 +53,8 @@ public class BuildWizardPage extends WizardPage
 {
 
    private ISelection selection;
+   
+   private ResourceBundles pluginPrb = ResourceBundles.getInstance();
 
    /**
     * Constructor for SampleNewWizardPage.
@@ -61,8 +64,8 @@ public class BuildWizardPage extends WizardPage
    public BuildWizardPage(ISelection selection)
    {
       super("wizardPage");
-      setTitle("MBean and Build");
-      setDescription("Input mbean and build information.");
+      setTitle(pluginPrb.getString("codegen.build.title"));
+      setDescription(pluginPrb.getString("codegen.build.desc"));
       this.selection = selection;
    }
 
@@ -80,7 +83,7 @@ public class BuildWizardPage extends WizardPage
       layout.verticalSpacing = 9;
 
       Label label = new Label(container, SWT.NULL);
-      label.setText(((CodeGenWizard) getWizard()).getResourceString("gen.mbean") + ":");
+      label.setText(((CodeGenWizard) getWizard()).getCodegenResourceString("gen.mbean") + ":");
       
       final Button mbeanButton = new Button(container, SWT.CHECK);
       mbeanButton.setSelection(false);
@@ -122,7 +125,7 @@ public class BuildWizardPage extends WizardPage
    private void createBuildGroup(Composite container)
    {
       Label label = new Label(container, SWT.NULL);
-      label.setText(((CodeGenWizard) getWizard()).getResourceString("build.env") + ":");
+      label.setText(((CodeGenWizard) getWizard()).getCodegenResourceString("build.env") + ":");
 
       final String[] items =
       {"Apache Ant", "Apache Ant / Apache Ivy", "Apache Maven"};
@@ -170,7 +173,7 @@ public class BuildWizardPage extends WizardPage
       
       if (((CodeGenWizard) getWizard()).getDef().getBuild().equals("ant") && ijHome.equals(""))
       {
-         updateStatus("IronJacamar home must be set");
+         updateStatus(pluginPrb.getString("codegen.build.ijhome"));
          return;
       }
 

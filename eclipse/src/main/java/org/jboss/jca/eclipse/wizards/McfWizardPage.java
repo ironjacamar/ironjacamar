@@ -23,6 +23,7 @@ package org.jboss.jca.eclipse.wizards;
 
 import org.jboss.jca.codegenerator.ConfigPropType;
 import org.jboss.jca.codegenerator.McfDef;
+import org.jboss.jca.eclipse.ResourceBundles;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,6 +91,8 @@ public class McfWizardPage extends WizardPage
 
    private McfDef mcfDef;
 
+   private ResourceBundles pluginPrb = ResourceBundles.getInstance();
+
    /**
     * Constructor for SampleNewWizardPage.
     * 
@@ -98,8 +101,8 @@ public class McfWizardPage extends WizardPage
    public McfWizardPage(ISelection selection)
    {
       super("wizardPage");
-      setTitle("Create Management Connection Factory");
-      setDescription("Input management connection factory information.");
+      setTitle(pluginPrb.getString("codegen.mcf.title"));
+      setDescription(pluginPrb.getString("codegen.mcf.desc"));
       this.selection = selection;
 
    }
@@ -133,7 +136,7 @@ public class McfWizardPage extends WizardPage
       layout.verticalSpacing = 9;
 
       Label label = new Label(mcfContainer, SWT.NULL);
-      label.setText(((CodeGenWizard) getWizard()).getResourceString("mcf.class.name") + ":");
+      label.setText(((CodeGenWizard) getWizard()).getCodegenResourceString("mcf.class.name") + ":");
 
       mcfText = new Text(mcfContainer, SWT.BORDER | SWT.SINGLE);
       GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -196,7 +199,7 @@ public class McfWizardPage extends WizardPage
       });
 
       label = new Label(mcfContainer, SWT.NULL);
-      label.setText(((CodeGenWizard) getWizard()).getResourceString("mcf.config.properties") + ":");
+      label.setText(((CodeGenWizard) getWizard()).getCodegenResourceString("mcf.config.properties") + ":");
 
       container = new Composite(wholeContainer, SWT.NULL);
       layout = new GridLayout();
@@ -221,7 +224,7 @@ public class McfWizardPage extends WizardPage
       layout.verticalSpacing = 9;
 
       label = new Label(mcfContainer, SWT.NULL);
-      label.setText(((CodeGenWizard) getWizard()).getResourceString("mcf.impl.raa") + ":");
+      label.setText(((CodeGenWizard) getWizard()).getCodegenResourceString("mcf.impl.raa") + ":");
 
       final Button annoButton = new Button(mcfContainer, SWT.CHECK);
       annoButton.setSelection(true);
@@ -236,7 +239,7 @@ public class McfWizardPage extends WizardPage
       });
 
       label = new Label(mcfContainer, SWT.NULL);
-      label.setText(((CodeGenWizard) getWizard()).getResourceString("mc.class.name") + ":");
+      label.setText(((CodeGenWizard) getWizard()).getCodegenResourceString("mc.class.name") + ":");
 
       mcText = new Text(mcfContainer, SWT.BORDER | SWT.SINGLE);
       gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -259,7 +262,7 @@ public class McfWizardPage extends WizardPage
       });
 
       label = new Label(mcfContainer, SWT.NULL);
-      label.setText(((CodeGenWizard) getWizard()).getResourceString("mcf.use.cci") + ":");
+      label.setText(((CodeGenWizard) getWizard()).getCodegenResourceString("mcf.use.cci") + ":");
 
       final Button cciButton = new Button(mcfContainer, SWT.CHECK);
       cciButton.setSelection(false);
@@ -288,7 +291,7 @@ public class McfWizardPage extends WizardPage
       });
 
       label = new Label(mcfContainer, SWT.NULL);
-      label.setText(((CodeGenWizard) getWizard()).getResourceString("cf.interface.name") + ":");
+      label.setText(((CodeGenWizard) getWizard()).getCodegenResourceString("cf.interface.name") + ":");
 
       cfText = new Text(mcfContainer, SWT.BORDER | SWT.SINGLE);
       gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -311,7 +314,7 @@ public class McfWizardPage extends WizardPage
       });
 
       label = new Label(mcfContainer, SWT.NULL);
-      label.setText(((CodeGenWizard) getWizard()).getResourceString("cf.class.name") + ":");
+      label.setText(((CodeGenWizard) getWizard()).getCodegenResourceString("cf.class.name") + ":");
 
       cfImplText = new Text(mcfContainer, SWT.BORDER | SWT.SINGLE);
       gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -334,7 +337,7 @@ public class McfWizardPage extends WizardPage
       });
 
       label = new Label(mcfContainer, SWT.NULL);
-      label.setText(((CodeGenWizard) getWizard()).getResourceString("conn.interface.name") + ":");
+      label.setText(((CodeGenWizard) getWizard()).getCodegenResourceString("conn.interface.name") + ":");
 
       connText = new Text(mcfContainer, SWT.BORDER | SWT.SINGLE);
       gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -357,7 +360,7 @@ public class McfWizardPage extends WizardPage
       });
 
       label = new Label(mcfContainer, SWT.NULL);
-      label.setText(((CodeGenWizard) getWizard()).getResourceString("conn.class.name") + ":");
+      label.setText(((CodeGenWizard) getWizard()).getCodegenResourceString("conn.class.name") + ":");
 
       connImplText = new Text(mcfContainer, SWT.BORDER | SWT.SINGLE);
       gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -570,37 +573,37 @@ public class McfWizardPage extends WizardPage
 
       if (mcfText.getText().length() == 0)
       {
-         updateStatus("Management connection factory class name must be specified");
+         updateStatus(pluginPrb.getString("codegen.mcf.mcf.defined"));
          return;
       }
       if (!mcfText.getText().matches("[a-zA-Z_][a-zA-Z_0-9]*"))
       {
-         updateStatus("Management connection factory class name must be validated");
+         updateStatus(pluginPrb.getString("codegen.mcf.mcf.validated"));
          return;
       }
       if (!mcText.getText().matches("[a-zA-Z_][a-zA-Z_0-9]*"))
       {
-         updateStatus("Management connection class name must be validated");
+         updateStatus(pluginPrb.getString("codegen.mcf.mc.validated"));
          return;
       }
       if (!cfText.getText().matches("[a-zA-Z_][a-zA-Z_0-9]*"))
       {
-         updateStatus("Connection factory interface name must be validated");
+         updateStatus(pluginPrb.getString("codegen.mcf.cfi.validated"));
          return;
       }
       if (!cfImplText.getText().matches("[a-zA-Z_][a-zA-Z_0-9]*"))
       {
-         updateStatus("Connection factory class name must be validated");
+         updateStatus(pluginPrb.getString("codegen.mcf.cf.validated"));
          return;
       }
       if (!connText.getText().matches("[a-zA-Z_][a-zA-Z_0-9]*"))
       {
-         updateStatus("Connection interface name must be validated");
+         updateStatus(pluginPrb.getString("codegen.mcf.ci.validated"));
          return;
       }
       if (!connImplText.getText().matches("[a-zA-Z_][a-zA-Z_0-9]*"))
       {
-         updateStatus("Connection class name must be validated");
+         updateStatus(pluginPrb.getString("codegen.mcf.conn.validated"));
          return;
       }
 

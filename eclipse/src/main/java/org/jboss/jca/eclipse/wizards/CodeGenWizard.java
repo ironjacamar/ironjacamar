@@ -100,7 +100,7 @@ public class CodeGenWizard extends Wizard implements INewWizard
    private String projectName;
    
    /** PropertyResourceBundle to load properties of code generation */
-   private PropertyResourceBundle prb;
+   private PropertyResourceBundle codegenPrb;
 
    /**
     * Constructor for CodeGenWizard.
@@ -110,26 +110,27 @@ public class CodeGenWizard extends Wizard implements INewWizard
       super();
       setNeedsProgressMonitor(true);
       def = new Definition();
+      
       try
       {
          InputStream in = CodeGenWizard.class.getClassLoader().
             getResourceAsStream("codegenerator.properties");
-         prb = new PropertyResourceBundle(in);
+         codegenPrb = new PropertyResourceBundle(in);
       }
       catch (IOException e)
       {
          e.printStackTrace();
       }
    }
-   
+
    /**
-    * getResourceString
+    * getCodeGenResourceString
     * @param key key string
     * @return resource
     */
-   public String getResourceString(String key)
+   public String getCodegenResourceString(String key)
    {
-      return prb.getString(key);
+      return codegenPrb.getString(key);
    }
 
    /**

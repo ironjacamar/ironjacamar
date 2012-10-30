@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.eclipse.wizards;
 
+import org.jboss.jca.eclipse.ResourceBundles;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.wizard.IWizardPage;
@@ -57,6 +58,8 @@ public class DefinitionWizardPage extends WizardPage
    
    private Button annotationshButton;
 
+   private ResourceBundles pluginPrb = ResourceBundles.getInstance();
+
    /**
     * Constructor for SampleNewWizardPage.
     * 
@@ -65,8 +68,8 @@ public class DefinitionWizardPage extends WizardPage
    public DefinitionWizardPage(ISelection selection)
    {
       super("wizardPage");
-      setTitle("Create JCA Project");
-      setDescription("This wizard creates a new jca project.");
+      setTitle(pluginPrb.getString("codegen.def.title"));
+      setDescription(pluginPrb.getString("codegen.def.desc"));
       this.selection = selection;
    }
 
@@ -104,7 +107,7 @@ public class DefinitionWizardPage extends WizardPage
       });
 
       label = new Label(container, SWT.NULL);
-      label.setText(((CodeGenWizard) getWizard()).getResourceString("package.name") + ":");
+      label.setText(((CodeGenWizard) getWizard()).getCodegenResourceString("package.name") + ":");
       packageText = new Text(container, SWT.BORDER | SWT.SINGLE);
       gd = new GridData(GridData.FILL_HORIZONTAL);
       gd.widthHint = 600;
@@ -129,7 +132,7 @@ public class DefinitionWizardPage extends WizardPage
       createTransactionGroup(container);
 
       label = new Label(container, SWT.NULL);
-      label.setText(((CodeGenWizard) getWizard()).getResourceString("support.reauthentication") + ":");
+      label.setText(((CodeGenWizard) getWizard()).getCodegenResourceString("support.reauthentication") + ":");
       final Button reauthButton = new Button(container, SWT.CHECK);
       reauthButton.setSelection(false);
       ((CodeGenWizard) getWizard()).getDef().setSupportReauthen(false);
@@ -142,7 +145,7 @@ public class DefinitionWizardPage extends WizardPage
       });
 
       label = new Label(container, SWT.NULL);
-      label.setText(((CodeGenWizard) getWizard()).getResourceString("use.annotation") + ":");
+      label.setText(((CodeGenWizard) getWizard()).getCodegenResourceString("use.annotation") + ":");
       annotationshButton = new Button(container, SWT.CHECK);
       annotationshButton.setSelection(true);
       ((CodeGenWizard) getWizard()).getDef().setUseAnnotation(true);
@@ -165,7 +168,7 @@ public class DefinitionWizardPage extends WizardPage
    private void createProfileGroup(Composite container)
    {
       Label label = new Label(container, SWT.NULL);
-      label.setText(((CodeGenWizard) getWizard()).getResourceString("profile.version") + ":");
+      label.setText(((CodeGenWizard) getWizard()).getCodegenResourceString("profile.version") + ":");
 
       final String[] items = {"1.6", "1.5", "1.0"};
       final Combo combo = new Combo(container, SWT.DROP_DOWN | SWT.READ_ONLY);
@@ -221,7 +224,7 @@ public class DefinitionWizardPage extends WizardPage
    private void createBoundTypeGroup(Composite container)
    {
       Label label = new Label(container, SWT.NULL);
-      label.setText(((CodeGenWizard) getWizard()).getResourceString("support.bound") + ":");
+      label.setText(((CodeGenWizard) getWizard()).getCodegenResourceString("support.bound") + ":");
 
       final String[] items =
       {"Outbound", "Inbound", "Bidirectional"};
@@ -264,7 +267,7 @@ public class DefinitionWizardPage extends WizardPage
    private void createTransactionGroup(Composite container)
    {
       Label label = new Label(container, SWT.NULL);
-      label.setText(((CodeGenWizard) getWizard()).getResourceString("support.transaction") + ":");
+      label.setText(((CodeGenWizard) getWizard()).getCodegenResourceString("support.transaction") + ":");
 
       final String[] items =
       {"NoTransaction", "LocalTransaction", "XATransaction"};
@@ -299,17 +302,17 @@ public class DefinitionWizardPage extends WizardPage
       String outDir = projectText.getText();
       if (outDir.length() == 0)
       {
-         updateStatus("Project name must be specified");
+         updateStatus(pluginPrb.getString("codegen.project.name.defined"));
          return;
       }
       if (packageText.getText().length() == 0)
       {
-         updateStatus("Package name must be specified");
+         updateStatus(pluginPrb.getString("codegen.package.name.defined"));
          return;
       }
       if (packageText.getText().indexOf('.') < 0)
       {
-         updateStatus("Package name should be 2 level at least, like org.jboss");
+         updateStatus(pluginPrb.getString("codegen.package.name.validated"));
          return;
       }
       
