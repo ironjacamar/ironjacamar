@@ -67,7 +67,7 @@ public abstract class RaXmlGen extends AbstractXmlGen
          out.write("<resourceadapter-class>" + def.getRaPackage() + "." + 
             def.getRaClass() + "</resourceadapter-class>");
          writeEol(out);
-         writeConfigPropsXml(def.getRaConfigProps(), out, indent + 1, false);
+         writeConfigPropsXml(def.getRaConfigProps(), out, indent + 1);
       }
 
       if (def.isSupportOutbound())
@@ -94,7 +94,7 @@ public abstract class RaXmlGen extends AbstractXmlGen
             out.write("<adminobject-class>" + def.getRaPackage() + "." + 
                def.getAdminObjects().get(i).getAdminObjectClass() + "</adminobject-class>");
             writeEol(out);
-            writeConfigPropsXml(def.getAdminObjects().get(i).getAoConfigProps(), out, indent + 2, false);
+            writeConfigPropsXml(def.getAdminObjects().get(i).getAoConfigProps(), out, indent + 2);
             writeIndent(out, indent + 1);
             out.write("</adminobject>");
             writeEol(out);
@@ -138,59 +138,75 @@ public abstract class RaXmlGen extends AbstractXmlGen
     * @param props config properties
     * @param out Writer
     * @param indent space number
-    * @param required support required
     * @throws IOException ioException
     */
    void writeConfigPropsXml(List<ConfigPropType> props, 
-      Writer out, int indent, boolean required) throws IOException
+      Writer out, int indent) throws IOException
    {
       if (props == null || props.size() == 0)
          return;
-      if (required)
+      for (ConfigPropType prop : props)
       {
-         for (ConfigPropType prop : props)
-         {
-            if (prop.isRequired())
-            {
-               writeIndent(out, indent);
-               out.write("<required-config-property>");
-               writeEol(out);
-               
-               writeIndent(out, indent + 1);
-               out.write("<config-property-name>" + prop.getName() + "</config-property-name>");
-               writeEol(out);
+         writeIndent(out, indent);
+         out.write("<config-property>");
+         writeEol(out);
 
-               writeIndent(out, indent);
-               out.write("</required-config-property>");
-               writeEol(out);
-            }
-         }
+         writeIndent(out, indent + 1);
+         out.write("<config-property-name>" + prop.getName() + "</config-property-name>");
+         writeEol(out);
+         writeIndent(out, indent + 1);
+         out.write("<config-property-type>java.lang." + prop.getType() + "</config-property-type>");
+         writeEol(out);
+         writeIndent(out, indent + 1);
+         out.write("<config-property-value>" + prop.getValue() + "</config-property-value>");
+         writeEol(out);
+
+         writeIndent(out, indent);
+         out.write("</config-property>");
+         writeEol(out);
          writeEol(out);
       }
-      else
+   }
+   
+   /**
+    * Output As config props xml part
+    * @param props config properties
+    * @param out Writer
+    * @param indent space number
+    * @throws IOException ioException
+    */
+   abstract void writeAsConfigPropsXml(List<ConfigPropType> props, 
+      Writer out, int indent) throws IOException;
+   
+   /**
+    * Output required config props xml part
+    * @param props config properties
+    * @param out Writer
+    * @param indent space number
+    * @throws IOException ioException
+    */
+   void writeRequireConfigPropsXml(List<ConfigPropType> props, Writer out, int indent) throws IOException
+   {
+      if (props == null || props.size() == 0)
+         return;
+      for (ConfigPropType prop : props)
       {
-         for (ConfigPropType prop : props)
+         if (prop.isRequired())
          {
             writeIndent(out, indent);
-            out.write("<config-property>");
+            out.write("<required-config-property>");
             writeEol(out);
-         
+
             writeIndent(out, indent + 1);
             out.write("<config-property-name>" + prop.getName() + "</config-property-name>");
             writeEol(out);
-            writeIndent(out, indent + 1);
-            out.write("<config-property-type>java.lang." + prop.getType() + "</config-property-type>");
-            writeEol(out);
-            writeIndent(out, indent + 1);
-            out.write("<config-property-value>" + prop.getValue() + "</config-property-value>");
-            writeEol(out);
-         
+
             writeIndent(out, indent);
-            out.write("</config-property>");
-            writeEol(out);
+            out.write("</required-config-property>");
             writeEol(out);
          }
       }
+      writeEol(out);
    }
    
    /**
@@ -230,7 +246,7 @@ public abstract class RaXmlGen extends AbstractXmlGen
          ".inflow." + def.getAsClass() + "</activationspec-class>");
       writeEol(out);
       
-      writeConfigPropsXml(def.getAsConfigProps(), out, indent + 4, true);
+      writeAsConfigPropsXml(def.getAsConfigProps(), out, indent + 4);
       writeIndent(out, indent + 3);
       out.write("</activationspec>");
       writeEol(out);
@@ -269,7 +285,7 @@ public abstract class RaXmlGen extends AbstractXmlGen
          out.write("<managedconnectionfactory-class>" + def.getRaPackage() + "." +
             def.getMcfDefs().get(num).getMcfClass() + "</managedconnectionfactory-class>");
          writeEol(out);
-         writeConfigPropsXml(def.getMcfDefs().get(num).getMcfConfigProps(), out, indent + 2, false);
+         writeConfigPropsXml(def.getMcfDefs().get(num).getMcfConfigProps(), out, indent + 2);
          
          if (!def.getMcfDefs().get(num).isUseCciConnection())
          {

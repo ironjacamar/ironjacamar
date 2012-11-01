@@ -21,8 +21,11 @@
  */
 package org.jboss.jca.codegenerator.xml;
 
+import org.jboss.jca.codegenerator.ConfigPropType;
+
 import java.io.IOException;
 import java.io.Writer;
+import java.util.List;
 
 /**
  * A BuildXmlGen.
@@ -61,5 +64,20 @@ public class Ra15XmlGen extends RaXmlGen
       out.write("           version=\"1.5\">");
       writeEol(out);
       writeEol(out);
+   }
+
+   
+   /**
+    * Output As config props xml part
+    * @param props config properties
+    * @param out Writer
+    * @param indent space number
+    * @throws IOException ioException
+    */
+   @Override
+   void writeAsConfigPropsXml(List<ConfigPropType> props, Writer out, int indent) throws IOException
+   {
+      writeRequireConfigPropsXml(props, out, indent);
+      //only required property
    }
 }

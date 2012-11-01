@@ -21,10 +21,12 @@
  */
 package org.jboss.jca.codegenerator.xml;
 
+import org.jboss.jca.codegenerator.ConfigPropType;
 import org.jboss.jca.codegenerator.Definition;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.List;
 
 /**
  * A Ra Xml Gen.
@@ -161,10 +163,24 @@ public class Ra10XmlGen extends RaXmlGen
       out.write("<transaction-support>" + def.getSupportTransaction() + "</transaction-support>");
       writeEol(out);
       
-      writeConfigPropsXml(def.getMcfDefs().get(0).getMcfConfigProps(), out, indent, false);
+      writeConfigPropsXml(def.getMcfDefs().get(0).getMcfConfigProps(), out, indent);
       
       writeIndent(out, indent);
       out.write("<reauthentication-support>" + def.isSupportReauthen() + "</reauthentication-support>");
       writeEol(out);
+   }
+   
+   
+   /**
+    * Output As config props xml part
+    * @param props config properties
+    * @param out Writer
+    * @param indent space number
+    * @throws IOException ioException
+    */
+   @Override
+   void writeAsConfigPropsXml(List<ConfigPropType> props, Writer out, int indent) throws IOException
+   {
+      // null
    }
 }

@@ -122,6 +122,18 @@ public class AsCodeGen extends PropsCodeGen
       writeEol(out);
       out.write("import javax.resource.spi.ResourceAdapter;");
       writeEol(out);
+      
+      if (def.isUseAnnotation())
+      {
+         for (int i = 0; i < getConfigProps(def).size(); i++)
+         {
+            if (getConfigProps(def).get(i).isRequired())
+            {
+               out.write("import javax.validation.constraints.NotNull;");
+               break;
+            }
+         }
+      }
       writeEol(out);
    }
    
