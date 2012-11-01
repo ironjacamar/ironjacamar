@@ -25,9 +25,15 @@ package org.jboss.jca.core.workmanager;
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.workmanager.DistributedWorkManager;
+import org.jboss.jca.core.api.workmanager.DistributedWorkManagerStatistics;
+import org.jboss.jca.core.spi.workmanager.notification.NotificationListener;
 import org.jboss.jca.core.spi.workmanager.policy.Policy;
 import org.jboss.jca.core.spi.workmanager.selector.Selector;
 import org.jboss.jca.core.spi.workmanager.transport.Transport;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 import javax.resource.spi.work.DistributableWork;
 import javax.resource.spi.work.Work;
@@ -63,6 +69,15 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    /** Transport */
    private Transport transport;
 
+   /** Notification listeners */
+   private Collection<NotificationListener> listeners;
+
+   /** Distributed statistics enabled */
+   private boolean distributedStatisticsEnabled;
+
+   /** Distributed statistics */
+   private DistributedWorkManagerStatisticsImpl distributedStatistics;
+
    /**
     * Constructor
     */
@@ -72,6 +87,9 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
       this.policy = null;
       this.selector = null;
       this.transport = null;
+      this.listeners = Collections.synchronizedList(new ArrayList<NotificationListener>(3));
+      this.distributedStatisticsEnabled = true;
+      this.distributedStatistics = null;
    }
 
    /**
@@ -89,7 +107,12 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    {
       policy = v;
       if (policy != null)
+      {
+         if (policy instanceof NotificationListener)
+            listeners.add((NotificationListener)policy);
+
          policy.setDistributedWorkManager(this);
+      }
    }
 
    /**
@@ -107,7 +130,12 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    {
       selector = v;
       if (selector != null)
+      {
+         if (selector instanceof NotificationListener)
+            listeners.add((NotificationListener)selector);
+
          selector.setDistributedWorkManager(this);
+      }
    }
 
    /**
@@ -125,7 +153,37 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    {
       transport = v;
       if (transport != null)
+      {
+         if (transport instanceof NotificationListener)
+            listeners.add((NotificationListener)transport);
+
          transport.setDistributedWorkManager(this);
+         initDistributedStatistics();
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isDistributedStatisticsEnabled()
+   {
+      return distributedStatisticsEnabled;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setDistributedStatisticsEnabled(boolean v)
+   {
+      distributedStatisticsEnabled = v;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public Collection<NotificationListener> getNotificationListeners()
+   {
+      return listeners;
    }
 
    /**
@@ -271,6 +329,131 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    }
 
    /**
+    * {@inheritDoc}
+    */
+   public DistributedWorkManagerStatistics getDistributedStatistics()
+   {
+      return distributedStatistics;
+   }
+
+   /**
+    * Set the distributed statistics value
+    * @param v The value
+    */
+   public void setDistributedStatistics(DistributedWorkManagerStatisticsImpl v)
+   {
+      distributedStatistics = v;
+   }
+
+   /**
+    * Init distributed statistics
+    */
+   private synchronized void initDistributedStatistics()
+   {
+      if (distributedStatistics == null)
+      {
+         distributedStatistics = new DistributedWorkManagerStatisticsImpl(getId(), transport);
+         listeners.add((NotificationListener)distributedStatistics);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   protected void deltaDoWorkAccepted()
+   {
+      super.deltaDoWorkAccepted();
+
+      if (distributedStatisticsEnabled)
+         distributedStatistics.sendDeltaDoWorkAccepted();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   protected void deltaDoWorkRejected()
+   {
+      super.deltaDoWorkRejected();
+
+      if (distributedStatisticsEnabled)
+         distributedStatistics.sendDeltaDoWorkRejected();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   protected void deltaStartWorkAccepted()
+   {
+      super.deltaStartWorkAccepted();
+
+      if (distributedStatisticsEnabled)
+         distributedStatistics.sendDeltaStartWorkAccepted();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   protected void deltaStartWorkRejected()
+   {
+      super.deltaStartWorkRejected();
+
+      if (distributedStatisticsEnabled)
+         distributedStatistics.sendDeltaStartWorkRejected();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   protected void deltaScheduleWorkAccepted()
+   {
+      super.deltaScheduleWorkAccepted();
+
+      if (distributedStatisticsEnabled)
+         distributedStatistics.sendDeltaScheduleWorkAccepted();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   protected void deltaScheduleWorkRejected()
+   {
+      super.deltaScheduleWorkRejected();
+
+      if (distributedStatisticsEnabled)
+         distributedStatistics.sendDeltaScheduleWorkRejected();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   protected void deltaWorkSuccessful()
+   {
+      super.deltaWorkSuccessful();
+
+      if (distributedStatisticsEnabled)
+         distributedStatistics.sendDeltaWorkSuccessful();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   protected void deltaWorkFailed()
+   {
+      super.deltaWorkFailed();
+
+      if (distributedStatisticsEnabled)
+         distributedStatistics.sendDeltaWorkFailed();
+   }
+
+   /**
     * Clone the WorkManager implementation
     * @return A copy of the implementation
     * @exception CloneNotSupportedException Thrown if the copy operation isn't supported
@@ -279,10 +462,11 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    @Override
    public org.jboss.jca.core.api.workmanager.WorkManager clone() throws CloneNotSupportedException
    {
-      DistributedWorkManager wm = (DistributedWorkManager)super.clone();
+      DistributedWorkManagerImpl wm = (DistributedWorkManagerImpl)super.clone();
       wm.setPolicy(getPolicy());
       wm.setSelector(getSelector());
       wm.setTransport(getTransport());
+      wm.setDistributedStatistics(distributedStatistics);
 
       return wm;
    }
@@ -296,5 +480,6 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
       sb.append(" policy=").append(policy);
       sb.append(" selector=").append(selector);
       sb.append(" transport=").append(transport);
+      sb.append(" distributedStatistics=").append(distributedStatistics);
    }
 }

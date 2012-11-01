@@ -52,4 +52,44 @@ public interface NotificationListener
     * @param free The number of free threads
     */
    public void updateLongRunningFree(String id, long free);
+
+   /**
+    * Delta doWork accepted
+    */
+   public void deltaDoWorkAccepted();
+
+   /**
+    * Delta doWork rejected
+    */
+   public void deltaDoWorkRejected();
+
+   /**
+    * Delta startWork accepted
+    */
+   public void deltaStartWorkAccepted();
+
+   /**
+    * Delta startWork rejected
+    */
+   public void deltaStartWorkRejected();
+
+   /**
+    * Delta scheduleWork accepted
+    */
+   public void deltaScheduleWorkAccepted();
+
+   /**
+    * Delta scheduleWork rejected
+    */
+   public void deltaScheduleWorkRejected();
+
+   /**
+    * Delta work successful
+    */
+   public void deltaWorkSuccessful();
+
+   /**
+    * Delta work failed
+    */
+   public void deltaWorkFailed();
 }

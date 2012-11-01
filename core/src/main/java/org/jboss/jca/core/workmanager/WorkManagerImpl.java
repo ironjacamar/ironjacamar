@@ -122,6 +122,9 @@ public class WorkManagerImpl implements WorkManager
    /** Active work wrappers */
    private Set<WorkWrapper> activeWorkWrappers;
 
+   /** Enable statistics */
+   private boolean statisticsEnabled;
+
    /** Statistics */
    private WorkManagerStatisticsImpl statistics;
 
@@ -146,6 +149,7 @@ public class WorkManagerImpl implements WorkManager
       resourceAdapter = null;
       shutdown = new AtomicBoolean(false);
       activeWorkWrappers = new HashSet<WorkWrapper>();
+      statisticsEnabled = true;
       statistics = new WorkManagerStatisticsImpl();
    }
 
@@ -297,6 +301,22 @@ public class WorkManagerImpl implements WorkManager
    }
 
    /**
+    * {@inheritDoc}
+    */
+   public boolean isStatisticsEnabled()
+   {
+      return statisticsEnabled;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setStatisticsEnabled(boolean v)
+   {
+      statisticsEnabled = v;
+   }
+
+   /**
     * Get the statistics
     * @return The value
     */
@@ -365,7 +385,7 @@ public class WorkManagerImpl implements WorkManager
             workListener.workAccepted(event);
          }
 
-         statistics.deltaDoWorkAccepted();
+         deltaDoWorkAccepted();
 
          if (execContext == null)
          {
@@ -428,7 +448,7 @@ public class WorkManagerImpl implements WorkManager
             if (trace)
                log.tracef("Exception %s for %s", exception, this);
 
-            statistics.deltaDoWorkRejected();
+            deltaDoWorkRejected();
 
             throw exception;
          }
@@ -470,7 +490,7 @@ public class WorkManagerImpl implements WorkManager
             workListener.workAccepted(event);
          }
 
-         statistics.deltaStartWorkAccepted();
+         deltaStartWorkAccepted();
 
          if (execContext == null)
          {
@@ -535,7 +555,7 @@ public class WorkManagerImpl implements WorkManager
             if (trace)
                log.tracef("Exception %s for %s", exception, this);
 
-            statistics.deltaStartWorkRejected();
+            deltaStartWorkRejected();
 
             throw exception;
          }
@@ -575,7 +595,7 @@ public class WorkManagerImpl implements WorkManager
             workListener.workAccepted(event);
          }
 
-         statistics.deltaScheduleWorkAccepted();
+         deltaScheduleWorkAccepted();
 
          if (execContext == null)
          {
@@ -634,7 +654,7 @@ public class WorkManagerImpl implements WorkManager
             if (trace)
                log.tracef("Exception %s for %s", exception, this);
 
-            statistics.deltaScheduleWorkRejected();
+            deltaScheduleWorkRejected();
 
             throw exception;
          }
@@ -642,6 +662,78 @@ public class WorkManagerImpl implements WorkManager
          if (wrapper != null)
             checkWorkCompletionException(wrapper);
       }
+   }
+
+   /**
+    * Delta doWork accepted
+    */
+   protected void deltaDoWorkAccepted()
+   {
+      if (statisticsEnabled)
+         statistics.deltaDoWorkAccepted();
+   }
+
+   /**
+    * Delta doWork rejected
+    */
+   protected void deltaDoWorkRejected()
+   {
+      if (statisticsEnabled)
+         statistics.deltaDoWorkRejected();
+   }
+
+   /**
+    * Delta startWork accepted
+    */
+   protected void deltaStartWorkAccepted()
+   {
+      if (statisticsEnabled)
+         statistics.deltaStartWorkAccepted();
+   }
+
+   /**
+    * Delta startWork rejected
+    */
+   protected void deltaStartWorkRejected()
+   {
+      if (statisticsEnabled)
+         statistics.deltaStartWorkRejected();
+   }
+
+   /**
+    * Delta scheduleWork accepted
+    */
+   protected void deltaScheduleWorkAccepted()
+   {
+      if (statisticsEnabled)
+         statistics.deltaScheduleWorkAccepted();
+   }
+
+   /**
+    * Delta scheduleWork rejected
+    */
+   protected void deltaScheduleWorkRejected()
+   {
+      if (statisticsEnabled)
+         statistics.deltaScheduleWorkRejected();
+   }
+
+   /**
+    * Delta work successful
+    */
+   protected void deltaWorkSuccessful()
+   {
+      if (statisticsEnabled)
+         statistics.deltaWorkSuccessful();
+   }
+
+   /**
+    * Delta work failed
+    */
+   protected void deltaWorkFailed()
+   {
+      if (statisticsEnabled)
+         statistics.deltaWorkFailed();
    }
 
    /**
@@ -715,7 +807,9 @@ public class WorkManagerImpl implements WorkManager
       synchronized (activeWorkWrappers)
       {
          activeWorkWrappers.add(ww);
-         statistics.setWorkActive(activeWorkWrappers.size());
+
+         if (statisticsEnabled)
+            statistics.setWorkActive(activeWorkWrappers.size());
       }
    }
 
@@ -728,7 +822,9 @@ public class WorkManagerImpl implements WorkManager
       synchronized (activeWorkWrappers)
       {
          activeWorkWrappers.remove(ww);
-         statistics.setWorkActive(activeWorkWrappers.size());
+
+         if (statisticsEnabled)
+            statistics.setWorkActive(activeWorkWrappers.size());
       }
    }
 
@@ -828,12 +924,12 @@ public class WorkManagerImpl implements WorkManager
          if (trace)
             log.tracef("Exception %s for %s", wrapper.getWorkException(), this);
 
-         statistics.deltaWorkFailed();
+         deltaWorkFailed();
 
          throw wrapper.getWorkException();
       }
 
-      statistics.deltaWorkSuccessful();
+      deltaWorkSuccessful();
    }
 
    /**

@@ -91,7 +91,23 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
 
    private static final short UPDATE_LONGRUNNING_FREE_METHOD = 10;
 
-   private static Map<Short, Method> methods = new HashMap<Short, Method>(10);
+   private static final short DELTA_DOWORK_ACCEPTED_METHOD = 11;
+
+   private static final short DELTA_DOWORK_REJECTED_METHOD = 12;
+
+   private static final short DELTA_STARTWORK_ACCEPTED_METHOD = 13;
+
+   private static final short DELTA_STARTWORK_REJECTED_METHOD = 14;
+
+   private static final short DELTA_SCHEDULEWORK_ACCEPTED_METHOD = 15;
+
+   private static final short DELTA_SCHEDULEWORK_REJECTED_METHOD = 16;
+
+   private static final short DELTA_WORK_SUCCESSFUL_METHOD = 17;
+
+   private static final short DELTA_WORK_FAILED_METHOD = 18;
+
+   private static Map<Short, Method> methods = new HashMap<Short, Method>();
 
    static
    {
@@ -121,6 +137,22 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
 
          methods.put(UPDATE_LONGRUNNING_FREE_METHOD,
             AbstractRemoteTransport.class.getMethod("localUpdateLongRunningFree", String.class, Long.class));
+
+         methods.put(DELTA_DOWORK_ACCEPTED_METHOD, AbstractRemoteTransport.class.getMethod("localDeltaDoWorkAccepted"));
+         methods.put(DELTA_DOWORK_REJECTED_METHOD, AbstractRemoteTransport.class.getMethod("localDeltaDoWorkRejected"));
+
+         methods.put(DELTA_STARTWORK_ACCEPTED_METHOD,
+                     AbstractRemoteTransport.class.getMethod("localDeltaStartWorkAccepted"));
+         methods.put(DELTA_STARTWORK_REJECTED_METHOD,
+                     AbstractRemoteTransport.class.getMethod("localDeltaStartWorkRejected"));
+
+         methods.put(DELTA_SCHEDULEWORK_ACCEPTED_METHOD,
+                     AbstractRemoteTransport.class.getMethod("localDeltaScheduleWorkAccepted"));
+         methods.put(DELTA_SCHEDULEWORK_REJECTED_METHOD,
+                     AbstractRemoteTransport.class.getMethod("localDeltaScheduleWorkRejected"));
+
+         methods.put(DELTA_WORK_SUCCESSFUL_METHOD, AbstractRemoteTransport.class.getMethod("localDeltaWorkSuccessful"));
+         methods.put(DELTA_WORK_FAILED_METHOD, AbstractRemoteTransport.class.getMethod("localDeltaWorkFailed"));
       }
       catch (NoSuchMethodException e)
       {
@@ -305,6 +337,70 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
                Long freeCount = (Long) parameters[1];
                disp.callRemoteMethod(destAddress,
                   new MethodCall(UPDATE_LONGRUNNING_FREE_METHOD, id, freeCount), opts);
+               break;
+            }
+            case DELTA_DOWORK_ACCEPTED : {
+               disp.callRemoteMethod(destAddress, new MethodCall(DELTA_DOWORK_ACCEPTED_METHOD),
+                                     opts);
+
+               returnValue = 0L;
+
+               break;
+            }
+            case DELTA_DOWORK_REJECTED : {
+               disp.callRemoteMethod(destAddress, new MethodCall(DELTA_DOWORK_REJECTED_METHOD),
+                                     opts);
+
+               returnValue = 0L;
+
+               break;
+            }
+            case DELTA_STARTWORK_ACCEPTED : {
+               disp.callRemoteMethod(destAddress, new MethodCall(DELTA_STARTWORK_ACCEPTED_METHOD),
+                                     opts);
+               
+               returnValue = 0L;
+
+               break;
+            }
+            case DELTA_STARTWORK_REJECTED : {
+               disp.callRemoteMethod(destAddress, new MethodCall(DELTA_STARTWORK_REJECTED_METHOD),
+                                     opts);
+
+               returnValue = 0L;
+
+               break;
+            }
+            case DELTA_SCHEDULEWORK_ACCEPTED : {
+               disp.callRemoteMethod(destAddress, new MethodCall(DELTA_SCHEDULEWORK_ACCEPTED_METHOD),
+                                     opts);
+               
+               returnValue = 0L;
+
+               break;
+            }
+            case DELTA_SCHEDULEWORK_REJECTED : {
+               disp.callRemoteMethod(destAddress, new MethodCall(DELTA_SCHEDULEWORK_REJECTED_METHOD),
+                                     opts);
+               
+               returnValue = 0L;
+
+               break;
+            }
+            case DELTA_WORK_SUCCESSFUL : {
+               disp.callRemoteMethod(destAddress, new MethodCall(DELTA_WORK_SUCCESSFUL_METHOD),
+                                     opts);
+
+               returnValue = 0L;
+
+               break;
+            }
+            case DELTA_WORK_FAILED : {
+               disp.callRemoteMethod(destAddress, new MethodCall(DELTA_WORK_FAILED_METHOD),
+                                     opts);
+
+               returnValue = 0L;
+
                break;
             }
             default :

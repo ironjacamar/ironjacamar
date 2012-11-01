@@ -22,9 +22,12 @@
 
 package org.jboss.jca.core.api.workmanager;
 
+import org.jboss.jca.core.spi.workmanager.notification.NotificationListener;
 import org.jboss.jca.core.spi.workmanager.policy.Policy;
 import org.jboss.jca.core.spi.workmanager.selector.Selector;
 import org.jboss.jca.core.spi.workmanager.transport.Transport;
+
+import java.util.Collection;
 
 import javax.resource.spi.work.Work;
 import javax.resource.spi.work.WorkException;
@@ -71,6 +74,24 @@ public interface DistributedWorkManager extends javax.resource.spi.work.Distribu
    public void setTransport(Transport v);
 
    /**
+    * Is distributed statistics enabled
+    * @return True if enabled; otherwise false
+    */
+   public boolean isDistributedStatisticsEnabled();
+
+   /**
+    * Set the distributed statistics enabled flag
+    * @param v The value
+    */
+   public void setDistributedStatisticsEnabled(boolean v);
+
+   /**
+    * Get the notification listeners attached
+    * @return The value
+    */
+   public Collection<NotificationListener> getNotificationListeners();
+
+   /**
     * doWork locally
     * @param work The work
     * @exception WorkException Thrown if an error occurs
@@ -91,4 +112,10 @@ public interface DistributedWorkManager extends javax.resource.spi.work.Distribu
     * @exception WorkException Thrown if an error occurs
     */
    public long localStartWork(Work work) throws WorkException;
+
+   /**
+    * Get the distributed statistics
+    * @return The value
+    */
+   public DistributedWorkManagerStatistics getDistributedStatistics();
 }

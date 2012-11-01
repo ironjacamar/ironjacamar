@@ -108,6 +108,18 @@ public interface WorkManager extends javax.resource.spi.work.WorkManager, Gracef
    public void setSpecCompliant(boolean v);
 
    /**
+    * Is statistics enabled
+    * @return True if enabled; otherwise false
+    */
+   public boolean isStatisticsEnabled();
+
+   /**
+    * Set the statistics enabled flag
+    * @param v The value
+    */
+   public void setStatisticsEnabled(boolean v);
+
+   /**
     * Get the callback security module
     * @return The value
     */

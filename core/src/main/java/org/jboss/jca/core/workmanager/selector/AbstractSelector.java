@@ -105,6 +105,62 @@ public abstract class AbstractSelector implements Selector, NotificationListener
    }
 
    /**
+    * {@inheritDoc}
+    */
+   public void deltaDoWorkAccepted()
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void deltaDoWorkRejected()
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void deltaStartWorkAccepted()
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void deltaStartWorkRejected()
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void deltaScheduleWorkAccepted()
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void deltaScheduleWorkRejected()
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void deltaWorkSuccessful()
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void deltaWorkFailed()
+   {
+   }
+
+   /**
     * Get explicit work manager override
     * @param work The work instance
     * @return The override, if none return null

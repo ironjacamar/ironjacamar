@@ -26,8 +26,6 @@ import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.workmanager.DistributedWorkManager;
 import org.jboss.jca.core.spi.workmanager.notification.NotificationListener;
-import org.jboss.jca.core.spi.workmanager.policy.Policy;
-import org.jboss.jca.core.spi.workmanager.selector.Selector;
 import org.jboss.jca.core.spi.workmanager.transport.Transport;
 
 import java.util.Collections;
@@ -127,34 +125,140 @@ public class InVM implements Transport
    @Override
    public void updateShortRunningFree(String id, long freeCount)
    {
-      if (dwm.getPolicy() instanceof NotificationListener)
+      for (NotificationListener nl : dwm.getNotificationListeners())
       {
-         ((NotificationListener) dwm.getPolicy()).updateShortRunningFree(
-                 id, freeCount);
+         nl.updateShortRunningFree(id, freeCount);
       }
-      if (dwm.getSelector() instanceof NotificationListener)
-      {
-         ((NotificationListener) dwm.getSelector()).updateShortRunningFree(
-                 id, freeCount);
-      }
-
    }
 
    @Override
    public void updateLongRunningFree(String id, long freeCount)
    {
-      if (dwm.getPolicy() instanceof NotificationListener)
+      for (NotificationListener nl : dwm.getNotificationListeners())
       {
-         ((NotificationListener) dwm.getPolicy()).updateLongRunningFree(
-                 id, freeCount);
-      }
-      if (dwm.getSelector() instanceof NotificationListener)
-      {
-         ((NotificationListener) dwm.getSelector()).updateLongRunningFree(
-                 id, freeCount);
+         nl.updateLongRunningFree(id, freeCount);
       }
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   public void deltaDoWorkAccepted(String id)
+   {
+      DistributedWorkManager dwm = workManagers.get(id);
+      if (dwm != null)
+      {
+         for (NotificationListener nl : dwm.getNotificationListeners())
+         {
+            nl.deltaDoWorkAccepted();
+         }
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void deltaDoWorkRejected(String id)
+   {
+      DistributedWorkManager dwm = workManagers.get(id);
+      if (dwm != null)
+      {
+         for (NotificationListener nl : dwm.getNotificationListeners())
+         {
+            nl.deltaDoWorkRejected();
+         }
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void deltaStartWorkAccepted(String id)
+   {
+      DistributedWorkManager dwm = workManagers.get(id);
+      if (dwm != null)
+      {
+         for (NotificationListener nl : dwm.getNotificationListeners())
+         {
+            nl.deltaStartWorkAccepted();
+         }
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void deltaStartWorkRejected(String id)
+   {
+      DistributedWorkManager dwm = workManagers.get(id);
+      if (dwm != null)
+      {
+         for (NotificationListener nl : dwm.getNotificationListeners())
+         {
+            nl.deltaStartWorkRejected();
+         }
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void deltaScheduleWorkAccepted(String id)
+   {
+      DistributedWorkManager dwm = workManagers.get(id);
+      if (dwm != null)
+      {
+         for (NotificationListener nl : dwm.getNotificationListeners())
+         {
+            nl.deltaScheduleWorkAccepted();
+         }
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void deltaScheduleWorkRejected(String id)
+   {
+      DistributedWorkManager dwm = workManagers.get(id);
+      if (dwm != null)
+      {
+         for (NotificationListener nl : dwm.getNotificationListeners())
+         {
+            nl.deltaScheduleWorkRejected();
+         }
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void deltaWorkSuccessful(String id)
+   {
+      DistributedWorkManager dwm = workManagers.get(id);
+      if (dwm != null)
+      {
+         for (NotificationListener nl : dwm.getNotificationListeners())
+         {
+            nl.deltaWorkSuccessful();
+         }
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void deltaWorkFailed(String id)
+   {
+      DistributedWorkManager dwm = workManagers.get(id);
+      if (dwm != null)
+      {
+         for (NotificationListener nl : dwm.getNotificationListeners())
+         {
+            nl.deltaWorkFailed();
+         }
+      }
+   }
 
    /**
     * {@inheritDoc}
@@ -218,24 +322,12 @@ public class InVM implements Transport
 
       workManagers.put(dwm.getId(), dwm);
 
-      Policy policy = this.dwm.getPolicy();
-      if (policy != null && policy instanceof NotificationListener)
+      for (NotificationListener nl : this.dwm.getNotificationListeners())
       {
-         NotificationListener listener = (NotificationListener)policy;
-         listener.join(dwm.getId());
+         nl.join(dwm.getId());
 
-         listener.updateShortRunningFree(dwm.getId(), getShortRunningFree(dwm.getId()));
-         listener.updateLongRunningFree(dwm.getId(), getLongRunningFree(dwm.getId()));
-      }
-
-      Selector selector = this.dwm.getSelector();
-      if (selector != null && selector instanceof NotificationListener)
-      {
-         NotificationListener listener = (NotificationListener)selector;
-         listener.join(dwm.getId());
-
-         listener.updateShortRunningFree(dwm.getId(), getShortRunningFree(dwm.getId()));
-         listener.updateLongRunningFree(dwm.getId(), getLongRunningFree(dwm.getId()));
+         nl.updateShortRunningFree(dwm.getId(), getShortRunningFree(dwm.getId()));
+         nl.updateLongRunningFree(dwm.getId(), getLongRunningFree(dwm.getId()));
       }
    }
 
@@ -250,18 +342,9 @@ public class InVM implements Transport
 
       workManagers.remove(dwm.getId());
 
-      Policy policy = this.dwm.getPolicy();
-      if (policy != null && policy instanceof NotificationListener)
+      for (NotificationListener nl : this.dwm.getNotificationListeners())
       {
-         NotificationListener listener = (NotificationListener)policy;
-         listener.leave(dwm.getId());
-      }
-
-      Selector selector = this.dwm.getSelector();
-      if (selector != null && selector instanceof NotificationListener)
-      {
-         NotificationListener listener = (NotificationListener)selector;
-         listener.leave(dwm.getId());
+         nl.leave(dwm.getId());
       }
    }
 

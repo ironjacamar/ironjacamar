@@ -58,6 +58,23 @@ public class ProtocolMessages
       /** get long running free */
       GET_LONGRUNNING_FREE(0),
 
+      /** DELTA_DOWORK_ACCEPTED */
+      DELTA_DOWORK_ACCEPTED(0),
+      /** DELTA_DOWORK_REJECTED */
+      DELTA_DOWORK_REJECTED(0),
+      /** DELTA_STARTWORK_ACCEPTED */
+      DELTA_STARTWORK_ACCEPTED(0),
+      /** DELTA_STARTWORK_REJECTED */
+      DELTA_STARTWORK_REJECTED(0),
+      /** DELTA_SCHEDULEWORK_ACCEPTED */
+      DELTA_SCHEDULEWORK_ACCEPTED(0),
+      /** DELTA_SCHEDULEWORK_REJECTED */
+      DELTA_SCHEDULEWORK_REJECTED(0),
+      /** DELTA_WORK_SUCCESSFUL */
+      DELTA_WORK_SUCCESSFUL(0),
+      /** DELTA_WORK_FAILED */
+      DELTA_WORK_FAILED(0),
+
       /** PING */
       PING(0),
       /** do work */

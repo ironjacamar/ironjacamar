@@ -107,6 +107,62 @@ public abstract class AbstractPolicy implements Policy, NotificationListener
    }
 
    /**
+    * {@inheritDoc}
+    */
+   public void deltaDoWorkAccepted()
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void deltaDoWorkRejected()
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void deltaStartWorkAccepted()
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void deltaStartWorkRejected()
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void deltaScheduleWorkAccepted()
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void deltaScheduleWorkRejected()
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void deltaWorkSuccessful()
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void deltaWorkFailed()
+   {
+   }
+
+   /**
     * Get should distribute override
     * @param work The work instance
     * @return The override, if none return null

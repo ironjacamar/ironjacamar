@@ -44,6 +44,7 @@ import org.jboss.threads.BlockingExecutor;
  * An abstract transport for remote communication
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  * @param <T> the type
  */
 public abstract class AbstractRemoteTransport<T> implements Transport
@@ -84,17 +85,8 @@ public abstract class AbstractRemoteTransport<T> implements Transport
          {
             String id = entry.getKey();
 
-            if (dwm.getPolicy() instanceof NotificationListener)
+            for (NotificationListener nl : dwm.getNotificationListeners())
             {
-               NotificationListener nl = (NotificationListener) dwm.getPolicy();
-
-               nl.join(id);
-               nl.updateShortRunningFree(id, getShortRunningFree(id));
-               nl.updateLongRunningFree(id, getLongRunningFree(id));
-            }
-            if (dwm.getSelector() instanceof NotificationListener)
-            {
-               NotificationListener nl = (NotificationListener) dwm.getSelector();
                nl.join(id);
                nl.updateShortRunningFree(id, getShortRunningFree(id));
                nl.updateLongRunningFree(id, getLongRunningFree(id));
@@ -260,6 +252,214 @@ public abstract class AbstractRemoteTransport<T> implements Transport
     * {@inheritDoc}
     */
    @Override
+   public void deltaDoWorkAccepted(String id)
+   {
+      if (trace)
+         log.tracef("DELTA_DOWORK_ACCEPTED(%s) from %s", id, dwm.getId());
+
+      if (!dwm.getId().equals(id))
+      {
+         try
+         {
+            T address = workManagers.get(id);
+            sendMessage(address, Request.DELTA_DOWORK_ACCEPTED);
+         }
+         catch (WorkException e1)
+         {
+            if (log.isDebugEnabled())
+            {
+               log.debug("Error", e1);
+            }
+         }
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void deltaDoWorkRejected(String id)
+   {
+      if (trace)
+         log.tracef("DELTA_DOWORK_REJECTED(%s) from %s", id, dwm.getId());
+
+      if (!dwm.getId().equals(id))
+      {
+         try
+         {
+            T address = workManagers.get(id);
+            sendMessage(address, Request.DELTA_DOWORK_REJECTED);
+         }
+         catch (WorkException e1)
+         {
+            if (log.isDebugEnabled())
+            {
+               log.debug("Error", e1);
+            }
+         }
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void deltaStartWorkAccepted(String id)
+   {
+      if (trace)
+         log.tracef("DELTA_STARTWORK_ACCEPTED(%s) from %s", id, dwm.getId());
+
+      if (!dwm.getId().equals(id))
+      {
+         try
+         {
+            T address = workManagers.get(id);
+            sendMessage(address, Request.DELTA_STARTWORK_ACCEPTED);
+         }
+         catch (WorkException e1)
+         {
+            if (log.isDebugEnabled())
+            {
+               log.debug("Error", e1);
+            }
+         }
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void deltaStartWorkRejected(String id)
+   {
+      if (trace)
+         log.tracef("DELTA_STARTWORK_REJECTED(%s) from %s", id, dwm.getId());
+
+      if (!dwm.getId().equals(id))
+      {
+         try
+         {
+            T address = workManagers.get(id);
+            sendMessage(address, Request.DELTA_STARTWORK_REJECTED);
+         }
+         catch (WorkException e1)
+         {
+            if (log.isDebugEnabled())
+            {
+               log.debug("Error", e1);
+            }
+         }
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void deltaScheduleWorkAccepted(String id)
+   {
+      if (trace)
+         log.tracef("DELTA_SCHEDULEWORK_ACCEPTED(%s) from %s", id, dwm.getId());
+
+      if (!dwm.getId().equals(id))
+      {
+         try
+         {
+            T address = workManagers.get(id);
+            sendMessage(address, Request.DELTA_SCHEDULEWORK_ACCEPTED);
+         }
+         catch (WorkException e1)
+         {
+            if (log.isDebugEnabled())
+            {
+               log.debug("Error", e1);
+            }
+         }
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void deltaScheduleWorkRejected(String id)
+   {
+      if (trace)
+         log.tracef("DELTA_SCHEDULEWORK_REJECTED(%s) from %s", id, dwm.getId());
+
+      if (!dwm.getId().equals(id))
+      {
+         try
+         {
+            T address = workManagers.get(id);
+            sendMessage(address, Request.DELTA_SCHEDULEWORK_REJECTED);
+         }
+         catch (WorkException e1)
+         {
+            if (log.isDebugEnabled())
+            {
+               log.debug("Error", e1);
+            }
+         }
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void deltaWorkSuccessful(String id)
+   {
+      if (trace)
+         log.tracef("DELTA_WORK_SUCCESSFUL(%s) from %s", id, dwm.getId());
+
+      if (!dwm.getId().equals(id))
+      {
+         try
+         {
+            T address = workManagers.get(id);
+            sendMessage(address, Request.DELTA_WORK_SUCCESSFUL);
+         }
+         catch (WorkException e1)
+         {
+            if (log.isDebugEnabled())
+            {
+               log.debug("Error", e1);
+            }
+         }
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void deltaWorkFailed(String id)
+   {
+      if (trace)
+         log.tracef("DELTA_WORK_FAILED(%s) from %s", id, dwm.getId());
+
+      if (!dwm.getId().equals(id))
+      {
+         try
+         {
+            T address = workManagers.get(id);
+            sendMessage(address, Request.DELTA_WORK_FAILED);
+         }
+         catch (WorkException e1)
+         {
+            if (log.isDebugEnabled())
+            {
+               log.debug("Error", e1);
+            }
+         }
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public void doWork(String id, DistributableWork work) throws WorkException
    {
       if (trace)
@@ -352,15 +552,10 @@ public abstract class AbstractRemoteTransport<T> implements Transport
 
       this.getWorkManagers().put(id, address);
 
-      if (this.getDistributedWorkManager().getPolicy() instanceof NotificationListener)
+      for (NotificationListener nl : this.getDistributedWorkManager().getNotificationListeners())
       {
-         ((NotificationListener) this.getDistributedWorkManager().getPolicy()).join(id);
+         nl.join(id);
       }
-      if (this.getDistributedWorkManager().getSelector() instanceof NotificationListener)
-      {
-         ((NotificationListener) this.getDistributedWorkManager().getSelector()).join(id);
-      }
-
    }
 
    /**
@@ -376,13 +571,9 @@ public abstract class AbstractRemoteTransport<T> implements Transport
 
       this.getWorkManagers().remove(id);
 
-      if (this.getDistributedWorkManager().getPolicy() instanceof NotificationListener)
+      for (NotificationListener nl : this.getDistributedWorkManager().getNotificationListeners())
       {
-         ((NotificationListener) this.getDistributedWorkManager().getPolicy()).leave(id);
-      }
-      if (this.getDistributedWorkManager().getSelector() instanceof NotificationListener)
-      {
-         ((NotificationListener) this.getDistributedWorkManager().getSelector()).leave(id);
+         nl.leave(id);
       }
    }
 
@@ -501,15 +692,10 @@ public abstract class AbstractRemoteTransport<T> implements Transport
       if (trace)
          log.tracef("LOCAL_UPDATE_LONGRUNNING_FREE(%s, %d)", id, freeCount);
 
-      if (this.getDistributedWorkManager().getPolicy() instanceof NotificationListener)
+
+      for (NotificationListener nl : this.getDistributedWorkManager().getNotificationListeners())
       {
-         ((NotificationListener) this.getDistributedWorkManager().getPolicy()).updateLongRunningFree(
-            id, freeCount);
-      }
-      if (this.getDistributedWorkManager().getSelector() instanceof NotificationListener)
-      {
-         ((NotificationListener) this.getDistributedWorkManager().getSelector()).updateLongRunningFree(
-            id, freeCount);
+         nl.updateLongRunningFree(id, freeCount);
       }
    }
 
@@ -524,15 +710,121 @@ public abstract class AbstractRemoteTransport<T> implements Transport
       if (trace)
          log.tracef("LOCAL_UPDATE_SHORTRUNNING_FREE(%s, %d)", id, freeCount);
 
-      if (this.getDistributedWorkManager().getPolicy() instanceof NotificationListener)
+      for (NotificationListener nl : this.getDistributedWorkManager().getNotificationListeners())
       {
-         ((NotificationListener) this.getDistributedWorkManager().getPolicy()).updateShortRunningFree(
-            id, freeCount);
+         nl.updateShortRunningFree(id, freeCount);
       }
-      if (this.getDistributedWorkManager().getSelector() instanceof NotificationListener)
+   }
+
+   /**
+    * Local delta doWork accepted
+    */
+   public void localDeltaDoWorkAccepted()
+   {
+      if (trace)
+         log.tracef("LOCAL_DELTA_DOWORK_ACCEPTED()");
+
+      for (NotificationListener nl : this.getDistributedWorkManager().getNotificationListeners())
       {
-         ((NotificationListener) this.getDistributedWorkManager().getSelector())
-            .updateShortRunningFree(id, freeCount);
+         nl.deltaDoWorkAccepted();
+      }
+   }
+
+   /**
+    * Local delta doWork rejected
+    */
+   public void localDeltaDoWorkRejected()
+   {
+      if (trace)
+         log.tracef("LOCAL_DELTA_DOWORK_REJECTED()");
+
+      for (NotificationListener nl : this.getDistributedWorkManager().getNotificationListeners())
+      {
+         nl.deltaDoWorkRejected();
+      }
+   }
+
+   /**
+    * Local delta startWork accepted
+    */
+   public void localDeltaStartWorkAccepted()
+   {
+      if (trace)
+         log.tracef("LOCAL_DELTA_STARTWORK_ACCEPTED()");
+
+      for (NotificationListener nl : this.getDistributedWorkManager().getNotificationListeners())
+      {
+         nl.deltaStartWorkAccepted();
+      }
+   }
+
+   /**
+    * Local delta startWork rejected
+    */
+   public void localDeltaStartWorkRejected()
+   {
+      if (trace)
+         log.tracef("LOCAL_DELTA_STARTWORK_REJECTED()");
+
+      for (NotificationListener nl : this.getDistributedWorkManager().getNotificationListeners())
+      {
+         nl.deltaStartWorkRejected();
+      }
+   }
+
+   /**
+    * Local delta scheduleWork accepted
+    */
+   public void localDeltaScheduleWorkAccepted()
+   {
+      if (trace)
+         log.tracef("LOCAL_DELTA_SCHEDULEWORK_ACCEPTED()");
+
+      for (NotificationListener nl : this.getDistributedWorkManager().getNotificationListeners())
+      {
+         nl.deltaScheduleWorkAccepted();
+      }
+   }
+
+   /**
+    * Local delta scheduleWork rejected
+    */
+   public void localDeltaScheduleWorkRejected()
+   {
+      if (trace)
+         log.tracef("LOCAL_DELTA_SCHEDULEWORK_REJECTED()");
+
+      for (NotificationListener nl : this.getDistributedWorkManager().getNotificationListeners())
+      {
+         nl.deltaScheduleWorkRejected();
+      }
+   }
+
+   /**
+    * Local delta work successful
+    */
+   public void localDeltaWorkSuccessful()
+   {
+      if (trace)
+         log.tracef("LOCAL_DELTA_WORK_SUCCESSFUL()");
+
+      for (NotificationListener nl : this.getDistributedWorkManager().getNotificationListeners())
+      {
+         nl.deltaWorkSuccessful();
+      }
+   }
+
+   /**
+    * Local delta work failed
+    */
+   public void localDeltaWorkFailed()
+   {
+      if (trace)
+         log.tracef("LOCAL_DELTA_WORK_FAILED()");
+
+      for (NotificationListener nl : this.getDistributedWorkManager().getNotificationListeners())
+      {
+         nl.deltaWorkFailed();
       }
    }
 

@@ -77,6 +77,54 @@ public interface Transport
    public void updateLongRunningFree(String id, long freeCount);
 
    /**
+    * Delta doWork accepted
+    * @param id The work manager id
+    */
+   public void deltaDoWorkAccepted(String id);
+
+   /**
+    * Delta doWork rejected
+    * @param id The work manager id
+    */
+   public void deltaDoWorkRejected(String id);
+
+   /**
+    * Delta startWork accepted
+    * @param id The work manager id
+    */
+   public void deltaStartWorkAccepted(String id);
+
+   /**
+    * Delta startWork rejected
+    * @param id The work manager id
+    */
+   public void deltaStartWorkRejected(String id);
+
+   /**
+    * Delta scheduleWork accepted
+    * @param id The work manager id
+    */
+   public void deltaScheduleWorkAccepted(String id);
+
+   /**
+    * Delta scheduleWork rejected
+    * @param id The work manager id
+    */
+   public void deltaScheduleWorkRejected(String id);
+
+   /**
+    * Delta work successful
+    * @param id The work manager id
+    */
+   public void deltaWorkSuccessful(String id);
+
+   /**
+    * Delta work failed
+    * @param id The work manager id
+    */
+   public void deltaWorkFailed(String id);
+
+   /**
     * doWork
     * @param id The work manager id
     * @param work The work

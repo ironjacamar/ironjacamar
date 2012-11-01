@@ -198,6 +198,78 @@ public class Communication implements Runnable
 
                break;
             }
+            case DELTA_DOWORK_ACCEPTED : {
+               if (trace)
+                  log.tracef("%s: DELTA_DOWORK_ACCEPTED()", socket.getInetAddress());
+
+               transport.localDeltaDoWorkAccepted();
+               response = Response.VOID_OK;
+
+               break;
+            }
+            case DELTA_DOWORK_REJECTED : {
+               if (trace)
+                  log.tracef("%s: DELTA_DOWORK_REJECTED()", socket.getInetAddress());
+
+               transport.localDeltaDoWorkRejected();
+               response = Response.VOID_OK;
+
+               break;
+            }
+            case DELTA_STARTWORK_ACCEPTED : {
+               if (trace)
+                  log.tracef("%s: DELTA_STARTWORK_ACCEPTED()", socket.getInetAddress());
+
+               transport.localDeltaStartWorkAccepted();
+               response = Response.VOID_OK;
+
+               break;
+            }
+            case DELTA_STARTWORK_REJECTED : {
+               if (trace)
+                  log.tracef("%s: DELTA_STARTWORK_REJECTED()", socket.getInetAddress());
+
+               transport.localDeltaStartWorkRejected();
+               response = Response.VOID_OK;
+
+               break;
+            }
+            case DELTA_SCHEDULEWORK_ACCEPTED : {
+               if (trace)
+                  log.tracef("%s: DELTA_SCHEDULEWORK_ACCEPTED()", socket.getInetAddress());
+
+               transport.localDeltaScheduleWorkAccepted();
+               response = Response.VOID_OK;
+
+               break;
+            }
+            case DELTA_SCHEDULEWORK_REJECTED : {
+               if (trace)
+                  log.tracef("%s: DELTA_SCHEDULEWORK_REJECTED()", socket.getInetAddress());
+
+               transport.localDeltaScheduleWorkRejected();
+               response = Response.VOID_OK;
+
+               break;
+            }
+            case DELTA_WORK_SUCCESSFUL : {
+               if (trace)
+                  log.tracef("%s: DELTA_WORK_SUCCESSFUL()", socket.getInetAddress());
+
+               transport.localDeltaWorkSuccessful();
+               response = Response.VOID_OK;
+
+               break;
+            }
+            case DELTA_WORK_FAILED : {
+               if (trace)
+                  log.tracef("%s: DELTA_WORK_FAILED()", socket.getInetAddress());
+
+               transport.localDeltaWorkFailed();
+               response = Response.VOID_OK;
+
+               break;
+            }
             default :
                if (log.isDebugEnabled())
                {
