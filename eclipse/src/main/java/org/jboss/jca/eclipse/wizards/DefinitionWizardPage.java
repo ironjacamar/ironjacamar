@@ -302,17 +302,17 @@ public class DefinitionWizardPage extends WizardPage
       String outDir = projectText.getText();
       if (outDir.length() == 0)
       {
-         updateStatus(pluginPrb.getString("codegen.project.name.defined"));
+         updateStatus(pluginPrb.getString("codegen.def.project.name.defined"));
          return;
       }
       if (packageText.getText().length() == 0)
       {
-         updateStatus(pluginPrb.getString("codegen.package.name.defined"));
+         updateStatus(pluginPrb.getString("codegen.def.package.name.defined"));
          return;
       }
       if (packageText.getText().indexOf('.') < 0)
       {
-         updateStatus(pluginPrb.getString("codegen.package.name.validated"));
+         updateStatus(pluginPrb.getString("codegen.def.package.name.validated"));
          return;
       }
       

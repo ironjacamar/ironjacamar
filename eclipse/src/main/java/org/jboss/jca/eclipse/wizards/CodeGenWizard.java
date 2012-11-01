@@ -313,6 +313,7 @@ public class CodeGenWizard extends Wizard implements INewWizard
       entries.addAll(Arrays.asList(javaProject.getRawClasspath()));
       entries.remove(JavaCore.newSourceEntry(new Path("/" + getProjectName())));
       entries.add(JavaCore.newSourceEntry(new Path("/" + getProjectName() + "/src/main/java")));
+      entries.add(JavaCore.newSourceEntry(new Path("/" + getProjectName() + "/src/main/resources")));
 
       IVMInstall vmInstall = JavaRuntime.getDefaultVMInstall();
       LibraryLocation[] locations = JavaRuntime.getLibraryLocations(vmInstall);
