@@ -25,6 +25,7 @@ package org.jboss.jca.core.bootstrapcontext;
 import org.jboss.jca.core.api.bootstrap.CloneableBootstrapContext;
 import org.jboss.jca.core.api.workmanager.DistributableContext;
 import org.jboss.jca.core.api.workmanager.WorkManager;
+import org.jboss.jca.core.workmanager.WorkManagerCoordinator;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -50,11 +51,17 @@ public class BaseCloneableBootstrapContext implements CloneableBootstrapContext
    /** Work Manager */
    private WorkManager workManager;
 
+   /** Work Manager name */
+   private String workManagerName;
+
    /** XATerminator */
    private XATerminator xaTerminator;
 
    /** Supported contexts */
    private Set<Class> supportedContexts;
+
+   /** The id */
+   private String id;
 
    /** The name */
    private String name;
@@ -66,6 +73,7 @@ public class BaseCloneableBootstrapContext implements CloneableBootstrapContext
    {
       this.transactionSynchronizationRegistry = null;
       this.workManager = null;
+      this.workManagerName = null;
       this.xaTerminator = null;
       this.supportedContexts = new HashSet<Class>(4);
 
@@ -74,7 +82,24 @@ public class BaseCloneableBootstrapContext implements CloneableBootstrapContext
       this.supportedContexts.add(TransactionContext.class);
       this.supportedContexts.add(DistributableContext.class);
 
+      this.id = null;
       this.name = null;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String getId()
+   {
+      return id;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setId(String v)
+   {
+      id = v;
    }
 
    /**
@@ -129,6 +154,9 @@ public class BaseCloneableBootstrapContext implements CloneableBootstrapContext
     */
    public WorkManager getWorkManager()
    {
+      if (workManager == null)
+         workManager = WorkManagerCoordinator.getInstance().createWorkManager(id, workManagerName);
+
       return workManager;
    }
 
@@ -139,6 +167,24 @@ public class BaseCloneableBootstrapContext implements CloneableBootstrapContext
    public void setWorkManager(WorkManager wm)
    {
       this.workManager = wm;
+   }
+
+   /**
+    * Get the work manager name
+    * @return The value
+    */
+   public String getWorkManagerName()
+   {
+      return workManagerName;
+   }
+
+   /**
+    * Set the work manager name
+    * @param wmn The value
+    */
+   public void setWorkManagerName(String wmn)
+   {
+      this.workManagerName = wmn;
    }
 
    /**
@@ -191,9 +237,9 @@ public class BaseCloneableBootstrapContext implements CloneableBootstrapContext
    {
       BaseCloneableBootstrapContext bcbc = (BaseCloneableBootstrapContext)super.clone();
       bcbc.setTransactionSynchronizationRegistry(getTransactionSynchronizationRegistry());
-      bcbc.setWorkManager(getWorkManager().clone());
       bcbc.setXATerminator(getXATerminator());
       bcbc.setName(getName());
+      bcbc.setWorkManagerName(getWorkManagerName());
 
       return bcbc;
    }

@@ -26,15 +26,13 @@ import org.jboss.jca.core.api.bootstrap.CloneableBootstrapContext;
 import java.util.Map;
 
 /**
- *
  * Configuration interface
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
- *
+ * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public interface Configuration
 {
-
    /**
     * Set if bean validation should be performed
     * @param value The value
@@ -87,24 +85,27 @@ public interface Configuration
     * Set the default bootstrap context
     * @param value The value
     */
+   @Deprecated
    public void setDefaultBootstrapContext(CloneableBootstrapContext value);
 
    /**
     * Get the default bootstrap context
     * @return The handle
     */
+   @Deprecated
    public CloneableBootstrapContext getDefaultBootstrapContext();
 
    /**
     * Set the bootstrap context map
     * @param value The value
     */
+   @Deprecated
    public void setBootstrapContexts(Map<String, CloneableBootstrapContext> value);
 
    /**
     * Get the bootstrap context map
     * @return The handle
     */
+   @Deprecated
    public Map<String, CloneableBootstrapContext> getBootstrapContexts();
-
 }

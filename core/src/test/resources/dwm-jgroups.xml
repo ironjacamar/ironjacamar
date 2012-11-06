@@ -122,13 +122,16 @@
   <!-- DistributedWorkManager1Transport -->
   <bean name="DistributedWorkManager1Transport"
         class="org.jboss.jca.core.workmanager.transport.remote.jgroups.JGroupsTransport">
-        <!-- The clusterName -->
-        <property name="ClusterName">myCluster</property>
+    <!-- The id -->
+    <property name="Id">1</property>
 
-        <!-- The channel -->
-        <property name="Channel">
-            <inject bean="JGroupsConfiguration" property="Channel"/>
-        </property> 
+    <!-- The channel -->
+    <property name="Channel">
+      <inject bean="JGroupsConfiguration" property="Channel"/>
+    </property> 
+
+    <start method="startup"/>
+    <stop method="shutdown"/>
   </bean>
 
   <!-- JGroupsConfiguration -->
@@ -139,13 +142,16 @@
   <!-- DistributedWorkManager2Transport -->
   <bean name="DistributedWorkManager2Transport"
         class="org.jboss.jca.core.workmanager.transport.remote.jgroups.JGroupsTransport">
-        <!-- The clusterName -->
-        <property name="ClusterName">myCluster</property>
+    <!-- The id -->
+    <property name="Id">2</property>
 
-        <!-- The channel -->
-        <property name="Channel">
-            <inject bean="JGroupsConfiguration2" property="Channel"/>
-        </property> 
+    <!-- The channel -->
+    <property name="Channel">
+      <inject bean="JGroupsConfiguration2" property="Channel"/>
+    </property> 
+
+    <start method="startup"/>
+    <stop method="shutdown"/>
   </bean>
 
   <!-- DistributedWorkManager1 -->
@@ -238,8 +244,8 @@
     <property name="TransactionSynchronizationRegistry">
        <inject bean="TransactionSynchronizationRegistry"/>
     </property>
-    <property name="WorkManager">
-       <inject bean="DistributedWorkManager1"/>
+    <property name="WorkManagerName">
+       <inject bean="DistributedWorkManager1" property="Name"/>
     </property>
     <property name="XATerminator">
        <inject bean="TransactionIntegration" property="XATerminator"/>
@@ -254,8 +260,8 @@
     <property name="TransactionSynchronizationRegistry">
        <inject bean="TransactionSynchronizationRegistry"/>
     </property>
-    <property name="WorkManager">
-       <inject bean="DistributedWorkManager2"/>
+    <property name="WorkManagerName">
+       <inject bean="DistributedWorkManager2" property="Name"/>
     </property>
     <property name="XATerminator">
        <inject bean="TransactionIntegration" property="XATerminator"/>

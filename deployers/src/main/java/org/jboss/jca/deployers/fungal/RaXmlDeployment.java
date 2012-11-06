@@ -52,6 +52,7 @@ public class RaXmlDeployment extends AbstractFungalDeployment
     * @param deploymentName The deployment name
     * @param ra The resource adapter instance if present
     * @param raKey The resource adapter instance key if present
+    * @param bootstrapContextId The bootstrap context identifier
     * @param jndiStrategy The JNDI strategy
     * @param mdr The metadata repository
     * @param resourceAdapterRepository The resource adapter repository
@@ -70,7 +71,7 @@ public class RaXmlDeployment extends AbstractFungalDeployment
     * @param log The logger
     */
    public RaXmlDeployment(URL deployment, URL raDeployment, String deploymentName, ResourceAdapter ra,
-                          String raKey,
+                          String raKey, String bootstrapContextId,
                           JndiStrategy jndiStrategy, MetadataRepository mdr, 
                           ResourceAdapterRepository resourceAdapterRepository,
                           Object[] cfs, String[] cfJndis, ConnectionManager[] cfCMs,
@@ -80,8 +81,8 @@ public class RaXmlDeployment extends AbstractFungalDeployment
                           MBeanServer server, List<ObjectName> objectNames,
                           ClassLoader cl, DeployersLogger log)
    {
-      super(deployment, deploymentName, true, ra, raKey, jndiStrategy, mdr, resourceAdapterRepository,
-            cfs, cfJndis, cfCMs, aos, aoJndis, recoveryModules, recoveryRegistry, managementRepository, 
-            connector, server, objectNames, cl, log);
+      super(deployment, deploymentName, true, ra, raKey, bootstrapContextId, jndiStrategy, mdr,
+            resourceAdapterRepository, cfs, cfJndis, cfCMs, aos, aoJndis, recoveryModules, recoveryRegistry,
+            managementRepository, connector, server, objectNames, cl, log);
    }
 }

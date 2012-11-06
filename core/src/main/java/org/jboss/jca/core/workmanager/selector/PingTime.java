@@ -24,6 +24,7 @@ package org.jboss.jca.core.workmanager.selector;
 
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
+import org.jboss.jca.core.spi.workmanager.Address;
 
 import java.util.Map;
 
@@ -58,8 +59,10 @@ public class PingTime extends AbstractSelector
    /**
     * {@inheritDoc}
     */
-   public String selectDistributedWorkManager(String ownId, DistributableWork work)
+   public Address selectDistributedWorkManager(Address own, DistributableWork work)
    {
+      /*
+        TODO
       String value = getWorkManager(work);
       if (value != null)
       {
@@ -68,24 +71,28 @@ public class PingTime extends AbstractSelector
 
          return value;
       }
+      */
 
-      Map<String, Long> selectionMap = getSelectionMap(work);
-      String result = null;
+      Map<Address, Long> selectionMap = getSelectionMap(own.getWorkManagerId(), work);
+      Address result = null;
       long pingTime = Long.MAX_VALUE;
 
-      for (Map.Entry<String, Long> entry : selectionMap.entrySet())
+      if (selectionMap != null)
       {
-         String id = entry.getKey();
-         if (!ownId.equals(id))
+         for (Map.Entry<Address, Long> entry : selectionMap.entrySet())
          {
-            Long free = entry.getValue();
-            if (free != null && free.intValue() > 0)
+            Address id = entry.getKey();
+            if (!own.equals(id))
             {
-               long l = dwm.getTransport().ping(id);
-               if (l < pingTime)
+               Long free = entry.getValue();
+               if (free != null && free.longValue() > 0)
                {
-                  result = id;
-                  pingTime = l;
+                  long l = Long.MAX_VALUE; // TODO dwm.getTransport().ping(id);
+                  if (l < pingTime)
+                  {
+                     result = id;
+                     pingTime = l;
+                  }
                }
             }
          }

@@ -37,6 +37,18 @@ import javax.transaction.TransactionSynchronizationRegistry;
 public interface CloneableBootstrapContext extends Cloneable, BootstrapContext
 {
    /**
+    * Get the id of the bootstrap context
+    * @return The value
+    */
+   public String getId();
+
+   /**
+    * Set the id of the bootstrap context
+    * @param v The value
+    */
+   public void setId(String v);
+
+   /**
     * Get the name of the bootstrap context
     * @return The value
     */
@@ -55,10 +67,23 @@ public interface CloneableBootstrapContext extends Cloneable, BootstrapContext
    public void setTransactionSynchronizationRegistry(TransactionSynchronizationRegistry tsr);
 
    /**
-    * Set the work manager
+    * Set the work manager - internal use only
     * @param wm The handle
     */
    public void setWorkManager(WorkManager wm);
+
+   /**
+    * Get the name of the work manager
+    * @return The value
+    */
+   public String getWorkManagerName();
+
+   /**
+   /**
+    * Set the name of the work manager
+    * @param wmn The name
+    */
+   public void setWorkManagerName(String wmn);
 
    /**
     * Set the XA terminator

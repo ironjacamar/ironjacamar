@@ -52,6 +52,8 @@ public class CommonDeployment
 
    private final String resourceAdapterKey;
 
+   private final String bootstrapContextIdentifier;
+
    private final Object[] cfs;
 
    private final String[] cfJndiNames;
@@ -80,6 +82,7 @@ public class CommonDeployment
     * @param activateDeployment activateDeployment
     * @param resourceAdapter resourceAdapter
     * @param resourceAdapterKey resourceAdapter key
+    * @param bootstrapContextIdentifier The bootstrap context identifier
     * @param cfs The connection factories
     * @param cfJndiNames The JNDI names for the connection factories
     * @param cfCM The connection managers
@@ -92,7 +95,8 @@ public class CommonDeployment
     * @param log log
     */
    public CommonDeployment(URL url, String deploymentName, boolean activateDeployment,
-                           ResourceAdapter resourceAdapter, String resourceAdapterKey,
+                           ResourceAdapter resourceAdapter, String resourceAdapterKey, 
+                           String bootstrapContextIdentifier,
                            Object[] cfs, String[] cfJndiNames, ConnectionManager[] cfCM,
                            Object[] aos, String[] aoJndiNames,
                            XAResourceRecovery[] recoveryModules,
@@ -105,6 +109,7 @@ public class CommonDeployment
       this.activateDeployment = activateDeployment;
       this.resourceAdapter = resourceAdapter;
       this.resourceAdapterKey = resourceAdapterKey;
+      this.bootstrapContextIdentifier = bootstrapContextIdentifier;
       this.cfs = cfs != null ? Arrays.copyOf(cfs, cfs.length) : null;
       this.cfJndiNames = cfJndiNames != null ? Arrays.copyOf(cfJndiNames, cfJndiNames.length) : null;
       this.cfCMs = cfCM != null ? Arrays.copyOf(cfCM, cfCM.length) : null;
@@ -164,6 +169,16 @@ public class CommonDeployment
    public final String getResourceAdapterKey()
    {
       return resourceAdapterKey;
+   }
+
+
+   /**
+    * Get the bootstrap context identifier
+    * @return The value
+    */
+   public final String getBootstrapContextIdentifier()
+   {
+      return bootstrapContextIdentifier;
    }
 
    /**

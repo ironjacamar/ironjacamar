@@ -22,6 +22,7 @@
 package org.jboss.jca.core.workmanager.spec.chapter10.api;
 
 import org.jboss.jca.arquillian.embedded.Inject;
+import org.jboss.jca.core.bootstrapcontext.BootstrapContextCoordinator;
 import org.jboss.jca.core.workmanager.spec.chapter10.common.SimpleWork;
 
 import java.util.Timer;
@@ -54,8 +55,8 @@ public class PeriodicExecutionTestCase
    /**
     * Injecting default bootstrap context
     */
-   @Inject(name = "DefaultBootstrapContext")
-   BootstrapContext bootstrapContext;
+   @Inject(name = "BootstrapContextCoordinator")
+   BootstrapContextCoordinator bootstrapContextCoordinator;
 
    /**
     * Test for paragraph 1
@@ -65,6 +66,8 @@ public class PeriodicExecutionTestCase
    @Test
    public void testPeriodicExecution() throws Throwable
    {
+      BootstrapContext bootstrapContext = bootstrapContextCoordinator.createBootstrapContext("id", null);
+
       assertNotNull(bootstrapContext);
       assertNotNull(bootstrapContext.getWorkManager());
       assertTrue(bootstrapContext.getWorkManager() instanceof WorkManager);

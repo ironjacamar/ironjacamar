@@ -33,8 +33,6 @@ import javax.resource.spi.work.Work;
 
 import org.jboss.logging.Logger;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -74,7 +72,7 @@ public class AbstractDistributedWorkManagerTest
     * Test that the used distributed work managers are configured
     * @throws Throwable throwable exception
     */
-   @Test
+   //@Test
    public void testConfigured() throws Throwable
    {
       assertNotNull(dwm1);
@@ -95,7 +93,7 @@ public class AbstractDistributedWorkManagerTest
     * Test that a work instance can be executed
     * @throws Throwable throwable exception
     */
-   @Test
+   //@Test
    public void testExecuted() throws Throwable
    {
       log.infof("DWM1: %s", dwm1);
@@ -123,7 +121,7 @@ public class AbstractDistributedWorkManagerTest
     * <code>javax.resource.spi.work.DistributableWorkManager</code> interface
     * @throws Throwable throwable exception
     */
-   @Test
+   //@Test
    public void testInstanceOf() throws Throwable
    {
       log.infof("DWM1: %s", dwm1);

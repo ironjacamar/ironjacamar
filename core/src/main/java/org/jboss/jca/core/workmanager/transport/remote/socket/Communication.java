@@ -23,6 +23,7 @@
 package org.jboss.jca.core.workmanager.transport.remote.socket;
 
 import org.jboss.jca.core.CoreLogger;
+import org.jboss.jca.core.spi.workmanager.Address;
 import org.jboss.jca.core.workmanager.transport.remote.ProtocolMessages.Request;
 import org.jboss.jca.core.workmanager.transport.remote.ProtocolMessages.Response;
 
@@ -31,6 +32,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
+import java.util.Set;
 
 import javax.resource.spi.work.DistributableWork;
 import javax.resource.spi.work.WorkException;
@@ -39,12 +41,12 @@ import org.jboss.logging.Logger;
 
 /**
  * The communication between client and server
- * @author <a href="mailto:jesper.pedersen@comcast.net">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class Communication implements Runnable
 {
    /** The logger */
-   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, SocketTransport.class.getName());
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, Communication.class.getName());
 
    /** Trace logging */
    private static boolean trace = log.isTraceEnabled();
@@ -74,7 +76,7 @@ public class Communication implements Runnable
    {
       ObjectInputStream ois = null;
       ObjectOutputStream oos = null;
-      Long returnValue = 0L;
+      Serializable returnValue = null;
       Response response = null;
       try
       {
@@ -94,179 +96,238 @@ public class Communication implements Runnable
          switch (command)
          {
             case JOIN : {
-               String id = (String)parameters[0];
-               String address = (String)parameters[1];
+               String address = (String)parameters[0];
 
                if (trace)
-                  log.tracef("%s: JOIN(%s, %s)", socket.getInetAddress(), id, address);
+                  log.tracef("%s: JOIN(%s)", socket.getInetAddress(), address);
 
-               transport.join(id, address);
-               response = Response.VOID_OK;
+               Set<Address> workManagers = 
+                  (Set<Address>)transport.sendMessage(address, Request.GET_WORKMANAGERS);
+               if (workManagers != null)
+               {
+                  for (Address a : workManagers)
+                  {
+                     transport.join(a, address);
+
+                     long shortRunningFree =
+                        (long)transport.sendMessage(address, Request.GET_SHORTRUNNING_FREE, a);
+                     long longRunningFree =
+                        (long)transport.sendMessage(address, Request.GET_LONGRUNNING_FREE, a);
+
+                     transport.localUpdateShortRunningFree(a, shortRunningFree);
+                     transport.localUpdateLongRunningFree(a, longRunningFree);
+                  }
+               }
+
+               response = Response.OK_VOID;
                break;
             }
             case LEAVE : {
-               String id = (String)parameters[0];
+               String address = (String)parameters[0];
 
                if (trace)
-                  log.tracef("%s: LEAVE(%s)", socket.getInetAddress(), id);
+                  log.tracef("%s: LEAVE(%s)", socket.getInetAddress(), address);
 
-               transport.leave(id);
-               response = Response.VOID_OK;
+               transport.leave(address);
+               response = Response.OK_VOID;
+               break;
+            }
+            case GET_WORKMANAGERS : {
+               if (trace)
+                  log.tracef("%s: GET_WORKMANAGERS()", socket.getInetAddress());
+
+               returnValue = (Serializable)transport.getAddresses(transport.getPhysicalAddress());
+               response = Response.OK_SERIALIZABLE;
+
                break;
             }
             case PING : {
-               //do nothing, just send an answer.
                if (trace)
                   log.tracef("%s: PING()", socket.getInetAddress());
 
-               response = Response.VOID_OK;
+               transport.localPing();
+               response = Response.OK_VOID;
 
                break;
             }
             case DO_WORK : {
-               DistributableWork work = (DistributableWork)parameters[0];
+               Address id = (Address)parameters[0];
+               DistributableWork work = (DistributableWork)parameters[1];
 
                if (trace)
-                  log.tracef("%s: DO_WORK(%s)", socket.getInetAddress(), work);
+                  log.tracef("%s: DO_WORK(%s, %s)", socket.getInetAddress(), id, work);
 
-               transport.getDistributedWorkManager().localDoWork(work);
-               response = Response.VOID_OK;
+               transport.localDoWork(id, work);
+               response = Response.OK_VOID;
 
                break;
             }
             case START_WORK : {
-               DistributableWork work = (DistributableWork)parameters[0];
+               Address id = (Address)parameters[0];
+               DistributableWork work = (DistributableWork)parameters[1];
 
                if (trace)
-                  log.tracef("%s: START_WORK(%s)", socket.getInetAddress(), work);
+                  log.tracef("%s: START_WORK(%s, %s)", socket.getInetAddress(), id, work);
 
-               returnValue = transport.getDistributedWorkManager().localStartWork(work);
-               response = Response.LONG_OK;
+               returnValue = transport.localStartWork(id, work);
+               response = Response.OK_SERIALIZABLE;
 
                break;
             }
             case SCHEDULE_WORK : {
-               DistributableWork work = (DistributableWork)parameters[0];
+               Address id = (Address)parameters[0];
+               DistributableWork work = (DistributableWork)parameters[1];
 
                if (trace)
-                  log.tracef("%s: SCHEDULE_WORK(%s)", socket.getInetAddress(), work);
+                  log.tracef("%s: SCHEDULE_WORK(%s, %s)", socket.getInetAddress(), id, work);
 
-               transport.getDistributedWorkManager().localScheduleWork(work);
-               response = Response.VOID_OK;
+               transport.localScheduleWork(id, work);
+               response = Response.OK_VOID;
 
                break;
             }
             case GET_SHORTRUNNING_FREE : {
-               if (trace)
-                  log.tracef("%s: GET_SHORTRUNNING_FREE()", socket.getInetAddress());
+               Address id = (Address)parameters[0];
 
-               returnValue = transport.localGetShortRunningFree();
-               response = Response.LONG_OK;
+               if (trace)
+                  log.tracef("%s: GET_SHORTRUNNING_FREE(%s)", socket.getInetAddress(), id);
+
+               returnValue = transport.localGetShortRunningFree(id);
+               response = Response.OK_SERIALIZABLE;
 
                break;
             }
             case GET_LONGRUNNING_FREE : {
-               if (trace)
-                  log.tracef("%s: GET_LONGRUNNING_FREE()", socket.getInetAddress());
+               Address id = (Address)parameters[0];
 
-               returnValue = transport.localGetLongRunningFree();
-               response = Response.LONG_OK;
+               if (trace)
+                  log.tracef("%s: GET_LONGRUNNING_FREE(%s)", socket.getInetAddress(), id);
+
+               returnValue = transport.localGetLongRunningFree(id);
+               response = Response.OK_SERIALIZABLE;
 
                break;
             }
             case UPDATE_SHORTRUNNING_FREE : {
-               String id = (String)parameters[0];
+               Address id = (Address)parameters[0];
                Long freeCount = (Long)parameters[1];
 
                if (trace)
                   log.tracef("%s: UPDATE_SHORTRUNNING_FREE(%s, %d)", socket.getInetAddress(), id, freeCount);
 
                transport.localUpdateShortRunningFree(id, freeCount);
-               response = Response.VOID_OK;
+               response = Response.OK_VOID;
 
                break;
             }
             case UPDATE_LONGRUNNING_FREE : {
-               String id = (String)parameters[0];
+               Address id = (Address)parameters[0];
                Long freeCount = (Long)parameters[1];
 
                if (trace)
                   log.tracef("%s: UPDATE_LONGRUNNING_FREE(%s, %d)", socket.getInetAddress(), id, freeCount);
 
                transport.localUpdateLongRunningFree(id, freeCount);
-               response = Response.VOID_OK;
+               response = Response.OK_VOID;
+
+               break;
+            }
+            case GET_DISTRIBUTED_STATISTICS : {
+               Address id = (Address)parameters[0];
+
+               if (trace)
+                  log.tracef("%s: GET_DISTRIBUTED_STATISTICS(%s)", socket.getInetAddress(), id);
+
+               returnValue = transport.localGetDistributedStatistics(id);
+               response = Response.OK_SERIALIZABLE;
 
                break;
             }
             case DELTA_DOWORK_ACCEPTED : {
-               if (trace)
-                  log.tracef("%s: DELTA_DOWORK_ACCEPTED()", socket.getInetAddress());
+               Address id = (Address)parameters[0];
 
-               transport.localDeltaDoWorkAccepted();
-               response = Response.VOID_OK;
+               if (trace)
+                  log.tracef("%s: DELTA_DOWORK_ACCEPTED(%s)", socket.getInetAddress(), id);
+
+               transport.localDeltaDoWorkAccepted(id);
+               response = Response.OK_VOID;
 
                break;
             }
             case DELTA_DOWORK_REJECTED : {
-               if (trace)
-                  log.tracef("%s: DELTA_DOWORK_REJECTED()", socket.getInetAddress());
+               Address id = (Address)parameters[0];
 
-               transport.localDeltaDoWorkRejected();
-               response = Response.VOID_OK;
+               if (trace)
+                  log.tracef("%s: DELTA_DOWORK_REJECTED(%s)", socket.getInetAddress(), id);
+
+               transport.localDeltaDoWorkRejected(id);
+               response = Response.OK_VOID;
 
                break;
             }
             case DELTA_STARTWORK_ACCEPTED : {
-               if (trace)
-                  log.tracef("%s: DELTA_STARTWORK_ACCEPTED()", socket.getInetAddress());
+               Address id = (Address)parameters[0];
 
-               transport.localDeltaStartWorkAccepted();
-               response = Response.VOID_OK;
+               if (trace)
+                  log.tracef("%s: DELTA_STARTWORK_ACCEPTED(%s)", socket.getInetAddress(), id);
+
+               transport.localDeltaStartWorkAccepted(id);
+               response = Response.OK_VOID;
 
                break;
             }
             case DELTA_STARTWORK_REJECTED : {
-               if (trace)
-                  log.tracef("%s: DELTA_STARTWORK_REJECTED()", socket.getInetAddress());
+               Address id = (Address)parameters[0];
 
-               transport.localDeltaStartWorkRejected();
-               response = Response.VOID_OK;
+               if (trace)
+                  log.tracef("%s: DELTA_STARTWORK_REJECTED(%s)", socket.getInetAddress(), id);
+
+               transport.localDeltaStartWorkRejected(id);
+               response = Response.OK_VOID;
 
                break;
             }
             case DELTA_SCHEDULEWORK_ACCEPTED : {
-               if (trace)
-                  log.tracef("%s: DELTA_SCHEDULEWORK_ACCEPTED()", socket.getInetAddress());
+               Address id = (Address)parameters[0];
 
-               transport.localDeltaScheduleWorkAccepted();
-               response = Response.VOID_OK;
+               if (trace)
+                  log.tracef("%s: DELTA_SCHEDULEWORK_ACCEPTED(%s)", socket.getInetAddress(), id);
+
+               transport.localDeltaScheduleWorkAccepted(id);
+               response = Response.OK_VOID;
 
                break;
             }
             case DELTA_SCHEDULEWORK_REJECTED : {
-               if (trace)
-                  log.tracef("%s: DELTA_SCHEDULEWORK_REJECTED()", socket.getInetAddress());
+               Address id = (Address)parameters[0];
 
-               transport.localDeltaScheduleWorkRejected();
-               response = Response.VOID_OK;
+               if (trace)
+                  log.tracef("%s: DELTA_SCHEDULEWORK_REJECTED(%s)", socket.getInetAddress(), id);
+
+               transport.localDeltaScheduleWorkRejected(id);
+               response = Response.OK_VOID;
 
                break;
             }
             case DELTA_WORK_SUCCESSFUL : {
-               if (trace)
-                  log.tracef("%s: DELTA_WORK_SUCCESSFUL()", socket.getInetAddress());
+               Address id = (Address)parameters[0];
 
-               transport.localDeltaWorkSuccessful();
-               response = Response.VOID_OK;
+               if (trace)
+                  log.tracef("%s: DELTA_WORK_SUCCESSFUL(%s)", socket.getInetAddress(), id);
+
+               transport.localDeltaWorkSuccessful(id);
+               response = Response.OK_VOID;
 
                break;
             }
             case DELTA_WORK_FAILED : {
-               if (trace)
-                  log.tracef("%s: DELTA_WORK_FAILED()", socket.getInetAddress());
+               Address id = (Address)parameters[0];
 
-               transport.localDeltaWorkFailed();
-               response = Response.VOID_OK;
+               if (trace)
+                  log.tracef("%s: DELTA_WORK_FAILED(%s)", socket.getInetAddress(), id);
+
+               transport.localDeltaWorkFailed(id);
+               response = Response.OK_VOID;
 
                break;
             }
@@ -325,7 +386,7 @@ public class Communication implements Runnable
          oos = new ObjectOutputStream(socket.getOutputStream());
          oos.writeInt(response.ordinal());
          oos.writeInt(response.getNumberOfParameter());
-         if (parameters != null)
+         if (response.getNumberOfParameter() > 0 && parameters != null)
          {
             for (Serializable o : parameters)
             {

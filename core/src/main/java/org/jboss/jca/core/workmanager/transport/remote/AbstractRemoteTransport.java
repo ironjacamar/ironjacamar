@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2008, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2012, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -23,15 +23,21 @@ package org.jboss.jca.core.workmanager.transport.remote;
 
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.workmanager.DistributedWorkManager;
+import org.jboss.jca.core.api.workmanager.DistributedWorkManagerStatisticsValues;
+import org.jboss.jca.core.api.workmanager.WorkManager;
+import org.jboss.jca.core.spi.workmanager.Address;
 import org.jboss.jca.core.spi.workmanager.notification.NotificationListener;
 import org.jboss.jca.core.spi.workmanager.transport.Transport;
+import org.jboss.jca.core.workmanager.WorkManagerCoordinator;
 import org.jboss.jca.core.workmanager.transport.remote.ProtocolMessages.Request;
 
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
 import javax.resource.spi.work.DistributableWork;
@@ -50,87 +56,63 @@ import org.jboss.threads.BlockingExecutor;
 public abstract class AbstractRemoteTransport<T> implements Transport
 {
    /** The logger */
-   protected static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, AbstractRemoteTransport.class.getName());
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, AbstractRemoteTransport.class.getName());
 
    /** Whether trace is enabled */
-   protected static boolean trace = log.isTraceEnabled();
+   private static boolean trace = log.isTraceEnabled();
 
-   /** Distributed work manager instance */
-   protected DistributedWorkManager dwm;
+   /** The identifier of the transport */
+   private String id;
 
    /** The kernel executorService*/
    protected ExecutorService executorService;
 
-   /** The work manager */
-   protected Map<String, T> workManagers;
+   /** The nodes */
+   protected Map<Address, T> nodes;
 
    /**
     * Constructor
     */
    public AbstractRemoteTransport()
    {
-      this.dwm = null;
       this.executorService = null;
-      this.workManagers = Collections.synchronizedMap(new HashMap<String, T>());
+      this.nodes = Collections.synchronizedMap(new HashMap<Address, T>());
    }
 
    /**
-    * Init
+    * {@inheritDoc}
     */
-   protected void init()
+   public String getId()
    {
-      if (getWorkManagers() != null)
-      {
-         for (Map.Entry<String, T> entry : getWorkManagers().entrySet())
-         {
-            String id = entry.getKey();
+      return id;
+   }
 
-            for (NotificationListener nl : dwm.getNotificationListeners())
-            {
-               nl.join(id);
-               nl.updateShortRunningFree(id, getShortRunningFree(id));
-               nl.updateLongRunningFree(id, getLongRunningFree(id));
-            }
-         }
-      }
+   /**
+    * Set the identifier
+    * @param id The value
+    */
+   public void setId(String id)
+   {
+      this.id = id;
    }
 
    /**
     * {@inheritDoc}
     */
    @Override
-   public void setDistributedWorkManager(DistributedWorkManager dwm)
-   {
-      this.dwm = dwm;
-      init();
-   }
-
-   /**
-    * get The distributed work manager
-    * @return the ditributed work manager
-    */
-   public DistributedWorkManager getDistributedWorkManager()
-   {
-      return dwm;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public long ping(String id)
+   public long ping(Address address)
    {
       if (trace)
-         log.tracef("PING(%s)", id);
+         log.tracef("PING(%s)", address);
 
-      if (dwm.getId().equals(id))
+      if (address.getTransportId() == null || getId().equals(address.getTransportId()))
          return localPing();
 
       long start = System.currentTimeMillis();
       try
       {
-         T address = workManagers.get(id);
-         sendMessage(address, Request.PING);
+         T addr = nodes.get(address);
+         sendMessage(addr, Request.PING);
       }
       catch (WorkException e1)
       {
@@ -145,18 +127,18 @@ public abstract class AbstractRemoteTransport<T> implements Transport
    }
 
    @Override
-   public long getShortRunningFree(String id)
+   public long getShortRunningFree(Address address)
    {
       if (trace)
-         log.tracef("GET_SHORT_RUNNING_FREE(%s)", id);
+         log.tracef("GET_SHORT_RUNNING_FREE(%s)", address);
 
-      if (dwm.getId().equals(id))
-         return localGetShortRunningFree();
+      if (address.getTransportId() == null || getId().equals(address.getTransportId()))
+         return localGetShortRunningFree(address);
 
       try
       {
-         T address = workManagers.get(id);
-         return sendMessage(address, Request.GET_SHORTRUNNING_FREE);
+         T addr = nodes.get(address);
+         return (long)sendMessage(addr, Request.GET_SHORTRUNNING_FREE, address);
       }
       catch (WorkException e1)
       {
@@ -169,18 +151,18 @@ public abstract class AbstractRemoteTransport<T> implements Transport
    }
 
    @Override
-   public long getLongRunningFree(String id)
+   public long getLongRunningFree(Address address)
    {
       if (trace)
-         log.tracef("GET_LONGRUNNING_FREE(%s)", id);
+         log.tracef("GET_LONGRUNNING_FREE(%s)", address);
 
-      if (dwm.getId().equals(id))
-         return localGetLongRunningFree();
+      if (address.getTransportId() == null || getId().equals(address.getTransportId()))
+         return localGetLongRunningFree(address);
 
       try
       {
-         T address = workManagers.get(id);
-         return sendMessage(address, Request.GET_LONGRUNNING_FREE);
+         T addr = nodes.get(address);
+         return (long)sendMessage(addr, Request.GET_LONGRUNNING_FREE, address);
       }
       catch (WorkException e1)
       {
@@ -193,23 +175,83 @@ public abstract class AbstractRemoteTransport<T> implements Transport
    }
 
    @Override
-   public void updateShortRunningFree(String id, long freeCount)
+   public void updateShortRunningFree(Address address, long freeCount)
    {
       if (trace)
-         log.tracef("UPDATE_SHORT_RUNNING_FREE(%s,%d) from %s", id, freeCount, dwm.getId());
-      try
+         log.tracef("UPDATE_SHORT_RUNNING_FREE(%s, %d)", address, freeCount);
+
+      localUpdateShortRunningFree(address, freeCount);
+
+      if (address.getTransportId() != null && getId().equals(address.getTransportId()))
       {
-         for (Entry<String, T> entry : workManagers.entrySet())
+         for (Entry<Address, T> entry : nodes.entrySet())
          {
-            if (entry.getKey().equals(dwm.getId()))
+            Address a = entry.getKey();
+            if (!getId().equals(a.getTransportId()))
             {
-               localUpdateShortRunningFree(id, freeCount);
-            }
-            else
-            {
-               sendMessage(entry.getValue(), Request.UPDATE_SHORTRUNNING_FREE, id, freeCount);
+               try
+               {
+                  sendMessage(entry.getValue(), Request.UPDATE_SHORTRUNNING_FREE, address, freeCount);
+               }
+               catch (WorkException e1)
+               {
+                  if (log.isDebugEnabled())
+                  {
+                     log.debug("Error", e1);
+                  }
+               }
             }
          }
+      }
+   }
+
+   @Override
+   public void updateLongRunningFree(Address address, long freeCount)
+   {
+      if (trace)
+         log.tracef("UPDATE_LONG_RUNNING_FREE(%s, %d)", address, freeCount);
+
+      localUpdateLongRunningFree(address, freeCount);
+
+      if (address.getTransportId() != null && getId().equals(address.getTransportId()))
+      {
+         for (Entry<Address, T> entry : nodes.entrySet())
+         {
+            Address a = entry.getKey();
+            if (!getId().equals(a.getTransportId()))
+            {
+               try
+               {
+                  sendMessage(entry.getValue(), Request.UPDATE_LONGRUNNING_FREE, address, freeCount);
+               }
+               catch (WorkException e1)
+               {
+                  if (log.isDebugEnabled())
+                  {
+                     log.debug("Error", e1);
+                  }
+               }
+            }
+         }
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public DistributedWorkManagerStatisticsValues getDistributedStatistics(Address address)
+   {
+      if (trace)
+         log.tracef("GET_DISTRIBUTED_STATISTICS(%s)", address);
+
+      if (address.getTransportId() == null || getId().equals(address.getTransportId()))
+         return localGetDistributedStatistics(address);
+
+      try
+      {
+         T addr = nodes.get(address);
+         return (DistributedWorkManagerStatisticsValues)sendMessage(addr, Request.GET_DISTRIBUTED_STATISTICS, address);
       }
       catch (WorkException e1)
       {
@@ -217,34 +259,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
          {
             log.debug("Error", e1);
          }
-      }
-   }
-
-   @Override
-   public void updateLongRunningFree(String id, long freeCount)
-   {
-      if (trace)
-         log.tracef("UPDATE_LONG_RUNNING_FREE(%s,%d) from %s", id, freeCount, dwm.getId());
-      try
-      {
-         for (Entry<String, T> entry : workManagers.entrySet())
-         {
-            if (entry.getKey().equals(dwm.getId()))
-            {
-               localUpdateLongRunningFree(id, freeCount);
-            }
-            else
-            {
-               sendMessage(entry.getValue(), Request.UPDATE_LONGRUNNING_FREE, id, freeCount);
-            }
-         }
-      }
-      catch (WorkException e1)
-      {
-         if (log.isDebugEnabled())
-         {
-            log.debug("Error", e1);
-         }
+         return null;
       }
    }
 
@@ -252,17 +267,17 @@ public abstract class AbstractRemoteTransport<T> implements Transport
     * {@inheritDoc}
     */
    @Override
-   public void deltaDoWorkAccepted(String id)
+   public void deltaDoWorkAccepted(Address address)
    {
       if (trace)
-         log.tracef("DELTA_DOWORK_ACCEPTED(%s) from %s", id, dwm.getId());
+         log.tracef("DELTA_DOWORK_ACCEPTED(%s)", address);
 
-      if (!dwm.getId().equals(id))
+      if (address.getTransportId() != null && !getId().equals(address.getTransportId()))
       {
          try
          {
-            T address = workManagers.get(id);
-            sendMessage(address, Request.DELTA_DOWORK_ACCEPTED);
+            T addr = nodes.get(address);
+            sendMessage(addr, Request.DELTA_DOWORK_ACCEPTED, address);
          }
          catch (WorkException e1)
          {
@@ -278,17 +293,17 @@ public abstract class AbstractRemoteTransport<T> implements Transport
     * {@inheritDoc}
     */
    @Override
-   public void deltaDoWorkRejected(String id)
+   public void deltaDoWorkRejected(Address address)
    {
       if (trace)
-         log.tracef("DELTA_DOWORK_REJECTED(%s) from %s", id, dwm.getId());
+         log.tracef("DELTA_DOWORK_REJECTED(%s)", address);
 
-      if (!dwm.getId().equals(id))
+      if (address.getTransportId() != null && !getId().equals(address.getTransportId()))
       {
          try
          {
-            T address = workManagers.get(id);
-            sendMessage(address, Request.DELTA_DOWORK_REJECTED);
+            T addr = nodes.get(address);
+            sendMessage(addr, Request.DELTA_DOWORK_REJECTED, address);
          }
          catch (WorkException e1)
          {
@@ -304,17 +319,17 @@ public abstract class AbstractRemoteTransport<T> implements Transport
     * {@inheritDoc}
     */
    @Override
-   public void deltaStartWorkAccepted(String id)
+   public void deltaStartWorkAccepted(Address address)
    {
       if (trace)
-         log.tracef("DELTA_STARTWORK_ACCEPTED(%s) from %s", id, dwm.getId());
+         log.tracef("DELTA_STARTWORK_ACCEPTED(%s)", address);
 
-      if (!dwm.getId().equals(id))
+      if (address.getTransportId() != null && !getId().equals(address.getTransportId()))
       {
          try
          {
-            T address = workManagers.get(id);
-            sendMessage(address, Request.DELTA_STARTWORK_ACCEPTED);
+            T addr = nodes.get(address);
+            sendMessage(addr, Request.DELTA_STARTWORK_ACCEPTED, address);
          }
          catch (WorkException e1)
          {
@@ -330,17 +345,17 @@ public abstract class AbstractRemoteTransport<T> implements Transport
     * {@inheritDoc}
     */
    @Override
-   public void deltaStartWorkRejected(String id)
+   public void deltaStartWorkRejected(Address address)
    {
       if (trace)
-         log.tracef("DELTA_STARTWORK_REJECTED(%s) from %s", id, dwm.getId());
+         log.tracef("DELTA_STARTWORK_REJECTED(%s)", address);
 
-      if (!dwm.getId().equals(id))
+      if (address.getTransportId() != null && !getId().equals(address.getTransportId()))
       {
          try
          {
-            T address = workManagers.get(id);
-            sendMessage(address, Request.DELTA_STARTWORK_REJECTED);
+            T addr = nodes.get(address);
+            sendMessage(addr, Request.DELTA_STARTWORK_REJECTED, address);
          }
          catch (WorkException e1)
          {
@@ -356,17 +371,17 @@ public abstract class AbstractRemoteTransport<T> implements Transport
     * {@inheritDoc}
     */
    @Override
-   public void deltaScheduleWorkAccepted(String id)
+   public void deltaScheduleWorkAccepted(Address address)
    {
       if (trace)
-         log.tracef("DELTA_SCHEDULEWORK_ACCEPTED(%s) from %s", id, dwm.getId());
+         log.tracef("DELTA_SCHEDULEWORK_ACCEPTED(%s)", address);
 
-      if (!dwm.getId().equals(id))
+      if (address.getTransportId() != null && !getId().equals(address.getTransportId()))
       {
          try
          {
-            T address = workManagers.get(id);
-            sendMessage(address, Request.DELTA_SCHEDULEWORK_ACCEPTED);
+            T addr = nodes.get(address);
+            sendMessage(addr, Request.DELTA_SCHEDULEWORK_ACCEPTED, address);
          }
          catch (WorkException e1)
          {
@@ -382,17 +397,17 @@ public abstract class AbstractRemoteTransport<T> implements Transport
     * {@inheritDoc}
     */
    @Override
-   public void deltaScheduleWorkRejected(String id)
+   public void deltaScheduleWorkRejected(Address address)
    {
       if (trace)
-         log.tracef("DELTA_SCHEDULEWORK_REJECTED(%s) from %s", id, dwm.getId());
+         log.tracef("DELTA_SCHEDULEWORK_REJECTED(%s)", address);
 
-      if (!dwm.getId().equals(id))
+      if (address.getTransportId() != null && !getId().equals(address.getTransportId()))
       {
          try
          {
-            T address = workManagers.get(id);
-            sendMessage(address, Request.DELTA_SCHEDULEWORK_REJECTED);
+            T addr = nodes.get(address);
+            sendMessage(addr, Request.DELTA_SCHEDULEWORK_REJECTED, address);
          }
          catch (WorkException e1)
          {
@@ -408,17 +423,17 @@ public abstract class AbstractRemoteTransport<T> implements Transport
     * {@inheritDoc}
     */
    @Override
-   public void deltaWorkSuccessful(String id)
+   public void deltaWorkSuccessful(Address address)
    {
       if (trace)
-         log.tracef("DELTA_WORK_SUCCESSFUL(%s) from %s", id, dwm.getId());
+         log.tracef("DELTA_WORK_SUCCESSFUL(%s)", address);
 
-      if (!dwm.getId().equals(id))
+      if (address.getTransportId() != null && !getId().equals(address.getTransportId()))
       {
          try
          {
-            T address = workManagers.get(id);
-            sendMessage(address, Request.DELTA_WORK_SUCCESSFUL);
+            T addr = nodes.get(address);
+            sendMessage(addr, Request.DELTA_WORK_SUCCESSFUL, address);
          }
          catch (WorkException e1)
          {
@@ -434,17 +449,17 @@ public abstract class AbstractRemoteTransport<T> implements Transport
     * {@inheritDoc}
     */
    @Override
-   public void deltaWorkFailed(String id)
+   public void deltaWorkFailed(Address address)
    {
       if (trace)
-         log.tracef("DELTA_WORK_FAILED(%s) from %s", id, dwm.getId());
+         log.tracef("DELTA_WORK_FAILED(%s)", address);
 
-      if (!dwm.getId().equals(id))
+      if (address.getTransportId() != null && !getId().equals(address.getTransportId()))
       {
          try
          {
-            T address = workManagers.get(id);
-            sendMessage(address, Request.DELTA_WORK_FAILED);
+            T addr = nodes.get(address);
+            sendMessage(addr, Request.DELTA_WORK_FAILED, address);
          }
          catch (WorkException e1)
          {
@@ -460,42 +475,39 @@ public abstract class AbstractRemoteTransport<T> implements Transport
     * {@inheritDoc}
     */
    @Override
-   public void doWork(String id, DistributableWork work) throws WorkException
+   public void doWork(Address address, DistributableWork work) throws WorkException
    {
       if (trace)
-         log.tracef("DO_WORK(%s, %s)", id, work);
+         log.tracef("DO_WORK(%s, %s)", address, work);
 
-      T address = workManagers.get(id);
-
-      sendMessage(address, Request.DO_WORK, work);
+      T addr = nodes.get(address);
+      sendMessage(addr, Request.DO_WORK, address, work);
    }
 
    /**
     * {@inheritDoc}
     */
    @Override
-   public void scheduleWork(String id, DistributableWork work) throws WorkException
+   public void scheduleWork(Address address, DistributableWork work) throws WorkException
    {
       if (trace)
-         log.tracef("SCHEDULE_WORK(%s, %s)", id, work);
+         log.tracef("SCHEDULE_WORK(%s, %s)", address, work);
 
-      T address = workManagers.get(id);
-
-      sendMessage(address, Request.SCHEDULE_WORK, work);
+      T addr = nodes.get(address);
+      sendMessage(addr, Request.SCHEDULE_WORK, address, work);
    }
 
    /**
     * {@inheritDoc}
     */
    @Override
-   public long startWork(String id, DistributableWork work) throws WorkException
+   public long startWork(Address address, DistributableWork work) throws WorkException
    {
       if (trace)
-         log.tracef("START_WORK(%s, %s)", id, work);
+         log.tracef("START_WORK(%s, %s)", address, work);
 
-      T address = workManagers.get(id);
-
-      return sendMessage(address, Request.START_WORK, work);
+      T addr = nodes.get(address);
+      return (long)sendMessage(addr, Request.START_WORK, address, work);
    }
 
    /**
@@ -519,324 +531,473 @@ public abstract class AbstractRemoteTransport<T> implements Transport
    }
 
    /**
-    * Get the workManagers.
-    *
-    * @return the workManagers.
+    * {@inheritDoc}
     */
-   public Map<String, T> getWorkManagers()
+   public void register(Address address)
    {
-      return workManagers;
+      nodes.put(address, null);
    }
 
    /**
-    * Set the workManagers.
-    *
-    * @param workManagers The workManagers to set.
+    * Get the addresses
+    * @param physicalAddress the physical address
+    * @return The logical addresses associated
     */
-   public void setWorkManagers(Map<String, T> workManagers)
+   public Set<Address> getAddresses(T physicalAddress)
    {
-      this.workManagers = workManagers;
+      Set<Address> result = new HashSet<Address>();
+      
+      for (Map.Entry<Address, T> entry : nodes.entrySet())
+      {
+         if (entry.getValue() == null || entry.getValue().equals(physicalAddress))
+         {
+            result.add(entry.getKey());
+         }
+      }
+
+      if (trace)
+         log.tracef("Addresses: %s", result);
+
+      return Collections.unmodifiableSet(result);
    }
 
    /**
-    *
     * join
-    *
-    * @param id the id
-    * @param address the address
+    * @param logicalAddress the logical address
+    * @param physicalAddress the physical address
     */
-   public void join(String id, T address)
+   public void join(Address logicalAddress, T physicalAddress)
    {
       if (trace)
-         log.tracef("JOIN(%s, %s)", id, address);
+         log.tracef("JOIN(%s, %s)", logicalAddress, physicalAddress);
 
-      this.getWorkManagers().put(id, address);
-
-      for (NotificationListener nl : this.getDistributedWorkManager().getNotificationListeners())
+      if (!nodes.containsKey(logicalAddress))
       {
-         nl.join(id);
+         nodes.put(logicalAddress, physicalAddress);
+
+         WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
+         DistributedWorkManager dwm = wmc.getDistributedWorkManager(logicalAddress.getWorkManagerId());
+         
+         if (dwm != null)
+         {
+            for (NotificationListener nl : dwm.getNotificationListeners())
+            {
+               nl.join(logicalAddress);
+            }
+         }
       }
    }
 
    /**
-    *
     * leave
-    *
-    * @param id the id
+    * @param physicalAddress the physical address
     */
-   public void leave(String id)
+   public void leave(T physicalAddress)
    {
       if (trace)
-         log.tracef("LEAVE(%s)", id);
+         log.tracef("LEAVE(%s)", physicalAddress);
 
-      this.getWorkManagers().remove(id);
+      Set<Address> remove = new HashSet<Address>();
 
-      for (NotificationListener nl : this.getDistributedWorkManager().getNotificationListeners())
+      for (Map.Entry<Address, T> entry : nodes.entrySet())
       {
-         nl.leave(id);
+         if (entry.getValue().equals(physicalAddress))
+         {
+            remove.add(entry.getKey());
+         }
+      }
+
+      if (remove.size() > 0)
+      {
+         WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
+
+         for (Address logicalAddress : remove)
+         {
+            nodes.remove(logicalAddress);
+
+            DistributedWorkManager dwm = wmc.getDistributedWorkManager(logicalAddress.getWorkManagerId());
+
+            if (dwm != null)
+            {
+               for (NotificationListener nl : dwm.getNotificationListeners())
+               {
+                  nl.leave(logicalAddress);
+               }
+            }
+         }
       }
    }
 
    /**
-    *
     * localPing
-    *
     * @return the ping value
     */
-   public Long localPing()
+   public long localPing()
    {
-      //do nothing, just send an answer.
       if (trace)
          log.tracef("LOCAL_PING()");
+
       return 0L;
    }
 
    /**
-    *
     * localDoWork
     *
+    * @param address the logical address
     * @param work the work
     * @throws WorkException in case of error
     */
-   public void localDoWork(DistributableWork work) throws WorkException
+   public void localDoWork(Address address, DistributableWork work) throws WorkException
    {
       if (trace)
-         log.tracef("LOCAL_DO_WORK(%s)", work);
+         log.tracef("LOCAL_DO_WORK(%s, %s)", address, work);
 
-      this.getDistributedWorkManager().localDoWork(work);
+      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
+      DistributedWorkManager dwm = wmc.getDistributedWorkManager(address.getWorkManagerId());
+
+      dwm.localDoWork(work);
    }
 
    /**
-    *
     * localStartWork
     *
+    * @param address the logical address
     * @param work the work
     * @return the start value
     * @throws WorkException in case of error
     */
-   public Long localStartWork(DistributableWork work) throws WorkException
+   public long localStartWork(Address address, DistributableWork work) throws WorkException
    {
       if (trace)
-         log.tracef("LOCAL_START_WORK(%s)", work);
+         log.tracef("LOCAL_START_WORK(%s, %s)", address, work);
 
-      return this.getDistributedWorkManager().localStartWork(work);
+      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
+      DistributedWorkManager dwm = wmc.getDistributedWorkManager(address.getWorkManagerId());
+
+      return dwm.localStartWork(work);
    }
 
    /**
-    *
     * localScheduleWork
     *
+    * @param address the logical address
     * @param work the work
     * @throws WorkException in case of error
     */
-   public void localScheduleWork(DistributableWork work) throws WorkException
+   public void localScheduleWork(Address address, DistributableWork work) throws WorkException
    {
       if (trace)
-         log.tracef("LOCAL_SCHEDULE_WORK(%s)", work);
+         log.tracef("LOCAL_SCHEDULE_WORK(%s, %s)", address, work);
 
-      this.getDistributedWorkManager().localScheduleWork(work);
+      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
+      DistributedWorkManager dwm = wmc.getDistributedWorkManager(address.getWorkManagerId());
+
+      dwm.localScheduleWork(work);
    }
 
    /**
-    *
     * localGetShortRunningFree
     *
+    * @param address the logical address
     * @return the free count
     */
-   public Long localGetShortRunningFree()
+   public long localGetShortRunningFree(Address address)
    {
       if (trace)
-         log.tracef("LOCAL_GET_SHORTRUNNING_FREE()");
+         log.tracef("LOCAL_GET_SHORTRUNNING_FREE(%s)", address);
 
-      BlockingExecutor executor = this.getDistributedWorkManager().getShortRunningThreadPool();
-      if (executor != null)
+      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
+      WorkManager wm = wmc.getWorkManager(address.getWorkManagerId());
+
+      if (wm != null)
       {
-         return executor.getNumberOfFreeThreads();
+         BlockingExecutor executor = wm.getShortRunningThreadPool();
+         if (executor != null)
+            return executor.getNumberOfFreeThreads();
       }
-      else
-      {
-         return 0L;
-      }
+
+      return 0L;
    }
 
    /**
-    *
     * localGetLongRunningFree
     *
+    * @param address the logical address
     * @return the free count
     */
-   public Long localGetLongRunningFree()
+   public long localGetLongRunningFree(Address address)
    {
       if (trace)
-         log.tracef("LOCAL_GET_LONGRUNNING_FREE()");
+         log.tracef("LOCAL_GET_LONGRUNNING_FREE(%s)", address);
 
-      BlockingExecutor executor = this.getDistributedWorkManager().getLongRunningThreadPool();
-      if (executor != null)
+      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
+      WorkManager wm = wmc.getWorkManager(address.getWorkManagerId());
+
+      if (wm != null)
       {
-         return executor.getNumberOfFreeThreads();
+         BlockingExecutor executor = wm.getLongRunningThreadPool();
+         if (executor != null)
+            return executor.getNumberOfFreeThreads();
       }
-      else
+
+      return 0L;
+   }
+
+   /**
+    * localUpdateShortRunningFree
+    *
+    * @param logicalAddress the logical address
+    * @param freeCount the free count
+    */
+   public void localUpdateShortRunningFree(Address logicalAddress, Long freeCount)
+   {
+      if (trace)
+         log.tracef("LOCAL_UPDATE_SHORTRUNNING_FREE(%s, %d)", logicalAddress, freeCount);
+
+      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
+      DistributedWorkManager dwm = wmc.getDistributedWorkManager(logicalAddress.getWorkManagerId());
+
+      if (dwm != null)
       {
-         return 0L;
+         for (NotificationListener nl : dwm.getNotificationListeners())
+         {
+            nl.updateShortRunningFree(logicalAddress, freeCount);
+         }
       }
    }
 
    /**
     * localUpdateLongRunningFree
     *
-    * @param id the id
+    * @param logicalAddress the logical address
     * @param freeCount the free count
     */
-   public void localUpdateLongRunningFree(String id, Long freeCount)
+   public void localUpdateLongRunningFree(Address logicalAddress, Long freeCount)
    {
       if (trace)
-         log.tracef("LOCAL_UPDATE_LONGRUNNING_FREE(%s, %d)", id, freeCount);
+         log.tracef("LOCAL_UPDATE_LONGRUNNING_FREE(%s, %d)", logicalAddress, freeCount);
 
+      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
+      DistributedWorkManager dwm = wmc.getDistributedWorkManager(logicalAddress.getWorkManagerId());
 
-      for (NotificationListener nl : this.getDistributedWorkManager().getNotificationListeners())
+      if (dwm != null)
       {
-         nl.updateLongRunningFree(id, freeCount);
+         for (NotificationListener nl : dwm.getNotificationListeners())
+         {
+            nl.updateLongRunningFree(logicalAddress, freeCount);
+         }
       }
    }
 
    /**
-    * localUpdateShortRunningFree
+    * localGetDistributedStatistics
     *
-    * @param id the id
-    * @param freeCount the free count
+    * @param address the logical address
+    * @return The value
     */
-   public void localUpdateShortRunningFree(String id, Long freeCount)
+   public DistributedWorkManagerStatisticsValues localGetDistributedStatistics(Address address)
    {
       if (trace)
-         log.tracef("LOCAL_UPDATE_SHORTRUNNING_FREE(%s, %d)", id, freeCount);
+         log.tracef("LOCAL_GET_DISTRIBUTED_STATISTICS(%s)", address);
 
-      for (NotificationListener nl : this.getDistributedWorkManager().getNotificationListeners())
+      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
+      DistributedWorkManager dwm = wmc.getDistributedWorkManager(address.getWorkManagerId());
+
+      if (dwm != null)
       {
-         nl.updateShortRunningFree(id, freeCount);
+         DistributedWorkManagerStatisticsValues values =
+            new DistributedWorkManagerStatisticsValues(dwm.getDistributedStatistics().getWorkSuccessful(),
+                                                       dwm.getDistributedStatistics().getWorkFailed(),
+                                                       dwm.getDistributedStatistics().getDoWorkAccepted(),
+                                                       dwm.getDistributedStatistics().getDoWorkRejected(),
+                                                       dwm.getDistributedStatistics().getScheduleWorkAccepted(),
+                                                       dwm.getDistributedStatistics().getScheduleWorkRejected(),
+                                                       dwm.getDistributedStatistics().getStartWorkAccepted(),
+                                                       dwm.getDistributedStatistics().getStartWorkRejected());
+
+         return values;
       }
+
+      return null;
    }
 
    /**
     * Local delta doWork accepted
+    * @param address the logical address
     */
-   public void localDeltaDoWorkAccepted()
+   public void localDeltaDoWorkAccepted(Address address)
    {
       if (trace)
-         log.tracef("LOCAL_DELTA_DOWORK_ACCEPTED()");
+         log.tracef("LOCAL_DELTA_DOWORK_ACCEPTED(%s)", address);
 
-      for (NotificationListener nl : this.getDistributedWorkManager().getNotificationListeners())
+      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
+      DistributedWorkManager dwm = wmc.getDistributedWorkManager(address.getWorkManagerId());
+
+      if (dwm != null)
       {
-         nl.deltaDoWorkAccepted();
+         for (NotificationListener nl : dwm.getNotificationListeners())
+         {
+            nl.deltaDoWorkAccepted();
+         }
       }
    }
 
    /**
     * Local delta doWork rejected
+    * @param address the logical address
     */
-   public void localDeltaDoWorkRejected()
+   public void localDeltaDoWorkRejected(Address address)
    {
       if (trace)
-         log.tracef("LOCAL_DELTA_DOWORK_REJECTED()");
+         log.tracef("LOCAL_DELTA_DOWORK_REJECTED(%s)", address);
 
-      for (NotificationListener nl : this.getDistributedWorkManager().getNotificationListeners())
+      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
+      DistributedWorkManager dwm = wmc.getDistributedWorkManager(address.getWorkManagerId());
+
+      if (dwm != null)
       {
-         nl.deltaDoWorkRejected();
+         for (NotificationListener nl : dwm.getNotificationListeners())
+         {
+            nl.deltaDoWorkRejected();
+         }
       }
    }
 
    /**
     * Local delta startWork accepted
+    * @param address the logical address
     */
-   public void localDeltaStartWorkAccepted()
+   public void localDeltaStartWorkAccepted(Address address)
    {
       if (trace)
-         log.tracef("LOCAL_DELTA_STARTWORK_ACCEPTED()");
+         log.tracef("LOCAL_DELTA_STARTWORK_ACCEPTED(%s)", address);
 
-      for (NotificationListener nl : this.getDistributedWorkManager().getNotificationListeners())
+      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
+      DistributedWorkManager dwm = wmc.getDistributedWorkManager(address.getWorkManagerId());
+
+      if (dwm != null)
       {
-         nl.deltaStartWorkAccepted();
+         for (NotificationListener nl : dwm.getNotificationListeners())
+         {
+            nl.deltaStartWorkAccepted();
+         }
       }
    }
 
    /**
     * Local delta startWork rejected
+    * @param address the logical address
     */
-   public void localDeltaStartWorkRejected()
+   public void localDeltaStartWorkRejected(Address address)
    {
       if (trace)
-         log.tracef("LOCAL_DELTA_STARTWORK_REJECTED()");
+         log.tracef("LOCAL_DELTA_STARTWORK_REJECTED(%s)", address);
 
-      for (NotificationListener nl : this.getDistributedWorkManager().getNotificationListeners())
+      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
+      DistributedWorkManager dwm = wmc.getDistributedWorkManager(address.getWorkManagerId());
+
+      if (dwm != null)
       {
-         nl.deltaStartWorkRejected();
+         for (NotificationListener nl : dwm.getNotificationListeners())
+         {
+            nl.deltaStartWorkRejected();
+         }
       }
    }
 
    /**
     * Local delta scheduleWork accepted
+    * @param address the logical address
     */
-   public void localDeltaScheduleWorkAccepted()
+   public void localDeltaScheduleWorkAccepted(Address address)
    {
       if (trace)
-         log.tracef("LOCAL_DELTA_SCHEDULEWORK_ACCEPTED()");
+         log.tracef("LOCAL_DELTA_SCHEDULEWORK_ACCEPTED(%s)", address);
 
-      for (NotificationListener nl : this.getDistributedWorkManager().getNotificationListeners())
+      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
+      DistributedWorkManager dwm = wmc.getDistributedWorkManager(address.getWorkManagerId());
+
+      if (dwm != null)
       {
-         nl.deltaScheduleWorkAccepted();
+         for (NotificationListener nl : dwm.getNotificationListeners())
+         {
+            nl.deltaScheduleWorkAccepted();
+         }
       }
    }
 
    /**
     * Local delta scheduleWork rejected
+    * @param address the logical address
     */
-   public void localDeltaScheduleWorkRejected()
+   public void localDeltaScheduleWorkRejected(Address address)
    {
       if (trace)
-         log.tracef("LOCAL_DELTA_SCHEDULEWORK_REJECTED()");
+         log.tracef("LOCAL_DELTA_SCHEDULEWORK_REJECTED(%s)", address);
 
-      for (NotificationListener nl : this.getDistributedWorkManager().getNotificationListeners())
+      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
+      DistributedWorkManager dwm = wmc.getDistributedWorkManager(address.getWorkManagerId());
+
+      if (dwm != null)
       {
-         nl.deltaScheduleWorkRejected();
+         for (NotificationListener nl : dwm.getNotificationListeners())
+         {
+            nl.deltaScheduleWorkRejected();
+         }
       }
    }
 
    /**
     * Local delta work successful
+    * @param address the logical address
     */
-   public void localDeltaWorkSuccessful()
+   public void localDeltaWorkSuccessful(Address address)
    {
       if (trace)
-         log.tracef("LOCAL_DELTA_WORK_SUCCESSFUL()");
+         log.tracef("LOCAL_DELTA_WORK_SUCCESSFUL(%s)", address);
 
-      for (NotificationListener nl : this.getDistributedWorkManager().getNotificationListeners())
+      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
+      DistributedWorkManager dwm = wmc.getDistributedWorkManager(address.getWorkManagerId());
+
+      if (dwm != null)
       {
-         nl.deltaWorkSuccessful();
+         for (NotificationListener nl : dwm.getNotificationListeners())
+         {
+            nl.deltaWorkSuccessful();
+         }
       }
    }
 
    /**
     * Local delta work failed
+    * @param address the logical address
     */
-   public void localDeltaWorkFailed()
+   public void localDeltaWorkFailed(Address address)
    {
       if (trace)
-         log.tracef("LOCAL_DELTA_WORK_FAILED()");
+         log.tracef("LOCAL_DELTA_WORK_FAILED(%s)", address);
 
-      for (NotificationListener nl : this.getDistributedWorkManager().getNotificationListeners())
+      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
+      DistributedWorkManager dwm = wmc.getDistributedWorkManager(address.getWorkManagerId());
+
+      if (dwm != null)
       {
-         nl.deltaWorkFailed();
+         for (NotificationListener nl : dwm.getNotificationListeners())
+         {
+            nl.deltaWorkFailed();
+         }
       }
    }
 
    /**
     * send a messagge using specific protocol. Method overridden in specific protocol implementation classes
     *
-    * @param address the address
+    * @param physicalAddress the physical address
     * @param request the request
     * @param parameters the parameters
-    * @return the returned long value. Can be null if requested operation return a void
+    * @return the returned value. Can be null if requested operation return a void
     * @throws WorkException in case of problem with the work
     */
-   protected abstract Long sendMessage(T address, Request request, Serializable... parameters)
+   protected abstract Serializable sendMessage(T physicalAddress, Request request, Serializable... parameters)
       throws WorkException;
 }

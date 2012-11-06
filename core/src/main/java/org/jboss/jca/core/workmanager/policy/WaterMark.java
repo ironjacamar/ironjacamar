@@ -24,6 +24,7 @@ package org.jboss.jca.core.workmanager.policy;
 
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
+import org.jboss.jca.core.api.workmanager.DistributedWorkManager;
 import org.jboss.jca.core.workmanager.WorkManagerUtil;
 
 import javax.resource.spi.work.DistributableWork;
@@ -60,41 +61,38 @@ public class WaterMark extends AbstractPolicy
     * {@inheritDoc}
     */
    @Override
-   public boolean shouldDistribute(DistributableWork work)
+   public synchronized boolean shouldDistribute(DistributedWorkManager dwm, DistributableWork work)
    {
       if (trace)
          log.tracef("Work=%s", work);
 
-      Boolean override = getShouldDistribute(work);
+      Boolean override = WorkManagerUtil.getShouldDistribute(work);
       if (override != null)
          return override.booleanValue();
-      synchronized (this)
+
+      if (WorkManagerUtil.isLongRunning(work) && dwm.getLongRunningThreadPool() != null)
       {
-         int currentFreeThread;
-         if (WorkManagerUtil.isLongRunning(work) && dwm.getLongRunningThreadPool() != null)
-         {
-            return !(dwm.getLongRunningThreadPool().getNumberOfFreeThreads() > watermark);
-         }
-         else
-         {
-            return !(dwm.getShortRunningThreadPool().getNumberOfFreeThreads() > watermark);
-         }
+         return !(dwm.getLongRunningThreadPool().getNumberOfFreeThreads() > watermark);
+      }
+      else
+      {
+         return !(dwm.getShortRunningThreadPool().getNumberOfFreeThreads() > watermark);
       }
    }
 
-    /**
-     * getWatermark
-     * @return the watermark value
-     */
+   /**
+    * Get the water mark value
+    * @return The value
+    */
    public int getWatermark()
    {
       return watermark;
    }
 
-    /**
-     * setWatermark
-     * @param value the watermark value
-     */
+   /**
+    * Set the water mark value
+    * @param value The value
+    */
    public void setWatermark(int value)
    {
       this.watermark = value;

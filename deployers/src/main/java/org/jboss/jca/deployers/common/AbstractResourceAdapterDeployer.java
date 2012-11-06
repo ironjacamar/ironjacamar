@@ -51,6 +51,7 @@ import org.jboss.jca.common.metadata.ra.common.ConfigPropertyImpl;
 import org.jboss.jca.core.api.bootstrap.CloneableBootstrapContext;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
+import org.jboss.jca.core.bootstrapcontext.BootstrapContextCoordinator;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
@@ -323,12 +324,15 @@ public abstract class AbstractResourceAdapterDeployer
    /**
     * Start the resource adapter
     * @param resourceAdapter The resource adapter
-    * @param bootstrapIdentifier The bootstrap context identifier; may be <code>null</code>
+    * @param bootstrapContextIdentifier The bootstrap context identifier
+    * @param bootstrapContextName The bootstrap context name; may be <code>null</code>
     * @param cb The callback
     * @throws DeployException DeployException Thrown if the resource adapter cant be started
     */
    @SuppressWarnings("unchecked")
-   protected void startContext(ResourceAdapter resourceAdapter, String bootstrapIdentifier, Callback cb)
+   protected void startContext(ResourceAdapter resourceAdapter,
+                               String bootstrapContextIdentifier, String bootstrapContextName,
+                               Callback cb)
       throws DeployException
    {
       try
@@ -336,18 +340,9 @@ public abstract class AbstractResourceAdapterDeployer
          Class clz = resourceAdapter.getClass();
          Method start = clz.getMethod("start", new Class[]{BootstrapContext.class});
 
-         CloneableBootstrapContext cbc = null;
-
-         if (bootstrapIdentifier != null && getConfiguration().getBootstrapContexts() != null)
-         {
-            CloneableBootstrapContext bc = getConfiguration().getBootstrapContexts().get(bootstrapIdentifier);
-
-            if (bc != null)
-               cbc = bc.clone();
-         }
-
-         if (cbc == null)
-            cbc = getConfiguration().getDefaultBootstrapContext().clone();
+         CloneableBootstrapContext cbc = 
+            BootstrapContextCoordinator.getInstance().createBootstrapContext(bootstrapContextIdentifier,
+                                                                             bootstrapContextName);
 
          cbc.setResourceAdapter(resourceAdapter);
 
@@ -1145,7 +1140,9 @@ public abstract class AbstractResourceAdapterDeployer
             new org.jboss.jca.core.api.management.Connector(mgtUniqueId);
 
          ResourceAdapter resourceAdapter = null;
+         Map<String, String> raConfigProperties = null;
          String resourceAdapterKey = null;
+         String bootstrapContextIdentifier = null;
          List<Validate> archiveValidationObjects = new ArrayList<Validate>();
          List<Object> beanValidationObjects = new ArrayList<Object>();
          List<Object> cfs = new ArrayList<Object>();
@@ -1213,7 +1210,8 @@ public abstract class AbstractResourceAdapterDeployer
                   Connector16 cmd16 = (Connector16)cmd;
                   if (cmd16.getRequiredWorkContexts() != null && cmd16.getRequiredWorkContexts().size() > 0)
                   {
-                     CloneableBootstrapContext bc = getConfiguration().getDefaultBootstrapContext();
+                     CloneableBootstrapContext bc =
+                        BootstrapContextCoordinator.getInstance().getDefaultBootstrapContext();
                      for (String requiredWorkContext : cmd16.getRequiredWorkContexts())
                      {
                         try
@@ -1253,8 +1251,6 @@ public abstract class AbstractResourceAdapterDeployer
                            throw new DeployException(bundle.invalidResourceAdapter(raClz));
 
                         resourceAdapter = (ResourceAdapter)or;
-
-                        Map<String, String> raConfigProperties = null;
 
                         if (raxml != null)
                            raConfigProperties = raxml.getConfigProperties();
@@ -2343,20 +2339,25 @@ public abstract class AbstractResourceAdapterDeployer
             // Activate deployment
             if (resourceAdapter != null)
             {
-               String bootstrapIdentifier = null;
+               String bootstrapContextName = null;
                if (raxml != null && raxml.getBootstrapContext() != null &&
                    !raxml.getBootstrapContext().trim().equals(""))
                {
-                  bootstrapIdentifier = raxml.getBootstrapContext();
+                  bootstrapContextName = raxml.getBootstrapContext();
                }
 
-               if (bootstrapIdentifier == null && ijmd != null && ijmd.getBootstrapContext() != null &&
+               if (bootstrapContextName == null && ijmd != null && ijmd.getBootstrapContext() != null &&
                    !ijmd.getBootstrapContext().trim().equals(""))
                {
-                  bootstrapIdentifier = ijmd.getBootstrapContext();
+                  bootstrapContextName = ijmd.getBootstrapContext();
                }
 
-               startContext(resourceAdapter, bootstrapIdentifier, callback);
+               bootstrapContextIdentifier =
+                  BootstrapContextCoordinator.getInstance().createIdentifier(resourceAdapter.getClass().getName(),
+                                                                             raConfigProperties,
+                                                                             bootstrapContextName);
+
+               startContext(resourceAdapter, bootstrapContextIdentifier, bootstrapContextName, callback);
 
                // Register with ResourceAdapterRepository
                resourceAdapterKey = registerResourceAdapterToResourceAdapterRepository(resourceAdapter);
@@ -2379,7 +2380,7 @@ public abstract class AbstractResourceAdapterDeployer
          String[] aoJndis = aoJndiNames.size() > 0 ? aoJndiNames.toArray(new String[aoJndiNames.size()]) : null;
          
          return new CommonDeployment(url, deploymentName, activateDeployment,
-                                     resourceAdapter, resourceAdapterKey,
+                                     resourceAdapter, resourceAdapterKey, bootstrapContextIdentifier,
                                      cfObjs, cfJndis, cfCM,
                                      aoObjs, aoJndis,
                                      recoveryModules.toArray(new XAResourceRecovery[recoveryModules.size()]),

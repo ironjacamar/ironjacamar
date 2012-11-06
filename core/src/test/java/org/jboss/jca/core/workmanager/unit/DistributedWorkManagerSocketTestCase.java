@@ -34,16 +34,18 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 
 
 /**
- * DistributedWorkManagerTestCase.
+ * DistributedWorkManagerSocketTestCase.
  *
  * Tests for the JBoss specific distributed work manager functionality.
  *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
+@Ignore
 @RunWith(Arquillian.class)
 @Configuration(autoActivate = false)
 public class DistributedWorkManagerSocketTestCase extends AbstractDistributedWorkManagerTest
@@ -90,14 +92,25 @@ public class DistributedWorkManagerSocketTestCase extends AbstractDistributedWor
     * Define the activation deployment
     * @return The deployment archive
     */
-   @Deployment(name = "ACT", order = 3)
-   public static InputStreamDescriptor createActivationDeployment()
+   @Deployment(name = "ACT1", order = 3)
+   public static InputStreamDescriptor createActivationDeployment1()
    {
       ClassLoader cl = Thread.currentThread().getContextClassLoader();
-      InputStreamDescriptor isd = new InputStreamDescriptor("dwm-invm-ra.xml",
-                                                            cl.getResourceAsStream("dwm-invm-ra.xml"));
+      InputStreamDescriptor isd = new InputStreamDescriptor("dwm-bc1-ra.xml",
+                                                            cl.getResourceAsStream("dwm-bc1-ra.xml"));
       return isd;
    }
 
-
+   /**
+    * Define the activation deployment
+    * @return The deployment archive
+    */
+   @Deployment(name = "ACT2", order = 4)
+   public static InputStreamDescriptor createActivationDeployment2()
+   {
+      ClassLoader cl = Thread.currentThread().getContextClassLoader();
+      InputStreamDescriptor isd = new InputStreamDescriptor("dwm-bc2-ra.xml",
+                                                            cl.getResourceAsStream("dwm-bc2-ra.xml"));
+      return isd;
+   }
 }

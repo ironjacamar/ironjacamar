@@ -24,6 +24,7 @@ package org.jboss.jca.core.workmanager;
 
 import org.jboss.jca.core.api.workmanager.DistributedWorkManagerStatistics;
 import org.jboss.jca.core.api.workmanager.DistributedWorkManagerStatisticsValues;
+import org.jboss.jca.core.spi.workmanager.Address;
 import org.jboss.jca.core.spi.workmanager.notification.NotificationListener;
 import org.jboss.jca.core.spi.workmanager.transport.Transport;
 
@@ -39,13 +40,13 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
                                                              NotificationListener
 {
    /** Own identifier */
-   private String ownId;
+   private Address own;
 
    /** Transport */
    private Transport transport;
 
    /** Work managers */
-   private Set<String> workManagers;
+   private Set<Address> workManagers;
 
    /** Successful */
    private AtomicInteger successful;
@@ -71,16 +72,19 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
    /** StartWork: Rejected */
    private AtomicInteger startWorkRejected;
 
+   /** Initialized */
+   private boolean initialized;
+
    /**
     * Constructor
     * @param ownId The local distributed work managers identifier
     * @param t The transport
     */
-   public DistributedWorkManagerStatisticsImpl(String ownId, Transport t)
+   public DistributedWorkManagerStatisticsImpl(Address ownId, Transport t)
    {
-      this.ownId = ownId;
+      this.own = ownId;
       this.transport = t;
-      this.workManagers = Collections.synchronizedSet(new HashSet<String>());
+      this.workManagers = Collections.synchronizedSet(new HashSet<Address>());
       this.successful = new AtomicInteger(0);
       this.failed = new AtomicInteger(0);
       this.doWorkAccepted = new AtomicInteger(0);
@@ -89,6 +93,7 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
       this.scheduleWorkRejected = new AtomicInteger(0);
       this.startWorkAccepted = new AtomicInteger(0);
       this.startWorkRejected = new AtomicInteger(0);
+      this.initialized = false;
    }
 
    /**
@@ -104,35 +109,46 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
       scheduleWorkRejected.set(values.getScheduleWorkRejected());
       startWorkAccepted.set(values.getStartWorkAccepted());
       startWorkRejected.set(values.getStartWorkRejected());
+      initialized = true;
    }
 
    /**
     * {@inheritDoc}
     */
-   public void join(String id)
+   public void join(Address address)
    {
-      workManagers.add(id);
+      workManagers.add(address);
+
+      if (!initialized)
+      {
+         if (!own.equals(address))
+         {
+            DistributedWorkManagerStatisticsValues values = transport.getDistributedStatistics(address);
+            if (values != null)
+               initialize(values);
+         }
+      }
    }
 
    /**
     * {@inheritDoc}
     */
-   public void leave(String id)
+   public void leave(Address address)
    {
-      workManagers.remove(id);
+      workManagers.remove(address);
    }
 
    /**
     * {@inheritDoc}
     */
-   public void updateShortRunningFree(String id, long free)
+   public void updateShortRunningFree(Address address, long free)
    {
    }
 
    /**
     * {@inheritDoc}
     */
-   public void updateLongRunningFree(String id, long free)
+   public void updateLongRunningFree(Address address, long free)
    {
    }
 
@@ -279,10 +295,10 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
    {
       doWorkAccepted.incrementAndGet();
 
-      for (String id : workManagers)
+      for (Address address : workManagers)
       {
-         if (!ownId.equals(id))
-            transport.deltaDoWorkAccepted(id);
+         if (!own.equals(address))
+            transport.deltaDoWorkAccepted(address);
       }
    }
 
@@ -293,10 +309,10 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
    {
       doWorkRejected.incrementAndGet();
 
-      for (String id : workManagers)
+      for (Address address : workManagers)
       {
-         if (!ownId.equals(id))
-            transport.deltaDoWorkRejected(id);
+         if (!own.equals(address))
+            transport.deltaDoWorkRejected(address);
       }
    }
 
@@ -307,10 +323,10 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
    {
       scheduleWorkAccepted.incrementAndGet();
 
-      for (String id : workManagers)
+      for (Address address : workManagers)
       {
-         if (!ownId.equals(id))
-            transport.deltaScheduleWorkAccepted(id);
+         if (!own.equals(address))
+            transport.deltaScheduleWorkAccepted(address);
       }
    }
 
@@ -321,10 +337,10 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
    {
       scheduleWorkRejected.incrementAndGet();
 
-      for (String id : workManagers)
+      for (Address address : workManagers)
       {
-         if (!ownId.equals(id))
-            transport.deltaScheduleWorkRejected(id);
+         if (!own.equals(address))
+            transport.deltaScheduleWorkRejected(address);
       }
    }
 
@@ -335,10 +351,10 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
    {
       startWorkAccepted.incrementAndGet();
 
-      for (String id : workManagers)
+      for (Address address : workManagers)
       {
-         if (!ownId.equals(id))
-            transport.deltaStartWorkAccepted(id);
+         if (!own.equals(address))
+            transport.deltaStartWorkAccepted(address);
       }
    }
 
@@ -349,10 +365,10 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
    {
       startWorkRejected.incrementAndGet();
 
-      for (String id : workManagers)
+      for (Address address : workManagers)
       {
-         if (!ownId.equals(id))
-            transport.deltaStartWorkRejected(id);
+         if (!own.equals(address))
+            transport.deltaStartWorkRejected(address);
       }
    }
 
@@ -363,10 +379,10 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
    {
       successful.incrementAndGet();
 
-      for (String id : workManagers)
+      for (Address address : workManagers)
       {
-         if (!ownId.equals(id))
-            transport.deltaWorkSuccessful(id);
+         if (!own.equals(address))
+            transport.deltaWorkSuccessful(address);
       }
    }
 
@@ -377,10 +393,10 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
    {
       failed.incrementAndGet();
 
-      for (String id : workManagers)
+      for (Address address : workManagers)
       {
-         if (!ownId.equals(id))
-            transport.deltaWorkFailed(id);
+         if (!own.equals(address))
+            transport.deltaWorkFailed(address);
       }
    }
 

@@ -24,6 +24,7 @@ package org.jboss.jca.core.workmanager.selector;
 
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
+import org.jboss.jca.core.spi.workmanager.Address;
 
 import java.util.Map;
 
@@ -58,10 +59,13 @@ public class FirstAvailable extends AbstractSelector
    /**
     * {@inheritDoc}
     */
-   public String selectDistributedWorkManager(String ownId, DistributableWork work)
+   public synchronized Address selectDistributedWorkManager(Address own, DistributableWork work)
    {
       if (trace)
-         log.tracef("OwnId: %s, Work: %s", ownId, work);
+         log.tracef("Own: %s, Work: %s", own, work);
+
+      /*
+        TODO
 
       String value = getWorkManager(work);
       if (value != null)
@@ -71,25 +75,29 @@ public class FirstAvailable extends AbstractSelector
 
          return value;
       }
+      */
 
-      Map<String, Long> selectionMap = getSelectionMap(work);
+      Map<Address, Long> selectionMap = getSelectionMap(own.getWorkManagerId(), work);
       // No sorting needed
 
       if (trace)
          log.tracef("SelectionMap: %s", selectionMap);
 
-      for (Map.Entry<String, Long> entry : selectionMap.entrySet())
+      if (selectionMap != null)
       {
-         String id = entry.getKey();
-         if (!ownId.equals(id))
+         for (Map.Entry<Address, Long> entry : selectionMap.entrySet())
          {
-            Long free = entry.getValue();
-            if (free != null && free.intValue() > 0)
+            Address id = entry.getKey();
+            if (!own.equals(id))
             {
-               if (trace)
-                  log.tracef("WorkManager: %s", id);
-
-               return id;
+               Long free = entry.getValue();
+               if (free != null && free.longValue() > 0)
+               {
+                  if (trace)
+                     log.tracef("WorkManager: %s", id);
+                  
+                  return id;
+               }
             }
          }
       }

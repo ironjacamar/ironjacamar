@@ -117,56 +117,60 @@
   <!-- DistributedWorkManager1Transport -->
   <bean name="DistributedWorkManager1Transport"
         class="org.jboss.jca.core.workmanager.transport.remote.socket.SocketTransport">
-        <!-- The executor -->
-        <property name="ExecutorService">
-            <inject bean="Kernel" property="ExecutorService"/>
-        </property>
+    <!-- The id -->
+    <property name="Id">1</property>
 
-        <!-- The host -->
-        <property name="Host">127.0.0.1</property>
+    <!-- The executor -->
+    <property name="ExecutorService">
+      <inject bean="Kernel" property="ExecutorService"/>
+    </property>
+    
+    <!-- The host -->
+    <property name="Host">127.0.0.1</property>
+    
+    <!-- The port -->
+    <property name="Port">1299</property>
+    
+    <!-- The peers -->
+    <property name="Peers">
+      <set class="java.util.HashSet" 
+           elementClass="java.lang.String">
+        <value>localhost:1300</value>
+      </set>
+    </property>
 
-        <!-- The port -->
-        <property name="Port">1299</property>
-
-        <!-- The work managers -->
-        <property name="WorkManagers">
-            <map class="java.util.Hashtable" 
-                 keyClass="java.lang.String"
-                 valueClass="java.lang.String">
-                <entry>
-                    <key>DWM2</key>
-                    <value>localhost:1300</value>
-                </entry>
-            </map>
-        </property>
+    <start method="startup"/>
+    <stop method="shutdown"/>
   </bean>
 
 
   <!-- DistributedWorkManager2Transport -->
   <bean name="DistributedWorkManager2Transport"
         class="org.jboss.jca.core.workmanager.transport.remote.socket.SocketTransport">
-        <!-- The executor -->
-        <property name="ExecutorService">
-            <inject bean="Kernel" property="ExecutorService"/>
-        </property>
+    <!-- The id -->
+    <property name="Id">2</property>
 
-        <!-- The host -->
-        <property name="Host">127.0.0.1</property>
+    <!-- The executor -->
+    <property name="ExecutorService">
+      <inject bean="Kernel" property="ExecutorService"/>
+    </property>
+    
+    <!-- The host -->
+    <property name="Host">127.0.0.1</property>
+    
+    <!-- The port -->
+    <property name="Port">1300</property>
+    
+    <!-- The peers -->
+    <property name="Peers">
+      <set class="java.util.HashSet" 
+           elementClass="java.lang.String">
+        <value>localhost:1299</value>
+      </set>
+    </property>
 
-        <!-- The port -->
-        <property name="Port">1300</property>
-
-        <!-- The work managers -->
-        <property name="WorkManagers">
-            <map class="java.util.Hashtable" 
-                 keyClass="java.lang.String"
-                 valueClass="java.lang.String">
-                <entry>
-                    <key>DWM1</key>
-                    <value>localhost:1299</value>
-                </entry>
-            </map>
-        </property>
+    <start method="startup"/>
+    <stop method="shutdown"/>
   </bean>
 
   <!-- DistributedWorkManager1 -->
@@ -259,8 +263,8 @@
     <property name="TransactionSynchronizationRegistry">
        <inject bean="TransactionSynchronizationRegistry"/>
     </property>
-    <property name="WorkManager">
-       <inject bean="DistributedWorkManager1"/>
+    <property name="WorkManagerName">
+       <inject bean="DistributedWorkManager1" property="Name"/>
     </property>
     <property name="XATerminator">
        <inject bean="TransactionIntegration" property="XATerminator"/>
@@ -275,8 +279,8 @@
     <property name="TransactionSynchronizationRegistry">
        <inject bean="TransactionSynchronizationRegistry"/>
     </property>
-    <property name="WorkManager">
-       <inject bean="DistributedWorkManager2"/>
+    <property name="WorkManagerName">
+       <inject bean="DistributedWorkManager2" property="Name"/>
     </property>
     <property name="XATerminator">
        <inject bean="TransactionIntegration" property="XATerminator"/>

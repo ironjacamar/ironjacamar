@@ -22,6 +22,8 @@
 
 package org.jboss.jca.core.spi.workmanager.notification;
 
+import org.jboss.jca.core.spi.workmanager.Address;
+
 /**
  * The notification listener gets notified about changes
  */
@@ -29,29 +31,29 @@ public interface NotificationListener
 {
    /**
     * A distributed work manager joined
-    * @param id The id
+    * @param address The address
     */
-   public void join(String id);
+   public void join(Address address);
 
    /**
     * A distributed work manager left
-    * @param id The id
+    * @param address The address
     */
-   public void leave(String id);
+   public void leave(Address address);
 
    /**
     * Update the short thread pool information for a distributed work manager
-    * @param id The work manager id
+    * @param address The address
     * @param free The number of free threads
     */
-   public void updateShortRunningFree(String id, long free);
+   public void updateShortRunningFree(Address address, long free);
 
    /**
     * Update the long thread pool information for a distributed work manager
-    * @param id The work manager id
+    * @param address The address
     * @param free The number of free threads
     */
-   public void updateLongRunningFree(String id, long free);
+   public void updateLongRunningFree(Address address, long free);
 
    /**
     * Delta doWork accepted

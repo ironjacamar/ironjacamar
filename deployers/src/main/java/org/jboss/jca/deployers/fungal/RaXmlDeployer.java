@@ -296,7 +296,7 @@ public final class RaXmlDeployer extends AbstractFungalRADeployer
             ((RAConfiguration) getConfiguration()).getResourceAdapterRepository();
 
          return new RaXmlDeployment(c.getURL(), deployment, c.getDeploymentName(), c.getResourceAdapter(),
-                                    c.getResourceAdapterKey(),
+                                    c.getResourceAdapterKey(), c.getBootstrapContextIdentifier(),
                                     jndiStrategy, metadataRepository, resourceAdapterRepository,
                                     c.getCfs(), c.getCfJndiNames(), c.getConnectionManagers(),
                                     c.getAos(), c.getAoJndiNames(), 

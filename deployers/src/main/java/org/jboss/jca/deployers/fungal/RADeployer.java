@@ -180,7 +180,7 @@ public final class RADeployer extends AbstractFungalRADeployer implements Deploy
             ((RAConfiguration) getConfiguration()).getResourceAdapterRepository();
 
          return new RADeployment(c.getURL(), c.getDeploymentName(), c.isActivateDeployment(), c.getResourceAdapter(),
-                                 c.getResourceAdapterKey(),
+                                 c.getResourceAdapterKey(), c.getBootstrapContextIdentifier(),
                                  jndiStrategy, metadataRepository, resourceAdapterRepository,
                                  c.getCfs(), c.getCfJndiNames(), c.getConnectionManagers(),
                                  c.getAos(), c.getAoJndiNames(), 

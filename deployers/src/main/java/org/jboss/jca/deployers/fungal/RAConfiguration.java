@@ -212,6 +212,7 @@ public class RAConfiguration implements Configuration
     * @param value The value
     */
    @Override
+   @Deprecated
    public void setDefaultBootstrapContext(CloneableBootstrapContext value)
    {
       defaultBootstrapContext = value;
@@ -222,6 +223,7 @@ public class RAConfiguration implements Configuration
     * @return The handle
     */
    @Override
+   @Deprecated
    public CloneableBootstrapContext getDefaultBootstrapContext()
    {
       return defaultBootstrapContext;
@@ -232,6 +234,7 @@ public class RAConfiguration implements Configuration
     * @param value The value
     */
    @Override
+   @Deprecated
    public void setBootstrapContexts(Map<String, CloneableBootstrapContext> value)
    {
       bootstrapContexts = value;
@@ -242,6 +245,7 @@ public class RAConfiguration implements Configuration
     * @return The handle
     */
    @Override
+   @Deprecated
    public Map<String, CloneableBootstrapContext> getBootstrapContexts()
    {
       return bootstrapContexts;
@@ -251,6 +255,7 @@ public class RAConfiguration implements Configuration
     * Add a bootstrap context
     * @param bc The value
     */
+   @Deprecated
    public void addBootstrapContext(CloneableBootstrapContext bc)
    {
       if (bc != null && bc.getName() != null)
@@ -266,6 +271,7 @@ public class RAConfiguration implements Configuration
     * Remove a bootstrap context
     * @param bc The value
     */
+   @Deprecated
    public void removeBootstrapContext(CloneableBootstrapContext bc)
    {
       if (bc != null && bootstrapContexts != null && bc.getName() != null)
@@ -387,9 +393,6 @@ public class RAConfiguration implements Configuration
     */
    public void start()
    {
-      if (defaultBootstrapContext == null)
-         throw new IllegalStateException("DefaultBootstrapContext not defined");
-
       if (printStream == null)
          throw new IllegalStateException("PrintStream not defined");
 

@@ -42,6 +42,12 @@ public interface WorkManager extends javax.resource.spi.work.WorkManager, Gracef
    public String getId();
 
    /**
+    * Set the id of the work manager
+    * @param v The value
+    */
+   public void setId(String v);
+
+   /**
     * Get the name of the work manager
     * @return The value
     */

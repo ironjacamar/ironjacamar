@@ -131,6 +131,17 @@
 
     <destroy method="shutdown"/>
   </bean>
+
+  <!-- Work Manager Coordinator -->
+  <bean name="WorkManagerCoordinator">
+    <constructor factoryClass="org.jboss.jca.core.workmanager.WorkManagerCoordinator"
+                 factoryMethod="getInstance"/>
+
+    <property name="DefaultWorkManager"><inject bean="WorkManager"/></property>
+
+    <incallback method="registerWorkManager"/>
+    <uncallback method="unregisterWorkManager"/>
+  </bean>
   
   <!-- Default Bootstrap context -->
   <bean name="DefaultBootstrapContext" 
@@ -144,12 +155,23 @@
     <property name="TransactionSynchronizationRegistry"><inject bean="TransactionSynchronizationRegistry"/></property>
 
     <!-- The Work Manager -->
-    <property name="WorkManager"><inject bean="WorkManager"/></property>
+    <property name="WorkManagerName"><inject bean="WorkManager" property="Name"/></property>
 
     <!-- The XA terminator -->
     <property name="XATerminator"><inject bean="TransactionIntegration" property="XATerminator"/></property>
   </bean>
 
+  <!-- Bootstrap Context Coordinator -->
+  <bean name="BootstrapContextCoordinator">
+    <constructor factoryClass="org.jboss.jca.core.bootstrapcontext.BootstrapContextCoordinator"
+                 factoryMethod="getInstance"/>
+
+    <property name="DefaultBootstrapContext"><inject bean="DefaultBootstrapContext"/></property>
+
+    <incallback method="registerBootstrapContext"/>
+    <uncallback method="unregisterBootstrapContext"/>
+  </bean>
+  
   <!-- Explicit JNDI strategy -->
   <bean name="ExplicitJndiStrategy"
         interface="org.jboss.jca.core.spi.naming.JndiStrategy"
@@ -197,16 +219,12 @@
     <property name="ArchiveValidationFailOnError">true</property>
     <property name="BeanValidation">true</property>
     <property name="PrintStream"><inject bean="JBossStdioContext" property="Out"/></property>
-    <property name="DefaultBootstrapContext"><inject bean="DefaultBootstrapContext"/></property>
     <property name="JndiStrategy"><inject bean="ExplicitJndiStrategy"/></property>
     <property name="TransactionIntegration"><inject bean="TransactionIntegration"/></property>
     <property name="MetadataRepository"><inject bean="MDR"/></property>
     <property name="ManagementRepository"><inject bean="ManagementRepository"/></property>
     <property name="ResourceAdapterRepository"><inject bean="ResourceAdapterRepository"/></property>
     <property name="CachedConnectionManager"><inject bean="CCM"/></property>
-
-    <incallback method="addBootstrapContext"/>
-    <uncallback method="removeBootstrapContext"/>
   </bean>
 
   <!-- Activator configuration -->
@@ -217,16 +235,12 @@
     <property name="ArchiveValidationFailOnError">true</property>
     <property name="BeanValidation">true</property>
     <property name="PrintStream"><inject bean="JBossStdioContext" property="Out"/></property>
-    <property name="DefaultBootstrapContext"><inject bean="DefaultBootstrapContext"/></property>
     <property name="JndiStrategy"><inject bean="SimpleJndiStrategy"/></property>
     <property name="TransactionIntegration"><inject bean="TransactionIntegration"/></property>
     <property name="MetadataRepository"><inject bean="MDR"/></property>
     <property name="ManagementRepository"><inject bean="ManagementRepository"/></property>
     <property name="ResourceAdapterRepository"><inject bean="ResourceAdapterRepository"/></property>
     <property name="CachedConnectionManager"><inject bean="CCM"/></property>
-
-    <incallback method="addBootstrapContext"/>
-    <uncallback method="removeBootstrapContext"/>
   </bean>
 
   <!-- RA deployer -->

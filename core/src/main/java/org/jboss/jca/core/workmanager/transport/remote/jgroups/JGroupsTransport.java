@@ -23,7 +23,7 @@
 package org.jboss.jca.core.workmanager.transport.remote.jgroups;
 
 import org.jboss.jca.core.CoreBundle;
-import org.jboss.jca.core.workmanager.DistributedWorkManagerImpl;
+import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.workmanager.transport.remote.AbstractRemoteTransport;
 import org.jboss.jca.core.workmanager.transport.remote.ProtocolMessages.Request;
 import org.jboss.jca.core.workmanager.transport.remote.ProtocolMessages.ResponseValues;
@@ -34,14 +34,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.resource.spi.work.DistributableWork;
 import javax.resource.spi.work.WorkException;
 
+import org.jboss.logging.Logger;
 import org.jboss.logging.Messages;
 
-import org.jgroups.Address;
 import org.jgroups.JChannel;
 import org.jgroups.MembershipListener;
 import org.jgroups.View;
@@ -58,8 +58,14 @@ import org.jgroups.util.RspList;
  *
  * @author <a href="mailto:stefano.maestri@redhat.com">Stefano Maestri</a>
  */
-public class JGroupsTransport extends AbstractRemoteTransport<Address> implements MembershipListener
+public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Address> implements MembershipListener
 {
+   /** The logger */
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, JGroupsTransport.class.getName());
+
+   /** Whether trace is enabled */
+   private static boolean trace = log.isTraceEnabled();
+
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
 
@@ -70,6 +76,8 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
    private String clusterName;
 
    private RpcDispatcher disp;
+
+   private boolean initialized;
 
    private static final short JOIN_METHOD = 1;
 
@@ -91,21 +99,23 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
 
    private static final short UPDATE_LONGRUNNING_FREE_METHOD = 10;
 
-   private static final short DELTA_DOWORK_ACCEPTED_METHOD = 11;
+   private static final short GET_DISTRIBUTED_STATISTICS_METHOD = 11;
 
-   private static final short DELTA_DOWORK_REJECTED_METHOD = 12;
+   private static final short DELTA_DOWORK_ACCEPTED_METHOD = 12;
 
-   private static final short DELTA_STARTWORK_ACCEPTED_METHOD = 13;
+   private static final short DELTA_DOWORK_REJECTED_METHOD = 13;
 
-   private static final short DELTA_STARTWORK_REJECTED_METHOD = 14;
+   private static final short DELTA_STARTWORK_ACCEPTED_METHOD = 14;
 
-   private static final short DELTA_SCHEDULEWORK_ACCEPTED_METHOD = 15;
+   private static final short DELTA_STARTWORK_REJECTED_METHOD = 15;
 
-   private static final short DELTA_SCHEDULEWORK_REJECTED_METHOD = 16;
+   private static final short DELTA_SCHEDULEWORK_ACCEPTED_METHOD = 16;
 
-   private static final short DELTA_WORK_SUCCESSFUL_METHOD = 17;
+   private static final short DELTA_SCHEDULEWORK_REJECTED_METHOD = 17;
 
-   private static final short DELTA_WORK_FAILED_METHOD = 18;
+   private static final short DELTA_WORK_SUCCESSFUL_METHOD = 18;
+
+   private static final short DELTA_WORK_FAILED_METHOD = 19;
 
    private static Map<Short, Method> methods = new HashMap<Short, Method>();
 
@@ -113,46 +123,82 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
    {
       try
       {
-         methods.put(JOIN_METHOD, JGroupsTransport.class.getMethod("join", String.class, Address.class));
+         methods.put(JOIN_METHOD, 
+                     JGroupsTransport.class.getMethod("join",
+                                                      org.jboss.jca.core.spi.workmanager.Address.class,
+                                                      org.jgroups.Address.class));
+         
+         methods.put(LEAVE_METHOD, 
+                     JGroupsTransport.class.getMethod("leave",
+                                                      org.jgroups.Address.class));
+         
+         methods.put(PING_METHOD,
+                     AbstractRemoteTransport.class.getMethod("localPing"));
 
-         methods.put(LEAVE_METHOD, AbstractRemoteTransport.class.getMethod("leave", String.class));
-
-         methods.put(PING_METHOD, AbstractRemoteTransport.class.getMethod("localPing"));
-
-         methods.put(DO_WORK_METHOD, AbstractRemoteTransport.class.getMethod("localDoWork", DistributableWork.class));
+         methods.put(DO_WORK_METHOD, 
+                     AbstractRemoteTransport.class.getMethod("localDoWork",
+                                                             org.jboss.jca.core.spi.workmanager.Address.class,
+                                                             DistributableWork.class));
 
          methods.put(START_WORK_METHOD,
-            AbstractRemoteTransport.class.getMethod("localStartWork", DistributableWork.class));
+                     AbstractRemoteTransport.class.getMethod("localStartWork",
+                                                             org.jboss.jca.core.spi.workmanager.Address.class,
+                                                             DistributableWork.class));
 
          methods.put(SCHEDULE_WORK_METHOD,
-            AbstractRemoteTransport.class.getMethod("localScheduleWork", DistributableWork.class));
+                     AbstractRemoteTransport.class.getMethod("localScheduleWork",
+                                                             org.jboss.jca.core.spi.workmanager.Address.class,
+                                                             DistributableWork.class));
 
          methods.put(GET_SHORTRUNNING_FREE_METHOD,
-            AbstractRemoteTransport.class.getMethod("localGetShortRunningFree"));
+                     AbstractRemoteTransport.class.getMethod("localGetShortRunningFree",
+                                                             org.jboss.jca.core.spi.workmanager.Address.class));
 
-         methods.put(GET_LONGRUNNING_FREE_METHOD, AbstractRemoteTransport.class.getMethod("localGetLongRunningFree"));
+         methods.put(GET_LONGRUNNING_FREE_METHOD,
+                     AbstractRemoteTransport.class.getMethod("localGetLongRunningFree",
+                                                             org.jboss.jca.core.spi.workmanager.Address.class));
 
          methods.put(UPDATE_SHORTRUNNING_FREE_METHOD,
-            AbstractRemoteTransport.class.getMethod("localUpdateShortRunningFree", String.class, Long.class));
+                     AbstractRemoteTransport.class.getMethod("localUpdateShortRunningFree",
+                                                             org.jboss.jca.core.spi.workmanager.Address.class,
+                                                             Long.class));
 
          methods.put(UPDATE_LONGRUNNING_FREE_METHOD,
-            AbstractRemoteTransport.class.getMethod("localUpdateLongRunningFree", String.class, Long.class));
+                     AbstractRemoteTransport.class.getMethod("localUpdateLongRunningFree",
+                                                             org.jboss.jca.core.spi.workmanager.Address.class,
+                                                             Long.class));
 
-         methods.put(DELTA_DOWORK_ACCEPTED_METHOD, AbstractRemoteTransport.class.getMethod("localDeltaDoWorkAccepted"));
-         methods.put(DELTA_DOWORK_REJECTED_METHOD, AbstractRemoteTransport.class.getMethod("localDeltaDoWorkRejected"));
+         methods.put(GET_DISTRIBUTED_STATISTICS_METHOD,
+                     AbstractRemoteTransport.class.getMethod("localGetDistributedStatistics",
+                                                             org.jboss.jca.core.spi.workmanager.Address.class));
+
+         methods.put(DELTA_DOWORK_ACCEPTED_METHOD,
+                     AbstractRemoteTransport.class.getMethod("localDeltaDoWorkAccepted",
+                                                             org.jboss.jca.core.spi.workmanager.Address.class));
+
+         methods.put(DELTA_DOWORK_REJECTED_METHOD,
+                     AbstractRemoteTransport.class.getMethod("localDeltaDoWorkRejected",
+                                                             org.jboss.jca.core.spi.workmanager.Address.class));
 
          methods.put(DELTA_STARTWORK_ACCEPTED_METHOD,
-                     AbstractRemoteTransport.class.getMethod("localDeltaStartWorkAccepted"));
+                     AbstractRemoteTransport.class.getMethod("localDeltaStartWorkAccepted",
+                                                             org.jboss.jca.core.spi.workmanager.Address.class));
          methods.put(DELTA_STARTWORK_REJECTED_METHOD,
-                     AbstractRemoteTransport.class.getMethod("localDeltaStartWorkRejected"));
+                     AbstractRemoteTransport.class.getMethod("localDeltaStartWorkRejected",
+                                                             org.jboss.jca.core.spi.workmanager.Address.class));
 
          methods.put(DELTA_SCHEDULEWORK_ACCEPTED_METHOD,
-                     AbstractRemoteTransport.class.getMethod("localDeltaScheduleWorkAccepted"));
+                     AbstractRemoteTransport.class.getMethod("localDeltaScheduleWorkAccepted",
+                                                             org.jboss.jca.core.spi.workmanager.Address.class));
          methods.put(DELTA_SCHEDULEWORK_REJECTED_METHOD,
-                     AbstractRemoteTransport.class.getMethod("localDeltaScheduleWorkRejected"));
+                     AbstractRemoteTransport.class.getMethod("localDeltaScheduleWorkRejected",
+                                                             org.jboss.jca.core.spi.workmanager.Address.class));
 
-         methods.put(DELTA_WORK_SUCCESSFUL_METHOD, AbstractRemoteTransport.class.getMethod("localDeltaWorkSuccessful"));
-         methods.put(DELTA_WORK_FAILED_METHOD, AbstractRemoteTransport.class.getMethod("localDeltaWorkFailed"));
+         methods.put(DELTA_WORK_SUCCESSFUL_METHOD, AbstractRemoteTransport.class.getMethod("localDeltaWorkSuccessful",
+                                                             org.jboss.jca.core.spi.workmanager.Address.class));
+
+         methods.put(DELTA_WORK_FAILED_METHOD, AbstractRemoteTransport.class.getMethod("localDeltaWorkFailed",
+                                                             org.jboss.jca.core.spi.workmanager.Address.class));
       }
       catch (NoSuchMethodException e)
       {
@@ -169,74 +215,86 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
       this.channel = null;
       this.clusterName = null;
       this.disp = null;
-   }
-
-   @Override
-   protected void init()
-   {
-      try
-      {
-         ((DistributedWorkManagerImpl) dwm).setId(channel.getAddressAsString());
-         disp = new RpcDispatcher(channel, null, this, this);
-
-         disp.setMethodLookup(new MethodLookup()
-         {
-            @Override
-            public Method findMethod(short key)
-            {
-               return methods.get(key);
-            }
-         });
-
-         channel.connect(clusterName);
-      }
-      catch (Throwable t)
-      {
-         log.errorf("Error during init: %s", t.getMessage(), t);
-      }
+      this.initialized = false;
    }
 
    /**
     * Delegator
-    * @param id The id
+    * @param logicalAddress The logical address
     * @param address The address
     */
-   public void join(String id, Address address)
+   public void join(org.jboss.jca.core.spi.workmanager.Address logicalAddress, org.jgroups.Address address)
    {
-      super.join(id, address);
+      super.join(logicalAddress, address);
    }
 
    /**
-    * Start method for bean lifecycle
-    *
-    * @throws Throwable in case of error
+    * Delegator
+    * @param address The address
     */
-   public void start() throws Throwable
+   public void leave(org.jgroups.Address address)
    {
+      super.leave(address);
    }
 
    /**
-    * Stop method for bean lifecycle
-    *
-    * @throws Throwable in case of error
+    * {@inheritDoc}
     */
-   public void stop() throws Throwable
+   public void startup() throws Throwable
    {
-      //sendMessage(null, Request.LEAVE, dwm.getId());
+      disp = new RpcDispatcher(channel, null, this, this);
 
-      disp.stop();
+      disp.setMethodLookup(new MethodLookup()
+      {
+         @Override
+         public Method findMethod(short key)
+         {
+            return methods.get(key);
+         }
+      });
 
-      channel.close();
+      if (clusterName == null)
+         clusterName = "jca";
+
+      channel.connect(clusterName);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isInitialized()
+   {
+      return initialized;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void initialize() throws Throwable
+   {
+      initialized = true;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void shutdown() throws Throwable
+   {
+      if (disp != null)
+         disp.stop();
+
+      if (channel != null)
+         channel.close();
    }
 
    @Override
-   public Long sendMessage(Address destAddress, Request request, Serializable... parameters)
+   public Serializable sendMessage(org.jgroups.Address destAddress, Request request, Serializable... parameters)
       throws WorkException
    {
-      Long returnValue = -1L;
+      Serializable returnValue = null;
 
       if (trace)
-         log.tracef("%s: sending message2=%s to %s", channel.getAddressAsString(), request, destAddress);
+         log.tracef("%s: sending message=%s to %s", channel.getAddressAsString(), request, destAddress);
 
       RequestOptions opts = new RequestOptions(ResponseMode.GET_ALL, 10000);
       try
@@ -244,27 +302,29 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
          switch (request)
          {
             case JOIN : {
-               String id = (String) parameters[0];
-               Address joiningAddress = (Address) parameters[1];
-               List<Address> dests = destAddress == null ? null : Arrays.asList(destAddress);
+               org.jgroups.Address joiningAddress = (org.jgroups.Address) parameters[0];
+               List<org.jgroups.Address> dests = destAddress == null ? null : Arrays.asList(destAddress);
 
                RspList<ResponseValues> rspList = disp.callRemoteMethods(dests, new MethodCall(JOIN_METHOD,
-                                                                                              id,
                                                                                               joiningAddress),
                   opts);
                throwWorkExceptionIfHasExption(rspList);
-               returnValue = 0L;
                break;
             }
             case LEAVE : {
-               String id = (String) parameters[0];
+               org.jgroups.Address leavingAddress = (org.jgroups.Address) parameters[0];
 
-               List<Address> dests = destAddress == null ? null : Arrays.asList(destAddress);
+               List<org.jgroups.Address> dests = destAddress == null ? null : Arrays.asList(destAddress);
 
                RspList<ResponseValues> rspList = disp.callRemoteMethods(dests, new MethodCall(LEAVE_METHOD,
-                                                                                              id), opts);
+                                                                                              leavingAddress), opts);
                throwWorkExceptionIfHasExption(rspList);
-               returnValue = 0L;
+               break;
+            }
+            case GET_WORKMANAGERS : {
+
+               // TODO
+
                break;
             }
             case PING : {
@@ -281,11 +341,13 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
                break;
             }
             case DO_WORK : {
-               DistributableWork work = (DistributableWork) parameters[0];
+               org.jboss.jca.core.spi.workmanager.Address address =
+                  (org.jboss.jca.core.spi.workmanager.Address) parameters[0];
+               DistributableWork work = (DistributableWork) parameters[1];
                try
                {
-                  disp.callRemoteMethod(destAddress, new MethodCall(DO_WORK_METHOD, work), opts);
-                  returnValue = 0L;
+                  disp.callRemoteMethod(destAddress,
+                                        new MethodCall(DO_WORK_METHOD, address, work), opts);
                }
                catch (Exception e)
                {
@@ -294,112 +356,145 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
                break;
             }
             case START_WORK : {
-               DistributableWork work = (DistributableWork) parameters[0];
+               org.jboss.jca.core.spi.workmanager.Address address =
+                  (org.jboss.jca.core.spi.workmanager.Address) parameters[0];
+               DistributableWork work = (DistributableWork) parameters[1];
 
-               returnValue = (Long) disp.callRemoteMethod(destAddress, new MethodCall(START_WORK_METHOD,
-                                                                                      work), opts);
+               returnValue = (Long) disp.callRemoteMethod(destAddress,
+                                                          new MethodCall(START_WORK_METHOD, address,
+                                                                         work), opts);
 
                break;
             }
             case SCHEDULE_WORK : {
-               DistributableWork work = (DistributableWork) parameters[0];
+               org.jboss.jca.core.spi.workmanager.Address address =
+                  (org.jboss.jca.core.spi.workmanager.Address) parameters[0];
+               DistributableWork work = (DistributableWork) parameters[1];
 
-               disp.callRemoteMethod(destAddress, new MethodCall(SCHEDULE_WORK_METHOD, work), opts);
-               returnValue = 0L;
+               disp.callRemoteMethod(destAddress,
+                                     new MethodCall(SCHEDULE_WORK_METHOD, address, work), opts);
 
                break;
             }
             case GET_SHORTRUNNING_FREE : {
+               org.jboss.jca.core.spi.workmanager.Address address =
+                  (org.jboss.jca.core.spi.workmanager.Address) parameters[0];
+
                returnValue = (Long) disp.callRemoteMethod(destAddress,
-                  new MethodCall(GET_SHORTRUNNING_FREE_METHOD), opts);
+                                                          new MethodCall(GET_SHORTRUNNING_FREE_METHOD,
+                                                                         address), opts);
 
                break;
             }
             case GET_LONGRUNNING_FREE : {
+               org.jboss.jca.core.spi.workmanager.Address address =
+                  (org.jboss.jca.core.spi.workmanager.Address) parameters[0];
+
                returnValue = (Long) disp.callRemoteMethod(destAddress,
-                  new MethodCall(GET_LONGRUNNING_FREE_METHOD),
-                  opts);
+                                                          new MethodCall(GET_LONGRUNNING_FREE_METHOD,
+                                                                         address), opts);
                break;
             }
             case UPDATE_SHORTRUNNING_FREE : {
-               String id = (String) parameters[0];
+               org.jboss.jca.core.spi.workmanager.Address address =
+                  (org.jboss.jca.core.spi.workmanager.Address) parameters[0];
                Long freeCount = (Long) parameters[1];
 
                disp.callRemoteMethod(destAddress,
-                  new MethodCall(UPDATE_SHORTRUNNING_FREE_METHOD, id, freeCount), opts);
-
-               returnValue = 0L;
+                  new MethodCall(UPDATE_SHORTRUNNING_FREE_METHOD, address, freeCount), opts);
 
                break;
             }
             case UPDATE_LONGRUNNING_FREE : {
-               String id = (String) parameters[0];
+               org.jboss.jca.core.spi.workmanager.Address address =
+                  (org.jboss.jca.core.spi.workmanager.Address) parameters[0];
                Long freeCount = (Long) parameters[1];
+
                disp.callRemoteMethod(destAddress,
-                  new MethodCall(UPDATE_LONGRUNNING_FREE_METHOD, id, freeCount), opts);
+                  new MethodCall(UPDATE_LONGRUNNING_FREE_METHOD, address, freeCount), opts);
+
+               break;
+            }
+            case GET_DISTRIBUTED_STATISTICS : {
+               org.jboss.jca.core.spi.workmanager.Address address =
+                  (org.jboss.jca.core.spi.workmanager.Address) parameters[0];
+
+               returnValue = 
+                  (Serializable)disp.callRemoteMethod(destAddress,
+                                                      new MethodCall(GET_DISTRIBUTED_STATISTICS_METHOD, address),
+                                                      opts);
+
                break;
             }
             case DELTA_DOWORK_ACCEPTED : {
-               disp.callRemoteMethod(destAddress, new MethodCall(DELTA_DOWORK_ACCEPTED_METHOD),
-                                     opts);
+               org.jboss.jca.core.spi.workmanager.Address address =
+                  (org.jboss.jca.core.spi.workmanager.Address) parameters[0];
 
-               returnValue = 0L;
+               disp.callRemoteMethod(destAddress, new MethodCall(DELTA_DOWORK_ACCEPTED_METHOD, address),
+                                     opts);
 
                break;
             }
             case DELTA_DOWORK_REJECTED : {
-               disp.callRemoteMethod(destAddress, new MethodCall(DELTA_DOWORK_REJECTED_METHOD),
-                                     opts);
+               org.jboss.jca.core.spi.workmanager.Address address =
+                  (org.jboss.jca.core.spi.workmanager.Address) parameters[0];
 
-               returnValue = 0L;
+               disp.callRemoteMethod(destAddress, new MethodCall(DELTA_DOWORK_REJECTED_METHOD, address),
+                                     opts);
 
                break;
             }
             case DELTA_STARTWORK_ACCEPTED : {
-               disp.callRemoteMethod(destAddress, new MethodCall(DELTA_STARTWORK_ACCEPTED_METHOD),
+               org.jboss.jca.core.spi.workmanager.Address address =
+                  (org.jboss.jca.core.spi.workmanager.Address) parameters[0];
+
+               disp.callRemoteMethod(destAddress, new MethodCall(DELTA_STARTWORK_ACCEPTED_METHOD, address),
                                      opts);
                
-               returnValue = 0L;
-
                break;
             }
             case DELTA_STARTWORK_REJECTED : {
-               disp.callRemoteMethod(destAddress, new MethodCall(DELTA_STARTWORK_REJECTED_METHOD),
-                                     opts);
+               org.jboss.jca.core.spi.workmanager.Address address =
+                  (org.jboss.jca.core.spi.workmanager.Address) parameters[0];
 
-               returnValue = 0L;
+               disp.callRemoteMethod(destAddress, new MethodCall(DELTA_STARTWORK_REJECTED_METHOD, address),
+                                     opts);
 
                break;
             }
             case DELTA_SCHEDULEWORK_ACCEPTED : {
-               disp.callRemoteMethod(destAddress, new MethodCall(DELTA_SCHEDULEWORK_ACCEPTED_METHOD),
+               org.jboss.jca.core.spi.workmanager.Address address =
+                  (org.jboss.jca.core.spi.workmanager.Address) parameters[0];
+
+               disp.callRemoteMethod(destAddress, new MethodCall(DELTA_SCHEDULEWORK_ACCEPTED_METHOD, address),
                                      opts);
                
-               returnValue = 0L;
-
                break;
             }
             case DELTA_SCHEDULEWORK_REJECTED : {
-               disp.callRemoteMethod(destAddress, new MethodCall(DELTA_SCHEDULEWORK_REJECTED_METHOD),
+               org.jboss.jca.core.spi.workmanager.Address address =
+                  (org.jboss.jca.core.spi.workmanager.Address) parameters[0];
+
+               disp.callRemoteMethod(destAddress, new MethodCall(DELTA_SCHEDULEWORK_REJECTED_METHOD, address),
                                      opts);
                
-               returnValue = 0L;
-
                break;
             }
             case DELTA_WORK_SUCCESSFUL : {
-               disp.callRemoteMethod(destAddress, new MethodCall(DELTA_WORK_SUCCESSFUL_METHOD),
-                                     opts);
+               org.jboss.jca.core.spi.workmanager.Address address =
+                  (org.jboss.jca.core.spi.workmanager.Address) parameters[0];
 
-               returnValue = 0L;
+               disp.callRemoteMethod(destAddress, new MethodCall(DELTA_WORK_SUCCESSFUL_METHOD, address),
+                                     opts);
 
                break;
             }
             case DELTA_WORK_FAILED : {
-               disp.callRemoteMethod(destAddress, new MethodCall(DELTA_WORK_FAILED_METHOD),
-                                     opts);
+               org.jboss.jca.core.spi.workmanager.Address address =
+                  (org.jboss.jca.core.spi.workmanager.Address) parameters[0];
 
-               returnValue = 0L;
+               disp.callRemoteMethod(destAddress, new MethodCall(DELTA_WORK_FAILED_METHOD, address),
+                                     opts);
 
                break;
             }
@@ -435,13 +530,6 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
             }
          }
       }
-   }
-
-
-   @Override
-   public String toString()
-   {
-      return "JGroupsTransport [channel=" + channel + ", clustername=" + clusterName + "]";
    }
 
    /**
@@ -495,23 +583,40 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
 
       synchronized (this)
       {
-         for (Entry<String, Address> entry : workManagers.entrySet())
+         for (org.jgroups.Address physicalAddress : nodes.values())
          {
-            if (!view.containsMember(entry.getValue()))
+            if (!view.containsMember(physicalAddress))
             {
-               leave(entry.getKey());
+               leave(physicalAddress);
             }
          }
-         for (Address address : view.getMembers())
+         for (org.jgroups.Address address : view.getMembers())
          {
-            if (!workManagers.containsKey(address.toString()))
+            if (!nodes.containsValue(address))
             {
-               join(address.toString(), address);
-               Long shortRunning = getShortRunningFree(address.toString());
-               Long longRunning = getShortRunningFree(address.toString());
+               try
+               {
+                  Set<org.jboss.jca.core.spi.workmanager.Address> logicalAddresses =
+                     (Set<org.jboss.jca.core.spi.workmanager.Address>)sendMessage(address, Request.GET_WORKMANAGERS);
 
-               localUpdateShortRunningFree(address.toString(), shortRunning);
-               localUpdateLongRunningFree(address.toString(), longRunning);
+                  if (logicalAddresses != null && logicalAddresses.size() > 0)
+                  {
+                     for (org.jboss.jca.core.spi.workmanager.Address logicalAddress : logicalAddresses)
+                     {
+                        join(logicalAddress, address);
+
+                        Long shortRunning = getShortRunningFree(logicalAddress);
+                        Long longRunning = getLongRunningFree(logicalAddress);
+                     
+                        localUpdateShortRunningFree(logicalAddress, shortRunning);
+                        localUpdateLongRunningFree(logicalAddress, longRunning);
+                     }
+                  }
+               }
+               catch (Throwable t)
+               {
+                  // Nothing
+               }
             }
          }
       }
@@ -525,10 +630,10 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
    }
 
    @Override
-   public void suspect(Address address)
+   public void suspect(org.jgroups.Address address)
    {
       if (trace)
-         log.tracef("suspect called w/ Adress=%s", address);
+         log.tracef("suspect called w/ Address=%s", address);
    }
 
    @Override
@@ -536,5 +641,11 @@ public class JGroupsTransport extends AbstractRemoteTransport<Address> implement
    {
       if (trace)
          log.tracef("unblock called");
+   }
+
+   @Override
+   public String toString()
+   {
+      return "JGroupsTransport [channel=" + channel + ", clustername=" + clusterName + "]";
    }
 }

@@ -24,6 +24,8 @@ package org.jboss.jca.core.workmanager.policy;
 
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
+import org.jboss.jca.core.api.workmanager.DistributedWorkManager;
+import org.jboss.jca.core.workmanager.WorkManagerUtil;
 
 import javax.resource.spi.work.DistributableWork;
 
@@ -56,12 +58,12 @@ public class Never extends AbstractPolicy
    /**
     * {@inheritDoc}
     */
-   public boolean shouldDistribute(DistributableWork work)
+   public synchronized boolean shouldDistribute(DistributedWorkManager dwm, DistributableWork work)
    {
       if (trace)
          log.tracef("Work=%s", work);
 
-      Boolean override = getShouldDistribute(work);
+      Boolean override = WorkManagerUtil.getShouldDistribute(work);
       if (override != null)
          return override.booleanValue();
 

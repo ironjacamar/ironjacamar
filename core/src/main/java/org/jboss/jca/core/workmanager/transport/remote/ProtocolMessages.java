@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.core.workmanager.transport.remote;
 
+import org.jboss.jca.core.spi.workmanager.Address;
+
 import java.io.Serializable;
 import java.util.Arrays;
 
@@ -28,61 +30,62 @@ import javax.resource.spi.work.DistributableWork;
 import javax.resource.spi.work.WorkException;
 
 /**
- *
  * A ProtocolMessages.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
- *
+ * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class ProtocolMessages
 {
    /**
-   *
-   * A Command of DistributedWorkManager to through network transport
-   *
-   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
-   *
-   */
+    * A Command of DistributedWorkManager to through network transport
+    *
+    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    */
    public static enum Request
    {
       /** join*/
-      JOIN(2, String.class, String.class),
+      JOIN(1, Serializable.class),
       /** leave */
-      LEAVE(1, String.class),
+      LEAVE(1, Serializable.class),
+      /** get workmanagers */
+      GET_WORKMANAGERS(0),
       /** update short running free */
-      UPDATE_SHORTRUNNING_FREE(2, String.class, Integer.class),
+      UPDATE_SHORTRUNNING_FREE(2, Address.class, Long.class),
       /** update long running free */
-      UPDATE_LONGRUNNING_FREE(2, String.class, Integer.class),
+      UPDATE_LONGRUNNING_FREE(2, Address.class, Long.class),
       /** get short running free */
-      GET_SHORTRUNNING_FREE(0),
+      GET_SHORTRUNNING_FREE(1, Address.class),
       /** get long running free */
-      GET_LONGRUNNING_FREE(0),
+      GET_LONGRUNNING_FREE(1, Address.class),
 
+      /** GET_DISTRIBUTED_STATISTICS */
+      GET_DISTRIBUTED_STATISTICS(1, Address.class),
       /** DELTA_DOWORK_ACCEPTED */
-      DELTA_DOWORK_ACCEPTED(0),
+      DELTA_DOWORK_ACCEPTED(1, Address.class),
       /** DELTA_DOWORK_REJECTED */
-      DELTA_DOWORK_REJECTED(0),
+      DELTA_DOWORK_REJECTED(1, Address.class),
       /** DELTA_STARTWORK_ACCEPTED */
-      DELTA_STARTWORK_ACCEPTED(0),
+      DELTA_STARTWORK_ACCEPTED(1, Address.class),
       /** DELTA_STARTWORK_REJECTED */
-      DELTA_STARTWORK_REJECTED(0),
+      DELTA_STARTWORK_REJECTED(1, Address.class),
       /** DELTA_SCHEDULEWORK_ACCEPTED */
-      DELTA_SCHEDULEWORK_ACCEPTED(0),
+      DELTA_SCHEDULEWORK_ACCEPTED(1, Address.class),
       /** DELTA_SCHEDULEWORK_REJECTED */
-      DELTA_SCHEDULEWORK_REJECTED(0),
+      DELTA_SCHEDULEWORK_REJECTED(1, Address.class),
       /** DELTA_WORK_SUCCESSFUL */
-      DELTA_WORK_SUCCESSFUL(0),
+      DELTA_WORK_SUCCESSFUL(1, Address.class),
       /** DELTA_WORK_FAILED */
-      DELTA_WORK_FAILED(0),
+      DELTA_WORK_FAILED(1, Address.class),
 
       /** PING */
       PING(0),
       /** do work */
-      DO_WORK(1, DistributableWork.class),
+      DO_WORK(2, Address.class, DistributableWork.class),
       /** schedule work */
-      SCHEDULE_WORK(1, DistributableWork.class),
+      SCHEDULE_WORK(2, Address.class, DistributableWork.class),
       /** start work */
-      START_WORK(1, DistributableWork.class);
+      START_WORK(2, Address.class, DistributableWork.class);
 
       private final int numberOfParameter;
 
@@ -125,10 +128,10 @@ public class ProtocolMessages
    */
    public enum Response
    {
-      /** VOID_OK*/
-      VOID_OK(0),
-      /** LONG return */
-      LONG_OK(1, Long.class),
+      /** OK_VOID */
+      OK_VOID(0),
+      /** OK_SERIALIZABLE */
+      OK_SERIALIZABLE(1, Serializable.class),
       /** WORK_EXCEPTION */
       WORK_EXCEPTION(1, WorkException.class),
       /** GENERIC_EXCEPTION */

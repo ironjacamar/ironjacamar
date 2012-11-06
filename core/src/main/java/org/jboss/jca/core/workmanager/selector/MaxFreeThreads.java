@@ -24,7 +24,7 @@ package org.jboss.jca.core.workmanager.selector;
 
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
-import org.jboss.jca.core.workmanager.WorkManagerUtil;
+import org.jboss.jca.core.spi.workmanager.Address;
 
 import java.util.Map;
 
@@ -34,7 +34,7 @@ import org.jboss.logging.Logger;
 import org.jboss.logging.Messages;
 
 /**
- * The ping time selector
+ * The max free threads selector
  *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
@@ -60,8 +60,10 @@ public class MaxFreeThreads extends AbstractSelector
     * {@inheritDoc}
     */
    @Override
-   public String selectDistributedWorkManager(String ownId, DistributableWork work)
+   public synchronized Address selectDistributedWorkManager(Address own, DistributableWork work)
    {
+      /*
+        TODO
       String value = getWorkManager(work);
       if (value != null)
       {
@@ -70,33 +72,27 @@ public class MaxFreeThreads extends AbstractSelector
 
          return value;
       }
+      */
 
-      Map<String, Long> selectionMap = getSelectionMap(work);
-      String result = null;
+      Map<Address, Long> selectionMap = getSelectionMap(own.getWorkManagerId(), work);
+      Address result = null;
       long freeThread = 0L;
 
-      for (Map.Entry<String, Long> entry : selectionMap.entrySet())
+      if (selectionMap != null)
       {
-         String id = entry.getKey();
-         if (!ownId.equals(id))
+         for (Map.Entry<Address, Long> entry : selectionMap.entrySet())
          {
-            Long free = entry.getValue();
-            if (free != null && free.intValue() > 0)
+            Address id = entry.getKey();
+            if (!own.equals(id))
             {
-               long l = 0L;
-               if (WorkManagerUtil.isLongRunning(work))
+               Long free = entry.getValue();
+               if (free != null && free.longValue() > 0)
                {
-                  l = dwm.getTransport().getLongRunningFree(id);
-               }
-               else
-               {
-                  l = dwm.getTransport().getShortRunningFree(id);
-               }
-
-               if (l > freeThread)
-               {
-                  result = id;
-                  freeThread = l;
+                  if (free.longValue() > freeThread)
+                  {
+                     result = id;
+                     freeThread = free.longValue();
+                  }
                }
             }
          }
@@ -107,6 +103,4 @@ public class MaxFreeThreads extends AbstractSelector
 
       return result;
    }
-
-
 }

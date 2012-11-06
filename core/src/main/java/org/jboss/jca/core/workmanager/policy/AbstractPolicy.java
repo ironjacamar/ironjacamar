@@ -24,14 +24,11 @@ package org.jboss.jca.core.workmanager.policy;
 
 import org.jboss.jca.core.api.workmanager.DistributableContext;
 import org.jboss.jca.core.api.workmanager.DistributedWorkManager;
-import org.jboss.jca.core.spi.workmanager.notification.NotificationListener;
 import org.jboss.jca.core.spi.workmanager.policy.Policy;
+import org.jboss.jca.core.workmanager.notification.AbstractNotificationListener;
 
 import java.io.Serializable;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.resource.spi.work.DistributableWork;
 import javax.resource.spi.work.HintsContext;
@@ -39,126 +36,16 @@ import javax.resource.spi.work.WorkContext;
 import javax.resource.spi.work.WorkContextProvider;
 
 /**
- * The never distribute policy
+ * An abstract policy
  *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public abstract class AbstractPolicy implements Policy, NotificationListener
+public abstract class AbstractPolicy extends AbstractNotificationListener implements Policy
 {
-   /** Distributed work manager instance */
-   protected DistributedWorkManager dwm;
-
-   /** Short running */
-   protected Map<String, Long> shortRunning;
-
-   /** Long running */
-   protected Map<String, Long> longRunning;
-
    /**
     * Constructor
     */
    public AbstractPolicy()
-   {
-      this.dwm = null;
-      this.shortRunning = Collections.synchronizedMap(new HashMap<String, Long>());
-      this.longRunning = Collections.synchronizedMap(new HashMap<String, Long>());
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setDistributedWorkManager(DistributedWorkManager dwm)
-   {
-      this.dwm = dwm;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void join(String id)
-   {
-      shortRunning.put(id, null);
-      longRunning.put(id, null);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void leave(String id)
-   {
-      shortRunning.remove(id);
-      longRunning.remove(id);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void updateShortRunningFree(String id, long free)
-   {
-      shortRunning.put(id, Long.valueOf(free));
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void updateLongRunningFree(String id, long free)
-   {
-      longRunning.put(id, Long.valueOf(free));
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void deltaDoWorkAccepted()
-   {
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void deltaDoWorkRejected()
-   {
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void deltaStartWorkAccepted()
-   {
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void deltaStartWorkRejected()
-   {
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void deltaScheduleWorkAccepted()
-   {
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void deltaScheduleWorkRejected()
-   {
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void deltaWorkSuccessful()
-   {
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void deltaWorkFailed()
    {
    }
 
@@ -203,5 +90,5 @@ public abstract class AbstractPolicy implements Policy, NotificationListener
    /**
     * {@inheritDoc}
     */
-   public abstract boolean shouldDistribute(DistributableWork work);
+   public abstract boolean shouldDistribute(DistributedWorkManager dwm, DistributableWork work);
 }

@@ -23,6 +23,8 @@
 package org.jboss.jca.core.workmanager.transport.remote.socket;
 
 import org.jboss.jca.core.CoreBundle;
+import org.jboss.jca.core.CoreLogger;
+import org.jboss.jca.core.spi.workmanager.Address;
 import org.jboss.jca.core.workmanager.transport.remote.AbstractRemoteTransport;
 import org.jboss.jca.core.workmanager.transport.remote.ProtocolMessages.Request;
 import org.jboss.jca.core.workmanager.transport.remote.ProtocolMessages.Response;
@@ -34,10 +36,12 @@ import java.io.Serializable;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.resource.spi.work.WorkException;
 
+import org.jboss.logging.Logger;
 import org.jboss.logging.Messages;
 
 /**
@@ -47,6 +51,12 @@ import org.jboss.logging.Messages;
  */
 public class SocketTransport extends AbstractRemoteTransport<String> implements Runnable
 {
+   /** The logger */
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, SocketTransport.class.getName());
+
+   /** Whether trace is enabled */
+   private static boolean trace = log.isTraceEnabled();
+
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
 
@@ -56,11 +66,17 @@ public class SocketTransport extends AbstractRemoteTransport<String> implements 
    /** The bind port */
    private int port;
 
+   /** The peers */
+   private Set<String> peers;
+
    /** Is the server running ? */
-   private final AtomicBoolean running;
+   private AtomicBoolean running;
 
    /** The server socket */
    private ServerSocket ss;
+
+   /** Is the transport initialized */
+   private boolean initialized;
 
    /**
     * Constructor
@@ -70,16 +86,16 @@ public class SocketTransport extends AbstractRemoteTransport<String> implements 
       super();
       this.host = null;
       this.port = 0;
+      this.peers = null;
       this.running = new AtomicBoolean(false);
       this.ss = null;
+      this.initialized = false;
    }
 
    /**
-    * Start method for bean lifecycle
-    *
-    * @throws Throwable in case of error
+    * {@inheritDoc}
     */
-   public void start() throws Throwable
+   public void startup() throws Throwable
    {
       if (!running.get())
       {
@@ -95,11 +111,98 @@ public class SocketTransport extends AbstractRemoteTransport<String> implements 
    }
 
    /**
-    * Stop method for bean lifecycle
-    *
-    * @throws Throwable in case of error
+    * {@inheritDoc}
     */
-   public void stop() throws Throwable
+   public boolean isInitialized()
+   {
+      return initialized;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void initialize() throws Throwable
+   {
+      if (peers != null && !initialized)
+      {
+         for (String addr : peers)
+         {
+            if (trace)
+               log.tracef("Peer: %s", addr);
+
+            try
+            {
+               // Let other node know of us
+               sendMessage(addr, Request.JOIN, getPhysicalAddress());
+
+               // Update the local information
+               Set<Address> workManagers = (Set<Address>)sendMessage(addr, Request.GET_WORKMANAGERS);
+
+               if (trace)
+                  log.tracef("Peer WorkManagers: %s", workManagers);
+
+               if (workManagers != null)
+               {
+                  for (Address a : workManagers)
+                  {
+                     join(a, addr);
+
+                     long shortRunningFree =
+                        (long)sendMessage(addr, Request.GET_SHORTRUNNING_FREE, a);
+                     long longRunningFree =
+                        (long)sendMessage(addr, Request.GET_LONGRUNNING_FREE, a);
+
+                     localUpdateShortRunningFree(a, shortRunningFree);
+                     localUpdateLongRunningFree(a, longRunningFree);
+                  }
+               }
+            }
+            catch (Throwable t)
+            {
+               log.error(t.getMessage(), t);
+            }
+         }
+      }
+
+      initialized = true;
+   }
+
+   /**
+    * Init
+    */
+   /*
+   protected void init()
+   {
+      if (getWorkManagers() != null)
+      {
+         for (Map.Entry<String, T> entry : getWorkManagers().entrySet())
+         {
+            String id = entry.getKey();
+
+            if (dwm.getPolicy() instanceof NotificationListener)
+            {
+               NotificationListener nl = (NotificationListener) dwm.getPolicy();
+
+               nl.join(id);
+               nl.updateShortRunningFree(id, getShortRunningFree(id));
+               nl.updateLongRunningFree(id, getLongRunningFree(id));
+            }
+            if (dwm.getSelector() instanceof NotificationListener)
+            {
+               NotificationListener nl = (NotificationListener) dwm.getSelector();
+               nl.join(id);
+               nl.updateShortRunningFree(id, getShortRunningFree(id));
+               nl.updateLongRunningFree(id, getLongRunningFree(id));
+            }
+         }
+      }
+   }
+   */
+
+   /**
+    * {@inheritDoc}
+    */
+   public void shutdown() throws Throwable
    {
       running.set(false);
 
@@ -108,7 +211,7 @@ public class SocketTransport extends AbstractRemoteTransport<String> implements 
    }
 
    @Override
-   protected Long sendMessage(String address, Request request, Serializable... parameters)
+   protected Serializable sendMessage(String address, Request request, Serializable... parameters)
       throws WorkException
    {
       String[] addressPart = address.split(":");
@@ -177,7 +280,7 @@ public class SocketTransport extends AbstractRemoteTransport<String> implements 
       }
    }
 
-   private Long parseResponse(Socket socket) throws Throwable
+   private Serializable parseResponse(Socket socket) throws Throwable
    {
       ObjectInputStream ois = null;
 
@@ -199,11 +302,11 @@ public class SocketTransport extends AbstractRemoteTransport<String> implements 
 
          switch (response)
          {
-            case VOID_OK : {
-               return 0L;
+            case OK_VOID : {
+               return null;
             }
-            case LONG_OK : {
-               return (Long)parameters[0];
+            case OK_SERIALIZABLE : {
+               return parameters[0];
             }
             case WORK_EXCEPTION : {
                WorkException we = (WorkException)parameters[0];
@@ -238,16 +341,6 @@ public class SocketTransport extends AbstractRemoteTransport<String> implements 
    }
 
    /**
-    * Get the host.
-    *
-    * @return the host.
-    */
-   public String getHost()
-   {
-      return host;
-   }
-
-   /**
     * Set the host.
     *
     * @param host The host to set.
@@ -258,16 +351,6 @@ public class SocketTransport extends AbstractRemoteTransport<String> implements 
    }
 
    /**
-    * Get the port.
-    *
-    * @return the port.
-    */
-   public int getPort()
-   {
-      return port;
-   }
-
-   /**
     * Set the port.
     *
     * @param port The port to set.
@@ -275,6 +358,24 @@ public class SocketTransport extends AbstractRemoteTransport<String> implements 
    public void setPort(int port)
    {
       this.port = port;
+   }
+
+   /**
+    * Set the peers
+    * @param peers The peers
+    */
+   public void setPeers(Set<String> peers)
+   {
+      this.peers = peers;
+   }
+
+   /**
+    * Get the physical address
+    * @return The value
+    */
+   public String getPhysicalAddress()
+   {
+      return host + ":" + port;
    }
 
    @Override

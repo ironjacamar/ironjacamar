@@ -24,6 +24,7 @@ package org.jboss.jca.deployers.fungal;
 
 import org.jboss.jca.core.api.management.Connector;
 import org.jboss.jca.core.api.management.ManagementRepository;
+import org.jboss.jca.core.bootstrapcontext.BootstrapContextCoordinator;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
@@ -66,6 +67,9 @@ public abstract class AbstractFungalDeployment implements Deployment
 
    /** The resource adapter instance key */
    protected String raKey;
+
+   /** The bootstrap context identifier */
+   protected String bootstrapContextId;
 
    /** The JNDI strategy */
    protected JndiStrategy jndiStrategy;
@@ -119,6 +123,7 @@ public abstract class AbstractFungalDeployment implements Deployment
     * @param activator Is this the activator of the deployment
     * @param ra The resource adapter instance if present
     * @param raKey The resource adapter instance key if present
+    * @param bootstrapContextId The bootstrap context identifier
     * @param jndiStrategy The JNDI strategy
     * @param metadataRepository The metadata repository
     * @param resourceAdapterRepository The resource adapter repository
@@ -137,7 +142,7 @@ public abstract class AbstractFungalDeployment implements Deployment
     * @param log The logger
     */
    public AbstractFungalDeployment(URL deployment, String deploymentName, boolean activator, ResourceAdapter ra,
-                                   String raKey,
+                                   String raKey, String bootstrapContextId,
                                    JndiStrategy jndiStrategy, MetadataRepository metadataRepository, 
                                    ResourceAdapterRepository resourceAdapterRepository,
                                    Object[] cfs, String[] cfJndis, ConnectionManager[] cfCMs,
@@ -152,6 +157,7 @@ public abstract class AbstractFungalDeployment implements Deployment
       this.activator = activator;
       this.ra = ra;
       this.raKey = raKey;
+      this.bootstrapContextId = bootstrapContextId;
       this.jndiStrategy = jndiStrategy;
       this.mdr = metadataRepository;
       this.rar = resourceAdapterRepository;
@@ -319,6 +325,8 @@ public abstract class AbstractFungalDeployment implements Deployment
          {
             ra.stop();
             ra = null;
+
+            BootstrapContextCoordinator.getInstance().removeBootstrapContext(bootstrapContextId);
          }
       }
    }

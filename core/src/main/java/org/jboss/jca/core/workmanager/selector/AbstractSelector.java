@@ -22,243 +22,69 @@
 
 package org.jboss.jca.core.workmanager.selector;
 
-import org.jboss.jca.core.api.workmanager.DistributableContext;
-import org.jboss.jca.core.api.workmanager.DistributedWorkManager;
-import org.jboss.jca.core.spi.workmanager.notification.NotificationListener;
+import org.jboss.jca.core.CoreLogger;
+import org.jboss.jca.core.spi.workmanager.Address;
 import org.jboss.jca.core.spi.workmanager.selector.Selector;
+import org.jboss.jca.core.workmanager.WorkManagerUtil;
+import org.jboss.jca.core.workmanager.notification.AbstractNotificationListener;
 
-import java.io.Serializable;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.resource.spi.work.DistributableWork;
-import javax.resource.spi.work.HintsContext;
-import javax.resource.spi.work.WorkContext;
-import javax.resource.spi.work.WorkContextProvider;
+
+import org.jboss.logging.Logger;
 
 /**
  * Common base class for selector implementations
  */
-public abstract class AbstractSelector implements Selector, NotificationListener
+public abstract class AbstractSelector extends AbstractNotificationListener implements Selector
 {
-   /** Distributed work manager instance */
-   protected DistributedWorkManager dwm;
+   /** The logger */
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class,
+                                                           AbstractSelector.class.getName());
 
-   /** Short running */
-   protected Map<String, Long> shortRunning;
-
-   /** Long running */
-   protected Map<String, Long> longRunning;
+   /** Whether trace is enabled */
+   private static boolean trace = log.isTraceEnabled();
 
    /**
     * Constructor
     */
    public AbstractSelector()
    {
-      this.dwm = null;
-      this.shortRunning = Collections.synchronizedMap(new HashMap<String, Long>());
-      this.longRunning = Collections.synchronizedMap(new HashMap<String, Long>());
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setDistributedWorkManager(DistributedWorkManager dwm)
-   {
-      this.dwm = dwm;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void join(String id)
-   {
-      shortRunning.put(id, null);
-      longRunning.put(id, null);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void leave(String id)
-   {
-      shortRunning.remove(id);
-      longRunning.remove(id);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void updateShortRunningFree(String id, long free)
-   {
-      shortRunning.put(id, Long.valueOf(free));
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void updateLongRunningFree(String id, long free)
-   {
-      longRunning.put(id, Long.valueOf(free));
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void deltaDoWorkAccepted()
-   {
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void deltaDoWorkRejected()
-   {
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void deltaStartWorkAccepted()
-   {
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void deltaStartWorkRejected()
-   {
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void deltaScheduleWorkAccepted()
-   {
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void deltaScheduleWorkRejected()
-   {
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void deltaWorkSuccessful()
-   {
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void deltaWorkFailed()
-   {
    }
 
    /**
     * Get explicit work manager override
-    * @param work The work instance
-    * @return The override, if none return null
-    */
-   protected String getWorkManager(DistributableWork work)
-   {
-      if (work != null && work instanceof WorkContextProvider)
-      {
-         List<WorkContext> contexts = ((WorkContextProvider)work).getWorkContexts();
-         if (contexts != null)
-         {
-            for (WorkContext wc : contexts)
-            {
-               if (wc instanceof DistributableContext)
-               {
-                  DistributableContext dc = (DistributableContext)wc;
-                  return dc.getWorkManager();
-               }
-               else if (wc instanceof HintsContext)
-               {
-                  HintsContext hc = (HintsContext)wc;
-                  if (hc.getHints().keySet().contains(DistributableContext.WORKMANAGER))
-                  {
-                     Serializable value = hc.getHints().get(DistributableContext.WORKMANAGER);
-                     if (value != null && value instanceof String)
-                     {
-                        return (String)value;
-                     }
-                  }
-               }
-            }
-         }
-      }
-
-      return null;
-   }
-
-   /**
-    * Get the data for selection
+    * @param wmId The work manager identifier
     * @param work The work instance
     * @return The selection map
     */
-   protected Map<String, Long> getSelectionMap(DistributableWork work)
+   protected Map<Address, Long> getSelectionMap(String wmId, DistributableWork work)
    {
-      Map<String, Long> sorted = null;
-      if (isLongRunning(work))
+      if (trace)
       {
-         sorted = new HashMap<String, Long>(longRunning);
+         log.tracef("getSelectionMap(%s, %s)", wmId, work);
+         log.tracef("ShortRunning: %s", shortRunning);
+         log.tracef("LongRunning: %s", longRunning);
       }
-      else
+
+      Map<Address, Long> sorted = null;
+
+      if (WorkManagerUtil.isLongRunning(work))
       {
-         sorted = new HashMap<String, Long>(shortRunning);
+         if (longRunning.get(wmId) != null)
+            sorted = new HashMap<Address, Long>(longRunning.get(wmId));
       }
+
+      if (sorted == null && shortRunning.get(wmId) != null)
+         sorted = new HashMap<Address, Long>(shortRunning.get(wmId));
 
       return sorted;
    }
 
    /**
-    * Is a long running work instance
-    * @param work The work instance
-    * @return True if long running, otherwise false
+    * {@inheritDoc}
     */
-   private boolean isLongRunning(DistributableWork work)
-   {
-      if (work != null && work instanceof WorkContextProvider)
-      {
-         List<WorkContext> contexts = ((WorkContextProvider)work).getWorkContexts();
-         if (contexts != null)
-         {
-            for (WorkContext wc : contexts)
-            {
-               if (wc instanceof HintsContext)
-               {
-                  HintsContext hc = (HintsContext)wc;
-                  if (hc.getHints().keySet().contains(HintsContext.LONGRUNNING_HINT))
-                  {
-                     Serializable value = hc.getHints().get(HintsContext.LONGRUNNING_HINT);
-                     if (value != null)
-                     {
-                        if (value instanceof String)
-                        {
-                           return Boolean.valueOf((String)value);
-                        }
-                        else if (value instanceof Boolean)
-                        {
-                           return ((Boolean)value).booleanValue();
-                        }
-                     }
-                     else
-                     {
-                        return true;
-                     }
-                  }
-               }
-            }
-         }
-      }
-
-      return false;
-   }
+   public abstract Address selectDistributedWorkManager(Address own, DistributableWork work);
 }

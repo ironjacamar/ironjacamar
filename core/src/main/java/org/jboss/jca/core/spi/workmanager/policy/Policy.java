@@ -36,15 +36,10 @@ import javax.resource.spi.work.DistributableWork;
 public interface Policy
 {
    /**
-    * Set the distributed work manager
-    * @param dwm The value
-    */
-   public void setDistributedWorkManager(DistributedWorkManager dwm);
-
-   /**
     * Should a distribution of the work happen
+    * @param dwm The invoking distributed work manager
     * @param work The work instance
     * @return True, if the work should be distributed; otherwise false
     */
-   public boolean shouldDistribute(DistributableWork work);
+   public boolean shouldDistribute(DistributedWorkManager dwm, DistributableWork work);
 }

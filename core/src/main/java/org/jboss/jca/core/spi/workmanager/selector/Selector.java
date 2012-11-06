@@ -22,7 +22,7 @@
 
 package org.jboss.jca.core.spi.workmanager.selector;
 
-import org.jboss.jca.core.api.workmanager.DistributedWorkManager;
+import org.jboss.jca.core.spi.workmanager.Address;
 
 import javax.resource.spi.work.DistributableWork;
 
@@ -33,16 +33,10 @@ import javax.resource.spi.work.DistributableWork;
 public interface Selector
 {
    /**
-    * Set the distributed work manager
-    * @param dwm The value
-    */
-   public void setDistributedWorkManager(DistributedWorkManager dwm);
-
-   /**
     * Select a distributed work manager
-    * @param ownId The id of the calling distributed work manager
+    * @param own The address of the invoking distributed work manager
     * @param work The work instance
-    * @return The id of the selected distributed work manager; <code>null</code> if none could be selected
+    * @return The address of the selected distributed work manager; <code>null</code> if none could be selected
     */
-   public String selectDistributedWorkManager(String ownId, DistributableWork work);
+   public Address selectDistributedWorkManager(Address own, DistributableWork work);
 }

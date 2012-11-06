@@ -22,7 +22,8 @@
 
 package org.jboss.jca.core.spi.workmanager.transport;
 
-import org.jboss.jca.core.api.workmanager.DistributedWorkManager;
+import org.jboss.jca.core.api.workmanager.DistributedWorkManagerStatisticsValues;
+import org.jboss.jca.core.spi.workmanager.Address;
 
 import javax.resource.spi.work.DistributableWork;
 import javax.resource.spi.work.WorkException;
@@ -34,118 +35,155 @@ import javax.resource.spi.work.WorkException;
 public interface Transport
 {
    /**
-    * Set the distributed work manager
-    * @param dwm The value
+    * Get the identifier of the transport
+    * @return The value
     */
-   public void setDistributedWorkManager(DistributedWorkManager dwm);
+   public String getId();
+
+   /**
+    * Startup the transport
+    * @exception Throwable In case of an error
+    */
+   public void startup() throws Throwable;
+
+   /**
+    * Shutdown the transport
+    * @exception Throwable In case of an error
+    */
+   public void shutdown() throws Throwable;
+
+   /**
+    * Initialize the transport
+    * @exception Throwable In case of an error
+    */
+   public void initialize() throws Throwable;
+
+   /**
+    * Is the transport initialized
+    * @return The value
+    */
+   public boolean isInitialized();
+
+   /**
+    * Register
+    * @param address The address
+    */
+   public void register(Address address);
 
    /**
     * Ping time to a distributed work manager
-    * @param dwm The id
+    * @param address The address
     * @return The ping time in milliseconds
     */
-   public long ping(String dwm);
+   public long ping(Address address);
 
    /**
     * Get The number of free thread in short running pool from a distributed work manager
-    * @param dwm The id
+    * @param address The address
     * @return The number of free thread in short running pool
     */
-   public long getShortRunningFree(String dwm);
+   public long getShortRunningFree(Address address);
 
    /**
-   * Get The number of free thread in long running pool from a distributed work manager
-   * @param dwm The id
-   * @return The number of free thread in long running pool
-   */
-   public long getLongRunningFree(String dwm);
+    * Get The number of free thread in long running pool from a distributed work manager
+    * @param address The address
+    * @return The number of free thread in long running pool
+    */
+   public long getLongRunningFree(Address address);
 
    /**
     * Update The number of free thread in short running pool from a distributed work manager
     *
-    * @param id The id
+    * @param address The address
     * @param freeCount the number of freeThread
     */
-   public void updateShortRunningFree(String id, long freeCount);
+   public void updateShortRunningFree(Address address, long freeCount);
 
    /**
     * Update The number of free thread in long running pool from a distributed work manager
     *
-    * @param id The id
+    * @param address The address
     * @param freeCount the number of freeThread
     */
-   public void updateLongRunningFree(String id, long freeCount);
+   public void updateLongRunningFree(Address address, long freeCount);
+
+   /**
+    * Get the distributed statistics
+    * @param address The address
+    * @return The value
+    */
+   public DistributedWorkManagerStatisticsValues getDistributedStatistics(Address address);
 
    /**
     * Delta doWork accepted
-    * @param id The work manager id
+    * @param address The address
     */
-   public void deltaDoWorkAccepted(String id);
+   public void deltaDoWorkAccepted(Address address);
 
    /**
     * Delta doWork rejected
-    * @param id The work manager id
+    * @param address The address
     */
-   public void deltaDoWorkRejected(String id);
+   public void deltaDoWorkRejected(Address address);
 
    /**
     * Delta startWork accepted
-    * @param id The work manager id
+    * @param address The address
     */
-   public void deltaStartWorkAccepted(String id);
+   public void deltaStartWorkAccepted(Address address);
 
    /**
     * Delta startWork rejected
-    * @param id The work manager id
+    * @param address The address
     */
-   public void deltaStartWorkRejected(String id);
+   public void deltaStartWorkRejected(Address address);
 
    /**
     * Delta scheduleWork accepted
-    * @param id The work manager id
+    * @param address The address
     */
-   public void deltaScheduleWorkAccepted(String id);
+   public void deltaScheduleWorkAccepted(Address address);
 
    /**
     * Delta scheduleWork rejected
-    * @param id The work manager id
+    * @param address The address
     */
-   public void deltaScheduleWorkRejected(String id);
+   public void deltaScheduleWorkRejected(Address address);
 
    /**
     * Delta work successful
-    * @param id The work manager id
+    * @param address The address
     */
-   public void deltaWorkSuccessful(String id);
+   public void deltaWorkSuccessful(Address address);
 
    /**
     * Delta work failed
-    * @param id The work manager id
+    * @param address The address
     */
-   public void deltaWorkFailed(String id);
+   public void deltaWorkFailed(Address address);
 
    /**
     * doWork
-    * @param id The work manager id
+    * @param address The address
     * @param work The work
     * @exception WorkException Thrown if an error occurs
     */
-   public void doWork(String id, DistributableWork work) throws WorkException;
+   public void doWork(Address address, DistributableWork work) throws WorkException;
 
    /**
     * scheduleWork
-    * @param id The work manager id
+    * @param address The address
     * @param work The work
     * @exception WorkException Thrown if an error occurs
     */
-   public void scheduleWork(String id, DistributableWork work) throws WorkException;
+   public void scheduleWork(Address address, DistributableWork work) throws WorkException;
 
    /**
     * startWork
-    * @param id The work manager id
+    * @param address The address
     * @param work The work
     * @return The delay
     * @exception WorkException Thrown if an error occurs
     */
-   public long startWork(String id, DistributableWork work) throws WorkException;
+   public long startWork(Address address, DistributableWork work) throws WorkException;
 }

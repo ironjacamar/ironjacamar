@@ -58,9 +58,32 @@ public class DistributedWorkManagerStatisticsValues implements Serializable
 
    /**
     * Constructor
+    * @param successful successful
+    * @param failed failed
+    * @param doWorkAccepted doWorkAccepted
+    * @param doWorkRejected doWorkRejected
+    * @param scheduleWorkAccepted scheduleWorkAccepted
+    * @param scheduleWorkRejected scheduleWorkRejected
+    * @param startWorkAccepted startWorkAccepted
+    * @param startWorkRejected startWorkRejected
     */
-   public DistributedWorkManagerStatisticsValues()
+   public DistributedWorkManagerStatisticsValues(int successful,
+                                                 int failed,
+                                                 int doWorkAccepted,
+                                                 int doWorkRejected,
+                                                 int scheduleWorkAccepted,
+                                                 int scheduleWorkRejected,
+                                                 int startWorkAccepted,
+                                                 int startWorkRejected)
    {
+      this.successful = successful;
+      this.failed = failed;
+      this.doWorkAccepted = doWorkAccepted;
+      this.doWorkRejected = doWorkRejected;
+      this.scheduleWorkAccepted = scheduleWorkAccepted;
+      this.scheduleWorkRejected = scheduleWorkRejected;
+      this.startWorkAccepted = startWorkAccepted;
+      this.startWorkRejected = startWorkRejected;
    }
 
    /**

@@ -22,24 +22,26 @@
 
 package org.jboss.jca.core.workmanager;
 
+import org.jboss.jca.core.api.workmanager.DistributableContext;
+
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.resource.spi.work.DistributableWork;
 import javax.resource.spi.work.HintsContext;
 import javax.resource.spi.work.Work;
 import javax.resource.spi.work.WorkContext;
 import javax.resource.spi.work.WorkContextProvider;
 
 /**
- *
- * A WorkManagerUtil.
+ * Utility methods for the WorkManager
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
- *
+ * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class WorkManagerUtil
 {
-
    /**
     *
     * Utility method to decide if a work will have to run under long running thread pool
@@ -49,7 +51,6 @@ public class WorkManagerUtil
     */
    public static boolean isLongRunning(Work work)
    {
-      boolean isLongRunning = false;
       if (work instanceof WorkContextProvider)
       {
          WorkContextProvider wcProvider = (WorkContextProvider) work;
@@ -67,13 +68,105 @@ public class WorkManagerUtil
                   HintsContext hc = (HintsContext) wc;
                   if (hc.getHints().containsKey(HintsContext.LONGRUNNING_HINT))
                   {
-                     isLongRunning = true;
-                     found = true;
+                     Serializable value = hc.getHints().get(HintsContext.LONGRUNNING_HINT);
+                     if (value != null)
+                     {
+                        if (value instanceof String)
+                        {
+                           return Boolean.valueOf((String)value);
+                        }
+                        else if (value instanceof Boolean)
+                        {
+                           return ((Boolean)value).booleanValue();
+                        }
+                     }
+                     else
+                     {
+                        // Assume true
+                        return true;
+                     }
                   }
                }
             }
          }
       }
-      return isLongRunning;
+
+      return false;
+   }
+
+   /**
+    * Get should distribute override
+    * @param work The work instance
+    * @return The override, if none return null
+    */
+   public static Boolean getShouldDistribute(DistributableWork work)
+   {
+      if (work != null && work instanceof WorkContextProvider)
+      {
+         List<WorkContext> contexts = ((WorkContextProvider)work).getWorkContexts();
+         if (contexts != null)
+         {
+            for (WorkContext wc : contexts)
+            {
+               if (wc instanceof DistributableContext)
+               {
+                  DistributableContext dc = (DistributableContext)wc;
+                  return dc.getDistribute();
+               }
+               else if (wc instanceof HintsContext)
+               {
+                  HintsContext hc = (HintsContext)wc;
+                  if (hc.getHints().keySet().contains(DistributableContext.DISTRIBUTE))
+                  {
+                     Serializable value = hc.getHints().get(DistributableContext.DISTRIBUTE);
+                     if (value != null && value instanceof Boolean)
+                     {
+                        return (Boolean)value;
+                     }
+                  }
+               }
+            }
+         }
+      }
+
+      return null;
+   }
+
+   /**
+    * Get explicit work manager override
+    * @param work The work instance
+    * @return The override, if none return null
+    */
+   public static String getWorkManager(DistributableWork work)
+   {
+      if (work != null && work instanceof WorkContextProvider)
+      {
+         List<WorkContext> contexts = ((WorkContextProvider)work).getWorkContexts();
+         if (contexts != null)
+         {
+            for (WorkContext wc : contexts)
+            {
+               if (wc instanceof DistributableContext)
+               {
+                  DistributableContext dc = (DistributableContext)wc;
+                  return dc.getWorkManager();
+               }
+               else if (wc instanceof HintsContext)
+               {
+                  HintsContext hc = (HintsContext)wc;
+                  if (hc.getHints().keySet().contains(DistributableContext.WORKMANAGER))
+                  {
+                     Serializable value = hc.getHints().get(DistributableContext.WORKMANAGER);
+                     if (value != null && value instanceof String)
+                     {
+                        return (String)value;
+                     }
+                  }
+               }
+            }
+         }
+      }
+
+      return null;
    }
 }
