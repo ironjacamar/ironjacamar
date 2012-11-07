@@ -24,6 +24,7 @@ package org.jboss.jca.eclipse;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -45,7 +46,7 @@ public class ResourceBundles
    {
       super();
       resBundles = new ArrayList<ResourceBundle>();
-      resBundles.add(ResourceBundle.getBundle("eclipse-plugin")); // eclipse-plugin.properties
+      resBundles.add(ResourceBundle.getBundle("eclipse-plugin", Locale.US, ResourceBundles.class.getClassLoader()));
    }
    
    
