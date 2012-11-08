@@ -560,7 +560,7 @@ public class McCodeGen extends AbstractCodeGen
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @return Character ourput stream associated with this Managed-Connection instance");
+      out.write(" * @return Character output stream associated with this Managed-Connection instance");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" * @throws ResourceException generic exception if operation fails");

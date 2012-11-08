@@ -181,7 +181,7 @@ public class AsCodeGen extends PropsCodeGen
       out.write(" *");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @throws InvalidPropertyException indicates invalid onfiguration property settings.");
+      out.write(" * @throws InvalidPropertyException indicates invalid configuration property settings.");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
