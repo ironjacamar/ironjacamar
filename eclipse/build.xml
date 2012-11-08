@@ -101,6 +101,8 @@
       <fileset dir="."
                includes="plugin.xml build.properties icons/** libs/** META-INF/**"/>
     </copy>
+    <copy todir="${build.eclipse.dir}/jars/eclipse" file="src/main/resources/eclipse-plugin.properties">
+    </copy>
 
     <jar destfile="${target.dir}/${name}-eclipse.jar"
          basedir="${build.eclipse.dir}/jars/eclipse"
