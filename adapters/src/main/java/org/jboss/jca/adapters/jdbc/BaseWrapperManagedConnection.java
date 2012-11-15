@@ -293,17 +293,28 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
             mcf.log.warn(t.getMessage(), t);
          }
 
-         isActive = true;
+         // Double-check
+         if (lock.hasQueuedThreads())
+            isActive = true;
       }
 
       if (lock.isLocked())
       {
-         Throwable t = new Throwable("Lock owned during cleanup");
-         t.setStackTrace(lock.getOwner().getStackTrace());
-
-         mcf.log.warn(t.getMessage(), t);
-
-         isActive = true;
+         Thread owner = lock.getOwner();
+         if (owner != null)
+         {
+            Throwable t = new Throwable("Lock owned during cleanup");
+            t.setStackTrace(owner.getStackTrace());
+            mcf.log.warn(t.getMessage(), t);
+         }
+         else
+         {
+            mcf.log.warn("Lock is locked during cleanup without an owner");
+         }
+         
+         // Double-check
+         if (lock.isLocked())
+            isActive = true;
       }
 
       synchronized (handles)
