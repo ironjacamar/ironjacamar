@@ -336,44 +336,45 @@ public class Main
          if (connector.getVersion() != Version.V_10)
          {
             ResourceAdapter1516 ra1516 = (ResourceAdapter1516)ra;
+            Map<String, String> introspected;
+            
             if (ra1516.getResourceadapterClass() != null && !ra1516.getResourceadapterClass().equals(""))
             {
                out.println();
                out.println("Resource-adapter:");
                out.println("-----------------");
                out.println("Class: " + ra1516.getResourceadapterClass());
-            }
-            
-            Map<String, String> introspected =
-               getIntrospectedProperties(ra1516.getResourceadapterClass(), cl);
+               
+               introspected = getIntrospectedProperties(ra1516.getResourceadapterClass(), cl);
 
-            if (ra1516.getConfigProperties() != null)
-            {
-               raConfigProperties = new HashMap<String, String>();
-               for (ConfigProperty cp : ra1516.getConfigProperties())
+               if (ra1516.getConfigProperties() != null)
                {
-                  raConfigProperties.put(getValueString(cp.getConfigPropertyName()), 
-                                         getValueString(cp.getConfigPropertyValue()));
-                  
-                  removeIntrospectedValue(introspected, getValueString(cp.getConfigPropertyName()));
+                  raConfigProperties = new HashMap<String, String>();
+                  for (ConfigProperty cp : ra1516.getConfigProperties())
+                  {
+                     raConfigProperties.put(getValueString(cp.getConfigPropertyName()),
+                           getValueString(cp.getConfigPropertyValue()));
 
-                  out.println("  Config-property: " + getValueString(cp.getConfigPropertyName()) + " (" +
-                              getValueString(cp.getConfigPropertyType()) + ")");
+                     removeIntrospectedValue(introspected, getValueString(cp.getConfigPropertyName()));
+
+                     out.println("  Config-property: " + getValueString(cp.getConfigPropertyName()) + " ("
+                           + getValueString(cp.getConfigPropertyType()) + ")");
+                  }
                }
-            }
 
-            if (introspected != null && !introspected.isEmpty())
-            {
-               for (Map.Entry<String, String> entry : introspected.entrySet())
+               if (introspected != null && !introspected.isEmpty())
                {
-                  out.println("  Introspected Config-property: " + entry.getKey() + " (" +
-                              entry.getValue() + ")");
+                  for (Map.Entry<String, String> entry : introspected.entrySet())
+                  {
+                     out.println("  Introspected Config-property: " + entry.getKey() + " (" + entry.getValue() + ")");
+                  }
                }
+
+               if (introspected == null)
+                  out.println("  Unable to resolve introspected config-property's");
+
             }
 
-            if (introspected == null)
-               out.println("  Unable to resolve introspected config-property's");
-            
             int line = 0;
             Set<String> sameClassnameSet = new HashSet<String>();
             boolean needPrint = true;
