@@ -720,18 +720,20 @@ public class Main
    private static void copyAllJars(String outputDir) throws IOException
    {
       File out = new File(outputDir);
-      String path = out.getAbsolutePath();
-      String targetPath = path + File.separatorChar + "lib";
+      String targetPath = out.getAbsolutePath() + File.separatorChar + "lib";
+      
+      File current = new File(".");   
+      String path = current.getCanonicalPath();
 
-      String libPath = path + File.separatorChar + ".." + File.separatorChar + ".." + File.separatorChar + 
+      String libPath = path + File.separatorChar + ".." + File.separatorChar + 
          ".." + File.separatorChar + "lib";
       Utils.copyFolder(libPath, targetPath, "jar");
 
-      String binPath = path + File.separatorChar + ".." + File.separatorChar + ".." + File.separatorChar + 
+      String binPath = path + File.separatorChar + ".." + File.separatorChar + 
          ".." + File.separatorChar + "bin";
       Utils.copyFolder(binPath, targetPath, "jar");
       
-      String eisPath = path + File.separatorChar + ".." + File.separatorChar + ".." + File.separatorChar + 
+      String eisPath = path + File.separatorChar + ".." + File.separatorChar + 
             ".." + File.separatorChar + "doc" + File.separatorChar + "eis";
       Utils.copyFolder(eisPath, targetPath, "jar");
    }
