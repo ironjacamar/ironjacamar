@@ -168,38 +168,6 @@ public class SocketTransport extends AbstractRemoteTransport<String> implements 
    }
 
    /**
-    * Init
-    */
-   /*
-   protected void init()
-   {
-      if (getWorkManagers() != null)
-      {
-         for (Map.Entry<String, T> entry : getWorkManagers().entrySet())
-         {
-            String id = entry.getKey();
-
-            if (dwm.getPolicy() instanceof NotificationListener)
-            {
-               NotificationListener nl = (NotificationListener) dwm.getPolicy();
-
-               nl.join(id);
-               nl.updateShortRunningFree(id, getShortRunningFree(id));
-               nl.updateLongRunningFree(id, getLongRunningFree(id));
-            }
-            if (dwm.getSelector() instanceof NotificationListener)
-            {
-               NotificationListener nl = (NotificationListener) dwm.getSelector();
-               nl.join(id);
-               nl.updateShortRunningFree(id, getShortRunningFree(id));
-               nl.updateLongRunningFree(id, getLongRunningFree(id));
-            }
-         }
-      }
-   }
-   */
-
-   /**
     * {@inheritDoc}
     */
    public void shutdown() throws Throwable
@@ -240,7 +208,7 @@ public class SocketTransport extends AbstractRemoteTransport<String> implements 
       {
          if (log.isDebugEnabled())
          {
-            log.debug("error sending command");
+            log.debug("Error sending command: " + t.getMessage(), t);
          }
          if (t instanceof WorkException)
          {

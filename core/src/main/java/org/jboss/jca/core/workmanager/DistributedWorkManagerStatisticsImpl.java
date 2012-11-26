@@ -22,6 +22,7 @@
 
 package org.jboss.jca.core.workmanager;
 
+import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.workmanager.DistributedWorkManagerStatistics;
 import org.jboss.jca.core.api.workmanager.DistributedWorkManagerStatisticsValues;
 import org.jboss.jca.core.spi.workmanager.Address;
@@ -33,12 +34,21 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.jboss.logging.Logger;
+
 /**
  * The JBoss distributed work manager statistics implementation
  */
 public class DistributedWorkManagerStatisticsImpl implements DistributedWorkManagerStatistics,
                                                              NotificationListener
 {
+   /** The logger */
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class,
+                                                           DistributedWorkManagerStatistics.class.getName());
+
+   /** Whether trace is enabled */
+   private static boolean trace = log.isTraceEnabled();
+
    /** Own identifier */
    private Address own;
 
@@ -295,6 +305,9 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
    {
       doWorkAccepted.incrementAndGet();
 
+      if (trace)
+         log.tracef("sendDeltaDoWorkAccepted: %s", workManagers);
+
       for (Address address : workManagers)
       {
          if (!own.equals(address))
@@ -308,6 +321,9 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
    void sendDeltaDoWorkRejected()
    {
       doWorkRejected.incrementAndGet();
+
+      if (trace)
+         log.tracef("sendDeltaDoWorkRejected: %s", workManagers);
 
       for (Address address : workManagers)
       {
@@ -323,6 +339,9 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
    {
       scheduleWorkAccepted.incrementAndGet();
 
+      if (trace)
+         log.tracef("sendDeltaScheduleWorkAccepted: %s", workManagers);
+
       for (Address address : workManagers)
       {
          if (!own.equals(address))
@@ -336,6 +355,9 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
    void sendDeltaScheduleWorkRejected()
    {
       scheduleWorkRejected.incrementAndGet();
+
+      if (trace)
+         log.tracef("sendDeltaScheduleWorkRejected: %s", workManagers);
 
       for (Address address : workManagers)
       {
@@ -351,6 +373,9 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
    {
       startWorkAccepted.incrementAndGet();
 
+      if (trace)
+         log.tracef("sendDeltaStartWorkAccepted: %s", workManagers);
+
       for (Address address : workManagers)
       {
          if (!own.equals(address))
@@ -364,6 +389,9 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
    void sendDeltaStartWorkRejected()
    {
       startWorkRejected.incrementAndGet();
+
+      if (trace)
+         log.tracef("sendDeltaStartWorkRejected: %s", workManagers);
 
       for (Address address : workManagers)
       {
@@ -379,6 +407,9 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
    {
       successful.incrementAndGet();
 
+      if (trace)
+         log.tracef("sendDeltaWorkSuccessful: %s", workManagers);
+
       for (Address address : workManagers)
       {
          if (!own.equals(address))
@@ -392,6 +423,9 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
    void sendDeltaWorkFailed()
    {
       failed.incrementAndGet();
+
+      if (trace)
+         log.tracef("sendDeltaWorkFailed: %s", workManagers);
 
       for (Address address : workManagers)
       {

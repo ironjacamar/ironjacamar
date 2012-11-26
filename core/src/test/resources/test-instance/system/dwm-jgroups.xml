@@ -66,7 +66,7 @@
   <bean name="DistributedWorkManagerTransportJGroups"
         class="org.jboss.jca.core.workmanager.transport.remote.jgroups.JGroupsTransport">
     <!-- The id -->
-    <property name="Id">1</property>
+    <property name="Id">2</property>
 
     <!-- The channel -->
     <property name="Channel">

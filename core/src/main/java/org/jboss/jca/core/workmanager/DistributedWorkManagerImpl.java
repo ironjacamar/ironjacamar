@@ -79,6 +79,9 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    /** Distributed statistics */
    private DistributedWorkManagerStatisticsImpl distributedStatistics;
 
+   /** Local address */
+   private Address localAddress;
+
    /**
     * Constructor
     */
@@ -91,6 +94,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
       this.listeners = Collections.synchronizedList(new ArrayList<NotificationListener>(3));
       this.distributedStatisticsEnabled = true;
       this.distributedStatistics = null;
+      this.localAddress = null;
    }
 
    /**
@@ -112,8 +116,6 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
       {
          if (policy instanceof NotificationListener)
             listeners.add((NotificationListener)policy);
-
-         //policy.setDistributedWorkManager(this);
       }
    }
 
@@ -136,8 +138,6 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
       {
          if (selector instanceof NotificationListener)
             listeners.add((NotificationListener)selector);
-
-         //selector.setDistributedWorkManager(this);
       }
    }
 
@@ -160,8 +160,6 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
       {
          if (transport instanceof NotificationListener)
             listeners.add((NotificationListener)transport);
-
-         //transport.setDistributedWorkManager(this);
       }
    }
 
@@ -198,30 +196,22 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
 
       if (WorkManagerUtil.isLongRunning(work))
       {
-         transport.updateLongRunningFree(new Address(getId(), transport.getId()),
+         transport.updateLongRunningFree(getLocalAddress(),
                                          getLongRunningThreadPool().getNumberOfFreeThreads() - 1);
       }
       else
       {
-         transport.updateShortRunningFree(new Address(getId(), transport.getId()),
+         transport.updateShortRunningFree(getLocalAddress(),
                                           getShortRunningThreadPool().getNumberOfFreeThreads() - 1);
       }
 
-      super.doWork(work, WorkManager.INDEFINITE, null, null);
+      WorkEventListener wel = new WorkEventListener(WorkManagerUtil.isLongRunning(work),
+                                                    getShortRunningThreadPool(),
+                                                    getLongRunningThreadPool(),
+                                                    getLocalAddress(),
+                                                    transport);
 
-      /*
-        TODO
-      if (WorkManagerUtil.isLongRunning(work))
-      {
-         transport.updateLongRunningFree(new Address(getId(), transport.getId()),
-                                         getLongRunningThreadPool().getNumberOfFreeThreads());
-      }
-      else
-      {
-         transport.updateShortRunningFree(new Address(getId(), transport.getId()),
-                                          getShortRunningThreadPool().getNumberOfFreeThreads());
-      }
-      */
+      super.doWork(work, WorkManager.INDEFINITE, null, wel);
    }
 
    /**
@@ -233,30 +223,22 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
 
       if (WorkManagerUtil.isLongRunning(work))
       {
-         transport.updateLongRunningFree(new Address(getId(), transport.getId()),
+         transport.updateLongRunningFree(getLocalAddress(),
                                          getLongRunningThreadPool().getNumberOfFreeThreads() - 1);
       }
       else
       {
-         transport.updateShortRunningFree(new Address(getId(), transport.getId()),
+         transport.updateShortRunningFree(getLocalAddress(),
                                           getShortRunningThreadPool().getNumberOfFreeThreads() - 1);
       }
 
-      super.scheduleWork(work, WorkManager.INDEFINITE, null, null);
+      WorkEventListener wel = new WorkEventListener(WorkManagerUtil.isLongRunning(work),
+                                                    getShortRunningThreadPool(),
+                                                    getLongRunningThreadPool(),
+                                                    getLocalAddress(),
+                                                    transport);
 
-      /*
-        TODO
-      if (WorkManagerUtil.isLongRunning(work))
-      {
-         transport.updateLongRunningFree(new Address(getId(), transport.getId()),
-                                         getLongRunningThreadPool().getNumberOfFreeThreads());
-      }
-      else
-      {
-         transport.updateShortRunningFree(new Address(getId(), transport.getId()),
-                                          getShortRunningThreadPool().getNumberOfFreeThreads());
-      }
-      */
+      super.scheduleWork(work, WorkManager.INDEFINITE, null, wel);
    }
 
    /**
@@ -268,30 +250,22 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
 
       if (WorkManagerUtil.isLongRunning(work))
       {
-         transport.updateLongRunningFree(new Address(getId(), transport.getId()),
+         transport.updateLongRunningFree(getLocalAddress(),
                                          getLongRunningThreadPool().getNumberOfFreeThreads() - 1);
       }
       else
       {
-         transport.updateShortRunningFree(new Address(getId(), transport.getId()),
+         transport.updateShortRunningFree(getLocalAddress(),
                                           getShortRunningThreadPool().getNumberOfFreeThreads() - 1);
       }
 
-      return super.startWork(work, WorkManager.INDEFINITE, null, null);
+      WorkEventListener wel = new WorkEventListener(WorkManagerUtil.isLongRunning(work),
+                                                    getShortRunningThreadPool(),
+                                                    getLongRunningThreadPool(),
+                                                    getLocalAddress(),
+                                                    transport);
 
-      /*
-        TODO
-      if (WorkManagerUtil.isLongRunning(work))
-      {
-         transport.updateLongRunningFree(new Address(getId(), transport.getId()),
-                                         getLongRunningThreadPool().getNumberOfFreeThreads());
-      }
-      else
-      {
-         transport.updateShortRunningFree(new Address(getId(), transport.getId()),
-                                          getShortRunningThreadPool().getNumberOfFreeThreads());
-      }
-      */
+      return super.startWork(work, WorkManager.INDEFINITE, null, wel);
    }
 
    /**
@@ -314,10 +288,8 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
 
          if (policy.shouldDistribute(this, dw))
          {
-            Address localAddress = new Address(getId(), transport.getId());
-
-            Address dwmAddress = selector.selectDistributedWorkManager(localAddress, dw);
-            if (dwmAddress != null && !localAddress.equals(dwmAddress))
+            Address dwmAddress = selector.selectDistributedWorkManager(getLocalAddress(), dw);
+            if (dwmAddress != null && !getLocalAddress().equals(dwmAddress))
             {
                transport.doWork(dwmAddress, dw);
                executed = true;
@@ -350,10 +322,8 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
 
          if (policy.shouldDistribute(this, dw))
          {
-            Address localAddress = new Address(getId(), transport.getId());
-
-            Address dwmAddress = selector.selectDistributedWorkManager(localAddress, dw);
-            if (dwmAddress != null && !localAddress.equals(dwmAddress))
+            Address dwmAddress = selector.selectDistributedWorkManager(getLocalAddress(), dw);
+            if (dwmAddress != null && !getLocalAddress().equals(dwmAddress))
             {
                return transport.startWork(dwmAddress, dw);
             }
@@ -383,10 +353,8 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
 
          if (policy.shouldDistribute(this, dw))
          {
-            Address localAddress = new Address(getId(), transport.getId());
-
-            Address dwmAddress = selector.selectDistributedWorkManager(localAddress, dw);
-            if (dwmAddress != null && !localAddress.equals(dwmAddress))
+            Address dwmAddress = selector.selectDistributedWorkManager(getLocalAddress(), dw);
+            if (dwmAddress != null && !getLocalAddress().equals(dwmAddress))
             {
                transport.scheduleWork(dwmAddress, dw);
                executed = true;
@@ -406,17 +374,12 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
     */
    private void checkTransport() throws WorkException
    {
-      if (transport == null)
-         throw new WorkException("Transport is null");
-
       if (!transport.isInitialized())
       {
-         transport.register(new Address(getId(), transport.getId()));
-
          try
          {
             transport.initialize();
-            initDistributedStatistics();
+            initialize();
          }
          catch (Throwable t)
          {
@@ -451,8 +414,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    {
       if (distributedStatistics == null)
       {
-         distributedStatistics = new DistributedWorkManagerStatisticsImpl(new Address(getId(), transport.getId()),
-                                                                          transport);
+         distributedStatistics = new DistributedWorkManagerStatisticsImpl(getLocalAddress(), transport);
          listeners.add((NotificationListener)distributedStatistics);
       }
    }
@@ -463,6 +425,9 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    @Override
    protected void deltaDoWorkAccepted()
    {
+      if (trace)
+         log.trace("deltaDoWorkAccepted");
+
       super.deltaDoWorkAccepted();
 
       if (distributedStatisticsEnabled)
@@ -485,6 +450,9 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    @Override
    protected void deltaDoWorkRejected()
    {
+      if (trace)
+         log.trace("deltaDoWorkRejected");
+
       super.deltaDoWorkRejected();
 
       if (distributedStatisticsEnabled)
@@ -507,6 +475,9 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    @Override
    protected void deltaStartWorkAccepted()
    {
+      if (trace)
+         log.trace("deltaStartWorkAccepted");
+
       super.deltaStartWorkAccepted();
 
       if (distributedStatisticsEnabled)
@@ -529,6 +500,9 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    @Override
    protected void deltaStartWorkRejected()
    {
+      if (trace)
+         log.trace("deltaStartWorkRejected");
+
       super.deltaStartWorkRejected();
 
       if (distributedStatisticsEnabled)
@@ -551,6 +525,9 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    @Override
    protected void deltaScheduleWorkAccepted()
    {
+      if (trace)
+         log.trace("deltaScheduleWorkAccepted");
+
       super.deltaScheduleWorkAccepted();
 
       if (distributedStatisticsEnabled)
@@ -573,6 +550,9 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    @Override
    protected void deltaScheduleWorkRejected()
    {
+      if (trace)
+         log.trace("deltaScheduleWorkRejected");
+
       super.deltaScheduleWorkRejected();
 
       if (distributedStatisticsEnabled)
@@ -595,6 +575,9 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    @Override
    protected void deltaWorkSuccessful()
    {
+      if (trace)
+         log.trace("deltaWorkSuccessful");
+
       super.deltaWorkSuccessful();
 
       if (distributedStatisticsEnabled)
@@ -617,6 +600,9 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    @Override
    protected void deltaWorkFailed()
    {
+      if (trace)
+         log.trace("deltaWorkFailed");
+
       super.deltaWorkFailed();
 
       if (distributedStatisticsEnabled)
@@ -631,6 +617,26 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
             log.debugf("deltaWorkFailed: %s", we.getMessage(), we);
          }
       }
+   }
+
+   /**
+    * Get local address
+    * @return The value
+    */
+   Address getLocalAddress()
+   {
+      if (localAddress == null)
+         localAddress = new Address(getId(), transport.getId());
+
+      return localAddress;
+   }
+
+   /**
+    * Initialize
+    */
+   public void initialize()
+   {
+      initDistributedStatistics();
    }
 
    /**

@@ -184,13 +184,156 @@
         
         <fileset dir="${build.core.dir}/test">
           <include name="**/*TestCase.class"/>
+          <exclude name="**/*BMTestCase.class"/>
+          <exclude name="**/*MJVMTestCase.class"/>
         </fileset>
       </batchtest>
 
     </junit>
     
+    <ant target="byteman-test"/>
+    <ant target="mjvm-test"/>
+
   </target>
 
+  <!-- ================================= 
+       Target: byteman-test
+       ================================= -->
+  <target name="byteman-test" unless="IBM">
+    <junit dir="src/test"
+           printsummary="${junit.printsummary}"
+           haltonerror="${junit.haltonerror}"
+           haltonfailure="${junit.haltonfailure}"
+           fork="${junit.fork}"
+           timeout="${junit.timeout}">
+      
+      <jvmarg line="${junit.jvm.options}"/>
+      <sysproperty key="archives.dir" value="${build.core.dir}"/>
+      <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
+      <sysproperty key="log4j.defaultInitOverride" value="true"/>
+      <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
+      <sysproperty key="test.dir" value="${test.dir}"/>
+      <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
+      
+      <classpath>
+        <pathelement location="${build.core.dir}/test"/>
+        <fileset dir="${target.dir}" includes="*.jar"/>
+        <fileset dir="${lib.dir}/common" includes="*.jar" />
+        <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
+        <fileset dir="${lib.dir}/embedded" includes="*.jar" />
+        <fileset dir="${lib.dir}/byteman" includes="*.jar" />
+        <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
+        <fileset dir="${lib.dir}/sjc" includes="*.jar" />
+        <fileset dir="${lib.dir}/test" includes="*.jar" />
+        <fileset dir="${java.home}/../lib/" includes="tools.jar" />
+      </classpath>
+      
+      <formatter type="plain"/>
+      <formatter type="xml"/>
+      
+      <batchtest todir="${reports.dir}/core"
+                 haltonerror="${junit.batchtest.haltonerror}"
+                 haltonfailure="${junit.batchtest.haltonfailure}"
+                 fork="${junit.batchtest.fork}">
+        
+        <fileset dir="${build.core.dir}/test">
+          <include name="**/*BMTestCase.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+  </target>
+
+  <!-- ================================= 
+       Target: mjvm-test
+       ================================= -->
+  <target name="mjvm-test">
+    <path id="ant.lib.path.id">
+      <fileset dir="../target">
+        <include name="*.jar"/>
+      </fileset>
+    </path>
+
+    <taskdef name="start"
+             classname="org.jboss.jca.sjc.ant.Start"
+             classpathref="ant.lib.path.id"/>
+    <taskdef name="ping"
+             classname="org.jboss.jca.sjc.ant.Ping"
+             classpathref="ant.lib.path.id"/>
+    <taskdef name="stop"
+             classname="org.jboss.jca.sjc.ant.Stop"
+             classpathref="ant.lib.path.id"/>
+    <taskdef name="deploy"
+             classname="org.jboss.jca.sjc.ant.Deploy"
+             classpathref="ant.lib.path.id"/>
+    <taskdef name="undeploy"
+             classname="org.jboss.jca.sjc.ant.Undeploy"
+             classpathref="ant.lib.path.id"/>
+
+    <mkdir dir="${build.core.dir}/ij" />
+    <copy todir="${build.core.dir}/ij" overwrite="true">
+      <fileset dir="${build.dir}/ij-template"/>
+    </copy>
+    <copy todir="${build.core.dir}/ij" overwrite="true">
+      <fileset dir="src/test/resources/test-instance"/>
+    </copy>
+
+    <start home="${build.core.dir}/ij" options="${build.core.dir}/ij/bin/ironjacamar.properties"/>
+    <waitfor maxwait="15" maxwaitunit="second">
+      <socket server="localhost" port="1303"/>
+    </waitfor>
+    <ping host="localhost" port="1303"/>
+    <deploy host="localhost" port="1303" file="${build.core.dir}/test/work.rar"/>
+    <deploy host="localhost" port="1303" file="src/test/resources/test-instance/dwm-bc-jgroups-ra.xml"/>
+    <deploy host="localhost" port="1303" file="src/test/resources/test-instance/dwm-bc-socket-ra.xml"/>
+
+    <junit dir="src/test"
+           printsummary="${junit.printsummary}"
+           haltonerror="${junit.haltonerror}"
+           haltonfailure="${junit.haltonfailure}"
+           fork="${junit.fork}"
+           timeout="${junit.timeout}">
+      
+      <jvmarg line="${junit.jvm.options}"/>
+      <sysproperty key="archives.dir" value="${build.core.dir}"/>
+      <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
+      <sysproperty key="log4j.defaultInitOverride" value="true"/>
+      <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
+      <sysproperty key="test.dir" value="${test.dir}"/>
+      <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
+      
+      <classpath>
+        <pathelement location="${build.core.dir}/test"/>
+        <fileset dir="${target.dir}" includes="*.jar"/>
+        <fileset dir="${lib.dir}/common" includes="*.jar" />
+        <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
+        <fileset dir="${lib.dir}/embedded" includes="*.jar" />
+        <fileset dir="${lib.dir}/byteman" includes="*.jar" />
+        <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
+        <fileset dir="${lib.dir}/sjc" includes="*.jar" />
+        <fileset dir="${lib.dir}/test" includes="*.jar" />
+        <fileset dir="${java.home}/../lib/" includes="tools.jar" />
+      </classpath>
+      
+      <formatter type="plain"/>
+      <formatter type="xml"/>
+      
+      <batchtest todir="${reports.dir}/core"
+                 haltonerror="${junit.batchtest.haltonerror}"
+                 haltonfailure="${junit.batchtest.haltonfailure}"
+                 fork="${junit.batchtest.fork}">
+        
+        <fileset dir="${build.core.dir}/test">
+          <include name="**/*MJVMTestCase.class"/>
+        </fileset>
+      </batchtest>
+    </junit>
+
+    <undeploy host="localhost" port="1303" file="src/test/resources/test-instance/dwm-bc-socket-ra.xml"/>
+    <undeploy host="localhost" port="1303" file="src/test/resources/test-instance/dwm-bc-jgroups-ra.xml"/>
+    <undeploy host="localhost" port="1303" file="${build.core.dir}/test/work.rar"/>
+    <stop home="${build.core.dir}/ij"/>
+
+  </target>
 
   <!-- ================================= 
        Target: one-test
@@ -220,9 +363,11 @@
         <fileset dir="${lib.dir}/common" includes="*.jar" />
         <fileset dir="${lib.dir}/embedded" includes="*.jar" />
         <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
+        <fileset dir="${lib.dir}/byteman" includes="*.jar" />
         <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
         <fileset dir="${lib.dir}/sjc" includes="*.jar" />
         <fileset dir="${lib.dir}/test" includes="*.jar" />
+        <fileset dir="${java.home}/../lib/" includes="tools.jar" />
       </classpath>
       
       <formatter type="plain"/>

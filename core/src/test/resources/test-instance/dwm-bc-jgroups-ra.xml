@@ -1,0 +1,16 @@
+<resource-adapters>
+
+  <resource-adapter>
+    <archive>work.rar</archive>
+    <bootstrap-context>DWMBC-JGroups</bootstrap-context>
+    <transaction-support>NoTransaction</transaction-support>
+  
+    <connection-definitions>
+      <connection-definition class-name="org.jboss.jca.core.workmanager.rars.dwm.WorkManagedConnectionFactory"
+                             jndi-name="java:/eis/WorkConnectionFactoryJGroups"
+                             pool-name="WorkConnectionFactoryJGroups">
+      </connection-definition>
+    </connection-definitions>
+  </resource-adapter>
+
+</resource-adapters>

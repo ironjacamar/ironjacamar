@@ -21,7 +21,6 @@
  */
 package org.jboss.jca.core.workmanager.unit;
 
-import org.jboss.jca.arquillian.embedded.Inject;
 import org.jboss.jca.core.api.workmanager.DistributedWorkManager;
 import org.jboss.jca.core.workmanager.rars.dwm.WorkConnection;
 import org.jboss.jca.core.workmanager.rars.dwm.WorkConnectionFactory;
@@ -33,6 +32,8 @@ import javax.resource.spi.work.Work;
 
 import org.jboss.logging.Logger;
 
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -41,28 +42,26 @@ import static org.junit.Assert.assertTrue;
  * An abstract distributed workmanager test
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class AbstractDistributedWorkManagerTest
+public abstract class AbstractDistributedWorkManagerTest
 {
    private static Logger log = Logger.getLogger(AbstractDistributedWorkManagerTest.class);
 
    @Resource(mappedName = "java:/eis/WorkConnectionFactory")
    private WorkConnectionFactory wcf;
 
-   /** injected DistributedWorkManager1 */
-   @Inject(name = "DistributedWorkManager1")
-   protected DistributedWorkManager dwm1;
+   /**
+    * Get the distributed work manager
+    * @return The value
+    */
+   protected abstract DistributedWorkManager getDistributedWorkManager();
 
-   @Inject(name = "DistributedBootstrapContext1")
-   private BootstrapContext dbc1;
-
-   /** injected DistributedWorkManager2 */
-   @Inject(name = "DistributedWorkManager2")
-   protected DistributedWorkManager dwm2;
-
-   @Inject(name = "DistributedBootstrapContext2")
-   private BootstrapContext dbc2;
-
+   /**
+    * Get the bootstrap context
+    * @return The value
+    */
+   protected abstract BootstrapContext getBootstrapContext();
 
    // --------------------------------------------------------------------------------||
    // Tests --------------------------------------------------------------------------||
@@ -72,43 +71,47 @@ public class AbstractDistributedWorkManagerTest
     * Test that the used distributed work managers are configured
     * @throws Throwable throwable exception
     */
-   //@Test
+   @Test
    public void testConfigured() throws Throwable
    {
-      assertNotNull(dwm1);
-      assertNotNull(dwm1.getPolicy());
-      assertNotNull(dwm1.getSelector());
-      assertNotNull(dwm1.getTransport());
+      assertNotNull(getDistributedWorkManager());
+      assertNotNull(getDistributedWorkManager().getPolicy());
+      assertNotNull(getDistributedWorkManager().getSelector());
+      assertNotNull(getDistributedWorkManager().getTransport());
 
-      assertNotNull(dwm2);
-      assertNotNull(dwm2.getPolicy());
-      assertNotNull(dwm2.getSelector());
-      assertNotNull(dwm2.getTransport());
-
-      assertNotNull(dbc1);
-      assertNotNull(dbc2);
+      assertNotNull(getBootstrapContext());
    }
 
    /**
     * Test that a work instance can be executed
     * @throws Throwable throwable exception
     */
-   //@Test
+   @Test
    public void testExecuted() throws Throwable
    {
-      log.infof("DWM1: %s", dwm1);
-      log.infof("DWM2: %s", dwm2);
+      log.infof("DWM: %s", getDistributedWorkManager());
 
       assertNotNull(wcf);
 
       WorkConnection wc = wcf.getConnection();
       try
       {
+         assertNotNull(wc.getWorkManager());
+         assertTrue(wc.getWorkManager() instanceof javax.resource.spi.work.DistributableWorkManager);
+
+         DistributedWorkManager dwm = (DistributedWorkManager)wc.getWorkManager();
+
          wc.doWork(new MyWork());
          wc.doWork(new MyDistributableWork());
 
-         assertEquals(1, dwm1.getStatistics().getWorkSuccessful());
-         assertEquals(1, dwm2.getStatistics().getWorkSuccessful());
+         assertNotNull(dwm.getStatistics());
+         assertNotNull(dwm.getDistributedStatistics());
+
+         log.infof("Statistics: %s", dwm.getStatistics());
+         log.infof("DistributedStatistics: %s", dwm.getDistributedStatistics());
+
+         assertEquals(1, dwm.getStatistics().getWorkSuccessful());
+         assertEquals(2, dwm.getDistributedStatistics().getWorkSuccessful());
       }
       finally
       {
@@ -121,17 +124,13 @@ public class AbstractDistributedWorkManagerTest
     * <code>javax.resource.spi.work.DistributableWorkManager</code> interface
     * @throws Throwable throwable exception
     */
-   //@Test
+   @Test
    public void testInstanceOf() throws Throwable
    {
-      log.infof("DWM1: %s", dwm1);
-      log.infof("DWM2: %s", dwm2);
+      log.infof("DWM: %s", getDistributedWorkManager());
 
-      assertNotNull(dwm1);
-      assertTrue(dwm1 instanceof javax.resource.spi.work.DistributableWorkManager);
-
-      assertNotNull(dwm2);
-      assertTrue(dwm2 instanceof javax.resource.spi.work.DistributableWorkManager);
+      assertNotNull(getDistributedWorkManager());
+      assertTrue(getDistributedWorkManager() instanceof javax.resource.spi.work.DistributableWorkManager);
    }
 
    // --------------------------------------------------------------------------------||

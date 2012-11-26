@@ -28,6 +28,8 @@ import org.jboss.jca.core.api.workmanager.WorkManager;
 import org.jboss.jca.core.spi.workmanager.Address;
 import org.jboss.jca.core.spi.workmanager.notification.NotificationListener;
 import org.jboss.jca.core.spi.workmanager.transport.Transport;
+import org.jboss.jca.core.workmanager.ClassBundle;
+import org.jboss.jca.core.workmanager.ClassBundleFactory;
 import org.jboss.jca.core.workmanager.WorkManagerCoordinator;
 import org.jboss.jca.core.workmanager.transport.remote.ProtocolMessages.Request;
 
@@ -480,8 +482,10 @@ public abstract class AbstractRemoteTransport<T> implements Transport
       if (trace)
          log.tracef("DO_WORK(%s, %s)", address, work);
 
+      ClassBundle cb = ClassBundleFactory.createClassBundle(work);
+
       T addr = nodes.get(address);
-      sendMessage(addr, Request.DO_WORK, address, work);
+      sendMessage(addr, Request.DO_WORK, address, cb, work);
    }
 
    /**
@@ -493,8 +497,10 @@ public abstract class AbstractRemoteTransport<T> implements Transport
       if (trace)
          log.tracef("SCHEDULE_WORK(%s, %s)", address, work);
 
+      ClassBundle cb = ClassBundleFactory.createClassBundle(work);
+
       T addr = nodes.get(address);
-      sendMessage(addr, Request.SCHEDULE_WORK, address, work);
+      sendMessage(addr, Request.SCHEDULE_WORK, address, cb, work);
    }
 
    /**
@@ -506,8 +512,10 @@ public abstract class AbstractRemoteTransport<T> implements Transport
       if (trace)
          log.tracef("START_WORK(%s, %s)", address, work);
 
+      ClassBundle cb = ClassBundleFactory.createClassBundle(work);
+
       T addr = nodes.get(address);
-      return (long)sendMessage(addr, Request.START_WORK, address, work);
+      return (long)sendMessage(addr, Request.START_WORK, address, cb, work);
    }
 
    /**
@@ -536,6 +544,14 @@ public abstract class AbstractRemoteTransport<T> implements Transport
    public void register(Address address)
    {
       nodes.put(address, null);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void unregister(Address address)
+   {
+      nodes.remove(address);
    }
 
    /**
@@ -580,6 +596,9 @@ public abstract class AbstractRemoteTransport<T> implements Transport
          
          if (dwm != null)
          {
+            // Make sure the DWM is initialized such that all notification listeners are present
+            dwm.initialize();
+
             for (NotificationListener nl : dwm.getNotificationListeners())
             {
                nl.join(logicalAddress);
@@ -805,6 +824,9 @@ public abstract class AbstractRemoteTransport<T> implements Transport
 
       if (dwm != null)
       {
+         // Make sure that the DWM is initialized
+         dwm.initialize();
+
          DistributedWorkManagerStatisticsValues values =
             new DistributedWorkManagerStatisticsValues(dwm.getDistributedStatistics().getWorkSuccessful(),
                                                        dwm.getDistributedStatistics().getWorkFailed(),

@@ -1,0 +1,7 @@
+<antlib>
+  <taskdef name="start" classname="org.jboss.jca.sjc.ant.Start"/>
+  <taskdef name="stop" classname="org.jboss.jca.sjc.ant.Stop"/>
+  <taskdef name="deploy" classname="org.jboss.jca.sjc.ant.Deploy"/>
+  <taskdef name="undeploy" classname="org.jboss.jca.sjc.ant.Undeploy"/>
+  <taskdef name="ping" classname="org.jboss.jca.sjc.ant.Ping"/>
+</antlib>

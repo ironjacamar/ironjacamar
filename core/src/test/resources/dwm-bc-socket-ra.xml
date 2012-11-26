@@ -2,7 +2,7 @@
 
   <resource-adapter>
     <archive>work.rar</archive>
-    <bootstrap-context>DWM1BC</bootstrap-context>
+    <bootstrap-context>DWMBC-Socket</bootstrap-context>
     <transaction-support>NoTransaction</transaction-support>
   
     <connection-definitions>

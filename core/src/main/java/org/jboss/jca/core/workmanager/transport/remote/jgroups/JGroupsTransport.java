@@ -24,6 +24,7 @@ package org.jboss.jca.core.workmanager.transport.remote.jgroups;
 
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
+import org.jboss.jca.core.workmanager.ClassBundle;
 import org.jboss.jca.core.workmanager.transport.remote.AbstractRemoteTransport;
 import org.jboss.jca.core.workmanager.transport.remote.ProtocolMessages.Request;
 import org.jboss.jca.core.workmanager.transport.remote.ProtocolMessages.ResponseValues;
@@ -343,7 +344,8 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
             case DO_WORK : {
                org.jboss.jca.core.spi.workmanager.Address address =
                   (org.jboss.jca.core.spi.workmanager.Address) parameters[0];
-               DistributableWork work = (DistributableWork) parameters[1];
+               ClassBundle cb = (ClassBundle)parameters[1];
+               DistributableWork work = (DistributableWork) parameters[2];
                try
                {
                   disp.callRemoteMethod(destAddress,
@@ -358,7 +360,8 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
             case START_WORK : {
                org.jboss.jca.core.spi.workmanager.Address address =
                   (org.jboss.jca.core.spi.workmanager.Address) parameters[0];
-               DistributableWork work = (DistributableWork) parameters[1];
+               ClassBundle cb = (ClassBundle)parameters[1];
+               DistributableWork work = (DistributableWork) parameters[2];
 
                returnValue = (Long) disp.callRemoteMethod(destAddress,
                                                           new MethodCall(START_WORK_METHOD, address,
@@ -369,7 +372,8 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
             case SCHEDULE_WORK : {
                org.jboss.jca.core.spi.workmanager.Address address =
                   (org.jboss.jca.core.spi.workmanager.Address) parameters[0];
-               DistributableWork work = (DistributableWork) parameters[1];
+               ClassBundle cb = (ClassBundle)parameters[1];
+               DistributableWork work = (DistributableWork) parameters[2];
 
                disp.callRemoteMethod(destAddress,
                                      new MethodCall(SCHEDULE_WORK_METHOD, address, work), opts);

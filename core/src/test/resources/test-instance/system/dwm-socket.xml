@@ -1,7 +1,7 @@
 <deployment>
 
-  <!-- DistributedWorkManagerThreadGroupJGroups -->
-  <bean name="DistributedWorkManagerThreadGroupJGroups"
+  <!-- DistributedWorkManagerThreadGroupSocket -->
+  <bean name="DistributedWorkManagerThreadGroupSocket"
         class="java.lang.ThreadGroup">
     <constructor>
       <parameter>dwm</parameter>
@@ -10,12 +10,12 @@
     <ignoreDestroy/>
   </bean>
 
-  <!-- DistributedWorkManagerThreadFactoryJGroups -->
-  <bean name="DistributedWorkManagerThreadFactoryJGroups"
+  <!-- DistributedWorkManagerThreadFactorySocket -->
+  <bean name="DistributedWorkManagerThreadFactorySocket"
         interface="java.util.concurrent.ThreadFactory"
         class="org.jboss.threads.JBossThreadFactory">
     <constructor>
-      <parameter><inject bean="DistributedWorkManagerThreadGroupJGroups"/></parameter>
+      <parameter><inject bean="DistributedWorkManagerThreadGroupSocket"/></parameter>
       <parameter>false</parameter>
       <parameter>5</parameter>
       <parameter>work</parameter>
@@ -24,8 +24,8 @@
     </constructor>
   </bean>
 
-  <!-- DistributedWorkManagerShortRunningThreadPoolJGroups -->
-  <bean name="DistributedWorkManagerShortRunningThreadPoolJGroups"
+  <!-- DistributedWorkManagerShortRunningThreadPoolSocket -->
+  <bean name="DistributedWorkManagerShortRunningThreadPoolSocket"
         class="org.jboss.threads.QueueExecutor">
     <constructor>
       <!-- Core threads -->
@@ -38,7 +38,7 @@
       <!-- Queue size -->
       <parameter>1024</parameter>
       <!-- Thread factory -->
-      <parameter><inject bean="DistributedWorkManagerThreadFactoryJGroups"/></parameter>
+      <parameter><inject bean="DistributedWorkManagerThreadFactorySocket"/></parameter>
       <!-- Blocking -->
       <parameter>true</parameter>
       <!-- Handoff executor -->
@@ -47,47 +47,56 @@
     <destroy method="shutdown"/>
   </bean>
 
-  <!-- DistributedWorkManagerPolicyJGroups -->
-  <bean name="DistributedWorkManagerPolicyJGroups"
+  <!-- DistributedWorkManagerPolicySocket -->
+  <bean name="DistributedWorkManagerPolicySocket"
         class="org.jboss.jca.core.workmanager.policy.Always">
   </bean>
 
-  <!-- DistributedWorkManagerSelectorJGroups -->
-  <bean name="DistributedWorkManagerSelectorJGroups"
+  <!-- DistributedWorkManagerSelectorSocket -->
+  <bean name="DistributedWorkManagerSelectorSocket"
         class="org.jboss.jca.core.workmanager.selector.FirstAvailable">
   </bean>
 
-  <!-- JGroupsConfiguration -->
-  <bean name="JGroupsConfiguration"
-        class="org.jboss.jca.core.workmanager.transport.remote.jgroups.JGroupsConfiguration">
-  </bean> 
-
-  <!-- DistributedWorkManagerTransportJGroups -->
-  <bean name="DistributedWorkManagerTransportJGroups"
-        class="org.jboss.jca.core.workmanager.transport.remote.jgroups.JGroupsTransport">
+  <!-- DistributedWorkManagerTransportSocket -->
+  <bean name="DistributedWorkManagerTransportSocket"
+        class="org.jboss.jca.core.workmanager.transport.remote.socket.SocketTransport">
     <!-- The id -->
-    <property name="Id">1</property>
+    <property name="Id">2</property>
 
-    <!-- The channel -->
-    <property name="Channel">
-      <inject bean="JGroupsConfiguration" property="Channel"/>
-    </property> 
+    <!-- The executor -->
+    <property name="ExecutorService">
+      <inject bean="Kernel" property="ExecutorService"/>
+    </property>
+    
+    <!-- The host -->
+    <property name="Host">127.0.0.1</property>
+    
+    <!-- The port -->
+    <property name="Port">1300</property>
+    
+    <!-- The peers -->
+    <property name="Peers">
+      <set class="java.util.HashSet" 
+           elementClass="java.lang.String">
+        <value>localhost:1299</value>
+      </set>
+    </property>
 
     <start method="startup"/>
     <stop method="shutdown"/>
   </bean>
 
-  <!-- DistributedWorkManagerJGroups -->
-  <bean name="DistributedWorkManagerJGroups"
+  <!-- DistributedWorkManagerSocket -->
+  <bean name="DistributedWorkManagerSocket"
         interface="org.jboss.jca.core.api.workmanager.DistributedWorkManager"
         class="org.jboss.jca.core.workmanager.DistributedWorkManagerImpl">
 
     <!-- The name -->
-    <property name="Name">DWM-JGroups</property>
+    <property name="Name">DWM-Socket</property>
 
     <!-- The short running thread pool -->
     <property name="ShortRunningThreadPool">
-       <inject bean="DistributedWorkManagerShortRunningThreadPoolJGroups"/>
+       <inject bean="DistributedWorkManagerShortRunningThreadPoolSocket"/>
     </property>
 
     <!-- The XA terminator -->
@@ -102,32 +111,32 @@
 
     <!-- The policy -->
     <property name="Policy">
-       <inject bean="DistributedWorkManagerPolicyJGroups"/>
+       <inject bean="DistributedWorkManagerPolicySocket"/>
     </property>
 
     <!-- The selector -->
     <property name="Selector">
-       <inject bean="DistributedWorkManagerSelectorJGroups"/>
+       <inject bean="DistributedWorkManagerSelectorSocket"/>
     </property>
 
     <!-- The transport -->
     <property name="Transport">
-       <inject bean="DistributedWorkManagerTransportJGroups"/>
+       <inject bean="DistributedWorkManagerTransportSocket"/>
     </property>
 
-    <destroy method="shutdown"/>
+    <!-- <destroy method="shutdown"/> -->
   </bean>
 
-  <!-- DistributedBootstrapContextJGroups -->
-  <bean name="DistributedBootstrapContextJGroups"
+  <!-- DistributedBootstrapContextSocket -->
+  <bean name="DistributedBootstrapContextSocket"
         interface="org.jboss.jca.core.api.bootstrap.CloneableBootstrapContext"
         class="org.jboss.jca.core.bootstrapcontext.BaseCloneableBootstrapContext">
-    <property name="Name">DWMBC-JGroups</property>
+    <property name="Name">DWMBC-Socket</property>
     <property name="TransactionSynchronizationRegistry">
        <inject bean="TransactionSynchronizationRegistry"/>
     </property>
     <property name="WorkManagerName">
-       <inject bean="DistributedWorkManagerJGroups" property="Name"/>
+       <inject bean="DistributedWorkManagerSocket" property="Name"/>
     </property>
     <property name="XATerminator">
        <inject bean="TransactionIntegration" property="XATerminator"/>

@@ -23,10 +23,14 @@
 package org.jboss.jca.core.workmanager.unit;
 
 import org.jboss.jca.arquillian.embedded.Configuration;
+import org.jboss.jca.arquillian.embedded.Inject;
+import org.jboss.jca.core.api.workmanager.DistributedWorkManager;
 import org.jboss.jca.core.workmanager.rars.dwm.WorkConnectionFactory;
 import org.jboss.jca.embedded.dsl.InputStreamDescriptor;
 
 import java.util.UUID;
+
+import javax.resource.spi.BootstrapContext;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -39,7 +43,7 @@ import org.junit.runner.RunWith;
 
 
 /**
- * DistributedWorkManagerJGroupsTestCase.
+ * DistributedWorkManagerJGroupsMJVMTestCase.
  *
  * Tests for the JBoss specific distributed work manager functionality.
  *
@@ -48,8 +52,31 @@ import org.junit.runner.RunWith;
 @Ignore
 @RunWith(Arquillian.class)
 @Configuration(autoActivate = false)
-public class DistributedWorkManagerJGroupsTestCase extends AbstractDistributedWorkManagerTest
+public class DistributedWorkManagerJGroupsMJVMTestCase extends AbstractDistributedWorkManagerTest
 {
+   /** injected DistributedWorkManager */
+   @Inject(name = "DistributedWorkManagerJGroups")
+   protected DistributedWorkManager dwm;
+
+   @Inject(name = "DistributedBootstrapContextJGroups")
+   private BootstrapContext dbc;
+
+   /**
+    * {@inheritDoc}
+    */
+   protected DistributedWorkManager getDistributedWorkManager()
+   {
+      return dwm;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   protected BootstrapContext getBootstrapContext()
+   {
+      return dbc;
+   }
+
    // --------------------------------------------------------------------------------||
    // Deployments --------------------------------------------------------------------||
    // --------------------------------------------------------------------------------||
@@ -94,8 +121,8 @@ public class DistributedWorkManagerJGroupsTestCase extends AbstractDistributedWo
    public static InputStreamDescriptor createActivationDeployment()
    {
       ClassLoader cl = Thread.currentThread().getContextClassLoader();
-      InputStreamDescriptor isd = new InputStreamDescriptor("dwm-bc1-ra.xml",
-                                                            cl.getResourceAsStream("dwm-bc1-ra.xml"));
+      InputStreamDescriptor isd = new InputStreamDescriptor("dwm-bc-jgroups-ra.xml",
+                                                            cl.getResourceAsStream("dwm-bc-jgroups-ra.xml"));
       return isd;
    }
 

@@ -22,6 +22,7 @@
 package org.jboss.jca.core.workmanager.transport.remote;
 
 import org.jboss.jca.core.spi.workmanager.Address;
+import org.jboss.jca.core.workmanager.ClassBundle;
 
 import java.io.Serializable;
 import java.util.Arrays;
@@ -81,11 +82,11 @@ public class ProtocolMessages
       /** PING */
       PING(0),
       /** do work */
-      DO_WORK(2, Address.class, DistributableWork.class),
+      DO_WORK(3, Address.class, ClassBundle.class, DistributableWork.class),
       /** schedule work */
-      SCHEDULE_WORK(2, Address.class, DistributableWork.class),
+      SCHEDULE_WORK(3, Address.class, ClassBundle.class, DistributableWork.class),
       /** start work */
-      START_WORK(2, Address.class, DistributableWork.class);
+      START_WORK(3, Address.class, ClassBundle.class, DistributableWork.class);
 
       private final int numberOfParameter;
 
@@ -216,7 +217,6 @@ public class ProtocolMessages
       {
          return values;
       }
-
    }
 
    /**

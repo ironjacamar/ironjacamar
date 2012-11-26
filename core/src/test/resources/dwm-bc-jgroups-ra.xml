@@ -2,11 +2,11 @@
 
   <resource-adapter>
     <archive>work.rar</archive>
-    <bootstrap-context>DWM2BC</bootstrap-context>
+    <bootstrap-context>DWMBC-JGroups</bootstrap-context>
     <transaction-support>NoTransaction</transaction-support>
   
     <connection-definitions>
-      <connection-definition class-name="org.jboss.jca.core.workmanager.rars.dwm.WorkManagedConnectionFactory" jndi-name="java:/eis/WorkConnectionFactory2" pool-name="WorkConnectionFactory2">
+      <connection-definition class-name="org.jboss.jca.core.workmanager.rars.dwm.WorkManagedConnectionFactory" jndi-name="java:/eis/WorkConnectionFactory" pool-name="WorkConnectionFactory">
       </connection-definition>
     </connection-definitions>
   </resource-adapter>

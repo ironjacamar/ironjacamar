@@ -71,6 +71,12 @@ public interface Transport
    public void register(Address address);
 
    /**
+    * Unregister
+    * @param address The address
+    */
+   public void unregister(Address address);
+
+   /**
     * Ping time to a distributed work manager
     * @param address The address
     * @return The ping time in milliseconds

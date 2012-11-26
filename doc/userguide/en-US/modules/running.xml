@@ -111,9 +111,118 @@ java -jar fungal-cli.jar shutdown
         </programlisting>
 
       </section>
+   </section>
 
+   <section id="running_ant">
+      <title>Apache Ant</title>
+
+      <para>The IronJacamar container can be controlled by Apache Ant tasks.</para>
+
+      <section id="running_ant_start">
+        <title>Start</title>
+
+        <para>
+          The IronJacamar container can be started by the Apache Ant task <code>org.jboss.jca.sjc.ant.Start</code> which takes a 
+          <code>home</code> attribute to specify the home directory of the installation.
+        </para>
+      </section>
+
+      <section id="running_ant_stop">
+        <title>Stop</title>
+
+        <para>
+          The IronJacamar container can be stopped by the Apache Ant task <code>org.jboss.jca.sjc.ant.Stop</code> which takes a 
+          <code>home</code> attribute to specify the home directory of the installation.
+        </para>
+      </section>
+
+      <section id="running_ant_deploy">
+        <title>Deploy</title>
+
+        <para>
+          Deployments to the IronJacamar container can be done by the Apache Ant task <code>org.jboss.jca.sjc.ant.Deploy</code> which takes a 
+          <code>file</code> attribute to specify the file that should be deployed. The task takes optional <code>host</code> and <code>port</code>
+          attributes in order to specify the host and port where the IronJacamar container is located.
+        </para>
+      </section>
+
+      <section id="running_ant_undeploy">
+        <title>Undeploy</title>
+
+        <para>
+          Undeploying from the IronJacamar container can be done by the Apache Ant task <code>org.jboss.jca.sjc.ant.Undeploy</code> which takes a 
+          <code>file</code> attribute to specify the file that should be undeployed. The task takes optional <code>host</code> and <code>port</code>
+          attributes in order to specify the host and port where the IronJacamar container is located.
+        </para>
+      </section>
+
+      <section id="running_ant_ping">
+        <title>Ping</title>
+
+        <para>
+          The IronJacamar container can be pinged for availability using the Apache Ant task <code>org.jboss.jca.sjc.ant.Ping</code>.
+          The task takes optional <code>host</code> and <code>port</code> attributes in order to specify the host and port where the
+          IronJacamar container is located.
+        </para>
+      </section>
 
    </section>
+
+   <section id="running_maven">
+      <title>Apache Maven</title>
+
+      <para>The IronJacamar container can be controlled by Apache Maven mojos.</para>
+
+      <section id="running_maven_start">
+        <title>Start</title>
+
+        <para>
+          The IronJacamar container can be started by the Apache Maven mojo <code>org.jboss.jca.sjc.maven.Start</code> which takes a 
+          <code>home</code> element to specify the home directory of the installation.
+        </para>
+      </section>
+
+      <section id="running_maven_stop">
+        <title>Stop</title>
+
+        <para>
+          The IronJacamar container can be stopped by the Apache Maven mojo <code>org.jboss.jca.sjc.maven.Stop</code> which takes a 
+          <code>home</code> element to specify the home directory of the installation.
+        </para>
+      </section>
+
+      <section id="running_maven_deploy">
+        <title>Deploy</title>
+
+        <para>
+          Deployments to the IronJacamar container can be done by the Apache Maven mojo <code>org.jboss.jca.sjc.maven.Deploy</code> which takes a 
+          <code>file</code> element to specify the file that should be deployed. The mojo takes optional <code>host</code> and <code>port</code>
+          elements in order to specify the host and port where the IronJacamar container is located.
+        </para>
+      </section>
+
+      <section id="running_maven_undeploy">
+        <title>Undeploy</title>
+
+        <para>
+          Undeploying from the IronJacamar container can be done by the Apache Maven mojo <code>org.jboss.jca.sjc.maven.Undeploy</code> which takes a 
+          <code>file</code> element to specify the file that should be undeployed. The mojo takes optional <code>host</code> and <code>port</code>
+          elements in order to specify the host and port where the IronJacamar container is located.
+        </para>
+      </section>
+
+      <section id="running_maven_ping">
+        <title>Ping</title>
+
+        <para>
+          The IronJacamar container can be pinged for availability using the Apache Maven mojo <code>org.jboss.jca.sjc.maven.Ping</code>.
+          The mojo takes optional <code>host</code> and <code>port</code> elements in order to specify the host and port where the
+          IronJacamar container is located.
+        </para>
+      </section>
+
+   </section>
+
 
 
 </chapter>

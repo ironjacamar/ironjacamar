@@ -24,14 +24,17 @@ package org.jboss.jca.core.workmanager.transport.remote.socket;
 
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.spi.workmanager.Address;
+import org.jboss.jca.core.workmanager.ClassBundle;
+import org.jboss.jca.core.workmanager.WorkClassLoader;
+import org.jboss.jca.core.workmanager.WorkObjectInputStream;
 import org.jboss.jca.core.workmanager.transport.remote.ProtocolMessages.Request;
 import org.jboss.jca.core.workmanager.transport.remote.ProtocolMessages.Response;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.Set;
 
 import javax.resource.spi.work.DistributableWork;
@@ -74,29 +77,22 @@ public class Communication implements Runnable
     */
    public void run()
    {
-      ObjectInputStream ois = null;
+      WorkObjectInputStream wois = null;
       ObjectOutputStream oos = null;
       Serializable returnValue = null;
       Response response = null;
       try
       {
-         ois = new ObjectInputStream(socket.getInputStream());
-         int commandOrdinalPosition = ois.readInt();
-         int numberOfParameters = ois.readInt();
-         Serializable[] parameters = new Serializable[numberOfParameters];
-
-         for (int i = 0; i < numberOfParameters; i++)
-         {
-            Serializable parameter = (Serializable)ois.readObject();
-            parameters[i] = parameter;
-         }
+         wois = new WorkObjectInputStream(socket.getInputStream());
+         int commandOrdinalPosition = wois.readInt();
+         int numberOfParameters = wois.readInt();
 
          Request command = Request.values()[commandOrdinalPosition];
 
          switch (command)
          {
             case JOIN : {
-               String address = (String)parameters[0];
+               String address = (String)wois.readObject();
 
                if (trace)
                   log.tracef("%s: JOIN(%s)", socket.getInetAddress(), address);
@@ -123,7 +119,7 @@ public class Communication implements Runnable
                break;
             }
             case LEAVE : {
-               String address = (String)parameters[0];
+               String address = (String)wois.readObject();
 
                if (trace)
                   log.tracef("%s: LEAVE(%s)", socket.getInetAddress(), address);
@@ -151,8 +147,16 @@ public class Communication implements Runnable
                break;
             }
             case DO_WORK : {
-               Address id = (Address)parameters[0];
-               DistributableWork work = (DistributableWork)parameters[1];
+               Address id = (Address)wois.readObject();
+               ClassBundle cb = (ClassBundle)wois.readObject();
+
+               if (trace)
+                  log.tracef("DO_WORK/ClassBundle: %s", cb);
+
+               WorkClassLoader wcl = new WorkClassLoader(cb);
+               wois.setWorkClassLoader(wcl);
+
+               DistributableWork work = (DistributableWork)wois.readObject();
 
                if (trace)
                   log.tracef("%s: DO_WORK(%s, %s)", socket.getInetAddress(), id, work);
@@ -163,8 +167,16 @@ public class Communication implements Runnable
                break;
             }
             case START_WORK : {
-               Address id = (Address)parameters[0];
-               DistributableWork work = (DistributableWork)parameters[1];
+               Address id = (Address)wois.readObject();
+               ClassBundle cb = (ClassBundle)wois.readObject();
+
+               if (trace)
+                  log.tracef("START_WORK/ClassBundle: %s", cb);
+
+               WorkClassLoader wcl = new WorkClassLoader(cb);
+               wois.setWorkClassLoader(wcl);
+
+               DistributableWork work = (DistributableWork)wois.readObject();
 
                if (trace)
                   log.tracef("%s: START_WORK(%s, %s)", socket.getInetAddress(), id, work);
@@ -175,8 +187,16 @@ public class Communication implements Runnable
                break;
             }
             case SCHEDULE_WORK : {
-               Address id = (Address)parameters[0];
-               DistributableWork work = (DistributableWork)parameters[1];
+               Address id = (Address)wois.readObject();
+               ClassBundle cb = (ClassBundle)wois.readObject();
+
+               if (trace)
+                  log.tracef("SCHEDULE_WORK/ClassBundle: %s", cb);
+
+               WorkClassLoader wcl = new WorkClassLoader(cb);
+               wois.setWorkClassLoader(wcl);
+
+               DistributableWork work = (DistributableWork)wois.readObject();
 
                if (trace)
                   log.tracef("%s: SCHEDULE_WORK(%s, %s)", socket.getInetAddress(), id, work);
@@ -187,7 +207,7 @@ public class Communication implements Runnable
                break;
             }
             case GET_SHORTRUNNING_FREE : {
-               Address id = (Address)parameters[0];
+               Address id = (Address)wois.readObject();
 
                if (trace)
                   log.tracef("%s: GET_SHORTRUNNING_FREE(%s)", socket.getInetAddress(), id);
@@ -198,7 +218,7 @@ public class Communication implements Runnable
                break;
             }
             case GET_LONGRUNNING_FREE : {
-               Address id = (Address)parameters[0];
+               Address id = (Address)wois.readObject();
 
                if (trace)
                   log.tracef("%s: GET_LONGRUNNING_FREE(%s)", socket.getInetAddress(), id);
@@ -209,8 +229,8 @@ public class Communication implements Runnable
                break;
             }
             case UPDATE_SHORTRUNNING_FREE : {
-               Address id = (Address)parameters[0];
-               Long freeCount = (Long)parameters[1];
+               Address id = (Address)wois.readObject();
+               Long freeCount = (Long)wois.readObject();
 
                if (trace)
                   log.tracef("%s: UPDATE_SHORTRUNNING_FREE(%s, %d)", socket.getInetAddress(), id, freeCount);
@@ -221,8 +241,8 @@ public class Communication implements Runnable
                break;
             }
             case UPDATE_LONGRUNNING_FREE : {
-               Address id = (Address)parameters[0];
-               Long freeCount = (Long)parameters[1];
+               Address id = (Address)wois.readObject();
+               Long freeCount = (Long)wois.readObject();
 
                if (trace)
                   log.tracef("%s: UPDATE_LONGRUNNING_FREE(%s, %d)", socket.getInetAddress(), id, freeCount);
@@ -233,7 +253,7 @@ public class Communication implements Runnable
                break;
             }
             case GET_DISTRIBUTED_STATISTICS : {
-               Address id = (Address)parameters[0];
+               Address id = (Address)wois.readObject();
 
                if (trace)
                   log.tracef("%s: GET_DISTRIBUTED_STATISTICS(%s)", socket.getInetAddress(), id);
@@ -244,7 +264,7 @@ public class Communication implements Runnable
                break;
             }
             case DELTA_DOWORK_ACCEPTED : {
-               Address id = (Address)parameters[0];
+               Address id = (Address)wois.readObject();
 
                if (trace)
                   log.tracef("%s: DELTA_DOWORK_ACCEPTED(%s)", socket.getInetAddress(), id);
@@ -255,7 +275,7 @@ public class Communication implements Runnable
                break;
             }
             case DELTA_DOWORK_REJECTED : {
-               Address id = (Address)parameters[0];
+               Address id = (Address)wois.readObject();
 
                if (trace)
                   log.tracef("%s: DELTA_DOWORK_REJECTED(%s)", socket.getInetAddress(), id);
@@ -266,7 +286,7 @@ public class Communication implements Runnable
                break;
             }
             case DELTA_STARTWORK_ACCEPTED : {
-               Address id = (Address)parameters[0];
+               Address id = (Address)wois.readObject();
 
                if (trace)
                   log.tracef("%s: DELTA_STARTWORK_ACCEPTED(%s)", socket.getInetAddress(), id);
@@ -277,7 +297,7 @@ public class Communication implements Runnable
                break;
             }
             case DELTA_STARTWORK_REJECTED : {
-               Address id = (Address)parameters[0];
+               Address id = (Address)wois.readObject();
 
                if (trace)
                   log.tracef("%s: DELTA_STARTWORK_REJECTED(%s)", socket.getInetAddress(), id);
@@ -288,7 +308,7 @@ public class Communication implements Runnable
                break;
             }
             case DELTA_SCHEDULEWORK_ACCEPTED : {
-               Address id = (Address)parameters[0];
+               Address id = (Address)wois.readObject();
 
                if (trace)
                   log.tracef("%s: DELTA_SCHEDULEWORK_ACCEPTED(%s)", socket.getInetAddress(), id);
@@ -299,7 +319,7 @@ public class Communication implements Runnable
                break;
             }
             case DELTA_SCHEDULEWORK_REJECTED : {
-               Address id = (Address)parameters[0];
+               Address id = (Address)wois.readObject();
 
                if (trace)
                   log.tracef("%s: DELTA_SCHEDULEWORK_REJECTED(%s)", socket.getInetAddress(), id);
@@ -310,7 +330,7 @@ public class Communication implements Runnable
                break;
             }
             case DELTA_WORK_SUCCESSFUL : {
-               Address id = (Address)parameters[0];
+               Address id = (Address)wois.readObject();
 
                if (trace)
                   log.tracef("%s: DELTA_WORK_SUCCESSFUL(%s)", socket.getInetAddress(), id);
@@ -321,7 +341,7 @@ public class Communication implements Runnable
                break;
             }
             case DELTA_WORK_FAILED : {
-               Address id = (Address)parameters[0];
+               Address id = (Address)wois.readObject();
 
                if (trace)
                   log.tracef("%s: DELTA_WORK_FAILED(%s)", socket.getInetAddress(), id);
@@ -351,24 +371,24 @@ public class Communication implements Runnable
       catch (WorkException we)
       {
          if (trace)
-            log.tracef("%s: WORK_EXCEPTION(%s)", socket.getInetAddress(), we);
+            log.tracef("%s: WORK_EXCEPTION(%s)", socket.getInetAddress(), we.getMessage());
 
          sendResponse(Response.WORK_EXCEPTION, we);
       }
       catch (Throwable t)
       {
          if (trace)
-            log.tracef("%s: THROWABLE(%s)", socket.getInetAddress(), t);
+            log.tracef("%s: THROWABLE(%s)", socket.getInetAddress(), t.getMessage());
 
          sendResponse(Response.GENERIC_EXCEPTION, t);
       }
       finally
       {
-         if (ois != null)
+         if (wois != null)
          {
             try
             {
-               ois.close();
+               wois.close();
             }
             catch (IOException e)
             {
@@ -380,6 +400,10 @@ public class Communication implements Runnable
 
    private void sendResponse(Response response, Serializable... parameters)
    {
+      if (trace)
+         log.tracef("Sending response: %s with %s", response,
+                    parameters != null ? Arrays.toString(parameters) : "null");
+
       ObjectOutputStream oos = null;
       try
       {
@@ -401,7 +425,7 @@ public class Communication implements Runnable
       {
          if (log.isDebugEnabled())
          {
-            log.debug("error sending command");
+            log.debugf("Error sending response: %s", t.getMessage());
          }
       }
       finally

@@ -23,10 +23,15 @@
 package org.jboss.jca.sjc;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
 import com.github.fungal.api.Kernel;
 import com.github.fungal.api.KernelFactory;
@@ -40,6 +45,12 @@ import com.github.fungal.api.configuration.KernelConfiguration;
  */
 public class Main
 {
+   /** Default name */
+   private static final String DEFAULT_NAME = "iron.jacamar";
+
+   /** ironjacamar.properties */
+   private static final String IRONJACAMAR_PROPERTIES = "ironjacamar.properties";
+
    /** Kernel */
    private static Kernel kernel;
 
@@ -62,6 +73,8 @@ public class Main
    {
       try
       {
+         Properties properties = loadProperties();
+
          List<String> order = new ArrayList<String>(5);
          order.add(".xml");
          order.add(".rar");
@@ -70,20 +83,41 @@ public class Main
          order.add(".war");
 
          KernelConfiguration kernelConfiguration = new KernelConfiguration();
-         kernelConfiguration = kernelConfiguration.name("iron.jacamar");
+         String configurationName = configurationString(properties, "name", DEFAULT_NAME);
+
+         kernelConfiguration = kernelConfiguration.name(configurationName);
          kernelConfiguration = kernelConfiguration.classLoader(ClassLoaderFactory.TYPE_PARENT_FIRST);
-         kernelConfiguration = kernelConfiguration.management(true);
-         kernelConfiguration = kernelConfiguration.parallelDeploy(true);
-         kernelConfiguration = kernelConfiguration.remoteAccess(true);
+
+         kernelConfiguration =
+            kernelConfiguration.management(configurationBoolean(properties, "management", true));
+
+         kernelConfiguration = 
+            kernelConfiguration.parallelDeploy(configurationBoolean(properties, "parallel.deploy", true));
+
+         kernelConfiguration =
+            kernelConfiguration.remoteAccess(configurationBoolean(properties, "remote.access", true));
+
+         kernelConfiguration =
+            kernelConfiguration.remotePort(configurationInteger(properties, "remote.port", 1202));
+
          kernelConfiguration = kernelConfiguration.eventListener(new PreClassLoaderEventListener());
          kernelConfiguration = kernelConfiguration.eventListener(new PostClassLoaderEventListener());
          kernelConfiguration = kernelConfiguration.command(new Shutdown());
          kernelConfiguration = kernelConfiguration.deploymentOrder(new DeploymentOrder(order));
-         kernelConfiguration = kernelConfiguration.remoteJmxAccess(true);
-         kernelConfiguration = kernelConfiguration.usePlatformMBeanServer(true);
-         kernelConfiguration = kernelConfiguration.beanManagement(true);
 
-         String home = SecurityActions.getSystemProperty("iron.jacamar.home");
+         kernelConfiguration = 
+            kernelConfiguration.remoteJmxAccess(configurationBoolean(properties, "remote.jmx.access", true));
+
+         kernelConfiguration = 
+            kernelConfiguration.usePlatformMBeanServer(configurationBoolean(properties, "use.platform.mbeanserver",
+                                                                            true));
+
+         kernelConfiguration = 
+            kernelConfiguration.beanManagement(configurationBoolean(properties, "bean.management", true));
+
+         applySystemProperties(properties);
+
+         String home = SecurityActions.getSystemProperty(configurationName + ".home");
          if (home != null)
          {
             kernelConfiguration.home(new File(home).toURI().toURL());
@@ -129,7 +163,7 @@ public class Main
    {
       try
       {
-         Class clz = Class.forName("org.jboss.logging.Logger", true, cl);
+         Class<?> clz = Class.forName("org.jboss.logging.Logger", true, cl);
          
          Method mGetLogger = clz.getMethod("getLogger", String.class);
 
@@ -153,7 +187,7 @@ public class Main
       {
          try
          {
-            Class clz = logging.getClass();
+            Class<?> clz = logging.getClass();
             Method mError = clz.getMethod("error", Object.class, Throwable.class);
             mError.invoke(logging, new Object[] {o, t});
          }
@@ -183,7 +217,7 @@ public class Main
       {
          try
          {
-            Class clz = logging.getClass();
+            Class<?> clz = logging.getClass();
             Method mWarn = clz.getMethod("warn", Object.class);
             mWarn.invoke(logging, new Object[] {o});
          }
@@ -210,7 +244,7 @@ public class Main
       {
          try
          {
-            Class clz = logging.getClass();
+            Class<?> clz = logging.getClass();
             Method mInfo = clz.getMethod("info", Object.class);
             mInfo.invoke(logging, new Object[] {o});
          }
@@ -237,7 +271,7 @@ public class Main
       {
          try
          {
-            Class clz = logging.getClass();
+            Class<?> clz = logging.getClass();
             Method mIsDebugEnabled = clz.getMethod("isDebugEnabled", (Class[])null);
             return ((Boolean)mIsDebugEnabled.invoke(logging, (Object[])null)).booleanValue();
          }
@@ -260,7 +294,7 @@ public class Main
       {
          try
          {
-            Class clz = logging.getClass();
+            Class<?> clz = logging.getClass();
             Method mDebug = clz.getMethod("debug", Object.class);
             mDebug.invoke(logging, new Object[] {o});
          }
@@ -273,6 +307,188 @@ public class Main
       {
          if (o != null)
             System.out.println(o.toString());
+      }
+   }
+
+   /**
+    * Load configuration values specified from either a file or the classloader
+    * @return The properties
+    */
+   private static Properties loadProperties()
+   {
+      Properties properties = new Properties();
+      boolean loaded = false;
+
+      String sysProperty = SecurityActions.getSystemProperty("iron.jacamar.options");
+      if (sysProperty != null && !sysProperty.equals(""))
+      {
+         File file = new File(sysProperty);
+         if (file.exists())
+         {
+            FileInputStream fis = null;
+            try
+            {
+               fis = new FileInputStream(file);
+               properties.load(fis);
+               loaded = true;
+            }
+            catch (Throwable t)
+            {
+               // Ignore
+            }
+            finally
+            {
+               if (fis != null)
+               {
+                  try
+                  {
+                     fis.close();
+                  }
+                  catch (IOException ioe)
+                  {
+                     //No op
+                  }
+               }
+            }
+         }
+      }
+
+      if (!loaded)
+      {
+         File file = new File(IRONJACAMAR_PROPERTIES);
+         if (file.exists())
+         {
+            FileInputStream fis = null;
+            try
+            {
+               fis = new FileInputStream(file);
+               properties.load(fis);
+               loaded = true;
+            }
+            catch (Throwable t)
+            {
+               // Ignore
+            }
+            finally
+            {
+               if (fis != null)
+               {
+                  try
+                  {
+                     fis.close();
+                  }
+                  catch (IOException ioe)
+                  {
+                     //No op
+                  }
+               }
+            }
+         }
+      }
+
+      if (!loaded)
+      {
+         InputStream is = null;
+         try
+         {
+            ClassLoader cl = Main.class.getClassLoader();
+            is = cl.getResourceAsStream(IRONJACAMAR_PROPERTIES);
+            properties.load(is);
+            loaded = true;
+         }
+         catch (Throwable t)
+         {
+            // Ignore
+         }
+         finally
+         {
+            if (is != null)
+            {
+               try
+               {
+                  is.close();
+               }
+               catch (IOException ioe)
+               {
+                  // Nothing to do
+               }
+            }
+         }
+      }
+
+      return properties;
+   }
+
+   /**
+    * Get configuration string
+    * @param properties The properties
+    * @param key The key
+    * @param defaultValue The default value
+    * @return The value
+    */
+   private static String configurationString(Properties properties, String key, String defaultValue)
+   {
+      if (properties != null)
+      {
+         return properties.getProperty(key, defaultValue);
+      }
+
+      return defaultValue;
+   }
+
+   /**
+    * Get configuration boolean
+    * @param properties The properties
+    * @param key The key
+    * @param defaultValue The default value
+    * @return The value
+    */
+   private static boolean configurationBoolean(Properties properties, String key, boolean defaultValue)
+   {
+      if (properties != null)
+      {
+         if (properties.containsKey(key))
+            return Boolean.valueOf(properties.getProperty(key));
+      }
+
+      return defaultValue;
+   }
+
+   /**
+    * Get configuration integer
+    * @param properties The properties
+    * @param key The key
+    * @param defaultValue The default value
+    * @return The value
+    */
+   private static int configurationInteger(Properties properties, String key, int defaultValue)
+   {
+      if (properties != null)
+      {
+         if (properties.containsKey(key))
+            return Integer.valueOf(properties.getProperty(key));
+      }
+
+      return defaultValue;
+   }
+
+   /**
+    * Apply any defined system properties
+    * @param properties The properties
+    */
+   private static void applySystemProperties(Properties properties)
+   {
+      if (properties != null)
+      {
+         for (Map.Entry<Object, Object> entry : properties.entrySet())
+         {
+            String key = (String)entry.getKey();
+            if (key.startsWith("system.property."))
+            {
+               key = key.substring(16);
+               SecurityActions.setSystemProperty(key, (String)entry.getValue());
+            }
+         }
       }
    }
 

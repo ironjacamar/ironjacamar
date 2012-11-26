@@ -118,4 +118,9 @@ public interface DistributedWorkManager extends javax.resource.spi.work.Distribu
     * @return The value
     */
    public DistributedWorkManagerStatistics getDistributedStatistics();
+
+   /**
+    * Initialize
+    */
+   public void initialize();
 }

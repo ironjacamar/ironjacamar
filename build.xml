@@ -148,7 +148,7 @@
   <property name="version.jetty.jsp" value="2.2.1"/>
   <property name="version.jetty.el" value="2.2.4"/>
   <property name="version.jasper" value="glassfish_2.1.0.v201004190952"/>
-  <property name="version.jgroups" value="3.1.0.Final"/>
+  <property name="version.jgroups" value="3.2.2.Final"/>
   <property name="version.junit" value="4.10"/>
   <property name="version.maven" value="2.2.1"/>
   <property name="version.saxon" value="8.7"/>
@@ -390,6 +390,7 @@
     <ant dir="adapters" inheritRefs="true" target="prepare-test"/>
     <ant dir="as" inheritRefs="true" target="prepare-test"/>
     <ant dir="eis" inheritRefs="true" target="prepare-test"/>
+    <ant dir="sjc" inheritRefs="true" target="prepare-test"/>
   </target>
   
   <!-- ================================= 
@@ -406,11 +407,11 @@
     <ant dir="as" inheritRefs="true" target="test"/>
     <ant dir="eis" inheritRefs="true" target="test"/>
   </target>
-  
+
   <!-- ================================= 
        Target: one-test
        ================================= -->
-  <target name="one-test" depends="jars">
+  <target name="one-test" depends="prepare-test">
     <condition property="module" else="core">
       <equals arg1="${module}" arg2="" trim="true"/> 
     </condition>
@@ -421,7 +422,7 @@
   <!-- ================================= 
        Target: module-test
        ================================= -->
-  <target name="module-test" depends="jars">
+  <target name="module-test" depends="prepare-test">
     <condition property="module" else="core">
       <equals arg1="${module}" arg2="" trim="true"/> 
     </condition>
@@ -429,6 +430,14 @@
     <ant dir="${module}" inheritRefs="true" target="test"/>
   </target>
 
+  <!-- ================================= 
+       Target: mjvm-test
+       ================================= -->
+  <target name="mjvm-test" depends="prepare-test">
+    <mkdir dir="${reports.dir}/core" />
+    <ant dir="core" inheritRefs="true" target="mjvm-test"/>
+  </target>
+  
   <!-- ================================= 
        Target: artifacts
        ================================= -->
@@ -789,6 +798,7 @@
         <batchtest todir="${reports.dir}/jacoco/tests">
           <fileset dir="${build.dir}/core/test">
             <include name="**/*TestCase.class"/>
+            <exclude name="**/*MJVMTestCase.class"/>
           </fileset>
         </batchtest>
       </junit>

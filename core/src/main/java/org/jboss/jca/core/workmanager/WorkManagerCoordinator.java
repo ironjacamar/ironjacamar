@@ -25,6 +25,7 @@ package org.jboss.jca.core.workmanager;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.workmanager.DistributedWorkManager;
 import org.jboss.jca.core.api.workmanager.WorkManager;
+import org.jboss.jca.core.spi.workmanager.Address;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -240,6 +241,12 @@ public class WorkManagerCoordinator
          WorkManager wm = template.clone();
          wm.setId(id);
 
+         if (wm instanceof DistributedWorkManager)
+         {
+            DistributedWorkManager dwm = (DistributedWorkManager)wm;
+            dwm.getTransport().register(new Address(wm.getId(), dwm.getTransport().getId()));
+         }
+
          activeWorkmanagers.put(id, wm);
          refCountWorkmanagers.put(id, Integer.valueOf(1));
 
@@ -271,6 +278,13 @@ public class WorkManagerCoordinator
          {
             if (trace)
                log.tracef("Removed WorkManager: %s", id);
+
+            WorkManager wm = getWorkManager(id);
+            if (wm instanceof DistributedWorkManager)
+            {
+               DistributedWorkManager dwm = (DistributedWorkManager)wm;
+               dwm.getTransport().unregister(new Address(wm.getId(), dwm.getTransport().getId()));
+            }
 
             activeWorkmanagers.remove(id);
             refCountWorkmanagers.remove(id);

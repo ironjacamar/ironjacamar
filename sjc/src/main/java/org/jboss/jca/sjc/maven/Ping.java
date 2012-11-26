@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2008-2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2012, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -20,52 +20,45 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.sjc;
+package org.jboss.jca.sjc.maven;
 
-import java.lang.reflect.Method;
-
-import com.github.fungal.api.Kernel;
-import com.github.fungal.api.events.Event;
-import com.github.fungal.api.events.EventListener;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 
 /**
- * An event listener for the POST_CLASSLOADER event
+ * A ping mojo
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-class PostClassLoaderEventListener implements EventListener
+public class Ping extends AbstractHostPortMojo
 {
    /**
-    * Default constructor
+    * Constructor
     */
-   PostClassLoaderEventListener()
+   public Ping()
    {
    }
 
    /**
-    * Event
-    * @param kernel The kernel
-    * @param event The event
+    * {@inheritDoc}
     */
-   @SuppressWarnings("unchecked") 
-   public void event(Kernel kernel, Event event)
+   public void execute() throws MojoExecutionException, MojoFailureException
    {
-      if (event == Event.POST_CLASSLOADER)
+      try
       {
-         try
+         if (isLocal())
          {
-            Class<?> clz = Class.forName("org.jboss.logmanager.log4j.BridgeRepositorySelector", 
-                                         true, 
-                                         kernel.getKernelClassLoader());
-
-            Method mStart = clz.getMethod("start", (Class[])null);
-            Object brs = clz.newInstance();
-
-            mStart.invoke(brs, (Object[])null);
+            if (!isCommandAvailable("local-list"))
+               throw new MojoFailureException("Unable to ping " + getHost() + ":" + getPort());
          }
-         catch (Throwable t)
+         else
          {
-            // Nothing we can do
+            if (!isCommandAvailable("remote-list"))
+               throw new MojoFailureException("Unable to ping " + getHost() + ":" + getPort());
          }
+      }
+      catch (Throwable t)
+      {
+         throw new MojoFailureException("Unable to ping " + getHost() + ":" + getPort() + " (" + t.getMessage() + ")", t);
       }
    }
 }

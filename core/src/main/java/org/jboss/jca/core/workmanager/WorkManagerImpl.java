@@ -947,17 +947,28 @@ public class WorkManagerImpl implements WorkManager
 
       Work work = wrapper.getWork();
 
-      //If work is an instanceof ResourceAdapterAssociation
-      if (resourceAdapter != null && work instanceof ResourceAdapterAssociation)
+      if (resourceAdapter != null)
       {
-         try
+         if (work.getClass().getClassLoader() instanceof WorkClassLoader)
          {
-            ResourceAdapterAssociation raa = (ResourceAdapterAssociation)work;
-            raa.setResourceAdapter(resourceAdapter);
+            WorkClassLoader wcl = (WorkClassLoader)work.getClass().getClassLoader();
+            ResourceAdapterClassLoader racl =
+               new ResourceAdapterClassLoader(resourceAdapter.getClass().getClassLoader(),
+                                              wcl);
+
+            wcl.setResourceAdapterClassLoader(racl);
          }
-         catch (Throwable t)
+         if (work instanceof ResourceAdapterAssociation)
          {
-            throw new WorkException(bundle.resourceAdapterAssociationFailed(work.getClass().getName()), t);
+            try
+            {
+               ResourceAdapterAssociation raa = (ResourceAdapterAssociation)work;
+               raa.setResourceAdapter(resourceAdapter);
+            }
+            catch (Throwable t)
+            {
+               throw new WorkException(bundle.resourceAdapterAssociationFailed(work.getClass().getName()), t);
+            }
          }
       }
 
