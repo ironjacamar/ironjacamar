@@ -759,14 +759,14 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
       {
          for (org.jgroups.Address physicalAddress : nodes.values())
          {
-            if (!view.containsMember(physicalAddress))
+            if (physicalAddress != null && !view.containsMember(physicalAddress))
             {
                leave(physicalAddress);
             }
          }
          for (org.jgroups.Address address : view.getMembers())
          {
-            if (!nodes.containsValue(address))
+            if (!channel.getAddress().equals(address) && !nodes.containsValue(address))
             {
                try
                {
@@ -789,7 +789,7 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
                }
                catch (Throwable t)
                {
-                  // Nothing
+                  log.error("ViewAccepted: " + t.getMessage(), t);
                }
             }
          }
