@@ -25,10 +25,16 @@ package org.jboss.jca.core.workmanager.transport.remote.jgroups;
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.workmanager.ClassBundle;
+import org.jboss.jca.core.workmanager.WorkClassLoader;
+import org.jboss.jca.core.workmanager.WorkObjectInputStream;
 import org.jboss.jca.core.workmanager.transport.remote.AbstractRemoteTransport;
 import org.jboss.jca.core.workmanager.transport.remote.ProtocolMessages.Request;
 import org.jboss.jca.core.workmanager.transport.remote.ProtocolMessages.ResponseValues;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -58,6 +64,7 @@ import org.jgroups.util.RspList;
  * The socket transport
  *
  * @author <a href="mailto:stefano.maestri@redhat.com">Stefano Maestri</a>
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Address> implements MembershipListener
 {
@@ -86,37 +93,39 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
 
    private static final short PING_METHOD = 3;
 
-   private static final short DO_WORK_METHOD = 4;
+   private static final short GET_WORKMANAGERS_METHOD = 4;
 
-   private static final short START_WORK_METHOD = 5;
+   private static final short DO_WORK_METHOD = 5;
 
-   private static final short SCHEDULE_WORK_METHOD = 6;
+   private static final short START_WORK_METHOD = 6;
 
-   private static final short GET_SHORTRUNNING_FREE_METHOD = 7;
+   private static final short SCHEDULE_WORK_METHOD = 7;
 
-   private static final short GET_LONGRUNNING_FREE_METHOD = 8;
+   private static final short GET_SHORTRUNNING_FREE_METHOD = 8;
 
-   private static final short UPDATE_SHORTRUNNING_FREE_METHOD = 9;
+   private static final short GET_LONGRUNNING_FREE_METHOD = 9;
 
-   private static final short UPDATE_LONGRUNNING_FREE_METHOD = 10;
+   private static final short UPDATE_SHORTRUNNING_FREE_METHOD = 10;
 
-   private static final short GET_DISTRIBUTED_STATISTICS_METHOD = 11;
+   private static final short UPDATE_LONGRUNNING_FREE_METHOD = 11;
 
-   private static final short DELTA_DOWORK_ACCEPTED_METHOD = 12;
+   private static final short GET_DISTRIBUTED_STATISTICS_METHOD = 12;
 
-   private static final short DELTA_DOWORK_REJECTED_METHOD = 13;
+   private static final short DELTA_DOWORK_ACCEPTED_METHOD = 13;
 
-   private static final short DELTA_STARTWORK_ACCEPTED_METHOD = 14;
+   private static final short DELTA_DOWORK_REJECTED_METHOD = 14;
 
-   private static final short DELTA_STARTWORK_REJECTED_METHOD = 15;
+   private static final short DELTA_STARTWORK_ACCEPTED_METHOD = 15;
 
-   private static final short DELTA_SCHEDULEWORK_ACCEPTED_METHOD = 16;
+   private static final short DELTA_STARTWORK_REJECTED_METHOD = 16;
 
-   private static final short DELTA_SCHEDULEWORK_REJECTED_METHOD = 17;
+   private static final short DELTA_SCHEDULEWORK_ACCEPTED_METHOD = 17;
 
-   private static final short DELTA_WORK_SUCCESSFUL_METHOD = 18;
+   private static final short DELTA_SCHEDULEWORK_REJECTED_METHOD = 18;
 
-   private static final short DELTA_WORK_FAILED_METHOD = 19;
+   private static final short DELTA_WORK_SUCCESSFUL_METHOD = 19;
+
+   private static final short DELTA_WORK_FAILED_METHOD = 20;
 
    private static Map<Short, Method> methods = new HashMap<Short, Method>();
 
@@ -136,20 +145,26 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
          methods.put(PING_METHOD,
                      AbstractRemoteTransport.class.getMethod("localPing"));
 
+         methods.put(GET_WORKMANAGERS_METHOD,
+                     JGroupsTransport.class.getMethod("getWorkManagers"));
+
          methods.put(DO_WORK_METHOD, 
-                     AbstractRemoteTransport.class.getMethod("localDoWork",
-                                                             org.jboss.jca.core.spi.workmanager.Address.class,
-                                                             DistributableWork.class));
+                     JGroupsTransport.class.getMethod("executeDoWork",
+                                                      org.jboss.jca.core.spi.workmanager.Address.class,
+                                                      ClassBundle.class,
+                                                      byte[].class));
 
          methods.put(START_WORK_METHOD,
-                     AbstractRemoteTransport.class.getMethod("localStartWork",
-                                                             org.jboss.jca.core.spi.workmanager.Address.class,
-                                                             DistributableWork.class));
+                     JGroupsTransport.class.getMethod("executeStartWork",
+                                                      org.jboss.jca.core.spi.workmanager.Address.class,
+                                                      ClassBundle.class,
+                                                      byte[].class));
 
          methods.put(SCHEDULE_WORK_METHOD,
-                     AbstractRemoteTransport.class.getMethod("localScheduleWork",
-                                                             org.jboss.jca.core.spi.workmanager.Address.class,
-                                                             DistributableWork.class));
+                     JGroupsTransport.class.getMethod("executeScheduleWork",
+                                                      org.jboss.jca.core.spi.workmanager.Address.class,
+                                                      ClassBundle.class,
+                                                      byte[].class));
 
          methods.put(GET_SHORTRUNNING_FREE_METHOD,
                      AbstractRemoteTransport.class.getMethod("localGetShortRunningFree",
@@ -239,6 +254,154 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
    }
 
    /**
+    * Get WorkManagers
+    * @return The value
+    */
+   public Set<org.jboss.jca.core.spi.workmanager.Address> getWorkManagers()
+   {
+      return getAddresses(channel.getAddress());
+   }
+
+   /**
+    * Execute doWork
+    * @param logicalAddress The logical address
+    * @param classBundle The class bundle
+    * @param b The bytes
+    * @throws WorkException in case of error
+    */
+   public void executeDoWork(org.jboss.jca.core.spi.workmanager.Address logicalAddress, ClassBundle classBundle, byte[] b)
+      throws WorkException
+   {
+      ByteArrayInputStream bias = new ByteArrayInputStream(b);
+      WorkObjectInputStream wois = null;
+      try
+      {
+         WorkClassLoader wcl = new WorkClassLoader(classBundle);
+         
+         wois = new WorkObjectInputStream(bias, wcl);
+
+         DistributableWork dw = (DistributableWork)wois.readObject();
+
+         localDoWork(logicalAddress, dw);
+      }
+      catch (WorkException we)
+      {
+         throw we;
+      }
+      catch (Throwable t)
+      {
+         throw new WorkException("Error during doWork: " + t.getMessage(), t);
+      }
+      finally
+      {
+         if (wois != null)
+         {
+            try
+            {
+               wois.close();
+            }
+            catch (IOException ioe)
+            {
+               // Ignore
+            }
+         }
+      }
+   }
+
+   /**
+    * Execute startWork
+    * @param logicalAddress The logical address
+    * @param classBundle The class bundle
+    * @param b The bytes
+    * @return the start value
+    * @throws WorkException in case of error
+    */
+   public long executeStartWork(org.jboss.jca.core.spi.workmanager.Address logicalAddress, ClassBundle classBundle, byte[] b)
+      throws WorkException
+   {
+      ByteArrayInputStream bias = new ByteArrayInputStream(b);
+      WorkObjectInputStream wois = null;
+      try
+      {
+         WorkClassLoader wcl = new WorkClassLoader(classBundle);
+         
+         wois = new WorkObjectInputStream(bias, wcl);
+
+         DistributableWork dw = (DistributableWork)wois.readObject();
+
+         return localStartWork(logicalAddress, dw);
+      }
+      catch (WorkException we)
+      {
+         throw we;
+      }
+      catch (Throwable t)
+      {
+         throw new WorkException("Error during doWork: " + t.getMessage(), t);
+      }
+      finally
+      {
+         if (wois != null)
+         {
+            try
+            {
+               wois.close();
+            }
+            catch (IOException ioe)
+            {
+               // Ignore
+            }
+         }
+      }
+   }
+
+   /**
+    * Execute scheduleWork
+    * @param logicalAddress The logical address
+    * @param classBundle The class bundle
+    * @param b The bytes
+    * @throws WorkException in case of error
+    */
+   public void executeScheduleWork(org.jboss.jca.core.spi.workmanager.Address logicalAddress, ClassBundle classBundle, byte[] b)
+      throws WorkException
+   {
+      ByteArrayInputStream bias = new ByteArrayInputStream(b);
+      WorkObjectInputStream wois = null;
+      try
+      {
+         WorkClassLoader wcl = new WorkClassLoader(classBundle);
+         
+         wois = new WorkObjectInputStream(bias, wcl);
+
+         DistributableWork dw = (DistributableWork)wois.readObject();
+
+         localScheduleWork(logicalAddress, dw);
+      }
+      catch (WorkException we)
+      {
+         throw we;
+      }
+      catch (Throwable t)
+      {
+         throw new WorkException("Error during doWork: " + t.getMessage(), t);
+      }
+      finally
+      {
+         if (wois != null)
+         {
+            try
+            {
+               wois.close();
+            }
+            catch (IOException ioe)
+            {
+               // Ignore
+            }
+         }
+      }
+   }
+
+   /**
     * {@inheritDoc}
     */
    public void startup() throws Throwable
@@ -323,8 +486,15 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
                break;
             }
             case GET_WORKMANAGERS : {
-
-               // TODO
+               try
+               {
+                  returnValue = (Serializable) disp.callRemoteMethod(destAddress, new MethodCall(GET_WORKMANAGERS_METHOD),
+                                                                     opts);
+               }
+               catch (Exception e)
+               {
+                  throw new WorkException(e);
+               }
 
                break;
             }
@@ -349,7 +519,7 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
                try
                {
                   disp.callRemoteMethod(destAddress,
-                                        new MethodCall(DO_WORK_METHOD, address, work), opts);
+                                        new MethodCall(DO_WORK_METHOD, address, cb, getBytes(work)), opts);
                }
                catch (Exception e)
                {
@@ -364,8 +534,8 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
                DistributableWork work = (DistributableWork) parameters[2];
 
                returnValue = (Long) disp.callRemoteMethod(destAddress,
-                                                          new MethodCall(START_WORK_METHOD, address,
-                                                                         work), opts);
+                                                          new MethodCall(START_WORK_METHOD, address, cb,
+                                                                         getBytes(work)), opts);
 
                break;
             }
@@ -376,7 +546,7 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
                DistributableWork work = (DistributableWork) parameters[2];
 
                disp.callRemoteMethod(destAddress,
-                                     new MethodCall(SCHEDULE_WORK_METHOD, address, work), opts);
+                                     new MethodCall(SCHEDULE_WORK_METHOD, address, cb, getBytes(work)), opts);
 
                break;
             }
@@ -645,6 +815,44 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
    {
       if (trace)
          log.tracef("unblock called");
+   }
+
+   /**
+    * Get the byte[] of a DistributableWork instance
+    * @param dw The instance
+    * @return The value
+    */
+   private byte[] getBytes(DistributableWork dw)
+   {
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      ObjectOutputStream oos = null;
+      try
+      {
+         oos = new ObjectOutputStream(baos);
+         oos.writeObject(dw);
+         oos.flush();
+         return baos.toByteArray();
+      }
+      catch (Throwable t)
+      {
+         log.error("Error during getBytes: " + t.getMessage(), t);
+      }
+      finally
+      {
+         if (oos != null)
+         {
+            try
+            {
+               oos.close();
+            }
+            catch (IOException ioe)
+            {
+               // Ignore
+            }
+         }
+      }
+
+      return null;
    }
 
    @Override
