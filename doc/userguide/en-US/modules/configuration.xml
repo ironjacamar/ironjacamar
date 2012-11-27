@@ -2,7 +2,109 @@
 <chapter id="configuration">
    <title>Configuration</title>
 
-   <para>The configuration for the IronJacamar container is located in the config/ directory.</para>
+   <para>The configuration for the IronJacamar container is mainly located under the <code>config/</code> directory.</para>
+
+   <section id="configuration_ironjacamar">
+      <title>IronJacamar server</title>
+
+      <para>
+        The IronJacamar server can be configured by including an <code>ironjacamar.properties</code> file
+        next to the <code>ironjacamar-sjc.jar</code> in the <code>bin/</code> directory.
+      </para>
+
+      <para>
+        This file will allow to override the core options given to the kernel environment, if multiple instances
+        of the IronJacamar container are going to run on the same machine, and network interface.
+      </para>
+
+      <para>
+        The options available
+
+        <table frame="all">
+          <title>IronJacamar options</title>
+          <tgroup cols="3" align="left" colsep="1" rowsep="1">
+            <colspec colname="c1" colwidth="3*"/>
+            <colspec colname="c2" colwidth="2*"/>
+            <colspec colname="c3" colwidth="3*"/>
+            <thead>
+              <row>
+                <entry align="left">Property</entry>
+                <entry align="left">Type</entry>
+                <entry align="left">Description</entry>
+              </row>
+            </thead>
+            <tbody>
+              <row>
+                <entry><code>name</code></entry>
+                <entry><code>String</code></entry>
+                <entry>
+                  The name of the IronJacamar configuration
+                </entry>
+              </row>
+              <row>
+                <entry><code>management</code></entry>
+                <entry><code>boolean</code></entry>
+                <entry>
+                  Should management be enabled
+                </entry>
+              </row>
+              <row>
+                <entry><code>parallel.deploy</code></entry>
+                <entry><code>boolean</code></entry>
+                <entry>
+                  Should parallel deployment be enabled
+                </entry>
+              </row>
+              <row>
+                <entry><code>remote.access</code></entry>
+                <entry><code>boolean</code></entry>
+                <entry>
+                  Should remote access be enabled
+                </entry>
+              </row>
+              <row>
+                <entry><code>remote.port</code></entry>
+                <entry><code>int</code></entry>
+                <entry>
+                  The port for remote access
+                </entry>
+              </row>
+              <row>
+                <entry><code>remote.jmx.access</code></entry>
+                <entry><code>boolean</code></entry>
+                <entry>
+                  Should remote access via JMX be enabled
+                </entry>
+              </row>
+              <row>
+                <entry><code>use.platform.mbeanserver</code></entry>
+                <entry><code>boolean</code></entry>
+                <entry>
+                  Should the platform MBeanServer be used for management
+                </entry>
+              </row>
+              <row>
+                <entry><code>bean.management</code></entry>
+                <entry><code>boolean</code></entry>
+                <entry>
+                  Should management for all beans be enabled
+                </entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+      </para>
+
+      <para>
+        An example of an <code>ironjacamar.properties</code> file:
+
+        <programlisting>
+remote.access=true
+remote.port=1302
+        </programlisting>
+      </para>
+
+   </section>
 
    <section id="logging">
       <title>Logging service</title>
@@ -481,12 +583,6 @@ config/bootstrap/jca.xml
 
             <itemizedlist>
               <listitem>
-                InVM -- <code>org.jboss.jca.core.workmanager.transport.invm.InVM</code>
-                <para>
-                  Communication between work manager instances within the JVM 
-                </para>
-              </listitem>
-              <listitem>
                 Socket -- <code>org.jboss.jca.core.workmanager.transport.remote.socket.SocketTransport</code>
                 <para>
                   Communication based on <code>java.net.Socket</code>, and hence TCP/IP 
@@ -502,8 +598,8 @@ config/bootstrap/jca.xml
           </para>
 
           <para>
-            Below is an example of a socket based configuration where two instances (<code>localhost:1299</code> and
-            <code>localhost:1300</code> communicates taken from the IronJacamar test suite.
+            Below is an example of a socket based configuration where two instances <code>localhost:1299</code> and
+            <code>localhost:1300</code> communicates, taken from the IronJacamar test suite.
           </para>
 
           <programlisting language="xml">
