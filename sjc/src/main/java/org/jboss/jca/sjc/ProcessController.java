@@ -129,6 +129,7 @@ public class ProcessController
             command.add("-Diron.jacamar.options=" + options.getAbsolutePath());
 
          command.add("-Djava.net.preferIPv4Stack=true");
+         command.add("-Djgroups.bind_addr=127.0.0.1");
          command.add("-Dorg.jboss.logging.Logger.pluginClass=org.jboss.logging.logmanager.LoggerPluginImpl");
          command.add("-Dlog4j.defaultInitOverride=true");
          command.add("-jar");

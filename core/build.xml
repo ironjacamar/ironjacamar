@@ -293,7 +293,7 @@
            fork="${junit.fork}"
            timeout="${junit.timeout}">
       
-      <jvmarg line="${junit.jvm.options}"/>
+      <jvmarg line="${junit.jvm.options} -Djava.net.preferIPv4Stack=true -Djgroups.bind_addr=127.0.0.1"/>
       <sysproperty key="archives.dir" value="${build.core.dir}"/>
       <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
       <sysproperty key="log4j.defaultInitOverride" value="true"/>
