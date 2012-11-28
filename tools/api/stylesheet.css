@@ -11,15 +11,15 @@ body {
 }
 a:link, a:visited {
 	text-decoration:none;
-	color:#a12d26;
+	color:#377687;
 }
 a:hover, a:focus {
 	text-decoration:none;
-	color:#e45c54;
+	color:#62b1c7;
 }
 a:active {
     text-decoration:none;
-    color:#e45c54;
+    color:#62b1c7;
 }
 a[name] {
     color:#353833;
@@ -214,8 +214,7 @@ Page header and footer styles
     margin:20px 0 5px 0;
 }
 .header ul li, .footer ul li {
-    list-style:none;
-    font-size:1.2em;
+  font-size:1.2em;
 }
 /*
 Heading styles
