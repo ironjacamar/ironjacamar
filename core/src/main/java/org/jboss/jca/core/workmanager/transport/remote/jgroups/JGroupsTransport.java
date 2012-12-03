@@ -95,37 +95,41 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
 
    private static final short GET_WORKMANAGERS_METHOD = 4;
 
-   private static final short DO_WORK_METHOD = 5;
+   private static final short WORKMANAGER_ADD_METHOD = 5;
 
-   private static final short START_WORK_METHOD = 6;
+   private static final short WORKMANAGER_REMOVE_METHOD = 6;
 
-   private static final short SCHEDULE_WORK_METHOD = 7;
+   private static final short DO_WORK_METHOD = 7;
 
-   private static final short GET_SHORTRUNNING_FREE_METHOD = 8;
+   private static final short START_WORK_METHOD = 8;
 
-   private static final short GET_LONGRUNNING_FREE_METHOD = 9;
+   private static final short SCHEDULE_WORK_METHOD = 9;
 
-   private static final short UPDATE_SHORTRUNNING_FREE_METHOD = 10;
+   private static final short GET_SHORTRUNNING_FREE_METHOD = 10;
 
-   private static final short UPDATE_LONGRUNNING_FREE_METHOD = 11;
+   private static final short GET_LONGRUNNING_FREE_METHOD = 11;
 
-   private static final short GET_DISTRIBUTED_STATISTICS_METHOD = 12;
+   private static final short UPDATE_SHORTRUNNING_FREE_METHOD = 12;
 
-   private static final short DELTA_DOWORK_ACCEPTED_METHOD = 13;
+   private static final short UPDATE_LONGRUNNING_FREE_METHOD = 13;
 
-   private static final short DELTA_DOWORK_REJECTED_METHOD = 14;
+   private static final short GET_DISTRIBUTED_STATISTICS_METHOD = 14;
 
-   private static final short DELTA_STARTWORK_ACCEPTED_METHOD = 15;
+   private static final short DELTA_DOWORK_ACCEPTED_METHOD = 15;
 
-   private static final short DELTA_STARTWORK_REJECTED_METHOD = 16;
+   private static final short DELTA_DOWORK_REJECTED_METHOD = 16;
 
-   private static final short DELTA_SCHEDULEWORK_ACCEPTED_METHOD = 17;
+   private static final short DELTA_STARTWORK_ACCEPTED_METHOD = 17;
 
-   private static final short DELTA_SCHEDULEWORK_REJECTED_METHOD = 18;
+   private static final short DELTA_STARTWORK_REJECTED_METHOD = 18;
 
-   private static final short DELTA_WORK_SUCCESSFUL_METHOD = 19;
+   private static final short DELTA_SCHEDULEWORK_ACCEPTED_METHOD = 19;
 
-   private static final short DELTA_WORK_FAILED_METHOD = 20;
+   private static final short DELTA_SCHEDULEWORK_REJECTED_METHOD = 20;
+
+   private static final short DELTA_WORK_SUCCESSFUL_METHOD = 21;
+
+   private static final short DELTA_WORK_FAILED_METHOD = 22;
 
    private static Map<Short, Method> methods = new HashMap<Short, Method>();
 
@@ -147,6 +151,15 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
 
          methods.put(GET_WORKMANAGERS_METHOD,
                      JGroupsTransport.class.getMethod("getWorkManagers"));
+
+         methods.put(WORKMANAGER_ADD_METHOD, 
+                     JGroupsTransport.class.getMethod("addWorkManager",
+                                                      org.jboss.jca.core.spi.workmanager.Address.class,
+                                                      org.jgroups.Address.class));
+
+         methods.put(WORKMANAGER_REMOVE_METHOD, 
+                     AbstractRemoteTransport.class.getMethod("localWorkManagerRemove",
+                                                             org.jboss.jca.core.spi.workmanager.Address.class));
 
          methods.put(DO_WORK_METHOD, 
                      JGroupsTransport.class.getMethod("executeDoWork",
@@ -263,13 +276,24 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
    }
 
    /**
+    * Delegator
+    * @param logicalAddress The logical address
+    * @param address The address
+    */
+   public void addWorkManager(org.jboss.jca.core.spi.workmanager.Address logicalAddress, org.jgroups.Address address)
+   {
+      super.localWorkManagerAdd(logicalAddress, address);
+   }
+
+   /**
     * Execute doWork
     * @param logicalAddress The logical address
     * @param classBundle The class bundle
     * @param b The bytes
     * @throws WorkException in case of error
     */
-   public void executeDoWork(org.jboss.jca.core.spi.workmanager.Address logicalAddress, ClassBundle classBundle, byte[] b)
+   public void executeDoWork(org.jboss.jca.core.spi.workmanager.Address logicalAddress,
+                             ClassBundle classBundle, byte[] b)
       throws WorkException
    {
       ByteArrayInputStream bias = new ByteArrayInputStream(b);
@@ -316,7 +340,8 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
     * @return the start value
     * @throws WorkException in case of error
     */
-   public long executeStartWork(org.jboss.jca.core.spi.workmanager.Address logicalAddress, ClassBundle classBundle, byte[] b)
+   public long executeStartWork(org.jboss.jca.core.spi.workmanager.Address logicalAddress,
+                                ClassBundle classBundle, byte[] b)
       throws WorkException
    {
       ByteArrayInputStream bias = new ByteArrayInputStream(b);
@@ -362,7 +387,8 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
     * @param b The bytes
     * @throws WorkException in case of error
     */
-   public void executeScheduleWork(org.jboss.jca.core.spi.workmanager.Address logicalAddress, ClassBundle classBundle, byte[] b)
+   public void executeScheduleWork(org.jboss.jca.core.spi.workmanager.Address logicalAddress,
+                                   ClassBundle classBundle, byte[] b)
       throws WorkException
    {
       ByteArrayInputStream bias = new ByteArrayInputStream(b);
@@ -445,10 +471,44 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
    public void shutdown() throws Throwable
    {
       if (disp != null)
-         disp.stop();
+      {
+         try
+         {
+            disp.stop();
+         }
+         catch (Throwable t)
+         {
+            if (trace)
+               log.tracef("Throwable during disp.stop(): %s", t.getMessage());
+         }
+
+         disp = null;
+      }
 
       if (channel != null)
-         channel.close();
+      {
+         try
+         {
+            channel.disconnect();
+         }
+         catch (Throwable t)
+         {
+            if (trace)
+               log.tracef("Throwable during channel.disconnect(): %s", t.getMessage());
+         }
+
+         try
+         {
+            channel.close();
+         }
+         catch (Throwable t)
+         {
+            if (trace)
+               log.tracef("Throwable during channel.close(): %s", t.getMessage());
+         }
+
+         channel = null;
+      }
    }
 
    @Override
@@ -459,6 +519,14 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
 
       if (trace)
          log.tracef("%s: sending message=%s to %s", channel.getAddressAsString(), request, destAddress);
+
+      if (channel == null || !channel.isOpen() || !channel.isConnected())
+      {
+         if (trace)
+            log.tracef("%s: channel not connected", channel != null ? channel.getAddressAsString() : "<empty>");
+
+         return null;
+      }
 
       RequestOptions opts = new RequestOptions(ResponseMode.GET_ALL, 10000);
       try
@@ -488,13 +556,33 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
             case GET_WORKMANAGERS : {
                try
                {
-                  returnValue = (Serializable) disp.callRemoteMethod(destAddress, new MethodCall(GET_WORKMANAGERS_METHOD),
+                  returnValue = (Serializable) disp.callRemoteMethod(destAddress,
+                                                                     new MethodCall(GET_WORKMANAGERS_METHOD),
                                                                      opts);
                }
                catch (Exception e)
                {
                   throw new WorkException(e);
                }
+
+               break;
+            }
+            case WORKMANAGER_ADD : {
+               org.jboss.jca.core.spi.workmanager.Address address =
+                  (org.jboss.jca.core.spi.workmanager.Address) parameters[0];
+               org.jgroups.Address physicalAddress = (org.jgroups.Address) parameters[1];
+
+               disp.callRemoteMethod(destAddress,
+                                     new MethodCall(WORKMANAGER_ADD_METHOD, address, physicalAddress), opts);
+
+               break;
+            }
+            case WORKMANAGER_REMOVE : {
+               org.jboss.jca.core.spi.workmanager.Address address =
+                  (org.jboss.jca.core.spi.workmanager.Address) parameters[0];
+
+               disp.callRemoteMethod(destAddress,
+                                     new MethodCall(WORKMANAGER_REMOVE_METHOD, address), opts);
 
                break;
             }
@@ -707,6 +795,15 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
    }
 
    /**
+    * Get the physical address
+    * @return The value
+    */
+   public org.jgroups.Address getOwnAddress()
+   {
+      return channel.getAddress();
+   }
+
+   /**
     * Get the channel.
     *
     * @return the channel.
@@ -766,7 +863,7 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
          }
          for (org.jgroups.Address address : view.getMembers())
          {
-            if (!channel.getAddress().equals(address) && !nodes.containsValue(address))
+            if (channel != null && !channel.getAddress().equals(address) && !nodes.containsValue(address))
             {
                try
                {

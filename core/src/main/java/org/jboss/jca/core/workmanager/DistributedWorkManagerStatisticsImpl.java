@@ -87,6 +87,14 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
 
    /**
     * Constructor
+    */
+   public DistributedWorkManagerStatisticsImpl()
+   {
+      this(null, null);
+   }
+
+   /**
+    * Constructor
     * @param ownId The local distributed work managers identifier
     * @param t The transport
     */
@@ -104,6 +112,24 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
       this.startWorkAccepted = new AtomicInteger(0);
       this.startWorkRejected = new AtomicInteger(0);
       this.initialized = false;
+   }
+
+   /**
+    * Set own id
+    * @param v The value
+    */
+   public void setOwnId(Address v)
+   {
+      own = v;
+   }
+
+   /**
+    * Set transport
+    * @param v The value
+    */
+   public void setTransport(Transport v)
+   {
+      transport = v;
    }
 
    /**
@@ -127,11 +153,14 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
     */
    public void join(Address address)
    {
+      if (trace)
+         log.tracef("join(%s)", address);
+
       workManagers.add(address);
 
-      if (!initialized)
+      if (!initialized && own != null && transport != null)
       {
-         if (!own.equals(address))
+         if (!own.equals(address) && transport.isInitialized())
          {
             DistributedWorkManagerStatisticsValues values = transport.getDistributedStatistics(address);
             if (values != null)
@@ -145,6 +174,9 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
     */
    public void leave(Address address)
    {
+      if (trace)
+         log.tracef("leave(%s)", address);
+
       workManagers.remove(address);
    }
 
@@ -308,10 +340,13 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
       if (trace)
          log.tracef("sendDeltaDoWorkAccepted: %s", workManagers);
 
-      for (Address address : workManagers)
+      if (own != null && transport != null && transport.isInitialized())
       {
-         if (!own.equals(address))
-            transport.deltaDoWorkAccepted(address);
+         for (Address address : workManagers)
+         {
+            if (!own.equals(address))
+               transport.deltaDoWorkAccepted(address);
+         }
       }
    }
 
@@ -325,10 +360,13 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
       if (trace)
          log.tracef("sendDeltaDoWorkRejected: %s", workManagers);
 
-      for (Address address : workManagers)
+      if (own != null && transport != null && transport.isInitialized())
       {
-         if (!own.equals(address))
-            transport.deltaDoWorkRejected(address);
+         for (Address address : workManagers)
+         {
+            if (!own.equals(address))
+               transport.deltaDoWorkRejected(address);
+         }
       }
    }
 
@@ -342,10 +380,13 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
       if (trace)
          log.tracef("sendDeltaScheduleWorkAccepted: %s", workManagers);
 
-      for (Address address : workManagers)
+      if (own != null && transport != null && transport.isInitialized())
       {
-         if (!own.equals(address))
-            transport.deltaScheduleWorkAccepted(address);
+         for (Address address : workManagers)
+         {
+            if (!own.equals(address))
+               transport.deltaScheduleWorkAccepted(address);
+         }
       }
    }
 
@@ -359,10 +400,13 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
       if (trace)
          log.tracef("sendDeltaScheduleWorkRejected: %s", workManagers);
 
-      for (Address address : workManagers)
+      if (own != null && transport != null && transport.isInitialized())
       {
-         if (!own.equals(address))
-            transport.deltaScheduleWorkRejected(address);
+         for (Address address : workManagers)
+         {
+            if (!own.equals(address))
+               transport.deltaScheduleWorkRejected(address);
+         }
       }
    }
 
@@ -376,10 +420,13 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
       if (trace)
          log.tracef("sendDeltaStartWorkAccepted: %s", workManagers);
 
-      for (Address address : workManagers)
+      if (own != null && transport != null && transport.isInitialized())
       {
-         if (!own.equals(address))
-            transport.deltaStartWorkAccepted(address);
+         for (Address address : workManagers)
+         {
+            if (!own.equals(address))
+               transport.deltaStartWorkAccepted(address);
+         }
       }
    }
 
@@ -393,10 +440,13 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
       if (trace)
          log.tracef("sendDeltaStartWorkRejected: %s", workManagers);
 
-      for (Address address : workManagers)
+      if (own != null && transport != null && transport.isInitialized())
       {
-         if (!own.equals(address))
-            transport.deltaStartWorkRejected(address);
+         for (Address address : workManagers)
+         {
+            if (!own.equals(address))
+               transport.deltaStartWorkRejected(address);
+         }
       }
    }
 
@@ -410,10 +460,13 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
       if (trace)
          log.tracef("sendDeltaWorkSuccessful: %s", workManagers);
 
-      for (Address address : workManagers)
+      if (own != null && transport != null && transport.isInitialized())
       {
-         if (!own.equals(address))
-            transport.deltaWorkSuccessful(address);
+         for (Address address : workManagers)
+         {
+            if (!own.equals(address))
+               transport.deltaWorkSuccessful(address);
+         }
       }
    }
 
@@ -427,10 +480,13 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
       if (trace)
          log.tracef("sendDeltaWorkFailed: %s", workManagers);
 
-      for (Address address : workManagers)
+      if (own != null && transport != null && transport.isInitialized())
       {
-         if (!own.equals(address))
-            transport.deltaWorkFailed(address);
+         for (Address address : workManagers)
+         {
+            if (!own.equals(address))
+               transport.deltaWorkFailed(address);
+         }
       }
    }
 

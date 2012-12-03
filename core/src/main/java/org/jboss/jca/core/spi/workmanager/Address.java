@@ -30,10 +30,13 @@ import java.io.Serializable;
 public final class Address implements Comparable<Address>, Serializable
 {
    /** Serial version UID */
-   private static final long serialVersionUID = 1L;
+   private static final long serialVersionUID = 2L;
 
    /** The id of the WorkManager */
    private String workManagerId;
+
+   /** The name of the WorkManager */
+   private String workManagerName;
 
    /** The id of the Transport */
    private String transportId;
@@ -41,23 +44,19 @@ public final class Address implements Comparable<Address>, Serializable
    /**
     * Constructor
     * @param workManagerId The id of the WorkManager
-    */
-   public Address(String workManagerId)
-   {
-      this(workManagerId, null);
-   }
-
-   /**
-    * Constructor
-    * @param workManagerId The id of the WorkManager
+    * @param workManagerName The name of the WorkManager
     * @param transportId The id of the Transport
     */
-   public Address(String workManagerId, String transportId)
+   public Address(String workManagerId, String workManagerName, String transportId)
    {
       if (workManagerId == null || workManagerId.trim().equals(""))
          throw new IllegalArgumentException("WorkManagerId is undefined");
       
+      if (workManagerName == null || workManagerName.trim().equals(""))
+         throw new IllegalArgumentException("WorkManagerName is undefined");
+      
       this.workManagerId = workManagerId;
+      this.workManagerName = workManagerName;
       this.transportId = transportId;
    }
 
@@ -68,6 +67,15 @@ public final class Address implements Comparable<Address>, Serializable
    public String getWorkManagerId()
    {
       return workManagerId;
+   }
+
+   /**
+    * Get the WorkManager name
+    * @return The value
+    */
+   public String getWorkManagerName()
+   {
+      return workManagerName;
    }
 
    /**
@@ -87,6 +95,7 @@ public final class Address implements Comparable<Address>, Serializable
       int result = 37;
 
       result += 7 * workManagerId.hashCode();
+      result += 7 * workManagerName.hashCode();
       result += transportId != null ? 7 * transportId.hashCode() : 7;
 
       return result;
@@ -106,6 +115,9 @@ public final class Address implements Comparable<Address>, Serializable
       Address a = (Address)o;
 
       if (!workManagerId.equals(a.workManagerId))
+         return false;
+
+      if (!workManagerName.equals(a.workManagerName))
          return false;
 
       if (transportId != null)
@@ -128,6 +140,10 @@ public final class Address implements Comparable<Address>, Serializable
    public int compareTo(Address a)
    {
       int compare = workManagerId.compareTo(a.getWorkManagerId());
+      if (compare != 0)
+         return compare;
+
+      compare = workManagerName.compareTo(a.getWorkManagerName());
       if (compare != 0)
          return compare;
 
@@ -162,6 +178,7 @@ public final class Address implements Comparable<Address>, Serializable
 
       sb.append("Address@").append(Integer.toHexString(System.identityHashCode(this)));
       sb.append("[workManagerId=").append(workManagerId);
+      sb.append(" workManagerName=").append(workManagerName);
       sb.append(" transportId=").append(transportId);
       sb.append("]");
 

@@ -160,6 +160,8 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
       {
          if (transport instanceof NotificationListener)
             listeners.add((NotificationListener)transport);
+
+         initDistributedStatistics();
       }
    }
 
@@ -185,6 +187,15 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    public Collection<NotificationListener> getNotificationListeners()
    {
       return listeners;
+   }
+
+   /**
+    * Set the listeners
+    * @param v The value
+    */
+   void setNotificationListeners(Collection<NotificationListener> v)
+   {
+      listeners = v;
    }
 
    /**
@@ -414,7 +425,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    {
       if (distributedStatistics == null)
       {
-         distributedStatistics = new DistributedWorkManagerStatisticsImpl(getLocalAddress(), transport);
+         distributedStatistics = new DistributedWorkManagerStatisticsImpl();
          listeners.add((NotificationListener)distributedStatistics);
       }
    }
@@ -626,7 +637,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    Address getLocalAddress()
    {
       if (localAddress == null)
-         localAddress = new Address(getId(), transport.getId());
+         localAddress = new Address(getId(), getName(), transport.getId());
 
       return localAddress;
    }
@@ -636,7 +647,8 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
     */
    public void initialize()
    {
-      initDistributedStatistics();
+      distributedStatistics.setOwnId(getLocalAddress());
+      distributedStatistics.setTransport(transport);
    }
 
    /**
@@ -652,7 +664,22 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
       wm.setPolicy(getPolicy());
       wm.setSelector(getSelector());
       wm.setTransport(getTransport());
-      wm.setDistributedStatistics(distributedStatistics);
+      wm.setDistributedStatisticsEnabled(isDistributedStatisticsEnabled());
+
+      DistributedWorkManagerStatisticsImpl dwmsi = new DistributedWorkManagerStatisticsImpl();
+      wm.setDistributedStatistics(dwmsi);
+      
+      if (getPolicy() instanceof NotificationListener)
+         wm.listeners.add((NotificationListener)getPolicy());
+
+      if (getSelector() instanceof NotificationListener)
+         wm.listeners.add((NotificationListener)getSelector());
+
+      if (getTransport() instanceof NotificationListener)
+         wm.listeners.add((NotificationListener)getTransport());
+
+      if (dwmsi instanceof NotificationListener)
+         wm.listeners.add((NotificationListener)dwmsi);
 
       return wm;
    }
@@ -666,6 +693,8 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
       sb.append(" policy=").append(policy);
       sb.append(" selector=").append(selector);
       sb.append(" transport=").append(transport);
+      sb.append(" distributedStatisticsEnabled=").append(distributedStatisticsEnabled);
       sb.append(" distributedStatistics=").append(distributedStatistics);
+      sb.append(" listeners=").append(listeners);
    }
 }

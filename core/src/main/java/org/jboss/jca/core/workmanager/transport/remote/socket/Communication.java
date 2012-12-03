@@ -132,8 +132,31 @@ public class Communication implements Runnable
                if (trace)
                   log.tracef("%s: GET_WORKMANAGERS()", socket.getInetAddress());
 
-               returnValue = (Serializable)transport.getAddresses(transport.getPhysicalAddress());
+               returnValue = (Serializable)transport.getAddresses(transport.getOwnAddress());
                response = Response.OK_SERIALIZABLE;
+
+               break;
+            }
+            case WORKMANAGER_ADD : {
+               Address id = (Address)wois.readObject();
+               String address = (String)wois.readObject();
+
+               if (trace)
+                  log.tracef("%s: WORKMANAGER_ADD(%s, %s)", socket.getInetAddress(), id, address);
+
+               transport.localWorkManagerAdd(id, address);
+               response = Response.OK_VOID;
+
+               break;
+            }
+            case WORKMANAGER_REMOVE : {
+               Address id = (Address)wois.readObject();
+
+               if (trace)
+                  log.tracef("%s: WORKMANAGER_REMOVE(%s)", socket.getInetAddress(), id);
+
+               transport.localWorkManagerRemove(id);
+               response = Response.OK_VOID;
 
                break;
             }

@@ -26,8 +26,10 @@ import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.workmanager.DistributedWorkManager;
 import org.jboss.jca.core.api.workmanager.WorkManager;
 import org.jboss.jca.core.spi.workmanager.Address;
+import org.jboss.jca.core.spi.workmanager.notification.NotificationListener;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -99,6 +101,76 @@ public class WorkManagerCoordinator
          if (!workmanagers.keySet().contains(wm.getName()))
          {
             workmanagers.put(wm.getName(), wm);
+
+            // Replay events for distributed work managers
+            if (wm instanceof DistributedWorkManager)
+            {
+               WorkManagerEventQueue wmeq = WorkManagerEventQueue.getInstance();
+               List<WorkManagerEvent> events = wmeq.getEvents(wm.getName());
+
+               if (events != null && events.size() > 0)
+               {
+                  if (trace)
+                     log.tracef("%s: Events=%s", wm.getName(), events);
+
+                  for (WorkManagerEvent event : events)
+                  {
+                     if (event.getType() == WorkManagerEvent.TYPE_JOIN)
+                     {
+                        DistributedWorkManager dwm = resolveDistributedWorkManager(event.getAddress());
+
+                        if (dwm != null)
+                        {
+                           for (NotificationListener nl : dwm.getNotificationListeners())
+                           {
+                              nl.join(event.getAddress());
+                           }
+                        }
+                     }
+                     else if (event.getType() == WorkManagerEvent.TYPE_LEAVE)
+                     {
+                        DistributedWorkManager dwm = 
+                           (DistributedWorkManager)activeWorkmanagers.get(event.getAddress().getWorkManagerId());
+
+                        if (dwm != null)
+                        {
+                           for (NotificationListener nl : dwm.getNotificationListeners())
+                           {
+                              nl.leave(event.getAddress());
+                           }
+                        }
+
+                        removeWorkManager(event.getAddress().getWorkManagerId());
+                     }
+                     else if (event.getType() == WorkManagerEvent.TYPE_UPDATE_SHORT_RUNNING)
+                     {
+                        DistributedWorkManager dwm = 
+                           (DistributedWorkManager)activeWorkmanagers.get(event.getAddress().getWorkManagerId());
+
+                        if (dwm != null)
+                        {
+                           for (NotificationListener nl : dwm.getNotificationListeners())
+                           {
+                              nl.updateShortRunningFree(event.getAddress(), event.getValue());
+                           }
+                        }
+                     }
+                     else if (event.getType() == WorkManagerEvent.TYPE_UPDATE_LONG_RUNNING)
+                     {
+                        DistributedWorkManager dwm = 
+                           (DistributedWorkManager)activeWorkmanagers.get(event.getAddress().getWorkManagerId());
+
+                        if (dwm != null)
+                        {
+                           for (NotificationListener nl : dwm.getNotificationListeners())
+                           {
+                              nl.updateLongRunningFree(event.getAddress(), event.getValue());
+                           }
+                        }
+                     }
+                  }
+               }
+            }
          }
       }
    }
@@ -120,6 +192,13 @@ public class WorkManagerCoordinator
          if (workmanagers.keySet().contains(wm.getName()))
          {
             workmanagers.remove(wm.getName());
+
+            // Clear any events
+            if (wm instanceof DistributedWorkManager)
+            {
+               WorkManagerEventQueue wmeq = WorkManagerEventQueue.getInstance();
+               List<WorkManagerEvent> events = wmeq.getEvents(wm.getName());
+            }
          }
       }
    }
@@ -153,50 +232,125 @@ public class WorkManagerCoordinator
    }
 
    /**
-    * Get a work manager
-    * @param id The id of the work manager
+    * Resolve a work manager
+    * @param address The work manager address
     * @return The value
     */
-   public WorkManager getWorkManager(String id)
+   public WorkManager resolveWorkManager(Address address)
    {
       if (trace)
       {
-         log.tracef("getWorkManager(%s)", id);
-         log.tracef("ActiveWorkManagers: %s", activeWorkmanagers);
+         log.tracef("resolveWorkManager(%s)", address);
+         log.tracef("  ActiveWorkManagers: %s", activeWorkmanagers);
       }
 
-      return activeWorkmanagers.get(id);
-   }
-
-   /**
-    * Get a distributed work manager
-    * @param id The id of the work manager
-    * @return The value
-    */
-   public DistributedWorkManager getDistributedWorkManager(String id)
-   {
-      if (trace)
+      WorkManager wm = activeWorkmanagers.get(address.getWorkManagerId());
+      if (wm != null)
       {
-         log.tracef("getDistributedWorkManager(%s)", id);
-         log.tracef("ActiveWorkManagers: %s", activeWorkmanagers);
+         if (trace)
+            log.tracef(" WorkManager: %s", wm);
+
+         return wm;
       }
 
-      WorkManager wm = activeWorkmanagers.get(id);
+      try
+      {
+         // Create a new instance
+         WorkManager template = workmanagers.get(address.getWorkManagerName());
 
-      if (wm instanceof DistributedWorkManager)
-         return (DistributedWorkManager)wm;
+         if (template != null)
+         {
+            wm = template.clone();
+            wm.setId(address.getWorkManagerId());
+
+            if (wm instanceof DistributedWorkManager)
+            {
+               DistributedWorkManager dwm = (DistributedWorkManager)wm;
+               dwm.initialize();
+               //dwm.getTransport().register(new Address(wm.getId(), wm.getName(), dwm.getTransport().getId()));
+            }
+
+            activeWorkmanagers.put(address.getWorkManagerId(), wm);
+            refCountWorkmanagers.put(address.getWorkManagerId(), Integer.valueOf(0));
+
+            if (trace)
+               log.tracef("Created WorkManager: %s", wm);
+
+            return wm;
+         }
+      }
+      catch (Throwable t)
+      {
+         //throw new IllegalStateException("The WorkManager couldn't be created: " + name);
+      }
 
       return null;
    }
 
    /**
-    * Create a work manager
-    * @param id The id of the work manager
-    * @return The work manager
+    * Resolve a distributed work manager
+    * @param address The work manager address
+    * @return The value
     */
-   public synchronized WorkManager createWorkManager(String id)
+   public DistributedWorkManager resolveDistributedWorkManager(Address address)
    {
-      return createWorkManager(id, null);
+      if (trace)
+      {
+         log.tracef("resolveDistributedWorkManager(%s)", address);
+         log.tracef("  ActiveWorkManagers: %s", activeWorkmanagers);
+      }
+
+      WorkManager wm = activeWorkmanagers.get(address.getWorkManagerId());
+
+      if (wm != null)
+      {
+         if (wm instanceof DistributedWorkManager)
+         {
+            if (trace)
+               log.tracef(" WorkManager: %s", wm);
+
+            return (DistributedWorkManager)wm;
+         }
+         else
+         {
+            if (trace)
+               log.tracef(" WorkManager not distributable: %s", wm);
+
+            return null;
+         }
+      }
+
+      try
+      {
+         // Create a new instance
+         WorkManager template = workmanagers.get(address.getWorkManagerName());
+
+         if (template != null)
+         {
+            wm = template.clone();
+            wm.setId(address.getWorkManagerId());
+
+            if (wm instanceof DistributedWorkManager)
+            {
+               DistributedWorkManager dwm = (DistributedWorkManager)wm;
+               dwm.initialize();
+
+               activeWorkmanagers.put(address.getWorkManagerId(), dwm);
+               refCountWorkmanagers.put(address.getWorkManagerId(), Integer.valueOf(0));
+               
+               if (trace)
+                  log.tracef("Created WorkManager: %s", dwm);
+               
+               return dwm;
+            }
+         }
+      }
+      catch (Throwable t)
+      {
+         //throw new IllegalStateException("The WorkManager couldn't be created: " + name);
+      }
+
+      return null;
    }
 
    /**
@@ -219,7 +373,14 @@ public class WorkManagerCoordinator
          Integer i = refCountWorkmanagers.get(id);
          refCountWorkmanagers.put(id, Integer.valueOf(i.intValue() + 1));
 
-         return activeWorkmanagers.get(id);
+         WorkManager wm = activeWorkmanagers.get(id);
+         if (wm instanceof DistributedWorkManager)
+         {
+            DistributedWorkManager dwm = (DistributedWorkManager)wm;
+            dwm.getTransport().register(new Address(wm.getId(), wm.getName(), dwm.getTransport().getId()));
+         }
+
+         return wm;
       }
 
       try
@@ -244,7 +405,8 @@ public class WorkManagerCoordinator
          if (wm instanceof DistributedWorkManager)
          {
             DistributedWorkManager dwm = (DistributedWorkManager)wm;
-            dwm.getTransport().register(new Address(wm.getId(), dwm.getTransport().getId()));
+            dwm.initialize();
+            dwm.getTransport().register(new Address(wm.getId(), wm.getName(), dwm.getTransport().getId()));
          }
 
          activeWorkmanagers.put(id, wm);
@@ -279,11 +441,11 @@ public class WorkManagerCoordinator
             if (trace)
                log.tracef("Removed WorkManager: %s", id);
 
-            WorkManager wm = getWorkManager(id);
+            WorkManager wm = activeWorkmanagers.get(id);
             if (wm instanceof DistributedWorkManager)
             {
                DistributedWorkManager dwm = (DistributedWorkManager)wm;
-               dwm.getTransport().unregister(new Address(wm.getId(), dwm.getTransport().getId()));
+               dwm.getTransport().unregister(new Address(wm.getId(), wm.getName(), dwm.getTransport().getId()));
             }
 
             activeWorkmanagers.remove(id);

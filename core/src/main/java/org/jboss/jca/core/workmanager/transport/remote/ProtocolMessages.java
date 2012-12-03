@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2008, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2012, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -51,6 +51,10 @@ public class ProtocolMessages
       LEAVE(1, Serializable.class),
       /** get workmanagers */
       GET_WORKMANAGERS(0),
+      /** workmanager add */
+      WORKMANAGER_ADD(2, Address.class, Serializable.class),
+      /** workmanager remove */
+      WORKMANAGER_REMOVE(1, Address.class),
       /** update short running free */
       UPDATE_SHORTRUNNING_FREE(2, Address.class, Long.class),
       /** update long running free */

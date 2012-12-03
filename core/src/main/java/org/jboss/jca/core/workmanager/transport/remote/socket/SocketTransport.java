@@ -133,7 +133,7 @@ public class SocketTransport extends AbstractRemoteTransport<String> implements 
             try
             {
                // Let other node know of us
-               sendMessage(addr, Request.JOIN, getPhysicalAddress());
+               sendMessage(addr, Request.JOIN, getOwnAddress());
 
                // Update the local information
                Set<Address> workManagers = (Set<Address>)sendMessage(addr, Request.GET_WORKMANAGERS);
@@ -341,7 +341,7 @@ public class SocketTransport extends AbstractRemoteTransport<String> implements 
     * Get the physical address
     * @return The value
     */
-   public String getPhysicalAddress()
+   public String getOwnAddress()
    {
       return host + ":" + port;
    }
