@@ -148,7 +148,7 @@
   <property name="version.jetty.jsp" value="2.2.1"/>
   <property name="version.jetty.el" value="2.2.4"/>
   <property name="version.jasper" value="glassfish_2.1.0.v201004190952"/>
-  <property name="version.jgroups" value="3.2.2.Final"/>
+  <property name="version.jgroups" value="3.2.4.Final"/>
   <property name="version.junit" value="4.10"/>
   <property name="version.maven" value="2.2.1"/>
   <property name="version.saxon" value="8.7"/>
