@@ -246,7 +246,7 @@
   <!-- ================================= 
        Target: mjvm-test
        ================================= -->
-  <target name="mjvm-test">
+  <target name="mjvm-test" unless="no-mjvm">
     <path id="ant.lib.path.id">
       <fileset dir="../target">
         <include name="*.jar"/>
