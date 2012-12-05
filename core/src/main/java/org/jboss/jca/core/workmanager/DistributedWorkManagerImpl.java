@@ -79,6 +79,15 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    /** Distributed statistics */
    private DistributedWorkManagerStatisticsImpl distributedStatistics;
 
+   /** Should doWork be enabled for distribution */
+   private boolean doWorkDistributionEnabled;
+
+   /** Should startWork be enabled for distribution */
+   private boolean startWorkDistributionEnabled;
+
+   /** Should scheduleWork be enabled for distribution */
+   private boolean scheduleWorkDistributionEnabled;
+
    /** Local address */
    private Address localAddress;
 
@@ -94,6 +103,9 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
       this.listeners = Collections.synchronizedList(new ArrayList<NotificationListener>(3));
       this.distributedStatisticsEnabled = true;
       this.distributedStatistics = null;
+      this.doWorkDistributionEnabled = true;
+      this.startWorkDistributionEnabled = true;
+      this.scheduleWorkDistributionEnabled = true;
       this.localAddress = null;
    }
 
@@ -201,6 +213,54 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    /**
     * {@inheritDoc}
     */
+   public void setDoWorkDistributionEnabled(boolean v)
+   {
+      doWorkDistributionEnabled = v;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isDoWorkDistributionEnabled()
+   {
+      return doWorkDistributionEnabled;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setStartWorkDistributionEnabled(boolean v)
+   {
+      startWorkDistributionEnabled = v;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isStartWorkDistributionEnabled()
+   {
+      return startWorkDistributionEnabled;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setScheduleWorkDistributionEnabled(boolean v)
+   {
+      scheduleWorkDistributionEnabled = v;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isScheduleWorkDistributionEnabled()
+   {
+      return scheduleWorkDistributionEnabled;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public void localDoWork(Work work) throws WorkException
    {
       checkTransport();
@@ -286,7 +346,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    public void doWork(Work work) throws WorkException
    {
       if (policy == null || selector == null || transport == null ||
-          work == null || !(work instanceof DistributableWork))
+          work == null || !(work instanceof DistributableWork) || !doWorkDistributionEnabled)
       {
          localDoWork(work);
       }
@@ -321,7 +381,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    public long startWork(Work work) throws WorkException
    {
       if (policy == null || selector == null || transport == null ||
-          work == null || !(work instanceof DistributableWork))
+          work == null || !(work instanceof DistributableWork) || !startWorkDistributionEnabled)
       {
          return localStartWork(work);
       }
@@ -351,7 +411,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    public void scheduleWork(Work work) throws WorkException
    {
       if (policy == null || selector == null || transport == null ||
-          work == null || !(work instanceof DistributableWork))
+          work == null || !(work instanceof DistributableWork) || !scheduleWorkDistributionEnabled)
       {
          localScheduleWork(work);
       }
@@ -665,6 +725,9 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
       wm.setSelector(getSelector());
       wm.setTransport(getTransport());
       wm.setDistributedStatisticsEnabled(isDistributedStatisticsEnabled());
+      wm.setDoWorkDistributionEnabled(isDoWorkDistributionEnabled());
+      wm.setStartWorkDistributionEnabled(isStartWorkDistributionEnabled());
+      wm.setScheduleWorkDistributionEnabled(isScheduleWorkDistributionEnabled());
 
       DistributedWorkManagerStatisticsImpl dwmsi = new DistributedWorkManagerStatisticsImpl();
       wm.setDistributedStatistics(dwmsi);
@@ -696,5 +759,8 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
       sb.append(" distributedStatisticsEnabled=").append(distributedStatisticsEnabled);
       sb.append(" distributedStatistics=").append(distributedStatistics);
       sb.append(" listeners=").append(listeners);
+      sb.append(" doWorkDistributionEnabled=").append(doWorkDistributionEnabled);
+      sb.append(" startWorkDistributionEnabled=").append(startWorkDistributionEnabled);
+      sb.append(" scheduleWorkDistributionEnabled=").append(scheduleWorkDistributionEnabled);
    }
 }

@@ -92,6 +92,42 @@ public interface DistributedWorkManager extends javax.resource.spi.work.Distribu
    public Collection<NotificationListener> getNotificationListeners();
 
    /**
+    * Toggle distribution of Work instances for doWork
+    * @param v The value
+    */
+   public void setDoWorkDistributionEnabled(boolean v);
+
+   /**
+    * Is distribution of Work instances for doWork enabled
+    * @return True if enabled, otherwise false
+    */
+   public boolean isDoWorkDistributionEnabled();
+
+   /**
+    * Toggle distribution of Work instances for startWork
+    * @param v The value
+    */
+   public void setStartWorkDistributionEnabled(boolean v);
+
+   /**
+    * Is distribution of Work instances for startWork enabled
+    * @return True if enabled, otherwise false
+    */
+   public boolean isStartWorkDistributionEnabled();
+
+   /**
+    * Toggle distribution of Work instances for scheduleWork
+    * @param v The value
+    */
+   public void setScheduleWorkDistributionEnabled(boolean v);
+
+   /**
+    * Is distribution of Work instances for scheduleWork enabled
+    * @return True if enabled, otherwise false
+    */
+   public boolean isScheduleWorkDistributionEnabled();
+
+   /**
     * doWork locally
     * @param work The work
     * @exception WorkException Thrown if an error occurs
