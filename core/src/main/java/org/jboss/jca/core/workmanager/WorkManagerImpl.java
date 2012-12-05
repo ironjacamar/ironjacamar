@@ -28,6 +28,7 @@ import org.jboss.jca.core.api.workmanager.WorkManager;
 import org.jboss.jca.core.spi.security.Callback;
 import org.jboss.jca.core.spi.transaction.xa.XATerminator;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -718,11 +719,25 @@ public class WorkManagerImpl implements WorkManager
                if (wc instanceof HintsContext)
                {
                   HintsContext hc = (HintsContext)wc;
-                  if (hc.getHints().containsKey(HintsContext.LONGRUNNING_HINT))
+                  Serializable value = hc.getHints().get(HintsContext.LONGRUNNING_HINT);
+                  boolean longRunning = true;
+
+                  if (value != null)
                   {
-                     executor = longRunningExecutor;
-                     found = true;
+                     if (value instanceof String)
+                     {
+                        longRunning = Boolean.valueOf((String)value);
+                     }
+                     else if (value instanceof Boolean)
+                     {
+                        longRunning = ((Boolean)value).booleanValue();
+                     }
                   }
+
+                  if (longRunning)
+                     executor = longRunningExecutor;
+
+                  found = true;
                }
             }
          }
