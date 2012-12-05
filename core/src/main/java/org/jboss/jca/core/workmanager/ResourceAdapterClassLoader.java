@@ -22,12 +22,23 @@
 
 package org.jboss.jca.core.workmanager;
 
+import org.jboss.jca.core.CoreLogger;
+
+import org.jboss.logging.Logger;
+
 /**
  * Resource adapter class loader
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class ResourceAdapterClassLoader extends ClassLoader
 {
+   /** The logger */
+   private static CoreLogger log =
+      Logger.getMessageLogger(CoreLogger.class, ResourceAdapterClassLoader.class.getName());
+
+   /** Whether trace is enabled */
+   private static boolean trace = log.isTraceEnabled();
+
    /** The work class loader */
    private WorkClassLoader workClassLoader;
 
@@ -48,6 +59,9 @@ public class ResourceAdapterClassLoader extends ClassLoader
    @Override
    public Class<?> loadClass(String name) throws ClassNotFoundException
    {
+      if (trace)
+         log.tracef("%s: loadClass(%s)", Integer.toHexString(System.identityHashCode(this)), name);
+
       try
       {
          return super.loadClass(name);
@@ -55,6 +69,8 @@ public class ResourceAdapterClassLoader extends ClassLoader
       catch (Throwable t)
       {
          // Default to delegate
+         if (trace)
+            log.tracef("%s: Failed to load=%s", Integer.toHexString(System.identityHashCode(this)), name);
       }
 
       return workClassLoader.loadClass(name, false);
@@ -69,15 +85,35 @@ public class ResourceAdapterClassLoader extends ClassLoader
    @Override
    public Class<?> findClass(String name) throws ClassNotFoundException
    {
+      if (trace)
+         log.tracef("%s: findClass(%s)", Integer.toHexString(System.identityHashCode(this)), name);
+
       try
       {
-         return super.findClass(name);
+         return getParent().loadClass(name);
       }
       catch (Throwable t)
       {
          // Default to delegate
+         if (trace)
+            log.tracef("%s: Failed to find=%s", Integer.toHexString(System.identityHashCode(this)), name);
       }
 
       return workClassLoader.lookup(name);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String toString()
+   {
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("ResourceAdapterClassLoader@").append(Integer.toHexString(System.identityHashCode(this)));
+      sb.append("[parent=").append(getParent());
+      sb.append(" workClassLoader=").append(Integer.toHexString(System.identityHashCode(workClassLoader)));
+      sb.append("]");
+
+      return sb.toString();
    }
 }

@@ -22,11 +22,17 @@
 
 package org.jboss.jca.core.workmanager;
 
+import org.jboss.jca.core.CoreLogger;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Vector;
+
+import org.jboss.logging.Logger;
 
 /**
  * Work class loader
@@ -34,6 +40,12 @@ import java.util.Vector;
  */
 public class WorkClassLoader extends ClassLoader
 {
+   /** The logger */
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, WorkClassLoader.class.getName());
+
+   /** Whether trace is enabled */
+   private static boolean trace = log.isTraceEnabled();
+
    /** The resource adapter class loader */
    private ResourceAdapterClassLoader resourceAdapterClassLoader;
 
@@ -55,9 +67,22 @@ public class WorkClassLoader extends ClassLoader
    {
       super(WorkClassLoader.class.getClassLoader());
 
+      List<Class<?>> classes = new ArrayList<Class<?>>(cb.getDefinitions().size());
+
       for (ClassDefinition cd : cb.getDefinitions())
       {
+         if (trace)
+            log.tracef("%s: Defining class=%s", Integer.toHexString(System.identityHashCode(this)), cd.getName());
+
          Class<?> c = defineClass(cd.getName(), cd.getData(), 0, cd.getData().length);
+         classes.add(c);
+      }
+
+      for (Class<?> c : classes)
+      {
+         if (trace)
+            log.tracef("%s: Resolving class=%s", Integer.toHexString(System.identityHashCode(this)), c.getName());
+
          resolveClass(c);
       }
 
@@ -70,6 +95,9 @@ public class WorkClassLoader extends ClassLoader
     */
    public void setResourceAdapterClassLoader(ResourceAdapterClassLoader v)
    {
+      if (trace)
+         log.tracef("%s: setResourceAdapterClassLoader(%s)", Integer.toHexString(System.identityHashCode(this)), v);
+
       resourceAdapterClassLoader = v;
    }
 
@@ -79,6 +107,9 @@ public class WorkClassLoader extends ClassLoader
    @Override
    public Class<?> loadClass(String name) throws ClassNotFoundException
    {
+      if (trace)
+         log.tracef("%s: loadClass(%s)", Integer.toHexString(System.identityHashCode(this)), name);
+
       Class<?> result = super.loadClass(name);
 
       if (result != null)
@@ -118,6 +149,9 @@ public class WorkClassLoader extends ClassLoader
    @Override
    public Class<?> findClass(String name) throws ClassNotFoundException
    {
+      if (trace)
+         log.tracef("%s: findClass(%s)", Integer.toHexString(System.identityHashCode(this)), name);
+
       if (resourceAdapterClassLoader != null)
       {
          try
@@ -259,5 +293,20 @@ public class WorkClassLoader extends ClassLoader
          resourceAdapterClassLoader.setPackageAssertionStatus(packageName, enabled);
 
       super.setPackageAssertionStatus(packageName, enabled);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String toString()
+   {
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("WorkClassLoader@").append(Integer.toHexString(System.identityHashCode(this)));
+      sb.append("[parent=").append(getParent());
+      sb.append(" resourceAdapterClassLoader=").append(resourceAdapterClassLoader);
+      sb.append("]");
+
+      return sb.toString();
    }
 }

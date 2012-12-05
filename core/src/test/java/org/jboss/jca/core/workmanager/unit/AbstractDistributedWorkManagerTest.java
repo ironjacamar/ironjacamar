@@ -24,9 +24,14 @@ package org.jboss.jca.core.workmanager.unit;
 import org.jboss.jca.core.api.workmanager.DistributedWorkManager;
 import org.jboss.jca.core.workmanager.rars.dwm.WorkConnection;
 import org.jboss.jca.core.workmanager.rars.dwm.WorkConnectionFactory;
+import org.jboss.jca.core.workmanager.rars.dwm.WorkResourceAdapter;
+
+import java.io.Serializable;
 
 import javax.annotation.Resource;
 import javax.resource.spi.BootstrapContext;
+import javax.resource.spi.ResourceAdapter;
+import javax.resource.spi.ResourceAdapterAssociation;
 import javax.resource.spi.work.DistributableWork;
 import javax.resource.spi.work.Work;
 
@@ -161,10 +166,34 @@ public abstract class AbstractDistributedWorkManagerTest
    /**
     * DistributableWork
     */
-   public static class MyDistributableWork implements DistributableWork
+   public static class MyDistributableWork extends CustomClass implements DistributableWork,
+                                                                          CustomInterface,
+                                                                          ResourceAdapterAssociation
    {
       /** Serial version uid */
       private static final long serialVersionUID = 1L;
+
+      /** Resource adapter */
+      private ResourceAdapter ra;
+
+      /** Custom parameter */
+      private CustomParameter parameter;
+
+      /**
+       * Constructor
+       */
+      public MyDistributableWork()
+      {
+         this.parameter = new CustomParameter();
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public void method()
+      {
+         System.out.println("MyDistributableWork: method");
+      }
 
       /**
        * {@inheritDoc}
@@ -172,6 +201,11 @@ public abstract class AbstractDistributedWorkManagerTest
       public void run()
       {
          System.out.println("MyDistributableWork: run");
+         method();
+         System.out.println("MyDistributableWork: ra=" + ra);
+
+         if (ra != null)
+            System.out.println("MyDistributableWork: ra=" + (WorkResourceAdapter)ra);
       }
 
       /**
@@ -180,6 +214,62 @@ public abstract class AbstractDistributedWorkManagerTest
       public void release()
       {
          System.out.println("MyDistributableWork: release");
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public ResourceAdapter getResourceAdapter()
+      {
+         return ra;
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public void setResourceAdapter(ResourceAdapter ra)
+      {
+         this.ra = ra;
+      }
+   }
+
+   /**
+    * Custom class
+    */
+   public static class CustomClass
+   {
+      /**
+       * Constructor
+       */
+      public CustomClass()
+      {
+      }
+   }
+
+   /**
+    * Custom interface
+    */
+   public static interface CustomInterface
+   {
+      /**
+       * Method
+       */
+      public void method();
+   }
+
+   /**
+    * Custom parameter
+    */
+   public static class CustomParameter implements Serializable
+   {
+      /** Serial version uid */
+      private static final long serialVersionUID = 1L;
+
+      /**
+       * Constructor
+       */
+      public CustomParameter()
+      {
       }
    }
 }

@@ -22,7 +22,14 @@
 
 package org.jboss.jca.core.workmanager;
 
+import org.jboss.jca.core.CoreLogger;
+
 import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jboss.logging.Logger;
 
 /**
  * A class bundle factory
@@ -30,6 +37,13 @@ import java.io.Serializable;
  */
 public class ClassBundleFactory
 {
+   /** The logger */
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class,
+                                                           ClassBundleFactory.class.getName());
+
+   /** Whether trace is enabled */
+   private static boolean trace = log.isTraceEnabled();
+
    /**
     * Constructor
     */
@@ -46,10 +60,157 @@ public class ClassBundleFactory
    {
       if (s == null)
          return null;
+      
+      if (trace)
+         log.tracef("Creating class bundle for: %s", s);
 
       ClassBundle cb = new ClassBundle();
+
+      Class<?>[] classes = s.getClass().getInterfaces();
+      if (classes != null && classes.length > 0)
+      {
+         for (Class<?> clz : classes)
+         {
+            String name = clz.getName();
+
+            if (!name.startsWith("java") && !name.startsWith("javax"))
+            {
+               if (trace)
+                  log.tracef("Creating class definition for: %s", name);
+
+               ClassDefinition cd = ClassDefinitionFactory.createClassDefinition(s, clz);
+               if (!cb.getDefinitions().contains(cd))
+                  cb.getDefinitions().add(cd);
+            }
+         }
+      }
+      else
+      {
+         if (trace)
+            log.tracef("No interfaces for: %s", s.getClass().getName());
+      }
+
+      classes = s.getClass().getDeclaredClasses();
+      if (classes != null && classes.length > 0)
+      {
+         for (Class<?> clz : classes)
+         {
+            String name = clz.getName();
+
+            if (!name.startsWith("java") && !name.startsWith("javax"))
+            {
+               if (trace)
+                  log.tracef("Creating class definition for: %s", name);
+
+               ClassDefinition cd = ClassDefinitionFactory.createClassDefinition(s, clz);
+               if (!cb.getDefinitions().contains(cd))
+                  cb.getDefinitions().add(cd);
+            }
+         }
+      }
+      else
+      {
+         if (trace)
+            log.tracef("No classes for: %s", s.getClass().getName());
+      }
+
+      classes = getFields(s.getClass());
+      if (classes != null && classes.length > 0)
+      {
+         for (Class<?> clz : classes)
+         {
+            String name = clz.getName();
+
+            if (!name.startsWith("java") && !name.startsWith("javax"))
+            {
+               if (trace)
+                  log.tracef("Creating class definition for: %s", name);
+
+               ClassDefinition cd = ClassDefinitionFactory.createClassDefinition(s, clz);
+               if (!cb.getDefinitions().contains(cd))
+                  cb.getDefinitions().add(cd);
+            }
+         }
+      }
+      else
+      {
+         if (trace)
+            log.tracef("No fields for: %s", s.getClass().getName());
+      }
+
+      Class<?> clz = s.getClass().getSuperclass();
+      while (clz != null)
+      {
+         String name = clz.getName();
+         if (!name.startsWith("java") && !name.startsWith("javax"))
+         {
+            if (trace)
+               log.tracef("Creating class definition for: %s", name);
+
+            ClassDefinition cd = ClassDefinitionFactory.createClassDefinition(s, clz);
+            if (!cb.getDefinitions().contains(cd))
+               cb.getDefinitions().add(cd);
+
+            clz = clz.getSuperclass();
+         }
+         else
+         {
+            clz = null;
+         }
+      }
+
       cb.getDefinitions().add(ClassDefinitionFactory.createClassDefinition(s));
 
+      if (trace)
+         log.tracef("Class bundle: %s", cb);
+
       return cb;
+   }
+
+   /**
+    * Get the classes for all the fields
+    * @param clz The class
+    * @return The classes; empty array if none
+    */
+   private static Class<?>[] getFields(Class<?> clz)
+   {
+      List<Class<?>> result = new ArrayList<Class<?>>();
+
+      Class<?> c = clz;
+      while (!c.equals(Object.class))
+      {
+         try
+         {
+            Field[] fields = c.getDeclaredFields();
+            if (fields != null && fields.length > 0)
+            {
+               for (Field f : fields)
+               {
+                  Class<?> defClz = f.getType();
+                  String defClzName = defClz.getName();
+
+                  if (!defClz.isPrimitive() && !defClz.isArray() && 
+                      !defClzName.startsWith("java") && !defClzName.startsWith("javax"))
+                  {
+                     if (!result.contains(defClz))
+                     {
+                        if (trace)
+                           log.tracef("Adding field: %s", defClzName);
+                        
+                        result.add(defClz);
+                     }
+                  }
+               }
+            }
+         }
+         catch (Throwable t)
+         {
+            // Ignore
+         }
+
+         c = c.getSuperclass();
+      }
+
+      return result.toArray(new Class<?>[result.size()]);
    }
 }

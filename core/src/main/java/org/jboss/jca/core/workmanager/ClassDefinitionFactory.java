@@ -48,10 +48,20 @@ public class ClassDefinitionFactory
     */
    public static ClassDefinition createClassDefinition(Serializable s)
    {
-      if (s == null)
+      return createClassDefinition(s, s.getClass());
+   }
+
+   /**
+    * Create a class definition
+    * @param s The serializable
+    * @param clz The class
+    * @return The definition
+    */
+   public static ClassDefinition createClassDefinition(Serializable s, Class<?> clz)
+   {
+      if (s == null || clz == null)
          return null;
 
-      Class<?> clz = s.getClass();
       String name = clz.getName();
       long serialVersionUID = 0L;
       byte[] data = null;
