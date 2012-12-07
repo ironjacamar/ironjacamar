@@ -616,6 +616,11 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
          }
       }
 
+      // We need to unlock() before sending the connection error to the
+      // event listeners. Otherwise the lock won't be in sync once
+      // cleanup() is called
+      unlock();
+
       Exception ex = null;
       if (e instanceof Exception)
       {
