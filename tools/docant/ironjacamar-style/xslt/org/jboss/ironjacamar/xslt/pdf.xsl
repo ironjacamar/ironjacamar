@@ -234,5 +234,137 @@
         </fo:block>
     </xsl:template>
 
+  <!--
+  From: fo/pagesetup.xsl
+  Reason: Custom Header
+  Version: 1.76.1
+  -->
+  <xsl:template name="header.content">
+    <xsl:param name="pageclass" select="''"/>
+    <xsl:param name="sequence" select="''"/>
+    <xsl:param name="position" select="''"/>
+    <xsl:param name="gentext-key" select="''"/>
+    <xsl:param name="title-limit" select="'30'"/>
+    <!--
+      <fo:block>
+        <xsl:value-of select="$pageclass"/>
+        <xsl:text>, </xsl:text>
+        <xsl:value-of select="$sequence"/>
+        <xsl:text>, </xsl:text>
+        <xsl:value-of select="$position"/>
+        <xsl:text>, </xsl:text>
+        <xsl:value-of select="$gentext-key"/>
+      </fo:block>
+    body, blank, left, chapter
+    -->
+    <!-- sequence can be odd, even, first, blank -->
+    <!-- position can be left, center, right -->
+    <xsl:choose>
+      <!--xsl:when test="($sequence='blank' and $position='left' and $gentext-key='chapter')">
+      <xsl:variable name="text">
+        <xsl:call-template name="component.title.nomarkup"/>
+      </xsl:variable>
+        <fo:inline keep-together.within-line="always" font-weight="bold">
+          <xsl:choose>
+          <xsl:when test="string-length($text) &gt; '33'">
+          <xsl:value-of select="concat(substring($text, 0, $title-limit), '...')"/>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:value-of select="$text"/>
+        </xsl:otherwise>
+        </xsl:choose>
+      </fo:inline>
+      </xsl:when-->
+      <xsl:when test="$confidential = 1 and (($sequence='odd' and $position='left') or ($sequence='even' and $position='right'))">
+        <fo:inline keep-together.within-line="always" font-weight="bold">
+          <xsl:text>RED HAT CONFIDENTIAL</xsl:text>
+        </fo:inline>
+      </xsl:when>
+      <xsl:when test="$sequence = 'blank'">
+        <!-- nothing -->
+      </xsl:when>
+      <!-- Extracting 'Chapter' + Chapter Number from the full Chapter title, with a dirty, dirty hack -->
+      <xsl:when test="($sequence='first' and $position='left' and $gentext-key='chapter')">
+        <xsl:variable name="text">
+          <xsl:call-template name="component.title.nomarkup"/>
+        </xsl:variable>
+        <xsl:variable name="chapt">
+          <xsl:value-of select="substring-before($text, '&#xA0;')"/>
+        </xsl:variable>
+        <xsl:variable name="remainder">
+          <xsl:value-of select="substring-after($text, '&#xA0;')"/>
+        </xsl:variable>
+        <xsl:variable name="chapt-num">
+          <xsl:value-of select="substring-before($remainder, '&#xA0;')"/>
+        </xsl:variable>
+        <xsl:variable name="text1">
+          <xsl:value-of select="concat($chapt, '&#xA0;', $chapt-num)"/>
+        </xsl:variable>
+        <fo:inline keep-together.within-line="always" font-weight="bold">
+          <xsl:value-of select="$text1"/>
+        </fo:inline>
+      </xsl:when>
+      <!--xsl:when test="($sequence='odd' or $sequence='even') and $position='center'"-->
+      <xsl:when test="($sequence='even' and $position='left')">
+        <!--xsl:if test="$pageclass != 'titlepage'"-->
+        <xsl:variable name="text">
+          <xsl:call-template name="component.title.nomarkup"/>
+        </xsl:variable>
+        <fo:inline keep-together.within-line="always" font-weight="bold">
+          <xsl:choose>
+            <xsl:when test="string-length($text) &gt; '33'">
+              <xsl:value-of select="concat(substring($text, 0, $title-limit), '...')"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="$text"/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </fo:inline>
+        <!--xsl:if-->
+      </xsl:when>
+      <xsl:when test="($sequence='odd' and $position='right')">
+        <!--xsl:if test="$pageclass != 'titlepage'"-->
+        <fo:inline keep-together.within-line="always">
+          <fo:retrieve-marker retrieve-class-name="section.head.marker" retrieve-position="first-including-carryover" retrieve-boundary="page-sequence"/>
+        </fo:inline>
+        <!--/xsl:if-->
+      </xsl:when>
+      <xsl:when test="$position='left'">
+        <!-- Same for odd, even, empty, and blank sequences -->
+        <xsl:call-template name="draft.text"/>
+      </xsl:when>
+      <xsl:when test="$position='center'">
+        <!-- nothing for empty and blank sequences -->
+      </xsl:when>
+      <xsl:when test="$position='right'">
+        <!-- Same for odd, even, empty, and blank sequences -->
+        <xsl:call-template name="draft.text"/>
+      </xsl:when>
+      <xsl:when test="$sequence = 'first'">
+        <!-- nothing for first pages -->
+      </xsl:when>
+      <xsl:when test="$sequence = 'blank'">
+        <!-- nothing for blank pages -->
+      </xsl:when>
+    </xsl:choose>
+  </xsl:template>
+
+  <xsl:template name="component.title.nomarkup">
+    <xsl:param name="node" select="."/>
+
+    <xsl:variable name="id">
+      <xsl:call-template name="object.id">
+        <xsl:with-param name="object" select="$node"/>
+      </xsl:call-template>
+    </xsl:variable>
+
+    <xsl:variable name="title">
+      <xsl:apply-templates select="$node" mode="object.title.markup">
+        <xsl:with-param name="allow-anchors" select="1"/>
+      </xsl:apply-templates>
+    </xsl:variable>
+    <xsl:copy-of select="$title"/>
+  </xsl:template>
+
 </xsl:stylesheet>
 
