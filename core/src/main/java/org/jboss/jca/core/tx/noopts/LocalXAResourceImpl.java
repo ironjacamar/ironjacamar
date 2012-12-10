@@ -26,6 +26,7 @@ import org.jboss.jca.core.api.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.api.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.spi.transaction.local.LocalXAException;
 import org.jboss.jca.core.spi.transaction.local.LocalXAResource;
+import org.jboss.jca.core.spi.transaction.xa.XAResourceWrapper;
 
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
@@ -38,16 +39,32 @@ import org.jboss.logging.Messages;
  * 
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class LocalXAResourceImpl implements LocalXAResource
+public class LocalXAResourceImpl implements LocalXAResource, XAResourceWrapper
 {
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
    
+   /** Product name */
+   private String productName;
+
+   /** Product version */
+   private String productVersion;
+   
+   /** Product version */
+   private String jndiName;
+   
    /**
     * Creates a new instance.
+    * @param productName product name
+    * @param productVersion product version
+    * @param jndiName jndi name
     */
-   public LocalXAResourceImpl()
+   public LocalXAResourceImpl(String productName, String productVersion,
+                              String jndiName)
    {
+      this.productName = productName;
+      this.productVersion = productVersion;
+      this.jndiName = jndiName;
    }
 
    /**
@@ -138,5 +155,37 @@ public class LocalXAResourceImpl implements LocalXAResource
    public boolean setTransactionTimeout(int seconds) throws XAException
    {
       return false;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public XAResource getResource()
+   {
+      return this;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String getProductName()
+   {
+      return productName;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String getProductVersion()
+   {
+      return productVersion;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String getJndiName()
+   {
+      return jndiName;
    }
 }
