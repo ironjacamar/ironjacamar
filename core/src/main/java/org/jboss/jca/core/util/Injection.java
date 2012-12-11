@@ -28,6 +28,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.util.Locale;
+import java.util.Properties;
+import java.util.StringTokenizer;
 
 /**
  * Injection utility which can inject values into objects. This file is a copy
@@ -278,6 +280,36 @@ public class Injection
          else if (clz.equals(Class.class))
          {
             v = Class.forName(substituredValue, true, cl);
+         }
+         else if (clz.equals(Properties.class))
+         {
+            Properties prop = new Properties();
+
+            StringTokenizer st = new StringTokenizer(substituredValue, " ,");
+            while (st.hasMoreTokens())
+            {
+               String token = st.nextToken();
+               String key = "";
+               String value = "";
+
+               int index = token.indexOf("=");
+               if (index != -1)
+               {
+                  key = token.substring(0, index);
+
+                  if (token.length() > index + 1)
+                     value = token.substring(index + 1);
+               }
+               else
+               {
+                  key = token;
+               }
+
+               if (!"".equals(key))
+                  prop.setProperty(key, value);
+            }
+
+            v = prop;
          }
          else
          {
