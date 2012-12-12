@@ -1507,6 +1507,9 @@ public abstract class AbstractResourceAdapterDeployer
                         if (mcf instanceof TransactionSupport)
                            tsl = ((TransactionSupport) mcf).getTransactionSupport();
 
+                        // XAResource recovery
+                        XAResourceRecovery recoveryImpl = null;
+
                         // Connection manager properties
                         Integer allocationRetry = null;
                         Long allocationRetryWaitMillis = null;
@@ -1537,6 +1540,7 @@ public abstract class AbstractResourceAdapterDeployer
                            Boolean isSameRMOverride = Defaults.IS_SAME_RM_OVERRIDE;
                            Boolean wrapXAResource = Defaults.WRAP_XA_RESOURCE;
                            Boolean padXid = Defaults.PAD_XID;
+                           Recovery recoveryMD = null;
                            if (connectionDefinition != null && connectionDefinition.isXa())
                            {
                               CommonXaPool xaPool = (CommonXaPool)connectionDefinition.getPool();
@@ -1548,6 +1552,7 @@ public abstract class AbstractResourceAdapterDeployer
                                  wrapXAResource = xaPool.isWrapXaResource();
                                  padXid = xaPool.isPadXid();
                               }
+                              recoveryMD = connectionDefinition.getRecovery();
                            }
 
                            cm = cmf.createTransactional(tsl, pool,
@@ -1558,6 +1563,95 @@ public abstract class AbstractResourceAdapterDeployer
                                                         getTransactionIntegration(), interleaving,
                                                         xaResourceTimeout, isSameRMOverride,
                                                         wrapXAResource, padXid);
+
+                           if (tsl == TransactionSupportLevel.XATransaction)
+                           {
+                              String recoverSecurityDomain = securityDomain;
+                              String recoverUser = null;
+                              String recoverPassword = null;
+                              if (recoveryMD == null || recoveryMD.getNoRecovery() == null ||
+                                  !recoveryMD.getNoRecovery())
+                              {
+                                 // If we have an XAResourceRecoveryRegistry and the deployment is XA
+                                 // lets register it for XA Resource Recovery using the "recover"
+                                 // definitions from the -ds.xml file. Fallback to the standard definitions
+                                 // for user name, password. Keep a seperate reference to the
+                                 // security-domain
+
+                                 Credential credential =
+                                    recoveryMD != null ? recoveryMD.getCredential() : null;
+
+                                 if (credential != null)
+                                 {
+                                    recoverSecurityDomain = credential.getSecurityDomain();
+
+                                    recoverUser = credential.getUserName();
+                                    recoverPassword = credential.getPassword();
+                                 }
+
+                                 if (log.isDebugEnabled())
+                                 {
+                                    if (recoverUser != null)
+                                    {
+                                       log.debug("RecoverUser=" + recoverUser);
+                                    }
+                                    else if (recoverSecurityDomain != null)
+                                    {
+                                       log.debug("RecoverSecurityDomain=" + recoverSecurityDomain);
+                                    }
+                                 }
+
+                                 RecoveryPlugin plugin = null;
+                                 if (recoveryMD != null && recoveryMD.getRecoverPlugin() != null)
+                                 {
+                                    List<ConfigProperty> configProperties = null;
+                                    if (recoveryMD.getRecoverPlugin().getConfigPropertiesMap() != null)
+                                    {
+                                       configProperties =
+                                          new ArrayList<ConfigProperty>(recoveryMD
+                                                                        .getRecoverPlugin()
+                                                                        .getConfigPropertiesMap().size());
+
+                                       for (Map.Entry<String, String> property :
+                                               recoveryMD.getRecoverPlugin().
+                                               getConfigPropertiesMap().entrySet())
+                                       {
+                                          ConfigProperty c =
+                                             new ConfigPropertyImpl(null,
+                                                                    new XsdString(property.getKey(),
+                                                                                  null),
+                                                                    new XsdString("String",
+                                                                                  null),
+                                                                    new XsdString(property
+                                                                                  .getValue(),
+                                                                                  null), null);
+                                          configProperties.add(c);
+                                       }
+
+                                       plugin =
+                                          (RecoveryPlugin)initAndInject(recoveryMD
+                                                                        .getRecoverPlugin().getClassName(),
+                                                                        configProperties, cl);
+                                    }
+                                 }
+                                 else
+                                 {
+                                    plugin = new DefaultRecoveryPlugin();
+                                 }
+                                 
+                                 recoveryImpl =
+                                    getTransactionIntegration().
+                                    createXAResourceRecovery(mcf,
+                                                             padXid,
+                                                             isSameRMOverride,
+                                                             wrapXAResource,
+                                                             recoverUser,
+                                                             recoverPassword,
+                                                             recoverSecurityDomain,
+                                                             getSubjectFactory(recoverSecurityDomain),
+                                                             plugin);
+                              }
+                           }
                         }
 
                         // ConnectionFactory
@@ -1624,6 +1718,16 @@ public abstract class AbstractResourceAdapterDeployer
                               
                               jndiName = poolName;
                               pool.setName(poolName);
+                           }
+
+                           if (getTransactionIntegration().getRecoveryRegistry() != null &&
+                               recoveryImpl != null)
+                           {
+                              recoveryImpl.setJndiName(cm.getJndiName());
+                              getTransactionIntegration().
+                                 getRecoveryRegistry().addXAResourceRecovery(recoveryImpl);
+
+                              recoveryModules.add(recoveryImpl);
                            }
 
                            if (activateDeployment)
@@ -1967,8 +2071,8 @@ public abstract class AbstractResourceAdapterDeployer
                                              isSameRMOverride = xaPool.isSameRmOverride();
                                              wrapXAResource = xaPool.isWrapXaResource();
                                              padXid = xaPool.isPadXid();
-                                             recoveryMD = connectionDefinition.getRecovery();
                                           }
+                                          recoveryMD = connectionDefinition.getRecovery();
                                        }
 
                                        cm = cmf.createTransactional(tsl, pool,
@@ -1985,7 +2089,8 @@ public abstract class AbstractResourceAdapterDeployer
                                           String recoverSecurityDomain = securityDomain;
                                           String recoverUser = null;
                                           String recoverPassword = null;
-                                          if (recoveryMD == null || !recoveryMD.getNoRecovery())
+                                          if (recoveryMD == null || recoveryMD.getNoRecovery() == null ||
+                                              !recoveryMD.getNoRecovery())
                                           {
                                              // If we have an XAResourceRecoveryRegistry and the deployment is XA
                                              // lets register it for XA Resource Recovery using the "recover"
