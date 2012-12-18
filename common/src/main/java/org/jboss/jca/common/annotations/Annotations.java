@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2008-2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2012, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -69,8 +69,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.resource.spi.Activation;
 import javax.resource.spi.AdministeredObject;
@@ -95,7 +97,7 @@ public class Annotations
 
    private enum Metadatas
    {
-      RA, ACTIVATION_SPEC, MANAGED_CONN_FACTORY, ADMIN_OBJECT;
+      RA, ACTIVATION_SPEC, MANAGED_CONN_FACTORY, ADMIN_OBJECT, PLAIN;
    };
 
    /**
@@ -172,37 +174,47 @@ public class Annotations
          javax.resource.spi.SecurityPermission
       */
 
-      // @ConfigProperty handle at last
+      // @ConfigProperty
       Map<Metadatas, ArrayList<ConfigProperty16>> configPropertiesMap =
          processConfigProperty(annotationRepository, classLoader);
 
       // @ConnectionDefinitions
-      ArrayList<ConnectionDefinition> connectionDefinitions = processConnectionDefinitions(annotationRepository,
-            configPropertiesMap == null ? null : configPropertiesMap.get(Metadatas.MANAGED_CONN_FACTORY));
+      ArrayList<ConnectionDefinition> connectionDefinitions = 
+         processConnectionDefinitions(annotationRepository, classLoader,
+            configPropertiesMap == null ? null : configPropertiesMap.get(Metadatas.MANAGED_CONN_FACTORY),
+            configPropertiesMap == null ? null : configPropertiesMap.get(Metadatas.PLAIN));
 
       // @ConnectionDefinition (outside of @ConnectionDefinitions)
       if (connectionDefinitions == null)
       {
          connectionDefinitions = new ArrayList<ConnectionDefinition>(1);
       }
-      ArrayList<ConnectionDefinition> definitions = processConnectionDefinition(annotationRepository,
-            configPropertiesMap == null ? null : configPropertiesMap.get(Metadatas.MANAGED_CONN_FACTORY));
+      ArrayList<ConnectionDefinition> definitions =
+         processConnectionDefinition(annotationRepository, classLoader,
+            configPropertiesMap == null ? null : configPropertiesMap.get(Metadatas.MANAGED_CONN_FACTORY),
+            configPropertiesMap == null ? null : configPropertiesMap.get(Metadatas.PLAIN));
+
       if (definitions != null)
          connectionDefinitions.addAll(definitions);
 
       connectionDefinitions.trimToSize();
 
       // @Activation
-      InboundResourceAdapter inboundRA = processActivation(annotationRepository,
-            configPropertiesMap == null ? null : configPropertiesMap.get(Metadatas.ACTIVATION_SPEC));
+      InboundResourceAdapter inboundRA = 
+         processActivation(annotationRepository, classLoader,
+            configPropertiesMap == null ? null : configPropertiesMap.get(Metadatas.ACTIVATION_SPEC),
+            configPropertiesMap == null ? null : configPropertiesMap.get(Metadatas.PLAIN));
 
       // @AdministeredObject
-      ArrayList<AdminObject> adminObjs = processAdministeredObject(annotationRepository, classLoader,
-         configPropertiesMap == null ? null : configPropertiesMap.get(Metadatas.ADMIN_OBJECT));
+      ArrayList<AdminObject> adminObjs =
+         processAdministeredObject(annotationRepository, classLoader,
+            configPropertiesMap == null ? null : configPropertiesMap.get(Metadatas.ADMIN_OBJECT),
+            configPropertiesMap == null ? null : configPropertiesMap.get(Metadatas.PLAIN));
 
       // @Connector
-      Connector conn = processConnector(annotationRepository, xmlResourceAdapterClass,
+      Connector conn = processConnector(annotationRepository, classLoader, xmlResourceAdapterClass,
             connectionDefinitions, configPropertiesMap == null ? null : configPropertiesMap.get(Metadatas.RA),
+            configPropertiesMap == null ? null : configPropertiesMap.get(Metadatas.PLAIN),
             inboundRA, adminObjs);
 
       return conn;
@@ -211,17 +223,23 @@ public class Annotations
    /**
     * Process: @Connector
     * @param annotationRepository The annotation repository
+    * @param classLoader The class loader
     * @param xmlResourceAdapterClass resource adpater class name as define in xml
     * @param connectionDefinitions
     * @param configProperties
+    * @param plainConfigProperties
     * @param inboundResourceadapter
     * @param adminObjs
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private Connector processConnector(AnnotationRepository annotationRepository, String xmlResourceAdapterClass,
-         ArrayList<ConnectionDefinition> connectionDefinitions, ArrayList<ConfigProperty16> configProperties,
-         InboundResourceAdapter inboundResourceadapter, ArrayList<AdminObject> adminObjs)
+   private Connector processConnector(AnnotationRepository annotationRepository, ClassLoader classLoader, 
+                                      String xmlResourceAdapterClass,
+                                      ArrayList<ConnectionDefinition> connectionDefinitions,
+                                      ArrayList<ConfigProperty16> configProperties,
+                                      ArrayList<ConfigProperty16> plainConfigProperties,
+                                      InboundResourceAdapter inboundResourceadapter,
+                                      ArrayList<AdminObject> adminObjs)
       throws Exception
    {
       Connector connector = null;
@@ -232,14 +250,13 @@ public class Annotations
          {
             Annotation annotation = values.iterator().next();
             String raClass = annotation.getClassName();
-            javax.resource.spi.Connector connectorAnnotation = (javax.resource.spi.Connector) annotation
-                  .getAnnotation();
+            javax.resource.spi.Connector connectorAnnotation = (javax.resource.spi.Connector)annotation.getAnnotation();
 
             if (trace)
                log.trace("Processing: " + connectorAnnotation + " for " + raClass);
 
-            connector = attachConnector(raClass, connectorAnnotation, connectionDefinitions, configProperties,
-                  inboundResourceadapter, adminObjs);
+            connector = attachConnector(raClass, classLoader, connectorAnnotation, connectionDefinitions,
+                                        configProperties, plainConfigProperties, inboundResourceadapter, adminObjs);
          }
          else if (values.size() == 0)
          {
@@ -262,7 +279,8 @@ public class Annotations
       }
       else
       {
-         connector = attachConnector(null, null, connectionDefinitions, null, inboundResourceadapter, adminObjs);
+         connector = attachConnector(null, classLoader, null, connectionDefinitions, null, null,
+                                     inboundResourceadapter, adminObjs);
       }
 
       return connector;
@@ -271,17 +289,23 @@ public class Annotations
    /**
     * Attach @Connector
     * @param raClass The class name for the resource adapter
+    * @param classLoader The class loader
     * @param conAnnotation The connector
     * @param connectionDefinitions connectionDefinitions
     * @param configProperties  configProperties
+    * @param plainConfigProperties plainConfigProperties
     * @param inboundResourceadapter inboundResourceadapter
     * @param adminObjs
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private Connector attachConnector(String raClass, javax.resource.spi.Connector conAnnotation,
-         ArrayList<ConnectionDefinition> connectionDefinitions, ArrayList<ConfigProperty16> configProperties,
-         InboundResourceAdapter inboundResourceadapter, ArrayList<AdminObject> adminObjs)
+   private Connector attachConnector(String raClass, ClassLoader classLoader,
+                                     javax.resource.spi.Connector conAnnotation,
+                                     ArrayList<ConnectionDefinition> connectionDefinitions,
+                                     ArrayList<ConfigProperty16> configProperties,
+                                     ArrayList<ConfigProperty16> plainConfigProperties,
+                                     InboundResourceAdapter inboundResourceadapter,
+                                     ArrayList<AdminObject> adminObjs)
       throws Exception
    {
       // Vendor name
@@ -406,7 +430,31 @@ public class Annotations
       if (conAnnotation != null)
          securityPermissions = processSecurityPermissions(conAnnotation.securityPermissions());
 
-      ResourceAdapter1516Impl resourceAdapter = new ResourceAdapter1516Impl(raClass, configProperties,
+      ArrayList<ConfigProperty> validProperties = new ArrayList<ConfigProperty>();
+
+      if (configProperties != null)
+      {
+         validProperties.addAll(configProperties);
+      }
+      if (plainConfigProperties != null && raClass != null)
+      {
+         Set<String> raClasses = getClasses(raClass, classLoader);
+
+         for (ConfigProperty configProperty16 : plainConfigProperties)
+         {
+            if (raClasses.contains(((ConfigProperty16Impl) configProperty16).getAttachedClassName()))
+            {
+               if (trace)
+                  log.tracef("Attaching: %s (%s)", configProperty16, raClass);
+                  
+               validProperties.add(configProperty16);
+            }
+         }
+      }
+
+      validProperties.trimToSize();
+
+      ResourceAdapter1516Impl resourceAdapter = new ResourceAdapter1516Impl(raClass, validProperties,
                                                                             outboundResourceadapter,
                                                                             inboundResourceadapter, adminObjs,
                                                                             securityPermissions, null);
@@ -475,12 +523,16 @@ public class Annotations
    /**
     * Process: @ConnectionDefinitions
     * @param annotationRepository The annotation repository
-    * @param configProperties
+    * @param classLoader The class loader
+    * @param configProperties Config properties
+    * @param plainConfigProperties Plain config properties
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
    private ArrayList<ConnectionDefinition> processConnectionDefinitions(AnnotationRepository annotationRepository,
-         ArrayList<? extends ConfigProperty> configProperties)
+      ClassLoader classLoader,
+      ArrayList<? extends ConfigProperty> configProperties,
+      ArrayList<? extends ConfigProperty> plainConfigProperties)
       throws Exception
    {
       Collection<Annotation> values = annotationRepository.getAnnotation(ConnectionDefinitions.class);
@@ -496,7 +548,8 @@ public class Annotations
                log.trace("Processing: " + connectionDefinitionsAnnotation);
 
             return attachConnectionDefinitions(connectionDefinitionsAnnotation, annotation.getClassName(),
-                  configProperties);
+                                               classLoader,
+                                               configProperties, plainConfigProperties);
          }
          else
             throw new ValidateException(bundle.moreThanOneConnectionDefinitionsDefined());
@@ -509,25 +562,28 @@ public class Annotations
     * Attach @ConnectionDefinitions
     * @param cds The connection definitions
     * @param mcf The managed connection factory
-    * @param configProperty
+    * @param classLoader The class loader
+    * @param configProperty The config properties
+    * @param plainConfigProperty The lain config properties
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
    private ArrayList<ConnectionDefinition> attachConnectionDefinitions(ConnectionDefinitions cds, String mcf,
-         ArrayList<? extends ConfigProperty> configProperty)
+      ClassLoader classLoader,                                                                       
+      ArrayList<? extends ConfigProperty> configProperty,
+      ArrayList<? extends ConfigProperty> plainConfigProperty)
       throws Exception
    {
       ArrayList<ConnectionDefinition> connectionDefinitions = null;
 
       if (cds.value() != null)
       {
-         connectionDefinitions =
-               new ArrayList<ConnectionDefinition>(cds.value().length);
+         connectionDefinitions = new ArrayList<ConnectionDefinition>(cds.value().length);
          for (javax.resource.spi.ConnectionDefinition cd : cds.value())
          {
-            connectionDefinitions.add(attachConnectionDefinition(mcf, cd, configProperty));
+            connectionDefinitions.add(attachConnectionDefinition(mcf, cd, classLoader,
+                                                                 configProperty, plainConfigProperty));
          }
-
       }
 
       return connectionDefinitions;
@@ -536,12 +592,16 @@ public class Annotations
    /**
     * Process: @ConnectionDefinition
     * @param annotationRepository The annotation repository
-    * @param configProperty
+    * @param classLoader The class loader
+    * @param configProperty The config properties
+    * @param plainConfigProperty The plain config properties
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
    private ArrayList<ConnectionDefinition> processConnectionDefinition(AnnotationRepository annotationRepository,
-         ArrayList<? extends ConfigProperty> configProperty)
+      ClassLoader classLoader,
+      ArrayList<? extends ConfigProperty> configProperty,
+      ArrayList<? extends ConfigProperty> plainConfigProperty)
       throws Exception
    {
       ArrayList<ConnectionDefinition> connectionDefinitions = null;
@@ -550,12 +610,12 @@ public class Annotations
          .getAnnotation(javax.resource.spi.ConnectionDefinition.class);
       if (values != null)
       {
-         connectionDefinitions =
-               new ArrayList<ConnectionDefinition>(values.size());
+         connectionDefinitions = new ArrayList<ConnectionDefinition>(values.size());
 
          for (Annotation annotation : values)
          {
-            ConnectionDefinition cd = attachConnectionDefinition(annotation, configProperty);
+            ConnectionDefinition cd = attachConnectionDefinition(annotation, classLoader,
+                                                                 configProperty, plainConfigProperty);
 
             if (trace)
                log.tracef("Adding connection definition: %s", cd);
@@ -569,40 +629,50 @@ public class Annotations
 
    /**
     * Attach @ConnectionDefinition
-    * @param annotation
-    * @param configProperty
+    * @param annotation The annotation
+    * @param classLoader The class loader
+    * @param configProperty The config properties
+    * @param plainConfigProperty The plain config properties
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
    private ConnectionDefinition attachConnectionDefinition(Annotation annotation,
-         ArrayList<? extends ConfigProperty> configProperty)
+      ClassLoader classLoader,
+      ArrayList<? extends ConfigProperty> configProperty,
+      ArrayList<? extends ConfigProperty> plainConfigProperty)
       throws Exception
    {
-      javax.resource.spi.ConnectionDefinition cd = (javax.resource.spi.ConnectionDefinition) annotation
-         .getAnnotation();
+      javax.resource.spi.ConnectionDefinition cd =
+         (javax.resource.spi.ConnectionDefinition) annotation.getAnnotation();
 
       if (trace)
          log.trace("Processing: " + annotation);
 
-      return attachConnectionDefinition(annotation.getClassName(), cd, configProperty);
+      return attachConnectionDefinition(annotation.getClassName(), cd, classLoader,
+                                        configProperty, plainConfigProperty);
    }
 
    /**
     * Attach @ConnectionDefinition
     * @param mcf The managed connection factory
     * @param cd The connection definition
-    * @param configProperties
+    * @param classLoader The class loader
+    * @param configProperties The config properties
+    * @param plainConfigProperties The plain config properties
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
    private ConnectionDefinition attachConnectionDefinition(String mcf, javax.resource.spi.ConnectionDefinition cd,
-         ArrayList<? extends ConfigProperty> configProperties)
+                                                           ClassLoader classLoader,
+                                                           ArrayList<? extends ConfigProperty> configProperties,
+                                                           ArrayList<? extends ConfigProperty> plainConfigProperties)
       throws Exception
    {
       if (trace)
          log.trace("Processing: " + cd);
 
       ArrayList<ConfigProperty> validProperties = new ArrayList<ConfigProperty>();
+
       if (configProperties != null)
       {
          for (ConfigProperty configProperty16 : configProperties)
@@ -617,6 +687,22 @@ public class Annotations
             }
          }
       }
+      if (plainConfigProperties != null)
+      {
+         Set<String> mcfClasses = getClasses(mcf, classLoader);
+
+         for (ConfigProperty configProperty16 : plainConfigProperties)
+         {
+            if (mcfClasses.contains(((ConfigProperty16Impl) configProperty16).getAttachedClassName()))
+            {
+               if (trace)
+                  log.tracef("Attaching: %s (%s)", configProperty16, mcf);
+                  
+               validProperties.add(configProperty16);
+            }
+         }
+      }
+
       validProperties.trimToSize();
 
       XsdString connectionfactoryInterface = new XsdString(cd.connectionFactory().getName(), null);
@@ -636,8 +722,7 @@ public class Annotations
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private Map<Metadatas, ArrayList<ConfigProperty16>> processConfigProperty(
-      AnnotationRepository annotationRepository,
+   private Map<Metadatas, ArrayList<ConfigProperty16>> processConfigProperty(AnnotationRepository annotationRepository,
                                                                              ClassLoader classLoader)
       throws Exception
    {
@@ -732,6 +817,14 @@ public class Annotations
                   }
                   valueMap.get(Metadatas.ADMIN_OBJECT).add(cfgMeta);
                }
+               else
+               {
+                  if (valueMap.get(Metadatas.PLAIN) == null)
+                  {
+                     valueMap.put(Metadatas.PLAIN, new ArrayList<ConfigProperty16>());
+                  }
+                  valueMap.get(Metadatas.PLAIN).add(cfgMeta);
+               }
             }
          }
          if (valueMap.get(Metadatas.RA) != null)
@@ -742,6 +835,8 @@ public class Annotations
             valueMap.get(Metadatas.ACTIVATION_SPEC).trimToSize();
          if (valueMap.get(Metadatas.ADMIN_OBJECT) != null)
             valueMap.get(Metadatas.ADMIN_OBJECT).trimToSize();
+         if (valueMap.get(Metadatas.PLAIN) != null)
+            valueMap.get(Metadatas.PLAIN).trimToSize();
          return valueMap;
       }
 
@@ -812,12 +907,14 @@ public class Annotations
     * @param md The metadata
     * @param annotationRepository The annotation repository
     * @param classLoader the classloadedr used to load annotated class
-    * @param configProperties
+    * @param configProperties The config properties
+    * @param plainConfigProperties The plain config properties
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
    private ArrayList<AdminObject> processAdministeredObject(AnnotationRepository annotationRepository,
-      ClassLoader classLoader, ArrayList<ConfigProperty16> configProperties)
+      ClassLoader classLoader, ArrayList<ConfigProperty16> configProperties,
+      ArrayList<ConfigProperty16> plainConfigProperties)
       throws Exception
    {
       ArrayList<AdminObject> adminObjs = null;
@@ -859,6 +956,7 @@ public class Annotations
             }
 
             ArrayList<ConfigProperty> validProperties = new ArrayList<ConfigProperty>();
+
             if (configProperties != null)
             {
                for (ConfigProperty configProperty16 : configProperties)
@@ -872,6 +970,22 @@ public class Annotations
                   }
                }
             }
+            if (plainConfigProperties != null)
+            {
+               Set<String> aoClasses = getClasses(aoClassName, classLoader);
+
+               for (ConfigProperty configProperty16 : plainConfigProperties)
+               {
+                  if (aoClasses.contains(((ConfigProperty16Impl) configProperty16).getAttachedClassName()))
+                  {
+                     if (trace)
+                        log.tracef("Attaching: %s (%s)", configProperty16, aoClassName);
+                  
+                     validProperties.add(configProperty16);
+                  }
+               }
+            }
+
             validProperties.trimToSize();
 
             XsdString adminobjectInterface = new XsdString(aoName, null);
@@ -887,12 +1001,15 @@ public class Annotations
    /**
     * Process: @Activation
     * @param annotationRepository The annotation repository
-    * @param configProperties
+    * @param classLoader The class loader
+    * @param configProperties The config properties
+    * @param plainConfigProperties The plain config properties
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private InboundResourceAdapter processActivation(AnnotationRepository annotationRepository,
-         ArrayList<ConfigProperty16> configProperties)
+   private InboundResourceAdapter processActivation(AnnotationRepository annotationRepository, ClassLoader classLoader,
+                                                    ArrayList<ConfigProperty16> configProperties,
+                                                    ArrayList<ConfigProperty16> plainConfigProperties)
       throws Exception
    {
       ArrayList<MessageListener> listeners = new ArrayList<MessageListener>();
@@ -901,7 +1018,7 @@ public class Annotations
       {
          for (Annotation annotation : values)
          {
-            listeners.addAll(attachActivation(annotation, configProperties));
+            listeners.addAll(attachActivation(annotation, classLoader, configProperties, plainConfigProperties));
          }
          listeners.trimToSize();
       }
@@ -912,20 +1029,35 @@ public class Annotations
    /**
     * Attach @Activation
     * @param annotation The activation annotation
-    * @param configProperties
+    * @param classLoader The class loader
+    * @param configProperties The config properties
+    * @param plainConfigProperties The plain config properties
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private ArrayList<MessageListener> attachActivation(Annotation annotation,
-         ArrayList<ConfigProperty16> configProperties)
+   private ArrayList<MessageListener> attachActivation(Annotation annotation, ClassLoader classLoader,
+                                                       ArrayList<ConfigProperty16> configProperties,
+                                                       ArrayList<ConfigProperty16> plainConfigProperties)
       throws Exception
    {
       ArrayList<ConfigProperty> validProperties = new ArrayList<ConfigProperty>();
+
       if (configProperties != null)
       {
          for (ConfigProperty configProperty16 : configProperties)
          {
             if (annotation.getClassName().equals(((ConfigProperty16Impl) configProperty16).getAttachedClassName()))
+            {
+               validProperties.add(configProperty16);
+            }
+         }
+      }
+      if (plainConfigProperties != null)
+      {
+         Set<String> asClasses = getClasses(annotation.getClassName(), classLoader);
+         for (ConfigProperty configProperty16 : plainConfigProperties)
+         {
+            if (asClasses.contains(((ConfigProperty16Impl) configProperty16).getAttachedClassName()))
             {
                validProperties.add(configProperty16);
             }
@@ -1072,5 +1204,32 @@ public class Annotations
       }
 
       throw new IllegalArgumentException(bundle.unknownAnnotation(annotation));
+   }
+
+   /**
+    * Get the class names for a class and all of its super classes
+    * @param name The name of the class
+    * @param cl The class loader
+    * @return The set of class names
+    */
+   private Set<String> getClasses(String name, ClassLoader cl)
+   {
+      Set<String> result = new HashSet<String>();
+      
+      try
+      {
+         Class<?> clz = Class.forName(name, true, cl);
+         while (!Object.class.equals(clz))
+         {
+            result.add(clz.getName());
+            clz = clz.getSuperclass();
+         }
+      }
+      catch (Throwable t)
+      {
+         log.debugf("Couldn't load: %s", name);
+      }
+
+      return result;
    }
 }

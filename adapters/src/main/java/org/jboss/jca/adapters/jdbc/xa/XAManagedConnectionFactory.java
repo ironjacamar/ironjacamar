@@ -26,9 +26,8 @@ import org.jboss.jca.adapters.jdbc.BaseWrapperManagedConnectionFactory;
 import org.jboss.jca.adapters.jdbc.classloading.TCClassLoaderPlugin;
 import org.jboss.jca.adapters.jdbc.spi.URLXASelectorStrategy;
 import org.jboss.jca.adapters.jdbc.spi.XAData;
+import org.jboss.jca.adapters.jdbc.util.Injection;
 
-import java.beans.PropertyEditor;
-import java.beans.PropertyEditorManager;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -346,56 +345,16 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
 
       try
       {
+         Injection injector = new Injection();
+
          xads = (XADataSource)clazz.newInstance();
          final Class<?>[] noClasses = new Class<?>[]{};
          for (Map.Entry<Object, Object> entry : p.entrySet())
          {
             String name = (String)entry.getKey();
             String value = (String)entry.getValue();
-            char firstCharName = Character.toUpperCase(name.charAt(0));
-            if (name.length() > 1)
-            {
-               name = firstCharName + name.substring(1);
-            }
-            else
-            {
-               name = "" + firstCharName;
-            }
 
-            // This is a bad solution.  On the other hand the only known example
-            // of a setter with no getter is for Oracle with password.
-            // Anyway, each xadatasource implementation should get its
-            // own subclass of this that explicitly sets the
-            // properties individually.
-            Class<?> type = null;
-            try
-            {
-               Method getter = clazz.getMethod("get" + name, noClasses);
-               type = getter.getReturnType();
-            }
-            catch (NoSuchMethodException e)
-            {
-               try
-               {
-                  //HACK for now until we can rethink the XADataSourceProperties variable and pass type information
-                  Method isMethod = clazz.getMethod("is" + name, (Class[])null);
-                  type = isMethod.getReturnType();
-               }
-               catch (NoSuchMethodException nsme)
-               {
-                  type = String.class;
-               }
-            }
-
-            Method setter = clazz.getMethod("set" + name, new Class<?>[]{type});
-            PropertyEditor editor = PropertyEditorManager.findEditor(type);
-
-            if (editor == null)
-               throw new ResourceException("No property editor found for type: " + type);
-
-            editor.setAsText(value);
-            setter.invoke(xads, new Object[]{editor.getValue()});
-
+            injector.inject(xads, name, value);
          }
       }
       catch (InstantiationException ie)
@@ -605,55 +564,14 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
             xads = (XADataSource) clazz.newInstance();
             final Class<?>[] noClasses = new Class<?>[] {};
 
+            Injection injector = new Injection();
+
             for (Map.Entry<String, String> entry : xaProps.entrySet())
             {
                String name = entry.getKey();
                String value = entry.getValue();
-               char firstCharName = Character.toUpperCase(name.charAt(0));
 
-               if (name.length() > 1)
-               {
-                  name = firstCharName + name.substring(1);
-               }
-               else
-               {
-                  name = "" + firstCharName;
-               }
-
-               // This is a bad solution.  On the other hand the only known example
-               // of a setter with no getter is for Oracle with password.
-               // Anyway, each xadatasource implementation should get its
-               // own subclass of this that explicitly sets the
-               // properties individually.
-
-               Class<?> type = null;
-               try
-               {
-                  Method getter = clazz.getMethod("get" + name, noClasses);
-                  type = getter.getReturnType();
-               }
-               catch (NoSuchMethodException e)
-               {
-                  try
-                  {
-                     //HACK for now until we can rethink the XADataSourceProperties variable and pass type information
-                     Method isMethod = clazz.getMethod("is" + name, (Class[])null);
-                     type = isMethod.getReturnType();
-                  }
-                  catch (NoSuchMethodException nsme)
-                  {
-                     type = String.class;
-                  }
-               }
-
-               Method setter = clazz.getMethod("set" + name, new Class<?>[] {type});
-               PropertyEditor editor = PropertyEditorManager.findEditor(type);
-
-               if (editor == null)
-                  throw new ResourceException("No property editor found for type: " + type);
-
-               editor.setAsText(value);
-               setter.invoke(xads, new Object[] {editor.getValue()});
+               injector.inject(xads, name, value);
             }
          }
          catch (ClassNotFoundException cnfe)

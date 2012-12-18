@@ -31,7 +31,6 @@ import org.jboss.jca.common.api.metadata.ra.InboundResourceAdapter;
 import org.jboss.jca.common.api.metadata.ra.MergeableMetadata;
 import org.jboss.jca.common.api.metadata.ra.OutboundResourceAdapter;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
-import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516.Tag;
 import org.jboss.jca.common.api.metadata.ra.SecurityPermission;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.validator.ValidateException;
@@ -349,7 +348,7 @@ public class ResourceAdapter1516Impl extends AbstractResourceAdapetrImpl impleme
          inboundOrOutbound = true;
 
       if (!inboundOrOutbound
-            && (this.resourceadapterClass == null || this.resourceadapterClass.getValue().trim().equals("")))
+            && (XsdString.isNull(this.resourceadapterClass) || this.resourceadapterClass.getValue().trim().equals("")))
          throw new ValidateException(bundle.invalidMetadataForResourceAdapter());
    }
 

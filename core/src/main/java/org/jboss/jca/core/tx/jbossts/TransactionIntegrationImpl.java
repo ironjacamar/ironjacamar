@@ -164,11 +164,16 @@ public class TransactionIntegrationImpl implements TransactionIntegration
    /**
     * Create a LocalXAResource instance
     * @param cm The connection manager
+    * @param productName The product name
+    * @param productVersion The product version
+    * @param jndiName The JNDI name for the resource
     * @return The value
     */
-   public LocalXAResource createLocalXAResource(ConnectionManager cm)
+   public LocalXAResource createLocalXAResource(ConnectionManager cm,
+                                                String productName, String productVersion,
+                                                String jndiName)
    {
-      LocalXAResource result = new LocalXAResourceImpl();
+      LocalXAResource result = new LocalXAResourceImpl(productName, productVersion, jndiName);
       result.setConnectionManager(cm);
 
       return result;

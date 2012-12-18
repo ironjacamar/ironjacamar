@@ -521,7 +521,29 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
       
       if (localTransactions)
       {
-         xaResource = txIntegration.createLocalXAResource(this);
+         String eisProductName = null;
+         String eisProductVersion = null;
+
+         try
+         {
+            if (mc.getMetaData() != null)
+            {
+               eisProductName = mc.getMetaData().getEISProductName();
+               eisProductVersion = mc.getMetaData().getEISProductVersion();
+            }
+         }
+         catch (ResourceException re)
+         {
+            // Ignore
+         }
+
+         if (eisProductName == null)
+            eisProductName = getJndiName();
+
+         if (eisProductVersion == null)
+            eisProductVersion = getJndiName();
+
+         xaResource = txIntegration.createLocalXAResource(this, eisProductName, eisProductVersion, getJndiName());
     
          if (xaResourceTimeout != 0)
          {

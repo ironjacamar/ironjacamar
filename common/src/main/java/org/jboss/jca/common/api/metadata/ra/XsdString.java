@@ -200,9 +200,10 @@ public class XsdString implements IdDecoratedMetadata, CopyableMetaData
    public String toString()
    {
       if (tag == null)
-         return value;
-      else
-         return "<" + tag + (id == null ? "" : " id=\"" + id + "\"") + ">" + value + "</" + tag + ">";
+         return value != null ? value : "";
+
+      return "<" + tag + (id == null ? "" : " id=\"" + id + "\"") + ">" + (value != null ? value : "") +
+         "</" + tag + ">";
    }
 
    /**

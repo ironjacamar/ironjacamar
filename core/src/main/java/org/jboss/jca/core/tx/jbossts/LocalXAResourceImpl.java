@@ -42,7 +42,11 @@ import org.jboss.logging.Messages;
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class LocalXAResourceImpl implements LocalXAResource, org.jboss.tm.LastResource
+public class LocalXAResourceImpl implements LocalXAResource,
+                                            org.jboss.jca.core.spi.transaction.LastResource,
+                                            org.jboss.tm.LastResource,
+                                            org.jboss.jca.core.spi.transaction.xa.XAResourceWrapper,
+                                            org.jboss.tm.XAResourceWrapper
 {
    /** Log instance */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, LocalXAResourceImpl.class.getName());
@@ -67,11 +71,27 @@ public class LocalXAResourceImpl implements LocalXAResource, org.jboss.tm.LastRe
    /** Current transction branch id */
    private Xid currentXid;
 
+   /** Product name */
+   private String productName;
+
+   /** Product version */
+   private String productVersion;
+   
+   /** Product version */
+   private String jndiName;
+   
    /**
     * Creates a new instance.
+    * @param productName product name
+    * @param productVersion product version
+    * @param jndiName jndi name
     */
-   public LocalXAResourceImpl()
+   public LocalXAResourceImpl(String productName, String productVersion,
+                              String jndiName)
    {
+      this.productName = productName;
+      this.productVersion = productVersion;
+      this.jndiName = jndiName;
    }
 
    /**
@@ -237,6 +257,38 @@ public class LocalXAResourceImpl implements LocalXAResource, org.jboss.tm.LastRe
    }
 
    /**
+    * {@inheritDoc}
+    */
+   public XAResource getResource()
+   {
+      return this;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String getProductName()
+   {
+      return productName;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String getProductVersion()
+   {
+      return productVersion;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String getJndiName()
+   {
+      return jndiName;
+   }
+
+   /**
     * String representation
     * @return The string
     */
@@ -251,6 +303,9 @@ public class LocalXAResourceImpl implements LocalXAResource, org.jboss.tm.LastRe
                                               Integer.toHexString(System.identityHashCode(connectionManager)) : "null");
       sb.append(" warned=").append(warned);
       sb.append(" currentXid=").append(currentXid);
+      sb.append(" productName=").append(productName);
+      sb.append(" productVersion=").append(productVersion);
+      sb.append(" jndiName=").append(jndiName);
       sb.append("]");
 
       return sb.toString();
