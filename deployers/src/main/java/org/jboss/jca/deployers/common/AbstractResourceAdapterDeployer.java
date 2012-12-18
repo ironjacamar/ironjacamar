@@ -1002,16 +1002,23 @@ public abstract class AbstractResourceAdapterDeployer
 
          if (root.isDirectory())
          {
-            for (File f : root.listFiles())
+            if (root.listFiles() != null)
             {
-               String fileName = f.getName().toLowerCase(Locale.US);
-               if (fileName.endsWith(".a") || fileName.endsWith(".so") || fileName.endsWith(".dll"))
+               for (File f : root.listFiles())
                {
-                  if (libs == null)
-                     libs = new ArrayList<String>();
+                  String fileName = f.getName().toLowerCase(Locale.US);
+                  if (fileName.endsWith(".a") || fileName.endsWith(".so") || fileName.endsWith(".dll"))
+                  {
+                     if (libs == null)
+                        libs = new ArrayList<String>();
 
-                  libs.add(f.getAbsolutePath());
+                     libs.add(f.getAbsolutePath());
+                  }
                }
+            }
+            else
+            {
+               log.debugf("Root is a directory, but there were an I/O error: %s", root.getAbsolutePath());
             }
          }
          else
