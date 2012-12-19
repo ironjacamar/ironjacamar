@@ -121,7 +121,7 @@
   <property name="version.mockito" value="1.9.0"/>
   <property name="version.eclipse.ecj" value="3.5.1"/>
   <property name="version.fungal" value="0.11.0.Beta13"/>
-  <property name="version.h2" value="1.3.168"/>
+  <property name="version.h2" value="1.3.170"/>
   <property name="version.hibernate-validator" value="4.3.1.Final"/>
   <property name="version.hornetq" value="2.2.19.Final"/>
   <property name="version.jboss.common" value="2.2.17.GA"/>
