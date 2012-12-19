@@ -651,7 +651,10 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       while (poolConfiguration.getMinSize() - (cls.size() + checkedOut.size()) > 0)
       {
          if (shutdown.get())
+         {
+            statistics.setInUsedCount(checkedOut.size());
             return;
+         }
 
          // Create a connection to fill the pool
          ConnectionListener cl = null;
@@ -697,6 +700,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
             }
          }
       }
+      statistics.setInUsedCount(checkedOut.size());
    }
 
    /**
