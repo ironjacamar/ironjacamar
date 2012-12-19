@@ -777,11 +777,17 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                try
                {
                   if (shutdown.get())
+                  {
+                     statistics.setInUsedCount(checkedOut.size());
                      return;
+                  }
 
                   // We already have enough connections
                   if (isSize(poolConfiguration.getMinSize()))
+                  {
+                     statistics.setInUsedCount(checkedOut.size());
                      return;
+                  }
 
                   // Create a connection to fill the pool
                   try
@@ -799,6 +805,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                   }
                   catch (ResourceException re)
                   {
+                     statistics.setInUsedCount(checkedOut.size());
                      log.unableFillPool(re);
                      return;
                   }
