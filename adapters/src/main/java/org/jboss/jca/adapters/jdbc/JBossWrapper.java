@@ -24,17 +24,18 @@ package org.jboss.jca.adapters.jdbc;
 
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.sql.Wrapper;
 
 /**
  * JBossWrapper.
  *
  * @author <a href="adrian@jboss.com">Adrian Brock</a>
- * @version $Revision: 85945 $
+ * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class JBossWrapper implements Serializable
 {
    /** The serialVersionUID */
-   private static final long serialVersionUID = -4018404397552543628L;
+   private static final long serialVersionUID = -4097918663681033085L;
 
    /**
     * Constructor
@@ -54,7 +55,10 @@ public class JBossWrapper implements Serializable
       if (iface == null)
          throw new IllegalArgumentException("Null interface");
 
-      Object wrapped = getWrappedObject();
+      if (iface.isAssignableFrom(getClass()))
+         return true;
+
+      Object wrapped = unwrapInnerMost(getWrappedObject(), iface);
 
       if (wrapped == null)
          return false;
@@ -74,7 +78,10 @@ public class JBossWrapper implements Serializable
       if (iface == null)
          throw new IllegalArgumentException("Null interface");
 
-      Object wrapped = getWrappedObject();
+      if (iface.isAssignableFrom(getClass()))
+         return iface.cast(this);
+
+      Object wrapped = unwrapInnerMost(getWrappedObject(), iface);
 
       if (wrapped != null && iface.isAssignableFrom(wrapped.getClass()))
          return iface.cast(wrapped);
@@ -90,5 +97,43 @@ public class JBossWrapper implements Serializable
    protected Object getWrappedObject() throws SQLException
    {
       return null;
+   }
+
+   /**
+    * Return the inner most wrapped object
+    * @param o The object
+    * @param clz The target class
+    * @return The result
+    */
+   private Object unwrapInnerMost(Object o, Class<?> clz)
+   {
+      if (o == null)
+         return null;
+
+      if (!(o instanceof Wrapper))
+         return o;
+
+      Wrapper w = (Wrapper)o;
+      try
+      {
+         if (!w.isWrapperFor(clz))
+            return o;
+      }
+      catch (SQLException se)
+      {
+         return o;
+      }
+
+      Object result = o;
+      try
+      {
+         result = ((Wrapper)o).unwrap(clz);
+      }
+      catch (SQLException se)
+      {
+         // Nothing we can do
+      }
+
+      return result;
    }
 }
