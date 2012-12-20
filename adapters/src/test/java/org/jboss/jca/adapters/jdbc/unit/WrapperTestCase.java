@@ -26,10 +26,6 @@ import org.jboss.jca.adapters.ArquillianJCATestUtils;
 import org.jboss.jca.embedded.dsl.InputStreamDescriptor;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
@@ -45,7 +41,6 @@ import org.junit.runner.RunWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 /**
  * Test cases for wrapper
@@ -101,7 +96,23 @@ public class WrapperTestCase
     * @exception Throwable Thrown if case of an error
     */
    @Test
-   public void testSelf() throws Throwable
+   public void testIsWraperForSelf() throws Throwable
+   {
+      assertNotNull(ds);
+      Connection c = ds.getConnection();
+      assertNotNull(c);
+
+      assertTrue(c.isWrapperFor(Connection.class));
+
+      c.close();
+   }
+
+   /**
+    * Case 1
+    * @exception Throwable Thrown if case of an error
+    */
+   @Test
+   public void testUnwrapSelf() throws Throwable
    {
       assertNotNull(ds);
       Connection c = ds.getConnection();
@@ -118,7 +129,7 @@ public class WrapperTestCase
     * @exception Throwable Thrown if case of an error
     */
    @Test
-   public void testDirect() throws Throwable
+   public void testUnwrapDirect() throws Throwable
    {
       assertNotNull(ds);
       Connection c = ds.getConnection();
@@ -126,6 +137,22 @@ public class WrapperTestCase
 
       org.h2.jdbc.JdbcConnection c2 = c.unwrap(org.h2.jdbc.JdbcConnection.class);
       assertNotNull(c2);
+
+      c.close();
+   }
+
+   /**
+    * Case 2
+    * @exception Throwable Thrown if case of an error
+    */
+   @Test
+   public void testIsWrapperForDirect() throws Throwable
+   {
+      assertNotNull(ds);
+      Connection c = ds.getConnection();
+      assertNotNull(c);
+
+      assertTrue(c.isWrapperFor(org.h2.jdbc.JdbcConnection.class));
 
       c.close();
    }
