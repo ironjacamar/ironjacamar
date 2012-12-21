@@ -1516,6 +1516,7 @@ public abstract class AbstractResourceAdapterDeployer
 
                         // XAResource recovery
                         XAResourceRecovery recoveryImpl = null;
+                        boolean enableRecovery = false;
 
                         // Connection manager properties
                         Integer allocationRetry = null;
@@ -1548,6 +1549,7 @@ public abstract class AbstractResourceAdapterDeployer
                            Boolean wrapXAResource = Defaults.WRAP_XA_RESOURCE;
                            Boolean padXid = Defaults.PAD_XID;
                            Recovery recoveryMD = null;
+
                            if (connectionDefinition != null && connectionDefinition.isXa())
                            {
                               CommonXaPool xaPool = (CommonXaPool)connectionDefinition.getPool();
@@ -1580,10 +1582,11 @@ public abstract class AbstractResourceAdapterDeployer
                                   !recoveryMD.getNoRecovery())
                               {
                                  // If we have an XAResourceRecoveryRegistry and the deployment is XA
-                                 // lets register it for XA Resource Recovery using the "recover"
-                                 // definitions from the -ds.xml file. Fallback to the standard definitions
+                                 // lets register it for XA Resource Recovery using the "recovery"
+                                 // definition. Fallback to the standard definitions
                                  // for user name, password. Keep a seperate reference to the
                                  // security-domain
+                                 enableRecovery = true;
 
                                  Credential credential =
                                     recoveryMD != null ? recoveryMD.getCredential() : null;
@@ -1598,65 +1601,62 @@ public abstract class AbstractResourceAdapterDeployer
 
                                  if (log.isDebugEnabled())
                                  {
-                                    if (recoverUser != null)
-                                    {
-                                       log.debug("RecoverUser=" + recoverUser);
-                                    }
-                                    else if (recoverSecurityDomain != null)
-                                    {
-                                       log.debug("RecoverSecurityDomain=" + recoverSecurityDomain);
-                                    }
+                                    log.debug("RecoverUser=" + recoverUser);
+                                    log.debug("RecoverSecurityDomain=" + recoverSecurityDomain);
                                  }
 
-                                 RecoveryPlugin plugin = null;
-                                 if (recoveryMD != null && recoveryMD.getRecoverPlugin() != null)
+                                 if (recoverUser != null || recoverSecurityDomain != null)
                                  {
-                                    List<ConfigProperty> configProperties = null;
-                                    if (recoveryMD.getRecoverPlugin().getConfigPropertiesMap() != null)
+                                    RecoveryPlugin plugin = null;
+                                    if (recoveryMD != null && recoveryMD.getRecoverPlugin() != null)
                                     {
-                                       configProperties =
-                                          new ArrayList<ConfigProperty>(recoveryMD
-                                                                        .getRecoverPlugin()
-                                                                        .getConfigPropertiesMap().size());
-
-                                       for (Map.Entry<String, String> property :
-                                               recoveryMD.getRecoverPlugin().
-                                               getConfigPropertiesMap().entrySet())
+                                       List<ConfigProperty> configProperties = null;
+                                       if (recoveryMD.getRecoverPlugin().getConfigPropertiesMap() != null)
                                        {
-                                          ConfigProperty c =
-                                             new ConfigPropertyImpl(null,
-                                                                    new XsdString(property.getKey(),
-                                                                                  null),
-                                                                    new XsdString("String",
-                                                                                  null),
-                                                                    new XsdString(property
-                                                                                  .getValue(),
-                                                                                  null), null);
-                                          configProperties.add(c);
-                                       }
+                                          configProperties =
+                                             new ArrayList<ConfigProperty>(recoveryMD
+                                                                           .getRecoverPlugin()
+                                                                           .getConfigPropertiesMap().size());
 
-                                       plugin =
-                                          (RecoveryPlugin)initAndInject(recoveryMD
-                                                                        .getRecoverPlugin().getClassName(),
-                                                                        configProperties, cl);
+                                          for (Map.Entry<String, String> property :
+                                                  recoveryMD.getRecoverPlugin().
+                                                  getConfigPropertiesMap().entrySet())
+                                          {
+                                             ConfigProperty c =
+                                                new ConfigPropertyImpl(null,
+                                                                       new XsdString(property.getKey(),
+                                                                                     null),
+                                                                       new XsdString("String",
+                                                                                     null),
+                                                                       new XsdString(property
+                                                                                     .getValue(),
+                                                                                     null), null);
+                                             configProperties.add(c);
+                                          }
+
+                                          plugin =
+                                             (RecoveryPlugin)initAndInject(recoveryMD
+                                                                           .getRecoverPlugin().getClassName(),
+                                                                           configProperties, cl);
+                                       }
                                     }
-                                 }
-                                 else
-                                 {
-                                    plugin = new DefaultRecoveryPlugin();
-                                 }
+                                    else
+                                    {
+                                       plugin = new DefaultRecoveryPlugin();
+                                    }
                                  
-                                 recoveryImpl =
-                                    getTransactionIntegration().
-                                    createXAResourceRecovery(mcf,
-                                                             padXid,
-                                                             isSameRMOverride,
-                                                             wrapXAResource,
-                                                             recoverUser,
-                                                             recoverPassword,
-                                                             recoverSecurityDomain,
-                                                             getSubjectFactory(recoverSecurityDomain),
-                                                             plugin);
+                                    recoveryImpl =
+                                       getTransactionIntegration().
+                                       createXAResourceRecovery(mcf,
+                                                                padXid,
+                                                                isSameRMOverride,
+                                                                wrapXAResource,
+                                                                recoverUser,
+                                                                recoverPassword,
+                                                                recoverSecurityDomain,
+                                                                getSubjectFactory(recoverSecurityDomain),
+                                                                plugin);
+                                 }
                               }
                            }
                         }
@@ -1727,14 +1727,20 @@ public abstract class AbstractResourceAdapterDeployer
                               pool.setName(poolName);
                            }
 
-                           if (getTransactionIntegration().getRecoveryRegistry() != null &&
-                               recoveryImpl != null)
+                           if (enableRecovery && getTransactionIntegration().getRecoveryRegistry() != null)
                            {
-                              recoveryImpl.setJndiName(cm.getJndiName());
-                              getTransactionIntegration().
-                                 getRecoveryRegistry().addXAResourceRecovery(recoveryImpl);
+                              if (recoveryImpl != null)
+                              {
+                                 recoveryImpl.setJndiName(cm.getJndiName());
+                                 getTransactionIntegration().
+                                    getRecoveryRegistry().addXAResourceRecovery(recoveryImpl);
 
-                              recoveryModules.add(recoveryImpl);
+                                 recoveryModules.add(recoveryImpl);
+                              }
+                              else
+                              {
+                                 log.missingRecovery(cm.getJndiName());
+                              }
                            }
 
                            if (activateDeployment)
@@ -2035,6 +2041,7 @@ public abstract class AbstractResourceAdapterDeployer
 
                                     // XAResource recovery
                                     XAResourceRecovery recoveryImpl = null;
+                                    boolean enableRecovery = false;
 
                                     // Connection manager properties
                                     Integer allocationRetry = null;
@@ -2100,10 +2107,11 @@ public abstract class AbstractResourceAdapterDeployer
                                               !recoveryMD.getNoRecovery())
                                           {
                                              // If we have an XAResourceRecoveryRegistry and the deployment is XA
-                                             // lets register it for XA Resource Recovery using the "recover"
-                                             // definitions from the -ds.xml file. Fallback to the standard definitions
+                                             // lets register it for XA Resource Recovery using the "recovery"
+                                             // definition. Fallback to the standard definitions
                                              // for user name, password. Keep a seperate reference to the
                                              // security-domain
+                                             enableRecovery = true;
 
                                              Credential credential =
                                                 recoveryMD != null ? recoveryMD.getCredential() : null;
@@ -2118,58 +2126,56 @@ public abstract class AbstractResourceAdapterDeployer
 
                                              if (log.isDebugEnabled())
                                              {
-                                                if (recoverUser != null)
-                                                {
-                                                   log.debug("RecoverUser=" + recoverUser);
-                                                }
-                                                else if (recoverSecurityDomain != null)
-                                                {
-                                                   log.debug("RecoverSecurityDomain=" + recoverSecurityDomain);
-                                                }
+                                                log.debug("RecoverUser=" + recoverUser);
+                                                log.debug("RecoverSecurityDomain=" + recoverSecurityDomain);
                                              }
 
-                                             RecoveryPlugin plugin = null;
-                                             if (recoveryMD != null && recoveryMD.getRecoverPlugin() != null)
+                                             if (recoverUser != null || recoverSecurityDomain != null)
                                              {
-                                                List<ConfigProperty> configProperties = null;
-                                                if (recoveryMD
-                                                    .getRecoverPlugin()
-                                                    .getConfigPropertiesMap() != null)
+                                                RecoveryPlugin plugin = null;
+                                                if (recoveryMD != null && recoveryMD.getRecoverPlugin() != null)
                                                 {
-                                                   configProperties =
-                                                      new ArrayList<ConfigProperty>(recoveryMD
-                                                                                    .getRecoverPlugin()
-                                                                                    .getConfigPropertiesMap().size());
-
-                                                   for (Map.Entry<String, String> property :
-                                                           recoveryMD.getRecoverPlugin().
-                                                           getConfigPropertiesMap().entrySet())
+                                                   List<ConfigProperty> configProperties = null;
+                                                   if (recoveryMD
+                                                       .getRecoverPlugin()
+                                                       .getConfigPropertiesMap() != null)
                                                    {
-                                                      ConfigProperty c =
-                                                         new ConfigPropertyImpl(null,
-                                                                                new XsdString(property.getKey(),
-                                                                                              null),
-                                                                                new XsdString("String",
-                                                                                              null),
-                                                                                new XsdString(property
-                                                                                              .getValue(),
-                                                                                              null), null);
-                                                      configProperties.add(c);
+                                                      configProperties =
+                                                         new ArrayList<ConfigProperty>(recoveryMD
+                                                                                       .getRecoverPlugin()
+                                                                                       .getConfigPropertiesMap()
+                                                                                       .size());
+
+                                                      for (Map.Entry<String, String> property :
+                                                              recoveryMD.getRecoverPlugin().
+                                                              getConfigPropertiesMap().entrySet())
+                                                      {
+                                                         ConfigProperty c =
+                                                            new ConfigPropertyImpl(null,
+                                                                                   new XsdString(property.getKey(),
+                                                                                                 null),
+                                                                                   new XsdString("String",
+                                                                                                 null),
+                                                                                   new XsdString(property
+                                                                                                 .getValue(),
+                                                                                                 null), null);
+                                                         configProperties.add(c);
+                                                      }
+
+                                                      plugin =
+                                                         (RecoveryPlugin)initAndInject(recoveryMD
+                                                                                       .getRecoverPlugin()
+                                                                                       .getClassName(),
+                                                                                       configProperties, cl);
                                                    }
-
-                                                   plugin =
-                                                      (RecoveryPlugin)initAndInject(recoveryMD
-                                                                                    .getRecoverPlugin().getClassName(),
-                                                                                    configProperties, cl);
                                                 }
-                                             }
-                                             else
-                                             {
-                                                plugin = new DefaultRecoveryPlugin();
-                                             }
+                                                else
+                                                {
+                                                   plugin = new DefaultRecoveryPlugin();
+                                                }
 
-                                             recoveryImpl =
-                                                getTransactionIntegration().
+                                                recoveryImpl =
+                                                   getTransactionIntegration().
                                                    createXAResourceRecovery(mcf,
                                                                             padXid,
                                                                             isSameRMOverride,
@@ -2179,6 +2185,7 @@ public abstract class AbstractResourceAdapterDeployer
                                                                             recoverSecurityDomain,
                                                                             getSubjectFactory(recoverSecurityDomain),
                                                                             plugin);
+                                             }
                                           }
                                        }
                                     }
@@ -2251,14 +2258,20 @@ public abstract class AbstractResourceAdapterDeployer
                                           pool.setName(poolName);
                                        }
 
-                                       if (getTransactionIntegration().getRecoveryRegistry() != null &&
-                                           recoveryImpl != null)
+                                       if (enableRecovery && getTransactionIntegration().getRecoveryRegistry() != null)
                                        {
-                                          recoveryImpl.setJndiName(cm.getJndiName());
-                                          getTransactionIntegration().
-                                             getRecoveryRegistry().addXAResourceRecovery(recoveryImpl);
-
-                                          recoveryModules.add(recoveryImpl);
+                                          if (recoveryImpl != null)
+                                          {
+                                             recoveryImpl.setJndiName(cm.getJndiName());
+                                             getTransactionIntegration().
+                                                getRecoveryRegistry().addXAResourceRecovery(recoveryImpl);
+                                             
+                                             recoveryModules.add(recoveryImpl);
+                                          }
+                                          else
+                                          {
+                                             log.missingRecovery(cm.getJndiName());
+                                          }
                                        }
 
                                        if (activateDeployment)
