@@ -162,4 +162,12 @@ public interface DeployersLogger extends BasicLogger
    @Message(id = 20015, value = "Connection factory not specification compliant. " +
             "See 6.5.1.3 for additional details: %s")
    public void connectionFactoryNotSpecCompliant(String clz);
+
+   /**
+    * Missing recovery
+    * @param jndi The jndi name
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 20016, value = "Missing <recovery> element. XA recovery disabled for: %s")
+   public void missingRecovery(String jndi);
 }
