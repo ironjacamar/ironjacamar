@@ -820,6 +820,11 @@
             <entry>Connection factory not spec compliant</entry>
           </row>
           <row>
+            <entry>20016</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Missing &lt;recovery&gt; element. XA recovery disabled</entry>
+          </row>
+          <row>
             <entry>20051</entry>
             <entry><code>EXCEPTION</code></entry>
             <entry>Unable to start</entry>
