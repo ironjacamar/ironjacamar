@@ -341,15 +341,12 @@ public abstract class AbstractDsDeployer
                                                        mgtDataSource,
                                                        jdbcXADeploymentCl);
 
-                        XAResourceRecovery recoveryInstance = recovery[0];
-                        if (recoveryInstance != null)
-                           recoveryModules.add(recoveryInstance);
-
                         bindConnectionFactory(deploymentName, jndiName, cf);
 
                         cfs.add(cf);
                         jndis.add(jndiName);
                         cms.add(cm[0]);
+                        recoveryModules.add(recovery[0]);
                         mgts.add(mgtDataSource);
                      }
                      catch (Throwable t)

@@ -180,7 +180,8 @@ public class DsXmlDeployment implements Deployment
       {
          for (XAResourceRecovery recovery : recoveryModules)
          {
-            recoveryRegistry.removeXAResourceRecovery(recovery);
+            if (recovery != null)
+               recoveryRegistry.removeXAResourceRecovery(recovery);
          }
       }
 
