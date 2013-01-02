@@ -1726,7 +1726,8 @@ public abstract class AbstractResourceAdapterDeployer
                               jndiName = poolName;
                               pool.setName(poolName);
                            }
-
+                           
+                           // Verify recovery settings, but always add the module to align deployment data
                            if (enableRecovery && getTransactionIntegration().getRecoveryRegistry() != null)
                            {
                               if (recoveryImpl != null)
@@ -1734,14 +1735,13 @@ public abstract class AbstractResourceAdapterDeployer
                                  recoveryImpl.setJndiName(cm.getJndiName());
                                  getTransactionIntegration().
                                     getRecoveryRegistry().addXAResourceRecovery(recoveryImpl);
-
-                                 recoveryModules.add(recoveryImpl);
                               }
                               else
                               {
                                  log.missingRecovery(cm.getJndiName());
                               }
                            }
+                           recoveryModules.add(recoveryImpl);
 
                            if (activateDeployment)
                            {
@@ -2258,6 +2258,7 @@ public abstract class AbstractResourceAdapterDeployer
                                           pool.setName(poolName);
                                        }
 
+                                       // Verify recovery settings, but always add the module to align deployment data
                                        if (enableRecovery && getTransactionIntegration().getRecoveryRegistry() != null)
                                        {
                                           if (recoveryImpl != null)
@@ -2265,14 +2266,13 @@ public abstract class AbstractResourceAdapterDeployer
                                              recoveryImpl.setJndiName(cm.getJndiName());
                                              getTransactionIntegration().
                                                 getRecoveryRegistry().addXAResourceRecovery(recoveryImpl);
-                                             
-                                             recoveryModules.add(recoveryImpl);
                                           }
                                           else
                                           {
                                              log.missingRecovery(cm.getJndiName());
                                           }
                                        }
+                                       recoveryModules.add(recoveryImpl);
 
                                        if (activateDeployment)
                                        {
