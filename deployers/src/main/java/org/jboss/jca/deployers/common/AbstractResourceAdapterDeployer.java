@@ -1675,13 +1675,10 @@ public abstract class AbstractResourceAdapterDeployer
                                           {
                                              ConfigProperty c =
                                                 new ConfigPropertyImpl(null,
-                                                                       new XsdString(property.getKey(),
-                                                                                     null),
-                                                                       new XsdString("String",
-                                                                                     null),
-                                                                       new XsdString(property
-                                                                                     .getValue(),
-                                                                                     null), null);
+                                                                       new XsdString(property.getKey(), null),
+                                                                       XsdString.NULL_XSDSTRING,
+                                                                       new XsdString(property.getValue(), null),
+                                                                       null);
                                              configProperties.add(c);
                                           }
 
@@ -2223,11 +2220,11 @@ public abstract class AbstractResourceAdapterDeployer
                                                             new ConfigPropertyImpl(null,
                                                                                    new XsdString(property.getKey(),
                                                                                                  null),
-                                                                                   new XsdString("String",
-                                                                                                 null),
+                                                                                   XsdString.NULL_XSDSTRING,
                                                                                    new XsdString(property
                                                                                                  .getValue(),
-                                                                                                 null), null);
+                                                                                                 null),
+                                                                                   null);
                                                          configProperties.add(c);
                                                       }
 
