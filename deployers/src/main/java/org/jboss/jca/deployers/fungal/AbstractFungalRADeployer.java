@@ -149,10 +149,9 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
                      {
                         injector.inject(o,
                                         cpmd.getConfigPropertyName().getValue(),
-                                        cpmd.getConfigPropertyValue().getValue(),
-                                        cpmd.getConfigPropertyType().getValue());
+                                        cpmd.getConfigPropertyValue().getValue());
                      }
-                     catch (NoSuchMethodException nsme)
+                     catch (Throwable t)
                      {
                         String newPropertyType = convertType(cpmd.getConfigPropertyType().getValue());
 
@@ -166,7 +165,7 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
                         }
                         else
                         {
-                           throw nsme;
+                           throw t;
                         }
                      }
                   }
