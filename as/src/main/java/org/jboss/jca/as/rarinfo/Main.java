@@ -246,7 +246,15 @@ public class Main
          {
             out = new PrintStream(rarFile.substring(0, rarFile.length() - 4) + REPORT_FILE);
          }
-         out.println("Archive:\t" + rarFile);
+         
+         String archiveFile;
+         int sep = rarFile.lastIndexOf(File.separator);
+         if (sep > 0)
+            archiveFile = rarFile.substring(sep + 1);
+         else
+            archiveFile = rarFile;
+         
+         out.println("Archive:\t" + archiveFile);
          
          String version;
          String type = "";
@@ -687,7 +695,7 @@ public class Main
          }
          
 
-         RaImpl raImpl = new RaImpl(rarFile, transSupport, connDefs, adminObjects, raConfigProperties);
+         RaImpl raImpl = new RaImpl(archiveFile, transSupport, connDefs, adminObjects, raConfigProperties);
          raImpl.buildResourceAdapterImpl();
 
          outputMenifest("META-INF/MANIFEST.MF", out);
