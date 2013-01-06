@@ -24,6 +24,7 @@ package org.jboss.jca.as.rarinfo;
 import org.jboss.jca.common.api.metadata.Defaults;
 import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
 import org.jboss.jca.common.api.metadata.common.CommonPool;
+import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.common.v10.CommonConnDef;
 import org.jboss.jca.common.api.metadata.ra.AdminObject;
@@ -41,6 +42,7 @@ import org.jboss.jca.common.metadata.common.CommonAdminObjectImpl;
 import org.jboss.jca.common.metadata.common.CommonPoolImpl;
 import org.jboss.jca.common.metadata.common.CommonSecurityImpl;
 import org.jboss.jca.common.metadata.common.CommonXaPoolImpl;
+import org.jboss.jca.common.metadata.common.CredentialImpl;
 import org.jboss.jca.common.metadata.common.v10.CommonConnDefImpl;
 import org.jboss.jca.common.metadata.ra.RaParser;
 import org.jboss.jca.validator.Validation;
@@ -486,19 +488,23 @@ public class Main
                   String poolName = getValueString(mcf.getConnectionInterface()).substring(
                      getValueString(mcf.getConnectionInterface()).lastIndexOf('.') + 1);
                   CommonPool pool = null;
+                  CommonConnDefImpl connImpl;
                   if (transSupport.equals(TransactionSupportEnum.XATransaction))
                   {
                      pool = xaPoolImpl;
+                     Recovery recovery = new Recovery(new CredentialImpl("user", "password", null), null, false);
+                     connImpl = new CommonConnDefImpl(configProperty, classname, "java:jboss/eis/" + poolName,
+                        poolName, Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT, Defaults.USE_CCM, pool, null, null,
+                        secImpl, recovery);
                   }
                   else
                   {
                      pool = poolImpl;
+                     connImpl = new CommonConnDefImpl(configProperty, classname, "java:jboss/eis/" + poolName,
+                        poolName, Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT, Defaults.USE_CCM, pool, null, null,
+                        secImpl, null);
                   }
-                  CommonConnDefImpl connImpl = new CommonConnDefImpl(configProperty, classname, 
-                                                                     "java:jboss/eis/" + poolName, poolName, 
-                                                                     Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT,
-                                                                     Defaults.USE_CCM,
-                                                                     pool, null, null, secImpl, null);
+
                   connDefs.add(connImpl);
                }
 

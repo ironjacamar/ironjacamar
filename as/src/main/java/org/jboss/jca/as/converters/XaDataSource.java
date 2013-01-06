@@ -248,7 +248,19 @@ public interface XaDataSource extends DataSource, CommonXa
       /**
       * useTryLock tag
       */
-      USE_TRY_LOCK("use-try-lock");
+      USE_TRY_LOCK("use-try-lock"),
+      /**
+      * recoveryUsername tag
+      */
+      RECOVER_USER_NAME("recover-user-name"),
+      /**
+      * recoveryPassword tag
+      */
+      RECOVER_PASSWORD("recover-password"),
+      /**
+      * noRecovery tag
+      */
+      NO_RECOVER("no_recover");
 
       private final String name;
 

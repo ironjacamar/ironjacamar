@@ -32,6 +32,7 @@ import org.jboss.jca.common.api.metadata.ds.TimeOut;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
 import org.jboss.jca.common.api.metadata.ds.Validation;
 import org.jboss.jca.common.metadata.common.CommonXaPoolImpl;
+import org.jboss.jca.common.metadata.common.CredentialImpl;
 import org.jboss.jca.common.metadata.ds.DsSecurityImpl;
 import org.jboss.jca.common.metadata.ds.StatementImpl;
 import org.jboss.jca.common.metadata.ds.TimeOutImpl;
@@ -258,6 +259,26 @@ public class LegacyXaDataSourceImp implements XaDataSource
       xaPool = new CommonXaPoolImpl(minPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy,
             isSameRmOverride, interleaving, padXid,
             wrapXaResource, noTxSeparatePool);
+      return this;
+   }
+   
+   /**
+    * build recovery part
+    * 
+    * @param recoveryUsername recoveryUsername
+    * @param recoveryPassword recoveryPassword
+    * @param noRecovery noRecovery
+    * @return this
+    * @throws Exception exception
+    */
+   public LegacyXaDataSourceImp buildRecovery(String recoveryUsername, String recoveryPassword, 
+      Boolean noRecovery) throws Exception
+   {
+      if (recoveryUsername == null || recoveryUsername.equals(""))
+         recoveryUsername = "user";
+      if (recoveryPassword == null || recoveryPassword.equals(""))
+         recoveryPassword = "password";
+      recovery = new Recovery(new CredentialImpl(recoveryUsername, recoveryPassword, null), null, noRecovery);
       return this;
    }
    

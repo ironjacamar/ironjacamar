@@ -267,6 +267,10 @@ public class LegacyDsParser extends AbstractParser
       Boolean wrapXaDataSource = Defaults.WRAP_XA_RESOURCE;
       Boolean noTxSeparatePool = Defaults.NO_TX_SEPARATE_POOL;
       
+      String recoveryUsername = null;
+      String recoveryPassword = null;
+      Boolean noRecovery = Defaults.NO_RECOVERY;
+      
       //elements reading
       while (reader.hasNext())
       {
@@ -286,6 +290,7 @@ public class LegacyDsParser extends AbstractParser
                         exceptionSorter);
                   xaDsImpl.buildCommonPool(minPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy,
                         isSameRmOverride, interleaving, padXid, wrapXaDataSource, noTxSeparatePool);
+                  xaDsImpl.buildRecovery(recoveryUsername, recoveryPassword, noRecovery);
                   xaDsImpl.buildOther(urlDelimiter, urlSelectorStrategyClassName, newConnectionSql, useJavaContext, 
                         poolName, enabled, jndiName, spy, useCcm, jta);
                   xaDsImpl.buildXaDataSourceImpl();
@@ -469,6 +474,18 @@ public class LegacyDsParser extends AbstractParser
                   }
                   case VALIDATE_ON_MATCH : {
                      validateOnMatch = elementAsBoolean(reader);
+                     break;
+                  }
+                  case RECOVER_USER_NAME : {
+                     recoveryUsername = elementAsString(reader);
+                     break;
+                  }
+                  case RECOVER_PASSWORD : {
+                     recoveryPassword = elementAsString(reader);
+                     break;
+                  }
+                  case NO_RECOVER : {
+                     noRecovery = elementAsBoolean(reader);
                      break;
                   }
                   default :
