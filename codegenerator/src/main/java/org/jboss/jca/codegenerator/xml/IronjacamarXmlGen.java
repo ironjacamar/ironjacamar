@@ -91,6 +91,15 @@ public class IronjacamarXmlGen extends AbstractXmlGen
          getPropsString(strMcfProps, mcfPropsList, 6);
          strMcf.append(strMcfProps.toString());
          
+         if (def.getSupportTransaction().endsWith("XATransaction"))
+         {
+            strMcf.append("      <recover>\n");
+            strMcf.append("        <recover-credential>\n");
+            strMcf.append("          <user-name>user</user-name>\n");
+            strMcf.append("          <password>password</password>\n");
+            strMcf.append("        </recover-credential>\n");
+            strMcf.append("      </recover> )\n");
+         }
          strMcf.append("    </connection-definition>\n");
       }
       strMcf.append("  </connection-definitions>\n");
