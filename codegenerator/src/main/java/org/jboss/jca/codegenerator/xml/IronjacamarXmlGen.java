@@ -93,12 +93,12 @@ public class IronjacamarXmlGen extends AbstractXmlGen
          
          if (def.getSupportTransaction().endsWith("XATransaction"))
          {
-            strMcf.append("      <recover>\n");
+            strMcf.append("      <recovery>\n");
             strMcf.append("        <recover-credential>\n");
             strMcf.append("          <user-name>user</user-name>\n");
             strMcf.append("          <password>password</password>\n");
             strMcf.append("        </recover-credential>\n");
-            strMcf.append("      </recover> )\n");
+            strMcf.append("      </recovery>\n");
          }
          strMcf.append("    </connection-definition>\n");
       }
