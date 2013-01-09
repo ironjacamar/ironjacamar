@@ -1213,6 +1213,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       label.setText(getString("ra.generate.mcf.recover.no.recovery"));
       final Button noRecoveryBtn = new Button(container, SWT.BORDER | SWT.CHECK);
       final Boolean isNoRecovery = isNoRecovery(recovery);
+      getRecoveryConfig().setNoRecovery(noRecoveryBtn.getSelection());
       noRecoveryBtn.setSelection(isNoRecovery);
       noRecoveryBtn.addSelectionListener(new SelectionAdapter()
       {
@@ -1245,13 +1246,19 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       label.setText(getString("ra.generate.mcf.recover.credential.username"));
       final String userName = getUserName(credential);
       userNameText = createText(credentialGroup, userName);
+      getRecoveryCredentialConfig().setUsername(userName);
       
       
       // password
       label = new Label(credentialGroup, SWT.NULL);
       label.setText(getString("ra.generate.mcf.recover.credential.password"));
-      final String password = getPassword(credential);
+      String password = getPassword(credential);
+      if (password.equals(null) || password.equals(""))
+      {
+         password = "password";
+      }
       final Text passwordText = new Text(credentialGroup, SWT.BORDER | SWT.SINGLE | SWT.PASSWORD);
+      getRecoveryCredentialConfig().setPassword(password);
       GridData layoutData = new GridData();
       layoutData.widthHint = 300;
       passwordText.setLayoutData(layoutData);
@@ -1265,14 +1272,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
          @Override
          public void modifyText(ModifyEvent e)
          {
-            if (!passwordText.getText().trim().equals(password))
-            {
-               getRecoveryCredentialConfig().setPassword(passwordText.getText().trim());
-            }
-            else
-            {
-               getRecoveryCredentialConfig().setPassword(null);
-            }
+            getRecoveryCredentialConfig().setPassword(passwordText.getText().trim());
          }
       });
       
@@ -1746,7 +1746,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       {
          return recovery.getNoRecovery();
       }
-      return Boolean.valueOf(false);
+      return Boolean.valueOf(true);
    }
    private ConnectionFactoryConfig.RecoveryConfig getRecoveryConfig()
    {
