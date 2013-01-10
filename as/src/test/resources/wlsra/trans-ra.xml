@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<weblogic-connector>
+  <jndi-name>eis/Transaction</jndi-name>
+  <enable-access-outside-app>true</enable-access-outside-app>
+  <enable-global-access-to-classes>true</enable-global-access-to-classes>
+  <outbound-resource-adapter>
+    <default-connection-properties>
+      <transaction-support>XATransaction</transaction-support>
+    </default-connection-properties>
+  </outbound-resource-adapter>
+</weblogic-connector>

@@ -54,12 +54,12 @@ public class Main
             System.exit(OTHER);
          }
 
-         String option = args[0];
-         String oldDsFilename = args[1];
-         String newFilename = args[2];
+         String option = args[0]; //first define ds or ra
+         String oldDsFilename = args[args.length - 2]; 
+         String newFilename = args[args.length - 1];
          
          if (!(option.equals("-ra") || option.equals("-ds")) ||
-             !oldDsFilename.endsWith("-ds.xml") || !newFilename.endsWith(".xml"))
+             !oldDsFilename.endsWith(".xml") || !newFilename.endsWith(".xml"))
          {
             usage();
             System.exit(OTHER);
@@ -74,8 +74,16 @@ public class Main
          }
          else if (option.equals("-ra"))
          {
-            ConnectionFactoryConverter converter = new ConnectionFactoryConverter();
-            converter.convert(in, out);
+            if (!args[1].equals("--weblogic"))
+            {
+               ConnectionFactoryConverter converter = new ConnectionFactoryConverter();
+               converter.convert(in, out);
+            }
+            else
+            {
+               WlsRaConverter converter = new WlsRaConverter();
+               converter.convert(in, out);
+            }
          }
 
          System.out.println("Done.");
@@ -120,6 +128,6 @@ public class Main
     */
    private static void usage()
    {
-      System.out.println("Usage: ./converter.sh -{ds|ra} old-ds.xml mydeployment-{ds|ra}.xml");
+      System.out.println("Usage: ./converter.sh -{ds|ra} [--weblogic] old-ds.xml mydeployment-{ds|ra}.xml");
    }
 }
