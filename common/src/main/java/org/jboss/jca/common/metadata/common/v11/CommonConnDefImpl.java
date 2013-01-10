@@ -40,7 +40,7 @@ public class CommonConnDefImpl extends org.jboss.jca.common.metadata.common.v10.
    implements CommonConnDef
 {
    /** The serialVersionUID */
-   private static final long serialVersionUID = 2L;
+   private static final long serialVersionUID = 3L;
 
    private final Boolean sharable;
 

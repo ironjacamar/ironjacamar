@@ -664,9 +664,9 @@ public abstract class AbstractResourceAdapterDeployer
 
    /**
     * Create an instance of the pool configuration based on the input
-    * @param pp pp pp The pool parameters
-    * @param tp tp tp The timeout parameters
-    * @param vp vp vp The validation parameters
+    * @param pp The pool parameters
+    * @param tp The timeout parameters
+    * @param vp The validation parameters
     * @return The configuration
     */
    protected PoolConfiguration createPoolConfiguration(CommonPool pp, CommonTimeOut tp, CommonValidation vp)
@@ -677,6 +677,24 @@ public abstract class AbstractResourceAdapterDeployer
       {
          if (pp.getMinPoolSize() != null)
             pc.setMinSize(pp.getMinPoolSize().intValue());
+
+         if (pp instanceof org.jboss.jca.common.api.metadata.common.v11.ConnDefPool)
+         {
+            org.jboss.jca.common.api.metadata.common.v11.ConnDefPool cdp =
+               (org.jboss.jca.common.api.metadata.common.v11.ConnDefPool)pp;
+
+            if (cdp.getInitialPoolSize() != null)
+               pc.setInitialSize(cdp.getInitialPoolSize().intValue());
+         }
+
+         if (pp instanceof org.jboss.jca.common.api.metadata.common.v11.ConnDefXaPool)
+         {
+            org.jboss.jca.common.api.metadata.common.v11.ConnDefXaPool cdxp =
+               (org.jboss.jca.common.api.metadata.common.v11.ConnDefXaPool)pp;
+
+            if (cdxp.getInitialPoolSize() != null)
+               pc.setInitialSize(cdxp.getInitialPoolSize().intValue());
+         }
 
          if (pp.getMaxPoolSize() != null)
             pc.setMaxSize(pp.getMaxPoolSize().intValue());
@@ -1695,15 +1713,15 @@ public abstract class AbstractResourceAdapterDeployer
                                  
                                     recoveryImpl =
                                        getTransactionIntegration().
-                                       createXAResourceRecovery(mcf,
-                                                                padXid,
-                                                                isSameRMOverride,
-                                                                wrapXAResource,
-                                                                recoverUser,
-                                                                recoverPassword,
-                                                                recoverSecurityDomain,
-                                                                getSubjectFactory(recoverSecurityDomain),
-                                                                plugin);
+                                          createXAResourceRecovery(mcf,
+                                                                   padXid,
+                                                                   isSameRMOverride,
+                                                                   wrapXAResource,
+                                                                   recoverUser,
+                                                                   recoverPassword,
+                                                                   recoverSecurityDomain,
+                                                                   getSubjectFactory(recoverSecurityDomain),
+                                                                   plugin);
                                  }
                               }
                            }
@@ -2242,15 +2260,15 @@ public abstract class AbstractResourceAdapterDeployer
 
                                                 recoveryImpl =
                                                    getTransactionIntegration().
-                                                   createXAResourceRecovery(mcf,
-                                                                            padXid,
-                                                                            isSameRMOverride,
-                                                                            wrapXAResource,
-                                                                            recoverUser,
-                                                                            recoverPassword,
-                                                                            recoverSecurityDomain,
-                                                                            getSubjectFactory(recoverSecurityDomain),
-                                                                            plugin);
+                                                      createXAResourceRecovery(mcf,
+                                                                               padXid,
+                                                                               isSameRMOverride,
+                                                                               wrapXAResource,
+                                                                               recoverUser,
+                                                                               recoverPassword,
+                                                                               recoverSecurityDomain,
+                                                                               getSubjectFactory(recoverSecurityDomain),
+                                                                               plugin);
                                              }
                                           }
                                        }

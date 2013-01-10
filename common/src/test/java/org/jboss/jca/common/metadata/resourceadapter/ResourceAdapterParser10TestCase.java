@@ -292,7 +292,7 @@ public class ResourceAdapterParser10TestCase extends XMLParserTestBase
       assertTrue(cd.isUseJavaContext());
       
       assertFalse(cd.isXa());
-      CommonPool pool = (CommonPool) cd.getPool();
+      CommonPool pool = cd.getPool();
       assertEquals(1, (int) pool.getMinPoolSize());
       assertEquals(5, (int) pool.getMaxPoolSize());
       assertTrue(pool.isPrefill());
@@ -352,7 +352,7 @@ public class ResourceAdapterParser10TestCase extends XMLParserTestBase
       assertTrue(cd.isUseJavaContext());
       
       assertFalse(cd.isXa());
-      pool = (CommonPool) cd.getPool();
+      pool = cd.getPool();
       assertFalse(pool.isPrefill());
       assertFalse(pool.isUseStrictMin());
       //default values

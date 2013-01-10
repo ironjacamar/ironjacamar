@@ -150,9 +150,9 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
          supportsLazyAssociation = Boolean.FALSE;
 
       // Schedule managed connection pool for prefill
-      if ((pc.isPrefill() || pc.isStrictMin()) && p instanceof PrefillPool && pc.getMinSize() > 0)
+      if ((pc.isPrefill() || pc.isStrictMin()) && p instanceof PrefillPool && pc.getInitialSize() > 0)
       {
-         PoolFiller.fillPool(this);
+         PoolFiller.fillPool(new FillRequest(this, pc.getInitialSize()));
       }
 
       reenable();
@@ -322,7 +322,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
                   if ((poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) &&
                       pool instanceof PrefillPool &&
                       poolConfiguration.getMinSize() > 0)
-                     PoolFiller.fillPool(this);
+                     PoolFiller.fillPool(new FillRequest(this, poolConfiguration.getMinSize()));
                
                   if (trace)
                      log.trace("supplying new ManagedConnection: " + cl);
@@ -592,7 +592,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
              (poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) &&
              pool instanceof PrefillPool)
          {
-            PoolFiller.fillPool(this);
+            PoolFiller.fillPool(new FillRequest(this, poolConfiguration.getMinSize()));
          }
       }
    }
@@ -659,7 +659,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
             {
                if (poolConfiguration.getMinSize() > 0)
                {
-                  PoolFiller.fillPool(this);
+                  PoolFiller.fillPool(new FillRequest(this, poolConfiguration.getMinSize()));
                }
                else
                {
@@ -704,7 +704,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
    /**
     * {@inheritDoc}
     */
-   public void fillToMin()
+   public void fillTo(int size)
    {
       if (poolConfiguration.getMinSize() <= 0)
          return;
@@ -715,7 +715,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       if (!(pool instanceof PrefillPool))
          return;
 
-      while (poolConfiguration.getMinSize() - (cls.size() + checkedOut.size()) > 0)
+      while (size - (cls.size() + checkedOut.size()) > 0)
       {
          if (shutdown.get())
          {
@@ -731,20 +731,20 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
             cl = createConnectionEventListener(defaultSubject, defaultCri);
             statistics.setInUsedCount(checkedOut.size() + 1);
                
-            if ((checkedOut.size() + cls.size()) < poolConfiguration.getMinSize())
+            if ((checkedOut.size() + cls.size()) < size)
             {
                if (trace)
                   log.trace("Filling pool cl=" + cl);
 
                if (!cls.offer(cl))
                {
-                  log.debug("Connection couldn't be inserted during fillToMin");
+                  log.debug("Connection couldn't be inserted during fillTo");
                   destroy = true;
                }
             }
             else
             {
-               log.debug("MinSize reached during fillToMin");
+               log.debug("Size reached during fillTo");
                destroy = true;
             }
          }
@@ -924,7 +924,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
              (poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) &&
              pool instanceof PrefillPool)
          {
-            PoolFiller.fillPool(this);
+            PoolFiller.fillPool(new FillRequest(this, poolConfiguration.getMinSize()));
          }
       }
    }

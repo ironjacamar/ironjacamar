@@ -435,6 +435,17 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="initial-pool-size" type="xs:nonNegativeInteger" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+              The initial-pool-size element indicates the initial number of connections 
+              a pool should hold. These are not created until a Subject is known from a 
+              request for a connection. This default to 0. Ex: <initial-pool-size>1</initial-pool-size>
+             ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
       <xs:element name="max-pool-size" type="xs:nonNegativeInteger" minOccurs="0">
         <xs:annotation>
           <xs:documentation>

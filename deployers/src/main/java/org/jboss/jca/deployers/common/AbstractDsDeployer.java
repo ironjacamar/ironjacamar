@@ -931,6 +931,22 @@ public abstract class AbstractDsDeployer
          if (pp.getMinPoolSize() != null)
             pc.setMinSize(pp.getMinPoolSize().intValue());
 
+         if (pp instanceof org.jboss.jca.common.api.metadata.ds.v12.DsPool)
+         {
+            org.jboss.jca.common.api.metadata.ds.v12.DsPool dsp =
+               (org.jboss.jca.common.api.metadata.ds.v12.DsPool)pp;
+            if (dsp.getInitialPoolSize() != null)
+               pc.setInitialSize(dsp.getInitialPoolSize().intValue());
+         }
+
+         if (pp instanceof org.jboss.jca.common.api.metadata.ds.v12.DsXaPool)
+         {
+            org.jboss.jca.common.api.metadata.ds.v12.DsXaPool dsp =
+               (org.jboss.jca.common.api.metadata.ds.v12.DsXaPool)pp;
+            if (dsp.getInitialPoolSize() != null)
+               pc.setInitialSize(dsp.getInitialPoolSize().intValue());
+         }
+
          if (pp.getMaxPoolSize() != null)
             pc.setMaxSize(pp.getMaxPoolSize().intValue());
 

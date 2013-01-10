@@ -19,30 +19,29 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.ds.v11;
+package org.jboss.jca.common.metadata.ds.v12;
 
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
-import org.jboss.jca.common.api.metadata.ds.v11.DsXaPool;
+import org.jboss.jca.common.api.metadata.ds.v12.DsXaPool;
 import org.jboss.jca.common.api.validator.ValidateException;
-import org.jboss.jca.common.metadata.common.CommonXaPoolImpl;
 
 /**
  * An XA pool implementation
  *
  * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class DsXaPoolImpl extends CommonXaPoolImpl implements DsXaPool
+public class DsXaPoolImpl extends org.jboss.jca.common.metadata.ds.v11.DsXaPoolImpl implements DsXaPool
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = 3261597366235425250L;
 
-   /** allow-multiple-users */
-   protected final Boolean allowMultipleUsers;
+   private final Integer initialPoolSize;
 
    /**
     * Create a new XaPoolImpl.
     *
     * @param minPoolSize minPoolSize
+    * @param initialPoolSize initialPoolSize
     * @param maxPoolSize maxPoolSize
     * @param prefill prefill
     * @param useStrictMin useStrictMin
@@ -55,7 +54,7 @@ public class DsXaPoolImpl extends CommonXaPoolImpl implements DsXaPool
     * @param allowMultipleUsers allowMultipleUsers
     * @throws ValidateException ValidateException
     */
-   public DsXaPoolImpl(Integer minPoolSize, Integer maxPoolSize,
+   public DsXaPoolImpl(Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize,
                        Boolean prefill, Boolean useStrictMin,
                        FlushStrategy flushStrategy,
                        Boolean isSameRmOverride, Boolean interleaving, 
@@ -64,18 +63,18 @@ public class DsXaPoolImpl extends CommonXaPoolImpl implements DsXaPool
                        Boolean allowMultipleUsers) throws ValidateException
    {
       super(minPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy,
-            isSameRmOverride, interleaving, padXid, wrapXaResource, noTxSeparatePool);
+            isSameRmOverride, interleaving, padXid, wrapXaResource, noTxSeparatePool, allowMultipleUsers);
 
-      this.allowMultipleUsers = allowMultipleUsers;
+      this.initialPoolSize = initialPoolSize;
    }
 
    /**
     * {@inheritDoc}
     */
    @Override
-   public final Boolean isAllowMultipleUsers()
+   public final Integer getInitialPoolSize()
    {
-      return allowMultipleUsers;
+      return initialPoolSize;
    }
 
    @Override
@@ -83,7 +82,7 @@ public class DsXaPoolImpl extends CommonXaPoolImpl implements DsXaPool
    {
       final int prime = 31;
       int result = super.hashCode();
-      result = prime * result + ((allowMultipleUsers == null) ? 0 : allowMultipleUsers.hashCode());
+      result = prime * result + ((initialPoolSize == null) ? 7 : 7 * initialPoolSize.hashCode());
       return result;
    }
 
@@ -100,12 +99,12 @@ public class DsXaPoolImpl extends CommonXaPoolImpl implements DsXaPool
          return false;
 
       DsXaPoolImpl other = (DsXaPoolImpl) obj;
-      if (allowMultipleUsers == null)
+      if (initialPoolSize == null)
       {
-         if (other.allowMultipleUsers != null)
+         if (other.initialPoolSize != null)
             return false;
       }
-      else if (!allowMultipleUsers.equals(other.allowMultipleUsers))
+      else if (!initialPoolSize.equals(other.initialPoolSize))
          return false;
       return true;
    }
@@ -125,6 +124,13 @@ public class DsXaPoolImpl extends CommonXaPoolImpl implements DsXaPool
          sb.append("<").append(DsXaPool.Tag.MIN_POOL_SIZE).append(">");
          sb.append(minPoolSize);
          sb.append("</").append(DsXaPool.Tag.MIN_POOL_SIZE).append(">");
+      }
+
+      if (initialPoolSize != null)
+      {
+         sb.append("<").append(DsXaPool.Tag.INITIAL_POOL_SIZE).append(">");
+         sb.append(initialPoolSize);
+         sb.append("</").append(DsXaPool.Tag.INITIAL_POOL_SIZE).append(">");
       }
 
       if (maxPoolSize != null)

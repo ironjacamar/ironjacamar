@@ -325,6 +325,14 @@ java:/eis/ao/&lt;deploymentName&gt;
                </entry>
              </row>
              <row>
+               <entry><code>initial-pool-size</code></entry>
+               <entry>
+                 The initial-pool-size element indicates the initial number of connections 
+                 a pool should hold. These are not created until a Subject is known from a 
+                 request for a connection. This default to 0 (1.1)
+               </entry>
+             </row>
+             <row>
                <entry><code>max-pool-size</code></entry>
                <entry>
                  The max-pool-size element indicates the maximum number of connections 
@@ -375,6 +383,14 @@ java:/eis/ao/&lt;deploymentName&gt;
                  The min-pool-size element indicates the minimum number of connections 
                  a pool should hold. These are not created until a Subject is known from a 
                  request for a connection. This default to 0
+               </entry>
+             </row>
+             <row>
+               <entry><code>initial-pool-size</code></entry>
+               <entry>
+                 The initial-pool-size element indicates the initial number of connections 
+                 a pool should hold. These are not created until a Subject is known from a 
+                 request for a connection. This default to 0 (1.1)
                </entry>
              </row>
              <row>
@@ -1118,6 +1134,14 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
                 </entry>
               </row>
               <row>
+                <entry><code>initial-pool-size</code></entry>
+                <entry>
+                  The initial-pool-size element indicates the initial number of connections 
+                  a pool should hold. These are not created until a Subject is known from a 
+                  request for a connection. This default to 0 (1.2)
+                </entry>
+              </row>
+              <row>
                 <entry><code>max-pool-size</code></entry>
                 <entry>
                   The max-pool-size element indicates the maximum number of connections 
@@ -1175,6 +1199,14 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
                   The min-pool-size element indicates the minimum number of connections 
                   a pool should hold. These are not created until a Subject is known from a 
                   request for a connection. This default to 0
+                </entry>
+              </row>
+              <row>
+                <entry><code>initial-pool-size</code></entry>
+                <entry>
+                  The initial-pool-size element indicates the initial number of connections 
+                  a pool should hold. These are not created until a Subject is known from a 
+                  request for a connection. This default to 0 (1.2)
                 </entry>
               </row>
               <row>

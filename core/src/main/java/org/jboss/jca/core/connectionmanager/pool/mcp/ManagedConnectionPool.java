@@ -119,9 +119,10 @@ public interface ManagedConnectionPool extends IdleConnectionRemovalSupport
    public void shutdown();
    
    /**
-    * Fill to min
+    * Fill to
+    * @param size The size
     */
-   public void fillToMin();
+   public void fillTo(int size);
    
    /**
     * Validate connecitons.

@@ -24,7 +24,7 @@ package org.jboss.jca.common.metadata.ds;
 import org.jboss.jca.common.api.metadata.ds.DataSources;
 import org.jboss.jca.common.metadata.ParserException;
 import org.jboss.jca.common.metadata.ParserTestBase;
-import org.jboss.jca.common.metadata.ds.v11.DsParser;
+import org.jboss.jca.common.metadata.ds.v12.DsParser;
 
 import org.junit.BeforeClass;
 import org.junit.Test;

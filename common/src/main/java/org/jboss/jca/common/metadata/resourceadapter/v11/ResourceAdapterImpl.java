@@ -42,7 +42,7 @@ import java.util.Map;
 public class ResourceAdapterImpl extends CommonIronJacamarImpl implements ResourceAdapter
 {
    /** The serialVersionUID */
-   //private static final long serialVersionUID = 7607776873201143875L;
+   private static final long serialVersionUID = 2L;
 
    /** archive */
    protected final String archive;

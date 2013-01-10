@@ -20,6 +20,7 @@
 				<config-property name="Property4">2</config-property>
 				<xa-pool>
 					<min-pool-size>1</min-pool-size>
+					<initial-pool-size>5</initial-pool-size>
 					<max-pool-size>5</max-pool-size>
 					<prefill>true</prefill>
 					<use-strict-min>true</use-strict-min>
@@ -108,6 +109,7 @@
 			<connection-definition jndi-name="java:jboss/name8">
 				<pool>
 					<min-pool-size>1</min-pool-size>
+					<initial-pool-size>5</initial-pool-size>
 					<max-pool-size>5</max-pool-size>
 					<prefill>true</prefill>
 					<use-strict-min>true</use-strict-min>

@@ -22,12 +22,16 @@
 package org.jboss.jca.common.metadata.common.v11;
 
 import org.jboss.jca.common.CommonBundle;
+import org.jboss.jca.common.api.metadata.Defaults;
 import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.common.CommonSecurity;
 import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
 import org.jboss.jca.common.api.metadata.common.CommonValidation;
+import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.metadata.common.v11.CommonConnDef;
+import org.jboss.jca.common.api.metadata.common.v11.ConnDefPool;
+import org.jboss.jca.common.api.metadata.common.v11.ConnDefXaPool;
 import org.jboss.jca.common.api.metadata.common.v11.WorkManager;
 import org.jboss.jca.common.api.metadata.common.v11.WorkManagerSecurity;
 import org.jboss.jca.common.api.metadata.ironjacamar.v11.IronJacamar;
@@ -371,6 +375,191 @@ public abstract class CommonIronJacamarParser extends org.jboss.jca.common.metad
 
                         groupMappings.put(from, to);
                      }
+                     break;
+                  }
+                  default :
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
+               }
+               break;
+            }
+         }
+      }
+      throw new ParserException(bundle.unexpectedEndOfDocument());
+   }
+
+   /**
+    * parse a {@link CommonPool} object
+    *
+    * @param reader reader
+    * @return the parsed {@link CommonPool} object
+    * @throws XMLStreamException XMLStreamException
+    * @throws ParserException ParserException
+    * @throws ValidateException ValidateException
+    */
+   @Override
+   protected ConnDefPool parsePool(XMLStreamReader reader) throws XMLStreamException, ParserException,
+      ValidateException
+   {
+      Integer minPoolSize = Defaults.MIN_POOL_SIZE;;
+      Integer initialPoolSize = Defaults.INITIAL_POOL_SIZE;;
+      Integer maxPoolSize = Defaults.MAX_POOL_SIZE;
+      Boolean prefill = Defaults.PREFILL;
+      Boolean useStrictMin = Defaults.USE_STRICT_MIN;
+      FlushStrategy flushStrategy = Defaults.FLUSH_STRATEGY;
+
+      while (reader.hasNext())
+      {
+         switch (reader.nextTag())
+         {
+            case END_ELEMENT : {
+               if (CommonConnDef.Tag.forName(reader.getLocalName()) == CommonConnDef.Tag.POOL)
+               {
+
+                  return new ConnDefPoolImpl(minPoolSize, initialPoolSize, maxPoolSize,
+                                             prefill, useStrictMin, flushStrategy);
+
+               }
+               else
+               {
+                  if (ConnDefPool.Tag.forName(reader.getLocalName()) == ConnDefPool.Tag.UNKNOWN)
+                  {
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
+                  }
+               }
+               break;
+            }
+            case START_ELEMENT : {
+               switch (ConnDefPool.Tag.forName(reader.getLocalName()))
+               {
+                  case MAX_POOL_SIZE : {
+                     maxPoolSize = elementAsInteger(reader);
+                     break;
+                  }
+                  case INITIAL_POOL_SIZE : {
+                     initialPoolSize = elementAsInteger(reader);
+                     break;
+                  }
+                  case MIN_POOL_SIZE : {
+                     minPoolSize = elementAsInteger(reader);
+                     break;
+                  }
+
+                  case PREFILL : {
+                     prefill = elementAsBoolean(reader);
+                     break;
+                  }
+                  case USE_STRICT_MIN : {
+                     useStrictMin = elementAsBoolean(reader);
+                     break;
+                  }
+                  case FLUSH_STRATEGY : {
+                     flushStrategy = elementAsFlushStrategy(reader);
+                     break;
+                  }
+                  default :
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
+               }
+               break;
+            }
+         }
+      }
+      throw new ParserException(bundle.unexpectedEndOfDocument());
+   }
+
+   /**
+   *
+   * parse a {@link CommonXaPool} object
+   *
+   * @param reader reader
+   * @return the parsed {@link CommonXaPool} object
+   * @throws XMLStreamException XMLStreamException
+   * @throws ParserException ParserException
+    * @throws ValidateException ValidateException
+   */
+   @Override
+   protected ConnDefXaPool parseXaPool(XMLStreamReader reader) throws XMLStreamException, ParserException,
+      ValidateException
+   {
+      Integer minPoolSize = Defaults.MIN_POOL_SIZE;
+      Integer initialPoolSize = Defaults.INITIAL_POOL_SIZE;
+      Integer maxPoolSize = Defaults.MAX_POOL_SIZE;
+      Boolean prefill = Defaults.PREFILL;
+      FlushStrategy flushStrategy = Defaults.FLUSH_STRATEGY;
+      Boolean interleaving = Defaults.INTERLEAVING;
+      Boolean isSameRmOverride = Defaults.IS_SAME_RM_OVERRIDE;
+      Boolean padXid = Defaults.PAD_XID;
+      Boolean noTxSeparatePool = Defaults.NO_TX_SEPARATE_POOL;
+      Boolean wrapXaDataSource = Defaults.WRAP_XA_RESOURCE;
+      Boolean useStrictMin = Defaults.USE_STRICT_MIN;
+
+      while (reader.hasNext())
+      {
+         switch (reader.nextTag())
+         {
+            case END_ELEMENT : {
+               if (CommonConnDef.Tag.forName(reader.getLocalName()) == CommonConnDef.Tag.XA_POOL)
+               {
+
+                  return new ConnDefXaPoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin,
+                                               flushStrategy,
+                                               isSameRmOverride, interleaving, padXid,
+                                               wrapXaDataSource, noTxSeparatePool);
+
+               }
+               else
+               {
+                  if (ConnDefXaPool.Tag.forName(reader.getLocalName()) == ConnDefXaPool.Tag.UNKNOWN)
+                  {
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
+                  }
+               }
+               break;
+            }
+            case START_ELEMENT : {
+               switch (ConnDefXaPool.Tag.forName(reader.getLocalName()))
+               {
+                  case MAX_POOL_SIZE : {
+                     maxPoolSize = elementAsInteger(reader);
+                     break;
+                  }
+                  case INITIAL_POOL_SIZE : {
+                     initialPoolSize = elementAsInteger(reader);
+                     break;
+                  }
+                  case MIN_POOL_SIZE : {
+                     minPoolSize = elementAsInteger(reader);
+                     break;
+                  }
+                  case INTERLEAVING : {
+                     interleaving = elementAsBoolean(reader);
+                     break;
+                  }
+                  case IS_SAME_RM_OVERRIDE : {
+                     isSameRmOverride = elementAsBoolean(reader);
+                     break;
+                  }
+                  case NO_TX_SEPARATE_POOLS : {
+                     noTxSeparatePool = elementAsBoolean(reader);
+                     break;
+                  }
+                  case PAD_XID : {
+                     padXid = elementAsBoolean(reader);
+                     break;
+                  }
+                  case WRAP_XA_RESOURCE : {
+                     wrapXaDataSource = elementAsBoolean(reader);
+                     break;
+                  }
+                  case PREFILL : {
+                     prefill = elementAsBoolean(reader);
+                     break;
+                  }
+                  case USE_STRICT_MIN : {
+                     useStrictMin = elementAsBoolean(reader);
+                     break;
+                  }
+                  case FLUSH_STRATEGY : {
+                     flushStrategy = elementAsFlushStrategy(reader);
                      break;
                   }
                   default :

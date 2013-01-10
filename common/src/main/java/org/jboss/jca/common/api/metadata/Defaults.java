@@ -77,6 +77,11 @@ public interface Defaults
    public static final Integer MIN_POOL_SIZE = Integer.valueOf(0);
 
    /**
+    * Initial pool size
+    */
+   public static final Integer INITIAL_POOL_SIZE = null;
+
+   /**
     * Max pool size
     */
    public static final Integer MAX_POOL_SIZE = Integer.valueOf(20);

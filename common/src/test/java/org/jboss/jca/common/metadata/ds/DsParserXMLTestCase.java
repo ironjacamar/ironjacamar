@@ -31,11 +31,11 @@ import org.jboss.jca.common.api.metadata.ds.Driver;
 import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
 import org.jboss.jca.common.metadata.XMLParserTestBase;
-import org.jboss.jca.common.metadata.ds.v11.DataSourceImpl;
-import org.jboss.jca.common.metadata.ds.v11.DsParser;
-import org.jboss.jca.common.metadata.ds.v11.DsPoolImpl;
-import org.jboss.jca.common.metadata.ds.v11.DsXaPoolImpl;
-import org.jboss.jca.common.metadata.ds.v11.XADataSourceImpl;
+import org.jboss.jca.common.metadata.ds.v12.DataSourceImpl;
+import org.jboss.jca.common.metadata.ds.v12.DsParser;
+import org.jboss.jca.common.metadata.ds.v12.DsPoolImpl;
+import org.jboss.jca.common.metadata.ds.v12.DsXaPoolImpl;
+import org.jboss.jca.common.metadata.ds.v12.XADataSourceImpl;
 
 import java.util.List;
 import java.util.Map;
@@ -128,6 +128,7 @@ public class DsParserXMLTestCase extends XMLParserTestBase
       DsPoolImpl pool = (DsPoolImpl) ds.getPool();
       assertNotNull(pool);
       assertEquals((int) pool.getMinPoolSize(), 1);
+      assertEquals((int) pool.getInitialPoolSize(), 5);
       assertEquals((int) pool.getMaxPoolSize(), 5);
       assertTrue(pool.isPrefill());
       assertTrue(pool.isUseStrictMin());
@@ -190,6 +191,7 @@ public class DsParserXMLTestCase extends XMLParserTestBase
       DsXaPoolImpl poolXa = (DsXaPoolImpl) xads.getXaPool();
       assertNotNull(poolXa);
       assertEquals((int) poolXa.getMinPoolSize(), 1);
+      assertEquals((int) poolXa.getInitialPoolSize(), 5);
       assertEquals((int) poolXa.getMaxPoolSize(), 5);
       assertTrue(poolXa.isPrefill());
       assertTrue(poolXa.isUseStrictMin());

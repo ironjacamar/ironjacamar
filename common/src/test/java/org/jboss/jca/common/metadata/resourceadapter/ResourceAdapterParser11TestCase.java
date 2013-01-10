@@ -34,6 +34,8 @@ import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.common.v11.CommonConnDef;
+import org.jboss.jca.common.api.metadata.common.v11.ConnDefPool;
+import org.jboss.jca.common.api.metadata.common.v11.ConnDefXaPool;
 import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter;
 import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapters;
 import org.jboss.jca.common.metadata.XMLParserTestBase;
@@ -115,8 +117,9 @@ public class ResourceAdapterParser11TestCase extends XMLParserTestBase
       assertEquals(cp.get("Property4"), "2");
 
       assertTrue(cd.isXa());
-      CommonXaPool xaPool = (CommonXaPool) cd.getPool();
+      ConnDefXaPool xaPool = (ConnDefXaPool) cd.getPool();
       assertEquals(1, (int) xaPool.getMinPoolSize());
+      assertEquals(5, (int) xaPool.getInitialPoolSize());
       assertEquals(5, (int) xaPool.getMaxPoolSize());
       assertTrue(xaPool.isPrefill());
       assertTrue(xaPool.isUseStrictMin());
@@ -174,7 +177,7 @@ public class ResourceAdapterParser11TestCase extends XMLParserTestBase
       assertEquals(0, cp.size());
 
       assertTrue(cd.isXa());
-      xaPool = (CommonXaPool) cd.getPool();
+      xaPool = (ConnDefXaPool) cd.getPool();
       //default values
       assertEquals(0, (int) xaPool.getMinPoolSize());
       assertEquals(20, (int) xaPool.getMaxPoolSize());
@@ -224,7 +227,7 @@ public class ResourceAdapterParser11TestCase extends XMLParserTestBase
       assertEquals(0, cp.size());
 
       assertTrue(cd.isXa());
-      xaPool = (CommonXaPool) cd.getPool();
+      xaPool = (ConnDefXaPool) cd.getPool();
       //default values
       assertEquals(0, (int) xaPool.getMinPoolSize());
       assertEquals(20, (int) xaPool.getMaxPoolSize());
@@ -302,8 +305,9 @@ public class ResourceAdapterParser11TestCase extends XMLParserTestBase
       assertTrue(cd.isUseJavaContext());
       
       assertFalse(cd.isXa());
-      CommonPool pool = (CommonPool) cd.getPool();
+      ConnDefPool pool = (ConnDefPool) cd.getPool();
       assertEquals(1, (int) pool.getMinPoolSize());
+      assertEquals(5, (int) pool.getInitialPoolSize());
       assertEquals(5, (int) pool.getMaxPoolSize());
       assertTrue(pool.isPrefill());
       assertTrue(pool.isUseStrictMin());
@@ -365,13 +369,13 @@ public class ResourceAdapterParser11TestCase extends XMLParserTestBase
       assertTrue(cd.isUseJavaContext());
       
       assertFalse(cd.isXa());
-      pool = (CommonPool) cd.getPool();
-      assertFalse(pool.isPrefill());
-      assertFalse(pool.isUseStrictMin());
+      CommonPool cpool = cd.getPool();
+      assertFalse(cpool.isPrefill());
+      assertFalse(cpool.isUseStrictMin());
       //default values
-      assertEquals(0, (int) pool.getMinPoolSize());
-      assertEquals(20, (int) pool.getMaxPoolSize());
-      assertEquals(pool.getFlushStrategy(), FlushStrategy.FAILING_CONNECTION_ONLY);
+      assertEquals(0, (int) cpool.getMinPoolSize());
+      assertEquals(20, (int) cpool.getMaxPoolSize());
+      assertEquals(cpool.getFlushStrategy(), FlushStrategy.FAILING_CONNECTION_ONLY);
 
       assertEquals(null, cd.getSecurity());
       assertEquals(null, cd.getTimeOut());

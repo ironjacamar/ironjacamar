@@ -169,9 +169,9 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          supportsLazyAssociation = Boolean.FALSE;
 
       // Schedule managed connection pool for prefill
-      if ((pc.isPrefill() || pc.isStrictMin()) && p instanceof PrefillPool && pc.getMinSize() > 0)
+      if ((pc.isPrefill() || pc.isStrictMin()) && p instanceof PrefillPool && pc.getInitialSize() > 0)
       {
-         PoolFiller.fillPool(this);
+         PoolFiller.fillPool(new FillRequest(this, pc.getInitialSize()));
       }
 
       reenable();
@@ -380,7 +380,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                if ((poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) &&
                    pool instanceof PrefillPool &&
                    poolConfiguration.getMinSize() > 0)
-                  PoolFiller.fillPool(this);
+                  PoolFiller.fillPool(new FillRequest(this, poolConfiguration.getMinSize()));
 
                synchronized (cls)
                {
@@ -644,7 +644,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
              (poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) &&
              pool instanceof PrefillPool)
          {
-            PoolFiller.fillPool(this);
+            PoolFiller.fillPool(new FillRequest(this, poolConfiguration.getMinSize()));
          }
       }
    }
@@ -708,7 +708,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             {
                if (poolConfiguration.getMinSize() > 0)
                {
-                  PoolFiller.fillPool(this);
+                  PoolFiller.fillPool(new FillRequest(this, poolConfiguration.getMinSize()));
                }
                else
                {
@@ -753,7 +753,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    /**
     * {@inheritDoc}
     */
-   public void fillToMin()
+   public void fillTo(int size)
    {
       if (poolConfiguration.getMinSize() <= 0)
          return;
@@ -783,7 +783,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                   }
 
                   // We already have enough connections
-                  if (isSize(poolConfiguration.getMinSize()))
+                  if (isSize(size))
                   {
                      statistics.setInUsedCount(checkedOut.size());
                      return;
@@ -821,7 +821,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             Thread.interrupted();
 
             if (trace)
-               log.trace("Interrupted while requesting permit in fillToMin");
+               log.trace("Interrupted while requesting permit in fillTo");
          }
       }
    }
@@ -998,7 +998,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                 (poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) &&
                 pool instanceof PrefillPool)
             {
-               PoolFiller.fillPool(this);
+               PoolFiller.fillPool(new FillRequest(this, poolConfiguration.getMinSize()));
             }
          }
       }

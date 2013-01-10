@@ -28,10 +28,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * PoolFiller
  * 
  * @author <a href="mailto:d_jencks@users.sourceforge.net">David Jencks</a>
- * @author Scott.Stark@jboss.org
+ * @author <a href="mailto:Scott.Stark@jboss.org">Scott Stark</a>
  * @author <a href="mailto:adrian@jboss.com">Adrian Brock</a>
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @version $Rev: $
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 class PoolFiller implements Runnable
 {
@@ -40,7 +40,7 @@ class PoolFiller implements Runnable
    private static final PoolFiller FILLER = new PoolFiller();
 
    /** Pools list */
-   private final LinkedList<ManagedConnectionPool> pools = new LinkedList<ManagedConnectionPool>();
+   private final LinkedList<FillRequest> pools = new LinkedList<FillRequest>();
 
    /** Filler thread */
    private final Thread fillerThread;
@@ -52,13 +52,12 @@ class PoolFiller implements Runnable
    private AtomicBoolean threadStarted = new AtomicBoolean(false);
 
    /**
-    * Fill given pool.
-    * 
-    * @param mcp internal managed connection pool
+    * Fill given pool
+    * @param fr The fill request
     */
-   static void fillPool(ManagedConnectionPool mcp)
+   static void fillPool(FillRequest fr)
    {
-      FILLER.internalFillPool(mcp);
+      FILLER.internalFillPool(fr);
    }
 
    /**
@@ -84,17 +83,19 @@ class PoolFiller implements Runnable
 
          while (!empty)
          {
-            ManagedConnectionPool mcp = null;
+            FillRequest fr = null;
 
             synchronized (pools)
             {
                empty = pools.isEmpty();
                if (!empty)
-                  mcp = pools.removeFirst();
+                  fr = pools.removeFirst();
             }
 
             if (!empty)
-               mcp.fillToMin();
+            {
+               fr.getManagedConnectionPool().fillTo(fr.getFillSize());
+            }
          }
 
          try 
@@ -116,10 +117,10 @@ class PoolFiller implements Runnable
    }
 
    /**
-    *  fill pool.
-    * @param mcp connection pool
+    * Fill pool
+    * @param fr The fill request
     */
-   private void internalFillPool(ManagedConnectionPool mcp)
+   private void internalFillPool(FillRequest fr)
    {
       if (this.threadStarted.compareAndSet(false, true))         
       {
@@ -128,8 +129,11 @@ class PoolFiller implements Runnable
       
       synchronized (pools)
       {
-         pools.addLast(mcp);
-         pools.notifyAll();
+         if (!pools.contains(fr))
+         {
+            pools.addLast(fr);
+            pools.notifyAll();
+         }
       }
    }
 }

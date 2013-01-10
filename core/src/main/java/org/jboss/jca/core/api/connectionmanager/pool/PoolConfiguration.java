@@ -36,6 +36,9 @@ public class PoolConfiguration
    /** Minumum size of the pool */
    private AtomicInteger minSize;
 
+   /** Initial size of the pool */
+   private AtomicInteger initialSize;
+
    /** Maximum size of the pool */
    private AtomicInteger maxSize;
 
@@ -69,6 +72,7 @@ public class PoolConfiguration
    public PoolConfiguration()
    {
       minSize = new AtomicInteger(0);
+      initialSize = null;
       maxSize = new AtomicInteger(20);
       blockingTimeout = new AtomicLong(30000);
       idleTimeoutMinutes = new AtomicInteger(30);
@@ -96,6 +100,31 @@ public class PoolConfiguration
    public void setMinSize(int minSize)
    {
       this.minSize.set(minSize);
+   }
+
+   /**
+    * @return the initialSize
+    */
+   public int getInitialSize()
+   {
+      if (initialSize == null)
+         return getMinSize();
+
+      if (initialSize.get() > maxSize.get())
+         return maxSize.get();
+
+      return initialSize.get();
+   }
+
+   /**
+    * @param initialSize the initialSize to set
+    */
+   public void setInitialSize(int initialSize)
+   {
+      if (this.initialSize == null)
+         this.initialSize = new AtomicInteger(0);
+
+      this.initialSize.set(initialSize);
    }
 
    /**
@@ -242,6 +271,7 @@ public class PoolConfiguration
 
       sb.append("PoolConfiguration@").append(Integer.toHexString(System.identityHashCode(this)));
       sb.append("[minSize=").append(minSize.get());
+      sb.append(" initialSize=").append(initialSize != null ? initialSize.get() : "null");
       sb.append(" maxSize=").append(maxSize.get());
       sb.append(" blockingTimeout=").append(blockingTimeout.get());
       sb.append(" idleTimeoutMinutes=").append(idleTimeoutMinutes.get());
