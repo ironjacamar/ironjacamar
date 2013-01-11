@@ -70,6 +70,8 @@ public interface MessageEndpointFactory
     * @throws UnavailableException indicates a transient failure
     * in creating a message endpoint. Subsequent attempts to create a message
     * endpoint might succeed.
+    *
+    * @since 1.6
     */
    MessageEndpoint createEndpoint(XAResource xaResource, long timeout)
       throws UnavailableException;
