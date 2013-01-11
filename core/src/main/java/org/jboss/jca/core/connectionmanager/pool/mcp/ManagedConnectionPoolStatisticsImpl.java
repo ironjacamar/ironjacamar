@@ -43,7 +43,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoolStatistics
 {
    /** Serial version uid */
-   private static final long serialVersionUID = 2L;
+   private static final long serialVersionUID = 3L;
 
    private static final String ACTIVE_COUNT = "ActiveCount";
    private static final String AVAILABLE_COUNT = "AvailableCount";
@@ -57,6 +57,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    private static final String MAX_WAIT_TIME = "MaxWaitTime";
    private static final String TIMED_OUT = "TimedOut";
    private static final String TOTAL_BLOCKING_TIME = "TotalBlockingTime";
+   private static final String TOTAL_BLOCKING_TIME_INVOCATIONS = "TotalBlockingTimeInvocations";
    private static final String TOTAL_CREATION_TIME = "TotalCreationTime";
 
    private int maxPoolSize;
@@ -73,6 +74,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    private transient AtomicLong maxWaitTime;
    private transient AtomicInteger timedOut;
    private transient AtomicLong totalBlockingTime;
+   private transient AtomicLong totalBlockingTimeInvocations;
    private transient AtomicLong totalCreationTime;
    private transient AtomicInteger inUseCount;
 
@@ -152,6 +154,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       this.maxWaitTime = new AtomicLong(Long.MIN_VALUE);
       this.timedOut = new AtomicInteger(0);
       this.totalBlockingTime = new AtomicLong(0);
+      this.totalBlockingTimeInvocations = new AtomicLong(0);
       this.totalCreationTime = new AtomicLong(0);
       this.inUseCount = new AtomicInteger(0);
    }
@@ -304,7 +307,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
     */
    public long getAverageBlockingTime()
    {
-      return createdCount.get() != 0 ? totalBlockingTime.get() / createdCount.get() : 0;
+      return totalBlockingTimeInvocations.get() != 0 ? totalBlockingTime.get() / totalBlockingTimeInvocations.get() : 0;
    }
 
    /**
@@ -444,6 +447,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       if (delta > 0)
       {
          totalBlockingTime.addAndGet(delta);
+         totalBlockingTimeInvocations.incrementAndGet();
 
          if (delta > maxWaitTime.get())
             maxWaitTime.set(delta);
@@ -526,6 +530,8 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       sb.append(TIMED_OUT).append("=").append(getTimedOut());
       sb.append(",");
       sb.append(TOTAL_BLOCKING_TIME).append("=").append(getTotalBlockingTime());
+      sb.append(",");
+      sb.append(TOTAL_BLOCKING_TIME_INVOCATIONS).append("=").append(totalBlockingTimeInvocations.get());
       sb.append(",");
       sb.append(TOTAL_CREATION_TIME).append("=").append(getTotalCreationTime());
 
