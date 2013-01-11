@@ -25,6 +25,7 @@ package org.jboss.jca.deployers.fungal;
 import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
 import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.Connector;
+import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
@@ -147,9 +148,19 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
                   {
                      try
                      {
-                        injector.inject(o,
-                                        cpmd.getConfigPropertyName().getValue(),
-                                        cpmd.getConfigPropertyValue().getValue());
+                        if (XsdString.isNull(cpmd.getConfigPropertyType()))
+                        {
+                           injector.inject(o,
+                                           cpmd.getConfigPropertyName().getValue(),
+                                           cpmd.getConfigPropertyValue().getValue());
+                        }
+                        else
+                        {
+                           injector.inject(o,
+                                           cpmd.getConfigPropertyName().getValue(),
+                                           cpmd.getConfigPropertyValue().getValue(),
+                                           cpmd.getConfigPropertyType().getValue());
+                        }
                      }
                      catch (Throwable t)
                      {
