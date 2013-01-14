@@ -27,6 +27,7 @@ import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
+import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -64,8 +65,8 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    /** Pool for this connection */
    private final Pool pool;
    
-   /** Pool internal context */
-   private final Object internalManagedPoolContext;
+   /** Managed connection pool */
+   private final ManagedConnectionPool managedConnectionPool;
 
    /** Flush strategy */
    private FlushStrategy flushStrategy;
@@ -94,16 +95,16 @@ public abstract class AbstractConnectionListener implements ConnectionListener
     * @param cm connection manager
     * @param managedConnection managed connection
     * @param pool pool
-    * @param context pool internal context
+    * @param mcp managed connection pool
     * @param flushStrategy flushStrategy
     */
    protected AbstractConnectionListener(ConnectionManager cm, ManagedConnection managedConnection, 
-                                        Pool pool, Object context, FlushStrategy flushStrategy)
+                                        Pool pool, ManagedConnectionPool mcp, FlushStrategy flushStrategy)
    {
       this.cm = cm;
       this.managedConnection = managedConnection;
       this.pool = pool;
-      this.internalManagedPoolContext = context;
+      this.managedConnectionPool = mcp;
       this.flushStrategy = flushStrategy;
       this.log = getLogger();
       this.trace = log.isTraceEnabled();
@@ -177,9 +178,9 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    /**
     * {@inheritDoc}
     */   
-   public Object getContext()
+   public ManagedConnectionPool getManagedConnectionPool()
    {
-      return internalManagedPoolContext;
+      return managedConnectionPool;
    }
 
    /**
@@ -379,11 +380,23 @@ public abstract class AbstractConnectionListener implements ConnectionListener
       
       getConnectionManager().returnManagedConnection(this, true);      
 
-      if (flushStrategy == FlushStrategy.IDLE_CONNECTIONS)
+      if (flushStrategy == FlushStrategy.FAILING_CONNECTION_ONLY)
+      {
+         managedConnectionPool.prefill();
+      }
+      else if (flushStrategy == FlushStrategy.IDLE_CONNECTIONS)
+      {
+         managedConnectionPool.flush();
+      }
+      else if (flushStrategy == FlushStrategy.ENTIRE_POOL)
+      {
+         managedConnectionPool.flush(true);
+      }
+      else if (flushStrategy == FlushStrategy.ALL_IDLE_CONNECTIONS)
       {
          pool.flush();
       }
-      else if (flushStrategy == FlushStrategy.ENTIRE_POOL)
+      else if (flushStrategy == FlushStrategy.ALL_CONNECTIONS)
       {
          pool.flush(true);
       }
@@ -484,7 +497,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
       buffer.append(" lastUse=").append(lastUse);
       buffer.append(" trackByTx=").append(trackByTx.get());
       buffer.append(" pool=").append(pool);
-      buffer.append(" pool internal context=").append(internalManagedPoolContext);
+      buffer.append(" mcp=").append(managedConnectionPool);
       toString(buffer);
       buffer.append(']');
       

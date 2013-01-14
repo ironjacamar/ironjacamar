@@ -29,6 +29,7 @@ import org.jboss.jca.core.connectionmanager.ConnectionRecord;
 import org.jboss.jca.core.connectionmanager.NoTxConnectionManager;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.NoTxConnectionListener;
+import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 
 import java.util.Collection;
@@ -78,11 +79,11 @@ public class NoTxConnectionManagerImpl extends AbstractConnectionManager impleme
    /**
     * {@inheritDoc}
     */
-   public ConnectionListener createConnectionListener(ManagedConnection managedConnection, Object context)
+   public ConnectionListener createConnectionListener(ManagedConnection managedConnection, ManagedConnectionPool mcp)
       throws ResourceException
    {
       ConnectionListener cli = new NoTxConnectionListener(this, managedConnection, getPool(), 
-                                                          context, getFlushStrategy());
+                                                          mcp, getFlushStrategy());
       managedConnection.addConnectionEventListener(cli);
 
       return cli;

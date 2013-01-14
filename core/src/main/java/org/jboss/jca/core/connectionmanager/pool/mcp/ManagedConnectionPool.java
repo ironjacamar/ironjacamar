@@ -103,6 +103,11 @@ public interface ManagedConnectionPool extends IdleConnectionRemovalSupport
    public void reenable();
    
    /**
+    * Prefill
+    */
+   public void prefill();
+   
+   /**
     * Flush idle connections
     */
    public void flush();

@@ -593,7 +593,7 @@ public abstract class AbstractPool implements Pool
    {
       cl.setTrackByTx(false);
       //Get connection listener pool
-      ManagedConnectionPool mcp = (ManagedConnectionPool) cl.getContext();
+      ManagedConnectionPool mcp = cl.getManagedConnectionPool();
 
       //Return connection to the pool
       mcp.returnConnection(cl, kill);

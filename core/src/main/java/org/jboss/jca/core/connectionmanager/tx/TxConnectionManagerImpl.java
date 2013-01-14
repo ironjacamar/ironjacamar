@@ -394,7 +394,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
             {
                cl.setTrackByTx(true);
 
-               ManagedConnectionPool mcp = (ManagedConnectionPool)cl.getContext();
+               ManagedConnectionPool mcp = cl.getManagedConnectionPool();
                Transaction tx = transactionManager.getTransaction();
 
                // The lock may need to be initialized if we are in the first lazy enlistment
@@ -523,7 +523,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
    /**
     * {@inheritDoc}
     */
-   public ConnectionListener createConnectionListener(ManagedConnection mc, Object context)
+   public ConnectionListener createConnectionListener(ManagedConnection mc, ManagedConnectionPool mcp)
       throws ResourceException
    {
       XAResource xaResource = null;
@@ -615,7 +615,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
          }
       }
 
-      ConnectionListener cli = new TxConnectionListener(this, mc, getPool(), context, getFlushStrategy(), xaResource);
+      ConnectionListener cli = new TxConnectionListener(this, mc, getPool(), mcp, getFlushStrategy(), xaResource);
       mc.addConnectionEventListener(cli);
       return cli;
    }

@@ -211,6 +211,18 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
    /**
     * {@inheritDoc}
     */
+   public void prefill()
+   {
+      if (!shutdown.get() &&
+          (poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) &&
+          pool instanceof PrefillPool &&
+          poolConfiguration.getMinSize() > 0)
+         PoolFiller.fillPool(new FillRequest(this, poolConfiguration.getMinSize()));
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public ConnectionListener getConnection(Subject subject, ConnectionRequestInfo cri) throws ResourceException
    {
       if (trace)
@@ -319,11 +331,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
                {
                   cl = createConnectionEventListener(subject, cri);
                
-                  if ((poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) &&
-                      pool instanceof PrefillPool &&
-                      poolConfiguration.getMinSize() > 0)
-                     PoolFiller.fillPool(new FillRequest(this, poolConfiguration.getMinSize()));
-               
+                  prefill();
+
                   if (trace)
                      log.trace("supplying new ManagedConnection: " + cl);
                
@@ -585,16 +594,10 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
             doDestroy(destroyCl);
             destroyCl = null;
          }
-
-         // We destroyed something, check the minimum.
-         if (!shutdown.get() && 
-             poolConfiguration.getMinSize() > 0 &&
-             (poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) &&
-             pool instanceof PrefillPool)
-         {
-            PoolFiller.fillPool(new FillRequest(this, poolConfiguration.getMinSize()));
-         }
       }
+
+      // Trigger prefill
+      prefill();
    }
 
    /**
@@ -672,7 +675,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
             }
 
             // Empty pool
-            if (emptyManagedConnectionPool)
+            if (emptyManagedConnectionPool && isEmpty())
                pool.emptyManagedConnectionPool(this);
          }
       }
@@ -918,14 +921,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       }
       finally
       {
-         if (anyDestroyed &&
-             !shutdown.get() &&
-             poolConfiguration.getMinSize() > 0 &&
-             (poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) &&
-             pool instanceof PrefillPool)
-         {
-            PoolFiller.fillPool(new FillRequest(this, poolConfiguration.getMinSize()));
-         }
+         if (anyDestroyed)
+            prefill();
       }
    }
 

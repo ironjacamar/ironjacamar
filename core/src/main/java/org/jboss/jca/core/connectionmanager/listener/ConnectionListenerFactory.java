@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.core.connectionmanager.listener;
 
+import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 
 import javax.resource.ResourceException;
@@ -31,7 +32,7 @@ import javax.resource.spi.ManagedConnection;
  *
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
  * @author <a href="mailto:adrian@jboss.org">Adrian Brock</a>
- * @version $Revision$
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public interface ConnectionListenerFactory
 {
@@ -39,11 +40,11 @@ public interface ConnectionListenerFactory
     * Create a managed connection listener for the managed connection.
     * 
     * @param managedConnection the managed connection
-    * @param context a context object used by the pool
+    * @param mcp the managed connection pool
     * @return a new connection event listener
     * @throws ResourceException for any error
     */
-   public ConnectionListener createConnectionListener(ManagedConnection managedConnection, Object context)
+   public ConnectionListener createConnectionListener(ManagedConnection managedConnection, ManagedConnectionPool mcp)
       throws ResourceException;
 
    /**

@@ -358,7 +358,8 @@ java:/eis/ao/&lt;deploymentName&gt;
                <entry><code>flush-strategy</code></entry>
                <entry>
                  Specifies how the pool should be flush in case of an error.
-                 Valid values are: FailingConnectionOnly (default), IdleConnections, EntirePool 
+                 Valid values are: FailingConnectionOnly (default), IdleConnections, EntirePool,
+                                   AllIdleConnections (1.1), AllConnections (1.1)
                </entry>
              </row>
            </tbody>
@@ -420,6 +421,7 @@ java:/eis/ao/&lt;deploymentName&gt;
                <entry>
                  Specifies how the pool should be flush in case of an error.
                  Valid values are: FailingConnectionOnly (default), IdleConnections, EntirePool 
+                                   AllIdleConnections (1.1), AllConnections (1.1)
                </entry>
              </row>
              <row>
@@ -1168,6 +1170,7 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
                 <entry>
                   Specifies how the pool should be flush in case of an error.
                   Valid values are: FailingConnectionOnly (default), IdleConnections, EntirePool 
+                                    AllIdleConnections (1.2), AllConnections (1.2)
                 </entry>
               </row>
               <row>
@@ -1236,6 +1239,7 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
                 <entry>
                   Specifies how the pool should be flush in case of an error.
                   Valid values are: FailingConnectionOnly (default), IdleConnections, EntirePool 
+                                    AllIdleConnections (1.2), AllConnections (1.2)
                 </entry>
               </row>
               <row>

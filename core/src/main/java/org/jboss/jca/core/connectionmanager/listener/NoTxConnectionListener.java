@@ -25,6 +25,7 @@ import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
+import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 
 import javax.resource.spi.ConnectionEvent;
 import javax.resource.spi.ManagedConnection;
@@ -49,13 +50,13 @@ public class NoTxConnectionListener extends AbstractConnectionListener
     * @param cm connection manager
     * @param mc managed connection
     * @param pool pool
-    * @param context context
+    * @param mcp mcp
     * @param flushStrategy flushStrategy
     */
    public NoTxConnectionListener(final ConnectionManager cm, final ManagedConnection mc, 
-                                 final Pool pool, final Object context, final FlushStrategy flushStrategy)
+                                 final Pool pool, final ManagedConnectionPool mcp, final FlushStrategy flushStrategy)
    {
-      super(cm, mc, pool, context, flushStrategy);
+      super(cm, mc, pool, mcp, flushStrategy);
 
       // Always "enlisted"
       setEnlisted(true);

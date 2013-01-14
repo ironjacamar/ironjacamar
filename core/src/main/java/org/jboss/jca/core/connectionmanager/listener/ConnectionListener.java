@@ -22,6 +22,7 @@
 package org.jboss.jca.core.connectionmanager.listener;
 
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
+import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnection;
@@ -61,11 +62,10 @@ public interface ConnectionListener extends org.jboss.jca.core.api.connectionman
    public void tidyup() throws ResourceException;
 
    /**
-    * Retrieve the context used by the pool.
-    * 
-    * @return the context
+    * Get the managed connection pool
+    * @return The value
     */
-   public Object getContext();
+   public ManagedConnectionPool getManagedConnectionPool();
 
    /**
     * Retrieve the state of this connection.

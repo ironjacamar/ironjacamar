@@ -25,6 +25,7 @@ import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.connectionmanager.AbstractConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionRecord;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
+import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 
 import java.util.Collection;
@@ -39,7 +40,6 @@ import org.jboss.logging.Logger;
 /**
  * Mock connection manager.
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @version $Rev$ $Date$
  *
  */
 public class MockConnectionManager extends AbstractConnectionManager
@@ -69,7 +69,7 @@ public class MockConnectionManager extends AbstractConnectionManager
     * {@inheritDoc}
     */
    public ConnectionListener createConnectionListener(ManagedConnection managedConnection,
-         Object context) throws ResourceException
+                                                      ManagedConnectionPool mcp) throws ResourceException
    {
       return null;
    }

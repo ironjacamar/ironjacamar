@@ -80,17 +80,17 @@ public class TxConnectionListener extends AbstractConnectionListener
     * @param cm connection manager
     * @param mc managed connection
     * @param pool pool
-    * @param context context
+    * @param mcp mcp
     * @param flushStrategy flushStrategy
     * @param xaResource xaresource instance
     * @throws ResourceException if aexception while creating
     */
    public TxConnectionListener(final ConnectionManager cm, final ManagedConnection mc,
-                               final Pool pool, final Object context, final FlushStrategy flushStrategy,
+                               final Pool pool, final ManagedConnectionPool mcp, final FlushStrategy flushStrategy,
                                final XAResource xaResource)
       throws ResourceException
    {
-      super(cm, mc, pool, context, flushStrategy);
+      super(cm, mc, pool, mcp, flushStrategy);
 
       this.xaResource = xaResource;
 
@@ -356,7 +356,7 @@ public class TxConnectionListener extends AbstractConnectionListener
 
             if (isTrackByTx())
             {
-               ManagedConnectionPool mcp = (ManagedConnectionPool)getContext();
+               ManagedConnectionPool mcp = getManagedConnectionPool();
                TransactionSynchronizationRegistry tsr =
                   getConnectionManager().getTransactionIntegration().getTransactionSynchronizationRegistry();
 

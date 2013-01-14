@@ -48,7 +48,17 @@ public enum FlushStrategy
    /**
     * Entire pool
     */
-   ENTIRE_POOL("EntirePool");
+   ENTIRE_POOL("EntirePool"),
+
+   /**
+    * All idle connections
+    */
+   ALL_IDLE_CONNECTIONS("AllIdleConnections"),
+
+   /**
+    * All connections
+    */
+   ALL_CONNECTIONS("AllConnections");
    
    private final String name;
 

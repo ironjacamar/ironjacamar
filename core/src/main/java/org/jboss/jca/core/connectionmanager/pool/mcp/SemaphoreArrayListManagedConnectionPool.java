@@ -248,6 +248,18 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    /**
     * {@inheritDoc}
     */
+   public void prefill()
+   {
+      if (!shutdown.get() &&
+          (poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) &&
+          pool instanceof PrefillPool &&
+          poolConfiguration.getMinSize() > 0)
+         PoolFiller.fillPool(new FillRequest(this, poolConfiguration.getMinSize()));
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public ConnectionListener getConnection(Subject subject, ConnectionRequestInfo cri) throws ResourceException
    {
       if (trace)
@@ -377,10 +389,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                // No, the pool was empty, so we have to make a new one.
                cl = createConnectionEventListener(subject, cri);
 
-               if ((poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) &&
-                   pool instanceof PrefillPool &&
-                   poolConfiguration.getMinSize() > 0)
-                  PoolFiller.fillPool(new FillRequest(this, poolConfiguration.getMinSize()));
+               // Trigger prefill
+               prefill();
 
                synchronized (cls)
                {
@@ -637,16 +647,10 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             doDestroy(cl);
             cl = null;
          }
-
-         // We destroyed something, check the minimum.
-         if (!shutdown.get() &&
-             poolConfiguration.getMinSize() > 0 &&
-             (poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) &&
-             pool instanceof PrefillPool)
-         {
-            PoolFiller.fillPool(new FillRequest(this, poolConfiguration.getMinSize()));
-         }
       }
+
+      // Trigger prefill
+      prefill();
    }
 
    /**
@@ -708,7 +712,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             {
                if (poolConfiguration.getMinSize() > 0)
                {
-                  PoolFiller.fillPool(new FillRequest(this, poolConfiguration.getMinSize()));
+                  prefill();
                }
                else
                {
@@ -721,7 +725,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             }
 
             // Empty pool
-            if (emptyManagedConnectionPool)
+            if (emptyManagedConnectionPool && isEmpty())
                pool.emptyManagedConnectionPool(this);
          }
       }
@@ -992,14 +996,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          {
             permits.release();
 
-            if (anyDestroyed &&
-                !shutdown.get() &&
-                poolConfiguration.getMinSize() > 0 &&
-                (poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) &&
-                pool instanceof PrefillPool)
-            {
-               PoolFiller.fillPool(new FillRequest(this, poolConfiguration.getMinSize()));
-            }
+            if (anyDestroyed)
+               prefill();
          }
       }
    }
