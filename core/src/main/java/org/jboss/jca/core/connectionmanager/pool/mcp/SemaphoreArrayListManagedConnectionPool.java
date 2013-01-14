@@ -568,15 +568,15 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             doDestroy(cl);
             cl = null;
          }
+      }
 
-         // We destroyed something, check the minimum.
-         if (!shutdown.get() &&
-             poolConfiguration.getMinSize() > 0 &&
-             (poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) &&
-             pool instanceof PrefillPool)
-         {
-            PoolFiller.fillPool(this);
-         }
+      // Trigger prefill
+      if (!shutdown.get() &&
+          poolConfiguration.getMinSize() > 0 &&
+          (poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) &&
+          pool instanceof PrefillPool)
+      {
+         PoolFiller.fillPool(this);
       }
    }
 
@@ -652,7 +652,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             }
 
             // Empty pool
-            if (emptyManagedConnectionPool)
+            if (emptyManagedConnectionPool && isEmpty())
                pool.emptyManagedConnectionPool(this);
          }
       }
