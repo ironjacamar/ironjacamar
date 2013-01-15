@@ -32,6 +32,12 @@ import java.util.Map;
 public interface XaDataSource extends org.jboss.jca.common.api.metadata.ds.XaDataSource
 {
    /**
+    * Get the url property
+    * @return The value
+    */
+   public String getUrlProperty();
+
+   /**
     * {@inheritDoc}
     */
    public DsXaPool getXaPool();
@@ -84,6 +90,10 @@ public interface XaDataSource extends org.jboss.jca.common.api.metadata.ds.XaDat
       * urlDelimiter tag
       */
       URL_DELIMITER("url-delimiter"),
+      /**
+      * urlProperty tag
+      */
+      URL_PROPERTY("url-property"),
       /**
       * urlSelectorStrategyClassName tag
       */

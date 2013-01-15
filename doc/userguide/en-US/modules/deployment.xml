@@ -971,7 +971,7 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
               <row>
                 <entry><code>url-selector-strategy-class-name</code></entry>
                 <entry>
-                  A class that implements org.jboss.jca.adapters.jdbc.URLSelectorStrategy
+                  A class that implements org.jboss.jca.adapters.jdbc.spi.URLSelectorStrategy
                 </entry>
               </row>
               <row>
@@ -1054,9 +1054,15 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
                 </entry>
               </row>
               <row>
+                <entry><code>url-property</code></entry>
+                <entry>
+                  Specifies the property for the URL property in the xa-datasource-property values (1.2)
+                </entry>
+              </row>
+              <row>
                 <entry><code>url-selector-strategy-class-name</code></entry>
                 <entry>
-                  A class that implements org.jboss.jca.adapters.jdbc.URLSelectorStrategy
+                  A class that implements org.jboss.jca.adapters.jdbc.spi.URLXASelectorStrategy
                 </entry>
               </row>
               <row>

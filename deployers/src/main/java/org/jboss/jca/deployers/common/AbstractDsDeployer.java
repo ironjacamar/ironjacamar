@@ -741,6 +741,15 @@ public abstract class AbstractDsDeployer
          injectValue(mcf, "setJndiName", jndiName);
       }
 
+      // Url property
+      if (ds instanceof org.jboss.jca.common.api.metadata.ds.v12.XaDataSource)
+      {
+         org.jboss.jca.common.api.metadata.ds.v12.XaDataSource xads12 =
+            (org.jboss.jca.common.api.metadata.ds.v12.XaDataSource)ds;
+         
+         injectValue(mcf, "setURLProperty", xads12.getUrlProperty());
+      }
+
       // Reauth
       if (strategy == PoolStrategy.REAUTH)
       {

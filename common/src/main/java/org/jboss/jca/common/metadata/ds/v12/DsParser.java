@@ -67,6 +67,7 @@ public class DsParser extends org.jboss.jca.common.metadata.ds.v11.DsParser impl
       Statement statementSettings = null;
       Validation validationSettings = null;
       String urlDelimiter = null;
+      String urlProperty = null;
       String urlSelectorStrategyClassName = null;
       String newConnectionSql = null;
       DsXaPool xaPool = null;
@@ -84,8 +85,8 @@ public class DsParser extends org.jboss.jca.common.metadata.ds.v11.DsParser impl
       Boolean spy = Defaults.SPY;
       Boolean useCcm = Defaults.USE_CCM;
 
-      for (org.jboss.jca.common.api.metadata.ds.v11.XaDataSource.Attribute attribute :
-              org.jboss.jca.common.api.metadata.ds.v11.XaDataSource.Attribute.values())
+      for (org.jboss.jca.common.api.metadata.ds.v12.XaDataSource.Attribute attribute :
+              org.jboss.jca.common.api.metadata.ds.v12.XaDataSource.Attribute.values())
       {
          switch (attribute)
          {
@@ -128,15 +129,15 @@ public class DsParser extends org.jboss.jca.common.metadata.ds.v11.DsParser impl
                {
 
                   return new XADataSourceImpl(transactionIsolation, timeOutSettings, securitySettings,
-                                              statementSettings, validationSettings, urlDelimiter,
+                                              statementSettings, validationSettings, urlDelimiter, urlProperty,
                                               urlSelectorStrategyClassName, useJavaContext, poolName, enabled,
                                               jndiName, spy, useCcm, xaDataSourceProperty, xaDataSourceClass, driver,
                                               newConnectionSql, xaPool, recovery);
                }
                else
                {
-                  if (org.jboss.jca.common.api.metadata.ds.v11.XaDataSource.Tag.forName(reader.getLocalName()) ==
-                      org.jboss.jca.common.api.metadata.ds.v11.XaDataSource.Tag.UNKNOWN)
+                  if (org.jboss.jca.common.api.metadata.ds.v12.XaDataSource.Tag.forName(reader.getLocalName()) ==
+                      org.jboss.jca.common.api.metadata.ds.v12.XaDataSource.Tag.UNKNOWN)
                   {
                      throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
@@ -144,7 +145,7 @@ public class DsParser extends org.jboss.jca.common.metadata.ds.v11.DsParser impl
                break;
             }
             case START_ELEMENT : {
-               switch (org.jboss.jca.common.api.metadata.ds.v11.XaDataSource.Tag.forName(reader.getLocalName()))
+               switch (org.jboss.jca.common.api.metadata.ds.v12.XaDataSource.Tag.forName(reader.getLocalName()))
                {
                   case XA_DATASOURCE_PROPERTY : {
                      parseConfigProperty(xaDataSourceProperty, reader);
@@ -168,6 +169,10 @@ public class DsParser extends org.jboss.jca.common.metadata.ds.v11.DsParser impl
                   }
                   case URL_DELIMITER : {
                      urlDelimiter = elementAsString(reader);
+                     break;
+                  }
+                  case URL_PROPERTY : {
+                     urlProperty = elementAsString(reader);
                      break;
                   }
                   case URL_SELECTOR_STRATEGY_CLASS_NAME : {
@@ -242,8 +247,8 @@ public class DsParser extends org.jboss.jca.common.metadata.ds.v11.DsParser impl
       Boolean useCcm = Defaults.USE_CCM;
       Boolean jta = Defaults.JTA;
 
-      for (org.jboss.jca.common.api.metadata.ds.v11.DataSource.Attribute attribute :
-              org.jboss.jca.common.api.metadata.ds.v11.DataSource.Attribute.values())
+      for (org.jboss.jca.common.api.metadata.ds.v12.DataSource.Attribute attribute :
+              org.jboss.jca.common.api.metadata.ds.v12.DataSource.Attribute.values())
       {
          switch (attribute)
          {
@@ -297,8 +302,8 @@ public class DsParser extends org.jboss.jca.common.metadata.ds.v11.DsParser impl
                }
                else
                {
-                  if (org.jboss.jca.common.api.metadata.ds.v11.DataSource.Tag.forName(reader.getLocalName()) ==
-                      org.jboss.jca.common.api.metadata.ds.v11.DataSource.Tag.UNKNOWN)
+                  if (org.jboss.jca.common.api.metadata.ds.v12.DataSource.Tag.forName(reader.getLocalName()) ==
+                      org.jboss.jca.common.api.metadata.ds.v12.DataSource.Tag.UNKNOWN)
                   {
                      throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                   }
@@ -306,7 +311,7 @@ public class DsParser extends org.jboss.jca.common.metadata.ds.v11.DsParser impl
                break;
             }
             case START_ELEMENT : {
-               switch (org.jboss.jca.common.api.metadata.ds.v11.DataSource.Tag.forName(reader.getLocalName()))
+               switch (org.jboss.jca.common.api.metadata.ds.v12.DataSource.Tag.forName(reader.getLocalName()))
                {
                   case CONNECTION_PROPERTY : {
                      parseConfigProperty(connectionProperties, reader);

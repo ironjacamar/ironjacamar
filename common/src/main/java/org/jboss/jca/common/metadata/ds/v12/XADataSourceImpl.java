@@ -41,7 +41,10 @@ import java.util.Map;
 public class XADataSourceImpl extends org.jboss.jca.common.metadata.ds.v11.XADataSourceImpl implements XaDataSource
 {
    /** The serialVersionUID */
-   private static final long serialVersionUID = -1401087499308709724L;
+   private static final long serialVersionUID = 2L;
+
+   /** The url property */
+   private String urlProperty;
 
    /**
     * Create a new XADataSourceImpl.
@@ -52,6 +55,7 @@ public class XADataSourceImpl extends org.jboss.jca.common.metadata.ds.v11.XADat
     * @param statement statement
     * @param validation validation
     * @param urlDelimiter urlDelimiter
+    * @param urlProperty urlProperty
     * @param urlSelectorStrategyClassName urlSelectorStrategyClassName
     * @param useJavaContext useJavaContext
     * @param poolName poolName
@@ -68,14 +72,27 @@ public class XADataSourceImpl extends org.jboss.jca.common.metadata.ds.v11.XADat
     * @throws ValidateException ValidateException
     */
    public XADataSourceImpl(TransactionIsolation transactionIsolation, TimeOut timeOut, DsSecurity security,
-      Statement statement, Validation validation, String urlDelimiter, String urlSelectorStrategyClassName,
-      Boolean useJavaContext, String poolName, Boolean enabled, String jndiName, Boolean spy, Boolean useCcm,
-      Map<String, String> xaDataSourceProperty, String xaDataSourceClass, String driver, String newConnectionSql,
-      DsXaPool xaPool, Recovery recovery) throws ValidateException
+                           Statement statement, Validation validation, String urlDelimiter, String urlProperty,
+                           String urlSelectorStrategyClassName, Boolean useJavaContext, String poolName,
+                           Boolean enabled, String jndiName, Boolean spy, Boolean useCcm,
+                           Map<String, String> xaDataSourceProperty, String xaDataSourceClass, String driver,
+                           String newConnectionSql,
+                           DsXaPool xaPool, Recovery recovery) throws ValidateException
    {
       super(transactionIsolation, timeOut, security, statement, validation, urlDelimiter,
             urlSelectorStrategyClassName, useJavaContext, poolName, enabled, jndiName, spy, useCcm,
             xaDataSourceProperty, xaDataSourceClass, driver, newConnectionSql, xaPool, recovery);
+
+      this.urlProperty = urlProperty;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getUrlProperty()
+   {
+      return urlProperty;
    }
 
    /**

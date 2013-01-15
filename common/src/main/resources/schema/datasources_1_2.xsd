@@ -238,6 +238,15 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="url-property" type="xs:token" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+               Specifies the property for the URL property in the xa-datasource-property values
+              ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
       <xs:element name="url-selector-strategy-class-name" type="xs:token" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
