@@ -24,6 +24,7 @@ package org.jboss.jca.core.connectionmanager.pool;
 
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
+import org.jboss.jca.core.api.connectionmanager.pool.FlushMode;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
@@ -319,15 +320,30 @@ public abstract class AbstractPool implements Pool
     */
    public void flush()
    {
-      flush(false);
+      flush(FlushMode.IDLE);
    }
 
    /**
     * {@inheritDoc}
     */
-   public synchronized void flush(boolean kill)
+   public void flush(boolean kill)
    {
-      log.debug(poolName + ": flush(" + kill + ")");
+      if (!kill)
+      {
+         flush(FlushMode.IDLE);
+      }
+      else
+      {
+         flush(FlushMode.ALL);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public synchronized void flush(FlushMode mode)
+   {
+      log.debug(poolName + ": flush(" + mode + ")");
 
       Set<ManagedConnectionPool> clearMcpPools = new HashSet<ManagedConnectionPool>();
 
@@ -335,7 +351,7 @@ public abstract class AbstractPool implements Pool
       while (it.hasNext())
       {
          ManagedConnectionPool mcp = it.next();
-         mcp.flush(kill);
+         mcp.flush(mode);
 
          if (mcp.isEmpty())
             clearMcpPools.add(mcp);

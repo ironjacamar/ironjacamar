@@ -25,6 +25,7 @@ import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
+import org.jboss.jca.core.api.connectionmanager.pool.FlushMode;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
@@ -384,21 +385,29 @@ public abstract class AbstractConnectionListener implements ConnectionListener
       {
          managedConnectionPool.prefill();
       }
+      else if (flushStrategy == FlushStrategy.INVALID_IDLE_CONNECTIONS)
+      {
+         managedConnectionPool.flush(FlushMode.INVALID);
+      }
       else if (flushStrategy == FlushStrategy.IDLE_CONNECTIONS)
       {
-         managedConnectionPool.flush();
+         managedConnectionPool.flush(FlushMode.IDLE);
       }
       else if (flushStrategy == FlushStrategy.ENTIRE_POOL)
       {
-         managedConnectionPool.flush(true);
+         managedConnectionPool.flush(FlushMode.ALL);
+      }
+      else if (flushStrategy == FlushStrategy.ALL_INVALID_IDLE_CONNECTIONS)
+      {
+         pool.flush(FlushMode.INVALID);
       }
       else if (flushStrategy == FlushStrategy.ALL_IDLE_CONNECTIONS)
       {
-         pool.flush();
+         pool.flush(FlushMode.IDLE);
       }
       else if (flushStrategy == FlushStrategy.ALL_CONNECTIONS)
       {
-         pool.flush(true);
+         pool.flush(FlushMode.ALL);
       }
    }
    

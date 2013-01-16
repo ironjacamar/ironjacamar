@@ -22,6 +22,7 @@
 
 package org.jboss.jca.core.connectionmanager.pool.mcp;
 
+import org.jboss.jca.core.api.connectionmanager.pool.FlushMode;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
@@ -108,15 +109,10 @@ public interface ManagedConnectionPool extends IdleConnectionRemovalSupport
    public void prefill();
    
    /**
-    * Flush idle connections
-    */
-   public void flush();
-   
-   /**
     * Flush
-    * @param kill Kill all connections
+    * @param mode The flush mode
     */
-   public void flush(boolean kill);
+   public void flush(FlushMode mode);
    
    /**
     * Shutdown

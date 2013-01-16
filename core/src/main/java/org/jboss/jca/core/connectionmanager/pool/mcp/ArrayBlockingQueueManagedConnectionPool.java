@@ -24,6 +24,7 @@ package org.jboss.jca.core.connectionmanager.pool.mcp;
 
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
+import org.jboss.jca.core.api.connectionmanager.pool.FlushMode;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
@@ -538,22 +539,25 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
    /**
     * {@inheritDoc}
     */
-   public void flush()
+   public void flush(FlushMode mode)
    {
-      flush(false);
+      flush(mode, true);
    }
 
    /**
-    * {@inheritDoc}
+    * Flush
+    * @param mode The flush mode
+    * @param prefill Should prefill be called
     */
-   public void flush(boolean kill)
+   private void flush(FlushMode mode, boolean prefill)
    {
+      ArrayList<ConnectionListener> keep = null;
       ArrayList<ConnectionListener> destroy = null;
 
       if (trace)
          log.trace("Flushing pool checkedOut=" + checkedOut + " inPool=" + cls);
 
-      if (kill)
+      if (FlushMode.ALL == mode)
       {
          // Mark checked out connections as requiring destruction
          while (checkedOut.size() > 0)
@@ -576,11 +580,61 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       ConnectionListener cl = cls.poll();
       while (cl != null)
       {
-         if (destroy == null)
-            destroy = new ArrayList<ConnectionListener>();
+         boolean kill = true;
 
-         destroy.add(cl);
+         if (FlushMode.INVALID == mode)
+         {
+            if (mcf instanceof ValidatingManagedConnectionFactory)
+            {
+               try
+               {
+                  ValidatingManagedConnectionFactory vcf = (ValidatingManagedConnectionFactory) mcf;
+                  Set candidateSet = Collections.singleton(cl.getManagedConnection());
+                  candidateSet = vcf.getInvalidConnections(candidateSet);
+
+                  if (candidateSet == null || candidateSet.size() == 0)
+                  {
+                     kill = false;
+                  }
+               }
+               catch (Throwable t)
+               {
+                  log.trace("Exception during invalid flush", t);
+               }
+            }
+         }
+         
+         if (kill)
+         {
+            if (destroy == null)
+               destroy = new ArrayList<ConnectionListener>(1);
+            
+            destroy.add(cl);
+         }
+         else
+         {
+            if (keep == null)
+               keep = new ArrayList<ConnectionListener>(1);
+
+            keep.add(cl);
+         }
+
          cl = cls.poll();
+      }
+
+      if (keep != null)
+      {
+         while (keep.size() > 0)
+         {
+            cl = keep.remove(0);
+            if (!cls.offer(cl))
+            {
+               if (destroy == null)
+                  destroy = new ArrayList<ConnectionListener>(1);
+            
+               destroy.add(cl);
+            }
+         }
       }
 
       // We need to destroy some connections
@@ -597,7 +651,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       }
 
       // Trigger prefill
-      prefill();
+      if (prefill)
+         prefill();
    }
 
    /**
@@ -701,7 +756,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
          }
       }
 
-      flush(true);
+      flush(FlushMode.ALL, false);
    }
 
    /**

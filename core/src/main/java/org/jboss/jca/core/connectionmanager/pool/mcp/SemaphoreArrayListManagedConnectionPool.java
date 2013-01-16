@@ -24,6 +24,7 @@ package org.jboss.jca.core.connectionmanager.pool.mcp;
 
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
+import org.jboss.jca.core.api.connectionmanager.pool.FlushMode;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
@@ -580,21 +581,24 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    /**
     * {@inheritDoc}
     */
-   public void flush()
+   public void flush(FlushMode mode)
    {
-      flush(false);
+      flush(mode, true);
    }
 
    /**
-    * {@inheritDoc}
+    * Flush
+    * @param mode The flush mode
+    * @param prefill Should prefill be called
     */
-   public void flush(boolean kill)
+   private void flush(FlushMode mode, boolean prefill)
    {
+      ArrayList<ConnectionListener> keep = null;
       ArrayList<ConnectionListener> destroy = null;
 
       synchronized (cls)
       {
-         if (kill)
+         if (FlushMode.ALL == mode)
          {
             if (trace)
                log.trace("Flushing pool checkedOut=" + checkedOut + " inPool=" + cls);
@@ -628,12 +632,48 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          while (cls.size() > 0)
          {
             ConnectionListener cl = cls.remove(0);
+            boolean kill = true;
 
-            if (destroy == null)
-               destroy = new ArrayList<ConnectionListener>(1);
+            if (FlushMode.INVALID == mode)
+            {
+               if (mcf instanceof ValidatingManagedConnectionFactory)
+               {
+                  try
+                  {
+                     ValidatingManagedConnectionFactory vcf = (ValidatingManagedConnectionFactory) mcf;
+                     Set candidateSet = Collections.singleton(cl.getManagedConnection());
+                     candidateSet = vcf.getInvalidConnections(candidateSet);
 
-            destroy.add(cl);
+                     if (candidateSet == null || candidateSet.size() == 0)
+                     {
+                        kill = false;
+                     }
+                  }
+                  catch (Throwable t)
+                  {
+                     log.trace("Exception during invalid flush", t);
+                  }
+               }
+            }
+
+            if (kill)
+            {
+               if (destroy == null)
+                  destroy = new ArrayList<ConnectionListener>(1);
+
+               destroy.add(cl);
+            }
+            else
+            {
+               if (keep == null)
+                  keep = new ArrayList<ConnectionListener>(1);
+
+               keep.add(cl);
+            }
          }
+
+         if (keep != null)
+            cls.addAll(keep);
       }
 
       // We need to destroy some connections
@@ -650,7 +690,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       }
 
       // Trigger prefill
-      prefill();
+      if (prefill)
+         prefill();
    }
 
    /**
@@ -751,7 +792,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          }
       }
 
-      flush(true);
+      flush(FlushMode.ALL, false);
    }
 
    /**

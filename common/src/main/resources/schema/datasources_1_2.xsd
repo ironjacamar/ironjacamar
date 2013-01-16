@@ -705,8 +705,8 @@
           <xs:documentation>
             <![CDATA[[
               Specifies how the pool should be flush in case of an error.
-              Valid values are: FailingConnectionOnly (default), IdleConnections, EntirePool,
-                                AllIdleConnections, AllConnections 
+              Valid values are: FailingConnectionOnly (default), InvalidIdleConnections, IdleConnections, EntirePool,
+                                AllInvalidIdleConnections, AllIdleConnections, AllConnections
              ]]>
           </xs:documentation>
         </xs:annotation>

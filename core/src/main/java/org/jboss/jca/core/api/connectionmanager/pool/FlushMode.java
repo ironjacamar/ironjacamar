@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2013, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -22,44 +22,23 @@
 package org.jboss.jca.core.api.connectionmanager.pool;
 
 /**
- * A pool.
- *
+ * Flush strategy mode
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public interface Pool
+public enum FlushMode
 {
    /**
-    * Gets pool name.
-    * @return pool name
+    * Invalid
     */
-   public String getName();
+   INVALID,
 
    /**
-    * Flush idle connections from the pool
+    * Idle
     */
-   public void flush();
+   IDLE,
 
    /**
-    * Flush the pool
-    * @param kill Kill all connections
+    * All
     */
-   public void flush(boolean kill);
-
-   /**
-    * Flush the pool
-    * @param mode The flush mode
-    */
-   public void flush(FlushMode mode);
-
-   /**
-    * Test if a connection can be obtained
-    * @return True if it was poosible to get a connection; otherwise false
-    */
-   public boolean testConnection();
-
-   /**
-    * Get the statistics
-    * @return The value
-    */
-   public PoolStatistics getStatistics();
+   ALL;
 }

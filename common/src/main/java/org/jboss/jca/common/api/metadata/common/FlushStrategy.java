@@ -41,6 +41,11 @@ public enum FlushStrategy
    FAILING_CONNECTION_ONLY("FailingConnectionOnly"),
 
    /**
+    * Invalid idle connections
+    */
+   INVALID_IDLE_CONNECTIONS("InvalidIdleConnections"),
+
+   /**
     * Idle connections
     */
    IDLE_CONNECTIONS("IdleConnections"),
@@ -49,6 +54,11 @@ public enum FlushStrategy
     * Entire pool
     */
    ENTIRE_POOL("EntirePool"),
+
+   /**
+    * All invalid idle connections
+    */
+   ALL_INVALID_IDLE_CONNECTIONS("AllInvalidIdleConnections"),
 
    /**
     * All idle connections
