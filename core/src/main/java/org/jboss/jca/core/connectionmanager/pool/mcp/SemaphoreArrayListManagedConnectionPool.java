@@ -583,16 +583,6 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
     */
    public void flush(FlushMode mode)
    {
-      flush(mode, true);
-   }
-
-   /**
-    * Flush
-    * @param mode The flush mode
-    * @param prefill Should prefill be called
-    */
-   private void flush(FlushMode mode, boolean prefill)
-   {
       ArrayList<ConnectionListener> keep = null;
       ArrayList<ConnectionListener> destroy = null;
 
@@ -690,8 +680,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       }
 
       // Trigger prefill
-      if (prefill)
-         prefill();
+      prefill();
    }
 
    /**
@@ -792,7 +781,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          }
       }
 
-      flush(FlushMode.ALL, false);
+      flush(FlushMode.ALL);
    }
 
    /**

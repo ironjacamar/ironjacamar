@@ -541,16 +541,6 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
     */
    public void flush(FlushMode mode)
    {
-      flush(mode, true);
-   }
-
-   /**
-    * Flush
-    * @param mode The flush mode
-    * @param prefill Should prefill be called
-    */
-   private void flush(FlushMode mode, boolean prefill)
-   {
       ArrayList<ConnectionListener> keep = null;
       ArrayList<ConnectionListener> destroy = null;
 
@@ -651,8 +641,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       }
 
       // Trigger prefill
-      if (prefill)
-         prefill();
+      prefill();
    }
 
    /**
@@ -756,7 +745,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
          }
       }
 
-      flush(FlushMode.ALL, false);
+      flush(FlushMode.ALL);
    }
 
    /**
