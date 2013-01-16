@@ -58,7 +58,8 @@ public class Ping extends AbstractHostPortMojo
       }
       catch (Throwable t)
       {
-         throw new MojoFailureException("Unable to ping " + getHost() + ":" + getPort() + " (" + t.getMessage() + ")", t);
+         throw new MojoFailureException("Unable to ping " + getHost() + ":" + getPort() +
+                                        " (" + t.getMessage() + ")", t);
       }
    }
 }

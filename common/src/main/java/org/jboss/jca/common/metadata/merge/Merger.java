@@ -133,26 +133,17 @@ public class Merger
    }
 
    /**
-   *
-   * Merge a {@link Connector} and a {@link CommonIronJacamar} passing also Matcher to identify {@link AdminObject}
-   * and {@link ConnectionDefinition} to merge inside the passed objects
-   *
-   * @param ij the {@link CommonIronJacamar} object
-   * @param conn {@link Connector} object
+    *
+    * Merge a {@link Connector} and a {@link CommonIronJacamar} passing also Matcher to identify {@link AdminObject}
+    * and {@link ConnectionDefinition} to merge inside the passed objects
+    *
+    * @param ij the {@link CommonIronJacamar} object
+    * @param conn {@link Connector} object
     * @param adminMatcher the matcher for {@link AdminObject} and {@link CommonAdminObject}
     * if null {@link DefaultAdminObjectMatcher} is used
     * @param connDefMatcher the matcher for {@link ConnectionDefinition} andf {@link CommonConnDef}.
     * if null {@link DefaultConnectionDefinitionMatcher} is used
-   * @return The merged {@link Connector}
-   */
-   /**
-    * FIXME Comment this
-    *
-    * @param ij
-    * @param conn
-    * @param adminMatcher
-    * @param connDefMatcher
-    * @return
+    * @return The merged {@link Connector}
     */
    public Connector mergeConnectorWithCommonIronJacamar(CommonIronJacamar ij, Connector conn,
       ExtensionMatcher<AdminObject, CommonAdminObject> adminMatcher,

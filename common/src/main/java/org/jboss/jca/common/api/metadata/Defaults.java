@@ -168,7 +168,10 @@ public interface Defaults
     */
    public static final Boolean VALIDATE_ON_MATCH = Boolean.FALSE;
 
-   //Security
+   //security
+   /**
+    * No recovery
+    */
    public static final Boolean NO_RECOVERY = Boolean.FALSE;
 
    /**
