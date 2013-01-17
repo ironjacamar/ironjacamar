@@ -40,14 +40,14 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Sub pool statistics.
+ * Pool statistics
  *
  * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class PoolStatisticsImpl implements PoolStatistics
 {
    /** Serial version uid */
-   private static final long serialVersionUID = 2L;
+   private static final long serialVersionUID = 3L;
 
    private static final String ACTIVE_COUNT = "ActiveCount";
    private static final String AVAILABLE_COUNT = "AvailableCount";
@@ -341,7 +341,16 @@ public class PoolStatisticsImpl implements PoolStatistics
    public long getAverageBlockingTime()
    {
       if (isEnabled())
-         return getCreatedCount() != 0 ? getTotalBlockingTime() / getCreatedCount() : 0;
+      {
+         long invocations = 0;
+
+         for (ManagedConnectionPool mcp : mcpPools.values())
+         {
+            invocations += mcp.getStatistics().getTotalBlockingInvocations();
+         }
+
+         return invocations != 0 ? getTotalBlockingTime() / invocations : 0;
+      }
 
       return 0;
    }
@@ -352,7 +361,10 @@ public class PoolStatisticsImpl implements PoolStatistics
    public long getAverageCreationTime()
    {
       if (isEnabled())
-         return getCreatedCount() != 0 ? getTotalCreationTime() / getCreatedCount() : 0;
+      {
+         int createdCount = getCreatedCount();
+         return createdCount != 0 ? getTotalCreationTime() / createdCount : 0;
+      }
 
       return 0;
    }

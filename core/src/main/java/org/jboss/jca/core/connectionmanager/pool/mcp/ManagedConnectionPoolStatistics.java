@@ -31,4 +31,9 @@ import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
  */
 public interface ManagedConnectionPoolStatistics extends PoolStatistics
 {   
+   /**
+    * Get the total number of blocking invocations
+    * @return The value
+    */
+   public long getTotalBlockingInvocations();
 }
