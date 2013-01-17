@@ -94,6 +94,7 @@ class ManagedConnectionPoolUtility
       sb.append("  Name: ").append(pool.getName()).append(newLine);
       sb.append("PoolConfiguration:").append(newLine);
       sb.append("  MinSize: ").append(pc.getMinSize()).append(newLine);
+      sb.append("  InitialSize: ").append(pc.getInitialSize()).append(newLine);
       sb.append("  MaxSize: ").append(pc.getMaxSize()).append(newLine);
       sb.append("  BlockingTimeout: ").append(pc.getBlockingTimeout()).append(newLine);
       sb.append("  IdleTimeoutMinutes: ").append(pc.getIdleTimeoutMinutes()).append(newLine);
