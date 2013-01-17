@@ -55,6 +55,12 @@ public interface PoolStatistics extends StatisticsPlugin
    public long getAverageCreationTime();
 
    /**
+    * Get the average time spent obtaining a connection (milliseconds)
+    * @return The value
+    */
+   public long getAverageGetTime();
+
+   /**
     * Get created count
     * @return The value
     */
@@ -71,6 +77,12 @@ public interface PoolStatistics extends StatisticsPlugin
     * @return The value
     */
    public long getMaxCreationTime();
+
+   /**
+    * Get max get time (milliseconds)
+    * @return The value
+    */
+   public long getMaxGetTime();
 
    /**
     * Get max used count
@@ -107,4 +119,10 @@ public interface PoolStatistics extends StatisticsPlugin
     * @return The value
     */
    public long getTotalCreationTime();
+
+   /**
+    * Get the total time spent obtaining connections (milliseconds)
+    * @return The value
+    */
+   public long getTotalGetTime();
 }

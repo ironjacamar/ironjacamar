@@ -47,21 +47,24 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class PoolStatisticsImpl implements PoolStatistics
 {
    /** Serial version uid */
-   private static final long serialVersionUID = 3L;
+   private static final long serialVersionUID = 4L;
 
    private static final String ACTIVE_COUNT = "ActiveCount";
    private static final String AVAILABLE_COUNT = "AvailableCount";
    private static final String AVERAGE_BLOCKING_TIME = "AverageBlockingTime";
    private static final String AVERAGE_CREATION_TIME = "AverageCreationTime";
+   private static final String AVERAGE_GET_TIME = "AverageGetTime";
    private static final String CREATED_COUNT = "CreatedCount";
    private static final String DESTROYED_COUNT = "DestroyedCount";
    private static final String MAX_CREATION_TIME = "MaxCreationTime";
+   private static final String MAX_GET_TIME = "MaxGetTime";
    private static final String MAX_USED_COUNT = "MaxUsedCount";
    private static final String MAX_WAIT_COUNT = "MaxWaitCount";
    private static final String MAX_WAIT_TIME = "MaxWaitTime";
    private static final String TIMED_OUT = "TimedOut";
    private static final String TOTAL_BLOCKING_TIME = "TotalBlockingTime";
    private static final String TOTAL_CREATION_TIME = "TotalCreationTime";
+   private static final String TOTAL_GET_TIME = "TotalCreationTime";
 
    private int maxPoolSize;
    private transient ConcurrentMap<Object, ManagedConnectionPool> mcpPools;
@@ -105,6 +108,9 @@ public class PoolStatisticsImpl implements PoolStatistics
       n.add(AVERAGE_CREATION_TIME);
       t.put(AVERAGE_CREATION_TIME, long.class);
 
+      n.add(AVERAGE_GET_TIME);
+      t.put(AVERAGE_GET_TIME, long.class);
+
       n.add(CREATED_COUNT);
       t.put(CREATED_COUNT, int.class);
 
@@ -113,6 +119,9 @@ public class PoolStatisticsImpl implements PoolStatistics
 
       n.add(MAX_CREATION_TIME);
       t.put(MAX_CREATION_TIME, long.class);
+
+      n.add(MAX_GET_TIME);
+      t.put(MAX_GET_TIME, long.class);
 
       n.add(MAX_USED_COUNT);
       t.put(MAX_USED_COUNT, int.class);
@@ -131,6 +140,9 @@ public class PoolStatisticsImpl implements PoolStatistics
 
       n.add(TOTAL_CREATION_TIME);
       t.put(TOTAL_CREATION_TIME, long.class);
+
+      n.add(TOTAL_GET_TIME);
+      t.put(TOTAL_GET_TIME, long.class);
 
       this.names = Collections.unmodifiableSet(n);
       this.types = Collections.unmodifiableMap(t);
@@ -216,6 +228,10 @@ public class PoolStatisticsImpl implements PoolStatistics
       {
          return getAverageCreationTime();
       }
+      else if (AVERAGE_GET_TIME.equals(name))
+      {
+         return getAverageGetTime();
+      }
       else if (CREATED_COUNT.equals(name))
       {
          return getCreatedCount();
@@ -227,6 +243,10 @@ public class PoolStatisticsImpl implements PoolStatistics
       else if (MAX_CREATION_TIME.equals(name))
       {
          return getMaxCreationTime();
+      }
+      else if (MAX_GET_TIME.equals(name))
+      {
+         return getMaxGetTime();
       }
       else if (MAX_USED_COUNT.equals(name))
       {
@@ -251,6 +271,10 @@ public class PoolStatisticsImpl implements PoolStatistics
       else if (TOTAL_CREATION_TIME.equals(name))
       {
          return getTotalCreationTime();
+      }
+      else if (TOTAL_GET_TIME.equals(name))
+      {
+         return getTotalGetTime();
       }
 
       return null;
@@ -372,6 +396,26 @@ public class PoolStatisticsImpl implements PoolStatistics
    /**
     * {@inheritDoc}
     */
+   public long getAverageGetTime()
+   {
+      if (isEnabled())
+      {
+         long invocations = 0;
+
+         for (ManagedConnectionPool mcp : mcpPools.values())
+         {
+            invocations += mcp.getStatistics().getTotalGetInvocations();
+         }
+
+         return invocations != 0 ? getTotalGetTime() / invocations : 0;
+      }
+
+      return 0;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public int getCreatedCount()
    {
       if (isEnabled())
@@ -421,6 +465,28 @@ public class PoolStatisticsImpl implements PoolStatistics
          for (ManagedConnectionPool mcp : mcpPools.values())
          {
             long v = mcp.getStatistics().getMaxCreationTime();
+            if (v > result)
+               result = v;
+         }
+
+         return result != Long.MIN_VALUE ? result : 0;
+      }
+
+      return 0;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getMaxGetTime()
+   {
+      if (isEnabled())
+      {
+         long result = Long.MIN_VALUE;
+
+         for (ManagedConnectionPool mcp : mcpPools.values())
+         {
+            long v = mcp.getStatistics().getMaxGetTime();
             if (v > result)
                result = v;
          }
@@ -562,6 +628,26 @@ public class PoolStatisticsImpl implements PoolStatistics
    /**
     * {@inheritDoc}
     */
+   public long getTotalGetTime()
+   {
+      if (isEnabled())
+      {
+         long result = 0;
+
+         for (ManagedConnectionPool mcp : mcpPools.values())
+         {
+            result += mcp.getStatistics().getTotalGetTime();
+         }
+
+         return result;
+      }
+
+      return 0;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public void clear()
    {
       for (ManagedConnectionPool mcp : mcpPools.values())
@@ -600,11 +686,15 @@ public class PoolStatisticsImpl implements PoolStatistics
       sb.append(",");
       sb.append(AVERAGE_CREATION_TIME).append("=").append(getAverageCreationTime());
       sb.append(",");
+      sb.append(AVERAGE_GET_TIME).append("=").append(getAverageGetTime());
+      sb.append(",");
       sb.append(CREATED_COUNT).append("=").append(getCreatedCount());
       sb.append(",");
       sb.append(DESTROYED_COUNT).append("=").append(getDestroyedCount());
       sb.append(",");
       sb.append(MAX_CREATION_TIME).append("=").append(getMaxCreationTime());
+      sb.append(",");
+      sb.append(MAX_GET_TIME).append("=").append(getMaxGetTime());
       sb.append(",");
       sb.append(MAX_USED_COUNT).append("=").append(getMaxUsedCount());
       sb.append(",");
@@ -617,6 +707,8 @@ public class PoolStatisticsImpl implements PoolStatistics
       sb.append(TOTAL_BLOCKING_TIME).append("=").append(getTotalBlockingTime());
       sb.append(",");
       sb.append(TOTAL_CREATION_TIME).append("=").append(getTotalCreationTime());
+      sb.append(",");
+      sb.append(TOTAL_GET_TIME).append("=").append(getTotalCreationTime());
 
       sb.append("]");
       

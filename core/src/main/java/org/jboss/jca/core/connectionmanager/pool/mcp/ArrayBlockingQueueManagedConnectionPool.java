@@ -357,6 +357,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       
       if (!verifyConnectionListener)
       {
+         statistics.deltaTotalGetTime(System.currentTimeMillis() - startWait);
+
          // Return connection listener
          return cl;
       }
@@ -371,6 +373,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
             {
                if (trace)
                   log.trace("supplying ManagedConnection from pool: " + cl);
+
+               statistics.deltaTotalGetTime(System.currentTimeMillis() - startWait);
 
                // Return connection listener
                return cl;

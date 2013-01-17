@@ -337,6 +337,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
                         clPermits.put(cl, cl);
 
+                        statistics.deltaTotalGetTime(System.currentTimeMillis() - startWait);
+
                         return cl;
                      }
 
@@ -403,6 +405,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                   log.trace("supplying new ManagedConnection: " + cl);
 
                clPermits.put(cl, cl);
+
+               statistics.deltaTotalGetTime(System.currentTimeMillis() - startWait);
 
                return cl;
             }
