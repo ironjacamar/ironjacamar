@@ -457,6 +457,14 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    /**
     * {@inheritDoc}
     */
+   public long getTotalBlockingInvocations()
+   {
+      return totalBlockingTimeInvocations.get();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public long getTotalCreationTime()
    {
       return totalCreationTime.get();
