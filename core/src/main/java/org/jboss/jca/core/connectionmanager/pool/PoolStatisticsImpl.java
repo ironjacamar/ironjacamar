@@ -117,6 +117,9 @@ public class PoolStatisticsImpl implements PoolStatistics
       n.add(MAX_USED_COUNT);
       t.put(MAX_USED_COUNT, int.class);
 
+      n.add(MAX_WAIT_COUNT);
+      t.put(MAX_WAIT_COUNT, int.class);
+
       n.add(MAX_WAIT_TIME);
       t.put(MAX_WAIT_TIME, long.class);
 
