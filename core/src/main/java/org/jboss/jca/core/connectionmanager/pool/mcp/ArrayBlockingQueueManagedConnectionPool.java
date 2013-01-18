@@ -247,6 +247,10 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       boolean verifyConnectionListener = true;
 
       long startWait = System.currentTimeMillis();
+
+      if (isFull())
+         statistics.deltaWaitCount();
+
       if (cls.size() > 0)
       {
          if (shutdown.get())

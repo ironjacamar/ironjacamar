@@ -67,6 +67,7 @@ public class PoolStatisticsImpl implements PoolStatistics
    private static final String TOTAL_BLOCKING_TIME = "TotalBlockingTime";
    private static final String TOTAL_CREATION_TIME = "TotalCreationTime";
    private static final String TOTAL_GET_TIME = "TotalCreationTime";
+   private static final String WAIT_COUNT = "WaitCount";
 
    private int maxPoolSize;
    private transient ConcurrentMap<Object, ManagedConnectionPool> mcpPools;
@@ -151,6 +152,9 @@ public class PoolStatisticsImpl implements PoolStatistics
 
       n.add(TOTAL_GET_TIME);
       t.put(TOTAL_GET_TIME, long.class);
+
+      n.add(WAIT_COUNT);
+      t.put(WAIT_COUNT, int.class);
 
       this.names = Collections.unmodifiableSet(n);
       this.types = Collections.unmodifiableMap(t);
@@ -291,6 +295,10 @@ public class PoolStatisticsImpl implements PoolStatistics
       else if (TOTAL_GET_TIME.equals(name))
       {
          return getTotalGetTime();
+      }
+      else if (WAIT_COUNT.equals(name))
+      {
+         return getWaitCount();
       }
 
       return null;
@@ -704,6 +712,26 @@ public class PoolStatisticsImpl implements PoolStatistics
    /**
     * {@inheritDoc}
     */
+   public int getWaitCount()
+   {
+      if (isEnabled())
+      {
+         int result = 0;
+
+         for (ManagedConnectionPool mcp : mcpPools.values())
+         {
+            result += mcp.getStatistics().getWaitCount();
+         }
+
+         return result;
+      }
+
+      return 0;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public void clear()
    {
       for (ManagedConnectionPool mcp : mcpPools.values())
@@ -769,6 +797,8 @@ public class PoolStatisticsImpl implements PoolStatistics
       sb.append(TOTAL_CREATION_TIME).append("=").append(getTotalCreationTime());
       sb.append(",");
       sb.append(TOTAL_GET_TIME).append("=").append(getTotalCreationTime());
+      sb.append(",");
+      sb.append(WAIT_COUNT).append("=").append(getWaitCount());
 
       sb.append("]");
       

@@ -65,6 +65,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    private static final String TOTAL_CREATION_TIME = "TotalCreationTime";
    private static final String TOTAL_GET_TIME = "TotalGetTime";
    private static final String TOTAL_GET_TIME_INVOCATIONS = "TotalGetTimeInvocations";
+   private static final String WAIT_COUNT = "WaitCount";
 
    private int maxPoolSize;
 
@@ -87,6 +88,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    private transient AtomicLong totalGetTimeInvocations;
    private transient AtomicInteger inUseCount;
    private transient AtomicInteger blockingFailureCount;
+   private transient AtomicInteger waitCount;
 
    /**
     * Constructor
@@ -162,6 +164,9 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       n.add(TOTAL_GET_TIME);
       t.put(TOTAL_GET_TIME, long.class);
 
+      n.add(WAIT_COUNT);
+      t.put(WAIT_COUNT, int.class);
+
       this.names = Collections.unmodifiableSet(n);
       this.types = Collections.unmodifiableMap(t);
       
@@ -186,6 +191,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       this.totalGetTimeInvocations = new AtomicLong(0);
       this.inUseCount = new AtomicInteger(0);
       this.blockingFailureCount = new AtomicInteger(0);
+      this.waitCount = new AtomicInteger(0);
    }
 
    /**
@@ -314,6 +320,10 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       else if (TOTAL_GET_TIME.equals(name))
       {
          return getTotalGetTime();
+      }
+      else if (WAIT_COUNT.equals(name))
+      {
+         return getWaitCount();
       }
 
       return null;
@@ -610,6 +620,22 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    /**
     * {@inheritDoc}
     */
+   public int getWaitCount()
+   {
+      return waitCount.get();
+   }
+
+   /**
+    * Add delta wait count
+    */
+   public void deltaWaitCount()
+   {
+      waitCount.incrementAndGet();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public void clear()
    {
       // No-op
@@ -676,6 +702,8 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       sb.append(TOTAL_GET_TIME).append("=").append(getTotalGetTime());
       sb.append(",");
       sb.append(TOTAL_GET_TIME_INVOCATIONS).append("=").append(totalGetTimeInvocations.get());
+      sb.append(",");
+      sb.append(WAIT_COUNT).append("=").append(getWaitCount());
 
       sb.append("]");
       

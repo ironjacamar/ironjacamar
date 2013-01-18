@@ -282,6 +282,9 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       subject = (subject == null) ? defaultSubject : subject;
       cri = (cri == null) ? defaultCri : cri;
 
+      if (isFull())
+         statistics.deltaWaitCount();
+
       if (pool.isSharable() && (supportsLazyAssociation == null || supportsLazyAssociation.booleanValue()) && isFull())
       {
          if (supportsLazyAssociation == null)

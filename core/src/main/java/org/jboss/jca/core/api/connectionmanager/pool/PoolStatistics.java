@@ -137,4 +137,10 @@ public interface PoolStatistics extends StatisticsPlugin
     * @return The value
     */
    public long getTotalGetTime();
+
+   /**
+    * Get wait count
+    * @return The value
+    */
+   public int getWaitCount();
 }

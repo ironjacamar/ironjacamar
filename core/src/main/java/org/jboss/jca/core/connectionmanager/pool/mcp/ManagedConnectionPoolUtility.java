@@ -144,7 +144,8 @@ class ManagedConnectionPoolUtility
       sb.append("  TimedOut: ").append(mcps.getTimedOut()).append(newLine);
       sb.append("  TotalBlockingTime: ").append(mcps.getTotalBlockingTime()).append(newLine);
       sb.append("  TotalCreationTime: ").append(mcps.getTotalCreationTime()).append(newLine);
-      sb.append("  TotalGetTime: ").append(mcps.getTotalGetTime());
+      sb.append("  TotalGetTime: ").append(mcps.getTotalGetTime()).append(newLine);
+      sb.append("  WaitCount: ").append(mcps.getWaitCount());
 
       return sb.toString();
    }
