@@ -73,6 +73,12 @@ public interface PoolStatistics extends StatisticsPlugin
    public int getDestroyedCount();
 
    /**
+    * Get in use count
+    * @return The value
+    */
+   public int getInUseCount();
+
+   /**
     * Get max creation time (milliseconds)
     * @return The value
     */
