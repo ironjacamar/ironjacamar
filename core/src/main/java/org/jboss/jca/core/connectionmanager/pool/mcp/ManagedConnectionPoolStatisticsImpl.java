@@ -50,6 +50,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    private static final String AVERAGE_BLOCKING_TIME = "AverageBlockingTime";
    private static final String AVERAGE_CREATION_TIME = "AverageCreationTime";
    private static final String AVERAGE_GET_TIME = "AverageGetTime";
+   private static final String BLOCKING_FAILURE_COUNT = "BlockingFailureCount";
    private static final String CREATED_COUNT = "CreatedCount";
    private static final String DESTROYED_COUNT = "DestroyedCount";
    private static final String IN_USE_COUNT = "InUseCount";
@@ -85,6 +86,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    private transient AtomicLong totalGetTime;
    private transient AtomicLong totalGetTimeInvocations;
    private transient AtomicInteger inUseCount;
+   private transient AtomicInteger blockingFailureCount;
 
    /**
     * Constructor
@@ -120,6 +122,9 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
 
       n.add(AVERAGE_GET_TIME);
       t.put(AVERAGE_GET_TIME, long.class);
+
+      n.add(BLOCKING_FAILURE_COUNT);
+      t.put(BLOCKING_FAILURE_COUNT, int.class);
 
       n.add(CREATED_COUNT);
       t.put(CREATED_COUNT, int.class);
@@ -180,6 +185,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       this.totalGetTime = new AtomicLong(0);
       this.totalGetTimeInvocations = new AtomicLong(0);
       this.inUseCount = new AtomicInteger(0);
+      this.blockingFailureCount = new AtomicInteger(0);
    }
 
    /**
@@ -256,6 +262,10 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       else if (AVERAGE_GET_TIME.equals(name))
       {
          return getAverageGetTime();
+      }
+      else if (BLOCKING_FAILURE_COUNT.equals(name))
+      {
+         return getBlockingFailureCount();
       }
       else if (CREATED_COUNT.equals(name))
       {
@@ -363,6 +373,22 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    public long getAverageGetTime()
    {
       return totalGetTimeInvocations.get() != 0 ? totalGetTime.get() / totalGetTimeInvocations.get() : 0;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public int getBlockingFailureCount()
+   {
+      return blockingFailureCount.get();
+   }
+
+   /**
+    * Delta the blocking failure count value
+    */
+   public void deltaBlockingFailureCount()
+   {
+      blockingFailureCount.incrementAndGet();
    }
 
    /**
@@ -620,6 +646,8 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       sb.append(AVERAGE_CREATION_TIME).append("=").append(getAverageCreationTime());
       sb.append(",");
       sb.append(AVERAGE_GET_TIME).append("=").append(getAverageCreationTime());
+      sb.append(",");
+      sb.append(BLOCKING_FAILURE_COUNT).append("=").append(getBlockingFailureCount());
       sb.append(",");
       sb.append(CREATED_COUNT).append("=").append(getCreatedCount());
       sb.append(",");

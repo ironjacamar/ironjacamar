@@ -307,12 +307,21 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
          try
          {
             cl = cls.poll(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS);
-            statistics.deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
 
             if (shutdown.get())
                throw new RetryableUnavailableException(
                   bundle.thePoolHasBeenShutdown(pool.getName(),
                                                 Integer.toHexString(System.identityHashCode(this))));
+
+            if (cl == null)
+            {
+               statistics.deltaBlockingFailureCount();
+
+               throw new ResourceException(bundle.noMManagedConnectionsAvailableWithinConfiguredBlockingTimeout(
+                     poolConfiguration.getBlockingTimeout()));
+            }
+
+            statistics.deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
          }
          catch (InterruptedException ie)
          {
@@ -320,6 +329,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
 
             if (!poolConfiguration.isUseFastFail())
             {
+               statistics.deltaBlockingFailureCount();
+
                throw new ResourceException(bundle.noMManagedConnectionsAvailableWithinConfiguredBlockingTimeout(
                      poolConfiguration.getBlockingTimeout()));
             }

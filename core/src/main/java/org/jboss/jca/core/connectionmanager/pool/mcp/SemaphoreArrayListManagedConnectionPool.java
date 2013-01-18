@@ -428,6 +428,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          }
          else
          {
+            statistics.deltaBlockingFailureCount();
+
             // We timed out
             throw new ResourceException(bundle.noMManagedConnectionsAvailableWithinConfiguredBlockingTimeout(
                   poolConfiguration.getBlockingTimeout()));

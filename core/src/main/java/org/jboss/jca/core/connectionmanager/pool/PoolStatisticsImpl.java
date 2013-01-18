@@ -54,6 +54,7 @@ public class PoolStatisticsImpl implements PoolStatistics
    private static final String AVERAGE_BLOCKING_TIME = "AverageBlockingTime";
    private static final String AVERAGE_CREATION_TIME = "AverageCreationTime";
    private static final String AVERAGE_GET_TIME = "AverageGetTime";
+   private static final String BLOCKING_FAILURE_COUNT = "BlockingFailureCount";
    private static final String CREATED_COUNT = "CreatedCount";
    private static final String DESTROYED_COUNT = "DestroyedCount";
    private static final String IN_USE_COUNT = "InUseCount";
@@ -111,6 +112,9 @@ public class PoolStatisticsImpl implements PoolStatistics
 
       n.add(AVERAGE_GET_TIME);
       t.put(AVERAGE_GET_TIME, long.class);
+
+      n.add(BLOCKING_FAILURE_COUNT);
+      t.put(BLOCKING_FAILURE_COUNT, int.class);
 
       n.add(CREATED_COUNT);
       t.put(CREATED_COUNT, int.class);
@@ -235,6 +239,10 @@ public class PoolStatisticsImpl implements PoolStatistics
       else if (AVERAGE_GET_TIME.equals(name))
       {
          return getAverageGetTime();
+      }
+      else if (BLOCKING_FAILURE_COUNT.equals(name))
+      {
+         return getBlockingFailureCount();
       }
       else if (CREATED_COUNT.equals(name))
       {
@@ -416,6 +424,26 @@ public class PoolStatisticsImpl implements PoolStatistics
          }
 
          return invocations != 0 ? getTotalGetTime() / invocations : 0;
+      }
+
+      return 0;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public int getBlockingFailureCount()
+   {
+      if (isEnabled())
+      {
+         int result = 0;
+
+         for (ManagedConnectionPool mcp : mcpPools.values())
+         {
+            result += mcp.getStatistics().getBlockingFailureCount();
+         }
+
+         return result;
       }
 
       return 0;
@@ -715,6 +743,8 @@ public class PoolStatisticsImpl implements PoolStatistics
       sb.append(AVERAGE_CREATION_TIME).append("=").append(getAverageCreationTime());
       sb.append(",");
       sb.append(AVERAGE_GET_TIME).append("=").append(getAverageGetTime());
+      sb.append(",");
+      sb.append(BLOCKING_FAILURE_COUNT).append("=").append(getBlockingFailureCount());
       sb.append(",");
       sb.append(CREATED_COUNT).append("=").append(getCreatedCount());
       sb.append(",");

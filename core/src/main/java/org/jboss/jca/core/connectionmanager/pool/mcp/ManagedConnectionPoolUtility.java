@@ -132,6 +132,7 @@ class ManagedConnectionPoolUtility
       sb.append("  AverageBlockingTime: ").append(mcps.getAverageBlockingTime()).append(newLine);
       sb.append("  AverageCreationTime: ").append(mcps.getAverageCreationTime()).append(newLine);
       sb.append("  AverageGetTime: ").append(mcps.getAverageGetTime()).append(newLine);
+      sb.append("  BlockingFailureCount: ").append(mcps.getBlockingFailureCount()).append(newLine);
       sb.append("  CreatedCount: ").append(mcps.getCreatedCount()).append(newLine);
       sb.append("  DestroyedCount: ").append(mcps.getDestroyedCount()).append(newLine);
       sb.append("  InUseCount: ").append(mcps.getInUseCount()).append(newLine);

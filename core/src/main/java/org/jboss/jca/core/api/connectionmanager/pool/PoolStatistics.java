@@ -61,6 +61,12 @@ public interface PoolStatistics extends StatisticsPlugin
    public long getAverageGetTime();
 
    /**
+    * Get the blocking failure count
+    * @return The value
+    */
+   public int getBlockingFailureCount();
+
+   /**
     * Get created count
     * @return The value
     */
