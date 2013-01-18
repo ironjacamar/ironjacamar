@@ -204,7 +204,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       else if (debug)
       {
          String method = "getConnection(" + subject + ", " + cri + ")";
-         log.debug(ManagedConnectionPoolUtility.details(method, pool.getName(), statistics));
+         log.debug(ManagedConnectionPoolUtility.details(method, pool.getName(),
+                                                        statistics.getInUseCount(), poolConfiguration.getMaxSize()));
       }
 
       subject = (subject == null) ? defaultSubject : subject;
@@ -380,7 +381,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       else if (debug)
       {
          String method = "returnConnection(" + Integer.toHexString(System.identityHashCode(cl)) + ", " + kill + ")";
-         log.debug(ManagedConnectionPoolUtility.details(method, pool.getName(), statistics));
+         log.debug(ManagedConnectionPoolUtility.details(method, pool.getName(),
+                                                        statistics.getInUseCount(), poolConfiguration.getMaxSize()));
       }
 
       if (cl.getState() == ConnectionState.DESTROYED)

@@ -44,19 +44,20 @@ class ManagedConnectionPoolUtility
     * Get the full details of a managed connection pool state
     * @param method The method identifier
     * @param poolName The pool name
-    * @param mcps The statistics
+    * @param inUse The in use count
+    * @param max The max
     * @return The state
     */
-   static String details(String method, String poolName, ManagedConnectionPoolStatistics mcps)
+   static String details(String method, String poolName, int inUse, int max)
    {
       StringBuilder sb = new StringBuilder(1024);
 
       sb.append(poolName).append(": ");
       sb.append(method).append(" ");
       sb.append("[");
-      sb.append(mcps.getActiveCount());
+      sb.append(Integer.toString(inUse));
       sb.append("/");
-      sb.append(mcps.getAvailableCount());
+      sb.append(Integer.toString(max));
       sb.append("]");
 
       return sb.toString();
@@ -131,6 +132,7 @@ class ManagedConnectionPoolUtility
       sb.append("  AverageCreationTime: ").append(mcps.getAverageCreationTime()).append(newLine);
       sb.append("  CreatedCount: ").append(mcps.getCreatedCount()).append(newLine);
       sb.append("  DestroyedCount: ").append(mcps.getDestroyedCount()).append(newLine);
+      sb.append("  InUseCount: ").append(mcps.getInUseCount()).append(newLine);
       sb.append("  MaxCreationTime: ").append(mcps.getMaxCreationTime()).append(newLine);
       sb.append("  MaxUsedCount: ").append(mcps.getMaxUsedCount()).append(newLine);
       sb.append("  MaxWaitCount: ").append(mcps.getMaxWaitCount()).append(newLine);

@@ -51,6 +51,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    private static final String AVERAGE_CREATION_TIME = "AverageCreationTime";
    private static final String CREATED_COUNT = "CreatedCount";
    private static final String DESTROYED_COUNT = "DestroyedCount";
+   private static final String IN_USE_COUNT = "InUseCount";
    private static final String MAX_CREATION_TIME = "MaxCreationTime";
    private static final String MAX_USED_COUNT = "MaxUsedCount";
    private static final String MAX_WAIT_COUNT = "MaxWaitCount";
@@ -115,6 +116,9 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
 
       n.add(DESTROYED_COUNT);
       t.put(DESTROYED_COUNT, int.class);
+
+      n.add(IN_USE_COUNT);
+      t.put(IN_USE_COUNT, int.class);
 
       n.add(MAX_CREATION_TIME);
       t.put(MAX_CREATION_TIME, long.class);
@@ -238,6 +242,10 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       {
          return getDestroyedCount();
       }
+      else if (IN_USE_COUNT.equals(name))
+      {
+         return getInUseCount();
+      }
       else if (MAX_CREATION_TIME.equals(name))
       {
          return getMaxCreationTime();
@@ -351,13 +359,13 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    }
 
    /**
-    * Get max used count
-    * @return The value
+    * {@inheritDoc}
     */
-   public int getMaxUsedCount()
+   public int getInUseCount()
    {
-      return maxUsedCount.get() != Integer.MIN_VALUE ? maxUsedCount.get() : 0;
+      return inUseCount.get();
    }
+
 
    /**
     * Set in used count
@@ -367,6 +375,15 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    {
       inUseCount.set(v);
       setMaxUsedCount(v);
+   }
+
+   /**
+    * Get max used count
+    * @return The value
+    */
+   public int getMaxUsedCount()
+   {
+      return maxUsedCount.get() != Integer.MIN_VALUE ? maxUsedCount.get() : 0;
    }
 
    /**
@@ -526,6 +543,8 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       sb.append(CREATED_COUNT).append("=").append(getCreatedCount());
       sb.append(",");
       sb.append(DESTROYED_COUNT).append("=").append(getDestroyedCount());
+      sb.append(",");
+      sb.append(IN_USE_COUNT).append("=").append(getInUseCount());
       sb.append(",");
       sb.append(MAX_CREATION_TIME).append("=").append(getMaxCreationTime());
       sb.append(",");
