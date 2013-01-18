@@ -605,6 +605,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
             if (destroy == null)
                destroy = new ArrayList<ConnectionListener>(1);
             
+            cl.setState(ConnectionState.DESTROY);
             destroy.add(cl);
          }
          else
