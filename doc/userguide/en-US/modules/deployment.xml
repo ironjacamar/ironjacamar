@@ -586,10 +586,10 @@ java:/eis/ao/&lt;deploymentName&gt;
                </entry>
              </row>
              <row>
-               <entry><code>background-validation-minutes</code></entry>
+               <entry><code>background-validation-millis</code></entry>
                <entry>
-                 The background-validation-minutes element specifies the amount of 
-                 time, in minutes, that background validation will run. 
+                 The background-validation-millis element specifies the amount of 
+                 time, in milliseconds, that background validation will run. 
                </entry>
              </row>
              <row>
@@ -1540,10 +1540,10 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
                 </entry>
               </row>
               <row>
-                <entry><code>background-validation-minutes</code></entry>
+                <entry><code>background-validation-millis</code></entry>
                 <entry>
-                  The background-validation-minutes element specifies the amount of 
-                  time, in minutes, that background validation will run
+                  The background-validation-millis element specifies the amount of 
+                  time, in milliseconds, that background validation will run
                 </entry>
               </row>
               <row>
