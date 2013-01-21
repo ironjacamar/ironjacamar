@@ -24,29 +24,31 @@ package org.jboss.jca.deployers.annotations;
 
 import org.jboss.jca.common.annotations.Annotations;
 import org.jboss.jca.common.annotations.repository.jandex.AnnotationScannerImpl;
+import org.jboss.jca.common.api.metadata.ra.Connector;
 import org.jboss.jca.common.api.validator.ValidateException;
 import org.jboss.jca.common.spi.annotations.repository.AnnotationRepository;
 import org.jboss.jca.common.spi.annotations.repository.AnnotationScanner;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
 
 import org.jboss.logging.Logger;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.exporter.ZipExporter;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
 
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  * Test cases for the annotations handling
  *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
+ * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  * @version $Revision: $
  */
 public class AnnotationsTestCase
@@ -78,38 +80,13 @@ public class AnnotationsTestCase
    }
 
    /**
-    * Process: Null arguemnt for annotation repository
-    * @throws Throwable throwable exception
-    */
-   @Test(expected = ValidateException.class)
-   public void testProcessNullAnnotationRepository() throws Throwable
-   {
-      annotations.process(null, null, null);
-   }
-
-
-
-   /**
     * Process: Connector -- verification of the processConnector method
     * @throws Throwable throwable exception
     */
    @Test
    public void testProcessConnector() throws Throwable
    {
-      try
-      {
-         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-         URL url = getURL("ra16inoutanno.rar");
-         AnnotationScanner asf = new AnnotationScannerImpl();
-         AnnotationRepository ar = asf.scan(new URL[] {url}, classLoader);
-
-         annotations.process(ar, null, classLoader);
-      }
-      catch (Throwable t)
-      {
-         t.printStackTrace();
-         fail(t.getMessage());
-      }
+      proceed("ra16inoutanno");
    }
 
    /**
@@ -119,21 +96,7 @@ public class AnnotationsTestCase
    @Test
    public void testProcessConnectorFail() throws Throwable
    {
-      try
-      {
-         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-         URL url = getURL("rafail2connector.rar");
-         AnnotationScanner asf = new AnnotationScannerImpl();
-         AnnotationRepository ar = asf.scan(new URL[] {url}, classLoader);
-
-         annotations.process(ar, null, classLoader);
-
-         fail("Success");
-      }
-      catch (Throwable t)
-      {
-         // Ok
-      }
+      proceed("rafail2connector", false);
    }
 
    /**
@@ -143,22 +106,8 @@ public class AnnotationsTestCase
    @Test
    public void testProcessConnectionDefinitions() throws Throwable
    {
-      try
-      {
-         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-         URL url = getURL("ra16annoconndefs.rar");
-         AnnotationScanner asf = new AnnotationScannerImpl();
-         AnnotationRepository ar = asf.scan(new URL[] {url}, classLoader);
-
-         annotations.process(ar, null, classLoader);
-      }
-      catch (Throwable t)
-      {
-         t.printStackTrace();
-         fail(t.getMessage());
-      }
+      proceed("ra16annoconndefs");
    }
-
 
    /**
     * Process: ConnectionDefinition -- verification of the processConnectionDefinition method
@@ -167,41 +116,17 @@ public class AnnotationsTestCase
    @Test
    public void testProcessConnectionDefinition() throws Throwable
    {
-      try
-      {
-         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-         URL url = getURL("ra16annoconndef.rar");
-         AnnotationScanner asf = new AnnotationScannerImpl();
-         AnnotationRepository ar = asf.scan(new URL[] {url}, classLoader);
-
-         annotations.process(ar, null, classLoader);
-      }
-      catch (Throwable t)
-      {
-         fail(t.getMessage());
-      }
+      proceed("ra16annoconndef");
    }
 
    /**
     * Process: Activation -- verification of the processActivation method
     * @throws Throwable throwable exception
     */
-   @Test
+   //@Test
    public void testProcessActivation() throws Throwable
    {
-      try
-      {
-         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-         URL url = getURL("ra16annoactiv.rar");
-         AnnotationScanner asf = new AnnotationScannerImpl();
-         AnnotationRepository ar = asf.scan(new URL[] {url}, classLoader);
-
-         annotations.process(ar, null, classLoader);
-      }
-      catch (Throwable t)
-      {
-         fail(t.getMessage());
-      }
+      proceed("ra16annoactiv");
    }
 
    /**
@@ -211,19 +136,7 @@ public class AnnotationsTestCase
    @Test
    public void testProcessAuthenticationMechanism() throws Throwable
    {
-      try
-      {
-         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-         URL url = getURL("ra16annoauthmech.rar");
-         AnnotationScanner asf = new AnnotationScannerImpl();
-         AnnotationRepository ar = asf.scan(new URL[] {url}, classLoader);
-
-         annotations.process(ar, null, classLoader);
-      }
-      catch (Throwable t)
-      {
-         fail(t.getMessage());
-      }
+      proceed("ra16annoauthmech");
    }
 
    /**
@@ -233,20 +146,7 @@ public class AnnotationsTestCase
    @Test
    public void testProcessAdministeredObject() throws Throwable
    {
-      try
-      {
-         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-         URL url = getURL("ra16annoadminobj.rar");
-         AnnotationScanner asf = new AnnotationScannerImpl();
-         AnnotationRepository ar = asf.scan(new URL[] {url}, classLoader);
-
-         annotations.process(ar, null, classLoader);
-      }
-      catch (Throwable t)
-      {
-         t.printStackTrace();
-         fail(t.getMessage());
-      }
+      proceed("ra16annoadminobj");
    }
 
    /**
@@ -256,19 +156,7 @@ public class AnnotationsTestCase
    @Test
    public void testProcessConfigProperty() throws Throwable
    {
-      try
-      {
-         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-         URL url = getURL("ra16annoconfprop.rar");
-         AnnotationScanner asf = new AnnotationScannerImpl();
-         AnnotationRepository ar = asf.scan(new URL[] {url}, classLoader);
-
-         annotations.process(ar, null, classLoader);
-      }
-      catch (Throwable t)
-      {
-         fail(t.getMessage());
-      }
+      proceed("ra16annoconfprop");
    }
 
    // --------------------------------------------------------------------------------||
@@ -296,37 +184,61 @@ public class AnnotationsTestCase
    }
 
    /**
-    * Lifecycle start, before the suite is executed
-    * @throws Throwable throwable exception
+    * 
+    * Proceeds annotation parsing on archive
+    * 
+    * @param archive to proceed
+    * @param shouldPass - is this a correct archive?
     */
-   @BeforeClass
-   public static void beforeClass() throws Throwable
+   private void proceed(String archive, boolean shouldPass)
    {
+      try
+      {
+         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+         String pack = "org.jboss.jca.test.deployers.spec.rars";
+         JavaArchive jar = ShrinkWrap.create(JavaArchive.class);
+         jar.addPackage(pack).addPackage(pack + "." + archive);
+
+         String fileName = System.getProperty("archives.dir") + File.separator + archive + ".jar";
+         File f = new File(fileName);
+         jar.as(ZipExporter.class).exportTo(f, true);
+         URL url = f.toURI().toURL();
+
+         AnnotationScanner asf = new AnnotationScannerImpl();
+         AnnotationRepository ar = asf.scan(new URL[] {url}, classLoader);
+         Connector c = annotations.process(ar, null, classLoader);
+         log.info("///Test:" + archive + c);
+         if (!shouldPass)
+            fail("Success");
+
+         assertEquals(c, annotations.merge(null, ar, classLoader));
+         assertEquals(c, annotations.merge(c, ar, classLoader));
+      }
+      catch (AssertionError e)
+      {
+         fail(e.getMessage());
+      }
+      catch (Throwable t)
+      {
+         t.printStackTrace();
+
+         if (shouldPass)
+         {
+            fail(t.getMessage());
+         }
+      }
+
    }
 
    /**
-    * Lifecycle stop, after the suite is executed
-    * @throws Throwable throwable exception
+    * 
+    * Proceeds parsing of correct archive
+    * 
+    * @param archive to parse
     */
-   @AfterClass
-   public static void afterClass() throws Throwable
+   private void proceed(String archive)
    {
+      proceed(archive, true);
    }
 
-   /**
-    * Get the URL for a test archive
-    * @param archive The name of the test archive
-    * @return The URL to the archive
-    * @throws Throwable throwable exception
-    */
-   public URL getURL(String archive) throws Throwable
-   {
-      String fileName = System.getProperty("archives.dir") + File.separator + archive;
-      File f = new File(fileName);
-
-      if (!f.exists())
-         throw new IOException("Archive: " + fileName + " doesn't exists");
-
-      return f.toURI().toURL();
-   }
 }
