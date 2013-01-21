@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<resource-adapters>
+  <resource-adapter>
+    <archive>wls.rar</archive>
+    <transaction-support>NoTransaction</transaction-support>
+    <connection-definitions>
+      <connection-definition class-name="connectionDefinition" enabled="true" jndi-name="jndiName" pool-name="poolName" use-ccm="true" use-java-context="true"/>
+    </connection-definitions>
+  </resource-adapter>
+</resource-adapters>
