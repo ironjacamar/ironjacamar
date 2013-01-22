@@ -22,6 +22,7 @@
 package org.jboss.jca.common.metadata.common.v10;
 
 import org.jboss.jca.common.CommonBundle;
+import org.jboss.jca.common.api.metadata.Defaults;
 import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
 import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.common.CommonSecurity;
@@ -81,12 +82,12 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       Recovery recovery = null;
 
       //attributes reading
-      Boolean useJavaContext = Boolean.TRUE;
+      Boolean useJavaContext = Defaults.USE_JAVA_CONTEXT;
       String className = null;
-      Boolean enabled = Boolean.TRUE;
+      Boolean enabled = Defaults.ENABLED;
       String jndiName = null;
       String poolName = null;
-      Boolean useCcm = Boolean.TRUE;
+      Boolean useCcm = Defaults.USE_CCM;
       int attributeSize = reader.getAttributeCount();
 
       Boolean isXa = Boolean.FALSE;
@@ -171,7 +172,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                      if (pool != null)
                         throw new ParserException(bundle.multiplePools());
                      pool = parseXaPool(reader);
-                     isXa = true;
+                     isXa = Boolean.TRUE;
                      break;
                   }
                   case POOL : {
@@ -206,8 +207,8 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       ParserException, 
       ValidateException
    {
-      Boolean useFastFail = Boolean.FALSE;
-      Boolean backgroundValidation = Boolean.FALSE;
+      Boolean useFastFail = Defaults.USE_FAST_FAIL;
+      Boolean backgroundValidation = Defaults.BACKGROUND_VALIDATION;
       Long backgroundValidationMillis = null;
 
       while (reader.hasNext())
@@ -342,9 +343,9 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       Map<String, String> configProperties = new HashMap<String, String>();
 
       //attributes reading
-      Boolean useJavaContext = Boolean.TRUE;
+      Boolean useJavaContext = Defaults.USE_JAVA_CONTEXT;
       String className = null;
-      Boolean enabled = Boolean.TRUE;
+      Boolean enabled = Defaults.ENABLED;
       String jndiName = null;
       String poolName = null;
 

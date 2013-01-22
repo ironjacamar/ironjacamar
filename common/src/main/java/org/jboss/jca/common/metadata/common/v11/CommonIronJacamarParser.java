@@ -85,14 +85,14 @@ public abstract class CommonIronJacamarParser extends org.jboss.jca.common.metad
       Recovery recovery = null;
 
       //attributes reading
-      Boolean useJavaContext = Boolean.TRUE;
+      Boolean useJavaContext = Defaults.USE_JAVA_CONTEXT;
       String className = null;
-      Boolean enabled = Boolean.TRUE;
+      Boolean enabled = Defaults.ENABLED;
       String jndiName = null;
       String poolName = null;
-      Boolean useCcm = Boolean.TRUE;
-      Boolean sharable = Boolean.TRUE;
-      Boolean enlistment = Boolean.TRUE;
+      Boolean useCcm = Defaults.USE_CCM;
+      Boolean sharable = Defaults.SHARABLE;
+      Boolean enlistment = Defaults.ENLISTMENT;
       int attributeSize = reader.getAttributeCount();
 
       Boolean isXa = Boolean.FALSE;
