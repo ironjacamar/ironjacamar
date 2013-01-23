@@ -392,8 +392,7 @@
           <xs:documentation>
             <![CDATA[[
               The min-pool-size element indicates the minimum number of connections 
-              a pool should hold. These are not created until a Subject is known from a 
-              request for a connection. This default to 0. Ex: <min-pool-size>1</min-pool-size>
+              a pool should hold. This default to 0. Ex: <min-pool-size>1</min-pool-size>
              ]]>
           </xs:documentation>
         </xs:annotation>
@@ -423,7 +422,7 @@
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
-              Define if the min-pool-size should be considered strict.
+              Define if the min-pool-size should be considered strictly.
               Default false
              ]]>
           </xs:documentation>
