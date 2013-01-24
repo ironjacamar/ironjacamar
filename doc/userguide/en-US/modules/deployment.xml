@@ -838,21 +838,21 @@ public void close(Object c) throws ResourceException;
                 <row>
                   <entry><code>AverageBlockingTime</code></entry>
                   <entry>
-                    The average time spend blocking on obtaining an exclusive lock
+                    The average time spent blocking on obtaining an exclusive lock
                     on the pool. The value is in milliseconds
                   </entry>
                 </row>
                 <row>
                   <entry><code>AverageCreationTime</code></entry>
                   <entry>
-                    The average time spend creating a connection.
+                    The average time spent creating a connection.
                     The value is in milliseconds
                   </entry>
                 </row>
                 <row>
                   <entry><code>AverageGetTime</code></entry>
                   <entry>
-                    The average time spend obtaining a connection.
+                    The average time spent obtaining a connection.
                     The value is in milliseconds
                   </entry>
                 </row>
@@ -911,7 +911,7 @@ public void close(Object c) throws ResourceException;
                 <row>
                   <entry><code>MaxWaitTime</code></entry>
                   <entry>
-                    The maximum time spend waiting for an exclusive lock
+                    The maximum time spent waiting for an exclusive lock
                     on the pool
                   </entry>
                 </row>
@@ -924,21 +924,21 @@ public void close(Object c) throws ResourceException;
                 <row>
                   <entry><code>TotalBlockingTime</code></entry>
                   <entry>
-                    The total time spend waiting for an exclusive lock
+                    The total time spent waiting for an exclusive lock
                     on the pool. The value is in milliseconds
                   </entry>
                 </row>
                 <row>
                   <entry><code>TotalCreationTime</code></entry>
                   <entry>
-                    The total time spend creating connections.
+                    The total time spent creating connections.
                     The value is in milliseconds
                   </entry>
                 </row>
                 <row>
                   <entry><code>TotalGetTime</code></entry>
                   <entry>
-                    The total time spend obtaining connections.
+                    The total time spent obtaining connections.
                     The value is in milliseconds
                   </entry>
                 </row>
@@ -2008,21 +2008,21 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
                 <row>
                   <entry><code>AverageBlockingTime</code></entry>
                   <entry>
-                    The average time spend blocking on obtaining an exclusive lock
+                    The average time spent blocking on obtaining an exclusive lock
                     on the pool. The value is in milliseconds
                   </entry>
                 </row>
                 <row>
                   <entry><code>AverageCreationTime</code></entry>
                   <entry>
-                    The average time spend creating a connection.
+                    The average time spent creating a connection.
                     The value is in milliseconds
                   </entry>
                 </row>
                 <row>
                   <entry><code>AverageGetTime</code></entry>
                   <entry>
-                    The average time spend obtaining a connection.
+                    The average time spent obtaining a connection.
                     The value is in milliseconds
                   </entry>
                 </row>
@@ -2081,7 +2081,7 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
                 <row>
                   <entry><code>MaxWaitTime</code></entry>
                   <entry>
-                    The maximum time spend waiting for an exclusive lock
+                    The maximum time spent waiting for an exclusive lock
                     on the pool
                   </entry>
                 </row>
@@ -2094,21 +2094,21 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
                 <row>
                   <entry><code>TotalBlockingTime</code></entry>
                   <entry>
-                    The total time spend waiting for an exclusive lock
+                    The total time spent waiting for an exclusive lock
                     on the pool. The value is in milliseconds
                   </entry>
                 </row>
                 <row>
                   <entry><code>TotalCreationTime</code></entry>
                   <entry>
-                    The total time spend creating connections.
+                    The total time spent creating connections.
                     The value is in milliseconds
                   </entry>
                 </row>
                 <row>
                   <entry><code>TotalGetTime</code></entry>
                   <entry>
-                    The total time spend obtaining connections.
+                    The total time spent obtaining connections.
                     The value is in milliseconds
                   </entry>
                 </row>
