@@ -84,28 +84,32 @@
 
     <!-- Mapped -->
     <security-work-context>
-      <!-- Not mapped -->
+      <!-- Mapped -->
       <inbound-mapping-required>false</inbound-mapping-required>
       
-      <!-- Not mapped -->
+      <!-- Mapped -->
       <caller-principal-default-mapped>
         <principal-name>jca1</principal-name>
       </caller-principal-default-mapped>
 
-      <!-- ? -->
+      <!-- Mapped -->
       <caller-principal-mapping>
+        <!-- Mapped -->
         <eis-caller-principal>jca1</eis-caller-principal>
         <mapped-caller-principal>
+          <!-- Mapped -->
           <principal-name>jca2</principal-name>
         </mapped-caller-principal>
       </caller-principal-mapping>
       
-      <!-- Not mapped -->
+      <!-- Mapped -->
       <group-principal-default-mapped>eisgroupname</group-principal-default-mapped>
       
-      <!-- ? -->
+      <!-- Mapped -->
       <group-principal-mapping>
+        <!-- Mapped -->
         <eis-group-principal>eisgroupuser</eis-group-principal>
+        <!-- Mapped -->
         <mapped-group-principal>mappedeisgroupuser</mapped-group-principal>
       </group-principal-mapping>
     </security-work-context>
@@ -134,8 +138,11 @@
     
     <!-- Mapped -->
     <admin-object-group>
+      <!-- Not mapped -->
       <admin-object-interface>aointerface</admin-object-interface>
+      <!-- Mapped -->
       <admin-object-class>aoclass</admin-object-class>
+      <!-- Mapped -->
       <default-properties>
         <property>
           <name>aog1name</name>
@@ -143,12 +150,15 @@
         </property>
       </default-properties>
       
+      <!-- Mapped -->
       <admin-object-instance>
+        <!-- Mapped -->
         <jndi-name>aojndi1name</jndi-name>
+        <!-- Mapped -->
         <properties>
           <property>
-            <name>ra1name</name>
-            <value>ra1value</value>
+            <name>ao1name</name>
+            <value>ao1value</value>
           </property>
         </properties>
       </admin-object-instance>
@@ -159,25 +169,41 @@
     <!-- Mapped -->
     <default-connection-properties>
     
-      <!-- ? -->
+      <!-- Mapped -->
       <pool-params>
+        <!-- Mapped -->
         <initial-capacity>5</initial-capacity>
+        <!-- Mapped -->
         <max-capacity>20</max-capacity>
+        <!-- Not mapped -->
         <capacity-increment>5</capacity-increment>
+        <!-- Not mapped -->
         <shrinking-enabled>true</shrinking-enabled>
+        <!-- Mapped -->
         <shrink-frequency-seconds>300</shrink-frequency-seconds>
+        <!-- Not mapped -->
         <highest-num-waiters>10</highest-num-waiters>
+        <!-- Not mapped -->
         <highest-num-unavailable>5</highest-num-unavailable>
+        <!-- Mapped -->
         <connection-creation-retry-frequency-seconds>60</connection-creation-retry-frequency-seconds>
+        <!-- Mapped -->
         <connection-reserve-timeout-seconds>10</connection-reserve-timeout-seconds>
+        <!-- Mapped -->
         <test-frequency-seconds>30</test-frequency-seconds>
+        <!-- Not mapped -->
         <test-connections-on-create>true</test-connections-on-create>
+        <!-- Not mapped -->
         <test-connections-on-release>true</test-connections-on-release>
+        <!-- Not mapped -->
         <test-connections-on-reserve>true</test-connections-on-reserve>
+        <!-- Not mapped -->
         <profile-harvest-frequency-seconds>60</profile-harvest-frequency-seconds>
+        <!-- Not mapped -->
         <ignore-in-use-connections-enabled>true</ignore-in-use-connections-enabled>
-        
+        <!-- Not mapped -->
         <match-connections-supported>true</match-connections-supported>
+        <!-- Not documented -->
         <use-first-available>false</use-first-available>
       </pool-params>
       
@@ -199,9 +225,9 @@
       <!-- Mapped -->
       <transaction-support>XATransaction</transaction-support>
       
-      <!-- ? -->
+      <!-- Not mapped -->
       <authentication-mechanism></authentication-mechanism>
-      <!-- ? -->
+      <!-- Not mapped -->
       <reauthentication-support>true</reauthentication-support>
       
       <!-- Mapped -->
