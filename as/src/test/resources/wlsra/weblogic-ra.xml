@@ -1,13 +1,233 @@
 <?xml version="1.0"?>
 <weblogic-connector>
+  <!-- Not mapped -->
+  <native-libdir>lib</native-libdir>
+
+  <!-- Not mapped -->
   <jndi-name>eis/TuxedoConnector</jndi-name>
+
+  <!-- Not mapped -->
   <enable-access-outside-app>true</enable-access-outside-app>
+
+  <!-- Not mapped -->
   <enable-global-access-to-classes>true</enable-global-access-to-classes>
+
+  <!-- Not mapped -->
+  <work-manager>
+    <!-- Not mapped -->
+    <name>name</name>
+    <!-- Not mapped -->
+    <response-time-request-class>c1</response-time-request-class>
+    <!-- Not mapped -->
+    <fair-share-request-class>c2</fair-share-request-class>
+    <!-- Not mapped -->
+    <context-request-class>c3</context-request-class>
+    <!-- Not mapped -->
+    <request-class-name>c4</request-class-name>
+    <!-- Not mapped -->
+    <min-threads-constraint>0</min-threads-constraint>
+    <!-- Not mapped -->
+    <min-threads-constraint-name>n</min-threads-constraint-name>
+    <!-- Not mapped -->
+    <max-threads-constraint>1</max-threads-constraint>
+    <!-- Not mapped -->
+    <max-threads-constraint-name>n</max-threads-constraint-name>
+    <!-- Not mapped -->
+    <capacity>0</capacity>
+    <!-- Not mapped -->
+    <capacity-name>n</capacity-name>
+  </work-manager>
+
+  <!-- Not mapped -->
+  <connector-work-manager>
+    <!-- Not mapped -->
+    <max-concurrent-long-running-requests>10</max-concurrent-long-running-requests>
+  </connector-work-manager>
+
+  <!-- Mapped -->
+  <security>
+    <!-- Not mapped -->
+    <default-principal-name>
+      <!-- Not mapped -->
+      <use-anonymous-identity>false</use-anonymous-identity>
+      <!-- Not mapped -->
+      <principal-name>n</principal-name>
+    </default-principal-name>
+
+    <!-- Not mapped -->
+    <manage-as-principal-name>
+      <!-- Not mapped -->
+      <use-anonymous-identity>false</use-anonymous-identity>
+      <!-- Not mapped -->
+      <principal-name>n</principal-name>
+    </manage-as-principal-name>
+
+    <!-- Not mapped -->
+    <run-as-principal-name>
+      <!-- Not mapped -->
+      <use-anonymous-identity>false</use-anonymous-identity>
+      <!-- Not mapped -->
+      <principal-name>n</principal-name>
+      <!-- Not mapped -->
+      <use-caller-identity>n</use-caller-identity>
+    </run-as-principal-name>
+
+    <!-- Not mapped -->
+    <run-work-as-principal-name>
+      <!-- Not mapped -->
+      <use-anonymous-identity>false</use-anonymous-identity>
+      <!-- Not mapped -->
+      <principal-name>n</principal-name>
+      <!-- Not mapped -->
+      <use-caller-identity>n</use-caller-identity>
+    </run-work-as-principal-name>
+
+    <!-- Mapped -->
+    <security-work-context>
+      <!-- Not mapped -->
+      <inbound-mapping-required>false</inbound-mapping-required>
+      
+      <!-- Not mapped -->
+      <caller-principal-default-mapped>
+        <principal-name>jca1</principal-name>
+      </caller-principal-default-mapped>
+
+      <!-- ? -->
+      <caller-principal-mapping>
+        <eis-caller-principal>jca1</eis-caller-principal>
+        <mapped-caller-principal>
+          <principal-name>jca2</principal-name>
+        </mapped-caller-principal>
+      </caller-principal-mapping>
+      
+      <!-- Not mapped -->
+      <group-principal-default-mapped>eisgroupname</group-principal-default-mapped>
+      
+      <!-- ? -->
+      <group-principal-mapping>
+        <eis-group-principal>eisgroupuser</eis-group-principal>
+        <mapped-group-principal>mappedeisgroupuser</mapped-group-principal>
+      </group-principal-mapping>
+    </security-work-context>
+    
+  </security>
+
+  <!-- Mapped -->
+  <properties>
+    <!-- Mapped -->
+    <property>
+      <name>ra1name</name>
+      <value>ra1value</value>
+    </property>
+  </properties>
+
+  <!-- Mapped -->
+  <admin-objects>
+    <!-- Mapped -->
+    <default-properties>
+      <!-- Mapped -->
+      <property>
+        <name>ao1name</name>
+        <value>ao1value</value>
+      </property>
+    </default-properties>
+    
+    <!-- Mapped -->
+    <admin-object-group>
+      <admin-object-interface>aointerface</admin-object-interface>
+      <admin-object-class>aoclass</admin-object-class>
+      <default-properties>
+        <property>
+          <name>aog1name</name>
+          <value>aog1value</value>
+        </property>
+      </default-properties>
+      
+      <admin-object-instance>
+        <jndi-name>aojndi1name</jndi-name>
+        <properties>
+          <property>
+            <name>ra1name</name>
+            <value>ra1value</value>
+          </property>
+        </properties>
+      </admin-object-instance>
+    </admin-object-group>
+  </admin-objects>
+
   <outbound-resource-adapter>
+    <!-- Mapped -->
+    <default-connection-properties>
+    
+      <!-- ? -->
+      <pool-params>
+        <initial-capacity>5</initial-capacity>
+        <max-capacity>20</max-capacity>
+        <capacity-increment>5</capacity-increment>
+        <shrinking-enabled>true</shrinking-enabled>
+        <shrink-frequency-seconds>300</shrink-frequency-seconds>
+        <highest-num-waiters>10</highest-num-waiters>
+        <highest-num-unavailable>5</highest-num-unavailable>
+        <connection-creation-retry-frequency-seconds>60</connection-creation-retry-frequency-seconds>
+        <connection-reserve-timeout-seconds>10</connection-reserve-timeout-seconds>
+        <test-frequency-seconds>30</test-frequency-seconds>
+        <test-connections-on-create>true</test-connections-on-create>
+        <test-connections-on-release>true</test-connections-on-release>
+        <test-connections-on-reserve>true</test-connections-on-reserve>
+        <profile-harvest-frequency-seconds>60</profile-harvest-frequency-seconds>
+        <ignore-in-use-connections-enabled>true</ignore-in-use-connections-enabled>
+        
+        <match-connections-supported>true</match-connections-supported>
+        <use-first-available>false</use-first-available>
+      </pool-params>
+      
+      <!-- Not mapped -->
+      <logging>
+        <log-filename>/tmp/server.log</log-filename>
+        <logging-enabled>true</logging-enabled>
+        <rotation-type>size</rotation-type>
+        <number-of-files-limited>true</number-of-files-limited>
+        <file-count>5</file-count>
+        <file-size-limit>1000000</file-size-limit>
+        <rotate-log-on-startup>true</rotate-log-on-startup>
+        <log-file-rotation-dir>logdir</log-file-rotation-dir>
+        <rotation-time>12pm</rotation-time>
+        <file-time-span>5</file-time-span>
+        <date-format-pattern>YYYYMMDD</date-format-pattern>
+      </logging>
+      
+      <!-- Mapped -->
+      <transaction-support>XATransaction</transaction-support>
+      
+      <!-- ? -->
+      <authentication-mechanism></authentication-mechanism>
+      <!-- ? -->
+      <reauthentication-support>true</reauthentication-support>
+      
+      <!-- Mapped -->
+      <properties>
+        <property>
+          <name>dcp1name</name>
+          <value>dcp1value</value>
+        </property>
+      </properties>
+      
+      <res-auth>Container</res-auth>
+    </default-connection-properties>
+    
     <connection-definition-group>
       <connection-factory-interface>javax.resource.cci.ConnectionFactory</connection-factory-interface>
+      
+      <!-- Mapped (connection-definition-propertiesType) -->
+      <default-connection-properties></default-connection-properties>
+      
+      <!-- Mapped -->
       <connection-instance>
+        <description>TuxDesc</description>
         <jndi-name>eis/TuxedoConnectionFactory</jndi-name>
+        
+        <!-- Mapped (connection-definition-propertiesType) -->
+        <connection-properties></connection-properties>
       </connection-instance>
     </connection-definition-group>
   </outbound-resource-adapter>
