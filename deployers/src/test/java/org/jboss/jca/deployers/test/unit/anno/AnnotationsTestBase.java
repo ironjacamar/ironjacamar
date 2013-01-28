@@ -119,7 +119,6 @@ public abstract class AnnotationsTestBase
          AnnotationRepository ar1 = asf.scan(new URL[]
          {url}, classLoader);
          Connector c1 = annotations.process(ar1, null, classLoader);
-         log.info("///Connector1:" + c1);
 
          //check merging
          checkConnector(annotations.merge(c, ar1, classLoader));

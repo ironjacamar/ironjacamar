@@ -48,7 +48,7 @@ import static org.junit.Assert.*;
 
 /**
  * 
- * A AnnotationsTestCase.
+ * A complex example. Proceeds all possible annotations in one RA.
  * 
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  *
@@ -118,6 +118,7 @@ public class AnnotationsComplexTestCase extends AnnotationsTestBase
       {
          if (valuesAreEqual(cd.getConnectionInterface(), bc))
          {
+            assertTrue(valuesAreEqual(cd.getManagedConnectionFactoryClass(), pack + ".AnnoManagedConnectionFactory"));
             assertTrue(valuesAreEqual(cd.getConnectionImplClass(), bc + "Impl"));
             assertTrue(valuesAreEqual(cd.getConnectionFactoryImplClass(), bc + "FactoryImpl"));
             assertTrue(valuesAreEqual(cd.getConnectionFactoryInterface(), bc + "Factory"));
@@ -125,6 +126,7 @@ public class AnnotationsComplexTestCase extends AnnotationsTestBase
          }
          else
          {
+            assertTrue(valuesAreEqual(cd.getManagedConnectionFactoryClass(), pack + ".AnnoManagedConnectionFactory1"));
             assertTrue(valuesAreEqual(cd.getConnectionInterface(), bc + "1"));
             assertTrue(valuesAreEqual(cd.getConnectionImplClass(), bc + "Impl1"));
             assertTrue(valuesAreEqual(cd.getConnectionFactoryImplClass(), bc + "FactoryImpl1"));
