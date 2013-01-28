@@ -22,7 +22,6 @@
 package org.jboss.jca.validator.rules;
 
 import org.jboss.jca.embedded.Embedded;
-import org.jboss.jca.embedded.EmbeddedFactory;
 import org.jboss.jca.validator.rules.ra.TestActivationSpec;
 import org.jboss.jca.validator.rules.ra.TestManagedConnection;
 import org.jboss.jca.validator.rules.ra.TestResourceAdapterRight;
@@ -31,12 +30,13 @@ import org.jboss.jca.validator.rules.ra.TestResourceAdapterWrong;
 import java.io.File;
 import java.util.UUID;
 
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.runner.RunWith;
 
 /**
  * Abstract class used from TestCase for conveninet methods and Lifecycle methods
@@ -44,12 +44,14 @@ import org.junit.BeforeClass;
  * @author Stefano Maestri mailto:stefano.maestri@javalinux.it
  *
  */
+@RunWith(Arquillian.class)
 public abstract class TestCaseAbstract
 {
 
    /**
     * Protected embedded JCA used by subclass to deploy
     */
+   @ArquillianResource
    protected static Embedded embedded;
 
    /**
@@ -70,6 +72,24 @@ public abstract class TestCaseAbstract
       raa.addAsLibrary(ja);
       raa.addAsManifestResource("validator/" + archiveName + "/META-INF/ra.xml", "ra.xml");
 
+      return raa;
+   }
+
+   /**
+    * 
+    * Creates resource adapter from annotated classes only
+    * 
+    * @param classes for RA
+    * @return the ResourceAdapter ot deploy
+    * @throws Throwable in case of error
+    */
+   protected ResourceAdapterArchive getAnnoArchive(Class... classes) throws Throwable
+   {
+      ResourceAdapterArchive raa = ShrinkWrap.create(ResourceAdapterArchive.class, "archive.rar");
+
+      JavaArchive ja = ShrinkWrap.create(JavaArchive.class, UUID.randomUUID().toString() + ".jar");
+      ja.addClasses(classes);
+      raa.addAsLibrary(ja);
       return raa;
    }
 
@@ -97,40 +117,6 @@ public abstract class TestCaseAbstract
          }
       }
       return (path.delete());
-   }
-
-   /**
-   *
-   * Lifecycle method creating the {@link EmbeddedJCA} and starting it up
-   *
-   * @throws Throwable in case of setup errors
-   *
-   */
-   @BeforeClass
-   public static void beforeClass() throws Throwable
-   {
-      // Create and set an embedded JCA instance
-      embedded = EmbeddedFactory.create();
-
-      // Startup
-      embedded.startup();
-   }
-
-   /**
-    *
-    * Lifecycle method shutting down the {@link EmbeddedJCA}
-    *
-    * @throws Throwable in case of shutdown errors
-    *
-    */
-   @AfterClass
-   public static void afterClass() throws Throwable
-   {
-      // Shutdown embedded
-      embedded.shutdown();
-
-      // Set embedded to null
-      embedded = null;
    }
 
 }
