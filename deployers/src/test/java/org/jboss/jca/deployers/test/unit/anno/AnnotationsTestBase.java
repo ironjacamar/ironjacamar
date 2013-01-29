@@ -56,7 +56,10 @@ import static org.junit.Assert.*;
  */
 public abstract class AnnotationsTestBase
 {
-   private static Logger log = Logger.getLogger(AnnotationsTestBase.class);
+   /**
+    * logger
+    */
+   protected static Logger log = Logger.getLogger(AnnotationsTestBase.class);
 
 
    /**
