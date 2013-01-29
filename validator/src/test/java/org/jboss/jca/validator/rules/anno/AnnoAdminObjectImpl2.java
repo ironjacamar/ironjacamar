@@ -24,16 +24,16 @@ package org.jboss.jca.validator.rules.anno;
 import javax.naming.NamingException;
 import javax.naming.Reference;
 
+import javax.resource.spi.AdministeredObject;
 import javax.resource.spi.ResourceAdapter;
-import javax.resource.spi.ResourceAdapterAssociation;
 
 /**
  * AnnoAdminObjectImpl
  *
  * @version $Revision: $
  */
-public class AnnoAdminObjectImpl1 implements AnnoAdminObject, AnnoAdminObject1,
-   ResourceAdapterAssociation
+@AdministeredObject
+public class AnnoAdminObjectImpl2 implements AnnoAdminObject
 {
    /** Serial version uid */
    private static final long serialVersionUID = 1L;
@@ -49,7 +49,7 @@ public class AnnoAdminObjectImpl1 implements AnnoAdminObject, AnnoAdminObject1,
    /**
     * Default constructor
     */
-   public AnnoAdminObjectImpl1()
+   public AnnoAdminObjectImpl2()
    {
 
    }
@@ -121,7 +121,7 @@ public class AnnoAdminObjectImpl1 implements AnnoAdminObject, AnnoAdminObject1,
          return false;
       if (other == this)
          return true;
-      return (other instanceof AnnoAdminObjectImpl1);
+      return (other instanceof AnnoAdminObjectImpl2);
    }
 
 }

@@ -21,19 +21,25 @@
  */
 package org.jboss.jca.validator.rules.anno;
 
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.io.Serializable;
+
 import javax.naming.NamingException;
 import javax.naming.Reference;
 
+import javax.resource.spi.AdministeredObject;
 import javax.resource.spi.ResourceAdapter;
-import javax.resource.spi.ResourceAdapterAssociation;
 
 /**
  * AnnoAdminObjectImpl
  *
  * @version $Revision: $
  */
-public class AnnoAdminObjectImpl1 implements AnnoAdminObject, AnnoAdminObject1,
-   ResourceAdapterAssociation
+@AdministeredObject
+public class AnnoAdminObjectImpl3 implements AnnoAdminObject, Serializable, Externalizable
 {
    /** Serial version uid */
    private static final long serialVersionUID = 1L;
@@ -49,7 +55,7 @@ public class AnnoAdminObjectImpl1 implements AnnoAdminObject, AnnoAdminObject1,
    /**
     * Default constructor
     */
-   public AnnoAdminObjectImpl1()
+   public AnnoAdminObjectImpl3()
    {
 
    }
@@ -121,7 +127,19 @@ public class AnnoAdminObjectImpl1 implements AnnoAdminObject, AnnoAdminObject1,
          return false;
       if (other == this)
          return true;
-      return (other instanceof AnnoAdminObjectImpl1);
+      return (other instanceof AnnoAdminObjectImpl3);
+   }
+
+
+   @Override
+   public void writeExternal(ObjectOutput out) throws IOException
+   {
+   }
+
+
+   @Override
+   public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException
+   {
    }
 
 }

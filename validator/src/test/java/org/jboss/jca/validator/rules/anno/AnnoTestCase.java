@@ -237,4 +237,35 @@ public class AnnoTestCase extends TestCaseAbstract
 
    }
 
+   /**
+    * AO implements only one interfaces and there is no annotation, defining interface
+    * JCA 1.6 spec. page 18-16
+    * 
+    * @throws Throwable and expect a Exception
+    * 
+    */
+   @Test
+   public void deployerShouldDeployAOWithoutInterfaceDefined() throws Throwable
+   {
+      testAnnoArchive(AnnoResourceAdapter.class, AnnoAdminObject.class, 
+         AnnoAdminObjectImpl2.class);
+
+   }
+
+   /**
+    * AO implements 3 interfaces, including Serializable and Externalizable,
+    * and there is no annotation, defining interface
+    * JCA 1.6 spec. page 18-16
+    * 
+    * @throws Throwable and expect a Exception
+    * 
+    */
+   @Test
+   public void deployerShouldDeployAOWithDefaultInterfacesDefined() throws Throwable
+   {
+      testAnnoArchive(AnnoResourceAdapter.class, AnnoAdminObject.class, 
+         AnnoAdminObjectImpl3.class);
+
+   }
+
 }
