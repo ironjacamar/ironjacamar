@@ -135,104 +135,6 @@
 
 
   <!-- ================================= 
-       Target: test-jars 
-       ================================= -->
-  <target name="test-jars">
-      	
-    <jar destfile="${build.deployers.dir}/rafail2connector.rar">
-       <fileset dir="${build.deployers.dir}/test"
-          includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
-       <fileset dir="${build.deployers.dir}/test"
-          includes="org/jboss/jca/test/deployers/spec/rars/rafail2connector/*.class"/>
-       <fileset dir="src/test/resources/rafail2connector.rar"/>
-    </jar>
-  	
-    <jar destfile="${build.deployers.dir}/ra16inoutanno.rar">
-       <fileset dir="${build.deployers.dir}/test"
-          includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
-       <fileset dir="${build.deployers.dir}/test"
-          includes="org/jboss/jca/test/deployers/spec/rars/ra16inoutanno/*.class"/>
-       <fileset dir="src/test/resources/ra16inoutanno.rar"/>
-    </jar>
-    <jar destfile="${build.deployers.dir}/ra16annoconndefs.rar">
-       <fileset dir="${build.deployers.dir}/test"
-          includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
-       <fileset dir="${build.deployers.dir}/test"
-          includes="org/jboss/jca/test/deployers/spec/rars/ra16annoconndefs/*.class"/>
-       <fileset dir="src/test/resources/ra16annoconndefs.rar"/>
-    </jar>
-    <jar destfile="${build.deployers.dir}/ra16annoconndef.rar">
-       <fileset dir="${build.deployers.dir}/test"
-          includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
-       <fileset dir="${build.deployers.dir}/test"
-          includes="org/jboss/jca/test/deployers/spec/rars/ra16annoconndef/*.class"/>
-       <fileset dir="src/test/resources/ra16annoconndef.rar"/>
-    </jar>
-    <jar destfile="${build.deployers.dir}/ra16annoadminobj.rar">
-       <fileset dir="${build.deployers.dir}/test"
-          includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
-       <fileset dir="${build.deployers.dir}/test"
-          includes="org/jboss/jca/test/deployers/spec/rars/ra16annoadminobj/*.class"/>
-       <fileset dir="src/test/resources/ra16annoadminobj.rar"/>
-    </jar>
-    <jar destfile="${build.deployers.dir}/ra16annoauthmech.rar">
-       <fileset dir="${build.deployers.dir}/test"
-          includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
-       <fileset dir="${build.deployers.dir}/test"
-          includes="org/jboss/jca/test/deployers/spec/rars/ra16annoauthmech/*.class"/>
-       <fileset dir="src/test/resources/ra16annoauthmech.rar"/>
-    </jar>
-    <jar destfile="${build.deployers.dir}/ra16annoactiv.rar">
-       <fileset dir="${build.deployers.dir}/test"
-          includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
-       <fileset dir="${build.deployers.dir}/test"
-          includes="org/jboss/jca/test/deployers/spec/rars/ra16annoactiv/*.class"/>
-       <fileset dir="src/test/resources/ra16annoactiv.rar"/>
-    </jar>
-    <jar destfile="${build.deployers.dir}/ra16annoconfprop.rar">
-       <fileset dir="${build.deployers.dir}/test"
-          includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
-       <fileset dir="${build.deployers.dir}/test"
-          includes="org/jboss/jca/test/deployers/spec/rars/ra16annoconfprop/*.class"/>
-       <fileset dir="src/test/resources/ra16annoconfprop.rar"/>
-    </jar>
-    <jar destfile="${build.deployers.dir}/multiple-full.rar">
-       <fileset dir="${build.deployers.dir}/test"
-          includes="org/jboss/jca/test/deployers/spec/rars/multiple/*.class"/>
-       <fileset dir="src/test/resources/multiple-full.rar"/>
-    </jar>
-    <jar destfile="${build.deployers.dir}/multiple-partial.rar">
-       <fileset dir="${build.deployers.dir}/test"
-          includes="org/jboss/jca/test/deployers/spec/rars/multiple/*.class"/>
-       <fileset dir="src/test/resources/multiple-partial.rar"/>
-    </jar>
-    <jar destfile="${build.deployers.dir}/config-property.rar">
-       <fileset dir="${build.deployers.dir}/test"
-          includes="org/jboss/jca/test/deployers/spec/rars/configproperty/*.class"/>
-       <fileset dir="src/test/resources/config-property.rar"/>
-    </jar>
-    <jar destfile="${build.deployers.dir}/ra16standard303ironjacamar.rar">
-       <fileset dir="${build.deployers.dir}/test"
-          includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
-       <fileset dir="${build.deployers.dir}/test"
-          includes="org/jboss/jca/test/deployers/spec/rars/ra16standard303ironjacamar/*.class"/>
-       <fileset dir="src/test/resources/ra16standard303ironjacamar.rar"/>
-    </jar>
-    <jar destfile="${build.deployers.dir}/ra16user303ironjacamar.rar">
-       <fileset dir="${build.deployers.dir}/test"
-          includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
-       <fileset dir="${build.deployers.dir}/test"
-          includes="org/jboss/jca/test/deployers/spec/rars/ra16user303ironjacamar/*.class"/>
-       <fileset dir="src/test/resources/ra16user303ironjacamar.rar"/>
-    </jar>
-    <jar destfile="${build.deployers.dir}/lazy.rar">
-       <fileset dir="${build.deployers.dir}/test"
-          includes="org/jboss/jca/test/deployers/spec/rars/lazy/*.class"/>
-       <fileset dir="src/test/resources/lazy.rar"/>
-    </jar>
-  </target>
-
-  <!-- ================================= 
        Target: docs
        ================================= -->
   <target name="docs">
@@ -370,8 +272,6 @@
     <copy todir="${build.deployers.dir}/test">
       <fileset dir="src/test/resources"/>
     </copy>
-
-    <ant target="test-jars"/>
 
   </target>
 
