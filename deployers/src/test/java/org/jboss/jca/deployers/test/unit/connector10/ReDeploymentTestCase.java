@@ -25,18 +25,17 @@ package org.jboss.jca.deployers.test.unit.connector10;
 import org.jboss.jca.deployers.test.DeploymentTestBase;
 import org.jboss.jca.deployers.test.rars.inout.SimpleConnectionFactory1;
 import org.jboss.jca.embedded.Embedded;
-import org.jboss.jca.embedded.EmbeddedFactory;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import static org.junit.Assert.*;
 
@@ -46,41 +45,13 @@ import static org.junit.Assert.*;
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  * @version $Revision: $
  */
+@RunWith(Arquillian.class)
 public class ReDeploymentTestCase extends DeploymentTestBase
 {
 
-   /*
-    * Embedded
-    */
+   @ArquillianResource
    private static Embedded embedded;
 
-   /**
-    * Lifecycle start, before the suite is executed
-    * @throws Throwable throwable exception 
-    */
-   @BeforeClass
-   public static void beforeClass() throws Throwable
-   {
-      // Create and set an embedded JCA instance
-      embedded = EmbeddedFactory.create();
-
-      // Startup
-      embedded.startup();
-   }
-
-   /**
-    * Lifecycle stop, after the suite is executed
-    * @throws Throwable throwable exception 
-    */
-   @AfterClass
-   public static void afterClass() throws Throwable
-   {
-      // Shutdown embedded
-      embedded.shutdown();
-
-      // Set embedded to null
-      embedded = null;
-   }
    
    /**
     * 
@@ -151,9 +122,7 @@ public class ReDeploymentTestCase extends DeploymentTestBase
     * 
     * @throws Throwable in case of error
     */
-
    @Test
-   @Ignore
    public void testReDeployIjRa() throws Throwable
    {
       ResourceAdapterArchive ra = createIJDeployment("ra10dtdoutoverwrite.rar", "ij2.rar");
@@ -165,12 +134,14 @@ public class ReDeploymentTestCase extends DeploymentTestBase
       connectionTest("java:/ra-activation4", "fff", (byte) 3);
       log.info("///first check");
       embedded.undeploy(d);
+      d = createDescriptor("ra10dtdoutoverwrite.rar/ij-ra.xml");
       embedded.deploy(d);
       connectionTest("java:/ra-activation4", "fff", (byte) 3);
       log.info("///second check");
       embedded.undeploy(d);
       embedded.undeploy(ra);
       embedded.deploy(ra);
+      d = createDescriptor("ra10dtdoutoverwrite.rar/ij-ra.xml");
       embedded.deploy(d);
       connectionTest("java:/ra-activation4", "fff", (byte) 3);
       log.info("///third check");
