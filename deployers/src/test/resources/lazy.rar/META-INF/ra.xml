@@ -34,7 +34,7 @@
    <eis-type>Lazy resource adapter</eis-type>
    <resourceadapter-version>0.2</resourceadapter-version>
    <resourceadapter>
-      <resourceadapter-class>org.jboss.jca.test.deployers.spec.rars.lazy.LazyResourceAdapter</resourceadapter-class>
+      <resourceadapter-class>org.jboss.jca.deployers.test.rars.lazy.LazyResourceAdapter</resourceadapter-class>
       <config-property>
          <config-property-name>Enable</config-property-name>
          <config-property-type>java.lang.Boolean</config-property-type>
@@ -53,11 +53,11 @@
 
       <outbound-resourceadapter>
          <connection-definition>
-            <managedconnectionfactory-class>org.jboss.jca.test.deployers.spec.rars.lazy.LazyManagedConnectionFactory</managedconnectionfactory-class>
-            <connectionfactory-interface>org.jboss.jca.test.deployers.spec.rars.lazy.LazyConnectionFactory</connectionfactory-interface>
-            <connectionfactory-impl-class>org.jboss.jca.test.deployers.spec.rars.lazy.LazyConnectionFactoryImpl</connectionfactory-impl-class>
-            <connection-interface>org.jboss.jca.test.deployers.spec.rars.lazy.LazyConnection</connection-interface>
-            <connection-impl-class>org.jboss.jca.test.deployers.spec.rars.lazy.LazyConnectionImpl</connection-impl-class>
+            <managedconnectionfactory-class>org.jboss.jca.deployers.test.rars.lazy.LazyManagedConnectionFactory</managedconnectionfactory-class>
+            <connectionfactory-interface>org.jboss.jca.deployers.test.rars.lazy.LazyConnectionFactory</connectionfactory-interface>
+            <connectionfactory-impl-class>org.jboss.jca.deployers.test.rars.lazy.LazyConnectionFactoryImpl</connectionfactory-impl-class>
+            <connection-interface>org.jboss.jca.deployers.test.rars.lazy.LazyConnection</connection-interface>
+            <connection-impl-class>org.jboss.jca.deployers.test.rars.lazy.LazyConnectionImpl</connection-impl-class>
          </connection-definition>
          <transaction-support>XATransaction</transaction-support>
          <reauthentication-support>false</reauthentication-support>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<resource-adapters>
+	<resource-adapter>
+		<archive>r1.rar</archive>
+		<config-property name="first">ra-ra</config-property>
+		<config-property name="second">true</config-property>
+		<transaction-support>LocalTransaction</transaction-support>
+		<connection-definitions>
+			<connection-definition jndi-name="java:/ijra-activation"
+				class-name="org.jboss.jca.deployers.test.rars.inout.SimpleManagedConnectionFactory">
+				<pool>
+					<prefill>false</prefill>
+					<use-strict-min>false</use-strict-min>
+				</pool>
+				<config-property name="first">aba</config-property>
+				<config-property name="second">d</config-property>
+			</connection-definition>
+		</connection-definitions>
+		<admin-object jndi-name="java:/ao/ijra-activation"
+			class-name="org.jboss.jca.deployers.test.rars.inout.SimpleAdminObjectImpl">
+			<config-property name="first">ao-ra</config-property>
+			<config-property name="second">2.18</config-property>
+		</admin-object>
+	</resource-adapter>
+</resource-adapters>

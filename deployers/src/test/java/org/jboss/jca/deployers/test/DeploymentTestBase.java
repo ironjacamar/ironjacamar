@@ -24,7 +24,9 @@ package org.jboss.jca.deployers.test;
 import org.jboss.jca.arquillian.embedded.Inject;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.deployers.test.rars.inout.SimpleAdminObject;
+import org.jboss.jca.deployers.test.rars.inout.SimpleAdminObject1;
 import org.jboss.jca.deployers.test.rars.inout.SimpleAdminObjectImpl;
+import org.jboss.jca.deployers.test.rars.inout.SimpleAdminObjectImpl1;
 import org.jboss.jca.deployers.test.rars.inout.SimpleConnection;
 import org.jboss.jca.deployers.test.rars.inout.SimpleConnection1;
 import org.jboss.jca.deployers.test.rars.inout.SimpleConnectionFactory;
@@ -378,6 +380,23 @@ public abstract class DeploymentTestBase
       assertNotNull(ao);
       assertTrue(ao instanceof SimpleAdminObjectImpl);
       SimpleAdminObjectImpl aoi = (SimpleAdminObjectImpl) ao;
+      assertEquals(first, aoi.getFirst());
+      assertEquals(second, (double) aoi.getSecond(), 0);
+   }
+
+   /**
+    * 
+    * tests SimpleAdminObjectImpl1 properties
+    * 
+    * @param ao SimpleAdminObject1 
+    * @param first property should be equal
+    * @param second property should be equal
+    */
+   public void testSimpleAO1(SimpleAdminObject1 ao, String first, double second)
+   {
+      assertNotNull(ao);
+      assertTrue(ao instanceof SimpleAdminObjectImpl1);
+      SimpleAdminObjectImpl1 aoi = (SimpleAdminObjectImpl1) ao;
       assertEquals(first, aoi.getFirst());
       assertEquals(second, (double) aoi.getSecond(), 0);
    }

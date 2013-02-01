@@ -1,0 +1,23 @@
+<resource-adapters>
+
+  <resource-adapter>
+    <archive>ra15camel.rar</archive>
+
+    <transaction-support>NoTransaction</transaction-support>
+    
+    <connection-definitions>
+      <connection-definition class-name="org.jboss.jca.deployers.test.rars.inout.SimpleManagedConnectionFactory" 
+                             enabled="true" jndi-name="java:/eis/MultipleConnectionFactory1"
+                             pool-name="MultipleConnectionFactory1">
+      </connection-definition>
+    </connection-definitions>
+    
+    <admin-objects>
+      <admin-object class-name="org.jboss.jca.deployers.test.rars.inout.SimpleAdminObjectImpl1" 
+                    jndi-name="java:/eis/MultipleAdminObject1">
+      </admin-object>
+    </admin-objects>
+    
+  </resource-adapter>
+
+</resource-adapters>
