@@ -97,4 +97,22 @@ public interface MessageEndpointFactory
     */
    boolean isDeliveryTransacted(java.lang.reflect.Method method)
       throws NoSuchMethodException;
+
+   /**
+    * Returns a unique name for the message endpoint deployment represented by
+    * the MessageEndpointFactory. If the message endpoint has been deployed into
+    * a clustered application server then this method must return the same name
+    * for that message endpoints activation in each application server instance. 
+    *
+    * It is recommended that this name be human-readable since this name may be used
+    * by the resource adapter in ways that may be visible to a user or administrator.
+    *
+    * It is also recommended that this name remain unchanged even in cases when the
+    * application server is restarted or the message endpoint redeployed.
+    *
+    * @return a new <code>String</code> instance representing the unique name of the
+    *         message endpoint deployment
+    * @since 1.7
+    */
+   String getActivationName();
 }

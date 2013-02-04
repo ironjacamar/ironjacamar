@@ -74,4 +74,12 @@ public class HornetQMessageEndpointFactory implements MessageEndpointFactory
    {
       return false;
    }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String getActivationName()
+   {
+      return "HornetQ";
+   }
 }
