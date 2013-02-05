@@ -23,10 +23,10 @@
 package javax.resource;
 
 import java.lang.annotation.Documented;
-import java.lang.annotation.Target;
-import java.lang.annotation.Retention;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 import javax.resource.spi.TransactionSupport;
 
@@ -38,7 +38,7 @@ import javax.resource.spi.TransactionSupport;
  * @see javax.annotation.Resource
  */
 @Documented
-@Target({ElementType.TYPE})
+@Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ConnectionFactoryDefinition
 {
@@ -86,5 +86,5 @@ public @interface ConnectionFactoryDefinition
     * Connection Factory properties that are specified and are not supported
     * in a given resource adapter or cannot be mapped to a vendor specific configuration property may be ignored.
     */
-   String[] properties() default {};
+   String[] properties() default { };
 }

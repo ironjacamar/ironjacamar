@@ -23,10 +23,10 @@
 package javax.resource;
 
 import java.lang.annotation.Documented;
-import java.lang.annotation.Target;
-import java.lang.annotation.Retention;
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Annotation used to define a Connector administered object to be registered in JNDI. 
@@ -36,7 +36,7 @@ import java.lang.annotation.RetentionPolicy;
  * @see javax.annotation.Resource
  */
 @Documented
-@Target({ElementType.TYPE})
+@Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AdministeredObjectDefinition
 {
@@ -66,5 +66,5 @@ public @interface AdministeredObjectDefinition
     * Administered object properties that are specified and are not supported
     * in a given resource adapter or cannot be mapped to a vendor specific configuration property may be ignored.
     */
-   String[] properties() default {};
+   String[] properties() default { };
 }
