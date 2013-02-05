@@ -44,7 +44,7 @@ import org.junit.runner.RunWith;
  *
  */
 @RunWith(Arquillian.class)
-public class SimpleActivationWithIJTestCase extends ActivationTestBase
+public class SimpleActivationWithIJTestCase extends Activation15TestBase
 {
 
    /**

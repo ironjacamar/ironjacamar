@@ -44,7 +44,7 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  */
 @RunWith(Arquillian.class)
-public class MultiplePartialTestCase extends ActivationTestBase
+public class MultiplePartialTestCase extends Activation15TestBase
 {
 
    //-------------------------------------------------------------------------------------||

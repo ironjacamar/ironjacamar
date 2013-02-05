@@ -38,6 +38,8 @@ import javax.resource.spi.ResourceAdapterInternalException;
 import javax.resource.spi.SecurityPermission;
 import javax.resource.spi.TransactionSupport;
 import javax.resource.spi.endpoint.MessageEndpointFactory;
+import javax.resource.spi.work.HintsContext;
+import javax.resource.spi.work.TransactionContext;
 
 import javax.transaction.xa.XAResource;
 
@@ -64,7 +66,7 @@ import javax.transaction.xa.XAResource;
       authMechanism = "AuthMechanism", description = {"desc1", "desc2" }) },
    securityPermissions = {@SecurityPermission(permissionSpec = "spec1"),
       @SecurityPermission(permissionSpec = "spec2", description = {"d1", "d2" }) },
-   requiredWorkContexts = {AnnoWorkContext.class, AnnoWorkContext1.class })
+   requiredWorkContexts = {TransactionContext.class, HintsContext.class })
 public class AnnoResourceAdapter implements ResourceAdapter, java.io.Serializable
 {
 

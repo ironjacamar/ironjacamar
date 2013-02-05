@@ -45,7 +45,7 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Arquillian.class)
 @Ignore("JBJCA-915")
-public class SimpleActivationWithIJDefaultClassNamesTestCase extends ActivationTestBase
+public class SimpleActivationWithIJDefaultClassNamesTestCase extends Activation15TestBase
 {
 
    /**

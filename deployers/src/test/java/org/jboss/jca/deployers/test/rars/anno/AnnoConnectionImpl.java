@@ -65,5 +65,16 @@ public class AnnoConnectionImpl implements AnnoConnection
    {
       mc.closeHandle(this);
    }
+   
+   /**
+    * 
+    * Returns AnnoManagedConnectionFactory
+    * 
+    * @return mcf
+    */
+   public AnnoManagedConnectionFactory getMCF()
+   {
+      return mcf;
+   }
 
 }

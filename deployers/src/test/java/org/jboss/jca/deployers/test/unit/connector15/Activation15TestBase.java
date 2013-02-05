@@ -35,13 +35,13 @@ import static org.junit.Assert.*;
 
 /**
  * 
- * A ActivationTestCase.
+ * A ActivationTestBase for 1.5 spec. tests
  * 
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  *
  */
 
-public abstract class ActivationTestBase extends DeploymentTestBase
+public abstract class Activation15TestBase extends DeploymentTestBase
 {
    /**
     * 

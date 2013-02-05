@@ -44,7 +44,6 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.shrinkwrap.api.spec.EnterpriseArchive;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
@@ -131,37 +130,6 @@ public abstract class DeploymentTestBase
       return raa;
    }
 
-   /**
-    * 
-    * Create .ear, containing .rar
-    * 
-    * @param rar archive
-    * @return ear archive
-    * @throws Exception in case of error
-    */
-   public static EnterpriseArchive buildEarWithRar(ResourceAdapterArchive rar) throws Exception
-   {
-      EnterpriseArchive ear = ShrinkWrap.create(EnterpriseArchive.class, rar.getName().replaceAll("rar", "ear"));
-      ear.addAsModule(rar);
-      return ear;
-   }
-
-   /**
-    * 
-    * Create .ear, containing some .rar archives
-    * 
-    * @param name of created archive
-    * @param rars archives
-    * @return ear archive
-    * @throws Exception in case of error
-    */
-   public static EnterpriseArchive buildEarWithRar(String name, ResourceAdapterArchive... rars) throws Exception
-   {
-      EnterpriseArchive ear = ShrinkWrap.create(EnterpriseArchive.class, name);
-      for (ResourceAdapterArchive rar : rars)
-         ear.addAsModule(rar);
-      return ear;
-   }
 
    /**
     * 

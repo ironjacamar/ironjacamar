@@ -44,7 +44,7 @@ import static org.junit.Assert.assertNotNull;
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 @RunWith(Arquillian.class)
-public class CamelCaseTestCase extends ActivationTestBase
+public class CamelCaseTestCase extends Activation15TestBase
 {
 
    //-------------------------------------------------------------------------------------||
@@ -58,7 +58,7 @@ public class CamelCaseTestCase extends ActivationTestBase
    @Deployment(order = 1)
    public static ResourceAdapterArchive createDeployment() throws Exception
    {
-      return createDeployment("ra15camel.rar");
+      return createDeployment("ra15CamelCase.rar");
    }
 
    /**
@@ -69,7 +69,7 @@ public class CamelCaseTestCase extends ActivationTestBase
    @Deployment(order = 2)
    public static Descriptor createDescriptor() throws Exception
    {
-      return createDescriptor("ra15camel.rar/camel-case-ra.xml");
+      return createDescriptor("ra15CamelCase.rar/camel-case-ra.xml");
    }
 
    //-------------------------------------------------------------------------------------||
