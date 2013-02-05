@@ -72,7 +72,7 @@ public class ClassBundle implements Serializable
    {
       int result = 17;
 
-      result += 7 * definitions.hashCode();
+      result += definitions != null ? 7 * definitions.hashCode() : 0;
 
       return result;
    }
@@ -89,12 +89,22 @@ public class ClassBundle implements Serializable
       if (other == this)
          return true;
 
-      if (!(other instanceof ClassDefinition))
+      if (!(other instanceof ClassBundle))
          return false;
 
       ClassBundle cb = (ClassBundle)other;
+      if (definitions == null)
+      {
+         if (cb.definitions != null)
+            return false;
+      }
+      else
+      {
+         if (!definitions.equals(cb.definitions))
+            return false;
+      }
 
-      return definitions.equals(cb.definitions);
+      return true;
    }
 
    /**
