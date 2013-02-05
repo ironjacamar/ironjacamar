@@ -24,12 +24,14 @@ package org.jboss.jca.deployers.test.unit.connector16;
 import org.jboss.jca.deployers.test.rars.anno.AnnoAdminObject;
 import org.jboss.jca.deployers.test.rars.anno.AnnoConnectionFactory;
 import org.jboss.jca.deployers.test.rars.anno.AnnoMessageListener;
+import org.jboss.jca.deployers.test.rars.anno.AnnoMessageListener1;
 
 import javax.annotation.Resource;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
+import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -42,7 +44,7 @@ import org.junit.runner.RunWith;
  *
  */
 @RunWith(Arquillian.class)
-public class RaBlocksAnnoTestCase extends Activation16TestBase
+public class RaOverridesAnnoTestCase extends Activation16TestBase
 {
 
    /**
@@ -51,21 +53,43 @@ public class RaBlocksAnnoTestCase extends Activation16TestBase
     * @return The deployment archive
     * @throws Exception in case of error
     */
-   @Deployment
+   @Deployment(order = 1)
    public static ResourceAdapterArchive createDeployment() throws Exception
    {
       ResourceAdapterArchive raa = buidShrinkwrapRa("ra16anno.rar", AnnoConnectionFactory.class.getPackage());
-      addRaXml(raa);
+      raa.addAsManifestResource("ra16anno.rar/META-INF/ra-over.xml", "ra.xml");
+      addIJXml(raa);
       return raa;
    }
 
+   /**
+    * 
+    * Define descriptor deployment
+    * 
+    * @return descriptor
+    * @throws Exception in case of error
+    */
+   @Deployment(order = 2)
+   public static Descriptor create() throws Exception
+   {
+      return createDescriptor("ra16anno.rar/over-ra.xml");
+   }
+
    /** Resource */
-   @Resource(mappedName = "java:/eis/ra16anno")
+   @Resource(mappedName = "java:/eis/ij")
    private AnnoConnectionFactory connectionFactory1;
 
    /** Resource */
-   @Resource(mappedName = "java:/eis/ao/ra16anno")
+   @Resource(mappedName = "java:/eis/ao/ij")
    private AnnoAdminObject adminObject;
+
+   /** Resource */
+   @Resource(mappedName = "java:/eis/ra")
+   private AnnoConnectionFactory connectionFactory2;
+
+   /** Resource */
+   @Resource(mappedName = "java:/eis/ao/ra")
+   private AnnoAdminObject adminObject2;
 
    /**
     * Test getConnection
@@ -73,10 +97,20 @@ public class RaBlocksAnnoTestCase extends Activation16TestBase
     * @exception Throwable Thrown if case of an error
     */
    @Test
-   @Ignore("JBJCA-984")
    public void testConnection1() throws Throwable
    {
-      testConnection(connectionFactory1, (byte) 23, (short) 55);
+      testConnection(connectionFactory1, (byte) 23, (short) 0);
+   }
+
+   /**
+    * Test getConnection
+    *
+    * @exception Throwable Thrown if case of an error
+    */
+   @Test
+   public void testConnection2() throws Throwable
+   {
+      testConnection(connectionFactory2, (byte) 23, (short) 0);
    }
 
    /**
@@ -85,10 +119,22 @@ public class RaBlocksAnnoTestCase extends Activation16TestBase
    * @exception Throwable Thrown if case of an error
    */
    @Test
-   @Ignore("JBJCA-984")
-   public void testAdminOjbect() throws Throwable
+   @Ignore
+   public void testAdminOjbect1() throws Throwable
    {
       testAdminOjbect(adminObject, 54321, true);
+   }
+
+   /**
+    * Test admin objects
+   *
+   * @exception Throwable Thrown if case of an error
+   */
+   @Test
+   @Ignore
+   public void testAdminOjbect2() throws Throwable
+   {
+      testAdminOjbect(adminObject2, 54321, true);
    }
 
    /**
@@ -98,10 +144,21 @@ public class RaBlocksAnnoTestCase extends Activation16TestBase
     *                Thrown if case of an error
     */
    @Test
-   @Ignore("JBJCA-984")
+   @Ignore
    public void testActivation1() throws Throwable
    {
-      testActivation(AnnoMessageListener.class, 'U', 4.4, "G", 99);
+      testActivation(AnnoMessageListener.class, 'U', 0.5, "G", 5);
+   }
+   /**
+    * test activation 1
+    * 
+    * @exception Throwable
+    *                Thrown if case of an error
+    */
+   @Test
+   public void testActivation2() throws Throwable
+   {
+      testActivation(AnnoMessageListener1.class, 'C', 0.5, "G", 5);
    }
 
    /**
@@ -112,7 +169,7 @@ public class RaBlocksAnnoTestCase extends Activation16TestBase
    @Test
    public void testMetaData() throws Throwable
    {
-      testMetaData(1);
+      testMetaData(2);
    }
 
 }

@@ -218,7 +218,6 @@ public class AnnotationsComplexTestCase extends AnnotationsTestBase
 
       List<String> wcs = con.getRequiredWorkContexts();
       assertEquals(2, wcs.size());
-      log.info("///WCS:"+wcs);
       assertTrue(wcs.contains("javax.resource.spi.work.TransactionContext"));
       assertTrue(wcs.contains("javax.resource.spi.work.HintsContext"));
 
