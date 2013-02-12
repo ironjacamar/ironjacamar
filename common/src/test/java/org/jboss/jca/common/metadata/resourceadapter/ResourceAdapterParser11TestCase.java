@@ -123,6 +123,9 @@ public class ResourceAdapterParser11TestCase extends XMLParserTestBase
       assertTrue(xaPool.isPrefill());
       assertTrue(xaPool.isUseStrictMin());
       assertEquals(xaPool.getFlushStrategy(), FlushStrategy.IDLE_CONNECTIONS);
+      assertNotNull(xaPool.getCapacity());
+      assertNotNull(xaPool.getCapacity().getIncrementer());
+      assertNotNull(xaPool.getCapacity().getDecrementer());
       assertTrue(xaPool.isSameRmOverride());
       assertTrue(xaPool.isInterleaving());
       assertTrue(xaPool.isNoTxSeparatePool());
@@ -311,6 +314,9 @@ public class ResourceAdapterParser11TestCase extends XMLParserTestBase
       assertTrue(pool.isPrefill());
       assertTrue(pool.isUseStrictMin());
       assertEquals(pool.getFlushStrategy(), FlushStrategy.IDLE_CONNECTIONS);
+      assertNotNull(pool.getCapacity());
+      assertNotNull(pool.getCapacity().getIncrementer());
+      assertNotNull(pool.getCapacity().getDecrementer());
       
       assertEquals(null, cd.getSecurity());
       assertEquals(null, cd.getTimeOut());

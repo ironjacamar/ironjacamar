@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.common.metadata.ds.v12;
 
+import org.jboss.jca.common.api.metadata.common.Capacity;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.common.api.metadata.ds.v12.DsPool;
 import org.jboss.jca.common.api.validator.ValidateException;
@@ -41,6 +42,11 @@ public class DsPoolImpl extends org.jboss.jca.common.metadata.ds.v11.DsPoolImpl 
    protected final Integer initialPoolSize;
 
    /**
+    * capacity
+    */
+   protected final Capacity capacity;
+
+   /**
     * Create a new PoolImpl.
     *
     * @param minPoolSize minPoolSize
@@ -50,24 +56,36 @@ public class DsPoolImpl extends org.jboss.jca.common.metadata.ds.v11.DsPoolImpl 
     * @param useStrictMin useStrictMin
     * @param flushStrategy flushStrategy
     * @param allowMultipleUsers allowMultipleUsers
+    * @param capacity capacity
     * @throws ValidateException ValidateException
     */
    public DsPoolImpl(Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize, 
                      Boolean prefill, Boolean useStrictMin,
-                     FlushStrategy flushStrategy, Boolean allowMultipleUsers)
+                     FlushStrategy flushStrategy, Boolean allowMultipleUsers,
+                     Capacity capacity)
       throws ValidateException
    {
       super(minPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy, allowMultipleUsers);
       this.initialPoolSize = initialPoolSize;
+      this.capacity = capacity;
    }
 
    /**
     * {@inheritDoc}
     */
    @Override
-   public final Integer getInitialPoolSize()
+   public Integer getInitialPoolSize()
    {
       return initialPoolSize;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Capacity getCapacity()
+   {
+      return capacity;
    }
 
    /**
@@ -79,6 +97,7 @@ public class DsPoolImpl extends org.jboss.jca.common.metadata.ds.v11.DsPoolImpl 
       final int prime = 31;
       int result = super.hashCode();
       result = prime * result + ((initialPoolSize == null) ? 7 : 7 * initialPoolSize.hashCode());
+      result = prime * result + ((capacity == null) ? 7 : 7 * capacity.hashCode());
       return result;
    }
 
@@ -104,6 +123,13 @@ public class DsPoolImpl extends org.jboss.jca.common.metadata.ds.v11.DsPoolImpl 
             return false;
       }
       else if (!initialPoolSize.equals(other.initialPoolSize))
+         return false;
+      if (capacity == null)
+      {
+         if (other.capacity != null)
+            return false;
+      }
+      else if (!capacity.equals(other.capacity))
          return false;
       return true;
    }
@@ -162,6 +188,13 @@ public class DsPoolImpl extends org.jboss.jca.common.metadata.ds.v11.DsPoolImpl 
       if (allowMultipleUsers != null && allowMultipleUsers.booleanValue())
       {
          sb.append("<").append(DsPool.Tag.ALLOW_MULTIPLE_USERS).append("/>");
+      }
+
+      if (capacity != null)
+      {
+         sb.append("<").append(DsPool.Tag.CAPACITY).append(">");
+         sb.append(capacity);
+         sb.append("</").append(DsPool.Tag.CAPACITY).append(">");
       }
 
       sb.append("</pool>");

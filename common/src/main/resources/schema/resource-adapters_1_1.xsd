@@ -486,6 +486,15 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="capacity" type="capacityType" minOccurs="0" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+              Specifies the capacity policies for the pool
+             ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
 
@@ -861,6 +870,29 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="capacityType">
+    <xs:sequence>
+      <xs:element name="incrementer" type="extensionType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+              Defines the policy for incrementing connections in the pool
+             ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="decrementer" type="extensionType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+              Defines the policy for decrementing connections in the pool
+             ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
   </xs:complexType>
 
 </xs:schema>

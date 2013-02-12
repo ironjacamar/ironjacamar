@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.common.api.metadata.common.v11;
 
+import org.jboss.jca.common.api.metadata.common.Capacity;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,6 +38,12 @@ public interface ConnDefPool extends org.jboss.jca.common.api.metadata.common.Co
     * @return The value
     */
    public Integer getInitialPoolSize();
+
+   /**
+    * Get the capacity
+    * @return The value
+    */
+   public Capacity getCapacity();
 
    /**
     * Tags
@@ -76,7 +84,12 @@ public interface ConnDefPool extends org.jboss.jca.common.api.metadata.common.Co
       /**
        * flush-strategy tag
        */
-      FLUSH_STRATEGY("flush-strategy");
+      FLUSH_STRATEGY("flush-strategy"),
+
+      /**
+       * capacity tag
+       */
+      CAPACITY("capacity");
 
       private String name;
 

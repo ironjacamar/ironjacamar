@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.common.metadata.common.v11;
 
+import org.jboss.jca.common.api.metadata.common.Capacity;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.common.api.metadata.common.v11.ConnDefPool;
 import org.jboss.jca.common.api.validator.ValidateException;
@@ -33,9 +34,11 @@ import org.jboss.jca.common.api.validator.ValidateException;
 public class ConnDefPoolImpl extends org.jboss.jca.common.metadata.common.CommonPoolImpl implements ConnDefPool
 {
    /** The serialVersionUID */
-   private static final long serialVersionUID = 2L;
+   private static final long serialVersionUID = 3L;
 
-   private final Integer initialPoolSize;
+   private Integer initialPoolSize;
+
+   private Capacity capacity;
 
    /**
     * Construcot
@@ -45,24 +48,35 @@ public class ConnDefPoolImpl extends org.jboss.jca.common.metadata.common.Common
     * @param prefill prefill
     * @param useStrictMin useStrictMin
     * @param flushStrategy flushStrategy
+    * @param capacity capacity
     * @throws ValidateException ValidateException
     */
    public ConnDefPoolImpl(Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize, 
                           Boolean prefill, Boolean useStrictMin,
-                          FlushStrategy flushStrategy)
+                          FlushStrategy flushStrategy, Capacity capacity)
       throws ValidateException
    {
       super(minPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy);
       this.initialPoolSize = initialPoolSize;
+      this.capacity = capacity;
    }
 
    /**
     * {@inheritDoc}
     */
    @Override
-   public final Integer getInitialPoolSize()
+   public Integer getInitialPoolSize()
    {
       return initialPoolSize;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Capacity getCapacity()
+   {
+      return capacity;
    }
 
    @Override
@@ -71,6 +85,7 @@ public class ConnDefPoolImpl extends org.jboss.jca.common.metadata.common.Common
       final int prime = 31;
       int result = super.hashCode();
       result = prime * result + ((initialPoolSize == null) ? 7 : 7 * initialPoolSize.hashCode());
+      result = prime * result + ((capacity == null) ? 7 : 7 * capacity.hashCode());
       return result;
    }
 
@@ -93,6 +108,13 @@ public class ConnDefPoolImpl extends org.jboss.jca.common.metadata.common.Common
             return false;
       }
       else if (!initialPoolSize.equals(other.initialPoolSize))
+         return false;
+      if (capacity == null)
+      {
+         if (other.capacity != null)
+            return false;
+      }
+      else if (!capacity.equals(other.capacity))
          return false;
 
       return true;
@@ -145,6 +167,13 @@ public class ConnDefPoolImpl extends org.jboss.jca.common.metadata.common.Common
          sb.append("<").append(ConnDefPool.Tag.FLUSH_STRATEGY).append(">");
          sb.append(flushStrategy);
          sb.append("</").append(ConnDefPool.Tag.FLUSH_STRATEGY).append(">");
+      }
+
+      if (capacity != null)
+      {
+         sb.append("<").append(ConnDefPool.Tag.CAPACITY).append(">");
+         sb.append(capacity);
+         sb.append("</").append(ConnDefPool.Tag.CAPACITY).append(">");
       }
 
       sb.append("</pool>");

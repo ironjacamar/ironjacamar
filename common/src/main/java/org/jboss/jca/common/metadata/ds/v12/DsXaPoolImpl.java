@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.common.metadata.ds.v12;
 
+import org.jboss.jca.common.api.metadata.common.Capacity;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.common.api.metadata.ds.v12.DsXaPool;
 import org.jboss.jca.common.api.validator.ValidateException;
@@ -38,6 +39,11 @@ public class DsXaPoolImpl extends org.jboss.jca.common.metadata.ds.v11.DsXaPoolI
    private final Integer initialPoolSize;
 
    /**
+    * capacity
+    */
+   protected final Capacity capacity;
+
+   /**
     * Create a new XaPoolImpl.
     *
     * @param minPoolSize minPoolSize
@@ -52,6 +58,7 @@ public class DsXaPoolImpl extends org.jboss.jca.common.metadata.ds.v11.DsXaPoolI
     * @param wrapXaResource wrapXaResource
     * @param noTxSeparatePool noTxSeparatePool
     * @param allowMultipleUsers allowMultipleUsers
+    * @param capacity capacity
     * @throws ValidateException ValidateException
     */
    public DsXaPoolImpl(Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize,
@@ -60,21 +67,32 @@ public class DsXaPoolImpl extends org.jboss.jca.common.metadata.ds.v11.DsXaPoolI
                        Boolean isSameRmOverride, Boolean interleaving, 
                        Boolean padXid, Boolean wrapXaResource,
                        Boolean noTxSeparatePool,
-                       Boolean allowMultipleUsers) throws ValidateException
+                       Boolean allowMultipleUsers,
+                       Capacity capacity) throws ValidateException
    {
       super(minPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy,
             isSameRmOverride, interleaving, padXid, wrapXaResource, noTxSeparatePool, allowMultipleUsers);
 
       this.initialPoolSize = initialPoolSize;
+      this.capacity = capacity;
    }
 
    /**
     * {@inheritDoc}
     */
    @Override
-   public final Integer getInitialPoolSize()
+   public Integer getInitialPoolSize()
    {
       return initialPoolSize;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Capacity getCapacity()
+   {
+      return capacity;
    }
 
    @Override
@@ -83,6 +101,7 @@ public class DsXaPoolImpl extends org.jboss.jca.common.metadata.ds.v11.DsXaPoolI
       final int prime = 31;
       int result = super.hashCode();
       result = prime * result + ((initialPoolSize == null) ? 7 : 7 * initialPoolSize.hashCode());
+      result = prime * result + ((capacity == null) ? 7 : 7 * capacity.hashCode());
       return result;
    }
 
@@ -105,6 +124,13 @@ public class DsXaPoolImpl extends org.jboss.jca.common.metadata.ds.v11.DsXaPoolI
             return false;
       }
       else if (!initialPoolSize.equals(other.initialPoolSize))
+         return false;
+      if (capacity == null)
+      {
+         if (other.capacity != null)
+            return false;
+      }
+      else if (!capacity.equals(other.capacity))
          return false;
       return true;
    }
@@ -164,6 +190,13 @@ public class DsXaPoolImpl extends org.jboss.jca.common.metadata.ds.v11.DsXaPoolI
       if (allowMultipleUsers != null && allowMultipleUsers.booleanValue())
       {
          sb.append("<").append(DsXaPool.Tag.ALLOW_MULTIPLE_USERS).append("/>");
+      }
+
+      if (capacity != null)
+      {
+         sb.append("<").append(DsXaPool.Tag.CAPACITY).append(">");
+         sb.append(capacity);
+         sb.append("</").append(DsXaPool.Tag.CAPACITY).append(">");
       }
 
       if (isSameRmOverride != null)

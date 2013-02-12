@@ -29,8 +29,10 @@ import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionState;
+import org.jboss.jca.core.connectionmanager.pool.api.CapacityDecrementer;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PrefillPool;
+import org.jboss.jca.core.connectionmanager.pool.capacity.DefaultCapacity;
 import org.jboss.jca.core.connectionmanager.pool.idle.IdleRemover;
 import org.jboss.jca.core.connectionmanager.pool.validator.ConnectionValidator;
 
@@ -107,6 +109,9 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
    /** Supports lazy association */
    private Boolean supportsLazyAssociation;
 
+   /** Last idle check */
+   private long lastIdleCheck;
+
    /**
     * Constructor
     */
@@ -145,7 +150,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       this.checkedOut = new ConcurrentSkipListSet<ConnectionListener>();
       this.statistics = new ManagedConnectionPoolStatisticsImpl(pc.getMaxSize());
       this.supportsLazyAssociation = null;
-  
+      this.lastIdleCheck = Long.MIN_VALUE;
+
       // Check if connection manager supports lazy association
       if (!(clf instanceof LazyAssociatableConnectionManager))
          supportsLazyAssociation = Boolean.FALSE;
@@ -284,6 +290,10 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
                if (trace)
                   log.trace("supplying new ManagedConnection: " + cl);
                
+               // Trigger capacity increase
+               if (pool.getCapacity().getIncrementer() != null)
+                  CapacityFiller.schedule(new CapacityRequest(this, subject, cri));
+
                verifyConnectionListener = false;
             }
             catch (Throwable t)
@@ -349,6 +359,10 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
                   cl = createConnectionEventListener(subject, cri);
                
                   prefill();
+
+                  // Trigger capacity increase
+                  if (pool.getCapacity().getIncrementer() != null)
+                     CapacityFiller.schedule(new CapacityRequest(this, subject, cri));
 
                   if (trace)
                      log.trace("supplying new ManagedConnection: " + cl);
@@ -671,46 +685,72 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
     */
    public void removeIdleConnections()
    {
-      ArrayList<ConnectionListener> destroy = null;
-      long timeout = System.currentTimeMillis() - (poolConfiguration.getIdleTimeoutMinutes() * 1000L * 60);
-      
-      boolean cont = true;
-      while (cont)
+      long now = System.currentTimeMillis();
+      long timeoutSetting = poolConfiguration.getIdleTimeoutMinutes() * 1000L * 60;
+
+      if (now < (lastIdleCheck + timeoutSetting))
+         return;
+
+      if (trace)
+         log.tracef("Idle check - Pool: %s MCP: %s", pool.getName(),
+                    Integer.toHexString(System.identityHashCode(this)));
+
+      lastIdleCheck = now;
+
+      ArrayList<ConnectionListener> destroyConnections = null;
+      long timeout = now - timeoutSetting;
+
+      CapacityDecrementer decrementer = pool.getCapacity().getDecrementer();
+      boolean destroy = true;
+      int destroyed = 0;
+
+      if (decrementer == null)
+         decrementer = DefaultCapacity.DEFAULT_DECREMENTER;
+
+      while (destroy)
       {
          // Check the first in the list
          ConnectionListener cl = cls.peek();
-         if (cl != null && cl.isTimedOut(timeout) && shouldRemove())
+         if (cl != null && shouldRemove())
          {
-            statistics.deltaTimedOut();
+            destroy = decrementer.shouldDestroy(cl, timeout,
+                                                cls.size() + checkedOut.size(),
+                                                poolConfiguration.getMinSize(),
+                                                destroyed);
 
-            // We need to destroy this one
-            if (destroy == null)
-               destroy = new ArrayList<ConnectionListener>(1);
-
-            cl = cls.poll();
-
-            if (cl != null)
+            if (destroy)
             {
-               destroy.add(cl);
-            }
-            else
-            {
-               // The connection list were empty
-               cont = false;
+               statistics.deltaTimedOut();
+
+               // We need to destroy this one
+               if (destroyConnections == null)
+                  destroyConnections = new ArrayList<ConnectionListener>(1);
+
+               cl = cls.poll();
+
+               if (cl != null)
+               {
+                  destroyConnections.add(cl);
+                  destroyed++;
+               }
+               else
+               {
+                  // The connection list were empty
+                  destroy = false;
+               }
             }
          }
          else
          {
-            // They were inserted chronologically, so if this one 
-            // isn't timed out, following ones won't be either.
-            cont = false;
+            // We are done
+            destroy = false;
          }
       }
 
       // We found some connections to destroy
-      if (destroy != null)
+      if (destroyConnections != null)
       {
-         for (ConnectionListener cl : destroy)
+         for (ConnectionListener cl : destroyConnections)
          {
             if (trace)
                log.trace("Destroying timedout connection " + cl);
@@ -846,6 +886,71 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
    public ManagedConnectionPoolStatistics getStatistics()
    {
       return statistics;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void increaseCapacity(Subject subject, ConnectionRequestInfo cri)
+   {
+      // We have already created one connection when this method is scheduled
+      int created = 1;
+      boolean create = true;
+
+      while (create && !isFull())
+      {
+         if (shutdown.get())
+         {
+            statistics.setInUsedCount(checkedOut.size());
+            return;
+         }
+
+         create = pool.getCapacity().getIncrementer().shouldCreate(cls.size() + checkedOut.size(),
+                                                                   poolConfiguration.getMaxSize(), created);
+
+         if (create)
+         {
+            // Create a connection to fill the pool
+            ConnectionListener cl = null;
+            boolean destroy = false;
+
+            try
+            {
+               cl = createConnectionEventListener(defaultSubject, defaultCri);
+               statistics.setInUsedCount(checkedOut.size() + 1);
+               
+               if (!cls.offer(cl))
+               {
+                  log.debug("Connection couldn't be inserted during increaseCapacity");
+                  destroy = true;
+               }
+               else
+               {
+                  if (trace)
+                     log.trace("Capacity fill: cl=" + cl);
+
+                  created++;
+               }
+            }
+            catch (ResourceException re)
+            {
+               log.unableFillPool(re);
+               destroy = true;
+            }
+            finally
+            {
+               if (destroy)
+               {
+                  if (cl != null)
+                  {
+                     doDestroy(cl);
+                     cl = null;
+                  }
+               }
+            }
+         }
+      }
+      statistics.setInUsedCount(checkedOut.size());
    }
 
    /**

@@ -136,4 +136,11 @@ public interface ManagedConnectionPool extends IdleConnectionRemovalSupport
     * @return The module
     */
    public ManagedConnectionPoolStatistics getStatistics();
+
+   /**
+    * Increase capacity
+    * @param subject The subject
+    * @param cri The connection request information object
+    */
+   public void increaseCapacity(Subject subject, ConnectionRequestInfo cri);
 }

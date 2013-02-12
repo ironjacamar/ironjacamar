@@ -58,6 +58,7 @@ import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
 import org.jboss.jca.core.connectionmanager.pool.api.PrefillPool;
+import org.jboss.jca.core.connectionmanager.pool.capacity.CapacityFactory;
 import org.jboss.jca.core.recovery.DefaultRecoveryPlugin;
 import org.jboss.jca.core.security.CallbackImpl;
 import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
@@ -686,8 +687,7 @@ public abstract class AbstractResourceAdapterDeployer
             if (cdp.getInitialPoolSize() != null)
                pc.setInitialSize(cdp.getInitialPoolSize().intValue());
          }
-
-         if (pp instanceof org.jboss.jca.common.api.metadata.common.v11.ConnDefXaPool)
+         else if (pp instanceof org.jboss.jca.common.api.metadata.common.v11.ConnDefXaPool)
          {
             org.jboss.jca.common.api.metadata.common.v11.ConnDefXaPool cdxp =
                (org.jboss.jca.common.api.metadata.common.v11.ConnDefXaPool)pp;
@@ -1542,6 +1542,9 @@ public abstract class AbstractResourceAdapterDeployer
                         Pool pool =
                            pf.create(strategy, mcf, pc, noTxSeparatePool.booleanValue(), sharable.booleanValue());
 
+                        // Capacity
+                        applyCapacity(connectionDefinition, pool);
+
                         // Add a connection manager
                         ConnectionManagerFactory cmf = new ConnectionManagerFactory();
                         ConnectionManager cm = null;
@@ -2084,6 +2087,9 @@ public abstract class AbstractResourceAdapterDeployer
                                     Pool pool = pf.create(strategy, mcf, pc, noTxSeparatePool.booleanValue(),
                                                           sharable.booleanValue());
 
+                                    // Capacity
+                                    applyCapacity(connectionDefinition, pool);
+                                    
                                     // Add a connection manager
                                     ConnectionManagerFactory cmf = new ConnectionManagerFactory();
                                     ConnectionManager cm = null;
@@ -2725,6 +2731,41 @@ public abstract class AbstractResourceAdapterDeployer
       }
 
       return null;
+   }
+
+   /**
+    * Apply capacity
+    * @param connectionDefinition The connection definition
+    * @param pool The pool
+    */
+   protected void applyCapacity(CommonConnDef connectionDefinition, Pool pool)
+   {
+      if (connectionDefinition != null &&
+          connectionDefinition instanceof org.jboss.jca.common.api.metadata.common.v11.CommonConnDef)
+      {
+         org.jboss.jca.common.api.metadata.common.v11.CommonConnDef ccd11 =
+            (org.jboss.jca.common.api.metadata.common.v11.CommonConnDef)connectionDefinition;
+
+         if (ccd11.getPool() != null)
+         {
+            if (ccd11.getPool() instanceof org.jboss.jca.common.api.metadata.common.v11.ConnDefPool)
+            {
+               org.jboss.jca.common.api.metadata.common.v11.ConnDefPool cdp11 =
+                  (org.jboss.jca.common.api.metadata.common.v11.ConnDefPool)ccd11.getPool();
+                                 
+               if (cdp11.getCapacity() != null)
+                  pool.setCapacity(CapacityFactory.create(cdp11.getCapacity()));
+            }
+            else if (ccd11.getPool() instanceof org.jboss.jca.common.api.metadata.common.v11.ConnDefXaPool)
+            {
+               org.jboss.jca.common.api.metadata.common.v11.ConnDefXaPool cdxp11 =
+                  (org.jboss.jca.common.api.metadata.common.v11.ConnDefXaPool)ccd11.getPool();
+               
+               if (cdxp11.getCapacity() != null)
+                  pool.setCapacity(CapacityFactory.create(cdxp11.getCapacity()));
+            }
+         }
+      }
    }
 
    /**

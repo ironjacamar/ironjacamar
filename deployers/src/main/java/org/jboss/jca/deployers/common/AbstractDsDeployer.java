@@ -46,6 +46,7 @@ import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
 import org.jboss.jca.core.connectionmanager.pool.api.PrefillPool;
+import org.jboss.jca.core.connectionmanager.pool.capacity.CapacityFactory;
 import org.jboss.jca.core.recovery.DefaultRecoveryPlugin;
 import org.jboss.jca.core.spi.mdr.NotFoundException;
 import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
@@ -473,6 +474,16 @@ public abstract class AbstractDsDeployer
 
       Pool pool = pf.create(strategy, mcf, pc, false, true);
 
+      // Capacity
+      if (ds.getPool() != null && ds.getPool() instanceof org.jboss.jca.common.api.metadata.ds.v12.DsPool)
+      {
+         org.jboss.jca.common.api.metadata.ds.v12.DsPool dsPool =
+            (org.jboss.jca.common.api.metadata.ds.v12.DsPool)ds.getPool();
+
+         if (dsPool.getCapacity() != null)
+            pool.setCapacity(CapacityFactory.create(dsPool.getCapacity()));
+      }
+
       // Connection manager properties
       Integer allocationRetry = null;
       Long allocationRetryWaitMillis = null;
@@ -667,6 +678,16 @@ public abstract class AbstractDsDeployer
       }
 
       Pool pool = pf.create(strategy, mcf, pc, noTxSeparatePool.booleanValue(), true);
+
+      // Capacity
+      if (ds.getXaPool() != null && ds.getXaPool() instanceof org.jboss.jca.common.api.metadata.ds.v12.DsXaPool)
+      {
+         org.jboss.jca.common.api.metadata.ds.v12.DsXaPool dsXaPool =
+            (org.jboss.jca.common.api.metadata.ds.v12.DsXaPool)ds.getXaPool();
+
+         if (dsXaPool.getCapacity() != null)
+            pool.setCapacity(CapacityFactory.create(dsXaPool.getCapacity()));
+      }
 
       // Connection manager properties
       Integer allocationRetry = null;

@@ -23,6 +23,7 @@ package org.jboss.jca.common.metadata.common.v11;
 
 import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.api.metadata.Defaults;
+import org.jboss.jca.common.api.metadata.common.Capacity;
 import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.common.CommonSecurity;
 import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
@@ -406,6 +407,7 @@ public abstract class CommonIronJacamarParser extends org.jboss.jca.common.metad
       Boolean prefill = Defaults.PREFILL;
       Boolean useStrictMin = Defaults.USE_STRICT_MIN;
       FlushStrategy flushStrategy = Defaults.FLUSH_STRATEGY;
+      Capacity capacity = null;
 
       while (reader.hasNext())
       {
@@ -416,7 +418,7 @@ public abstract class CommonIronJacamarParser extends org.jboss.jca.common.metad
                {
 
                   return new ConnDefPoolImpl(minPoolSize, initialPoolSize, maxPoolSize,
-                                             prefill, useStrictMin, flushStrategy);
+                                             prefill, useStrictMin, flushStrategy, capacity);
 
                }
                else
@@ -456,6 +458,10 @@ public abstract class CommonIronJacamarParser extends org.jboss.jca.common.metad
                      flushStrategy = elementAsFlushStrategy(reader);
                      break;
                   }
+                  case CAPACITY : {
+                     capacity = parseCapacity(reader);
+                     break;
+                  }
                   default :
                      throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
@@ -485,6 +491,7 @@ public abstract class CommonIronJacamarParser extends org.jboss.jca.common.metad
       Integer maxPoolSize = Defaults.MAX_POOL_SIZE;
       Boolean prefill = Defaults.PREFILL;
       FlushStrategy flushStrategy = Defaults.FLUSH_STRATEGY;
+      Capacity capacity = null;
       Boolean interleaving = Defaults.INTERLEAVING;
       Boolean isSameRmOverride = Defaults.IS_SAME_RM_OVERRIDE;
       Boolean padXid = Defaults.PAD_XID;
@@ -501,7 +508,7 @@ public abstract class CommonIronJacamarParser extends org.jboss.jca.common.metad
                {
 
                   return new ConnDefXaPoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin,
-                                               flushStrategy,
+                                               flushStrategy, capacity,
                                                isSameRmOverride, interleaving, padXid,
                                                wrapXaDataSource, noTxSeparatePool);
 
@@ -560,6 +567,10 @@ public abstract class CommonIronJacamarParser extends org.jboss.jca.common.metad
                   }
                   case FLUSH_STRATEGY : {
                      flushStrategy = elementAsFlushStrategy(reader);
+                     break;
+                  }
+                  case CAPACITY : {
+                     capacity = parseCapacity(reader);
                      break;
                   }
                   default :

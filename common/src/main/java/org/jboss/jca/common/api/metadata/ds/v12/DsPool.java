@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.common.api.metadata.ds.v12;
 
+import org.jboss.jca.common.api.metadata.common.Capacity;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,6 +38,12 @@ public interface DsPool extends org.jboss.jca.common.api.metadata.ds.v11.DsPool
     * @return The size
     */
    public Integer getInitialPoolSize();
+
+   /**
+    * Get the capacity
+    * @return The value
+    */
+   public Capacity getCapacity();
 
    /**
    *
@@ -84,7 +92,12 @@ public interface DsPool extends org.jboss.jca.common.api.metadata.ds.v11.DsPool
       /**
        * allow-multiple-users tag
        */
-      ALLOW_MULTIPLE_USERS("allow-multiple-users");
+      ALLOW_MULTIPLE_USERS("allow-multiple-users"),
+
+      /**
+       * capacity tag
+       */
+      CAPACITY("capacity");
 
       private String name;
 

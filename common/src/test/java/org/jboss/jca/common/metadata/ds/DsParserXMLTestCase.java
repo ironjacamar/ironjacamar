@@ -105,6 +105,9 @@ public class DsParserXMLTestCase extends XMLParserTestBase
    public void checkMetadata(JCAMetadata result)
    {
       DataSources dss = (DataSources) result;
+
+      System.out.println(dss);
+
       //Ds part
       DataSourceImpl ds = (DataSourceImpl) dss.getDataSource().get(0);
       assertNotNull(ds);
@@ -134,6 +137,11 @@ public class DsParserXMLTestCase extends XMLParserTestBase
       assertTrue(pool.isUseStrictMin());
       assertEquals(pool.getFlushStrategy(), FlushStrategy.ENTIRE_POOL);
       assertTrue(pool.isAllowMultipleUsers());
+      assertNotNull(pool.getCapacity());
+      assertNotNull(pool.getCapacity().getIncrementer());
+      checkExtension(pool.getCapacity().getIncrementer(), "ic");
+      assertNotNull(pool.getCapacity().getDecrementer());
+      checkExtension(pool.getCapacity().getDecrementer(), "dc");
 
       DsSecurityImpl security = (DsSecurityImpl) ds.getSecurity();
       assertNotNull(security);
@@ -197,6 +205,11 @@ public class DsParserXMLTestCase extends XMLParserTestBase
       assertTrue(poolXa.isUseStrictMin());
       assertEquals(poolXa.getFlushStrategy(), FlushStrategy.IDLE_CONNECTIONS);
       assertTrue(poolXa.isAllowMultipleUsers());
+      assertNotNull(poolXa.getCapacity());
+      assertNotNull(poolXa.getCapacity().getIncrementer());
+      checkExtension(poolXa.getCapacity().getIncrementer(), "ic");
+      assertNotNull(poolXa.getCapacity().getDecrementer());
+      checkExtension(pool.getCapacity().getDecrementer(), "dc");
       assertTrue(poolXa.isSameRmOverride());
       assertTrue(poolXa.isInterleaving());
       assertTrue(poolXa.isPadXid());

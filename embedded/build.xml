@@ -221,6 +221,22 @@
       </descriptors>
     </metadata-parser>
 
+    <metadata-parser verbose="false"
+                     classpathref="main.lib.path.id">
+      <path pathToApi="${build.embedded.dir}/src/main/java"
+            pathToImpl="${build.embedded.dir}/src/main/java"
+            pathToServices="${build.embedded.dir}/src/main/resources/META-INF/services"/>
+      <descriptors>
+        <descriptor pathToXsd="common/src/main/resources/schema/datasources_1_2.xsd"
+                    nameSpace="datasources"
+                    packageApi="org.jboss.jca.embedded.dsl.datasources12.api"
+                    packageImpl="org.jboss.jca.embedded.dsl.datasources12.impl"
+                    descriptorName="DatasourcesDescriptor"
+                    elementName="datasources"
+                    elementType="datasources:datasourcesType"/>
+      </descriptors>
+    </metadata-parser>
+
     <javac srcdir="${build.embedded.dir}/src/main/java"
            destdir="${build.embedded.dir}/impl"
            classpathref="main.lib.path.id"

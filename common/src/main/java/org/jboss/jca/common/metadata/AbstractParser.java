@@ -24,6 +24,7 @@ package org.jboss.jca.common.metadata;
 import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.CommonLogger;
 import org.jboss.jca.common.api.metadata.Defaults;
+import org.jboss.jca.common.api.metadata.common.Capacity;
 import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.common.CommonSecurity;
 import org.jboss.jca.common.api.metadata.common.CommonXaPool;
@@ -151,7 +152,6 @@ public abstract class AbstractParser
    protected String elementAsString(XMLStreamReader reader) throws XMLStreamException
    {
       String elementtext = rawElementText(reader);
-      //return elementtext;
       return getSubstitutionValue(elementtext);
    }
 
@@ -800,6 +800,62 @@ public abstract class AbstractParser
                }
                break;
             }
+         }
+      }
+      throw new ParserException(bundle.unexpectedEndOfDocument());
+   }
+
+   /**
+    * Parse capacity tag
+    *
+    * @param reader reader
+    * @return the parsed recovery object
+    * @throws XMLStreamException in case of error
+    * @throws ParserException in case of error
+    * @throws ValidateException in case of error
+    */
+   protected Capacity parseCapacity(XMLStreamReader reader) throws XMLStreamException, ParserException,
+      ValidateException
+   {
+      Extension incrementer = null;
+      Extension decrementer = null;
+
+      while (reader.hasNext())
+      {
+         switch (reader.nextTag())
+         {
+            case END_ELEMENT : {
+               if (org.jboss.jca.common.api.metadata.ds.v12.DsPool.Tag.forName(reader.getLocalName()) ==
+                   org.jboss.jca.common.api.metadata.ds.v12.DsPool.Tag.CAPACITY)
+               {
+                  return new Capacity(incrementer, decrementer);
+               }
+               else
+               {
+                  if (Capacity.Tag.forName(reader.getLocalName()) == Capacity.Tag.UNKNOWN)
+                  {
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
+                  }
+               }
+               break;
+            }
+            case START_ELEMENT : {
+               Capacity.Tag tag = Capacity.Tag.forName(reader.getLocalName());
+               switch (tag)
+               {
+                  case INCREMENTER : {
+                     incrementer = parseExtension(reader, tag.getLocalName());
+                     break;
+                  }
+                  case DECREMENTER : {
+                     decrementer = parseExtension(reader, tag.getLocalName());
+                     break;
+                  }
+               }
+               break;
+            }
+            default :
+               throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
          }
       }
       throw new ParserException(bundle.unexpectedEndOfDocument());

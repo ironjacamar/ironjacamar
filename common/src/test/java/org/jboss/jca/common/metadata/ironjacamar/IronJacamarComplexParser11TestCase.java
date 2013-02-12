@@ -26,13 +26,13 @@ import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
 import org.jboss.jca.common.api.metadata.common.CommonSecurity;
 import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
 import org.jboss.jca.common.api.metadata.common.CommonValidation;
-import org.jboss.jca.common.api.metadata.common.CommonXaPool;
 import org.jboss.jca.common.api.metadata.common.Credential;
 import org.jboss.jca.common.api.metadata.common.Extension;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.common.v11.CommonConnDef;
+import org.jboss.jca.common.api.metadata.common.v11.ConnDefXaPool;
 import org.jboss.jca.common.metadata.XMLParserTestBase;
 import org.jboss.jca.common.metadata.ironjacamar.v11.IronJacamarImpl;
 import org.jboss.jca.common.metadata.ironjacamar.v11.IronJacamarParser;
@@ -106,12 +106,27 @@ public class IronJacamarComplexParser11TestCase extends XMLParserTestBase
       assertEquals(cp.get("Property4"), "2");
 
       assertTrue(cd.isXa());
-      CommonXaPool xaPool = (CommonXaPool) cd.getPool();
+      assertNotNull(cd.getPool());
+      assertTrue(cd.getPool() instanceof ConnDefXaPool);
+
+      ConnDefXaPool xaPool = (ConnDefXaPool) cd.getPool();
       assertEquals(1, (int) xaPool.getMinPoolSize());
+      assertEquals(2, (int) xaPool.getInitialPoolSize());
       assertEquals(5, (int) xaPool.getMaxPoolSize());
       assertTrue(xaPool.isPrefill());
       assertTrue(xaPool.isUseStrictMin());
       assertEquals(xaPool.getFlushStrategy(), FlushStrategy.IDLE_CONNECTIONS);
+      assertNotNull(xaPool.getCapacity());
+      assertNotNull(xaPool.getCapacity().getIncrementer());
+      assertNotNull(xaPool.getCapacity().getIncrementer().getClassName());
+      assertEquals("ic", xaPool.getCapacity().getIncrementer().getClassName());
+      assertNotNull(xaPool.getCapacity().getIncrementer().getConfigPropertiesMap());
+      assertEquals(2, xaPool.getCapacity().getIncrementer().getConfigPropertiesMap().size());
+      assertNotNull(xaPool.getCapacity().getDecrementer());
+      assertNotNull(xaPool.getCapacity().getDecrementer().getClassName());
+      assertEquals("dc", xaPool.getCapacity().getDecrementer().getClassName());
+      assertNotNull(xaPool.getCapacity().getDecrementer().getConfigPropertiesMap());
+      assertEquals(2, xaPool.getCapacity().getDecrementer().getConfigPropertiesMap().size());
       assertTrue(xaPool.isSameRmOverride());
       assertTrue(xaPool.isInterleaving());
       assertTrue(xaPool.isNoTxSeparatePool());
@@ -165,13 +180,14 @@ public class IronJacamarComplexParser11TestCase extends XMLParserTestBase
       assertEquals(0, cp.size());
 
       assertTrue(cd.isXa());
-      xaPool = (CommonXaPool) cd.getPool();
+      xaPool = (ConnDefXaPool) cd.getPool();
       //default values
       assertEquals(0, (int) xaPool.getMinPoolSize());
       assertEquals(20, (int) xaPool.getMaxPoolSize());
       assertFalse(xaPool.isPrefill());
       assertFalse(xaPool.isUseStrictMin());
       assertEquals(xaPool.getFlushStrategy(), FlushStrategy.ENTIRE_POOL);
+      assertNull(xaPool.getCapacity());
       assertFalse(xaPool.isSameRmOverride());
       //default for boolean-presenceType
       assertFalse(xaPool.isInterleaving());
@@ -215,12 +231,13 @@ public class IronJacamarComplexParser11TestCase extends XMLParserTestBase
       assertEquals(0, cp.size());
 
       assertTrue(cd.isXa());
-      xaPool = (CommonXaPool) cd.getPool();
+      xaPool = (ConnDefXaPool) cd.getPool();
       //default values
       assertEquals(0, (int) xaPool.getMinPoolSize());
       assertEquals(20, (int) xaPool.getMaxPoolSize());
       assertFalse(xaPool.isPrefill());
       assertEquals(xaPool.getFlushStrategy(), FlushStrategy.FAILING_CONNECTION_ONLY);
+      assertNull(xaPool.getCapacity());
       assertEquals(null, xaPool.isSameRmOverride());
       //default for boolean-presenceType
       assertFalse(xaPool.isInterleaving());

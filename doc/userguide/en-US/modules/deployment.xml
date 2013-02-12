@@ -2183,4 +2183,246 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
 
    </section>
 
+   <section id="deploying_general">
+      <title>General deployment settings</title>
+
+      <para>
+        This section will provide an overview of general deployment settings that are shared between resource adapter
+        activations, and datasource deployments.
+      </para>
+
+      <section id="deploying_capacity_policies">
+        <title>Capacity policies</title>
+
+        <para>
+          The policy for creating and destroying physical connections for a pool can be controlled by specifying
+          which policy that should be used.
+        </para>
+        
+        <para>
+          The default policies are only to create one connection per request, and to destroy all connections timed
+          out when the idle timeout is scheduled.
+        </para>
+
+        <section id="deploying_capacity_increment">
+          <title>Increment policies</title>
+
+          <para>
+            The following increment policies are supported.
+          </para>
+          
+          <section id="deploying_capacity_increment_maxpool">
+            <title>MaxPoolSize policy</title>
+            
+            <para>
+              The <code>org.jboss.jca.core.connectionmanager.pool.capacity.MaxPoolSizeIncrementer</code> policy
+              will fill the pool to its max size for each request.
+            </para>
+            
+            <para>
+              This policy is useful when you want to keep the maximum number of connections available all the time.
+            </para>
+          </section>
+
+          <section id="deploying_capacity_increment_size">
+            <title>Size policy</title>
+            
+            <para>
+              The <code>org.jboss.jca.core.connectionmanager.pool.capacity.SizeIncrementer</code> policy
+              will fill the pool by the specified number of connections for each request.
+            </para>
+            
+            <table frame="all">
+              <title>Policy properties</title>
+              <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                <colspec colname="c1" colwidth="2*"/>
+                <colspec colname="c2" colwidth="3*"/>
+                <thead>
+                  <row>
+                    <entry align="left">Name</entry>
+                    <entry align="left">Desciption</entry>
+                  </row>
+                </thead>
+                <tbody>
+                  <row>
+                    <entry><code>Size</code></entry>
+                    <entry>
+                      The number of connections that should be created
+                    </entry>
+                  </row>
+                </tbody>
+              </tgroup>
+            </table>
+
+            <para>
+              This policy is useful when you want to increment with an additional number of connections per
+              request in anticipation that the next request will also need a connection.
+            </para>
+
+            <para>
+              This is the default increment policy with a value of 1.
+            </para>
+
+          </section>
+
+          <section id="deploying_capacity_increment_watermark">
+            <title>Watermark policy</title>
+            
+            <para>
+              The <code>org.jboss.jca.core.connectionmanager.pool.capacity.WatermarkIncrementer</code> policy
+              will fill the pool to the specified number of connections for each request.
+            </para>
+            
+            <table frame="all">
+              <title>Policy properties</title>
+              <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                <colspec colname="c1" colwidth="2*"/>
+                <colspec colname="c2" colwidth="3*"/>
+                <thead>
+                  <row>
+                    <entry align="left">Name</entry>
+                    <entry align="left">Desciption</entry>
+                  </row>
+                </thead>
+                <tbody>
+                  <row>
+                    <entry><code>Watermark</code></entry>
+                    <entry>
+                      The watermark level for the number of connections
+                    </entry>
+                  </row>
+                </tbody>
+              </tgroup>
+            </table>
+
+            <para>
+              This policy is useful when you want to keep a specified number of connections in the pool
+              at all time.
+            </para>
+          </section>
+
+        </section>
+
+        <!-- Decrement policies -->
+        <section id="deploying_capacity_decrement">
+          <title>Decrement policies</title>
+
+          <para>
+            The following decrement policies are supported.
+          </para>
+          
+          <section id="deploying_capacity_decrement_minpool">
+            <title>MinPoolSize policy</title>
+            
+            <para>
+              The <code>org.jboss.jca.core.connectionmanager.pool.capacity.MinPoolSizeDecrementer</code> policy
+              will decrement the pool to its min size for each request.
+            </para>
+            
+            <para>
+              This policy is useful when you want to limit the number of connections after each idle timeout request.
+            </para>
+          </section>
+
+          <section id="deploying_capacity_decrement_size">
+            <title>Size policy</title>
+            
+            <para>
+              The <code>org.jboss.jca.core.connectionmanager.pool.capacity.SizeDecrementer</code> policy
+              will decrement the pool by the specified number of connections for each idle timeout request.
+            </para>
+            
+            <table frame="all">
+              <title>Policy properties</title>
+              <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                <colspec colname="c1" colwidth="2*"/>
+                <colspec colname="c2" colwidth="3*"/>
+                <thead>
+                  <row>
+                    <entry align="left">Name</entry>
+                    <entry align="left">Desciption</entry>
+                  </row>
+                </thead>
+                <tbody>
+                  <row>
+                    <entry><code>Size</code></entry>
+                    <entry>
+                      The number of connections that should be created
+                    </entry>
+                  </row>
+                </tbody>
+              </tgroup>
+            </table>
+
+            <para>
+              This policy is useful when you want to decrement an additional number of connections per
+              idle timeout request in anticipation that the pool usage will lower over time.
+            </para>
+          </section>
+
+          <section id="deploying_capacity_decrement_timedout">
+            <title>TimedOut policy</title>
+            
+            <para>
+              The <code>org.jboss.jca.core.connectionmanager.pool.capacity.TimedOutDecrementer</code> policy
+              will removed all connections that have timed out from the pool for each idle timeout request.
+            </para>
+
+            <para>
+              This policy is the default decrement policy.
+            </para>
+          </section>
+
+          <section id="deploying_capacity_decrement_watermark">
+            <title>Watermark policy</title>
+            
+            <para>
+              The <code>org.jboss.jca.core.connectionmanager.pool.capacity.WatermarkDecrementer</code> policy
+              will decrement the pool to the specified number of connections for each idle timeout request.
+            </para>
+            
+            <table frame="all">
+              <title>Policy properties</title>
+              <tgroup cols="2" align="left" colsep="1" rowsep="1">
+                <colspec colname="c1" colwidth="2*"/>
+                <colspec colname="c2" colwidth="3*"/>
+                <thead>
+                  <row>
+                    <entry align="left">Name</entry>
+                    <entry align="left">Desciption</entry>
+                  </row>
+                </thead>
+                <tbody>
+                  <row>
+                    <entry><code>Watermark</code></entry>
+                    <entry>
+                      The watermark level for the number of connections
+                    </entry>
+                  </row>
+                </tbody>
+              </tgroup>
+            </table>
+
+            <para>
+              This policy is useful when you want to keep a specified number of connections in the pool
+              at all time.
+            </para>
+          </section>
+
+        </section>
+
+
+
+<!--
+A       core/src/main/java/org/jboss/jca/core/connectionmanager/pool/capacity/MinPoolSizeDecrementer.java
+A       core/src/main/java/org/jboss/jca/core/connectionmanager/pool/capacity/SizeDecrementer.java
+A       core/src/main/java/org/jboss/jca/core/connectionmanager/pool/capacity/TimedOutDecrementer.java
+A       core/src/main/java/org/jboss/jca/core/connectionmanager/pool/capacity/WatermarkDecrementer.java
+-->
+
+      </section>
+
+   </section>
+
+
 </chapter>

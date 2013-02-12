@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.common.metadata.common.v11;
 
+import org.jboss.jca.common.api.metadata.common.Capacity;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.common.api.metadata.common.v11.ConnDefXaPool;
 import org.jboss.jca.common.api.validator.ValidateException;
@@ -38,6 +39,9 @@ public class ConnDefXaPoolImpl extends org.jboss.jca.common.metadata.common.Comm
    /** initial-pool-size */
    protected final Integer initialPoolSize;
 
+   /** capacity */
+   protected final Capacity capacity;
+
    /**
     * Constructor
     *
@@ -47,6 +51,7 @@ public class ConnDefXaPoolImpl extends org.jboss.jca.common.metadata.common.Comm
     * @param prefill prefill
     * @param useStrictMin useStrictMin
     * @param flushStrategy flushStrategy
+    * @param capacity capacity
     * @param isSameRmOverride isSameRmOverride
     * @param interleaving interleaving
     * @param padXid padXid
@@ -56,7 +61,7 @@ public class ConnDefXaPoolImpl extends org.jboss.jca.common.metadata.common.Comm
     */
    public ConnDefXaPoolImpl(Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize,
                             Boolean prefill, Boolean useStrictMin,
-                            FlushStrategy flushStrategy,
+                            FlushStrategy flushStrategy, Capacity capacity,
                             Boolean isSameRmOverride, Boolean interleaving, 
                             Boolean padXid, Boolean wrapXaResource,
                             Boolean noTxSeparatePool) throws ValidateException
@@ -64,6 +69,7 @@ public class ConnDefXaPoolImpl extends org.jboss.jca.common.metadata.common.Comm
       super(minPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy,
             isSameRmOverride, interleaving, padXid, wrapXaResource, noTxSeparatePool);
       this.initialPoolSize = initialPoolSize;
+      this.capacity = capacity;
    }
 
    /**
@@ -76,12 +82,22 @@ public class ConnDefXaPoolImpl extends org.jboss.jca.common.metadata.common.Comm
       return initialPoolSize;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Capacity getCapacity()
+   {
+      return capacity;
+   }
+
    @Override
    public int hashCode()
    {
       final int prime = 31;
       int result = super.hashCode();
       result = prime * result + ((initialPoolSize == null) ? 7 : 7 * initialPoolSize.hashCode());
+      result = prime * result + ((capacity == null) ? 7 : 7 * capacity.hashCode());
       return result;
    }
 
@@ -102,6 +118,14 @@ public class ConnDefXaPoolImpl extends org.jboss.jca.common.metadata.common.Comm
       }
       else if (!initialPoolSize.equals(other.initialPoolSize))
          return false;
+      if (capacity == null)
+      {
+         if (other.capacity != null)
+            return false;
+      }
+      else if (!capacity.equals(other.capacity))
+         return false;
+
       return true;
    }
 
@@ -155,6 +179,13 @@ public class ConnDefXaPoolImpl extends org.jboss.jca.common.metadata.common.Comm
          sb.append("<").append(ConnDefXaPool.Tag.FLUSH_STRATEGY).append(">");
          sb.append(flushStrategy);
          sb.append("</").append(ConnDefXaPool.Tag.FLUSH_STRATEGY).append(">");
+      }
+
+      if (capacity != null)
+      {
+         sb.append("<").append(ConnDefXaPool.Tag.CAPACITY).append(">");
+         sb.append(capacity);
+         sb.append("</").append(ConnDefXaPool.Tag.CAPACITY).append(">");
       }
 
       if (isSameRmOverride != null)

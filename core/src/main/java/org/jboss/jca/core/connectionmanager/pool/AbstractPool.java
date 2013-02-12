@@ -29,7 +29,9 @@ import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
+import org.jboss.jca.core.connectionmanager.pool.api.Capacity;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
+import org.jboss.jca.core.connectionmanager.pool.capacity.DefaultCapacity;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactory;
 import org.jboss.jca.core.connectionmanager.transaction.LockKey;
@@ -102,6 +104,9 @@ public abstract class AbstractPool implements Pool
    /** Are the connections sharable */
    private boolean sharable;
 
+   /** The capacity */
+   private Capacity capacity;
+
    /**
     * Create a new base pool.
     *
@@ -126,6 +131,7 @@ public abstract class AbstractPool implements Pool
       this.log = getLogger();
       this.trace = log.isTraceEnabled();
       this.statistics = new PoolStatisticsImpl(pc.getMaxSize(), mcpPools);
+      this.capacity = null;
    }
 
    /**
@@ -153,6 +159,25 @@ public abstract class AbstractPool implements Pool
    public boolean isSharable()
    {
       return sharable;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public Capacity getCapacity()
+   {
+      if (capacity == null)
+         return DefaultCapacity.INSTANCE;
+
+      return capacity;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setCapacity(Capacity c)
+   {
+      capacity = c;
    }
 
    /**

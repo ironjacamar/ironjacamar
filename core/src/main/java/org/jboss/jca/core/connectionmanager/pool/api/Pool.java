@@ -69,6 +69,18 @@ public interface Pool extends org.jboss.jca.core.api.connectionmanager.pool.Pool
    public void setConnectionListenerFactory(ConnectionListenerFactory clf);
 
    /**
+    * Get the capacity policy
+    * @return The value
+    */
+   public Capacity getCapacity();
+
+   /**
+    * Set the capacity policy
+    * @param c The value
+    */
+   public void setCapacity(Capacity c);
+
+   /**
     * Get a connection
     * 
     * @param trackByTransaction for transaction stickiness
