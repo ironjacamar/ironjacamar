@@ -4,6 +4,18 @@
 
   <para>All the IronJacamar schemas are deployed under <ulink url="http://www.jboss.org/ironjacamar/schema/">http://www.jboss.org/ironjacamar/schema/</ulink>.</para>
 
+  <!-- JCA 1.7 -->
+  <section id="jca17">
+    <title>Java EE Connector Architecture 1.7</title>
+
+    <programlisting language="xml">
+      <xi:include parse="text" 
+                  href="../../../../common/src/main/resources/schema/connector_1_7.xsd"
+                  xmlns:xi="http://www.w3.org/2001/XInclude"/>
+    </programlisting>
+
+  </section>
+
   <!-- JCA 1.6 -->
   <section id="jca16">
     <title>Java EE Connector Architecture 1.6</title>
@@ -108,6 +120,18 @@
     <programlisting language="xml">
       <xi:include parse="text" 
                   href="../../../../common/src/main/resources/schema/datasources_1_1.xsd"
+                  xmlns:xi="http://www.w3.org/2001/XInclude"/>
+    </programlisting>
+
+  </section>
+
+  <!-- Datasources 1.2 -->
+  <section id="ds12">
+    <title>Datasources 1.2</title>
+
+    <programlisting language="xml">
+      <xi:include parse="text" 
+                  href="../../../../common/src/main/resources/schema/datasources_1_2.xsd"
                   xmlns:xi="http://www.w3.org/2001/XInclude"/>
     </programlisting>
 
