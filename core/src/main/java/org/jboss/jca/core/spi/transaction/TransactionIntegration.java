@@ -118,6 +118,19 @@ public interface TransactionIntegration
                                                 String jndiName);
 
    /**
+    * Create a connectable LocalXAResource instance
+    * @param cm The connection manager
+    * @param productName The product name
+    * @param productVersion The product version
+    * @param jndiName The JNDI name for the resource
+    * @param cr The connectable resource
+    * @return The value
+    */
+   public LocalXAResource createConnectableLocalXAResource(ConnectionManager cm, 
+                                                           String productName, String productVersion,
+                                                           String jndiName, ConnectableResource cr);
+
+   /**
     * Create an XAResource wrapper instance
     * @param xares The XAResource instance
     * @param pad Should the branch qualifier for Xid's be padded
@@ -131,4 +144,20 @@ public interface TransactionIntegration
                                                     boolean pad, Boolean override, 
                                                     String productName, String productVersion,
                                                     String jndiName);
+
+   /**
+    * Create a connectable XAResource wrapper instance
+    * @param xares The XAResource instance
+    * @param pad Should the branch qualifier for Xid's be padded
+    * @param override Should the isSameRM value be overriden; <code>null</code> for instance equally check
+    * @param productName The product name
+    * @param productVersion The product version
+    * @param jndiName The JNDI name for the resource
+    * @param cr The connectable resource
+    * @return The value
+    */
+   public XAResourceWrapper createConnectableXAResourceWrapper(XAResource xares,
+                                                               boolean pad, Boolean override, 
+                                                               String productName, String productVersion,
+                                                               String jndiName, ConnectableResource cr);
 }

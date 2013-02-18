@@ -24,6 +24,7 @@ package org.jboss.jca.adapters.jdbc;
 
 import org.jboss.jca.adapters.jdbc.spi.reauth.ReauthPlugin;
 import org.jboss.jca.adapters.jdbc.util.ReentrantLock;
+import org.jboss.jca.core.spi.transaction.ConnectableResource;
 
 import java.io.PrintWriter;
 import java.sql.CallableStatement;
@@ -62,7 +63,7 @@ import org.jboss.logging.Logger;
  * @version $Revision: 105425 $
  */
 
-public abstract class BaseWrapperManagedConnection implements ManagedConnection
+public abstract class BaseWrapperManagedConnection implements ManagedConnection, ConnectableResource
 {
    private static final WrappedConnectionFactory WRAPPED_CONNECTION_FACTORY;
 
@@ -446,14 +447,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
          mcf.loadReauthPlugin();
 
       checkIdentity(subject, cri);
-      WrappedConnection lc = WRAPPED_CONNECTION_FACTORY.createWrappedConnection(this,
-                                                                                mcf.getSpy().booleanValue(),
-                                                                                mcf.getJndiName());
-      synchronized (handles)
-      {
-         handles.add(lc);
-      }
-      return lc;
+      return getWrappedConnection();
    }
 
    /**
@@ -521,6 +515,14 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
    public Properties getProperties()
    {
       return this.props;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public AutoCloseable getConnection() throws Exception
+   {
+      return getWrappedConnection();
    }
 
    /**
@@ -648,7 +650,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
     * @return The connection
     * @exception SQLException Thrown if there isn't a connection
     */
-   Connection getConnection() throws SQLException
+   Connection getRealConnection() throws SQLException
    {
       if (con == null)
          throw new SQLException("Connection has been destroyed!!!");
@@ -1175,6 +1177,25 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection
 
       throw new ResourceException("SQLException", e);
    }
+
+   /**
+    * Get a wrapped connection
+    * @return The connection
+    * @exception ResourceException Thrown if an error occurs
+    */
+   private WrappedConnection getWrappedConnection() throws ResourceException
+   {
+      WrappedConnection lc = WRAPPED_CONNECTION_FACTORY.createWrappedConnection(this,
+                                                                                mcf.getSpy().booleanValue(),
+                                                                                mcf.getJndiName());
+      synchronized (handles)
+      {
+         handles.add(lc);
+      }
+
+      return lc;
+   }
+
 
    /**
     * Returns true if the underlying connection is handled by an XA resource manager

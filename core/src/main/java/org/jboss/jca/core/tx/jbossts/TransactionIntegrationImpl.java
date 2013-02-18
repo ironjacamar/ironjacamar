@@ -23,6 +23,7 @@ package org.jboss.jca.core.tx.jbossts;
 
 import org.jboss.jca.core.api.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
+import org.jboss.jca.core.spi.transaction.ConnectableResource;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.core.spi.transaction.local.LocalXAResource;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
@@ -162,6 +163,25 @@ public class TransactionIntegrationImpl implements TransactionIntegration
    }
 
    /**
+    * Create a connectable LocalXAResource instance
+    * @param cm The connection manager
+    * @param productName The product name
+    * @param productVersion The product version
+    * @param jndiName The JNDI name for the resource
+    * @param cr The connectable resource
+    * @return The value
+    */
+   public LocalXAResource createConnectableLocalXAResource(ConnectionManager cm,
+                                                           String productName, String productVersion,
+                                                           String jndiName, ConnectableResource cr)
+   {
+      LocalXAResource result = new LocalConnectableXAResourceImpl(productName, productVersion, jndiName, cr);
+      result.setConnectionManager(cm);
+
+      return result;
+   }
+
+   /**
     * Create a LocalXAResource instance
     * @param cm The connection manager
     * @param productName The product name
@@ -177,6 +197,28 @@ public class TransactionIntegrationImpl implements TransactionIntegration
       result.setConnectionManager(cm);
 
       return result;
+   }
+
+   /**
+    * Create a connectable XAResource wrapper instance
+    * @param xares The XAResource instance
+    * @param pad Should the branch qualifier for Xid's be padded
+    * @param override Should the isSameRM value be overriden; <code>null</code> for instance equally check
+    * @param productName The product name
+    * @param productVersion The product version
+    * @param jndiName The JNDI name for the resource
+    * @param cr The connectable resource
+    * @return The value
+    */
+   public XAResourceWrapper createConnectableXAResourceWrapper(XAResource xares,
+                                                               boolean pad, Boolean override, 
+                                                               String productName, String productVersion,
+                                                               String jndiName,
+                                                               ConnectableResource cr)
+   {
+      return new ConnectableXAResourceWrapperImpl(xares, pad, override,
+                                                  productName, productVersion, jndiName,
+                                                  cr);
    }
 
    /**

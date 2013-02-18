@@ -552,7 +552,18 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
          if (eisProductVersion == null)
             eisProductVersion = getJndiName();
 
-         xaResource = txIntegration.createLocalXAResource(this, eisProductName, eisProductVersion, getJndiName());
+         if (mc instanceof org.jboss.jca.core.spi.transaction.ConnectableResource)
+         {
+            org.jboss.jca.core.spi.transaction.ConnectableResource cr =
+               (org.jboss.jca.core.spi.transaction.ConnectableResource)mc;
+
+            xaResource = txIntegration.createConnectableLocalXAResource(this, eisProductName, eisProductVersion,
+                                                                        getJndiName(), cr);
+         }
+         else
+         {
+            xaResource = txIntegration.createLocalXAResource(this, eisProductName, eisProductVersion, getJndiName());
+         }
     
          if (xaResourceTimeout != 0)
          {
@@ -585,13 +596,27 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
             if (eisProductVersion == null)
                eisProductVersion = getJndiName();
 
+            if (mc instanceof org.jboss.jca.core.spi.transaction.ConnectableResource)
+            {
+               org.jboss.jca.core.spi.transaction.ConnectableResource cr =
+                  (org.jboss.jca.core.spi.transaction.ConnectableResource)mc;
+
+               xaResource = txIntegration.createConnectableXAResourceWrapper(mc.getXAResource(), padXid, 
+                                                                             isSameRMOverride, 
+                                                                             eisProductName, eisProductVersion,
+                                                                             getJndiName(),
+                                                                             cr);
+            }
+            else
+            {
+               xaResource = txIntegration.createXAResourceWrapper(mc.getXAResource(), padXid, 
+                                                                  isSameRMOverride, 
+                                                                  eisProductName, eisProductVersion,
+                                                                  getJndiName());
+            }
+
             if (trace)
                log.tracef("Generating XAResourceWrapper for TxConnectionManager (%s)", this);
-
-            xaResource = txIntegration.createXAResourceWrapper(mc.getXAResource(), padXid, 
-                                                               isSameRMOverride, 
-                                                               eisProductName, eisProductVersion,
-                                                               getJndiName());
          }
          else
          {
