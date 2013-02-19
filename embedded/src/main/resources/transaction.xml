@@ -2,29 +2,6 @@
 
 <deployment>
 
-  <bean name="RecoveryEnvironmentBean" class="com.arjuna.ats.arjuna.common.RecoveryEnvironmentBean">
-    <constructor factoryClass="com.arjuna.ats.arjuna.common.recoveryPropertyManager" factoryMethod="getRecoveryEnvironmentBean"/>
-    <property name="recoveryInetAddress">localhost</property>
-    <property name="recoveryPort">4712</property>
-    <property name="transactionStatusManagerInetAddress">localhost</property>
-    <property name="transactionStatusManagerPort">4713</property>
-    <property name="recoveryModuleClassNames">
-      <list elementClass="java.lang.String">
-        <value>com.arjuna.ats.internal.arjuna.recovery.AtomicActionRecoveryModule</value>
-        <value>com.arjuna.ats.internal.txoj.recovery.TORecoveryModule</value>
-        <value>com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule</value>
-      </list>
-    </property>
-    <property name="expiryScannerClassNames">
-      <list elementClass="java.lang.String">
-        <value>com.arjuna.ats.internal.arjuna.recovery.ExpiredTransactionStatusManagerScanner</value>
-      </list>
-    </property>
-    <property name="recoveryActivators">
-      <null/>
-    </property>
-  </bean>
-
   <bean name="CoreEnvironmentBean" class="com.arjuna.ats.arjuna.common.CoreEnvironmentBean">
     <constructor factoryClass="com.arjuna.ats.arjuna.common.arjPropertyManager" factoryMethod="getCoreEnvironmentBean"/>
     <property name="socketProcessIdPort">0</property>
@@ -40,40 +17,29 @@
     <property name="txReaperTimeout">120000</property>
   </bean>
 
-  <bean name="ActionStoreObjectStoreEnvironmentBean" class="com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean">
-    <constructor factoryClass="com.arjuna.common.internal.util.propertyservice.BeanPopulator" factoryMethod="getNamedInstance">
+  <bean name="BeanPopulatorBean">
+    <constructor factoryClass="com.arjuna.common.internal.util.propertyservice.BeanPopulator" factoryMethod="getDefaultInstance">
       <parameter>com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean</parameter>
-      <parameter>default</parameter>
     </constructor>
-    <property name="objectStoreDir">${iron.jacamar.home}/tmp/tx-object-store</property>
+    <property name="ObjectStoreType">com.arjuna.ats.internal.arjuna.objectstore.VolatileStore</property>
   </bean>
 
-  <bean name="StateStoreObjectStoreEnvironmentBean" class="com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean">
+  <bean name="StateStoreObjectStoreEnvironmentBean">
     <constructor factoryClass="com.arjuna.common.internal.util.propertyservice.BeanPopulator" factoryMethod="getNamedInstance">
       <parameter>com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean</parameter>
       <parameter>stateStore</parameter>
     </constructor>
-    <property name="objectStoreDir">${iron.jacamar.home}/tmp/tx-object-store</property>
+    <property name="ObjectStoreType">com.arjuna.ats.internal.arjuna.objectstore.VolatileStore</property>
+    <depends>BeanPopulatorBean</depends>
   </bean>
 
-  <bean name="CommunicationStoreObjectStoreEnvironmentBean" class="com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean">
+  <bean name="CommunicationStoreObjectStoreEnvironmentBean">
     <constructor factoryClass="com.arjuna.common.internal.util.propertyservice.BeanPopulator" factoryMethod="getNamedInstance">
       <parameter>com.arjuna.ats.arjuna.common.ObjectStoreEnvironmentBean</parameter>
       <parameter>communicationStore</parameter>
     </constructor>
-    <property name="objectStoreDir">${iron.jacamar.home}/tmp/tx-object-store</property>
-  </bean>
-
-  <bean name="ObjectStoreBrowserBean" class="com.arjuna.ats.arjuna.tools.osb.mbean.ObjStoreBrowser">
-    <property name="types">
-      <map keyClass="java.lang.String" valueClass="java.lang.String">
-        <entry>
-          <key>StateManager/BasicAction/TwoPhaseCoordinator/AtomicAction</key>
-          <value>com.arjuna.ats.internal.jta.tools.osb.mbean.jta.JTAActionBean</value>
-        </entry>
-      </map>
-    </property>
-    <depends>ActionStoreObjectStoreEnvironmentBean</depends>
+    <property name="ObjectStoreType">com.arjuna.ats.internal.arjuna.objectstore.VolatileStore</property>
+    <depends>BeanPopulatorBean</depends>
   </bean>
 
   <bean name="JTAEnvironmentBean" class="com.arjuna.ats.jta.common.JTAEnvironmentBean">
@@ -95,13 +61,6 @@
     </property>
   </bean>
 
-  <bean name="RecoveryManager" class="com.arjuna.ats.jbossatx.jta.RecoveryManagerService">
-    <depends>RecoveryEnvironmentBean</depends>
-    <depends>ActionStoreObjectStoreEnvironmentBean</depends>
-    <depends>StateStoreObjectStoreEnvironmentBean</depends>
-    <depends>CommunicationStoreObjectStoreEnvironmentBean</depends>
-  </bean>
-
   <bean name="XATerminator" class="com.arjuna.ats.internal.jbossatx.jta.jca.XATerminator"/>
 
   <bean name="TransactionSynchronizationRegistry" class="com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple">
@@ -113,16 +72,13 @@
   <bean name="TransactionManager" class="com.arjuna.ats.jbossatx.jta.TransactionManagerService">
     <property name="jbossXATerminator"><inject bean="XATerminator"/></property>
     <property name="transactionSynchronizationRegistry"><inject bean="TransactionSynchronizationRegistry"/></property>
-    <depends>RecoveryEnvironmentBean</depends>
     <depends>CoreEnvironmentBean</depends>
     <depends>CoordinatorEnvironmentBean</depends>
     <depends>JTAEnvironmentBean</depends>
-    <depends>RecoveryManager</depends>
     <depends>TransactionManagerJNDIBinding</depends>
     <depends>TransactionSynchronizationRegistryJNDIBinding</depends>
     <depends>TransactionPropagationContextImporterJNDIBinding</depends>
     <depends>TransactionPropagationContextExporterJNDIBinding</depends>
-    <depends>ActionStoreObjectStoreEnvironmentBean</depends>
     <depends>StateStoreObjectStoreEnvironmentBean</depends>
     <depends>CommunicationStoreObjectStoreEnvironmentBean</depends>
     <depends>TxControl</depends>
@@ -240,7 +196,7 @@
       <parameter><inject bean="TransactionSynchronizationRegistry"/></parameter>
       <parameter><inject bean="UserTransactionRegistry"/></parameter>
       <parameter><inject bean="TransactionManager" property="XATerminator"/></parameter>
-      <parameter><inject bean="RecoveryManager"/></parameter>
+      <parameter><null/></parameter>
     </constructor>
   </bean>
 
