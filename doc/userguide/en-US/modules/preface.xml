@@ -6,7 +6,7 @@
     <title>About IronJacamar</title>
 
     <para>The goal of the IronJacamar project is to provide an implementation of the Java Connector
-      Architecture 1.6 specification.</para>
+      Architecture 1.7 specification.</para>
     
     <para>The specification can be found here: <ulink url="http://www.jcp.org/en/jsr/detail?id=322">http://www.jcp.org/en/jsr/detail?id=322</ulink>.</para>
 
@@ -42,10 +42,16 @@
 
         <itemizedlist>
           <listitem>
+            Java EE Connector Architecture 1.7 (standalone / Java EE7)
+          </listitem>
+          <listitem>
             Lazy connection manager (JCA chapter 7.16)
           </listitem>
           <listitem>
             Distributed work manager (JCA chapter 10.3.11)
+          </listitem>
+          <listitem>
+            Advanced pool capacity policies and flush strategies
           </listitem>
           <listitem>
             Enhanced Arquillian integration
@@ -142,7 +148,7 @@
   <section id="license">
     <title>License</title>
 
-    <para>Copyright © 2012 Red Hat, Inc. and others.</para>
+    <para>Copyright © 2013 Red Hat, Inc. and others.</para>
     <para>The text of and illustrations in this document are licensed by Red Hat under
       a Creative Commons Attribution–Share Alike 3.0 Unported license ("CC-BY-SA").</para>
     <para>An explanation of CC-BY-SA is available at 
