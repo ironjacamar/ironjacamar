@@ -1230,7 +1230,7 @@ public abstract class AbstractResourceAdapterDeployer
             // ResourceAdapter
             if (cmd.getVersion() != Version.V_10)
             {
-               if (cmd.getVersion() == Version.V_16)
+               if (cmd.getVersion() == Version.V_16 || cmd.getVersion() == Version.V_17)
                {
                   Connector16 cmd16 = (Connector16)cmd;
                   if (cmd16.getRequiredWorkContexts() != null && cmd16.getRequiredWorkContexts().size() > 0)
@@ -2458,7 +2458,8 @@ public abstract class AbstractResourceAdapterDeployer
          if (activateDeployment)
          {
             // Bean validation
-            if (getConfiguration().getBeanValidation() && cmd.getVersion() == Version.V_16)
+            if (getConfiguration().getBeanValidation() && (cmd.getVersion() == Version.V_16 || 
+                                                           cmd.getVersion() == Version.V_17))
             {
                List<Class> groupsClasses = null;
 
