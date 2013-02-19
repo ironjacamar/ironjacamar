@@ -66,7 +66,7 @@ public class PoolStatisticsImpl implements PoolStatistics
    private static final String TIMED_OUT = "TimedOut";
    private static final String TOTAL_BLOCKING_TIME = "TotalBlockingTime";
    private static final String TOTAL_CREATION_TIME = "TotalCreationTime";
-   private static final String TOTAL_GET_TIME = "TotalCreationTime";
+   private static final String TOTAL_GET_TIME = "TotalGetTime";
    private static final String WAIT_COUNT = "WaitCount";
 
    private int maxPoolSize;
@@ -796,7 +796,7 @@ public class PoolStatisticsImpl implements PoolStatistics
       sb.append(",");
       sb.append(TOTAL_CREATION_TIME).append("=").append(getTotalCreationTime());
       sb.append(",");
-      sb.append(TOTAL_GET_TIME).append("=").append(getTotalCreationTime());
+      sb.append(TOTAL_GET_TIME).append("=").append(getTotalGetTime());
       sb.append(",");
       sb.append(WAIT_COUNT).append("=").append(getWaitCount());
 
