@@ -31,8 +31,8 @@ import javax.transaction.xa.XAResource;
  * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class ConnectableXAResourceWrapperImpl extends XAResourceWrapperImpl
-   implements ConnectableResource,
-              org.jboss.tm.ConnectableLastResource
+   implements ConnectableResource//,
+              //org.jboss.tm.ConnectableLastResource
 {
    /** The connectable resource */
    private ConnectableResource cr;
