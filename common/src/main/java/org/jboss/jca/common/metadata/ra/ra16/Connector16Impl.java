@@ -42,18 +42,19 @@ import java.util.List;
  * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
  *
  */
-public final class Connector16Impl extends Connector15Impl implements Connector16
+public class Connector16Impl extends Connector15Impl implements Connector16
 {
+   /** The serial version uid */
+   private static final long serialVersionUID = 2L;
 
-   /**
-    */
-   private static final long serialVersionUID = -6095735191032372517L;
+   /** The module name */
+   protected XsdString moduleName;
 
-   private final XsdString moduleName;
+   /** The required work contexts */
+   protected ArrayList<XsdString> requiredWorkContexts;
 
-   private ArrayList<XsdString> requiredWorkContexts;
-
-   private final boolean metadataComplete;
+   /** Metadata complete */
+   protected boolean metadataComplete;
 
    /**
     * @param moduleName name of the module

@@ -120,7 +120,10 @@ public interface Connector
       /**
        * 1.6
        */
-      V_16;
+      V_16,
+      /**
+       * 1.7
+       */
+      V_17;
    }
-
 }
