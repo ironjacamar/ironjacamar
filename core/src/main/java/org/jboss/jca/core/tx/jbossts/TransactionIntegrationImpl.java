@@ -123,6 +123,9 @@ public class TransactionIntegrationImpl implements TransactionIntegration
     */
    public XAResourceRecoveryRegistry getRecoveryRegistry()
    {
+      if (rr == null)
+         return null;
+
       return new XAResourceRecoveryRegistryImpl(rr);
    }
 
