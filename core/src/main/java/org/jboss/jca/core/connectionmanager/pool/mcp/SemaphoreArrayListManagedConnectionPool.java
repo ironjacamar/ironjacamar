@@ -636,6 +636,20 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
             statistics.setInUsedCount(checkedOut.size());
          }
+         else if (FlushMode.GRACEFULLY == mode)
+         {
+            if (trace)
+               log.trace("Gracefully flushing pool checkedOut=" + checkedOut + " inPool=" + cls);
+
+            // Mark checked out connections as requiring destruction upon return
+            for (ConnectionListener cl : checkedOut)
+            {
+               if (trace)
+                  log.trace("Graceful flush marking checked out connection for destruction " + cl);
+
+               cl.setState(ConnectionState.DESTROY);
+            }
+         }
 
          // Destroy connections in the pool
          while (cls.size() > 0)

@@ -51,6 +51,11 @@ public enum FlushStrategy
    IDLE_CONNECTIONS("IdleConnections"),
 
    /**
+    * Gracefully
+    */
+   GRACEFULLY("Gracefully"),
+
+   /**
     * Entire pool
     */
    ENTIRE_POOL("EntirePool"),
@@ -64,6 +69,11 @@ public enum FlushStrategy
     * All idle connections
     */
    ALL_IDLE_CONNECTIONS("AllIdleConnections"),
+
+   /**
+    * All gracefully
+    */
+   ALL_GRACEFULLY("AllGracefully"),
 
    /**
     * All connections

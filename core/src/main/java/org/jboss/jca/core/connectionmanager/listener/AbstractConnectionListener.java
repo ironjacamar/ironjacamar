@@ -393,6 +393,10 @@ public abstract class AbstractConnectionListener implements ConnectionListener
       {
          managedConnectionPool.flush(FlushMode.IDLE);
       }
+      else if (flushStrategy == FlushStrategy.GRACEFULLY)
+      {
+         managedConnectionPool.flush(FlushMode.GRACEFULLY);
+      }
       else if (flushStrategy == FlushStrategy.ENTIRE_POOL)
       {
          managedConnectionPool.flush(FlushMode.ALL);
@@ -404,6 +408,10 @@ public abstract class AbstractConnectionListener implements ConnectionListener
       else if (flushStrategy == FlushStrategy.ALL_IDLE_CONNECTIONS)
       {
          pool.flush(FlushMode.IDLE);
+      }
+      else if (flushStrategy == FlushStrategy.ALL_GRACEFULLY)
+      {
+         pool.flush(FlushMode.GRACEFULLY);
       }
       else if (flushStrategy == FlushStrategy.ALL_CONNECTIONS)
       {

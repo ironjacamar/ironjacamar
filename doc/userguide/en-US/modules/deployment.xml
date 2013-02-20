@@ -359,9 +359,9 @@ java:/eis/ao/&lt;deploymentName&gt;
                <entry>
                  Specifies how the pool should be flush in case of an error.
                  Valid values are: <code>FailingConnectionOnly</code> (default), <code>InvalidIdleConnections</code> (1.1),
-                                   <code>IdleConnections</code>, <code>EntirePool</code>,
+                                   <code>IdleConnections</code>, <code>Gracefully</code> (1.1), <code>EntirePool</code>,
                                    <code>AllInvalidIdleConnections</code> (1.1), <code>AllIdleConnections</code> (1.1),
-                                   <code>AllConnections</code> (1.1)
+                                   <code>AllGracefully</code> (1.1), <code>AllConnections</code> (1.1)
                </entry>
              </row>
            </tbody>
@@ -423,9 +423,9 @@ java:/eis/ao/&lt;deploymentName&gt;
                <entry>
                  Specifies how the pool should be flush in case of an error.
                  Valid values are: <code>FailingConnectionOnly</code> (default), <code>InvalidIdleConnections</code> (1.1),
-                                   <code>IdleConnections</code>, <code>EntirePool</code>,
+                                   <code>IdleConnections</code>, <code>Gracefully</code> (1.1), <code>EntirePool</code>,
                                    <code>AllInvalidIdleConnections</code> (1.1), <code>AllIdleConnections</code> (1.1),
-                                   <code>AllConnections</code> (1.1)
+                                   <code>AllGracefully</code> (1.1), <code>AllConnections</code> (1.1)
                </entry>
              </row>
              <row>
@@ -1331,9 +1331,9 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
                 <entry>
                   Specifies how the pool should be flush in case of an error.
                   Valid values are: <code>FailingConnectionOnly</code> (default), <code>InvalidIdleConnections</code> (1.2),
-                                    <code>IdleConnections</code>, <code>EntirePool</code>,
+                                    <code>IdleConnections</code>, <code>Gracefully</code> (1.2), <code>EntirePool</code>,
                                     <code>AllInvalidIdleConnections</code> (1.2), <code>AllIdleConnections</code> (1.2),
-                                    <code>AllConnections</code> (1.2)
+                                    <code>AllGracefully</code> (1.2), <code>AllConnections</code> (1.2)
                 </entry>
               </row>
               <row>
@@ -1402,9 +1402,9 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
                 <entry>
                   Specifies how the pool should be flush in case of an error.
                   Valid values are: <code>FailingConnectionOnly</code> (default), <code>InvalidIdleConnections</code> (1.2),
-                                    <code>IdleConnections</code>, <code>EntirePool</code>, 
+                                    <code>IdleConnections</code>, <code>Gracefully</code> (1.2), <code>EntirePool</code>, 
                                     <code>AllInvalidIdleConnections</code> (1.2), <code>AllIdleConnections</code> (1.2),
-                                    <code>AllConnections</code> (1.2)
+                                    <code>AllGracefully</code> (1.2), <code>AllConnections</code> (1.2)
                 </entry>
               </row>
               <row>
@@ -2410,15 +2410,6 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
           </section>
 
         </section>
-
-
-
-<!--
-A       core/src/main/java/org/jboss/jca/core/connectionmanager/pool/capacity/MinPoolSizeDecrementer.java
-A       core/src/main/java/org/jboss/jca/core/connectionmanager/pool/capacity/SizeDecrementer.java
-A       core/src/main/java/org/jboss/jca/core/connectionmanager/pool/capacity/TimedOutDecrementer.java
-A       core/src/main/java/org/jboss/jca/core/connectionmanager/pool/capacity/WatermarkDecrementer.java
--->
 
       </section>
 

@@ -38,6 +38,11 @@ public enum FlushMode
    IDLE,
 
    /**
+    * Gracefully
+    */
+   GRACEFULLY,
+
+   /**
     * All
     */
    ALL;
