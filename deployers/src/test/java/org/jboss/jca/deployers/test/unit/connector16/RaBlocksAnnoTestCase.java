@@ -31,7 +31,6 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -73,7 +72,6 @@ public class RaBlocksAnnoTestCase extends Activation16TestBase
     * @exception Throwable Thrown if case of an error
     */
    @Test
-   @Ignore("JBJCA-984")
    public void testConnection1() throws Throwable
    {
       testConnection(connectionFactory1, (byte) 23, (short) 55);
@@ -85,7 +83,6 @@ public class RaBlocksAnnoTestCase extends Activation16TestBase
    * @exception Throwable Thrown if case of an error
    */
    @Test
-   @Ignore("JBJCA-984")
    public void testAdminOjbect() throws Throwable
    {
       testAdminOjbect(adminObject, 54321, true);
@@ -98,7 +95,6 @@ public class RaBlocksAnnoTestCase extends Activation16TestBase
     *                Thrown if case of an error
     */
    @Test
-   @Ignore("JBJCA-984")
    public void testActivation1() throws Throwable
    {
       testActivation(AnnoMessageListener.class, 'U', 4.4, "G", 99);
