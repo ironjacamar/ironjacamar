@@ -157,8 +157,8 @@
         <!-- Mapped -->
         <properties>
           <property>
-            <name>ao1name</name>
-            <value>ao1value</value>
+            <name>aoi1name</name>
+            <value>aoi1value</value>
           </property>
         </properties>
       </admin-object-instance>

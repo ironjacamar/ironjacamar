@@ -21,9 +21,10 @@
  */
 package org.jboss.jca.as.converters;
 
-import org.jboss.jca.as.converters.weblogic.ConnectionDefinitionType;
-import org.jboss.jca.as.converters.weblogic.TransactionSupportType;
-import org.jboss.jca.as.converters.weblogic.WeblogicConnectorType;
+import org.jboss.jca.as.converters.wls.api.metadata.ConnectionDefinition;
+import org.jboss.jca.as.converters.wls.api.metadata.TransactionSupport;
+import org.jboss.jca.as.converters.wls.api.metadata.WeblogicConnector;
+import org.jboss.jca.as.converters.wls.metadata.WeblogicRaPasrer;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 
 import java.io.InputStream;
@@ -32,22 +33,16 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
 
 /**
  * ConnectionFactoryConverter
@@ -73,17 +68,10 @@ public class WlsRaConverter
     */
    public void convert(InputStream in, OutputStream out) throws Exception
    {
-      JAXBContext context = JAXBContext.newInstance("org.jboss.jca.as.converters.weblogic");
-      Unmarshaller unmarshaller = context.createUnmarshaller();
+      WeblogicRaPasrer parser = new WeblogicRaPasrer();
+      WeblogicConnector wlsConnector = parser.parse(in);
 
-      SAXParserFactory sax = SAXParserFactory.newInstance();  
-      sax.setNamespaceAware(false);  
-      XMLReader xmlReader = sax.newSAXParser().getXMLReader();  
-      Source source = new SAXSource(xmlReader, new InputSource(in));  
-      
-      WeblogicConnectorType ra = (WeblogicConnectorType)unmarshaller.unmarshal(source);
-         
-      ConnectionFactories ds = transform(ra);
+      ConnectionFactories ds = transform(wlsConnector);
 
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
       DocumentBuilder db = dbf.newDocumentBuilder();
@@ -101,17 +89,17 @@ public class WlsRaConverter
 
    }
    
-   private ConnectionFactories transform(WeblogicConnectorType ra) throws Exception
+   private ConnectionFactories transform(WeblogicConnector ra) throws Exception
    {
       List<NoTxConnectionFactory> noTxConnectionFactory = new ArrayList<NoTxConnectionFactory>();
       List<TxConnectionFactory> txConnectionFactory = new ArrayList<TxConnectionFactory>();
       
-      for (ConnectionDefinitionType conDef : ra.getOutboundResourceAdapter().getConnectionDefinitionGroup())
+      for (ConnectionDefinition conDef : ra.getOutboundResourceAdapter().getConnectionDefinitionGroup())
       {
          if (conDef.getDefaultConnectionProperties() == null || 
                conDef.getDefaultConnectionProperties().getTransactionSupport() == null ||
                conDef.getDefaultConnectionProperties().getTransactionSupport().
-            equals(TransactionSupportType.NoTransaction))
+            equals(TransactionSupport.NoTransaction))
          {
             noTxConnectionFactory.add(buildNoTxConnectionFactory(conDef, ra));
          }
@@ -123,7 +111,7 @@ public class WlsRaConverter
       return new ConnectionFactoriesImpl(noTxConnectionFactory, txConnectionFactory);
    }
    
-   private NoTxConnectionFactory buildNoTxConnectionFactory(ConnectionDefinitionType conDef, WeblogicConnectorType ra)
+   private NoTxConnectionFactory buildNoTxConnectionFactory(ConnectionDefinition conDef, WeblogicConnector ra)
       throws Exception
    {
       LegacyConnectionFactoryImp noTxCf = new LegacyConnectionFactoryImp("jndiName", "wls.rar", "poolName",
@@ -132,12 +120,12 @@ public class WlsRaConverter
       return noTxCf;
    }
    
-   private TxConnectionFactory buildTxConnectionFactory(ConnectionDefinitionType conDef, WeblogicConnectorType ra)
+   private TxConnectionFactory buildTxConnectionFactory(ConnectionDefinition conDef, WeblogicConnector ra)
       throws Exception
    {
       LegacyConnectionFactoryImp txCf;
       if (conDef.getDefaultConnectionProperties().getTransactionSupport()
-            .equals(TransactionSupportType.LocalTransaction))
+            .equals(TransactionSupport.LocalTransaction))
       {
          txCf = new LegacyConnectionFactoryImp("jndiName", "wls.rar", "poolName", "connectionDefinition", null,
                TransactionSupportEnum.LocalTransaction);
