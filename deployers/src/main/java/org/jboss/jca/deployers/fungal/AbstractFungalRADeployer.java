@@ -133,51 +133,37 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
             {
                if (cpmd.isValueSet())
                {
-                  boolean setValue = true;
-
-                  if (cpmd instanceof org.jboss.jca.common.api.metadata.ra.ra16.ConfigProperty16)
+                  try
                   {
-                     org.jboss.jca.common.api.metadata.ra.ra16.ConfigProperty16 cpmd16 =
-                        (org.jboss.jca.common.api.metadata.ra.ra16.ConfigProperty16)cpmd;
-
-                     if (cpmd16.getConfigPropertyIgnore() != null && cpmd16.getConfigPropertyIgnore().booleanValue())
-                        setValue = false;
-                  }
-
-                  if (setValue)
-                  {
-                     try
+                     if (XsdString.isNull(cpmd.getConfigPropertyType()))
                      {
-                        if (XsdString.isNull(cpmd.getConfigPropertyType()))
-                        {
-                           injector.inject(o,
-                                           cpmd.getConfigPropertyName().getValue(),
-                                           cpmd.getConfigPropertyValue().getValue());
-                        }
-                        else
-                        {
-                           injector.inject(o,
-                                           cpmd.getConfigPropertyName().getValue(),
-                                           cpmd.getConfigPropertyValue().getValue(),
-                                           cpmd.getConfigPropertyType().getValue());
-                        }
+                        injector.inject(o,
+                                        cpmd.getConfigPropertyName().getValue(),
+                                        cpmd.getConfigPropertyValue().getValue());
                      }
-                     catch (Throwable t)
+                     else
                      {
-                        String newPropertyType = convertType(cpmd.getConfigPropertyType().getValue());
-
-                        if (newPropertyType != null)
-                        {
-                           injector.inject(o,
-                                           cpmd.getConfigPropertyName().getValue(),
-                                           cpmd.getConfigPropertyValue().getValue(),
-                                           newPropertyType);
-
-                        }
-                        else
-                        {
-                           throw t;
-                        }
+                        injector.inject(o,
+                                        cpmd.getConfigPropertyName().getValue(),
+                                        cpmd.getConfigPropertyValue().getValue(),
+                                        cpmd.getConfigPropertyType().getValue());
+                     }
+                  }
+                  catch (Throwable t)
+                  {
+                     String newPropertyType = convertType(cpmd.getConfigPropertyType().getValue());
+                     
+                     if (newPropertyType != null)
+                     {
+                        injector.inject(o,
+                                        cpmd.getConfigPropertyName().getValue(),
+                                        cpmd.getConfigPropertyValue().getValue(),
+                                        newPropertyType);
+                        
+                     }
+                     else
+                     {
+                        throw t;
                      }
                   }
                }
