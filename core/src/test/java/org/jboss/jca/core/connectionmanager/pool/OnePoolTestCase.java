@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2008, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2013, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -21,319 +21,323 @@
  */
 package org.jboss.jca.core.connectionmanager.pool;
 
-import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
+import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
+import org.jboss.jca.core.connectionmanager.ConnectionManagerUtil;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
+import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolStatistics;
 import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
+import org.jboss.jca.core.connectionmanager.rar.SimpleConnection;
+import org.jboss.jca.core.connectionmanager.rar.SimpleConnectionFactory;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.security.auth.Subject;
-import javax.transaction.Transaction;
+import java.util.Locale;
+
+import javax.annotation.Resource;
+import javax.resource.spi.ManagedConnection;
+
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
 import org.junit.Test;
-import org.mockito.InOrder;
-import org.mockito.Mockito;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
 
 /**
- *
- * A OnePoolTestCase.
- *
+ * 
+ * An OnePoolTestCase.
+ * 
  * NOTE that this class is in org.jboss.jca.core.connectionmanager.pool and not in
- * org.jboss.jca.core.connectionmanager.pool.strategy because it needs to access to AbstractPool's
- * package protected methods. Please don't move it, and keep this class packaging consistent with AbstractPool's
- *
+ * org.jboss.jca.core.connectionmanager.pool.strategy because it needs to access to 
+ * AbstractPool's package protected methods.
+ * Please don't move it, and keep this class packaging consistent with AbstractPool's
+ * 
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
- *
+ * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
+ * 
  */
-public class OnePoolTestCase
+public class OnePoolTestCase extends PoolTestCaseAbstract
 {
 
    /**
-    *
+    * 
+    * deployment
+    * 
+    * @return archive
+    */
+   @Deployment
+   public static ResourceAdapterArchive deployment()
+   {
+      return getDeployment();
+   }
+
+   /**
+    * ConnectionFactory
+    */
+   @Resource(mappedName = "java:/eis/Pool")
+   SimpleConnectionFactory cf;
+
+   @Override
+   public AbstractPool getPool()
+   {
+      return (OnePool) ConnectionManagerUtil.extract(cf).getPool();
+   }
+
+   /**
+    * 
     * getKeyShouldReturnSameBooleanValuePassedAsSeparateNoTx
+    * 
     * @throws Exception in case of unexpected errors
-    *
+    * 
     */
    @Test
    public void getKeyShouldReturnSameBooleanValuePassedAsSeparateNoTx() throws Exception
    {
-      AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false, true);
-      assertThat((Boolean) pool.getKey(null, null, true), is(true));
-      assertThat((Boolean) pool.getKey(null, null, false), is(false));
+      AbstractPool pool = getPool();
+      assertTrue((Boolean) pool.getKey(null, null, true));
+      assertFalse((Boolean) pool.getKey(null, null, false));
    }
 
    /**
-   *
-   * getKeyShouldReturnSameBooleanValuePassedAsSeparateNoTx
-   *  @throws Exception in case of unexpected errors
-   */
+    * 
+    * getManagedConnectionPoolShouldAlwaysReturnTheSameValueForSimilarKey
+    * 
+    * @throws Exception in case of unexpected errors
+    * 
+    */
+   @Test
+   public void getManagedConnectionPoolShouldAlwaysReturnTheSameValueForSimilarKey() throws Exception
+   {
+      AbstractPool pool = getPool();
+      Object key = pool.getKey(null, null, true);
+      assertTrue(pool.getManagedConnectionPool(key, null, null) == pool.getManagedConnectionPool(key, null, null));
+   }
+
+   /**
+    * 
+    * getManagedConnectionPoolShouldReturnDifferentValuesForDifferentKeys
+    * 
+    * @throws Exception in case of unexpected errors
+    * 
+    */
+   @Test
+   public void getManagedConnectionPoolShouldReturnDifferentValuesForDifferentKeys() throws Exception
+   {
+      AbstractPool pool = getPool();
+      Object key1 = pool.getKey(null, null, true);
+      Object key2 = pool.getKey(null, null, false);
+      assertFalse(pool.getManagedConnectionPool(key1, null, null).equals(
+         pool.getManagedConnectionPool(key2, null, null)));
+   }
+
+   /**
+    * 
+    * emptyManagedConnectionPoolTest
+    * 
+    * @throws Exception in case of unexpected errors
+    * 
+    */
+   @Test
+   public void emptyManagedConnectionPoolTest() throws Exception
+   {
+      AbstractPool pool = getPool();
+      Object key1 = pool.getKey(null, null, true);
+      Object key2 = pool.getKey(null, null, false);
+      ManagedConnectionPool mcp1 = pool.getManagedConnectionPool(key1, null, null);
+      ManagedConnectionPool mcp2 = pool.getManagedConnectionPool(key2, null, null);
+      assertEquals(pool.getManagedConnectionPools().size(), 2);
+      pool.emptyManagedConnectionPool(mcp1);
+      assertEquals(pool.getManagedConnectionPools().size(), 1);
+      // the last pool shouldn't be removed
+      pool.emptyManagedConnectionPool(mcp2);
+      assertEquals(pool.getManagedConnectionPools().size(), 1);
+
+   }
+
+   /**
+    * 
+    * constructorShouldThrowIllegalArgumentExceptionForNullManagedConnectionFactory
+    * 
+    * @throws Exception in case of unexpected errors
+    */
    @Test(expected = IllegalArgumentException.class)
    public void constructorShouldThrowIllegalArgumentExceptionForNullManagedConnectionFactory() throws Exception
    {
-      OnePool pool = new OnePool(null, mock(PoolConfiguration.class), false, true);
+      new OnePool(null, null, false, true);
    }
 
    /**
-   *
-   * constructorShouldThrowIllegalArgumentExceptionForNullPoolConfiguration
-   *  @throws Exception in case of unexpected errors
-   */
+    * 
+    * constructorShouldThrowIllegalArgumentExceptionForNullPoolConfiguration
+    * 
+    * @throws Exception in case of unexpected errors
+    */
    @Test(expected = IllegalArgumentException.class)
    public void constructorShouldThrowIllegalArgumentExceptionForNullPoolConfiguration() throws Exception
    {
-      OnePool pool = new OnePool(mock(ManagedConnectionFactory.class), null, false, true);
+      new OnePool(cf.getMCF(), null, false, true);
    }
 
    /**
-   *
-   * emptySubPoolShouldDoNothing
-   *  @throws Exception in case of unexpected errors
-   */
+    * 
+    * emptySubPoolShouldDoNothing
+    * 
+    * @throws Exception in case of unexpected errors
+    */
    @Test
    public void emptySubPoolShouldDoNothing() throws Exception
    {
-      //given
-      AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false, true);
-      //when (note: argument is not important, set to null just for convenience)
-      ((OnePool) pool).emptySubPool(null);
-      //then
-      assertThat(pool.getManagedConnectionPools().get(pool.getKey(null, null, false)) == null, is(true));
+      AbstractPool pool = getPool();
+      Object key1 = pool.getKey(null, null, true);
+      Object key2 = pool.getKey(null, null, false);
+      ManagedConnectionPool mcp1 = pool.getManagedConnectionPool(key1, null, null);
+      ManagedConnectionPool mcp2 = pool.getManagedConnectionPool(key2, null, null);
+      assertEquals(pool.getManagedConnectionPools().size(), 2);
+      ((OnePool) pool).emptySubPool(mcp1);
+      assertEquals(pool.getManagedConnectionPools().size(), 2);
+      ((OnePool) pool).emptySubPool(mcp2);
+      assertEquals(pool.getManagedConnectionPools().size(), 2);
    }
 
    /**
-   *
-   * flushPoolShouldLeaveSubPoolEmpty
-   *  @throws Exception in case of unexpected errors
-   */
+    * 
+    * flushPoolShouldLeaveSubPoolEmpty
+    * 
+    * @throws Exception in case of unexpected errors
+    */
    @Test
    public void flushPoolShouldLeaveSubPoolEmpty() throws Exception
    {
-      //given
-      AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false, true);
-      //when (note: argument is not important, set to null just for convenience)
+      AbstractPool pool = getPool();
+      Object key1 = pool.getKey(null, null, true);
+      Object key2 = pool.getKey(null, null, false);
+      pool.getManagedConnectionPool(key1, null, null);
+      pool.getManagedConnectionPool(key2, null, null);
+      assertEquals(pool.getManagedConnectionPools().size(), 2);
       ((OnePool) pool).flush();
-      //then
-      assertThat(pool.getManagedConnectionPools().size(), is(0));
-
+      assertEquals(pool.getManagedConnectionPools().size(), 0);
    }
 
    /**
-   *
-   * shutdownShouldLeaveSubPoolEmpty
-   *  @throws Exception in case of unexpected errors
-   */
+    * 
+    * shutdownShouldLeaveSubPoolEmpty
+    * 
+    * @throws Exception in case of unexpected errors
+    */
    @Test
    public void shutdownShouldLeaveSubPoolEmpty() throws Exception
    {
-      //given
-      AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false, true);
-      //when (note: argument is not important, set to null just for convenience)
+      AbstractPool pool = getPool();
+      Object key1 = pool.getKey(null, null, true);
+      Object key2 = pool.getKey(null, null, false);
+      pool.getManagedConnectionPool(key1, null, null);
+      pool.getManagedConnectionPool(key2, null, null);
+      assertEquals(pool.getManagedConnectionPools().size(), 2);
       ((OnePool) pool).shutdown();
-      //then
-      assertThat(pool.getManagedConnectionPools().size(), is(0));
+      assertEquals(pool.getManagedConnectionPools().size(), 0);
 
    }
 
    /**
-   *
-   * getTransactionOldConnectionShouldThrowResourceExceptionIfLockFail
-   *  @throws Exception in case of unexpected errors
-   */
-   @Test//(expected = ResourceException.class)
-   public void getTransactionOldConnectionShouldThrowResourceExceptionIfLockFail() throws Exception
-   {
-      //given
-      AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false, true);
-      Transaction trackByTransaction = mock(Transaction.class);
-      //doThrow(new InterruptedException()).lock(trackByTransaction);
-      //when
-      //pool.getTransactionOldConnection(trackByTransaction);
-      //then exception
-   }
-
-   /**
-   *
-   * getTransactionOldConnectionShouldReturnNullIfClIsNullButCOrrectlyLockAndUnlock
-   *  @throws Exception in case of unexpected errors
-   */
+    * 
+    * testConnection
+    * 
+    * @throws Exception in case of unexpected errors
+    */
    @Test
-   public void getTransactionOldConnectionShouldReturnNullIfClIsNullButCorrectlyLockAndUnlock() throws Exception
+   public void testConnection() throws Exception
    {
-      //given
-      AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false, true);
-      Transaction trackByTransaction = mock(Transaction.class);
-      //when
-      //Object returnValue = pool.getTransactionOldConnection(trackByTransaction);
-      //then
-      //assertThat(returnValue == null, is(true));
+      AbstractPool pool = getPool();
+      assertTrue(((OnePool) pool).testConnection());
+      assertTrue(pool.internalTestConnection(null));
    }
 
    /**
-   *
-   * getTransactionOldConnectionShouldReturnNullIfClIsNullButCOrrectlyLockAndUnlock
-   *  @throws Exception in case of unexpected errors
-   */
+    * 
+    * testConnection
+    * 
+    * @throws Exception in case of unexpected errors
+    */
    @Test
-   public void getTransactionOldConnectionShouldReturnValueIfClHasValueAndCorrectlyLockAndUnlock() throws Exception
+   public void getAndReturnConnectionTest() throws Exception
    {
-      //given
-      AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false, true);
-      Transaction trackByTransaction = mock(Transaction.class);
-      ConnectionListener listener = mock(ConnectionListener.class);
-      //when
-      //ConnectionListener returnValue = pool.getTransactionOldConnection(trackByTransaction);
-      //then
-      //assertThat(returnValue, is(listener));
+      AbstractPool pool = getPool();
+      pool.flush(true);
+      ConnectionListener cl = pool.getConnection(null, null, null);
+      log.info("Pools:" + pool.getManagedConnectionPools() + "//CL.pool=" + cl.getManagedConnectionPool());
+      ManagedConnectionPool mcp = cl.getManagedConnectionPool();
+      assertTrue(pool.getManagedConnectionPools().containsValue(mcp));
+      ManagedConnectionPoolStatistics ms = mcp.getStatistics();
+      PoolStatistics ps = pool.getStatistics();
+      log.info(ps.toString());
+      assertEquals(ps.getActiveCount(), 1);
+      assertEquals(ms.getActiveCount(), 1);
+      ManagedConnection mc = cl.getManagedConnection();
+      Object ob = mc.getConnection(null, null);
+      cl.registerConnection(ob);
+      assertEquals(cl.getNumberOfConnections(), 1);
+      assertTrue(ob instanceof SimpleConnection);
+      assertEquals(pool.findConnectionListener(mc), cl);
+      assertEquals(pool.findConnectionListener(mc, ob), cl);
+      assertNull(pool.findConnectionListener(null));
+      cl.unregisterConnection(ob);
+      assertEquals(cl.getNumberOfConnections(), 0);
+      pool.returnConnection(cl, true);
+      assertEquals(ps.getActiveCount(), 0);
+      assertEquals(ms.getActiveCount(), 0);
+      log.info(ms.toString());
    }
 
    /**
-   *
-   * getTransactionNewConnectionShouldGetConnectionBeforeLocking
-   *  @throws Exception in case of unexpected errors
-   */
+    * 
+    * testPoolStatistics
+    * 
+    * @throws Exception in case of unexpected errors
+    */
    @Test
-   public void getTransactionNewConnectionShouldGetConnectionBeforeLocking() throws Exception
+   public void testPoolStatistics() throws Exception
    {
-      //given
-      AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false, true);
-      Transaction trackByTransaction = mock(Transaction.class);
-      ConnectionListener listener = mock(ConnectionListener.class);
-      ManagedConnectionPool mcp = mock(ManagedConnectionPool.class);
-      Subject subject = new Subject();
-      ConnectionRequestInfo cri = mock(ConnectionRequestInfo.class);
-      //when
-      //ConnectionListener returnValue = pool.getTransactionNewConnection(trackByTransaction, mcp, subject, cri);
-      //then
-
-      //note: it'simportant the order of inorder.verrify invocations, not inOrder() constructor
-      /*
-      InOrder inOrder = Mockito.inOrder(mcp, trackByTx);
-      inOrder.verify(mcp, times(1)).getConnection(subject, cri);
-      inOrder.verify(trackByTx, times(1)).lock(eq(trackByTransaction));
-      //always unlock because it's on finally block
-      inOrder.verify(trackByTx, times(1)).unlock(eq(trackByTransaction));
-      */
+      AbstractPool pool = getPool();
+      PoolStatistics ps = pool.getStatistics();
+      ps.setEnabled(false);
+      assertFalse(ps.isEnabled());
+      for (String name : ps.getNames())
+      {
+         assertNotNull(ps.getDescription(name));
+         assertNotNull(ps.getValue(name));
+         assertNotNull(ps.getType(name));
+      }
+      assertNull(ps.getValue(null));
+      assertEquals(ps.getDescription("WaitCount", Locale.TRADITIONAL_CHINESE), ps.getDescription("WaitCount"));
+      ps.clear();
+      ps.setEnabled(true);
+      assertTrue(ps.isEnabled());
    }
 
    /**
-   *
-   * getTransactionNewConnectionShouldThrowResourceExceptionAndReturnCOnnectionInCaseOfLockFails
-   *  @throws Exception in case of unexpected errors
-   */
-   @Test//(expected = ResourceException.class)
-   public void getTransactionNewConnectionShouldThrowResourceExceptionAndReturnCOnnectionInCaseOfLockFails()
-      throws Exception
-   {
-      //given
-      AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false, true);
-      Transaction trackByTransaction = mock(Transaction.class);
-      ManagedConnectionPool mcp = mock(ManagedConnectionPool.class);
-      ConnectionListener cl = mock(ConnectionListener.class);
-      Subject subject = new Subject();
-      ConnectionRequestInfo cri = mock(ConnectionRequestInfo.class);
-      when(mcp.getConnection(subject, cri)).thenReturn(cl);
-
-      //doThrow(new InterruptedException()).when(trackByTx).lock(trackByTransaction);
-      //ConnectionListener returnValue = pool.getTransactionNewConnection(trackByTransaction, mcp, subject, cri);
-      //then
-
-      //note: it'simportant the order of inorder.verrify invocations, not inOrder() constructor
-      /*
-      InOrder inOrder = Mockito.inOrder(mcp, trackByTx);
-      inOrder.verify(mcp, times(1)).getConnection(subject, cri);
-      inOrder.verify(trackByTx, times(1)).lock(eq(trackByTransaction));
-      inOrder.verify(mcp, times(1)).returnConnection(eq(cl), eq(false));
-      //always unlock because it's on finally block
-      inOrder.verify(trackByTx, times(1)).unlock(eq(trackByTransaction));
-      */
-   }
-
-   /**
-   *
-   * getTransactionNewConnectionShouldThrowResourceExceptionAndReturnCOnnectionInCaseOfLockFails
-   *  @throws Exception in case of unexpected errors
-   */
+    * 
+    * testMCPoolStatistics
+    * 
+    * @throws Exception in case of unexpected errors
+    */
    @Test
-   public void getTransactionNewConnectionShouldUseTheOtherFromDifferentThreadIfAlreadyTracked() throws Exception
+   public void testMCPoolStatistics() throws Exception
    {
-      //given
-      AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false, true);
-      Transaction trackByTransaction = mock(Transaction.class);
-      ManagedConnectionPool mcp = mock(ManagedConnectionPool.class);
-      ConnectionListener cl = mock(ConnectionListener.class);
-      ConnectionListener other = mock(ConnectionListener.class);
-
-      Subject subject = new Subject();
-      ConnectionRequestInfo cri = mock(ConnectionRequestInfo.class);
-      when(mcp.getConnection(subject, cri)).thenReturn(cl);
-
-      //when(trackByTx.get(eq(trackByTransaction))).thenReturn(other);
-      //when
-      //ConnectionListener returnValue = pool.getTransactionNewConnection(trackByTransaction, mcp, subject, cri);
-      //then
-
-      //note: it'simportant the order of inorder.verrify invocations, not inOrder() constructor
-      /*
-      InOrder inOrder = Mockito.inOrder(mcp, trackByTx, other);
-      inOrder.verify(mcp, times(1)).getConnection(subject, cri);
-      inOrder.verify(trackByTx, times(1)).lock(eq(trackByTransaction));
-      inOrder.verify(mcp, times(1)).returnConnection(eq(cl), eq(false));
-      inOrder.verify(other, times(1)).setTrackByTx(eq(true));
-      inOrder.verify(trackByTx, times(1)).set(eq(other));
-      //always unlock because it's on finally block
-      inOrder.verify(trackByTx, times(1)).unlock(eq(trackByTransaction));
-      */
-
-      //assertThat(returnValue, is(other));
+      AbstractPool pool = getPool();
+      Object key = pool.getKey(null, null, false);
+      ManagedConnectionPool mcp = pool.getManagedConnectionPool(key, null, null);
+      ManagedConnectionPoolStatistics mcps = mcp.getStatistics();
+      mcps.setEnabled(false);
+      assertTrue(mcps.isEnabled());
+      for (String name : mcps.getNames())
+      {
+         assertNotNull(mcps.getDescription(name));
+         assertNotNull(mcps.getValue(name));
+         assertNotNull(mcps.getType(name));
+      }
+      assertNull(mcps.getValue(null));
+      assertEquals(mcps.getDescription("WaitCount", Locale.TRADITIONAL_CHINESE), mcps.getDescription("WaitCount"));
+      mcps.clear();
+      mcps.setEnabled(true);
+      assertTrue(mcps.isEnabled());
    }
-
-   /**
-   *
-   * getTransactionNewConnectionShouldThrowResourceExceptionAndReturnCOnnectionInCaseOfLockFails
-   *  @throws Exception in case of unexpected errors
-   */
-   @Test
-   public void getTransactionNewConnectionShouldUseMcpReturnedCl() throws Exception
-   {
-      //given
-      AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false, true);
-      Transaction trackByTransaction = mock(Transaction.class);
-      ManagedConnectionPool mcp = mock(ManagedConnectionPool.class);
-      ConnectionListener cl = mock(ConnectionListener.class);
-      ConnectionListener other = null;
-
-      Subject subject = new Subject();
-      ConnectionRequestInfo cri = mock(ConnectionRequestInfo.class);
-      when(mcp.getConnection(subject, cri)).thenReturn(cl);
-
-      //when(trackByTx.get(eq(trackByTransaction))).thenReturn(other);
-      //when
-      //ConnectionListener returnValue = pool.getTransactionNewConnection(trackByTransaction, mcp, subject, cri);
-      //then
-
-      //note: it'simportant the order of inorder.verrify invocations, not inOrder() constructor
-      /*
-      InOrder inOrder = Mockito.inOrder(mcp, trackByTx, cl);
-      inOrder.verify(mcp, times(1)).getConnection(subject, cri);
-      inOrder.verify(trackByTx, times(1)).lock(eq(trackByTransaction));
-      inOrder.verify(cl, times(1)).setTrackByTx(eq(true));
-      inOrder.verify(trackByTx, times(1)).set(eq(cl));
-      //always unlock because it's on finally block
-      inOrder.verify(trackByTx, times(1)).unlock(eq(trackByTransaction));
-      */
-
-      //assertThat(returnValue, is(cl));
-   }
-
 }

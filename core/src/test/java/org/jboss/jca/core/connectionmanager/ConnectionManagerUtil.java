@@ -22,6 +22,7 @@
 package org.jboss.jca.core.connectionmanager;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 /**
  * Utility class for ConnectionManager
@@ -60,14 +61,32 @@ public class ConnectionManagerUtil
                   if (fieldType.equals(javax.resource.spi.ConnectionManager.class) ||
                       fieldType.equals(org.jboss.jca.core.connectionmanager.ConnectionManager.class))
                   {
-                     return (org.jboss.jca.core.connectionmanager.ConnectionManager)field.get(obj);
+                     return (org.jboss.jca.core.connectionmanager.ConnectionManager) field.get(obj);
                   }
                }
             }
          }
          catch (Throwable t)
          {
-            // Nothing
+            //t.printStackTrace();
+         }
+         try
+         {
+            Method[] methods = clz.getDeclaredMethods();
+            for (Method method : methods)
+            {
+               Class<?> type = method.getReturnType();
+               if (type.equals(javax.resource.spi.ConnectionManager.class) ||
+                   type.equals(org.jboss.jca.core.connectionmanager.ConnectionManager.class))
+               {
+                  return (org.jboss.jca.core.connectionmanager.ConnectionManager) method.invoke(obj, new Object[]
+                  {});
+               }
+            }
+         }
+         catch (Throwable t)
+         {
+            //t.printStackTrace();            
          }
          clz = clz.getSuperclass();
       }
