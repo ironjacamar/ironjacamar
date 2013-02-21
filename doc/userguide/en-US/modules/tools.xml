@@ -122,6 +122,27 @@
         the new format. It will be necessary to make additional changes to the generated file.
         Please, consult this documentation for additional information.
       </note>
+
+      <section id="tools_migration_resource_adapters_weblogic">
+        <title>WebLogic converter</title>
+        
+        <para>
+          The resource adapter converter tool can also convert the Oracle WebLogic <code>weblogic-ra.xml</code> files
+          to the IronJacamar format.
+        </para>
+
+        <para>
+          The following command line can be used:
+        </para>
+
+        <programlisting>
+./converter.sh -ra --weblogic weblogic-ra.xml new-ra.xml
+        </programlisting>
+
+        <para>
+          to get a best effort convertion of the Oracle WebLogic deployment file.
+        </para>
+      </section>
     </section>
 
     <section id="tools_migration_datasources">
