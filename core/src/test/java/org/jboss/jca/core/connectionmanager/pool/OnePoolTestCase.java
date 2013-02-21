@@ -22,17 +22,14 @@
 package org.jboss.jca.core.connectionmanager.pool;
 
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
-import org.jboss.jca.core.connectionmanager.ConnectionManagerUtil;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolStatistics;
 import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
 import org.jboss.jca.core.connectionmanager.rar.SimpleConnection;
-import org.jboss.jca.core.connectionmanager.rar.SimpleConnectionFactory;
 
 import java.util.Locale;
 
-import javax.annotation.Resource;
 import javax.resource.spi.ManagedConnection;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -68,18 +65,6 @@ public class OnePoolTestCase extends PoolTestCaseAbstract
    public static ResourceAdapterArchive deployment()
    {
       return getDeployment();
-   }
-
-   /**
-    * ConnectionFactory
-    */
-   @Resource(mappedName = "java:/eis/Pool")
-   SimpleConnectionFactory cf;
-
-   @Override
-   public AbstractPool getPool()
-   {
-      return (OnePool) ConnectionManagerUtil.extract(cf).getPool();
    }
 
    /**

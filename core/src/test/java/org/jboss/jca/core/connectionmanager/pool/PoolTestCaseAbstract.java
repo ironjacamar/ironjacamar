@@ -21,9 +21,14 @@
  */
 package org.jboss.jca.core.connectionmanager.pool;
 
+import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
+import org.jboss.jca.core.connectionmanager.ConnectionManagerUtil;
+import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
 import org.jboss.jca.core.connectionmanager.rar.SimpleConnectionFactory;
 
 import java.util.logging.Logger;
+
+import javax.annotation.Resource;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -31,6 +36,8 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
 import org.junit.runner.RunWith;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * 
@@ -81,10 +88,36 @@ public abstract class PoolTestCaseAbstract
    }
 
    /**
+    * connection factory
+    */
+   @Resource(mappedName = "java:/eis/Pool")
+   SimpleConnectionFactory cf;
+
+   /**
     * 
-    * To override
+    * get Pool from CF
     * 
     * @return AbstractPool implementation
     */
-   public abstract AbstractPool getPool();
+   public AbstractPool getPool()
+   {
+      return (OnePool) ConnectionManagerUtil.extract(cf).getPool();
+   }
+
+   /**
+    * 
+    * Checks statistics
+    * 
+    * @param ps PoolStatistics implementation
+    * @param available count
+    * @param inUse count
+    * @param active count
+    */
+   public void checkStatistics(PoolStatistics ps, int available, int inUse, int active)
+   {
+      assertEquals(ps.getActiveCount(), active);
+      assertEquals(ps.getInUseCount(), inUse);
+      assertEquals(ps.getAvailableCount(), available);
+
+   }
 }

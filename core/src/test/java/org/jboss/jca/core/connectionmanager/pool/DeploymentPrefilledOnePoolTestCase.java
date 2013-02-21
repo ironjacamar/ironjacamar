@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
 
 /**
  * 
- * A DeploymentSimpleOnePoolTestCase.
+ * A DeploymentPrefilledOnePoolTestCase.
  * 
  * NOTE that this class is in org.jboss.jca.core.connectionmanager.pool and not in
  * org.jboss.jca.core.connectionmanager.pool.strategy because it needs to access to 
@@ -46,7 +46,7 @@ import static org.junit.Assert.*;
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  * 
  */
-public class DeploymentSimpleOnePoolTestCase extends PoolTestCaseAbstract
+public class DeploymentPrefilledOnePoolTestCase extends PoolTestCaseAbstract
 {
 
    /**
@@ -58,7 +58,7 @@ public class DeploymentSimpleOnePoolTestCase extends PoolTestCaseAbstract
    @Deployment
    public static ResourceAdapterArchive deployment()
    {
-      return getDeployment();
+      return getDeploymentWith("ij-prefilled.xml");
    }
 
    /**
@@ -85,29 +85,28 @@ public class DeploymentSimpleOnePoolTestCase extends PoolTestCaseAbstract
    {
       AbstractPool pool = getPool();
 
-      assertEquals(pool.getManagedConnectionPools().size(), 0);
-      SimpleConnection c = cf.getConnection();
       assertEquals(pool.getManagedConnectionPools().size(), 1);
       PoolStatistics ps = pool.getStatistics();
-      checkStatistics(ps, 19, 1, 1);
+      checkStatistics(ps, 5, 0, 2);
 
-      c.close();
+      SimpleConnection c = cf.getConnection();
       assertEquals(pool.getManagedConnectionPools().size(), 1);
-      checkStatistics(ps, 20, 0, 1);
+      checkStatistics(ps, 4, 1, 2);
 
-      c = cf.getConnection();
       SimpleConnection c1 = cf.getConnection();
+      SimpleConnection c2 = cf.getConnection();
       assertEquals(pool.getManagedConnectionPools().size(), 1);
-      checkStatistics(ps, 18, 2, 2);
-
+      checkStatistics(ps, 2, 3, 3);
       for (ManagedConnectionPool mcp : pool.getManagedConnectionPools().values())
       {
-         checkStatistics(mcp.getStatistics(), 18, 2, 2);
+         checkStatistics(mcp.getStatistics(), 2, 3, 3);
       }
 
       c.close();
       c1.close();
+      c2.close();
       assertEquals(pool.getManagedConnectionPools().size(), 1);
-      checkStatistics(ps, 20, 0, 2);
+      checkStatistics(ps, 5, 0, 3);
+
    }
 }
