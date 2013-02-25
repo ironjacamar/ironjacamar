@@ -74,6 +74,7 @@ public class SimpleManagedConnection implements ManagedConnection
       this.listeners = Collections.synchronizedList(new ArrayList<ConnectionEventListener>(1));
       this.connection = null;
    }
+
    /**
     * Default constructor
     */
@@ -91,8 +92,7 @@ public class SimpleManagedConnection implements ManagedConnection
     * @return generic Object instance representing the connection handle. 
     * @throws ResourceException generic exception if operation fails
     */
-   public Object getConnection(Subject subject,
-      ConnectionRequestInfo cxRequestInfo) throws ResourceException
+   public Object getConnection(Subject subject, ConnectionRequestInfo cxRequestInfo) throws ResourceException
    {
       log.finest("getConnection()");
       connection = new SimpleConnectionImpl(this, mcf);
@@ -116,7 +116,7 @@ public class SimpleManagedConnection implements ManagedConnection
       if (!(connection instanceof SimpleConnectionImpl))
          throw new ResourceException("Wrong connection handle");
 
-      this.connection = (SimpleConnectionImpl)connection;
+      this.connection = (SimpleConnectionImpl) connection;
    }
 
    /**
@@ -146,10 +146,11 @@ public class SimpleManagedConnection implements ManagedConnection
     */
    public void addConnectionEventListener(ConnectionEventListener listener)
    {
-      log.finest("addConnectionEventListener()");
+      log.info("//addConnectionEventListener():" + listener);
       if (listener == null)
          throw new IllegalArgumentException("Listener is null");
       listeners.add(listener);
+      log.info("///ListenersADDExit:" + listeners);
    }
 
    /**
@@ -159,10 +160,11 @@ public class SimpleManagedConnection implements ManagedConnection
     */
    public void removeConnectionEventListener(ConnectionEventListener listener)
    {
-      log.finest("removeConnectionEventListener()");
+      log.info("//removeConnectionEventListener():" + listener);
       if (listener == null)
          throw new IllegalArgumentException("Listener is null");
       listeners.remove(listener);
+      log.info("///ListenersREMOVEExit:" + listeners);
    }
 
    /**
@@ -174,17 +176,38 @@ public class SimpleManagedConnection implements ManagedConnection
    {
       ConnectionEvent event = new ConnectionEvent(this, ConnectionEvent.CONNECTION_CLOSED);
       event.setConnectionHandle(handle);
+      log.info("///ListenersBEFOREclose:" + listeners);
+
       for (ConnectionEventListener cel : listeners)
       {
          cel.connectionClosed(event);
       }
+      log.info("/////CLOSEListeners on Exit:" + listeners);
+   }
 
+   /**
+    * Fail handle
+    *
+    * @param handle The handle
+    */
+   void failHandle(SimpleConnection handle)
+   {
+      ConnectionEvent event = new ConnectionEvent(this, ConnectionEvent.CONNECTION_ERROR_OCCURRED);
+      event.setConnectionHandle(handle);
+      log.info("///ListenersBEFOREfail:" + listeners);
+      for (int i = 0; i < listeners.size(); i++)
+      {
+         ConnectionEventListener cel = listeners.get(i);
+         log.info("/////Listener:" + cel);
+         cel.connectionErrorOccurred(event);
+      }
+      log.info("/////FAILListeners on Exit:" + listeners);
    }
 
    /**
     * Gets the log writer for this ManagedConnection instance.
     *
-    * @return Character ourput stream associated with this Managed-Connection instance
+    * @return Character output stream associated with this Managed-Connection instance
     * @throws ResourceException generic exception if operation fails
     */
    public PrintWriter getLogWriter() throws ResourceException

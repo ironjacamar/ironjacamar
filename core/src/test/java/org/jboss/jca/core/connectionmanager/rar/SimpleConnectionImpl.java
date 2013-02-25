@@ -66,4 +66,10 @@ public class SimpleConnectionImpl implements SimpleConnection
       mc.closeHandle(this);
    }
 
+   @Override
+   public void fail()
+   {
+      mc.failHandle(this);
+   }
+
 }

@@ -36,4 +36,8 @@ public interface SimpleConnection
     * Close
     */
    public void close();
+   /**
+    * Fail
+    */
+   public void fail();
 }

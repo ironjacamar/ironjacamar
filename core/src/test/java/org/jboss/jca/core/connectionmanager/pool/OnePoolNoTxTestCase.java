@@ -52,7 +52,7 @@ import static org.junit.Assert.*;
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  * 
  */
-public class OnePoolTestCase extends PoolTestCaseAbstract
+public class OnePoolNoTxTestCase extends PoolTestCaseAbstract
 {
 
    /**

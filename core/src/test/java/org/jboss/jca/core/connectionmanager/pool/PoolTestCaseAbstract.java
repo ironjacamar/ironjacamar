@@ -118,6 +118,22 @@ public abstract class PoolTestCaseAbstract
       assertEquals(ps.getActiveCount(), active);
       assertEquals(ps.getInUseCount(), inUse);
       assertEquals(ps.getAvailableCount(), available);
+   }
 
+   /**
+    * 
+    * Checks statistics
+    * 
+    * @param ps PoolStatistics implementation
+    * 
+    * @param available count
+    * @param inUse count
+    * @param active count
+    * @param destroyed count
+    */
+   public void checkStatistics(PoolStatistics ps, int available, int inUse, int active, int destroyed)
+   {
+      checkStatistics(ps, available, inUse, active);
+      assertEquals(ps.getDestroyedCount(), destroyed);
    }
 }

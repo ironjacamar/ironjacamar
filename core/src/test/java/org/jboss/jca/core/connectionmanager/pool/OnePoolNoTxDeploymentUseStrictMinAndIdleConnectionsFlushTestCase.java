@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
 
 /**
  * 
- * A DeploymentPrefilledOnePoolTestCase.
+ * A OnePoolNoTxDeploymentUseStrictMinAndIdleConnectionsFlushTestCase
  * 
  * NOTE that this class is in org.jboss.jca.core.connectionmanager.pool and not in
  * org.jboss.jca.core.connectionmanager.pool.strategy because it needs to access to 
@@ -46,7 +46,7 @@ import static org.junit.Assert.*;
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  * 
  */
-public class DeploymentPrefilledOnePoolTestCase extends PoolTestCaseAbstract
+public class OnePoolNoTxDeploymentUseStrictMinAndIdleConnectionsFlushTestCase extends PoolTestCaseAbstract
 {
 
    /**
@@ -58,7 +58,7 @@ public class DeploymentPrefilledOnePoolTestCase extends PoolTestCaseAbstract
    @Deployment
    public static ResourceAdapterArchive deployment()
    {
-      return getDeploymentWith("ij-prefilled.xml");
+      return getDeploymentWith("ij-strict-idle.xml");
    }
 
    /**
@@ -85,28 +85,41 @@ public class DeploymentPrefilledOnePoolTestCase extends PoolTestCaseAbstract
    {
       AbstractPool pool = getPool();
 
-      assertEquals(pool.getManagedConnectionPools().size(), 1);
+      assertEquals(pool.getManagedConnectionPools().size(), 0);
       PoolStatistics ps = pool.getStatistics();
-      checkStatistics(ps, 5, 0, 2);
 
       SimpleConnection c = cf.getConnection();
+      Thread.sleep(1000);
       assertEquals(pool.getManagedConnectionPools().size(), 1);
-      checkStatistics(ps, 4, 1, 2);
+      checkStatistics(ps, 4, 1, 3);
+      
+      c.fail();
+      Thread.sleep(1000);
+      //1 failed + 2 idle connections destroyed
+      log.info("PS after fail:" + ps.toString());
+      checkStatistics(ps, 5, 0, 3, 3);
+      log.info("PS after get:" + ps.toString());
+      
+      c = cf.getConnection();
+      checkStatistics(ps, 4, 1, 3, 3);
 
       SimpleConnection c1 = cf.getConnection();
-      SimpleConnection c2 = cf.getConnection();
       assertEquals(pool.getManagedConnectionPools().size(), 1);
-      checkStatistics(ps, 2, 3, 3);
+      checkStatistics(ps, 3, 2, 3);
       for (ManagedConnectionPool mcp : pool.getManagedConnectionPools().values())
       {
-         checkStatistics(mcp.getStatistics(), 2, 3, 3);
+         checkStatistics(mcp.getStatistics(), 3, 2, 3);
       }
-
-      c.close();
-      c1.close();
-      c2.close();
+      
+      c1.fail();
+      Thread.sleep(1000);
+      log.info("PS after 2nd fail:" + ps.toString());
       assertEquals(pool.getManagedConnectionPools().size(), 1);
-      checkStatistics(ps, 5, 0, 3);
-
+      //1 failed + 1 idle connection destroyed
+      checkStatistics(ps, 4, 1, 3, 5);
+      
+      c.close();
+      log.info("PS after close:" + ps.toString());
+      checkStatistics(ps, 5, 0, 3, 5);
    }
 }
