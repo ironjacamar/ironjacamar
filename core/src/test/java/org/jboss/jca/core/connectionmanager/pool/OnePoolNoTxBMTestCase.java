@@ -21,12 +21,10 @@
  */
 package org.jboss.jca.core.connectionmanager.pool;
 
+import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
 
-import java.util.Locale;
-
 import javax.resource.ResourceException;
-import javax.resource.spi.ManagedConnection;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.extension.byteman.api.BMRule;
@@ -37,17 +35,9 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
+ * Byteman test for OnePool
  * 
- * An OnePoolTestCase.
- * 
- * NOTE that this class is in org.jboss.jca.core.connectionmanager.pool and not in
- * org.jboss.jca.core.connectionmanager.pool.strategy because it needs to access to 
- * AbstractPool's package protected methods.
- * Please don't move it, and keep this class packaging consistent with AbstractPool's
- * 
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
- * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
- * 
+ * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class OnePoolNoTxBMTestCase extends PoolTestCaseAbstract
 {
@@ -62,17 +52,30 @@ public class OnePoolNoTxBMTestCase extends PoolTestCaseAbstract
    }
 
    /**
-    * testConnection
-    * @throws Exception in case of unexpected errors
+    * getConnection
+    * @throws Throwable in case of unexpected errors
     */
    @Test
    @BMRule(name = "Throw exception on getConnection",
            targetClass = "org.jboss.jca.core.connectionmanager.pool.AbstractPool",
            targetMethod = "getConnection",
            action = "throw new javax.resource.ResourceException()")
-   public void testConnection() throws Exception
+   public void testGetConnection() throws Throwable
    {
       AbstractPool pool = getPool();
-      assertFalse(((OnePool) pool).testConnection());
+      ConnectionListener cl = null;
+      try
+      {
+         cl = pool.getConnection(null, null, null);
+      }
+      catch (ResourceException re)
+      {
+         // Ok
+      }
+      catch (Throwable t)
+      {
+         fail(t.getMessage());
+         throw t;
+      }
    }
 }
