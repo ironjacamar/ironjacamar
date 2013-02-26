@@ -43,9 +43,10 @@
       </connection-definition>
     </connection-definitions>
     <admin-objects>
-      <admin-object class-name="aoclass" jndi-name="java:jboss/aojndi1name" pool-name="FIXME">
+      <admin-object class-name="aoclass" jndi-name="java:jboss/aojndi1name" pool-name="FIXME" enabled="true" use-java-context="true">
         <config-property name="aog1name">aog1value</config-property>
         <config-property name="ao1name">ao1value</config-property>
+        <config-property name="aoi1name">aoi1value</config-property>
       </admin-object>
     </admin-objects>
   </resource-adapter>

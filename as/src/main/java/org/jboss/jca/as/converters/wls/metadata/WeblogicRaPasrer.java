@@ -177,8 +177,6 @@ public class WeblogicRaPasrer extends AbstractParser implements MetadataParser<W
       
       while (reader.hasNext())
       {
-         System.out.println(reader.getLocalName());
-
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
@@ -834,8 +832,6 @@ public class WeblogicRaPasrer extends AbstractParser implements MetadataParser<W
             
       while (reader.hasNext())
       {
-         System.out.println(reader.getLocalName());
-
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
@@ -917,8 +913,6 @@ public class WeblogicRaPasrer extends AbstractParser implements MetadataParser<W
                break;
             }
             case START_ELEMENT : {
-               System.out.println(reader.getLocalName());
-
                switch (SecurityWorkContext.Tag.forName(reader.getLocalName()))
                {
                   case INBOUND_MAPPING_REQUIRED : {
@@ -1100,8 +1094,6 @@ public class WeblogicRaPasrer extends AbstractParser implements MetadataParser<W
    {
       while (reader.hasNext())
       {
-         //System.out.println(reader.getLocalName());
-
          switch (reader.next())
          {
             case END_ELEMENT : {

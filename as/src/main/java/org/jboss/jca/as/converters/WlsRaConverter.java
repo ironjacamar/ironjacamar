@@ -21,6 +21,9 @@
  */
 package org.jboss.jca.as.converters;
 
+import org.jboss.jca.as.converters.wls.api.metadata.AdminObjectGroup;
+import org.jboss.jca.as.converters.wls.api.metadata.AdminObjectInstance;
+import org.jboss.jca.as.converters.wls.api.metadata.ConfigProperty;
 import org.jboss.jca.as.converters.wls.api.metadata.ConnectionDefinition;
 import org.jboss.jca.as.converters.wls.api.metadata.TransactionSupport;
 import org.jboss.jca.as.converters.wls.api.metadata.WeblogicConnector;
@@ -31,7 +34,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -114,29 +119,113 @@ public class WlsRaConverter
    private NoTxConnectionFactory buildNoTxConnectionFactory(ConnectionDefinition conDef, WeblogicConnector ra)
       throws Exception
    {
+      Map<String, String> props = transformConfigProperties(ra);
+      
       LegacyConnectionFactoryImp noTxCf = new LegacyConnectionFactoryImp("jndiName", "wls.rar", "poolName",
-         "connectionDefinition", null, TransactionSupportEnum.NoTransaction);
+         "connectionDefinition", props, TransactionSupportEnum.NoTransaction);
+      transformAdminObjects(noTxCf, ra);
       noTxCf.buildResourceAdapterImpl();
       return noTxCf;
    }
-   
+
    private TxConnectionFactory buildTxConnectionFactory(ConnectionDefinition conDef, WeblogicConnector ra)
       throws Exception
    {
+      Map<String, String> props = transformConfigProperties(ra);
+      
       LegacyConnectionFactoryImp txCf;
       if (conDef.getDefaultConnectionProperties().getTransactionSupport()
             .equals(TransactionSupport.LocalTransaction))
       {
-         txCf = new LegacyConnectionFactoryImp("jndiName", "wls.rar", "poolName", "connectionDefinition", null,
+         txCf = new LegacyConnectionFactoryImp("jndiName", "wls.rar", "poolName", "connectionDefinition", props,
                TransactionSupportEnum.LocalTransaction);
       }
       else
       {
-         txCf = new LegacyConnectionFactoryImp("jndiName", "wls.rar", "poolName", "connectionDefinition", null,
+         txCf = new LegacyConnectionFactoryImp("jndiName", "wls.rar", "poolName", "connectionDefinition", props,
                TransactionSupportEnum.XATransaction);
       }
+      transformAdminObjects(txCf, ra);
+      transformResourceAdapter(txCf, ra);
       txCf.buildResourceAdapterImpl();
       return txCf;
    }
    
+   private void transformResourceAdapter(LegacyConnectionFactoryImp lcf, WeblogicConnector ra)
+   {
+      // TODO Auto-generated method stub
+      
+   }
+
+   private Map<String, String> transformConfigProperties(WeblogicConnector ra)
+   {
+      if (ra.getProperties() == null || ra.getProperties().getProperty() == null ||
+            ra.getProperties().getProperty().size() == 0)
+         return null;
+      
+      Map<String, String> props = new HashMap<String, String>();
+      for (ConfigProperty cp : ra.getProperties().getProperty())
+      {
+         props.put(cp.getName(), cp.getValue());
+      }
+      return props;
+   }
+
+   private void transformAdminObjects(LegacyConnectionFactoryImp lcf, WeblogicConnector ra) throws Exception
+   {
+      if (ra.getAdminObjects() == null || 
+            ra.getAdminObjects().getAdminObjectGroup() == null ||
+            ra.getAdminObjects().getAdminObjectGroup().size() == 0)
+         return;
+      
+      final Map<String, String> defaultProps = new HashMap<String, String>();
+      if (ra.getAdminObjects().getDefaultProperties() != null &&
+            ra.getAdminObjects().getDefaultProperties().getProperty() != null)
+      {
+         for (ConfigProperty cp : ra.getAdminObjects().getDefaultProperties().getProperty())
+         {
+            defaultProps.put(cp.getName(), cp.getValue());
+         }
+      }
+
+      for (AdminObjectGroup aog : ra.getAdminObjects().getAdminObjectGroup())
+      {
+         if (aog.getAdminObjectInstance() == null ||
+               aog.getAdminObjectInstance().size() == 0)
+            return;
+         
+         final Map<String, String> aogProps = new HashMap<String, String>();
+         aogProps.putAll(defaultProps);
+         if (aog.getDefaultProperties() != null && 
+               aog.getDefaultProperties().getProperty() != null)
+         {
+            for (ConfigProperty cp : aog.getDefaultProperties().getProperty())
+            {
+               aogProps.put(cp.getName(), cp.getValue());
+            }
+         }
+         
+         for (AdminObjectInstance aoi : aog.getAdminObjectInstance())
+         {
+            Map<String, String> aoiProps = null;
+            if (aoi.getProperties() != null && 
+                  aoi.getProperties().getProperty() != null)
+            {
+               aoiProps = new HashMap<String, String>();
+               aoiProps.putAll(aogProps);
+               
+               for (ConfigProperty cp : aoi.getProperties().getProperty())
+               {
+                  aoiProps.put(cp.getName(), cp.getValue());
+               }
+            }
+            else
+               aoiProps = aogProps;
+            
+            lcf.buildAdminObejcts(aog.getAdminObjectClass(), "java:jboss/" + aoi.getJndiName(), "FIXME", 
+                  aoiProps, true, true);
+         }
+      }
+   }
+
 }

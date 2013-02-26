@@ -24,6 +24,7 @@ package org.jboss.jca.as.converters.wls;
 
 import org.jboss.jca.as.converters.wls.api.metadata.WeblogicConnector;
 import org.jboss.jca.as.converters.wls.metadata.WeblogicRaPasrer;
+import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
 import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter;
 import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapters;
 import org.jboss.jca.common.metadata.resourceadapter.v11.ResourceAdapterParser;
@@ -71,6 +72,34 @@ public class WlsRaConvertTestCase
       List<ResourceAdapter> listRa = ras.getResourceAdapters();
       
       assertNotNull(listRa);
+      
+      assertAdminObjects(wlsConnector, listRa);
+      assertConfigProperties(wlsConnector, listRa);
    }
- 
+
+   private void assertAdminObjects(WeblogicConnector wlsConnector, List<ResourceAdapter> listRa)
+   {
+      ResourceAdapter ra = listRa.get(0);
+      assertNotNull(ra);
+      assertNotNull(ra.getAdminObjects());
+      assertEquals(ra.getAdminObjects().size(), 1);
+      
+      CommonAdminObject ao = ra.getAdminObjects().get(0);
+      assertEquals(ao.getClassName(), 
+         wlsConnector.getAdminObjects().getAdminObjectGroup().get(0).getAdminObjectClass());
+      assertTrue(ao.getJndiName().indexOf(wlsConnector.getAdminObjects().getAdminObjectGroup().get(0).
+         getAdminObjectInstance().get(0).getJndiName()) > 0);
+      assertEquals(ao.getConfigProperties().size(), 3);
+      assertEquals(ao.getConfigProperties().get("aoi1name"), "aoi1value");
+   }
+
+   private void assertConfigProperties(WeblogicConnector wlsConnector, List<ResourceAdapter> listRa)
+   {
+      ResourceAdapter ra = listRa.get(0);
+      assertNotNull(ra);
+      assertNotNull(ra.getConfigProperties());
+      assertEquals(ra.getConfigProperties().size(), 1);
+      assertEquals(ra.getConfigProperties().get("ra1name"), "ra1value");
+   }
+
 }

@@ -22,10 +22,12 @@
 package org.jboss.jca.as.converters;
 
 import org.jboss.jca.common.api.metadata.Defaults;
+import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
 import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.common.v10.CommonConnDef;
+import org.jboss.jca.common.metadata.common.CommonAdminObjectImpl;
 import org.jboss.jca.common.metadata.common.CommonPoolImpl;
 import org.jboss.jca.common.metadata.common.CommonSecurityImpl;
 import org.jboss.jca.common.metadata.common.CommonTimeOutImpl;
@@ -51,7 +53,7 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
 
    private TransactionSupportEnum transactionSupport;
    private List<CommonConnDef> connectionDefinitions;
-   //private List<CommonAdminObject> adminObjects;
+   private List<CommonAdminObject> adminObjects;
    //private Map<String, String> configProperties;
    //private List<String> beanValidationGroups;
    //private String bootstrapContext;
@@ -119,8 +121,8 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
                                                         pool, timeOut, validation, security, recovery);
       connectionDefinitions = new ArrayList<CommonConnDef>();
       connectionDefinitions.add(connDef);
-      raImpl = new ResourceAdapterImpl(rarName, transactionSupport, connectionDefinitions, null,
-                                       null, null, null);
+      raImpl = new ResourceAdapterImpl(rarName, transactionSupport, connectionDefinitions, adminObjects,
+            configProperty, null, null);
    }
    
    @Override
@@ -198,6 +200,30 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
          String securityDomainAndApplicationManaged, boolean applicationManaged) throws Exception
    {
       security = new CommonSecurityImpl(securityDomainManaged, securityDomainAndApplicationManaged, applicationManaged);
+      return this;
+   }
+   
+   /**
+    * build admin object
+    * 
+    * @param className className
+    * @param jndiName jndiName
+    * @param poolName poolName
+    * @param configProperties configProperties
+    * @param enabled enabled
+    * @param useJavaContext useJavaContext
+    * @return this
+    * @throws Exception exception
+    */
+   public LegacyConnectionFactoryImp buildAdminObejcts(String className, String jndiName, String poolName,
+         Map<String, String> configProperties, boolean enabled, boolean useJavaContext)  throws Exception
+   {
+      if (adminObjects == null)
+      {
+         adminObjects = new ArrayList<CommonAdminObject>();
+      }
+      adminObjects.add(
+            new CommonAdminObjectImpl(configProperties, className, jndiName, poolName, enabled, useJavaContext));
       return this;
    }
    
