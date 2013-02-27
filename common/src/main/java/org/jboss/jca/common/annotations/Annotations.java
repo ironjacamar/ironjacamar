@@ -38,6 +38,7 @@ import org.jboss.jca.common.api.metadata.ra.LicenseType;
 import org.jboss.jca.common.api.metadata.ra.LocalizedXsdString;
 import org.jboss.jca.common.api.metadata.ra.MessageListener;
 import org.jboss.jca.common.api.metadata.ra.OutboundResourceAdapter;
+import org.jboss.jca.common.api.metadata.ra.RequiredConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.SecurityPermission;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
@@ -803,6 +804,11 @@ public class Annotations
                }
                else if (hasInterface(attachedClass, "javax.resource.spi.ActivationSpec"))
                {
+                  if (hasNotNull(annotationRepository, annotation))
+                  {
+                     ((ConfigProperty16Impl)cfgMeta).setMandatory(true);
+                  }
+
                   if (valueMap.get(Metadatas.ACTIVATION_SPEC) == null)
                   {
                      valueMap.put(Metadatas.ACTIVATION_SPEC, new ArrayList<ConfigProperty16>());
@@ -819,6 +825,11 @@ public class Annotations
                }
                else
                {
+                  if (hasNotNull(annotationRepository, annotation))
+                  {
+                     ((ConfigProperty16Impl)cfgMeta).setMandatory(true);
+                  }
+
                   if (valueMap.get(Metadatas.PLAIN) == null)
                   {
                      valueMap.put(Metadatas.PLAIN, new ArrayList<ConfigProperty16>());
@@ -1041,6 +1052,7 @@ public class Annotations
       throws Exception
    {
       ArrayList<ConfigProperty> validProperties = new ArrayList<ConfigProperty>();
+      ArrayList<RequiredConfigProperty> requiredConfigProperties = null;
 
       if (configProperties != null)
       {
@@ -1049,6 +1061,16 @@ public class Annotations
             if (annotation.getClassName().equals(((ConfigProperty16Impl) configProperty16).getAttachedClassName()))
             {
                validProperties.add(configProperty16);
+
+               if (configProperty16.isMandatory())
+               {
+                  if (requiredConfigProperties == null)
+                     requiredConfigProperties = new ArrayList<RequiredConfigProperty>(1);
+
+                  requiredConfigProperties.add(new RequiredConfigProperty(null,
+                                                                          configProperty16.getConfigPropertyName(),
+                                                                          null));
+               }
             }
          }
       }
@@ -1060,6 +1082,16 @@ public class Annotations
             if (asClasses.contains(((ConfigProperty16Impl) configProperty16).getAttachedClassName()))
             {
                validProperties.add(configProperty16);
+
+               if (configProperty16.isMandatory())
+               {
+                  if (requiredConfigProperties == null)
+                     requiredConfigProperties = new ArrayList<RequiredConfigProperty>(1);
+
+                  requiredConfigProperties.add(new RequiredConfigProperty(null,
+                                                                          configProperty16.getConfigPropertyName(),
+                                                                          null));
+               }
             }
          }
       }
@@ -1075,7 +1107,8 @@ public class Annotations
          messageListeners = new ArrayList<MessageListener>(activation.messageListeners().length);
          for (Class asClass : activation.messageListeners())
          {
-            Activationspec16 asMeta = new Activationspec16Impl(new XsdString(annotation.getClassName(), null), null,
+            Activationspec16 asMeta = new Activationspec16Impl(new XsdString(annotation.getClassName(), null),
+                                                               requiredConfigProperties,
                                                                validProperties,
                                                                null);
             MessageListener mlMeta = new MessageListenerImpl(new XsdString(asClass.getName(), null), asMeta, null);
@@ -1231,5 +1264,28 @@ public class Annotations
       }
 
       return result;
+   }
+
+   /**
+    * Has a NotNull annotation attached
+    * @param annotationRepository The annotation repository
+    * @param annotation The annotation being checked
+    * @return True of the method/field contains the NotNull annotation; otherwise false
+    */
+   private boolean hasNotNull(AnnotationRepository annotationRepository, Annotation annotation)
+   {
+      Collection<Annotation> values = annotationRepository.getAnnotation(javax.validation.constraints.NotNull.class);
+
+      if (values == null || values.size() == 0)
+         return false;
+
+      for (Annotation notNullAnnotation : values)
+      {
+         if (notNullAnnotation.getClassName().equals(annotation.getClassName()) &&
+             notNullAnnotation.getMemberName().equals(annotation.getMemberName()))
+            return true;
+      }
+
+      return false;
    }
 }

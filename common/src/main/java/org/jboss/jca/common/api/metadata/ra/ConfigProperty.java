@@ -75,6 +75,12 @@ public interface ConfigProperty extends IdDecoratedMetadata, CopyableMetaData
    public abstract boolean isValueSet();
 
    /**
+    * Is the config property mandatory
+    * @return The value
+    */
+   public boolean isMandatory();
+
+   /**
    *
    * A Tag.
    *

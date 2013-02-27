@@ -41,9 +41,8 @@ import java.util.List;
  */
 public class ConfigPropertyImpl implements ConfigProperty
 {
-
    /** The serialVersionUID */
-   private static final long serialVersionUID = 4840388990647778928L;
+   private static final long serialVersionUID = 2L;
 
    /**
     * description
@@ -71,6 +70,11 @@ public class ConfigPropertyImpl implements ConfigProperty
    protected final String id;
 
    /**
+    * mandatory
+    */
+   protected boolean mandatory;
+
+   /**
     * Create a new ConfigProperty15.
     *
     * @param description the description
@@ -80,9 +84,25 @@ public class ConfigPropertyImpl implements ConfigProperty
     * @param id id attribute in xml file
     */
    public ConfigPropertyImpl(List<LocalizedXsdString> description, XsdString configPropertyName,
-         XsdString configPropertyType, XsdString configPropertyValue, String id)
+                             XsdString configPropertyType, XsdString configPropertyValue, String id)
    {
-      super();
+      this(description, configPropertyName, configPropertyType, configPropertyValue, id, false);
+   }
+
+   /**
+    * Create a new ConfigProperty15.
+    *
+    * @param description the description
+    * @param configPropertyName name of config-property
+    * @param configPropertyType type of config-property
+    * @param configPropertyValue value of config-property
+    * @param id id attribute in xml file
+    * @param mandatory mandatory
+    */
+   public ConfigPropertyImpl(List<LocalizedXsdString> description, XsdString configPropertyName,
+                             XsdString configPropertyType, XsdString configPropertyValue, String id,
+                             boolean mandatory)
+   {
       if (description != null)
       {
          this.description = new ArrayList<LocalizedXsdString>(description.size());
@@ -104,6 +124,7 @@ public class ConfigPropertyImpl implements ConfigProperty
       if (!XsdString.isNull(this.configPropertyValue))
          this.configPropertyValue.setTag(Tag.CONFIG_PROPERTY_VALUE.toString());
       this.id = id;
+      this.mandatory = mandatory;
    }
 
    /**
@@ -156,10 +177,22 @@ public class ConfigPropertyImpl implements ConfigProperty
    }
 
    @Override
+   public boolean isMandatory()
+   {
+      return mandatory;
+   }
+
+   public void setMandatory(boolean v)
+   {
+      mandatory = v;
+   }
+
+   @Override
    public CopyableMetaData copy()
    {
       return new ConfigPropertyImpl(CopyUtil.cloneList(description), CopyUtil.clone(configPropertyName),
-            CopyUtil.clone(configPropertyType), CopyUtil.clone(configPropertyValue), CopyUtil.cloneString(id));
+                                    CopyUtil.clone(configPropertyType), CopyUtil.clone(configPropertyValue),
+                                    CopyUtil.cloneString(id), mandatory);
    }
 
    @Override
@@ -172,6 +205,7 @@ public class ConfigPropertyImpl implements ConfigProperty
       result = prime * result + ((configPropertyValue == null) ? 0 : configPropertyValue.hashCode());
       result = prime * result + ((description == null) ? 0 : description.hashCode());
       result = prime * result + ((id == null) ? 0 : id.hashCode());
+      result = prime * result + (mandatory ? 7 : 0);
       return result;
    }
 
@@ -221,6 +255,10 @@ public class ConfigPropertyImpl implements ConfigProperty
       }
       else if (!id.equals(other.id))
          return false;
+
+      if (mandatory != other.mandatory)
+         return false;
+
       return true;
    }
 
