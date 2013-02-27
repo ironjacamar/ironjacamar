@@ -171,11 +171,9 @@ public class AnnotationsComplexTestCase extends AnnotationsTestBase
          Activationspec16Impl as = (Activationspec16Impl) ml.getActivationspec();
          assertTrue(valuesAreEqual(as.getActivationspecClass(), pack + ".AnnoActivationSpec"));
          checkProperties(as.getConfigProperties(), "Character", "C", "Double", "0.5");
-         /*@Ignored - JBJCA-977
-          * 
-          *assertEquals(as.getRequiredConfigProperties().size(), 1);
-          *assertTrue(checkValue(as.getRequiredConfigProperties().get(0).getConfigPropertyName(), "first"));
-         */
+         assertNotNull(as.getRequiredConfigProperties());
+         assertEquals(as.getRequiredConfigProperties().size(), 1);
+         assertEquals(as.getRequiredConfigProperties().get(0).getConfigPropertyName().getValue(), "first");
          if (!valuesAreEqual(ml.getMessagelistenerType(), pack + ".AnnoMessageListener"))
             assertTrue(valuesAreEqual(ml.getMessagelistenerType(), pack + ".AnnoMessageListener1"));
       }
