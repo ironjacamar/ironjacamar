@@ -148,7 +148,7 @@
   <property name="version.jetty.el" value="2.2.4"/>
   <property name="version.jetty.jsp" value="2.2.1"/>
   <property name="version.jetty.servlet" value="3.0.1"/>
-  <property name="version.jgroups" value="3.2.5.Final"/>
+  <property name="version.jgroups" value="3.2.7.Final"/>
   <property name="version.juel" value="2.2.6"/>
   <property name="version.junit" value="4.10"/>
   <property name="version.maven" value="2.2.1"/>
