@@ -29,6 +29,7 @@ import java.io.Serializable;
 
 import javax.validation.ConstraintValidatorFactory;
 import javax.validation.MessageInterpolator;
+import javax.validation.ParameterNameProvider;
 import javax.validation.TraversableResolver;
 import javax.validation.Validator;
 import javax.validation.ValidatorContext;
@@ -43,7 +44,7 @@ import javax.validation.ValidatorFactory;
 public class SerializableValidatorFactory implements ValidatorFactory, Serializable
 {
    /** Serial version uid */
-   private static final long serialVersionUID = 1L;
+   private static final long serialVersionUID = 2L;
 
    /** The validator factory */
    private transient ValidatorFactory validatorFactory;
@@ -66,8 +67,7 @@ public class SerializableValidatorFactory implements ValidatorFactory, Serializa
    }
 
    /**
-    * Get the message interpolator
-    * @return The interpolator
+    * {@inheritDoc}
     */
    public MessageInterpolator getMessageInterpolator()
    {
@@ -75,8 +75,7 @@ public class SerializableValidatorFactory implements ValidatorFactory, Serializa
    }
 
    /**
-    * Get the validator
-    * @return The validator
+    * {@inheritDoc}
     */
    public Validator getValidator()
    {
@@ -84,8 +83,7 @@ public class SerializableValidatorFactory implements ValidatorFactory, Serializa
    }
 
    /**
-    * Get the validator context
-    * @return The context
+    * {@inheritDoc}
     */
    public ValidatorContext usingContext()
    {
@@ -93,9 +91,7 @@ public class SerializableValidatorFactory implements ValidatorFactory, Serializa
    }
 
    /**
-    * Unwrap
-    * @param type The type
-    * @return The context
+    * {@inheritDoc}
     */
    public <T> T unwrap(Class<T> type)
    {
@@ -103,8 +99,7 @@ public class SerializableValidatorFactory implements ValidatorFactory, Serializa
    }
 
    /**
-    * Get the constraint validator factory
-    * @return The factory
+    * {@inheritDoc}
     */
    public ConstraintValidatorFactory getConstraintValidatorFactory()
    {
@@ -112,12 +107,27 @@ public class SerializableValidatorFactory implements ValidatorFactory, Serializa
    }
 
    /**
-    * Get the traversable resolver
-    * @return The resolver
+    * {@inheritDoc}
     */
    public TraversableResolver getTraversableResolver()
    {
       return validatorFactory.getTraversableResolver();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public ParameterNameProvider getParameterNameProvider()
+   {
+      return validatorFactory.getParameterNameProvider();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void close()
+   {
+      validatorFactory.close();
    }
 
    /**

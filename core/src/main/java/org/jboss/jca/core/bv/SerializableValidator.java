@@ -30,6 +30,7 @@ import java.util.Set;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
+import javax.validation.executable.ExecutableValidator;
 import javax.validation.metadata.BeanDescriptor;
 
 /**
@@ -41,7 +42,7 @@ import javax.validation.metadata.BeanDescriptor;
 public class SerializableValidator implements Validator, Serializable
 {
    /** Serial version uid */
-   private static final long serialVersionUID = 1L;
+   private static final long serialVersionUID = 2L;
 
    /** The validator */
    private transient Validator validator;
@@ -64,9 +65,7 @@ public class SerializableValidator implements Validator, Serializable
    }
 
    /**
-    * Get the constraints for a class
-    * @param clazz The class
-    * @return The bean descriptor
+    * {@inheritDoc}
     */
    public BeanDescriptor getConstraintsForClass(Class<?> clazz)
    {
@@ -74,10 +73,7 @@ public class SerializableValidator implements Validator, Serializable
    }
 
    /**
-    * Validate
-    * @param object The object
-    * @param groups The groups
-    * @return The constraint violations
+    * {@inheritDoc}
     */
    public <T> Set<ConstraintViolation<T>> validate(T object, Class<?>... groups)
    {
@@ -85,11 +81,7 @@ public class SerializableValidator implements Validator, Serializable
    }
 
    /**
-    * Validate property
-    * @param object The object
-    * @param propertyName The property name
-    * @param groups The groups
-    * @return The constraint violations
+    * {@inheritDoc}
     */
    public <T> Set<ConstraintViolation<T>> validateProperty(T object, String propertyName, Class<?>... groups)
    {
@@ -97,12 +89,7 @@ public class SerializableValidator implements Validator, Serializable
    }
 
    /**
-    * Validate value
-    * @param beanType The bean type
-    * @param propertyName The property name
-    * @param value The value
-    * @param groups The groups
-    * @return The constraint violations
+    * {@inheritDoc}
     */
    public <T> Set<ConstraintViolation<T>> validateValue(Class<T> beanType, 
                                                         String propertyName, 
@@ -113,13 +100,19 @@ public class SerializableValidator implements Validator, Serializable
    }
 
    /**
-    * Unwrap
-    * @param type The type
-    * @return The context
+    * {@inheritDoc}
     */
    public <T> T unwrap(Class<T> type)
    {
       return validator.unwrap(type);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public ExecutableValidator forExecutables()
+   {
+      return validator.forExecutables();
    }
 
    /**
