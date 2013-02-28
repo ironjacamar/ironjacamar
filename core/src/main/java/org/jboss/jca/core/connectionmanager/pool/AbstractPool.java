@@ -691,19 +691,35 @@ public abstract class AbstractPool implements Pool
    public abstract boolean testConnection();
 
    /**
+    * {@inheritDoc}
+    */
+   public abstract boolean testConnection(ConnectionRequestInfo cri, Subject subject);
+
+   /**
     * Test if a connection can be obtained
     * @param subject Optional subject
+    * @param cri Optional CRI
     * @return True if possible; otherwise false
     */
-   protected boolean internalTestConnection(Subject subject)
+   protected boolean internalTestConnection(ConnectionRequestInfo cri, Subject subject)
    {
       boolean result = false;
       ConnectionListener cl = null;
       try
       {
-         if (((PoolStatisticsImpl)getStatistics()).getAvailableCount(true) > 0)
+         boolean separateNoTx = false;
+
+         if (noTxSeparatePools)
          {
-            cl = getConnection(null, subject, null);
+            separateNoTx = clf.isTransactional();
+         }
+
+         Object key = getKey(subject, cri, separateNoTx);
+         ManagedConnectionPool mcp = getManagedConnectionPool(key, subject, cri);
+
+         if (mcp.getStatistics().getAvailableCount() > 0)
+         {
+            cl = mcp.getConnection(subject, cri);
             result = true;
          }
       }

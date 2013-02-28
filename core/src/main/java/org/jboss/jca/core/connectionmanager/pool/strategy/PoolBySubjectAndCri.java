@@ -78,6 +78,14 @@ public class PoolBySubjectAndCri extends AbstractPool
    /**
     * {@inheritDoc}
     */
+   public boolean testConnection(ConnectionRequestInfo cri, Subject subject)
+   {
+      return internalTestConnection(cri, subject);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public CoreLogger getLogger()
    {
       return log;

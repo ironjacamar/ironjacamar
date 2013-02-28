@@ -21,6 +21,9 @@
  */
 package org.jboss.jca.core.api.connectionmanager.pool;
 
+import javax.resource.spi.ConnectionRequestInfo;
+import javax.security.auth.Subject;
+
 /**
  * A pool.
  *
@@ -53,9 +56,17 @@ public interface Pool
 
    /**
     * Test if a connection can be obtained
-    * @return True if it was poosible to get a connection; otherwise false
+    * @return True if it was possible to get a connection; otherwise false
     */
    public boolean testConnection();
+
+   /**
+    * Test if a connection can be obtained
+    * @param cri Optional connection request info object
+    * @param subject Optional subject
+    * @return True if it was possible to get a connection; otherwise false
+    */
+   public boolean testConnection(ConnectionRequestInfo cri, Subject subject);
 
    /**
     * Get the statistics
