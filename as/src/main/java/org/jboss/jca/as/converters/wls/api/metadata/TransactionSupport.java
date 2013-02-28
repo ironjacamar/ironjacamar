@@ -36,7 +36,10 @@ public enum TransactionSupport
    LocalTransaction,
 
    /** XATransaction */
-   XATransaction;
+   XATransaction,
+   
+   /** not defined */
+   NotDefined;
 
    /**
     * get value

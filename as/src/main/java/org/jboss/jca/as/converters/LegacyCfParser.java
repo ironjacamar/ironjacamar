@@ -232,8 +232,9 @@ public class LegacyCfParser extends AbstractParser
                if (ConnectionFactories.Tag.forName(reader.getLocalName()) == 
                   ConnectionFactories.Tag.NO_TX_CONNECTION_FACTORY)
                {
-                  LegacyConnectionFactoryImp cfImpl = new LegacyConnectionFactoryImp(jndiName, rarName, poolName,
-                        connectionDefinition, configProperty, TransactionSupportEnum.NoTransaction);
+                  LegacyConnectionFactoryImp cfImpl = new LegacyConnectionFactoryImp(jndiName, rarName, 
+                        configProperty, poolName, connectionDefinition, configProperty, 
+                        TransactionSupportEnum.NoTransaction);
                   cfImpl.buildTimeOut(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry,
                         allocationRetryWaitMillis, null);
                   cfImpl.buildSecurity(securityDomainManaged, securityDomainAndApplicationManaged, applicationManaged);
@@ -382,8 +383,8 @@ public class LegacyCfParser extends AbstractParser
                if (ConnectionFactories.Tag.forName(reader.getLocalName()) == 
                   ConnectionFactories.Tag.TX_CONNECTION_FACTORY)
                {
-                  LegacyConnectionFactoryImp cfImpl = new LegacyConnectionFactoryImp(jndiName, rarName, poolName,
-                        connectionDefinition, configProperty, transactionSupport);
+                  LegacyConnectionFactoryImp cfImpl = new LegacyConnectionFactoryImp(jndiName, rarName, 
+                        configProperty, poolName, connectionDefinition, configProperty, transactionSupport);
                   cfImpl.buildTimeOut(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry,
                         allocationRetryWaitMillis, xaResourceTimeout);
                   cfImpl.buildSecurity(securityDomainManaged, securityDomainAndApplicationManaged, applicationManaged);

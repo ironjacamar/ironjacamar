@@ -23,11 +23,17 @@ package org.jboss.jca.as.converters;
 
 import org.jboss.jca.as.converters.wls.api.metadata.AdminObjectGroup;
 import org.jboss.jca.as.converters.wls.api.metadata.AdminObjectInstance;
+import org.jboss.jca.as.converters.wls.api.metadata.ConfigProperties;
 import org.jboss.jca.as.converters.wls.api.metadata.ConfigProperty;
 import org.jboss.jca.as.converters.wls.api.metadata.ConnectionDefinition;
+import org.jboss.jca.as.converters.wls.api.metadata.ConnectionDefinitionProperties;
+import org.jboss.jca.as.converters.wls.api.metadata.ConnectionInstance;
+import org.jboss.jca.as.converters.wls.api.metadata.PoolParams;
 import org.jboss.jca.as.converters.wls.api.metadata.TransactionSupport;
 import org.jboss.jca.as.converters.wls.api.metadata.WeblogicConnector;
+import org.jboss.jca.as.converters.wls.metadata.ConnectionDefinitionPropertiesImpl;
 import org.jboss.jca.as.converters.wls.metadata.WeblogicRaPasrer;
+import org.jboss.jca.common.api.metadata.Defaults;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 
 import java.io.InputStream;
@@ -98,77 +104,119 @@ public class WlsRaConverter
    {
       List<NoTxConnectionFactory> noTxConnectionFactory = new ArrayList<NoTxConnectionFactory>();
       List<TxConnectionFactory> txConnectionFactory = new ArrayList<TxConnectionFactory>();
+   
+      if (ra.getOutboundResourceAdapter() == null || 
+            ra.getOutboundResourceAdapter().getConnectionDefinitionGroup() == null ||
+            ra.getOutboundResourceAdapter().getConnectionDefinitionGroup().size() == 0)
+         return null;
       
+      ConnectionDefinitionProperties defaultCdProps = ra.getOutboundResourceAdapter().getDefaultConnectionProperties();
+            
       for (ConnectionDefinition conDef : ra.getOutboundResourceAdapter().getConnectionDefinitionGroup())
       {
-         if (conDef.getDefaultConnectionProperties() == null || 
-               conDef.getDefaultConnectionProperties().getTransactionSupport() == null ||
-               conDef.getDefaultConnectionProperties().getTransactionSupport().
-            equals(TransactionSupport.NoTransaction))
+         ConnectionDefinitionProperties groupCdProps = mergedCdProps(defaultCdProps,
+               conDef.getDefaultConnectionProperties());
+         if (conDef.getConnectionInstance() == null)
+            continue;
+         
+         for (ConnectionInstance conInstance : conDef.getConnectionInstance())
          {
-            noTxConnectionFactory.add(buildNoTxConnectionFactory(conDef, ra));
-         }
-         else
-         {
-            txConnectionFactory.add(buildTxConnectionFactory(conDef, ra));
+            ConnectionDefinitionProperties myCdProps = mergedCdProps(groupCdProps,
+                  conInstance.getConnectionProperties());
+            
+            if (myCdProps.getTransactionSupport().equals(TransactionSupport.NoTransaction))
+            {
+               noTxConnectionFactory.add(buildNoTxConnectionFactory(conInstance.getJndiName(), myCdProps, ra));
+            }
+            else
+            {
+               txConnectionFactory.add(buildTxConnectionFactory(conInstance.getJndiName(), myCdProps, ra));
+            }
          }
       }
       return new ConnectionFactoriesImpl(noTxConnectionFactory, txConnectionFactory);
    }
    
-   private NoTxConnectionFactory buildNoTxConnectionFactory(ConnectionDefinition conDef, WeblogicConnector ra)
-      throws Exception
+   private NoTxConnectionFactory buildNoTxConnectionFactory(String jndiName, 
+         ConnectionDefinitionProperties myCdProps, WeblogicConnector ra) throws Exception
    {
-      Map<String, String> props = transformConfigProperties(ra);
+      Map<String, String> rarProps = transformConfigProperties(ra.getProperties());
+      Map<String, String> connProps = transformConfigProperties(myCdProps.getProperties());
       
-      LegacyConnectionFactoryImp noTxCf = new LegacyConnectionFactoryImp("jndiName", "wls.rar", "poolName",
-         "connectionDefinition", props, TransactionSupportEnum.NoTransaction);
+      LegacyConnectionFactoryImp noTxCf = new LegacyConnectionFactoryImp(jndiName, "wls.rar", rarProps, "FIXME", 
+            "FIXME", connProps, TransactionSupportEnum.NoTransaction);
       transformAdminObjects(noTxCf, ra);
+      transformResourceAdapter(noTxCf, myCdProps);
       noTxCf.buildResourceAdapterImpl();
       return noTxCf;
    }
 
-   private TxConnectionFactory buildTxConnectionFactory(ConnectionDefinition conDef, WeblogicConnector ra)
-      throws Exception
+   private TxConnectionFactory buildTxConnectionFactory(String jndiName, 
+         ConnectionDefinitionProperties myCdProps, WeblogicConnector ra) throws Exception
    {
-      Map<String, String> props = transformConfigProperties(ra);
+      Map<String, String> rarProps = transformConfigProperties(ra.getProperties());
+      Map<String, String> connProps = transformConfigProperties(myCdProps.getProperties());
       
       LegacyConnectionFactoryImp txCf;
-      if (conDef.getDefaultConnectionProperties().getTransactionSupport()
-            .equals(TransactionSupport.LocalTransaction))
+      if (myCdProps.getTransactionSupport().equals(TransactionSupport.LocalTransaction))
       {
-         txCf = new LegacyConnectionFactoryImp("jndiName", "wls.rar", "poolName", "connectionDefinition", props,
+         txCf = new LegacyConnectionFactoryImp(jndiName, "wls.rar", rarProps, "FIXME", "FIXME", connProps,
                TransactionSupportEnum.LocalTransaction);
       }
       else
       {
-         txCf = new LegacyConnectionFactoryImp("jndiName", "wls.rar", "poolName", "connectionDefinition", props,
+         txCf = new LegacyConnectionFactoryImp(jndiName, "wls.rar", rarProps, "FIXME", "FIXME", connProps,
                TransactionSupportEnum.XATransaction);
       }
       transformAdminObjects(txCf, ra);
-      transformResourceAdapter(txCf, ra);
+      transformResourceAdapter(txCf, myCdProps);
       txCf.buildResourceAdapterImpl();
       return txCf;
    }
    
-   private void transformResourceAdapter(LegacyConnectionFactoryImp lcf, WeblogicConnector ra)
+   private void transformResourceAdapter(LegacyConnectionFactoryImp lcf, ConnectionDefinitionProperties myCdProps)
+      throws Exception
    {
-      // TODO Auto-generated method stub
-      
+      lcf.buildCommonPool(myCdProps.getPoolParams().getInitialCapacity(), myCdProps.getPoolParams().getMaxCapacity(),
+            Defaults.PREFILL, Defaults.USE_STRICT_MIN, Defaults.INTERLEAVING);
+      lcf.buildTimeOut(new Long(myCdProps.getPoolParams().getConnectionReserveTimeoutSeconds() * 1000), new Long(
+            myCdProps.getPoolParams().getConnectionReserveTimeoutSeconds()), 5, 
+            new Long(myCdProps.getPoolParams().getTestFrequencySeconds() * 1000), 0);
+
    }
 
-   private Map<String, String> transformConfigProperties(WeblogicConnector ra)
+   private ConnectionDefinitionProperties mergedCdProps(ConnectionDefinitionProperties oldCdProps, 
+         ConnectionDefinitionProperties newCdProps)
    {
-      if (ra.getProperties() == null || ra.getProperties().getProperty() == null ||
-            ra.getProperties().getProperty().size() == 0)
+      //TODO should merge more properties
+      PoolParams poolParams = newCdProps.getPoolParams() == null ? 
+            oldCdProps.getPoolParams() : newCdProps.getPoolParams();
+      ConfigProperties props = newCdProps.getProperties() == null ?
+            oldCdProps.getProperties() : newCdProps.getProperties();
+      
+      TransactionSupport trans = oldCdProps.getTransactionSupport();
+      if (newCdProps.getTransactionSupport() != null &&
+            newCdProps.getTransactionSupport() != TransactionSupport.NotDefined)
+      {
+         trans = newCdProps.getTransactionSupport();
+      }
+      return new ConnectionDefinitionPropertiesImpl(poolParams, null, trans, 
+            newCdProps.getAuthenticationMechanism(), newCdProps.getReauthenticationSupport(), 
+            props, newCdProps.getResAuth());
+   }
+
+   private Map<String, String> transformConfigProperties(ConfigProperties props)
+   {
+      if (props == null || props.getProperty() == null ||
+            props.getProperty().size() == 0)
          return null;
       
-      Map<String, String> props = new HashMap<String, String>();
-      for (ConfigProperty cp : ra.getProperties().getProperty())
+      Map<String, String> newprops = new HashMap<String, String>();
+      for (ConfigProperty cp : props.getProperty())
       {
-         props.put(cp.getName(), cp.getValue());
+         newprops.put(cp.getName(), cp.getValue());
       }
-      return props;
+      return newprops;
    }
 
    private void transformAdminObjects(LegacyConnectionFactoryImp lcf, WeblogicConnector ra) throws Exception

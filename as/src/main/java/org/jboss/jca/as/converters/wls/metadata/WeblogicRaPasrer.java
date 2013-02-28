@@ -715,9 +715,13 @@ public class WeblogicRaPasrer extends AbstractParser implements MetadataParser<W
       {
          return TransactionSupport.LocalTransaction;
       }
-      else
+      else if (trans.equals("NoTransaction"))
       {
          return TransactionSupport.NoTransaction;
+      }
+      else
+      {
+         return TransactionSupport.NotDefined;
       }
    }
 

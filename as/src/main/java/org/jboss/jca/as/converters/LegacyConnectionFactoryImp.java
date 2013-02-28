@@ -71,8 +71,8 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
    private String rarName;
    private String poolName;
    private String connectionDefinition;
-   private Map<String, String> configProperty;
-   
+   private Map<String, String> rarConfigProperty;
+   private Map<String, String> connConfigProperty;
    private Boolean noTxSeparatePool;
    private Boolean interleaving;
 
@@ -81,25 +81,36 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
     * 
     * @param jndiName jndiName
     * @param rarName rarName
+    * @param rarConfigProperty rarConfigProperty
     * @param poolName poolName
     * @param connectionDefinition connectionDefinition
-    * @param configProperty configProperty
+    * @param connConfigProperty connConfigProperty
     * @param transactionSupport transactionSupport
     */
-   public LegacyConnectionFactoryImp(String jndiName, String rarName, String poolName,
-         String connectionDefinition, Map<String, String> configProperty, TransactionSupportEnum transactionSupport)
+   public LegacyConnectionFactoryImp(String jndiName, String rarName, Map<String, String> rarConfigProperty, 
+         String poolName, String connectionDefinition, Map<String, String> connConfigProperty, 
+         TransactionSupportEnum transactionSupport)
    {
       this.jndiName = jndiName;
       this.rarName = rarName;
       this.poolName = poolName;
-      if (configProperty != null)
+      if (rarConfigProperty != null)
       {
-         this.configProperty = new HashMap<String, String>(configProperty.size());
-         this.configProperty.putAll(configProperty);
+         this.rarConfigProperty = new HashMap<String, String>(rarConfigProperty.size());
+         this.rarConfigProperty.putAll(rarConfigProperty);
       }
       else
       {
-         this.configProperty = new HashMap<String, String>(0);
+         this.rarConfigProperty = new HashMap<String, String>(0);
+      }
+      if (connConfigProperty != null)
+      {
+         this.connConfigProperty = new HashMap<String, String>(connConfigProperty.size());
+         this.connConfigProperty.putAll(connConfigProperty);
+      }
+      else
+      {
+         this.connConfigProperty = new HashMap<String, String>(0);
       }
       this.connectionDefinition = connectionDefinition;
       this.transactionSupport = transactionSupport;
@@ -116,13 +127,13 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
       {
          recovery = new Recovery(new CredentialImpl("user", "password", null), null, false);
       }
-      CommonConnDefImpl connDef = new CommonConnDefImpl(configProperty, connectionDefinition, jndiName, poolName,
+      CommonConnDefImpl connDef = new CommonConnDefImpl(connConfigProperty, connectionDefinition, jndiName, poolName,
                                                         Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT, Defaults.USE_CCM,
                                                         pool, timeOut, validation, security, recovery);
       connectionDefinitions = new ArrayList<CommonConnDef>();
       connectionDefinitions.add(connDef);
       raImpl = new ResourceAdapterImpl(rarName, transactionSupport, connectionDefinitions, adminObjects,
-            configProperty, null, null);
+            rarConfigProperty, null, null);
    }
    
    @Override
@@ -343,7 +354,7 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
    @Override
    public Map<String, String> getConfigProperties()
    {
-      return configProperty;
+      return rarConfigProperty;
    }
 
    @Override
