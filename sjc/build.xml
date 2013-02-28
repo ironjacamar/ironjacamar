@@ -231,6 +231,7 @@
     <copy todir="${build.dir}/ij-template/lib">
       <fileset dir="${lib.dir}/common">
         <include name="*.jar"/>
+        <exclude name="jdeparser.jar"/>
         <exclude name="jboss-logging-generator.jar"/>
         <exclude name="jboss-logging-processor.jar"/>
       </fileset>
@@ -426,6 +427,7 @@
     <copy todir="${target.dir}/sjc/lib">
       <fileset dir="${lib.dir}/common">
         <include name="*.jar"/>
+        <exclude name="jdeparser.jar"/>
         <exclude name="jboss-logging-generator.jar"/>
         <exclude name="jboss-logging-processor.jar"/>
       </fileset>
