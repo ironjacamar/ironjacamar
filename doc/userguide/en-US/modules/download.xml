@@ -77,6 +77,18 @@ ironjacamar-1.0.0.Final.tar.gz
           </thead>
           <tbody>
             <row>
+              <entry><code>ironjacamar-arquillian-embedded</code></entry>
+              <entry>
+                The Arquillian extension for the embedded module
+              </entry>
+            </row>
+            <row>
+              <entry><code>ironjacamar-arquillian-embedded-byteman</code></entry>
+              <entry>
+                The Arquillian/Byteman extension for the embedded module
+              </entry>
+            </row>
+            <row>
               <entry><code>ironjacamar-as</code></entry>
               <entry>
                 JBoss Application Server integration tools
@@ -143,18 +155,6 @@ ironjacamar-1.0.0.Final.tar.gz
               </entry>
             </row>
             <row>
-              <entry><code>ironjacamar-embedded-arquillian</code></entry>
-              <entry>
-                The Arquillian extension for the embedded module
-              </entry>
-            </row>
-            <row>
-              <entry><code>ironjacamar-embedded-arquillian-byteman</code></entry>
-              <entry>
-                The Arquillian/Byteman extension for the embedded module
-              </entry>
-            </row>
-            <row>
               <entry><code>ironjacamar-jdbc</code></entry>
               <entry>
                 The core library for the JDBC resource adapters
@@ -163,7 +163,7 @@ ironjacamar-1.0.0.Final.tar.gz
             <row>
               <entry><code>ironjacamar-spec-api</code></entry>
               <entry>
-                The Java EE Connector Architecture 1.6 API
+                The Java EE Connector Architecture 1.7 API
               </entry>
             </row>
             <row>
@@ -200,12 +200,6 @@ ironjacamar-1.0.0.Final.tar.gz
               <entry><code>jdbc-xa</code></entry>
               <entry>
                 A JDBC resource adapter backing XA datasources
-              </entry>
-            </row>
-            <row>
-              <entry><code>mail</code></entry>
-              <entry>
-                An inflow mail resource adapter
               </entry>
             </row>
           </tbody>
