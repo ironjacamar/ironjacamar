@@ -233,7 +233,7 @@ public class OnePoolNoTxTestCase extends PoolTestCaseAbstract
    {
       AbstractPool pool = getPool();
       assertTrue(((OnePool) pool).testConnection());
-      assertTrue(pool.internalTestConnection(null));
+      assertTrue(pool.internalTestConnection(null, null));
    }
 
    /**
