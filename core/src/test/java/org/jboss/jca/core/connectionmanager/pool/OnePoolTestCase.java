@@ -97,16 +97,16 @@ public class OnePoolTestCase
 
    /**
    *
-   * emptySubPoolShouldDoNothing
+   * emptyManagedConnectionPoolShouldDoNothing
    *  @throws Exception in case of unexpected errors
    */
    @Test
-   public void emptySubPoolShouldDoNothing() throws Exception
+   public void emptyManagedConnectionPoolShouldDoNothing() throws Exception
    {
       //given
       AbstractPool pool = new OnePool(mock(ManagedConnectionFactory.class), mock(PoolConfiguration.class), false);
       //when (note: argument is not important, set to null just for convenience)
-      ((OnePool) pool).emptySubPool(null);
+      ((OnePool) pool).emptyManagedConnectionPool(null);
       //then
       assertThat(pool.getManagedConnectionPools().get(pool.getKey(null, null, false)) == null, is(true));
    }

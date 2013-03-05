@@ -79,7 +79,8 @@ public class ReauthPool extends AbstractPool
     * 
     * @param pool the internal managed connection pool
     */
-   public void emptySubPool(ManagedConnectionPool pool)
+   @Override
+   public void emptyManagedConnectionPool(ManagedConnectionPool pool)
    {
       // No-operation
    }
