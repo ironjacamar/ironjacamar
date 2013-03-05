@@ -112,6 +112,9 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
    /** Last idle check */
    private long lastIdleCheck;
 
+   /** Last used */
+   private long lastUsed;
+
    /**
     * Constructor
     */
@@ -151,6 +154,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       this.statistics = new ManagedConnectionPoolStatisticsImpl(pc.getMaxSize());
       this.supportsLazyAssociation = null;
       this.lastIdleCheck = Long.MIN_VALUE;
+      this.lastUsed = Long.MAX_VALUE;
 
       // Check if connection manager supports lazy association
       if (!(clf instanceof LazyAssociatableConnectionManager))
@@ -165,6 +169,14 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       reenable();
 
       statistics.setMaxWaitCount(-1);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getLastUsed()
+   {
+      return lastUsed;
    }
 
    /**
@@ -387,7 +399,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       
       if (!verifyConnectionListener)
       {
-         statistics.deltaTotalGetTime(System.currentTimeMillis() - startWait);
+         lastUsed = System.currentTimeMillis();
+         statistics.deltaTotalGetTime(lastUsed - startWait);
 
          // Return connection listener
          return cl;
@@ -404,7 +417,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
                if (trace)
                   log.trace("supplying ManagedConnection from pool: " + cl);
 
-               statistics.deltaTotalGetTime(System.currentTimeMillis() - startWait);
+               lastUsed = System.currentTimeMillis();
+               statistics.deltaTotalGetTime(lastUsed - startWait);
 
                // Return connection listener
                return cl;
@@ -460,6 +474,38 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       }
 
       return null;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void addConnectionListener(ConnectionListener cl)
+   {
+      try
+      {
+         cls.put(cl);
+         statistics.deltaCreatedCount();
+      }
+      catch (Throwable t)
+      {
+         Thread.interrupted();
+
+         cl.setState(ConnectionState.DESTROY);
+         doDestroy(cl);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public ConnectionListener removeConnectionListener()
+   {
+      ConnectionListener cl = cls.poll();
+
+      if (cl != null)
+         statistics.deltaDestroyedCount();
+
+      return cl;
    }
 
    /**

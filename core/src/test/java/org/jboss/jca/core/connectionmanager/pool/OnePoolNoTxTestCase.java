@@ -116,7 +116,7 @@ public class OnePoolNoTxTestCase extends PoolTestCaseAbstract
 
    /**
     * 
-    * emptyManagedConnectionPoolTest
+    * emptyManagedConnectionPoolTest -- should be a noop
     * 
     * @throws Exception in case of unexpected errors
     * 
@@ -131,11 +131,9 @@ public class OnePoolNoTxTestCase extends PoolTestCaseAbstract
       ManagedConnectionPool mcp2 = pool.getManagedConnectionPool(key2, null, null);
       assertEquals(pool.getManagedConnectionPools().size(), 2);
       pool.emptyManagedConnectionPool(mcp1);
-      assertEquals(pool.getManagedConnectionPools().size(), 1);
-      // the last pool shouldn't be removed
+      assertEquals(pool.getManagedConnectionPools().size(), 2);
       pool.emptyManagedConnectionPool(mcp2);
-      assertEquals(pool.getManagedConnectionPools().size(), 1);
-
+      assertEquals(pool.getManagedConnectionPools().size(), 2);
    }
 
    /**
@@ -160,27 +158,6 @@ public class OnePoolNoTxTestCase extends PoolTestCaseAbstract
    public void constructorShouldThrowIllegalArgumentExceptionForNullPoolConfiguration() throws Exception
    {
       new OnePool(cf.getMCF(), null, false, true);
-   }
-
-   /**
-    * 
-    * emptySubPoolShouldDoNothing
-    * 
-    * @throws Exception in case of unexpected errors
-    */
-   @Test
-   public void emptySubPoolShouldDoNothing() throws Exception
-   {
-      AbstractPool pool = getPool();
-      Object key1 = pool.getKey(null, null, true);
-      Object key2 = pool.getKey(null, null, false);
-      ManagedConnectionPool mcp1 = pool.getManagedConnectionPool(key1, null, null);
-      ManagedConnectionPool mcp2 = pool.getManagedConnectionPool(key2, null, null);
-      assertEquals(pool.getManagedConnectionPools().size(), 2);
-      ((OnePool) pool).emptySubPool(mcp1);
-      assertEquals(pool.getManagedConnectionPools().size(), 2);
-      ((OnePool) pool).emptySubPool(mcp2);
-      assertEquals(pool.getManagedConnectionPools().size(), 2);
    }
 
    /**

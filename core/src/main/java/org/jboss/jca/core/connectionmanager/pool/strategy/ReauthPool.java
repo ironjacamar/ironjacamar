@@ -24,12 +24,14 @@ package org.jboss.jca.core.connectionmanager.pool.strategy;
 
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
+import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.pool.AbstractPool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnectionFactory;
+import javax.resource.spi.RetryableUnavailableException;
 import javax.security.auth.Subject;
 
 import org.jboss.logging.Logger;
@@ -37,17 +39,15 @@ import org.jboss.logging.Logger;
 /**
  * Pool implementation that supports reauthentication
  *
- * Initial implementation is based on OnePool with no prefill support, since
- * each managed connection will likely have different credentials. Note, that
- * using a simple key (ReauthKey) will result in a higher reauthentication
- * numbers than optimal.
- *
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public class ReauthPool extends AbstractPool
 {
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, ReauthPool.class.getName());
+
+   /** Max pool size */
+   private int maxPoolSize;
 
    /**
     * Creates a new instance.
@@ -62,26 +62,54 @@ public class ReauthPool extends AbstractPool
                      final boolean sharable)
    {
       super(mcf, pc, noTxSeparatePools, sharable);
+      this.maxPoolSize = pc.getMaxSize();
    }
 
    /**
     * {@inheritDoc}
     */
    @Override
-   protected Object getKey(Subject subject, ConnectionRequestInfo cri, boolean separateNoTx)
+   protected synchronized Object getKey(Subject subject, ConnectionRequestInfo cri, boolean separateNoTx)
       throws ResourceException
    {
-      return new ReauthKey(subject, cri, separateNoTx);
+      ReauthKey key = new ReauthKey(subject, cri, separateNoTx);
+      int activeCount = getActiveCount();
+
+      if (activeCount >= maxPoolSize)
+      {
+         ManagedConnectionPool ownMcp = getManagedConnectionPool(key, subject, cri);
+
+         if (ownMcp.getStatistics().getIdleCount() == 0)
+         {
+            ManagedConnectionPool mcp = getTargetManagedConnectionPool(ownMcp);
+
+            if (mcp == null)
+               throw new RetryableUnavailableException();
+
+            ConnectionListener cl = mcp.removeConnectionListener();
+
+            if (cl == null)
+               throw new RetryableUnavailableException();
+
+            ownMcp.addConnectionListener(cl);
+
+            if (mcp.isEmpty())
+               super.emptyManagedConnectionPool(mcp);
+         }
+      }
+
+      return key;
    }
 
    /**
-    * There is no reason to empty the subpool for reauth enabled
+    * There is no reason to empty the managed connection pool for reauth enabled
     * resource adapters, since all managed connections can change
     * its credentials
     * 
-    * @param pool the internal managed connection pool
+    * @param pool the managed connection pool
     */
-   public void emptySubPool(ManagedConnectionPool pool)
+   @Override
+   public void emptyManagedConnectionPool(ManagedConnectionPool pool)
    {
       // No-operation
    }
@@ -108,5 +136,46 @@ public class ReauthPool extends AbstractPool
    public CoreLogger getLogger()
    {
       return log;
+   }
+
+   /**
+    * Get the active count - use pools directly as statistics could be disabled at pool level
+    * @return The number of active connections
+    */
+   private int getActiveCount()
+   {
+      int result = 0;
+
+      for (ManagedConnectionPool mcp : getManagedConnectionPools().values())
+      {
+         result += mcp.getStatistics().getActiveCount();
+      }
+         
+      return result;
+   }
+
+   /**
+    * Find the oldest managed connection pool with idle connections
+    * @param exclude The managed connection pool that should be excluded
+    * @return The managed connection pool; <code>null</code> if none
+    */
+   private ManagedConnectionPool getTargetManagedConnectionPool(ManagedConnectionPool exclude)
+   {
+      ManagedConnectionPool mcp = null;
+      long lastUsed = Long.MAX_VALUE;
+      
+      for (ManagedConnectionPool m : getManagedConnectionPools().values())
+      {
+         if (lastUsed > m.getLastUsed() && m.getStatistics().getIdleCount() > 0)
+         {
+            if (exclude == null || m != exclude)
+            {
+               mcp = m;
+               lastUsed = m.getLastUsed();
+            }
+         }
+      }
+
+      return mcp;
    }
 }

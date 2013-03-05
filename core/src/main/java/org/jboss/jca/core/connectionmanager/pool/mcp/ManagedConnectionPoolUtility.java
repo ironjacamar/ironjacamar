@@ -135,6 +135,7 @@ class ManagedConnectionPoolUtility
       sb.append("  BlockingFailureCount: ").append(mcps.getBlockingFailureCount()).append(newLine);
       sb.append("  CreatedCount: ").append(mcps.getCreatedCount()).append(newLine);
       sb.append("  DestroyedCount: ").append(mcps.getDestroyedCount()).append(newLine);
+      sb.append("  IdleCount: ").append(mcps.getIdleCount()).append(newLine);
       sb.append("  InUseCount: ").append(mcps.getInUseCount()).append(newLine);
       sb.append("  MaxCreationTime: ").append(mcps.getMaxCreationTime()).append(newLine);
       sb.append("  MaxGetTime: ").append(mcps.getMaxGetTime()).append(newLine);

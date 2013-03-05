@@ -77,7 +77,8 @@ public class OnePool extends AbstractPrefillPool
    /**
     * {@inheritDoc}
     */
-   public void emptySubPool(ManagedConnectionPool pool)
+   @Override
+   public void emptyManagedConnectionPool(ManagedConnectionPool pool)
    {
       // No-operation
    }

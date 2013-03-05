@@ -130,6 +130,9 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    /** Last idle check */
    private long lastIdleCheck;
 
+   /** Last used */
+   private long lastUsed;
+
    /**
     * Constructor
     */
@@ -170,6 +173,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       this.permits = new Semaphore(maxSize, true, statistics);
       this.supportsLazyAssociation = null;
       this.lastIdleCheck = Long.MIN_VALUE;
+      this.lastUsed = Long.MAX_VALUE;
 
       // Check if connection manager supports lazy association
       if (!(clf instanceof LazyAssociatableConnectionManager))
@@ -182,6 +186,14 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       }
 
       reenable();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getLastUsed()
+   {
+      return lastUsed;
    }
 
    /**
@@ -346,7 +358,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
                         clPermits.put(cl, cl);
 
-                        statistics.deltaTotalGetTime(System.currentTimeMillis() - startWait);
+                        lastUsed = System.currentTimeMillis();
+                        statistics.deltaTotalGetTime(lastUsed - startWait);
 
                         return cl;
                      }
@@ -419,7 +432,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
                clPermits.put(cl, cl);
 
-               statistics.deltaTotalGetTime(System.currentTimeMillis() - startWait);
+               lastUsed = System.currentTimeMillis();
+               statistics.deltaTotalGetTime(lastUsed - startWait);
 
                return cl;
             }
@@ -478,6 +492,35 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          {
             if (cl.controls(mc, connection))
                return cl;
+         }
+      }
+
+      return null;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void addConnectionListener(ConnectionListener cl)
+   {
+      synchronized (cls)
+      {
+         cls.add(cl);
+         statistics.deltaCreatedCount();
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public ConnectionListener removeConnectionListener()
+   {
+      synchronized (cls)
+      {
+         if (cls.size() > 0)
+         {
+            statistics.deltaDestroyedCount();
+            return cls.remove(0);
          }
       }
 

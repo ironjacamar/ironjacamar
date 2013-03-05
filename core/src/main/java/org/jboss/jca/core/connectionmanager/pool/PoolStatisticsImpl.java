@@ -47,7 +47,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class PoolStatisticsImpl implements PoolStatistics
 {
    /** Serial version uid */
-   private static final long serialVersionUID = 4L;
+   private static final long serialVersionUID = 5L;
 
    private static final String ACTIVE_COUNT = "ActiveCount";
    private static final String AVAILABLE_COUNT = "AvailableCount";
@@ -57,6 +57,7 @@ public class PoolStatisticsImpl implements PoolStatistics
    private static final String BLOCKING_FAILURE_COUNT = "BlockingFailureCount";
    private static final String CREATED_COUNT = "CreatedCount";
    private static final String DESTROYED_COUNT = "DestroyedCount";
+   private static final String IDLE_COUNT = "IdleCount";
    private static final String IN_USE_COUNT = "InUseCount";
    private static final String MAX_CREATION_TIME = "MaxCreationTime";
    private static final String MAX_GET_TIME = "MaxGetTime";
@@ -122,6 +123,9 @@ public class PoolStatisticsImpl implements PoolStatistics
 
       n.add(DESTROYED_COUNT);
       t.put(DESTROYED_COUNT, int.class);
+
+      n.add(IDLE_COUNT);
+      t.put(IDLE_COUNT, int.class);
 
       n.add(IN_USE_COUNT);
       t.put(IN_USE_COUNT, int.class);
@@ -255,6 +259,10 @@ public class PoolStatisticsImpl implements PoolStatistics
       else if (DESTROYED_COUNT.equals(name))
       {
          return getDestroyedCount();
+      }
+      else if (IDLE_COUNT.equals(name))
+      {
+         return getIdleCount();
       }
       else if (IN_USE_COUNT.equals(name))
       {
@@ -489,6 +497,26 @@ public class PoolStatisticsImpl implements PoolStatistics
          for (ManagedConnectionPool mcp : mcpPools.values())
          {
             result += mcp.getStatistics().getDestroyedCount();
+         }
+
+         return result;
+      }
+
+      return 0;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public int getIdleCount()
+   {
+      if (isEnabled())
+      {
+         int result = 0;
+
+         for (ManagedConnectionPool mcp : mcpPools.values())
+         {
+            result += mcp.getStatistics().getIdleCount();
          }
 
          return result;
@@ -777,6 +805,8 @@ public class PoolStatisticsImpl implements PoolStatistics
       sb.append(CREATED_COUNT).append("=").append(getCreatedCount());
       sb.append(",");
       sb.append(DESTROYED_COUNT).append("=").append(getDestroyedCount());
+      sb.append(",");
+      sb.append(IDLE_COUNT).append("=").append(getIdleCount());
       sb.append(",");
       sb.append(IN_USE_COUNT).append("=").append(getInUseCount());
       sb.append(",");

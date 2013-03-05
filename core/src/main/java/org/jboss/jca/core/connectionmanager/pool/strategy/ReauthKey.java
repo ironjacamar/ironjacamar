@@ -46,12 +46,12 @@ class ReauthKey
    
    /** The connection request information */
    private final Object cri;
-   
-   /** The cached hashCode */
-   private int hashCode;
 
    /** Separate no tx */
    private boolean separateNoTx;
+
+   /** The cached hashCode */
+   private int hashCode = Integer.MAX_VALUE;
 
    /**
     * Constructor
@@ -64,7 +64,6 @@ class ReauthKey
       this.subject = (subject == null) ? NOSUBJECT : subject;
       this.cri = (cri == null) ? NOCRI : cri;
       this.separateNoTx = separateNoTx;
-      this.hashCode = separateNoTx ? Boolean.TRUE.hashCode() : Boolean.FALSE.hashCode();
    }
    
    /**
@@ -73,6 +72,11 @@ class ReauthKey
    @Override
    public int hashCode()
    {
+      if (hashCode == Integer.MAX_VALUE)
+      {
+         hashCode = SecurityActions.hashCode(subject) ^ cri.hashCode();
+      }
+      
       return hashCode;
    }
 
@@ -94,6 +98,8 @@ class ReauthKey
       
       ReauthKey other = (ReauthKey)obj;
       
-      return separateNoTx == other.separateNoTx;
+      return SecurityActions.equals(subject, other.subject) 
+         && cri.equals(other.cri)
+         && separateNoTx == other.separateNoTx;
    }
 }

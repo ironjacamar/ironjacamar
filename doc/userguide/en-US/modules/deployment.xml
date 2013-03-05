@@ -876,6 +876,12 @@ public void close(Object c) throws ResourceException;
                   </entry>
                 </row>
                 <row>
+                  <entry><code>IdleCount</code></entry>
+                  <entry>
+                    The number of connections currently idle
+                  </entry>
+                </row>
+                <row>
                   <entry><code>InUseCount</code></entry>
                   <entry>
                     The number of connections currently in use
@@ -2043,6 +2049,12 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
                   <entry><code>DestroyedCount</code></entry>
                   <entry>
                     The number of connections destroyed
+                  </entry>
+                </row>
+                <row>
+                  <entry><code>IdleCount</code></entry>
+                  <entry>
+                    The number of connections currently idle
                   </entry>
                 </row>
                 <row>

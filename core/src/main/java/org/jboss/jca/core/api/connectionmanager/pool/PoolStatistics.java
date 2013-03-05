@@ -79,6 +79,12 @@ public interface PoolStatistics extends StatisticsPlugin
    public int getDestroyedCount();
 
    /**
+    * Get idle count
+    * @return The value
+    */
+   public int getIdleCount();
+
+   /**
     * Get in use count
     * @return The value
     */

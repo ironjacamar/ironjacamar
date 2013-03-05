@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2008-2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2013, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -65,8 +65,7 @@ import org.jboss.logging.Messages;
  * method to create map key object.
  * </p>
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @version $Rev$
- *
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 public abstract class AbstractPool implements Pool
 {
@@ -747,12 +746,9 @@ public abstract class AbstractPool implements Pool
 
    /**
     * Get the managed connection pools. 
-    * This method is package protected beacause it is intended only for test case use.
-    * Please don't use it in your production code.
-    *
     * @return The managed connection pools
     */
-   final ConcurrentMap<Object, ManagedConnectionPool> getManagedConnectionPools()
+   protected ConcurrentMap<Object, ManagedConnectionPool> getManagedConnectionPools()
    {
       return mcpPools;
    }

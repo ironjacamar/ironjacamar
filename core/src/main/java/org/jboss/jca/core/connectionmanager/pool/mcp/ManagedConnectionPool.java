@@ -43,6 +43,12 @@ import javax.security.auth.Subject;
 public interface ManagedConnectionPool extends IdleConnectionRemovalSupport
 {   
    /**
+    * Get the last used timestamp
+    * @return The value
+    */
+   public long getLastUsed();
+
+   /**
     * Initialize the managed connection pool
     * 
     * @param mcf The managed connection factory
@@ -143,4 +149,16 @@ public interface ManagedConnectionPool extends IdleConnectionRemovalSupport
     * @param cri The connection request information object
     */
    public void increaseCapacity(Subject subject, ConnectionRequestInfo cri);
+
+   /**
+    * Add a connection to the pool
+    * @param cl The connection listener
+    */
+   public void addConnectionListener(ConnectionListener cl);
+
+   /**
+    * Remove an idle connection from the pool
+    * @return A connection listener; <code>null</code> if no connection listener was available
+    */
+   public ConnectionListener removeConnectionListener();
 }

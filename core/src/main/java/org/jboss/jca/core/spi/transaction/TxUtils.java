@@ -72,7 +72,7 @@ public class TxUtils
       }
       catch (SystemException error)
       {
-         throw new RuntimeException("Error during isCompleted()", error);
+         throw new RuntimeException("Error during isActive()", error);
       }
    }
 
@@ -94,7 +94,7 @@ public class TxUtils
       }
       catch (SystemException error)
       {
-         throw new RuntimeException("Error during isCompleted()", error);
+         throw new RuntimeException("Error during isUncommitted()", error);
       }
    }
 
