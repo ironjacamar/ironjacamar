@@ -117,14 +117,10 @@ public abstract class SecurityContext implements WorkContext
     * </ul>
     * The following <code>Callback</code>s may be supported by the container.
     * <ul>
-    * <li>CertStoreCallback
-    * <li>
-    * <li>PrivateKeyCallback
-    * <li>
-    * <li>SecretKeyCallback
-    * <li>
-    * <li>TrustStoreCallback
-    * <li>
+    * <li>CertStoreCallback</li>
+    * <li>PrivateKeyCallback</li>
+    * <li>SecretKeyCallback</li>
+    * <li>TrustStoreCallback</li>
     * </ul>
     * <p>
     * 
@@ -158,13 +154,13 @@ public abstract class SecurityContext implements WorkContext
     * the application server.
     * <p>
     * 
-    * The serviceSubject argument must be non-null and it must not be
-    * read-only. It represents the application server and it may be used by the
-    * Work implementation to retrieve Principals and credentials necessary to
-    * establish a connection to the EIS (in the cause of mutual-auth like
-    * scenarios). If the Subject is not null, the Work implementation may
-    * collect the server credentials, as necessary, by using the callback
-    * handler passed to them .
+    * The serviceSubject argument may be null. If it is not null, it must not be read-
+    * only. It represents the application server’s credentials and it may be used by the
+    * Work implementation to retrieve Principals and credentials necessary to establish
+    * a connection to the EIS (in the cause of mutual-auth like scenarios). The
+    * serviceSubject may contain the credentials of the application server or the
+    * SecurityContext implementation may collect the service credentials, as
+    * necessary, by using the CallbackHandler passed to it.
     * <p>
     * 
     * 
@@ -206,7 +202,7 @@ public abstract class SecurityContext implements WorkContext
     *            or credentials to be used to validate a connection to the EIS.
     *            If the Subject is not null, the method implementation may add
     *            additional Principals or credentials (pertaining to the
-    *            recipient of the service request) to the Subject. *
+    *            recipient of the service request) to the Subject.
     */
    public abstract void setupSecurityContext(CallbackHandler handler,
                                              Subject executionSubject, Subject serviceSubject);
