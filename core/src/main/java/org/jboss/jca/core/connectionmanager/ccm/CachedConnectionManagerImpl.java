@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2008-2009, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2013, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -30,8 +30,12 @@ import org.jboss.jca.core.connectionmanager.transaction.TransactionSynchronizer;
 import org.jboss.jca.core.spi.transaction.TxUtils;
 import org.jboss.jca.core.spi.transaction.usertx.UserTransactionRegistry;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
@@ -143,8 +147,15 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
    }
 
    /**
-    * Set debug flag
-    * @param v The value
+    * {@inheritDoc}
+    */
+   public boolean isDebug()
+   {
+      return debug;
+   }
+
+   /**
+    * {@inheritDoc}
     */
    public void setDebug(boolean v)
    {
@@ -152,8 +163,15 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
    }
 
    /**
-    * Set error flag
-    * @param v The value
+    * {@inheritDoc}
+    */
+   public boolean isError()
+   {
+      return error;
+   }
+
+   /**
+    * {@inheritDoc}
     */
    public void setError(boolean v)
    {
@@ -161,7 +179,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
    }
 
    /**
-    * Start
+    * {@inheritDoc}
     */
    public void start()
    {
@@ -172,7 +190,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
    }
 
    /**
-    * Stop
+    * {@inheritDoc}
     */
    public void stop()
    {
@@ -398,6 +416,47 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
       }
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   public int getNumberOfConnections()
+   {
+      if (!debug)
+         return 0;
+
+      synchronized (connectionStackTraces)
+      {
+         return connectionStackTraces.size();
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public Map<String, String> listConnections()
+   {
+      if (!debug)
+         return Collections.unmodifiableMap(Collections.EMPTY_MAP);
+
+      synchronized (connectionStackTraces)
+      {
+         HashMap<String, String> result = new HashMap<String, String>();
+
+         for (Map.Entry<Object, Throwable> entry : connectionStackTraces.entrySet())
+         {
+            Object key = entry.getKey();
+            Throwable stackTrace = entry.getValue();
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            PrintStream ps = new PrintStream(baos, true);
+            stackTrace.printStackTrace(ps);
+
+            result.put(key.toString(), baos.toString());
+         }
+
+         return Collections.unmodifiableMap(result);
+      }
+   }
 
    /**
     * Close all connections.

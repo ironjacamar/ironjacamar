@@ -26,6 +26,8 @@ import org.jboss.jca.core.api.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.spi.connectionmanager.ComponentStack;
 import org.jboss.jca.core.spi.transaction.usertx.UserTransactionListener;
 
+import java.util.Map;
+
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.transaction.TransactionManager;
 
@@ -43,10 +45,22 @@ public interface CachedConnectionManager extends UserTransactionListener, Compon
    public TransactionManager getTransactionManager();
 
    /**
+    * Is debug enabled
+    * @return True if enabled; otherwise false
+    */
+   public boolean isDebug();
+
+   /**
     * Set debug flag
     * @param v The value
     */
    public void setDebug(boolean v);
+
+   /**
+    * Is error enabled
+    * @return True if enabled; otherwise false
+    */
+   public boolean isError();
 
    /**
     * Set error flag
@@ -70,6 +84,20 @@ public interface CachedConnectionManager extends UserTransactionListener, Compon
     * @param connection connection handle
     */
    public void unregisterConnection(ConnectionCacheListener cm, Object connection);
+
+   /**
+    * Get the number of connections currently in use - if debug is enabled
+    * @return The value
+    */
+   public int getNumberOfConnections();
+
+   /**
+    * List the connections in use - if debug is enabled
+    *
+    * The return value is the connection key, and its allocation stack trace
+    * @return The map
+    */
+   public Map<String, String> listConnections();
 
    /**
     * Start
