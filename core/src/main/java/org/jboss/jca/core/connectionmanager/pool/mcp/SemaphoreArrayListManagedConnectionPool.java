@@ -335,10 +335,9 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                                                       Integer.toHexString(System.identityHashCode(this))));
                   }
 
-                  int clsSize = cls.size();
-                  if (clsSize > 0)
+                  if (cls.size() > 0)
                   {
-                     cl = cls.remove(clsSize - 1);
+                     cl = cls.remove(0);
                      checkedOut.add(cl);
                      statistics.setInUsedCount(checkedOut.size());
                   }
