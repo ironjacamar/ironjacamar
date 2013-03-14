@@ -167,7 +167,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
    private boolean wrapXAResource = true;
 
    /** Same RM override */
-   private boolean isSameRMOverride;
+   private Boolean isSameRMOverride;
    
    /**
     * Constructor
@@ -272,7 +272,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
     * Get the IsSameRMOverride value
     * @return The value
     */
-   public boolean getIsSameRMOverride()
+   public Boolean getIsSameRMOverride()
    {
       return isSameRMOverride;
    }
@@ -281,7 +281,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
     * Set the IsSameRMOverride value.
     * @param v The value
     */
-   public void setIsSameRMOverride(boolean v)
+   public void setIsSameRMOverride(Boolean v)
    {
       isSameRMOverride = v;
    }
