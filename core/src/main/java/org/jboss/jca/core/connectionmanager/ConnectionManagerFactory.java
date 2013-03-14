@@ -257,8 +257,7 @@ public class ConnectionManagerFactory
       if (xaResourceTimeout != null)
          cm.setXAResourceTimeout(xaResourceTimeout.intValue());
 
-      if (isSameRMOverride != null)
-         cm.setIsSameRMOverride(isSameRMOverride.booleanValue());
+      cm.setIsSameRMOverride(isSameRMOverride);
 
       if (wrapXAResource != null)
          cm.setWrapXAResource(wrapXAResource.booleanValue());

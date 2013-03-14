@@ -55,9 +55,9 @@ public interface TxConnectionManager extends ConnectionManager, TransactionTimeo
 
    /**
     * Get the IsSameRMOverride status
-    * @return True if isSameRM is overridden; otherwise false
+    * @return <code>null</code> if no override; else true or false
     */
-   public boolean getIsSameRMOverride();
+   public Boolean getIsSameRMOverride();
 
    /**
     * Get the wrap XAResource status
