@@ -34,6 +34,7 @@ import org.jboss.jca.common.metadata.common.CommonTimeOutImpl;
 import org.jboss.jca.common.metadata.common.CommonValidationImpl;
 import org.jboss.jca.common.metadata.common.CredentialImpl;
 import org.jboss.jca.common.metadata.common.v10.CommonConnDefImpl;
+import org.jboss.jca.common.metadata.common.v11.ConnDefXaPoolImpl;
 import org.jboss.jca.common.metadata.resourceadapter.v10.ResourceAdapterImpl;
 
 import java.util.ArrayList;
@@ -192,7 +193,12 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
    public LegacyConnectionFactoryImp buildCommonPool(Integer minPoolSize, Integer maxPoolSize, 
          Boolean prefill, Boolean noTxSeparatePool, Boolean interleaving) throws Exception
    {
-      pool = new CommonPoolImpl(minPoolSize, maxPoolSize, prefill, Defaults.USE_STRICT_MIN, Defaults.FLUSH_STRATEGY);
+      if (transactionSupport == TransactionSupportEnum.XATransaction)
+         pool = new ConnDefXaPoolImpl(minPoolSize, minPoolSize, maxPoolSize, prefill, Defaults.USE_STRICT_MIN, 
+            Defaults.FLUSH_STRATEGY, null, Defaults.IS_SAME_RM_OVERRIDE, interleaving, Defaults.PAD_XID, 
+            Defaults.WRAP_XA_RESOURCE, noTxSeparatePool);
+      else
+         pool = new CommonPoolImpl(minPoolSize, maxPoolSize, prefill, Defaults.USE_STRICT_MIN, Defaults.FLUSH_STRATEGY);
       this.noTxSeparatePool = noTxSeparatePool;
       this.setInterleaving(interleaving);
       return this;

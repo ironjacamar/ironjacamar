@@ -182,7 +182,7 @@ public class WlsRaConverter
       lcf.buildTimeOut(new Long(myCdProps.getPoolParams().getConnectionReserveTimeoutSeconds() * 1000), new Long(
             myCdProps.getPoolParams().getConnectionReserveTimeoutSeconds()), 5, 
             new Long(myCdProps.getPoolParams().getTestFrequencySeconds() * 1000), 0);
-
+      lcf.buildSecurity("", "", true);
    }
 
    private ConnectionDefinitionProperties mergedCdProps(ConnectionDefinitionProperties oldCdProps, 
