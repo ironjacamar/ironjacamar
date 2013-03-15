@@ -120,7 +120,7 @@ public class H2SecurityDomainMultipleUsersTestCase
          c = ds.getConnection("sa", null);
          fail("Got connection");
       }
-      catch (Throwable t)
+      catch (Exception t)
       {
          // Ok
       }

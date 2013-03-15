@@ -84,7 +84,7 @@ public class ShrinkWrapTestCase
          embedded.deploy(raa);
          fail("Null deployment successful");
       }
-      catch (Throwable t)
+      catch (Exception t)
       {
          // Ok
       }
@@ -95,7 +95,7 @@ public class ShrinkWrapTestCase
             embedded.undeploy(raa);
             fail("Null undeployment successful");
          }
-         catch (Throwable t)
+         catch (Exception t)
          {
             // Ok
          }
