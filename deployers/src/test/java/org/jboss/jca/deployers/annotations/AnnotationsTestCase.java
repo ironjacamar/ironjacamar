@@ -130,7 +130,7 @@ public class AnnotationsTestCase
 
          fail("Success");
       }
-      catch (Exception t)
+      catch (Throwable t)
       {
          // Ok
       }

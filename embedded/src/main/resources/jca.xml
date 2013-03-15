@@ -193,15 +193,6 @@
     <property name="Password">password</property>
   </bean>
 
-  <!-- A successful security domain for H2 database -->
-  <bean name="SuccessfulSecurityDomain"
-        interface="org.jboss.security.SubjectFactory"
-        class="org.jboss.jca.core.security.DefaultSubjectFactory">
-    <property name="SecurityDomain">SuccessfulSecurityDomain</property>
-    <property name="UserName">sa</property>
-    <property name="Password">sa</property>
-  </bean>
-
   <!-- Deployer configuration -->
   <bean name="DeployerConfiguration"
         class="org.jboss.jca.deployers.fungal.RAConfiguration">

@@ -86,9 +86,6 @@ public class H2SecurityDomainMultipleUsersTestCase
    @Resource(mappedName = "java:/H2DS")
    private DataSource ds;
 
-   @Resource(mappedName = "java:/H2DS2")
-   private DataSource ds2;
-
    //-------------------------------------------------------------------------------------||
    //---------------------- THEN  --------------------------------------------------------||
    //-------------------------------------------------------------------------------------||
@@ -120,45 +117,7 @@ public class H2SecurityDomainMultipleUsersTestCase
          c = ds.getConnection("sa", null);
          fail("Got connection");
       }
-      catch (Exception t)
-      {
-         // Ok
-      }
-      finally
-      {
-         if (c != null)
-            c.close();
-      }
-   }
-
-   /**
-    * Not null password
-    * @exception Throwable Thrown if case of an error
-    */
-   @Test
-   public void testNotNullPasswordOnDS2() throws Throwable
-   {
-      assertNotNull(ds);
-      Connection c = ds.getConnection("sa", "sa");
-      assertNotNull(c);
-      c.close();
-   }
-
-   /**
-    * Null password
-    * @exception Throwable Thrown if case of an error
-    */
-   @Test
-   public void testNullPasswordOnDS2() throws Throwable
-   {
-      assertNotNull(ds);
-      Connection c = null;
-      try
-      {
-         c = ds.getConnection("sa", null);
-         fail("Got connection");
-      }
-      catch (Exception t)
+      catch (Throwable t)
       {
          // Ok
       }

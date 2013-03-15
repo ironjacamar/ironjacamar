@@ -330,7 +330,7 @@ public class InterleavingTestCase
         
          fail("Should not be here.");
       }
-      catch (Exception t)
+      catch (Throwable t)
       {
          // Ignore
       }      
@@ -371,7 +371,7 @@ public class InterleavingTestCase
         
          fail("Should not be here.");
       }
-      catch (Exception t)
+      catch (Throwable t)
       {
          log.debug(t.getMessage(), t);
       }      
