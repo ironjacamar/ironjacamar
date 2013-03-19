@@ -115,4 +115,20 @@ public interface MessageEndpointFactory
     * @since 1.7
     */
    String getActivationName();
+
+   /**
+    * Return the <code>Class</code> object corresponding to the message endpoint class. 
+    * 
+    * For example, for a Message Driven Bean this is the <code>Class</code> object corresponding
+    * to the application's MDB class. The resource adapter may use this to introspect the message
+    * endpoint class to discover annotations, interfaces implemented, etc. and modify the behavior
+    * of the resource adapter accordingly.
+    *
+    * A return value of <code>null</code> indicates that the MessageEndpoint doesn't implement the
+    * business methods of underlying message endpoint class.
+    *
+    * @return A <code>Class</code> corresponding to the message endpoint class.
+    * @since 1.7
+    */
+   Class<?> getEndpointClass();
 }

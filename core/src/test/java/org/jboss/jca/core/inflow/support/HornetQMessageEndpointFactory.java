@@ -82,4 +82,12 @@ public class HornetQMessageEndpointFactory implements MessageEndpointFactory
    {
       return "HornetQ";
    }
+
+   /**
+    * {@inheritDoc}
+    */
+   public Class<?> getEndpointClass()
+   {
+      return null;
+   }
 }
