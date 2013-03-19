@@ -66,7 +66,11 @@ public class DB2ExceptionSorter implements ExceptionSorter, Serializable
       final int code = Math.abs(e.getErrorCode());
       boolean isFatal = false;
       
-      if (code == 4499)
+      if (code == 4470)
+      {
+         isFatal = true;
+      }
+      else if (code == 4499)
       {
          isFatal = true;
       }
