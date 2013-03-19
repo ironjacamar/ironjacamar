@@ -100,7 +100,7 @@ public class ShrinkWrapTestCase
          tc.callMe();
          tc.close();
       }
-      catch (Throwable t)
+      catch (Exception t)
       {
          log.error(t.getMessage(), t);
          fail(t.getMessage());

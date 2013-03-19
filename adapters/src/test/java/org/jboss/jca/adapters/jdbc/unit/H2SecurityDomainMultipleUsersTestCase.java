@@ -66,12 +66,26 @@ public class H2SecurityDomainMultipleUsersTestCase
    }
 
    /**
+    * Define the security domain
+    * @return The deployment archive
+    * @throws Exception in case of errors
+    */
+   @Deployment(order = 2, name = "security")
+   public static Descriptor createSecurityDomain() throws Exception
+   {
+      ClassLoader cl = Thread.currentThread().getContextClassLoader();
+      InputStreamDescriptor isd = new InputStreamDescriptor("h2-sd-mu.xml", 
+                                                            cl.getResourceAsStream("h2-sd-mu.xml"));
+      return isd;
+   }
+
+   /**
     * Define the -ds.xml
     * @return The deployment archive
     * @throws Exception in case of errors
     */
-   @Deployment(order = 2)
-   public static Descriptor createDescriptor() throws Exception
+   @Deployment(order = 3, name = "datasources")
+   public static Descriptor createDataSources() throws Exception
    {
       ClassLoader cl = Thread.currentThread().getContextClassLoader();
       InputStreamDescriptor isd = new InputStreamDescriptor("h2-sd-mu-ds.xml", 
@@ -85,6 +99,9 @@ public class H2SecurityDomainMultipleUsersTestCase
    //
    @Resource(mappedName = "java:/H2DS")
    private DataSource ds;
+
+   @Resource(mappedName = "java:/H2DS2")
+   private DataSource ds2;
 
    //-------------------------------------------------------------------------------------||
    //---------------------- THEN  --------------------------------------------------------||
@@ -117,7 +134,45 @@ public class H2SecurityDomainMultipleUsersTestCase
          c = ds.getConnection("sa", null);
          fail("Got connection");
       }
-      catch (Throwable t)
+      catch (Exception t)
+      {
+         // Ok
+      }
+      finally
+      {
+         if (c != null)
+            c.close();
+      }
+   }
+
+   /**
+    * Not null password
+    * @exception Throwable Thrown if case of an error
+    */
+   @Test
+   public void testNotNullPasswordOnDS2() throws Throwable
+   {
+      assertNotNull(ds);
+      Connection c = ds.getConnection("sa", "sa");
+      assertNotNull(c);
+      c.close();
+   }
+
+   /**
+    * Null password
+    * @exception Throwable Thrown if case of an error
+    */
+   @Test
+   public void testNullPasswordOnDS2() throws Throwable
+   {
+      assertNotNull(ds);
+      Connection c = null;
+      try
+      {
+         c = ds.getConnection("sa", null);
+         fail("Got connection");
+      }
+      catch (Exception t)
       {
          // Ok
       }

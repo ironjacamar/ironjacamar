@@ -1222,45 +1222,32 @@ public abstract class BaseWrapperManagedConnectionFactory
             {
                if (cred.getManagedConnectionFactory().equals(mcf))
                {
-                  boolean pwd = false;
-
-                  props.setProperty("user", (cred.getUserName() == null) ? "" : cred.getUserName());
-
-                  if (cred.getPassword() != null)
-                  {
-                     props.setProperty("password", new String(cred.getPassword()));
-                     pwd = true;
-                  }
+                  String user = null;
+                  String pass = null;
 
                   if (cri != null)
                   {
                      WrappedConnectionRequestInfo lcri = (WrappedConnectionRequestInfo)cri;
-
-                     if (lcri.getUserName() != null)
-                        props.setProperty("user", lcri.getUserName());
-
-                     if (lcri.getPassword() != null)
-                     {
-                        props.setProperty("password", lcri.getPassword());
-                        pwd = true;
-                     }
+                     user = lcri.getUserName();
+                     pass = lcri.getPassword();
+                  }
+                  else
+                  {
+                      user = cred.getUserName();
+                      if (cred.getPassword() != null)
+                         pass = new String(cred.getPassword());
                   }
 
                   if (userName != null)
                   {
-                     props.setProperty("user", userName);
+                     user = userName;
 
                      if (password != null)
-                     {
-                        props.setProperty("password", password);
-                        pwd = true;
-                     }
+                        pass = password;
                   }
 
-                  if (!pwd || props.getProperty("password") == null)
-                  {
-                     props.setProperty("password", "");
-                  }
+                  props.setProperty("user", (user == null) ? "" : user);
+                  props.setProperty("password", (pass == null) ? "" : pass);
 
                   return Boolean.TRUE;
                }
