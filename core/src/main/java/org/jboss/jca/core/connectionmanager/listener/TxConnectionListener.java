@@ -25,6 +25,7 @@ import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
+import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.transaction.LockKey;
@@ -298,6 +299,8 @@ public class TxConnectionListener extends AbstractConnectionListener
 
       try
       {
+         boolean fired = false;
+
          if (!isTrackByTx() && transactionSynchronization != null)
          {
             Transaction tx = transactionSynchronization.currentTx;
@@ -305,23 +308,103 @@ public class TxConnectionListener extends AbstractConnectionListener
             transactionSynchronization = null;
             if (TxUtils.isUncommitted(tx))
             {
-               TransactionSynchronizer synchronizer =
-                  TransactionSynchronizer.getRegisteredSynchronizer(tx,
-                                                                    getConnectionManager().
-                                                                    getTransactionIntegration().
-                                                                    getTransactionSynchronizationRegistry());
-
                if (synchronization.enlisted)
-                  synchronizer.removeEnlisted(synchronization);
-
-               if (!tx.delistResource(getXAResource(), XAResource.TMSUSPEND))
                {
-                  throw new ResourceException(bundle.failureDelistResource(this));
+                  TransactionSynchronizer synchronizer =
+                     TransactionSynchronizer.getRegisteredSynchronizer(tx,
+                                                                       getConnectionManager().
+                                                                       getTransactionIntegration().
+                                                                       getTransactionSynchronizationRegistry());
+
+                  synchronizer.removeEnlisted(synchronization);
+               }
+
+               if (!getState().equals(ConnectionState.DESTROYED))
+               {
+                  if (trace)
+                     log.tracef("delistResource(%s, TMSUSPEND)", getXAResource());
+
+                  boolean suspendResult = tx.delistResource(getXAResource(), XAResource.TMSUSPEND);
+
+                  if (!suspendResult)
+                  {
+                     throw new ResourceException(bundle.failureDelistResource(this));
+                  }
+                  else
+                  {
+                     if (trace)
+                        log.trace("delist-suspend " + this);
+
+                     fired = true;
+                  }
                }
             }
 
             setEnlisted(false);
          }
+
+         if (!isTrackByTx() && !fired && transactionSynchronization == null &&
+             !getState().equals(ConnectionState.DESTROYED) &&
+             isManagedConnectionFree())
+         {
+            ConnectionListenerFactory clf = (ConnectionListenerFactory)getConnectionManager();
+            if (clf.getTransactionIntegration() != null &&
+                clf.getTransactionIntegration().getTransactionManager() != null)
+            {
+               Transaction tx = clf.getTransactionIntegration().getTransactionManager().getTransaction();
+
+               if (TxUtils.isUncommitted(tx))
+               {
+                  if (TxUtils.isActive(tx))
+                  {
+                     if (trace)
+                        log.tracef("delistResource(%s, TMSUCCESS)", getXAResource());
+
+                     boolean successResult = tx.delistResource(getXAResource(), XAResource.TMSUCCESS);
+
+                     if (!successResult)
+                     {
+                        throw new ResourceException(bundle.failureDelistResource(this));
+                     }
+                     else
+                     {
+                        if (trace)
+                           log.trace("delist-success " + this);
+                     
+                        fired = true;
+                     }
+                  }
+                  else
+                  {
+                     if (trace)
+                        log.tracef("delistResource(%s, TMFAIL)", getXAResource());
+
+                     boolean failResult = tx.delistResource(getXAResource(), XAResource.TMFAIL);
+
+                     if (!failResult)
+                     {
+                        throw new ResourceException(bundle.failureDelistResource(this));
+                     }
+                     else
+                     {
+                        if (trace)
+                           log.trace("delist-fail " + this);
+                     
+                        fired = true;
+                     }
+                  }
+               }
+            }
+
+            setEnlisted(false);
+         }
+
+         if (trace)
+            log.trace("delisted " + this);
+      }
+      catch (ResourceException re)
+      {
+         throw re;
       }
       catch (Throwable t)
       {
@@ -717,7 +800,44 @@ public class TxConnectionListener extends AbstractConnectionListener
        */
       public void beforeCompletion()
       {
-         //No-op
+         try
+         {
+            if (this.equals(transactionSynchronization) && wasTrackByTx)
+            {
+               if (TxUtils.isUncommitted(currentTx))
+               {
+                  if (TxUtils.isActive(currentTx))
+                  {
+                     if (trace)
+                        log.tracef("delistResource(%s, TMSUCCESS)", TxConnectionListener.this.getXAResource());
+
+                     currentTx.delistResource(TxConnectionListener.this.getXAResource(), XAResource.TMSUCCESS);
+                  }
+                  else
+                  {
+                     if (trace)
+                        log.tracef("delistResource(%s, TMFAIL)", TxConnectionListener.this.getXAResource());
+
+                     currentTx.delistResource(TxConnectionListener.this.getXAResource(), XAResource.TMFAIL);
+                  }
+               }
+               else
+               {
+                  if (trace)
+                     log.tracef("Non-uncommitted transaction for %s (%s)", TxConnectionListener.this,
+                                currentTx != null ? TxUtils.getStatusAsString(currentTx.getStatus()) : "None");
+               }
+            }
+            else
+            {
+               if (trace)
+                  log.tracef("No delistResource for: %s", TxConnectionListener.this);
+            }
+         }
+         catch (Throwable t)
+         {
+            log.beforeCompletionErrorOccured(TxConnectionListener.this, t);
+         }
       }
 
       /**

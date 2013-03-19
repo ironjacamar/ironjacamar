@@ -142,7 +142,6 @@ public interface CoreLogger extends BasicLogger
    @Message(id = 306, value = "Unknown connection error occured: %s")
    public void unknownConnectionErrorOccured(Object cl, @Cause Throwable t);
    
-   
    /**
     * Notified of error on a different managed connection
     */
@@ -174,7 +173,15 @@ public interface CoreLogger extends BasicLogger
    @Message(id = 313, value = "There is something wrong with the pooling")
    public void somethingWrongWithPooling(@Cause Throwable t);
    
-   
+   /**
+    * Error during beforeCompletion
+    * @param cl AbstractConnectionListener instance
+    * @param t The exception
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 314, value = "Error during beforeCompletion: %s")
+   public void beforeCompletionErrorOccured(Object cl, @Cause Throwable t);
+         
    // CONNECTION MANAGER (400)
 
    /**
