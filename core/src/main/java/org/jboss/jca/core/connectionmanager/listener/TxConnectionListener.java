@@ -25,6 +25,7 @@ import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
+import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.transaction.TransactionSynchronizer;
 import org.jboss.jca.core.connectionmanager.tx.TxConnectionManagerImpl;
@@ -300,21 +301,40 @@ public class TxConnectionListener extends AbstractConnectionListener
             transactionSynchronization = null;
             if (TxUtils.isUncommitted(tx))
             {
-               TransactionSynchronizer synchronizer =
-                  TransactionSynchronizer.getRegisteredSynchronizer(tx,
-                                                                    getConnectionManager().
-                                                                    getTransactionIntegration().
-                                                                    getTransactionSynchronizationRegistry());
-
                if (synchronization.enlisted)
+               {
+                  TransactionSynchronizer synchronizer =
+                     TransactionSynchronizer.getRegisteredSynchronizer(tx,
+                                                                       getConnectionManager().
+                                                                       getTransactionIntegration().
+                                                                       getTransactionSynchronizationRegistry());
+                  
                   synchronizer.removeEnlisted(synchronization);
+               }
 
-               if (!tx.delistResource(getXAResource(), XAResource.TMSUSPEND))
+               if (trace)
+                  log.tracef("delistResource(%s, TMSUSPEND)", getXAResource());
+
+               boolean suspendResult = tx.delistResource(getXAResource(), XAResource.TMSUSPEND);
+
+               if (!suspendResult)
                {
                   throw new ResourceException(bundle.failureDelistResource(this));
                }
+               else
+               {
+                  if (trace)
+                     log.trace("delist-suspend " + this);
+               }
             }
          }
+
+         if (trace)
+            log.trace("delisted " + this);
+      }
+      catch (ResourceException re)
+      {
+         throw re;
       }
       catch (Throwable t)
       {
@@ -680,7 +700,7 @@ public class TxConnectionListener extends AbstractConnectionListener
       public String toString()
       {
          StringBuffer buffer = new StringBuffer();
-         buffer.append("TxSync").append(System.identityHashCode(this));
+         buffer.append("TxSync@").append(System.identityHashCode(this));
          buffer.append("{tx=").append(currentTx);
          buffer.append(" wasTrackByTx=").append(wasTrackByTx);
          buffer.append(" enlisted=").append(enlisted);

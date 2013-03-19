@@ -83,6 +83,7 @@ class ManagedConnectionPoolUtility
    {
       StringBuilder sb = new StringBuilder(1024);
 
+      sb.append(method).append(newLine);
       sb.append("ManagedConnectionPool: ").append(Integer.toHexString(identifier)).append(newLine);
       sb.append("Method: ").append(method).append(newLine);
       sb.append("ManagedConnectionFactory:").append(newLine);
