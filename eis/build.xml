@@ -42,9 +42,10 @@
         ================================= -->
   <target name="compile" depends="check" unless="eis.uptodate">
     <mkdir dir="${build.eis.dir}" />
+    <mkdir dir="${build.eis.dir}/impl" />
 
     <javac srcdir="src/main"
-           destdir="${build.eis.dir}"
+           destdir="${build.eis.dir}/impl"
            classpathref="main.lib.path.id"
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
@@ -59,7 +60,7 @@
        Target: jars
        ================================= -->
   <target name="jars" depends="compile">
-    <copy todir="${build.eis.dir}">
+    <copy todir="${build.eis.dir}/impl">
       <fileset dir="src/main/resources/"
                includes="**/*"/>
       <filterset>
@@ -68,7 +69,7 @@
     </copy>
 
     <jar destfile="${target.dir}/${name}-test-eis.jar"
-         basedir="${build.eis.dir}"
+         basedir="${build.eis.dir}/impl"
          index="true"
          indexMetaInf="true"
          update="true"
@@ -101,7 +102,7 @@
              doctitle="IronJacamar Test EIS Server"
              use="true"
              additionalparam="-author -version"
-             classpath="${build.eis.dir}"
+             classpath="${build.eis.dir}/impl"
              classpathref="main.lib.path.id"
              bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
       <link offline="true" href="http://docs.oracle.com/javase/6/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
@@ -273,7 +274,7 @@
              doctitle="IronJacamar Test EIS Server"
              use="true"
              additionalparam="-author -version"
-             classpath="${build.eis.dir}"
+             classpath="${build.eis.dir}/impl"
              classpathref="main.lib.path.id"
              bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
       <link offline="true" href="http://docs.oracle.com/javase/6/docs/api/" packagelistLoc="${java.home}/../docs/api"/>

@@ -42,21 +42,22 @@
         ================================= -->
   <target name="compile" depends="check" unless="common.uptodate">
     <mkdir dir="${build.common.dir}" />
+    <mkdir dir="${build.common.dir}/impl" />
     
     <javac srcdir="src/main"
-           destdir="${build.common.dir}"
+           destdir="${build.common.dir}/impl"
            classpathref="main.lib.path.id"
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
            optimize="${javac.optimize}"
            includeAntRuntime="false">
       <compilerarg value="-Xlint"/>
-      <compilerarg value="-AgeneratedTranslationFilesPath=${build.common.dir}"/>
-      <compilerarg value="-AtranslationFilesPath=${build.common.dir}"/>
+      <compilerarg value="-AgeneratedTranslationFilesPath=${build.common.dir}/impl"/>
+      <compilerarg value="-AtranslationFilesPath=${build.common.dir}/impl"/>
     </javac>
     
-    <javac srcdir="${build.common.dir}"
-           destdir="${build.common.dir}"
+    <javac srcdir="${build.common.dir}/impl"
+           destdir="${build.common.dir}/impl"
            classpathref="main.lib.path.id"
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
@@ -65,7 +66,7 @@
       <compilerarg value="-Xlint"/>
     </javac> 
 
-    <copy todir="${build.common.dir}"
+    <copy todir="${build.common.dir}/impl"
           flatten="yes">
       <fileset dir="src/main/resources/">
         <include name="**/*.dtd"/>
@@ -80,7 +81,7 @@
        ================================= -->
   <target name="jars" depends="compile">
     <jar destfile="${target.dir}/${name}-common-api.jar"
-         basedir="${build.common.dir}"
+         basedir="${build.common.dir}/impl"
          index="true"
          indexMetaInf="true"
          update="true"
@@ -95,7 +96,7 @@
     </jar>
 
     <jar destfile="${target.dir}/${name}-common-spi.jar"
-         basedir="${build.common.dir}"
+         basedir="${build.common.dir}/impl"
          index="true"
          indexMetaInf="true"
          update="true"
@@ -110,7 +111,7 @@
     </jar>
 
     <jar destfile="${target.dir}/${name}-common-impl.jar"
-         basedir="${build.common.dir}"
+         basedir="${build.common.dir}/impl"
          index="true"
          indexMetaInf="true"
          update="true"
@@ -141,7 +142,7 @@
              doctitle="IronJacamar Common"
              use="true"
              additionalparam="-author -version"
-             classpath="${build.common.dir}"
+             classpath="${build.common.dir}/impl"
              classpathref="main.lib.path.id"
              bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
       <link offline="true" href="http://docs.oracle.com/javase/6/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
@@ -307,7 +308,7 @@
          level="9">
       <fileset dir="src/main/java"
                excludes="**/common/api/**,**/common/spi/**"/>
-      <fileset dir="${build.common.dir}"
+      <fileset dir="${build.common.dir}/impl"
                includes="**/*.java"/>
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Common Implementation - Sources"/>
@@ -329,7 +330,7 @@
              doctitle="IronJacamar Common - API"
              use="true"
              additionalparam="-author -version"
-             classpath="${build.common.dir}"
+             classpath="${build.common.dir}/impl"
              classpathref="main.lib.path.id"
              bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
 
@@ -367,7 +368,7 @@
              doctitle="IronJacamar Common - SPI"
              use="true"
              additionalparam="-author -version"
-             classpath="${build.common.dir}"
+             classpath="${build.common.dir}/impl"
              classpathref="main.lib.path.id"
              bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
 
@@ -405,7 +406,7 @@
              doctitle="IronJacamar Common - Implementation"
              use="true"
              additionalparam="-author -version"
-             classpath="${build.common.dir}"
+             classpath="${build.common.dir}/impl"
              classpathref="main.lib.path.id"
              bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
 

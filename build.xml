@@ -1105,6 +1105,48 @@
       <xml destfile="${reports.dir}/jacoco/xml/jacoco.xml"/>
     </jacoco-report>
 
+    <!-- Workaround for jacoco-plugin classes -->
+    <mkdir dir="${build.dir}/jacoco-classes"/>
+    <copy todir="${build.dir}/jacoco-classes">
+      <fileset dir="${build.dir}/adapters/impl"/>
+    </copy>
+    <copy todir="${build.dir}/jacoco-classes">
+      <fileset dir="${build.dir}/api"/>
+    </copy>
+    <copy todir="${build.dir}/jacoco-classes">
+      <fileset dir="${build.dir}/arquillian/impl"/>
+    </copy>
+    <copy todir="${build.dir}/jacoco-classes">
+      <fileset dir="${build.dir}/as/impl"/>
+    </copy>
+    <copy todir="${build.dir}/jacoco-classes">
+      <fileset dir="${build.dir}/codegenerator/impl"/>
+    </copy>
+    <copy todir="${build.dir}/jacoco-classes">
+      <fileset dir="${build.dir}/common/impl"/>
+    </copy>
+    <copy todir="${build.dir}/jacoco-classes">
+      <fileset dir="${build.dir}/core/impl"/>
+    </copy>
+    <copy todir="${build.dir}/jacoco-classes">
+      <fileset dir="${build.dir}/deployers/impl"/>
+    </copy>
+    <copy todir="${build.dir}/jacoco-classes">
+      <fileset dir="${build.dir}/eis/impl"/>
+    </copy>
+    <copy todir="${build.dir}/jacoco-classes">
+      <fileset dir="${build.dir}/embedded/impl"/>
+    </copy>
+    <copy todir="${build.dir}/jacoco-classes">
+      <fileset dir="${build.dir}/sjc/impl"/>
+    </copy>
+    <copy todir="${build.dir}/jacoco-classes">
+      <fileset dir="${build.dir}/validator/impl"/>
+    </copy>
+    <copy todir="${build.dir}/jacoco-classes">
+      <fileset dir="${build.dir}/web/impl"/>
+    </copy>
+
   </target>
 
   <!-- ================================= 
