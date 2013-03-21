@@ -145,8 +145,8 @@ public class XidWrapperImpl implements XidWrapper
          StringBuilder sb = new StringBuilder();
          sb.append("XidWrapperImpl@").append(Integer.toHexString(System.identityHashCode(this)));
          sb.append("[formatId=").append(getFormatId());
-         sb.append(" globalTransactionId=").append(new String(getGlobalTransactionId()).trim());
-         sb.append(" branchQualifier=").append(new String(getBranchQualifier()).trim());
+         sb.append(" globalTransactionId=").append(Arrays.toString(getGlobalTransactionId()));
+         sb.append(" branchQualifier=").append(Arrays.toString(getBranchQualifier()));
          sb.append(" jndiName=").append(jndiName);
          sb.append("]");
          cachedToString = sb.toString();
