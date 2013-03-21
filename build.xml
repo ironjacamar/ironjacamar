@@ -850,7 +850,7 @@
     </jacoco-coverage>
  
     <jacoco-coverage destfile="${reports.dir}/jacoco/jacoco.exec"
-                     excludes="org.jboss.jca.embedded.dsl.datasources10.api.*:org.jboss.jca.embedded.dsl.datasources10.impl.*:org.jboss.jca.embedded.dsl.datasources11.api.*:org.jboss.jca.embedded.dsl.datasources11.impl.*:org.jboss.jca.embedded.dsl.datasources12.api.*:org.jboss.jca.embedded.dsl.datasources12.impl.*:org.jboss.jca.embedded.dsl.ironjacamar10.api.*:org.jboss.jca.embedded.dsl.ironjacamar10.impl.*:org.jboss.jca.embedded.dsl.ironjacamar11.api.*:org.jboss.jca.embedded.dsl.ironjacamar11.impl.*:org.jboss.jca.embedded.dsl.resourceadapters10.api.*:org.jboss.jca.embedded.dsl.resourceadapters10.impl.*:org.jboss.jca.embedded.dsl.resourceadapters11.api.*:org.jboss.jca.embedded.dsl.resourceadapters11.impl.*:org.jboss.shrinkwrap.descriptor.api.connector15.*:org.jboss.shrinkwrap.descriptor.api.connector16.*:org.jboss.shrinkwrap.descriptor.api.j2ee14.*:org.jboss.shrinkwrap.descriptor.api.javaee6.*:org.jboss.shrinkwrap.descriptor.impl.connector10.*:org.jboss.shrinkwrap.descriptor.impl.connector15.*:org.jboss.shrinkwrap.descriptor.impl.connector16.*:org.jboss.shrinkwrap.descriptor.impl.j2ee14.*:org.jboss.shrinkwrap.descriptor.impl.javaee6.*">
+                     excludes="org.jboss.jca.embedded.dsl.datasources10.api.*:org.jboss.jca.embedded.dsl.datasources10.impl.*:org.jboss.jca.embedded.dsl.datasources11.api.*:org.jboss.jca.embedded.dsl.datasources11.impl.*:org.jboss.jca.embedded.dsl.datasources12.api.*:org.jboss.jca.embedded.dsl.datasources12.impl.*:org.jboss.jca.embedded.dsl.ironjacamar10.api.*:org.jboss.jca.embedded.dsl.ironjacamar10.impl.*:org.jboss.jca.embedded.dsl.ironjacamar11.api.*:org.jboss.jca.embedded.dsl.ironjacamar11.impl.*:org.jboss.jca.embedded.dsl.resourceadapters10.api.*:org.jboss.jca.embedded.dsl.resourceadapters10.impl.*:org.jboss.jca.embedded.dsl.resourceadapters11.api.*:org.jboss.jca.embedded.dsl.resourceadapters11.impl.*:org.jboss.shrinkwrap.descriptor.api.connector15.*:org.jboss.shrinkwrap.descriptor.api.connector16.*:org.jboss.shrinkwrap.descriptor.api.connector17.*:org.jboss.shrinkwrap.descriptor.api.j2ee14.*:org.jboss.shrinkwrap.descriptor.api.javaee6.*:org.jboss.shrinkwrap.descriptor.api.javaee7.*:org.jboss.shrinkwrap.descriptor.impl.connector10.*:org.jboss.shrinkwrap.descriptor.impl.connector15.*:org.jboss.shrinkwrap.descriptor.impl.connector16.*:org.jboss.shrinkwrap.descriptor.impl.connector17.*:org.jboss.shrinkwrap.descriptor.impl.j2ee14.*:org.jboss.shrinkwrap.descriptor.impl.javaee6.*:org.jboss.shrinkwrap.descriptor.impl.javaee7.*">
       <junit dir="embedded/src/test"
              printsummary="${junit.printsummary}"
              haltonerror="${junit.haltonerror}"
@@ -1057,54 +1057,6 @@
       </junit>
     </jacoco-coverage>
 
-    <jacoco-report>
-      <executiondata>
-        <file file="${reports.dir}/jacoco/jacoco.exec"/>
-      </executiondata>
-      <structure name="IronJacamar">
-        <classfiles>
-          <fileset dir="${build.dir}/instrumented" includes="*.jar" />
-        </classfiles>
-        <sourcefiles encoding="UTF-8">
-          <fileset dir="api/src/main/java">
-            <include name="**/*.java" />
-          </fileset>
-          <fileset dir="adapters/src/main/java">
-            <include name="**/*.java" />
-          </fileset>
-          <fileset dir="arquillian/src/main/java">
-            <include name="**/*.java" />
-          </fileset>
-          <fileset dir="codegenerator/src/main/java">
-            <include name="**/*.java" />
-          </fileset>
-          <fileset dir="common/src/main/java">
-            <include name="**/*.java" />
-          </fileset>
-          <fileset dir="core/src/main/java">
-            <include name="**/*.java" />
-          </fileset>
-          <fileset dir="deployers/src/main/java">
-            <include name="**/*.java" />
-          </fileset>
-          <fileset dir="embedded/src/main/java">
-            <include name="**/*.java" />
-          </fileset>
-          <fileset dir="sjc/src/main/java">
-            <include name="**/*.java" />
-          </fileset>
-          <fileset dir="validator/src/main/java">
-            <include name="**/*.java" />
-          </fileset>
-          <fileset dir="web/src/main/java">
-            <include name="**/*.java" />
-          </fileset>
-        </sourcefiles>
-      </structure>
-      <html destdir="${reports.dir}/jacoco/html"/>
-      <xml destfile="${reports.dir}/jacoco/xml/jacoco.xml"/>
-    </jacoco-report>
-
     <!-- Workaround for jacoco-plugin classes -->
     <mkdir dir="${build.dir}/jacoco-classes"/>
     <copy todir="${build.dir}/jacoco-classes">
@@ -1146,6 +1098,58 @@
     <copy todir="${build.dir}/jacoco-classes">
       <fileset dir="${build.dir}/web/impl"/>
     </copy>
+
+    <jacoco-report>
+      <executiondata>
+        <file file="${reports.dir}/jacoco/jacoco.exec"/>
+      </executiondata>
+      <structure name="IronJacamar">
+        <classfiles>
+          <fileset dir="${build.dir}/jacoco-classes">
+            <include name="**/*.class"/>
+            <exclude name="**/embedded/dsl/**"/>
+            <exclude name="**/shrinkwrap/descriptor/**"/>
+          </fileset>
+        </classfiles>
+        <sourcefiles encoding="UTF-8">
+          <fileset dir="api/src/main/java">
+            <include name="**/*.java" />
+          </fileset>
+          <fileset dir="adapters/src/main/java">
+            <include name="**/*.java" />
+          </fileset>
+          <fileset dir="arquillian/src/main/java">
+            <include name="**/*.java" />
+          </fileset>
+          <fileset dir="codegenerator/src/main/java">
+            <include name="**/*.java" />
+          </fileset>
+          <fileset dir="common/src/main/java">
+            <include name="**/*.java" />
+          </fileset>
+          <fileset dir="core/src/main/java">
+            <include name="**/*.java" />
+          </fileset>
+          <fileset dir="deployers/src/main/java">
+            <include name="**/*.java" />
+          </fileset>
+          <fileset dir="embedded/src/main/java">
+            <include name="**/*.java" />
+          </fileset>
+          <fileset dir="sjc/src/main/java">
+            <include name="**/*.java" />
+          </fileset>
+          <fileset dir="validator/src/main/java">
+            <include name="**/*.java" />
+          </fileset>
+          <fileset dir="web/src/main/java">
+            <include name="**/*.java" />
+          </fileset>
+        </sourcefiles>
+      </structure>
+      <html destdir="${reports.dir}/jacoco/html"/>
+      <xml destfile="${reports.dir}/jacoco/xml/jacoco.xml"/>
+    </jacoco-report>
 
   </target>
 
