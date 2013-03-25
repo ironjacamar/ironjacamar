@@ -116,7 +116,11 @@ public class Main
          def.setOutputDir(outputDir);
 
          Profile profile;
-         if (def.getVersion().equals("1.6"))
+         if (def.getVersion().equals("1.7"))
+         {
+            profile = new JCA17Profile();
+         }
+         else if (def.getVersion().equals("1.6"))
          {
             profile = new JCA16Profile();
          }
@@ -181,12 +185,13 @@ public class Main
       do
       {
          System.out.print(rb.getString("profile.version") + " " + 
-            rb.getString("profile.version.values") + " [1.6]: ");
+            rb.getString("profile.version.values") + " [1.7]: ");
          version = in.readLine();
          if (version == null || version.equals(""))
-            version = "1.6";
+            version = "1.7";
       }
-      while (!(version.equals("1.6") || version.equals("1.5") || version.equals("1.0")));
+      while (!version.equals("1.7") || (version.equals("1.6") || version.equals("1.5") || version.equals("1.0")));
+      
       def.setVersion(version);
       
       //by default, support outbound, but not inbound
@@ -259,7 +264,7 @@ public class Main
       }
 
       //support annotation
-      if (version.equals("1.6"))
+      if (version.equals("1.7") || version.equals("1.6"))
       {
          System.out.print(rb.getString("use.annotation") + " " + rb.getString("yesno") + " [Y]: ");
          String useAnnotation = in.readLine();
@@ -279,7 +284,8 @@ public class Main
       }
 
       //use resource adapter
-      if (def.isSupportOutbound() && !def.isSupportInbound() && (version.equals("1.6") || version.equals("1.5")))
+      if (def.isSupportOutbound() && !def.isSupportInbound() && 
+         (version.equals("1.7") || version.equals("1.6") || version.equals("1.5")))
       {
          System.out.print(rb.getString("use.ra") + " " + rb.getString("yesno") + " [Y]: ");
          String useRa = in.readLine();
@@ -471,7 +477,7 @@ public class Main
             mcfID++;
             moreMcf = false;
 
-            if (def.getVersion().equals("1.5") || def.getVersion().equals("1.6"))
+            if (def.getVersion().equals("1.5") || def.getVersion().equals("1.6") || def.getVersion().equals("1.7"))
             {
                System.out.print(rb.getString("more.mcf") +  " " + rb.getString("yesno") + " [N]: ");
                String inputMoreMcf = in.readLine();

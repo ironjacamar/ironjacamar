@@ -136,7 +136,7 @@ public class RaCodeGen extends PropsCodeGen
          writeEol(out);
          writeIndent(out, indent);
          out.write("private ");
-         if (def.getVersion().equals("1.6"))
+         if (def.getVersion().equals("1.6") || def.getVersion().equals("1.7"))
          {
             out.write("ConcurrentHash");
          }
@@ -162,7 +162,7 @@ public class RaCodeGen extends PropsCodeGen
       if (def.isSupportInbound())
       {
          writeIndent(out, indent + 1);
-         if (def.getVersion().equals("1.6"))
+         if (def.getVersion().equals("1.6") || def.getVersion().equals("1.7"))
          {
             out.write("this.activations = new ConcurrentHashMap<" + 
                def.getAsClass() + ", " + def.getActivationClass() + ">();");
@@ -216,7 +216,7 @@ public class RaCodeGen extends PropsCodeGen
             writeEol(out);
             writeEol(out);
          }
-         else if (def.getVersion().equals("1.6"))
+         else if (def.getVersion().equals("1.6") || def.getVersion().equals("1.7"))
          {
             out.write("import java.util.concurrent.ConcurrentHashMap;");
             writeEol(out);

@@ -40,7 +40,7 @@ public class Definition
 {
    /** jca version  */
    @XmlElement(name = "version")
-   private String version = "1.6";
+   private String version = "1.7";
    /** output directory  */
    private String outputDir;
    /** resource adapter package name */

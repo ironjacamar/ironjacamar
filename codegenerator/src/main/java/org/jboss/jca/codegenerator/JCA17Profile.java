@@ -19,3 +19,35 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.jboss.jca.codegenerator;
+
+import org.jboss.jca.codegenerator.xml.Ra17XmlGen;
+import org.jboss.jca.codegenerator.xml.RaXmlGen;
+
+/**
+ * A JCA16Profile.
+ * 
+ * @author Jeff Zhang
+ * @version $Revision: $
+ */
+public class JCA17Profile extends BaseProfile
+{
+
+   /**
+    * JCA16Profile
+    */
+   public JCA17Profile()
+   {
+   }
+   
+   /**
+    * get right profile ra xmlGen
+    * @param def Definition
+    * @return RaXmlGen profile ra xmlGen
+    */
+   @Override
+   RaXmlGen getRaXmlGen(Definition def)
+   {
+      return new Ra17XmlGen();
+   }
+}
