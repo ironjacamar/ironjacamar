@@ -19,6 +19,12 @@
 
       <itemizedlist spacing="compact">
         <listitem>
+          Resource adapter using JCA 1.7 annotations
+        </listitem>
+        <listitem>
+          Resource adapter using JCA 1.7 metadata
+        </listitem>
+        <listitem>
           Resource adapter using JCA 1.6 annotations
         </listitem>
         <listitem>
