@@ -802,7 +802,7 @@ public class TxConnectionListener extends AbstractConnectionListener
       {
          try
          {
-            if (this.equals(transactionSynchronization) && wasTrackByTx)
+            if (this.equals(transactionSynchronization) && wasTrackByTx && !cancel)
             {
                if (TxUtils.isUncommitted(currentTx))
                {
