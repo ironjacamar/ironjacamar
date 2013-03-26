@@ -800,43 +800,51 @@ public class TxConnectionListener extends AbstractConnectionListener
        */
       public void beforeCompletion()
       {
-         try
+         if (enlisted && !cancel)
          {
-            if (this.equals(transactionSynchronization) && wasTrackByTx && !cancel)
+            try
             {
-               if (TxUtils.isUncommitted(currentTx))
+               if (this.equals(transactionSynchronization) && wasTrackByTx)
                {
-                  if (TxUtils.isActive(currentTx))
+                  if (TxUtils.isUncommitted(currentTx))
                   {
-                     if (trace)
-                        log.tracef("delistResource(%s, TMSUCCESS)", TxConnectionListener.this.getXAResource());
+                     if (TxUtils.isActive(currentTx))
+                     {
+                        if (trace)
+                           log.tracef("delistResource(%s, TMSUCCESS)", TxConnectionListener.this.getXAResource());
 
-                     currentTx.delistResource(TxConnectionListener.this.getXAResource(), XAResource.TMSUCCESS);
+                        currentTx.delistResource(TxConnectionListener.this.getXAResource(), XAResource.TMSUCCESS);
+                     }
+                     else
+                     {
+                        if (trace)
+                           log.tracef("delistResource(%s, TMFAIL)", TxConnectionListener.this.getXAResource());
+
+                        currentTx.delistResource(TxConnectionListener.this.getXAResource(), XAResource.TMFAIL);
+                     }
                   }
                   else
                   {
                      if (trace)
-                        log.tracef("delistResource(%s, TMFAIL)", TxConnectionListener.this.getXAResource());
-
-                     currentTx.delistResource(TxConnectionListener.this.getXAResource(), XAResource.TMFAIL);
+                        log.tracef("Non-uncommitted transaction for %s (%s)", TxConnectionListener.this,
+                                   currentTx != null ? TxUtils.getStatusAsString(currentTx.getStatus()) : "None");
                   }
                }
                else
                {
                   if (trace)
-                     log.tracef("Non-uncommitted transaction for %s (%s)", TxConnectionListener.this,
-                                currentTx != null ? TxUtils.getStatusAsString(currentTx.getStatus()) : "None");
+                     log.tracef("No delistResource for: %s", TxConnectionListener.this);
                }
             }
-            else
+            catch (Throwable t)
             {
-               if (trace)
-                  log.tracef("No delistResource for: %s", TxConnectionListener.this);
+               log.beforeCompletionErrorOccured(TxConnectionListener.this, t);
             }
          }
-         catch (Throwable t)
+         else
          {
-            log.beforeCompletionErrorOccured(TxConnectionListener.this, t);
+            if (trace)
+               log.tracef("Unenlisted resource: %s", TxConnectionListener.this);
          }
       }
 
