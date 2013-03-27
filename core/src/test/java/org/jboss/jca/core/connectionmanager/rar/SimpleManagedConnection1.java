@@ -49,7 +49,7 @@ public class SimpleManagedConnection1 implements ManagedConnection
 {
 
    /** The logger */
-   private static Logger log = Logger.getLogger("SimpleManagedConnection");
+   private static Logger log = Logger.getLogger("SimpleManagedConnection1");
 
    /** The logwriter */
    private PrintWriter logwriter;
@@ -63,16 +63,24 @@ public class SimpleManagedConnection1 implements ManagedConnection
    /** Connection */
    private SimpleConnectionImpl1 connection;
 
+   /** ConnectionRequestInfo */
+   private ConnectionRequestInfo cri;
+
    /**
     * Default constructor
     * @param mcf mcf
+    * @param cri cri
     */
-   public SimpleManagedConnection1(SimpleManagedConnectionFactory1 mcf)
+   public SimpleManagedConnection1(SimpleManagedConnectionFactory1 mcf, ConnectionRequestInfo cri)
    {
       this.mcf = mcf;
       this.logwriter = null;
       this.listeners = Collections.synchronizedList(new ArrayList<ConnectionEventListener>(1));
       this.connection = null;
+      if (cri == null || cri instanceof SimpleConnectionRequestInfoImpl)
+         this.cri = cri;
+      else
+         throw new RuntimeException("CRI of wrong type:" + cri);
    }
 
    /**
@@ -84,11 +92,14 @@ public class SimpleManagedConnection1 implements ManagedConnection
     * @return generic Object instance representing the connection handle. 
     * @throws ResourceException generic exception if operation fails
     */
-   public Object getConnection(Subject subject,
-      ConnectionRequestInfo cxRequestInfo) throws ResourceException
+   public Object getConnection(Subject subject, ConnectionRequestInfo cxRequestInfo) throws ResourceException
    {
-      log.finest("getConnection()");
-      connection = new SimpleConnectionImpl1(this, mcf);
+      log.info("getConnection()");
+      if (cxRequestInfo == null ||
+          (cxRequestInfo instanceof SimpleConnectionRequestInfoImpl && cxRequestInfo.equals(cri)))
+         connection = new SimpleConnectionImpl1(this, mcf, cxRequestInfo);
+      else
+         throw new ResourceException("CRI is wrong:" + cxRequestInfo);
       return connection;
    }
 
@@ -101,7 +112,7 @@ public class SimpleManagedConnection1 implements ManagedConnection
     */
    public void associateConnection(Object connection) throws ResourceException
    {
-      log.finest("associateConnection()");
+      log.info("associateConnection()");
 
       if (connection == null)
          throw new ResourceException("Null connection handle");
@@ -109,7 +120,7 @@ public class SimpleManagedConnection1 implements ManagedConnection
       if (!(connection instanceof SimpleConnectionImpl1))
          throw new ResourceException("Wrong connection handle");
 
-      this.connection = (SimpleConnectionImpl1)connection;
+      this.connection = (SimpleConnectionImpl1) connection;
    }
 
    /**
@@ -163,7 +174,7 @@ public class SimpleManagedConnection1 implements ManagedConnection
     *
     * @param handle The handle
     */
-   void closeHandle(SimpleConnection1 handle)
+   void closeHandle(SimpleConnection handle)
    {
       ConnectionEvent event = new ConnectionEvent(this, ConnectionEvent.CONNECTION_CLOSED);
       event.setConnectionHandle(handle);
@@ -238,6 +249,34 @@ public class SimpleManagedConnection1 implements ManagedConnection
    void callMe()
    {
       log.finest("callMe()");
+   }
+
+   /**
+    * Fail handle
+    *
+    * @param handle The handle
+    */
+   void failHandle(SimpleConnection handle)
+   {
+      ConnectionEvent event = new ConnectionEvent(this, ConnectionEvent.CONNECTION_ERROR_OCCURRED);
+      event.setConnectionHandle(handle);
+      for (int i = 0; i < listeners.size(); i++)
+      {
+         ConnectionEventListener cel = listeners.get(i);
+         cel.connectionErrorOccurred(event);
+      }
+      log.info("/////FAILListeners on Exit:" + listeners);
+   }
+
+   /**
+    * 
+    * getter
+    * 
+    * @return cri cri
+    */
+   public ConnectionRequestInfo getCri()
+   {
+      return cri;
    }
 
 }

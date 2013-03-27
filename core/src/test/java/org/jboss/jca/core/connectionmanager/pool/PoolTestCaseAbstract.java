@@ -23,12 +23,12 @@ package org.jboss.jca.core.connectionmanager.pool;
 
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
 import org.jboss.jca.core.connectionmanager.ConnectionManagerUtil;
-import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
 import org.jboss.jca.core.connectionmanager.rar.SimpleConnectionFactory;
 
 import java.util.logging.Logger;
 
 import javax.annotation.Resource;
+import javax.resource.spi.ConnectionManager;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -37,7 +37,7 @@ import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
 import org.junit.runner.RunWith;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * 
@@ -101,7 +101,7 @@ public abstract class PoolTestCaseAbstract
     */
    public AbstractPool getPool()
    {
-      return (OnePool) ConnectionManagerUtil.extract(cf).getPool();
+      return (AbstractPool) ConnectionManagerUtil.extract(cf).getPool();
    }
 
    /**
@@ -115,6 +115,7 @@ public abstract class PoolTestCaseAbstract
     */
    public void checkStatistics(PoolStatistics ps, int available, int inUse, int active)
    {
+      log.info("Statistics of " + ps.getClass() + ": " + ps);
       assertEquals(ps.getActiveCount(), active);
       assertEquals(ps.getInUseCount(), inUse);
       assertEquals(ps.getAvailableCount(), available);
@@ -136,4 +137,20 @@ public abstract class PoolTestCaseAbstract
       checkStatistics(ps, available, inUse, active);
       assertEquals(ps.getDestroyedCount(), destroyed);
    }
+
+   /**
+    * 
+    * checkConfiguration
+    * @param cmClass class, implementing ConnectionManager in configuration
+    * @param poolClass class, implementing Pool in configuration
+    * 
+    */
+   public void checkConfiguration(Class<? extends ConnectionManager> cmClass, Class<? extends AbstractPool> poolClass)
+   {
+      assertTrue(cmClass.isAssignableFrom(ConnectionManagerUtil.extract(cf).getClass()));
+      AbstractPool pool = getPool();
+      assertTrue(poolClass.isAssignableFrom(pool.getClass()));
+      assertEquals(pool.getManagedConnectionFactory(), cf.getMCF());
+   }
+
 }

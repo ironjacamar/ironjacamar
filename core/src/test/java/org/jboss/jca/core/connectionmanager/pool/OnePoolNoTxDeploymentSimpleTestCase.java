@@ -22,9 +22,9 @@
 package org.jboss.jca.core.connectionmanager.pool;
 
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
-import org.jboss.jca.core.connectionmanager.ConnectionManagerUtil;
 import org.jboss.jca.core.connectionmanager.NoTxConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
+import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
 import org.jboss.jca.core.connectionmanager.rar.SimpleConnection;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -63,15 +63,13 @@ public class OnePoolNoTxDeploymentSimpleTestCase extends PoolTestCaseAbstract
 
    /**
     * 
-    * checkConfiguration
-    * 
+    * checkConfig
+    *
     */
-   @Test
-   public void checkConfiguration()
+   @Test 
+   public void checkConfig()
    {
-      assertTrue(ConnectionManagerUtil.extract(cf) instanceof NoTxConnectionManager);
-      AbstractPool pool = getPool();
-      assertEquals(pool.getManagedConnectionFactory(), cf.getMCF());
+      checkConfiguration(NoTxConnectionManager.class, OnePool.class);
    }
 
    /**

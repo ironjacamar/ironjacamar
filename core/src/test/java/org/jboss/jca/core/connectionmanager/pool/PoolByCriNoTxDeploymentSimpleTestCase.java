@@ -24,7 +24,7 @@ package org.jboss.jca.core.connectionmanager.pool;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
 import org.jboss.jca.core.connectionmanager.NoTxConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
-import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
+import org.jboss.jca.core.connectionmanager.pool.strategy.PoolByCri;
 import org.jboss.jca.core.connectionmanager.rar.SimpleConnection;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
 
 /**
  * 
- * A OnePoolNoTxDeploymentPrefilledTestCase
+ * A PoolByCriNoTxDeploymentSimpleTestCase
  * 
  * NOTE that this class is in org.jboss.jca.core.connectionmanager.pool and not in
  * org.jboss.jca.core.connectionmanager.pool.strategy because it needs to access to 
@@ -46,7 +46,7 @@ import static org.junit.Assert.*;
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  * 
  */
-public class OnePoolNoTxDeploymentPrefilledTestCase extends PoolTestCaseAbstract
+public class PoolByCriNoTxDeploymentSimpleTestCase extends PoolTestCaseAbstract
 {
 
    /**
@@ -58,7 +58,7 @@ public class OnePoolNoTxDeploymentPrefilledTestCase extends PoolTestCaseAbstract
    @Deployment
    public static ResourceAdapterArchive deployment()
    {
-      return getDeploymentWith("ij-prefilled.xml");
+      return getDeploymentWith("ij-app.xml");
    }
 
    /**
@@ -69,9 +69,9 @@ public class OnePoolNoTxDeploymentPrefilledTestCase extends PoolTestCaseAbstract
    @Test 
    public void checkConfig()
    {
-      checkConfiguration(NoTxConnectionManager.class, OnePool.class);
+      checkConfiguration(NoTxConnectionManager.class, PoolByCri.class);
    }
-
+   
    /**
     * 
     * checkPool
@@ -83,33 +83,32 @@ public class OnePoolNoTxDeploymentPrefilledTestCase extends PoolTestCaseAbstract
    {
       AbstractPool pool = getPool();
 
-      assertEquals(pool.getManagedConnectionPools().size(), 1);
-      PoolStatistics ps = pool.getStatistics();
-      checkStatistics(ps, 5, 0, 2);
-
+      assertEquals(pool.getManagedConnectionPools().size(), 0);
       SimpleConnection c = cf.getConnection();
       assertEquals(pool.getManagedConnectionPools().size(), 1);
-      checkStatistics(ps, 4, 1, 2);
+      PoolStatistics ps = pool.getStatistics();
+      checkStatistics(ps, 19, 1, 1);
 
-      SimpleConnection c1 = cf.getConnection();
-      SimpleConnection c2 = cf.getConnection();
+      c.close();
       assertEquals(pool.getManagedConnectionPools().size(), 1);
-      checkStatistics(ps, 2, 3, 3);
+      checkStatistics(ps, 20, 0, 1);
+
+      c = cf.getConnection("0");
+      SimpleConnection c1 = cf.getConnection("1");
+      assertEquals(pool.getManagedConnectionPools().size(), 3);
+      checkStatistics(ps, 58, 2, 3);
+
       for (ManagedConnectionPool mcp : pool.getManagedConnectionPools().values())
       {
-         checkStatistics(mcp.getStatistics(), 2, 3, 3);
+         if (mcp.getStatistics().getAvailableCount() == 20)
+            checkStatistics(mcp.getStatistics(), 20, 0, 1);
+         else
+            checkStatistics(mcp.getStatistics(), 19, 1, 1);
       }
+
       c.fail();
-      Thread.sleep(1000);
-      log.info("PS after fail:" + ps.toString());
-      checkStatistics(ps, 3, 2, 2, 1);
-      c1.fail();
-      Thread.sleep(1000);
-      checkStatistics(ps, 4, 1, 2, 2);
-      c2.close();
-      assertEquals(pool.getManagedConnectionPools().size(), 1);
-      Thread.sleep(1000);
-      log.info("PS after close:" + ps.toString());
-      checkStatistics(ps, 5, 0, 2, 2);
+      c1.close();
+      assertEquals(pool.getManagedConnectionPools().size(), 3);
+      checkStatistics(ps, 60, 0, 2, 1);
    }
 }

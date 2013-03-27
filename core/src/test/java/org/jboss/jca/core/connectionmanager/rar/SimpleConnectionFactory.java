@@ -44,6 +44,16 @@ public interface SimpleConnectionFactory extends Serializable, Referenceable
 
    /**
     * 
+    * Get connection for special userID
+    * 
+    * @param userId connection parameter
+    * @return SimpleConnection instance
+    * @throws ResourceException Thrown if a connection can't be obtained
+    */
+   public SimpleConnection getConnection(String userId) throws ResourceException;
+   
+   /**
+    * 
     * get MCF instance
     * 
     * @return mcf

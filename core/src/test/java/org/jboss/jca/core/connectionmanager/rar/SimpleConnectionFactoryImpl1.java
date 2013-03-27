@@ -28,6 +28,7 @@ import javax.naming.Reference;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionManager;
+import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnectionFactory;
 
 
@@ -36,13 +37,13 @@ import javax.resource.spi.ManagedConnectionFactory;
  *
  * @version $Revision: $
  */
-public class SimpleConnectionFactoryImpl1 implements SimpleConnectionFactory1
+public class SimpleConnectionFactoryImpl1 implements SimpleConnectionFactory
 {
    /** The serial version UID */
    private static final long serialVersionUID = 1L;
 
    /** The logger */
-   private static Logger log = Logger.getLogger("SimpleConnectionFactoryImpl");
+   private static Logger log = Logger.getLogger("SimpleConnectionFactoryImpl1");
 
    /** Reference */
    private Reference reference;
@@ -52,6 +53,31 @@ public class SimpleConnectionFactoryImpl1 implements SimpleConnectionFactory1
 
    /** ConnectionManager */
    private ConnectionManager connectionManager;
+
+   /** ConnectionRequestInfo */
+   private ConnectionRequestInfo cri;
+
+   /**
+    * 
+    * get ConnectionManager
+    * 
+    * @return ConnectionManager
+    */
+   public ConnectionManager getConnectionManager()
+   {
+      return connectionManager;
+   }
+
+   /**
+    * 
+    * set ConnectionManager
+    * 
+    * @param connectionManager ConnectionManager
+    */
+   public void setConnectionManager(ConnectionManager connectionManager)
+   {
+      this.connectionManager = connectionManager;
+   }
 
    /**
     * Default constructor
@@ -79,10 +105,10 @@ public class SimpleConnectionFactoryImpl1 implements SimpleConnectionFactory1
     * @exception ResourceException Thrown if a connection can't be obtained
     */
    @Override
-   public SimpleConnection1 getConnection() throws ResourceException
+   public SimpleConnection getConnection() throws ResourceException
    {
-      log.finest("getConnection()");
-      return (SimpleConnection1)connectionManager.allocateConnection(mcf, null);
+      log.info("getConnection()");
+      return (SimpleConnection)connectionManager.allocateConnection(mcf, null);
    }
 
    /**
@@ -110,15 +136,18 @@ public class SimpleConnectionFactoryImpl1 implements SimpleConnectionFactory1
       this.reference = reference;
    }
    
-   /**
-    * 
-    * get MCF instance
-    * 
-    * @return mcf
-    */
+   @Override
    public ManagedConnectionFactory getMCF()
    {
       return mcf;
+   }
+
+   @Override
+   public SimpleConnection getConnection(String userId) throws ResourceException
+   {
+      log.info("getConnection()");
+      cri = new SimpleConnectionRequestInfoImpl(userId);
+      return (SimpleConnection)connectionManager.allocateConnection(mcf, cri);
    }
 
 }

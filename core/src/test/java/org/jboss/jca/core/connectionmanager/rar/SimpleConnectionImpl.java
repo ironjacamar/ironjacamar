@@ -50,17 +50,13 @@ public class SimpleConnectionImpl implements SimpleConnection
       this.mcf = mcf;
    }
 
-   /**
-    * Call me
-    */
+   @Override
    public void callMe()
    {
       mc.callMe();
    }
 
-   /**
-    * Close
-    */
+   @Override
    public void close()
    {
       mc.closeHandle(this);

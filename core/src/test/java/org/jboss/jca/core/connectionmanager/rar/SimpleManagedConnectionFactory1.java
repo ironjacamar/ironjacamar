@@ -49,7 +49,7 @@ public class SimpleManagedConnectionFactory1 implements ManagedConnectionFactory
    private static final long serialVersionUID = 1L;
 
    /** The logger */
-   private static Logger log = Logger.getLogger("SimpleManagedConnectionFactory");
+   private static Logger log = Logger.getLogger("SimpleManagedConnectionFactory1");
 
    /** The resource adapter */
    private ResourceAdapter ra;
@@ -116,7 +116,7 @@ public class SimpleManagedConnectionFactory1 implements ManagedConnectionFactory
     */
    public Object createConnectionFactory(ConnectionManager cxManager) throws ResourceException
    {
-      log.finest("createConnectionFactory()");
+      log.info("createConnectionFactory()");
       return new SimpleConnectionFactoryImpl1(this, cxManager);
    }
 
@@ -142,8 +142,8 @@ public class SimpleManagedConnectionFactory1 implements ManagedConnectionFactory
    public ManagedConnection createManagedConnection(Subject subject,
          ConnectionRequestInfo cxRequestInfo) throws ResourceException
    {
-      log.finest("createManagedConnection()");
-      return new SimpleManagedConnection1(this);
+      log.info("createManagedConnection()");
+      return new SimpleManagedConnection1(this, cxRequestInfo);
    }
 
    /**
@@ -158,14 +158,16 @@ public class SimpleManagedConnectionFactory1 implements ManagedConnectionFactory
    public ManagedConnection matchManagedConnections(Set connectionSet,
          Subject subject, ConnectionRequestInfo cxRequestInfo) throws ResourceException
    {
-      log.finest("matchManagedConnections()");
+      log.info("matchManagedConnections()");
       ManagedConnection result = null;
       Iterator it = connectionSet.iterator();
       while (result == null && it.hasNext())
       {
          ManagedConnection mc = (ManagedConnection)it.next();
-         if (mc instanceof SimpleManagedConnection)
+         if (mc instanceof SimpleManagedConnection1)
          {
+            if (cxRequestInfo instanceof SimpleConnectionRequestInfoImpl &&
+               (cxRequestInfo.equals(((SimpleManagedConnection1)mc).getCri())))
             result = mc;
          }
 

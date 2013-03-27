@@ -23,12 +23,14 @@ package org.jboss.jca.core.connectionmanager.rar;
 
 import java.util.logging.Logger;
 
+import javax.resource.spi.ConnectionRequestInfo;
+
 /**
  * SimpleConnectionImpl
  *
  * @version $Revision: $
  */
-public class SimpleConnectionImpl1 implements SimpleConnection1
+public class SimpleConnectionImpl1 implements SimpleConnection
 {
    /** The logger */
    private static Logger log = Logger.getLogger("SimpleConnectionImpl1");
@@ -39,31 +41,55 @@ public class SimpleConnectionImpl1 implements SimpleConnection1
    /** ManagedConnectionFactory */
    private SimpleManagedConnectionFactory1 mcf;
 
+   /** ConnectionRequestInfo */
+   private ConnectionRequestInfo cri;
+
    /**
     * Default constructor
     * @param mc SimpleManagedConnection
     * @param mcf SimpleManagedConnectionFactory
+    * @param cri ConnectionRequestInfo
     */
-   public SimpleConnectionImpl1(SimpleManagedConnection1 mc, SimpleManagedConnectionFactory1 mcf)
+   public SimpleConnectionImpl1(SimpleManagedConnection1 mc, SimpleManagedConnectionFactory1 mcf,
+      ConnectionRequestInfo cri)
    {
+      log.info("Constructor");
       this.mc = mc;
       this.mcf = mcf;
+      if (cri == null || cri instanceof SimpleConnectionRequestInfoImpl)
+         this.cri = cri;
+      else
+         throw new RuntimeException("CRI of wrong type:" + cri);
+
    }
 
-   /**
-    * Call me
-    */
+   @Override
    public void callMe()
    {
       mc.callMe();
    }
 
-   /**
-    * Close
-    */
+   @Override
    public void close()
    {
       mc.closeHandle(this);
+   }
+
+   @Override
+   public void fail()
+   {
+      mc.failHandle(this);
+   }
+
+   /**
+    * 
+    * getter
+    * 
+    * @return cri cri
+    */
+   public ConnectionRequestInfo getCri()
+   {
+      return cri;
    }
 
 }

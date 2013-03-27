@@ -44,6 +44,13 @@
             <connection-interface>org.jboss.jca.core.connectionmanager.rar.SimpleConnection</connection-interface>
             <connection-impl-class>org.jboss.jca.core.connectionmanager.rar.SimpleConnectionImpl</connection-impl-class>
          </connection-definition>
+         <connection-definition>
+            <managedconnectionfactory-class>org.jboss.jca.core.connectionmanager.rar.SimpleManagedConnectionFactory1</managedconnectionfactory-class>
+            <connectionfactory-interface>org.jboss.jca.core.connectionmanager.rar.SimpleConnectionFactory</connectionfactory-interface>
+            <connectionfactory-impl-class>org.jboss.jca.core.connectionmanager.rar.SimpleConnectionFactoryImpl1</connectionfactory-impl-class>
+            <connection-interface>org.jboss.jca.core.connectionmanager.rar.SimpleConnection</connection-interface>
+            <connection-impl-class>org.jboss.jca.core.connectionmanager.rar.SimpleConnectionImpl1</connection-impl-class>
+         </connection-definition>
          <transaction-support>NoTransaction</transaction-support>
          <reauthentication-support>false</reauthentication-support>
       </outbound-resourceadapter>

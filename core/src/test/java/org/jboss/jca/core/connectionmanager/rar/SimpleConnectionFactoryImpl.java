@@ -134,15 +134,16 @@ public class SimpleConnectionFactoryImpl implements SimpleConnectionFactory
       this.reference = reference;
    }
    
-   /**
-    * 
-    * get MCF instance
-    * 
-    * @return mcf
-    */
+   @Override
    public ManagedConnectionFactory getMCF()
    {
       return mcf;
+   }
+
+   @Override
+   public SimpleConnection getConnection(String userId) throws ResourceException
+   {
+      return getConnection();
    }
 
 }
