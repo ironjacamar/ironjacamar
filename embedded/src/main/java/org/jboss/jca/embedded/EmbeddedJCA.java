@@ -214,6 +214,7 @@ class EmbeddedJCA implements Embedded
       if (!(descriptor instanceof InputStreamDescriptor ||
             descriptor instanceof org.jboss.jca.embedded.dsl.datasources10.api.DatasourcesDescriptor ||
             descriptor instanceof org.jboss.jca.embedded.dsl.datasources11.api.DatasourcesDescriptor ||
+            descriptor instanceof org.jboss.jca.embedded.dsl.datasources12.api.DatasourcesDescriptor ||
             descriptor instanceof org.jboss.jca.embedded.dsl.resourceadapters10.api.ResourceAdaptersDescriptor ||
             descriptor instanceof org.jboss.jca.embedded.dsl.resourceadapters11.api.ResourceAdaptersDescriptor))
          throw new IllegalArgumentException("Unsupported descriptor: " + descriptor.getClass().getName());
@@ -347,6 +348,7 @@ class EmbeddedJCA implements Embedded
       if (!(descriptor instanceof InputStreamDescriptor ||
             descriptor instanceof org.jboss.jca.embedded.dsl.datasources10.api.DatasourcesDescriptor ||
             descriptor instanceof org.jboss.jca.embedded.dsl.datasources11.api.DatasourcesDescriptor ||
+            descriptor instanceof org.jboss.jca.embedded.dsl.datasources12.api.DatasourcesDescriptor ||
             descriptor instanceof org.jboss.jca.embedded.dsl.resourceadapters10.api.ResourceAdaptersDescriptor ||
             descriptor instanceof org.jboss.jca.embedded.dsl.resourceadapters11.api.ResourceAdaptersDescriptor))
          throw new IllegalArgumentException("Unsupported descriptor: " + descriptor.getClass().getName());
