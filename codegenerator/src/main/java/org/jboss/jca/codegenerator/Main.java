@@ -190,7 +190,7 @@ public class Main
          if (version == null || version.equals(""))
             version = "1.7";
       }
-      while (!version.equals("1.7") || (version.equals("1.6") || version.equals("1.5") || version.equals("1.0")));
+      while (!(version.equals("1.7") || version.equals("1.6") || version.equals("1.5") || version.equals("1.0")));
       
       def.setVersion(version);
       
