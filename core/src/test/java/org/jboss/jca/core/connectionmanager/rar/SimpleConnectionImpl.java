@@ -23,6 +23,7 @@ package org.jboss.jca.core.connectionmanager.rar;
 
 import java.util.logging.Logger;
 
+
 /**
  * SimpleConnectionImpl
  *
@@ -68,4 +69,9 @@ public class SimpleConnectionImpl implements SimpleConnection
       mc.failHandle(this);
    }
 
+   @Override
+   public boolean isDetached()
+   {
+      return mc.isDestroyed();
+   }
 }

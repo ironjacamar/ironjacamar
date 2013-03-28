@@ -65,6 +65,9 @@ public class SimpleManagedConnection1 implements ManagedConnection
 
    /** ConnectionRequestInfo */
    private ConnectionRequestInfo cri;
+ 
+   /** destroyed */
+   private boolean destroyed;
 
    /**
     * Default constructor
@@ -81,6 +84,7 @@ public class SimpleManagedConnection1 implements ManagedConnection
          this.cri = cri;
       else
          throw new RuntimeException("CRI of wrong type:" + cri);
+      destroyed = false;
    }
 
    /**
@@ -141,6 +145,7 @@ public class SimpleManagedConnection1 implements ManagedConnection
    public void destroy() throws ResourceException
    {
       log.finest("destroy()");
+      destroyed = true;
    }
 
    /**
@@ -277,6 +282,17 @@ public class SimpleManagedConnection1 implements ManagedConnection
    public ConnectionRequestInfo getCri()
    {
       return cri;
+   }
+
+   /**
+    * 
+    * getter
+    * 
+    * @return true if connection was destroyed
+    */
+   public boolean isDestroyed()
+   {
+      return destroyed;
    }
 
 }

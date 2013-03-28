@@ -107,10 +107,12 @@ public class OnePoolNoTxDeploymentPrefilledEntirePoolFlushTestCase extends PoolT
       //the whole pool is emptied
       checkStatistics(ps, 5, 0, 2, 3);
       
+      assertTrue(c1.isDetached());
       c1.fail();
       //doesn't make an effect, connection is detached
       checkStatistics(ps, 5, 0, 2, 3);
-      
+
+      assertTrue(c2.isDetached());
       c2.close();
       //doesn't make an effect, connection is detached
       log.info("PS after close:" + ps.toString());

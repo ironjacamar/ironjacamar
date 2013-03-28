@@ -115,10 +115,13 @@ public abstract class PoolTestCaseAbstract
     */
    public void checkStatistics(PoolStatistics ps, int available, int inUse, int active)
    {
-      log.info("Statistics of " + ps.getClass() + ": " + ps);
-      assertEquals(ps.getActiveCount(), active);
-      assertEquals(ps.getInUseCount(), inUse);
-      assertEquals(ps.getAvailableCount(), available);
+      log.info("/// Statistics of " + ps.getClass() + ": " + ps);
+      assertEquals("ActiveCount value is " + ps.getActiveCount() + " but expected value is " + active,
+         ps.getActiveCount(), active);
+      assertEquals("InUseCount value is " + ps.getInUseCount() + " but expected value is " + inUse, ps.getInUseCount(),
+         inUse);
+      assertEquals("AvailableCount value is " + ps.getAvailableCount() + " but expected value is " + available,
+         ps.getAvailableCount(), available);
    }
 
    /**
@@ -135,7 +138,8 @@ public abstract class PoolTestCaseAbstract
    public void checkStatistics(PoolStatistics ps, int available, int inUse, int active, int destroyed)
    {
       checkStatistics(ps, available, inUse, active);
-      assertEquals(ps.getDestroyedCount(), destroyed);
+      assertEquals("DestroyedCount value is " + ps.getDestroyedCount() + " but expected value is " + destroyed,
+         ps.getDestroyedCount(), destroyed);
    }
 
    /**
@@ -147,10 +151,13 @@ public abstract class PoolTestCaseAbstract
     */
    public void checkConfiguration(Class<? extends ConnectionManager> cmClass, Class<? extends AbstractPool> poolClass)
    {
-      assertTrue(cmClass.isAssignableFrom(ConnectionManagerUtil.extract(cf).getClass()));
+      assertTrue("ConnectionFactory " + cf + " should contain this ConnectionManager implementation: " + cmClass +
+                 " but got " + ConnectionManagerUtil.extract(cf).getClass(),
+         cmClass.isAssignableFrom(ConnectionManagerUtil.extract(cf).getClass()));
       AbstractPool pool = getPool();
-      assertTrue(poolClass.isAssignableFrom(pool.getClass()));
-      assertEquals(pool.getManagedConnectionFactory(), cf.getMCF());
+      assertTrue("There should be a " + poolClass + " implementation of Pool, but got " + pool.getClass(),
+         poolClass.isAssignableFrom(pool.getClass()));
+      assertEquals("Pool's MCF should be " + cf.getMCF() + " but got " + pool.getManagedConnectionFactory(),
+         pool.getManagedConnectionFactory(), cf.getMCF());
    }
-
 }

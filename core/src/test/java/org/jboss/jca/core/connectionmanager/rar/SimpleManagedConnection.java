@@ -62,6 +62,10 @@ public class SimpleManagedConnection implements ManagedConnection
 
    /** Connection */
    private SimpleConnectionImpl connection;
+   
+   /** destroyed */
+   private boolean destroyed;
+
 
    /**
     * Default constructor
@@ -73,6 +77,7 @@ public class SimpleManagedConnection implements ManagedConnection
       this.logwriter = null;
       this.listeners = Collections.synchronizedList(new ArrayList<ConnectionEventListener>(1));
       this.connection = null;
+      destroyed = false;
    }
 
    /**
@@ -137,6 +142,7 @@ public class SimpleManagedConnection implements ManagedConnection
    public void destroy() throws ResourceException
    {
       log.finest("destroy()");
+      destroyed = true;
    }
 
    /**
@@ -268,6 +274,17 @@ public class SimpleManagedConnection implements ManagedConnection
    void callMe()
    {
       log.finest("callMe()");
+   }
+
+   /**
+    * 
+    * is destroyed
+    * 
+    * @return true if connection was destroyed
+    */
+   public boolean isDestroyed()
+   {
+      return destroyed;
    }
 
 }

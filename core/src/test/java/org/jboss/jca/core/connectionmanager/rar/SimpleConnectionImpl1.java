@@ -81,6 +81,12 @@ public class SimpleConnectionImpl1 implements SimpleConnection
       mc.failHandle(this);
    }
 
+   @Override
+   public boolean isDetached()
+   {
+      return mc.isDestroyed();
+   }
+
    /**
     * 
     * getter

@@ -23,9 +23,9 @@ package org.jboss.jca.core.connectionmanager.pool;
 
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
 import org.jboss.jca.core.connectionmanager.NoTxConnectionManager;
-import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.pool.strategy.PoolByCri;
 import org.jboss.jca.core.connectionmanager.rar.SimpleConnection;
+import org.jboss.jca.core.connectionmanager.rar.SimpleConnectionRequestInfoImpl;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
@@ -92,13 +92,12 @@ public class PoolByCriNoTxDeploymentEntirePoolFlushTestCase extends PoolTestCase
       assertEquals(pool.getManagedConnectionPools().size(), 2);
       checkStatistics(ps, 7, 3, 3);
 
-      for (ManagedConnectionPool mcp : pool.getManagedConnectionPools().values())
-      {
-         if (mcp.getStatistics().getInUseCount() == 2)
-            checkStatistics(mcp.getStatistics(), 3, 2, 2);
-         else
-            checkStatistics(mcp.getStatistics(), 4, 1, 1);
-      }
+      Object key1 = pool.getKey(null, new SimpleConnectionRequestInfoImpl("A"), false);
+      Object key2 = pool.getKey(null, new SimpleConnectionRequestInfoImpl("B"), false);
+
+      checkStatistics(pool.getManagedConnectionPools().get(key1).getStatistics(), 4, 1, 1);
+      checkStatistics(pool.getManagedConnectionPools().get(key2).getStatistics(), 3, 2, 2);
+
 
       c.close();
       checkStatistics(ps, 8, 2, 3);
@@ -106,16 +105,12 @@ public class PoolByCriNoTxDeploymentEntirePoolFlushTestCase extends PoolTestCase
       Thread.sleep(1000);
       checkStatistics(ps, 10, 0, 1, 2);
 
-      for (ManagedConnectionPool mcp : pool.getManagedConnectionPools().values())
-      {
-         if (mcp.getStatistics().getActiveCount() == 1)
-            checkStatistics(mcp.getStatistics(), 5, 0, 1);
-         else
-            checkStatistics(mcp.getStatistics(), 5, 0, 0, 2);
-      }
+      checkStatistics(pool.getManagedConnectionPools().get(key1).getStatistics(), 5, 0, 1);
+      checkStatistics(pool.getManagedConnectionPools().get(key2).getStatistics(), 5, 0, 0, 2);
 
-      //doesn't make an effect - connection is in detached state
+      assertTrue(c1.isDetached());
       c1.fail();
+      //doesn't make an effect - connection is in detached state
 
       assertEquals(pool.getManagedConnectionPools().size(), 2);
       checkStatistics(ps, 10, 0, 1, 2);

@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.core.connectionmanager.rar;
 
+
 /**
  * SimpleConnection
  *
@@ -40,4 +41,11 @@ public interface SimpleConnection
     * Fail
     */
    public void fail();
+   /**
+    * 
+    * is detached
+    * 
+    * @return true if connection is in detached state
+    */
+   public boolean isDetached();
 }
