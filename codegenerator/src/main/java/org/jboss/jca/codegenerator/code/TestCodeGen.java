@@ -53,7 +53,7 @@ public class TestCodeGen extends AbstractCodeGen
       out.write("public class " + getClassName(def));
       writeLeftCurlyBracket(out, 0);
       writeIndent(out, indent);
-      out.write("private static Logger log = Logger.getLogger(\"" + getClassName(def) + "\");");
+      out.write("private static Logger log = Logger.getLogger(" + getSelfClassName(def) + ");");
       writeEol(out);
       writeEol(out);
       writeIndent(out, indent);

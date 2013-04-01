@@ -125,7 +125,7 @@ public class RaCodeGen extends PropsCodeGen
       writeEol(out);
       
       writeIndent(out, indent);
-      out.write("private static Logger log = Logger.getLogger(\"" + getClassName(def) + "\");");
+      out.write("private static Logger log = Logger.getLogger(" + getSelfClassName(def) + ");");
       writeEol(out);
       writeEol(out);
       

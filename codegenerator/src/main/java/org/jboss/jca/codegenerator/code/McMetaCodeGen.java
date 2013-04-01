@@ -52,7 +52,7 @@ public class McMetaCodeGen extends AbstractCodeGen
       out.write("/** The logger */");
       writeEol(out);
       writeIndent(out, indent);
-      out.write("private static Logger log = Logger.getLogger(\"" + getClassName(def) + "\");");
+      out.write("private static Logger log = Logger.getLogger(" + getSelfClassName(def) + ");");
       writeEol(out);
       writeEol(out);
       

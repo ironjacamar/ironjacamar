@@ -268,5 +268,14 @@ public abstract class AbstractCodeGen extends BaseGen
    {
       return numOfMcf;
    }
-
+   
+   /**
+    * get self classname
+    * @param def definition
+    * @return classname of self
+    */
+   protected String getSelfClassName(Definition def)
+   {
+      return getClassName(def) + ".class.getName()";
+   }
 }
