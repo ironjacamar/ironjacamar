@@ -139,7 +139,7 @@
   <property name="version.jboss.picketbox" value="4.0.15.Final"/>
   <property name="version.jboss.security" value="2.1.0.20090318"/>
   <property name="version.jboss.shrinkwrap" value="1.0.1"/>
-  <property name="version.jboss.shrinkwrap.descriptors" value="2.0.0-alpha-4"/>
+  <property name="version.jboss.shrinkwrap.descriptors" value="2.0.0-alpha-5"/>
   <property name="version.jboss.slf4j.logmanager" value="1.0.0.GA"/>
   <property name="version.jboss.stdio" value="1.0.1.GA"/>
   <property name="version.jboss.threads" value="2.1.0.Alpha1-ij-1"/>
