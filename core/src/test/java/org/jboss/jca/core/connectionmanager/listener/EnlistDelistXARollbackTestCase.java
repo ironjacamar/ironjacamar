@@ -56,8 +56,8 @@ public class EnlistDelistXARollbackTestCase extends EnlistDelist
    {
       Context context = null;
 
-      ResourceAdapterArchive raa = createRar("XATransaction");
-      ResourceAdaptersDescriptor dashRaXml = createDeployment("XATransaction");
+      ResourceAdapterArchive raa = createRar();
+      ResourceAdaptersDescriptor dashRaXml = createXATxDeployment();
 
       try
       {

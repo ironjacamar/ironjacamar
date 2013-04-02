@@ -115,6 +115,10 @@ public class TransactionImpl implements Transaction, Serializable
 
             delisted.add(xaRes);
          }
+         else
+         {
+            enlisted.put(xaRes, Integer.valueOf(XAResource.TMSUSPEND));
+         }
 
          return true;
       }
@@ -249,7 +253,7 @@ public class TransactionImpl implements Transaction, Serializable
       }
 
       if (enlisted != null && !enlisted.isEmpty())
-         throw new IllegalStateException("XAResource instances still registrered");
+         checkEnlisted();
 
       status = st;
 
@@ -322,5 +326,18 @@ public class TransactionImpl implements Transaction, Serializable
 
       if (delisted != null)
          delisted = null;
+   }
+
+   /**
+    * Check enlisted XAResources
+    * @exception IllegalStateException Thrown if there non-TMSUSPENDed XAResources
+    */
+   private void checkEnlisted() throws IllegalStateException
+   {
+      for (Integer state : enlisted.values())
+      {
+         if (state.intValue() != XAResource.TMSUSPEND)
+            throw new IllegalStateException("XAResource instances still registrered");
+      }
    }
 }

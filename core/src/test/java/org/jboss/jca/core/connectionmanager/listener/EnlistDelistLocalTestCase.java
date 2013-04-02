@@ -56,8 +56,8 @@ public class EnlistDelistLocalTestCase extends EnlistDelist
    {
       Context context = null;
 
-      ResourceAdapterArchive raa = createRar("LocalTransaction");
-      ResourceAdaptersDescriptor dashRaXml = createDeployment("LocalTransaction");
+      ResourceAdapterArchive raa = createRar();
+      ResourceAdaptersDescriptor dashRaXml = createLocalTxDeployment();
 
       try
       {

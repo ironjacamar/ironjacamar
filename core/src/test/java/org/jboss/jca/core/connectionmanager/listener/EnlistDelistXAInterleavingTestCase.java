@@ -38,13 +38,13 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * An enlist / delist local rollback test case
+ * An enlist / delist XA interleaving test case
  *
  * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class EnlistDelistLocalRollbackTestCase extends EnlistDelist
+public class EnlistDelistXAInterleavingTestCase extends EnlistDelist
 {
-   private static Logger log = Logger.getLogger(EnlistDelistLocalRollbackTestCase.class);
+   private static Logger log = Logger.getLogger(EnlistDelistXAInterleavingTestCase.class);
 
    /**
     * Basic
@@ -57,7 +57,7 @@ public class EnlistDelistLocalRollbackTestCase extends EnlistDelist
       Context context = null;
 
       ResourceAdapterArchive raa = createRar();
-      ResourceAdaptersDescriptor dashRaXml = createLocalTxDeployment();
+      ResourceAdaptersDescriptor dashRaXml = createXATxDeployment(true);
 
       try
       {
@@ -77,15 +77,14 @@ public class EnlistDelistLocalRollbackTestCase extends EnlistDelist
          TxLogConnection c = cf.getConnection();
          c.close();
 
-         ut.setRollbackOnly();
-         ut.rollback();
+         ut.commit();
 
          // Verify
          c = cf.getConnection();
 
          log.infof("Connection=%s", c);
 
-         assertEquals("02", c.getState());
+         assertEquals("3D", c.getState());
          c.clearState();
          c.close();
       }

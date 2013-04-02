@@ -62,16 +62,15 @@ public abstract class EnlistDelist
 
    /**
     * Create .rar
-    * @param tx The transaction support
     * @return The resource adapter archive
     */
-   public ResourceAdapterArchive createRar(String tx)
+   public ResourceAdapterArchive createRar()
    {
       ConnectorDescriptor raXml = Descriptors.create(ConnectorDescriptor.class, "ra.xml")
          .version("1.5");
       ResourceadapterType rt = raXml.getOrCreateResourceadapter();
       OutboundResourceadapterType ort = rt.getOrCreateOutboundResourceadapter()
-         .transactionSupport(tx).reauthenticationSupport(false);
+         .transactionSupport("XATransaction").reauthenticationSupport(false);
       org.jboss.shrinkwrap.descriptor.api.connector15.ConnectionDefinitionType cdt =
          ort.createConnectionDefinition()
             .managedconnectionfactoryClass(TxLogManagedConnectionFactory.class.getName())
@@ -95,12 +94,16 @@ public abstract class EnlistDelist
    /**
     * Create deployment
     * @param tx The transaction support
+    * @param interleaving Use interleaving
     * @return The resource adapter descriptor
     */
-   public ResourceAdaptersDescriptor createDeployment(String tx)
+   private ResourceAdaptersDescriptor createDeployment(String tx, boolean interleaving)
    {
       ResourceAdaptersDescriptor dashRaXml = Descriptors.create(ResourceAdaptersDescriptor.class, "txlog-ra.xml");
+
       ResourceAdapterType dashRaXmlRt = dashRaXml.createResourceAdapter().archive("txlog.rar");
+      dashRaXmlRt.transactionSupport(tx);
+
       ConnectionDefinitionsType dashRaXmlCdst = dashRaXmlRt.getOrCreateConnectionDefinitions();
       org.jboss.jca.embedded.dsl.resourceadapters11.api.ConnectionDefinitionType dashRaXmlCdt =
          dashRaXmlCdst.createConnectionDefinition()
@@ -111,6 +114,9 @@ public abstract class EnlistDelist
       {
          org.jboss.jca.embedded.dsl.resourceadapters11.api.XaPoolType dashRaXmlPt = dashRaXmlCdt.getOrCreateXaPool()
             .minPoolSize(1).initialPoolSize(1).maxPoolSize(1);
+
+         if (interleaving)
+            dashRaXmlPt.interleaving();
       }
       else
       {
@@ -119,6 +125,34 @@ public abstract class EnlistDelist
       }
 
       return dashRaXml;
+   }
+
+   /**
+    * Create an XATransaction deployment
+    * @return The resource adapter descriptor
+    */
+   public ResourceAdaptersDescriptor createXATxDeployment()
+   {
+      return createDeployment("XATransaction", false);
+   }
+
+   /**
+    * Create an XATransaction deployment
+    * @param interleaving Use interleaving
+    * @return The resource adapter descriptor
+    */
+   public ResourceAdaptersDescriptor createXATxDeployment(boolean interleaving)
+   {
+      return createDeployment("XATransaction", interleaving);
+   }
+
+   /**
+    * Create a LocalTransaction deployment
+    * @return The resource adapter descriptor
+    */
+   public ResourceAdaptersDescriptor createLocalTxDeployment()
+   {
+      return createDeployment("LocalTransaction", false);
    }
 
    /**
