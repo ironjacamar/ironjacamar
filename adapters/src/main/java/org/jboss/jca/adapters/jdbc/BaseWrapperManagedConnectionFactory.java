@@ -1233,9 +1233,9 @@ public abstract class BaseWrapperManagedConnectionFactory
                   }
                   else
                   {
-                      user = cred.getUserName();
-                      if (cred.getPassword() != null)
-                         pass = new String(cred.getPassword());
+                     user = cred.getUserName();
+                     if (cred.getPassword() != null)
+                        pass = new String(cred.getPassword());
                   }
 
                   if (userName != null)

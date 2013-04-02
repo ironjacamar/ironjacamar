@@ -22,7 +22,6 @@
 package org.jboss.jca.core.connectionmanager.pool;
 
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
-import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
 
 import javax.resource.ResourceException;
 

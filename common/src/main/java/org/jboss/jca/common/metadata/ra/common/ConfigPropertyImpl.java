@@ -182,6 +182,10 @@ public class ConfigPropertyImpl implements ConfigProperty
       return mandatory;
    }
 
+   /**
+    * Is the config-property mandatory
+    * @param v The value
+    */
    public void setMandatory(boolean v)
    {
       mandatory = v;
