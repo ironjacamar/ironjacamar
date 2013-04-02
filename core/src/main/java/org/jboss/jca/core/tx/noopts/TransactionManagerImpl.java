@@ -21,8 +21,10 @@
  */
 package org.jboss.jca.core.tx.noopts;
 
-import org.jboss.jca.core.spi.transaction.xa.XATerminator;
+import java.io.Serializable;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.transaction.HeuristicMixedException;
 import javax.transaction.HeuristicRollbackException;
 import javax.transaction.InvalidTransactionException;
@@ -37,10 +39,11 @@ import javax.transaction.TransactionManager;
  * A transaction manager implementation
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class TransactionManagerImpl implements TransactionManager
+public class TransactionManagerImpl implements TransactionManager, Serializable
 {
+   private static final long serialVersionUID = 1L;
+   private static final String JNDI_NAME = "java:/TransactionManager";
    private TxRegistry registry;
-   private XATerminator terminator;
 
    /**
     * Constructor
@@ -48,7 +51,6 @@ public class TransactionManagerImpl implements TransactionManager
    public TransactionManagerImpl()
    {
       this.registry = null;
-      this.terminator = null;
    }
 
    /**
@@ -58,24 +60,6 @@ public class TransactionManagerImpl implements TransactionManager
    public void setRegistry(TxRegistry v)
    {
       registry = v;
-   }
-
-   /**
-    * Get the terminator
-    * @return The value
-    */
-   public XATerminator getXATerminator()
-   {
-      return terminator;
-   }
-
-   /**
-    * Set the terminator
-    * @param v The value
-    */
-   public void setXATerminator(XATerminator v)
-   {
-      terminator = v;
    }
 
    /**
@@ -194,5 +178,31 @@ public class TransactionManagerImpl implements TransactionManager
       registry.assignTransaction(null);
 
       return tx;
+   }
+
+   /**
+    * Start
+    * @exception Throwable Thrown if an error occurs
+    */
+   public void start() throws Throwable
+   {
+      Context context = new InitialContext();
+
+      context.bind(JNDI_NAME, this);
+
+      context.close();
+   }
+
+   /**
+    * Stop
+    * @exception Throwable Thrown if an error occurs
+    */
+   public void stop() throws Throwable
+   {
+      Context context = new InitialContext();
+
+      context.unbind(JNDI_NAME);
+
+      context.close();
    }
 }
