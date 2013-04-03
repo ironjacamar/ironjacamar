@@ -77,6 +77,9 @@ public class EnlistDelistXAInterleavingTestCase extends EnlistDelist
          TxLogConnection c = cf.getConnection();
          c.close();
 
+         c = cf.getConnection();
+         c.close();
+
          ut.commit();
 
          // Verify
@@ -84,7 +87,7 @@ public class EnlistDelistXAInterleavingTestCase extends EnlistDelist
 
          log.infof("Connection=%s", c);
 
-         assertEquals("3D", c.getState());
+         assertEquals("3D5D", c.getState());
          c.clearState();
          c.close();
       }

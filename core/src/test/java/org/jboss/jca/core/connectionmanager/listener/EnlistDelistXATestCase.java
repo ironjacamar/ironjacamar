@@ -77,6 +77,9 @@ public class EnlistDelistXATestCase extends EnlistDelist
          TxLogConnection c = cf.getConnection();
          c.close();
 
+         c = cf.getConnection();
+         c.close();
+
          ut.commit();
 
          // Verify
