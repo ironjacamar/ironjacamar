@@ -24,6 +24,7 @@ package org.jboss.jca.core.workmanager;
 
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
+import org.jboss.jca.core.security.CallbackHandlerImpl;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -55,7 +56,6 @@ import org.jboss.logging.Messages;
 
 import org.jboss.security.SecurityContextAssociation;
 import org.jboss.security.SecurityContextFactory;
-import org.jboss.security.auth.callback.JASPICallbackHandler;
 
 /**
  * Wraps the resource adapter's work.
@@ -304,8 +304,15 @@ public class WorkWrapper implements Runnable
             // Security context
             org.jboss.security.SecurityContext sc = null;
 
-            // Setup callbacks
-            CallbackHandler cbh = new JASPICallbackHandler();
+            // Setup callback handler
+            CallbackHandler cbh = null;
+            if (workManager.getCallbackSecurity() != null && workManager.getCallbackSecurity().isMappingRequired())
+            {
+               cbh = new CallbackHandlerImpl(workManager.getCallbackSecurity());
+            }
+
+            if (cbh == null)
+               cbh = new CallbackHandlerImpl();
 
             // Subjects for execution environment
             Subject executionSubject = null;
@@ -352,42 +359,40 @@ public class WorkWrapper implements Runnable
             // Resource adapter callback
             securityContext.setupSecurityContext(cbh, executionSubject, serviceSubject);
 
-            List<Callback> callbacks = new ArrayList<Callback>();
-            if (workManager.getCallbackSecurity().isMappingRequired())
+            if (workManager.getCallbackSecurity() != null)
             {
-               // JCA 1.6: 16.4.4
-            }
+               List<Callback> callbacks = new ArrayList<Callback>();
+               if (workManager.getCallbackSecurity().getDefaultPrincipal() != null)
+               {
+                  Principal defaultPrincipal = workManager.getCallbackSecurity().getDefaultPrincipal();
 
-            if (workManager.getCallbackSecurity().getDefaultPrincipal() != null)
-            {
-               Principal defaultPrincipal = workManager.getCallbackSecurity().getDefaultPrincipal();
+                  if (trace)
+                     log.tracef("Adding default principal: %s", defaultPrincipal);
 
-               if (trace)
-                  log.tracef("Adding default principal: %s", defaultPrincipal);
+                  CallerPrincipalCallback cpc =
+                     new CallerPrincipalCallback(executionSubject, defaultPrincipal);
 
-               CallerPrincipalCallback cpc =
-                  new CallerPrincipalCallback(executionSubject, defaultPrincipal);
+                  callbacks.add(cpc);
+               }
 
-               callbacks.add(cpc);
-            }
+               if (workManager.getCallbackSecurity().getDefaultGroups() != null)
+               {
+                  String[] defaultGroups = workManager.getCallbackSecurity().getDefaultGroups();
 
-            if (workManager.getCallbackSecurity().getDefaultGroups() != null)
-            {
-               String[] defaultGroups = workManager.getCallbackSecurity().getDefaultGroups();
+                  if (trace)
+                     log.tracef("Adding default groups: %s", Arrays.toString(defaultGroups));
+                  
+                  GroupPrincipalCallback gpc = 
+                     new GroupPrincipalCallback(executionSubject, defaultGroups);
 
-               if (trace)
-                  log.tracef("Adding default groups: %s", Arrays.toString(defaultGroups));
+                  callbacks.add(gpc);
+               }
 
-               GroupPrincipalCallback gpc = 
-                  new GroupPrincipalCallback(executionSubject, defaultGroups);
-
-               callbacks.add(gpc);
-            }
-
-            if (callbacks.size() > 0)
-            {
-               Callback[] cb = new Callback[callbacks.size()];
-               cbh.handle(callbacks.toArray(cb));
+               if (callbacks.size() > 0)
+               {
+                  Callback[] cb = new Callback[callbacks.size()];
+                  cbh.handle(callbacks.toArray(cb));
+               }
             }
 
             if (trace)

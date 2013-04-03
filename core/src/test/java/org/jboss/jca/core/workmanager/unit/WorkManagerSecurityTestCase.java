@@ -25,13 +25,13 @@ package org.jboss.jca.core.workmanager.unit;
 import org.jboss.jca.arquillian.embedded.Configuration;
 import org.jboss.jca.arquillian.embedded.Inject;
 import org.jboss.jca.core.api.workmanager.WorkManager;
-import org.jboss.jca.core.spi.security.Callback;
 import org.jboss.jca.core.workmanager.rars.dwm.WorkConnection;
 import org.jboss.jca.core.workmanager.rars.dwm.WorkConnectionFactory;
 import org.jboss.jca.embedded.dsl.InputStreamDescriptor;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -44,6 +44,8 @@ import javax.resource.spi.work.WorkContext;
 import javax.resource.spi.work.WorkContextProvider;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
+import javax.security.auth.message.callback.CallerPrincipalCallback;
+import javax.security.auth.message.callback.GroupPrincipalCallback;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -54,6 +56,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -142,7 +145,7 @@ public class WorkManagerSecurityTestCase
       assertNotNull(wcf);
       assertNotNull(workManagerSecurity);
 
-      Callback defaultCallback = workManagerSecurity.getCallbackSecurity();
+      org.jboss.jca.core.spi.security.Callback defaultCallback = workManagerSecurity.getCallbackSecurity();
       assertNotNull(defaultCallback);
       assertFalse("mapping-required", defaultCallback.isMappingRequired());
       assertEquals("domain", "other", defaultCallback.getDomain());
@@ -157,7 +160,7 @@ public class WorkManagerSecurityTestCase
          WorkManager wm = (WorkManager)wc.getWorkManager();
          assertNotNull(wm);
 
-         Callback callback = wm.getCallbackSecurity();
+         org.jboss.jca.core.spi.security.Callback callback = wm.getCallbackSecurity();
          assertNotNull(callback);
          assertTrue("mapping-required", callback.isMappingRequired());
          assertEquals("domain", "other", callback.getDomain());
@@ -176,7 +179,7 @@ public class WorkManagerSecurityTestCase
     * Test that a Work is executed in a security context
     * @throws Throwable throwable exception
     */
-   @Test
+   @Ignore("SECURITY-731, SECURITY-732")
    public void testSecurityContext() throws Throwable
    {
       assertNotNull(wcf);
@@ -190,12 +193,15 @@ public class WorkManagerSecurityTestCase
          log.infof("Principals=%s", myWork.getPrincipals());
          
          assertNotNull("principals-not-null", myWork.getPrincipals());
-         assertTrue("principals-contains", myWork.getPrincipals().contains(new SimplePrincipal("default_principal")));
+         assertTrue("principals-contains-default", 
+                    myWork.getPrincipals().contains(new SimplePrincipal("default_principal")));
+         assertTrue("principals-contains-mapping",
+                    myWork.getPrincipals().contains(new SimplePrincipal("jca")));
 
-         log.infof("Roles=%s", myWork.getRoles());
-         
          assertNotNull("roles-not-null", myWork.getRoles());
-         assertArrayEquals("roles-equals", new String[] {"default_group"}, myWork.getRoles());
+         log.infof("Roles=%s", Arrays.toString(myWork.getRoles()));
+         assertTrue("roles-contains-default", myWork.hasRole("default_group"));
+         assertTrue("roles-contains-mapping", myWork.hasRole("jca"));
       }
       finally
       {
@@ -298,6 +304,25 @@ public class WorkManagerSecurityTestCase
       {
          return roles;
       }
+
+      /**
+       * Has role
+       * @param r The name of the role
+       * @return True if the role is present; otherwise false
+       */
+      public boolean hasRole(String r)
+      {
+         if (roles != null)
+         {
+            for (String role : roles)
+            {
+               if (role.equals(r))
+                  return true;
+            }
+         }
+
+         return false;
+      }
    }
 
    /**
@@ -322,6 +347,18 @@ public class WorkManagerSecurityTestCase
       {
          log.info("MySecurityContext: setupSecurityContext(" + handler + ", " + executionSubject + ", " +
                   serviceSubject + ")");
+
+         try
+         {
+            List<javax.security.auth.callback.Callback> cbs = new ArrayList<javax.security.auth.callback.Callback>();
+            cbs.add(new CallerPrincipalCallback(executionSubject, new SimplePrincipal("eis")));
+            cbs.add(new GroupPrincipalCallback(executionSubject, new String[] {"eis"}));
+            handler.handle(cbs.toArray(new javax.security.auth.callback.Callback[cbs.size()]));
+         }
+         catch (Throwable t)
+         {
+            log.error(t.getMessage(), t);
+         }
       }
    }
 }
