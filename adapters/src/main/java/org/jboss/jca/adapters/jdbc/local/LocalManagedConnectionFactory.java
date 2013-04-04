@@ -241,15 +241,21 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       }
    }
 
-   private LocalManagedConnection getLocalManagedConnection(Properties props, Properties copy)
+   private LocalManagedConnection createLocalManagedConnection(String url, Properties props, Properties copy)
       throws ResourceException
    {
       Connection con = null;
       try
       {
-         if (driverClass != null)
+         if (dataSourceClass != null)
          {
-            String url = getConnectionURL();
+            DataSource d = getDataSource();
+            con = d.getConnection(copy.getProperty("user"), copy.getProperty("password"));
+            if (con == null)
+               throw new ResourceException("Unable to create connection from datasource");
+         }
+         else if (driverClass != null)
+         {
             Driver d = getDriver(url);
             con = d.connect(url, copy);
             if (con == null)
@@ -258,10 +264,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
          }
          else
          {
-            DataSource d = getDataSource();
-            con = d.getConnection(copy.getProperty("user"), copy.getProperty("password"));
-            if (con == null)
-               throw new ResourceException("Unable to create connection from datasource");
+            throw new ResourceException("Unable to create connection");
          }
 
          return new LocalManagedConnection(this, con, props, transactionIsolation, preparedStatementCacheSize);
@@ -283,6 +286,12 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       }
    }
 
+   private LocalManagedConnection getLocalManagedConnection(Properties props, Properties copy)
+      throws ResourceException
+   {
+      return createLocalManagedConnection(getConnectionURL(), props, copy);
+   }
+
    private LocalManagedConnection getHALocalManagedConnection(Properties props, Properties copy)
       throws ResourceException
    {
@@ -295,34 +304,12 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
          if (trace)
             log.tracef("Trying to create a connection to %s", url);
 
-         Connection con = null;
          try
          {
-            Driver d = getDriver(url);
-            con = d.connect(url, copy);
-            if (con == null)
-            {
-               log.warn("Wrong driver class [" + d.getClass() + "] for this connection URL: " + url);
-               urlSelector.fail(url);
-            }
-            else
-            {
-               return new LocalManagedConnection(this, con, props, transactionIsolation, preparedStatementCacheSize);
-            }
+            return createLocalManagedConnection(url, props, copy);
          }
          catch (Exception e)
          {
-            if (con != null)
-            {
-               try
-               {
-                  con.close();
-               }
-               catch (Throwable ignored)
-               {
-                  // Ignore
-               }
-            }
             log.warn("Failed to create connection for " + url + ": " + e.getMessage());
             urlSelector.fail(url);
          }
