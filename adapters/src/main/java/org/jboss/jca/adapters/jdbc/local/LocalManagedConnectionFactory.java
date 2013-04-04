@@ -244,6 +244,19 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
    private LocalManagedConnection createLocalManagedConnection(String url, Properties props, Properties copy)
       throws ResourceException
    {
+      // We need to register with the DriverManager if there is a driver class no matter what
+      if (driverClass != null && !isDriverLoadedForURL(url))
+      {
+         try
+         {
+            getDriver(url);
+         }
+         catch (ResourceException re)
+         {
+            log.debug("Exception while registering driver", re);
+         }
+      }
+
       Connection con = null;
       try
       {
