@@ -28,17 +28,14 @@ package org.jboss.jca;
  */
 public class Version
 {
-   /** The vendor */
-   public static final String VENDOR = "JBoss"; 
-   
-   /** The product */
-   public static final String PRODUCT = "IronJacamar"; 
+   /** The project */
+   public static final String PROJECT = "IronJacamar"; 
    
    /** The version */
    public static final String VERSION = "@VERSION@";
    
    /** Full version */
-   public static final String FULL_VERSION = VENDOR + " " + PRODUCT + " " + VERSION;
+   public static final String FULL_VERSION = PROJECT + " " + VERSION;
    
    /**
     * Constructor
@@ -53,6 +50,6 @@ public class Version
     */
    public static void main(String[] args)
    {
-      System.out.println(PRODUCT + " " + VERSION);
+      System.out.println(FULL_VERSION);
    }
 }
