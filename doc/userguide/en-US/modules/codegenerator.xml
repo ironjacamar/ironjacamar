@@ -338,6 +338,16 @@
               </row>
               <row>
                 <entry>
+                  Use JBoss Logging (Y/Yes/N/No) [N]:
+                </entry>
+                <entry>All</entry>
+                <entry>
+                  Use JBoss Logging instead of Java Util Logging
+                </entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>
                   Build environment [A/Ant/I/Ant+Ivy/M/Maven]
                 </entry>
                 <entry>All</entry>
