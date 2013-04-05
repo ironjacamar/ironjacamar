@@ -170,9 +170,7 @@ public class McfCodeGen extends PropsCodeGen
       out.write("import java.util.Set;");
       writeEol(out);
       writeEol(out);
-      out.write("import java.util.logging.Logger;");
-      writeEol(out);
-      writeEol(out);
+      importLogging(def, out);
 
       out.write("import javax.resource.ResourceException;");
       writeEol(out);
@@ -268,9 +266,7 @@ public class McfCodeGen extends PropsCodeGen
       writeIndent(out, indent);
       out.write("public Object createConnectionFactory(ConnectionManager cxManager) throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("log.finest(\"createConnectionFactory()\");");
-      writeEol(out);
+      writeLogging(def, out, indent + 1, "trace", "createConnectionFactory");
       writeIndent(out, indent + 1);
       if (def.getMcfDefs().get(getNumOfMcf()).isUseCciConnection())
          out.write("return new " + def.getMcfDefs().get(getNumOfMcf()).getCciConnFactoryClass() + "(cxManager);");
@@ -351,9 +347,7 @@ public class McfCodeGen extends PropsCodeGen
       writeIndent(out, indent + 2);
       out.write("ConnectionRequestInfo cxRequestInfo) throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("log.finest(\"createManagedConnection()\");");
-      writeEol(out);
+      writeLogging(def, out, indent + 1, "trace", "createManagedConnection");
       writeIndent(out, indent + 1);
       out.write("return new " + def.getMcfDefs().get(getNumOfMcf()).getMcClass() + "(this);");
       writeRightCurlyBracket(out, indent);
@@ -394,9 +388,7 @@ public class McfCodeGen extends PropsCodeGen
       writeIndent(out, indent + 2);
       out.write("Subject subject, ConnectionRequestInfo cxRequestInfo) throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("log.finest(\"matchManagedConnections()\");");
-      writeEol(out);
+      writeLogging(def, out, indent + 1, "trace", "matchManagedConnections");
       writeIndent(out, indent + 1);
       out.write("ManagedConnection result = null;");
       writeEol(out);
@@ -453,9 +445,7 @@ public class McfCodeGen extends PropsCodeGen
       writeIndent(out, indent);
       out.write("public PrintWriter getLogWriter() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("log.finest(\"getLogWriter()\");");
-      writeEol(out);
+      writeLogging(def, out, indent + 1, "trace", "getLogWriter");
       writeIndent(out, indent + 1);
       out.write("return logwriter;");
       writeRightCurlyBracket(out, indent);
@@ -483,9 +473,7 @@ public class McfCodeGen extends PropsCodeGen
       writeIndent(out, indent);
       out.write("public void setLogWriter(PrintWriter out) throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("log.finest(\"setLogWriter()\");");
-      writeEol(out);
+      writeLogging(def, out, indent + 1, "trace", "setLogWriter");
       writeIndent(out, indent + 1);
       out.write("logwriter = out;");
       writeRightCurlyBracket(out, indent);
@@ -520,9 +508,7 @@ public class McfCodeGen extends PropsCodeGen
       writeIndent(out, indent);
       out.write("public ResourceAdapter getResourceAdapter()");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("log.finest(\"getResourceAdapter()\");");
-      writeEol(out);
+      writeLogging(def, out, indent + 1, "trace", "getResourceAdapter");
       writeIndent(out, indent + 1);
       out.write("return ra;");
       writeRightCurlyBracket(out, indent);
@@ -547,9 +533,7 @@ public class McfCodeGen extends PropsCodeGen
       writeIndent(out, indent);
       out.write("public void setResourceAdapter(ResourceAdapter ra)");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("log.finest(\"setResourceAdapter()\");");
-      writeEol(out);
+      writeLogging(def, out, indent + 1, "trace", "setResourceAdapter");
       writeIndent(out, indent + 1);
       out.write("this.ra = ra;");
       writeRightCurlyBracket(out, indent);

@@ -104,9 +104,8 @@ public class AsCodeGen extends PropsCodeGen
       out.write("package " + def.getRaPackage() + ".inflow;");
       writeEol(out);
       writeEol(out);
-      out.write("import java.util.logging.Logger;");
-      writeEol(out);
-      writeEol(out);
+      importLogging(def, out);
+      
       out.write("import javax.resource.ResourceException;");
       writeEol(out);
       out.write("import javax.resource.spi.Activation;");
@@ -190,8 +189,8 @@ public class AsCodeGen extends PropsCodeGen
       writeIndent(out, indent);
       out.write("public void validate() throws InvalidPropertyException");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("log.finest(\"validate()\");");
+
+      writeLogging(def, out, indent + 1, "trace", "validate");
 
       writeRightCurlyBracket(out, indent);
       writeEol(out);
@@ -225,9 +224,9 @@ public class AsCodeGen extends PropsCodeGen
       writeIndent(out, indent);
       out.write("public ResourceAdapter getResourceAdapter()");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("log.finest(\"getResourceAdapter()\");");
-      writeEol(out);
+
+      writeLogging(def, out, indent + 1, "trace", "getResourceAdapter");
+      
       writeIndent(out, indent + 1);
       out.write("return ra;");
       writeRightCurlyBracket(out, indent);
@@ -252,9 +251,9 @@ public class AsCodeGen extends PropsCodeGen
       writeIndent(out, indent);
       out.write("public void setResourceAdapter(ResourceAdapter ra)");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("log.finest(\"setResourceAdapter()\");");
-      writeEol(out);
+
+      writeLogging(def, out, indent + 1, "trace", "setResourceAdapter");
+      
       writeIndent(out, indent + 1);
       out.write("this.ra = ra;");
       writeRightCurlyBracket(out, indent);

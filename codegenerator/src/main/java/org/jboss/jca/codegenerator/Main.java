@@ -679,6 +679,19 @@ public class Main
          }
       }
       
+      //generate logging support
+      System.out.print(rb.getString("support.jbosslogging") + " " + rb.getString("yesno") + " [N]: ");
+      String supportJbossLogging = in.readLine();
+      if (supportJbossLogging == null)
+         def.setSupportJbossLogging(false);
+      else
+      {
+         if (supportJbossLogging.equals("Y") || supportJbossLogging.equals("y") || supportJbossLogging.equals("Yes"))
+            def.setSupportJbossLogging(true);
+         else
+            def.setSupportJbossLogging(false);
+      }
+      
       //build environment
       System.out.print(rb.getString("build.env") + " " + rb.getString("build.env.values"));
       System.out.print(" [" + def.getBuild() + "]: ");

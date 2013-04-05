@@ -122,9 +122,7 @@ public class ConnImplCodeGen extends AbstractCodeGen
 
       writeEol(out);
       writeEol(out);
-      out.write("import java.util.logging.Logger;");
-      writeEol(out);
-      writeEol(out);
+      importLogging(def, out);
    }
    
    /**

@@ -278,4 +278,51 @@ public abstract class AbstractCodeGen extends BaseGen
    {
       return getClassName(def) + ".class.getName()";
    }
+   
+   /**
+    * import logging
+    * @param def definition
+    * @param out Writer
+    * @throws IOException ioException
+    */
+   protected void importLogging(Definition def, Writer out) throws IOException
+   {
+      if (def.isSupportJbossLogging())
+      {
+         out.write("import org.jboss.logging.Logger;");
+         writeEol(out);
+         writeEol(out);
+      }
+      else
+      {
+         out.write("import java.util.logging.Logger;");
+         writeEol(out);
+         writeEol(out);
+      }
+   }
+   
+   /**
+    * output logging
+    * @param def definition
+    * @param out Writer
+    * @param indent indent
+    * @param level logging level
+    * @param content logging content
+    * @param params logging params
+    * @throws IOException ioException
+    */
+   protected void writeLogging(Definition def, Writer out, int indent, String level, 
+      String content, String... params) throws IOException
+   {
+      writeIndent(out, indent);
+      if (def.isSupportJbossLogging())
+      {
+         out.write("log.trace(\"" + content + "()\");");
+      }
+      else
+      {
+         out.write("log.finest(\"" + content + "()\");");
+      }
+      writeEol(out);
+   }
 }

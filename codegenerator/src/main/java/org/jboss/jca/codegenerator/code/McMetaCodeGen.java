@@ -78,9 +78,7 @@ public class McMetaCodeGen extends AbstractCodeGen
 
       writeEol(out);
       writeEol(out);
-      out.write("import java.util.logging.Logger;");
-      writeEol(out);
-      writeEol(out);
+      importLogging(def, out);
       out.write("import javax.resource.ResourceException;");
       writeEol(out);
       writeEol(out);
@@ -134,9 +132,7 @@ public class McMetaCodeGen extends AbstractCodeGen
       writeIndent(out, indent);
       out.write("public String getEISProductName() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("log.finest(\"getEISProductName()\");");
-      writeEol(out);
+      writeLogging(def, out, indent + 1, "trace", "getEISProductName");
       writeIndent(out, indent + 1);
       out.write("return null; //TODO");
       writeRightCurlyBracket(out, indent);
@@ -167,9 +163,7 @@ public class McMetaCodeGen extends AbstractCodeGen
       writeIndent(out, indent);
       out.write("public String getEISProductVersion() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("log.finest(\"getEISProductVersion()\");");
-      writeEol(out);
+      writeLogging(def, out, indent + 1, "trace", "getEISProductVersion");
       writeIndent(out, indent + 1);
       out.write("return null; //TODO");
       writeRightCurlyBracket(out, indent);
@@ -210,9 +204,7 @@ public class McMetaCodeGen extends AbstractCodeGen
       writeIndent(out, indent);
       out.write("public int getMaxConnections() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("log.finest(\"getMaxConnections()\");");
-      writeEol(out);
+      writeLogging(def, out, indent + 1, "trace", "getMaxConnections");
       writeIndent(out, indent + 1);
       out.write("return 0; //TODO");
       writeRightCurlyBracket(out, indent);
@@ -253,9 +245,7 @@ public class McMetaCodeGen extends AbstractCodeGen
       writeIndent(out, indent);
       out.write("public String getUserName() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("log.finest(\"getUserName()\");");
-      writeEol(out);
+      writeLogging(def, out, indent + 1, "trace", "getUserName");
       writeIndent(out, indent + 1);
       out.write("return null; //TODO");
       writeRightCurlyBracket(out, indent);

@@ -138,9 +138,7 @@ public class CfCodeGen extends AbstractCodeGen
 
       writeEol(out);
       writeEol(out);
-      out.write("import java.util.logging.Logger;");
-      writeEol(out);
-      writeEol(out);
+      importLogging(def, out);
       out.write("import javax.naming.NamingException;");
       writeEol(out);
       out.write("import javax.naming.Reference;");
@@ -199,9 +197,8 @@ public class CfCodeGen extends AbstractCodeGen
       out.write("public " + def.getMcfDefs().get(getNumOfMcf()).getConnInterfaceClass() + 
          " getConnection() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("log.finest(\"getConnection()\");");
-      writeEol(out);
+      writeLogging(def, out, indent + 1, "trace", "getConnection");
+      
       writeIndent(out, indent + 1);
       out.write("return (" + def.getMcfDefs().get(getNumOfMcf()).getConnInterfaceClass() + 
          ")connectionManager.allocateConnection(mcf, null);");
@@ -243,9 +240,7 @@ public class CfCodeGen extends AbstractCodeGen
       writeIndent(out, indent);
       out.write("public Reference getReference() throws NamingException");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("log.finest(\"getReference()\");");
-      writeEol(out);
+      writeLogging(def, out, indent + 1, "trace", "getReference");
       writeIndent(out, indent + 1);
       out.write("return reference;");
       writeRightCurlyBracket(out, indent);
@@ -273,9 +268,8 @@ public class CfCodeGen extends AbstractCodeGen
       writeIndent(out, indent);
       out.write("public void setReference(Reference reference)");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("log.finest(\"setReference()\");");
-      writeEol(out);
+      writeLogging(def, out, indent + 1, "trace", "setReference");
+      
       writeIndent(out, indent + 1);
       out.write("this.reference = reference;");
       writeRightCurlyBracket(out, indent);

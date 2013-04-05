@@ -136,6 +136,10 @@ public class Definition
    @XmlElement(name = "SupportEis")
    private boolean supportEis = false;
    
+   /** Support jboss logging or not  */
+   @XmlElement(name = "SupportJbossLogging")
+   private boolean supportJbossLogging = false;
+
    /**
     * Set the version.
     * 
@@ -738,6 +742,24 @@ public class Definition
    public void setSupportEis(boolean supportEis)
    {
       this.supportEis = supportEis;
+   }
+   
+   /**
+    * get supportJbossLogging
+    * @return the supportJbossLogging
+    */
+   public boolean isSupportJbossLogging()
+   {
+      return supportJbossLogging;
+   }
+
+   /**
+    * set supportJbossLogging
+    * @param supportJbossLogging the supportJbossLogging to set
+    */
+   public void setSupportJbossLogging(boolean supportJbossLogging)
+   {
+      this.supportJbossLogging = supportJbossLogging;
    }
 
 }

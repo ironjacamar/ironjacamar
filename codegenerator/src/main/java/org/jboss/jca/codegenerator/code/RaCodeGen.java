@@ -223,9 +223,7 @@ public class RaCodeGen extends PropsCodeGen
             writeEol(out);
          }
       }
-      out.write("import java.util.logging.Logger;");
-      writeEol(out);
-      writeEol(out);
+      importLogging(def, out);
       
       out.write("import javax.resource.ResourceException;");
       writeEol(out);
@@ -309,9 +307,7 @@ public class RaCodeGen extends PropsCodeGen
       writeIndent(out, indent + 1);
       out.write("throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("log.finest(\"getXAResources()\");");
-      writeEol(out);
+      writeLogging(def, out, indent + 1, "trace", "getXAResources");
       writeIndent(out, indent + 1);
       out.write("return null;");
       writeRightCurlyBracket(out, indent);
@@ -352,8 +348,7 @@ public class RaCodeGen extends PropsCodeGen
       writeIndent(out, indent + 1);
       out.write("throws ResourceAdapterInternalException");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("log.finest(\"start()\");");
+      writeLogging(def, out, indent + 1, "trace", "start");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
 
@@ -373,8 +368,7 @@ public class RaCodeGen extends PropsCodeGen
       writeIndent(out, indent);
       out.write("public void stop()");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("log.finest(\"stop()\");");
+      writeLogging(def, out, indent + 1, "trace", "stop");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }
@@ -432,8 +426,7 @@ public class RaCodeGen extends PropsCodeGen
          writeEol(out);
       }
       
-      writeIndent(out, indent + 1);
-      out.write("log.finest(\"endpointActivation()\");");
+      writeLogging(def, out, indent + 1, "trace", "endpointActivation");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
 
@@ -476,8 +469,7 @@ public class RaCodeGen extends PropsCodeGen
          writeEol(out);
          writeEol(out);
       }
-      writeIndent(out, indent + 1);
-      out.write("log.finest(\"endpointDeactivation()\");");
+      writeLogging(def, out, indent + 1, "trace", "endpointDeactivation");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }

@@ -193,9 +193,7 @@ public class McCodeGen extends AbstractCodeGen
       writeEol(out);
       out.write("import java.util.List;");
       writeEol(out);
-      out.write("import java.util.logging.Logger;");
-      writeEol(out);
-      writeEol(out);
+      importLogging(def, out);
       out.write("import javax.resource.NotSupportedException;");
       writeEol(out);
       out.write("import javax.resource.ResourceException;");
@@ -274,9 +272,7 @@ public class McCodeGen extends AbstractCodeGen
       writeIndent(out, indent + 1);
       out.write("ConnectionRequestInfo cxRequestInfo) throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("log.finest(\"getConnection()\");");
-      writeEol(out);
+      writeLogging(def, out, indent + 1, "trace", "getConnection");
       writeIndent(out, indent + 1);
       if (def.getMcfDefs().get(getNumOfMcf()).isUseCciConnection())
          out.write("connection = new " + def.getMcfDefs().get(getNumOfMcf()).getCciConnClass() + "();");
@@ -313,9 +309,7 @@ public class McCodeGen extends AbstractCodeGen
       writeIndent(out, indent);
       out.write("public void associateConnection(Object connection) throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("log.finest(\"associateConnection()\");");
-      writeEol(out);
+      writeLogging(def, out, indent + 1, "trace", "associateConnection");
       writeEol(out);
       writeIndent(out, indent + 1);
       out.write("if (connection == null)");
@@ -375,8 +369,7 @@ public class McCodeGen extends AbstractCodeGen
       writeIndent(out, indent);
       out.write("public void cleanup() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("log.finest(\"cleanup()\");");
+      writeLogging(def, out, indent + 1, "trace", "cleanup");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
 
@@ -399,8 +392,7 @@ public class McCodeGen extends AbstractCodeGen
       writeIndent(out, indent);
       out.write("public void destroy() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("log.finest(\"destroy()\");");
+      writeLogging(def, out, indent + 1, "trace", "destroy");
       
       if (def.isSupportEis())
       {
@@ -456,9 +448,7 @@ public class McCodeGen extends AbstractCodeGen
       writeIndent(out, indent);
       out.write("public void addConnectionEventListener(ConnectionEventListener listener)");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("log.finest(\"addConnectionEventListener()\");");
-      writeEol(out);
+      writeLogging(def, out, indent + 1, "trace", "addConnectionEventListener");
       writeIndent(out, indent + 1);
       out.write("if (listener == null)");
       writeEol(out);
@@ -489,9 +479,7 @@ public class McCodeGen extends AbstractCodeGen
       writeIndent(out, indent);
       out.write("public void removeConnectionEventListener(ConnectionEventListener listener)");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("log.finest(\"removeConnectionEventListener()\");");
-      writeEol(out);
+      writeLogging(def, out, indent + 1, "trace", "removeConnectionEventListener");
       writeIndent(out, indent + 1);
       out.write("if (listener == null)");
       writeEol(out);
@@ -572,9 +560,7 @@ public class McCodeGen extends AbstractCodeGen
       writeIndent(out, indent);
       out.write("public PrintWriter getLogWriter() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("log.finest(\"getLogWriter()\");");
-      writeEol(out);
+      writeLogging(def, out, indent + 1, "trace", "getLogWriter");
       writeIndent(out, indent + 1);
       out.write("return logwriter;");
       writeRightCurlyBracket(out, indent);
@@ -602,9 +588,7 @@ public class McCodeGen extends AbstractCodeGen
       writeIndent(out, indent);
       out.write("public void setLogWriter(PrintWriter out) throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("log.finest(\"setLogWriter()\");");
-      writeEol(out);
+      writeLogging(def, out, indent + 1, "trace", "setLogWriter");
       writeIndent(out, indent + 1);
       out.write("logwriter = out;");
       writeRightCurlyBracket(out, indent);
@@ -649,9 +633,7 @@ public class McCodeGen extends AbstractCodeGen
       }
       else
       {
-         writeIndent(out, indent + 1);
-         out.write("log.finest(\"getLocalTransaction()\");");
-         writeEol(out);
+         writeLogging(def, out, indent + 1, "trace", "getLocalTransaction");
          writeIndent(out, indent + 1);
          out.write("return null;");
       }
@@ -687,9 +669,7 @@ public class McCodeGen extends AbstractCodeGen
       }
       else
       {
-         writeIndent(out, indent + 1);
-         out.write("log.finest(\"getXAResource()\");");
-         writeEol(out);
+         writeLogging(def, out, indent + 1, "trace", "getXAResource");
          writeIndent(out, indent + 1);
          out.write("return null;");
       }
@@ -729,9 +709,7 @@ public class McCodeGen extends AbstractCodeGen
       writeIndent(out, indent);
       out.write("public ManagedConnectionMetaData getMetaData() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-      writeIndent(out, indent + 1);
-      out.write("log.finest(\"getMetaData()\");");
-      writeEol(out);
+      writeLogging(def, out, indent + 1, "trace", "getMetaData");
       
       writeIndent(out, indent + 1);
       out.write("return new " + def.getMcfDefs().get(getNumOfMcf()).getMcMetaClass() + "();");
@@ -812,9 +790,8 @@ public class McCodeGen extends AbstractCodeGen
                      out.write(", ");
                }
                writeLeftCurlyBracket(out, indent);
-               writeIndent(out, indent + 1);
-               out.write("log.finest(\"" + method.getMethodName() + "()\");");
-
+               writeLogging(def, out, indent + 1, "trace", method.getMethodName());
+               
                if (!method.getReturnType().equals("void"))
                {
                   writeEol(out);
@@ -841,8 +818,7 @@ public class McCodeGen extends AbstractCodeGen
          writeIndent(out, indent);
          out.write("void callMe()");
          writeLeftCurlyBracket(out, indent);
-         writeIndent(out, indent + 1);
-         out.write("log.finest(\"callMe()\");");
+         writeLogging(def, out, indent + 1, "trace", "callMe");
          writeRightCurlyBracket(out, indent);
       }
    }

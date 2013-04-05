@@ -93,9 +93,7 @@ public class TestCodeGen extends AbstractCodeGen
       writeEol(out);
       out.write("import java.util.UUID;");
       writeEol(out);
-      out.write("import java.util.logging.Logger;");
-      writeEol(out);
-      writeEol(out);
+      importLogging(def, out);
       out.write("import javax.annotation.Resource;");
       writeEol(out);
       writeEol(out);
