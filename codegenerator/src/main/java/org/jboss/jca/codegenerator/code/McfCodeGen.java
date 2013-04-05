@@ -266,7 +266,7 @@ public class McfCodeGen extends PropsCodeGen
       writeIndent(out, indent);
       out.write("public Object createConnectionFactory(ConnectionManager cxManager) throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-      writeLogging(def, out, indent + 1, "trace", "createConnectionFactory");
+      writeLogging(def, out, indent + 1, "trace", "createConnectionFactory", "cxManager");
       writeIndent(out, indent + 1);
       if (def.getMcfDefs().get(getNumOfMcf()).isUseCciConnection())
          out.write("return new " + def.getMcfDefs().get(getNumOfMcf()).getCciConnFactoryClass() + "(cxManager);");
@@ -347,7 +347,7 @@ public class McfCodeGen extends PropsCodeGen
       writeIndent(out, indent + 2);
       out.write("ConnectionRequestInfo cxRequestInfo) throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-      writeLogging(def, out, indent + 1, "trace", "createManagedConnection");
+      writeLogging(def, out, indent + 1, "trace", "createManagedConnection", "subject", "cxRequestInfo");
       writeIndent(out, indent + 1);
       out.write("return new " + def.getMcfDefs().get(getNumOfMcf()).getMcClass() + "(this);");
       writeRightCurlyBracket(out, indent);
@@ -388,7 +388,8 @@ public class McfCodeGen extends PropsCodeGen
       writeIndent(out, indent + 2);
       out.write("Subject subject, ConnectionRequestInfo cxRequestInfo) throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-      writeLogging(def, out, indent + 1, "trace", "matchManagedConnections");
+      writeLogging(def, out, indent + 1, "trace", "matchManagedConnections", "connectionSet", 
+         "subject", "cxRequestInfo");
       writeIndent(out, indent + 1);
       out.write("ManagedConnection result = null;");
       writeEol(out);
@@ -473,7 +474,7 @@ public class McfCodeGen extends PropsCodeGen
       writeIndent(out, indent);
       out.write("public void setLogWriter(PrintWriter out) throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-      writeLogging(def, out, indent + 1, "trace", "setLogWriter");
+      writeLogging(def, out, indent + 1, "trace", "setLogWriter", "out");
       writeIndent(out, indent + 1);
       out.write("logwriter = out;");
       writeRightCurlyBracket(out, indent);
@@ -533,7 +534,7 @@ public class McfCodeGen extends PropsCodeGen
       writeIndent(out, indent);
       out.write("public void setResourceAdapter(ResourceAdapter ra)");
       writeLeftCurlyBracket(out, indent);
-      writeLogging(def, out, indent + 1, "trace", "setResourceAdapter");
+      writeLogging(def, out, indent + 1, "trace", "setResourceAdapter", "ra");
       writeIndent(out, indent + 1);
       out.write("this.ra = ra;");
       writeRightCurlyBracket(out, indent);

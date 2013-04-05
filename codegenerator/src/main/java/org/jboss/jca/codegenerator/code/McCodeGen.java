@@ -309,7 +309,7 @@ public class McCodeGen extends AbstractCodeGen
       writeIndent(out, indent);
       out.write("public void associateConnection(Object connection) throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-      writeLogging(def, out, indent + 1, "trace", "associateConnection");
+      writeLogging(def, out, indent + 1, "trace", "associateConnection", "connection");
       writeEol(out);
       writeIndent(out, indent + 1);
       out.write("if (connection == null)");
@@ -448,7 +448,7 @@ public class McCodeGen extends AbstractCodeGen
       writeIndent(out, indent);
       out.write("public void addConnectionEventListener(ConnectionEventListener listener)");
       writeLeftCurlyBracket(out, indent);
-      writeLogging(def, out, indent + 1, "trace", "addConnectionEventListener");
+      writeLogging(def, out, indent + 1, "trace", "addConnectionEventListener", "listener");
       writeIndent(out, indent + 1);
       out.write("if (listener == null)");
       writeEol(out);
@@ -479,7 +479,7 @@ public class McCodeGen extends AbstractCodeGen
       writeIndent(out, indent);
       out.write("public void removeConnectionEventListener(ConnectionEventListener listener)");
       writeLeftCurlyBracket(out, indent);
-      writeLogging(def, out, indent + 1, "trace", "removeConnectionEventListener");
+      writeLogging(def, out, indent + 1, "trace", "removeConnectionEventListener", "listener");
       writeIndent(out, indent + 1);
       out.write("if (listener == null)");
       writeEol(out);
@@ -588,7 +588,7 @@ public class McCodeGen extends AbstractCodeGen
       writeIndent(out, indent);
       out.write("public void setLogWriter(PrintWriter out) throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-      writeLogging(def, out, indent + 1, "trace", "setLogWriter");
+      writeLogging(def, out, indent + 1, "trace", "setLogWriter", "out");
       writeIndent(out, indent + 1);
       out.write("logwriter = out;");
       writeRightCurlyBracket(out, indent);

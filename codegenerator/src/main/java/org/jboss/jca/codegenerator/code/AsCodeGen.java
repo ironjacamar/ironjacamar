@@ -252,7 +252,7 @@ public class AsCodeGen extends PropsCodeGen
       out.write("public void setResourceAdapter(ResourceAdapter ra)");
       writeLeftCurlyBracket(out, indent);
 
-      writeLogging(def, out, indent + 1, "trace", "setResourceAdapter");
+      writeLogging(def, out, indent + 1, "trace", "setResourceAdapter", "ra");
       
       writeIndent(out, indent + 1);
       out.write("this.ra = ra;");

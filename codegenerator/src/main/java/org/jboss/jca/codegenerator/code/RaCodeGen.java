@@ -307,7 +307,7 @@ public class RaCodeGen extends PropsCodeGen
       writeIndent(out, indent + 1);
       out.write("throws ResourceException");
       writeLeftCurlyBracket(out, indent);
-      writeLogging(def, out, indent + 1, "trace", "getXAResources");
+      writeLogging(def, out, indent + 1, "trace", "getXAResources", "specs.toString()");
       writeIndent(out, indent + 1);
       out.write("return null;");
       writeRightCurlyBracket(out, indent);
@@ -348,7 +348,7 @@ public class RaCodeGen extends PropsCodeGen
       writeIndent(out, indent + 1);
       out.write("throws ResourceAdapterInternalException");
       writeLeftCurlyBracket(out, indent);
-      writeLogging(def, out, indent + 1, "trace", "start");
+      writeLogging(def, out, indent + 1, "trace", "start", "ctx");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
 
@@ -426,7 +426,7 @@ public class RaCodeGen extends PropsCodeGen
          writeEol(out);
       }
       
-      writeLogging(def, out, indent + 1, "trace", "endpointActivation");
+      writeLogging(def, out, indent + 1, "trace", "endpointActivation", "endpointFactory", "spec");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
 
@@ -469,7 +469,7 @@ public class RaCodeGen extends PropsCodeGen
          writeEol(out);
          writeEol(out);
       }
-      writeLogging(def, out, indent + 1, "trace", "endpointDeactivation");
+      writeLogging(def, out, indent + 1, "trace", "endpointDeactivation", "endpointFactory");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }

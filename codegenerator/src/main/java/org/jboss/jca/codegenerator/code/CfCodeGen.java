@@ -268,7 +268,7 @@ public class CfCodeGen extends AbstractCodeGen
       writeIndent(out, indent);
       out.write("public void setReference(Reference reference)");
       writeLeftCurlyBracket(out, indent);
-      writeLogging(def, out, indent + 1, "trace", "setReference");
+      writeLogging(def, out, indent + 1, "trace", "setReference", "reference");
       
       writeIndent(out, indent + 1);
       out.write("this.reference = reference;");

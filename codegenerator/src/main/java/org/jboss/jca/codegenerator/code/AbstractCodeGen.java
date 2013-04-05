@@ -317,7 +317,24 @@ public abstract class AbstractCodeGen extends BaseGen
       writeIndent(out, indent);
       if (def.isSupportJbossLogging())
       {
-         out.write("log.trace(\"" + content + "()\");");
+         out.write("log.trace");
+         int size = params.length;
+         if (size > 0)
+            out.write("f");
+         out.write("(\"" + content + "(");
+         for (int i = 0; i < size; i++)
+         {
+            out.write("%s");
+            if (i < size - 1)
+               out.write(", ");
+         }
+         out.write(")\"");
+         for (int i = 0; i < size; i++)
+         {
+            out.write(", ");
+            out.write(params[i]);
+         }
+         out.write(");");
       }
       else
       {
