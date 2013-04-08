@@ -79,35 +79,6 @@ public abstract class PoolTestCaseAbstract
 
    /**
     * 
-    * Creates default deployment with different configurations
-    * 
-    * @param ijName ironjacamar.xml for deployment file name
-    * @return rar archive
-    */
-   /*public static ResourceAdapterArchive getDeploymentWith(String ijName)
-   {
-      ResourceAdapterArchive raa = ShrinkWrap.create(ResourceAdapterArchive.class, "pool.rar");
-      JavaArchive ja = ShrinkWrap.create(JavaArchive.class);
-      ja.addPackage(SimpleConnectionFactory.class.getPackage());
-      raa.addAsLibrary(ja);
-      raa.addAsManifestResource("rars/cm/META-INF/ra.xml", "ra.xml");
-      raa.addAsManifestResource("rars/cm/META-INF/" + ijName, "ironjacamar.xml");
-      return raa;
-   }*/
-
-   /**
-    * 
-    * Creates default deployment with ironjacamar.xml file
-    * 
-    * @return rar archive
-    */
-   /*public static ResourceAdapterArchive getDeployment()
-   {
-      return getDeploymentWith("ironjacamar.xml");
-   }*/
-
-   /**
-    * 
     * Creates default deployment with defined configurations
     * @param raXml ConnectionDescriptor
     * @param ijXml IronjacamarDescriptor
