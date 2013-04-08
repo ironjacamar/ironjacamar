@@ -28,6 +28,7 @@ import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolStatistics;
 import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
 import org.jboss.jca.core.connectionmanager.rar.SimpleConnection;
+import org.jboss.jca.core.connectionmanager.rar.SimpleManagedConnectionFactory;
 
 import java.util.Locale;
 
@@ -64,7 +65,7 @@ public class OnePoolNoTxTestCase extends PoolTestCaseAbstract
    @Deployment
    public static ResourceAdapterArchive deployment()
    {
-      return getDeployment();
+      return createNoTxDeployment(getBasicIJXml(SimpleManagedConnectionFactory.class.getName()));
    }
 
    /**
@@ -205,8 +206,8 @@ public class OnePoolNoTxTestCase extends PoolTestCaseAbstract
     * 
     * @throws Exception in case of unexpected errors
     */
-   @Test
-   public void testConnection() throws Exception
+   @Override
+   public void checkPool() throws Exception
    {
       AbstractPool pool = getPool();
       assertTrue(((OnePool) pool).testConnection());

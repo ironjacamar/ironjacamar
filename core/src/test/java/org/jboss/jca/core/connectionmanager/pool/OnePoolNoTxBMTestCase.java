@@ -22,6 +22,7 @@
 package org.jboss.jca.core.connectionmanager.pool;
 
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
+import org.jboss.jca.core.connectionmanager.rar.SimpleManagedConnectionFactory;
 
 import javax.resource.ResourceException;
 
@@ -40,6 +41,7 @@ import static org.junit.Assert.*;
  */
 public class OnePoolNoTxBMTestCase extends PoolTestCaseAbstract
 {
+
    /**
     * deployment
     * @return archive
@@ -47,7 +49,7 @@ public class OnePoolNoTxBMTestCase extends PoolTestCaseAbstract
    @Deployment
    public static ResourceAdapterArchive deployment()
    {
-      return getDeployment();
+      return createNoTxDeployment(getBasicIJXml(SimpleManagedConnectionFactory.class.getName()));
    }
 
    /**
@@ -55,11 +57,11 @@ public class OnePoolNoTxBMTestCase extends PoolTestCaseAbstract
     * @throws Throwable in case of unexpected errors
     */
    @Test
-   @BMRule(name = "Throw exception on getConnection",
-           targetClass = "org.jboss.jca.core.connectionmanager.pool.AbstractPool",
-           targetMethod = "getConnection",
-           action = "throw new javax.resource.ResourceException()")
-   public void testGetConnection() throws Throwable
+   @BMRule(name = "Throw exception on getConnection", 
+   targetClass = "org.jboss.jca.core.connectionmanager.pool.AbstractPool", 
+   targetMethod = "getConnection", 
+   action = " throw new javax.resource.ResourceException()")
+   public  void testGetConnection() throws Throwable
    {
       AbstractPool pool = getPool();
       ConnectionListener cl = null;
@@ -69,6 +71,8 @@ public class OnePoolNoTxBMTestCase extends PoolTestCaseAbstract
       }
       catch (ResourceException re)
       {
+         log.info("////Got");
+         re.printStackTrace();
          // Ok
       }
       catch (Throwable t)
@@ -77,4 +81,5 @@ public class OnePoolNoTxBMTestCase extends PoolTestCaseAbstract
          throw t;
       }
    }
+
 }

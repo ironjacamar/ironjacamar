@@ -23,7 +23,18 @@ package org.jboss.jca.core.connectionmanager.pool;
 
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
 import org.jboss.jca.core.connectionmanager.ConnectionManagerUtil;
+import org.jboss.jca.core.connectionmanager.rar.SimpleConnection;
 import org.jboss.jca.core.connectionmanager.rar.SimpleConnectionFactory;
+import org.jboss.jca.core.connectionmanager.rar.SimpleConnectionFactoryImpl;
+import org.jboss.jca.core.connectionmanager.rar.SimpleConnectionFactoryImpl1;
+import org.jboss.jca.core.connectionmanager.rar.SimpleConnectionImpl;
+import org.jboss.jca.core.connectionmanager.rar.SimpleConnectionImpl1;
+import org.jboss.jca.core.connectionmanager.rar.SimpleManagedConnectionFactory;
+import org.jboss.jca.core.connectionmanager.rar.SimpleManagedConnectionFactory1;
+import org.jboss.jca.core.connectionmanager.rar.SimpleResourceAdapter;
+import org.jboss.jca.embedded.dsl.ironjacamar11.api.ConnectionDefinitionType;
+import org.jboss.jca.embedded.dsl.ironjacamar11.api.ConnectionDefinitionsType;
+import org.jboss.jca.embedded.dsl.ironjacamar11.api.IronjacamarDescriptor;
 
 import java.util.logging.Logger;
 
@@ -32,16 +43,22 @@ import javax.resource.spi.ConnectionManager;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
+import org.jboss.shrinkwrap.descriptor.api.Descriptors;
+import org.jboss.shrinkwrap.descriptor.api.connector15.ConnectorDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.connector15.OutboundResourceadapterType;
+import org.jboss.shrinkwrap.descriptor.api.connector15.ResourceadapterType;
 
+import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.junit.Assert.*;
 
 /**
  * 
- * An AbstractPoolTestCase.
+ * An PoolTestCaseAbstract.
  * 
  * NOTE that this class is in org.jboss.jca.core.connectionmanager.pool and not in
  * org.jboss.jca.core.connectionmanager.pool.strategy because it needs to access 
@@ -56,7 +73,9 @@ public abstract class PoolTestCaseAbstract
 {
 
    /** The logger */
-   protected static Logger log = Logger.getLogger("AbstractPoolTestCase");
+   protected static Logger log = Logger.getLogger("PoolTestCaseAbstract");
+
+   private  static final String jndiName = "java:/eis/Pool";
 
    /**
     * 
@@ -65,7 +84,7 @@ public abstract class PoolTestCaseAbstract
     * @param ijName ironjacamar.xml for deployment file name
     * @return rar archive
     */
-   public static ResourceAdapterArchive getDeploymentWith(String ijName)
+   /*public static ResourceAdapterArchive getDeploymentWith(String ijName)
    {
       ResourceAdapterArchive raa = ShrinkWrap.create(ResourceAdapterArchive.class, "pool.rar");
       JavaArchive ja = ShrinkWrap.create(JavaArchive.class);
@@ -74,7 +93,7 @@ public abstract class PoolTestCaseAbstract
       raa.addAsManifestResource("rars/cm/META-INF/ra.xml", "ra.xml");
       raa.addAsManifestResource("rars/cm/META-INF/" + ijName, "ironjacamar.xml");
       return raa;
-   }
+   }*/
 
    /**
     * 
@@ -82,15 +101,92 @@ public abstract class PoolTestCaseAbstract
     * 
     * @return rar archive
     */
-   public static ResourceAdapterArchive getDeployment()
+   /*public static ResourceAdapterArchive getDeployment()
    {
       return getDeploymentWith("ironjacamar.xml");
+   }*/
+
+   /**
+    * 
+    * Creates default deployment with defined configurations
+    * @param raXml ConnectionDescriptor
+    * @param ijXml IronjacamarDescriptor
+    * 
+    * @return rar archive
+    */
+   public static ResourceAdapterArchive createDeployment(ConnectorDescriptor raXml, IronjacamarDescriptor ijXml)
+   {
+      ResourceAdapterArchive raa = ShrinkWrap.create(ResourceAdapterArchive.class, "pool.rar");
+      JavaArchive ja = ShrinkWrap.create(JavaArchive.class);
+      ja.addPackage(SimpleConnectionFactory.class.getPackage());
+      raa.addAsLibrary(ja);
+      raa.addAsManifestResource(new StringAsset(raXml.exportAsString()), "ra.xml");
+      raa.addAsManifestResource(new StringAsset(ijXml.exportAsString()), "ironjacamar.xml");
+      return raa;
+   }
+
+   /**
+    * 
+    * Create IronjacamarDescriptor
+    * 
+    * @param mcf  ManagedConnectionFactory class name
+    * @return IronjacamarDescriptor
+    */
+   protected static IronjacamarDescriptor getBasicIJXml(String mcf)
+   {
+      IronjacamarDescriptor ijXml = Descriptors.create(IronjacamarDescriptor.class);
+      ConnectionDefinitionsType ijCdst = ijXml.getOrCreateConnectionDefinitions();
+      ConnectionDefinitionType ijCdt = ijCdst.createConnectionDefinition().className(mcf).jndiName(jndiName);
+      return ijXml;
+   }
+
+   /**
+    * 
+    * create ConnectorDescriptor
+    * 
+    * @param tx Transaction support level
+    * @return ConnectorDescriptor
+    */
+   protected static ConnectorDescriptor getRaXml(String tx)
+   {
+      ConnectorDescriptor raXml = Descriptors.create(ConnectorDescriptor.class, "ra.xml").version("1.5");
+      ResourceadapterType rt = raXml.getOrCreateResourceadapter().resourceadapterClass(
+         SimpleResourceAdapter.class.getName());
+
+      OutboundResourceadapterType ort = rt.getOrCreateOutboundResourceadapter().transactionSupport(tx)
+         .reauthenticationSupport(false);
+      org.jboss.shrinkwrap.descriptor.api.connector15.ConnectionDefinitionType cdt = ort.createConnectionDefinition()
+         .managedconnectionfactoryClass(SimpleManagedConnectionFactory.class.getName())
+         .connectionfactoryInterface(SimpleConnectionFactory.class.getName())
+         .connectionfactoryImplClass(SimpleConnectionFactoryImpl.class.getName())
+         .connectionInterface(SimpleConnection.class.getName())
+         .connectionImplClass(SimpleConnectionImpl.class.getName());
+
+      org.jboss.shrinkwrap.descriptor.api.connector15.ConnectionDefinitionType cdt1 = ort.createConnectionDefinition()
+         .managedconnectionfactoryClass(SimpleManagedConnectionFactory1.class.getName())
+         .connectionfactoryInterface(SimpleConnectionFactory.class.getName())
+         .connectionfactoryImplClass(SimpleConnectionFactoryImpl1.class.getName())
+         .connectionInterface(SimpleConnection.class.getName())
+         .connectionImplClass(SimpleConnectionImpl1.class.getName());
+      return raXml;
+   }
+
+   /**
+    * 
+    * create deployment of RA without transaction support
+    * 
+    * @param ijXml IronjacamarDescriptor
+    * @return archive
+    */
+   public static ResourceAdapterArchive createNoTxDeployment(IronjacamarDescriptor ijXml)
+   {
+      return createDeployment(getRaXml("NoTransaction"), ijXml);
    }
 
    /**
     * connection factory
     */
-   @Resource(mappedName = "java:/eis/Pool")
+   @Resource(mappedName = jndiName)
    SimpleConnectionFactory cf;
 
    /**
@@ -160,4 +256,16 @@ public abstract class PoolTestCaseAbstract
       assertEquals("Pool's MCF should be " + cf.getMCF() + " but got " + pool.getManagedConnectionFactory(),
          pool.getManagedConnectionFactory(), cf.getMCF());
    }
+
+   /**
+    * 
+    * check pool behaviour
+    * 
+    * @throws Exception in case of error
+    */
+   @Test
+   public void checkPool() throws Exception
+   {
+   }
+
 }

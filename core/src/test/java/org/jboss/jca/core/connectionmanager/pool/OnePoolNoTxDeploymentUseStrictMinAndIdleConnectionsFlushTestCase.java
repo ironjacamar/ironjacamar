@@ -22,15 +22,14 @@
 package org.jboss.jca.core.connectionmanager.pool;
 
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
-import org.jboss.jca.core.connectionmanager.NoTxConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
-import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
 import org.jboss.jca.core.connectionmanager.rar.SimpleConnection;
+import org.jboss.jca.core.connectionmanager.rar.SimpleManagedConnectionFactory;
+import org.jboss.jca.embedded.dsl.ironjacamar11.api.ConnectionDefinitionType;
+import org.jboss.jca.embedded.dsl.ironjacamar11.api.IronjacamarDescriptor;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
-
-import org.junit.Test;
 
 import static org.junit.Assert.*;
 
@@ -46,7 +45,7 @@ import static org.junit.Assert.*;
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  * 
  */
-public class OnePoolNoTxDeploymentUseStrictMinAndIdleConnectionsFlushTestCase extends PoolTestCaseAbstract
+public class OnePoolNoTxDeploymentUseStrictMinAndIdleConnectionsFlushTestCase extends OnePoolNoTxTestCaseAbstract
 {
 
    /**
@@ -58,27 +57,26 @@ public class OnePoolNoTxDeploymentUseStrictMinAndIdleConnectionsFlushTestCase ex
    @Deployment
    public static ResourceAdapterArchive deployment()
    {
-      return getDeploymentWith("ij-strict-idle.xml");
+      return createNoTxDeployment(getIJ());
    }
 
    /**
     * 
-    * checkConfig
-    *
+    * get IronjacamarDescriptor for deployment
+    * 
+    * @return IronjacamarDescriptor
     */
-   @Test 
-   public void checkConfig()
+   public static IronjacamarDescriptor getIJ()
    {
-      checkConfiguration(NoTxConnectionManager.class, OnePool.class);
+      IronjacamarDescriptor ij = getBasicIJXml(SimpleManagedConnectionFactory.class.getName());
+      ConnectionDefinitionType ijCdt = ij.getOrCreateConnectionDefinitions().getOrCreateConnectionDefinition();
+      ijCdt.removePool().getOrCreatePool().minPoolSize(3).maxPoolSize(5).useStrictMin(true)
+         .flushStrategy("IdleConnections");
+
+      return ij;
    }
 
-   /**
-    * 
-    * checkPool
-    * 
-    * @throws Exception in case of error
-    */
-   @Test
+   @Override
    public void checkPool() throws Exception
    {
       AbstractPool pool = getPool();
@@ -90,13 +88,13 @@ public class OnePoolNoTxDeploymentUseStrictMinAndIdleConnectionsFlushTestCase ex
       Thread.sleep(1000);
       assertEquals(pool.getManagedConnectionPools().size(), 1);
       checkStatistics(ps, 4, 1, 3);
-      
+
       c.fail();
       Thread.sleep(1000);
       //1 failed + 2 idle connections destroyed
       log.info("PS after fail:" + ps.toString());
       checkStatistics(ps, 5, 0, 3, 3);
-      
+
       c = cf.getConnection();
       checkStatistics(ps, 4, 1, 3, 3);
 
@@ -107,14 +105,14 @@ public class OnePoolNoTxDeploymentUseStrictMinAndIdleConnectionsFlushTestCase ex
       {
          checkStatistics(mcp.getStatistics(), 3, 2, 3);
       }
-      
+
       c1.fail();
       Thread.sleep(1000);
       log.info("PS after 2nd fail:" + ps.toString());
       assertEquals(pool.getManagedConnectionPools().size(), 1);
       //1 failed + 1 idle connection destroyed
       checkStatistics(ps, 4, 1, 3, 5);
-      
+
       c.close();
       log.info("PS after close:" + ps.toString());
       checkStatistics(ps, 5, 0, 3, 5);

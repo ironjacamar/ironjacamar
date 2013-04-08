@@ -22,16 +22,16 @@
 package org.jboss.jca.core.connectionmanager.pool;
 
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
-import org.jboss.jca.core.connectionmanager.NoTxConnectionManager;
-import org.jboss.jca.core.connectionmanager.pool.strategy.PoolByCri;
 import org.jboss.jca.core.connectionmanager.rar.SimpleConnection;
 import org.jboss.jca.core.connectionmanager.rar.SimpleConnectionRequestInfoImpl;
+import org.jboss.jca.core.connectionmanager.rar.SimpleManagedConnectionFactory1;
+import org.jboss.jca.embedded.dsl.ironjacamar11.api.ConnectionDefinitionType;
+import org.jboss.jca.embedded.dsl.ironjacamar11.api.IronjacamarDescriptor;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
 import org.junit.Ignore;
-import org.junit.Test;
 
 import static org.junit.Assert.*;
 
@@ -48,7 +48,7 @@ import static org.junit.Assert.*;
  * 
  */
 @Ignore
-public class PoolByCriNoTxDeploymentAllConnectionsFlushTestCase extends PoolTestCaseAbstract
+public class PoolByCriNoTxDeploymentAllConnectionsFlushTestCase extends PoolByCriNoTxTestCaseAbstract
 {
 
    /**
@@ -60,27 +60,26 @@ public class PoolByCriNoTxDeploymentAllConnectionsFlushTestCase extends PoolTest
    @Deployment
    public static ResourceAdapterArchive deployment()
    {
-      return getDeploymentWith("ij-cri-all.xml");
+      return createNoTxDeployment(getIJ());
    }
 
    /**
     * 
-    * checkConfig
-    *
+    * get IronjacamarDescriptor for deployment
+    * 
+    * @return IronjacamarDescriptor
     */
-   @Test
-   public void checkConfig()
+   public static IronjacamarDescriptor getIJ()
    {
-      checkConfiguration(NoTxConnectionManager.class, PoolByCri.class);
+      IronjacamarDescriptor ij = getBasicIJXml(SimpleManagedConnectionFactory1.class.getName());
+      ConnectionDefinitionType ijCdt = ij.getOrCreateConnectionDefinitions().getOrCreateConnectionDefinition();
+      ijCdt.removePool().getOrCreatePool().minPoolSize(3).maxPoolSize(5).prefill(true).flushStrategy("AllConnections");
+      ijCdt.getOrCreateSecurity().application();
+
+      return ij;
    }
 
-   /**
-    * 
-    * checkPool
-    * 
-    * @throws Exception in case of error
-    */
-   @Test
+   @Override
    public void checkPool() throws Exception
    {
       AbstractPool pool = getPool();
@@ -107,7 +106,7 @@ public class PoolByCriNoTxDeploymentAllConnectionsFlushTestCase extends PoolTest
 
       assertTrue(c.isDetached());
       assertTrue(c1.isDetached());
-      
+
       c.fail();
       c1.close();
       //doesn't make an effect - connections are in detached state

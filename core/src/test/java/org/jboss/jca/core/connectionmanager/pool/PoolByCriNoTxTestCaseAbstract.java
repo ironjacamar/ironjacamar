@@ -1,9 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<!--
 /*
  * JBoss, Home of Professional Open Source.
- * Copyright 2013, Red Hat Middleware LLC, and individual contributors
+ * Copyright 2008, Red Hat Middleware LLC, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -22,23 +19,34 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
--->
+package org.jboss.jca.core.connectionmanager.pool;
 
-<ironjacamar xmlns="http://www.jboss.org/ironjacamar/schema"
-             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://www.jboss.org/ironjacamar/schema 
-             http://www.jboss.org/ironjacamar/schema/ironjacamar_1_0.xsd">
+import org.jboss.jca.core.connectionmanager.NoTxConnectionManager;
+import org.jboss.jca.core.connectionmanager.pool.strategy.PoolByCri;
 
-  <transaction-support>NoTransaction</transaction-support>
-  
-  <connection-definitions>
-    <connection-definition class-name="org.jboss.jca.core.connectionmanager.rar.SimpleManagedConnectionFactory1" 
-                           enabled="true" jndi-name="java:/eis/Pool" 
-                           use-java-context="true" pool-name="Pool">
-                           <security>
-                           <application/>
-                           </security>
-    </connection-definition>
-  </connection-definitions>
+import org.junit.Test;
 
-</ironjacamar>
+/**
+ * 
+ * A PoolByCriNoTxTestCaseAbstract.
+ * 
+ * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
+ *
+ */
+public class PoolByCriNoTxTestCaseAbstract extends PoolTestCaseAbstract
+{
+
+   /**
+    * 
+    * checkConfig
+    *
+    */
+   @Test 
+   public void checkConfig()
+   {
+      checkConfiguration(NoTxConnectionManager.class, PoolByCri.class);
+   }
+   
+
+}
+

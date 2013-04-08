@@ -22,15 +22,14 @@
 package org.jboss.jca.core.connectionmanager.pool;
 
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
-import org.jboss.jca.core.connectionmanager.NoTxConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
-import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
 import org.jboss.jca.core.connectionmanager.rar.SimpleConnection;
+import org.jboss.jca.core.connectionmanager.rar.SimpleManagedConnectionFactory;
+import org.jboss.jca.embedded.dsl.ironjacamar11.api.ConnectionDefinitionType;
+import org.jboss.jca.embedded.dsl.ironjacamar11.api.IronjacamarDescriptor;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
-
-import org.junit.Test;
 
 import static org.junit.Assert.*;
 
@@ -46,7 +45,7 @@ import static org.junit.Assert.*;
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  * 
  */
-public class OnePoolNoTxDeploymentPrefilledEntirePoolFlushTestCase extends PoolTestCaseAbstract
+public class OnePoolNoTxDeploymentPrefilledEntirePoolFlushTestCase extends OnePoolNoTxTestCaseAbstract
 {
 
    /**
@@ -58,27 +57,25 @@ public class OnePoolNoTxDeploymentPrefilledEntirePoolFlushTestCase extends PoolT
    @Deployment
    public static ResourceAdapterArchive deployment()
    {
-      return getDeploymentWith("ij-prefilled-entire.xml");
+      return createNoTxDeployment(getIJ());
    }
 
    /**
     * 
-    * checkConfig
-    *
+    * get IronjacamarDescriptor for deployment
+    * 
+    * @return IronjacamarDescriptor
     */
-   @Test 
-   public void checkConfig()
+   public static IronjacamarDescriptor getIJ()
    {
-      checkConfiguration(NoTxConnectionManager.class, OnePool.class);
+      IronjacamarDescriptor ij = getBasicIJXml(SimpleManagedConnectionFactory.class.getName());
+      ConnectionDefinitionType ijCdt = ij.getOrCreateConnectionDefinitions().getOrCreateConnectionDefinition();
+      ijCdt.removePool().getOrCreatePool().minPoolSize(2).maxPoolSize(5).prefill(true).flushStrategy("EntirePool");
+
+      return ij;
    }
 
-   /**
-    * 
-    * checkPool
-    * 
-    * @throws Exception in case of error
-    */
-   @Test
+   @Override
    public void checkPool() throws Exception
    {
       AbstractPool pool = getPool();
@@ -99,14 +96,14 @@ public class OnePoolNoTxDeploymentPrefilledEntirePoolFlushTestCase extends PoolT
       {
          checkStatistics(mcp.getStatistics(), 2, 3, 3);
       }
-      
+
       c.fail();
       Thread.sleep(1000);
       log.info("PS after fail:" + ps.toString());
       assertEquals(pool.getManagedConnectionPools().size(), 1);
       //the whole pool is emptied
       checkStatistics(ps, 5, 0, 2, 3);
-      
+
       assertTrue(c1.isDetached());
       c1.fail();
       //doesn't make an effect, connection is detached

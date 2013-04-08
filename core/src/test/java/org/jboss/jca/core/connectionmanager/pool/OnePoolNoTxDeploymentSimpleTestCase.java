@@ -22,15 +22,12 @@
 package org.jboss.jca.core.connectionmanager.pool;
 
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
-import org.jboss.jca.core.connectionmanager.NoTxConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
-import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
 import org.jboss.jca.core.connectionmanager.rar.SimpleConnection;
+import org.jboss.jca.core.connectionmanager.rar.SimpleManagedConnectionFactory;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
-
-import org.junit.Test;
 
 import static org.junit.Assert.*;
 
@@ -46,39 +43,22 @@ import static org.junit.Assert.*;
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  * 
  */
-public class OnePoolNoTxDeploymentSimpleTestCase extends PoolTestCaseAbstract
+public class OnePoolNoTxDeploymentSimpleTestCase extends OnePoolNoTxTestCaseAbstract
 {
 
    /**
     * 
-    * deployment
+    * create deployment
     * 
     * @return archive
     */
    @Deployment
    public static ResourceAdapterArchive deployment()
    {
-      return getDeployment();
+      return createNoTxDeployment(getBasicIJXml(SimpleManagedConnectionFactory.class.getName()));
    }
 
-   /**
-    * 
-    * checkConfig
-    *
-    */
-   @Test 
-   public void checkConfig()
-   {
-      checkConfiguration(NoTxConnectionManager.class, OnePool.class);
-   }
-
-   /**
-    * 
-    * checkPool
-    * 
-    * @throws Exception in case of error
-    */
-   @Test
+   @Override
    public void checkPool() throws Exception
    {
       AbstractPool pool = getPool();
