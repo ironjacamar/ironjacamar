@@ -23,6 +23,9 @@ package org.jboss.jca.core.connectionmanager.pool;
 
 import org.jboss.jca.core.connectionmanager.NoTxConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.strategy.PoolByCri;
+import org.jboss.jca.core.connectionmanager.rar.SimpleManagedConnectionFactory1;
+import org.jboss.jca.embedded.dsl.ironjacamar11.api.ConnectionDefinitionType;
+import org.jboss.jca.embedded.dsl.ironjacamar11.api.IronjacamarDescriptor;
 
 import org.junit.Test;
 
@@ -35,6 +38,21 @@ import org.junit.Test;
  */
 public class PoolByCriNoTxTestCaseAbstract extends PoolTestCaseAbstract
 {
+
+   /**
+    * 
+    * get IronjacamarDescriptor for deployment
+    * 
+    * @return IronjacamarDescriptor
+    */
+   public static IronjacamarDescriptor getCriIJ()
+   {
+      IronjacamarDescriptor ij = getBasicIJXml(SimpleManagedConnectionFactory1.class.getName());
+      ConnectionDefinitionType ijCdt = ij.getOrCreateConnectionDefinitions().getOrCreateConnectionDefinition();
+      ijCdt.getOrCreateSecurity().application();
+
+      return ij;
+   }
 
    /**
     * 

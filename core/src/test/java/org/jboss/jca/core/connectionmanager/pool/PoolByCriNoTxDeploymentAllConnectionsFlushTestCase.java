@@ -24,7 +24,6 @@ package org.jboss.jca.core.connectionmanager.pool;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
 import org.jboss.jca.core.connectionmanager.rar.SimpleConnection;
 import org.jboss.jca.core.connectionmanager.rar.SimpleConnectionRequestInfoImpl;
-import org.jboss.jca.core.connectionmanager.rar.SimpleManagedConnectionFactory1;
 import org.jboss.jca.embedded.dsl.ironjacamar11.api.ConnectionDefinitionType;
 import org.jboss.jca.embedded.dsl.ironjacamar11.api.IronjacamarDescriptor;
 
@@ -71,10 +70,9 @@ public class PoolByCriNoTxDeploymentAllConnectionsFlushTestCase extends PoolByCr
     */
    public static IronjacamarDescriptor getIJ()
    {
-      IronjacamarDescriptor ij = getBasicIJXml(SimpleManagedConnectionFactory1.class.getName());
+      IronjacamarDescriptor ij = getCriIJ();
       ConnectionDefinitionType ijCdt = ij.getOrCreateConnectionDefinitions().getOrCreateConnectionDefinition();
       ijCdt.removePool().getOrCreatePool().minPoolSize(3).maxPoolSize(5).prefill(true).flushStrategy("AllConnections");
-      ijCdt.getOrCreateSecurity().application();
 
       return ij;
    }

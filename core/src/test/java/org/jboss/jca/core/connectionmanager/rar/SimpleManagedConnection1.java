@@ -183,8 +183,9 @@ public class SimpleManagedConnection1 implements ManagedConnection
    {
       ConnectionEvent event = new ConnectionEvent(this, ConnectionEvent.CONNECTION_CLOSED);
       event.setConnectionHandle(handle);
-      for (ConnectionEventListener cel : listeners)
+      for (int i = 0; i < listeners.size(); i++)
       {
+         ConnectionEventListener cel = listeners.get(i);
          cel.connectionClosed(event);
       }
 
