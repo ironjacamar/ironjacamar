@@ -28,7 +28,7 @@
         revision="${version}">
     <license name="lgpl" url="http://repository.jboss.org/licenses/lgpl.txt"/>
     <repository name="jboss" url="http://repository.jboss.org"/>
-    <description homepage="http://www.jboss.org/ironjacamar">
+    <description homepage="http://www.ironjacamar.org">
       The IronJacamar project implements the Java EE Connector Architecture 1.6 specification
     </description>
   </info>

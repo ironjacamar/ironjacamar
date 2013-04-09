@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- See http://www.jboss.org/community/wiki/Multiple1PC for information about datasource -->
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:noNamespaceSchemaLocation="http://www.jboss.org/ironjacamar/schema/datasources_1_0.xsd">
+             xsi:noNamespaceSchemaLocation="http://www.ironjacamar.org/schema/datasources_1_0.xsd">
 
   <datasource jndi-name="SapdbDS" pool-name="SapdbDS">
     <connection-url>jdbc:sapdb://127.0.0.1/DB_NAME</connection-url>

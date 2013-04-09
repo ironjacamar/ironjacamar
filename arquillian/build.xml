@@ -84,7 +84,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Arquillian Embedded"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -100,7 +100,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Arquillian Embedded Byteman"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -127,7 +127,7 @@
              additionalparam="-author -version"
              classpath="${build.arquillian.dir}/impl"
              classpathref="main.lib.path.id"
-             bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
+             bottom="Copyright &amp;#169; 2013 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
       <fileset dir="src/main/java"/>
       <link offline="true" href="http://docs.oracle.com/javase/6/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
     </javadoc>
@@ -316,7 +316,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Arquillian Embedded - Sources"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -331,7 +331,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Arquillian Embedded Byteman - Sources"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -353,7 +353,7 @@
              additionalparam="-author -version"
              classpath="${build.arquillian.dir}"
              classpathref="main.lib.path.id"
-             bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
+             bottom="Copyright &amp;#169; 2013 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
 
       <packageset dir="src/main/java" defaultexcludes="yes">
         <include name="**/arquillian/embedded/**"/>
@@ -374,7 +374,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Arquillian Embedded - JavaDoc"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -389,7 +389,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Arquillian Embedded Byteman - JavaDoc"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>

@@ -94,7 +94,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Core API"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -109,7 +109,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Core Implementation"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
         <attribute name="Main-Class" value="org.jboss.jca.Version"/>
       </manifest>
@@ -134,7 +134,7 @@
              additionalparam="-author -version"
              classpath="${build.core.dir}/impl"
              classpathref="main.lib.path.id"
-             bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
+             bottom="Copyright &amp;#169; 2013 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
       <link offline="true" href="http://docs.oracle.com/javase/6/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
     </javadoc>
     <copy todir="${target.dir}/docs/core" overwrite="true">
@@ -411,7 +411,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Test - Transaction Manager"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -433,7 +433,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Test - Reauth CRI"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -445,7 +445,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Test - Reauth CRI RAR"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
       <fileset dir="${build.core.dir}/test">
@@ -465,7 +465,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Test - Reauth Subject"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -477,7 +477,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Test - Reauth CRI RAR"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
       <fileset dir="${build.core.dir}/test">
@@ -497,7 +497,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Test - Pure inflow"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -509,7 +509,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Test - Pure inflow RAR"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
       <fileset dir="${build.core.dir}/test">
@@ -529,7 +529,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Test - Work"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -541,7 +541,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Test - Work RAR"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
       <fileset dir="${build.core.dir}/test">
@@ -567,7 +567,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Core API - Sources"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -584,7 +584,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Core Implementation - Sources"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -602,7 +602,7 @@
              additionalparam="-author -version"
              classpath="${build.core.dir}"
              classpathref="main.lib.path.id"
-             bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
+             bottom="Copyright &amp;#169; 2013 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
 
       <packageset dir="src/main/java" defaultexcludes="yes">
         <include name="**/core/api/**"/>
@@ -624,7 +624,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Core API - JavaDoc"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -641,7 +641,7 @@
              additionalparam="-author -version"
              classpath="${build.core.dir}"
              classpathref="main.lib.path.id"
-             bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
+             bottom="Copyright &amp;#169; 2013 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
 
       <packageset dir="src/main/java" defaultexcludes="yes">
         <exclude name="**/core/api/**"/>
@@ -663,7 +663,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Core Implementation - JavaDoc"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>

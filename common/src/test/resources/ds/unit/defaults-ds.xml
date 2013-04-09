@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:noNamespaceSchemaLocation="http://www.jboss.org/ironjacamar/schema/datasources_1_1.xsd"> 
+  xsi:noNamespaceSchemaLocation="http://www.ironjacamar.org/schema/datasources_1_1.xsd"> 
                  <datasource jndi-name="java:jboss/datasources/complexDs"  pool-name="complexDs_Pool">
                     <connection-url>
                         jdbc:h2:mem:test;DB_CLOSE_DELAY=-1

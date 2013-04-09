@@ -6,8 +6,8 @@
                                http://java.sun.com/xml/ns/j2ee/connector_1_5.xsd"
            version="1.5">
 
-  <description>JBoss LocalTransaction JDBC Wrapper Resource Adapter</description>
-  <display-name>JBoss LocalTransaction JDBC Wrapper</display-name>
+  <description>LocalTransaction JDBC Wrapper Resource Adapter</description>
+  <display-name>LocalTransaction JDBC Wrapper</display-name>
   
   <vendor-name>Red Hat Inc</vendor-name>
   <eis-type>JDBC 4.0 Relational Database</eis-type>

@@ -24,10 +24,10 @@
  */
 -->
 
-<ironjacamar xmlns="http://www.jboss.org/ironjacamar/schema"
+<ironjacamar xmlns="http://www.ironjacamar.org/schema"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://www.jboss.org/ironjacamar/schema 
-             http://www.jboss.org/ironjacamar/schema/ironjacamar_1_0.xsd">
+             xsi:schemaLocation="http://www.ironjacamar.org/schema 
+             http://www.ironjacamar.org/schema/ironjacamar_1_0.xsd">
   <config-property name="Server">localhost</config-property>
   <config-property name="Port">19000</config-property>
 

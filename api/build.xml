@@ -69,7 +69,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="The Java EE Connector Architecture 1.7 API"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -94,7 +94,7 @@
              additionalparam="-author -version"
              classpath="${build.api.dir}"
              classpathref="main.lib.path.id"
-             bottom="Copyright &amp;#169; 2013 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
+             bottom="Copyright &amp;#169; 2013 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
       <link offline="true" href="http://docs.oracle.com/javase/6/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
     </javadoc>
     <copy todir="${target.dir}/docs/spec" overwrite="true">
@@ -116,7 +116,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="The Java EE Connector Architecture 1.7 API - Sources"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -135,7 +135,7 @@
              additionalparam="-author -version"
              classpath="${build.api.dir}"
              classpathref="main.lib.path.id"
-             bottom="Copyright &amp;#169; 2013 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
+             bottom="Copyright &amp;#169; 2013 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
       <link offline="true" href="http://docs.oracle.com/javase/6/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
     </javadoc>
     <copy todir="${build.api.dir}/docs" overwrite="true">
@@ -151,7 +151,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="The Java EE Connector Architecture 1.7 API - JavaDoc"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>

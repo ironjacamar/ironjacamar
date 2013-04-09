@@ -86,7 +86,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Codegenerator"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
         <attribute name="Main-Class" value="org.jboss.jca.codegenerator.Main"/>
       </manifest>
@@ -111,7 +111,7 @@
              additionalparam="-author -version"
              classpath="${build.codegenerator.dir}/impl"
              classpathref="main.lib.path.id"
-             bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
+             bottom="Copyright &amp;#169; 2013 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
       <link offline="true" href="http://docs.oracle.com/javase/6/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
     </javadoc>
     <copy todir="${target.dir}/docs/codegenerator" overwrite="true">
@@ -249,7 +249,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Codegenerator - Sources"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -268,7 +268,7 @@
              additionalparam="-author -version"
              classpath="${build.codegenerator.dir}"
              classpathref="main.lib.path.id"
-             bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
+             bottom="Copyright &amp;#169; 2013 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
       <link offline="true" href="http://docs.oracle.com/javase/6/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
     </javadoc>
     <copy todir="${build.codegenerator.dir}/docs" overwrite="true">
@@ -284,7 +284,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Codegenerator - JavaDoc"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>

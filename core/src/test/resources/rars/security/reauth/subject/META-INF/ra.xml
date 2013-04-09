@@ -30,7 +30,7 @@
            http://java.sun.com/xml/ns/j2ee/connector_1_5.xsd"
            version="1.5">
 
-   <vendor-name>JBoss, Red Hat</vendor-name>
+   <vendor-name>IronJacamar</vendor-name>
    <eis-type>Reauth resource adapter (SUBJECT)</eis-type>
    <resourceadapter-version>1.0</resourceadapter-version>
    <resourceadapter>

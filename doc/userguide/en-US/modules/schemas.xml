@@ -2,7 +2,7 @@
 <appendix id="schemas">
   <title>Schemas</title>
 
-  <para>All the IronJacamar schemas are deployed under <ulink url="http://www.jboss.org/ironjacamar/schema/">http://www.jboss.org/ironjacamar/schema/</ulink>.</para>
+  <para>All the IronJacamar schemas are deployed under <ulink url="http://www.ironjacamar.org/schema/">http://www.ironjacamar.org/schema/</ulink>.</para>
 
   <!-- JCA 1.7 -->
   <section id="jca17">

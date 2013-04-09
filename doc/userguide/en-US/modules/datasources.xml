@@ -3,7 +3,7 @@
   <title>Datasources</title>
 
   <para>The datasource schema can found at <ulink
-     url="http://www.jboss.org/ironjacamar/schema/datasources_1_0.xsd"/>.</para>
+     url="http://www.ironjacamar.org/schema/datasources_1_0.xsd"/>.</para>
 
   <section id="ex_datasources_postgresql">
     <title>PosgreSQL</title>

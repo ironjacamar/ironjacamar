@@ -108,7 +108,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Validator"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -136,7 +136,7 @@
         <attribute name="Main-Class" value="org.jboss.jca.validator.cli.Main"/>
         <attribute name="Implementation-Title" value="IronJacamar Validator Command Line Interface"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -151,7 +151,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Validator Ant support"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -166,7 +166,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Validator Maven support"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -190,7 +190,7 @@
              additionalparam="-author -version"
              classpath="${build.validator.dir}/impl"
              classpathref="main.lib.path.id"
-             bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
+             bottom="Copyright &amp;#169; 2013 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
       <link offline="true" href="http://docs.oracle.com/javase/6/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
     </javadoc>
     <copy todir="${target.dir}/docs/validator" overwrite="true">
@@ -329,7 +329,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Validator - Sources"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -346,7 +346,7 @@
              additionalparam="-author -version"
              classpath="${build.validator.dir}"
              classpathref="main.lib.path.id"
-             bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
+             bottom="Copyright &amp;#169; 2013 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
 
       <packageset dir="src/main/java" defaultexcludes="yes">
         <exclude name="**/validator/ant/**"/>
@@ -368,7 +368,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Validator - JavaDoc"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -386,7 +386,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Validator Ant - Sources"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -401,7 +401,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Validator Maven - Sources"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>  	
@@ -417,7 +417,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Validator CLI - Sources"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -435,7 +435,7 @@
              additionalparam="-author -version"
              classpath="${build.validator.dir}"
              classpathref="main.lib.path.id"
-             bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
+             bottom="Copyright &amp;#169; 2013 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
 
       <packageset dir="src/main/java" defaultexcludes="yes">
         <include name="**/validator/ant/**"/>
@@ -456,7 +456,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Validator Ant - JavaDoc"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -473,7 +473,7 @@
              additionalparam="-author -version"
              classpath="${build.validator.dir}"
              classpathref="main.lib.path.id"
-             bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
+             bottom="Copyright &amp;#169; 2013 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
       <link offline="true" href="http://docs.oracle.com/javase/6/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
 
       <packageset dir="src/main/java" defaultexcludes="yes">
@@ -495,7 +495,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Validator Maven - JavaDoc"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>  	
@@ -513,7 +513,7 @@
              additionalparam="-author -version"
              classpath="${build.validator.dir}"
              classpathref="main.lib.path.id"
-             bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
+             bottom="Copyright &amp;#169; 2013 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
 
       <packageset dir="src/main/java" defaultexcludes="yes">
         <include name="**/validator/cli/**"/>
@@ -534,7 +534,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Validator CLI - JavaDoc"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>

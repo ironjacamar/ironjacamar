@@ -6,8 +6,8 @@
                                http://java.sun.com/xml/ns/j2ee/connector_1_5.xsd"
            version="1.5">
   
-  <description>JBoss Resource Adapter for JDBC 4 XA drivers</description>
-  <display-name>JBoss JDBC XATransaction ResourceAdapter</display-name>
+  <description>Resource Adapter for JDBC 4 XA drivers</description>
+  <display-name>JDBC XATransaction ResourceAdapter</display-name>
   
   <vendor-name>Red Hat Inc</vendor-name>
   <eis-type>JDBC 4.0 XA Relational Database</eis-type>

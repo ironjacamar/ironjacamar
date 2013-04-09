@@ -90,7 +90,7 @@
       <manifest>
 	<attribute name="Implementation-Title" value="IronJacamar Common API"/>
         <attribute name="Implementation-Version" value="${version}"/>
-	<attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+	<attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
 	<attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -105,7 +105,7 @@
       <manifest>
 	<attribute name="Implementation-Title" value="IronJacamar Common SPI"/>
         <attribute name="Implementation-Version" value="${version}"/>
-	<attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+	<attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
 	<attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -120,7 +120,7 @@
       <manifest>
 	<attribute name="Implementation-Title" value="IronJacamar Common Implementation"/>
         <attribute name="Implementation-Version" value="${version}"/>
-	<attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+	<attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
 	<attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -144,7 +144,7 @@
              additionalparam="-author -version"
              classpath="${build.common.dir}/impl"
              classpathref="main.lib.path.id"
-             bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
+             bottom="Copyright &amp;#169; 2013 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
       <link offline="true" href="http://docs.oracle.com/javase/6/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
     </javadoc>
     <copy todir="${target.dir}/docs/common" overwrite="true">
@@ -281,7 +281,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Common API - Sources"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -296,7 +296,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Common SPI - Sources"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -313,7 +313,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Common Implementation - Sources"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -332,7 +332,7 @@
              additionalparam="-author -version"
              classpath="${build.common.dir}/impl"
              classpathref="main.lib.path.id"
-             bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
+             bottom="Copyright &amp;#169; 2013 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
 
       <packageset dir="src/main/java" defaultexcludes="yes">
         <include name="**/common/api/**"/>
@@ -353,7 +353,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Common API - JavaDoc"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -370,7 +370,7 @@
              additionalparam="-author -version"
              classpath="${build.common.dir}/impl"
              classpathref="main.lib.path.id"
-             bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
+             bottom="Copyright &amp;#169; 2013 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
 
       <packageset dir="src/main/java" defaultexcludes="yes">
         <include name="**/common/spi/**"/>
@@ -391,7 +391,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Common SPI - JavaDoc"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
@@ -408,7 +408,7 @@
              additionalparam="-author -version"
              classpath="${build.common.dir}/impl"
              classpathref="main.lib.path.id"
-             bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
+             bottom="Copyright &amp;#169; 2013 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
 
       <packageset dir="src/main/java" defaultexcludes="yes">
         <exclude name="**/common/api/**"/>
@@ -430,7 +430,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Common Implementation - JavaDoc"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:noNamespaceSchemaLocation="http://www.jboss.org/ironjacamar/schema/datasources_1_0.xsd">
+             xsi:noNamespaceSchemaLocation="http://www.ironjacamar.org/schema/datasources_1_0.xsd">
 
   <datasource jndi-name="DB2-400" pool-name="DB2-400">
     <connection-url>jdbc:as400://[systemname]/[schema];extended dynamic=true;package=jbpkg;package cache=true;package library=jboss;errors=full</connection-url>

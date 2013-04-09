@@ -30,7 +30,7 @@
            http://java.sun.com/xml/ns/j2ee/connector_1_5.xsd"
            version="1.5">
 
-   <vendor-name>JBoss, by Red Hat</vendor-name>
+   <vendor-name>IronJacamar</vendor-name>
    <eis-type>Lazy resource adapter</eis-type>
    <resourceadapter-version>0.2</resourceadapter-version>
    <resourceadapter>

@@ -303,7 +303,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Embedded"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
       <fileset dir="${build.embedded.dir}/impl"
@@ -334,7 +334,7 @@
              additionalparam="-author -version"
              classpath="${build.embedded.dir}/impl"
              classpathref="main.lib.path.id"
-             bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
+             bottom="Copyright &amp;#169; 2013 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
       <fileset dir="src/main/java"/>
       <fileset dir="${build.embedded.dir}/src/main/java"
                excludes="**/impl/**"/>
@@ -474,7 +474,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Embedded - Sources"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
       <fileset dir="src/main/java"/>
@@ -499,7 +499,7 @@
              additionalparam="-author -version"
              classpath="${build.embedded.dir}/impl"
              classpathref="main.lib.path.id"
-             bottom="Copyright &amp;#169; 2012 JBoss, by Red Hat (&lt;a href='http://www.jboss.org/ironjacamar'&gt;http://www.jboss.org/ironjacamar&lt;/a&gt;)">
+             bottom="Copyright &amp;#169; 2013 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
       <fileset dir="src/main/java"/>
       <fileset dir="${build.embedded.dir}/src/main/java"
                excludes="**/impl/**"/>
@@ -518,7 +518,7 @@
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar Embedded - JavaDoc"/>
         <attribute name="Implementation-Version" value="${version}"/>
-        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.jboss.org/ironjacamar)"/>
+        <attribute name="Implementation-Vendor" value="The IronJacamar project (http://www.ironjacamar.org)"/>
         <attribute name="Implementation-Vendor-Id" value="org.jboss"/>
       </manifest>
     </jar>
