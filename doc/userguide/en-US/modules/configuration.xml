@@ -127,7 +127,7 @@ config/logging.properties
    <section id="transaction">
       <title>Transaction service</title>
 
-      <para>The IronJacamar container uses the JBoss Transaction Manager as its transaction implementation.</para>
+      <para>The IronJacamar container uses Narayana its transaction implementation.</para>
 
       <para>The configuration is done in the</para>
 
@@ -137,7 +137,7 @@ config/transaction.xml
 
       <para>file.</para>
 
-      <para>Consult the JBoss Transaction documentation on how the service can be configured.</para>
+      <para>Consult the Narayana documentation on how the service can be configured.</para>
 
    </section>
 

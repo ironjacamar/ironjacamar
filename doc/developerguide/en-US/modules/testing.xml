@@ -66,8 +66,8 @@ org.jboss.jca.core.spec.chaper10.section3
     </section>
 
     <section id="jbinterfacetest">
-      <title>JBoss specific interfaces</title>
-      <para>The purpose of the JBoss specific interfaces tests is to test our specific interfaces.</para>
+      <title>IronJacamar specific interfaces</title>
+      <para>The purpose of the IronJacamar specific interfaces tests is to test our specific interfaces.</para>
       <para>Each test can depend on:</para>
       <itemizedlist spacing="compact">
          <listitem>
@@ -91,8 +91,8 @@ org.jboss.jca.core.workmanager
     </section>
 
     <section id="jbimpltest">
-      <title>JBoss specific implementation</title>
-      <para>The purpose of the JBoss specific implementation tests is to test our specific implementation.
+      <title>IronJacamar specific implementation</title>
+      <para>The purpose of the IronJacamar specific implementation tests is to test our specific implementation.
       These tests should cover all methods are not exposed through the interface.</para>
       <para>Each test can depend on:</para>
       <itemizedlist spacing="compact">
