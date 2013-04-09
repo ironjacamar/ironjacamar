@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2009, Red Hat Middleware LLC, and individual contributors
+ * IronJacamar, a Java EE Connector Architecture implementation
+ * Copyright 2009, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -41,7 +41,7 @@ import javax.resource.spi.TransactionSupport;
       displayName = { "displayName" },
       smallIcon = { "smallIcon" },
       largeIcon = { "largeIcon" },
-      vendorName = "Red Hat Middleware LLC",
+      vendorName = "Red Hat Inc",
       eisType = "Test RA",
       version = "0.1",
       licenseDescription = { "licenseDescription" },

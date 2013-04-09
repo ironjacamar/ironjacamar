@@ -4,7 +4,7 @@
 
 <connector version="1.6" metadata-complete="true">
 
-   <vendor-name>Red Hat Middleware LLC</vendor-name>
+   <vendor-name>Red Hat Inc</vendor-name>
    <eis-type>Test RA</eis-type>
    <resourceadapter-version>0.1</resourceadapter-version>
 

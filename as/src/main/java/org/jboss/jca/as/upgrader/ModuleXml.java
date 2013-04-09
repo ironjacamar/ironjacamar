@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2011, Red Hat Middleware LLC, and individual contributors
+ * IronJacamar, a Java EE Connector Architecture implementation
+ * Copyright 2011, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -35,7 +35,7 @@ public class ModuleXml
       "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
       "",
       "<!--",
-      "  ~ JBoss, Home of Professional Open Source.",
+      "  ~ IronJacamar, a Java EE Connector Architecture implementation",
       "  ~ Copyright 2011, Red Hat, Inc., and individual contributors",
       "  ~ as indicated by the @author tags. See the copyright.txt file in the",
       "  ~ distribution for a full listing of individual contributors.",

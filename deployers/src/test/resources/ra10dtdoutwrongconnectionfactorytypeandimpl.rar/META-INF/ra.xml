@@ -9,7 +9,7 @@
 <connector>
 	<display-name>en-connector-disp</display-name>
 	<description>en-connector-desc</description>
-	<vendor-name>Red Hat Middleware LLC</vendor-name>
+	<vendor-name>Red Hat Inc</vendor-name>
 	<spec-version>1.0</spec-version>
 	<eis-type>JMS 1.1 Server</eis-type>
 	<version>1.0</version>

@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2010, Red Hat Middleware LLC, and individual contributors
+ * IronJacamar, a Java EE Connector Architecture implementation
+ * Copyright 2010, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -49,7 +49,7 @@ public abstract class RaXmlGen extends AbstractXmlGen
       
       int indent = 1;
       writeIndent(out, indent);
-      out.write("<vendor-name>Red Hat Middleware LLC</vendor-name>");
+      out.write("<vendor-name>Red Hat Inc</vendor-name>");
       writeEol(out);
       writeIndent(out, indent);
       out.write("<eis-type>Test RA</eis-type>");
