@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
 
 /**
  * 
- * A PoolByCriNoTxDeploymentAllGacefullyFlushTestCase
+ * A PoolByCriNoTxDeploymentAllIdleConnectionsFlushTestCase
  * 
  * NOTE that this class is in org.jboss.jca.core.connectionmanager.pool and not in
  * org.jboss.jca.core.connectionmanager.pool.strategy because it needs to access to 
@@ -43,7 +43,7 @@ import static org.junit.Assert.*;
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  * 
  */
-public class PoolByCriNoTxDeploymentAllGracefullyFlushTestCase extends PoolByCriNoTxTestCaseAbstract
+public class PoolByCriNoTxDeploymentAllIdleConnectionsFlushTestCase extends PoolByCriNoTxTestCaseAbstract
 {
 
    /**
@@ -55,8 +55,9 @@ public class PoolByCriNoTxDeploymentAllGracefullyFlushTestCase extends PoolByCri
    @Deployment
    public static ResourceAdapterArchive deployment()
    {
-      return createNoTxDeployment(getCriIJ(FlushStrategy.ALL_GRACEFULLY));
+      return createNoTxDeployment(getCriIJ(FlushStrategy.ALL_IDLE_CONNECTIONS));
    }
+
 
    @Override
    public void checkPool() throws Exception
@@ -94,6 +95,6 @@ public class PoolByCriNoTxDeploymentAllGracefullyFlushTestCase extends PoolByCri
       //graceful flush of released connection
 
       assertEquals(pool.getManagedConnectionPools().size(), 1);
-      checkStatistics(ps, 5, 0, 0, 2);
+      checkStatistics(ps, 5, 0, 1, 1);
    }
 }

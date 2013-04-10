@@ -22,6 +22,7 @@
 package org.jboss.jca.core.connectionmanager.rar;
 
 import java.io.PrintWriter;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -34,6 +35,7 @@ import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.ResourceAdapterAssociation;
+import javax.resource.spi.ValidatingManagedConnectionFactory;
 
 import javax.security.auth.Subject;
 
@@ -42,7 +44,11 @@ import javax.security.auth.Subject;
  *
  * @version $Revision: $
  */
-public class SimpleManagedConnectionFactory1 implements ManagedConnectionFactory, ResourceAdapterAssociation
+public class SimpleManagedConnectionFactory1
+   implements
+      ManagedConnectionFactory,
+      ResourceAdapterAssociation,
+      ValidatingManagedConnectionFactory
 {
 
    /** The serial version UID */
@@ -62,6 +68,8 @@ public class SimpleManagedConnectionFactory1 implements ManagedConnectionFactory
 
    /** second */
    private Byte second = 8;
+
+   private boolean isInvalid = true;
 
    /**
     * Default constructor
@@ -139,8 +147,8 @@ public class SimpleManagedConnectionFactory1 implements ManagedConnectionFactory
     * @throws ResourceException generic exception
     * @return ManagedConnection instance 
     */
-   public ManagedConnection createManagedConnection(Subject subject,
-         ConnectionRequestInfo cxRequestInfo) throws ResourceException
+   public ManagedConnection createManagedConnection(Subject subject, ConnectionRequestInfo cxRequestInfo)
+      throws ResourceException
    {
       log.info("createManagedConnection()");
       return new SimpleManagedConnection1(this, cxRequestInfo);
@@ -155,20 +163,20 @@ public class SimpleManagedConnectionFactory1 implements ManagedConnectionFactory
     * @throws ResourceException generic exception
     * @return ManagedConnection if resource adapter finds an acceptable match otherwise null 
     */
-   public ManagedConnection matchManagedConnections(Set connectionSet,
-         Subject subject, ConnectionRequestInfo cxRequestInfo) throws ResourceException
+   public ManagedConnection matchManagedConnections(Set connectionSet, Subject subject,
+      ConnectionRequestInfo cxRequestInfo) throws ResourceException
    {
       log.info("matchManagedConnections()");
       ManagedConnection result = null;
       Iterator it = connectionSet.iterator();
       while (result == null && it.hasNext())
       {
-         ManagedConnection mc = (ManagedConnection)it.next();
+         ManagedConnection mc = (ManagedConnection) it.next();
          if (mc instanceof SimpleManagedConnection1)
          {
             if (cxRequestInfo instanceof SimpleConnectionRequestInfoImpl &&
-               (cxRequestInfo.equals(((SimpleManagedConnection1)mc).getCri())))
-            result = mc;
+                (cxRequestInfo.equals(((SimpleManagedConnection1) mc).getCri())))
+               result = mc;
          }
 
       }
@@ -254,8 +262,8 @@ public class SimpleManagedConnectionFactory1 implements ManagedConnectionFactory
          return true;
       if (!(other instanceof SimpleManagedConnectionFactory1))
          return false;
-      SimpleManagedConnectionFactory1 obj = (SimpleManagedConnectionFactory1)other;
-      boolean result = true; 
+      SimpleManagedConnectionFactory1 obj = (SimpleManagedConnectionFactory1) other;
+      boolean result = true;
       if (result)
       {
          if (first == null)
@@ -271,6 +279,24 @@ public class SimpleManagedConnectionFactory1 implements ManagedConnectionFactory
             result = second.equals(obj.getSecond());
       }
       return result;
+   }
+
+   @Override
+   @SuppressWarnings(
+      {"unchecked", "rawtypes" })
+   public Set getInvalidConnections(Set connectionSet) throws ResourceException
+   {
+      Set resultSet = new HashSet();
+
+      Iterator it = connectionSet.iterator();
+      while (it.hasNext())
+      {
+         Object o = it.next();
+         if (isInvalid)
+            resultSet.add(o);
+         isInvalid = !isInvalid;
+      }
+      return resultSet;
    }
 
 }

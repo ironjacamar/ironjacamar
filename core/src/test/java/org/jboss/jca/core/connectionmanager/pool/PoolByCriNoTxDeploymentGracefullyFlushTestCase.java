@@ -21,11 +21,10 @@
  */
 package org.jboss.jca.core.connectionmanager.pool;
 
+import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
 import org.jboss.jca.core.connectionmanager.rar.SimpleConnection;
 import org.jboss.jca.core.connectionmanager.rar.SimpleConnectionRequestInfoImpl;
-import org.jboss.jca.embedded.dsl.ironjacamar11.api.ConnectionDefinitionType;
-import org.jboss.jca.embedded.dsl.ironjacamar11.api.IronjacamarDescriptor;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
@@ -56,22 +55,7 @@ public class PoolByCriNoTxDeploymentGracefullyFlushTestCase extends PoolByCriNoT
    @Deployment
    public static ResourceAdapterArchive deployment()
    {
-      return createNoTxDeployment(getIJ());
-   }
-
-   /**
-    * 
-    * get IronjacamarDescriptor for deployment
-    * 
-    * @return IronjacamarDescriptor
-    */
-   public static IronjacamarDescriptor getIJ()
-   {
-      IronjacamarDescriptor ij = getCriIJ();
-      ConnectionDefinitionType ijCdt = ij.getOrCreateConnectionDefinitions().getOrCreateConnectionDefinition();
-      ijCdt.removePool().getOrCreatePool().minPoolSize(3).maxPoolSize(5).prefill(true).flushStrategy("Gracefully");
-
-      return ij;
+      return createNoTxDeployment(getCriIJ(FlushStrategy.GRACEFULLY));
    }
 
    @Override

@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
 
 /**
  * 
- * A PoolByCriNoTxDeploymentAllGacefullyFlushTestCase
+ * A PoolByCriNoTxDeploymentIdleConnectionsFlushTestCase
  * 
  * NOTE that this class is in org.jboss.jca.core.connectionmanager.pool and not in
  * org.jboss.jca.core.connectionmanager.pool.strategy because it needs to access to 
@@ -43,7 +43,7 @@ import static org.junit.Assert.*;
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  * 
  */
-public class PoolByCriNoTxDeploymentAllGracefullyFlushTestCase extends PoolByCriNoTxTestCaseAbstract
+public class PoolByCriNoTxDeploymentIdleConnectionsFlushTestCase extends PoolByCriNoTxTestCaseAbstract
 {
 
    /**
@@ -55,7 +55,7 @@ public class PoolByCriNoTxDeploymentAllGracefullyFlushTestCase extends PoolByCri
    @Deployment
    public static ResourceAdapterArchive deployment()
    {
-      return createNoTxDeployment(getCriIJ(FlushStrategy.ALL_GRACEFULLY));
+      return createNoTxDeployment(getCriIJ(FlushStrategy.IDLE_CONNECTIONS));
    }
 
    @Override
@@ -66,34 +66,48 @@ public class PoolByCriNoTxDeploymentAllGracefullyFlushTestCase extends PoolByCri
 
       assertEquals(pool.getManagedConnectionPools().size(), 0);
       SimpleConnection c = cf.getConnection("A");
+      SimpleConnection c0 = cf.getConnection("A");
       SimpleConnection c1 = cf.getConnection("B");
       SimpleConnection c2 = cf.getConnection("B");
+      SimpleConnection c3 = cf.getConnection("B");
 
       assertEquals(pool.getManagedConnectionPools().size(), 2);
-      checkStatistics(ps, 7, 3, 3);
+      checkStatistics(ps, 5, 5, 5);
 
       Object key1 = pool.getKey(null, new SimpleConnectionRequestInfoImpl("A"), false);
       Object key2 = pool.getKey(null, new SimpleConnectionRequestInfoImpl("B"), false);
 
-      checkStatistics(pool.getManagedConnectionPools().get(key1).getStatistics(), 4, 1, 1);
-      checkStatistics(pool.getManagedConnectionPools().get(key2).getStatistics(), 3, 2, 2);
-
-      c2.close();
-      c.fail();
-      Thread.sleep(1000);
-      assertEquals(pool.getManagedConnectionPools().size(), 1);
-      //check, that pool "A" was flushed and an idle connection from pool "B" too
-      checkStatistics(ps, 4, 1, 1, 1);
-      //check, that remaining statistics are for pool "B"
-      checkStatistics(pool.getManagedConnectionPools().get(key2).getStatistics(), 4, 1, 1, 1);
-
-      assertTrue(c2.isDetached());
-      assertFalse(c1.isDetached());
+      checkStatistics(pool.getManagedConnectionPools().get(key1).getStatistics(), 3, 2, 2);
+      checkStatistics(pool.getManagedConnectionPools().get(key2).getStatistics(), 2, 3, 3);
 
       c1.close();
-      //graceful flush of released connection
+      c.fail();
+      Thread.sleep(1000);
+      assertEquals(pool.getManagedConnectionPools().size(), 2);
 
-      assertEquals(pool.getManagedConnectionPools().size(), 1);
-      checkStatistics(ps, 5, 0, 0, 2);
+      checkStatistics(ps, 7, 3, 4, 1);
+      checkStatistics(pool.getManagedConnectionPools().get(key1).getStatistics(), 4, 1, 1, 1);
+      checkStatistics(pool.getManagedConnectionPools().get(key2).getStatistics(), 3, 2, 3);
+
+      assertFalse(c0.isDetached());
+      assertFalse(c3.isDetached());
+      assertFalse(c2.isDetached());
+      assertFalse(c1.isDetached());
+
+      c2.fail();
+
+      Thread.sleep(1000);
+      assertFalse(c0.isDetached());
+      assertFalse(c3.isDetached());
+      assertTrue(c2.isDetached());
+      assertTrue(c1.isDetached());
+
+      assertEquals(pool.getManagedConnectionPools().size(), 2);
+      checkStatistics(pool.getManagedConnectionPools().get(key1).getStatistics(), 4, 1, 1, 1);
+      checkStatistics(pool.getManagedConnectionPools().get(key2).getStatistics(), 4, 1, 1, 2);
+      c0.close();
+      c3.close();
+      checkStatistics(pool.getManagedConnectionPools().get(key1).getStatistics(), 5, 0, 1, 1);
+      checkStatistics(pool.getManagedConnectionPools().get(key2).getStatistics(), 5, 0, 1, 2);
    }
 }

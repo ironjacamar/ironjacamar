@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2008, Red Hat Inc, and individual contributors
+ * Copyright 2013, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.core.connectionmanager.pool;
 
+import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.core.connectionmanager.NoTxConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.strategy.PoolByCri;
 import org.jboss.jca.core.connectionmanager.rar.SimpleManagedConnectionFactory1;
@@ -41,16 +42,20 @@ public class PoolByCriNoTxTestCaseAbstract extends PoolTestCaseAbstract
 
    /**
     * 
-    * get IronjacamarDescriptor for deployment
+    * get IronjacamarDescriptor for deployment with defined FlushStrategy
+    * @param fs FlushStrategy
     * 
     * @return IronjacamarDescriptor
     */
-   public static IronjacamarDescriptor getCriIJ()
+   public static IronjacamarDescriptor getCriIJ(FlushStrategy fs)
    {
       IronjacamarDescriptor ij = getBasicIJXml(SimpleManagedConnectionFactory1.class.getName());
       ConnectionDefinitionType ijCdt = ij.getOrCreateConnectionDefinitions().getOrCreateConnectionDefinition();
       ijCdt.getOrCreateSecurity().application();
-
+      if (fs != null)
+      {
+         ijCdt.removePool().getOrCreatePool().minPoolSize(3).maxPoolSize(5).prefill(true).flushStrategy(fs.getName());
+      }
       return ij;
    }
 
@@ -59,12 +64,10 @@ public class PoolByCriNoTxTestCaseAbstract extends PoolTestCaseAbstract
     * checkConfig
     *
     */
-   @Test 
+   @Test
    public void checkConfig()
    {
       checkConfiguration(NoTxConnectionManager.class, PoolByCri.class);
    }
-   
 
 }
-

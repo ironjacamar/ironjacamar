@@ -54,7 +54,7 @@ public class PoolByCriNoTxDeploymentSimpleTestCase extends PoolByCriNoTxTestCase
    @Deployment
    public static ResourceAdapterArchive deployment()
    {
-      return createNoTxDeployment(getCriIJ());
+      return createNoTxDeployment(getCriIJ(null));
    }
 
 
