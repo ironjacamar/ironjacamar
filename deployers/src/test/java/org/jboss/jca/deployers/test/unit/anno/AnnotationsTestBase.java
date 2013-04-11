@@ -109,18 +109,13 @@ public abstract class AnnotationsTestBase
          URL url = f.toURI().toURL();
 
          AnnotationScanner asf = new AnnotationScannerImpl();
-         AnnotationRepository ar = asf.scan(new URL[]
-         {url}, classLoader);
+         AnnotationRepository ar = asf.scan(new URL[] {url}, classLoader);
          Connector c = annotations.process(ar, null, classLoader);
          log.info("///Connector:" + c);
          checkConnector(c);
-         //checkMerging with null connector
-         checkConnector(annotations.merge(null, ar, classLoader));
 
          //getting empty connector
-         url = new File(System.getProperty("archives.dir")).toURI().toURL();
-         AnnotationRepository ar1 = asf.scan(new URL[]
-         {url}, classLoader);
+         AnnotationRepository ar1 = asf.scan(new URL[] {}, classLoader);
          Connector c1 = annotations.process(ar1, null, classLoader);
 
          //check merging
@@ -218,11 +213,12 @@ public abstract class AnnotationsTestBase
    {
       for (Icon icon : icons)
       {
-         log.info("Icon:" + icon.getSmallIcon() + "//" + icon.getLargeIcon());
-         if (valuesAreEqual(icon.getSmallIcon(), small) && valuesAreEqual(icon.getLargeIcon(), large))
+         if (small != null && valuesAreEqual(icon.getSmallIcon(), small))
+            return;
+         if (large != null && valuesAreEqual(icon.getLargeIcon(), large))
             return;
       }
-      fail(icons + "There's no icon with files: " + small + " and " + large);
+      fail(icons + "There's no icon with files: " + small + " or " + large);
    }
 
    /**

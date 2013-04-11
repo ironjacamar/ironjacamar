@@ -280,7 +280,7 @@ public class Annotations
       }
       else
       {
-         connector = attachConnector(null, classLoader, null, connectionDefinitions, null, null,
+         connector = attachConnector(xmlResourceAdapterClass, classLoader, null, connectionDefinitions, null, null,
                                      inboundResourceadapter, adminObjs);
       }
 
@@ -390,26 +390,34 @@ public class Annotations
          icons = new ArrayList<Icon>(
                                      (conAnnotation.smallIcon() == null ? 0 : conAnnotation.smallIcon().length) +
                                         (conAnnotation.largeIcon() == null ? 0 : conAnnotation.largeIcon().length));
-         for (String smallIconAnnotation : conAnnotation.smallIcon())
+
+         if (conAnnotation.smallIcon() != null && conAnnotation.smallIcon().length > 0)
          {
-            icons.add(new Icon(new XsdString(smallIconAnnotation, null), null, null));
+            for (String smallIconAnnotation : conAnnotation.smallIcon())
+            {
+               if (smallIconAnnotation != null && !smallIconAnnotation.trim().equals(""))
+                  icons.add(new Icon(new XsdString(smallIconAnnotation, null), null, null));
+            }
          }
-         for (String largeIconAnnotation : conAnnotation.largeIcon())
+         if (conAnnotation.largeIcon() != null && conAnnotation.largeIcon().length > 0)
          {
-            icons.add(new Icon(null, new XsdString(largeIconAnnotation, null),  null));
+            for (String largeIconAnnotation : conAnnotation.largeIcon())
+            {
+               if (largeIconAnnotation != null && !largeIconAnnotation.trim().equals(""))
+                  icons.add(new Icon(null, new XsdString(largeIconAnnotation, null),  null));
+            }
          }
       }
 
       // Transaction support
       TransactionSupport.TransactionSupportLevel transactionSupportAnnotation = null;
+      TransactionSupportEnum transactionSupport = null;
 
       if (conAnnotation != null)
          transactionSupportAnnotation = conAnnotation.transactionSupport();
 
-      if (transactionSupportAnnotation == null)
-         transactionSupportAnnotation = TransactionSupport.TransactionSupportLevel.NoTransaction;
-
-      TransactionSupportEnum transactionSupport = TransactionSupportEnum.valueOf(transactionSupportAnnotation.name());
+      if (transactionSupportAnnotation != null)
+         transactionSupport = TransactionSupportEnum.valueOf(transactionSupportAnnotation.name());
 
       // Reauthentication support
       boolean reauthenticationSupport = false;
@@ -460,7 +468,10 @@ public class Annotations
                                                                             inboundResourceadapter, adminObjs,
                                                                             securityPermissions, null);
 
-      XsdString resourceadapterVersion = new XsdString("1.6", null);
+      XsdString resourceadapterVersion = null;
+      if (conAnnotation != null && conAnnotation.version() != null && !conAnnotation.version().trim().equals(""))
+         resourceadapterVersion = new XsdString(conAnnotation.version(), null);
+
       return new Connector16Impl("", vendorName, eisType, resourceadapterVersion, license, resourceAdapter,
                                  requiredWorkContexts, false, descriptions, displayNames, icons, null);
 
@@ -477,10 +488,20 @@ public class Annotations
             securityPermissions = new ArrayList<SecurityPermission>(securityPermissionAnotations.length);
             for (javax.resource.spi.SecurityPermission securityPermission : securityPermissionAnotations)
             {
-               SecurityPermission spmd = new SecurityPermissionImpl(
-                                                                    null,
-                                                                    new XsdString(
-                                                                                  securityPermission.permissionSpec(),
+               ArrayList<LocalizedXsdString> desc = null;
+               if (securityPermission.description() != null && securityPermission.description().length > 0)
+               {
+                  desc = new ArrayList<LocalizedXsdString>(securityPermission.description().length);
+
+                  for (String d : securityPermission.description())
+                  {
+                     if (d != null && !d.trim().equals(""))
+                        desc.add(new LocalizedXsdString(d, null));
+                  }
+               }
+
+               SecurityPermission spmd = new SecurityPermissionImpl(desc,
+                                                                    new XsdString(securityPermission.permissionSpec(),
                                                                                   null), null);
                securityPermissions.add(spmd);
             }

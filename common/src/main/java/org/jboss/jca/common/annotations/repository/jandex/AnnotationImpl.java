@@ -205,4 +205,26 @@ public class AnnotationImpl implements Annotation
    {
       return onField;
    }
+
+   /**
+    * String representation
+    * @return The string
+    */
+   @Override
+   public String toString()
+   {
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("AnnotationImpl@").append(Integer.toHexString(System.identityHashCode(this)));
+      sb.append("[className=").append(className);
+      sb.append(" cl=").append(cl);
+      sb.append(" parameterTypes=").append(parameterTypes);
+      sb.append(" memberName=").append(memberName);
+      sb.append(" onMethod=").append(onMethod);
+      sb.append(" onField=").append(onField);
+      sb.append(" annotationClass=").append(annotationClass);
+      sb.append("]");
+
+      return sb.toString();
+   }
 }

@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.deployers.test.unit.anno;
 
+import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ra.AdminObject;
 import org.jboss.jca.common.api.metadata.ra.AuthenticationMechanism;
 import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
@@ -78,21 +79,15 @@ public class AnnotationsComplexTestCase extends AnnotationsTestBase
       checkValues(con.getDisplayNames(), "disp1", "disp2");
 
       List<Icon> icons = con.getIcons();
-      /* @Ignored  - JBJCA-973
-       * 
+      assertNotNull(icons);
       assertEquals(4, icons.size()); 
-      checkIcons(icons, "s1", "l1");
+      checkIcons(icons, "s1", "");
+      checkIcons(icons, "", "l1");
       checkIcons(icons, "", "l2");
       checkIcons(icons, "s3", "");
-      checkIcons(icons,  "", "");
-       * 
-       */
 
       assertEquals(con.getVendorName().getValue(), "vendor");
-      /* @Ignored - JBJCA-974
-       * 
-       * assertEquals(con.getResourceadapterVersion().getValue(), "1.a");
-       */
+      assertEquals(con.getResourceadapterVersion().getValue(), "1.a");
       assertEquals(con.getEisType().getValue(), "type");
 
       LicenseType license = con.getLicense();
@@ -103,10 +98,7 @@ public class AnnotationsComplexTestCase extends AnnotationsTestBase
       assertTrue(rai instanceof ResourceAdapter1516Impl);
       ResourceAdapter1516Impl ra = (ResourceAdapter1516Impl) rai;
       
-      /*@Ignored - JBJCA-976
-       * 
-       * assertEquals(ra.getResourceadapterClass(), pack + ".AnnoResourceAdapter");
-       */
+      assertEquals(pack + ".AnnoResourceAdapter", ra.getResourceadapterClass());
 
       checkProperties(ra.getConfigProperties(), "String", "A", "Integer", "5");
 
@@ -136,10 +128,7 @@ public class AnnotationsComplexTestCase extends AnnotationsTestBase
          }
       }
 
-      /* @Ignored - JBJCA-975
-       * 
-       * assertEquals(out.getTransactionSupport(), TransactionSupportEnum.LocalTransaction);
-       */
+      assertEquals(TransactionSupportEnum.LocalTransaction, out.getTransactionSupport());
 
       List<AuthenticationMechanism> ams = out.getAuthenticationMechanisms();
       assertEquals(2, ams.size());
@@ -206,12 +195,8 @@ public class AnnotationsComplexTestCase extends AnnotationsTestBase
          else
          {
             assertTrue(valuesAreEqual(perm.getSecurityPermissionSpec(), "spec2"));
-            /*@Ignored - JBJCA-978
-             * 
-             * checkValues(perm.getDescriptions(), "d1", "d2");
-             */
+            checkValues(perm.getDescriptions(), "d1", "d2");
          }
-
       }
 
       List<String> wcs = con.getRequiredWorkContexts();

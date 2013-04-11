@@ -146,6 +146,9 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
    @Override
    public synchronized TransactionSupportEnum getTransactionSupport()
    {
+      if (transactionSupport == null)
+         return TransactionSupportEnum.NoTransaction;
+
       return transactionSupport;
    }
 
