@@ -372,7 +372,7 @@ public class ResourceAdapter1516Impl extends AbstractResourceAdapetrImpl impleme
                inputRA.configProperties);
          List<AdminObject> newAdminobjects = MergeUtil.mergeList(this.adminobjects, inputRA.adminobjects);
          String newId = this.id == null ? inputRA.id : this.id;
-         XsdString newResourceadapterClass = this.resourceadapterClass == null
+         XsdString newResourceadapterClass = XsdString.isNull(this.resourceadapterClass)
                ? inputRA.resourceadapterClass
                : this.resourceadapterClass;
          return new ResourceAdapter1516Impl(newResourceadapterClass, newConfigProperties, newOutboundResourceadapter,
