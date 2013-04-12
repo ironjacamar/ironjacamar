@@ -24,9 +24,6 @@ package org.jboss.jca.core.connectionmanager.pool;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.rar.SimpleConnection;
-import org.jboss.jca.core.connectionmanager.rar.SimpleManagedConnectionFactory;
-import org.jboss.jca.embedded.dsl.ironjacamar11.api.ConnectionDefinitionType;
-import org.jboss.jca.embedded.dsl.ironjacamar11.api.IronjacamarDescriptor;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
@@ -57,23 +54,9 @@ public class OnePoolNoTxDeploymentPrefilledTestCase extends OnePoolNoTxTestCaseA
    @Deployment
    public static ResourceAdapterArchive deployment()
    {
-      return createNoTxDeployment(getIJ());
+      return createNoTxDeployment(getPrefilledIJ(null));
    }
 
-   /**
-    * 
-    * get IronjacamarDescriptor for deployment
-    * 
-    * @return IronjacamarDescriptor
-    */
-   public static IronjacamarDescriptor getIJ()
-   {
-      IronjacamarDescriptor ij = getBasicIJXml(SimpleManagedConnectionFactory.class.getName());
-      ConnectionDefinitionType ijCdt = ij.getOrCreateConnectionDefinitions().getOrCreateConnectionDefinition();
-      ijCdt.removePool().getOrCreatePool().minPoolSize(2).maxPoolSize(5).prefill(true);
-
-      return ij;
-   }
 
    @Override
    public void checkPool() throws Exception

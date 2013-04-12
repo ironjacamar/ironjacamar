@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2008, Red Hat Inc, and individual contributors
+ * Copyright 2013, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -21,58 +21,50 @@
  */
 package org.jboss.jca.core.connectionmanager.pool;
 
-import org.jboss.jca.common.api.metadata.common.FlushStrategy;
-import org.jboss.jca.core.connectionmanager.NoTxConnectionManager;
-import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
-import org.jboss.jca.core.connectionmanager.rar.SimpleManagedConnectionFactory;
 import org.jboss.jca.embedded.dsl.ironjacamar11.api.ConnectionDefinitionType;
 import org.jboss.jca.embedded.dsl.ironjacamar11.api.IronjacamarDescriptor;
-import org.jboss.jca.embedded.dsl.ironjacamar11.api.PoolType;
 
-import org.junit.Test;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
 /**
- * 
- * A OnePoolNoTxTestCaseAbstract.
+ * OnePoolNoTxMatchConnectionUseFastFailBMTestCase
  * 
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
- *
  */
-public class OnePoolNoTxTestCaseAbstract extends PoolTestCaseAbstract
+public  class OnePoolNoTxMatchConnectionUseFastFailBMTestCase extends OnePoolNoTxMatchConnectionBMTestCaseAbstract
 {
 
    /**
     * 
-    * create IronjacamarDescriptor  with prefilled pool and defined FlushStrategy
+    * deployment
     * 
-    * @param fs FlushStrategy
-    * @return IronjacamarDescriptor 
+    * @return archive
     */
-   public static IronjacamarDescriptor getPrefilledIJ(FlushStrategy fs)
+   @Deployment
+   public static ResourceAdapterArchive deployment()
    {
-      IronjacamarDescriptor ij = getBasicIJXml(SimpleManagedConnectionFactory.class.getName());
-      ConnectionDefinitionType ijCdt = ij.getOrCreateConnectionDefinitions().getOrCreateConnectionDefinition();
-      PoolType pool = ijCdt.removePool().getOrCreatePool();
-      pool.minPoolSize(2).maxPoolSize(5).prefill(true);
-      if (fs != null)
-      {
-         pool.flushStrategy(fs.getName());
-      }
-      return ij;
+      return createNoTxDeployment(getIJ());
    }
-
 
    /**
     * 
-    * checkConfig
-    *
+    * get IronjacamarDescriptor for deployment
+    * 
+    * @return IronjacamarDescriptor
     */
-   @Test
-   public void checkConfig()
+   public static IronjacamarDescriptor getIJ()
    {
-      checkConfiguration(NoTxConnectionManager.class, OnePool.class);
+      IronjacamarDescriptor ij = getPrefilledIJ(null);
+      ConnectionDefinitionType ijCdt = ij.getOrCreateConnectionDefinitions().getOrCreateConnectionDefinition();
+      ijCdt.removeValidation().getOrCreateValidation().useFastFail(true);
+
+      return ij;
    }
-   
 
+   @Override
+   public void test() throws Throwable
+   {
+      test(1);
+   }
 }
-
