@@ -139,7 +139,6 @@ public class AnnoTestCase extends TestCaseAbstract
     * 
     */
    @Test(expected = Exception.class)
-   @Ignore("JBJCA-979")
    public void deployerShouldThrowDeployExceptionWithTypeMismatch() throws Throwable
    {
       testAnnoArchive(AnnoResourceAdapter2.class);
@@ -153,7 +152,6 @@ public class AnnoTestCase extends TestCaseAbstract
     * 
     */
    @Test(expected = Exception.class)
-   @Ignore("JBJCA-979")
    public void deployerShouldThrowDeployExceptionWithSetterTypeMismatch() throws Throwable
    {
       testAnnoArchive(AnnoResourceAdapter3.class);
