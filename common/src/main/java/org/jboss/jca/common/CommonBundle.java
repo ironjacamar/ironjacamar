@@ -241,4 +241,12 @@ public interface CommonBundle
     */
    @Message(id = 10076, value = "%s must be defined")
    public String missingValue(String tag);
+
+   /**
+    * Wrong annotation type
+    * @param annotation The annotation
+    * @return The value
+    */
+   @Message(id = 10077, value = "Wrong annotation type: %s")
+   public String wrongAnnotationType(Object annotation);
 }

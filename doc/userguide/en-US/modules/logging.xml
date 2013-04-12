@@ -722,6 +722,11 @@
             <entry><code>EXCEPTION</code></entry>
             <entry>Tag must be defined</entry>
           </row>
+          <row>
+            <entry>10077</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Wrong annotation type</entry>
+          </row>
         </tbody>
       </tgroup>
     </table>

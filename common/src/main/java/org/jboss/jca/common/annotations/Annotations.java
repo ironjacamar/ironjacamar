@@ -762,19 +762,13 @@ public class Annotations
                log.trace("Processing: " + configPropertyAnnotation);
 
             XsdString configPropertyValue = XsdString.NULL_XSDSTRING;
-            XsdString configPropertyName = new XsdString(getConfigPropertyName(annotation), null);
-            if (configPropertyAnnotation.defaultValue() != null &&
-                !configPropertyAnnotation.defaultValue().equals(""))
+            if (configPropertyAnnotation.defaultValue() != null && !configPropertyAnnotation.defaultValue().equals(""))
                configPropertyValue = new XsdString(configPropertyAnnotation.defaultValue(), null);
-            XsdString configPropertyType;
-            if (!Object.class.equals(configPropertyAnnotation.type()))
-            {
-               configPropertyType = new XsdString(configPropertyAnnotation.type().getName(), null);
-            }
-            else
-            {
-               configPropertyType = new XsdString(getConfigPropertyType(annotation, classLoader), null);
-            }
+
+            XsdString configPropertyName = new XsdString(getConfigPropertyName(annotation), null);
+
+            XsdString configPropertyType =
+               new XsdString(getConfigPropertyType(annotation, configPropertyAnnotation.type(), classLoader), null);
 
             Boolean configPropertySupportsDynamicUpdates = configPropertyAnnotation.supportsDynamicUpdates();
             Boolean configPropertyConfidential = configPropertyAnnotation.confidential();
@@ -1188,14 +1182,17 @@ public class Annotations
    /**
     * Get the config-property-type for an annotation
     * @param annotation The annotation
+    * @param type An optional declared type
     * @param classLoader The class loader to use
     * @return The fully qualified classname
     * @exception ClassNotFoundException Thrown if a class cannot be found
+    * @exception ValidateException Thrown if a ConfigProperty type isn't correct
     */
    @SuppressWarnings("unchecked")
    private String getConfigPropertyType(Annotation annotation,
+                                        Class<?> type,
                                         ClassLoader classLoader)
-      throws ClassNotFoundException
+      throws ClassNotFoundException, ValidateException
    {
       if (annotation.isOnField())
       {
@@ -1206,8 +1203,15 @@ public class Annotations
             try
             {
                Field field = clz.getDeclaredField(annotation.getMemberName());
-
-               return field.getType().getName();
+               
+               if (type == null || type.equals(Object.class) || type.equals(field.getType()))
+               {
+                  return field.getType().getName();
+               }
+               else
+               {
+                  throw new ValidateException(bundle.wrongAnnotationType(annotation));
+               }
             }
             catch (NoSuchFieldException nsfe)
             {
@@ -1242,12 +1246,26 @@ public class Annotations
                {
                   if (parameters != null && parameters.length > 0)
                   {
-                     return parameters[0].getName();
+                     if (type == null || type.equals(Object.class) || type.equals(parameters[0]))
+                     {
+                        return parameters[0].getName();
+                     }
+                     else
+                     {
+                        throw new ValidateException(bundle.wrongAnnotationType(annotation));
+                     }
                   }
                }
                else
                {
-                  return method.getReturnType().getName();
+                  if (type == null || type.equals(Object.class) || type.equals(method.getReturnType()))
+                  {
+                     return method.getReturnType().getName();
+                  }
+                  else
+                  {
+                     throw new ValidateException(bundle.wrongAnnotationType(annotation));
+                  }
                }
             }
             catch (NoSuchMethodException nsme)
