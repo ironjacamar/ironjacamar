@@ -59,6 +59,6 @@ public class WatermarkIncrementer implements CapacityIncrementer
       if (watermark < 0)
          return currentSize < maxSize;
 
-      return watermark < currentSize;
+      return watermark > currentSize;
    }
 }

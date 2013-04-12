@@ -72,7 +72,6 @@ public class OnePoolNoTxTestCaseAbstract extends PoolTestCaseAbstract
    {
       checkConfiguration(NoTxConnectionManager.class, OnePool.class);
    }
-   
 
 }
 
