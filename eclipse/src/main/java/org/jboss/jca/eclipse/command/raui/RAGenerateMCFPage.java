@@ -1253,7 +1253,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       label = new Label(credentialGroup, SWT.NULL);
       label.setText(getString("ra.generate.mcf.recover.credential.password"));
       String password = getPassword(credential);
-      if (password.equals(null) || password.equals(""))
+      if (null == password || password.equals(""))
       {
          password = "password";
       }
