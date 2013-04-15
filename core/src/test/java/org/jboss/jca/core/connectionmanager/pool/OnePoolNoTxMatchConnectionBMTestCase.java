@@ -48,6 +48,6 @@ public  class OnePoolNoTxMatchConnectionBMTestCase extends OnePoolNoTxMatchConne
    @Override
    public void test() throws Throwable
    {
-      test(2);
+      test(true);
    }
 }

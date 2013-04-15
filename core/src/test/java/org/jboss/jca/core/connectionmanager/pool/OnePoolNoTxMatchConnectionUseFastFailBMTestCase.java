@@ -65,6 +65,6 @@ public  class OnePoolNoTxMatchConnectionUseFastFailBMTestCase extends OnePoolNoT
    @Override
    public void test() throws Throwable
    {
-      test(1);
+      test(false);
    }
 }

@@ -39,7 +39,6 @@ import static org.junit.Assert.*;
 public abstract class OnePoolNoTxMatchConnectionBMTestCaseAbstract extends OnePoolNoTxTestCaseAbstract
 {
 
-
    /**
     * testExceptionOnMatchConnection
     * @throws Throwable in case of unexpected errors
@@ -60,9 +59,8 @@ public abstract class OnePoolNoTxMatchConnectionBMTestCaseAbstract extends OnePo
     */
    @Test
    @BMRule(name = "Returns null on matchConnection", 
-      targetClass = "org.jboss.jca.core.connectionmanager.rar.SimpleManagedConnectionFactory", 
-      targetMethod = "matchManagedConnections", 
-      action = " RETURN null")
+   targetClass = "org.jboss.jca.core.connectionmanager.rar.SimpleManagedConnectionFactory", 
+   targetMethod = "matchManagedConnections", action = " RETURN null")
    public void testMatchConnectionReturnsNull() throws Throwable
    {
       test();
@@ -71,20 +69,21 @@ public abstract class OnePoolNoTxMatchConnectionBMTestCaseAbstract extends OnePo
    /**
     * 
     * Unified test for all cases
-    * @param shouldBeDestroyed count of connections to be destroyed
+    * @param wholePoolShouldBeDestroyed if true - all active connections in pool should be destroyed
+    * otherwise - just one of them
     * 
     * @throws Throwable in case of error
     */
-   public void test(int shouldBeDestroyed) throws Throwable
+   public void test(boolean wholePoolShouldBeDestroyed) throws Throwable
    {
       AbstractPool pool = getPool();
       assertEquals(pool.getManagedConnectionPools().size(), 1);
       PoolStatistics ps = pool.getStatistics();
       int destroyed = ps.getDestroyedCount();
-
+      int active = ps.getActiveCount();
       SimpleConnection c = cf.getConnection();
       Thread.sleep(1000);
-      assertEquals(ps.getDestroyedCount(), destroyed + shouldBeDestroyed);
+      assertEquals(ps.getDestroyedCount(), destroyed + (wholePoolShouldBeDestroyed ? active : 1));
       c.close();
    }
 

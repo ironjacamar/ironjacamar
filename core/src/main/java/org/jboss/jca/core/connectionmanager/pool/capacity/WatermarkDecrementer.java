@@ -60,6 +60,6 @@ public class WatermarkDecrementer implements CapacityDecrementer
       if (watermark < 0)
          return currentSize > minPoolSize;
 
-      return watermark > currentSize;
+      return watermark < currentSize;
    }
 }
