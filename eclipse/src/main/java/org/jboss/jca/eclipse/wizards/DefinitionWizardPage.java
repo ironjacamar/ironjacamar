@@ -26,6 +26,8 @@ import org.jboss.jca.common.api.metadata.ra.ra16.Connector16;
 import org.jboss.jca.common.api.metadata.ra.ra17.Connector17;
 import org.jboss.jca.eclipse.ResourceBundles;
 
+import java.util.regex.Pattern;
+
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
@@ -51,10 +53,13 @@ import org.eclipse.swt.widgets.Text;
 
 public class DefinitionWizardPage extends WizardPage
 {
+   private static final String PACKAGE_NAME_PATTERN = "^[a-z|A-Z][\\w|\\.]*[\\w]$";
+
    private Text projectText;
 
    private Text packageText;
 
+   @SuppressWarnings("unused")
    private ISelection selection;
 
    private Combo boundCombo;
@@ -101,10 +106,6 @@ public class DefinitionWizardPage extends WizardPage
          {
             String string = projectText.getText();
             ((CodeGenWizard) getWizard()).setProjectName(string);
-            if (string.length() > 0)
-            {
-               updateStatus(null);
-            }
             dialogChanged();
          }
       });
@@ -123,7 +124,6 @@ public class DefinitionWizardPage extends WizardPage
             if (string.length() > 0)
             {
                ((CodeGenWizard) getWizard()).getDef().setRaPackage(string);
-               updateStatus(null);
             }
             dialogChanged();
          }
@@ -314,6 +314,12 @@ public class DefinitionWizardPage extends WizardPage
          return;
       }
       if (packageText.getText().indexOf('.') < 0)
+      {
+         updateStatus(pluginPrb.getString("codegen.def.package.name.validated"));
+         return;
+      }
+      
+      if (!Pattern.matches(PACKAGE_NAME_PATTERN, packageText.getText()))
       {
          updateStatus(pluginPrb.getString("codegen.def.package.name.validated"));
          return;
