@@ -291,8 +291,23 @@ public abstract class PropsCodeGen extends AbstractCodeGen
 
    /**
     * get list of ConfigPropType
-    * @param def TODO
+    * @param def definition
     * @return List<ConfigPropType> List of ConfigPropType
     */
    public abstract List<ConfigPropType> getConfigProps(Definition def);
+   
+
+   /**import ConfigProperty
+    * @param def definition
+    * @param out Writer
+    * @throws IOException IOException
+    */
+   protected void importConfigProperty(Definition def, Writer out) throws IOException
+   {
+      if (getConfigProps(def).size() > 0)
+      {
+         out.write("import javax.resource.spi.ConfigProperty;");
+         writeEol(out);
+      }
+   }
 }

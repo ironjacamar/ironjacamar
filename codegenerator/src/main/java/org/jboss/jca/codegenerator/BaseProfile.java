@@ -64,7 +64,7 @@ public class BaseProfile implements Profile
    @Override
    public void generate(Definition def)
    {
-      generatePackageHtml(def, def.getOutputDir(), null);
+      generatePackageHtml(def, "main", null);
       
       generateRaCode(def);
       generateOutboundCode(def);
@@ -171,7 +171,7 @@ public class BaseProfile implements Profile
             generateClassCode(def, "Ml", "inflow");
          generateClassCode(def, "As", "inflow");
          generateClassCode(def, "Activation", "inflow");
-         generatePackageHtml(def, def.getOutputDir(), "inflow");
+         generatePackageHtml(def, "main", "inflow");
       }
    }
 
@@ -186,7 +186,7 @@ public class BaseProfile implements Profile
       {
          generateClassCode(def, "MbeanInterface", "mbean");
          generateClassCode(def, "MbeanImpl", "mbean");
-         generatePackageHtml(def, def.getOutputDir(), "mbean");
+         generatePackageHtml(def, "main", "mbean");
       }
    }
 
@@ -509,7 +509,7 @@ public class BaseProfile implements Profile
    /**
     * generate package.html
     * @param def Definition
-    * @param outputDir output directory
+    * @param outputDir main or test
     * @param subDir sub-directory
     */
    void generatePackageHtml(Definition def, String outputDir, String subDir)
@@ -517,10 +517,17 @@ public class BaseProfile implements Profile
       try
       {
          FileWriter fw = null;
-         if (subDir == null)
-            fw = Utils.createSrcFile("package.html", def.getRaPackage(), def.getOutputDir());
+         if (outputDir.equals("test"))
+         {
+            fw = Utils.createTestFile("package.html", def.getRaPackage(), def.getOutputDir());
+         }
          else
-            fw = Utils.createSrcFile("package.html", def.getRaPackage() + "." + subDir, def.getOutputDir());
+         {
+            if (subDir == null)
+               fw = Utils.createSrcFile("package.html", def.getRaPackage(), def.getOutputDir());
+            else
+               fw = Utils.createSrcFile("package.html", def.getRaPackage() + "." + subDir, def.getOutputDir());
+         }
          PackageHtmlGen phGen = new PackageHtmlGen();
          phGen.generate(def, fw);
          fw.close();
@@ -554,6 +561,8 @@ public class BaseProfile implements Profile
          
          fw.flush();
          fw.close();
+         
+         generatePackageHtml(def, "test", null);
          
          copyTestResourceFiles(def.getOutputDir(), "logging.properties");
          copyTestResourceFiles(def.getOutputDir(), "jndi.properties");

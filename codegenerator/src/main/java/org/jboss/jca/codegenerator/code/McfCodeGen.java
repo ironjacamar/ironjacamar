@@ -185,8 +185,7 @@ public class McfCodeGen extends PropsCodeGen
       
       if (def.isUseAnnotation())
       {
-         out.write("import javax.resource.spi.ConfigProperty;");
-         writeEol(out);
+         importConfigProperty(def, out);
          out.write("import javax.resource.spi.ConnectionDefinition;");
          writeEol(out);
       }

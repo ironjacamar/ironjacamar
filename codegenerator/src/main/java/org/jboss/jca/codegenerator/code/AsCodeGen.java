@@ -106,16 +106,13 @@ public class AsCodeGen extends PropsCodeGen
       writeEol(out);
       importLogging(def, out);
       
-      out.write("import javax.resource.ResourceException;");
-      writeEol(out);
       out.write("import javax.resource.spi.Activation;");
       writeEol(out);
       out.write("import javax.resource.spi.ActivationSpec;");
       writeEol(out);
       if (def.isUseAnnotation())
       {
-         out.write("import javax.resource.spi.ConfigProperty;");
-         writeEol(out);
+         importConfigProperty(def, out);
       }
       out.write("import javax.resource.spi.InvalidPropertyException;");
       writeEol(out);

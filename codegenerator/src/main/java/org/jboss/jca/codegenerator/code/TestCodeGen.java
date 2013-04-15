@@ -116,10 +116,6 @@ public class TestCodeGen extends AbstractCodeGen
       out.write("import static org.junit.Assert.*;");
       writeEol(out);
       writeEol(out);
-
-      out.write("import " + def.getRaPackage() + ".*;");
-      writeEol(out);
-      writeEol(out);
    }
    
    /**
@@ -185,6 +181,8 @@ public class TestCodeGen extends AbstractCodeGen
       {
          out.write(def.getMcfDefs().get(num).getMcfClass() + ".class, " + 
             def.getMcfDefs().get(num).getMcClass() + ".class, ");
+         writeEol(out);
+         writeIndent(out, indent + 2);
          if (def.getMcfDefs().get(num).isUseCciConnection())
          {
             if (def.isUseRa())
