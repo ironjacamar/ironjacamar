@@ -62,10 +62,9 @@ public class SimpleManagedConnection implements ManagedConnection
 
    /** Connection */
    private SimpleConnectionImpl connection;
-   
+
    /** destroyed */
    private boolean destroyed;
-
 
    /**
     * Default constructor
@@ -183,9 +182,9 @@ public class SimpleManagedConnection implements ManagedConnection
       ConnectionEvent event = new ConnectionEvent(this, ConnectionEvent.CONNECTION_CLOSED);
       event.setConnectionHandle(handle);
       log.info("///ListenersBEFOREclose:" + listeners);
-
-      for (ConnectionEventListener cel : listeners)
+      for (int i = 0; i < listeners.size(); i++)
       {
+         ConnectionEventListener cel = listeners.get(i);
          cel.connectionClosed(event);
       }
       log.info("/////CLOSEListeners on Exit:" + listeners);
@@ -204,7 +203,6 @@ public class SimpleManagedConnection implements ManagedConnection
       for (int i = 0; i < listeners.size(); i++)
       {
          ConnectionEventListener cel = listeners.get(i);
-         log.info("/////Listener:" + cel);
          cel.connectionErrorOccurred(event);
       }
       log.info("/////FAILListeners on Exit:" + listeners);

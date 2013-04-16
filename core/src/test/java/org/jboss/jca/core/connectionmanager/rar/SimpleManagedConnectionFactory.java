@@ -22,6 +22,7 @@
 package org.jboss.jca.core.connectionmanager.rar;
 
 import java.io.PrintWriter;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -34,6 +35,7 @@ import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.ResourceAdapterAssociation;
+import javax.resource.spi.ValidatingManagedConnectionFactory;
 
 import javax.security.auth.Subject;
 
@@ -42,7 +44,11 @@ import javax.security.auth.Subject;
  *
  * @version $Revision: $
  */
-public class SimpleManagedConnectionFactory implements ManagedConnectionFactory, ResourceAdapterAssociation
+public class SimpleManagedConnectionFactory
+   implements
+      ManagedConnectionFactory,
+      ResourceAdapterAssociation,
+      ValidatingManagedConnectionFactory
 {
 
    /** The serial version UID */
@@ -62,6 +68,9 @@ public class SimpleManagedConnectionFactory implements ManagedConnectionFactory,
 
    /** second */
    private Character second = 'c';
+
+   /** fail */
+   private int fail = 0;
 
    /**
     * Default constructor
@@ -139,8 +148,8 @@ public class SimpleManagedConnectionFactory implements ManagedConnectionFactory,
     * @throws ResourceException generic exception
     * @return ManagedConnection instance 
     */
-   public ManagedConnection createManagedConnection(Subject subject,
-         ConnectionRequestInfo cxRequestInfo) throws ResourceException
+   public ManagedConnection createManagedConnection(Subject subject, ConnectionRequestInfo cxRequestInfo)
+      throws ResourceException
    {
       log.finest("createManagedConnection()");
       return new SimpleManagedConnection(this);
@@ -155,15 +164,15 @@ public class SimpleManagedConnectionFactory implements ManagedConnectionFactory,
     * @throws ResourceException generic exception
     * @return ManagedConnection if resource adapter finds an acceptable match otherwise null 
     */
-   public ManagedConnection matchManagedConnections(Set connectionSet,
-         Subject subject, ConnectionRequestInfo cxRequestInfo) throws ResourceException
+   public ManagedConnection matchManagedConnections(Set connectionSet, Subject subject,
+      ConnectionRequestInfo cxRequestInfo) throws ResourceException
    {
       log.finest("matchManagedConnections()");
       ManagedConnection result = null;
       Iterator it = connectionSet.iterator();
       while (result == null && it.hasNext())
       {
-         ManagedConnection mc = (ManagedConnection)it.next();
+         ManagedConnection mc = (ManagedConnection) it.next();
          if (mc instanceof SimpleManagedConnection)
          {
             result = mc;
@@ -252,8 +261,8 @@ public class SimpleManagedConnectionFactory implements ManagedConnectionFactory,
          return true;
       if (!(other instanceof SimpleManagedConnectionFactory))
          return false;
-      SimpleManagedConnectionFactory obj = (SimpleManagedConnectionFactory)other;
-      boolean result = true; 
+      SimpleManagedConnectionFactory obj = (SimpleManagedConnectionFactory) other;
+      boolean result = true;
       if (result)
       {
          if (first == null)
@@ -269,6 +278,26 @@ public class SimpleManagedConnectionFactory implements ManagedConnectionFactory,
             result = second.equals(obj.getSecond());
       }
       return result;
+   }
+
+   @Override
+   @SuppressWarnings(
+   {"unchecked", "rawtypes" })
+   public Set getInvalidConnections(Set connectionSet) throws ResourceException
+   {
+      //if "first" property is set to "invalid", this method returns 2 invalid connections 
+      Set resultSet = new HashSet();
+      if (first.equals("invalid"))
+      {
+         Iterator it = connectionSet.iterator();
+         while (it.hasNext() && fail < 2)
+         {
+            Object o = it.next();
+            resultSet.add(o);
+            fail++;
+         }
+      }
+      return resultSet;
    }
 
 }
