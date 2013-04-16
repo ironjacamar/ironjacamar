@@ -1140,6 +1140,18 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
                   log.backgroundValidationNonCompliantManagedConnectionFactory();
                }
             }
+            catch (ResourceException re)
+            {
+               if (cl != null)
+               {
+                  doDestroy(cl);
+                  cl = null;
+                  destroyed = true;
+                  anyDestroyed = true;
+               }
+               
+               log.connectionValidatorIgnoredUnexpectedError(re);
+            }
             finally
             {
                if (!destroyed)
