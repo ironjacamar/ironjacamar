@@ -728,6 +728,19 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="connection-listener" type="extensionType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+              An org.jboss.jca.adapters.jdbc.spi.listener.ConnectionListener that provides 
+              a possible to listen for connection activation and passivation in order to
+              perform actions before the connection is returned to the application or returned
+              to the pool. Ex:
+              <connection-listener class-name="com.acme.jdbc.OracleConnectionListener"/>
+             ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
     </xs:sequence>
   </xs:complexType>
   <xs:complexType name="xa-poolType">

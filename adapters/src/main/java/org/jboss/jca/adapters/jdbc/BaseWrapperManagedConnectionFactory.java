@@ -30,6 +30,7 @@ import org.jboss.jca.adapters.jdbc.spi.ClassLoaderPlugin;
 import org.jboss.jca.adapters.jdbc.spi.ExceptionSorter;
 import org.jboss.jca.adapters.jdbc.spi.StaleConnectionChecker;
 import org.jboss.jca.adapters.jdbc.spi.ValidConnectionChecker;
+import org.jboss.jca.adapters.jdbc.spi.listener.ConnectionListener;
 import org.jboss.jca.adapters.jdbc.spi.reauth.ReauthPlugin;
 import org.jboss.jca.adapters.jdbc.statistics.JdbcStatisticsPlugin;
 import org.jboss.jca.adapters.jdbc.util.Injection;
@@ -232,6 +233,15 @@ public abstract class BaseWrapperManagedConnectionFactory
 
    /** JTA enabled */
    private Boolean jta = Boolean.TRUE;
+
+   /** Connection listener plugin class name */
+   private String connectionListenerClassName;
+
+   /** Connection listener plugin properties - format: [key|value](,key|value)+ */
+   private String connectionListenerProperties;
+
+   /** Connection listener plugin */
+   private ConnectionListener connectionListenerPlugin;
 
    /**
     * Constructor
@@ -814,6 +824,153 @@ public abstract class BaseWrapperManagedConnectionFactory
    ReauthPlugin getReauthPlugin()
    {
       return reauthPlugin;
+   }
+
+   /**
+    * Get connection listener class name
+    * @return The value
+    */
+   public String getConnectionListenerClassName()
+   {
+      return connectionListenerClassName;
+   }
+
+   /**
+    * Set connection listener class name
+    * @param v The value
+    */
+   public void setConnectionListenerClassName(String v)
+   {
+      if (v != null)
+         connectionListenerClassName = v;
+   }
+
+   /**
+    * Get connection listener properties
+    * @return The value
+    */
+   public String getConnectionListenerProperties()
+   {
+      return connectionListenerProperties;
+   }
+
+   /**
+    * Set connection listener properties
+    * @param v The value
+    */
+   public void setConnectionListenerProperties(String v)
+   {
+      if (v != null)
+         connectionListenerProperties = v;
+   }
+
+   /**
+    * Load connection listener
+    * @exception ResourceException Thrown in case of an error
+    */
+   synchronized void loadConnectionListenerPlugin() throws ResourceException
+   {
+      if (connectionListenerPlugin != null)
+         return;
+
+      if (connectionListenerClassName == null || connectionListenerClassName.trim().equals(""))
+         throw new IllegalStateException("ConnectionListener class name not defined");
+      
+      Class<?> clz = null;
+      ClassLoader usedCl = null;
+
+      try
+      {
+         clz = Class.forName(connectionListenerClassName, true, getClassLoaderPlugin().getClassLoader());
+         usedCl = getClassLoaderPlugin().getClassLoader();
+      }
+      catch (ClassNotFoundException cnfe)
+      {
+         // Not found
+      }
+
+      if (clz == null)
+      {
+         try
+         {
+            clz = Class.forName(connectionListenerClassName, true, new TCClassLoaderPlugin().getClassLoader());
+            usedCl = new TCClassLoaderPlugin().getClassLoader();
+         }
+         catch (ClassNotFoundException cnfe)
+         {
+            // Not found
+         }
+      }
+
+      if (clz == null)
+      {
+         try
+         {
+            clz = Class.forName(connectionListenerClassName, true, 
+                                BaseWrapperManagedConnectionFactory.class.getClassLoader());
+            usedCl = BaseWrapperManagedConnectionFactory.class.getClassLoader();
+         }
+         catch (ClassNotFoundException cnfe)
+         {
+            throw new ResourceException("Error during loading connection listener", cnfe);
+         }
+      }
+
+      try
+      {
+         connectionListenerPlugin = (ConnectionListener)clz.newInstance();
+
+         if (connectionListenerProperties != null)
+         {
+            Injection injector = new Injection();
+
+            StringTokenizer st = new StringTokenizer(connectionListenerProperties, ",");
+            while (st.hasMoreTokens())
+            {
+               String keyValue = st.nextToken();
+
+               int split = keyValue.indexOf("|");
+
+               if (split == -1)
+                  throw new IllegalStateException("ConnectionListener property incorrect: " + keyValue);
+
+               String key = keyValue.substring(0, split);
+               String value = "";
+
+               if (keyValue.length() > (split + 1))
+                  value = keyValue.substring(split + 1);
+
+               injector.inject(connectionListenerPlugin, key, value);
+            }
+         }
+
+         connectionListenerPlugin.initialize(usedCl);
+      }
+      catch (Throwable t)
+      {
+         throw new ResourceException("Error during loading connection listener plugin", t);
+      }
+   }
+
+   /**
+    * Get the connection listener plugin
+    * @return The value
+    */
+   ConnectionListener getConnectionListenerPlugin()
+   {
+      try
+      {
+         if (connectionListenerClassName != null && connectionListenerPlugin == null)
+            loadConnectionListenerPlugin();
+
+         return connectionListenerPlugin;
+      }
+      catch (ResourceException re)
+      {
+         log.warn(re.getMessage(), re);
+      }
+
+      return null;
    }
 
    /**

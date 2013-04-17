@@ -23,6 +23,7 @@ package org.jboss.jca.common.metadata.ds.v12;
 
 import org.jboss.jca.common.api.metadata.Defaults;
 import org.jboss.jca.common.api.metadata.common.Capacity;
+import org.jboss.jca.common.api.metadata.common.Extension;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.metadata.ds.DataSources;
@@ -406,6 +407,7 @@ public class DsParser extends org.jboss.jca.common.metadata.ds.v11.DsParser impl
       FlushStrategy flushStrategy = Defaults.FLUSH_STRATEGY;
       Boolean allowMultipleUsers = Defaults.ALLOW_MULTIPLE_USERS;
       Capacity capacity = null;
+      Extension connectionListener = null;
 
       while (reader.hasNext())
       {
@@ -415,7 +417,7 @@ public class DsParser extends org.jboss.jca.common.metadata.ds.v11.DsParser impl
                if (DataSource.Tag.forName(reader.getLocalName()) == DataSource.Tag.POOL)
                {
                   return new DsPoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy,
-                                        allowMultipleUsers, capacity);
+                                        allowMultipleUsers, capacity, connectionListener);
                }
                else
                {
@@ -427,7 +429,8 @@ public class DsParser extends org.jboss.jca.common.metadata.ds.v11.DsParser impl
                break;
             }
             case START_ELEMENT : {
-               switch (DsPool.Tag.forName(reader.getLocalName()))
+               DsPool.Tag tag = DsPool.Tag.forName(reader.getLocalName());
+               switch (tag)
                {
                   case MAX_POOL_SIZE : {
                      maxPoolSize = elementAsInteger(reader);
@@ -461,6 +464,10 @@ public class DsParser extends org.jboss.jca.common.metadata.ds.v11.DsParser impl
                      capacity = parseCapacity(reader);
                      break;
                   }
+                  case CONNECTION_LISTENER : {
+                     connectionListener = parseExtension(reader, tag.getLocalName());
+                     break;
+                  }
                   default :
                      throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
@@ -491,6 +498,7 @@ public class DsParser extends org.jboss.jca.common.metadata.ds.v11.DsParser impl
       FlushStrategy flushStrategy = Defaults.FLUSH_STRATEGY;
       Boolean allowMultipleUsers = Defaults.ALLOW_MULTIPLE_USERS;
       Capacity capacity = null;
+      Extension connectionListener = null;
       Boolean interleaving = Defaults.INTERLEAVING;
       Boolean isSameRmOverride = Defaults.IS_SAME_RM_OVERRIDE;
       Boolean padXid = Defaults.PAD_XID;
@@ -507,7 +515,8 @@ public class DsParser extends org.jboss.jca.common.metadata.ds.v11.DsParser impl
                {
                   return new DsXaPoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin,
                                           flushStrategy, isSameRmOverride, interleaving, padXid,
-                                          wrapXaDataSource, noTxSeparatePool, allowMultipleUsers, capacity);
+                                          wrapXaDataSource, noTxSeparatePool, allowMultipleUsers, capacity,
+                                          connectionListener);
                }
                else
                {
@@ -519,7 +528,8 @@ public class DsParser extends org.jboss.jca.common.metadata.ds.v11.DsParser impl
                break;
             }
             case START_ELEMENT : {
-               switch (DsXaPool.Tag.forName(reader.getLocalName()))
+               DsXaPool.Tag tag = DsXaPool.Tag.forName(reader.getLocalName());
+               switch (tag)
                {
                   case MAX_POOL_SIZE : {
                      maxPoolSize = elementAsInteger(reader);
@@ -571,6 +581,10 @@ public class DsParser extends org.jboss.jca.common.metadata.ds.v11.DsParser impl
                   }
                   case CAPACITY : {
                      capacity = parseCapacity(reader);
+                     break;
+                  }
+                  case CONNECTION_LISTENER : {
+                     connectionListener = parseExtension(reader, tag.getLocalName());
                      break;
                   }
                   default :

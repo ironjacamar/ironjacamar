@@ -22,9 +22,13 @@
 package org.jboss.jca.common.metadata.ds.v12;
 
 import org.jboss.jca.common.api.metadata.common.Capacity;
+import org.jboss.jca.common.api.metadata.common.Extension;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.common.api.metadata.ds.v12.DsXaPool;
 import org.jboss.jca.common.api.validator.ValidateException;
+
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * An XA pool implementation
@@ -44,6 +48,11 @@ public class DsXaPoolImpl extends org.jboss.jca.common.metadata.ds.v11.DsXaPoolI
    protected final Capacity capacity;
 
    /**
+    * connection-listener
+    */
+   protected final Extension connectionListener;
+
+   /**
     * Create a new XaPoolImpl.
     *
     * @param minPoolSize minPoolSize
@@ -59,6 +68,7 @@ public class DsXaPoolImpl extends org.jboss.jca.common.metadata.ds.v11.DsXaPoolI
     * @param noTxSeparatePool noTxSeparatePool
     * @param allowMultipleUsers allowMultipleUsers
     * @param capacity capacity
+    * @param connectionListener connectionListener
     * @throws ValidateException ValidateException
     */
    public DsXaPoolImpl(Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize,
@@ -68,13 +78,14 @@ public class DsXaPoolImpl extends org.jboss.jca.common.metadata.ds.v11.DsXaPoolI
                        Boolean padXid, Boolean wrapXaResource,
                        Boolean noTxSeparatePool,
                        Boolean allowMultipleUsers,
-                       Capacity capacity) throws ValidateException
+                       Capacity capacity, Extension connectionListener) throws ValidateException
    {
       super(minPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy,
             isSameRmOverride, interleaving, padXid, wrapXaResource, noTxSeparatePool, allowMultipleUsers);
 
       this.initialPoolSize = initialPoolSize;
       this.capacity = capacity;
+      this.connectionListener = connectionListener;
    }
 
    /**
@@ -95,6 +106,15 @@ public class DsXaPoolImpl extends org.jboss.jca.common.metadata.ds.v11.DsXaPoolI
       return capacity;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Extension getConnectionListener()
+   {
+      return connectionListener;
+   }
+
    @Override
    public int hashCode()
    {
@@ -102,6 +122,7 @@ public class DsXaPoolImpl extends org.jboss.jca.common.metadata.ds.v11.DsXaPoolI
       int result = super.hashCode();
       result = prime * result + ((initialPoolSize == null) ? 7 : 7 * initialPoolSize.hashCode());
       result = prime * result + ((capacity == null) ? 7 : 7 * capacity.hashCode());
+      result = prime * result + ((connectionListener == null) ? 7 : 7 * connectionListener.hashCode());
       return result;
    }
 
@@ -131,6 +152,13 @@ public class DsXaPoolImpl extends org.jboss.jca.common.metadata.ds.v11.DsXaPoolI
             return false;
       }
       else if (!capacity.equals(other.capacity))
+         return false;
+      if (connectionListener == null)
+      {
+         if (other.connectionListener != null)
+            return false;
+      }
+      else if (!connectionListener.equals(other.connectionListener))
          return false;
       return true;
    }
@@ -193,10 +221,32 @@ public class DsXaPoolImpl extends org.jboss.jca.common.metadata.ds.v11.DsXaPoolI
       }
 
       if (capacity != null)
-      {
-         sb.append("<").append(DsXaPool.Tag.CAPACITY).append(">");
          sb.append(capacity);
-         sb.append("</").append(DsXaPool.Tag.CAPACITY).append(">");
+
+      if (connectionListener != null)
+      {
+         sb.append("<").append(DsXaPool.Tag.CONNECTION_LISTENER);
+         sb.append(" ").append(Extension.Attribute.CLASS_NAME).append("=\"");
+         sb.append(connectionListener.getClassName()).append("\"");
+         sb.append(">");
+
+         if (connectionListener.getConfigPropertiesMap() != null &&
+             connectionListener.getConfigPropertiesMap().size() > 0)
+         {
+            Iterator<Map.Entry<String, String>> it = connectionListener.getConfigPropertiesMap().entrySet().iterator();
+            
+            while (it.hasNext())
+            {
+               Map.Entry<String, String> entry = it.next();
+
+               sb.append("<").append(Extension.Tag.CONFIG_PROPERTY);
+               sb.append(" name=\"").append(entry.getKey()).append("\">");
+               sb.append(entry.getValue());
+               sb.append("</").append(Extension.Tag.CONFIG_PROPERTY).append(">");
+            }
+         }
+
+         sb.append("</").append(DsXaPool.Tag.CONNECTION_LISTENER).append(">");
       }
 
       if (isSameRmOverride != null)

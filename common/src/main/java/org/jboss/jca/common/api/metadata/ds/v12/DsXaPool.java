@@ -22,6 +22,7 @@
 package org.jboss.jca.common.api.metadata.ds.v12;
 
 import org.jboss.jca.common.api.metadata.common.Capacity;
+import org.jboss.jca.common.api.metadata.common.Extension;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,6 +45,12 @@ public interface DsXaPool extends org.jboss.jca.common.api.metadata.ds.v11.DsXaP
     * @return The value
     */
    public Capacity getCapacity();
+
+   /**
+    * Get the connection listener
+    * @return The value
+    */
+   public Extension getConnectionListener();
 
    /**
    *
@@ -97,6 +104,11 @@ public interface DsXaPool extends org.jboss.jca.common.api.metadata.ds.v11.DsXaP
        * capacity tag
        */
       CAPACITY("capacity"),
+
+      /**
+       * connection-listener tag
+       */
+      CONNECTION_LISTENER("connection-listener"),
 
       /**
        * isSameRmOverrideValue tag

@@ -364,6 +364,12 @@ java:/eis/ao/&lt;deploymentName&gt;
                                    <code>AllGracefully</code> (1.1), <code>AllConnections</code> (1.1)
                </entry>
              </row>
+             <row>
+               <entry><code>capacity</code></entry>
+               <entry>
+                 Specifies the capacity policies (1.1)
+               </entry>
+             </row>
            </tbody>
          </tgroup>
        </table>
@@ -429,6 +435,12 @@ java:/eis/ao/&lt;deploymentName&gt;
                </entry>
              </row>
              <row>
+               <entry><code>capacity</code></entry>
+               <entry>
+                 Specifies the capacity policies (1.1)
+               </entry>
+             </row>
+             <row>
                <entry><code>is-same-rm-override</code></entry>
                <entry>
                  The is-same-rm-override element allows one to unconditionally 
@@ -458,7 +470,7 @@ java:/eis/ao/&lt;deploymentName&gt;
              <row>
                <entry><code>wrap-xa-resource</code></entry>
                <entry>
-                 Should the XAResource instances be wrapped in a org.jboss.tm.XAResourceWrapper
+                 Should the XAResource instances be wrapped in an org.jboss.jca.core.spi.transaction.xa.XAResourceWrapper
                  instance
                </entry>
              </row>
@@ -1041,7 +1053,7 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
                 <entry><code>spy</code></entry>
                 <entry>
                   Enable spy functionality on the JDBC layer - e.g. log all JDBC traffic to the datasource.
-                  The logging category <code>org.jboss.jdbc</code> must be enabled too.
+                  The logging category <code>jboss.jdbc.spy</code> must be enabled too.
                 </entry>
               </row>
               <row>
@@ -1349,6 +1361,21 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
                   method and hence if the internal pool type should account for that (1.1)
                 </entry>
               </row>
+              <row>
+                <entry><code>capacity</code></entry>
+                <entry>
+                  Specifies the capacity policies (1.2)
+                </entry>
+              </row>
+              <row>
+                <entry><code>connection-listener</code></entry>
+                <entry>
+                  An org.jboss.jca.adapters.jdbc.spi.listener.ConnectionListener that provides 
+                  a possible to listen for connection activation and passivation in order to
+                  perform actions before the connection is returned to the application or returned
+                  to the pool (1.2)
+                </entry>
+              </row>
             </tbody>
           </tgroup>
         </table>
@@ -1421,6 +1448,21 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
                 </entry>
               </row>
               <row>
+                <entry><code>capacity</code></entry>
+                <entry>
+                  Specifies the capacity policies (1.2)
+                </entry>
+              </row>
+              <row>
+                <entry><code>connection-listener</code></entry>
+                <entry>
+                  An org.jboss.jca.adapters.jdbc.spi.listener.ConnectionListener that provides 
+                  a possible to listen for connection activation and passivation in order to
+                  perform actions before the connection is returned to the application or returned
+                  to the pool (1.2)
+                </entry>
+              </row>
+              <row>
                 <entry><code>is-same-rm-override</code></entry>
                 <entry>
                   The is-same-rm-override element allows one to unconditionally 
@@ -1450,7 +1492,7 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
               <row>
                 <entry><code>wrap-xa-resource</code></entry>
                 <entry>
-                  Should the XAResource instances be wrapped in a org.jboss.tm.XAResourceWrapper
+                  Should the XAResource instances be wrapped in an org.jboss.jca.core.spi.transaction.xa.XAResourceWrapper
                   instance
                 </entry>
               </row>
@@ -1516,7 +1558,7 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
               <row>
                 <entry><code>valid-connection-checker</code></entry>
                 <entry>
-                  An org.jboss.jca.adapters.jdbc.ValidConnectionChecker that provides 
+                  An org.jboss.jca.adapters.jdbc.spi.ValidConnectionChecker that provides 
                   a SQLException isValidConnection(Connection e) method to validate is a connection 
                   is valid. An exception means the connection is destroyed. This overrides 
                   the check-valid-connection-sql when present
@@ -1563,7 +1605,7 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
               <row>
                 <entry><code>stale-connection-checker</code></entry>
                 <entry>
-                  An org.jboss.jca.adapters.jdbc.StaleConnectionChecker that provides 
+                  An org.jboss.jca.adapters.jdbc.spi.StaleConnectionChecker that provides 
                   a boolean isStaleConnection(SQLException e) method which if it it returns 
                   true will wrap the exception in an org.jboss.jca.adapters.jdbc.StaleConnectionException 
                   which is a subclass of SQLException
@@ -1572,7 +1614,7 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
               <row>
                 <entry><code>exception-sorter</code></entry>
                 <entry>
-                  An org.jboss.jca.adapters.jdbc.ExceptionSorter that provides a 
+                  An org.jboss.jca.adapters.jdbc.spi.ExceptionSorter that provides a 
                   boolean isExceptionFatal(SQLException e) method to validate is an exception 
                   should be broadcast to all javax.resource.spi.ConnectionEventListener as 
                   a connectionErrorOccurred message

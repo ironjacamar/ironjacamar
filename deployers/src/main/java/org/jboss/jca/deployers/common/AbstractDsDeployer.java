@@ -593,6 +593,39 @@ public abstract class AbstractDsDeployer
          }
       }
 
+      // ConnectionListener
+      if (ds.getPool() != null && ds.getPool() instanceof org.jboss.jca.common.api.metadata.ds.v12.DsPool)
+      {
+         org.jboss.jca.common.api.metadata.ds.v12.DsPool dsPool =
+            (org.jboss.jca.common.api.metadata.ds.v12.DsPool)ds.getPool();
+
+         if (dsPool.getConnectionListener() != null)
+         {
+            injectValue(mcf, "setConnectionListenerClassName", dsPool.getConnectionListener().getClassName());
+
+            Map<String, String> mps = dsPool.getConnectionListener().getConfigPropertiesMap();
+            if (mps != null && mps.size() > 0)
+            {
+               StringBuilder connectionListenerProperties = new StringBuilder();
+
+               Iterator<Map.Entry<String, String>> entryIterator = mps.entrySet().iterator();
+               while (entryIterator.hasNext())
+               {
+                  Map.Entry<String, String> entry = entryIterator.next();
+
+                  connectionListenerProperties.append(entry.getKey());
+                  connectionListenerProperties.append("|");
+                  connectionListenerProperties.append(entry.getValue());
+                  
+                  if (entryIterator.hasNext())
+                     connectionListenerProperties.append(",");
+               }
+
+               injectValue(mcf, "setConnectionListenerProperties", connectionListenerProperties.toString());
+            }
+         }
+      }
+
       // Prefill
       if (pool instanceof PrefillPool)
       {
@@ -796,6 +829,39 @@ public abstract class AbstractDsDeployer
             }
 
             injectValue(mcf, "setReauthPluginProperties", reauthPluginProperties.toString());
+         }
+      }
+
+      // ConnectionListener
+      if (ds.getXaPool() != null && ds.getXaPool() instanceof org.jboss.jca.common.api.metadata.ds.v12.DsXaPool)
+      {
+         org.jboss.jca.common.api.metadata.ds.v12.DsXaPool dsXaPool =
+            (org.jboss.jca.common.api.metadata.ds.v12.DsXaPool)ds.getXaPool();
+
+         if (dsXaPool.getConnectionListener() != null)
+         {
+            injectValue(mcf, "setConnectionListenerClassName", dsXaPool.getConnectionListener().getClassName());
+
+            Map<String, String> mps = dsXaPool.getConnectionListener().getConfigPropertiesMap();
+            if (mps != null && mps.size() > 0)
+            {
+               StringBuilder connectionListenerProperties = new StringBuilder();
+
+               Iterator<Map.Entry<String, String>> entryIterator = mps.entrySet().iterator();
+               while (entryIterator.hasNext())
+               {
+                  Map.Entry<String, String> entry = entryIterator.next();
+
+                  connectionListenerProperties.append(entry.getKey());
+                  connectionListenerProperties.append("|");
+                  connectionListenerProperties.append(entry.getValue());
+                  
+                  if (entryIterator.hasNext())
+                     connectionListenerProperties.append(",");
+               }
+
+               injectValue(mcf, "setConnectionListenerProperties", connectionListenerProperties.toString());
+            }
          }
       }
 

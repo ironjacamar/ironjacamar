@@ -540,6 +540,21 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
       synchronized (handles)
       {
          handles.remove(handle);
+
+         if (handles.size() == 0)
+         {
+            if (mcf.getConnectionListenerPlugin() != null)
+            {
+               try
+               {
+                  mcf.getConnectionListenerPlugin().passivated(con);
+               }
+               catch (SQLException se)
+               {
+                  mcf.log.warn("Error during passivated", se);
+               }
+            }
+         }
       }
 
       Collection<ConnectionEventListener> copy = null;
@@ -1191,6 +1206,21 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
       synchronized (handles)
       {
          handles.add(lc);
+
+         if (handles.size() == 1)
+         {
+            if (mcf.getConnectionListenerPlugin() != null)
+            {
+               try
+               {
+                  mcf.getConnectionListenerPlugin().activated(con);
+               }
+               catch (SQLException se)
+               {
+                  mcf.log.warn("Error during activated", se);
+               }
+            }
+         }
       }
 
       return lc;

@@ -22,9 +22,13 @@
 package org.jboss.jca.common.metadata.ds.v12;
 
 import org.jboss.jca.common.api.metadata.common.Capacity;
+import org.jboss.jca.common.api.metadata.common.Extension;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.common.api.metadata.ds.v12.DsPool;
 import org.jboss.jca.common.api.validator.ValidateException;
+
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * A pool implementation
@@ -47,6 +51,11 @@ public class DsPoolImpl extends org.jboss.jca.common.metadata.ds.v11.DsPoolImpl 
    protected final Capacity capacity;
 
    /**
+    * connection-listener
+    */
+   protected final Extension connectionListener;
+
+   /**
     * Create a new PoolImpl.
     *
     * @param minPoolSize minPoolSize
@@ -57,17 +66,19 @@ public class DsPoolImpl extends org.jboss.jca.common.metadata.ds.v11.DsPoolImpl 
     * @param flushStrategy flushStrategy
     * @param allowMultipleUsers allowMultipleUsers
     * @param capacity capacity
+    * @param connectionListener connectionListener
     * @throws ValidateException ValidateException
     */
    public DsPoolImpl(Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize, 
                      Boolean prefill, Boolean useStrictMin,
                      FlushStrategy flushStrategy, Boolean allowMultipleUsers,
-                     Capacity capacity)
+                     Capacity capacity, Extension connectionListener)
       throws ValidateException
    {
       super(minPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy, allowMultipleUsers);
       this.initialPoolSize = initialPoolSize;
       this.capacity = capacity;
+      this.connectionListener = connectionListener;
    }
 
    /**
@@ -92,12 +103,22 @@ public class DsPoolImpl extends org.jboss.jca.common.metadata.ds.v11.DsPoolImpl 
     * {@inheritDoc}
     */
    @Override
+   public Extension getConnectionListener()
+   {
+      return connectionListener;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public int hashCode()
    {
       final int prime = 31;
       int result = super.hashCode();
       result = prime * result + ((initialPoolSize == null) ? 7 : 7 * initialPoolSize.hashCode());
       result = prime * result + ((capacity == null) ? 7 : 7 * capacity.hashCode());
+      result = prime * result + ((connectionListener == null) ? 7 : 7 * connectionListener.hashCode());
       return result;
    }
 
@@ -130,6 +151,13 @@ public class DsPoolImpl extends org.jboss.jca.common.metadata.ds.v11.DsPoolImpl 
             return false;
       }
       else if (!capacity.equals(other.capacity))
+         return false;
+      if (connectionListener == null)
+      {
+         if (other.connectionListener != null)
+            return false;
+      }
+      else if (!connectionListener.equals(other.connectionListener))
          return false;
       return true;
    }
@@ -191,10 +219,32 @@ public class DsPoolImpl extends org.jboss.jca.common.metadata.ds.v11.DsPoolImpl 
       }
 
       if (capacity != null)
-      {
-         sb.append("<").append(DsPool.Tag.CAPACITY).append(">");
          sb.append(capacity);
-         sb.append("</").append(DsPool.Tag.CAPACITY).append(">");
+
+      if (connectionListener != null)
+      {
+         sb.append("<").append(DsPool.Tag.CONNECTION_LISTENER);
+         sb.append(" ").append(Extension.Attribute.CLASS_NAME).append("=\"");
+         sb.append(connectionListener.getClassName()).append("\"");
+         sb.append(">");
+
+         if (connectionListener.getConfigPropertiesMap() != null &&
+             connectionListener.getConfigPropertiesMap().size() > 0)
+         {
+            Iterator<Map.Entry<String, String>> it = connectionListener.getConfigPropertiesMap().entrySet().iterator();
+            
+            while (it.hasNext())
+            {
+               Map.Entry<String, String> entry = it.next();
+
+               sb.append("<").append(Extension.Tag.CONFIG_PROPERTY);
+               sb.append(" name=\"").append(entry.getKey()).append("\">");
+               sb.append(entry.getValue());
+               sb.append("</").append(Extension.Tag.CONFIG_PROPERTY).append(">");
+            }
+         }
+
+         sb.append("</").append(DsPool.Tag.CONNECTION_LISTENER).append(">");
       }
 
       sb.append("</pool>");
