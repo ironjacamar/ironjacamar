@@ -125,7 +125,10 @@ public class Injection
          }
                 
          if (!parameterClass.isPrimitive() || parameterValue != null)
+         {
+            method.setAccessible(true);
             method.invoke(object, new Object[] {parameterValue});
+         }
       }
       else
       {
@@ -148,7 +151,7 @@ public class Injection
             {
                throw new InvocationTargetException(t, t.getMessage());
             }
-
+            field.setAccessible(true);
             field.set(object, fieldValue);
          }
          else

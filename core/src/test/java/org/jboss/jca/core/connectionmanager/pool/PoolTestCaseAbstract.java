@@ -230,6 +230,22 @@ public abstract class PoolTestCaseAbstract
 
    /**
     * 
+    * filling pool by idle connections to the defined size 
+    * 
+    * @param size count of idle connections
+    * @throws Exception in case of error
+    */
+   public void fillPoolToSize(int size) throws Exception
+   {
+      SimpleConnection[] c = new SimpleConnection[size];
+      for (int i = 0; i < size; i++)
+         c[i] = cf.getConnection();
+      for (int i = 0; i < size; i++)
+         c[i].close();
+   }
+
+   /**
+    * 
     * check pool behaviour
     * 
     * @throws Exception in case of error

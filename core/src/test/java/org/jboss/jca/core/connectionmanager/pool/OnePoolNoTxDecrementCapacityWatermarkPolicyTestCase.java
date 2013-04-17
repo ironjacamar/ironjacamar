@@ -25,15 +25,13 @@ import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.extension.byteman.api.BMRule;
-import org.jboss.arquillian.extension.byteman.api.BMRules;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
 import static org.junit.Assert.assertEquals;
 
 /**
  * 
- * A OnePoolNoTxDecrementCapacityTimedOutPolicyBMTestCase
+ * A OnePoolNoTxDecrementCapacityWatermarkPolicyBMTestCase
  * 
  * NOTE that this class is in org.jboss.jca.core.connectionmanager.pool and not in
  * org.jboss.jca.core.connectionmanager.pool.strategy because it needs to access to 
@@ -43,21 +41,10 @@ import static org.junit.Assert.assertEquals;
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  * 
  */
-@BMRules(value =
-      {
-      @BMRule(name = "start counter", 
-         targetClass = "OnePoolNoTxDecrementCapacityTimedOutPolicyBMTestCase", 
-         targetMethod = "checkPool", 
-         action = "createCounter(\"counter\", 3)"),
-      @BMRule(name = "decrement counter", 
-         targetClass = "AbstractConnectionListener", 
-         targetMethod = "isTimedOut", 
-         condition = "decrementCounter(\"counter\")>0", 
-         action = "RETURN true")
-      })
-public class OnePoolNoTxDecrementCapacityTimedOutPolicyBMTestCase extends
+public class OnePoolNoTxDecrementCapacityWatermarkPolicyTestCase  extends
       OnePoolNoTxDecrementCapacityPolicyTestCaseAbstract
 {
+
    /**
     * 
     * deployment
@@ -67,7 +54,7 @@ public class OnePoolNoTxDecrementCapacityTimedOutPolicyBMTestCase extends
    @Deployment
    public static ResourceAdapterArchive deployment()
    {
-      return createNoTxDeployment(getIJWithDecrementer("TimedOutDecrementer"));
+      return createNoTxDeployment(getIJWithDecrementer("WatermarkDecrementer", "watermark", "3"));
    }
 
    @Override
@@ -82,7 +69,8 @@ public class OnePoolNoTxDecrementCapacityTimedOutPolicyBMTestCase extends
       ManagedConnectionPool mcp = pool.getManagedConnectionPools().values().iterator().next();
       callRemoveIdleConnections(mcp);
       checkStatistics(ps, 5, 0, 3, 2);
+      callRemoveIdleConnections(mcp);
+      checkStatistics(ps, 5, 0, 3, 2);
 
    }
-
 }

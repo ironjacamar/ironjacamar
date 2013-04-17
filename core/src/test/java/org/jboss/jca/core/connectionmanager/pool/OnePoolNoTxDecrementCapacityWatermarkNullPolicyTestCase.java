@@ -22,16 +22,16 @@
 package org.jboss.jca.core.connectionmanager.pool;
 
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
+import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 
 import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.extension.byteman.api.BMRule;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
 import static org.junit.Assert.assertEquals;
 
 /**
  * 
- * A OnePoolNoTxDecrementCapacitySizePolicyNullBMTestCase
+ * A OnePoolNoTxDecrementCapacityWatermarkNullPolicyBMTestCase
  * 
  * NOTE that this class is in org.jboss.jca.core.connectionmanager.pool and not in
  * org.jboss.jca.core.connectionmanager.pool.strategy because it needs to access to 
@@ -41,13 +41,10 @@ import static org.junit.Assert.assertEquals;
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  * 
  */
-@BMRule(name = "enable removeIdleConnections() to start", 
-   targetClass = "SemaphoreArrayListManagedConnectionPool", 
-   targetMethod = "removeIdleConnections", 
-   action = "$0.lastIdleCheck=0")
-public class OnePoolNoTxDecrementCapacitySizePolicyNullBMTestCase extends 
-      OnePoolNoTxDecrementCapacityPolicyBMTestCaseAbstract
+public class OnePoolNoTxDecrementCapacityWatermarkNullPolicyTestCase extends 
+      OnePoolNoTxDecrementCapacityPolicyTestCaseAbstract
 {
+
    /**
     * 
     * deployment
@@ -57,7 +54,7 @@ public class OnePoolNoTxDecrementCapacitySizePolicyNullBMTestCase extends
    @Deployment
    public static ResourceAdapterArchive deployment()
    {
-      return createNoTxDeployment(getIJWithDecrementer("SizeDecrementer"));
+      return createNoTxDeployment(getIJWithDecrementer("WatermarkDecrementer"));
    }
 
    @Override
@@ -65,15 +62,15 @@ public class OnePoolNoTxDecrementCapacitySizePolicyNullBMTestCase extends
    {
       AbstractPool pool = getPool();
       assertEquals(pool.getManagedConnectionPools().size(), 0);
-      fillPool(5);
+      fillPoolToSize(5);
       assertEquals(pool.getManagedConnectionPools().size(), 1);
       PoolStatistics ps = pool.getStatistics();
       checkStatistics(ps, 5, 0, 5);
-      pool.getManagedConnectionPools().values().iterator().next().removeIdleConnections();
-      checkStatistics(ps, 5, 0, 4, 1);
-      pool.getManagedConnectionPools().values().iterator().next().removeIdleConnections();
-      checkStatistics(ps, 5, 0, 3, 2);
+      ManagedConnectionPool mcp = pool.getManagedConnectionPools().values().iterator().next();
+      callRemoveIdleConnections(mcp);
+      checkStatistics(ps, 5, 0, 2, 3);
+      callRemoveIdleConnections(mcp);
+      checkStatistics(ps, 5, 0, 2, 3);
 
    }
-
 }

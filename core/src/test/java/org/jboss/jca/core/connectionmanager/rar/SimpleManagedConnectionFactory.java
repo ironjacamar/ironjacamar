@@ -297,6 +297,11 @@ public class SimpleManagedConnectionFactory
             fail++;
          }
       }
+      else if (first.equals("error"))
+      {
+         if (fail++ < 3)
+            throw new ResourceException();
+      }
       return resultSet;
    }
 

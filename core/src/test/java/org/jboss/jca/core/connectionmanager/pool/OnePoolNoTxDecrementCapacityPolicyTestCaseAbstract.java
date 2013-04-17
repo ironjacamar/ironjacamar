@@ -21,8 +21,9 @@
  */
 package org.jboss.jca.core.connectionmanager.pool;
 
-import org.jboss.jca.core.connectionmanager.rar.SimpleConnection;
+import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.rar.SimpleManagedConnectionFactory;
+import org.jboss.jca.core.util.Injection;
 import org.jboss.jca.embedded.dsl.ironjacamar11.api.ConnectionDefinitionType;
 import org.jboss.jca.embedded.dsl.ironjacamar11.api.ExtensionType;
 import org.jboss.jca.embedded.dsl.ironjacamar11.api.IronjacamarDescriptor;
@@ -39,7 +40,7 @@ import org.jboss.jca.embedded.dsl.ironjacamar11.api.IronjacamarDescriptor;
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  * 
  */
-public abstract class OnePoolNoTxDecrementCapacityPolicyBMTestCaseAbstract extends 
+public abstract class OnePoolNoTxDecrementCapacityPolicyTestCaseAbstract extends 
       OnePoolNoTxTestCaseAbstract
 {
 
@@ -84,17 +85,17 @@ public abstract class OnePoolNoTxDecrementCapacityPolicyBMTestCaseAbstract exten
 
    /**
     * 
-    * filling pool by idle connections to the defined size 
+    * Replaces value of lastIdleCheck variable and then execute removeIdleConnections()
+    * method on ManagedConnectionPool instance
     * 
-    * @param size count of idle connections
+    * @param mcp ManagedConnectionPool instance
     * @throws Exception in case of error
     */
-   public void fillPool(int size) throws Exception
+   public void  callRemoveIdleConnections(ManagedConnectionPool mcp) throws Exception
    {
-      SimpleConnection[] c = new SimpleConnection[size];
-      for (int i = 0; i < size; i++)
-         c[i] = cf.getConnection();
-      for (int i = 0; i < size; i++)
-         c[i].close();
+      Injection in = new Injection(); 
+      in.inject(mcp, "lastIdleCheck", Long.MIN_VALUE, long.class.getName(), true);
+      mcp.removeIdleConnections();
+
    }
 }
