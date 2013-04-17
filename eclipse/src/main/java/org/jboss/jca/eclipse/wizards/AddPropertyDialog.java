@@ -225,6 +225,7 @@ public class AddPropertyDialog extends Dialog
                public void widgetSelected(SelectionEvent event)
                {
                   propertyRequired = requiredButton.getSelection();
+                  updateButtons();
                }
             });
          }
@@ -303,7 +304,7 @@ public class AddPropertyDialog extends Dialog
       String value = valueText.getText().trim();
       
       boolean validated = true;
-      validated = validated && (name.length() > 0) && (value.length()) > 0;
+      validated = validated && (name.length() > 0);
       validated = validated && name.matches("[a-zA-Z_][a-zA-Z_0-9]*");
       if (propList != null)
       {
@@ -316,81 +317,88 @@ public class AddPropertyDialog extends Dialog
             }
          }
       }
-      if (type.equals("Boolean"))
+      if (this.propertyRequired && value.length() == 0)
       {
-         validated = validated && (value.toLowerCase().equals("true") || value.toLowerCase().equals("false"));
+         validated = false;
       }
-      if (type.equals("Integer") || type.equals("Short"))
+      if (value.length() > 0)
       {
-         try
+         if (type.equals("Boolean"))
          {
-            Integer.parseInt(value);
+            validated = validated && (value.toLowerCase().equals("true") || value.toLowerCase().equals("false"));
          }
-         catch (NumberFormatException e)
+         if (type.equals("Integer") || type.equals("Short"))
          {
-            validated = false;
+            try
+            {
+               Integer.parseInt(value);
+            }
+            catch (NumberFormatException e)
+            {
+               validated = false;
+            }
          }
-      }
-      if (type.equals("Short"))
-      {
-         try
+         if (type.equals("Short"))
          {
-            Short.parseShort(value);
+            try
+            {
+               Short.parseShort(value);
+            }
+            catch (NumberFormatException e)
+            {
+               validated = false;
+            }
          }
-         catch (NumberFormatException e)
+         if (type.equals("Double"))
          {
-            validated = false;
+            try
+            {
+               Double.parseDouble(value);
+            }
+            catch (NumberFormatException e)
+            {
+               validated = false;
+            }
          }
-      }
-      if (type.equals("Double"))
-      {
-         try
+         if (type.equals("Long"))
          {
-            Double.parseDouble(value);
+            try
+            {
+               Long.parseLong(value);
+            }
+            catch (NumberFormatException e)
+            {
+               validated = false;
+            }
          }
-         catch (NumberFormatException e)
+         if (type.equals("Float"))
          {
-            validated = false;
+            try
+            {
+               Float.parseFloat(value);
+            }
+            catch (NumberFormatException e)
+            {
+               validated = false;
+            }
          }
-      }
-      if (type.equals("Long"))
-      {
-         try
+         if (type.equals("Byte"))
          {
-            Long.parseLong(value);
+            try
+            {
+               Byte.parseByte(value);
+            }
+            catch (NumberFormatException e)
+            {
+               validated = false;
+            }
          }
-         catch (NumberFormatException e)
+         if (type.equals("Character"))
          {
-            validated = false;
+            char[] c = value.toCharArray();
+            if (c.length > 1)
+               validated = false;
          }
-      }
-      if (type.equals("Float"))
-      {
-         try
-         {
-            Float.parseFloat(value);
-         }
-         catch (NumberFormatException e)
-         {
-            validated = false;
-         }
-      }
-      if (type.equals("Byte"))
-      {
-         try
-         {
-            Byte.parseByte(value);
-         }
-         catch (NumberFormatException e)
-         {
-            validated = false;
-         }
-      }
-      if (type.equals("Character"))
-      {
-         char[] c = value.toCharArray();
-         if (c.length > 1)
-            validated = false;
       }
       
       getButton(IDialogConstants.OK_ID).setEnabled(validated);
