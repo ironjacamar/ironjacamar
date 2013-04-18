@@ -148,6 +148,7 @@ public class WlsRaConverter
       transformAdminObjects(noTxCf, ra);
       transformResourceAdapter(noTxCf, myCdProps);
       noTxCf.buildResourceAdapterImpl();
+      transformSecurity(noTxCf, ra);
       return noTxCf;
    }
 
@@ -275,5 +276,9 @@ public class WlsRaConverter
          }
       }
    }
-
+   
+   private void transformSecurity(LegacyConnectionFactoryImp lcf, WeblogicConnector ra) throws Exception
+   {
+      
+   }
 }

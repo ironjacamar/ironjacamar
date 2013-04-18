@@ -26,16 +26,17 @@ import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
 import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
-import org.jboss.jca.common.api.metadata.common.v10.CommonConnDef;
+import org.jboss.jca.common.api.metadata.common.v11.CommonConnDef;
+import org.jboss.jca.common.api.metadata.common.v11.WorkManager;
 import org.jboss.jca.common.metadata.common.CommonAdminObjectImpl;
 import org.jboss.jca.common.metadata.common.CommonPoolImpl;
 import org.jboss.jca.common.metadata.common.CommonSecurityImpl;
 import org.jboss.jca.common.metadata.common.CommonTimeOutImpl;
 import org.jboss.jca.common.metadata.common.CommonValidationImpl;
 import org.jboss.jca.common.metadata.common.CredentialImpl;
-import org.jboss.jca.common.metadata.common.v10.CommonConnDefImpl;
+import org.jboss.jca.common.metadata.common.v11.CommonConnDefImpl;
 import org.jboss.jca.common.metadata.common.v11.ConnDefXaPoolImpl;
-import org.jboss.jca.common.metadata.resourceadapter.v10.ResourceAdapterImpl;
+import org.jboss.jca.common.metadata.resourceadapter.v11.ResourceAdapterImpl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,6 +68,8 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
    private CommonValidationImpl validation = null;
 
    private CommonPool pool = null;
+   
+   private WorkManager workmanager = null;
 
    private String jndiName;
    private String rarName;
@@ -128,13 +131,15 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
       {
          recovery = new Recovery(new CredentialImpl("user", "password", null), null, false);
       }
-      CommonConnDefImpl connDef = new CommonConnDefImpl(connConfigProperty, connectionDefinition, jndiName, poolName,
+      CommonConnDefImpl connDef = new CommonConnDefImpl(connConfigProperty, "FIXME", connectionDefinition, jndiName,
                                                         Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT, Defaults.USE_CCM,
+                                                        Defaults.SHARABLE, Defaults.ENLISTMENT,
                                                         pool, timeOut, validation, security, recovery);
+      
       connectionDefinitions = new ArrayList<CommonConnDef>();
       connectionDefinitions.add(connDef);
-      raImpl = new ResourceAdapterImpl(rarName, transactionSupport, connectionDefinitions, adminObjects,
-            rarConfigProperty, null, null);
+      raImpl = new ResourceAdapterImpl("ID", rarName, transactionSupport, connectionDefinitions, adminObjects,
+            rarConfigProperty, null, null, workmanager);
    }
    
    @Override
@@ -241,6 +246,20 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
       }
       adminObjects.add(
             new CommonAdminObjectImpl(configProperties, className, jndiName, poolName, enabled, useJavaContext));
+      return this;
+   }
+   
+   
+   /**
+    * build workmanager
+    * 
+    * @param workmanager workmanager
+    * @return this
+    * @throws Exception exception
+    */
+   public LegacyConnectionFactoryImp buildWorkManager(WorkManager workmanager) throws Exception
+   {
+      this.workmanager = workmanager;
       return this;
    }
    

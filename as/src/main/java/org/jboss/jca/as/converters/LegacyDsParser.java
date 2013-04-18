@@ -288,7 +288,7 @@ public class LegacyDsParser extends AbstractParser
                   xaDsImpl.buildValidation(backgroundValidation, backgroundValidationMillis, useFastFail, 
                         validConnectionChecker, checkValidConnectionSql, validateOnMatch, staleConnectionChecker, 
                         exceptionSorter);
-                  xaDsImpl.buildCommonPool(minPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy,
+                  xaDsImpl.buildCommonPool(minPoolSize, minPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy,
                         isSameRmOverride, interleaving, padXid, wrapXaDataSource, noTxSeparatePool);
                   xaDsImpl.buildRecovery(recoveryUsername, recoveryPassword, noRecovery);
                   xaDsImpl.buildOther(urlDelimiter, urlSelectorStrategyClassName, newConnectionSql, useJavaContext, 
@@ -575,7 +575,7 @@ public class LegacyDsParser extends AbstractParser
                   txDsImpl.buildValidation(backgroundValidation, backgroundValidationMillis, useFastFail, 
                         validConnectionChecker, checkValidConnectionSql, validateOnMatch, staleConnectionChecker, 
                         exceptionSorter);
-                  txDsImpl.buildCommonPool(minPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy);
+                  txDsImpl.buildCommonPool(minPoolSize, minPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy);
                   txDsImpl.buildOther(urlDelimiter, urlSelectorStrategyClassName, newConnectionSql, useJavaContext, 
                         poolName, enabled, jndiName, spy, useCcm, jta);
                   txDsImpl.buildDataSourceImpl();

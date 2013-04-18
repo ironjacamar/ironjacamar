@@ -21,21 +21,22 @@
  */
 package org.jboss.jca.as.converters;
 
-import org.jboss.jca.common.api.metadata.common.CommonPool;
+import org.jboss.jca.common.api.metadata.common.Capacity;
 import org.jboss.jca.common.api.metadata.common.Extension;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.common.api.metadata.ds.DsSecurity;
 import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.Statement.TrackStatementsEnum;
+import org.jboss.jca.common.api.metadata.ds.v12.DsPool;
 import org.jboss.jca.common.api.metadata.ds.TimeOut;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
 import org.jboss.jca.common.api.metadata.ds.Validation;
-import org.jboss.jca.common.metadata.common.CommonPoolImpl;
 import org.jboss.jca.common.metadata.ds.DsSecurityImpl;
 import org.jboss.jca.common.metadata.ds.StatementImpl;
 import org.jboss.jca.common.metadata.ds.TimeOutImpl;
 import org.jboss.jca.common.metadata.ds.ValidationImpl;
-import org.jboss.jca.common.metadata.ds.v10.DataSourceImpl;
+import org.jboss.jca.common.metadata.ds.v12.DataSourceImpl;
+import org.jboss.jca.common.metadata.ds.v12.DsPoolImpl;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -71,7 +72,7 @@ public class LegacyTxDataSourceImpl implements LocalTxDataSource
 
    private Validation validation = null;
 
-   private CommonPool pool = null;
+   private DsPool pool = null;
 
    private String urlDelimiter;
 
@@ -234,11 +235,12 @@ public class LegacyTxDataSourceImpl implements LocalTxDataSource
     * @return this
     * @throws Exception exception
     */
-   public LegacyTxDataSourceImpl buildCommonPool(Integer minPoolSize, Integer maxPoolSize, 
+   public LegacyTxDataSourceImpl buildCommonPool(Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize, 
          Boolean prefill, Boolean useStrictMin,
          FlushStrategy flushStrategy) throws Exception
    {
-      pool = new CommonPoolImpl(minPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy);
+      pool = new DsPoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, 
+         useStrictMin, flushStrategy, false, null, null);
       return this;
    }
    
