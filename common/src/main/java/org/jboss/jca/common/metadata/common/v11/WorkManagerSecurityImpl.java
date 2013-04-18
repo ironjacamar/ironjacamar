@@ -257,6 +257,8 @@ public class WorkManagerSecurityImpl implements WorkManagerSecurity
 
          if (userMappings != null && userMappings.size() > 0)
          {
+            sb.append("<").append(WorkManagerSecurity.Tag.USERS).append(">");
+            
             for (Map.Entry<String, String> entry : userMappings.entrySet())
             {
                sb.append("<").append(WorkManagerSecurity.Tag.MAP);
@@ -269,10 +271,14 @@ public class WorkManagerSecurityImpl implements WorkManagerSecurity
 
                sb.append("/>");
             }
+
+            sb.append("</").append(WorkManagerSecurity.Tag.USERS).append(">");
          }
 
          if (groupMappings != null && groupMappings.size() > 0)
          {
+            sb.append("<").append(WorkManagerSecurity.Tag.GROUPS).append(">");
+            
             for (Map.Entry<String, String> entry : groupMappings.entrySet())
             {
                sb.append("<").append(WorkManagerSecurity.Tag.MAP);
@@ -285,6 +291,8 @@ public class WorkManagerSecurityImpl implements WorkManagerSecurity
 
                sb.append("/>");
             }
+
+            sb.append("</").append(WorkManagerSecurity.Tag.GROUPS).append(">");
          }
 
          sb.append("</").append(WorkManagerSecurity.Tag.MAPPINGS).append(">");
