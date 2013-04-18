@@ -22,9 +22,11 @@
 
 package org.jboss.jca.as.converters.wls;
 
+import org.jboss.jca.as.converters.wls.api.metadata.OutboundResourceAdapter;
 import org.jboss.jca.as.converters.wls.api.metadata.WeblogicConnector;
 import org.jboss.jca.as.converters.wls.metadata.WeblogicRaPasrer;
 import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
+import org.jboss.jca.common.api.metadata.common.CommonConnDef;
 import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter;
 import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapters;
 import org.jboss.jca.common.metadata.resourceadapter.v11.ResourceAdapterParser;
@@ -75,6 +77,7 @@ public class WlsRaConvertTestCase
       
       assertAdminObjects(wlsConnector, listRa);
       assertConfigProperties(wlsConnector, listRa);
+      assertResourceAdapter(wlsConnector, listRa);
    }
 
    private void assertAdminObjects(WeblogicConnector wlsConnector, List<ResourceAdapter> listRa)
@@ -102,4 +105,42 @@ public class WlsRaConvertTestCase
       assertEquals(ra.getConfigProperties().get("ra1name"), "ra1value");
    }
 
+   private void assertResourceAdapter(WeblogicConnector wlsConnector, List<ResourceAdapter> listRa)
+   {
+      ResourceAdapter ra = listRa.get(0);
+      assertNotNull(ra);
+      
+      CommonConnDef conn = ra.getConnectionDefinitions().get(0);
+      OutboundResourceAdapter wlc = wlsConnector.getOutboundResourceAdapter();
+      
+      //props
+      assertNotNull(conn.getConfigProperties());
+      assertEquals(conn.getConfigProperties().size(), 1);
+      assertEquals(conn.getConfigProperties().get("dcp1name"), "dcp1value");
+      
+      assertNotNull(wlc.getDefaultConnectionProperties().getProperties().getProperty());
+      assertEquals(wlc.getDefaultConnectionProperties().getProperties().getProperty().size(), 1);
+      assertEquals(wlc.getDefaultConnectionProperties().getProperties().getProperty().get(0).getName(), "dcp1name");
+      assertEquals(wlc.getDefaultConnectionProperties().getProperties().getProperty().get(0).getValue(), "dcp1value");
+      
+      //pool
+      assertEquals(conn.getPool().getMaxPoolSize(), 
+            wlc.getDefaultConnectionProperties().getPoolParams().getMaxCapacity());
+      assertEquals(conn.getPool().getMinPoolSize(), 
+            wlc.getDefaultConnectionProperties().getPoolParams().getInitialCapacity());
+      
+      //timeout
+      assertEquals(conn.getTimeOut().getBlockingTimeoutMillis().intValue(),
+            wlc.getDefaultConnectionProperties().getPoolParams().getConnectionReserveTimeoutSeconds() * 1000);
+      assertEquals(conn.getTimeOut().getAllocationRetryWaitMillis().intValue(),
+            wlc.getDefaultConnectionProperties().getPoolParams().getConnectionCreationRetryFrequencySeconds() * 1000);
+
+      //validation
+      assertEquals(conn.getValidation().getBackgroundValidationMillis().intValue(),
+            wlc.getDefaultConnectionProperties().getPoolParams().getTestFrequencySeconds() * 1000);
+      
+      assertTrue(conn.getJndiName()
+            .indexOf(wlc.getConnectionDefinitionGroup().get(0).getConnectionInstance().get(0).getJndiName()) > 0);
+      
+   }
 }
