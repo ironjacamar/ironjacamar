@@ -131,7 +131,7 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
       {
          recovery = new Recovery(new CredentialImpl("user", "password", null), null, false);
       }
-      CommonConnDefImpl connDef = new CommonConnDefImpl(connConfigProperty, "FIXME", connectionDefinition, jndiName,
+      CommonConnDefImpl connDef = new CommonConnDefImpl(connConfigProperty, "FIXME", jndiName, poolName,
                                                         Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT, Defaults.USE_CCM,
                                                         Defaults.SHARABLE, Defaults.ENLISTMENT,
                                                         pool, timeOut, validation, security, recovery);

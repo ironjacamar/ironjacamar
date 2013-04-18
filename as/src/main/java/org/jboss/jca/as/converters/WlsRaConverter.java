@@ -28,13 +28,18 @@ import org.jboss.jca.as.converters.wls.api.metadata.ConfigProperty;
 import org.jboss.jca.as.converters.wls.api.metadata.ConnectionDefinition;
 import org.jboss.jca.as.converters.wls.api.metadata.ConnectionDefinitionProperties;
 import org.jboss.jca.as.converters.wls.api.metadata.ConnectionInstance;
+import org.jboss.jca.as.converters.wls.api.metadata.InboundCallerPrincipalMapping;
+import org.jboss.jca.as.converters.wls.api.metadata.InboundGroupPrincipalMapping;
 import org.jboss.jca.as.converters.wls.api.metadata.PoolParams;
+import org.jboss.jca.as.converters.wls.api.metadata.SecurityWorkContext;
 import org.jboss.jca.as.converters.wls.api.metadata.TransactionSupport;
 import org.jboss.jca.as.converters.wls.api.metadata.WeblogicConnector;
 import org.jboss.jca.as.converters.wls.metadata.ConnectionDefinitionPropertiesImpl;
 import org.jboss.jca.as.converters.wls.metadata.WeblogicRaPasrer;
 import org.jboss.jca.common.api.metadata.Defaults;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
+import org.jboss.jca.common.metadata.common.v11.WorkManagerImpl;
+import org.jboss.jca.common.metadata.common.v11.WorkManagerSecurityImpl;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -82,6 +87,17 @@ public class WlsRaConverter
       WeblogicRaPasrer parser = new WeblogicRaPasrer();
       WeblogicConnector wlsConnector = parser.parse(in);
 
+      convert(wlsConnector, out);
+   }
+   
+   /**
+    * convert 
+    * @param wlsConnector WeblogicConnector
+    * @param out outputStream
+    * @throws Exception exception
+    */
+   public void convert(WeblogicConnector wlsConnector, OutputStream out) throws Exception
+   {
       ConnectionFactories ds = transform(wlsConnector);
 
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -97,7 +113,6 @@ public class WlsRaConverter
       serializer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 
       serializer.transform(new DOMSource(doc), new StreamResult(out));
-
    }
    
    private ConnectionFactories transform(WeblogicConnector ra) throws Exception
@@ -126,11 +141,13 @@ public class WlsRaConverter
             
             if (myCdProps.getTransactionSupport().equals(TransactionSupport.NoTransaction))
             {
-               noTxConnectionFactory.add(buildNoTxConnectionFactory(conInstance.getJndiName(), myCdProps, ra));
+               noTxConnectionFactory.add(buildNoTxConnectionFactory("java:jboss/" + conInstance.getJndiName(), 
+                     myCdProps, ra));
             }
             else
             {
-               txConnectionFactory.add(buildTxConnectionFactory(conInstance.getJndiName(), myCdProps, ra));
+               txConnectionFactory.add(buildTxConnectionFactory("java:jboss/" + conInstance.getJndiName(), 
+                     myCdProps, ra));
             }
          }
       }
@@ -147,8 +164,8 @@ public class WlsRaConverter
             "FIXME", connProps, TransactionSupportEnum.NoTransaction);
       transformAdminObjects(noTxCf, ra);
       transformResourceAdapter(noTxCf, myCdProps);
-      noTxCf.buildResourceAdapterImpl();
       transformSecurity(noTxCf, ra);
+      noTxCf.buildResourceAdapterImpl();
       return noTxCf;
    }
 
@@ -171,6 +188,7 @@ public class WlsRaConverter
       }
       transformAdminObjects(txCf, ra);
       transformResourceAdapter(txCf, myCdProps);
+      transformSecurity(txCf, ra);
       txCf.buildResourceAdapterImpl();
       return txCf;
    }
@@ -182,7 +200,9 @@ public class WlsRaConverter
             Defaults.PREFILL, Defaults.USE_STRICT_MIN, Defaults.INTERLEAVING);
       lcf.buildTimeOut(new Long(myCdProps.getPoolParams().getConnectionReserveTimeoutSeconds() * 1000), new Long(
             myCdProps.getPoolParams().getConnectionReserveTimeoutSeconds()), 5, 
-            new Long(myCdProps.getPoolParams().getTestFrequencySeconds() * 1000), 0);
+            new Long(myCdProps.getPoolParams().getConnectionCreationRetryFrequencySeconds() * 1000), 0);
+      lcf.buildValidation(true, new Long(myCdProps.getPoolParams().getTestFrequencySeconds() * 1000), 
+            Defaults.USE_FAST_FAIL);
       lcf.buildSecurity("", "", true);
    }
 
@@ -279,6 +299,30 @@ public class WlsRaConverter
    
    private void transformSecurity(LegacyConnectionFactoryImp lcf, WeblogicConnector ra) throws Exception
    {
+      SecurityWorkContext swc = ra.getSecurity().getSecurityWorkContext();
+      if (swc == null)
+         return;
       
+      boolean mappingRequired = swc.getInboundMappingRequired();
+      
+      String defaultPrincipal = swc.getCallerPrincipalDefaultMapped().getPrincipalName();
+      Map<String, String> userMappings = new HashMap<String, String>();
+      for (InboundCallerPrincipalMapping icpm : swc.getCallerPrincipalMapping())
+      {
+         userMappings.put(icpm.getEisCallerPrincipal(), icpm.getMappedCallerPrincipal().getPrincipalName());
+      }
+      
+      List<String> defaultGroups = new ArrayList<String>();
+      defaultGroups.add(swc.getGroupPrincipalDefaultMapped());
+      Map<String, String> groupMappings = new HashMap<String, String>();
+      for (InboundGroupPrincipalMapping igpm : swc.getGroupPrincipalMapping())
+      {
+         groupMappings.put(igpm.getEisGroupPrincipal(), igpm.getMappedGroupPrincipal());
+      }
+      
+      WorkManagerSecurityImpl wmsImpl = new WorkManagerSecurityImpl(mappingRequired, "FIXME", defaultPrincipal,
+         defaultGroups, userMappings, groupMappings);
+      
+      lcf.buildWorkManager(new WorkManagerImpl(wmsImpl));
    }
 }

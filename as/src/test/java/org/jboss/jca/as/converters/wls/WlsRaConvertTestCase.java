@@ -22,17 +22,24 @@
 
 package org.jboss.jca.as.converters.wls;
 
-import org.jboss.jca.as.converters.wls.api.metadata.OutboundResourceAdapter;
+import org.jboss.jca.as.converters.WlsRaConverter;
 import org.jboss.jca.as.converters.wls.api.metadata.WeblogicConnector;
 import org.jboss.jca.as.converters.wls.metadata.WeblogicRaPasrer;
 import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
 import org.jboss.jca.common.api.metadata.common.CommonConnDef;
-import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter;
+import org.jboss.jca.common.api.metadata.common.CommonPool;
+import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
+import org.jboss.jca.common.api.metadata.common.CommonValidation;
+import org.jboss.jca.common.api.metadata.common.v11.WorkManager;
 import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapters;
+import org.jboss.jca.common.api.metadata.resourceadapter.v11.ResourceAdapter;
 import org.jboss.jca.common.metadata.resourceadapter.v11.ResourceAdapterParser;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 import org.jboss.logging.Logger;
 
@@ -65,82 +72,125 @@ public class WlsRaConvertTestCase
       InputStream in = WlsRaConvertTestCase.class.getClassLoader().getResourceAsStream("wlsra/" + wlsRaFilesName);
       WeblogicRaPasrer parser = new WeblogicRaPasrer();
       WeblogicConnector wlsConnector = parser.parse(in);
-
       assertNotNull(wlsConnector);
       
       ResourceAdapterParser raParser = new ResourceAdapterParser();
       InputStream ijRaIn = WlsRaConvertTestCase.class.getClassLoader().getResourceAsStream("wlsra/" + ijRaFilesName);
       ResourceAdapters ras = raParser.parse(ijRaIn);
-      List<ResourceAdapter> listRa = ras.getResourceAdapters();
-      
+      List<?> listRa = ras.getResourceAdapters();
       assertNotNull(listRa);
+      ResourceAdapter target = (ResourceAdapter)listRa.get(0);
+      assertNotNull(target);
       
-      assertAdminObjects(wlsConnector, listRa);
-      assertConfigProperties(wlsConnector, listRa);
-      assertResourceAdapter(wlsConnector, listRa);
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      WlsRaConverter converter = new WlsRaConverter();
+      converter.convert(wlsConnector, baos);
+      System.out.println(baos.toString());
+      
+      ByteArrayInputStream bais = new ByteArrayInputStream(baos.toString().getBytes());
+      List<?> listRb = raParser.parse(bais).getResourceAdapters();
+      assertNotNull(listRb);
+      ResourceAdapter source = (ResourceAdapter)listRb.get(0);
+      assertNotNull(source);
+      
+      checkMapEqualSize(source.getConfigProperties(), target.getConfigProperties());
+      assertConfigProps(source.getConfigProperties(), target.getConfigProperties());
+      
+      assertAdminObjects(source.getAdminObjects(), target.getAdminObjects());
+
+      assertResourceAdapter(source.getConnectionDefinitions(), target.getConnectionDefinitions());
+      
+      asesertSecurity(source.getWorkManager(), target.getWorkManager());
    }
 
-   private void assertAdminObjects(WeblogicConnector wlsConnector, List<ResourceAdapter> listRa)
+   private void assertAdminObjects(List<CommonAdminObject> source, List<CommonAdminObject> target)
    {
-      ResourceAdapter ra = listRa.get(0);
-      assertNotNull(ra);
-      assertNotNull(ra.getAdminObjects());
-      assertEquals(ra.getAdminObjects().size(), 1);
+      checkListEqualSize(source, target);
       
-      CommonAdminObject ao = ra.getAdminObjects().get(0);
-      assertEquals(ao.getClassName(), 
-         wlsConnector.getAdminObjects().getAdminObjectGroup().get(0).getAdminObjectClass());
-      assertTrue(ao.getJndiName().indexOf(wlsConnector.getAdminObjects().getAdminObjectGroup().get(0).
-         getAdminObjectInstance().get(0).getJndiName()) > 0);
-      assertEquals(ao.getConfigProperties().size(), 3);
-      assertEquals(ao.getConfigProperties().get("aoi1name"), "aoi1value");
+      for (int i = 0; i < source.size(); i++)
+      {
+         CommonAdminObject aoSource =  source.get(i);
+         CommonAdminObject aoTarget =  target.get(i);
+         assertEquals(aoSource.getClassName(), aoTarget.getClassName());
+         assertEquals(aoSource.getJndiName(), aoTarget.getJndiName());
+         assertEquals(aoSource.getConfigProperties().size(), aoTarget.getConfigProperties().size());
+         assertConfigProps(aoSource.getConfigProperties(), aoTarget.getConfigProperties());
+      }
+   }
+   
+   private void checkListEqualSize(List<?> source, List<?> target)
+   {
+      assertNotNull(source);
+      assertNotNull(target);
+      assertEquals(source.size(), target.size());
+   }
+   private void checkMapEqualSize(Map<?, ?> source, Map<?, ?> target)
+   {
+      assertNotNull(source);
+      assertNotNull(target);
+      assertEquals(source.size(), target.size());
    }
 
-   private void assertConfigProperties(WeblogicConnector wlsConnector, List<ResourceAdapter> listRa)
+   private void assertConfigProps(Map<String, String> source, Map<String, String> target)
    {
-      ResourceAdapter ra = listRa.get(0);
-      assertNotNull(ra);
-      assertNotNull(ra.getConfigProperties());
-      assertEquals(ra.getConfigProperties().size(), 1);
-      assertEquals(ra.getConfigProperties().get("ra1name"), "ra1value");
+      for (String key : source.keySet())
+      {
+         assertEquals(source.get(key), target.get(key));
+      }
    }
 
-   private void assertResourceAdapter(WeblogicConnector wlsConnector, List<ResourceAdapter> listRa)
+   private void assertResourceAdapter(List<CommonConnDef> source, List<CommonConnDef> target)
    {
-      ResourceAdapter ra = listRa.get(0);
-      assertNotNull(ra);
+      checkListEqualSize(source, target);
       
-      CommonConnDef conn = ra.getConnectionDefinitions().get(0);
-      OutboundResourceAdapter wlc = wlsConnector.getOutboundResourceAdapter();
-      
-      //props
-      assertNotNull(conn.getConfigProperties());
-      assertEquals(conn.getConfigProperties().size(), 1);
-      assertEquals(conn.getConfigProperties().get("dcp1name"), "dcp1value");
-      
-      assertNotNull(wlc.getDefaultConnectionProperties().getProperties().getProperty());
-      assertEquals(wlc.getDefaultConnectionProperties().getProperties().getProperty().size(), 1);
-      assertEquals(wlc.getDefaultConnectionProperties().getProperties().getProperty().get(0).getName(), "dcp1name");
-      assertEquals(wlc.getDefaultConnectionProperties().getProperties().getProperty().get(0).getValue(), "dcp1value");
-      
-      //pool
-      assertEquals(conn.getPool().getMaxPoolSize(), 
-            wlc.getDefaultConnectionProperties().getPoolParams().getMaxCapacity());
-      assertEquals(conn.getPool().getMinPoolSize(), 
-            wlc.getDefaultConnectionProperties().getPoolParams().getInitialCapacity());
-      
-      //timeout
-      assertEquals(conn.getTimeOut().getBlockingTimeoutMillis().intValue(),
-            wlc.getDefaultConnectionProperties().getPoolParams().getConnectionReserveTimeoutSeconds() * 1000);
-      assertEquals(conn.getTimeOut().getAllocationRetryWaitMillis().intValue(),
-            wlc.getDefaultConnectionProperties().getPoolParams().getConnectionCreationRetryFrequencySeconds() * 1000);
+      for (int i = 0; i < source.size(); i++)
+      {
+         CommonConnDef raSource =  source.get(i);
+         CommonConnDef raTarget =  source.get(i);
+         checkMapEqualSize(raSource.getConfigProperties(), raTarget.getConfigProperties());
+         assertConfigProps(raSource.getConfigProperties(), raTarget.getConfigProperties());
+         assertEquals(raSource.getJndiName(), raTarget.getJndiName());
+         
+         assertPool(raSource.getPool(), raTarget.getPool());
+         assertTimeout(raSource.getTimeOut(), raTarget.getTimeOut());
+         assertValidation(raSource.getValidation(), raTarget.getValidation());
+      }
+   }
 
-      //validation
-      assertEquals(conn.getValidation().getBackgroundValidationMillis().intValue(),
-            wlc.getDefaultConnectionProperties().getPoolParams().getTestFrequencySeconds() * 1000);
-      
-      assertTrue(conn.getJndiName()
-            .indexOf(wlc.getConnectionDefinitionGroup().get(0).getConnectionInstance().get(0).getJndiName()) > 0);
-      
+   private void assertPool(CommonPool source, CommonPool target)
+   {
+      assertNotNull(source);
+      assertNotNull(target);
+      assertEquals(source.getMinPoolSize(), target.getMinPoolSize());
+      assertEquals(source.getMaxPoolSize(), target.getMaxPoolSize());
+   }
+   
+   private void assertTimeout(CommonTimeOut source, CommonTimeOut target)
+   {
+      assertNotNull(source);
+      assertNotNull(target);
+      assertEquals(source.getAllocationRetry(), target.getAllocationRetry());
+      assertEquals(source.getBlockingTimeoutMillis(), target.getBlockingTimeoutMillis());
+      assertEquals(source.getIdleTimeoutMinutes(), target.getIdleTimeoutMinutes());
+   }
+   
+   private void assertValidation(CommonValidation source, CommonValidation target)
+   {
+      assertNotNull(source);
+      assertNotNull(target);
+      assertEquals(source.getBackgroundValidationMillis(), target.getBackgroundValidationMillis());
+   }
+   
+   private void asesertSecurity(WorkManager source, WorkManager target)
+   {
+      assertNotNull(source);
+      assertNotNull(target);
+      assertEquals(source.getSecurity().isMappingRequired(), target.getSecurity().isMappingRequired());
+      assertEquals(source.getSecurity().getDefaultPrincipal(), target.getSecurity().getDefaultPrincipal());
+      checkListEqualSize(source.getSecurity().getDefaultGroups(), target.getSecurity().getDefaultGroups());
+      //checkMapEqualSize(source.getSecurity().getUserMappings(), target.getSecurity().getUserMappings());
+      //assertConfigProps(source.getSecurity().getUserMappings(), target.getSecurity().getUserMappings());
+      //checkMapEqualSize(source.getSecurity().getGroupMappings(), target.getSecurity().getGroupMappings());
+      //assertConfigProps(source.getSecurity().getGroupMappings(), target.getSecurity().getGroupMappings());
    }
 }

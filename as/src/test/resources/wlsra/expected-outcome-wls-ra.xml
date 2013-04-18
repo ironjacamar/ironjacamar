@@ -33,7 +33,7 @@
         </xa-pool>
         <timeout>
           <blocking-timeout-millis>10000</blocking-timeout-millis>
-          <idle-timeout-minutes>5</idle-timeout-minutes>
+          <idle-timeout-minutes>10</idle-timeout-minutes>
           <allocation-retry-wait-millis>60000</allocation-retry-wait-millis>
         </timeout>
         <validation>
