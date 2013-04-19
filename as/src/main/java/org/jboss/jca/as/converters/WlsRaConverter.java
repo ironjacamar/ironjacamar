@@ -199,7 +199,7 @@ public class WlsRaConverter
       lcf.buildCommonPool(myCdProps.getPoolParams().getInitialCapacity(), myCdProps.getPoolParams().getMaxCapacity(),
             Defaults.PREFILL, Defaults.USE_STRICT_MIN, Defaults.INTERLEAVING);
       lcf.buildTimeOut(new Long(myCdProps.getPoolParams().getConnectionReserveTimeoutSeconds() * 1000), new Long(
-            myCdProps.getPoolParams().getConnectionReserveTimeoutSeconds()), 5, 
+            myCdProps.getPoolParams().getShrinkFrequencySeconds() / 60), 5, 
             new Long(myCdProps.getPoolParams().getConnectionCreationRetryFrequencySeconds() * 1000), 0);
       lcf.buildValidation(true, new Long(myCdProps.getPoolParams().getTestFrequencySeconds() * 1000), 
             Defaults.USE_FAST_FAIL);
@@ -209,7 +209,6 @@ public class WlsRaConverter
    private ConnectionDefinitionProperties mergedCdProps(ConnectionDefinitionProperties oldCdProps, 
          ConnectionDefinitionProperties newCdProps)
    {
-      //TODO should merge more properties
       PoolParams poolParams = newCdProps.getPoolParams() == null ? 
             oldCdProps.getPoolParams() : newCdProps.getPoolParams();
       ConfigProperties props = newCdProps.getProperties() == null ?
