@@ -241,7 +241,6 @@ public class CodeGenWizard extends Wizard implements INewWizard
       project.setDescription(description, progressMonitor);
 
       String path = new File(project.getLocationURI()).toString();
-      System.out.println(path);
 
       def.setOutputDir(path);
 
@@ -319,7 +318,10 @@ public class CodeGenWizard extends Wizard implements INewWizard
       entries.addAll(Arrays.asList(javaProject.getRawClasspath()));
       entries.remove(JavaCore.newSourceEntry(new Path("/" + getProjectName())));
       entries.add(JavaCore.newSourceEntry(new Path("/" + getProjectName() + "/src/main/java")));
-      entries.add(JavaCore.newSourceEntry(new Path("/" + getProjectName() + "/src/main/resources")));
+      if (willResourcesGenerated())
+      {
+         entries.add(JavaCore.newSourceEntry(new Path("/" + getProjectName() + "/src/main/resources")));
+      }
 
       IVMInstall vmInstall = JavaRuntime.getDefaultVMInstall();
       LibraryLocation[] locations = JavaRuntime.getLibraryLocations(vmInstall);
@@ -338,6 +340,23 @@ public class CodeGenWizard extends Wizard implements INewWizard
 
       monitor.worked(1);
 
+   }
+
+   private boolean willResourcesGenerated()
+   {
+      if (def.getVersion().equals("1.0") || def.getVersion().equals(Connector15.XML_VERSION))
+      {
+         return true;
+      }
+      if (def.isSupportOutbound())
+      {
+         return true;
+      }
+      if (def.isUseAnnotation())
+      {
+         return false;
+      }
+      return true;
    }
 
    /**
