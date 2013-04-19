@@ -21,8 +21,8 @@
  */
 package org.jboss.jca.core.connectionmanager.pool;
 
-import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
+import org.jboss.jca.core.connectionmanager.NoTxConnectionManager;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolStatistics;
@@ -304,40 +304,16 @@ public class OnePoolNoTxTestCase extends PoolTestCaseAbstract
       mcps.setEnabled(true);
       assertTrue(mcps.isEnabled());
    }
-
+   
    /**
     * 
-    * testPrefill
-    * 
-    * @throws Exception in case of unexpected errors
+    * checkConfig
+    *
     */
    @Test
-   public void testPrefill() throws Exception
+   public void checkConfig()
    {
-      AbstractPool pl = getPool();
-      PoolConfiguration pc = new PoolConfiguration();
-      pc.setPrefill(true);
-      pc.setMaxSize(5);
-      pc.setMinSize(3);
-      AbstractPrefillPool pool = new OnePool(pl.getManagedConnectionFactory(), pc, true, pl.isSharable());
-      pool.setConnectionListenerFactory(pl.getConnectionListenerFactory());
-      pool.setName("Prefilled");
-      pool.flush();
-      pool.prefill(null, null, true);
-      assertEquals(pool.getManagedConnectionPools().size(), 1);
-      PoolStatistics ps = pool.getStatistics();
-      Thread.sleep(1000);
-      assertEquals(ps.getAvailableCount(), 5);
-      assertEquals(ps.getActiveCount(), 3);
-      for (ManagedConnectionPool mcp : pool.getManagedConnectionPools().values())
-      {
-         assertFalse(mcp.isEmpty());
-         assertTrue(mcp.isRunning());
-         ps = mcp.getStatistics();
-
-         assertEquals(ps.getAvailableCount(), 5);
-         assertEquals(ps.getActiveCount(), 3);
-      }
+      checkConfiguration(NoTxConnectionManager.class, OnePool.class);
    }
 
 }

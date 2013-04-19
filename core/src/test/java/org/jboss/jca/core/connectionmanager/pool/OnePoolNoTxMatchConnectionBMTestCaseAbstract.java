@@ -82,7 +82,6 @@ public abstract class OnePoolNoTxMatchConnectionBMTestCaseAbstract extends OnePo
       int destroyed = ps.getDestroyedCount();
       int active = ps.getActiveCount();
       SimpleConnection c = cf.getConnection();
-      Thread.sleep(1000);
       assertEquals(ps.getDestroyedCount(), destroyed + (wholePoolShouldBeDestroyed ? active : 1));
       c.close();
    }

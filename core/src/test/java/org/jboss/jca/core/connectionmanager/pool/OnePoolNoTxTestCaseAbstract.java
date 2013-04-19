@@ -22,14 +22,10 @@
 package org.jboss.jca.core.connectionmanager.pool;
 
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
-import org.jboss.jca.core.connectionmanager.NoTxConnectionManager;
-import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
 import org.jboss.jca.core.connectionmanager.rar.SimpleManagedConnectionFactory;
 import org.jboss.jca.embedded.dsl.ironjacamar11.api.ConnectionDefinitionType;
 import org.jboss.jca.embedded.dsl.ironjacamar11.api.IronjacamarDescriptor;
 import org.jboss.jca.embedded.dsl.ironjacamar11.api.PoolType;
-
-import org.junit.Test;
 
 /**
  * 
@@ -62,16 +58,6 @@ public class OnePoolNoTxTestCaseAbstract extends PoolTestCaseAbstract
    }
 
 
-   /**
-    * 
-    * checkConfig
-    *
-    */
-   @Test
-   public void checkConfig()
-   {
-      checkConfiguration(NoTxConnectionManager.class, OnePool.class);
-   }
 
 }
 
