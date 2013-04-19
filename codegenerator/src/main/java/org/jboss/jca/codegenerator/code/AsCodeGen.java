@@ -23,6 +23,7 @@ package org.jboss.jca.codegenerator.code;
 
 import org.jboss.jca.codegenerator.ConfigPropType;
 import org.jboss.jca.codegenerator.Definition;
+import org.jboss.jca.common.api.metadata.ra.ra15.Connector15;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -90,6 +91,68 @@ public class AsCodeGen extends PropsCodeGen
       writeResourceAdapter(def, out, indent);
       
       writeRightCurlyBracket(out, 0);
+   }
+   
+   @Override
+   void writeDefaultConstructor(Definition def, Writer out, int indent) throws IOException
+   {
+      if (!def.getVersion().equals(Connector15.XML_VERSION))
+      {
+         super.writeDefaultConstructor(def, out, indent);
+         return;
+      }
+      // only for JCA 1.5
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Default constructor");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      
+      //constructor
+      writeIndent(out, indent);
+      out.write("public " + getClassName(def) + "()");
+      writeLeftCurlyBracket(out, indent);
+      writeConfigPropsDefaults(def, out, indent);
+      writeRightCurlyBracket(out, indent);
+      writeEol(out);
+      
+   }
+
+   private void writeConfigPropsDefaults(Definition def, Writer out, int indent) throws IOException
+   {
+      List<ConfigPropType> configPropTypes = def.getAsConfigProps();
+      if (configPropTypes == null)
+      {
+         return;
+      }
+      for (ConfigPropType configPropType: configPropTypes)
+      {
+         String name = configPropType.getName();
+         String type = configPropType.getType();
+         String value = configPropType.getValue();
+         if (value != null && value.length() > 0)
+         {
+            writeIndent(out, indent);
+            writeIndent(out, indent);
+            if (type.equals("Character"))
+            {
+               out.write("this." + name + " = " + type + ".valueOf(\'" + value + "\');");
+            }
+            else if (type.equals("String"))
+            {
+               out.write("this." + name + " = \"" + value + "\";");
+            }
+            else
+            {
+               out.write("this." + name + " = " + type + ".valueOf(\"" + value + "\");");
+            }
+            writeEol(out);
+         }
+      }
    }
    
    /**
