@@ -239,7 +239,7 @@ public class LegacyCfParser extends AbstractParser
                         allocationRetryWaitMillis, null);
                   cfImpl.buildSecurity(securityDomainManaged, securityDomainAndApplicationManaged, applicationManaged);
                   cfImpl.buildValidation(backgroundValidation, backgroundValidationMillis, useFastFail);
-                  cfImpl.buildCommonPool(minPoolSize, maxPoolSize, prefill, Defaults.NO_TX_SEPARATE_POOL, 
+                  cfImpl.buildCommonPool(minPoolSize, maxPoolSize, prefill, null, Defaults.NO_TX_SEPARATE_POOL, 
                         Defaults.INTERLEAVING);
                   cfImpl.buildResourceAdapterImpl();
                   return cfImpl;
@@ -389,7 +389,7 @@ public class LegacyCfParser extends AbstractParser
                         allocationRetryWaitMillis, xaResourceTimeout);
                   cfImpl.buildSecurity(securityDomainManaged, securityDomainAndApplicationManaged, applicationManaged);
                   cfImpl.buildValidation(backgroundValidation, backgroundValidationMillis, useFastFail);
-                  cfImpl.buildCommonPool(minPoolSize, maxPoolSize, prefill, noTxSeparatePool, interleaving);
+                  cfImpl.buildCommonPool(minPoolSize, maxPoolSize, prefill, null, noTxSeparatePool, interleaving);
                   cfImpl.buildResourceAdapterImpl();
                   return cfImpl;
                }

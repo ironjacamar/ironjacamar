@@ -22,6 +22,7 @@
 package org.jboss.jca.as.converters;
 
 import org.jboss.jca.common.api.metadata.Defaults;
+import org.jboss.jca.common.api.metadata.common.Capacity;
 import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
 import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.common.Recovery;
@@ -190,17 +191,18 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
     * @param minPoolSize minPoolSize
     * @param maxPoolSize maxPoolSize
     * @param prefill prefill
+    * @param capacity capacity
     * @param noTxSeparatePool noTxSeparatePool
     * @param interleaving interleaving
     * @return this
     * @throws Exception exception
     */
    public LegacyConnectionFactoryImp buildCommonPool(Integer minPoolSize, Integer maxPoolSize, 
-         Boolean prefill, Boolean noTxSeparatePool, Boolean interleaving) throws Exception
+         Boolean prefill, Capacity capacity, Boolean noTxSeparatePool, Boolean interleaving) throws Exception
    {
       if (transactionSupport == TransactionSupportEnum.XATransaction)
          pool = new ConnDefXaPoolImpl(minPoolSize, minPoolSize, maxPoolSize, prefill, Defaults.USE_STRICT_MIN, 
-            Defaults.FLUSH_STRATEGY, null, Defaults.IS_SAME_RM_OVERRIDE, interleaving, Defaults.PAD_XID, 
+            Defaults.FLUSH_STRATEGY, capacity, Defaults.IS_SAME_RM_OVERRIDE, interleaving, Defaults.PAD_XID, 
             Defaults.WRAP_XA_RESOURCE, noTxSeparatePool);
       else
          pool = new CommonPoolImpl(minPoolSize, maxPoolSize, prefill, Defaults.USE_STRICT_MIN, Defaults.FLUSH_STRATEGY);

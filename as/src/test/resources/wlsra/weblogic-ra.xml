@@ -175,7 +175,7 @@
         <initial-capacity>5</initial-capacity>
         <!-- Mapped -->
         <max-capacity>20</max-capacity>
-        <!-- Not mapped -->
+        <!-- Mapped -->
         <capacity-increment>5</capacity-increment>
         <!-- Not mapped -->
         <shrinking-enabled>true</shrinking-enabled>

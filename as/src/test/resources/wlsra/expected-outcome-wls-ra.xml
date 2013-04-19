@@ -30,6 +30,11 @@
           <min-pool-size>5</min-pool-size>
           <initial-pool-size>5</initial-pool-size>
           <max-pool-size>20</max-pool-size>
+          <capacity>
+            <incrementer class-name="org.jboss.jca.core.connectionmanager.pool.capacity.SizeIncrementer">
+              <config-property name="Size">5</config-property>
+            </incrementer>
+          </capacity>
         </xa-pool>
         <timeout>
           <blocking-timeout-millis>10000</blocking-timeout-millis>

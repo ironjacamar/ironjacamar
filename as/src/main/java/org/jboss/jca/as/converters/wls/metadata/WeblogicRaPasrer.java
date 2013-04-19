@@ -753,6 +753,7 @@ public class WeblogicRaPasrer extends AbstractParser implements MetadataParser<W
       Integer connectionCreationRetryFrequencySeconds = null;
       Integer connectionReserveTimeoutSeconds = null;
       Integer testFrequencySeconds = null;
+      Integer capacityIncrement = null;
       
       while (reader.hasNext())
       {
@@ -762,7 +763,7 @@ public class WeblogicRaPasrer extends AbstractParser implements MetadataParser<W
                if (ConnectionDefinitionProperties.Tag.forName(reader.getLocalName()) == 
                   ConnectionDefinitionProperties.Tag.POOL_PARAMS)
                {
-                  return new PoolParamsImpl(initialCapacity, maxCapacity, shrinkFrequencySeconds, 
+                  return new PoolParamsImpl(initialCapacity, maxCapacity, capacityIncrement, shrinkFrequencySeconds, 
                      connectionCreationRetryFrequencySeconds, connectionReserveTimeoutSeconds, testFrequencySeconds);
                }
                else
@@ -801,7 +802,10 @@ public class WeblogicRaPasrer extends AbstractParser implements MetadataParser<W
                      testFrequencySeconds = elementAsInteger(reader);
                      break;
                   }
-                  case CAPACITY_INCREMENT:
+                  case CAPACITY_INCREMENT: {
+                     capacityIncrement = elementAsInteger(reader);
+                     break;
+                  }
                   case SHRINKING_ENABLED : 
                   case HIGHEST_NUM_WAITERS :
                   case HIGHEST_NUM_UNAVILABE :

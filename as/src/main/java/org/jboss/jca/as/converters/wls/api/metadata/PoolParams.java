@@ -52,7 +52,7 @@ public interface PoolParams extends WlsMetadata
     * 
     * @return the CapacityIncrement
     */
-   public Boolean getCapacityIncrement();
+   public Integer getCapacityIncrement();
    
    /**
     * getShrinkingEnabled

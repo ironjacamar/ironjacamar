@@ -30,6 +30,7 @@ import org.jboss.jca.common.api.metadata.common.CommonConnDef;
 import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
 import org.jboss.jca.common.api.metadata.common.CommonValidation;
+import org.jboss.jca.common.api.metadata.common.v11.ConnDefXaPool;
 import org.jboss.jca.common.api.metadata.common.v11.WorkManager;
 import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapters;
 import org.jboss.jca.common.api.metadata.resourceadapter.v11.ResourceAdapter;
@@ -81,17 +82,17 @@ public class WlsRaConvertTestCase
       assertNotNull(listRa);
       ResourceAdapter target = (ResourceAdapter)listRa.get(0);
       assertNotNull(target);
-      
+
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       WlsRaConverter converter = new WlsRaConverter();
       converter.convert(wlsConnector, baos);
-      System.out.println(baos.toString());
       
       ByteArrayInputStream bais = new ByteArrayInputStream(baos.toString().getBytes());
       List<?> listRb = raParser.parse(bais).getResourceAdapters();
       assertNotNull(listRb);
       ResourceAdapter source = (ResourceAdapter)listRb.get(0);
       assertNotNull(source);
+
       
       checkMapEqualSize(source.getConfigProperties(), target.getConfigProperties());
       assertConfigProps(source.getConfigProperties(), target.getConfigProperties());
@@ -146,11 +147,12 @@ public class WlsRaConvertTestCase
       for (int i = 0; i < source.size(); i++)
       {
          CommonConnDef raSource =  source.get(i);
-         CommonConnDef raTarget =  source.get(i);
+         CommonConnDef raTarget =  target.get(i);
          checkMapEqualSize(raSource.getConfigProperties(), raTarget.getConfigProperties());
          assertConfigProps(raSource.getConfigProperties(), raTarget.getConfigProperties());
          assertEquals(raSource.getJndiName(), raTarget.getJndiName());
          
+
          assertPool(raSource.getPool(), raTarget.getPool());
          assertTimeout(raSource.getTimeOut(), raTarget.getTimeOut());
          assertValidation(raSource.getValidation(), raTarget.getValidation());
@@ -163,15 +165,23 @@ public class WlsRaConvertTestCase
       assertNotNull(target);
       assertEquals(source.getMinPoolSize(), target.getMinPoolSize());
       assertEquals(source.getMaxPoolSize(), target.getMaxPoolSize());
+
+      assertNotNull(((ConnDefXaPool)source).getCapacity());
+      assertNotNull(((ConnDefXaPool)target).getCapacity());
+      assertEquals(
+            ((ConnDefXaPool)source).getCapacity().getIncrementer().
+            getConfigPropertiesMap().get("Size"), 
+            ((ConnDefXaPool)target).getCapacity().getIncrementer().
+            getConfigPropertiesMap().get("Size"));
    }
    
    private void assertTimeout(CommonTimeOut source, CommonTimeOut target)
    {
       assertNotNull(source);
       assertNotNull(target);
-      assertEquals(source.getAllocationRetry(), target.getAllocationRetry());
       assertEquals(source.getBlockingTimeoutMillis(), target.getBlockingTimeoutMillis());
       assertEquals(source.getIdleTimeoutMinutes(), target.getIdleTimeoutMinutes());
+      assertEquals(source.getAllocationRetryWaitMillis(), target.getAllocationRetryWaitMillis());
    }
    
    private void assertValidation(CommonValidation source, CommonValidation target)

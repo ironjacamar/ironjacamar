@@ -41,23 +41,27 @@ public class PoolParamsImpl implements PoolParams
    private final Integer connectionCreationRetryFrequencySeconds;
    private final Integer connectionReserveTimeoutSeconds;
    private final Integer testFrequencySeconds;
+   private final Integer capacityIncrement;
    
    /**
     * constructor
     * 
     * @param initialCapacity initialCapacity
     * @param maxCapacity maxCapacity
+    * @param capacityIncrement capacityIncrement
     * @param shrinkFrequencySeconds shrinkFrequencySeconds
     * @param connectionCreationRetryFrequencySeconds connectionCreationRetryFrequencySeconds
     * @param connectionReserveTimeoutSeconds connectionReserveTimeoutSeconds
     * @param testFrequencySeconds testFrequencySeconds
     */
-   public PoolParamsImpl(Integer initialCapacity, Integer maxCapacity, Integer shrinkFrequencySeconds,
+   public PoolParamsImpl(Integer initialCapacity, Integer maxCapacity, 
+      Integer capacityIncrement, Integer shrinkFrequencySeconds,
       Integer connectionCreationRetryFrequencySeconds, Integer connectionReserveTimeoutSeconds, 
       Integer testFrequencySeconds)
    {
       this.initialCapacity = initialCapacity;
       this.maxCapacity = maxCapacity;
+      this.capacityIncrement = capacityIncrement;
       this.shrinkFrequencySeconds = shrinkFrequencySeconds;
       this.connectionCreationRetryFrequencySeconds = connectionCreationRetryFrequencySeconds;
       this.connectionReserveTimeoutSeconds = connectionReserveTimeoutSeconds;
@@ -86,9 +90,9 @@ public class PoolParamsImpl implements PoolParams
     * @see org.jboss.jca.as.converters.wls.api.metadata.PoolParams#getCapacityIncrement()
     */
    @Override
-   public Boolean getCapacityIncrement()
+   public Integer getCapacityIncrement()
    {
-      return null;
+      return capacityIncrement;
    }
 
    /* (non-Javadoc)

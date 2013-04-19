@@ -37,6 +37,8 @@ import org.jboss.jca.as.converters.wls.api.metadata.WeblogicConnector;
 import org.jboss.jca.as.converters.wls.metadata.ConnectionDefinitionPropertiesImpl;
 import org.jboss.jca.as.converters.wls.metadata.WeblogicRaPasrer;
 import org.jboss.jca.common.api.metadata.Defaults;
+import org.jboss.jca.common.api.metadata.common.Capacity;
+import org.jboss.jca.common.api.metadata.common.Extension;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.metadata.common.v11.WorkManagerImpl;
 import org.jboss.jca.common.metadata.common.v11.WorkManagerSecurityImpl;
@@ -196,8 +198,16 @@ public class WlsRaConverter
    private void transformResourceAdapter(LegacyConnectionFactoryImp lcf, ConnectionDefinitionProperties myCdProps)
       throws Exception
    {
+      Capacity capacity = null;
+      if (myCdProps.getPoolParams().getCapacityIncrement() > 0)
+      {
+         String inc = "org.jboss.jca.core.connectionmanager.pool.capacity.SizeIncrementer";
+         Map<String, String> configProps = new HashMap<String, String>();
+         configProps.put("Size", myCdProps.getPoolParams().getCapacityIncrement().toString());
+         capacity = new Capacity(new Extension(inc, configProps), null);
+      }
       lcf.buildCommonPool(myCdProps.getPoolParams().getInitialCapacity(), myCdProps.getPoolParams().getMaxCapacity(),
-            Defaults.PREFILL, Defaults.USE_STRICT_MIN, Defaults.INTERLEAVING);
+            Defaults.PREFILL, capacity, Defaults.USE_STRICT_MIN, Defaults.INTERLEAVING);
       lcf.buildTimeOut(new Long(myCdProps.getPoolParams().getConnectionReserveTimeoutSeconds() * 1000), new Long(
             myCdProps.getPoolParams().getShrinkFrequencySeconds() / 60), 5, 
             new Long(myCdProps.getPoolParams().getConnectionCreationRetryFrequencySeconds() * 1000), 0);
