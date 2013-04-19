@@ -188,9 +188,9 @@ public class WlsRaConvertTestCase
       assertEquals(source.getSecurity().isMappingRequired(), target.getSecurity().isMappingRequired());
       assertEquals(source.getSecurity().getDefaultPrincipal(), target.getSecurity().getDefaultPrincipal());
       checkListEqualSize(source.getSecurity().getDefaultGroups(), target.getSecurity().getDefaultGroups());
-      //checkMapEqualSize(source.getSecurity().getUserMappings(), target.getSecurity().getUserMappings());
-      //assertConfigProps(source.getSecurity().getUserMappings(), target.getSecurity().getUserMappings());
-      //checkMapEqualSize(source.getSecurity().getGroupMappings(), target.getSecurity().getGroupMappings());
-      //assertConfigProps(source.getSecurity().getGroupMappings(), target.getSecurity().getGroupMappings());
+      checkMapEqualSize(source.getSecurity().getUserMappings(), target.getSecurity().getUserMappings());
+      assertConfigProps(source.getSecurity().getUserMappings(), target.getSecurity().getUserMappings());
+      checkMapEqualSize(source.getSecurity().getGroupMappings(), target.getSecurity().getGroupMappings());
+      assertConfigProps(source.getSecurity().getGroupMappings(), target.getSecurity().getGroupMappings());
    }
 }
