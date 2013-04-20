@@ -198,22 +198,49 @@ public class WlsRaConverter
    private void transformResourceAdapter(LegacyConnectionFactoryImp lcf, ConnectionDefinitionProperties myCdProps)
       throws Exception
    {
+      lcf.buildSecurity("", "", true);
+
+      if (myCdProps == null || myCdProps.getPoolParams() == null)
+         return;
+      
       Capacity capacity = null;
-      if (myCdProps.getPoolParams().getCapacityIncrement() > 0)
+      if (myCdProps.getPoolParams().getCapacityIncrement() != null && 
+            myCdProps.getPoolParams().getCapacityIncrement() > 0)
       {
          String inc = "org.jboss.jca.core.connectionmanager.pool.capacity.SizeIncrementer";
          Map<String, String> configProps = new HashMap<String, String>();
          configProps.put("Size", myCdProps.getPoolParams().getCapacityIncrement().toString());
          capacity = new Capacity(new Extension(inc, configProps), null);
       }
-      lcf.buildCommonPool(myCdProps.getPoolParams().getInitialCapacity(), myCdProps.getPoolParams().getMaxCapacity(),
+      int initialCapacity = 0;
+      int maxCapacity = 0;
+      if (myCdProps.getPoolParams().getInitialCapacity() != null)
+         initialCapacity = myCdProps.getPoolParams().getInitialCapacity();
+      if (myCdProps.getPoolParams().getMaxCapacity() != null)
+         maxCapacity = myCdProps.getPoolParams().getMaxCapacity();
+      if (maxCapacity < initialCapacity)
+         initialCapacity = maxCapacity;
+      lcf.buildCommonPool(initialCapacity, maxCapacity,
             Defaults.PREFILL, capacity, Defaults.USE_STRICT_MIN, Defaults.INTERLEAVING);
-      lcf.buildTimeOut(new Long(myCdProps.getPoolParams().getConnectionReserveTimeoutSeconds() * 1000), new Long(
-            myCdProps.getPoolParams().getShrinkFrequencySeconds() / 60), 5, 
-            new Long(myCdProps.getPoolParams().getConnectionCreationRetryFrequencySeconds() * 1000), 0);
-      lcf.buildValidation(true, new Long(myCdProps.getPoolParams().getTestFrequencySeconds() * 1000), 
-            Defaults.USE_FAST_FAIL);
-      lcf.buildSecurity("", "", true);
+      
+      int connectionReserveTimeoutSeconds = myCdProps.getPoolParams().getConnectionReserveTimeoutSeconds() != null ?
+            myCdProps.getPoolParams().getConnectionReserveTimeoutSeconds() : 0;
+      int shrinkFrequencySeconds = myCdProps.getPoolParams().getShrinkFrequencySeconds() != null ?
+            myCdProps.getPoolParams().getShrinkFrequencySeconds() : 0;
+      int connectionCreationRetryFrequencySeconds = 
+            myCdProps.getPoolParams().getConnectionCreationRetryFrequencySeconds() != null ?
+            myCdProps.getPoolParams().getConnectionCreationRetryFrequencySeconds() : 0;
+            
+      if (connectionReserveTimeoutSeconds + shrinkFrequencySeconds + connectionCreationRetryFrequencySeconds > 0)
+      {
+         lcf.buildTimeOut(new Long(connectionReserveTimeoutSeconds * 1000), new Long(shrinkFrequencySeconds / 60), 5, 
+            new Long(connectionCreationRetryFrequencySeconds * 1000), 0);
+      }
+      
+      int testFrequencySeconds = myCdProps.getPoolParams().getTestFrequencySeconds() != null ?
+            myCdProps.getPoolParams().getTestFrequencySeconds() : 0;
+      if (testFrequencySeconds > 0)
+         lcf.buildValidation(true, new Long(testFrequencySeconds * 1000), Defaults.USE_FAST_FAIL);
    }
 
    private ConnectionDefinitionProperties mergedCdProps(ConnectionDefinitionProperties oldCdProps, 
@@ -308,10 +335,10 @@ public class WlsRaConverter
    
    private void transformSecurity(LegacyConnectionFactoryImp lcf, WeblogicConnector ra) throws Exception
    {
-      SecurityWorkContext swc = ra.getSecurity().getSecurityWorkContext();
-      if (swc == null)
+      if (ra == null || ra.getSecurity() == null || ra.getSecurity().getSecurityWorkContext() == null)
          return;
-      
+      SecurityWorkContext swc = ra.getSecurity().getSecurityWorkContext();
+
       boolean mappingRequired = swc.getInboundMappingRequired();
       
       String defaultPrincipal = swc.getCallerPrincipalDefaultMapped().getPrincipalName();
