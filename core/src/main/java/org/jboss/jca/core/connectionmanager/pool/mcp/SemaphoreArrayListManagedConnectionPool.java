@@ -413,13 +413,6 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                // No, the pool was empty, so we have to make a new one.
                cl = createConnectionEventListener(subject, cri);
 
-               // Trigger prefill
-               prefill();
-
-               // Trigger capacity increase
-               if (pool.getCapacity().getIncrementer() != null)
-                  CapacityFiller.schedule(new CapacityRequest(this, subject, cri));
-
                synchronized (cls)
                {
                   checkedOut.add(cl);
@@ -433,6 +426,13 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
                lastUsed = System.currentTimeMillis();
                statistics.deltaTotalGetTime(lastUsed - startWait);
+
+               // Trigger prefill
+               prefill();
+
+               // Trigger capacity increase
+               if (pool.getCapacity().getIncrementer() != null)
+                  CapacityFiller.schedule(new CapacityRequest(this, subject, cri));
 
                return cl;
             }
