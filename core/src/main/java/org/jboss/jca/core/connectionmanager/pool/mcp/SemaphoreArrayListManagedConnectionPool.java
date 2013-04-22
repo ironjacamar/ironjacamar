@@ -343,11 +343,6 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                // No, the pool was empty, so we have to make a new one.
                cl = createConnectionEventListener(subject, cri);
 
-               if ((poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) &&
-                   pool instanceof PrefillPool &&
-                   poolConfiguration.getMinSize() > 0)
-                  PoolFiller.fillPool(this);
-
                synchronized (cls)
                {
                   checkedOut.add(cl);
@@ -358,6 +353,11 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                   log.trace("supplying new ManagedConnection: " + cl);
 
                clPermits.put(cl, cl);
+
+               if ((poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) &&
+                   pool instanceof PrefillPool &&
+                   poolConfiguration.getMinSize() > 0)
+                  PoolFiller.fillPool(this);
 
                return cl;
             }
