@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2008, Red Hat Inc, and individual contributors
+ * Copyright 2013, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -26,7 +26,12 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -125,10 +130,7 @@ public class Injection
          }
                 
          if (!parameterClass.isPrimitive() || parameterValue != null)
-         {
-            method.setAccessible(true);
             method.invoke(object, new Object[] {parameterValue});
-         }
       }
       else
       {
@@ -151,7 +153,7 @@ public class Injection
             {
                throw new InvocationTargetException(t, t.getMessage());
             }
-            field.setAccessible(true);
+
             field.set(object, fieldValue);
          }
          else
@@ -172,6 +174,7 @@ public class Injection
    {
       while (!clz.equals(Object.class))
       {
+         List<Method> hits = null;
          Method[] methods = clz.getDeclaredMethods();
          for (int i = 0; i < methods.length; i++)
          {
@@ -179,7 +182,35 @@ public class Injection
             if (methodName.equals(method.getName()) && method.getParameterTypes().length == 1)
             {
                if (propertyType == null || propertyType.equals(method.getParameterTypes()[0].getName()))
-                  return method;
+               {
+                  if (hits == null)
+                     hits = new ArrayList<Method>(1);
+
+                  method.setAccessible(true);
+                  hits.add(method);
+               }
+            }
+         }
+
+         if (hits != null)
+         {
+            if (hits.size() == 1)
+            {
+               return hits.get(0);
+            }
+            else
+            {
+               Collections.sort(hits, new MethodSorter());
+               if (propertyType != null)
+               {
+                  for (Method m : hits)
+                  {
+                     if (propertyType.equals(m.getParameterTypes()[0].getName()))
+                        return m;
+                  }
+               }
+
+               return hits.get(0);
             }
          }
 
@@ -200,6 +231,7 @@ public class Injection
    {
       while (!clz.equals(Object.class))
       {
+         List<Field> hits = null;
          Field[] fields = clz.getDeclaredFields();
          for (int i = 0; i < fields.length; i++)
          {
@@ -207,7 +239,35 @@ public class Injection
             if (fieldName.equals(field.getName()))
             {
                if (fieldType == null || fieldType.equals(field.getType().getName()))
-                  return field;
+               {
+                  if (hits == null)
+                     hits = new ArrayList<Field>(1);
+
+                  field.setAccessible(true);
+                  hits.add(field);
+               }
+            }
+         }
+
+         if (hits != null)
+         {
+            if (hits.size() == 1)
+            {
+               return hits.get(0);
+            }
+            else
+            {
+               Collections.sort(hits, new FieldSorter());
+               if (fieldType != null)
+               {
+                  for (Field f : hits)
+                  {
+                     if (fieldType.equals(f.getType().getName()))
+                        return f;
+                  }
+               }
+
+               return hits.get(0);
             }
          }
 
@@ -412,5 +472,133 @@ public class Injection
          }
       }
       return input;
+   }
+
+   /**
+    * Method sorter
+    */
+   static class MethodSorter implements Comparator<Method>
+   {
+      /**
+       * Constructor
+       */
+      MethodSorter()
+      {
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public int compare(Method o1, Method o2)
+      {
+         int m1 = o1.getModifiers();
+         int m2 = o2.getModifiers();
+
+         if (Modifier.isPublic(m1))
+            return -1;
+
+         if (Modifier.isPublic(m2))
+            return 1;
+
+         if (Modifier.isProtected(m1))
+            return -1;
+
+         if (Modifier.isProtected(m2))
+            return 1;
+
+         if (Modifier.isPrivate(m1))
+            return -1;
+
+         if (Modifier.isPrivate(m2))
+            return 1;
+
+         return 0;
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public boolean equals(Object o)
+      {
+         if (this == o)
+            return true;
+
+         if (o == null || !(o instanceof MethodSorter))
+            return false;
+
+         return true;
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public int hashCode()
+      {
+         return 42;
+      }
+   }
+
+   /**
+    * Field sorter
+    */
+   static class FieldSorter implements Comparator<Field>
+   {
+      /**
+       * Constructor
+       */
+      FieldSorter()
+      {
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public int compare(Field o1, Field o2)
+      {
+         int m1 = o1.getModifiers();
+         int m2 = o2.getModifiers();
+
+         if (Modifier.isPublic(m1))
+            return -1;
+
+         if (Modifier.isPublic(m2))
+            return 1;
+
+         if (Modifier.isProtected(m1))
+            return -1;
+
+         if (Modifier.isProtected(m2))
+            return 1;
+
+         if (Modifier.isPrivate(m1))
+            return -1;
+
+         if (Modifier.isPrivate(m2))
+            return 1;
+
+         return 0;
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public boolean equals(Object o)
+      {
+         if (this == o)
+            return true;
+
+         if (o == null || !(o instanceof FieldSorter))
+            return false;
+
+         return true;
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public int hashCode()
+      {
+         return 42;
+      }
    }
 }
