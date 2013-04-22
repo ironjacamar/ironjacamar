@@ -24,6 +24,9 @@ package org.jboss.jca.core.connectionmanager.pool;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.rar.SimpleConnection;
+import org.jboss.jca.core.connectionmanager.rar.SimpleManagedConnectionFactory;
+import org.jboss.jca.embedded.dsl.ironjacamar11.api.ConnectionDefinitionType;
+import org.jboss.jca.embedded.dsl.ironjacamar11.api.IronjacamarDescriptor;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.extension.byteman.api.BMRule;
@@ -34,7 +37,7 @@ import static org.junit.Assert.*;
 
 /**
  * 
- * A OnePoolNoTxDeploymentPrefilledBMTestCase
+ * A OnePoolNoTxDeploymentUseStrictMinAndIdleConnectionsFlushBMTestCase
  * 
  * NOTE that this class is in org.jboss.jca.core.connectionmanager.pool and not in
  * org.jboss.jca.core.connectionmanager.pool.strategy because it needs to access to 
@@ -46,42 +49,35 @@ import static org.junit.Assert.*;
  */
 @BMRules(value =
       {
-      @BMRule(name = "first check", 
-         targetClass = "OnePoolNoTxDeploymentPrefilledBMTestCase", 
+      @BMRule(name = "wait prefill1", 
+         targetClass = "OnePoolNoTxDeploymentUseStrictMinAndIdleConnectionsFlushBMTestCase", 
          targetMethod = "checkPool", 
-         targetLocation = "LINE 101",
-         condition = "$0.getPool().getStatistics().getActiveCount()<2||flagged(\"prefill start\")",
-         action = "traceln(\"///Prefill already started, wait for it \");" +
-            "\n waitFor(\"filled\", 100)"),
+         targetLocation = "LINE 118",
+         action = "waitFor(\"filled\")"),
       @BMRule(name = "wait prefill2", 
-         targetClass = "OnePoolNoTxDeploymentPrefilledBMTestCase", 
+         targetClass = "OnePoolNoTxDeploymentUseStrictMinAndIdleConnectionsFlushBMTestCase", 
          targetMethod = "checkPool", 
-         targetLocation = "LINE 113",
+         targetLocation = "LINE 119",
          action = "waitFor(\"filled\")"),
       @BMRule(name = "wait prefill3", 
-         targetClass = "OnePoolNoTxDeploymentPrefilledBMTestCase", 
-         targetMethod = "checkPool", 
-         targetLocation = "LINE 120",
-         action = "waitFor(\"filled\")"),
-      @BMRule(name = "wait prefill4", 
-         targetClass = "OnePoolNoTxDeploymentPrefilledBMTestCase", 
+         targetClass = "OnePoolNoTxDeploymentUseStrictMinAndIdleConnectionsFlushBMTestCase", 
          targetMethod = "checkPool", 
          targetLocation = "LINE 123",
          action = "waitFor(\"filled\")"),
-         @BMRule(name = "filled", 
+      @BMRule(name = "wait prefill4", 
+         targetClass = "OnePoolNoTxDeploymentUseStrictMinAndIdleConnectionsFlushBMTestCase", 
+         targetMethod = "checkPool", 
+         targetLocation = "LINE 140",
+         action = "waitFor(\"filled\")"),
+      @BMRule(name = "filled", 
          targetClass = "SemaphoreArrayListManagedConnectionPool", 
          targetMethod = "fillTo", 
          targetLocation = "EXIT",
-         action = "signalWake(\"filled\", true)"),
-      @BMRule(name = "prefill start", 
-         targetClass = "SemaphoreArrayListManagedConnectionPool", 
-         targetMethod = "fillTo", 
-         targetLocation = "ENTRY",
-         action = "flag(\"prefill start\")")
+         action = "signalWake(\"filled\", true)") 
       })
-public class OnePoolNoTxDeploymentPrefilledBMTestCase extends OnePoolNoTxTestCaseAbstract
+public class OnePoolNoTxDeploymentUseStrictMinAndIdleConnectionsFlushBMTestCase extends OnePoolNoTxTestCaseAbstract
 {
-
+   
    /**
     * 
     * deployment
@@ -91,39 +87,61 @@ public class OnePoolNoTxDeploymentPrefilledBMTestCase extends OnePoolNoTxTestCas
    @Deployment
    public static ResourceAdapterArchive deployment()
    {
-      return createNoTxDeployment(getPrefilledIJ(null));
+      return createNoTxDeployment(getIJ());
+   }
+
+   /**
+    * 
+    * get IronjacamarDescriptor for deployment
+    * 
+    * @return IronjacamarDescriptor
+    */
+   public static IronjacamarDescriptor getIJ()
+   {
+      IronjacamarDescriptor ij = getBasicIJXml(SimpleManagedConnectionFactory.class.getName());
+      ConnectionDefinitionType ijCdt = ij.getOrCreateConnectionDefinitions().getOrCreateConnectionDefinition();
+      ijCdt.removePool().getOrCreatePool().minPoolSize(3).maxPoolSize(5).useStrictMin(true)
+         .flushStrategy("IdleConnections");
+
+      return ij;
    }
 
    @Override
    public void checkPool() throws Exception
    {
       AbstractPool pool = getPool();
-      // prefill()
-      assertEquals(pool.getManagedConnectionPools().size(), 1);
+      
+      assertEquals(pool.getManagedConnectionPools().size(), 0);
       PoolStatistics ps = pool.getStatistics();
-      checkStatistics(ps, 5, 0, 2);
 
       SimpleConnection c = cf.getConnection();
+      //prefill() 2x here - init mcp and after getConnection()
       assertEquals(pool.getManagedConnectionPools().size(), 1);
-      checkStatistics(ps, 4, 1, 2);
+      checkStatistics(ps, 4, 1, 3);
+
+      c.fail();
+      //prefill() 
+      //1 failed + 2 idle connections destroyed
+      checkStatistics(ps, 5, 0, 3, 3);
+
+      c = cf.getConnection();
+      checkStatistics(ps, 4, 1, 3, 3);
 
       SimpleConnection c1 = cf.getConnection();
-      SimpleConnection c2 = cf.getConnection();
       assertEquals(pool.getManagedConnectionPools().size(), 1);
-      //prefill()
-      checkStatistics(ps, 2, 3, 3);
+      checkStatistics(ps, 3, 2, 3);
       for (ManagedConnectionPool mcp : pool.getManagedConnectionPools().values())
       {
-         checkStatistics(mcp.getStatistics(), 2, 3, 3);
+         checkStatistics(mcp.getStatistics(), 3, 2, 3);
       }
-      c.fail();
-      //prefill()
-      checkStatistics(ps, 3, 2, 2, 1);
+
       c1.fail();
       //prefill()
-      checkStatistics(ps, 4, 1, 2, 2);
-      c2.close();
       assertEquals(pool.getManagedConnectionPools().size(), 1);
-      checkStatistics(ps, 5, 0, 2, 2);
+      //1 failed + 1 idle connection destroyed
+      checkStatistics(ps, 4, 1, 3, 5);
+
+      c.close();
+      checkStatistics(ps, 5, 0, 3, 5);
    }
 }
