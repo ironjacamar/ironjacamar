@@ -50,24 +50,19 @@ import static org.junit.Assert.*;
 @BMRules(value =
       {
       @BMRule(name = "wait prefill1", 
-         targetClass = "OnePoolNoTxDeploymentUseStrictMinAndIdleConnectionsFlushBMTestCase", 
-         targetMethod = "checkPool", 
-         targetLocation = "LINE 118",
-         action = "waitFor(\"filled\")"),
-      @BMRule(name = "wait prefill2", 
-         targetClass = "OnePoolNoTxDeploymentUseStrictMinAndIdleConnectionsFlushBMTestCase", 
-         targetMethod = "checkPool", 
-         targetLocation = "LINE 119",
+         targetClass = "SemaphoreArrayListManagedConnectionPool", 
+         targetMethod = "initialize", 
+         targetLocation = "EXIT",
          action = "waitFor(\"filled\")"),
       @BMRule(name = "wait prefill3", 
          targetClass = "OnePoolNoTxDeploymentUseStrictMinAndIdleConnectionsFlushBMTestCase", 
          targetMethod = "checkPool", 
-         targetLocation = "LINE 123",
+         targetLocation = "LINE 118",
          action = "waitFor(\"filled\")"),
       @BMRule(name = "wait prefill4", 
          targetClass = "OnePoolNoTxDeploymentUseStrictMinAndIdleConnectionsFlushBMTestCase", 
          targetMethod = "checkPool", 
-         targetLocation = "LINE 140",
+         targetLocation = "LINE 134",
          action = "waitFor(\"filled\")"),
       @BMRule(name = "filled", 
          targetClass = "SemaphoreArrayListManagedConnectionPool", 
@@ -115,7 +110,7 @@ public class OnePoolNoTxDeploymentUseStrictMinAndIdleConnectionsFlushBMTestCase 
       PoolStatistics ps = pool.getStatistics();
 
       SimpleConnection c = cf.getConnection();
-      //prefill() 2x here - init mcp and after getConnection()
+      //prefill() called during mcp initialization and we get connection from pool 
       assertEquals(pool.getManagedConnectionPools().size(), 1);
       checkStatistics(ps, 4, 1, 3);
 

@@ -52,8 +52,8 @@ import static org.junit.Assert.*;
          targetMethod = "checkPool", 
          targetLocation = "LINE 101",
          condition = "flagged(\"prefill start\")||$0.getPool().getStatistics().getActiveCount()<2",
-         action = "traceln(\"///Prefill already started, wait for it \");" +
-            "\n waitFor(\"filled\", 100)"),
+         action = "traceln(\"///Prefill didn't finish, wait for it \");" +
+            "\n waitFor(\"filled\")"),
       @BMRule(name = "wait prefill2", 
          targetClass = "OnePoolNoTxDeploymentPrefilledEntirePoolFlushBMTestCase", 
          targetMethod = "checkPool", 
