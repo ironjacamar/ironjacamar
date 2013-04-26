@@ -53,7 +53,7 @@ public class TransactionIntegrationImpl implements TransactionIntegration
    private TransactionSynchronizationRegistry tsr;
 
    /** User transaction registry */
-   private org.jboss.tm.usertx.UserTransactionRegistry utr;
+   private UserTransactionRegistry utr;
 
    /** XATerminator */
    private org.jboss.tm.JBossXATerminator terminator;
@@ -84,7 +84,7 @@ public class TransactionIntegrationImpl implements TransactionIntegration
          this.tm = tm;
       }
       this.tsr = tsr;
-      this.utr = utr;
+      this.utr = new UserTransactionRegistryImpl(utr);
       this.terminator = terminator;
       this.rr = rr;
    }
@@ -113,7 +113,7 @@ public class TransactionIntegrationImpl implements TransactionIntegration
     */
    public UserTransactionRegistry getUserTransactionRegistry()
    {
-      return new UserTransactionRegistryImpl(utr);
+      return utr;
    }
 
    /**
@@ -122,6 +122,9 @@ public class TransactionIntegrationImpl implements TransactionIntegration
     */
    public XAResourceRecoveryRegistry getRecoveryRegistry()
    {
+      if (rr == null)
+         return null;
+
       return new XAResourceRecoveryRegistryImpl(rr);
    }
 

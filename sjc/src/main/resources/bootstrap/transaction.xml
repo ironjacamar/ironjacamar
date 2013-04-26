@@ -67,8 +67,10 @@
     <constructor factoryClass="com.arjuna.ats.jta.common.jtaPropertyManager" factoryMethod="getJTAEnvironmentBean"/>
     <property name="lastResourceOptimisationInterface">org.jboss.tm.LastResource</property>
     <property name="transactionManagerClassName">com.arjuna.ats.jbossatx.jta.TransactionManagerDelegate</property>
-    <property name="userTransactionClassName">com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple</property>
-    <property name="transactionSynchronizationRegistryClassName">com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple</property>
+    <property name="userTransactionClassName"><null/></property>
+    <property name="userTransaction"><inject bean="UserTransaction"/></property>
+    <property name="transactionSynchronizationRegistryClassName"><null/></property>
+    <property name="transactionSynchronizationRegistry"><inject bean="TransactionSynchronizationRegistry"/></property>
     <property name="xaRecoveryNodes">
       <list elementClass="java.lang.String">
         <value>1</value>
@@ -91,9 +93,7 @@
 
   <bean name="XATerminator" class="com.arjuna.ats.internal.jbossatx.jta.jca.XATerminator"/>
 
-  <bean name="TransactionSynchronizationRegistry" class="com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple">
-    <depends>JTAEnvironmentBean</depends>
-  </bean>
+  <bean name="TransactionSynchronizationRegistry" class="com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple"/>
 
   <bean name="TxControl" class="com.arjuna.ats.arjuna.coordinator.TxControl"/>
 
@@ -105,22 +105,15 @@
     <depends>CoordinatorEnvironmentBean</depends>
     <depends>JTAEnvironmentBean</depends>
     <depends>RecoveryManager</depends>
-    <depends>TransactionManagerJNDIBinding</depends>
-    <depends>TransactionSynchronizationRegistryJNDIBinding</depends>
     <depends>ActionStoreObjectStoreEnvironmentBean</depends>
     <depends>StateStoreObjectStoreEnvironmentBean</depends>
     <depends>CommunicationStoreObjectStoreEnvironmentBean</depends>
     <depends>TxControl</depends>
   </bean>
 
-  <bean name="TransactionManagerJNDIBinding" class="com.arjuna.ats.jta.utils.JNDIReferenceBindingBean">
-    <property name="bindName">java:/TransactionManager</property>
-    <property name="className">
-      <inject bean="JTAEnvironmentBean" property="transactionManagerClassName"/>
-    </property>
-    <property name="factory">
-      <inject bean="JTAEnvironmentBean" property="transactionManagerClassName"/>
-    </property>
+  <bean name="TransactionManagerJNDIBinding" class="org.jboss.jca.core.naming.JndiBinder">
+    <property name="name">java:/TransactionManager</property>
+    <property name="object"><inject bean="RealTransactionManager"/></property>
 
     <install method="bind"/>
     <uninstall method="unbind"/>
@@ -128,14 +121,9 @@
     <depends>NamingServer</depends>
   </bean>
 
-  <bean name="TransactionSynchronizationRegistryJNDIBinding" class="com.arjuna.ats.jta.utils.JNDIReferenceBindingBean">
-    <property name="bindName">java:/TransactionSynchronizationRegistry</property>
-    <property name="className">
-      <inject bean="JTAEnvironmentBean" property="transactionSynchronizationRegistryClassName"/>
-    </property>
-    <property name="factory">
-      <inject bean="JTAEnvironmentBean" property="transactionSynchronizationRegistryClassName"/>
-    </property>
+  <bean name="TransactionSynchronizationRegistryJNDIBinding" class="org.jboss.jca.core.naming.JndiBinder">
+    <property name="name">java:/TransactionSynchronizationRegistry</property>
+    <property name="object"><inject bean="TransactionSynchronizationRegistry"/></property>
 
     <install method="bind"/>
     <uninstall method="unbind"/>
@@ -162,20 +150,19 @@
   </bean>
   
   <!-- The provider for default in process UserTransactions -->
-  <bean name="DefaultUserTransactionProvider" class="org.jboss.tm.usertx.client.ServerVMClientUserTransaction">
+  <bean name="UserTransaction" class="org.jboss.tm.usertx.client.ServerVMClientUserTransaction">
     <constructor factoryClass="org.jboss.tm.usertx.client.ServerVMClientUserTransaction" factoryMethod="getSingleton"/>
-    <property name="TransactionManager"><inject bean="RealTransactionManager"/></property>
+    <property name="TransactionRegistry"><inject bean="UserTransactionRegistry"/></property>
+
+    <!-- Hack due to cyclic dependencies -->
+    <incallback method="setTransactionManager"/>
+    <uncallback method="setTransactionManager"/>
   </bean>
   
   <!-- Bind java:/UserTransaction -->
-  <bean name="UserTransactionJNDIBinding" class="com.arjuna.ats.jta.utils.JNDIReferenceBindingBean">
-    <property name="bindName">java:/UserTransaction</property>
-    <property name="className">
-      <inject bean="JTAEnvironmentBean" property="userTransactionClassName"/>
-    </property>
-    <property name="factory">
-      <inject bean="JTAEnvironmentBean" property="userTransactionClassName"/>
-    </property>
+  <bean name="UserTransactionJNDIBinding" class="org.jboss.jca.core.naming.JndiBinder">
+    <property name="name">java:/UserTransaction</property>
+    <property name="object"><inject bean="UserTransaction"/></property>
 
     <install method="bind"/>
     <uninstall method="unbind"/>
