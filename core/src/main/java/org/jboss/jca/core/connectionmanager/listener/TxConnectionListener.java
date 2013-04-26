@@ -784,12 +784,13 @@ public class TxConnectionListener extends AbstractConnectionListener
                return false;
             }
 
+            enlisted = true;
+
             if (trace)
             {
                log.trace("Enlisted resource " + TxConnectionListener.this);
             }
 
-            enlisted = true;
             return true;
          }
       }

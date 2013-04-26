@@ -39,6 +39,7 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -121,6 +122,9 @@ public class EnlistmentCCMTestCase
       org.jboss.jca.embedded.dsl.resourceadapters11.api.XaPoolType dashRaXmlPt = dashRaXmlCdt.getOrCreateXaPool()
          .minPoolSize(0).initialPoolSize(0).maxPoolSize(10);
 
+      org.jboss.jca.embedded.dsl.resourceadapters11.api.RecoverType dashRaXmlRyt = dashRaXmlCdt.getOrCreateRecovery()
+         .noRecovery(Boolean.TRUE);
+
       return dashRaXml;
    }
 
@@ -136,6 +140,9 @@ public class EnlistmentCCMTestCase
   
    @Inject(name = "RealTransactionManager")
    private TransactionManager tm;
+
+   @Inject(name = "UserTransaction")
+   private UserTransaction ut;
   
    /**
     * Enlistment stack
@@ -147,6 +154,7 @@ public class EnlistmentCCMTestCase
       assertNotNull(cf);
       assertNotNull(ccm);
       assertNotNull(tm);
+      assertNotNull(ut);
 
       Set unsharableResources = new HashSet();
 
@@ -171,14 +179,14 @@ public class EnlistmentCCMTestCase
       log.infof("Layer 2: Enter (%s)", layer2);
 
       ccm.pushMetaAwareObject(layer2, unsharableResources);
-      tm.begin();
+      ut.begin();
 
       log.infof("Layer 2: Begin");
 
       TxLogConnection c2 = cf.getConnection();
       c2.close();
 
-      tm.commit();
+      ut.commit();
 
       log.infof("Layer 2: Committed");
 

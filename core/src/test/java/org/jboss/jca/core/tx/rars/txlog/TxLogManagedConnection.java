@@ -320,6 +320,8 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
     */
    public void begin() throws ResourceException
    {
+      log.trace("begin()");
+
       txState.append(TX_LOCAL_BEGIN);
 
       ConnectionEvent ce = new ConnectionEvent(this, ConnectionEvent.LOCAL_TRANSACTION_STARTED);
@@ -335,6 +337,8 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
     */
    public void commit() throws ResourceException
    {
+      log.trace("commit()");
+
       txState.append(TX_LOCAL_COMMIT);
 
       ConnectionEvent ce = new ConnectionEvent(this, ConnectionEvent.LOCAL_TRANSACTION_COMMITTED);
@@ -350,6 +354,8 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
     */
    public void rollback() throws ResourceException
    {
+      log.trace("rollback()");
+
       txState.append(TX_LOCAL_ROLLBACK);
 
       ConnectionEvent ce = new ConnectionEvent(this, ConnectionEvent.LOCAL_TRANSACTION_ROLLEDBACK);
@@ -367,6 +373,8 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
     */
    public void start(Xid xid, int flags) throws XAException
    {
+      log.tracef("start(%s, %d)", xid, flags);
+
       if (flags == XAResource.TMNOFLAGS)
       {
          txState.append(TX_XA_START_TMNOFLAGS);
@@ -390,6 +398,8 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
     */
    public void commit(Xid xid, boolean onePhase) throws XAException
    {
+      log.tracef("commit(%s, %s)", xid, onePhase);
+
       txState.append(TX_XA_COMMIT);
    }
 
@@ -398,6 +408,8 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
     */
    public void rollback(Xid xid) throws XAException
    {
+      log.tracef("rollback(%s)", xid);
+
       txState.append(TX_XA_ROLLBACK);
    }
 
@@ -406,6 +418,8 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
     */
    public void end(Xid xid, int flags) throws XAException
    {
+      log.tracef("end(%s, %d)", xid, flags);
+
       if (flags == XAResource.TMSUCCESS)
       {
          txState.append(TX_XA_END_TMSUCCESS);
@@ -429,6 +443,8 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
     */
    public void forget(Xid xid) throws XAException
    {
+      log.tracef("forget(%s)", xid);
+
       txState.append(TX_XA_FORGET);
    }
 
@@ -437,6 +453,8 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
     */
    public boolean isSameRM(XAResource xares) throws XAException
    {
+      log.tracef("isSameRM(%s)", xares);
+
       if (this == xares)
          return true;
 
@@ -448,6 +466,8 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
     */
    public int prepare(Xid xid) throws XAException
    {
+      log.tracef("prepare(%s)", xid);
+
       txState.append(TX_XA_PREPARE);
 
       return XAResource.XA_OK;

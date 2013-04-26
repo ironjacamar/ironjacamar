@@ -110,9 +110,7 @@ class EmbeddedJCAEnricher implements TestEnricher
       }
       catch (Throwable t)
       {
-         // Nothing to do
+         throw new RuntimeException("Could not inject: " + annotation.name() + " (" + field.getType() + ")", t);
       }
-
-      throw new RuntimeException("Could not inject: " + annotation.name() + " (" + field.getType() + ")");
    }
 }
