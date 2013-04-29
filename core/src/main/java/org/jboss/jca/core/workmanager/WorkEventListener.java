@@ -22,12 +22,13 @@
 
 package org.jboss.jca.core.workmanager;
 
-import javax.resource.spi.work.WorkAdapter;
-import javax.resource.spi.work.WorkEvent;
-
 import org.jboss.jca.core.api.workmanager.StatisticsExecutor;
 import org.jboss.jca.core.spi.workmanager.Address;
 import org.jboss.jca.core.spi.workmanager.transport.Transport;
+
+import javax.resource.spi.work.WorkAdapter;
+import javax.resource.spi.work.WorkEvent;
+
 
 /**
  * Work event listener
