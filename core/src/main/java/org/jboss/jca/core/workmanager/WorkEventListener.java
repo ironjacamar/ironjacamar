@@ -22,13 +22,12 @@
 
 package org.jboss.jca.core.workmanager;
 
-import org.jboss.jca.core.spi.workmanager.Address;
-import org.jboss.jca.core.spi.workmanager.transport.Transport;
-
 import javax.resource.spi.work.WorkAdapter;
 import javax.resource.spi.work.WorkEvent;
 
-import org.jboss.threads.BlockingExecutor;
+import org.jboss.jca.core.api.workmanager.StatisticsExecutor;
+import org.jboss.jca.core.spi.workmanager.Address;
+import org.jboss.jca.core.spi.workmanager.transport.Transport;
 
 /**
  * Work event listener
@@ -40,10 +39,10 @@ public class WorkEventListener extends WorkAdapter
    private boolean isLong;
 
    /** The short thread pool */
-   private BlockingExecutor shortThreadPool;
+   private StatisticsExecutor shortThreadPool;
 
    /** The long thread pool */
-   private BlockingExecutor longThreadPool;
+   private StatisticsExecutor longThreadPool;
 
    /** The address */
    private Address address;
@@ -60,8 +59,8 @@ public class WorkEventListener extends WorkAdapter
     * @param transport The transport
     */
    public WorkEventListener(boolean isLong,
-                            BlockingExecutor shortThreadPool,
-                            BlockingExecutor longThreadPool,
+                            StatisticsExecutor shortThreadPool,
+                            StatisticsExecutor longThreadPool,
                             Address address,
                             Transport transport)
    {

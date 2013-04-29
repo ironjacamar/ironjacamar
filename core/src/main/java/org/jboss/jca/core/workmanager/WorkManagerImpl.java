@@ -25,6 +25,7 @@ package org.jboss.jca.core.workmanager;
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.workmanager.DistributableContext;
+import org.jboss.jca.core.api.workmanager.StatisticsExecutor;
 import org.jboss.jca.core.api.workmanager.WorkManager;
 import org.jboss.jca.core.api.workmanager.WorkManagerStatistics;
 import org.jboss.jca.core.spi.security.Callback;
@@ -99,10 +100,10 @@ public class WorkManagerImpl implements WorkManager
    private boolean specCompliant;
 
    /** The short running executor */
-   private BlockingExecutor shortRunningExecutor;
+   private StatisticsExecutor shortRunningExecutor;
 
    /** The long running executor */
-   private BlockingExecutor longRunningExecutor;
+   private StatisticsExecutor longRunningExecutor;
 
    /** The XA terminator */
    private XATerminator xaTerminator;
@@ -196,7 +197,7 @@ public class WorkManagerImpl implements WorkManager
     * Retrieve the executor for short running tasks
     * @return The executor
     */
-   public BlockingExecutor getShortRunningThreadPool()
+   public StatisticsExecutor getShortRunningThreadPool()
    {
       return shortRunningExecutor;
    }
@@ -207,14 +208,14 @@ public class WorkManagerImpl implements WorkManager
     */
    public void setShortRunningThreadPool(BlockingExecutor executor)
    {
-      this.shortRunningExecutor = executor;
+      this.shortRunningExecutor = new StatisticsExecutorImpl(executor);
    }
 
    /**
     * Retrieve the executor for long running tasks
     * @return The executor
     */
-   public BlockingExecutor getLongRunningThreadPool()
+   public StatisticsExecutor getLongRunningThreadPool()
    {
       return longRunningExecutor;
    }
@@ -225,7 +226,7 @@ public class WorkManagerImpl implements WorkManager
     */
    public void setLongRunningThreadPool(BlockingExecutor executor)
    {
-      this.longRunningExecutor = executor;
+      this.longRunningExecutor = new StatisticsExecutorImpl(executor);
    }
 
    /**

@@ -24,6 +24,7 @@ package org.jboss.jca.core.workmanager.transport.remote;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.workmanager.DistributedWorkManager;
 import org.jboss.jca.core.api.workmanager.DistributedWorkManagerStatisticsValues;
+import org.jboss.jca.core.api.workmanager.StatisticsExecutor;
 import org.jboss.jca.core.api.workmanager.WorkManager;
 import org.jboss.jca.core.spi.workmanager.Address;
 import org.jboss.jca.core.spi.workmanager.notification.NotificationListener;
@@ -47,8 +48,10 @@ import java.util.concurrent.ExecutorService;
 import javax.resource.spi.work.DistributableWork;
 import javax.resource.spi.work.WorkException;
 
+
+
+
 import org.jboss.logging.Logger;
-import org.jboss.threads.BlockingExecutor;
 
 /**
  * An abstract transport for remote communication
@@ -604,7 +607,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
    public Set<Address> getAddresses(T physicalAddress)
    {
       Set<Address> result = new HashSet<Address>();
-      
+
       for (Map.Entry<Address, T> entry : nodes.entrySet())
       {
          if (entry.getValue() == null || entry.getValue().equals(physicalAddress))
@@ -635,7 +638,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
 
          WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
          DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(logicalAddress);
-         
+
          if (dwm != null)
          {
             for (NotificationListener nl : dwm.getNotificationListeners())
@@ -822,7 +825,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
 
       if (wm != null)
       {
-         BlockingExecutor executor = wm.getShortRunningThreadPool();
+         StatisticsExecutor executor = wm.getShortRunningThreadPool();
          if (executor != null)
             return executor.getNumberOfFreeThreads();
       }
@@ -846,7 +849,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
 
       if (wm != null)
       {
-         BlockingExecutor executor = wm.getLongRunningThreadPool();
+         StatisticsExecutor executor = wm.getLongRunningThreadPool();
          if (executor != null)
             return executor.getNumberOfFreeThreads();
       }

@@ -69,7 +69,7 @@ public interface WorkManager extends javax.resource.spi.work.WorkManager, Gracef
     * Retrieve the executor for short running tasks
     * @return The executor
     */
-   public BlockingExecutor getShortRunningThreadPool();
+   public StatisticsExecutor getShortRunningThreadPool();
 
    /**
     * Set the executor for short running tasks
@@ -81,7 +81,7 @@ public interface WorkManager extends javax.resource.spi.work.WorkManager, Gracef
     * Retrieve the executor for long running tasks
     * @return The executor
     */
-   public BlockingExecutor getLongRunningThreadPool();
+   public StatisticsExecutor getLongRunningThreadPool();
 
    /**
     * Set the executor for long running tasks
@@ -147,7 +147,7 @@ public interface WorkManager extends javax.resource.spi.work.WorkManager, Gracef
     * Clone the WorkManager implementation
     * @return A copy of the implementation
     * @exception CloneNotSupportedException Thrown if the copy operation isn't supported
-    *  
+    *
     */
    public WorkManager clone() throws CloneNotSupportedException;
 }
