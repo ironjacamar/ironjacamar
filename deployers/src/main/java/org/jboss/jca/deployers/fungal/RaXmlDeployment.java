@@ -39,6 +39,8 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.resource.spi.ResourceAdapter;
 
+import com.github.fungal.api.classloading.KernelClassLoader;
+
 /**
  * A -ra.xml deployment for JCA/SJC
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
@@ -79,7 +81,7 @@ public class RaXmlDeployment extends AbstractFungalDeployment
                           XAResourceRecovery[] recoveryModules, XAResourceRecoveryRegistry recoveryRegistry,
                           ManagementRepository managementRepository, Connector connector,
                           MBeanServer server, List<ObjectName> objectNames,
-                          ClassLoader cl, DeployersLogger log)
+                          KernelClassLoader cl, DeployersLogger log)
    {
       super(deployment, deploymentName, true, ra, raKey, bootstrapContextId, jndiStrategy, mdr,
             resourceAdapterRepository, cfs, cfJndis, cfCMs, aos, aoJndis, recoveryModules, recoveryRegistry,

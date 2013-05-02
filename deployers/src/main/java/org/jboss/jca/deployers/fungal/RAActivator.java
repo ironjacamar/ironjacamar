@@ -543,7 +543,7 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
                                           ((RAConfiguration)getConfiguration()).getManagementRepository(), 
                                           c.getConnector(),
                                           kernel.getMBeanServer(), ons,
-                                          c.getCl(), c.getLog());
+                                          cl, c.getLog());
       }
       catch (DeployException de)
       {

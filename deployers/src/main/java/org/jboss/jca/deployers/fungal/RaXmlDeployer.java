@@ -303,7 +303,7 @@ public final class RaXmlDeployer extends AbstractFungalRADeployer
                                     c.getRecovery(), getTransactionIntegration().getRecoveryRegistry(),
                                     ((RAConfiguration)getConfiguration()).getManagementRepository(), c.getConnector(),
                                     kernel.getMBeanServer(), ons, 
-                                    c.getCl(), c.getLog());
+                                    cl, c.getLog());
       }
       catch (DeployException de)
       {

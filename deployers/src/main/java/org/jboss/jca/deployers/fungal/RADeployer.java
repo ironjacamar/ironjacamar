@@ -188,7 +188,7 @@ public final class RADeployer extends AbstractFungalRADeployer implements Deploy
                                  destination, 
                                  ((RAConfiguration)getConfiguration()).getManagementRepository(), c.getConnector(),
                                  kernel.getMBeanServer(), ons,
-                                 c.getCl(), c.getLog());
+                                 cl, c.getLog());
 
       }
       catch (DeployException de)

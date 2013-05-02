@@ -22,6 +22,7 @@
 
 package org.jboss.jca.validator;
 
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
@@ -93,13 +94,40 @@ class SecurityActions
     * @param parent The parent class loader
     * @return The class loader
     */
-   static URLClassLoader createURLCLassLoader(final URL[] urls, final ClassLoader parent)
+   static URLClassLoader createURLClassLoader(final URL[] urls, final ClassLoader parent)
    {
       return AccessController.doPrivileged(new PrivilegedAction<URLClassLoader>() 
       {
          public URLClassLoader run()
          {
             return new URLClassLoader(urls, parent);
+         }
+      });
+   }
+
+   /**
+    * Close an URLClassLoader
+    * @param cl The class loader
+    */
+   static void closeURLClassLoader(final URLClassLoader cl)
+   {
+      AccessController.doPrivileged(new PrivilegedAction<Object>() 
+      {
+         public Object run()
+         {
+            if (cl != null)
+            {
+               try
+               {
+                  cl.close();
+               }
+               catch (IOException ioe)
+               {
+                  // Ignore
+               }
+            }
+
+            return null;
          }
       });
    }

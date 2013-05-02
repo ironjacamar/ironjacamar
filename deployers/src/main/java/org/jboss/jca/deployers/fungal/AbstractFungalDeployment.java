@@ -42,6 +42,7 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.resource.spi.ResourceAdapter;
 
+import com.github.fungal.api.classloading.KernelClassLoader;
 import com.github.fungal.spi.deployers.Deployment;
 
 /**
@@ -114,7 +115,7 @@ public abstract class AbstractFungalDeployment implements Deployment
    protected List<ObjectName> objectNames;
 
    /** The classloader */
-   protected ClassLoader cl;
+   protected KernelClassLoader cl;
 
    /**
     * Constructor
@@ -150,7 +151,7 @@ public abstract class AbstractFungalDeployment implements Deployment
                                    XAResourceRecovery[] recoveryModules, XAResourceRecoveryRegistry recoveryRegistry,
                                    ManagementRepository managementRepository, Connector connector,
                                    MBeanServer server, List<ObjectName> objectNames,
-                                   ClassLoader cl, DeployersLogger log)
+                                   KernelClassLoader cl, DeployersLogger log)
    {
       this.deployment = deployment;
       this.deploymentName = deploymentName;
@@ -337,21 +338,21 @@ public abstract class AbstractFungalDeployment implements Deployment
     */
    public void destroy()
    {
-      if (cl != null && cl instanceof Closeable)
+      if (activator)
+      {
+         log.info("Undeployed: " + deployment.toExternalForm());
+      }
+
+      if (cl != null)
       {
          try
          {
-            ((Closeable) cl).close();
+            cl.shutdown();
          }
          catch (IOException ioe)
          {
             // Swallow
          }
-      }
-
-      if (activator)
-      {
-         log.info("Undeployed: " + deployment.toExternalForm());
       }
    }
 }

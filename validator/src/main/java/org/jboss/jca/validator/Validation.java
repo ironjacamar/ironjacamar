@@ -98,6 +98,7 @@ public class Validation
       int exitCode = SUCCESS;
       File destination = null;
 
+      URLClassLoader cl =  null;
       try
       {
          File f = new File(url.toURI());
@@ -135,8 +136,7 @@ public class Validation
          else
             allurls = urls;
 
-         URLClassLoader cl = SecurityActions.createURLCLassLoader(allurls,
-               SecurityActions.getThreadContextClassLoader());
+         cl = SecurityActions.createURLClassLoader(allurls, SecurityActions.getThreadContextClassLoader());
          SecurityActions.setThreadContextClassLoader(cl);
 
          // Parse metadata
@@ -229,6 +229,10 @@ public class Validation
       {
          e.printStackTrace();
          exitCode = OTHER;
+      }
+      finally
+      {
+         SecurityActions.closeURLClassLoader(cl);
       }
 
       if (destination != null)

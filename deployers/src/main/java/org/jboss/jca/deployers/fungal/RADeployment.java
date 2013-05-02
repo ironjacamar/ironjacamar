@@ -41,6 +41,7 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.resource.spi.ResourceAdapter;
 
+import com.github.fungal.api.classloading.KernelClassLoader;
 import com.github.fungal.api.util.FileUtil;
 
 /**
@@ -88,7 +89,7 @@ public class RADeployment extends AbstractFungalDeployment
                        File tmpDirectory,
                        ManagementRepository managementRepository, Connector connector,
                        MBeanServer server, List<ObjectName> objectNames,
-                       ClassLoader cl, DeployersLogger log)
+                       KernelClassLoader cl, DeployersLogger log)
    {
       super(deployment, deploymentName, activator, ra, raKey, bootstrapContextId, jndiStrategy, mdr,
             resourceAdapterRepository, cfs, cfJndis, cfCMs, aos, aoJndis, recoveryModules, recoveryRegistry,
