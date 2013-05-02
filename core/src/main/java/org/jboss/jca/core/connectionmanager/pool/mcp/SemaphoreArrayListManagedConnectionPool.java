@@ -1223,9 +1223,6 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
     */
    private ConnectionListener removeForFrequencyCheck()
    {
-      if (debug)
-         log.debug("Checking for connection within frequency");
-
       ConnectionListener cl = null;
 
       for (Iterator<ConnectionListener> iter = cls.iterator(); iter.hasNext();)
@@ -1244,6 +1241,9 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          }
       }
 
+      if (debug)
+         log.debugf("Checking for connection within frequency: %s", cl);
+
       return cl;
    }
 
@@ -1254,7 +1254,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    private void returnForFrequencyCheck(ConnectionListener cl)
    {
       if (debug)
-         log.debug("Returning for connection within frequency");
+         log.debugf("Returning for connection within frequency: %s", cl);
 
       cl.setLastValidatedTime(System.currentTimeMillis());
       cls.add(cl);

@@ -1175,8 +1175,6 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
     */
    private ConnectionListener removeForFrequencyCheck()
    {
-      log.debug("Checking for connection within frequency");
-
       ConnectionListener result = null;
       Iterator<ConnectionListener> iter = cls.iterator();
 
@@ -1192,6 +1190,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
          }
       }
 
+      log.debugf("Checking for connection within frequency: %s", result);
+
       return result;
    }
 
@@ -1202,7 +1202,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
     */
    private boolean returnForFrequencyCheck(ConnectionListener cl)
    {
-      log.debug("Returning for connection within frequency: " + cl);
+      log.debugf("Returning for connection within frequency: %s", cl);
 
       if (cl == null)
          return true;
