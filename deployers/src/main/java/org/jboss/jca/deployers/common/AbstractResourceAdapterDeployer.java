@@ -2770,6 +2770,39 @@ public abstract class AbstractResourceAdapterDeployer
    }
 
    /**
+    * Should the archive be scanned for annotations
+    * @param cmd The metadata
+    * @return True if scan is needed; otherwise false
+    */
+   protected boolean scanArchive(Connector cmd)
+   {
+      if (cmd == null)
+         return true;
+
+      if (cmd.getVersion() == Version.V_16 || cmd.getVersion() == Version.V_17)
+      {
+         if (cmd.getVersion() == Version.V_16)
+         {
+            org.jboss.jca.common.api.metadata.ra.ra16.Connector16 cmd16 =
+               (org.jboss.jca.common.api.metadata.ra.ra16.Connector16)cmd;
+
+            if (!cmd16.isMetadataComplete())
+               return true;
+         }
+         else
+         {
+            org.jboss.jca.common.api.metadata.ra.ra17.Connector17 cmd17 =
+               (org.jboss.jca.common.api.metadata.ra.ra17.Connector17)cmd;
+
+            if (!cmd17.isMetadataComplete())
+               return true;
+         }
+      }
+
+      return false;
+   }
+
+   /**
     *
     * get The directory where write error reports
     *

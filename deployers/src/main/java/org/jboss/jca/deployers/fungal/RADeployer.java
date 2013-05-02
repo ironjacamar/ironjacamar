@@ -155,10 +155,13 @@ public final class RADeployer extends AbstractFungalRADeployer implements Deploy
          IronJacamar ijmd = metadataFactory.getIronJacamarMetaData(root);
 
          // Annotation scanning
-         Annotations annotator = new Annotations();
-         AnnotationScanner scanner = AnnotationScannerFactory.getAnnotationScanner();
-         AnnotationRepository repository = scanner.scan(cl.getURLs(), cl);
-         cmd = annotator.merge(cmd, repository, cl);
+         if (scanArchive(cmd))
+         {
+            Annotations annotator = new Annotations();
+            AnnotationScanner scanner = AnnotationScannerFactory.getAnnotationScanner();
+            AnnotationRepository repository = scanner.scan(cl.getURLs(), cl);
+            cmd = annotator.merge(cmd, repository, cl);
+         }
 
          // Validate metadata
          cmd.validate();
