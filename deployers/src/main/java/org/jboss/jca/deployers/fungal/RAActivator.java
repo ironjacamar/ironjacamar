@@ -486,13 +486,21 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
             return null;
 
          File root = null;
-         File destination = null;
 
          if (f.isFile())
          {
-            FileUtil fileUtil = new FileUtil();
-            destination = new File(SecurityActions.getSystemProperty("iron.jacamar.home"), "/tmp/");
-            root = fileUtil.extract(f, destination);
+            File destination = new File(SecurityActions.getSystemProperty("iron.jacamar.home"), "/tmp/");
+            File target = new File(destination, f.getName());
+            
+            if (!target.exists())
+            {
+               FileUtil fileUtil = new FileUtil();
+               root = fileUtil.extract(f, destination);
+            }
+            else
+            {
+               root = target;
+            }
          }
          else
          {
