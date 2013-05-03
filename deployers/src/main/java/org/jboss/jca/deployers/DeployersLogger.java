@@ -170,4 +170,12 @@ public interface DeployersLogger extends BasicLogger
    @LogMessage(level = WARN)
    @Message(id = 20016, value = "Missing <recovery> element. XA recovery disabled for: %s")
    public void missingRecovery(String jndi);
+
+   /**
+    * Invalid archive
+    * @param archive The archive
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 20017, value = "Invalid archive: %s")
+   public void validationInvalidArchive(String archive);
 }

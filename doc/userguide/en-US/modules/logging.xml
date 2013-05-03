@@ -865,6 +865,11 @@
             <entry>Missing &lt;recovery&gt; element. XA recovery disabled</entry>
           </row>
           <row>
+            <entry>20017</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Invalid archive</entry>
+          </row>
+          <row>
             <entry>20051</entry>
             <entry><code>EXCEPTION</code></entry>
             <entry>Unable to start</entry>

@@ -2439,6 +2439,11 @@ public abstract class AbstractResourceAdapterDeployer
          }
          else
          {
+            if (failures != null && failures.size() > 0)
+            {
+               log.validationInvalidArchive(url.toExternalForm());
+            }
+
             printFailuresLog(url.getPath(), new Validator(), failures, null);
          }
 
