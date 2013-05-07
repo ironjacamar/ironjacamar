@@ -113,6 +113,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       {
          // Reset lockedMC reference once the connection is returned to the pool
          lockedMC = null;
+         closed = true;
       }
    }
 
