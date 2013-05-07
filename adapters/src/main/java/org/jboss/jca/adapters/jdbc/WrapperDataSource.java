@@ -41,6 +41,7 @@ import javax.resource.spi.ConnectionRequestInfo;
 import javax.sql.DataSource;
 import javax.transaction.RollbackException;
 import javax.transaction.Status;
+import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.UserTransaction;
 
 import org.jboss.logging.Logger;
@@ -64,6 +65,7 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
 
    private PrintWriter logger;
    private Reference reference;
+   private TransactionSynchronizationRegistry tsr;
    private UserTransaction userTransaction;
 
    private boolean initialized = false;
@@ -78,6 +80,7 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
    {
       this.mcf = mcf;
       this.cm = cm;
+      this.tsr = null;
       this.userTransaction = null;
       
       if (mcf.getUserName() != null)
@@ -225,15 +228,14 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
       if (!mcf.isJTA().booleanValue())
          return;
 
-      if (initialized && userTransaction == null)
+      if (initialized && userTransaction == null && tsr == null)
          return;
 
-      if (userTransaction == null)
+      if (!initialized)
       {
          try
          {
-            initialized = true;
-            initUserTransaction();
+            initTransactionIntegration();
          }
          catch (SQLException e)
          {
@@ -242,11 +244,23 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
             return;
          }
       }
+
       try
       {
-         int status = userTransaction.getStatus();
+         int status = Status.STATUS_NO_TRANSACTION;
+
+         if (tsr != null)
+         {
+            status = tsr.getTransactionStatus();
+         }
+         else
+         {
+            status = userTransaction.getStatus();
+         }
+
          if (status == Status.STATUS_NO_TRANSACTION)
             return;
+
          // Only allow states that will actually succeed
          if (status != Status.STATUS_ACTIVE && status != Status.STATUS_PREPARING &&
              status != Status.STATUS_PREPARED && status != Status.STATUS_COMMITTING)
@@ -261,6 +275,30 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
       catch (Throwable t)
       {
          throw new SQLException(t.getMessage(), t);
+      }
+   }
+
+   /**
+    * Init transaction integration
+    */
+   private void initTransactionIntegration() throws SQLException
+   {
+      if (mcf.getTransactionSynchronizationRegistry() != null)
+      {
+         tsr = mcf.getTransactionSynchronizationRegistry();
+         initialized = true;
+      }
+
+      if (!initialized && mcf.getUserTransaction() != null)
+      {
+         userTransaction = mcf.getUserTransaction();
+         initialized = true;
+      }
+
+      if (!initialized)
+      {
+         initialized = true;
+         initUserTransaction();
       }
    }
 

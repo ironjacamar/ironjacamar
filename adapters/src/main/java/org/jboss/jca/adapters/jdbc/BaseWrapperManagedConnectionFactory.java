@@ -59,6 +59,8 @@ import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.ValidatingManagedConnectionFactory;
 import javax.resource.spi.security.PasswordCredential;
 import javax.security.auth.Subject;
+import javax.transaction.TransactionSynchronizationRegistry;
+import javax.transaction.UserTransaction;
 
 import org.jboss.logging.Logger;
 
@@ -227,6 +229,12 @@ public abstract class BaseWrapperManagedConnectionFactory
 
    /** The JNDI name for the user transaction */
    private String userTransactionJndiName;
+
+   /** UserTransaction object */
+   private UserTransaction userTransaction;
+
+   /** TransactionSynchronizationRegistry object */
+   private TransactionSynchronizationRegistry tsr;
 
    /** The statistics plugin */
    private JdbcStatisticsPlugin statisticsPlugin = new JdbcStatisticsPlugin();
@@ -1028,6 +1036,42 @@ public abstract class BaseWrapperManagedConnectionFactory
    public void setUserTransactionJndiName(String v)
    {
       this.userTransactionJndiName = v;
+   }
+
+   /**
+    * Get the user transaction
+    * @return The value
+    */
+   protected UserTransaction getUserTransaction()
+   {
+      return userTransaction;
+   }
+
+   /**
+    * Set the user transaction
+    * @param v The value
+    */
+   protected void setUserTransaction(UserTransaction v)
+   {
+      this.userTransaction = v;
+   }
+
+   /**
+    * Get the transaction synchronization registry
+    * @return The value
+    */
+   protected TransactionSynchronizationRegistry getTransactionSynchronizationRegistry()
+   {
+      return tsr;
+   }
+
+   /**
+    * Set the transaction synchronization registry
+    * @param v The value
+    */
+   protected void setTransactionSynchronizationRegistry(TransactionSynchronizationRegistry v)
+   {
+      this.tsr = v;
    }
 
    /**
