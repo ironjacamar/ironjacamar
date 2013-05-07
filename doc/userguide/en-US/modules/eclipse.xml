@@ -5,7 +5,7 @@
   <para>
     The IronJacamar Eclipse plugin features development tools used
     for developing resource adapter applications for the IronJacamar standalone distribution,
-    JBoss Application Server 7+ or JBoss Enterprise Application Platform 6+.
+    WildFly or JBoss Enterprise Application Platform 6+.
   </para>
 
   <para>

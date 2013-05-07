@@ -75,15 +75,15 @@ ironjacamar-1.0.0.Final
    </section>
 
    <section id="installas">
-     <title>JBoss Application Server</title>
+     <title>WildFly</title>
 
      <para>
        The IronJacamar provides the Java EE Connector Architecture (JCA) container
-       for JBoss Application Server 7 and future versions.
+       for WildFly 8 and future versions.
      </para>
 
      <para>
-       The container can be updated in the JBoss Application Server by using the 
+       The container can be updated in WildFly by using the 
        <code>as-upgrader.sh</code> script in the <code>doc/as</code> directory.
        This will allow an easy installation of IronJacamar patch releases to fix bugs
        in the application server environment.
@@ -94,13 +94,13 @@ ironjacamar-1.0.0.Final
      </para>
 
      <programlisting>
-./as-upgrader.sh 1.0.0.Final /path/to/as7/installation
+./as-upgrader.sh 1.1.0.Final /path/to/wildfly/installation
      </programlisting>
 
      <para>
-       where <code>1.0.0.Final</code> is the version identifier of the IronJacamar container
-       and the path points to the top-level directory of the JBoss Application Server installation.
-       You can also use <code>1.0.1-SNAPSHOT</code> in order to upgrade to a patch snapshot build.
+       where <code>1.1.0.Final</code> is the version identifier of the IronJacamar container
+       and the path points to the top-level directory of the WildFly installation.
+       You can also use <code>1.1.1-SNAPSHOT</code> in order to upgrade to a patch snapshot build.
      </para>
 
      <para>

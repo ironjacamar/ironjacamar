@@ -114,7 +114,7 @@
       <para>
         which will convert the file <code>old-ds.xml</code> to <code>new-ra.xml</code>. The content of
         <code>new-ra.xml</code> can then be copied into the <code>resource-adapters</code> subsystem
-        in JBoss Application Server 7 or used directly in the IronJacamar/Standalone distribution.
+        in WildFly or used directly in the IronJacamar/Standalone distribution.
       </para>
 
       <note>
@@ -159,7 +159,7 @@
       <para>
         which will convert the file <code>old-ds.xml</code> to <code>new-ds.xml</code>. The content of
         <code>new-ds.xml</code> can then be copied into the <code>datasources</code> subsystem
-        in JBoss Application Server 7 or used directly in the IronJacamar/Standalone distribution.
+        in WildFly or used directly in the IronJacamar/Standalone distribution.
       </para>
 
       <note>

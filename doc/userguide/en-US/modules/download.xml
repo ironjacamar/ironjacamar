@@ -91,7 +91,7 @@ ironjacamar-1.0.0.Final.tar.gz
             <row>
               <entry><code>ironjacamar-as</code></entry>
               <entry>
-                JBoss Application Server integration tools
+                WildFly integration tools
               </entry>
             </row>
             <row>
