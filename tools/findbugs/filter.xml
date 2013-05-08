@@ -28,8 +28,22 @@
     <Bug code="OBL"/>
   </Match>
   <Match>
+    <Class name="org.jboss.jca.as.rarinfo.Main"/>
+    <Bug code="Dm"/>
+  </Match>
+  <Match>
     <Class name="org.jboss.jca.as.upgrader.Main"/>
-    <Bug code="OS,OBL"/>
+    <Bug code="OS,OBL,Dm"/>
+  </Match>
+
+  <!--  org.jboss.jca.codegenerator filter -->
+  <Match>
+    <Class name="org.jboss.jca.codegenerator.Main"/>
+    <Bug code="Dm"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.codegenerator.Utils"/>
+    <Bug code="Dm"/>
   </Match>
 
   <!--  org.jboss.jca.common filter -->
@@ -131,6 +145,26 @@
     <Class name="org.jboss.jca.common.metadata.ds.v11.XADataSourceImpl"/>
     <Bug code="Nm"/>
   </Match>
+  <Match>
+    <Class name="org.jboss.jca.common.metadata.ds.v12.DataSourceImpl"/>
+    <Bug code="Nm"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.common.metadata.ds.v12.DsParser"/>
+    <Bug code="Nm,RI"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.common.metadata.ds.v12.DsPoolImpl"/>
+    <Bug code="Nm"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.common.metadata.ds.v12.DsXaPoolImpl"/>
+    <Bug code="Nm"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.common.metadata.ds.v12.XADataSourceImpl"/>
+    <Bug code="Nm"/>
+  </Match>
 
   <!--  org.jboss.jca.core filter -->
   <Match>
@@ -152,6 +186,10 @@
   <Match>
     <Class name="org.jboss.jca.core.connectionmanager.ConnectionManager"/>
     <Bug code="Nm"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.core.connectionmanager.ccm.CachedConnectionManagerImpl"/>
+    <Bug code="Dm"/>
   </Match>
   <Match>
     <Class name="org.jboss.jca.core.connectionmanager.listener.ConnectionListener"/>
@@ -225,7 +263,7 @@
   </Match>
   <Match>
     <Class name="org.jboss.jca.deployers.common.AbstractResourceAdapterDeployer"/>
-    <Bug code="IP"/>
+    <Bug code="IP,Dm"/>
   </Match>
   <Match>
     <Class name="org.jboss.jca.deployers.common.CommonDeployment"/>
@@ -238,6 +276,14 @@
   <Match>
     <Class name="org.jboss.jca.deployers.fungal.AbstractFungalDeployment"/>
     <Bug code="EI2"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.deployers.fungal.AbstractFungalRADeployer"/>
+    <Bug code="Dm"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.deployers.fungal.DriverRegistry"/>
+    <Bug code="Dm"/>
   </Match>
   <Match>
     <Class name="org.jboss.jca.deployers.fungal.DsXmlDeployer"/>
@@ -279,6 +325,10 @@
   </Match>
 
   <!--  org.jboss.jca.validator filter -->
+  <Match>
+    <Class name="org.jboss.jca.validator.Validation"/>
+    <Bug code="Dm"/>
+  </Match>
   <Match>
     <Class name="org.jboss.jca.validator.maven.ValidatorMojo"/>
     <Bug code="EI,EI2"/>
