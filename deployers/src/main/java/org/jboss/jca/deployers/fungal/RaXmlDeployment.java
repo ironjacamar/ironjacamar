@@ -87,4 +87,25 @@ public class RaXmlDeployment extends AbstractFungalDeployment
             resourceAdapterRepository, cfs, cfJndis, cfCMs, aos, aoJndis, recoveryModules, recoveryRegistry,
             managementRepository, connector, server, objectNames, cl, log);
    }
+
+   /**
+    * Stop
+    */
+   @Override
+   public void stop()
+   {
+      super.stop();
+
+      if (mdr != null)
+      {
+         try
+         {
+            mdr.unregisterResourceAdapter(deployment.toExternalForm());
+         }
+         catch (Throwable t)
+         {
+            log.warn("Exception during unregistering deployment in the metadata repository", t);
+         }
+      }
+   }
 }
