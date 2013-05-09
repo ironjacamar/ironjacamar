@@ -559,7 +559,7 @@ public abstract class AbstractDsDeployer
          injectValue(mcf, "setReauthPluginClassName", ds.getSecurity().getReauthPlugin().getClassName());
 
          Map<String, String> mps = ds.getSecurity().getReauthPlugin().getConfigPropertiesMap();
-         if (mps != null && mps.size() > 0)
+         if (mps.size() > 0)
          {
             StringBuilder reauthPluginProperties = new StringBuilder();
 
@@ -745,7 +745,7 @@ public abstract class AbstractDsDeployer
          injectValue(mcf, "setReauthPluginClassName", ds.getSecurity().getReauthPlugin().getClassName());
 
          Map<String, String> mps = ds.getSecurity().getReauthPlugin().getConfigPropertiesMap();
-         if (mps != null && mps.size() > 0)
+         if (mps.size() > 0)
          {
             StringBuilder reauthPluginProperties = new StringBuilder();
 
@@ -812,27 +812,25 @@ public abstract class AbstractDsDeployer
          {
             RecoveryPlugin plugin = null;
 
-            if (recoveryMD != null && recoveryMD.getRecoverPlugin() != null)
+            if (recoveryMD != null && recoveryMD.getRecoverPlugin() != null &&
+                recoveryMD.getRecoverPlugin().getClassName() != null)
             {
-               List<ConfigProperty> configProperties = null;
-               if (recoveryMD.getRecoverPlugin().getConfigPropertiesMap() != null)
+               List<ConfigProperty> configProperties = new ArrayList<ConfigProperty>(recoveryMD.getRecoverPlugin()
+                                                                                     .getConfigPropertiesMap().size());
+               for (Entry<String, String> property : recoveryMD.getRecoverPlugin().getConfigPropertiesMap()
+                       .entrySet())
                {
-                  configProperties = new ArrayList<ConfigProperty>(recoveryMD.getRecoverPlugin()
-                                                                   .getConfigPropertiesMap().size());
-                  for (Entry<String, String> property : recoveryMD.getRecoverPlugin().getConfigPropertiesMap()
-                          .entrySet())
-                  {
-                     ConfigProperty c = new ConfigPropertyImpl(null,
-                                                               new XsdString(property.getKey(), null),
-                                                               new XsdString("String", null),
-                                                               new XsdString(property.getValue(), null),
-                                                               null);
-                     configProperties.add(c);
-                  }
-
-                  plugin = (RecoveryPlugin) initAndInject(recoveryMD.getRecoverPlugin().getClassName(),
-                                                          configProperties, cl);
+                  ConfigProperty c =
+                     new ConfigPropertyImpl(null,
+                                            new XsdString(property.getKey(), null),
+                                            XsdString.NULL_XSDSTRING,
+                                            new XsdString(property.getValue(), null),
+                                            null);
+                  configProperties.add(c);
                }
+
+               plugin = (RecoveryPlugin) initAndInject(recoveryMD.getRecoverPlugin().getClassName(),
+                                                       configProperties, cl);
             }
             else
             {

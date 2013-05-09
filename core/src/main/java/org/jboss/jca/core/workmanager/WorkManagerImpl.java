@@ -1136,7 +1136,7 @@ public class WorkManagerImpl implements WorkManager
       sb.append(" activeWorkWrappers=[");
       synchronized (activeWorkWrappers)
       {
-         if (activeWorkWrappers != null && activeWorkWrappers.size() > 0)
+         if (activeWorkWrappers.size() > 0)
          {
             Iterator<WorkWrapper> it = activeWorkWrappers.iterator();
 

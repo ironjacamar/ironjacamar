@@ -91,16 +91,13 @@ public class Http
                // Ignore
             }
          }
-         if (os != null)
+         try
          {
-            try
-            {
-               os.close();
-            }
-            catch (IOException ignore)
-            {
-               // Ignore
-            }
+            os.close();
+         }
+         catch (IOException ignore)
+         {
+            // Ignore
          }
 
          HttpURLConnection.setFollowRedirects(redirect);

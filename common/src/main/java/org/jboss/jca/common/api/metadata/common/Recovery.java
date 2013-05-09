@@ -184,7 +184,7 @@ public class Recovery implements JCAMetadata, ValidatableMetadata
          sb.append(recoverPlugin.getClassName()).append("\"");
          sb.append(">");
 
-         if (recoverPlugin.getConfigPropertiesMap() != null && recoverPlugin.getConfigPropertiesMap().size() > 0)
+         if (recoverPlugin.getConfigPropertiesMap().size() > 0)
          {
             Iterator<Map.Entry<String, String>> it = recoverPlugin.getConfigPropertiesMap().entrySet().iterator();
             

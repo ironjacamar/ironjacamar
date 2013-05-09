@@ -130,7 +130,10 @@ public class TransactionManagerDelegator implements TransactionManager, Transact
     */
    public int getTransactionTimeout() throws SystemException
    {
-      return ((org.jboss.tm.TransactionTimeoutConfiguration)tm).getTransactionTimeout();
+      if (tm instanceof org.jboss.tm.TransactionTimeoutConfiguration)
+         return ((org.jboss.tm.TransactionTimeoutConfiguration)tm).getTransactionTimeout();
+
+      return 0;
    }
 
    /**
@@ -138,6 +141,9 @@ public class TransactionManagerDelegator implements TransactionManager, Transact
     */
    public long getTimeLeftBeforeTransactionTimeout(boolean errorRollback) throws RollbackException
    {
-      return ((org.jboss.tm.TransactionTimeoutConfiguration)tm).getTimeLeftBeforeTransactionTimeout(errorRollback);
+      if (tm instanceof org.jboss.tm.TransactionTimeoutConfiguration)
+         return ((org.jboss.tm.TransactionTimeoutConfiguration)tm).getTimeLeftBeforeTransactionTimeout(errorRollback);
+
+      return 0;
    }
 }

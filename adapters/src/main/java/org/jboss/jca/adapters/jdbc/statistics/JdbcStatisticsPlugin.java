@@ -61,9 +61,9 @@ public class JdbcStatisticsPlugin implements StatisticsPlugin
    private Set<String> names;
    private Map<String, Class> types;
    private AtomicBoolean enabled;
-   private Map<Locale, ResourceBundle> rbs;
+   private transient Map<Locale, ResourceBundle> rbs;
 
-   private Set<PreparedStatementCache> psCaches;
+   private transient Set<PreparedStatementCache> psCaches;
 
    /**
     * Constructor

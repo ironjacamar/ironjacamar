@@ -22,6 +22,8 @@
 
 package org.jboss.jca.adapters.jdbc;
 
+import java.io.Serializable;
+
 import javax.resource.spi.ConnectionRequestInfo;
 
 /**
@@ -29,10 +31,11 @@ import javax.resource.spi.ConnectionRequestInfo;
  *
  * @author <a href="mailto:d_jencks@users.sourceforge.net">David Jencks</a>
  * @author <a href="mailto:adrian@jboss.com">Adrian Brock</a>
- * @version $Revision: 71554 $
  */
-public class WrappedConnectionRequestInfo implements ConnectionRequestInfo
+public class WrappedConnectionRequestInfo implements ConnectionRequestInfo, Serializable
 {
+   private static final long serialVersionUID = 1L;
+
    private final String user;
 
    private final String password;
@@ -79,13 +82,14 @@ public class WrappedConnectionRequestInfo implements ConnectionRequestInfo
     */
    public boolean equals(Object other)
    {
-      if (other == null || !(other.getClass() == WrappedConnectionRequestInfo.class))
-      {
+      if (other == null)
          return false;
-      }
 
       if (other == this)
          return true;
+
+      if (!(other instanceof WrappedConnectionRequestInfo))
+         return false;
 
       WrappedConnectionRequestInfo cri = (WrappedConnectionRequestInfo) other;
       if (user == null)

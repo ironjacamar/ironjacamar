@@ -195,8 +195,7 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
          sb.append(validConnectionChecker.getClassName()).append("\"");
          sb.append(">");
 
-         if (validConnectionChecker.getConfigPropertiesMap() != null &&
-             validConnectionChecker.getConfigPropertiesMap().size() > 0)
+         if (validConnectionChecker.getConfigPropertiesMap().size() > 0)
          {
             Iterator<Map.Entry<String, String>> it =
                validConnectionChecker.getConfigPropertiesMap().entrySet().iterator();
@@ -257,8 +256,7 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
          sb.append(staleConnectionChecker.getClassName()).append("\"");
          sb.append(">");
 
-         if (staleConnectionChecker.getConfigPropertiesMap() != null &&
-             staleConnectionChecker.getConfigPropertiesMap().size() > 0)
+         if (staleConnectionChecker.getConfigPropertiesMap().size() > 0)
          {
             Iterator<Map.Entry<String, String>> it =
                staleConnectionChecker.getConfigPropertiesMap().entrySet().iterator();
@@ -284,8 +282,7 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonV
          sb.append(exceptionSorter.getClassName()).append("\"");
          sb.append(">");
 
-         if (exceptionSorter.getConfigPropertiesMap() != null &&
-             exceptionSorter.getConfigPropertiesMap().size() > 0)
+         if (exceptionSorter.getConfigPropertiesMap().size() > 0)
          {
             Iterator<Map.Entry<String, String>> it =
                exceptionSorter.getConfigPropertiesMap().entrySet().iterator();

@@ -41,31 +41,35 @@ import java.util.Map;
 import org.jboss.logging.Messages;
 
 /**
- *
- * A DataSourceImpl.
+ * An XADataSourceImpl.
  *
  * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
- *
  */
 public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSource
 {
    /** The serialVersionUID */
-   private static final long serialVersionUID = -1401087499308709724L;
+   private static final long serialVersionUID = 2L;
 
    /** The bundle */
    private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
-   private final HashMap<String, String> xaDataSourceProperty;
+   /** The properties */
+   protected HashMap<String, String> xaDataSourceProperty;
 
-   private String xaDataSourceClass;
+   /** The class */
+   protected String xaDataSourceClass;
 
-   private final String driver;
+   /** The driver */
+   protected String driver;
 
-   private final String newConnectionSql;
+   /** The new connection SQL */
+   protected String newConnectionSql;
 
-   private final CommonXaPool xaPool;
+   /** The XA pool */
+   protected CommonXaPool xaPool;
 
-   private final Recovery recovery;
+   /** The recovery */
+   protected Recovery recovery;
 
    /**
     * Create a new XADataSourceImpl.
