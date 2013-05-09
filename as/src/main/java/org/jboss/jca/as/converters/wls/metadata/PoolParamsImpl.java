@@ -101,7 +101,7 @@ public class PoolParamsImpl implements PoolParams
    @Override
    public Boolean getShrinkingEnabled()
    {
-      return null;
+      return false;
    }
 
    /* (non-Javadoc)
@@ -165,7 +165,7 @@ public class PoolParamsImpl implements PoolParams
    @Override
    public Boolean getTestConnectionsOnCreate()
    {
-      return null;
+      return false;
    }
 
    /* (non-Javadoc)
@@ -174,7 +174,7 @@ public class PoolParamsImpl implements PoolParams
    @Override
    public Boolean getTestConnectionsOnRelease()
    {
-      return null;
+      return false;
    }
 
    /* (non-Javadoc)
@@ -183,7 +183,7 @@ public class PoolParamsImpl implements PoolParams
    @Override
    public Boolean getTestConnectionsOnReserve()
    {
-      return null;
+      return false;
    }
 
    /* (non-Javadoc)
@@ -201,7 +201,7 @@ public class PoolParamsImpl implements PoolParams
    @Override
    public Boolean getIgnoreInUseConnectionsEnabled()
    {
-      return null;
+      return false;
    }
 
    /* (non-Javadoc)
@@ -210,7 +210,7 @@ public class PoolParamsImpl implements PoolParams
    @Override
    public Boolean getMatchConnectionsSupported()
    {
-      return null;
+      return false;
    }
 
    /* (non-Javadoc)
@@ -219,7 +219,7 @@ public class PoolParamsImpl implements PoolParams
    @Override
    public Boolean getUseFirstAvailable()
    {
-      return null;
+      return false;
    }
 
 }

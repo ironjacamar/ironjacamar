@@ -233,14 +233,15 @@ public class WlsRaConverter
             
       if (connectionReserveTimeoutSeconds + shrinkFrequencySeconds + connectionCreationRetryFrequencySeconds > 0)
       {
-         lcf.buildTimeOut(new Long(connectionReserveTimeoutSeconds * 1000), new Long(shrinkFrequencySeconds / 60), 5, 
-            new Long(connectionCreationRetryFrequencySeconds * 1000), 0);
+         lcf.buildTimeOut(Long.valueOf(connectionReserveTimeoutSeconds * 1000L), 
+               Long.valueOf(shrinkFrequencySeconds / 60), 5, 
+               Long.valueOf(connectionCreationRetryFrequencySeconds * 1000L), 0);
       }
       
       int testFrequencySeconds = myCdProps.getPoolParams().getTestFrequencySeconds() != null ?
             myCdProps.getPoolParams().getTestFrequencySeconds() : 0;
       if (testFrequencySeconds > 0)
-         lcf.buildValidation(true, new Long(testFrequencySeconds * 1000), Defaults.USE_FAST_FAIL);
+         lcf.buildValidation(true, Long.valueOf(testFrequencySeconds * 1000L), Defaults.USE_FAST_FAIL);
    }
 
    private ConnectionDefinitionProperties mergedCdProps(ConnectionDefinitionProperties oldCdProps, 

@@ -745,7 +745,7 @@ public class WeblogicRaPasrer extends AbstractParser implements MetadataParser<W
 
    private PoolParams parsePoolParams(XMLStreamReader reader) throws XMLStreamException, ParserException
    {
-      String noMapped = null;
+      //String noMapped = null;
 
       Integer initialCapacity = null;
       Integer maxCapacity = null;
@@ -816,7 +816,7 @@ public class WeblogicRaPasrer extends AbstractParser implements MetadataParser<W
                   case IGNORE_IN_USE_CONNECTION_ENABLED : 
                   case MATCH_CONNECTIONS_SUPPORTED : 
                   case USE_FIRST_AVAILABLE : {
-                     noMapped = elementAsString(reader);
+                     //noMapped = elementAsString(reader);
                      break;
                   }
                   default :

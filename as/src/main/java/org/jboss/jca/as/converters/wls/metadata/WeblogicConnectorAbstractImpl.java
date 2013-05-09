@@ -110,7 +110,7 @@ public abstract class WeblogicConnectorAbstractImpl implements WeblogicConnector
    @Override
    public Boolean isEnableAccessOutsideApp()
    {
-      return null;
+      return false;
    }
 
    /* (non-Javadoc)
@@ -119,7 +119,7 @@ public abstract class WeblogicConnectorAbstractImpl implements WeblogicConnector
    @Override
    public Boolean isEnableGlobalAccessToClasses()
    {
-      return null;
+      return false;
    }
 
    /* (non-Javadoc)

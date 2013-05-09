@@ -965,7 +965,7 @@ public class Main
    private static void cleanupTempFiles()
    {
       File destination = new File(tempdir, subdir);
-      if (destination != null)
+      if (destination.exists())
       {
          try
          {
@@ -1019,28 +1019,25 @@ public class Main
 
          Method[] methods = c.getMethods();
 
-         if (methods != null)
+         for (Method m : methods)
          {
-            for (Method m : methods)
+            if (m.getName().startsWith("set") && m.getParameterTypes().length == 1
+                  && isValidType(m.getParameterTypes()[0]))
             {
-               if (m.getName().startsWith("set") && m.getParameterTypes() != null && m.getParameterTypes().length == 1
-                     && isValidType(m.getParameterTypes()[0]))
+               String name = m.getName().substring(3);
+
+               if (name.length() == 1)
                {
-                  String name = m.getName().substring(3);
-
-                  if (name.length() == 1)
-                  {
-                     name = name.toLowerCase(Locale.US);
-                  }
-                  else
-                  {
-                     name = name.substring(0, 1).toLowerCase(Locale.US) + name.substring(1);
-                  }
-
-                  String type = m.getParameterTypes()[0].getName();
-
-                  result.put(name, type);
+                  name = name.toLowerCase(Locale.US);
                }
+               else
+               {
+                  name = name.substring(0, 1).toLowerCase(Locale.US) + name.substring(1);
+               }
+
+               String type = m.getParameterTypes()[0].getName();
+
+               result.put(name, type);
             }
          }
       }
@@ -1209,11 +1206,22 @@ public class Main
                {
                   // Ignore
                }
-
+               
+               try
+               {
+                  jar.close();
+               }
+               catch (IOException ignore)
+               {
+                  // Ignore
+               }
+               
                try
                {
                   if (in != null)
+                  {
                      in.close();
+                  }
                }
                catch (IOException ignore)
                {

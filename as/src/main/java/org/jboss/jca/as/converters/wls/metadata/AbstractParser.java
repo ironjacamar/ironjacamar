@@ -85,7 +85,7 @@ public abstract class AbstractParser
           stringValue.trim().equalsIgnoreCase("false"))
       {
 
-         return stringValue == null || stringValue.length() == 0 ? true : Boolean.valueOf(stringValue.trim());
+         return stringValue == null || stringValue.length() == 0 ? Boolean.TRUE : Boolean.valueOf(stringValue.trim());
       }
       else
       {
@@ -309,7 +309,7 @@ public abstract class AbstractParser
          {
             input = prefix + systemProperty + postfix;
          }
-         else if (defaultValue != null && !defaultValue.trim().equals(""))
+         else if (!defaultValue.trim().equals(""))
          {
             input = prefix + defaultValue + postfix;
          }
