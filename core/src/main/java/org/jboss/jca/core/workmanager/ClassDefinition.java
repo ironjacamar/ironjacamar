@@ -53,7 +53,9 @@ public class ClassDefinition implements Serializable
    {
       this.name = name;
       this.svu = serialVersionUID;
-      this.data = data;
+      this.data = new byte[data.length];
+      
+      System.arraycopy(data, 0, this.data, 0, data.length);
    }
 
    /**
@@ -80,7 +82,9 @@ public class ClassDefinition implements Serializable
     */
    public byte[] getData()
    {
-      return data;
+      byte[] copy = new byte[data.length];
+      System.arraycopy(data, 0, copy, 0, data.length);
+      return copy;
    }
 
    /** 

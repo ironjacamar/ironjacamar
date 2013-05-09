@@ -288,10 +288,9 @@ public class Server
          }
          catch (ClassNotFoundException e)
          {
-            String s = (attr != null) ? attr.getName() : attrType;
             if (trace)
-               log.trace("Failed to load class for attribute: " + s, e);
-            throw new ReflectionException(e, "Failed to load class for attribute: " + s);
+               log.trace("Failed to load class for attribute: " + attrType, e);
+            throw new ReflectionException(e, "Failed to load class for attribute: " + attrType);
          }
          catch (IntrospectionException e)
          {

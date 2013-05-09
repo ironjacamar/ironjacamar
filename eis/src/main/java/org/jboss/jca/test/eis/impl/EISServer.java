@@ -132,13 +132,10 @@ public class EISServer
     */
    public void shutdown() throws Throwable
    {
-      HandlerServer handlerServer = handlerServers.get(getKey());
+      HandlerServer handlerServer = handlerServers.remove(getKey());
 
       if (handlerServer != null)
-      {
          handlerServer.stop();
-         handlerServer = null;
-      }
    }
 
    /**
@@ -148,14 +145,5 @@ public class EISServer
    private String getKey()
    {
       return host + ":" + port;
-   }
-
-   /**
-    * Main
-    * @param args The arguments
-    */
-   public static void main(String[] args)
-   {
-
    }
 }

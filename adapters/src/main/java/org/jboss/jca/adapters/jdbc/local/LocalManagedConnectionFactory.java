@@ -71,7 +71,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
 
    private String connectionURL;
 
-   private URLSelectorStrategy urlSelector;
+   private transient URLSelectorStrategy urlSelector;
 
    /** The connection properties */
    protected String connectionProperties;
@@ -83,6 +83,9 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
     */
    public LocalManagedConnectionFactory()
    {
+      this.driver = null;
+      this.dataSource = null;
+      this.urlSelector = null;
    }
 
    /**
@@ -494,6 +497,9 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
    @Override
    public boolean equals(Object other)
    {
+      if (other == null)
+         return false;
+
       if (this == other)
          return true;
 

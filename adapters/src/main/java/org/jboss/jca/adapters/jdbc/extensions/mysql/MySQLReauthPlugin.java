@@ -87,7 +87,7 @@ public class MySQLReauthPlugin implements ReauthPlugin
 
       try
       {
-         Method changeUser = mysqlConnection.getMethod("changeUser", new Class[] {String.class, String.class});
+         mysqlConnection.getMethod("changeUser", new Class[] {String.class, String.class});
       }
       catch (Throwable t)
       {

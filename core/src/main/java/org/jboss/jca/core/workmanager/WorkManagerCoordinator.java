@@ -108,7 +108,7 @@ public class WorkManagerCoordinator
                WorkManagerEventQueue wmeq = WorkManagerEventQueue.getInstance();
                List<WorkManagerEvent> events = wmeq.getEvents(wm.getName());
 
-               if (events != null && events.size() > 0)
+               if (events.size() > 0)
                {
                   if (trace)
                      log.tracef("%s: Events=%s", wm.getName(), events);
@@ -198,6 +198,7 @@ public class WorkManagerCoordinator
             {
                WorkManagerEventQueue wmeq = WorkManagerEventQueue.getInstance();
                List<WorkManagerEvent> events = wmeq.getEvents(wm.getName());
+               events.clear();
             }
          }
       }

@@ -358,10 +358,10 @@ public class SocketTransport extends AbstractRemoteTransport<String> implements 
             Runnable r = new Communication(this, socket);
             this.getExecutorService().submit(r);
          }
-         catch (IOException ioe)
+         catch (Exception e)
          {
             if (log.isTraceEnabled())
-               log.trace(ioe.getMessage());
+               log.trace(e.getMessage());
          }
       }
    }

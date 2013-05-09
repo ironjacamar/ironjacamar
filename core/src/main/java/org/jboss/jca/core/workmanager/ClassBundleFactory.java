@@ -182,7 +182,7 @@ public class ClassBundleFactory
          try
          {
             Field[] fields = c.getDeclaredFields();
-            if (fields != null && fields.length > 0)
+            if (fields.length > 0)
             {
                for (Field f : fields)
                {

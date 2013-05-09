@@ -67,7 +67,6 @@ public class CapacityFactory
          incrementer = loadIncrementer(metadata.getIncrementer().getClassName());
 
          if (incrementer != null &&
-             metadata.getIncrementer().getConfigPropertiesMap() != null &&
              metadata.getIncrementer().getConfigPropertiesMap().size() > 0)
          {
             Injection injector = new Injection();
@@ -97,7 +96,6 @@ public class CapacityFactory
          decrementer = loadDecrementer(metadata.getDecrementer().getClassName());
 
          if (decrementer != null &&
-             metadata.getDecrementer().getConfigPropertiesMap() != null &&
              metadata.getDecrementer().getConfigPropertiesMap().size() > 0)
          {
             Injection injector = new Injection();

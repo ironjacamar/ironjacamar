@@ -31,6 +31,7 @@ import org.jboss.jca.common.api.metadata.ds.v12.DsXaPool;
 import org.jboss.jca.common.api.metadata.ds.v12.XaDataSource;
 import org.jboss.jca.common.api.validator.ValidateException;
 
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -44,7 +45,7 @@ public class XADataSourceImpl extends org.jboss.jca.common.metadata.ds.v11.XADat
    private static final long serialVersionUID = 2L;
 
    /** The url property */
-   private String urlProperty;
+   protected String urlProperty;
 
    /**
     * Create a new XADataSourceImpl.
@@ -102,5 +103,149 @@ public class XADataSourceImpl extends org.jboss.jca.common.metadata.ds.v11.XADat
    public DsXaPool getXaPool()
    {
       return (DsXaPool)super.getXaPool();
+   }
+
+   @Override
+   public int hashCode()
+   {
+      final int prime = 31;
+      int result = super.hashCode();
+      result = prime * result + ((urlProperty == null) ? 0 : urlProperty.hashCode());
+      return result;
+   }
+
+   @Override
+   public boolean equals(Object obj)
+   {
+      if (this == obj)
+         return true;
+      if (!super.equals(obj))
+         return false;
+      if (!(obj instanceof XADataSourceImpl))
+         return false;
+      XADataSourceImpl other = (XADataSourceImpl) obj;
+      if (urlProperty == null)
+      {
+         if (other.urlProperty != null)
+            return false;
+      }
+      else if (!urlProperty.equals(other.urlProperty))
+         return false;
+      return true;
+   }
+
+   @Override
+   public String toString()
+   {
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("<xa-datasource");
+
+      if (jndiName != null)
+         sb.append(" ").append(XaDataSource.Attribute.JNDI_NAME).append("=\"").append(jndiName).append("\"");
+
+      if (poolName != null)
+         sb.append(" ").append(XaDataSource.Attribute.POOL_NAME).append("=\"").append(poolName).append("\"");
+
+      if (enabled != null)
+         sb.append(" ").append(XaDataSource.Attribute.ENABLED).append("=\"").append(enabled).append("\"");
+
+      if (useJavaContext != null)
+      {
+         sb.append(" ").append(XaDataSource.Attribute.USE_JAVA_CONTEXT);
+         sb.append("=\"").append(useJavaContext).append("\"");
+      }
+
+      if (spy != null)
+         sb.append(" ").append(XaDataSource.Attribute.SPY).append("=\"").append(spy).append("\"");
+
+      if (useCcm != null)
+         sb.append(" ").append(XaDataSource.Attribute.USE_CCM).append("=\"").append(useCcm).append("\"");
+
+      sb.append(">");
+
+      if (xaDataSourceProperty != null && xaDataSourceProperty.size() > 0)
+      {
+         Iterator<Map.Entry<String, String>> it = xaDataSourceProperty.entrySet().iterator();
+         while (it.hasNext())
+         {
+            Map.Entry<String, String> entry = it.next();
+            sb.append("<").append(XaDataSource.Tag.XA_DATASOURCE_PROPERTY);
+            sb.append(" name=\"").append(entry.getKey()).append("\">");
+            sb.append(entry.getValue());
+            sb.append("</").append(XaDataSource.Tag.XA_DATASOURCE_PROPERTY).append(">");
+         }
+      }
+
+      if (xaDataSourceClass != null)
+      {
+         sb.append("<").append(XaDataSource.Tag.XA_DATASOURCE_CLASS).append(">");
+         sb.append(xaDataSourceClass);
+         sb.append("</").append(XaDataSource.Tag.XA_DATASOURCE_CLASS).append(">");
+      }
+
+      if (driver != null)
+      {
+         sb.append("<").append(XaDataSource.Tag.DRIVER).append(">");
+         sb.append(driver);
+         sb.append("</").append(XaDataSource.Tag.DRIVER).append(">");
+      }
+
+      if (urlDelimiter != null)
+      {
+         sb.append("<").append(XaDataSource.Tag.URL_DELIMITER).append(">");
+         sb.append(urlDelimiter);
+         sb.append("</").append(XaDataSource.Tag.URL_DELIMITER).append(">");
+      }
+
+      if (urlProperty != null)
+      {
+         sb.append("<").append(XaDataSource.Tag.URL_PROPERTY).append(">");
+         sb.append(urlProperty);
+         sb.append("</").append(XaDataSource.Tag.URL_PROPERTY).append(">");
+      }
+
+      if (urlSelectorStrategyClassName != null)
+      {
+         sb.append("<").append(XaDataSource.Tag.URL_SELECTOR_STRATEGY_CLASS_NAME).append(">");
+         sb.append(urlSelectorStrategyClassName);
+         sb.append("</").append(XaDataSource.Tag.URL_SELECTOR_STRATEGY_CLASS_NAME).append(">");
+      }
+
+      if (newConnectionSql != null)
+      {
+         sb.append("<").append(XaDataSource.Tag.NEW_CONNECTION_SQL).append(">");
+         sb.append(newConnectionSql);
+         sb.append("</").append(XaDataSource.Tag.NEW_CONNECTION_SQL).append(">");
+      }
+
+      if (transactionIsolation != null)
+      {
+         sb.append("<").append(XaDataSource.Tag.TRANSACTION_ISOLATION).append(">");
+         sb.append(transactionIsolation);
+         sb.append("</").append(XaDataSource.Tag.TRANSACTION_ISOLATION).append(">");
+      }
+
+      if (xaPool != null)
+         sb.append(xaPool);
+
+      if (security != null)
+         sb.append(security);
+
+      if (validation != null)
+         sb.append(validation);
+
+      if (timeOut != null)
+         sb.append(timeOut);
+
+      if (statement != null)
+         sb.append(statement);
+
+      if (recovery != null)
+         sb.append(recovery);
+
+      sb.append("</xa-datasource>");
+
+      return sb.toString();
    }
 }

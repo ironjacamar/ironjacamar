@@ -235,13 +235,9 @@ public class WorkClassLoader extends ClassLoader
       }
 
       e = super.getResources(name);
-
-      if (e != null)
+      while (e.hasMoreElements())
       {
-         while (e.hasMoreElements())
-         {
-            v.add(e.nextElement());
-         }
+         v.add(e.nextElement());
       }
 
       return v.elements();

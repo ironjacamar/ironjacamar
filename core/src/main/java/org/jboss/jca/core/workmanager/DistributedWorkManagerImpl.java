@@ -741,8 +741,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
       if (getTransport() instanceof NotificationListener)
          wm.listeners.add((NotificationListener)getTransport());
 
-      if (dwmsi instanceof NotificationListener)
-         wm.listeners.add((NotificationListener)dwmsi);
+      wm.listeners.add((NotificationListener)dwmsi);
 
       return wm;
    }

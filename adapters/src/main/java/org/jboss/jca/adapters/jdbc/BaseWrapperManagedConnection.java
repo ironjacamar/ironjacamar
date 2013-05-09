@@ -566,7 +566,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
       Collection<ConnectionEventListener> copy = null;
       synchronized (cels)
       {
-         if (cels != null && cels.size() > 0)
+         if (cels.size() > 0)
             copy = new ArrayList<ConnectionEventListener>(cels);
       }
 

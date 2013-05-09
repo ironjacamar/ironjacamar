@@ -230,8 +230,7 @@ public class DsXaPoolImpl extends org.jboss.jca.common.metadata.ds.v11.DsXaPoolI
          sb.append(connectionListener.getClassName()).append("\"");
          sb.append(">");
 
-         if (connectionListener.getConfigPropertiesMap() != null &&
-             connectionListener.getConfigPropertiesMap().size() > 0)
+         if (connectionListener.getConfigPropertiesMap().size() > 0)
          {
             Iterator<Map.Entry<String, String>> it = connectionListener.getConfigPropertiesMap().entrySet().iterator();
             

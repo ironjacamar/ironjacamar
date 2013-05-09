@@ -151,10 +151,10 @@ public class HandlerServer implements Runnable
             active.add(hs);
             executorService.submit(hs);
          }
-         catch (IOException ioe)
+         catch (Exception e)
          {
             if (running.get())
-               ioe.printStackTrace(System.err);
+               e.printStackTrace(System.err);
          }
       }
    }

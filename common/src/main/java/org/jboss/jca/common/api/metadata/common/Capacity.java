@@ -138,7 +138,7 @@ public class Capacity implements JCAMetadata, ValidatableMetadata
          sb.append(incrementer.getClassName()).append("\"");
          sb.append(">");
 
-         if (incrementer.getConfigPropertiesMap() != null && incrementer.getConfigPropertiesMap().size() > 0)
+         if (incrementer.getConfigPropertiesMap().size() > 0)
          {
             Iterator<Map.Entry<String, String>> it = incrementer.getConfigPropertiesMap().entrySet().iterator();
             
@@ -162,7 +162,7 @@ public class Capacity implements JCAMetadata, ValidatableMetadata
          sb.append(decrementer.getClassName()).append("\"");
          sb.append(">");
 
-         if (decrementer.getConfigPropertiesMap() != null && decrementer.getConfigPropertiesMap().size() > 0)
+         if (decrementer.getConfigPropertiesMap().size() > 0)
          {
             Iterator<Map.Entry<String, String>> it = decrementer.getConfigPropertiesMap().entrySet().iterator();
             

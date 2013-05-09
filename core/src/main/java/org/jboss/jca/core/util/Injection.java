@@ -22,6 +22,7 @@
 package org.jboss.jca.core.util;
 
 import java.io.File;
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -477,8 +478,10 @@ public class Injection
    /**
     * Method sorter
     */
-   static class MethodSorter implements Comparator<Method>
+   static class MethodSorter implements Comparator<Method>, Serializable
    {
+      private static final long serialVersionUID = 1L;
+
       /**
        * Constructor
        */
@@ -541,8 +544,10 @@ public class Injection
    /**
     * Field sorter
     */
-   static class FieldSorter implements Comparator<Field>
+   static class FieldSorter implements Comparator<Field>, Serializable
    {
+      private static final long serialVersionUID = 1L;
+
       /**
        * Constructor
        */

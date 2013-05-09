@@ -132,8 +132,7 @@ public class DsSecurityImpl extends CredentialImpl implements DsSecurity
          sb.append(getReauthPlugin().getClassName()).append("\"");
          sb.append(">");
 
-         if (getReauthPlugin().getConfigPropertiesMap() != null &&
-             getReauthPlugin().getConfigPropertiesMap().size() > 0)
+         if (getReauthPlugin().getConfigPropertiesMap().size() > 0)
          {
             Iterator<Map.Entry<String, String>> it = getReauthPlugin().getConfigPropertiesMap().entrySet().iterator();
             

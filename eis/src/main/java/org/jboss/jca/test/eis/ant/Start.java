@@ -132,7 +132,7 @@ public class Start extends AbstractTask
    /**
     * Classpath
     */
-   public class Classpath extends org.apache.tools.ant.types.Path
+   public static class Classpath extends org.apache.tools.ant.types.Path
    {
       /**
        * Constructor

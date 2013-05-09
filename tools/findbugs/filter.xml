@@ -22,6 +22,100 @@
     <Bug code="Se"/>
   </Match>
 
+  <!--  org.jboss.jca.adapters filter -->
+  <Match>
+    <Class name="org.jboss.jca.adapters.jdbc.BaseWrapperManagedConnection"/>
+    <Bug code="SQL,MS,IS"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.adapters.jdbc.BaseWrapperManagedConnectionFactory"/>
+    <Bug code="Dm,Nm,RCN,IS"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.adapters.jdbc.BaseWrapperManagedConnectionFactory$SubjectActions"/>
+    <Bug code="RCN"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.adapters.jdbc.CachedPreparedStatement"/>
+    <Bug code="MS"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.adapters.jdbc.CheckValidConnectionSQL"/>
+    <Bug code="SQL"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.adapters.jdbc.PreparedStatementCache"/>
+    <Bug code="UrF"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.adapters.jdbc.WrappedConnection"/>
+    <Bug code="SQL,MS"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.adapters.jdbc.WrappedResultSet"/>
+    <Bug code="MS"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.adapters.jdbc.WrappedStatement"/>
+    <Bug code="SQL,MS"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.adapters.jdbc.WrapperDataSource"/>
+    <Bug code="DE,Se,RI"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.adapters.jdbc.extensions.oracle.OracleExceptionSorter"/>
+    <Bug code="Dm"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.adapters.jdbc.extensions.oracle.OracleValidConnectionChecker"/>
+    <Bug code="REC"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.adapters.jdbc.extensions.sybase.SybaseExceptionSorter"/>
+    <Bug code="Dm"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.adapters.jdbc.local.LocalManagedConnectionFactory"/>
+    <Bug code="Dm,Nm,REC,IS,UG"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.adapters.jdbc.statistics.JdbcStatisticsPlugin"/>
+    <Bug code="Se"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.adapters.jdbc.xa.XAManagedConnectionFactory"/>
+    <Bug code="Dm,Nm,IS,UG"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.adapters.jdbc.util.BoundedConcurrentHashMap"/>
+    <Bug code="DLS"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.adapters.jdbc.util.BoundedConcurrentHashMap$HashEntry"/>
+    <Bug code="BC"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.adapters.jdbc.util.BoundedConcurrentHashMap$LIRS"/>
+    <Bug code="BC"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.adapters.jdbc.util.BoundedConcurrentHashMap$LIRSHashEntry"/>
+    <Bug code="BC,SF"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.adapters.jdbc.util.BoundedConcurrentHashMap$Segment"/>
+    <Bug code="Se,UL,VO"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.adapters.jdbc.util.BoundedConcurrentHashMap$WriteThroughEntry"/>
+    <Bug code="Se"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.adapters.jdbc.util.ReentrantLock"/>
+    <Bug code="Dm,Nm"/>
+  </Match>
+
   <!--  org.jboss.jca.as filter -->
   <Match>
     <Class name="org.jboss.jca.as.converters.Main"/>
@@ -54,6 +148,10 @@
   <Match>
     <Class name="org.jboss.jca.common.CommonLogger_$logger"/>
     <Bug code="Nm,Se,RI"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.common.annotations.repository.jandex.AnnotationImpl"/>
+    <Bug code="REC"/>
   </Match>
   <Match>
     <Class name="org.jboss.jca.common.api.ThreadPool"/>
@@ -96,12 +194,40 @@
     <Bug code="Nm"/>
   </Match>
   <Match>
+    <Class name="org.jboss.jca.common.api.metadata.ds.v12.DataSource"/>
+    <Bug code="Nm"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.common.api.metadata.ds.v12.DsPool"/>
+    <Bug code="Nm"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.common.api.metadata.ds.v12.DsXaPool"/>
+    <Bug code="Nm"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.common.api.metadata.ds.v12.XaDataSource"/>
+    <Bug code="Nm"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.common.api.metadata.ironjacamar.v10.IronJacamar"/>
+    <Bug code="Nm"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.common.api.metadata.ironjacamar.v11.IronJacamar"/>
+    <Bug code="Nm"/>
+  </Match>
+  <Match>
     <Class name="org.jboss.jca.common.api.metadata.resourceadapter.v10.ResourceAdapter"/>
     <Bug code="Nm"/>
   </Match>
   <Match>
     <Class name="org.jboss.jca.common.api.metadata.resourceadapter.v11.ResourceAdapter"/>
     <Bug code="Nm"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.common.metadata.AbstractParser"/>
+    <Bug code="RCN"/>
   </Match>
   <Match>
     <Class name="org.jboss.jca.common.metadata.merge.Merger"/>
@@ -209,11 +335,11 @@
   </Match>
   <Match>
     <Class name="org.jboss.jca.core.connectionmanager.pool.mcp.ArrayBlockingQueueManagedConnectionPool"/>
-    <Bug code="DLS,NP"/>
+    <Bug code="DLS,NP,BC,RCN"/>
   </Match>
   <Match>
     <Class name="org.jboss.jca.core.connectionmanager.pool.mcp.SemaphoreArrayListManagedConnectionPool"/>
-    <Bug code="DLS,NP"/>
+    <Bug code="DLS,NP,BC,RCN"/>
   </Match>
   <Match>
     <Class name="org.jboss.jca.core.connectionmanager.pool.mcp.Semaphore"/>
@@ -226,6 +352,22 @@
   <Match>
     <Class name="org.jboss.jca.core.mdr.SimpleMetadataRepository"/>
     <Bug code="Dm"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.core.naming.ExplicitJndiStrategy"/>
+    <Bug code="RCN"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.core.naming.JndiBinder"/>
+    <Bug code="RCN"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.core.naming.SimpleJndiStrategy"/>
+    <Bug code="RCN"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.core.security.CallbackImpl"/>
+    <Bug code="PZLA"/>
   </Match>
   <Match>
     <Class name="org.jboss.jca.core.security.DefaultCallback"/>
@@ -248,8 +390,32 @@
     <Bug code="Se"/>
   </Match>
   <Match>
+    <Class name="org.jboss.jca.core.workmanager.DistributedWorkManagerImpl"/>
+    <Bug code="BC"/>
+  </Match>
+  <Match>
     <Class name="org.jboss.jca.core.workmanager.WorkWrapper"/>
     <Bug code="NP"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.core.workmanager.WorkManagerUtil"/>
+    <Bug code="NP"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.core.workmanager.policy.AbstractPolicy"/>
+    <Bug code="NP"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.core.workmanager.transport.remote.ProtocolMessages$RequestValues"/>
+    <Bug code="EI"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.core.workmanager.transport.remote.ProtocolMessages$ResponseValues"/>
+    <Bug code="EI"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.core.workmanager.transport.remote.socket.SocketTransport"/>
+    <Bug code="RV"/>
   </Match>
 
   <!--  org.jboss.jca.deployers filter -->
@@ -263,7 +429,7 @@
   </Match>
   <Match>
     <Class name="org.jboss.jca.deployers.common.AbstractResourceAdapterDeployer"/>
-    <Bug code="IP,Dm"/>
+    <Bug code="IP,Dm,DLS"/>
   </Match>
   <Match>
     <Class name="org.jboss.jca.deployers.common.CommonDeployment"/>
@@ -309,6 +475,14 @@
     <Class name="org.jboss.jca.deployers.fungal.RAActivatorDeployment"/>
     <Bug code="EI2"/>
   </Match>
+  <Match>
+    <Class name="org.jboss.jca.deployers.fungal.external.LocalList"/>
+    <Bug code="PZLA"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.deployers.fungal.external.RemoteList"/>
+    <Bug code="PZLA"/>
+  </Match>
 
   <!--  org.jboss.jca.sjc filter -->
   <Match>
@@ -322,6 +496,12 @@
   <Match>
     <Class name="org.jboss.jca.sjc.Shutdown"/>
     <Bug code="Dm,PZLA"/>
+  </Match>
+
+  <!--  org.jboss.jca.test filter -->
+  <Match>
+    <Class name="org.jboss.jca.test.eis.impl.HandlerServer"/>
+    <Bug code="RV"/>
   </Match>
 
   <!--  org.jboss.jca.validator filter -->

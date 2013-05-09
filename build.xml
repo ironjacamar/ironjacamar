@@ -614,6 +614,8 @@
           <include name="*.jar"/>
         </fileset>
       </auxClasspath>
+      <class location="${target.dir}/${name}-arquillian-embedded-byteman.jar" />
+      <class location="${target.dir}/${name}-arquillian-embedded.jar" />
       <class location="${target.dir}/${name}-as.jar" />
       <class location="${target.dir}/${name}-codegenerator.jar" />
       <class location="${target.dir}/${name}-common-api.jar" />
@@ -624,16 +626,16 @@
       <class location="${target.dir}/${name}-deployers-common.jar" />
       <class location="${target.dir}/${name}-deployers-fungal.jar" />
       <class location="${target.dir}/${name}-embedded.jar" />
-      <class location="${target.dir}/${name}-arquillian-embedded.jar" />
-      <class location="${target.dir}/${name}-arquillian-embedded-byteman.jar" />
+      <class location="${target.dir}/${name}-jdbc.jar" />
       <class location="${target.dir}/${name}-sjc.jar" />
       <class location="${target.dir}/${name}-spec-api.jar" />
-      <class location="${target.dir}/${name}-validator.jar" />
+      <class location="${target.dir}/${name}-test-eis.jar" />
       <class location="${target.dir}/${name}-validator-ant.jar" />
       <class location="${target.dir}/${name}-validator-cli.jar" />
       <class location="${target.dir}/${name}-validator-maven.jar" />
-      <class location="${target.dir}/${name}-web.jar" />
+      <class location="${target.dir}/${name}-validator.jar" />
       <class location="${target.dir}/${name}-web-console.jar" />
+      <class location="${target.dir}/${name}-web.jar" />
     </findbugs>
 
     <findbugs home="${basedir}/tools/findbugs/lib/"
@@ -670,6 +672,8 @@
           <include name="*.jar"/>
         </fileset>
       </auxClasspath>
+      <class location="${target.dir}/${name}-arquillian-embedded-byteman.jar" />
+      <class location="${target.dir}/${name}-arquillian-embedded.jar" />
       <class location="${target.dir}/${name}-as.jar" />
       <class location="${target.dir}/${name}-codegenerator.jar" />
       <class location="${target.dir}/${name}-common-api.jar" />
@@ -680,16 +684,16 @@
       <class location="${target.dir}/${name}-deployers-common.jar" />
       <class location="${target.dir}/${name}-deployers-fungal.jar" />
       <class location="${target.dir}/${name}-embedded.jar" />
-      <class location="${target.dir}/${name}-arquillian-embedded.jar" />
-      <class location="${target.dir}/${name}-arquillian-embedded-byteman.jar" />
+      <class location="${target.dir}/${name}-jdbc.jar" />
       <class location="${target.dir}/${name}-sjc.jar" />
       <class location="${target.dir}/${name}-spec-api.jar" />
-      <class location="${target.dir}/${name}-validator.jar" />
+      <class location="${target.dir}/${name}-test-eis.jar" />
       <class location="${target.dir}/${name}-validator-ant.jar" />
       <class location="${target.dir}/${name}-validator-cli.jar" />
       <class location="${target.dir}/${name}-validator-maven.jar" />
-      <class location="${target.dir}/${name}-web.jar" />
+      <class location="${target.dir}/${name}-validator.jar" />
       <class location="${target.dir}/${name}-web-console.jar" />
+      <class location="${target.dir}/${name}-web.jar" />
     </findbugs>
   </target>
 

@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.common.api.metadata.common.v11;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +30,7 @@ import java.util.Map;
  *
  * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public interface WorkManager
+public interface WorkManager extends Serializable
 {
    /**
     * Get the security settings

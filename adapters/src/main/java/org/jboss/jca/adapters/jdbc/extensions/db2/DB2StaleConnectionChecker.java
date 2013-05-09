@@ -30,7 +30,6 @@ import java.sql.SQLException;
  * A DB2StaleConnectionChecker.
  * 
  * @author <a href="weston.price@jboss.com">Weston Price</a>
- * @version $Revision: 85945 $
  */
 public class DB2StaleConnectionChecker implements StaleConnectionChecker
 {
@@ -46,7 +45,6 @@ public class DB2StaleConnectionChecker implements StaleConnectionChecker
     */
    public boolean isStaleConnection(SQLException e)
    {
-      final int code = Math.abs(e.getErrorCode());
       return false;
    }
 }

@@ -119,7 +119,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
     * Set the metadata repository
     * @param v The value
     */
-   public void setMetadataRepository(MetadataRepository v)
+   public synchronized void setMetadataRepository(MetadataRepository v)
    {
       this.mdr = v;
    }

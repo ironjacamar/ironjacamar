@@ -71,17 +71,19 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
 
    private Boolean isSameRMOverrideValue;
 
-   private XADataSource xads;
+   private transient XADataSource xads;
 
    private String urlProperty;
 
-   private URLXASelectorStrategy xadsSelector;
+   private transient URLXASelectorStrategy xadsSelector;
 
    /**
     * Constructor
     */
    public XAManagedConnectionFactory()
    {
+      this.xads = null;
+      this.xadsSelector = null;
    }
 
    /**
@@ -350,7 +352,6 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
          Injection injector = new Injection();
 
          xads = (XADataSource)clazz.newInstance();
-         final Class<?>[] noClasses = new Class<?>[]{};
          for (Map.Entry<Object, Object> entry : p.entrySet())
          {
             String name = (String)entry.getKey();
@@ -527,6 +528,9 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
    @Override
    public boolean equals(Object other)
    {
+      if (other == null)
+         return false;
+
       if (this == other)
          return true;
 
@@ -564,8 +568,6 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
             Class<?> clazz = Class.forName(xaDataSourceClass, true, getClassLoaderPlugin().getClassLoader());
 
             xads = (XADataSource) clazz.newInstance();
-            final Class<?>[] noClasses = new Class<?>[] {};
-
             Injection injector = new Injection();
 
             for (Map.Entry<String, String> entry : xaProps.entrySet())

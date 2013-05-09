@@ -104,8 +104,7 @@ public abstract class AbstractParser
       if (stringValue == null || stringValue.length() == 0 || stringValue.trim().equalsIgnoreCase("true") ||
           stringValue.trim().equalsIgnoreCase("false"))
       {
-
-         return stringValue == null || stringValue.length() == 0 ? true : Boolean.valueOf(stringValue.trim());
+         return stringValue == null || stringValue.length() == 0 ? Boolean.TRUE : Boolean.valueOf(stringValue.trim());
       }
       else
       {
@@ -851,6 +850,8 @@ public abstract class AbstractParser
                      decrementer = parseExtension(reader, tag.getLocalName());
                      break;
                   }
+                  default :
+                     // Nothing
                }
                break;
             }
