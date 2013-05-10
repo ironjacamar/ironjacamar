@@ -971,19 +971,17 @@ public abstract class AbstractDsDeployer
    {
       // Method has to be public
       Method[] methods = o.getClass().getMethods();
-      if (methods != null)
-      {
-         boolean found = false;
-         for (int i = 0; !found && i < methods.length; i++)
-         {
-            Method m = methods[i];
-            m.setAccessible(true);
+      boolean found = false;
 
-            if (m.getName().equals(methodName) && m.getParameterTypes().length == 1)
-            {
-               m.invoke(o, value);
-               found = true;
-            }
+      for (int i = 0; !found && i < methods.length; i++)
+      {
+         Method m = methods[i];
+         m.setAccessible(true);
+
+         if (m.getName().equals(methodName) && m.getParameterTypes().length == 1)
+         {
+            m.invoke(o, value);
+            found = true;
          }
       }
    }
@@ -1071,7 +1069,7 @@ public abstract class AbstractDsDeployer
                Subject subject = subjectFactory.createSubject(securityDomain);
 
                Set<PasswordCredential> pcs = subject.getPrivateCredentials(PasswordCredential.class);
-               if (pcs != null && pcs.size() > 0)
+               if (pcs.size() > 0)
                {
                   for (PasswordCredential pc : pcs)
                   {

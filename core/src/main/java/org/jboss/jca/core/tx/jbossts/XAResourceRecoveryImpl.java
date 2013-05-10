@@ -300,7 +300,7 @@ public class XAResourceRecoveryImpl implements org.jboss.jca.core.spi.transactio
                      Subject subject = subjectFactory.createSubject(domain);
                      
                      Set<PasswordCredential> pcs = subject.getPrivateCredentials(PasswordCredential.class);
-                     if (pcs != null && pcs.size() > 0)
+                     if (pcs.size() > 0)
                      {
                         for (PasswordCredential pc : pcs)
                         {

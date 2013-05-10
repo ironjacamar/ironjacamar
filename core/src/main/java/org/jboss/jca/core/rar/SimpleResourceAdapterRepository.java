@@ -470,7 +470,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
       if (clz != null)
       {
          Method[] methods = clz.getMethods();
-         if (methods != null && methods.length > 0)
+         if (methods.length > 0)
          {
             for (int i = 0; i < methods.length; i++)
             {

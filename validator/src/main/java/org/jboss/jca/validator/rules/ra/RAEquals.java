@@ -28,7 +28,6 @@ import org.jboss.jca.validator.Rule;
 import org.jboss.jca.validator.Severity;
 import org.jboss.jca.validator.Validate;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -71,9 +70,8 @@ public class RAEquals implements Rule
          {
             try
             {
-               Method equals = clz.getDeclaredMethod("equals", new Class[] {Object.class});
-               if (equals != null)
-                  error = false;
+               clz.getDeclaredMethod("equals", new Class[] {Object.class});
+               error = false;
             }
             catch (Throwable t)
             {

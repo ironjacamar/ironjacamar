@@ -2514,7 +2514,7 @@ public abstract class AbstractResourceAdapterDeployer
                Subject subject = subjectFactory.createSubject(securityDomain);
 
                Set<PasswordCredential> pcs = subject.getPrivateCredentials(PasswordCredential.class);
-               if (pcs != null && pcs.size() > 0)
+               if (pcs.size() > 0)
                {
                   for (PasswordCredential pc : pcs)
                   {

@@ -232,16 +232,13 @@ class EmbeddedJCA implements Embedded
       }
       finally
       {
-         if (bos != null)
+         try
          {
-            try
-            {
-               bos.close();
-            }
-            catch (IOException ignore)
-            {
-               // Ignore
-            }
+            bos.close();
+         }
+         catch (IOException ignore)
+         {
+            // Ignore
          }
       }
 
