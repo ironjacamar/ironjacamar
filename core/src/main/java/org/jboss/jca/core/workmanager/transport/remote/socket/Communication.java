@@ -176,7 +176,7 @@ public class Communication implements Runnable
                if (trace)
                   log.tracef("DO_WORK/ClassBundle: %s", cb);
 
-               WorkClassLoader wcl = new WorkClassLoader(cb);
+               WorkClassLoader wcl = SecurityActions.createWorkClassLoader(cb);
                wois.setWorkClassLoader(wcl);
 
                DistributableWork work = (DistributableWork)wois.readObject();
@@ -196,7 +196,7 @@ public class Communication implements Runnable
                if (trace)
                   log.tracef("START_WORK/ClassBundle: %s", cb);
 
-               WorkClassLoader wcl = new WorkClassLoader(cb);
+               WorkClassLoader wcl = SecurityActions.createWorkClassLoader(cb);
                wois.setWorkClassLoader(wcl);
 
                DistributableWork work = (DistributableWork)wois.readObject();
@@ -216,7 +216,7 @@ public class Communication implements Runnable
                if (trace)
                   log.tracef("SCHEDULE_WORK/ClassBundle: %s", cb);
 
-               WorkClassLoader wcl = new WorkClassLoader(cb);
+               WorkClassLoader wcl = SecurityActions.createWorkClassLoader(cb);
                wois.setWorkClassLoader(wcl);
 
                DistributableWork work = (DistributableWork)wois.readObject();

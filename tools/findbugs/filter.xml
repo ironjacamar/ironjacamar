@@ -112,6 +112,14 @@
     <Bug code="Se"/>
   </Match>
   <Match>
+    <Class name="org.jboss.jca.adapters.jdbc.util.Injection$1"/>
+    <Bug code="SIC"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.adapters.jdbc.util.Injection$2"/>
+    <Bug code="SIC"/>
+  </Match>
+  <Match>
     <Class name="org.jboss.jca.adapters.jdbc.util.ReentrantLock"/>
     <Bug code="Dm,Nm"/>
   </Match>
@@ -350,6 +358,10 @@
     <Bug code="SIC"/>
   </Match>
   <Match>
+    <Class name="org.jboss.jca.core.connectionmanager.transaction.TransactionSynchronizer"/>
+    <Bug code="IS"/>
+  </Match>
+  <Match>
     <Class name="org.jboss.jca.core.mdr.SimpleMetadataRepository"/>
     <Bug code="Dm"/>
   </Match>
@@ -414,8 +426,20 @@
     <Bug code="EI"/>
   </Match>
   <Match>
+    <Class name="org.jboss.jca.core.workmanager.transport.remote.jgroups.JGroupsTransport$1"/>
+    <Bug code="SIC"/>
+  </Match>
+  <Match>
     <Class name="org.jboss.jca.core.workmanager.transport.remote.socket.SocketTransport"/>
     <Bug code="RV"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.core.util.Injection$1"/>
+    <Bug code="SIC"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.core.util.Injection$2"/>
+    <Bug code="SIC"/>
   </Match>
 
   <!--  org.jboss.jca.deployers filter -->
@@ -482,6 +506,52 @@
   <Match>
     <Class name="org.jboss.jca.deployers.fungal.external.RemoteList"/>
     <Bug code="PZLA"/>
+  </Match>
+
+  <!--  org.jboss.jca.embedded filter -->
+  <Match>
+    <Class name="org.jboss.jca.embedded.dsl.datasources10.impl.DatasourcesDescriptorImpl"/>
+    <Bug code="WMI"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.embedded.dsl.datasources11.impl.DatasourcesDescriptorImpl"/>
+    <Bug code="WMI"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.embedded.dsl.datasources12.impl.DatasourcesDescriptorImpl"/>
+    <Bug code="WMI"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.embedded.dsl.ironjacamar10.impl.IronjacamarDescriptorImpl"/>
+    <Bug code="WMI"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.embedded.dsl.ironjacamar11.impl.IronjacamarDescriptorImpl"/>
+    <Bug code="WMI"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.embedded.dsl.resourceadapters10.impl.ResourceAdaptersDescriptorImpl"/>
+    <Bug code="WMI"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.embedded.dsl.resourceadapters11.impl.ResourceAdaptersDescriptorImpl"/>
+    <Bug code="WMI"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.shrinkwrap.descriptor.impl.connector10.ConnectorDescriptorImpl"/>
+    <Bug code="WMI"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.shrinkwrap.descriptor.impl.connector15.ConnectorDescriptorImpl"/>
+    <Bug code="WMI"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.shrinkwrap.descriptor.impl.connector16.ConnectorDescriptorImpl"/>
+    <Bug code="WMI"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.shrinkwrap.descriptor.impl.connector17.ConnectorDescriptorImpl"/>
+    <Bug code="WMI"/>
   </Match>
 
   <!--  org.jboss.jca.sjc filter -->

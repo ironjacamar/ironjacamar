@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2008, Red Hat Inc, and individual contributors
+ * Copyright 2012, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,36 +19,41 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.merge;
 
-import org.jboss.jca.common.api.metadata.common.CommonConnDef;
-import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
-import org.jboss.jca.common.api.metadata.ra.XsdString;
+package org.jboss.jca.core.workmanager.transport.remote.socket;
+
+import org.jboss.jca.core.workmanager.ClassBundle;
+import org.jboss.jca.core.workmanager.WorkClassLoader;
+
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 /**
- *
- * A DefaultConnectionDefinitionMatcher.
- *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
- *
+ * Privileged Blocks
+ * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
-public class DefaultConnectionDefinitionMatcher
-   implements
-      ExtensionMatcher<ConnectionDefinition, CommonConnDef>
-{
-
-   @Override
-   public boolean match(ConnectionDefinition left, CommonConnDef right)
+class SecurityActions
+{ 
+   /**
+    * Constructor
+    */
+   private SecurityActions()
    {
-      if (!XsdString.isNull(left.getConnectionImplClass()))
-      {
-         return right.isEnabled() &&
-                left.getManagedConnectionFactoryClass().getValue().trim().equals(right.getClassName().trim());
-      }
-      else
-      {
-         return right.getClassName() == null || right.getClassName().trim().equals("");
-      }
    }
 
+   /**
+    * Create a WorkClassLoader
+    * @param cb The class bundle
+    * @return The class loader
+    */
+   static WorkClassLoader createWorkClassLoader(final ClassBundle cb)
+   {
+      return AccessController.doPrivileged(new PrivilegedAction<WorkClassLoader>() 
+      {
+         public WorkClassLoader run()
+         {
+            return new WorkClassLoader(cb);
+         }
+      });
+   }
 }

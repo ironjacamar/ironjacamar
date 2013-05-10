@@ -21,8 +21,6 @@
  */
 package org.jboss.jca.common.metadata.merge;
 
-import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
-import org.jboss.jca.common.api.metadata.common.CommonConnDef;
 import org.jboss.jca.common.api.metadata.common.CommonIronJacamar;
 import org.jboss.jca.common.api.metadata.common.Credential;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
@@ -46,7 +44,6 @@ import org.jboss.jca.common.api.metadata.ra.SecurityPermission;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra16.ConfigProperty16;
 import org.jboss.jca.common.metadata.ra.common.AbstractResourceAdapetrImpl;
-import org.jboss.jca.common.metadata.ra.common.AdminObjectImpl;
 import org.jboss.jca.common.metadata.ra.common.ConfigPropertyImpl;
 import org.jboss.jca.common.metadata.ra.common.ConnectionDefinitionImpl;
 import org.jboss.jca.common.metadata.ra.common.OutboundResourceAdapterImpl;
@@ -121,7 +118,8 @@ public class Merger
 
    /**
     *
-    * Merge a {@link Connector} and a {@link CommonIronJacamar}
+    * Merge a {@link Connector} and a {@link CommonIronJacamar} passing also Matcher to identify {@link AdminObject}
+    * and {@link ConnectionDefinition} to merge inside the passed objects
     *
     * @param ij the {@link CommonIronJacamar} object
     * @param conn {@link Connector} object
@@ -129,35 +127,8 @@ public class Merger
     */
    public Connector mergeConnectorWithCommonIronJacamar(CommonIronJacamar ij, Connector conn)
    {
-      return this.mergeConnectorWithCommonIronJacamar(ij, conn, null, null);
-   }
-
-   /**
-    *
-    * Merge a {@link Connector} and a {@link CommonIronJacamar} passing also Matcher to identify {@link AdminObject}
-    * and {@link ConnectionDefinition} to merge inside the passed objects
-    *
-    * @param ij the {@link CommonIronJacamar} object
-    * @param conn {@link Connector} object
-    * @param adminMatcher the matcher for {@link AdminObject} and {@link CommonAdminObject}
-    * if null {@link DefaultAdminObjectMatcher} is used
-    * @param connDefMatcher the matcher for {@link ConnectionDefinition} andf {@link CommonConnDef}.
-    * if null {@link DefaultConnectionDefinitionMatcher} is used
-    * @return The merged {@link Connector}
-    */
-   public Connector mergeConnectorWithCommonIronJacamar(CommonIronJacamar ij, Connector conn,
-      ExtensionMatcher<AdminObject, CommonAdminObject> adminMatcher,
-      ExtensionMatcher<ConnectionDefinition, CommonConnDef> connDefMatcher)
-   {
-
       if (ij == null)
          return conn;
-
-      if (adminMatcher == null)
-         adminMatcher = new DefaultAdminObjectMatcher();
-
-      if (connDefMatcher == null)
-         connDefMatcher = new DefaultConnectionDefinitionMatcher();
 
       //merge transactionSupport;
       mergeTransactionSupport(ij, conn);
@@ -208,30 +179,6 @@ public class Merger
       }
 
       return conn;
-   }
-
-   private ConnectionDefinition mergeConDef(CommonConnDef commonConDef, ConnectionDefinition conDef)
-   {
-      // merge ConnectionDefinition onfigProperties;
-      List<? extends ConfigProperty> original = conDef.getConfigProperties();
-      List<ConfigProperty> newProperties = this.mergeConfigProperties(commonConDef.getConfigProperties(), original);
-
-
-      ((ConnectionDefinitionImpl) conDef).forceNewConfigPropertiesContent(newProperties);
-
-      return conDef;
-   }
-
-   private AdminObject mergeAdminObject(CommonAdminObject commonAdminObj, AdminObject adminObj)
-   {
-      // merge AdminObject onfigProperties;
-      List<? extends ConfigProperty> original = adminObj.getConfigProperties();
-      List<? extends ConfigProperty> newProperties = this.mergeConfigProperties(commonAdminObj.getConfigProperties(),
-         original);
-
-      ((AdminObjectImpl) adminObj).forceNewConfigPropertiesContent(newProperties);
-      return adminObj;
-
    }
 
    private void mergeTransactionSupport(CommonIronJacamar ij, Connector conn)
@@ -601,8 +548,7 @@ public class Merger
                   break;
                }
                case EXCEPTIONSORTERPROPERTIES : {
-                  if (ds != null && ds.getValidation() != null && ds.getValidation().getExceptionSorter() != null &&
-                      ds.getValidation().getExceptionSorter().getConfigPropertiesMap() != null)
+                  if (ds != null && ds.getValidation() != null && ds.getValidation().getExceptionSorter() != null)
                   {
                      StringBuffer valueBuf = new StringBuffer();
                      for (Entry<String, String> connProperty : ds.getValidation().getExceptionSorter()
@@ -632,8 +578,7 @@ public class Merger
                }
                case STALECONNECTIONCHECKERPROPERTIES : {
                   if (ds != null && ds.getValidation() != null &&
-                      ds.getValidation().getStaleConnectionChecker() != null &&
-                      ds.getValidation().getStaleConnectionChecker().getConfigPropertiesMap() != null)
+                      ds.getValidation().getStaleConnectionChecker() != null)
                   {
                      StringBuffer valueBuf = new StringBuffer();
                      for (Entry<String, String> connProperty : ds.getValidation().getStaleConnectionChecker()

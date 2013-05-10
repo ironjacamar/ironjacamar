@@ -172,14 +172,23 @@ public class WARDeployer implements Deployer
          webapp.setWar(url.toString());
          webapp.setTempDirectory(tmpDeployment);
 
-         ClassLoader webappCL = new WARClassLoader(context.getKernel(), parent);
-         webapp.setClassLoader(new WebAppClassLoader(webappCL, webapp));
+         ClassLoader webappCL = SecurityActions.createWARClassLoader(context.getKernel(), parent);
+         WebAppClassLoader wal = SecurityActions.createWebAppClassLoader(webappCL, webapp);
+
+         if (wal == null)
+            throw new DeployException("WebAppClassLoader is null");
+
+         webapp.setClassLoader(wal);
 
          webServer.addHandler(webapp);
 
          log.info("Deployed: " + url.toExternalForm());
 
          return new WARDeployment(url, webapp, tmpDeployment, webappCL);
+      }
+      catch (DeployException de)
+      {
+         throw de;
       }
       catch (Throwable t)
       {

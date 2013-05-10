@@ -22,7 +22,6 @@
 
 package org.jboss.jca.core.naming;
 
-import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 
 import java.util.Hashtable;

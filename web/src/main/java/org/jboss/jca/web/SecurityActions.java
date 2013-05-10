@@ -22,10 +22,16 @@
 
 package org.jboss.jca.web;
 
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+
+import com.github.fungal.api.Kernel;
+
+import org.eclipse.jetty.webapp.WebAppClassLoader;
+import org.eclipse.jetty.webapp.WebAppContext;
 
 /**
  * Privileged Blocks
@@ -100,6 +106,47 @@ class SecurityActions
          public URLClassLoader run()
          {
             return new URLClassLoader(urls, parent);
+         }
+      });
+   }
+
+   /**
+    * Create a WARClassLoader
+    * @param kernel The kernel
+    * @param parent The parent class loader
+    * @return The class loader
+    */
+   static WARClassLoader createWARClassLoader(final Kernel kernel, final ClassLoader parent)
+   {
+      return AccessController.doPrivileged(new PrivilegedAction<WARClassLoader>() 
+      {
+         public WARClassLoader run()
+         {
+            return new WARClassLoader(kernel, parent);
+         }
+      });
+   }
+
+   /**
+    * Create a WebClassLoader
+    * @param cl The classloader
+    * @param wac The web app context
+    * @return The class loader
+    */
+   static WebAppClassLoader createWebAppClassLoader(final ClassLoader cl, final WebAppContext wac)
+   {
+      return AccessController.doPrivileged(new PrivilegedAction<WebAppClassLoader>() 
+      {
+         public WebAppClassLoader run()
+         {
+            try
+            {
+               return new WebAppClassLoader(cl, wac);
+            }
+            catch (IOException ioe)
+            {
+               return null;
+            }
          }
       });
    }

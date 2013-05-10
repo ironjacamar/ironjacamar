@@ -22,13 +22,17 @@
 
 package org.jboss.jca.validator;
 
+import java.io.Serializable;
 import java.util.ResourceBundle;
 
 /**
  * Failure
  */
-public class Failure
+public class Failure implements Serializable
 {
+   /** SerialVersionUID */
+   private static final long serialVersionUID = 1L;
+
    /** New line character */
    private static final String NEW_LINE = System.getProperty("line.separator");
 

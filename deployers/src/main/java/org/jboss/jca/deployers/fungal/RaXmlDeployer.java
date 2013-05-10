@@ -190,12 +190,8 @@ public final class RaXmlDeployer extends AbstractFungalRADeployer
                .getResourceAdapters())
             {
                Deployment raDeployment = doDeploy(url, raxml, parent);
-               if (raDeployment != null)
-               {
-                  deployments.add(raDeployment);
-
-                  kernel.getMainDeployer().registerDeployment(raDeployment);
-               }
+               deployments.add(raDeployment);
+               kernel.getMainDeployer().registerDeployment(raDeployment);
             }
 
             return null;
@@ -316,11 +312,8 @@ public final class RaXmlDeployer extends AbstractFungalRADeployer
       }
       catch (Throwable t)
       {
-
          throw new DeployException("Deployment " + url.toExternalForm() + " failed", t);
-
       }
-
       finally
       {
          SecurityActions.setThreadContextClassLoader(oldTCCL);

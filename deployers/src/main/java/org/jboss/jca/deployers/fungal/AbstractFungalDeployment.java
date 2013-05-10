@@ -33,7 +33,6 @@ import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecoveryRegistry;
 import org.jboss.jca.deployers.DeployersLogger;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;

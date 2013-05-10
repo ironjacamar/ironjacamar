@@ -300,7 +300,7 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
       WorkObjectInputStream wois = null;
       try
       {
-         WorkClassLoader wcl = new WorkClassLoader(classBundle);
+         WorkClassLoader wcl = SecurityActions.createWorkClassLoader(classBundle);
          
          wois = new WorkObjectInputStream(bias, wcl);
 
@@ -348,7 +348,7 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
       WorkObjectInputStream wois = null;
       try
       {
-         WorkClassLoader wcl = new WorkClassLoader(classBundle);
+         WorkClassLoader wcl = SecurityActions.createWorkClassLoader(classBundle);
          
          wois = new WorkObjectInputStream(bias, wcl);
 
@@ -395,7 +395,7 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
       WorkObjectInputStream wois = null;
       try
       {
-         WorkClassLoader wcl = new WorkClassLoader(classBundle);
+         WorkClassLoader wcl = SecurityActions.createWorkClassLoader(classBundle);
          
          wois = new WorkObjectInputStream(bias, wcl);
 

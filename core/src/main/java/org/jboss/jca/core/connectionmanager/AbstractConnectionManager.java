@@ -858,7 +858,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
          subject = subjectFactory.createSubject(securityDomain);
 
          Set<PasswordCredential> credentials = subject.getPrivateCredentials(PasswordCredential.class);
-         if (credentials != null && credentials.size() > 0)
+         if (credentials.size() > 0)
          {
             ManagedConnectionFactory pcMcf = getManagedConnectionFactory();
             for (PasswordCredential pc : credentials)

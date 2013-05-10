@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.adapters.jdbc.extensions.mysql;
+package org.jboss.jca.adapters.jdbc.extensions.oracle;
 
 import java.lang.reflect.Method;
 import java.security.AccessController;
@@ -33,28 +33,6 @@ import java.security.PrivilegedAction;
  */
 class SecurityActions
 {
-   /**
-    * Get the context classloader.
-    * @return The classloader
-    */
-   public static ClassLoader getThreadContextClassLoader()
-   {
-      if (System.getSecurityManager() == null)
-      {
-         return Thread.currentThread().getContextClassLoader();
-      }
-      else
-      {
-         return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>()
-         {
-            public ClassLoader run()
-            {
-               return Thread.currentThread().getContextClassLoader();
-            }
-         });
-      }
-   }
-
    /**
     * SetAccessible
     * @param m The method

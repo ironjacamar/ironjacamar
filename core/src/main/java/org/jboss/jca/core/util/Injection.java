@@ -29,6 +29,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.InetAddress;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -179,7 +181,7 @@ public class Injection
          Method[] methods = clz.getDeclaredMethods();
          for (int i = 0; i < methods.length; i++)
          {
-            Method method = methods[i];
+            final Method method = methods[i];
             if (methodName.equals(method.getName()) && method.getParameterTypes().length == 1)
             {
                if (propertyType == null || propertyType.equals(method.getParameterTypes()[0].getName()))
@@ -187,7 +189,15 @@ public class Injection
                   if (hits == null)
                      hits = new ArrayList<Method>(1);
 
-                  method.setAccessible(true);
+                  AccessController.doPrivileged(new PrivilegedAction<Object>() 
+                  {
+                     public Object run()
+                     {
+                        method.setAccessible(true);
+                        return null;
+                     }
+                  });
+
                   hits.add(method);
                }
             }
@@ -236,7 +246,7 @@ public class Injection
          Field[] fields = clz.getDeclaredFields();
          for (int i = 0; i < fields.length; i++)
          {
-            Field field = fields[i];
+            final Field field = fields[i];
             if (fieldName.equals(field.getName()))
             {
                if (fieldType == null || fieldType.equals(field.getType().getName()))
@@ -244,7 +254,15 @@ public class Injection
                   if (hits == null)
                      hits = new ArrayList<Field>(1);
 
-                  field.setAccessible(true);
+                  AccessController.doPrivileged(new PrivilegedAction<Object>() 
+                  {
+                     public Object run()
+                     {
+                        field.setAccessible(true);
+                        return null;
+                     }
+                  });
+
                   hits.add(field);
                }
             }
@@ -463,7 +481,7 @@ public class Injection
          {
             input = prefix + systemProperty + postfix;
          }
-         else if (defaultValue != null && !defaultValue.trim().equals(""))
+         else if (!defaultValue.trim().equals(""))
          {
             input = prefix + defaultValue + postfix;
          }
