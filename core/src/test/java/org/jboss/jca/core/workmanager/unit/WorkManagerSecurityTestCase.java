@@ -179,7 +179,7 @@ public class WorkManagerSecurityTestCase
     * Test that a Work is executed in a security context
     * @throws Throwable throwable exception
     */
-   @Ignore("SECURITY-731, SECURITY-732")
+   @Test
    public void testSecurityContext() throws Throwable
    {
       assertNotNull(wcf);
