@@ -81,6 +81,9 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
    /** Enabled error handling for debugging */
    private boolean error = false;
 
+   /** Ignore unknown connections */
+   private boolean ignoreConnections = false;
+
    /** Transaction Manager instance */
    private TransactionManager transactionManager;
 
@@ -176,6 +179,22 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
    public void setError(boolean v)
    {
       error = v;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isIgnoreUnknownConnections()
+   {
+      return ignoreConnections;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setIgnoreUnknownConnections(boolean v)
+   {
+      ignoreConnections = v;
    }
 
    /**
@@ -362,7 +381,8 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
          }
       }
 
-      throw new IllegalStateException("Trying to return an unknown connection2! " + connection);
+      if (!ignoreConnections)
+         throw new IllegalStateException(bundle.tryingToReturnUnknownConnection(connection.toString()));
    }
 
    /**
@@ -668,6 +688,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
       sb.append("CachedConnectionManagerImpl@").append(Integer.toHexString(System.identityHashCode(this)));
       sb.append("[debug=").append(debug);
       sb.append(" error=").append(error);
+      sb.append(" ignoreConnections=").append(ignoreConnections);
       sb.append(" transactionManager=").append(transactionManager);
       sb.append(" transactionSynchronizationRegistry=").append(transactionSynchronizationRegistry);
       sb.append(" userTransactionRegistry=").append(userTransactionRegistry);

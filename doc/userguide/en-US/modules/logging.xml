@@ -40,6 +40,11 @@
             <entry>Some connections were not closed, see the log for the allocation stacktraces</entry>
           </row>
           <row>
+            <entry>152</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Trying to return an unknown connection</entry>
+          </row>
+          <row>
             <entry>201</entry>
             <entry><code>ERROR</code></entry>
             <entry>SecurityContext setup failed</entry>

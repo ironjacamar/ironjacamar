@@ -69,6 +69,18 @@ public interface CachedConnectionManager extends UserTransactionListener, Compon
    public void setError(boolean v);
 
    /**
+    * Is ignore unknown connections on close enabled
+    * @return True if enabled; otherwise false
+    */
+   public boolean isIgnoreUnknownConnections();
+
+   /**
+    * Set ignore unknown connections flag
+    * @param v The value
+    */
+   public void setIgnoreUnknownConnections(boolean v);
+
+   /**
     * Register connection.
     * @param cm connection manager
     * @param cl connection listener

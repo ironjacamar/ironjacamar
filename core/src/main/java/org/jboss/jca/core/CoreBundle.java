@@ -43,6 +43,14 @@ public interface CoreBundle
    @Message(id = 151, value = "Some connections were not closed, see the log for the allocation stacktraces")
    public String someConnectionsWereNotClosed();
    
+   /**
+    * Trying to return an unknown connection
+    * @param connection The connection
+    * @return The value
+    */
+   @Message(id = 152, value = "Trying to return an unknown connection: %s")
+   public String tryingToReturnUnknownConnection(String connection);
+   
    // WORK MANAGER (200)
    
    /**
