@@ -166,10 +166,10 @@ public class WeblogicRaPasrer extends AbstractParser implements MetadataParser<W
    {
       String nativeLibdir = null;
       String jndiName = null;
-      Boolean eaoa = false;
-      Boolean egac = false;
-      WorkManager wm = null;
-      ConnectorWorkManager cwm = null;
+      //Boolean eaoa = false;
+      //Boolean egac = false;
+      //WorkManager wm = null;
+      //ConnectorWorkManager cwm = null;
       ResourceAdapterSecurity ras = null;
       ConfigProperties props = null;
       AdminObjects aos = null;
@@ -204,20 +204,17 @@ public class WeblogicRaPasrer extends AbstractParser implements MetadataParser<W
                      jndiName = elementAsString(reader);
                      break;
                   }
-                  case ENABLE_ACCESS_OUTSIDE_APP : {
-                     eaoa = elementAsBoolean(reader);
-                     break;
-                  }
+                  case ENABLE_ACCESS_OUTSIDE_APP :
                   case ENABLE_GLOBAL_ACCESS_TO_CLASSES : {
-                     egac = elementAsBoolean(reader);
+                     elementAsBoolean(reader);
                      break;
                   }
                   case WORK_MANAGER : {
-                     wm = parseWorkManager(reader);
+                     parseWorkManager(reader);
                      break;
                   }
                   case CONNECTOR_WORK_MANAGER : {
-                     cwm = parseConnectorWorkManager(reader);
+                     parseConnectorWorkManager(reader);
                      break;
                   }
                   case RESOURCE_ADAPTER_SECURITY : {
@@ -832,10 +829,10 @@ public class WeblogicRaPasrer extends AbstractParser implements MetadataParser<W
    private ResourceAdapterSecurity parseResourceAdapaterSecurity(XMLStreamReader reader)
       throws XMLStreamException, ParserException
    {
-      AnonPrincipal dpn = null;
-      AnonPrincipal mapn = null;
-      AnonPrincipalCaller rapn = null;
-      AnonPrincipalCaller rwapn = null;
+      //AnonPrincipal dpn = null;
+      //AnonPrincipal mapn = null;
+      //AnonPrincipalCaller rapn = null;
+      //AnonPrincipalCaller rwapn = null;
       SecurityWorkContext swc = null;
             
       while (reader.hasNext())
@@ -862,20 +859,14 @@ public class WeblogicRaPasrer extends AbstractParser implements MetadataParser<W
             case START_ELEMENT : {
                switch (ResourceAdapterSecurity.Tag.forName(reader.getLocalName()))
                {
-                  case DEFAULT_PRINCIPAL_NAME : {
-                     dpn = parseAnonPrincipal(reader);
-                     break;
-                  }
+                  case DEFAULT_PRINCIPAL_NAME : 
                   case MANAGE_AS_PRINCIPAL_NAME : {
-                     mapn = parseAnonPrincipal(reader);
+                     parseAnonPrincipal(reader);
                      break;
                   }
-                  case RUN_AS_PRINCIPAL_NAME : {
-                     rapn = parseAnonPrincipalCaller(reader);
-                     break;
-                  }
+                  case RUN_AS_PRINCIPAL_NAME : 
                   case RUN_WORK_AS_PRINCIPAL_NAME : {
-                     rwapn = parseAnonPrincipalCaller(reader);
+                     parseAnonPrincipalCaller(reader);
                      break;
                   }
                   case SECURITY_WORK_CONTEXT : {
