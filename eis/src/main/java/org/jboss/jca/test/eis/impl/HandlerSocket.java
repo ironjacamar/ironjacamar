@@ -88,6 +88,8 @@ public class HandlerSocket implements Runnable
     */
    void shutdown()
    {
+      server.done(this);
+
       try
       {
          if (socket != null)
