@@ -1159,88 +1159,95 @@ public class Main
       if (!target.mkdirs())
          throw new IOException("Could not create " + target);
 
-      JarFile jar = new JarFile(file);
-      Enumeration<JarEntry> entries = jar.entries();
-
-      while (entries.hasMoreElements())
+      JarFile jar = null;
+      try
       {
-         JarEntry je = entries.nextElement();
-         File copy = new File(target, je.getName());
+         jar = new JarFile(file);
+         Enumeration<JarEntry> entries = jar.entries();
 
-         if (!je.isDirectory())
+         while (entries.hasMoreElements())
          {
-            InputStream in = null;
-            OutputStream out = null;
+            JarEntry je = entries.nextElement();
+            File copy = new File(target, je.getName());
 
-            // Make sure that the directory is _really_ there
-            if (copy.getParentFile() != null && !copy.getParentFile().exists())
+            if (!je.isDirectory())
             {
-               if (!copy.getParentFile().mkdirs())
-                  throw new IOException("Could not create " + copy.getParentFile());
-            }
+               InputStream in = null;
+               OutputStream out = null;
 
-            try
-            {
-               in = new BufferedInputStream(jar.getInputStream(je));
-               out = new BufferedOutputStream(new FileOutputStream(copy));
-
-               byte[] buffer = new byte[4096];
-               for (;;)
+               // Make sure that the directory is _really_ there
+               if (copy.getParentFile() != null && !copy.getParentFile().exists())
                {
-                  int nBytes = in.read(buffer);
-                  if (nBytes <= 0)
-                     break;
-
-                  out.write(buffer, 0, nBytes);
+                  if (!copy.getParentFile().mkdirs())
+                     throw new IOException("Could not create " + copy.getParentFile());
                }
-               out.flush();
-            }
-            finally
-            {
+
                try
                {
-                  if (out != null)
-                     out.close();
-               }
-               catch (IOException ignore)
-               {
-                  // Ignore
-               }
-               
-               try
-               {
-                  jar.close();
-               }
-               catch (IOException ignore)
-               {
-                  // Ignore
-               }
-               
-               try
-               {
-                  if (in != null)
+                  in = new BufferedInputStream(jar.getInputStream(je));
+                  out = new BufferedOutputStream(new FileOutputStream(copy));
+
+                  byte[] buffer = new byte[4096];
+                  for (;;)
                   {
-                     in.close();
+                     int nBytes = in.read(buffer);
+                     if (nBytes <= 0)
+                        break;
+
+                     out.write(buffer, 0, nBytes);
+                  }
+                  out.flush();
+               }
+               finally
+               {
+                  try
+                  {
+                     if (out != null)
+                        out.close();
+                  }
+                  catch (IOException ignore)
+                  {
+                     // Ignore
+                  }
+               
+                  try
+                  {
+                     if (in != null)
+                     {
+                        in.close();
+                     }
+                  }
+                  catch (IOException ignore)
+                  {
+                     // Ignore
                   }
                }
-               catch (IOException ignore)
-               {
-                  // Ignore
-               }
-            }
-         }
-         else
-         {
-            if (!copy.exists())
-            {
-               if (!copy.mkdirs())
-                  throw new IOException("Could not create " + copy);
             }
             else
             {
-               if (!copy.isDirectory())
-                  throw new IOException(copy + " isn't a directory");
+               if (!copy.exists())
+               {
+                  if (!copy.mkdirs())
+                     throw new IOException("Could not create " + copy);
+               }
+               else
+               {
+                  if (!copy.isDirectory())
+                     throw new IOException(copy + " isn't a directory");
+               }
             }
+         }
+      }
+      finally
+      {
+         try
+         {
+            if (jar != null)
+               jar.close();
+         }
+         catch (IOException ignore)
+         {
+            // Ignore
          }
       }
 

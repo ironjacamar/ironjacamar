@@ -130,11 +130,11 @@
     <Bug code="OBL"/>
   </Match>
   <Match>
-    <Class name="org.jboss.jca.as.converters.weblogic.AdminObjectGroupType"/>
+    <Class name="org.jboss.jca.as.converters.wls.metadata.AdminObjectGroupImpl"/>
     <Bug code="Nm"/>
   </Match>
   <Match>
-    <Class name="org.jboss.jca.as.converters.weblogic.ConnectionDefinitionType"/>
+    <Class name="org.jboss.jca.as.converters.wls.metadata.ConnectionDefinitionImpl"/>
     <Bug code="Nm"/>
   </Match>
   <Match>
