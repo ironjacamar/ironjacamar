@@ -265,7 +265,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    {
       checkTransport();
 
-      if (WorkManagerUtil.isLongRunning(work))
+      if (getLongRunningThreadPool() != null && WorkManagerUtil.isLongRunning(work))
       {
          transport.updateLongRunningFree(getLocalAddress(),
                                          getLongRunningThreadPool().getNumberOfFreeThreads() - 1);
@@ -292,7 +292,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    {
       checkTransport();
 
-      if (WorkManagerUtil.isLongRunning(work))
+      if (getLongRunningThreadPool() != null && WorkManagerUtil.isLongRunning(work))
       {
          transport.updateLongRunningFree(getLocalAddress(),
                                          getLongRunningThreadPool().getNumberOfFreeThreads() - 1);
@@ -319,7 +319,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    {
       checkTransport();
 
-      if (WorkManagerUtil.isLongRunning(work))
+      if (getLongRunningThreadPool() != null && WorkManagerUtil.isLongRunning(work))
       {
          transport.updateLongRunningFree(getLocalAddress(),
                                          getLongRunningThreadPool().getNumberOfFreeThreads() - 1);

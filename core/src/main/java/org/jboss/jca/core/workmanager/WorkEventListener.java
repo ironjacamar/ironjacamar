@@ -96,7 +96,7 @@ public class WorkEventListener extends WorkAdapter
     */
    private void done()
    {
-      if (isLong)
+      if (longThreadPool != null && isLong)
       {
          transport.updateLongRunningFree(address,
                                          longThreadPool.getNumberOfFreeThreads() + 1);

@@ -209,15 +209,18 @@ public class WorkManagerImpl implements WorkManager
    public void setShortRunningThreadPool(BlockingExecutor executor)
    {
       if (trace)
-         log.trace("short running exector:" + executor.getClass());
+         log.trace("short running executor:" + (executor != null ? executor.getClass() : "null"));
 
-      if (executor instanceof StatisticsExecutor)
+      if (executor != null)
       {
-         this.shortRunningExecutor = (StatisticsExecutor) executor;
-      }
-      else
-      {
-         this.shortRunningExecutor = new StatisticsExecutorImpl(executor);
+         if (executor instanceof StatisticsExecutor)
+         {
+            this.shortRunningExecutor = (StatisticsExecutor) executor;
+         }
+         else
+         {
+            this.shortRunningExecutor = new StatisticsExecutorImpl(executor);
+         }
       }
    }
 
@@ -237,15 +240,18 @@ public class WorkManagerImpl implements WorkManager
    public void setLongRunningThreadPool(BlockingExecutor executor)
    {
       if (trace)
-         log.trace("long running exector:" + executor.getClass());
-
-      if (executor instanceof StatisticsExecutor)
+         log.trace("long running executor:" + (executor != null ? executor.getClass() : "null"));
+ 
+      if (executor != null)
       {
-         this.longRunningExecutor = (StatisticsExecutor) executor;
-      }
-      else
-      {
-         this.longRunningExecutor = new StatisticsExecutorImpl(executor);
+         if (executor instanceof StatisticsExecutor)
+         {
+            this.longRunningExecutor = (StatisticsExecutor) executor;
+         }
+         else
+         {
+            this.longRunningExecutor = new StatisticsExecutorImpl(executor);
+         }
       }
    }
 
@@ -857,7 +863,7 @@ public class WorkManagerImpl implements WorkManager
    private BlockingExecutor getExecutor(Work work)
    {
       BlockingExecutor executor = shortRunningExecutor;
-      if (WorkManagerUtil.isLongRunning(work))
+      if (longRunningExecutor != null && WorkManagerUtil.isLongRunning(work))
       {
          executor = longRunningExecutor;
       }
