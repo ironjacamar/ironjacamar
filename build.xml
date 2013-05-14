@@ -34,7 +34,7 @@
   <property name="major" value="1"/>
   <property name="minor" value="1"/>
   <property name="patch" value="0"/>
-  <property name="type" value="Beta5"/>
+  <property name="type" value="CR1"/>
 
   <condition property="version" value="${major}.${minor}.${patch}-SNAPSHOT">
     <isset property="snapshot"/>
