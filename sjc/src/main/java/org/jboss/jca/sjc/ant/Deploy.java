@@ -111,7 +111,7 @@ public class Deploy extends AbstractHostPortTask
             }
          }
 
-         if (result != null && result.booleanValue())
+         if (result.booleanValue())
          {
             log("Deployed: " + file.getName());
          }

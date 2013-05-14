@@ -111,7 +111,7 @@ public class Deploy extends AbstractHostPortMojo
             }
          }
 
-         if (result != null && result.booleanValue())
+         if (result.booleanValue())
          {
             getLog().info("Deployed: " + file.getName());
          }
