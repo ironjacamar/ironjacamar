@@ -208,7 +208,17 @@ public class WorkManagerImpl implements WorkManager
     */
    public void setShortRunningThreadPool(BlockingExecutor executor)
    {
-      this.shortRunningExecutor = new StatisticsExecutorImpl(executor);
+      if (trace)
+         log.trace("short running exector:" + executor.getClass());
+
+      if (executor instanceof StatisticsExecutor)
+      {
+         this.shortRunningExecutor = (StatisticsExecutor) executor;
+      }
+      else
+      {
+         this.shortRunningExecutor = new StatisticsExecutorImpl(executor);
+      }
    }
 
    /**
@@ -226,7 +236,17 @@ public class WorkManagerImpl implements WorkManager
     */
    public void setLongRunningThreadPool(BlockingExecutor executor)
    {
-      this.longRunningExecutor = new StatisticsExecutorImpl(executor);
+      if (trace)
+         log.trace("long running exector:" + executor.getClass());
+
+      if (executor instanceof StatisticsExecutor)
+      {
+         this.longRunningExecutor = (StatisticsExecutor) executor;
+      }
+      else
+      {
+         this.longRunningExecutor = new StatisticsExecutorImpl(executor);
+      }
    }
 
    /**

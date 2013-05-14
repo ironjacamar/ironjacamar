@@ -22,11 +22,13 @@
 
 package org.jboss.jca.core.workmanager;
 
+import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.workmanager.StatisticsExecutor;
 
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import org.jboss.logging.Logger;
 import org.jboss.threads.BlockingExecutor;
 import org.jboss.threads.JBossThreadPoolExecutor;
 import org.jboss.threads.management.ThreadPoolExecutorMBean;
@@ -39,6 +41,12 @@ import org.jboss.threads.management.ThreadPoolExecutorMBean;
 
 public class StatisticsExecutorImpl implements StatisticsExecutor
 {
+   /** The logger */
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class,
+                                                           StatisticsExecutorImpl.class.getName());
+
+   /** Whether trace is enabled */
+   private static boolean trace = log.isTraceEnabled();
 
    private final BlockingExecutor realExecutor;
 
@@ -80,7 +88,6 @@ public class StatisticsExecutorImpl implements StatisticsExecutor
    @Override
    public long getNumberOfFreeThreads()
    {
-
       if (realExecutor instanceof JBossThreadPoolExecutor)
       {
          return ((JBossThreadPoolExecutor) realExecutor).getMaximumPoolSize() -
