@@ -74,7 +74,16 @@ public class Deploy extends AbstractHostPortMojo
          Boolean result = null;
          if (isLocal())
          {
-            result = (Boolean)executeCommand("local-deploy", new Serializable[] {file.toURI().toURL()});
+            Object value = executeCommand("local-deploy", new Serializable[] {file.toURI().toURL()});
+
+            if (value instanceof Boolean)
+            {
+               result = (Boolean)value;
+            }
+            else
+            {
+               throw (Throwable)value;
+            }
          }
          else
          {
@@ -90,7 +99,16 @@ public class Deploy extends AbstractHostPortMojo
 
             byte[] bytes = baos.toByteArray();
 
-            result = (Boolean)executeCommand("remote-deploy", new Serializable[] {file.getName(), bytes});
+            Object value = executeCommand("remote-deploy", new Serializable[] {file.getName(), bytes});
+
+            if (value instanceof Boolean)
+            {
+               result = (Boolean)value;
+            }
+            else
+            {
+               throw (Throwable)value;
+            }
          }
 
          if (result != null && result.booleanValue())

@@ -207,7 +207,7 @@ public class BootstrapContextCoordinator
       }
       catch (Throwable t)
       {
-         throw new IllegalStateException("The BootstrapContext couldn't be created: " + name);
+         throw new IllegalStateException("The BootstrapContext couldn't be created: " + name, t);
       }
    }
 

@@ -70,11 +70,29 @@ public class Undeploy extends AbstractHostPortTask
          Boolean result = null;
          if (isLocal())
          {
-            result = (Boolean)executeCommand("local-undeploy", new Serializable[] {file.toURI().toURL()});
+            Object value = executeCommand("local-undeploy", new Serializable[] {file.toURI().toURL()});
+
+            if (value instanceof Boolean)
+            {
+               result = (Boolean)value;
+            }
+            else
+            {
+               throw (Throwable)value;
+            }
          }
          else
          {
-            result = (Boolean)executeCommand("remote-undeploy", new Serializable[] {file.getName()});
+            Object value = executeCommand("remote-undeploy", new Serializable[] {file.getName()});
+
+            if (value instanceof Boolean)
+            {
+               result = (Boolean)value;
+            }
+            else
+            {
+               throw (Throwable)value;
+            }
          }
 
          if (result != null && result.booleanValue())

@@ -420,7 +420,7 @@ public class WorkManagerCoordinator
       }
       catch (Throwable t)
       {
-         throw new IllegalStateException("The WorkManager couldn't be created: " + name);
+         throw new IllegalStateException("The WorkManager couldn't be created: " + name, t);
       }
    }
 

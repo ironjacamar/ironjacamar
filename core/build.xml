@@ -251,6 +251,9 @@
       <fileset dir="../target">
         <include name="*.jar"/>
       </fileset>
+      <fileset dir="../lib/sjc">
+        <include name="*.jar"/>
+      </fileset>
     </path>
 
     <taskdef name="start"
