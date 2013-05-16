@@ -132,7 +132,7 @@ class EmbeddedJCAContainer implements DeployableContainer<EmbeddedJCAContainerCo
       }
       catch (Throwable t)
       {
-         throw new DeploymentException("Could not undeploy the application: " + t.getMessage(), t);
+         throw new DeploymentException("Could not deploy the application: " + t.getMessage(), t);
       }      
    }
    
@@ -231,7 +231,7 @@ class EmbeddedJCAContainer implements DeployableContainer<EmbeddedJCAContainerCo
       }
       catch (Throwable t)
       {
-         throw new LifecycleException("Could not start the EmbeddedJCA container: " + t.getMessage(), t);
+         throw new LifecycleException("Could not start the IronJacamar container: " + t.getMessage(), t);
       }
    }
 
@@ -248,7 +248,7 @@ class EmbeddedJCAContainer implements DeployableContainer<EmbeddedJCAContainerCo
       }
       catch (Throwable t)
       {
-         throw new LifecycleException("Could not stop the EmbeddedJCA container: " + t.getMessage(), t);
+         throw new LifecycleException("Could not stop the IronJacamar container: " + t.getMessage(), t);
       }
       embedded = null;
    }
