@@ -69,6 +69,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -981,24 +982,46 @@ public class Main
    
    private static boolean hasInterface(Class<?> clazz, String interfaceName)
    {
-      if (clazz.getName().equals(interfaceName))
-         return true;
-      for (Class<?> iface : clazz.getInterfaces())
+      for (Class<?> iface : getAllInterfaces(clazz))
       {
          if (iface.getName().equals(interfaceName))
          {
             return true;
          }
-         else
-         {
-            return hasInterface(iface, interfaceName);
-         }
       }
-      if (clazz.getSuperclass() != null)
-      {
-         return hasInterface(clazz.getSuperclass(), interfaceName);
-      }
+
       return false;
+   }
+
+   private static List<Class<?>> getAllInterfaces(Class<?> cls)
+   {
+      if (cls == null)
+      {
+         return null;
+      }
+
+      LinkedHashSet<Class<?>> interfacesFound = new LinkedHashSet<Class<?>>();
+      getAllInterfaces(cls, interfacesFound);
+
+      return new ArrayList<Class<?>>(interfacesFound);
+   }
+
+   private static void getAllInterfaces(Class<?> cls, HashSet<Class<?>> interfacesFound)
+   {
+      while (cls != null)
+      {
+         Class<?>[] interfaces = cls.getInterfaces();
+
+         for (Class<?> i : interfaces)
+         {
+            if (interfacesFound.add(i))
+            {
+               getAllInterfaces(i, interfacesFound);
+            }
+         }
+
+         cls = cls.getSuperclass();
+      }
    }
    
    /**
