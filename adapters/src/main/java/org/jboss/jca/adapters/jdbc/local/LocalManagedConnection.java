@@ -130,7 +130,7 @@ public class LocalManagedConnection extends BaseWrapperManagedConnection impleme
             }
             catch (Exception e2)
             {
-               // Ignore
+               // We are ignoring since we just need the notification
             }
          }
       }

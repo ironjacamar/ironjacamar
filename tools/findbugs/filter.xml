@@ -76,12 +76,20 @@
     <Bug code="Dm"/>
   </Match>
   <Match>
+    <Class name="org.jboss.jca.adapters.jdbc.local.LocalManagedConnection"/>
+    <Bug code="DE"/>
+  </Match>
+  <Match>
     <Class name="org.jboss.jca.adapters.jdbc.local.LocalManagedConnectionFactory"/>
     <Bug code="Dm,Nm,REC,IS,UG"/>
   </Match>
   <Match>
     <Class name="org.jboss.jca.adapters.jdbc.statistics.JdbcStatisticsPlugin"/>
     <Bug code="Se"/>
+  </Match>
+  <Match>
+    <Class name="org.jboss.jca.adapters.jdbc.xa.XAManagedConnection"/>
+    <Bug code="DE"/>
   </Match>
   <Match>
     <Class name="org.jboss.jca.adapters.jdbc.xa.XAManagedConnectionFactory"/>

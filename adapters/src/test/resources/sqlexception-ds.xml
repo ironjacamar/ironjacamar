@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:noNamespaceSchemaLocation="http://www.ironjacamar.org/schema/datasources_1_2.xsd">
+  <datasource jndi-name="java:/SQLExceptionDS" pool-name="SQLExceptionDS">
+    <connection-url>jdbc:noop:commit:rollback</connection-url>
+    <driver-class>org.jboss.jca.adapters.jdbc.support.NoopDriver</driver-class>
+    <security>
+      <user-name>noop</user-name>
+      <password>noop</password>
+    </security>
+    <validation>
+      <exception-sorter class-name="org.jboss.jca.adapters.jdbc.support.NoopExceptionSorter"></exception-sorter>
+    </validation>
+  </datasource>
+
+</datasources>

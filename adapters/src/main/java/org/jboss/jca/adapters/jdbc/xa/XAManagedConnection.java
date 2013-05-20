@@ -181,7 +181,7 @@ public class XAManagedConnection extends BaseWrapperManagedConnection implements
             }
             catch (Exception e2)
             {
-               // Ignore
+               // We are ignoring since we just need the notification
             }
          }
       }
