@@ -130,6 +130,11 @@
             <entry>ResourceAdapterAssociation failed</entry>
           </row>
           <row>
+            <entry>266</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Invalid number of parameters</entry>
+          </row>
+          <row>
             <entry>301</entry>
             <entry><code>INFO</code></entry>
             <entry>Registered a null handle for managed connection</entry>

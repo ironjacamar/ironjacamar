@@ -168,6 +168,15 @@ public interface CoreBundle
    @Message(id = 265, value = "ResourceAdapterAssociation failed for %s")
    public String resourceAdapterAssociationFailed(String clz);
    
+   /**
+    * Invalid number of parameters
+    * @param number The number
+    * @param c The command
+    * @return The value
+    */
+   @Message(id = 266, value = "Invalid number of parameters %d (%s)")
+   public String invalidNumberOfParameters(int number, String c);
+   
    // CONNECTION MANAGER LISTENER (300)
 
    /**

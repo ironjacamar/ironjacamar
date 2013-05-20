@@ -22,6 +22,7 @@
 
 package org.jboss.jca.core.workmanager.transport.remote.socket;
 
+import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.spi.workmanager.Address;
 import org.jboss.jca.core.workmanager.ClassBundle;
@@ -41,6 +42,7 @@ import javax.resource.spi.work.DistributableWork;
 import javax.resource.spi.work.WorkException;
 
 import org.jboss.logging.Logger;
+import org.jboss.logging.Messages;
 
 /**
  * The communication between client and server
@@ -53,6 +55,9 @@ public class Communication implements Runnable
 
    /** Trace logging */
    private static boolean trace = log.isTraceEnabled();
+
+   /** The bundle */
+   private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
 
    /** The socket */
    private final Socket socket;
@@ -92,6 +97,9 @@ public class Communication implements Runnable
          switch (command)
          {
             case JOIN : {
+               if (numberOfParameters != 1)
+                  throw new IllegalArgumentException(bundle.invalidNumberOfParameters(numberOfParameters, "JOIN"));
+
                String address = (String)wois.readObject();
 
                if (trace)
@@ -119,6 +127,9 @@ public class Communication implements Runnable
                break;
             }
             case LEAVE : {
+               if (numberOfParameters != 1)
+                  throw new IllegalArgumentException(bundle.invalidNumberOfParameters(numberOfParameters, "LEAVE"));
+
                String address = (String)wois.readObject();
 
                if (trace)
@@ -129,6 +140,10 @@ public class Communication implements Runnable
                break;
             }
             case GET_WORKMANAGERS : {
+               if (numberOfParameters != 0)
+                  throw new IllegalArgumentException(bundle.invalidNumberOfParameters(numberOfParameters,
+                                                                                      "GET_WORKMANAGERS"));
+
                if (trace)
                   log.tracef("%s: GET_WORKMANAGERS()", socket.getInetAddress());
 
@@ -138,6 +153,10 @@ public class Communication implements Runnable
                break;
             }
             case WORKMANAGER_ADD : {
+               if (numberOfParameters != 2)
+                  throw new IllegalArgumentException(bundle.invalidNumberOfParameters(numberOfParameters,
+                                                                                      "WORKMANAGER_ADD"));
+
                Address id = (Address)wois.readObject();
                String address = (String)wois.readObject();
 
@@ -150,6 +169,10 @@ public class Communication implements Runnable
                break;
             }
             case WORKMANAGER_REMOVE : {
+               if (numberOfParameters != 1)
+                  throw new IllegalArgumentException(bundle.invalidNumberOfParameters(numberOfParameters,
+                                                                                      "WORKMANAGER_REMOVE"));
+
                Address id = (Address)wois.readObject();
 
                if (trace)
@@ -161,6 +184,10 @@ public class Communication implements Runnable
                break;
             }
             case PING : {
+               if (numberOfParameters != 0)
+                  throw new IllegalArgumentException(bundle.invalidNumberOfParameters(numberOfParameters,
+                                                                                      "PING"));
+
                if (trace)
                   log.tracef("%s: PING()", socket.getInetAddress());
 
@@ -170,6 +197,10 @@ public class Communication implements Runnable
                break;
             }
             case DO_WORK : {
+               if (numberOfParameters != 3)
+                  throw new IllegalArgumentException(bundle.invalidNumberOfParameters(numberOfParameters,
+                                                                                      "DO_WORK"));
+
                Address id = (Address)wois.readObject();
                ClassBundle cb = (ClassBundle)wois.readObject();
 
@@ -190,6 +221,10 @@ public class Communication implements Runnable
                break;
             }
             case START_WORK : {
+               if (numberOfParameters != 3)
+                  throw new IllegalArgumentException(bundle.invalidNumberOfParameters(numberOfParameters,
+                                                                                      "START_WORK"));
+
                Address id = (Address)wois.readObject();
                ClassBundle cb = (ClassBundle)wois.readObject();
 
@@ -210,6 +245,10 @@ public class Communication implements Runnable
                break;
             }
             case SCHEDULE_WORK : {
+               if (numberOfParameters != 3)
+                  throw new IllegalArgumentException(bundle.invalidNumberOfParameters(numberOfParameters,
+                                                                                      "SCHEDULE_WORK"));
+
                Address id = (Address)wois.readObject();
                ClassBundle cb = (ClassBundle)wois.readObject();
 
@@ -230,6 +269,10 @@ public class Communication implements Runnable
                break;
             }
             case GET_SHORTRUNNING_FREE : {
+               if (numberOfParameters != 1)
+                  throw new IllegalArgumentException(bundle.invalidNumberOfParameters(numberOfParameters,
+                                                                                      "GET_SHORTRUNNING_FREE"));
+
                Address id = (Address)wois.readObject();
 
                if (trace)
@@ -241,6 +284,10 @@ public class Communication implements Runnable
                break;
             }
             case GET_LONGRUNNING_FREE : {
+               if (numberOfParameters != 1)
+                  throw new IllegalArgumentException(bundle.invalidNumberOfParameters(numberOfParameters,
+                                                                                      "GET_LONGRUNNING_FREE"));
+
                Address id = (Address)wois.readObject();
 
                if (trace)
@@ -252,6 +299,10 @@ public class Communication implements Runnable
                break;
             }
             case UPDATE_SHORTRUNNING_FREE : {
+               if (numberOfParameters != 2)
+                  throw new IllegalArgumentException(bundle.invalidNumberOfParameters(numberOfParameters,
+                                                                                      "UPDATE_SHORTRUNNING_FREE"));
+
                Address id = (Address)wois.readObject();
                Long freeCount = (Long)wois.readObject();
 
@@ -264,6 +315,10 @@ public class Communication implements Runnable
                break;
             }
             case UPDATE_LONGRUNNING_FREE : {
+               if (numberOfParameters != 2)
+                  throw new IllegalArgumentException(bundle.invalidNumberOfParameters(numberOfParameters,
+                                                                                      "UPDATE_LONGRUNNING_FREE"));
+
                Address id = (Address)wois.readObject();
                Long freeCount = (Long)wois.readObject();
 
@@ -276,6 +331,10 @@ public class Communication implements Runnable
                break;
             }
             case GET_DISTRIBUTED_STATISTICS : {
+               if (numberOfParameters != 1)
+                  throw new IllegalArgumentException(bundle.invalidNumberOfParameters(numberOfParameters,
+                                                                                      "GET_DISTRIBUTED_STATISTICS"));
+
                Address id = (Address)wois.readObject();
 
                if (trace)
@@ -287,6 +346,10 @@ public class Communication implements Runnable
                break;
             }
             case DELTA_DOWORK_ACCEPTED : {
+               if (numberOfParameters != 1)
+                  throw new IllegalArgumentException(bundle.invalidNumberOfParameters(numberOfParameters,
+                                                                                      "DELTA_DOWORK_ACCEPTED"));
+
                Address id = (Address)wois.readObject();
 
                if (trace)
@@ -298,6 +361,10 @@ public class Communication implements Runnable
                break;
             }
             case DELTA_DOWORK_REJECTED : {
+               if (numberOfParameters != 1)
+                  throw new IllegalArgumentException(bundle.invalidNumberOfParameters(numberOfParameters,
+                                                                                      "DELTA_DOWORK_REJECTED"));
+
                Address id = (Address)wois.readObject();
 
                if (trace)
@@ -309,6 +376,10 @@ public class Communication implements Runnable
                break;
             }
             case DELTA_STARTWORK_ACCEPTED : {
+               if (numberOfParameters != 1)
+                  throw new IllegalArgumentException(bundle.invalidNumberOfParameters(numberOfParameters,
+                                                                                      "DELTA_STARTWORK_ACCEPTED"));
+
                Address id = (Address)wois.readObject();
 
                if (trace)
@@ -320,6 +391,10 @@ public class Communication implements Runnable
                break;
             }
             case DELTA_STARTWORK_REJECTED : {
+               if (numberOfParameters != 1)
+                  throw new IllegalArgumentException(bundle.invalidNumberOfParameters(numberOfParameters,
+                                                                                      "DELTA_STARTWORK_REJECTED"));
+
                Address id = (Address)wois.readObject();
 
                if (trace)
@@ -331,6 +406,10 @@ public class Communication implements Runnable
                break;
             }
             case DELTA_SCHEDULEWORK_ACCEPTED : {
+               if (numberOfParameters != 1)
+                  throw new IllegalArgumentException(bundle.invalidNumberOfParameters(numberOfParameters,
+                                                                                      "DELTA_SCHEDULEWORK_ACCEPTED"));
+
                Address id = (Address)wois.readObject();
 
                if (trace)
@@ -342,6 +421,10 @@ public class Communication implements Runnable
                break;
             }
             case DELTA_SCHEDULEWORK_REJECTED : {
+               if (numberOfParameters != 1)
+                  throw new IllegalArgumentException(bundle.invalidNumberOfParameters(numberOfParameters,
+                                                                                      "DELTA_SCHEDULEWORK_REJECTED"));
+
                Address id = (Address)wois.readObject();
 
                if (trace)
@@ -353,6 +436,10 @@ public class Communication implements Runnable
                break;
             }
             case DELTA_WORK_SUCCESSFUL : {
+               if (numberOfParameters != 1)
+                  throw new IllegalArgumentException(bundle.invalidNumberOfParameters(numberOfParameters,
+                                                                                      "DELTA_WORK_SUCCESSFUL"));
+
                Address id = (Address)wois.readObject();
 
                if (trace)
@@ -364,6 +451,10 @@ public class Communication implements Runnable
                break;
             }
             case DELTA_WORK_FAILED : {
+               if (numberOfParameters != 1)
+                  throw new IllegalArgumentException(bundle.invalidNumberOfParameters(numberOfParameters,
+                                                                                      "DELTA_WORK_FAILED"));
+
                Address id = (Address)wois.readObject();
 
                if (trace)
