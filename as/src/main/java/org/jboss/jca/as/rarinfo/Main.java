@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.as.rarinfo;
 
+import org.jboss.jca.common.annotations.Annotations;
 import org.jboss.jca.common.api.metadata.Defaults;
 import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
 import org.jboss.jca.common.api.metadata.common.CommonPool;
@@ -45,6 +46,9 @@ import org.jboss.jca.common.metadata.common.CommonXaPoolImpl;
 import org.jboss.jca.common.metadata.common.CredentialImpl;
 import org.jboss.jca.common.metadata.common.v10.CommonConnDefImpl;
 import org.jboss.jca.common.metadata.ra.RaParser;
+import org.jboss.jca.common.spi.annotations.repository.AnnotationRepository;
+import org.jboss.jca.common.spi.annotations.repository.AnnotationScanner;
+import org.jboss.jca.common.spi.annotations.repository.AnnotationScannerFactory;
 import org.jboss.jca.validator.Validation;
 
 import java.io.BufferedInputStream;
@@ -154,6 +158,8 @@ public class Main
    {
       final int argsLength = args.length;
       PrintStream out = null;
+      ZipFile zipFile = null;
+      URLClassLoader cl = null;
       try
       {
          if (argsLength < 1)
@@ -191,9 +197,8 @@ public class Main
                System.exit(OTHER);
             }
          }
-         ZipFile zipFile = new ZipFile(rarFile);
+         zipFile = new ZipFile(rarFile);
 
-         boolean hasRaXml = false;
          boolean exsitNativeFile = false;
          Connector connector = null;
 
@@ -215,7 +220,6 @@ public class Main
 
             if (name.equals(RAXML_FILE))
             {
-               hasRaXml = true;
                InputStream raIn = zipFile.getInputStream(ze);
                RaParser parser = new RaParser();
                connector = parser.parse(raIn);
@@ -224,19 +228,24 @@ public class Main
             }
          }
 
-         if (!hasRaXml)
+         root = getRoot(rarFile);
+         cl = loadClass(cps);
+
+         // Annotation scanning
+         if (scanArchive(connector))
          {
-            System.out.println("JCA annotations aren't supported");
-            System.exit(OTHER);
+            Annotations annotator = new Annotations();
+            AnnotationScanner scanner = AnnotationScannerFactory.getAnnotationScanner();
+            AnnotationRepository repository = scanner.scan(cl.getURLs(), cl);
+            connector = annotator.merge(connector, repository, cl);
          }
+
          if (connector == null)
          {
             System.out.println("can't parse ra.xml");
             System.exit(OTHER);
          }
 
-         URLClassLoader cl = loadClass(rarFile, cps);
-         
          if (stdout)
          {
             out = System.out;
@@ -274,14 +283,19 @@ public class Main
          {
             if (connector.getVersion() == Version.V_15)
                version = "1.5";
-            else
+            else if (connector.getVersion() == Version.V_16)
                version = "1.6";
+            else
+               version = "1.7";
             ResourceAdapter1516 ra1516 = (ResourceAdapter1516)connector.getResourceadapter();
             ra = ra1516;
             if (ra1516.getOutboundResourceadapter() != null)
             {
                reauth = ra1516.getOutboundResourceadapter().getReauthenticationSupport();
-               if (ra1516.getInboundResourceadapter() != null)
+               if (ra1516.getInboundResourceadapter() != null &&
+                   ra1516.getInboundResourceadapter().getMessageadapter() != null &&
+                   ra1516.getInboundResourceadapter().getMessageadapter().getMessagelisteners() != null &&
+                   ra1516.getInboundResourceadapter().getMessageadapter().getMessagelisteners().size() > 0)
                   type = "Bidirectional";
                else
                   type = "OutBound";
@@ -520,69 +534,72 @@ public class Main
                out.println("Admin-object:");
                out.println("-------------");
                adminObjects = new ArrayList<CommonAdminObject>();
-            }
-            for (AdminObject ao : ra1516.getAdminObjects())
-            {
-               String aoClassname = getValueString(ao.getAdminobjectClass());
-               if (!sameClassnameSet.contains(aoClassname))
-               {
-                  sameClassnameSet.add(aoClassname);
-                  if (line != 0)
-                  {
-                     out.println();
-                  }
-                  line++;
-                  out.println("Class: " + aoClassname);
-                  out.println("  Interface: " + getValueString(ao.getAdminobjectInterface()));
-                  needPrint = true;
-               }
-               else
-               {
-                  needPrint = false;
-               }
 
-               String poolName = aoClassname.substring(aoClassname.lastIndexOf('.') + 1);
-               Map<String, String> configProperty = null;
-               if (ao.getConfigProperties() != null)
-                  configProperty = new HashMap<String, String>();
-               
-               introspected = getIntrospectedProperties(aoClassname, cl);
-               
-               for (ConfigProperty cp : ao.getConfigProperties())
+               for (AdminObject ao : ra1516.getAdminObjects())
                {
-                  configProperty.put(getValueString(cp.getConfigPropertyName()), 
-                                     getValueString(cp.getConfigPropertyValue()));
+                  String aoClassname = getValueString(ao.getAdminobjectClass());
+                  if (!sameClassnameSet.contains(aoClassname))
+                  {
+                     sameClassnameSet.add(aoClassname);
+                     if (line != 0)
+                     {
+                        out.println();
+                     }
+                     line++;
+                     out.println("Class: " + aoClassname);
+                     out.println("  Interface: " + getValueString(ao.getAdminobjectInterface()));
+                     needPrint = true;
+                  }
+                  else
+                  {
+                     needPrint = false;
+                  }
+
+                  String poolName = aoClassname.substring(aoClassname.lastIndexOf('.') + 1);
+                  Map<String, String> configProperty = null;
+                  if (ao.getConfigProperties() != null)
+                     configProperty = new HashMap<String, String>();
+               
+                  introspected = getIntrospectedProperties(aoClassname, cl);
+               
+                  for (ConfigProperty cp : ao.getConfigProperties())
+                  {
+                     configProperty.put(getValueString(cp.getConfigPropertyName()), 
+                                        getValueString(cp.getConfigPropertyValue()));
                      
-                  removeIntrospectedValue(introspected, getValueString(cp.getConfigPropertyName()));
+                     removeIntrospectedValue(introspected, getValueString(cp.getConfigPropertyName()));
                   
-                  if (needPrint)
-                     out.println("  Config-property: " + getValueString(cp.getConfigPropertyName()) + " (" +
-                                 getValueString(cp.getConfigPropertyType()) + ")");
-               }
-
-               if (introspected != null && !introspected.isEmpty())
-               {
-                  for (Map.Entry<String, String> entry : introspected.entrySet())
-                  {
                      if (needPrint)
-                        out.println("  Introspected Config-property: " + entry.getKey() + " (" +
-                                    entry.getValue() + ")");
+                        out.println("  Config-property: " + getValueString(cp.getConfigPropertyName()) + " (" +
+                                    getValueString(cp.getConfigPropertyType()) + ")");
                   }
-               }
 
-               if (introspected == null)
-                  out.println("  Unable to resolve introspected config-property's");
+                  if (introspected != null && !introspected.isEmpty())
+                  {
+                     for (Map.Entry<String, String> entry : introspected.entrySet())
+                     {
+                        if (needPrint)
+                           out.println("  Introspected Config-property: " + entry.getKey() + " (" +
+                                       entry.getValue() + ")");
+                     }
+                  }
+                  
+                  if (introspected == null)
+                     out.println("  Unable to resolve introspected config-property's");
 
-               CommonAdminObjectImpl aoImpl = new CommonAdminObjectImpl(configProperty, aoClassname,
+                  CommonAdminObjectImpl aoImpl = new CommonAdminObjectImpl(configProperty, aoClassname,
                      "java:jboss/eis/ao/" + poolName, poolName, Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT);
-               adminObjects.add(aoImpl);
+                  adminObjects.add(aoImpl);
+               }
             }
             
             line = 0;
             sameClassnameSet.clear();
 
             if (ra1516.getInboundResourceadapter() != null && 
-               ra1516.getInboundResourceadapter().getMessageadapter() != null)
+                ra1516.getInboundResourceadapter().getMessageadapter() != null &&
+                ra1516.getInboundResourceadapter().getMessageadapter().getMessagelisteners() != null &&
+                ra1516.getInboundResourceadapter().getMessageadapter().getMessagelisteners().size() > 0)
             {
                out.println();
                out.println("Activation-spec:");
@@ -727,6 +744,28 @@ public class Main
             try
             {
                out.close();
+            }
+            catch (Exception ioe)
+            {
+               // Ignore
+            }
+         }
+         if (cl != null)
+         {
+            try
+            {
+               cl.close();
+            }
+            catch (Exception ioe)
+            {
+               // Ignore
+            }
+         }
+         if (zipFile != null)
+         {
+            try
+            {
+               zipFile.close();
             }
             catch (Exception ioe)
             {
@@ -911,28 +950,69 @@ public class Main
       serializer.transform(new DOMSource(doc), new StreamResult(out));
    }
 
-   private static URLClassLoader loadClass(String rarFile, String[] classpath)
+   /**
+    * Should the archive be scanned for annotations
+    * @param cmd The metadata
+    * @return True if scan is needed; otherwise false
+    */
+   private static boolean scanArchive(Connector cmd)
    {
+      if (cmd == null)
+         return true;
 
-      if (rarFile == null)
-         throw new IllegalArgumentException("Rar file name is null");
-
-      File destination = null;
-      try
+      if (cmd.getVersion() == Version.V_16 || cmd.getVersion() == Version.V_17)
       {
-         File f = new File(rarFile);
-         //File root = null;
-
-         if (f.isFile())
+         if (cmd.getVersion() == Version.V_16)
          {
-            destination = new File(tempdir, subdir);
-            root = extract(f, destination);
+            org.jboss.jca.common.api.metadata.ra.ra16.Connector16 cmd16 =
+               (org.jboss.jca.common.api.metadata.ra.ra16.Connector16)cmd;
+
+            if (!cmd16.isMetadataComplete())
+               return true;
          }
          else
          {
-            root = f;
-         }
+            org.jboss.jca.common.api.metadata.ra.ra17.Connector17 cmd17 =
+               (org.jboss.jca.common.api.metadata.ra.ra17.Connector17)cmd;
 
+            if (!cmd17.isMetadataComplete())
+               return true;
+         }
+      }
+
+      return false;
+   }
+
+   private static File getRoot(String rarFile)
+   {
+      if (rarFile == null)
+         throw new IllegalArgumentException("Rar file name is null");
+
+      try
+      {
+         File f = new File(rarFile);
+
+         if (f.isFile())
+         {
+            File destination = new File(tempdir, subdir);
+            return extract(f, destination);
+         }
+         else
+         {
+            return f;
+         }
+      }
+      catch (Throwable t)
+      {
+         // Nothing we can do
+      }
+      return null;
+   }
+
+   private static URLClassLoader loadClass(String[] classpath)
+   {
+      try
+      {
          // Create classloader
          URL[] allurls;
          URL[] urls = getUrls(root);
