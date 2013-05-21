@@ -442,6 +442,10 @@
     <Bug code="EI"/>
   </Match>
   <Match>
+    <Class name="org.jboss.jca.core.workmanager.transport.remote.jgroups.JGroupsTransport"/>
+    <Bug code="PZLA"/>
+  </Match>
+  <Match>
     <Class name="org.jboss.jca.core.workmanager.transport.remote.jgroups.JGroupsTransport$1"/>
     <Bug code="SIC"/>
   </Match>

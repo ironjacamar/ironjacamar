@@ -51,7 +51,7 @@ public class WorkManagerUtil
     */
    public static boolean isLongRunning(Work work)
    {
-      if (work instanceof WorkContextProvider)
+      if (work != null && work instanceof WorkContextProvider)
       {
          WorkContextProvider wcProvider = (WorkContextProvider) work;
          List<WorkContext> contexts = wcProvider.getWorkContexts();
