@@ -31,7 +31,7 @@ import java.util.Map;
 /**
  * UserTransactionRegistry implementation
  * 
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class UserTransactionRegistryImpl implements org.jboss.jca.core.spi.transaction.usertx.UserTransactionRegistry
 {

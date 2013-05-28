@@ -36,7 +36,7 @@ import java.util.List;
  *
  * A Activationspec15.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public class Activationspec15Impl implements Activationspec15

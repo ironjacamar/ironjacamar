@@ -32,7 +32,7 @@ import java.util.Map;
  *
  * A Messageadapter.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public interface Messageadapter extends IdDecoratedMetadata, MergeableMetadata<Messageadapter>, CopyableMetaData
@@ -79,7 +79,7 @@ public interface Messageadapter extends IdDecoratedMetadata, MergeableMetadata<M
    *
    * A Tag.
    *
-   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
    *
    */
    public enum Tag
@@ -169,7 +169,7 @@ public interface Messageadapter extends IdDecoratedMetadata, MergeableMetadata<M
     *
     * A Attribute.
     *
-    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
     *
     */
    public enum Attribute

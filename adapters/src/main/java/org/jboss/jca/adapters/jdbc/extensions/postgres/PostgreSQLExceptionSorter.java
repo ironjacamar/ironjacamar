@@ -30,7 +30,7 @@ import java.sql.SQLException;
 /**
  * A PostgreSQLExceptionSorter.
  * 
- * @author <a href="weston.price@jboss.com">Weston Price</a>
+ * @author <a href="wprice@redhat.com">Weston Price</a>
  * @version $Revision: 71554 $
  */
 public class PostgreSQLExceptionSorter implements ExceptionSorter, Serializable

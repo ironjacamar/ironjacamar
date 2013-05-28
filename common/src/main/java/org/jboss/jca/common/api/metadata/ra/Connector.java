@@ -30,7 +30,7 @@ import java.util.List;
  *
  * A Connector.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public interface Connector
@@ -104,7 +104,7 @@ public interface Connector
     *
     * A Version enumeration
     *
-    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
     *
     */
    public enum Version

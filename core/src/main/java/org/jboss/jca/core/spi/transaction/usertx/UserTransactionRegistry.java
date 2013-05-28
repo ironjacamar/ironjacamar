@@ -24,7 +24,7 @@ package org.jboss.jca.core.spi.transaction.usertx;
 /**
  * UserTransactionRegistry.
  * 
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public interface UserTransactionRegistry
 {

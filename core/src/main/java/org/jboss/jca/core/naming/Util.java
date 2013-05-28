@@ -32,8 +32,8 @@ import org.jboss.logging.Logger;
 /**
  * A static utility class for common JNDI operations.
  *
- * @author Scott.Stark@jboss.org
- * @author adrian@jboss.com
+ * @author sstark@redhat.com
+ * @author abrock@redhat.com
  */
 @SuppressWarnings("unchecked")
 class Util

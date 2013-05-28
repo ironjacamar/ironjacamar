@@ -34,7 +34,7 @@ import org.jboss.logging.Logger;
 /**
  * BaseResourceAdapter
  *
- * @author  <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>.
+ * @author  <a href="mailto:jeff.zhang@ironjacamar.org">Jeff Zhang</a>.
  * @version $Revision: $
  */
 public class BaseResourceAdapter implements ResourceAdapter

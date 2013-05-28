@@ -41,7 +41,7 @@ import org.jboss.security.SimplePrincipal;
 /**
  * An implementation of the callback SPI for explicit security settings
  * 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class CallbackImpl implements Callback
 {

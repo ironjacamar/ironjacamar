@@ -43,7 +43,7 @@ import java.util.StringTokenizer;
  * Injection utility which can inject values into objects. This file is a copy
  * of the <code>com.github.fungal.api.util.Injection</code> class.
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class Injection
 {

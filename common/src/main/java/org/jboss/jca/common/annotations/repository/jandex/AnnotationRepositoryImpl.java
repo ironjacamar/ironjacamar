@@ -42,7 +42,7 @@ import org.jboss.jandex.Type;
  * An AnnotationRepositoryImpl.
  *
  * @author <a href="mailto:stefano.maestri@redhat.com">Stefano Maestri</a>
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class AnnotationRepositoryImpl implements AnnotationRepository
 {

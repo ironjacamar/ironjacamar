@@ -35,8 +35,8 @@ import org.jboss.logging.Messages;
 /**
  * Default implementation of a recovery plugin.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class DefaultRecoveryPlugin implements RecoveryPlugin
 {

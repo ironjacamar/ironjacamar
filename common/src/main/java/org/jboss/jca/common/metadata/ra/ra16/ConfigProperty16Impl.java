@@ -31,7 +31,7 @@ import org.jboss.jca.common.metadata.ra.common.ConfigPropertyImpl;
 import java.util.List;
 
 /**
- * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
+ * @author <a href="mailto:stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public class ConfigProperty16Impl extends ConfigPropertyImpl implements ConfigProperty16

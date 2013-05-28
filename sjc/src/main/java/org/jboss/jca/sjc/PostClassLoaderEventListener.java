@@ -30,7 +30,7 @@ import com.github.fungal.api.events.EventListener;
 
 /**
  * An event listener for the POST_CLASSLOADER event
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 class PostClassLoaderEventListener implements EventListener
 {

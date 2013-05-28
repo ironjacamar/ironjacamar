@@ -32,7 +32,7 @@ import java.util.List;
  *
  * A ResourceAdaptersImpl.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public class ResourceAdaptersImpl implements ResourceAdapters

@@ -26,7 +26,7 @@ import javax.transaction.xa.Xid;
 /**
  * A XidWrapper.
  * 
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  * @version $Revision: 85945 $
  */
 public interface XidWrapper extends Xid

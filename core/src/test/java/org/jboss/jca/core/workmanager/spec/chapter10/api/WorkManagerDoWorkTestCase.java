@@ -47,7 +47,7 @@ import static org.junit.Assert.*;
  * 
  * Tests for the JCA specific API about WorkManager
  * 
- * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
+ * @author <a href="mailto:jeff.zhang@ironjacamar.org">Jeff Zhang</a>
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  * @version $Revision: $
  */

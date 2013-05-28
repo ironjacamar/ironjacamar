@@ -30,7 +30,7 @@ import java.util.List;
  *
  * A ResourceAdapter.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public interface ResourceAdapter extends IdDecoratedMetadata, ValidatableMetadata, CopyableMetaData

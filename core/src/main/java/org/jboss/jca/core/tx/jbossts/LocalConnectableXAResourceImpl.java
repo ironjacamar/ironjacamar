@@ -26,7 +26,7 @@ import org.jboss.jca.core.spi.transaction.ConnectableResource;
 /**
  * Local connectable XA resource implementation.
  * 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class LocalConnectableXAResourceImpl extends LocalXAResourceImpl 
    implements ConnectableResource, org.jboss.tm.ConnectableLastResource

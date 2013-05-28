@@ -30,7 +30,7 @@ import java.lang.reflect.Constructor;
 import java.net.Socket;
 
 /**
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class HandlerSocket implements Runnable
 {

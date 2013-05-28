@@ -38,7 +38,7 @@ import org.jboss.logging.Logger;
  * request info for its pool partition.
  * 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class PoolBySubjectAndCri extends AbstractPool
 {

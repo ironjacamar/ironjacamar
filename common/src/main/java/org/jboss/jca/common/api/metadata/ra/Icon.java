@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
+ * @author <a href="mailto:stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public class Icon implements IdDecoratedMetadata, LocalizedMetadata, CopyableMetaData
@@ -221,7 +221,7 @@ public class Icon implements IdDecoratedMetadata, LocalizedMetadata, CopyableMet
    *
    * A Tag.
    *
-   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
    *
    */
    public enum Tag 
@@ -316,7 +316,7 @@ public class Icon implements IdDecoratedMetadata, LocalizedMetadata, CopyableMet
     *
     * A Attribute.
     *
-    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
     *
     */
    public enum Attribute 

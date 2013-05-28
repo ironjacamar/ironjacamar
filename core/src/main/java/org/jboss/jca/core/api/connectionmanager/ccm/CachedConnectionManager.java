@@ -34,7 +34,7 @@ import javax.transaction.TransactionManager;
 /**
  * CacheConnectionManager.
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public interface CachedConnectionManager extends UserTransactionListener, ComponentStack
 {

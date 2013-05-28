@@ -35,7 +35,7 @@ import org.jboss.logging.Messages;
  *
  * A ValidationImpl.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonValidationImpl implements Validation

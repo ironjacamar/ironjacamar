@@ -40,7 +40,7 @@ import static org.junit.Assert.*;
 /**
  * An enlist / delist XA rollback test case
  *
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class EnlistDelistXARollbackTestCase extends EnlistDelist
 {

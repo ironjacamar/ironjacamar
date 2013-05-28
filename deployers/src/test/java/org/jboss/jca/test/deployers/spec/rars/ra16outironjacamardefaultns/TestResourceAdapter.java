@@ -25,8 +25,8 @@ import org.jboss.jca.test.deployers.spec.rars.BaseResourceAdapter;
 
 /**
  * TestResourceAdapter
- * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jeff.zhang@ironjacamar.org">Jeff Zhang</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  * @version $Revision: $
  */
 public class TestResourceAdapter extends BaseResourceAdapter

@@ -36,7 +36,7 @@ import static org.junit.Assert.assertThat;
  *
  * A DsParserForValidatorForTemplateReplaceTestCase. See also JBJCA-263 jira
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public class DsParserForTemplateReplaceTestCase extends ParserTestBase

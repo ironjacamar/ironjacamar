@@ -127,9 +127,9 @@ import org.jboss.logging.Messages;
  * written.
  *
  * @author <a href="mailto:d_jencks@users.sourceforge.net">David Jencks</a>
- * @author <a href="mailto:adrian@jboss.org">Adrian Brock</a>
- * @author <a href="weston.price@jboss.com">Weston Price</a>
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:abrock@redhat.com">Adrian Brock</a>
+ * @author <a href="wprice@redhat.com">Weston Price</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class TxConnectionManagerImpl extends AbstractConnectionManager implements TxConnectionManager
 {

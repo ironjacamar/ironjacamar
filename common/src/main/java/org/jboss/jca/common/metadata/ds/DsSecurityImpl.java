@@ -33,7 +33,7 @@ import java.util.Map;
  *
  * A DsSecurityImpl.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public class DsSecurityImpl extends CredentialImpl implements DsSecurity

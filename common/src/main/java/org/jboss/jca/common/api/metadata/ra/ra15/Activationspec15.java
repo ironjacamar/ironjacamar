@@ -34,7 +34,7 @@ import java.util.Map;
  *
  * A Activationspec15.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public interface Activationspec15 extends IdDecoratedMetadata, CopyableMetaData
@@ -75,7 +75,7 @@ public interface Activationspec15 extends IdDecoratedMetadata, CopyableMetaData
     *
     * A Tag.
     *
-    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
     *
     */
    public enum Tag
@@ -170,7 +170,7 @@ public interface Activationspec15 extends IdDecoratedMetadata, CopyableMetaData
     *
     * A Attribute.
     *
-    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
     *
     */
    public enum Attribute

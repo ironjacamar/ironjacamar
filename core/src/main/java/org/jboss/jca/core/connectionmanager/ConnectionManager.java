@@ -40,7 +40,7 @@ import org.jboss.security.SubjectFactory;
  * </ul>
  * </p> 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a> 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a> 
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a> 
  */
 public interface ConnectionManager extends
    org.jboss.jca.core.api.connectionmanager.ConnectionManager,

@@ -29,7 +29,7 @@ import javax.security.auth.Subject;
 
 /**
  * Privileged Blocks
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 class SecurityActions
 { 

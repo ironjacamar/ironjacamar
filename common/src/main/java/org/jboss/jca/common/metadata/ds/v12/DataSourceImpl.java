@@ -36,7 +36,7 @@ import java.util.Map;
  *
  * A datasource implementation
  *
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class DataSourceImpl extends org.jboss.jca.common.metadata.ds.v11.DataSourceImpl implements DataSource
 {

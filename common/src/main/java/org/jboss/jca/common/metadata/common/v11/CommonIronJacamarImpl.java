@@ -36,7 +36,7 @@ import java.util.Map;
  *
  * A CommonIronJacamarImpl.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public abstract class CommonIronJacamarImpl implements CommonIronJacamar

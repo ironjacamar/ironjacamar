@@ -29,8 +29,8 @@ import javax.resource.ResourceException;
 /**
  * ComponentStack.
  * 
- * @author <a href="adrian@jboss.com">Adrian Brock</a>
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="abrock@redhat.com">Adrian Brock</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public interface ComponentStack
 {

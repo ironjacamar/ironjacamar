@@ -29,7 +29,7 @@ import javax.resource.ResourceException;
  * Marker recovery plugin to let the recovery subsystem know that the ValidatingManagedConnectionFactory
  * interface should be used for verifying the managed connection
  *
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class ValidatingManagedConnectionFactoryRecoveryPlugin implements RecoveryPlugin
 {

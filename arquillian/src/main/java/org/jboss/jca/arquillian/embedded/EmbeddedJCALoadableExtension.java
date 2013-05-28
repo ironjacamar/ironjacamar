@@ -29,7 +29,7 @@ import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
 /**
  * Arquillian {@link LoadableExtension} adaptor for Embedded JCA
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 class EmbeddedJCALoadableExtension implements LoadableExtension
 {

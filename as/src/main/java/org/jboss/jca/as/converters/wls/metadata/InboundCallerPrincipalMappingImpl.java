@@ -28,7 +28,7 @@ import org.jboss.jca.as.converters.wls.api.metadata.InboundCallerPrincipalMappin
  *
  * A generic SecurityWorkContext.
  *
- * @author <a href="jeff.zhang@jboss.org">Jeff Zhang</a>
+ * @author <a href="jeff.zhang@ironjacamar.org">Jeff Zhang</a>
  *
  */
 public class InboundCallerPrincipalMappingImpl implements InboundCallerPrincipalMapping

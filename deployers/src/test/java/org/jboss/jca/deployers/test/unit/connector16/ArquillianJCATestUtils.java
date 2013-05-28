@@ -34,7 +34,7 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
  *
  * A ArquillianJCATestUtils.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  *
  */

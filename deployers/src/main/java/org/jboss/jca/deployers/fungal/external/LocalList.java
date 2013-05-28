@@ -30,7 +30,7 @@ import com.github.fungal.api.remote.Command;
 
 /**
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class LocalList implements Command
 {

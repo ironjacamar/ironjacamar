@@ -27,7 +27,7 @@ import java.util.Map;
 /**
  * A IronJacamar.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public interface IronJacamar extends org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar
@@ -37,7 +37,7 @@ public interface IronJacamar extends org.jboss.jca.common.api.metadata.ironjacam
    *
    * A Tag.
    *
-   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
    *
    */
    public enum Tag

@@ -35,7 +35,7 @@ import javax.transaction.TransactionManager;
 /**
  * This class provide a delegator implementation of the transaction manager
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class TransactionManagerDelegator implements TransactionManager, TransactionTimeoutConfiguration
 {

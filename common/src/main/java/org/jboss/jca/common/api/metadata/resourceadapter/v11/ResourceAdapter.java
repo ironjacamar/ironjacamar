@@ -31,7 +31,7 @@ import java.util.Map;
  *
  * A ResourceAdapter.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public interface ResourceAdapter extends org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter,
@@ -54,7 +54,7 @@ public interface ResourceAdapter extends org.jboss.jca.common.api.metadata.resou
    *
    * A Tag.
    *
-   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
    *
    */
    public enum Tag
@@ -194,7 +194,7 @@ public interface ResourceAdapter extends org.jboss.jca.common.api.metadata.resou
     *
     * A Attribute.
     *
-    * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+    * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
     *
     */
    public enum Attribute

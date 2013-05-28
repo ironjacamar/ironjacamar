@@ -38,7 +38,7 @@ import org.eclipse.jetty.webapp.WebAppContext;
 
 /**
  * The WAR deployer for JCA/SJC
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class WARDeployer implements Deployer
 {

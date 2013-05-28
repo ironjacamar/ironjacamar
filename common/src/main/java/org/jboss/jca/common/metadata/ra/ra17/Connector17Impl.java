@@ -34,7 +34,7 @@ import java.util.List;
 /**
  * Implementation of Connector17
  *
- * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
+ * @author <a href="mailto:stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  */
 public class Connector17Impl extends Connector16Impl implements Connector17
 {

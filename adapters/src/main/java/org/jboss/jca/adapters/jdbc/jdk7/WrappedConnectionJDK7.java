@@ -39,7 +39,7 @@ import java.util.concurrent.Executor;
 /**
  * WrappedConnectionJDK7.
  * 
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 @SuppressWarnings("unchecked")
 public class WrappedConnectionJDK7 extends WrappedConnection

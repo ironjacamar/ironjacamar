@@ -25,7 +25,7 @@ package org.jboss.jca.core.api.management;
 /**
  * Represents a config property
  * 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class ConfigProperty
 {

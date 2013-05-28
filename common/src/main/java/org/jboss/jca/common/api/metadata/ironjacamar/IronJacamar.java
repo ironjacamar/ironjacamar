@@ -26,7 +26,7 @@ import org.jboss.jca.common.api.metadata.common.CommonIronJacamar;
 /**
  * A IronJacamar.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public interface IronJacamar extends CommonIronJacamar

@@ -30,7 +30,7 @@ import javax.resource.spi.TransactionSupport;
 
 /**
  * TestResourceAdapter
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 @Connector(
       description = { "Test RA" },

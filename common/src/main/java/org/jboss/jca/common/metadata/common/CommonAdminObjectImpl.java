@@ -32,7 +32,7 @@ import java.util.Map;
  *
  * A AdminObjectImpl.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public class CommonAdminObjectImpl implements CommonAdminObject

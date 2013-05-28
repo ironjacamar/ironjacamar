@@ -61,7 +61,7 @@ import com.github.fungal.api.util.JarFilter;
 /**
  * An abstract resource adapter deployer which contains common functionality
  * for all resource adapter archive based deployers.
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDeployer
 {

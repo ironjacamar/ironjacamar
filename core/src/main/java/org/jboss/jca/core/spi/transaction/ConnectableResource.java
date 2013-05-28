@@ -25,7 +25,7 @@ package org.jboss.jca.core.spi.transaction;
  * Defines a resource as connectable, which allows the transaction manager
  * to get access to the connection used by the transaction
  * 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public interface ConnectableResource
 {

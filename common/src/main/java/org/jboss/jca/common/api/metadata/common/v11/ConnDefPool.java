@@ -29,7 +29,7 @@ import java.util.Map;
 /**
  * A pool for the ConnectionDefinition.
  *
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public interface ConnDefPool extends org.jboss.jca.common.api.metadata.common.CommonPool
 {
@@ -47,7 +47,7 @@ public interface ConnDefPool extends org.jboss.jca.common.api.metadata.common.Co
 
    /**
     * Tags
-    * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+    * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
     */
    public enum Tag
    {

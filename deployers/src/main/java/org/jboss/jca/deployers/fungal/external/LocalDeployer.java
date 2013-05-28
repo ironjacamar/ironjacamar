@@ -33,7 +33,7 @@ import com.github.fungal.api.remote.Communicator;
 
 /**
  * A deployer for local machine deployments
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class LocalDeployer
 {

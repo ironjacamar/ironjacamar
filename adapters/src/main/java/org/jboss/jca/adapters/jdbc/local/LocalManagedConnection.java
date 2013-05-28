@@ -36,7 +36,7 @@ import javax.transaction.xa.XAResource;
  * LocalManagedConnection
  *
  * @author <a href="mailto:d_jencks@users.sourceforge.net">David Jencks</a>
- * @author <a href="mailto:adrian@jboss.com">Adrian Brock</a>
+ * @author <a href="mailto:abrock@redhat.com">Adrian Brock</a>
  * @version $Revision: 71788 $
  */
 public class LocalManagedConnection extends BaseWrapperManagedConnection implements LocalTransaction

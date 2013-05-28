@@ -29,8 +29,8 @@ import java.sql.Statement;
  A simple interface that allow us to get the underlying driver specific
  statement implementation back from the wrapper.
 
- @author Scott.Stark@jboss.org
- @author Adrian.Brock@jboss.com
+ @author sstark@redhat.com
+ @author abrock@redhat.com
  @version $Revision: 71554 $
  */
 public interface StatementAccess

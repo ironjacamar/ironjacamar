@@ -64,7 +64,7 @@ import static org.junit.Assert.*;
 /**
  * Work manager test case for security inflow
  * 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 @RunWith(Arquillian.class)
 @Configuration(autoActivate = false)

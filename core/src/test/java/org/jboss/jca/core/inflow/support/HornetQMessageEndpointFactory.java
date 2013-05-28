@@ -33,7 +33,7 @@ import org.jboss.logging.Logger;
 /**
  * A HornetQ message endpoint factory
  * 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  * @version $Revision: $
  */
 public class HornetQMessageEndpointFactory implements MessageEndpointFactory

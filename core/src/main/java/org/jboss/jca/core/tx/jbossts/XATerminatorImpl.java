@@ -31,7 +31,7 @@ import org.jboss.tm.JBossXATerminator;
 /**
  * XATerminator implementation
  *
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class XATerminatorImpl implements org.jboss.jca.core.spi.transaction.xa.XATerminator
 {

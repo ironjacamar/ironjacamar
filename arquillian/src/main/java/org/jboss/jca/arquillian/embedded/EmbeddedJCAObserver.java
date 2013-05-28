@@ -31,7 +31,7 @@ import org.jboss.logging.Logger;
 /**
  * Observer for the @BeforeClass annotation
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 class EmbeddedJCAObserver
 {

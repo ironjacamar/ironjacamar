@@ -46,7 +46,7 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 /**
  * Arquillian {@link DeployableContainer} adaptor for Embedded JCA
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 class EmbeddedJCAContainer implements DeployableContainer<EmbeddedJCAContainerConfiguration>
 {

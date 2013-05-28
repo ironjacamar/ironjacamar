@@ -35,7 +35,7 @@ import org.jboss.logging.Messages;
 /**
  * Configurable implementation of a recovery plugin.
  *
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class ConfigurableRecoveryPlugin implements RecoveryPlugin
 {

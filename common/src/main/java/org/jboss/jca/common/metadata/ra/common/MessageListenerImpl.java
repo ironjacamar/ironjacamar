@@ -29,7 +29,7 @@ import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra15.Activationspec15;
 
 /**
- * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
+ * @author <a href="mailto:stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public class MessageListenerImpl implements MessageListener

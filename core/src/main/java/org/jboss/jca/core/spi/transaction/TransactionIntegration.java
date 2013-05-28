@@ -49,7 +49,7 @@ import org.jboss.security.SubjectFactory;
  * If a feature isn't supported by the transaction manager a <code>null</code>
  * value should be returned. That way it is disabled in the IronJacamar container. 
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public interface TransactionIntegration
 {

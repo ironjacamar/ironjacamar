@@ -86,8 +86,8 @@ import org.jboss.logging.Messages;
 
 /**
  * The annotation processor for JCA 1.6
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
- * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jeff.zhang@ironjacamar.org">Jeff Zhang</a>
  */
 public class Annotations
 {

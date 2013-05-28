@@ -32,7 +32,7 @@ import java.sql.Statement;
 /**
  * A DB2ValidConnectionChecker.
  *
- * @author <a href="weston.price@jboss.com">Weston Price</a>
+ * @author <a href="wprice@redhat.com">Weston Price</a>
  * @version $Revision: 71554 $
  */
 public class DB2ValidConnectionChecker implements ValidConnectionChecker, Serializable

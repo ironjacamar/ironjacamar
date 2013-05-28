@@ -32,7 +32,7 @@ import java.util.Map;
  *
  * A Validation.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public interface Validation extends org.jboss.jca.common.api.metadata.common.CommonValidation, ValidatableMetadata
@@ -78,7 +78,7 @@ public interface Validation extends org.jboss.jca.common.api.metadata.common.Com
    *
    * A Tag.
    *
-   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
    *
    */
    public enum Tag

@@ -43,7 +43,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Test cases for getting a connection from the H2 database
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  * @version $Revision: $
  */
 @RunWith(Arquillian.class)

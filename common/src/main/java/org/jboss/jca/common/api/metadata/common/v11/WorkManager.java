@@ -28,7 +28,7 @@ import java.util.Map;
 /**
  * WorkManager
  *
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public interface WorkManager extends Serializable
 {
@@ -41,7 +41,7 @@ public interface WorkManager extends Serializable
    /**
     * A Tag.
     *
-    * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+    * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
     */
    public enum Tag
    {

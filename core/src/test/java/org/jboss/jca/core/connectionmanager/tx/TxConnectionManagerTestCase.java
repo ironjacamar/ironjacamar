@@ -61,7 +61,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * TxConnectionManagerTestCase.
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class TxConnectionManagerTestCase
 {

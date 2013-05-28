@@ -59,7 +59,7 @@ import org.jboss.logging.Messages;
 /**
  * A simple implementation of the resource adapter repository
  * 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class SimpleResourceAdapterRepository implements ResourceAdapterRepository
 {   

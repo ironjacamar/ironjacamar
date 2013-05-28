@@ -35,7 +35,7 @@ import org.jboss.logging.Logger;
 /**
  * A SybaseValidConnectionChecker.
  *
- * @author <a href="weston.price@jboss.com">Weston Price</a>
+ * @author <a href="wprice@redhat.com">Weston Price</a>
  * @version $Revision: 85945 $
  */
 public class SybaseValidConnectionChecker implements ValidConnectionChecker, Serializable

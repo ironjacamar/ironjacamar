@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
 	<name>ironjacamar-common</name>
-	<comment>JBoss JCA Common</comment>
+	<comment>IronJacamar Common</comment>
 	<projects>
 	</projects>
 	<buildSpec>

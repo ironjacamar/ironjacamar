@@ -49,9 +49,9 @@ import org.jboss.util.propertyeditor.PropertyEditors;
 
 /**
  * Utility methods related to the MBeanServer interface
- * @author <a href="mailto:scott.stark@jboss.org">Scott Stark</a>
- * @author <a href="mailto:dimitris@jboss.org">Dimitris Andreadis</a>
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:sstark@redhat.com">Scott Stark</a>
+ * @author <a href="mailto:dimitris@ironjacamar.org">Dimitris Andreadis</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class Server
 {

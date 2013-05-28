@@ -39,7 +39,7 @@ import javax.transaction.UserTransaction;
 
 /**
  * A transaction manager implementation
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class UserTransactionImpl implements UserTransactionProvider, UserTransaction, Serializable
 {

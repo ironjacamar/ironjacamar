@@ -27,7 +27,7 @@ import javax.resource.spi.ManagedConnection;
 /**
  * Connection listener.
  * 
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public interface ConnectionListener extends ConnectionEventListener, Comparable
 {

@@ -29,7 +29,7 @@ import java.sql.SQLException;
 /**
  * A DB2StaleConnectionChecker.
  * 
- * @author <a href="weston.price@jboss.com">Weston Price</a>
+ * @author <a href="wprice@redhat.com">Weston Price</a>
  */
 public class DB2StaleConnectionChecker implements StaleConnectionChecker
 {

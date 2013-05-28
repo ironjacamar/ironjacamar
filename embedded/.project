@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
 	<name>ironjacamar-embedded</name>
-	<comment>JBoss JCA Embedded</comment>
+	<comment>IronJacamar Embedded</comment>
 	<projects>
 	</projects>
 	<buildSpec>

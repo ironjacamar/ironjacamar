@@ -32,7 +32,7 @@ import java.util.Set;
  *
  * A static class with Merge Utilities methods.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public class MergeUtil

@@ -33,8 +33,8 @@ import javax.resource.ResourceException;
  * An implementation of this SPI must have a default constructor and will have
  * its Java bean properties set after initialization.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public interface RecoveryPlugin
 {

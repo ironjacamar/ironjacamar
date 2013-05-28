@@ -61,7 +61,7 @@ import static org.junit.Assert.*;
 /**
  * Enlistment test case for CCM
  *
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 @RunWith(Arquillian.class)
 @Configuration(autoActivate = false)

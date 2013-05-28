@@ -33,7 +33,7 @@ import org.jboss.logging.Logger;
 /**
  * Arquillian {@link ResourceProvider} resource provider for Embedded
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 class EmbeddedJCAEmbeddedResourceProvider implements ResourceProvider
 {

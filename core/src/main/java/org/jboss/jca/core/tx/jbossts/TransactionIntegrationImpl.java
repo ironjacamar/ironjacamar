@@ -43,7 +43,7 @@ import org.jboss.security.SubjectFactory;
  * This class provide an implementation of the transaction integration for
  * the IronJacamar container using JBossTS.
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class TransactionIntegrationImpl implements TransactionIntegration
 {

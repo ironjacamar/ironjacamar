@@ -31,7 +31,7 @@ import java.sql.SQLException;
 /**
  * MySQL plugin for reauthentication
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class MySQLReauthPlugin implements ReauthPlugin
 {

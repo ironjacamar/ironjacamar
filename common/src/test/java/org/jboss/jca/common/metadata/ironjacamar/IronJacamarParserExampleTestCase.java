@@ -25,6 +25,7 @@ import org.jboss.jca.common.metadata.ParserTestBase;
 import org.jboss.jca.common.metadata.ironjacamar.v11.IronJacamarParser;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -34,6 +35,7 @@ import org.junit.Test;
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  *
  */
+@Ignore
 public class IronJacamarParserExampleTestCase extends ParserTestBase
 {
    /**
@@ -54,7 +56,7 @@ public class IronJacamarParserExampleTestCase extends ParserTestBase
     * 
     * @throws Exception in case of error
     */
-   @Test
+   // @Test
    public void testExamples() throws Exception
    {
       testSubSystem("ironjacamar");

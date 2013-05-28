@@ -33,7 +33,7 @@ import javax.security.auth.Subject;
 /**
  * Factory to create a managed connection pool
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class ManagedConnectionPoolFactory
 {   

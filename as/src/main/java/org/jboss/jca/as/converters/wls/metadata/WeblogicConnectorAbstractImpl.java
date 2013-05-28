@@ -33,7 +33,7 @@ import org.jboss.jca.as.converters.wls.api.metadata.WorkManager;
 *
 * An abstract WeblogicConnector Impl.
 *
-* @author <a href="jeff.zhang@jboss.org">Jeff Zhang</a>
+* @author <a href="jeff.zhang@ironjacamar.org">Jeff Zhang</a>
 *
 */
 public abstract class WeblogicConnectorAbstractImpl implements WeblogicConnector

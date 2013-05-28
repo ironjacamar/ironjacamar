@@ -29,9 +29,9 @@ import javax.resource.spi.ConnectionRequestInfo;
  * Information about a connection.
  *
  * @author <a href="mailto:d_jencks@users.sourceforge.net">David Jencks</a>
- * @author <a href="mailto:adrian@jboss.org">Adrian Brock</a>
+ * @author <a href="mailto:abrock@redhat.com">Adrian Brock</a>
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a> 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a> 
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a> 
  */
 public class ConnectionRecord 
 {

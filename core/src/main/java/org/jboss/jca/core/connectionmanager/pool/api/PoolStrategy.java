@@ -24,7 +24,7 @@ package org.jboss.jca.core.connectionmanager.pool.api;
 
 /**
  * Defines a pool strategy. 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public enum PoolStrategy
 {

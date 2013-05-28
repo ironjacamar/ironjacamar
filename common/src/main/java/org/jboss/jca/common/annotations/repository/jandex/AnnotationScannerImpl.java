@@ -39,7 +39,7 @@ import org.jboss.logging.Logger;
 /**
  * An AnnotationScannerImpl based on jandex.
  *
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class AnnotationScannerImpl implements AnnotationScanner
 {

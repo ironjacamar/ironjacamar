@@ -40,7 +40,7 @@ import org.jboss.logging.Messages;
 /**
  * Local XA resource implementation.
  * 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class LocalXAResourceImpl implements LocalXAResource, XAResourceWrapper
 {

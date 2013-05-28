@@ -46,7 +46,7 @@ import static org.junit.Assert.*;
 
 /**
  * Prefill test case
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a> 
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a> 
  */
 public class PrefillTestCase
 {

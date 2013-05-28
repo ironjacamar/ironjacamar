@@ -65,7 +65,7 @@ import org.jboss.logging.Messages;
  * method to create map key object.
  * </p>
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public abstract class AbstractPool implements Pool
 {

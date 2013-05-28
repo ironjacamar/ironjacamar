@@ -46,7 +46,7 @@ import org.jboss.logging.Logger;
  * are invoked before the cached connection manager closes any
  * closed connections.
  *
- * @author <a href="mailto:adrian@jboss.org">Adrian Brock</a>
+ * @author <a href="mailto:abrock@redhat.com">Adrian Brock</a>
  * @author gurkanerdogdu
  * @version $Rev$
  */

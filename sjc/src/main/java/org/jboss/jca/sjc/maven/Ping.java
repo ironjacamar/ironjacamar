@@ -27,7 +27,7 @@ import org.apache.maven.plugin.MojoFailureException;
 
 /**
  * A ping mojo
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class Ping extends AbstractHostPortMojo
 {

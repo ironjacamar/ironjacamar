@@ -40,7 +40,7 @@ import org.jboss.logging.Logger;
 
 /**
  * Helper class to create JNDI bindings
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class JndiBinder implements ObjectFactory
 {
