@@ -29,7 +29,7 @@ import java.util.Map;
 /**
  * An XA pool for the ConnectionDefinition.
  *
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public interface ConnDefXaPool extends org.jboss.jca.common.api.metadata.common.CommonXaPool
 {
@@ -47,7 +47,7 @@ public interface ConnDefXaPool extends org.jboss.jca.common.api.metadata.common.
 
    /**
     * Tags
-    * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+    * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
     */
    public enum Tag
    {

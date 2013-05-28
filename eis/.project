@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
 	<name>ironjacamar-eis</name>
-	<comment>JBoss JCA EIS</comment>
+	<comment>IronJacamar EIS</comment>
 	<projects>
 	</projects>
 	<buildSpec>

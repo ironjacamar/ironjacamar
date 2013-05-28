@@ -30,7 +30,7 @@ import javax.resource.spi.ManagedConnectionMetaData;
 
 /**
  * Managed connection metadata
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class ManagedConnectionMetaDataImpl implements ManagedConnectionMetaData, Serializable
 {

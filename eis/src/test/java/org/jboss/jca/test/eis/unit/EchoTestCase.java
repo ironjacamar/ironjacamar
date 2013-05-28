@@ -46,7 +46,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Echo test for the EIS test server
  * 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 @RunWith(Arquillian.class)
 @Configuration(autoActivate = true)

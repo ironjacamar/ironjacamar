@@ -24,7 +24,7 @@ package org.jboss.jca;
 
 /**
  * The version class
- * @author Jesper Pedersen <jesper.pedersen@jboss.org>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class Version
 {

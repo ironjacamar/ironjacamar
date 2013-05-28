@@ -28,8 +28,8 @@ import javax.transaction.xa.Xid;
 /**
  * Extends XATerminator to include registration calls
  *
- * @author <a href="adrian@jboss.com">Adrian Brock</a>
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="abrock@redhat.com">Adrian Brock</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public interface XATerminator extends javax.resource.spi.XATerminator
 {

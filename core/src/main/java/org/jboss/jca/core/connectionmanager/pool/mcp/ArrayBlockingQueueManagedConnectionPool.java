@@ -60,7 +60,7 @@ import org.jboss.logging.Messages;
 /**
  * A managed connection pool implementation using ArrayBlockingQueue
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectionPool
 {

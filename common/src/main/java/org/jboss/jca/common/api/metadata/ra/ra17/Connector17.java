@@ -29,7 +29,7 @@ import java.util.Map;
 /**
  * A Connector17
  *
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public interface Connector17 extends Connector16
 {
@@ -41,7 +41,7 @@ public interface Connector17 extends Connector16
    /**
     * A Tag.
     *
-    * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+    * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
     */
    public enum Tag
    {
@@ -174,7 +174,7 @@ public interface Connector17 extends Connector16
    /**
     * An attribute
     *
-    * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+    * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
     */
    public enum Attribute
    {

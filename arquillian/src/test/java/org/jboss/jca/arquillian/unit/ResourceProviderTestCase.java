@@ -38,7 +38,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Unit test for Arquillian ResourceProvider integration
  * 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 @RunWith(Arquillian.class)
 public class ResourceProviderTestCase

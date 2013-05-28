@@ -34,7 +34,7 @@ import org.jboss.logging.Logger;
 /**
  * Handle @Inject fields for test cases based on kernel based lookups.
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 class EmbeddedJCAEnricher implements TestEnricher
 {

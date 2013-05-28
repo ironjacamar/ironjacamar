@@ -35,7 +35,7 @@ import java.sql.SQLException;
  *
  * @author <a href="mailto:an_test@mail.ru">Andrey Demchenko</a>
  * @author <a href="mailto:d_jencks@users.sourceforge.net">David Jencks</a>
- * @author <a href="mailto:weston.price@jboss.com">Weston Price</a>
+ * @author <a href="mailto:wprice@redhat.com">Weston Price</a>
  * @version 1.0
  */
 public class OracleExceptionSorter implements ExceptionSorter, Serializable

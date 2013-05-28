@@ -32,7 +32,7 @@ import javax.security.auth.Subject;
 /**
  * Abstract pool implementation which can be prefilled.
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public abstract class AbstractPrefillPool extends AbstractPool implements PrefillPool
 {

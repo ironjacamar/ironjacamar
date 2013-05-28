@@ -44,7 +44,7 @@ import org.jboss.logging.Messages;
 /**
  * A simple implementation of the metadata repository
  * 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class SimpleMetadataRepository implements MetadataRepository
 {

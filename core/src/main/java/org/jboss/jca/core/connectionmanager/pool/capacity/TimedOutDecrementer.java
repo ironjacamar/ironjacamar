@@ -27,7 +27,7 @@ import org.jboss.jca.core.connectionmanager.pool.api.CapacityDecrementer;
 /**
  * Decrement all timed out connection listeners
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class TimedOutDecrementer implements CapacityDecrementer
 {

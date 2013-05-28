@@ -50,7 +50,7 @@ import static org.junit.Assert.*;
  * AbstractPool's package protected methods.
  * Please don't move it, and keep this class packaging consistent with AbstractPool's
  * 
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  * 
  */

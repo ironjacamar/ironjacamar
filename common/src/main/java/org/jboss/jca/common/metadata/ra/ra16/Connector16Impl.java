@@ -39,7 +39,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
+ * @author <a href="mailto:stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public class Connector16Impl extends Connector15Impl implements Connector16

@@ -25,7 +25,7 @@ package org.jboss.jca.common.metadata.merge;
  *
  * A ExtensionMatcher.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  * @param <T> type one
  * @param <S> type two
  *

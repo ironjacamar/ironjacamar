@@ -28,7 +28,7 @@ import org.jboss.jca.core.connectionmanager.pool.api.CapacityDecrementer;
  * Decrement until the defined number of connection has been destroyed.
  *
  * Default value is 1
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class SizeDecrementer implements CapacityDecrementer
 {

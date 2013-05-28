@@ -25,7 +25,7 @@ package org.jboss.jca.common.api.metadata.ra;
  *
  * A MergeableMetadata.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  * @param <T> the type of Mergeable data
  *
  */

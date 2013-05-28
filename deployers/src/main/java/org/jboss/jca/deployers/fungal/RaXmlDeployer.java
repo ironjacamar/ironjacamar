@@ -56,7 +56,7 @@ import com.github.fungal.spi.deployers.Deployment;
 
 /**
  * The -ra.xml deployer for JCA/SJC
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public final class RaXmlDeployer extends AbstractFungalRADeployer
    implements

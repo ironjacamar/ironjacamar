@@ -27,7 +27,7 @@ import java.io.Serializable;
  *
  * A generic JCAMetadata.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public interface JCAMetadata extends Serializable

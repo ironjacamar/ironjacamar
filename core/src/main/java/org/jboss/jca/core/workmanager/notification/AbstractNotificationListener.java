@@ -35,7 +35,7 @@ import org.jboss.logging.Logger;
 /**
  * An abstract notification listener
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public abstract class AbstractNotificationListener implements NotificationListener
 {

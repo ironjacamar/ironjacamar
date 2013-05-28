@@ -27,7 +27,7 @@ import org.jboss.arquillian.container.spi.client.container.ContainerConfiguratio
 /**
  * {@link ContainerConfiguration} implementation specific to the EmbeddedJCA container
  * 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 class EmbeddedJCAContainerConfiguration implements ContainerConfiguration
 {

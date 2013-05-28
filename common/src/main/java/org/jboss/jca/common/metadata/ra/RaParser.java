@@ -90,7 +90,7 @@ import org.jboss.logging.Messages;
  *
  * A RaParser.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public class RaParser extends AbstractParser implements MetadataParser<Connector>
@@ -1544,7 +1544,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
    *
    * A Tag.
    *
-   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
    *
    */
    public enum Tag 

@@ -25,7 +25,7 @@ package org.jboss.jca.as.converters.wls.api.metadata;
  *
  * A generic Logging.
  *
- * @author <a href="jeff.zhang@jboss.org">Jeff Zhang</a>
+ * @author <a href="jeff.zhang@ironjacamar.org">Jeff Zhang</a>
  *
  */
 public interface Logging extends WlsMetadata

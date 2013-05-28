@@ -29,7 +29,7 @@ import java.util.Map;
  *
  * A ConnectionDefinition.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public interface CommonConnDef extends JCAMetadata

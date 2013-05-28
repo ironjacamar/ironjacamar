@@ -47,7 +47,7 @@ import org.jboss.logging.Messages;
  *
  * A single admin object is bound under "java:/eis/ao/&lt;deployment&gt;" by default.
  * 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class SimpleJndiStrategy implements JndiStrategy
 {

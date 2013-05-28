@@ -36,7 +36,7 @@ import org.jboss.logging.Logger;
  * 
  * TODO DB2 CLI
  * 
- * @author <a href="weston.price@jboss.com">Weston Price</a>
+ * @author <a href="wprice@redhat.com">Weston Price</a>
  * @version $Revision: 71554 $
  */
 public class DB2ExceptionSorter implements ExceptionSorter, Serializable

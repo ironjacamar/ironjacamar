@@ -27,7 +27,7 @@ import org.jboss.jca.core.connectionmanager.pool.api.CapacityDecrementer;
 /**
  * Keep destroying connection listeners until min-pool-size is reached
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class MinPoolSizeDecrementer implements CapacityDecrementer
 {

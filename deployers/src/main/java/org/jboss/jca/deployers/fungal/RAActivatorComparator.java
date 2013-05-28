@@ -27,7 +27,7 @@ import java.util.Comparator;
 
 /**
  * The comparator for the RA activator
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class RAActivatorComparator implements Comparator<String>, Serializable
 {

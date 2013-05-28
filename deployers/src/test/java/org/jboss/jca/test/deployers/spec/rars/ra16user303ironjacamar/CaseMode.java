@@ -23,7 +23,7 @@ package org.jboss.jca.test.deployers.spec.rars.ra16user303ironjacamar;
 
 /**
  * 
- * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
+ * @author <a href="mailto:jeff.zhang@ironjacamar.org">Jeff Zhang</a>
  * @version $Revision: $
  */
 public enum CaseMode

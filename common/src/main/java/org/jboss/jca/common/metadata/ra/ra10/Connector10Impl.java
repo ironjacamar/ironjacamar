@@ -39,7 +39,7 @@ import org.jboss.jca.common.metadata.ra.common.ConnectorAbstractmpl;
 import java.util.List;
 
 /**
- * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
+ * @author <a href="mailto:stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public final class Connector10Impl extends ConnectorAbstractmpl implements Connector10

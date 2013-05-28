@@ -35,7 +35,7 @@ import org.jboss.shrinkwrap.descriptor.api.DescriptorExportException;
  * Note, that this class will close the passed <code>InputStream</code> once one of the export methods
  * have been called.
  * 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class InputStreamDescriptor implements Descriptor
 {

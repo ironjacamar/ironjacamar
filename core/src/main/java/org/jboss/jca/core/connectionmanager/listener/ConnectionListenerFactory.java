@@ -31,8 +31,8 @@ import javax.resource.spi.ManagedConnection;
  * A factory for connection event listeners.
  *
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @author <a href="mailto:adrian@jboss.org">Adrian Brock</a>
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:abrock@redhat.com">Adrian Brock</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public interface ConnectionListenerFactory
 {

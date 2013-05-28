@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
 /**
  * Test cases for the embedded container
  * 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  * @version $Revision: $
  */
 public class EmbeddedTestCase

@@ -43,7 +43,7 @@ import java.util.List;
 import org.jboss.logging.Messages;
 
 /**
- * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
+ * @author <a href="mailto:stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public class ResourceAdapter10Impl extends AbstractResourceAdapetrImpl implements ResourceAdapter10

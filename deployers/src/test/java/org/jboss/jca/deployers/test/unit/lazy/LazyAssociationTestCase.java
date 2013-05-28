@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
 /**
  * Test cases for deploying a lazy association resource adapter archive
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class LazyAssociationTestCase extends LazyTestBase
 {

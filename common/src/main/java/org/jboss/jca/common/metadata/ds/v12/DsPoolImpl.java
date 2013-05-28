@@ -33,7 +33,7 @@ import java.util.Map;
 /**
  * A pool implementation
  *
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class DsPoolImpl extends org.jboss.jca.common.metadata.ds.v11.DsPoolImpl implements DsPool
 {

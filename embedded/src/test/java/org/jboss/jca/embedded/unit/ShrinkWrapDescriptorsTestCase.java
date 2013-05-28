@@ -57,7 +57,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Unit test for ShrinkWrap/Descriptors integration
  * 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 @RunWith(Arquillian.class)
 @Configuration(autoActivate = false)

@@ -28,7 +28,7 @@ import org.apache.maven.plugin.MojoFailureException;
 
 /**
  * An abstract home mojo
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public abstract class AbstractHomeMojo extends AbstractMojo
 {

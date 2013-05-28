@@ -36,7 +36,7 @@ import org.jboss.logging.Logger;
 /**
  * Cache for PreparedStatements. When ps ages out, close it.
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 @SuppressWarnings("unchecked")
 public class PreparedStatementCache

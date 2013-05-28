@@ -44,7 +44,7 @@ import org.jboss.logging.Messages;
 /**
  * An explicit JNDI strategy that requires a JNDI for each connection factory
  * 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class ExplicitJndiStrategy implements JndiStrategy
 {

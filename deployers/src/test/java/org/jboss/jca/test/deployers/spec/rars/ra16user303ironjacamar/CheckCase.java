@@ -32,7 +32,7 @@ import javax.validation.Payload;
 
 /**
  * 
- * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
+ * @author <a href="mailto:jeff.zhang@ironjacamar.org">Jeff Zhang</a>
  * @version $Revision: $
  */
 @Target({ METHOD, FIELD, ANNOTATION_TYPE })

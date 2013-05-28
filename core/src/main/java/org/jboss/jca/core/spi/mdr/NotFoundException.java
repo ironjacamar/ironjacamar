@@ -25,7 +25,7 @@ package org.jboss.jca.core.spi.mdr;
 /**
  * NotFoundExcepion is thrown in case a metadata entry isn't found in the repository
  * 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class NotFoundException extends MetadataRepositoryException
 {

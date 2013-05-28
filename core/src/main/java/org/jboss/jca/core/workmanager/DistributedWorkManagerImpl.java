@@ -47,7 +47,7 @@ import org.jboss.logging.Messages;
 /**
  * The distributed work manager implementation.
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class DistributedWorkManagerImpl extends WorkManagerImpl implements DistributedWorkManager
 {

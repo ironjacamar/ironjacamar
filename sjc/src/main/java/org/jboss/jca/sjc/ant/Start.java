@@ -30,7 +30,7 @@ import org.apache.tools.ant.BuildException;
 
 /**
  * Start an IronJacamar/Standalone instance
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class Start extends AbstractHomeTask
 {

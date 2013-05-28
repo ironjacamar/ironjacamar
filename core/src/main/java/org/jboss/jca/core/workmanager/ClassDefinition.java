@@ -27,7 +27,7 @@ import java.util.Arrays;
 
 /**
  * A definition of a class
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class ClassDefinition implements Serializable
 {

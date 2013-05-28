@@ -25,7 +25,7 @@ import org.jboss.jca.common.api.metadata.CopyUtil;
 import org.jboss.jca.common.api.metadata.CopyableMetaData;
 
 /**
- * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
+ * @author <a href="mailto:stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public class LocalizedXsdString extends XsdString implements LocalizedMetadata

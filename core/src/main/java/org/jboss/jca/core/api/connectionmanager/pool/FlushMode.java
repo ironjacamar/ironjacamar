@@ -23,7 +23,7 @@ package org.jboss.jca.core.api.connectionmanager.pool;
 
 /**
  * Flush strategy mode
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public enum FlushMode
 {

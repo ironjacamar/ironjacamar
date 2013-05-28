@@ -31,7 +31,7 @@ import org.jboss.logging.Messages;
  *
  * A StatementImpl.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public class StatementImpl implements Statement

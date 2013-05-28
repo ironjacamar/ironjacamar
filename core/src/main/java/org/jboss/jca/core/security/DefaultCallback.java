@@ -47,7 +47,7 @@ import org.jboss.security.SimplePrincipal;
 /**
  * A default implementation of the callback security SPI.
  * 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class DefaultCallback implements Callback
 {

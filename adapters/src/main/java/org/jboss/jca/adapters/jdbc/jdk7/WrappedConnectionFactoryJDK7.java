@@ -35,7 +35,7 @@ import java.sql.SQLException;
 /**
  * WrappedConnectionFactoryJDK7
  * 
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class WrappedConnectionFactoryJDK7 implements WrappedConnectionFactory
 {

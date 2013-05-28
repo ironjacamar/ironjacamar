@@ -33,7 +33,7 @@ import java.util.List;
  *
  * A generic SecurityWorkContext.
  *
- * @author <a href="jeff.zhang@jboss.org">Jeff Zhang</a>
+ * @author <a href="jeff.zhang@ironjacamar.org">Jeff Zhang</a>
  *
  */
 public class SecurityWorkContextImpl implements SecurityWorkContext

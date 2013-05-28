@@ -47,8 +47,8 @@ import org.jboss.security.SubjectFactory;
 /**
  * An XAResourceRecovery implementation.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class XAResourceRecoveryImpl implements org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery,
                                                org.jboss.tm.XAResourceRecovery

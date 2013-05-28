@@ -33,7 +33,7 @@ import java.sql.SQLException;
 /**
  * WrappedPreparedStatementJDK7.
  * 
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class WrappedPreparedStatementJDK7 extends WrappedPreparedStatement
 {

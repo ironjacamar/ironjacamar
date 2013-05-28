@@ -35,7 +35,7 @@ import org.jboss.logging.Logger;
 
 /**
  * An interaction between client and server
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class Interaction implements Runnable
 {

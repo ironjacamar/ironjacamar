@@ -29,7 +29,7 @@ import java.sql.SQLException;
 /**
  * A NullStaleConnectionChecker.
  * 
- * @author <a href="weston.price@jboss.com">Weston Price</a>
+ * @author <a href="wprice@redhat.com">Weston Price</a>
  * @version $Revision: 71554 $
  */
 public class NullStaleConnectionChecker implements StaleConnectionChecker

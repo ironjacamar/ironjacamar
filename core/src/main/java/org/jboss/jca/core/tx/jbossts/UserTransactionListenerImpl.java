@@ -26,7 +26,7 @@ import javax.transaction.SystemException;
 /**
  * UserTransactionListener implementation
  * 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class UserTransactionListenerImpl implements org.jboss.jca.core.spi.transaction.usertx.UserTransactionListener,
                                                     org.jboss.tm.usertx.UserTransactionListener

@@ -27,8 +27,8 @@ package org.jboss.jca.core.spi.transaction;
  * gambit. i.e. It is committed after the resources are
  * prepared. If it fails to commit, roll everybody back.
  * 
- * @author <a href="mailto:adrian@jboss.org">Adrian Brock</a>
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:abrock@redhat.com">Adrian Brock</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public interface LastResource
 {

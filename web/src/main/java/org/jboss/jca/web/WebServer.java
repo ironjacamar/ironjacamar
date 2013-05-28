@@ -37,7 +37,7 @@ import org.eclipse.jetty.server.handler.HandlerList;
 
 /**
  * The web server
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class WebServer implements DeployerPhases
 {

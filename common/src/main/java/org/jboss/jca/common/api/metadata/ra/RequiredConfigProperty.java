@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
+ * @author <a href="mailto:stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public class RequiredConfigProperty implements IdDecoratedMetadata, CopyableMetaData
@@ -203,7 +203,7 @@ public class RequiredConfigProperty implements IdDecoratedMetadata, CopyableMeta
    *
    * A Tag.
    *
-   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
    *
    */
    public enum Tag
@@ -298,7 +298,7 @@ public class RequiredConfigProperty implements IdDecoratedMetadata, CopyableMeta
     *
     * A Attribute.
     *
-    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
     *
     */
    public enum Attribute

@@ -51,7 +51,7 @@ import org.junit.BeforeClass;
 /**
  * The base for enlist / delist test cases
  *
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public abstract class EnlistDelist
 {

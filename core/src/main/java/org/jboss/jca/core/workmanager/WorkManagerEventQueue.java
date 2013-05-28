@@ -33,7 +33,7 @@ import org.jboss.logging.Logger;
 
 /**
  * Event queue for WorkManager instances
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class WorkManagerEventQueue
 {

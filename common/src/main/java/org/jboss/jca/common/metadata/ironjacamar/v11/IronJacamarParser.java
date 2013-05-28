@@ -50,7 +50,7 @@ import org.jboss.logging.Messages;
  *
  * A ResourceAdapterParserr.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public class IronJacamarParser extends CommonIronJacamarParser implements MetadataParser<IronJacamar>
@@ -214,7 +214,7 @@ public class IronJacamarParser extends CommonIronJacamarParser implements Metada
    *
    * A Tag.
    *
-   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
    *
    */
    public enum Tag

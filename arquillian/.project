@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
 	<name>ironjacamar-arquillian</name>
-	<comment>JBoss JCA Arquillian</comment>
+	<comment>IronJacamar Arquillian</comment>
 	<projects>
 	</projects>
 	<buildSpec>

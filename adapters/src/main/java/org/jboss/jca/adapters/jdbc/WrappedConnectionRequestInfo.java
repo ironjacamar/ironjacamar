@@ -30,7 +30,7 @@ import javax.resource.spi.ConnectionRequestInfo;
  * WrappedConnectionRequestInfo
  *
  * @author <a href="mailto:d_jencks@users.sourceforge.net">David Jencks</a>
- * @author <a href="mailto:adrian@jboss.com">Adrian Brock</a>
+ * @author <a href="mailto:abrock@redhat.com">Adrian Brock</a>
  */
 public class WrappedConnectionRequestInfo implements ConnectionRequestInfo, Serializable
 {

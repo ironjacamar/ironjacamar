@@ -37,7 +37,7 @@ import java.util.Map;
  *
  * A DatasourcesImpl.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public class DatasourcesImpl implements DataSources

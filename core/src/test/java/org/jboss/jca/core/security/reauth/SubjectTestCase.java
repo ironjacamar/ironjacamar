@@ -44,7 +44,7 @@ import static org.junit.Assert.*;
 /**
  * Tests for CRO based reauthentication.
  * 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  * @version $Revision: $
  */
 public class SubjectTestCase

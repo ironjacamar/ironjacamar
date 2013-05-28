@@ -28,7 +28,7 @@ import javax.security.auth.Subject;
 /**
  * Represents a capacity request for a managed connection pool
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 class CapacityRequest
 {

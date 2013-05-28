@@ -32,7 +32,7 @@ import java.util.List;
 /**
  * Represents a resource adapter instance
  * 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class ResourceAdapter
 {

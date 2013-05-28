@@ -44,8 +44,8 @@ import org.jboss.logging.Logger;
  * Wrapper class for cached PreparedStatements.  Keeps a refcount.  When this refcount reaches 0,
  * it will close ps.
  *
- * @author <a href="mailto:bill@jboss.org">Bill Burke</a>
- * @author <a href="mailto:adrian@jboss.com">Adrian Brock</a>
+ * @author <a href="mailto:bburke@redhat.com">Bill Burke</a>
+ * @author <a href="mailto:abrock@redhat.com">Adrian Brock</a>
  * @version $Revision: 84265 $
  */
 public abstract class CachedPreparedStatement extends JBossWrapper implements PreparedStatement

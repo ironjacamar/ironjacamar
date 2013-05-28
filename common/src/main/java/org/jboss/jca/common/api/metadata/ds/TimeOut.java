@@ -30,7 +30,7 @@ import java.util.Map;
  *
  * A TimeOut.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public interface TimeOut extends org.jboss.jca.common.api.metadata.common.CommonTimeOut, ValidatableMetadata
@@ -63,7 +63,7 @@ public interface TimeOut extends org.jboss.jca.common.api.metadata.common.Common
    *
    * A Tag.
    *
-   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
    *
    */
    public enum Tag

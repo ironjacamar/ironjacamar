@@ -32,7 +32,7 @@ import java.sql.Statement;
 /**
  * Implements check valid connection sql
  *
- * @author <a href="mailto:adrian@jboss.org">Adrian Brock</a>
+ * @author <a href="mailto:abrock@redhat.com">Adrian Brock</a>
  * @version $Revision: 71554 $
  */
 public class CheckValidConnectionSQL implements ValidConnectionChecker, Serializable

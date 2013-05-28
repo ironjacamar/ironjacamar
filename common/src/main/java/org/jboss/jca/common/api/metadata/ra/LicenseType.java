@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
+ * @author <a href="mailto:stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public class LicenseType implements IdDecoratedMetadata, MergeableMetadata<LicenseType>, CopyableMetaData
@@ -235,7 +235,7 @@ public class LicenseType implements IdDecoratedMetadata, MergeableMetadata<Licen
     *
     * A Tag.
     *
-    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
     *
     */
    public enum Tag 
@@ -330,7 +330,7 @@ public class LicenseType implements IdDecoratedMetadata, MergeableMetadata<Licen
     *
     * A Attribute.
     *
-    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
     *
     */
    public enum Attribute 

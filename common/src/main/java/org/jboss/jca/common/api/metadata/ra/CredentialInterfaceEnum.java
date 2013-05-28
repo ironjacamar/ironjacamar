@@ -22,7 +22,7 @@
 package org.jboss.jca.common.api.metadata.ra;
 
 /**
- * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
+ * @author <a href="mailto:stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *The credential-interfaceType specifies the
  *        interface that the resource adapter implementation
  *        supports for the representation of the

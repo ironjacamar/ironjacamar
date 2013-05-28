@@ -65,7 +65,7 @@ import org.jboss.logging.Messages;
  *
  * A WeblogicRaPasrer
  *
- * @author <a href="jeff.zhang@jboss.org">Jeff Zhang</a>
+ * @author <a href="jeff.zhang@ironjacamar.org">Jeff Zhang</a>
  *
  */
 public class WeblogicRaPasrer extends AbstractParser implements MetadataParser<WeblogicConnector>

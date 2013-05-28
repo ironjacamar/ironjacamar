@@ -25,7 +25,7 @@ package org.jboss.jca.core.connectionmanager.pool.mcp;
 /**
  * Represents a fill request for a managed connection pool
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 class FillRequest
 {

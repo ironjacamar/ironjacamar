@@ -28,8 +28,8 @@ import java.util.Map;
 /**
  * Configuration interface
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public interface Configuration
 {

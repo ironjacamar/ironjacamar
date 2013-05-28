@@ -27,14 +27,14 @@ import java.util.Map;
 /**
  * An XaDataSource.
  *
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public interface XaDataSource extends org.jboss.jca.common.api.metadata.ds.XaDataSource
 {
    /**
     * A Tag.
     *
-    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
     */
    public enum Tag
    {
@@ -171,7 +171,7 @@ public interface XaDataSource extends org.jboss.jca.common.api.metadata.ds.XaDat
     *
     * A Attribute.
     *
-    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
     *
     */
    public enum Attribute

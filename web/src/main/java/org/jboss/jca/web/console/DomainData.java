@@ -27,8 +27,8 @@ import java.util.TreeSet;
 /**
  * The MBeanData for a given JMX domain name
  *
- * @author <a href="mailto:scott.stark@jboss.org">Scott Stark</a>
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:sstark@redhat.com">Scott Stark</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class DomainData
 {

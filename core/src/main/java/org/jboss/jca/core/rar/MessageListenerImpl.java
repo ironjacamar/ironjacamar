@@ -28,7 +28,7 @@ import org.jboss.jca.core.spi.rar.MessageListener;
 /**
  * A message listener implementation
  * 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class MessageListenerImpl implements MessageListener
 {

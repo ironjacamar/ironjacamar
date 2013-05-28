@@ -44,7 +44,7 @@ import static org.junit.Assert.*;
  * Test cases for getting a connection from the H2 database backed by a security domain
  * and using multiple users
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 @RunWith(Arquillian.class)
 public class H2SecurityDomainMultipleUsersTestCase

@@ -34,8 +34,8 @@ import org.jboss.logging.Logger;
 /**
  * Implements a valid connection checker for Oracle
  *
- * @author <a href="mailto:adrian@jboss.org">Adrian Brock</a>
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:abrock@redhat.com">Adrian Brock</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class OracleValidConnectionChecker implements ValidConnectionChecker, Serializable
 {
