@@ -33,8 +33,8 @@ import org.jboss.logging.Logger;
 /**
  * A XAResourceWrapper.
  * 
- * @author <a href="weston.price@jboss.com">Weston Price</a>
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="wprice@redhat.com">Weston Price</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class XAResourceWrapperImpl implements org.jboss.jca.core.spi.transaction.xa.XAResourceWrapper,
                                               org.jboss.tm.XAResourceWrapper

@@ -25,7 +25,7 @@ package org.jboss.jca.core.spi.rar;
 /**
  * AlreadyExistsException is thrown in case the resource adapter already is registered
  * 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class AlreadyExistsException extends ResourceAdapterRepositoryException
 {

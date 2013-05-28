@@ -33,7 +33,7 @@ import org.jboss.logging.Logger;
 /**
  * A MSSQLValidConnectionChecker.
  *
- * @author <a href="weston.price@jboss.com">Weston Price</a>
+ * @author <a href="wprice@redhat.com">Weston Price</a>
  * @version $Revision: 85945 $
  */
 public class MSSQLValidConnectionChecker implements ValidConnectionChecker, Serializable

@@ -31,7 +31,7 @@ import java.util.Map;
  *
  * A Statement.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public interface Statement extends JCAMetadata, ValidatableMetadata
@@ -41,7 +41,7 @@ public interface Statement extends JCAMetadata, ValidatableMetadata
     *
     * A TrackStatementsEnum.
     *
-    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
     *
     */
    public enum TrackStatementsEnum
@@ -106,7 +106,7 @@ public interface Statement extends JCAMetadata, ValidatableMetadata
    *
    * A Tag.
    *
-   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
    *
    */
    public enum Tag

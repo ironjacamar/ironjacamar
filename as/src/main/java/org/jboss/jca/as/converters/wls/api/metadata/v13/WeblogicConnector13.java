@@ -30,7 +30,7 @@ import java.util.Map;
  *
  * A WeblogicConnector v1.3.
  *
- * @author <a href="jeff.zhang@jboss.org">Jeff Zhang</a>
+ * @author <a href="jeff.zhang@ironjacamar.org">Jeff Zhang</a>
  *
  */
 public interface WeblogicConnector13 extends WeblogicConnector
@@ -44,7 +44,7 @@ public interface WeblogicConnector13 extends WeblogicConnector
    *
    * A Tag.
    *
-   * @author <a href="jeff.zhang@jboss.org">Jeff Zhang</a>
+   * @author <a href="jeff.zhang@ironjacamar.org">Jeff Zhang</a>
    *
    */
    public enum Tag
@@ -189,7 +189,7 @@ public interface WeblogicConnector13 extends WeblogicConnector
     *
     * A Attribute.
     *
-    * @author <a href="jeff.zhang@jboss.org">Jeff Zhang</a>
+    * @author <a href="jeff.zhang@ironjacamar.org">Jeff Zhang</a>
     *
     */
    public enum Attribute

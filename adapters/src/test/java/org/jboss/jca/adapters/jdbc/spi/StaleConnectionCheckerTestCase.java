@@ -48,7 +48,7 @@ import static org.junit.Assert.assertThat;
  *
  * A StaleConectionCheckerTestCase.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 @RunWith(Arquillian.class)

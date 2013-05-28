@@ -61,8 +61,8 @@ import com.github.fungal.spi.deployers.Deployer;
 
 /**
  * The RA deployer for JCA/SJC
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
- * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jeff.zhang@ironjacamar.org">Jeff Zhang</a>
  * @author <a href="mailto:stefano.maestri@javalinux.it">Stefano Maestri</a>
  */
 public final class RADeployer extends AbstractFungalRADeployer implements Deployer

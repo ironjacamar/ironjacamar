@@ -35,7 +35,7 @@ import org.jboss.logging.Messages;
 /**
  * The never distribute policy
  * 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class Never extends AbstractPolicy
 {

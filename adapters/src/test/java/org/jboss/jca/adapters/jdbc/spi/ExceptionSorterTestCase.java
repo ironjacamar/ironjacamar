@@ -49,7 +49,7 @@ import static org.junit.matchers.JUnitMatchers.hasItems;
  *
  * A ExceptionSorterTestCase.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 @RunWith(Arquillian.class)

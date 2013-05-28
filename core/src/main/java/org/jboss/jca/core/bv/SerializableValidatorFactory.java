@@ -38,7 +38,7 @@ import javax.validation.ValidatorFactory;
 /**
  * Serializable validator factory
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  * @version $Revision: $
  */
 public class SerializableValidatorFactory implements ValidatorFactory, Serializable

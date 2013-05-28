@@ -25,7 +25,7 @@ package org.jboss.jca.core.spi.mdr;
 /**
  * Top level exception for the metadata repository
  * 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class MetadataRepositoryException extends Exception
 {

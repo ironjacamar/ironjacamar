@@ -32,7 +32,7 @@ import javax.xml.stream.XMLStreamReader;
  *
  * A AbstractParser.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  * @author Jeff Zhang
  */
 public abstract class AbstractParser

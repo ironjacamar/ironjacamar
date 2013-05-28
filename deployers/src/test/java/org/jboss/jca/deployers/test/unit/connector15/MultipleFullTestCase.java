@@ -42,7 +42,7 @@ import org.junit.runner.RunWith;
  * Test cases for deploying resource adapter archives (.RAR) with multiple
  * mananged connection factories and admin objects
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  */
 @RunWith(Arquillian.class)

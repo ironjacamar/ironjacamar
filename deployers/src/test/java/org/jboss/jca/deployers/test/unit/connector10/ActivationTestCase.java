@@ -43,7 +43,7 @@ import static org.junit.Assert.*;
  * Test cases for deploying resource adapter archives (.RAR) using -ra.xml files
  * for activation
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  * @version $Revision: $
  */

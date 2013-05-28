@@ -33,7 +33,7 @@ import javax.validation.ValidatorFactory;
 /**
  * Bean validation implementation backed by Hibernate Validator
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  * @version $Revision: $
  */
 public class BeanValidation

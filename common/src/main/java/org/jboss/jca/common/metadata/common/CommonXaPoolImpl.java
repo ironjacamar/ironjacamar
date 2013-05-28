@@ -29,7 +29,7 @@ import org.jboss.jca.common.api.validator.ValidateException;
  *
  * A XaPoolImpl.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public class CommonXaPoolImpl extends CommonPoolImpl implements CommonXaPool

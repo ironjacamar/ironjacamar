@@ -27,7 +27,7 @@ import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
 /**
  * Statistics for a managed connection pool
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public interface ManagedConnectionPoolStatistics extends PoolStatistics
 {   

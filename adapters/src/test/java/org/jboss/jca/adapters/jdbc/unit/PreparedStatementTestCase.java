@@ -49,7 +49,7 @@ import static org.junit.Assert.fail;
 /**
  * Test cases for prepared statement cache
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  * @version $Revision: $
  */
 @RunWith(Arquillian.class)

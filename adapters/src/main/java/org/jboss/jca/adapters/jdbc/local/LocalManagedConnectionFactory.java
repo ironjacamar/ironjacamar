@@ -54,8 +54,8 @@ import javax.sql.DataSource;
  * LocalManagedConnectionFactory
  *
  * @author <a href="mailto:d_jencks@users.sourceforge.net">David Jencks</a>
- * @author <a href="mailto:adrian@jboss.com">Adrian Brock</a>
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:abrock@redhat.com">Adrian Brock</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionFactory
 {

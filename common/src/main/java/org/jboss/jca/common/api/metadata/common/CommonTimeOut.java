@@ -30,7 +30,7 @@ import java.util.Map;
  *
  * A TimeOut.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public interface CommonTimeOut extends JCAMetadata
@@ -75,7 +75,7 @@ public interface CommonTimeOut extends JCAMetadata
    *
    * A Tag.
    *
-   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
    *
    */
    public enum Tag

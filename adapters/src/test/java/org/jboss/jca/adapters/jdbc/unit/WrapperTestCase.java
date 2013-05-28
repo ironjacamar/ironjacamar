@@ -45,7 +45,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Test cases for wrapper
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 @RunWith(Arquillian.class)
 public class WrapperTestCase

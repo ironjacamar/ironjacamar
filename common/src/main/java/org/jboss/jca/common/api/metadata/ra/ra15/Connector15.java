@@ -31,7 +31,7 @@ import java.util.Map;
  *
  * A Connector15.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public interface Connector15 extends Connector
@@ -51,7 +51,7 @@ public interface Connector15 extends Connector
    *
    * A Tag.
    *
-   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
    *
    */
    public enum Tag
@@ -175,7 +175,7 @@ public interface Connector15 extends Connector
     *
     * A Attribute.
     *
-    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
     *
     */
    public enum Attribute

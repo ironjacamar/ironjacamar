@@ -57,9 +57,9 @@ import org.jboss.logging.Logger;
  * BaseWrapperManagedConnection
  *
  * @author <a href="mailto:d_jencks@users.sourceforge.net">David Jencks</a>
- * @author <a href="mailto:adrian@jboss.com">Adrian Brock</a>
- * @author <a href="mailto:weston.price@jboss.com">Weston Price</a>
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:abrock@redhat.com">Adrian Brock</a>
+ * @author <a href="mailto:wprice@redhat.com">Weston Price</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  * @version $Revision: 105425 $
  */
 

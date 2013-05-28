@@ -24,7 +24,7 @@ package org.jboss.jca.core.tx.jbossts;
 /**
  * UserTransactionProvider implementation
  * 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class UserTransactionProviderImpl implements org.jboss.jca.core.spi.transaction.usertx.UserTransactionProvider,
                                                     org.jboss.tm.usertx.UserTransactionProvider

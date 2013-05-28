@@ -34,7 +34,7 @@ import java.util.Map;
 /**
  * A ConnectionDefinition.
  *
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class CommonConnDefImpl extends org.jboss.jca.common.metadata.common.v10.CommonConnDefImpl
    implements CommonConnDef

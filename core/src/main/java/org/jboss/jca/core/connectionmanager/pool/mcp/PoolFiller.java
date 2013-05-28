@@ -28,10 +28,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * PoolFiller
  * 
  * @author <a href="mailto:d_jencks@users.sourceforge.net">David Jencks</a>
- * @author <a href="mailto:Scott.Stark@jboss.org">Scott Stark</a>
- * @author <a href="mailto:adrian@jboss.com">Adrian Brock</a>
+ * @author <a href="mailto:sstark@redhat.com">Scott Stark</a>
+ * @author <a href="mailto:abrock@redhat.com">Adrian Brock</a>
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 class PoolFiller implements Runnable
 {

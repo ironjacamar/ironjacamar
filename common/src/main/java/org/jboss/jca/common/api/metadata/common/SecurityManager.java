@@ -25,7 +25,7 @@ package org.jboss.jca.common.api.metadata.common;
  *
  * A SecurityManager.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public enum SecurityManager

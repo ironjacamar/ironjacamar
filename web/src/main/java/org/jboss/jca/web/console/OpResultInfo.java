@@ -25,8 +25,8 @@ package org.jboss.jca.web.console;
  * A simple tuple of a MBean operation name,
  * index, signature, args and operation result.
  *
- * @author <a href="mailto:scott.stark@jboss.org">Scott Stark</a>
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:sstark@redhat.com">Scott Stark</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class OpResultInfo
 {

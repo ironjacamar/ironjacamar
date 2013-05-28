@@ -28,7 +28,7 @@ package org.jboss.jca.common.api.metadata;
  * On the presence of this method are based some assumption to use generics during clone deep into the metadatas
  * members.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public interface CopyableMetaData extends Cloneable

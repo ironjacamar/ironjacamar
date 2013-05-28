@@ -33,7 +33,7 @@ import java.util.Map;
  *
  * A Recovery.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public class Recovery implements JCAMetadata, ValidatableMetadata
@@ -211,7 +211,7 @@ public class Recovery implements JCAMetadata, ValidatableMetadata
    *
    * A Tag.
    *
-   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
    *
    */
    public enum Tag
@@ -304,7 +304,7 @@ public class Recovery implements JCAMetadata, ValidatableMetadata
     *
     * A Attribute.
     *
-    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
     *
     */
    public enum Attribute

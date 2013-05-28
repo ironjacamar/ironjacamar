@@ -35,7 +35,7 @@ import java.io.OutputStream;
  * The AS upgrader application - updates the IronJacamar distribution inside
  * the JBoss Application Server
  * 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class Main
 {

@@ -29,7 +29,7 @@ import java.util.Map;
 /**
  * IronJacamar v1.1
  *
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public interface IronJacamar extends org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar
 {
@@ -43,7 +43,7 @@ public interface IronJacamar extends org.jboss.jca.common.api.metadata.ironjacam
     *
     * A Tag.
     *
-    * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+    * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
     */
    public enum Tag
    {

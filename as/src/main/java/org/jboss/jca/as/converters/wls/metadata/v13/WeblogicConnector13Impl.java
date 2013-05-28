@@ -32,7 +32,7 @@ import org.jboss.jca.as.converters.wls.metadata.WeblogicConnectorAbstractImpl;
  *
  * A WeblogicConnector v1.3.
  *
- * @author <a href="jeff.zhang@jboss.org">Jeff Zhang</a>
+ * @author <a href="jeff.zhang@ironjacamar.org">Jeff Zhang</a>
  *
  */
 public class WeblogicConnector13Impl extends WeblogicConnectorAbstractImpl implements WeblogicConnector13

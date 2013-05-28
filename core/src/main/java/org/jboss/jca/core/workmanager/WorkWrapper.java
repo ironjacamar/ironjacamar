@@ -60,7 +60,7 @@ import org.jboss.security.SecurityContextFactory;
 /**
  * Wraps the resource adapter's work.
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  * @version $Revision: 71538 $
  */
 public class WorkWrapper implements Runnable

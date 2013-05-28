@@ -48,7 +48,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Unit test for Arquillian integration and injecting
  * 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 @RunWith(Arquillian.class)
 @Configuration(autoActivate = true)

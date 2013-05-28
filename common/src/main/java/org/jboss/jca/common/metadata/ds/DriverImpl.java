@@ -31,7 +31,7 @@ import org.jboss.logging.Messages;
  *
  * A DriverImpl.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public class DriverImpl implements Driver

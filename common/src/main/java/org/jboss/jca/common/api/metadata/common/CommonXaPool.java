@@ -30,7 +30,7 @@ import java.util.Map;
  *
  * A XaPool.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public interface CommonXaPool extends CommonPool
@@ -76,7 +76,7 @@ public interface CommonXaPool extends CommonPool
    *
    * A Tag.
    *
-   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
    *
    */
    public enum Tag

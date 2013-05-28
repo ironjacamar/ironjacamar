@@ -26,7 +26,7 @@ import java.util.Map;
 
 /**
  * Flush strategy for the pools
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public enum FlushStrategy
 {

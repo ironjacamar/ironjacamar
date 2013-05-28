@@ -31,7 +31,7 @@ import org.jboss.logging.Logger;
 /**
  * BaseConnectionManager
  *
- * @author  <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>.
+ * @author  <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>.
  * @version $Revision: $
  */
 public class BaseConnectionManager implements ConnectionManager

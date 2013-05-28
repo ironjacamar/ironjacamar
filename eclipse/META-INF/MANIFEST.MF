@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: JBoss JCA Container - Ironjacamar Plugin
+Bundle-Name: IronJacamar Plugin
 Bundle-SymbolicName: org.jboss.jca.eclipse;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.jboss.jca.eclipse.Activator
-Bundle-Vendor: JBoss Ironjacamar Team
+Bundle-Vendor: IronJacamar Team
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.core.resources,

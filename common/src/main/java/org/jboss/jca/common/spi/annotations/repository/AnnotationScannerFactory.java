@@ -24,7 +24,7 @@ package org.jboss.jca.common.spi.annotations.repository;
 /**
  * The AnnotationScannerFactory which creates an annotation scanner instance
  *
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class AnnotationScannerFactory
 {

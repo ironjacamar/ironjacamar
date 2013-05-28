@@ -26,7 +26,7 @@ import org.jboss.jca.core.connectionmanager.pool.api.CapacityIncrementer;
 /**
  * Keep incrementing until max-pool-size is reached
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class MaxPoolSizeIncrementer implements CapacityIncrementer
 {

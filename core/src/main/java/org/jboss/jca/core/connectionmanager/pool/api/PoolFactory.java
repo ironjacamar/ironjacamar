@@ -33,7 +33,7 @@ import javax.resource.spi.ManagedConnectionFactory;
 
 /**
  * The pool factory. 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class PoolFactory
 {

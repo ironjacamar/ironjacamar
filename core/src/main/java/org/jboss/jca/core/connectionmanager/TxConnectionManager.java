@@ -31,7 +31,7 @@ import org.jboss.jca.core.spi.transaction.TransactionTimeoutConfiguration;
  * </ul>
  * </p> 
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a> 
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a> 
  */
 public interface TxConnectionManager extends ConnectionManager, TransactionTimeoutConfiguration
 {

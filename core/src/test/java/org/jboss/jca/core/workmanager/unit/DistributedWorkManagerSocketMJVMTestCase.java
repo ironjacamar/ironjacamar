@@ -46,7 +46,7 @@ import org.junit.runner.RunWith;
  *
  * Tests for the JBoss specific distributed work manager functionality.
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 @RunWith(Arquillian.class)
 @Configuration(autoActivate = false)

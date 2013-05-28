@@ -27,7 +27,7 @@ import org.jboss.jca.core.connectionmanager.pool.api.CapacityIncrementer;
  * Increment until the defined number of connection has been created.
  *
  * Default value is 1
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class SizeIncrementer implements CapacityIncrementer
 {

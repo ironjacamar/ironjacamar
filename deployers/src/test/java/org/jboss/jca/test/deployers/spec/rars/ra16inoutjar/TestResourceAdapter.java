@@ -33,7 +33,7 @@ import javax.resource.spi.TransactionSupport;
 
 /**
  * TestResourceAdapter
- * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
+ * @author <a href="mailto:jeff.zhang@ironjacamar.org">Jeff Zhang</a>
  * @version $Revision: $
  */
 @Connector(

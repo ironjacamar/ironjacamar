@@ -28,7 +28,7 @@ import java.util.Map;
  *
  * A ConnectionDefinition.
  *
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public interface CommonConnDef extends org.jboss.jca.common.api.metadata.common.CommonConnDef
 {
@@ -36,7 +36,7 @@ public interface CommonConnDef extends org.jboss.jca.common.api.metadata.common.
     *
     * A Tag.
     *
-    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
     *
     */
    public enum Tag
@@ -149,7 +149,7 @@ public interface CommonConnDef extends org.jboss.jca.common.api.metadata.common.
    *
    * A Attribute.
    *
-   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
    *
    */
    public enum Attribute

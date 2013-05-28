@@ -31,7 +31,7 @@ import java.util.List;
 *
 * A generic AdminObjectGroup.
 *
-* @author <a href="jeff.zhang@jboss.org">Jeff Zhang</a>
+* @author <a href="jeff.zhang@ironjacamar.org">Jeff Zhang</a>
 *
 */
 public class AdminObjectGroupImpl implements AdminObjectGroup

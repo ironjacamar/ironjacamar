@@ -29,7 +29,7 @@ import org.jboss.jca.common.api.metadata.ra.MessageListener;
 import org.jboss.jca.common.api.metadata.ra.Messageadapter;
 
 /**
- * @author <a href="mailto:stefano.maestri@jboss.org">Stefano Maestri</a>
+ * @author <a href="mailto:stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public class InboundResourceAdapterImpl implements InboundResourceAdapter

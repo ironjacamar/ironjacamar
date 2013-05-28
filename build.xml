@@ -1184,7 +1184,7 @@
         <include name="**/*.bak"/>
       </fileset>
     </delete>
-    <delete>
+    <delete failonerror="false">
       <fileset dir="${lib.dir}" includes="**/*.jar"/>
     </delete>
     <delete dir="${build.dir}"/>
@@ -1196,7 +1196,7 @@
 
     <ant antfile="tools/docant/build.xml" target="clean" inheritrefs="false" inheritAll="false"/>
     <delete dir="${doc.dir}/target"/>
-    <delete>
+    <delete failonerror="false">
       <fileset dir="eclipse/libs" includes="**/*.jar"/>
     </delete>
   </target>

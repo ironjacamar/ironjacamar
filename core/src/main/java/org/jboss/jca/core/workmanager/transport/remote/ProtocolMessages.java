@@ -33,15 +33,15 @@ import javax.resource.spi.work.WorkException;
 /**
  * A ProtocolMessages.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class ProtocolMessages
 {
    /**
     * A Command of DistributedWorkManager to through network transport
     *
-    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
     */
    public static enum Request
    {
@@ -128,7 +128,7 @@ public class ProtocolMessages
    *
    * A Command of DistributedWorkManager to through network transport
    *
-   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
    *
    */
    public enum Response
@@ -177,7 +177,7 @@ public class ProtocolMessages
     *
     * A ResponseValue.
     *
-    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
     *
     */
    public static class ResponseValues implements Serializable
@@ -227,7 +227,7 @@ public class ProtocolMessages
    *
    * A ResponseValue.
    *
-   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
    *
    */
    public static class RequestValues implements Serializable

@@ -42,7 +42,7 @@ import org.jboss.security.auth.callback.JASPICallbackHandler;
 /**
  * An implementation of the callback SPI for explicit security settings
  * 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class CallbackHandlerImpl implements CallbackHandler, Serializable
 {

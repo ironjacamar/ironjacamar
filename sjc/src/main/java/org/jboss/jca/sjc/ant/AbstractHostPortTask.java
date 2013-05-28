@@ -34,7 +34,7 @@ import org.apache.tools.ant.Task;
 
 /**
  * An abstract host/port task
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public abstract class AbstractHostPortTask extends Task
 {

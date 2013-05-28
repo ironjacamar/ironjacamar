@@ -35,7 +35,7 @@ import javax.transaction.TransactionSynchronizationRegistry;
 
 /**
  * A transaction synchronization registry implementation
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class TransactionSynchronizationRegistryImpl implements TransactionSynchronizationRegistry, Serializable
 {

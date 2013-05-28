@@ -38,7 +38,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * A configuration for the resource adapter deployer chain
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class RAConfiguration implements Configuration
 {

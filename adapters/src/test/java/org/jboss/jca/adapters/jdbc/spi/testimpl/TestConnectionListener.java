@@ -29,7 +29,7 @@ import java.sql.SQLException;
 /**
  * A TestConnectionListener.
  *
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class TestConnectionListener implements ConnectionListener
 {

@@ -28,7 +28,7 @@ import org.jboss.jca.as.converters.wls.api.metadata.ConfigProperties;
 *
 * A generic AdminObjectInstance.
 *
-* @author <a href="jeff.zhang@jboss.org">Jeff Zhang</a>
+* @author <a href="jeff.zhang@ironjacamar.org">Jeff Zhang</a>
 *
 */
 public class AdminObjectInstanceImpl implements AdminObjectInstance

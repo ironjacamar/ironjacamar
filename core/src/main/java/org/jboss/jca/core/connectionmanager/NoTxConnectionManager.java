@@ -24,7 +24,7 @@ package org.jboss.jca.core.connectionmanager;
 /**
  * Internal connection manager contract for non-transactional contexts.
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a> 
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a> 
  */
 public interface NoTxConnectionManager extends ConnectionManager
 {

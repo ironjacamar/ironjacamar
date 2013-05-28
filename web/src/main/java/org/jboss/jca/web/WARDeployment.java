@@ -36,7 +36,7 @@ import org.eclipse.jetty.server.Handler;
 
 /**
  * A web archive deployment for JCA/SJC
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class WARDeployment implements Deployment
 {

@@ -33,7 +33,7 @@ import java.util.Map;
  *
  * A JdbcAdapterExtension.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public final class Extension implements JCAMetadata, ValidatableMetadata
@@ -130,7 +130,7 @@ public final class Extension implements JCAMetadata, ValidatableMetadata
    *
    * A Tag.
    *
-   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
    *
    */
    public enum Tag
@@ -223,7 +223,7 @@ public final class Extension implements JCAMetadata, ValidatableMetadata
     *
     * A Attribute.
     *
-    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
     *
     */
    public enum Attribute

@@ -27,7 +27,7 @@ import org.jboss.jca.core.connectionmanager.pool.api.CapacityIncrementer;
  * Increment until the defined pool size is reached.
  *
  * Default value is max-pool-size
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class WatermarkIncrementer implements CapacityIncrementer
 {

@@ -228,10 +228,11 @@
       <compilerarg value="-Xlint"/>
     </javac> 
 
+    <!--
     <copy todir="${build.codegenerator.dir}/test">
       <fileset dir="src/test/resources"/>
     </copy>
-
+    -->
 
   </target>
 

@@ -33,7 +33,7 @@ import java.util.List;
  *
  * A AbstractResourceAdapetrImpl.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public abstract class AbstractResourceAdapetrImpl implements ResourceAdapter

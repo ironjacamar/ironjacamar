@@ -30,7 +30,7 @@ import java.lang.ref.WeakReference;
 /**
  * Represents a managed connection factory instance
  * 
- * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a> 
+ * @author <a href="mailto:jeff.zhang@ironjacamar.org">Jeff Zhang</a> 
  */
 public class ConnectionFactory
 {

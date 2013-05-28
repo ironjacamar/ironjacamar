@@ -29,7 +29,7 @@ import java.util.Map;
  *
  * A generic InboundGroupPrincipalMapping.
  *
- * @author <a href="jeff.zhang@jboss.org">Jeff Zhang</a>
+ * @author <a href="jeff.zhang@ironjacamar.org">Jeff Zhang</a>
  *
  */
 public interface InboundGroupPrincipalMapping extends WlsMetadata

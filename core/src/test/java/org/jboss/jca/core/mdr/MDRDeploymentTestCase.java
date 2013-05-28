@@ -52,7 +52,7 @@ import static org.junit.Assert.*;
 
 /**
  * Deployment test cases for MDR
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a> 
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a> 
  */
 public class MDRDeploymentTestCase
 {

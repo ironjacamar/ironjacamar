@@ -40,7 +40,7 @@ import static org.junit.Assert.*;
 /**
  * An enlist / delist XA interleaving test case
  *
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class EnlistDelistXAInterleavingTestCase extends EnlistDelist
 {

@@ -29,7 +29,7 @@ import org.jboss.jca.common.metadata.common.CommonXaPoolImpl;
 /**
  * An XA pool implementation
  *
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class DsXaPoolImpl extends CommonXaPoolImpl implements DsXaPool
 {

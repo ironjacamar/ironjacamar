@@ -31,7 +31,7 @@ import java.util.Map;
  *
  * A Pool.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public interface CommonPool extends JCAMetadata, ValidatableMetadata
@@ -76,7 +76,7 @@ public interface CommonPool extends JCAMetadata, ValidatableMetadata
    *
    * A Tag.
    *
-   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
    *
    */
    public enum Tag

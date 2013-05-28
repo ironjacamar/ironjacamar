@@ -25,7 +25,7 @@ package org.jboss.jca.deployers.common;
  *
  * The deploy exception for IronJacamar
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public class DeployException extends Exception

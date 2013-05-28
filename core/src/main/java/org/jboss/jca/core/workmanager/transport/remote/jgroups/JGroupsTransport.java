@@ -64,7 +64,7 @@ import org.jgroups.util.RspList;
  * The socket transport
  *
  * @author <a href="mailto:stefano.maestri@redhat.com">Stefano Maestri</a>
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Address> implements MembershipListener
 {

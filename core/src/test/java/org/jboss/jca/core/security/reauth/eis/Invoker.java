@@ -26,7 +26,7 @@ import java.io.Serializable;
 
 /**
  * Represents an invoker
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public interface Invoker
 {

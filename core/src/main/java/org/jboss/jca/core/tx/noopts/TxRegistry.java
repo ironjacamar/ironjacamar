@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  * The transaction registry
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class TxRegistry implements Serializable
 {

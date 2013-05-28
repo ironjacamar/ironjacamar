@@ -35,7 +35,7 @@ import javax.transaction.SystemException;
  *
  * @author <a href="mailto:d_jencks@users.sourceforge.net">David Jencks</a>
  * @author <a href="mailto:E.Guib@ceyoniq.com">Erwin Guib</a>
- * @author <a href="mailto:adrian@jboss.com">Adrian Brock</a>
+ * @author <a href="mailto:abrock@redhat.com">Adrian Brock</a>
  * @version $Revision: 71554 $
  */
 public interface ConnectionCacheListener

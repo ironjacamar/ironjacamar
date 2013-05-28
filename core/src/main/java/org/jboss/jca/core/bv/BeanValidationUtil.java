@@ -30,7 +30,7 @@ import javax.validation.ValidatorFactory;
 /**
  * Bean validation utility
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  * @version $Revision: $
  */
 public class BeanValidationUtil

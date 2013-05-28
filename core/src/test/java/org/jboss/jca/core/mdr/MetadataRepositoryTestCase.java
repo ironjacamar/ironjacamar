@@ -40,7 +40,7 @@ import static org.mockito.Mockito.mock;
 
 /**
  * Unit test for the SimpleMetadataRepository
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a> 
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a> 
  */
 public class MetadataRepositoryTestCase
 {

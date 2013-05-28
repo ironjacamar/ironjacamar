@@ -46,7 +46,7 @@ import com.github.fungal.spi.deployers.Deployment;
 
 /**
  * A resource adapter deployment for JCA/SJC
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public abstract class AbstractFungalDeployment implements Deployment
 {

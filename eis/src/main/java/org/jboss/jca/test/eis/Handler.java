@@ -31,7 +31,7 @@ import java.io.OutputStream;
  * Once the <code>handle</code> method returns the socket where
  * the communication takes place is closed
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public interface Handler
 {

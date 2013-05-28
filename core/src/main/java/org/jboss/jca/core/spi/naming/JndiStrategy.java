@@ -27,7 +27,7 @@ import javax.naming.spi.ObjectFactory;
 /**
  * The SPI for a JNDI strategy
  * 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public interface JndiStrategy extends Cloneable, ObjectFactory
 {

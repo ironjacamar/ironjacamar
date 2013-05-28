@@ -42,7 +42,7 @@ import java.util.Map;
  * A cache wrapper for java.sql.CallableStatement
  *
  * @author <a href="mailto:andrewarro@mail.ru">Andrew Belomutskiy</a>
- * @author Scott.Stark@jboss.org
+ * @author sstark@redhat.com
  * @version $Revision: 76129 $
  */
 @SuppressWarnings("deprecation")

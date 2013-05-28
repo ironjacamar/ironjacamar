@@ -50,7 +50,7 @@ import static org.junit.Assert.assertNotNull;
  * Serializable test of the transaction connection manager
  *
  * We need this in IronJacamar 2.0
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 @Ignore
 public class SerializableTestCase

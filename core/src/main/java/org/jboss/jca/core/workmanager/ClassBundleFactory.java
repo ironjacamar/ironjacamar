@@ -33,7 +33,7 @@ import org.jboss.logging.Logger;
 
 /**
  * A class bundle factory
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class ClassBundleFactory
 {

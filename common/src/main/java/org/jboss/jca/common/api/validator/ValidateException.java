@@ -24,7 +24,7 @@ package org.jboss.jca.common.api.validator;
 
 /**
  * The validate exception
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class ValidateException extends Exception
 {

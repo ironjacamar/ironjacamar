@@ -30,7 +30,7 @@ import java.sql.SQLException;
  *
  * A TestValidConnectionChecker.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public class TestValidConnectionChecker implements ValidConnectionChecker

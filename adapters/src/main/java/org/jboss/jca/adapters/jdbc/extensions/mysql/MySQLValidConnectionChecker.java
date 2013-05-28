@@ -39,9 +39,9 @@ import org.jboss.logging.Logger;
  * only be "fast" on version 3.22.1 and later. Prior to that version it just
  * does "SELECT 1" anyhow.
  *
- * @author <a href="mailto:adrian@jboss.org">Adrian Brock</a>
- * @author <a href="mailto:acoliver ot jbosss dat org">Andrew C. Oliver</a>
- * @author <a href="mailto:jim.moran@jboss.org">Jim Moran</a>
+ * @author <a href="mailto:abrock@redhat.com">Adrian Brock</a>
+ * @author Andrew C. Oliver
+ * @author Jim Moran
  * @version $Revision: 78074 $
  */
 public class MySQLValidConnectionChecker implements ValidConnectionChecker, Serializable

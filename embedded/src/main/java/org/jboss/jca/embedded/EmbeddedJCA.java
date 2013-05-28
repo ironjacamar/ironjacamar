@@ -45,7 +45,7 @@ import com.github.fungal.api.configuration.KernelConfiguration;
 
 /**
  * The embedded IronJacamar container
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 class EmbeddedJCA implements Embedded
 {

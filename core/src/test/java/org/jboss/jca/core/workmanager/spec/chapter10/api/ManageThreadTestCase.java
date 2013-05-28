@@ -44,7 +44,7 @@ import static org.junit.Assert.*;
  * 
  * Tests for the JCA specific Chapter 10 Section 1,3
  * 
- * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
+ * @author <a href="mailto:jeff.zhang@ironjacamar.org">Jeff Zhang</a>
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  * @version $Revision: $
  */

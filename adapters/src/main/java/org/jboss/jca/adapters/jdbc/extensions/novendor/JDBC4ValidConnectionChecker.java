@@ -31,7 +31,7 @@ import java.sql.SQLException;
 /**
  * Use JDBC4 for connection validation
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class JDBC4ValidConnectionChecker implements ValidConnectionChecker, Serializable
 {

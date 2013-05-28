@@ -30,7 +30,7 @@ import javax.security.auth.Subject;
  * 
  * However, initial implementation only divides on separateNoTx.
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a> 
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a> 
  * @version $Rev: $
  */
 class ReauthKey

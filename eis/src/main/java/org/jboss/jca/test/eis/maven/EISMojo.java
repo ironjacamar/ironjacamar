@@ -27,7 +27,7 @@ import org.apache.maven.plugin.MojoFailureException;
 
 /**
  * Base mojo for the EIS test server
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public abstract class EISMojo extends AbstractMojo
 {

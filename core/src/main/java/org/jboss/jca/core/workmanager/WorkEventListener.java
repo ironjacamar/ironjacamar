@@ -32,7 +32,7 @@ import javax.resource.spi.work.WorkEvent;
 
 /**
  * Work event listener
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class WorkEventListener extends WorkAdapter
 {

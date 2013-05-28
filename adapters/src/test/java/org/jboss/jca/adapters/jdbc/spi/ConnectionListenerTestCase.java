@@ -44,7 +44,7 @@ import static org.junit.Assert.*;
 /**
  * A ConnectionListenerTestCase.
  *
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 @RunWith(Arquillian.class)
 public class ConnectionListenerTestCase

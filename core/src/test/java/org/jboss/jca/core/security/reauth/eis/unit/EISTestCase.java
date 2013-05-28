@@ -40,7 +40,7 @@ import static org.junit.Assert.*;
 /**
  * Tests for the reauthencation EIS server.
  * 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  * @version $Revision: $
  */
 public class EISTestCase

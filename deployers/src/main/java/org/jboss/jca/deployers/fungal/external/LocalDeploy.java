@@ -35,7 +35,7 @@ import com.github.fungal.spi.deployers.Deployment;
 
 /**
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class LocalDeploy implements Command
 {

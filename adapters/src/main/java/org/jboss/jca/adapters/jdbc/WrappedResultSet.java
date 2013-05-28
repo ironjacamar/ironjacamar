@@ -51,8 +51,8 @@ import org.jboss.logging.Logger;
 /**
  * A wrapper for a result set
  * 
- * @author <a href="mailto:adrian@jboss.com">Adrian Brock</a>
- * @author <a href="mailto:jesper.pedersne@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:abrock@redhat.com">Adrian Brock</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  * @version $Revision: 74335 $
  */
 public abstract class WrappedResultSet extends JBossWrapper implements ResultSet

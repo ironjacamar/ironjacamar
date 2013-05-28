@@ -36,7 +36,7 @@ import java.sql.SQLException;
  * Java bean properties can be set, using the supported types
  * by the Java EE Connector Architecture specification.
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public interface ReauthPlugin
 {

@@ -37,7 +37,7 @@ import org.jboss.logging.Logger;
  * Single pool implementation.
  * 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class OnePool extends AbstractPrefillPool
 {

@@ -30,7 +30,7 @@ import java.util.Map;
  *
  * A ConfigProperty16.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public interface ConfigProperty16 extends ConfigProperty
@@ -79,7 +79,7 @@ public interface ConfigProperty16 extends ConfigProperty
    *
    * A Tag.
    *
-   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
    *
    */
    public enum Tag
@@ -199,7 +199,7 @@ public interface ConfigProperty16 extends ConfigProperty
     *
     * A Attribute.
     *
-    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
     *
     */
    public enum Attribute

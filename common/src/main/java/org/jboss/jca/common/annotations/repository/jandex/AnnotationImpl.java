@@ -35,7 +35,7 @@ import org.jboss.logging.Logger;
  * An AnnotationImpl.
  *
  * @author <a href="mailto:stefano.maestri@redhat.com">Stefano Maestri</a>
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class AnnotationImpl implements Annotation
 {

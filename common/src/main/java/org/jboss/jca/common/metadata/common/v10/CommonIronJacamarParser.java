@@ -53,7 +53,7 @@ import org.jboss.logging.Messages;
  *
  * A CommonIronJacamarParser.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public abstract class CommonIronJacamarParser extends AbstractParser

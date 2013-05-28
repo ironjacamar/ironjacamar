@@ -41,7 +41,7 @@ import java.util.List;
  *
  * A Connector15.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public class Connector15Impl extends ConnectorAbstractmpl implements Connector15

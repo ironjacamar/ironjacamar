@@ -32,7 +32,7 @@ import java.util.Map;
  *
  * A ConfigProperty.
  *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+ * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
 public interface ConfigProperty extends IdDecoratedMetadata, CopyableMetaData
@@ -84,7 +84,7 @@ public interface ConfigProperty extends IdDecoratedMetadata, CopyableMetaData
    *
    * A Tag.
    *
-   * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+   * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
    *
    */
    public enum Tag
@@ -189,7 +189,7 @@ public interface ConfigProperty extends IdDecoratedMetadata, CopyableMetaData
     *
     * A Attribute.
     *
-    * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
+    * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
     *
     */
    public enum Attribute

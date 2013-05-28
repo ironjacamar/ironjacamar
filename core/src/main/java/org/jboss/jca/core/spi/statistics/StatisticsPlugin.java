@@ -28,7 +28,7 @@ import java.util.Set;
 /**
  * Defines the contract for a statistics plugin.
  *
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public interface StatisticsPlugin extends Serializable
 {

@@ -32,7 +32,7 @@ import javax.transaction.TransactionSynchronizationRegistry;
 /**
  * The cloneable bootstrap context interface which defines
  * the contract for all BootstrapContext implementations
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public interface CloneableBootstrapContext extends Cloneable, BootstrapContext
 {

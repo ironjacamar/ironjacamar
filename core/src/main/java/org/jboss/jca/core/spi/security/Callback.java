@@ -29,7 +29,7 @@ import java.security.Principal;
  * This SPI interface represents the security inflow contract in
  * the container environment
  * 
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public interface Callback extends Serializable
 {

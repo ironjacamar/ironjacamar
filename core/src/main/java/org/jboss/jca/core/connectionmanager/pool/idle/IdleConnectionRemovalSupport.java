@@ -26,7 +26,7 @@ package org.jboss.jca.core.connectionmanager.pool.idle;
  * to remove an idle connection.
  * 
  * @author gurkanerdogdu
- * @author <a href="weston.price@jboss.com">Weston Price</a>
+ * @author <a href="wprice@redhat.com">Weston Price</a>
  * @version $Revision$
  */
 public interface IdleConnectionRemovalSupport

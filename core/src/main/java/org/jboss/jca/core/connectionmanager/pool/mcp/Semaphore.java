@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * A semaphore implementation that supports statistics
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class Semaphore extends java.util.concurrent.Semaphore
 {

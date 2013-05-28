@@ -39,7 +39,7 @@ import static org.junit.Assert.assertNotNull;
  * Test cases for deploying resource adapter archives (.RAR) using -ra.xml files
  * for activation
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  * @version $Revision: $
  */
 @RunWith(Arquillian.class)

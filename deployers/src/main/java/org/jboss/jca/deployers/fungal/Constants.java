@@ -24,7 +24,7 @@ package org.jboss.jca.deployers.fungal;
 
 /**
  * Constants for the deployer chains
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class Constants
 {

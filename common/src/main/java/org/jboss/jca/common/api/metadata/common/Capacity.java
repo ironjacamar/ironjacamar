@@ -32,7 +32,7 @@ import java.util.Map;
 /**
  * Capacity definition 
  *
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class Capacity implements JCAMetadata, ValidatableMetadata
 {
@@ -188,7 +188,7 @@ public class Capacity implements JCAMetadata, ValidatableMetadata
    /**
     * A tag
     *
-    * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+    * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
     */
    public enum Tag
    {

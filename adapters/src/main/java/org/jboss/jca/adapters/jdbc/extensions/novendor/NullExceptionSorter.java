@@ -31,8 +31,8 @@ import java.sql.SQLException;
 /**
  * Does not check the exception. Used if the named exception sorter cannot be instantiated.
  *
- * @author <a href="mailto:adrian@jboss.org">Adrian Brock</a>
- * @author <a href="mailto:weston.price@jboss.com">Weston Price</a>
+ * @author <a href="mailto:abrock@redhat.com">Adrian Brock</a>
+ * @author <a href="mailto:wprice@redhat.com">Weston Price</a>
  * 
  * @version $Revision: 75423 $
  */

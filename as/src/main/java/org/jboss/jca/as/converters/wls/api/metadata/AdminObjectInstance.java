@@ -28,7 +28,7 @@ import java.util.Map;
  *
  * A generic AdminObjectInstance.
  *
- * @author <a href="jeff.zhang@jboss.org">Jeff Zhang</a>
+ * @author <a href="jeff.zhang@ironjacamar.org">Jeff Zhang</a>
  *
  */
 public interface AdminObjectInstance extends WlsMetadata

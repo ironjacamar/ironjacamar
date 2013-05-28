@@ -29,7 +29,7 @@ import java.util.Map;
 /**
  * WorkManager security settings
  *
- * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public interface WorkManagerSecurity extends Serializable
 {
@@ -72,7 +72,7 @@ public interface WorkManagerSecurity extends Serializable
    /**
     * A Tag.
     *
-    * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+    * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
     */
    public enum Tag
    {
@@ -199,7 +199,7 @@ public interface WorkManagerSecurity extends Serializable
    /**
     * An Attribute.
     *
-    * @author <a href="jesper.pedersen@jboss.org">Jesper Pedersen</a>
+    * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
     */
    public enum Attribute
    {

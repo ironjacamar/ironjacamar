@@ -25,7 +25,7 @@ import org.jboss.jca.test.deployers.spec.rars.BaseActivationSpec;
 
 /**
  * TestActivationSpec
- * @author <a href="mailto:jeff.zhang@jboss.org">Jeff Zhang</a>
+ * @author <a href="mailto:jeff.zhang@ironjacamar.org">Jeff Zhang</a>
  * @version $Revision: $
  */
 public class TestActivationSpec extends BaseActivationSpec
