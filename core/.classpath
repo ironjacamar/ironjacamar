@@ -36,8 +36,8 @@
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-transaction-spi.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-jaspi-api_1.0_spec.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-transaction-api_1.1_spec.jar"/>
-	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jbossjta-integration.jar"/>
-	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jbossjta.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/narayana-jts-integration.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/narayana-jta.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jgroups.jar" sourcepath="/dati/project/RH/JGroups/src"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/target/ironjacamar-embedded.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-arquillian"/>
