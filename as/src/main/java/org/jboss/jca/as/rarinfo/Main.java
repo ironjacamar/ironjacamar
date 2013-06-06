@@ -442,6 +442,9 @@ public class Main
                      
                      //DissociatableManagedConnection
                      hasDissociatableMcInterface(out, mcfClassName, cl);
+                     
+                     //LazyEnlistableManagedConnection
+                     hasEnlistableMcInterface(out, mcfClassName, cl);
 
                      //CCI
                      String cfi = getValueString(mcf.getConnectionFactoryInterface());
@@ -669,6 +672,9 @@ public class Main
             //DissociatableManagedConnection
             hasDissociatableMcInterface(out, mcfClassName, cl);
             
+            //LazyEnlistableManagedConnection
+            hasEnlistableMcInterface(out, mcfClassName, cl);
+            
             Class<?> cfi = Class.forName(mcfClassName, true, cl);
             out.println("  ConnectionFactory (" + mcfClassName + "):");
             outputMethodInfo(out, cfi, cl);
@@ -873,6 +879,39 @@ public class Main
          ManagedConnection mcClz = mcf.createManagedConnection(null, null); 
 
          if (hasInterface(mcClz.getClass(), "javax.resource.spi.DissociatableManagedConnection"))
+         {
+            out.println("Yes");
+         }
+         else
+         {
+            out.println("No");
+         }
+      }
+      catch (Throwable t)
+      {
+         // Nothing we can do
+         t.printStackTrace(System.err);
+         out.println("Unknown");
+      }
+   }
+   
+   /**
+    * hasEnlistableMcInterface
+    * 
+    * @param out output stream
+    * @param classname classname
+    * @param cl classloader
+    */
+   private static void hasEnlistableMcInterface(PrintStream out, String classname, URLClassLoader cl)
+   {
+      try
+      {
+         out.print("  Enlistment: ");
+         Class<?> mcfClz = Class.forName(classname, true, cl);
+         ManagedConnectionFactory mcf = (ManagedConnectionFactory)mcfClz.newInstance();
+         ManagedConnection mcClz = mcf.createManagedConnection(null, null); 
+
+         if (hasInterface(mcClz.getClass(), "javax.resource.spi.LazyEnlistableManagedConnection"))
          {
             out.println("Yes");
          }
