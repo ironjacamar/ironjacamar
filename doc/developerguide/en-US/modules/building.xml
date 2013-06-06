@@ -7,12 +7,9 @@
     
     <section id="jdk">
       <title>Java Development Kit (JDK)</title>
-      <para>You must have one of the following JDKs installed in order to build the project:</para>
+      <para>You must have the following JDK installed in order to build the project:</para>
 
       <itemizedlist spacing="compact">
-         <listitem>
-            <para>Sun JDK 1.6.x</para>
-         </listitem>
          <listitem>
             <para>Sun JDK 1.7.x</para>
          </listitem>
@@ -60,10 +57,10 @@ export ANT_OPTS
 
     </section>
 
-    <section id="subversion">
-      <title>Subversion</title>
-      <para>You must have Subversion 1.5+ installed on your system.</para>
-      <para>Remember to ensure that "svn" are in your path (or symlinked).</para>
+    <section id="git">
+      <title>Git</title>
+      <para>You must have Git installed on your system.</para>
+      <para>Remember to ensure that "git" are in your path (or symlinked).</para>
     </section>
  
   </section>
@@ -71,36 +68,49 @@ export ANT_OPTS
   <section id="obtainingthesource">
     <title>Obtaining the source code</title>
 
-    <section id="anonsvn">
-      <title>Anonymous SVN access</title>
-      <para>The anonymous SVN repository is located under:</para>
+    <section id="forking">
+      <title>Forking the repository</title>
+      <para>
+        The IronJacamar repository is located at:
+      </para>
 
       <programlisting>
-svn co http://anonsvn.jboss.org/repos/jbossas/projects/jboss-jca/trunk/ ironjacamar-trunk
+https://github.com/ironjacamar/ironjacamar
       </programlisting>
       
-    </section>
+      <para>
+        Press the "Fork" button in order to fork the repository to your own GitHub account.
+      </para>
 
-    <section id="developersvn">
-      <title>Developer SVN access</title>
-      <para>The developer SVN repository is located under:</para>
-      
+      <para>
+        Clone your repository to your machine using
+      </para>
+
       <programlisting>
-svn co https://svn.jboss.org/repos/jbossas/projects/jboss-jca/trunk/ ironjacamar-trunk
+git clone git@github.com:&lt;your_account&gt;/ironjacamar.git
       </programlisting>
-      
+
+      <para>
+        Next add the upstream repository as a remote location:
+      </para>
+
+      <programlisting>
+cd ironjacamar
+git remote add upstream git@github.com:ironjacamar/ironjacamar.git
+      </programlisting>
+
     </section>
 
-    <section id="svnmodules">
-      <title>SVN modules</title>
-      <para>We have the following modules for the project:</para>
+    <section id="gitbranches">
+      <title>Git branches</title>
+      <para>We have the following branches for the project:</para>
       <itemizedlist>
          <listitem>
-            <para>trunk</para>
+            <para>master</para>
             <para>The head of development targeting the next upcoming release.</para>
          </listitem>
          <listitem>
-            <para>branches/Branch_1_0</para>
+            <para>1.0</para>
             <para>The development targeting the IronJacamar 1.0 releases.</para>
          </listitem>
       </itemizedlist>
@@ -175,8 +185,53 @@ cd target/sjc/bin
     </para>
 
     <para>
-      All patches should be created in a unified diff format.
+      You should develop your feature on a Git branch using
     </para>
+
+    <programlisting>
+git checkout -b &lt;feature_name&gt;
+    </programlisting>
+
+    <para>
+      Once you are done you will need to rebase your work with the latest master
+    </para>
+
+    <programlisting>
+git fetch upstream
+git rebase -i upstream/master
+    </programlisting>
+
+    <para>
+      You will need to resolve any conflicts of course. Note, that all pull requests
+      must be rebased against upstream master in order to get merged.
+    </para>
+
+    <para>
+      Then push the feature to your repository
+    </para>
+
+    <programlisting>
+git push origin &lt;feature_name&gt;
+    </programlisting>
+
+    <para>
+      Go to your account on GitHub.com and submit a pull request via the "Pull request" button
+    </para>
+
+    <programlisting>
+https://www.github.com/&lt;your_account&gt;/ironjacamar
+    </programlisting>
+
+    <para>
+      Remember to select the correct branch, fill in the subject with a short description
+      of the feature, and fill in the description with the full description of the feature.
+    </para>
+
+    <para>
+      If your feature / bug-fix applies to multiple branches you will need to submit
+      multiple pull requests - one pull request per branch.
+    </para>
+
   </section>
 
 </chapter>
