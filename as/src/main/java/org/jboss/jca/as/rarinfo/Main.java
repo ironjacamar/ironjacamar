@@ -345,7 +345,7 @@ public class Main
             out.println(name);
          }
          
-         String classname = "";
+         String mcfClassName = "";
          Map<String, String> raConfigProperties = null;
          TransactionSupportEnum transSupport = TransactionSupportEnum.NoTransaction;
          List<CommonAdminObject> adminObjects = null;
@@ -416,16 +416,16 @@ public class Main
                transSupport = ra1516.getOutboundResourceadapter().getTransactionSupport();
                for (ConnectionDefinition mcf : ra1516.getOutboundResourceadapter().getConnectionDefinitions())
                {
-                  classname = getValueString(mcf.getManagedConnectionFactoryClass());
-                  if (!sameClassnameSet.contains(classname))
+                  mcfClassName = getValueString(mcf.getManagedConnectionFactoryClass());
+                  if (!sameClassnameSet.contains(mcfClassName))
                   {
-                     sameClassnameSet.add(classname);
+                     sameClassnameSet.add(mcfClassName);
                      if (line != 0)
                      {
                         out.println();
                      }
                      line++;
-                     out.println("Class: " + classname);
+                     out.println("Class: " + mcfClassName);
                      needPrint = true;
                   }
                   else
@@ -436,7 +436,7 @@ public class Main
                   if (needPrint)
                   {
                      //ValidatingManagedConnectionFactory
-                     hasValidatingMcfInterface(out, classname, cl);
+                     hasValidatingMcfInterface(out, mcfClassName, cl);
 
                      //CCI
                      String cfi = getValueString(mcf.getConnectionFactoryInterface());
@@ -473,7 +473,7 @@ public class Main
                   if (mcf.getConfigProperties() != null)
                      configProperty = new HashMap<String, String>();
 
-                  introspected = getIntrospectedProperties(classname, cl);
+                  introspected = getIntrospectedProperties(mcfClassName, cl);
 
                   for (ConfigProperty cp : mcf.getConfigProperties())
                   {
@@ -508,14 +508,14 @@ public class Main
                   {
                      pool = xaPoolImpl;
                      Recovery recovery = new Recovery(new CredentialImpl("user", "password", null), null, false);
-                     connImpl = new CommonConnDefImpl(configProperty, classname, "java:jboss/eis/" + poolName,
+                     connImpl = new CommonConnDefImpl(configProperty, mcfClassName, "java:jboss/eis/" + poolName,
                         poolName, Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT, Defaults.USE_CCM, pool, null, null,
                         secImpl, recovery);
                   }
                   else
                   {
                      pool = poolImpl;
-                     connImpl = new CommonConnDefImpl(configProperty, classname, "java:jboss/eis/" + poolName,
+                     connImpl = new CommonConnDefImpl(configProperty, mcfClassName, "java:jboss/eis/" + poolName,
                         poolName, Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT, Defaults.USE_CCM, pool, null, null,
                         secImpl, null);
                   }
@@ -655,14 +655,14 @@ public class Main
             ResourceAdapter10 ra10 = (ResourceAdapter10)ra;
             out.println("Class: " + ra10.getManagedConnectionFactoryClass());
             
-            classname = getValueString(ra10.getManagedConnectionFactoryClass());
+            mcfClassName = getValueString(ra10.getManagedConnectionFactoryClass());
             transSupport = ra10.getTransactionSupport();
             
             //ValidatingManagedConnectionFactory
-            hasValidatingMcfInterface(out, classname, cl);
+            hasValidatingMcfInterface(out, mcfClassName, cl);
             
-            Class<?> cfi = Class.forName(classname, true, cl);
-            out.println("  ConnectionFactory (" + classname + "):");
+            Class<?> cfi = Class.forName(mcfClassName, true, cl);
+            out.println("  ConnectionFactory (" + mcfClassName + "):");
             outputMethodInfo(out, cfi, cl);
             
             Class<?> ci = Class.forName(getValueString(ra10.getConnectionInterface()), true, cl);
@@ -674,7 +674,7 @@ public class Main
                configProperty = new HashMap<String, String>();
 
             Map<String, String> introspected =
-               getIntrospectedProperties(classname, cl);
+               getIntrospectedProperties(mcfClassName, cl);
 
             for (ConfigProperty cp : ra10.getConfigProperties())
             {
@@ -699,7 +699,7 @@ public class Main
             if (introspected == null)
                out.println("  Unable to resolve introspected config-property's");
 
-            String poolName = classname.substring(classname.lastIndexOf('.') + 1);
+            String poolName = mcfClassName.substring(mcfClassName.lastIndexOf('.') + 1);
             CommonPool pool = null;
             if (transSupport.equals(TransactionSupportEnum.XATransaction))
             {
@@ -709,7 +709,7 @@ public class Main
             {
                pool = poolImpl;
             }
-            CommonConnDefImpl connImpl = new CommonConnDefImpl(configProperty, classname, 
+            CommonConnDefImpl connImpl = new CommonConnDefImpl(configProperty, mcfClassName, 
                                                                "java:jboss/eis/" + poolName, poolName, 
                                                                Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT,
                                                                Defaults.USE_CCM,
