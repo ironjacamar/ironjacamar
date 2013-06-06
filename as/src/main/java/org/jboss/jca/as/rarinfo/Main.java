@@ -85,6 +85,8 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.resource.spi.ManagedConnection;
+import javax.resource.spi.ManagedConnectionFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -437,6 +439,9 @@ public class Main
                   {
                      //ValidatingManagedConnectionFactory
                      hasValidatingMcfInterface(out, mcfClassName, cl);
+                     
+                     //DissociatableManagedConnection
+                     hasDissociatableMcInterface(out, mcfClassName, cl);
 
                      //CCI
                      String cfi = getValueString(mcf.getConnectionFactoryInterface());
@@ -661,6 +666,9 @@ public class Main
             //ValidatingManagedConnectionFactory
             hasValidatingMcfInterface(out, mcfClassName, cl);
             
+            //DissociatableManagedConnection
+            hasDissociatableMcInterface(out, mcfClassName, cl);
+            
             Class<?> cfi = Class.forName(mcfClassName, true, cl);
             out.println("  ConnectionFactory (" + mcfClassName + "):");
             outputMethodInfo(out, cfi, cl);
@@ -832,6 +840,39 @@ public class Main
          Class<?> clazz = Class.forName(classname, true, cl);
 
          if (hasInterface(clazz, "javax.resource.spi.ValidatingManagedConnectionFactory"))
+         {
+            out.println("Yes");
+         }
+         else
+         {
+            out.println("No");
+         }
+      }
+      catch (Throwable t)
+      {
+         // Nothing we can do
+         t.printStackTrace(System.err);
+         out.println("Unknown");
+      }
+   }
+   
+   /**
+    * hasDissociatableMcInterface
+    * 
+    * @param out output stream
+    * @param classname classname
+    * @param cl classloader
+    */
+   private static void hasDissociatableMcInterface(PrintStream out, String classname, URLClassLoader cl)
+   {
+      try
+      {
+         out.print("  Sharable: ");
+         Class<?> mcfClz = Class.forName(classname, true, cl);
+         ManagedConnectionFactory mcf = (ManagedConnectionFactory)mcfClz.newInstance();
+         ManagedConnection mcClz = mcf.createManagedConnection(null, null); 
+
+         if (hasInterface(mcClz.getClass(), "javax.resource.spi.DissociatableManagedConnection"))
          {
             out.println("Yes");
          }
