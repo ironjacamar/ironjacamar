@@ -291,6 +291,9 @@ public class WorkWrapper implements Runnable
          }
       }
 
+      // Fire complete for transaction context
+      fireWorkContextSetupComplete(ctx);
+      
       // Security setup
       javax.resource.spi.work.SecurityContext securityContext = 
          getWorkContext(javax.resource.spi.work.SecurityContext.class);
@@ -331,7 +334,7 @@ public class WorkWrapper implements Runnable
 
                if (scDomain == null || scDomain.trim().equals(""))
                {
-                  fireWorkContextSetupFailed(ctx);
+                  fireWorkContextSetupFailed(securityContext);
                   throw new WorkException(bundle.securityContextSetupFailedSinceCallbackSecurityDomainWasEmpty());
                }
 
@@ -400,18 +403,21 @@ public class WorkWrapper implements Runnable
 
             // Set the authenticated subject
             sc.getSubjectInfo().setAuthenticatedSubject(executionSubject);
+
+            // Fire complete for security context
+            fireWorkContextSetupComplete(securityContext);
          }
          catch (Throwable t)
          {
             log.securityContextSetupFailed(t.getMessage(), t);
-            fireWorkContextSetupFailed(ctx);
+            fireWorkContextSetupFailed(securityContext);
             throw new WorkException(bundle.securityContextSetupFailed(t.getMessage()), t);
          }
       }
       else if (securityContext != null && workManager.getCallbackSecurity() == null)
       {
          log.securityContextSetupFailedCallbackSecurityNull();
-         fireWorkContextSetupFailed(ctx);
+         fireWorkContextSetupFailed(securityContext);
          throw new WorkException(bundle.securityContextSetupFailedSinceCallbackSecurityWasNull());
       }
    
@@ -424,9 +430,6 @@ public class WorkWrapper implements Runnable
          }
       }
 
-      //Fires Context setup complete
-      fireWorkContextSetupComplete(ctx);
-      
       if (trace)
          log.tracef("Started work: %s", this);  
    }

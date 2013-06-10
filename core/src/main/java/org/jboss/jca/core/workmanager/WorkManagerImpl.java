@@ -868,7 +868,40 @@ public class WorkManagerImpl implements WorkManager
          executor = longRunningExecutor;
       }
 
+      fireHintsComplete(work);
+
       return executor;
+   }
+
+   /**
+    * Fire complete for HintsContext
+    * @param work The work instance
+    */
+   private void fireHintsComplete(Work work)
+   {
+      if (work != null && work instanceof WorkContextProvider)
+      {
+         WorkContextProvider wcProvider = (WorkContextProvider) work;
+         List<WorkContext> contexts = wcProvider.getWorkContexts();
+
+         if (contexts != null && contexts.size() > 0)
+         {
+            Iterator<WorkContext> it = contexts.iterator();
+            while (it.hasNext())
+            {
+               WorkContext wc = it.next();
+               if (wc instanceof HintsContext)
+               {
+                  HintsContext hc = (HintsContext) wc;
+                  if (hc instanceof WorkContextLifecycleListener)
+                  {
+                     WorkContextLifecycleListener listener = (WorkContextLifecycleListener)hc;
+                     listener.contextSetupComplete();   
+                  }
+               }
+            }
+         }
+      }
    }
 
    /**
