@@ -22,7 +22,6 @@
 
 package javax.resource;
 
-import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -37,7 +36,6 @@ import javax.resource.spi.TransactionSupport;
  * @since 1.7
  * @see javax.annotation.Resource
  */
-@Documented
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ConnectionFactoryDefinition
@@ -55,7 +53,7 @@ public @interface ConnectionFactoryDefinition
    String resourceAdapter();
 
    /** The fully qualified domain name of the connection factory interface class. */
-   String className();
+   String interfaceName();
 
    /**
     * The level of transaction support the connection factory resource needs to support.
