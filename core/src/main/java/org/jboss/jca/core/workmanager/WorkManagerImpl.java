@@ -737,6 +737,8 @@ public class WorkManagerImpl implements WorkManager
                   if (longRunning)
                      executor = longRunningExecutor;
 
+                  fireHintsComplete(hc);
+
                   found = true;
                }
             }
@@ -746,7 +748,18 @@ public class WorkManagerImpl implements WorkManager
       return executor;
    }
 
-
+   /**
+    * Fire complete for HintsContext
+    * @param hc The HintsContext
+    */
+   private void fireHintsComplete(HintsContext hc)
+   {
+      if (hc instanceof WorkContextLifecycleListener)
+      {
+         WorkContextLifecycleListener listener = (WorkContextLifecycleListener)hc;
+         listener.contextSetupComplete();   
+      }
+   }
 
    /**
     * Check and verify work before submitting.
