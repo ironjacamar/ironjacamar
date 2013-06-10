@@ -22,7 +22,6 @@
 
 package javax.resource;
 
-import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -34,7 +33,6 @@ import java.lang.annotation.Target;
  * @since 1.7
  * @see javax.resource.AdministeredObjectDefinition
  */
-@Documented
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AdministeredObjectDefinitions
@@ -42,5 +40,5 @@ public @interface AdministeredObjectDefinitions
    /**
     * The AdministeredObjectDefinition definitions
     */
-   AdministeredObjectDefinition[] value() default { };
+   AdministeredObjectDefinition[] value();
 }
