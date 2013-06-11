@@ -1,19 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- ===================================================================== -->
-<!--                                                                       -->
-<!--  JBoss Server Configuration                                           -->
-<!--                                                                       -->
-<!-- ===================================================================== -->
-
-<!-- See http://www.jboss.org/community/wiki/Multiple1PC for information about local-tx-datasource -->
-<!-- $Id: solid-ds.xml 97536 2009-12-08 14:05:07Z jesper.pedersen $ -->
-<!-- ==================================================================== -->
-<!-- DataSource configuration for solid using 3.0 driver                  -->
-<!-- Thanks to Casey Haakenson                                            -->
-<!-- ==================================================================== -->
-
-
 <datasources>
   <local-tx-datasource>
     <jndi-name>SolidDS</jndi-name>

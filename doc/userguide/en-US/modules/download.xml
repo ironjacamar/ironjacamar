@@ -209,16 +209,18 @@ ironjacamar-1.0.0.Final.tar.gz
    </section>
 
 
-   <section id="SVN">
-      <title>SVN Access</title>
-      <para>If you want to experiment with the latest developments you may
-        checkout the latest code from SVN trunk. Be aware that the
-        information provided in this manual might then not be accurate.</para>
+   <section id="GIT">
+      <title>Git Access</title>
+      <para>
+        If you want to experiment with the latest developments you may
+        checkout the latest code from Git. Be aware that the
+        information provided in this manual might then not be accurate.
+      </para>
 
-      <para>The anonymous SVN repository is located under:</para>
+      <para>The Git repository is located at:</para>
 
       <programlisting>
-svn co http://anonsvn.jboss.org/repos/jbossas/projects/jboss-jca/trunk/ ironjacamar-trunk
+http://github.com/ironjacamar/ironjacamar
       </programlisting>
 
       <para>You can find additional information about this in the developer guide.</para>

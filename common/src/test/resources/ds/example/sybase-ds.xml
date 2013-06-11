@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- See http://www.jboss.org/community/wiki/Multiple1PC for information about datasource -->
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
              xsi:noNamespaceSchemaLocation="http://www.ironjacamar.org/schema/datasources_1_0.xsd">
 
-  <datasource jndi-name="jdbc/SybaseDB" pool-name="jdbc/SybaseDB">
+  <datasource jndi-name="java:/SybaseDB" pool-name="SybaseDB">
     <connection-url>jdbc:sybase:Tds:host.at.some.domain:5000/db_name?JCONNECT_VERSION=6</connection-url>
     <driver-class>com.sybase.jdbc2.jdbc.SybDataSource</driver-class>
     <security>

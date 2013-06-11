@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
-  targetNamespace="http://www.jboss.org/ironjacamar/schema" xmlns="http://www.jboss.org/ironjacamar/schema">
+           targetNamespace="http://www.ironjacamar.org/doc/schema" xmlns="http://www.ironjacamar.org/doc/schema">
 
   <xs:complexType name="boolean-presenceType"></xs:complexType>
 

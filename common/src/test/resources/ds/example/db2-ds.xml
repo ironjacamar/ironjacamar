@@ -2,7 +2,7 @@
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:noNamespaceSchemaLocation="http://www.ironjacamar.org/schema/datasources_1_0.xsd">
 
-  <datasource jndi-name="DB2DS" pool-name="DB2DS">
+  <datasource jndi-name="java:/DB2DS" pool-name="DB2DS">
     <!-- 
       DB2 Universal Driver Note connection URL is in form of
       jdbc:db2://host:port:dbname
@@ -20,10 +20,6 @@
      -->  
     <connection-url>jdbc:db2:yourdatabase</connection-url>
     <driver-class>COM.ibm.db2.jdbc.app.DB2Driver</driver-class>
-    <pool>
-      <min-pool-size>0</min-pool-size>
-      <max-pool-size>50</max-pool-size>
-    </pool>
     <security>
       <user-name>x</user-name>
       <password>y</password>

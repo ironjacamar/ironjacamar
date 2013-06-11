@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- See http://www.jboss.org/community/wiki/Multiple1PC for information about datasource -->
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:noNamespaceSchemaLocation="http://www.ironjacamar.orgd/schema/atasources_1_0.xsd">
 
-  <datasource jndi-name="MSSQLDS" pool-name="MSSQLDS">
+  <datasource jndi-name="java:/MSSQLDS" pool-name="MSSQLDS">
     <connection-url>jdbc:microsoft:sqlserver://localhost:1433;DatabaseName=MyDatabase</connection-url>
     <driver-class>com.microsoft.sqlserver.jdbc.SQLServerDriver</driver-class>
     <security>

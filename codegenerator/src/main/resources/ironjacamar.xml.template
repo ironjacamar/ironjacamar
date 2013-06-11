@@ -1,7 +1,7 @@
-<ironjacamar xmlns="http://www.jboss.org/ironjacamar/schema"
+<ironjacamar xmlns="http://www.ironjacamar.org/doc/schema"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://www.jboss.org/ironjacamar/schema 
-             http://www.jboss.org/ironjacamar/schema/ironjacamar_1_1.xsd">
+             xsi:schemaLocation="http://www.ironjacamar.org/doc/schema 
+             http://www.ironjacamar.org/doc/schema/ironjacamar_1_1.xsd">
 ${ra.props}
   <transaction-support>${transaction}</transaction-support>
   
