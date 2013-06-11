@@ -1,18 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- ===================================================================== -->
-<!--                                                                       -->
-<!--  JBoss Server Configuration                                           -->
-<!--                                                                       -->
-<!-- ===================================================================== -->
-
-<!-- See http://www.jboss.org/community/wiki/Multiple1PC for information about local-tx-datasource -->
-<!-- $Id: postgres-ds.xml 97536 2009-12-08 14:05:07Z jesper.pedersen $ -->
-<!-- ==================================================================== -->
-<!--  Datasource config for Postgres                                      -->
-<!-- ==================================================================== -->
-
-
 <datasources>
   <local-tx-datasource>
     <jndi-name>PostgresDS</jndi-name>

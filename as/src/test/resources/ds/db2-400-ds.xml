@@ -1,22 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- ===================================================================== -->
-<!--                                                                       -->
-<!--  JBoss Server Configuration                                           -->
-<!--                                                                       -->
-<!-- ===================================================================== -->
-
-<!-- $Id: db2-400-ds.xml 97536 2009-12-08 14:05:07Z jesper.pedersen $ -->
-
-<!-- You need the jt400.jar that is delivered with IBM iSeries Access or the
-     OpenSource Project jtopen.
-
-     [systemname] Hostame of the iSeries
-     [schema]     Default schema is needed so jboss could use metadat to test if the tables exists
-
-     See http://www.jboss.org/community/wiki/Multiple1PC for information about local-tx-datasource
-  -->
-
 <datasources>
   <local-tx-datasource>
     <jndi-name>DB2-400</jndi-name>

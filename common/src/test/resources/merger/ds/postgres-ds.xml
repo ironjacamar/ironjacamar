@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- ===================================================================== -->
-<!-- See http://www.jboss.org/community/wiki/Multiple1PC for information about datasource -->
-<!-- ===================================================================== -->
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ironjacamar.org/schema/datasources_1_0.xsd">
   <datasource jndi-name="PostgresDS" pool-name="PostgresDS">
     <connection-url>jdbc:postgresql://[servername]:[port]/[database name]</connection-url>
@@ -9,7 +6,6 @@
     <security>
       <user-name>x</user-name>
       <password>y</password>
-    
-</security>
+    </security>
   </datasource>
 </datasources>

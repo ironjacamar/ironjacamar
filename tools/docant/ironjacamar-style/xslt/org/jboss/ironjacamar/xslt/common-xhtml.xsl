@@ -27,9 +27,9 @@
 
     <xsl:import href="common-base.xsl"/>
 
-    <xsl:param name="siteHref" select="'http://www.jboss.org/ironjacamar'"/>
-    <xsl:param name="docHref" select="'http://docs.jboss.org/ironjacamar/'"/>
-    <xsl:param name="siteLinkText" select="'www.jboss.org/ironjacamar'"/>
+    <xsl:param name="siteHref" select="'http://www.ironjacamar.org/'"/>
+    <xsl:param name="docHref" select="'http://www.ironjacamar.org/documentation.html'"/>
+    <xsl:param name="siteLinkText" select="'www.ironjacamar.org'"/>
 
     <xsl:param name="legalnotice.filename">legalnotice.html</xsl:param>
 

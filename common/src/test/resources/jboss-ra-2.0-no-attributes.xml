@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<jboss-ra xmlns="http://www.jboss.org/schema/ra/2.0"
- xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://www.jboss.org/schema/ra/2.0 http://www.jboss.org/jee/schema/ironjacamar/2.0/jboss-ra_2_0.xsd">
-    
-</jboss-ra>

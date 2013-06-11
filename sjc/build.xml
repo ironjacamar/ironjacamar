@@ -480,12 +480,17 @@
         <include name="dtd/connector_1_0.dtd"/>
         <include name="schema/connector_1_5.xsd"/>
         <include name="schema/connector_1_6.xsd"/>
+        <include name="schema/connector_1_7.xsd"/>
         <include name="schema/datasources_1_0.xsd"/>
         <include name="schema/datasources_1_1.xsd"/>
+        <include name="schema/datasources_1_2.xsd"/>
         <include name="schema/resource-adapters_1_0.xsd"/>
         <include name="schema/resource-adapters_1_1.xsd"/>
         <include name="schema/ironjacamar_1_0.xsd"/>
         <include name="schema/ironjacamar_1_1.xsd"/>
+        <include name="schema/j2ee_1_4.xsd"/>
+        <include name="schema/javaee_6.xsd"/>
+        <include name="schema/javaee_7.xsd"/>
       </fileset>
     </copy>
 

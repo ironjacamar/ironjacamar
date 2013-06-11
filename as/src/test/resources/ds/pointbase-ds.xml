@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- Example of the pointbase 4.8 datasource configuration -->
-<!-- See http://www.jboss.org/community/wiki/Multiple1PC for information about local-tx-datasource -->
-<!-- $Id: pointbase-ds.xml 97536 2009-12-08 14:05:07Z jesper.pedersen $ -->
-
 <datasources>
    <local-tx-datasource>
       <jndi-name>DefaultDS</jndi-name>

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- See http://www.jboss.org/community/wiki/Multiple1PC for information about datasource -->
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
              xsi:noNamespaceSchemaLocation="http://www.ironjacamar.org/schema/datasources_1_0.xsd">
-  <datasource jndi-name="OracleDS" pool-name="OracleDS">
+  <datasource jndi-name="java:/OracleDS" pool-name="OracleDS">
     <!--
       Here are a couple of the possible OCI configurations. For more information, 
       see http://otn.oracle.com/docs/products/oracle9i/doc_library/release2/java.920/a96654/toc.htm 

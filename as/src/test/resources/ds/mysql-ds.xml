@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!-- See http://www.jboss.org/community/wiki/Multiple1PC for information about local-tx-datasource -->
-<!-- $Id: mysql-ds.xml 97536 2009-12-08 14:05:07Z jesper.pedersen $ -->
-<!--  Datasource config for MySQL using 3.0.9 available from:
-http://www.mysql.com/downloads/api-jdbc-stable.html
--->
-
 <datasources>
   <local-tx-datasource>
     <jndi-name>MySqlDS</jndi-name>

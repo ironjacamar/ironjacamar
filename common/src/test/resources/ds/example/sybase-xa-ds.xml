@@ -2,22 +2,19 @@
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
              xsi:noNamespaceSchemaLocation="http://www.ironjacamar.org/schema/datasources_1_0.xsd">
 
-  <xa-datasource jndi-name="SybaseXADS" pool-name="SybaseXADS">
+  <xa-datasource jndi-name="java:/SybaseXADS" pool-name="SybaseXADS">
     <xa-datasource-property name="NetworkProtocol">Tds</xa-datasource-property>
     <xa-datasource-property name="ServerName">myserver</xa-datasource-property>
     <xa-datasource-property name="PortNumber">4100</xa-datasource-property>
     <xa-datasource-property name="DatabaseName">mydatabase</xa-datasource-property>
-    <xa-datasource-property name="User">user</xa-datasource-property>
-    <xa-datasource-property name="Password">password</xa-datasource-property>
     <xa-datasource-class>com.sybase.jdbc3.jdbc.SybXADataSource</xa-datasource-class>
     <xa-pool>
-      <min-pool-size>1</min-pool-size>
-      <max-pool-size>20</max-pool-size>
       <!-- Uncomment to enable interleaving <interleaving/> -->
     </xa-pool>
-    <timeout>
-      <idle-timeout-minutes>15</idle-timeout-minutes>
-    </timeout>
+    <security>
+      <user-name>x</user-name>
+      <password>y</password>
+    </security>
     <validation>
       <valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.sybase.SybaseValidConnectionChecker"></valid-connection-checker>
       <exception-sorter class-name="org.jboss.jca.adapters.jdbc.extensions.sybase.SybaseExceptionSorter"></exception-sorter>

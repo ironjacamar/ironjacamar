@@ -1,23 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<!-- ===================================================================== -->
-<!--                                                                       -->
-<!--  JBoss Server Configuration                                           -->
-<!--                                                                       -->
-<!-- ===================================================================== -->
-
-<!-- See http://www.jboss.org/community/wiki/Multiple1PC for information about local-tx-datasource -->
-<!-- $Id: progress-ds.xml 97536 2009-12-08 14:05:07Z jesper.pedersen $ -->
-<!-- ==================================================================== -->
-<!--  Datasource config for Progress 9.1                                  -->
-<!--                                                                      -->
-<!--  Based on config provided by victorstar in the forums                -->
-<!--                                                                      -->
-<!--  Beside adding the driver jar to server/[config]/lib you also        -->
-<!--  need to add the native library to your path.                        -->
-<!--  e.g. JdbcProgress.dll on windows                                    -->
-<!-- ==================================================================== -->
-
 <datasources>
 
    <local-tx-datasource>

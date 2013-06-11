@@ -8,7 +8,7 @@ ${ivy.pom.license}
   <packaging>${ivy.pom.packaging}</packaging>
   <version>${ivy.pom.version}</version>
   <name>IronJacamar</name>
-  <url>http://www.jboss.org/ironjacamar</url>
+  <url>http://www.ironjacamar.org</url>
   <description>
     IronJacamar is an implementation of the Java EE Connector Architecture 1.7 specification
   </description>
@@ -19,8 +19,8 @@ ${ivy.pom.license}
     </license>
   </licenses>
   <organization>
-    <name>JBoss, by Red Hat</name>
-    <url>http://www.jboss.org</url>
+    <name>IronJacamar</name>
+    <url>http://www.ironjacamar.org</url>
   </organization>
   <scm>
     <url>http://github.com/ironjacamar/ironjacamar</url>
@@ -31,17 +31,22 @@ ${ivy.pom.license}
     <developer>
       <id>jesper.pedersen</id>
       <name>Jesper Pedersen</name>
-      <organization>JBoss, by Red Hat</organization>
+      <organization>IronJacamar</organization>
     </developer>
     <developer>
       <id>jeff.zhang</id>
       <name>Jeff Zhang</name>
-      <organization>JBoss, by Red Hat</organization>
+      <organization>IronJacamar</organization>
     </developer>
     <developer>
       <id>maeste</id>
       <name>Stefano Maestri</name>
-      <organization>JBoss, by Red Hat</organization>
+      <organization>IronJacamar</organization>
+    </developer>
+    <developer>
+      <id>vrastseluev</id>
+      <name>Vladimir Rastseluev</name>
+      <organization>IronJacamar</organization>
     </developer>
   </developers>
   <dependencies>
