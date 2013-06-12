@@ -34,6 +34,12 @@
     <delete includeemptydirs="true">
       <fileset dir="${docant.target.dir}/docbook/staging/images/images/" excludes="community/** org/**"/>
     </delete>
+    <delete>
+      <fileset dir="${target.dir}/docs/${srcDocName}">
+        <include name="**/*.svg"/>
+        <include name="**/*jbossorg*"/>
+      </fileset>
+    </delete>
   </target>
 
   <target name="html">
@@ -42,7 +48,7 @@
             sourceDocumentName="${srcDocNameFile}"
             baseOutputDirectory="${docant.target.dir}">
       <format name="html" 
-	      stylesheetResource="classpath:/xslt/org/jboss/ironjacamar/xslt/xhtml.xsl"
+	      stylesheetResource="classpath:/xslt/org/ironjacamar/xslt/xhtml.xsl"
 	      targetFinalName="index.html"/>
     </docant>
     <antcall target="docant-post"/>
@@ -54,7 +60,7 @@
             sourceDocumentName="${srcDocNameFile}"
             baseOutputDirectory="${docant.target.dir}">
       <format name="html_single" 
-	      stylesheetResource="classpath:/xslt/org/jboss/ironjacamar/xslt/xhtml-single.xsl"
+	      stylesheetResource="classpath:/xslt/org/ironjacamar/xslt/xhtml-single.xsl"
 	      targetFinalName="index.html"/>
     </docant>
     <antcall target="docant-post"/>
@@ -66,7 +72,7 @@
             sourceDocumentName="${srcDocNameFile}"
             baseOutputDirectory="${docant.target.dir}">
       <format name="pdf" 
-	      stylesheetResource="classpath:/xslt/org/jboss/ironjacamar/xslt/pdf.xsl"
+	      stylesheetResource="classpath:/xslt/org/ironjacamar/xslt/pdf.xsl"
 	      targetFinalName="${pdfName}"/>
     </docant>
     <antcall target="docant-post"/>
@@ -78,13 +84,13 @@
             sourceDocumentName="${srcDocNameFile}"
             baseOutputDirectory="${docant.target.dir}">
       <format name="html" 
-	      stylesheetResource="classpath:/xslt/org/jboss/ironjacamar/xslt/xhtml.xsl"
+	      stylesheetResource="classpath:/xslt/org/ironjacamar/xslt/xhtml.xsl"
 	      targetFinalName="index.html"/>
       <format name="html_single" 
-	      stylesheetResource="classpath:/xslt/org/jboss/ironjacamar/xslt/xhtml-single.xsl"
+	      stylesheetResource="classpath:/xslt/org/ironjacamar/xslt/xhtml-single.xsl"
 	      targetFinalName="index.html"/>
       <format name="pdf" 
-	      stylesheetResource="classpath:/xslt/org/jboss/ironjacamar/xslt/pdf.xsl"
+	      stylesheetResource="classpath:/xslt/org/ironjacamar/xslt/pdf.xsl"
 	      targetFinalName="${pdfName}"/>
     </docant>
     <antcall target="docant-post"/>

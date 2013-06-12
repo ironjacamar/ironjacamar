@@ -1,4 +1,8 @@
-@import url("jbossorg.css");
+@import url("documentation.css");
+@import url("docnav.css");
+@import url("reports.css");
+@import url("extensions.css");
+@import url("codehighlight.css");
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 /* work around problems in the jboss.org styles wrt html & jHighLight */
@@ -29,24 +33,47 @@ pre.XHTML {
 }
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-body{
-/*
-	background-image:url(../images/org/jboss/ironjacamar/bkg_gradient.png);
-*/
+body {
     font-family:'Lucida Grande', Geneva, Verdana, Arial, sans-serif;
+    background-image:url(../images/community/bkg_gradient.gif);
+    background-repeat:repeat-x;
+    margin:0 auto;
+    font-family:'Lucida Grande', Geneva, Verdana, Arial, sans-serif;
+    font-size:12px;
+    max-width:55em;
+    padding:0em 2em;
+    color:#333;
+    line-height:150%;
+    text-align:justify;
 }
 
-a{
-    text-decoration:none;
+a {
+    text-decoration: none;
+}
+
+a:link {
+    color:#0066cc;
+}
+
+a:visited {
+    color:#6699cc;
+}
+
+div.longdesc-link {
+    float:right;
+    color:#999;
+}
+
+h1,h2,h3,h4,h5,h6{
+    color:#4a5d75;
+    line-height:130%;
+    margin-top:0em;
+    background-color:transparent;
 }
 
 h1{
-	background-image:url(../images/org/jboss/ironjacamar/title_hdr.png);
-	color:#182737;
-}
-
-h2,h3,h4,h5,h6{
-    color:#4a5d75;
+    background-image: url();
+    color:#182737;
 }
 
 #title a.site_href {
@@ -54,16 +81,25 @@ h2,h3,h4,h5,h6{
     height:80px;
     width:200px;
     float:left;
-    background:url(../images/org/jboss/ironjacamar/ironjacamar_logo.gif) center left no-repeat;
+    background:url(../images/org/ironjacamar/ironjacamar_logo.gif) center left no-repeat;
 }
 
-/*
-#title a.doc_href {
-    display:block;
-    height:100px;
-    background:transparent url(../images/org/jboss/ironjacamar/community_doc.png) top right no-repeat;
+hr {
+    border-collapse:collapse;
+    border-style:none;
+    border-top:1px dotted #ccc;
+    width:100% !important;
 }
-*/
+
+sup {
+    color:#999;
+}
+
+#title a.doc_href {
+    display: block;
+    height: 89px;
+    background-image: url();
+}
 
 .releaseinfo {
     color:#4a5d75;
@@ -73,7 +109,7 @@ h2,h3,h4,h5,h6{
 div.note {
     background-color:#849092;
     color:white;
-    background-image: url(../images/org/jboss/ironjacamar/docbook/note.png);
+    background-image: url(../images/org/ironjacamar/docbook/note.png);
 }
 
 div.note h2 {
@@ -81,37 +117,36 @@ div.note h2 {
 }
 
 div.tip {
-    background-image:url(../images/org/jboss/ironjacamar/docbook/tip.png);
+    background-image:url(../images/org/ironjacamar/docbook/tip.png);
 }
 
 div.important {
-    background-image:url(../images/org/jboss/ironjacamar/docbook/important.png);
+    background-image:url(../images/org/ironjacamar/docbook/important.png);
 }
 
 div.caution {
-    background-image:url(../images/org/jboss/ironjacamar/docbook/caution.png);
+    background-image:url(../images/org/ironjacamar/docbook/caution.png);
 }
 
 div.warning {
-    background-image:url(../images/org/jboss/ironjacamar/docbook/warning.png);
+    background-image:url(../images/org/ironjacamar/docbook/warning.png);
 }
 
 div.note a:visited, div.tip a:visited, div.important a:visited, div.caution a:visited, div.warning a:visited, div.note a:link, div.tip a:link, div.important a:link, div.caution a:link, div.warning a:link {
     color: #f7f2d0;
 }
 
-.docnav li.next a strong {background-image:url(../images/org/jboss/ironjacamar/docbook/next.png);}
-.docnav li.previous a strong {background-image:url(../images/org/jboss/ironjacamar/docbook/prev.png);}
-.docnav li.home a strong {background-image:url(../images/org/jboss/ironjacamar/docbook/home.png);}
-.docnav li.up a strong {background-image:url(../images/org/jboss/ironjacamar/docbook/up.png);}
+.docnav li.next a strong {background-image:url(../images/org/ironjacamar/docbook/next.png);}
+.docnav li.previous a strong {background-image:url(../images/org/ironjacamar/docbook/prev.png);}
+.docnav li.home a strong {background-image:url(../images/org/ironjacamar/docbook/home.png);}
+.docnav li.up a strong {background-image:url(../images/org/ironjacamar/docbook/up.png);}
 
 /* Eclipse Help Navigation */
-.navheader td.next a {background-image:url(../images/org/jboss/ironjacamar/docbook/next.png);}
-.navheader td.previous a {background-image:url(../images/org/jboss/ironjacamar/docbook/prev.png);}
+.navheader td.next a {background-image:url(../images/org/ironjacamar/docbook/next.png);}
+.navheader td.previous a {background-image:url(../images/org/ironjacamar/docbook/prev.png);}
 
-.navfooter td.next a {background-image:url(../images/org/jboss/ironjacamar/docbook/next.png);}
-.navfooter td.previous a {background-image:url(../images/org/jboss/ironjacamar/docbook/prev.png);}
-.navfooter td.home a {background-image:url(../images/org/jboss/ironjacamar/docbook/home.png);}
-.navfooter td.up a {background-image:url(../images/org/jboss/ironjacamar/docbook/up.png);}
-
+.navfooter td.next a {background-image:url(../images/org/ironjacamar/docbook/next.png);}
+.navfooter td.previous a {background-image:url(../images/org/ironjacamar/docbook/prev.png);}
+.navfooter td.home a {background-image:url(../images/org/ironjacamar/docbook/home.png);}
+.navfooter td.up a {background-image:url(../images/org/ironjacamar/docbook/up.png);}
 
