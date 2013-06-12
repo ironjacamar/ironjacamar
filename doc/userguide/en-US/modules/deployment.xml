@@ -2287,7 +2287,7 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
             </para>
             
             <table frame="all">
-              <title>Policy properties</title>
+              <title>Size policy properties</title>
               <tgroup cols="2" align="left" colsep="1" rowsep="1">
                 <colspec colname="c1" colwidth="2*"/>
                 <colspec colname="c2" colwidth="3*"/>
@@ -2328,7 +2328,7 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
             </para>
             
             <table frame="all">
-              <title>Policy properties</title>
+              <title>Watermark policy properties</title>
               <tgroup cols="2" align="left" colsep="1" rowsep="1">
                 <colspec colname="c1" colwidth="2*"/>
                 <colspec colname="c2" colwidth="3*"/>
@@ -2387,7 +2387,7 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
             </para>
             
             <table frame="all">
-              <title>Policy properties</title>
+              <title>Size policy properties</title>
               <tgroup cols="2" align="left" colsep="1" rowsep="1">
                 <colspec colname="c1" colwidth="2*"/>
                 <colspec colname="c2" colwidth="3*"/>
@@ -2436,7 +2436,7 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
             </para>
             
             <table frame="all">
-              <title>Policy properties</title>
+              <title>Watermark policy properties</title>
               <tgroup cols="2" align="left" colsep="1" rowsep="1">
                 <colspec colname="c1" colwidth="2*"/>
                 <colspec colname="c2" colwidth="3*"/>

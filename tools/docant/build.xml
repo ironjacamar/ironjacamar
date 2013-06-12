@@ -25,6 +25,7 @@
 
   <available classname="java.lang.Enum" property="HAVE_JDK_1.5"/>
   <available classname="java.lang.management.LockInfo" property="HAVE_JDK_1.6"/>
+  <available classname="java.util.concurrent.ForkJoinPool" property="HAVE_JDK_1.7"/>
 
   <!-- ================================= 
        Project              
@@ -66,7 +67,6 @@
        Target: init              
        ================================= -->
   <target name="init">
-    <fail message="The performance test suite requires JDK5+" unless="HAVE_JDK_1.5"/>
     <mkdir dir="${docant.target.dir}" />
   </target>
   
