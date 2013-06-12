@@ -19,11 +19,11 @@
       <exception-sorter class-name="org.jboss.jca.adapters.jdbc.extensions.db2.DB2ExceptionSorter"></exception-sorter>
     </validation>
     <recovery>
-      <recovery-plugin class-name="org.jboss.jca.core.recovery.ConfigurableRecoveryPlugin">
+      <recover-plugin class-name="org.jboss.jca.core.recovery.ConfigurableRecoveryPlugin">
         <config-property name="EnableIsValid">false</config-property>
         <config-property name="IsValidOverride">false</config-property>
         <config-property name="EnableClose">false</config-property>
-      </recovery-plugin>
+      </recover-plugin>
     </recovery>
   </xa-datasource>
     
