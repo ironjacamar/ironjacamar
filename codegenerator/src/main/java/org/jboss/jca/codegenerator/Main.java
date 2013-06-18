@@ -25,12 +25,14 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -48,6 +50,9 @@ public class Main
    private static final int SUCCESS = 0;
    private static final int ERROR = 1;
    private static final int OTHER = 2;
+   
+   private static final String PACKAGE_NAME_PATTERN = "^[a-z|A-Z][\\w|\\.]*[\\w]$";
+   private static final String CLASS_NAME_PATTERN = "^[a-z|A-Z][\\w]*";
 
    /** ResourceBundle */
    private static ResourceBundle rb = ResourceBundle.getBundle("codegenerator", Locale.getDefault());
@@ -220,8 +225,16 @@ public class Main
       }
 
       //package name
-      System.out.print(rb.getString("package.name") + ": ");
-      String packageName = in.readLine();
+      String packageName;
+      do
+      {
+         System.out.print(rb.getString("package.name") + ": ");
+         packageName = in.readLine();
+         if (packageName.indexOf(".") >= 0 && Pattern.matches(PACKAGE_NAME_PATTERN, packageName))
+            break;
+         System.out.println(rb.getString("package.name.validated"));
+      }
+      while (true);
       def.setRaPackage(packageName);
       
       //transaction
@@ -311,16 +324,27 @@ public class Main
       //input ra class name
       if (def.isUseRa() || def.isSupportInbound())
       {
-         System.out.print(rb.getString("ra.class.name"));
-         System.out.print(" [" + def.getRaClass() + "]: ");
-         String raClassName = in.readLine();
-         classes.add(raClassName);
-         if (raClassName != null && !raClassName.equals(""))
+         String raClassName;
+         do
          {
-            def.setRaClass(raClassName);
-            setDefaultValue(def, raClassName, "ResourceAdapter");
-            setDefaultValue(def, raClassName, "Ra");
+            System.out.print(rb.getString("ra.class.name"));
+            System.out.print(" [" + def.getRaClass() + "]: ");
+            raClassName = in.readLine();
+            if (raClassName != null && !raClassName.equals(""))
+            {
+               if (!Pattern.matches(CLASS_NAME_PATTERN, raClassName))
+               {
+                  System.out.println(rb.getString("class.name.validated"));
+                  continue;
+               }
+               def.setRaClass(raClassName);
+               classes.add(raClassName);
+               setDefaultValue(def, raClassName, "ResourceAdapter");
+               setDefaultValue(def, raClassName, "Ra");
+            }
+            break;
          }
+         while (true);
          
          System.out.print(rb.getString("ra.serial") + " " + rb.getString("yesno") + " [Y]: ");
          String raSerial = in.readLine();
@@ -354,8 +378,14 @@ public class Main
                System.out.print(rb.getString("mcf.class.name"));
                System.out.print(" [" + mcfdef.getMcfClass() + "]: ");
                mcfClassName = in.readLine();
+               if (!mcfClassName.equals("") && !Pattern.matches(CLASS_NAME_PATTERN, mcfClassName))
+               {
+                  System.out.println(rb.getString("class.name.validated"));
+                  continue;
+               }
             }
-            while (classes.contains(mcfClassName) && !mcfClassName.equals(""));
+            while ((classes.contains(mcfClassName) || !Pattern.matches(CLASS_NAME_PATTERN, mcfClassName))
+               && !mcfClassName.equals(""));
             classes.add(mcfClassName);
             if (mcfClassName != null && !mcfClassName.equals(""))
             {
@@ -388,8 +418,14 @@ public class Main
                System.out.print(rb.getString("mc.class.name"));
                System.out.print(" [" + mcfdef.getMcClass() + "]: ");
                mcClassName = in.readLine();
+               if (!mcClassName.equals("") && !Pattern.matches(CLASS_NAME_PATTERN, mcClassName))
+               {
+                  System.out.println(rb.getString("class.name.validated"));
+                  continue;
+               }
             }
-            while (classes.contains(mcClassName) && !mcClassName.equals(""));
+            while ((classes.contains(mcClassName) || !Pattern.matches(CLASS_NAME_PATTERN, mcClassName)) 
+               && !mcClassName.equals(""));
             classes.add(mcClassName);
 
             if (mcClassName != null && !mcClassName.equals(""))
@@ -415,8 +451,14 @@ public class Main
                   System.out.print(rb.getString("cf.interface.name"));
                   System.out.print(" [" + mcfdef.getCfInterfaceClass() + "]: ");
                   cfInterfaceName = in.readLine();
+                  if (!cfInterfaceName.equals("") && !Pattern.matches(CLASS_NAME_PATTERN, cfInterfaceName))
+                  {
+                     System.out.println(rb.getString("class.name.validated"));
+                     continue;
+                  }
                }
-               while (classes.contains(cfInterfaceName) && !cfInterfaceName.equals(""));
+               while ((classes.contains(cfInterfaceName) || !Pattern.matches(CLASS_NAME_PATTERN, cfInterfaceName))
+                  && !cfInterfaceName.equals(""));
                classes.add(cfInterfaceName);
                if (cfInterfaceName != null && !cfInterfaceName.equals(""))
                   mcfdef.setCfInterfaceClass(cfInterfaceName);
@@ -427,8 +469,14 @@ public class Main
                   System.out.print(rb.getString("cf.class.name"));
                   System.out.print(" [" + mcfdef.getCfClass() + "]: ");
                   cfClassName = in.readLine();
+                  if (!cfClassName.equals("") && !Pattern.matches(CLASS_NAME_PATTERN, cfClassName))
+                  {
+                     System.out.println(rb.getString("class.name.validated"));
+                     continue;
+                  }
                }
-               while (classes.contains(cfClassName) && !cfClassName.equals(""));
+               while ((classes.contains(cfClassName) || !Pattern.matches(CLASS_NAME_PATTERN, cfClassName))
+                  && !cfClassName.equals(""));
                classes.add(cfClassName);
                if (cfClassName != null && !cfClassName.equals(""))
                   mcfdef.setCfClass(cfClassName);
@@ -439,8 +487,14 @@ public class Main
                   System.out.print(rb.getString("conn.interface.name"));
                   System.out.print(" [" + mcfdef.getConnInterfaceClass() + "]: ");
                   connInterfaceName = in.readLine();
+                  if (!connInterfaceName.equals("") && !Pattern.matches(CLASS_NAME_PATTERN, connInterfaceName))
+                  {
+                     System.out.println(rb.getString("class.name.validated"));
+                     continue;
+                  }
                }
-               while (classes.contains(connInterfaceName) && !connInterfaceName.equals(""));
+               while ((classes.contains(connInterfaceName) || !Pattern.matches(CLASS_NAME_PATTERN, connInterfaceName))
+                  && !connInterfaceName.equals(""));
                classes.add(connInterfaceName);
                if (connInterfaceName != null && !connInterfaceName.equals(""))
                   mcfdef.setConnInterfaceClass(connInterfaceName);
@@ -451,8 +505,14 @@ public class Main
                   System.out.print(rb.getString("conn.class.name"));
                   System.out.print(" [" + mcfdef.getConnImplClass() + "]: ");
                   connImplName = in.readLine();
+                  if (!connImplName.equals("") && !Pattern.matches(CLASS_NAME_PATTERN, connImplName))
+                  {
+                     System.out.println(rb.getString("class.name.validated"));
+                     continue;
+                  }
                }
-               while (classes.contains(connImplName) && !connImplName.equals(""));
+               while ((classes.contains(connImplName) || !Pattern.matches(CLASS_NAME_PATTERN, connImplName)) 
+                  && !connImplName.equals(""));
                classes.add(connImplName);
                if (connImplName != null && !connImplName.equals(""))
                   mcfdef.setConnImplClass(connImplName);
@@ -498,8 +558,14 @@ public class Main
             System.out.print(rb.getString("ml.interface.name"));
             System.out.print(" [" + def.getMlClass() + "]: ");
             mlClassName = in.readLine();
+            if (!mlClassName.equals("") && !Pattern.matches(CLASS_NAME_PATTERN, mlClassName))
+            {
+               System.out.println(rb.getString("class.name.validated"));
+               continue;
+            }
          }
-         while (classes.contains(mlClassName) && !mlClassName.equals(""));
+         while ((classes.contains(mlClassName) || !Pattern.matches(CLASS_NAME_PATTERN, mlClassName))
+            && !mlClassName.equals(""));
          classes.add(mlClassName);
          boolean defaultPackage = true;
          if (mlClassName != null && !mlClassName.equals(""))
@@ -521,8 +587,14 @@ public class Main
             System.out.print(rb.getString("as.class.name"));
             System.out.print(" [" + def.getAsClass() + "]: ");
             asClassName = in.readLine();
+            if (!asClassName.equals("") && !Pattern.matches(CLASS_NAME_PATTERN, asClassName))
+            {
+               System.out.println(rb.getString("class.name.validated"));
+               continue;
+            }
          }
-         while (classes.contains(asClassName) && !asClassName.equals(""));
+         while ((classes.contains(asClassName) || !Pattern.matches(CLASS_NAME_PATTERN, asClassName))
+            && !asClassName.equals(""));
          classes.add(asClassName);
          if (asClassName != null && !asClassName.equals(""))
             def.setAsClass(asClassName);
@@ -536,8 +608,14 @@ public class Main
             System.out.print(rb.getString("acti.class.name"));
             System.out.print(" [" + def.getActivationClass() + "]: ");
             actiClassName = in.readLine();
+            if (!actiClassName.equals("") && !Pattern.matches(CLASS_NAME_PATTERN, actiClassName))
+            {
+               System.out.println(rb.getString("class.name.validated"));
+               continue;
+            }
          }
-         while (classes.contains(actiClassName) && !actiClassName.equals(""));
+         while ((classes.contains(actiClassName) || !Pattern.matches(CLASS_NAME_PATTERN, actiClassName))
+            && !actiClassName.equals(""));
          classes.add(actiClassName);
          if (actiClassName != null && !actiClassName.equals(""))
             def.setActivationClass(actiClassName);
@@ -582,8 +660,14 @@ public class Main
             System.out.print(rb.getString("adminobject.interface.name"));
             System.out.print(" [" + def.getDefaultValue() + strOrder + "AdminObject]: ");
             aoInterfaceName = in.readLine();
+            if (!aoInterfaceName.equals("") && !Pattern.matches(CLASS_NAME_PATTERN, aoInterfaceName))
+            {
+               System.out.println(rb.getString("class.name.validated"));
+               continue;
+            }
          }
-         while (classes.contains(aoInterfaceName) && !aoInterfaceName.equals(""));
+         while ((classes.contains(aoInterfaceName) || !Pattern.matches(CLASS_NAME_PATTERN, aoInterfaceName))
+            && !aoInterfaceName.equals(""));
          classes.add(aoInterfaceName);
          
          if (aoInterfaceName != null && !aoInterfaceName.equals(""))
@@ -601,8 +685,14 @@ public class Main
             System.out.print(rb.getString("adminobject.class.name"));
             System.out.print(" [" + def.getDefaultValue() + strOrder + "AdminObjectImpl]: ");
             aoClassName = in.readLine();
+            if (!aoClassName.equals("") && !Pattern.matches(CLASS_NAME_PATTERN, aoClassName))
+            {
+               System.out.println(rb.getString("class.name.validated"));
+               continue;
+            }
          }
-         while (classes.contains(aoClassName) && !aoClassName.equals(""));
+         while ((classes.contains(aoClassName) || !Pattern.matches(CLASS_NAME_PATTERN, aoClassName))
+            && !aoClassName.equals(""));
          classes.add(aoClassName);
          if (aoClassName != null && !aoClassName.equals(""))
          {
@@ -770,42 +860,90 @@ public class Main
       throws IOException
    {
       List<ConfigPropType> props = new ArrayList<ConfigPropType>();
+      Set<String> propsNamesSet = new HashSet<String>();
       while (true)
       {
          System.out.println(rb.getString(classname + ".config.properties") + " " + 
             rb.getString("confirm.quit") + ": ");
-         System.out.print("    " + rb.getString("config.properties.name") + ": ");
-         String name = in.readLine();
-         if (name == null || name.equals(""))
-            break;
-         System.out.print("    " + rb.getString("config.properties.type") + ": ");
-         String type = in.readLine();
-
-         if (!BasicType.isBasicType(type))
+         String name;
+         do
          {
-            System.out.print(rb.getString("config.properties.type.tip") + ": [");
-            System.out.println(BasicType.allBasicType() + "]");
-            continue;
-         }
-         System.out.print("    " + rb.getString("config.properties.value") + ": ");
-         String value = in.readLine();
-         boolean required = false;
-         if (supportRequired)
-         {
-            System.out.print("    " + rb.getString("config.properties.required") + " " + 
-               rb.getString("yesno") + " [N]: ");
-            String propRequired = in.readLine();
-            if (propRequired == null)
-               required = false;
-            else
+            System.out.print("    " + rb.getString("config.properties.name") + ": ");
+            name = in.readLine();
+            if (name == null || name.equals(""))
+               break;
+            if (propsNamesSet.contains(name))
             {
-               if (propRequired.equals("Y") || propRequired.equals("y") || propRequired.equals("Yes"))
-                  required = true;
-               else
-                  required = false;
+               System.out.println("    " + rb.getString("config.properties.name.repeat"));
+            }
+            if (!Pattern.matches(CLASS_NAME_PATTERN, name))
+            {
+               System.out.println("    " + rb.getString("config.properties.name.validated"));
             }
          }
-         System.out.println();
+         while (propsNamesSet.contains(name) || !Pattern.matches(CLASS_NAME_PATTERN, name));
+         
+         if (name == null || name.equals(""))
+            break;
+         propsNamesSet.add(name);
+
+         String type;
+         do
+         {
+            System.out.print("    " + rb.getString("config.properties.type") + ": ");
+            type = in.readLine();
+
+            if (!BasicType.isBasicType(type))
+            {
+               System.out.print(rb.getString("config.properties.type.tip") + ": [");
+               System.out.println(BasicType.allBasicType() + "]");
+               continue;
+            }
+            break;
+         }
+         while (true);
+         
+         String value;
+         boolean required;
+         do
+         {
+            System.out.print("    " + rb.getString("config.properties.value") + ": ");
+            value = in.readLine();
+            if (!type.equals("String"))
+            {
+               try
+               {
+                  Class<?> cs = Class.forName("java.lang." + type);
+                  Method m = cs.getMethod("valueOf", new Class<?>[] {String.class});
+                  m.invoke(cs, new Object[] {value});
+               }
+               catch (Exception e)
+               {
+                  System.out.println("    " + rb.getString("config.properties.value.valid"));
+                  continue;
+               }
+            }
+
+            required = false;
+            if (supportRequired)
+            {
+               System.out.print("    " + rb.getString("config.properties.required") + " " + rb.getString("yesno")
+                     + " [N]: ");
+               String propRequired = in.readLine();
+               if (propRequired == null)
+                  required = false;
+               else
+               {
+                  if (propRequired.equals("Y") || propRequired.equals("y") || propRequired.equals("Yes"))
+                     required = true;
+                  else
+                     required = false;
+               }
+            }
+            System.out.println();
+            break;
+         }
+         while (true);
          
          String lowerCaseFirstLetterName = name.substring(0, 1).toLowerCase(Locale.US);
          if (name.length() > 1)
@@ -828,6 +966,7 @@ public class Main
       throws IOException
    {
       List<MethodForConnection> methods = new ArrayList<MethodForConnection>();
+      Set<String> setMethodsSig = new HashSet<String>();
       while (true)
       {
          System.out.print("    " + rb.getString("connection.method.name") + " " + 
@@ -873,6 +1012,11 @@ public class Main
             MethodParam param = method.newParam(paramName, paramType);
             method.getParams().add(param);
          }
+         if (setMethodsSig.contains(method.toString()))
+         {
+            System.out.println("    " + rb.getString("connection.method.repeat"));
+            continue;
+         }
          
          while (true)
          {
@@ -883,6 +1027,7 @@ public class Main
             method.getExceptionType().add(exceptions);
          }
          methods.add(method);
+         setMethodsSig.add(method.toString());
       }
       
       return methods;
