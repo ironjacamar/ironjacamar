@@ -74,4 +74,14 @@ public class MethodParam
    {
       return type;
    }
+   
+   /**
+    * toString
+    * @return name and type
+    */
+   @Override
+   public String toString()
+   {
+      return name + "," + type;
+   }
 }

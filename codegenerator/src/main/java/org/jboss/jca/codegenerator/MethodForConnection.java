@@ -144,4 +144,20 @@ public class MethodForConnection
       return exceptionType;
    }
 
+   /**
+    * toString
+    * @return methodName and all params
+    */
+   @Override
+   public String toString()
+   {
+      StringBuilder sb = new StringBuilder();
+      sb.append(methodName);
+      for (MethodParam p : params)
+      {
+         sb.append(",");
+         sb.append(p.toString());
+      }
+      return sb.toString();
+   }
 }
