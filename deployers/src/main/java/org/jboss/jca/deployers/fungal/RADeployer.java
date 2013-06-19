@@ -279,6 +279,10 @@ public final class RADeployer extends AbstractFungalRADeployer implements Deploy
                   if (raMcfClasses.contains(clz))
                      return true;
                }
+               if (raMcfClasses.size() == 1 && ijmd.getConnectionDefinitions().size() == 1)
+               {
+                  return true;
+               }
             }
 
             if (ijmd.getAdminObjects() != null)
@@ -289,6 +293,10 @@ public final class RADeployer extends AbstractFungalRADeployer implements Deploy
 
                   if (raAoClasses.contains(clz))
                      return true;
+               }
+               if (raAoClasses.size() == 1 && ijmd.getAdminObjects().size() == 1)
+               {
+                  return true;
                }
             }
          }
