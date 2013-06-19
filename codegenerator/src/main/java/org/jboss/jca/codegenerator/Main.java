@@ -876,12 +876,14 @@ public class Main
             {
                System.out.println("    " + rb.getString("config.properties.name.repeat"));
             }
-            if (!Pattern.matches(CLASS_NAME_PATTERN, name))
+            if (!Pattern.matches(CLASS_NAME_PATTERN, name) || BasicType.isBasicType(name)
+               || BasicType.isPrimitiveType(name))
             {
                System.out.println("    " + rb.getString("config.properties.name.validated"));
             }
          }
-         while (propsNamesSet.contains(name) || !Pattern.matches(CLASS_NAME_PATTERN, name));
+         while (propsNamesSet.contains(name) || !Pattern.matches(CLASS_NAME_PATTERN, name)
+            || BasicType.isBasicType(name) || BasicType.isPrimitiveType(name));
          
          if (name == null || name.equals(""))
             break;
