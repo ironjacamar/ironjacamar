@@ -298,98 +298,95 @@ public class TxConnectionListener extends AbstractConnectionListener
 
       try
       {
-         boolean fired = false;
-
-         if (!isTrackByTx() && transactionSynchronization != null)
+         if (!isTrackByTx())
          {
-            Transaction tx = transactionSynchronization.currentTx;
-            TransactionSynchronization synchronization = transactionSynchronization;
-            transactionSynchronization = null;
-            if (TxUtils.isUncommitted(tx))
+            if (transactionSynchronization != null)
             {
-               if (synchronization.enlisted)
+               // SUSPEND
+               Transaction tx = transactionSynchronization.currentTx;
+               TransactionSynchronization synchronization = transactionSynchronization;
+               transactionSynchronization = null;
+               if (TxUtils.isUncommitted(tx))
                {
-                  TransactionSynchronizer synchronizer =
-                     TransactionSynchronizer.getRegisteredSynchronizer(tx,
-                                                                       getConnectionManager().
-                                                                       getTransactionIntegration().
-                                                                       getTransactionSynchronizationRegistry());
-
-                  synchronizer.removeEnlisted(synchronization);
-               }
-
-               if (!getState().equals(ConnectionState.DESTROYED))
-               {
-                  if (trace)
-                     log.tracef("delistResource(%s, TMSUSPEND)", getXAResource());
-
-                  boolean suspendResult = tx.delistResource(getXAResource(), XAResource.TMSUSPEND);
-
-                  if (!suspendResult)
+                  if (synchronization.enlisted)
                   {
-                     throw new ResourceException(bundle.failureDelistResource(this));
+                     TransactionSynchronizer synchronizer =
+                        TransactionSynchronizer.getRegisteredSynchronizer(tx,
+                                                                          getConnectionManager().
+                                                                          getTransactionIntegration().
+                                                                          getTransactionSynchronizationRegistry());
+
+                     synchronizer.removeEnlisted(synchronization);
                   }
-                  else
+
+                  if (!getState().equals(ConnectionState.DESTROYED))
                   {
                      if (trace)
-                        log.trace("delist-suspend " + this);
+                        log.tracef("delistResource(%s, TMSUSPEND)", getXAResource());
 
-                     fired = true;
+                     boolean suspendResult = tx.delistResource(getXAResource(), XAResource.TMSUSPEND);
+
+                     if (!suspendResult)
+                     {
+                        throw new ResourceException(bundle.failureDelistResource(this));
+                     }
+                     else
+                     {
+                        if (trace)
+                           log.trace("delist-suspend: " + this);
+                     }
                   }
                }
             }
-
-            setEnlisted(false);
-         }
-
-         if (!isTrackByTx() && !fired && transactionSynchronization == null &&
-             !getState().equals(ConnectionState.DESTROYED) &&
-             isManagedConnectionFree())
-         {
-            ConnectionListenerFactory clf = (ConnectionListenerFactory)getConnectionManager();
-            if (clf.getTransactionIntegration() != null &&
-                clf.getTransactionIntegration().getTransactionManager() != null)
+            else
             {
-               Transaction tx = clf.getTransactionIntegration().getTransactionManager().getTransaction();
-
-               if (TxUtils.isUncommitted(tx))
+               // SUCCESS / FAIL
+               if (!getState().equals(ConnectionState.DESTROYED) &&
+                   isManagedConnectionFree() &&
+                   isEnlisted())
                {
-                  if (TxUtils.isActive(tx))
+                  ConnectionListenerFactory clf = (ConnectionListenerFactory)getConnectionManager();
+                  if (clf.getTransactionIntegration() != null &&
+                      clf.getTransactionIntegration().getTransactionManager() != null)
                   {
-                     if (trace)
-                        log.tracef("delistResource(%s, TMSUCCESS)", getXAResource());
+                     Transaction tx = clf.getTransactionIntegration().getTransactionManager().getTransaction();
 
-                     boolean successResult = tx.delistResource(getXAResource(), XAResource.TMSUCCESS);
+                     if (TxUtils.isUncommitted(tx))
+                     {
+                        if (TxUtils.isActive(tx))
+                        {
+                           if (trace)
+                              log.tracef("delistResource(%s, TMSUCCESS)", getXAResource());
 
-                     if (!successResult)
-                     {
-                        throw new ResourceException(bundle.failureDelistResource(this));
-                     }
-                     else
-                     {
-                        if (trace)
-                           log.trace("delist-success " + this);
-                     
-                        fired = true;
-                     }
-                  }
-                  else
-                  {
-                     if (trace)
-                        log.tracef("delistResource(%s, TMFAIL)", getXAResource());
+                           boolean successResult = tx.delistResource(getXAResource(), XAResource.TMSUCCESS);
 
-                     boolean failResult = tx.delistResource(getXAResource(), XAResource.TMFAIL);
+                           if (successResult)
+                           {
+                              if (trace)
+                                 log.trace("delist-success: " + this);
+                           }
+                           else
+                           {
+                              log.debug("delist-success failed: " + this);
+                           }
+                        }
+                        else
+                        {
+                           if (trace)
+                              log.tracef("delistResource(%s, TMFAIL)", getXAResource());
 
-                     if (!failResult)
-                     {
-                        throw new ResourceException(bundle.failureDelistResource(this));
-                     }
-                     else
-                     {
-                        if (trace)
-                           log.trace("delist-fail " + this);
-                     
-                        fired = true;
+                           boolean failResult = tx.delistResource(getXAResource(), XAResource.TMFAIL);
+                           
+                           if (failResult)
+                           {
+                              if (trace)
+                                 log.trace("delist-fail: " + this);
+                           }
+                           else
+                           {
+                              log.debug("delist-fail failed: " + this);
+                           }
+                        }
                      }
                   }
                }

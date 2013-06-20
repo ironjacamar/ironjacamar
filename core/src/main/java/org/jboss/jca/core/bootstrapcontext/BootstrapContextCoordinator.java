@@ -133,13 +133,23 @@ public class BootstrapContextCoordinator
     */
    public void setDefaultBootstrapContext(CloneableBootstrapContext bc)
    {
+      if (trace)
+         log.tracef("Default BootstrapContext: %s", bc);
+
+      String currentName = null;
+
+      if (defaultBootstrapContext != null)
+         currentName = defaultBootstrapContext.getName();
+
+      defaultBootstrapContext = bc;
+
       if (bc != null)
       {
-         if (bc.getName() == null || bc.getName().trim().equals(""))
-            throw new IllegalArgumentException("The name of BootstrapContext is invalid: " + bc);
-
-         defaultBootstrapContext = bc;
          bootstrapContexts.put(bc.getName(), bc);
+      }
+      else if (currentName != null)
+      {
+         bootstrapContexts.remove(currentName);
       }
    }
 
@@ -258,6 +268,9 @@ public class BootstrapContextCoordinator
     */
    public String createIdentifier(String raClz, Map<String, String> cps, String bootstrapContextName)
    {
+      if (defaultBootstrapContext == null)
+         throw new IllegalArgumentException("No default BootstrapContext defined");
+
       StringBuffer sb = new StringBuffer();
 
       sb.append(raClz);
