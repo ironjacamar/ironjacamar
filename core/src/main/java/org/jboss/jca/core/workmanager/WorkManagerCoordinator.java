@@ -219,16 +219,23 @@ public class WorkManagerCoordinator
     */
    public void setDefaultWorkManager(WorkManager wm)
    {
+      if (trace)
+         log.tracef("Default WorkManager: %s", wm);
+
+      String currentName = null;
+
+      if (defaultWorkManager != null)
+         currentName = defaultWorkManager.getName();
+
+      defaultWorkManager = wm;
+
       if (wm != null)
       {
-         if (wm.getName() == null || wm.getName().trim().equals(""))
-            throw new IllegalArgumentException("The name of WorkManager is invalid: " + wm);
-
-         if (trace)
-            log.tracef("Default WorkManager: %s", wm);
-
-         defaultWorkManager = wm;
          workmanagers.put(wm.getName(), wm);
+      }
+      else if (currentName != null)
+      {
+         workmanagers.remove(currentName);
       }
    }
 
