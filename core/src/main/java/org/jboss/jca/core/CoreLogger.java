@@ -392,6 +392,32 @@ public interface CoreLogger extends BasicLogger
    @Message(id = 616, value = "Leak detected in pool: %s")
    public void connectionLeak(String poolName, @Cause Throwable t);
    
+   /**
+    * Invalid incrementer policy
+    * @param clz The class name
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 617, value = "Invalid incrementer capacity policy: %s")
+   public void invalidCapacityIncrementer(String clz);
+   
+   /**
+    * Invalid decrementer policy
+    * @param clz The class name
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 618, value = "Invalid decrementer capacity policy: %s")
+   public void invalidCapacityDecrementer(String clz);
+   
+   /**
+    * Invalid policy option
+    * @param key The property name
+    * @param value The property value
+    * @param policy The class name
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 619, value = "Invalid property '%s' with value '%s' for %s")
+   public void invalidCapacityOption(String key, String value, String policy);
+   
    // NAMING (700)
 
    /**

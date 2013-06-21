@@ -425,6 +425,21 @@
             <entry>Leak detected in pool</entry>
           </row>
           <row>
+            <entry>617</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Invalid incrementer capacity policy</entry>
+          </row>
+          <row>
+            <entry>618</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Invalid decrementer capacity policy</entry>
+          </row>
+          <row>
+            <entry>619</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Invalid capacity property</entry>
+          </row>
+          <row>
             <entry>651</entry>
             <entry><code>EXCEPTION</code></entry>
             <entry>Unable to get managed connection pool</entry>
