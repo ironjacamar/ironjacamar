@@ -66,24 +66,30 @@ public class CapacityFactory
       {
          incrementer = loadIncrementer(metadata.getIncrementer().getClassName());
 
-         if (incrementer != null &&
-             metadata.getIncrementer().getConfigPropertiesMap().size() > 0)
+         if (incrementer != null)
          {
-            Injection injector = new Injection();
-
-            Map<String, String> properties = metadata.getIncrementer().getConfigPropertiesMap();
-            for (Map.Entry<String, String> property : properties.entrySet())
+            if (metadata.getIncrementer().getConfigPropertiesMap().size() > 0)
             {
-               try
+               Injection injector = new Injection();
+
+               Map<String, String> properties = metadata.getIncrementer().getConfigPropertiesMap();
+               for (Map.Entry<String, String> property : properties.entrySet())
                {
-                  injector.inject(incrementer, property.getKey(), property.getValue());
-               }
-               catch (Throwable t)
-               {
-                  log.debugf("Unable to set %s with value %s on %s", property.getKey(),
-                             property.getValue(), incrementer);
+                  try
+                  {
+                     injector.inject(incrementer, property.getKey(), property.getValue());
+                  }
+                  catch (Throwable t)
+                  {
+                     log.invalidCapacityOption(property.getKey(),
+                                               property.getValue(), incrementer.getClass().getName());
+                  }
                }
             }
+         }
+         else
+         {
+            log.invalidCapacityIncrementer(metadata.getIncrementer().getClassName());
          }
       }
 
@@ -95,24 +101,30 @@ public class CapacityFactory
       {
          decrementer = loadDecrementer(metadata.getDecrementer().getClassName());
 
-         if (decrementer != null &&
-             metadata.getDecrementer().getConfigPropertiesMap().size() > 0)
+         if (decrementer != null)
          {
-            Injection injector = new Injection();
-
-            Map<String, String> properties = metadata.getDecrementer().getConfigPropertiesMap();
-            for (Map.Entry<String, String> property : properties.entrySet())
+            if (metadata.getDecrementer().getConfigPropertiesMap().size() > 0)
             {
-               try
+               Injection injector = new Injection();
+
+               Map<String, String> properties = metadata.getDecrementer().getConfigPropertiesMap();
+               for (Map.Entry<String, String> property : properties.entrySet())
                {
-                  injector.inject(decrementer, property.getKey(), property.getValue());
-               }
-               catch (Throwable t)
-               {
-                  log.debugf("Unable to set %s with value %s on %s", property.getKey(),
-                             property.getValue(), decrementer);
+                  try
+                  {
+                     injector.inject(decrementer, property.getKey(), property.getValue());
+                  }
+                  catch (Throwable t)
+                  {
+                     log.invalidCapacityOption(property.getKey(),
+                                               property.getValue(), decrementer.getClass().getName());
+                  }
                }
             }
+         }
+         else
+         {
+            log.invalidCapacityDecrementer(metadata.getDecrementer().getClassName());
          }
       }
 
