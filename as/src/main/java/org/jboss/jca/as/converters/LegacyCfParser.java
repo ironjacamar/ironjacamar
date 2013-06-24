@@ -95,7 +95,6 @@ public class LegacyCfParser extends AbstractParser
          }
       }
       log.info("Skipping: " + reader.getLocalName());
-      //System.out.println("Skip parse " + reader.getLocalName());
    }
    
 
@@ -155,6 +154,7 @@ public class LegacyCfParser extends AbstractParser
    {
       ArrayList<NoTxConnectionFactory> noTxConnectionFactory = new ArrayList<NoTxConnectionFactory>();
       ArrayList<TxConnectionFactory> txConnectionFactory = new ArrayList<TxConnectionFactory>();
+      ArrayList<Mbean> mbean = new ArrayList<Mbean>();
 
       while (reader.hasNext())
       {
@@ -163,11 +163,45 @@ public class LegacyCfParser extends AbstractParser
             case END_ELEMENT : {
                if (Tag.forName(reader.getLocalName()) == Tag.CONNECTION_FACTORIES)
                {
+                  //merge mbean infomation
+                  if ((noTxConnectionFactory.size() == 1 ||
+                     txConnectionFactory.size() == 1) &&
+                     noTxConnectionFactory.size() + txConnectionFactory.size() == 1 &&
+                     mbean.size() == 1)
+                  {
+                     String jndiName = mbean.get(0).getAttributes().get("JNDIName");
+                     if (jndiName != null)
+                     {
+                        Map<String, String> cps = new HashMap<String, String>();
+                        LegacyConnectionFactoryImp cfImpl = null;
+                        if (noTxConnectionFactory.size() == 1)
+                           cfImpl = (LegacyConnectionFactoryImp)noTxConnectionFactory.get(0);
+                        else
+                           cfImpl = (LegacyConnectionFactoryImp)txConnectionFactory.get(0);
+                        if (!jndiName.startsWith("java"))
+                           jndiName = "java:/" + jndiName;
+                        String props = mbean.get(0).getAttributes().get("Properties");
+                        String[] strs = null;
+                        if (props != null)
+                           strs = props.split(" ");
+                        if (strs != null && strs.length > 0)
+                        {
+                           for (String str : strs)
+                           {
+                              String[] prop = str.split("=");
+                              cps.put(prop[0], prop[1]);
+                           }
+                        }
+                        cfImpl.buildAdminObejcts("FIXME", jndiName, "", cps, 
+                           Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT);
+                        cfImpl.buildResourceAdapterImpl();
+                     }
+                  }
                   return new ConnectionFactoriesImpl(noTxConnectionFactory, txConnectionFactory);
                }
                else
                {
-                  if (DataSources.Tag.forName(reader.getLocalName()) == DataSources.Tag.UNKNOWN)
+                  if (ConnectionFactories.Tag.forName(reader.getLocalName()) == ConnectionFactories.Tag.UNKNOWN)
                   {
                      throw new UnknownTagException(reader.getLocalName());
                   }
@@ -183,6 +217,10 @@ public class LegacyCfParser extends AbstractParser
                   }
                   case TX_CONNECTION_FACTORY : {
                      txConnectionFactory.add(parseTxConnectionFactory(reader));
+                     break;
+                  }
+                  case MBEAN : {
+                     mbean.add(parseMbean(reader));
                      break;
                   }
                   default :
@@ -510,7 +548,76 @@ public class LegacyCfParser extends AbstractParser
       throw new ParserException();
    }
 
+   private Mbean parseMbean(XMLStreamReader reader) throws Exception
+   {
+      Map<String, String> attributes = new HashMap<String, String>();
+      String code = null;
+      String name = null;
 
+      //attributes reading
+      for (Mbean.Attribute attribute : Mbean.Attribute.values())
+      {
+         switch (attribute)
+         {
+            case CODE : {
+               code = attributeAsString(reader, "code");
+               break;
+            }
+            case NAME : {
+               name = attributeAsString(reader, "name");
+               break;
+            }
+            default :
+               break;
+         }
+      }
+      //elements reading
+      while (reader.hasNext())
+      {
+         switch (reader.nextTag())
+         {
+            case END_ELEMENT : {
+               if (ConnectionFactories.Tag.forName(reader.getLocalName()) == 
+                  ConnectionFactories.Tag.MBEAN)
+               {
+                  MbeanImpl mbeanImpl = new MbeanImpl(code, name, attributes);
+                  return mbeanImpl;
+               }
+               else
+               {
+                  if (Mbean.Tag.forName(reader.getLocalName()) == Mbean.Tag.UNKNOWN)
+                  {
+                     throw new UnknownTagException(reader.getLocalName());
+                  }
+               }
+               break;
+            }
+            case START_ELEMENT : {
+               switch (Mbean.Tag.forName(reader.getLocalName()))
+               {
+                  case ATTRIBUTE : {
+                     attributes.put(attributeAsString(reader, "name"), elementAsString(reader));
+                     break;
+                  }
+                  case DEPENDS : {
+                     attributeAsString(reader, "optional-attribute-name");
+                     elementAsString(reader);
+                     break;
+                  }
+                  default :
+                     skipParse(reader);
+
+               }
+               break;
+            }
+            case CHARACTERS : {
+               break;
+            }
+         }
+      }
+      throw new ParserException();
+   }
+   
    /**
    *
    * A Tag.
