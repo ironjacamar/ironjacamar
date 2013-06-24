@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2011, Red Hat Inc, and individual contributors
+ * Copyright 2013, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -22,58 +22,56 @@
 package org.jboss.jca.as.converters;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
- *
- * ConnectionFactories
+ * Common ConnectionFactory
  * 
  * @author Jeff Zhang
  * @version $Revision: $
  */
-public interface ConnectionFactories
+public interface Mbean
 {
    /**
-    * Get the TxConnectionFactory
+    * Get the code.
     *
-    * @return the list of TxConnectionFactory
+    * @return the code.
     */
-   public List<TxConnectionFactory> getTxConnectionFactory();
+   public String getCode();
 
    /**
-    * Get the NoTxConnectionFactory
+    * Get the name.
     *
-    * @return the list of NoTxConnectionFactory
+    * @return the name.
     */
-   public List<NoTxConnectionFactory> getNoTxConnectionFactory();
+   public String getName();
+
+   
+   /**
+    * Get the attributes.
+    *
+    * @return the attributes.
+    */
+   public Map<String, String> getAttributes();
 
    /**
    *
    * A Tag.
-   *
    */
-   public enum Tag
+   public enum Tag 
    {
-      /** always first
-       *
+      /**
+       * always first
        */
       UNKNOWN(null),
-
       /**
-       * tx-connection-factory tag
+       * attribute tag
        */
-      TX_CONNECTION_FACTORY("tx-connection-factory"),
-
+      ATTRIBUTE("attribute"),
       /**
-       * no-tx-connection-factory tag
+       * depends tag
        */
-      NO_TX_CONNECTION_FACTORY("no-tx-connection-factory"),
-      
-      /**
-       * mbean tag
-       */
-      MBEAN("mbean");
+      DEPENDS("depends");
 
       private final String name;
 
@@ -131,6 +129,98 @@ public interface ConnectionFactories
       {
          final Tag element = MAP.get(localName);
          return element == null ? UNKNOWN : element;
+      }
+   }
+   
+
+   /**
+    *
+    * Attribute.
+    *
+    */
+   public enum Attribute
+   {
+      /** unknown attribute
+       *
+       */
+      UNKNOWN(null),
+      /**
+       * code tag
+       */
+      CODE("code"),
+      /**
+       * name tag
+       */
+      NAME("name");
+
+      private String name;
+
+      /**
+       *
+       * Create a new Tag.
+       *
+       * @param name a name
+       */
+      Attribute(final String name)
+      {
+         this.name = name;
+      }
+
+      /**
+       * Get the local name of this element.
+       *
+       * @return the local name
+       */
+      public String getLocalName()
+      {
+         return name;
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public String toString()
+      {
+         return name;
+      }
+
+
+      private static final Map<String, Attribute> MAP;
+
+      static
+      {
+         final Map<String, Attribute> map = new HashMap<String, Attribute>();
+         for (Attribute element : values())
+         {
+            final String name = element.getLocalName();
+            if (name != null)
+               map.put(name, element);
+         }
+         MAP = map;
+      }
+
+      /**
+       * Set the value
+       * @param v The name
+       * @return The value
+       */
+      Attribute value(String v)
+      {
+         name = v;
+         return this;
+      }
+
+      /**
+      *
+      * Static method to get enum instance given localName XsdString
+      *
+      * @param localName a XsdString used as localname (typically tag name as defined in xsd)
+      * @return the enum instance
+      */
+      public static Attribute forName(String localName)
+      {
+         final Attribute element = MAP.get(localName);
+         return element == null ? UNKNOWN.value(localName) : element;
       }
    }
 }
