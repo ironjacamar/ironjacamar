@@ -104,6 +104,52 @@ remote.port=1302
         </programlisting>
       </para>
 
+      <section id="configuration_ironjacamar_leakpool">
+        <title>Using the leak detector pool</title>
+
+        <para>
+          IronJacamar features a connection pool implementation, which keeps track of
+          connection allocations, and their release in order to provide feedback if
+          a connection is obtained, but never released by the application. This will cause
+          leaks, and lead to applications not being able to obtain any connections.
+        </para>
+
+        <para>
+          The leak detector pool provides a stack trace of the leaked connection allocation
+          either during shutdown of the pool, or once the pool is flush using a flush strategy
+          which kills all active connections.
+        </para>
+
+        <para>
+          The leak detector pool is configured using the <code>ironjacamar.mcp</code> system
+          property with a value of
+        </para>
+
+        <programlisting>
+org.jboss.jca.core.connectionmanager.pool.mcp.LeakDumperManagedConnectionPool
+        </programlisting>
+
+        <para>
+          This configuration applies to all connection pools used by IronJacamar.
+        </para>
+
+        <para>
+          The system property <code>ironjacamar.leaklog</code> can be used
+          to have the leaks dumped out into a special file separate from the logging
+          setup.
+        </para>
+
+        <para>
+          An example
+        </para>
+
+        <programlisting>
+-Dironjacamar.mcp=org.jboss.jca.core.connectionmanager.pool.mcp.LeakDumperManagedConnectionPool
+-Dironjacamar.leaklog=leaks.txt
+        </programlisting>
+
+      </section>
+
    </section>
 
    <section id="logging">
