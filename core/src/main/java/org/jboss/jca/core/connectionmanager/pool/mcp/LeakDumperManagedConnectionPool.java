@@ -99,6 +99,7 @@ public class LeakDumperManagedConnectionPool extends SemaphoreArrayListManagedCo
    public void returnConnection(ConnectionListener cl, boolean kill, boolean cleanup)
    {
       tracker.remove(cl);
+      super.returnConnection(cl, kill, cleanup);
    }
 
    /**
@@ -107,8 +108,6 @@ public class LeakDumperManagedConnectionPool extends SemaphoreArrayListManagedCo
    @Override
    void doDestroy(ConnectionListener cl)
    {
-      super.doDestroy(cl);
-
       if (tracker.containsKey(cl))
       {
          Throwable t = tracker.get(cl);
@@ -119,6 +118,8 @@ public class LeakDumperManagedConnectionPool extends SemaphoreArrayListManagedCo
 
          tracker.remove(cl);
       }
+
+      super.doDestroy(cl);
    }
 
    /**
@@ -127,8 +128,6 @@ public class LeakDumperManagedConnectionPool extends SemaphoreArrayListManagedCo
    @Override
    public void shutdown()
    {
-      super.shutdown();
-
       if (tracker.size() > 0)
       {
          for (Throwable t : tracker.values())
@@ -139,6 +138,8 @@ public class LeakDumperManagedConnectionPool extends SemaphoreArrayListManagedCo
                dump(t);
          }
       }
+
+      super.shutdown();
    }
 
    private void dump(Throwable t)
