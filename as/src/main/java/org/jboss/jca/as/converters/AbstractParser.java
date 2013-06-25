@@ -25,6 +25,7 @@ import java.io.File;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
@@ -209,6 +210,42 @@ public abstract class AbstractParser
       }
 
       return longValue;
+   }
+   
+   /**
+    * convert an xml element in String value but ignore nest element
+    *
+    * @param reader the StAX reader
+    * @return the string representing element
+    * @throws XMLStreamException StAX exception
+    */
+   protected String elementAsStringNoNest(XMLStreamReader reader) throws XMLStreamException
+   {
+      if (reader.getEventType() != XMLStreamConstants.START_ELEMENT)
+      {
+         throw new XMLStreamException("parser must be on START_ELEMENT to read next text", reader.getLocation());
+      }
+      int eventType = reader.next();
+      StringBuilder content = new StringBuilder();
+      while (eventType != XMLStreamConstants.END_ELEMENT)
+      {
+         if (eventType == XMLStreamConstants.CHARACTERS || eventType == XMLStreamConstants.CDATA
+               || eventType == XMLStreamConstants.SPACE || eventType == XMLStreamConstants.ENTITY_REFERENCE)
+         {
+            content.append(reader.getText());
+         }
+         else if (eventType == XMLStreamConstants.PROCESSING_INSTRUCTION || eventType == XMLStreamConstants.COMMENT
+               || eventType == XMLStreamConstants.END_DOCUMENT || eventType == XMLStreamConstants.START_ELEMENT)
+         {
+            // skipping
+         }
+         else
+         {
+            throw new XMLStreamException("Unexpected event type " + eventType, reader.getLocation());
+         }
+         eventType = reader.next();
+      }
+      return content.toString();
    }
 
    /**

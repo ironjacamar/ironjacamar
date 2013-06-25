@@ -596,7 +596,9 @@ public class LegacyCfParser extends AbstractParser
                switch (Mbean.Tag.forName(reader.getLocalName()))
                {
                   case ATTRIBUTE : {
-                     attributes.put(attributeAsString(reader, "name"), elementAsString(reader));
+                     String attrName = attributeAsString(reader, "name");
+                     String mbeanText = elementAsStringNoNest(reader);
+                     attributes.put(attrName, mbeanText);
                      break;
                   }
                   case DEPENDS : {
