@@ -1631,6 +1631,13 @@ public abstract class AbstractResourceAdapterDeployer
                                  wrapXAResource = xaPool.isWrapXaResource();
                                  padXid = xaPool.isPadXid();
                               }
+
+                              CommonTimeOut timeout = connectionDefinition.getTimeOut();
+                              if (timeout != null)
+                              {
+                                 xaResourceTimeout = timeout.getXaResourceTimeout();
+                              }
+                              
                               recoveryMD = connectionDefinition.getRecovery();
                            }
 
@@ -2171,6 +2178,13 @@ public abstract class AbstractResourceAdapterDeployer
                                              wrapXAResource = xaPool.isWrapXaResource();
                                              padXid = xaPool.isPadXid();
                                           }
+
+                                          CommonTimeOut timeout = connectionDefinition.getTimeOut();
+                                          if (timeout != null)
+                                          {
+                                             xaResourceTimeout = timeout.getXaResourceTimeout();
+                                          }
+
                                           recoveryMD = connectionDefinition.getRecovery();
                                        }
 
