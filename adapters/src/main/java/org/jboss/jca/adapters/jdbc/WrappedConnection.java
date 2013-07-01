@@ -1547,6 +1547,10 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          checkTransaction();
          return mc.getConnection();
       }
+      catch (Throwable t)
+      {
+         throw checkException(t);
+      }
       finally
       {
          unlock();
