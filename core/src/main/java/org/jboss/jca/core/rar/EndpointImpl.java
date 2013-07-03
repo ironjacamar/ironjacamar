@@ -26,10 +26,14 @@ import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.bv.BeanValidationUtil;
 import org.jboss.jca.core.spi.rar.Endpoint;
+import org.jboss.jca.core.spi.transaction.TransactionIntegration;
+import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.resource.ResourceException;
@@ -59,11 +63,26 @@ public class EndpointImpl implements Endpoint
    /** Bean validation groups */
    private Set<String> beanValidationGroups;
    
+   /** The product name */
+   private String productName;
+
+   /** The product version */
+   private String productVersion;
+
+   /** Transaction integration */
+   private TransactionIntegration transactionIntegration;
+
+   /** The active recovery modules */
+   private Map<ActivationSpec, XAResourceRecovery> recovery;
+
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
    
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, Endpoint.class.getName());
+
+   /** Trace logging */
+   private static boolean trace = log.isTraceEnabled();
 
    /** Is bean validation for inflow enabled */
    private static boolean bvEnabled;
@@ -78,12 +97,20 @@ public class EndpointImpl implements Endpoint
     * @param ra The resource adapter reference
     * @param is16 Is the resource adapter a 1.6 archive
     * @param bvg The bean validation groups
+    * @param productName The product name
+    * @param productVersion The product version
+    * @param ti The transaction integration
     */
-   EndpointImpl(WeakReference<ResourceAdapter> ra, boolean is16, Set<String> bvg)
+   EndpointImpl(WeakReference<ResourceAdapter> ra, boolean is16, Set<String> bvg,
+                String productName, String productVersion, TransactionIntegration ti)
    {
       this.ra = ra;
       this.is16 = is16;
       this.beanValidationGroups = bvg;
+      this.productName = productName;
+      this.productVersion = productVersion;
+      this.transactionIntegration = ti;
+      this.recovery = new HashMap<ActivationSpec, XAResourceRecovery>();
    }
 
    /**
@@ -162,6 +189,18 @@ public class EndpointImpl implements Endpoint
       }
 
       rar.endpointActivation(endpointFactory, spec);
+
+      if (transactionIntegration != null && transactionIntegration.getRecoveryRegistry() != null)
+      {
+         XAResourceRecovery xrr = transactionIntegration.createXAResourceRecovery(rar, spec,
+                                                                                  productName, productVersion);
+
+         if (trace)
+            log.tracef("Adding %s for recovery", xrr);
+
+         transactionIntegration.getRecoveryRegistry().addXAResourceRecovery(xrr);
+         recovery.put(spec, xrr);
+      }
    }
 
    /**
@@ -180,6 +219,18 @@ public class EndpointImpl implements Endpoint
 
       if (rar == null)
          throw new ResourceException(bundle.resourceAdapterInstanceNotActive());
+
+      if (transactionIntegration != null && transactionIntegration.getRecoveryRegistry() != null)
+      {
+         XAResourceRecovery xrr = recovery.remove(spec);
+         if (xrr != null)
+         {
+            if (trace)
+               log.tracef("Removing %s for recovery", xrr);
+
+            transactionIntegration.getRecoveryRegistry().removeXAResourceRecovery(xrr);
+         }
+      }
 
       rar.endpointDeactivation(endpointFactory, spec);
    }
