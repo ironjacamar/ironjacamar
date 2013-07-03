@@ -27,6 +27,7 @@ import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.Connector;
 import org.jboss.jca.common.api.metadata.ra.RequiredConfigProperty;
 import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
+import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra15.Activationspec15;
 import org.jboss.jca.common.api.metadata.ra.ra15.Connector15;
 import org.jboss.jca.common.api.metadata.ra.ra16.Activationspec16;
@@ -37,6 +38,7 @@ import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.rar.Endpoint;
 import org.jboss.jca.core.spi.rar.NotFoundException;
 import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
+import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
@@ -82,6 +84,9 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
    /** The metadata repository */
    private MetadataRepository mdr;
 
+   /** The transaction integration */
+   private TransactionIntegration transactionIntegration;
+
    // We include the primitive types because we can handle those
    static
    {
@@ -113,6 +118,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
       this.rars = new HashMap<String, WeakReference<ResourceAdapter>>();
       this.ids = new HashMap<String, AtomicInteger>();
       this.mdr = null;
+      this.transactionIntegration = null;
    }
 
    /**
@@ -122,6 +128,15 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
    public synchronized void setMetadataRepository(MetadataRepository v)
    {
       this.mdr = v;
+   }
+
+   /**
+    * Set the transaction integration
+    * @param v The value
+    */
+   public synchronized void setTransactionIntegration(TransactionIntegration v)
+   {
+      this.transactionIntegration = v;
    }
 
    /**
@@ -301,8 +316,11 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
       String mdrIdentifier = getMDRIdentifier(ra.get());
       boolean is16 = is16(mdrIdentifier);
       Set<String> beanValidationGroups = getBeanValidationGroups(mdrIdentifier);
+      String productName = getProductName(mdrIdentifier);
+      String productVersion = getProductVersion(mdrIdentifier);
 
-      return new EndpointImpl(ra, is16, beanValidationGroups);
+      return new EndpointImpl(ra, is16, beanValidationGroups,
+                              productName, productVersion, transactionIntegration);
    }
 
    /**
@@ -589,6 +607,62 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
       return null;
    }
 
+   /**
+    * Get the product name for the resource adapter
+    * @param id The MDR identifier
+    * @return The value
+    */
+   private String getProductName(String id)
+   {
+      if (id == null || id.equals(""))
+         return "";
+
+      try
+      {
+         Connector raXml = mdr.getResourceAdapter(id);
+         if (raXml != null && !XsdString.isNull(raXml.getEisType()))
+         {
+            return raXml.getEisType().getValue();
+         }
+      }
+      catch (Throwable t)
+      {
+         log.debug("Exception while loading ra.xml: " + id, t);
+      }
+
+      return "";
+   }
+
+   /**
+    * Get the product version for the resource adapter
+    * @param id The MDR identifier
+    * @return The value
+    */
+   private String getProductVersion(String id)
+   {
+      if (id == null || id.equals(""))
+         return "";
+
+      try
+      {
+         Connector raXml = mdr.getResourceAdapter(id);
+         if (raXml != null)
+         {
+            if (raXml instanceof Connector15)
+            {
+               Connector15 ra15 = (Connector15)raXml;
+               if (!XsdString.isNull(ra15.getResourceadapterVersion()))
+                  return ((Connector15)raXml).getResourceadapterVersion().getValue();
+            }
+         }
+      }
+      catch (Throwable t)
+      {
+         log.debug("Exception while loading ra.xml: " + id, t);
+      }
+
+      return "";
+   }
 
    /**
     * String representation
@@ -604,6 +678,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
       sb.append(" rars=").append(rars);
       sb.append(" ids=").append(ids);
       sb.append(" mdr=").append(mdr);
+      sb.append(" ti=").append(transactionIntegration);
       sb.append("]");
 
       return sb.toString();

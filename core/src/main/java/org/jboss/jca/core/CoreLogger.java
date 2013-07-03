@@ -441,7 +441,16 @@ public interface CoreLogger extends BasicLogger
    @LogMessage(level = WARN)
    @Message(id = 901, value = "Error during connection close")
    public void exceptionDuringConnectionClose(@Cause Throwable t);
-   
+
+   /**
+    * Error during inflow crash recovery
+    * @param rar The resource adapter class name
+    * @param as The activation spec
+    * @param t The exception
+    */
+   @LogMessage(level = ERROR)
+   @Message(id = 902, value = "Error during inflow crash recovery for '%s' (%s)")
+   public void exceptionDuringCrashRecoveryInflow(String rar, Object as, @Cause Throwable t);
    
    // SECURITY (1000)
 

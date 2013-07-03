@@ -30,7 +30,9 @@ import org.jboss.jca.core.spi.transaction.usertx.UserTransactionRegistry;
 import org.jboss.jca.core.spi.transaction.xa.XAResourceWrapper;
 import org.jboss.jca.core.spi.transaction.xa.XATerminator;
 
+import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.ManagedConnectionFactory;
+import javax.resource.spi.ResourceAdapter;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.xa.XAResource;
@@ -82,6 +84,19 @@ public interface TransactionIntegration
     * @return The value
     */
    public XATerminator getXATerminator();
+
+   /**
+    * Create an XAResourceRecovery instance
+    *
+    * @param rar The resource adapter
+    * @param as The activation spec
+    * @param productName The product name
+    * @param productVersion The product version
+    * @return The value
+    */
+   public XAResourceRecovery createXAResourceRecovery(ResourceAdapter rar,
+                                                      ActivationSpec as,
+                                                      String productName, String productVersion);
 
    /**
     * Create an XAResourceRecovery instance
