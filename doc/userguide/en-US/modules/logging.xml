@@ -460,6 +460,11 @@
             <entry>Error during connection close</entry>
           </row>
           <row>
+            <entry>902</entry>
+            <entry><code>ERROR</code></entry>
+            <entry>Error during inflow crash recovery</entry>
+          </row>
+          <row>
             <entry>951</entry>
             <entry><code>EXCEPTION</code></entry>
             <entry>Error during connection close</entry>
