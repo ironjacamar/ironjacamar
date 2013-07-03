@@ -530,6 +530,26 @@
             <entry>Error during inflow crash recovery</entry>
           </row>
           <row>
+            <entry>903</entry>
+            <entry><code>ERROR</code></entry>
+            <entry>Error creating Subject for crash recovery</entry>
+          </row>
+          <row>
+            <entry>904</entry>
+            <entry><code>WARN</code></entry>
+            <entry>No security domain defined for crash recovery</entry>
+          </row>
+          <row>
+            <entry>905</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Subject for crash recovery was null</entry>
+          </row>
+          <row>
+            <entry>906</entry>
+            <entry><code>ERROR</code></entry>
+            <entry>Error during crash recovery</entry>
+          </row>
+          <row>
             <entry>951</entry>
             <entry><code>EXCEPTION</code></entry>
             <entry>Error during connection close</entry>
