@@ -124,6 +124,7 @@
        ================================= -->
   <target name="test-jars">
       	
+    <!--
     <jar destfile="${build.deployers.dir}/rafail2connector.rar">
        <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
@@ -131,7 +132,8 @@
           includes="org/jboss/jca/test/deployers/spec/rars/rafail2connector/*.class"/>
        <fileset dir="src/test/resources/rafail2connector.rar"/>
     </jar>
-  	
+    -->
+
     <jar destfile="${build.deployers.dir}/ra16inoutanno.rar">
        <fileset dir="${build.deployers.dir}/test"
           includes="org/jboss/jca/test/deployers/spec/rars/*.class"/>
