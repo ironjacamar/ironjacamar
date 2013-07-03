@@ -66,6 +66,18 @@ public class XAResourceWrapperImpl implements org.jboss.jca.core.spi.transaction
    /**
     * Creates a new wrapper instance.
     * @param resource xaresource
+    * @param productName product name
+    * @param productVersion product version
+    */   
+   public XAResourceWrapperImpl(XAResource resource,
+                                String productName, String productVersion)
+   {
+      this(resource, false, null, productName, productVersion, null);
+   }
+
+   /**
+    * Creates a new wrapper instance.
+    * @param resource xaresource
     * @param pad pad
     * @param override override
     * @param productName product name

@@ -178,6 +178,7 @@
         interface="org.jboss.jca.core.spi.rar.ResourceAdapterRepository"
         class="org.jboss.jca.core.rar.SimpleResourceAdapterRepository">
     <property name="MetadataRepository"><inject bean="MDR"/></property>
+    <property name="TransactionIntegration"><null/></property>
   </bean>
 
   <!-- Management repository -->
