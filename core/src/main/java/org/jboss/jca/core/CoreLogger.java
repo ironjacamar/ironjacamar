@@ -410,6 +410,42 @@ public interface CoreLogger extends BasicLogger
    @Message(id = 902, value = "Error during inflow crash recovery for '%s' (%s)")
    public void exceptionDuringCrashRecoveryInflow(String rar, Object as, @Cause Throwable t);
    
+   /**
+    * Error creating Subject for crash recovery
+    * @param jndiName The JNDI name
+    * @param reason The reason
+    * @param t The exception
+    */
+   @LogMessage(level = ERROR)
+   @Message(id = 903, value = "Error creating Subject for crash recovery: %s (%s)")
+   public void exceptionDuringCrashRecoverySubject(String jndiName, String reason, @Cause Throwable t);
+   
+   /**
+    * No security domain defined for crash recovery
+    * @param jndiName The JNDI name
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 904, value = "No security domain defined for crash recovery: %s")
+   public void noCrashRecoverySecurityDomain(String jndiName);
+
+   /**
+    * Subject for crash recovery was null
+    * @param jndiName The JNDI name
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 905, value = "Subject for crash recovery was null: %s")
+   public void nullSubjectCrashRecovery(String jndiName);
+
+   /**
+    * Error during crash recovery
+    * @param jndiName The JNDI name
+    * @param reason The reason
+    * @param t The exception
+    */
+   @LogMessage(level = ERROR)
+   @Message(id = 906, value = "Error during crash recovery: %s (%s)")
+   public void exceptionDuringCrashRecovery(String jndiName, String reason, @Cause Throwable t);
+
    // SECURITY (1000)
 
    /**

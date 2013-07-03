@@ -235,12 +235,12 @@ public class XAResourceRecoveryImpl implements org.jboss.jca.core.spi.transactio
          }
          else
          {
-            log.debugf("Subject for recovery was null");
+            log.nullSubjectCrashRecovery(jndiName);
          }
       }
       catch (ResourceException re)
       {
-         log.debugf("Error during recovery", re);
+         log.exceptionDuringCrashRecovery(jndiName, re.getMessage(), re);
       }
 
       return new XAResource[0];
@@ -314,12 +314,12 @@ public class XAResourceRecoveryImpl implements org.jboss.jca.core.spi.transactio
                   }
                   else
                   {
-                     log.debugf("RecoverySecurityDomain was empty");
+                     log.noCrashRecoverySecurityDomain(jndiName);
                   }
                }
                catch (Throwable t)
                {
-                  log.debugf("Exception during getSubject() - %s", t.getMessage(), t);
+                  log.exceptionDuringCrashRecoverySubject(jndiName, t.getMessage(), t);
                }
 
                return null;
