@@ -167,6 +167,26 @@ public class Injection
    }
 
    /**
+    * Compare the type of a class with the actual value
+    * @param classType The class type
+    * @param propertyType The property type
+    * @return True if they match, or if there is a primitive mapping
+    */
+   private boolean argumentMatches(String classType, String propertyType)
+   {
+      return (classType.equals(propertyType))
+         || (classType.equals("java.lang.Byte") && propertyType.equals("byte"))
+         || (classType.equals("java.lang.Short") && propertyType.equals("short"))
+         || (classType.equals("java.lang.Integer") && propertyType.equals("int"))
+         || (classType.equals("java.lang.Long") && propertyType.equals("long"))
+         || (classType.equals("java.lang.Float") && propertyType.equals("float"))
+         || (classType.equals("java.lang.Double") && propertyType.equals("double"))
+         || (classType.equals("java.lang.Boolean") && propertyType.equals("boolean"))
+         || (classType.equals("java.lang.Character") && propertyType.equals("char"))
+         ;
+   }
+
+   /**
     * Find a method
     * @param clz The class
     * @param methodName The method name
@@ -184,7 +204,7 @@ public class Injection
             final Method method = methods[i];
             if (methodName.equals(method.getName()) && method.getParameterTypes().length == 1)
             {
-               if (propertyType == null || propertyType.equals(method.getParameterTypes()[0].getName()))
+               if (propertyType == null || argumentMatches(propertyType, method.getParameterTypes()[0].getName()))
                {
                   if (hits == null)
                      hits = new ArrayList<Method>(1);
@@ -249,7 +269,7 @@ public class Injection
             final Field field = fields[i];
             if (fieldName.equals(field.getName()))
             {
-               if (fieldType == null || fieldType.equals(field.getType().getName()))
+               if (fieldType == null || argumentMatches(fieldType, field.getType().getName()))
                {
                   if (hits == null)
                      hits = new ArrayList<Field>(1);
