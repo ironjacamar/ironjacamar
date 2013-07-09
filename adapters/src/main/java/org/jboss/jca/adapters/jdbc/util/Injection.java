@@ -182,8 +182,7 @@ public class Injection
          || (classType.equals("java.lang.Float") && propertyType.equals("float"))
          || (classType.equals("java.lang.Double") && propertyType.equals("double"))
          || (classType.equals("java.lang.Boolean") && propertyType.equals("boolean"))
-         || (classType.equals("java.lang.Character") && propertyType.equals("char"))
-         ;
+         || (classType.equals("java.lang.Character") && propertyType.equals("char"));
    }
 
    /**

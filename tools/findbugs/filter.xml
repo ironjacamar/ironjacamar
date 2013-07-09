@@ -157,7 +157,7 @@
   <!--  org.jboss.jca.codegenerator filter -->
   <Match>
     <Class name="org.jboss.jca.codegenerator.Main"/>
-    <Bug code="Dm"/>
+    <Bug code="Dm,REC"/>
   </Match>
   <Match>
     <Class name="org.jboss.jca.codegenerator.Utils"/>
@@ -362,6 +362,10 @@
     <Bug code="DLS,NP,BC,RCN"/>
   </Match>
   <Match>
+    <Class name="org.jboss.jca.core.connectionmanager.pool.mcp.LeakDumperManagedConnectionPool"/>
+    <Bug code="Dm"/>
+  </Match>
+  <Match>
     <Class name="org.jboss.jca.core.connectionmanager.pool.mcp.SemaphoreArrayListManagedConnectionPool"/>
     <Bug code="DLS,NP,BC,RCN"/>
   </Match>
@@ -530,48 +534,48 @@
 
   <!--  org.jboss.jca.embedded filter -->
   <Match>
-    <Class name="org.jboss.jca.embedded.dsl.datasources10.impl.DatasourcesDescriptorImpl"/>
-    <Bug code="WMI"/>
+    <Package name="org.jboss.jca.embedded.dsl.datasources10.impl"/>
+    <Bug code="Nm,WMI"/>
   </Match>
   <Match>
-    <Class name="org.jboss.jca.embedded.dsl.datasources11.impl.DatasourcesDescriptorImpl"/>
-    <Bug code="WMI"/>
+    <Package name="org.jboss.jca.embedded.dsl.datasources11.impl"/>
+    <Bug code="Nm,WMI"/>
   </Match>
   <Match>
-    <Class name="org.jboss.jca.embedded.dsl.datasources12.impl.DatasourcesDescriptorImpl"/>
-    <Bug code="WMI"/>
+    <Package name="org.jboss.jca.embedded.dsl.datasources12.impl"/>
+    <Bug code="Nm,WMI"/>
   </Match>
   <Match>
-    <Class name="org.jboss.jca.embedded.dsl.ironjacamar10.impl.IronjacamarDescriptorImpl"/>
-    <Bug code="WMI"/>
+    <Package name="org.jboss.jca.embedded.dsl.ironjacamar10.impl"/>
+    <Bug code="Nm,WMI"/>
   </Match>
   <Match>
-    <Class name="org.jboss.jca.embedded.dsl.ironjacamar11.impl.IronjacamarDescriptorImpl"/>
-    <Bug code="WMI"/>
+    <Package name="org.jboss.jca.embedded.dsl.ironjacamar11.impl"/>
+    <Bug code="Nm,WMI"/>
   </Match>
   <Match>
-    <Class name="org.jboss.jca.embedded.dsl.resourceadapters10.impl.ResourceAdaptersDescriptorImpl"/>
-    <Bug code="WMI"/>
+    <Package name="org.jboss.jca.embedded.dsl.resourceadapters10.impl"/>
+    <Bug code="Nm,WMI"/>
   </Match>
   <Match>
-    <Class name="org.jboss.jca.embedded.dsl.resourceadapters11.impl.ResourceAdaptersDescriptorImpl"/>
-    <Bug code="WMI"/>
+    <Package name="org.jboss.jca.embedded.dsl.resourceadapters11.impl"/>
+    <Bug code="Nm,WMI"/>
   </Match>
   <Match>
-    <Class name="org.jboss.shrinkwrap.descriptor.impl.connector10.ConnectorDescriptorImpl"/>
-    <Bug code="WMI"/>
+    <Package name="org.jboss.shrinkwrap.descriptor.impl.connector10"/>
+    <Bug code="Nm,WMI"/>
   </Match>
   <Match>
-    <Class name="org.jboss.shrinkwrap.descriptor.impl.connector15.ConnectorDescriptorImpl"/>
-    <Bug code="WMI"/>
+    <Package name="org.jboss.shrinkwrap.descriptor.impl.connector15"/>
+    <Bug code="Nm,WMI"/>
   </Match>
   <Match>
-    <Class name="org.jboss.shrinkwrap.descriptor.impl.connector16.ConnectorDescriptorImpl"/>
-    <Bug code="WMI"/>
+    <Package name="org.jboss.shrinkwrap.descriptor.impl.connector16"/>
+    <Bug code="Nm,WMI"/>
   </Match>
   <Match>
-    <Class name="org.jboss.shrinkwrap.descriptor.impl.connector17.ConnectorDescriptorImpl"/>
-    <Bug code="WMI"/>
+    <Package name="org.jboss.shrinkwrap.descriptor.impl.connector17"/>
+    <Bug code="Nm,WMI"/>
   </Match>
 
   <!--  org.jboss.jca.sjc filter -->

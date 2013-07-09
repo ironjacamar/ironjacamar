@@ -26,7 +26,7 @@ import org.jboss.jca.common.metadata.ironjacamar.v11.IronJacamarParser;
 
 import org.junit.BeforeClass;
 import org.junit.Ignore;
-import org.junit.Test;
+//import org.junit.Test;
 
 /**
  *
