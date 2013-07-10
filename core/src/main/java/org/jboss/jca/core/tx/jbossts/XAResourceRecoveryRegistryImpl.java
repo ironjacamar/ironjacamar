@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2011, Red Hat Middleware LLC, and individual contributors
+ * IronJacamar, a Java EE Connector Architecture implementation
+ * Copyright 2011, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -46,10 +46,10 @@ public class XAResourceRecoveryRegistryImpl
     */
    public void addXAResourceRecovery(XAResourceRecovery recovery)
    {
-      if (!(recovery instanceof XAResourceRecoveryImpl))
-         throw new IllegalArgumentException("Recovery is not a XAResourceRecoveryImpl instance");
+      if (!(recovery instanceof org.jboss.tm.XAResourceRecovery))
+         throw new IllegalArgumentException("Recovery is not a org.jboss.tm.XAResourceRecovery instance");
 
-      delegator.addXAResourceRecovery((XAResourceRecoveryImpl)recovery);
+      delegator.addXAResourceRecovery((org.jboss.tm.XAResourceRecovery)recovery);
    }
 
    /**
@@ -57,9 +57,9 @@ public class XAResourceRecoveryRegistryImpl
     */
    public void removeXAResourceRecovery(XAResourceRecovery recovery)
    {
-      if (!(recovery instanceof XAResourceRecoveryImpl))
-         throw new IllegalArgumentException("Recovery is not a XAResourceRecoveryImpl instance");
+      if (!(recovery instanceof org.jboss.tm.XAResourceRecovery))
+         throw new IllegalArgumentException("Recovery is not a org.jboss.tm.XAResourceRecovery instance");
 
-      delegator.removeXAResourceRecovery((XAResourceRecoveryImpl)recovery);
+      delegator.removeXAResourceRecovery((org.jboss.tm.XAResourceRecovery)recovery);
    }
 }
