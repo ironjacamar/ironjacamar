@@ -46,10 +46,10 @@ public class XAResourceRecoveryRegistryImpl
     */
    public void addXAResourceRecovery(XAResourceRecovery recovery)
    {
-      if (!(recovery instanceof XAResourceRecoveryImpl))
-         throw new IllegalArgumentException("Recovery is not a XAResourceRecoveryImpl instance");
+      if (!(recovery instanceof org.jboss.tm.XAResourceRecovery))
+         throw new IllegalArgumentException("Recovery is not a org.jboss.tm.XAResourceRecovery instance");
 
-      delegator.addXAResourceRecovery((XAResourceRecoveryImpl)recovery);
+      delegator.addXAResourceRecovery((org.jboss.tm.XAResourceRecovery)recovery);
    }
 
    /**
@@ -57,9 +57,9 @@ public class XAResourceRecoveryRegistryImpl
     */
    public void removeXAResourceRecovery(XAResourceRecovery recovery)
    {
-      if (!(recovery instanceof XAResourceRecoveryImpl))
-         throw new IllegalArgumentException("Recovery is not a XAResourceRecoveryImpl instance");
+      if (!(recovery instanceof org.jboss.tm.XAResourceRecovery))
+         throw new IllegalArgumentException("Recovery is not a org.jboss.tm.XAResourceRecovery instance");
 
-      delegator.removeXAResourceRecovery((XAResourceRecoveryImpl)recovery);
+      delegator.removeXAResourceRecovery((org.jboss.tm.XAResourceRecovery)recovery);
    }
 }
