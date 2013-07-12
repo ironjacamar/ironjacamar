@@ -44,6 +44,7 @@ import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
+import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 
 import org.jboss.logging.Logger;
@@ -69,6 +70,9 @@ public class TxConnectionListener extends AbstractConnectionListener
    /**XAResource instance*/
    private final XAResource xaResource;
 
+   /** XAResource timeout */
+   private final int xaResourceTimeout;
+
    /** Whether there is a local transaction */
    private final AtomicBoolean localTransaction = new AtomicBoolean(false);
 
@@ -80,16 +84,18 @@ public class TxConnectionListener extends AbstractConnectionListener
     * @param context context
     * @param flushStrategy flushStrategy
     * @param xaResource xaresource instance
+    * @param xaResourceTimeout timeout for the XAResource
     * @throws ResourceException if aexception while creating
     */
    public TxConnectionListener(final ConnectionManager cm, final ManagedConnection mc,
                                final Pool pool, final Object context, final FlushStrategy flushStrategy,
-                               final XAResource xaResource)
+                               final XAResource xaResource, final int xaResourceTimeout)
       throws ResourceException
    {
       super(cm, mc, pool, context, flushStrategy);
 
       this.xaResource = xaResource;
+      this.xaResourceTimeout = xaResourceTimeout;
 
       if (xaResource instanceof LocalXAResource)
       {
@@ -103,6 +109,28 @@ public class TxConnectionListener extends AbstractConnectionListener
    protected CoreLogger getLogger()
    {
       return log;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void used()
+   {
+      super.used();
+
+      // Do a reset of the underlying XAResource timeout
+      if (!(xaResource instanceof LocalXAResource) && xaResourceTimeout > 0)
+      {
+         try
+         {
+            xaResource.setTransactionTimeout(xaResourceTimeout);
+         }
+         catch (XAException e)
+         {
+            log.debug("XAException happend during return for: " + getPool().getName(), e);
+         }
+      }
    }
 
    /**

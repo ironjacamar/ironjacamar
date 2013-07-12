@@ -518,7 +518,8 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
       throws ResourceException
    {
       XAResource xaResource = null;
-      
+      int explicitXAResourceTimeout = 0;
+
       if (localTransactions)
       {
          String eisProductName = null;
@@ -596,8 +597,14 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
          {
             try
             {
-               if (!xaResource.setTransactionTimeout(xaResourceTimeout))
+               if (xaResource.setTransactionTimeout(xaResourceTimeout))
+               {
+                  explicitXAResourceTimeout = xaResourceTimeout;
+               }
+               else
+               {
                   log.debug("XAResource does not support transaction timeout configuration: " + getJndiName());
+               }
             }
             catch (XAException e)
             {
@@ -606,7 +613,8 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
          }
       }
 
-      ConnectionListener cli = new TxConnectionListener(this, mc, getPool(), context, getFlushStrategy(), xaResource);
+      ConnectionListener cli = new TxConnectionListener(this, mc, getPool(), context, getFlushStrategy(),
+                                                        xaResource, explicitXAResourceTimeout);
       mc.addConnectionEventListener(cli);
       return cli;
    }
