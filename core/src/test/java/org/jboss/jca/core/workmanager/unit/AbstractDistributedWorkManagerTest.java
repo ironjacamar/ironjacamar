@@ -117,6 +117,12 @@ public abstract class AbstractDistributedWorkManagerTest
 
          assertEquals(1, dwm.getStatistics().getWorkSuccessful());
          assertEquals(2, dwm.getDistributedStatistics().getWorkSuccessful());
+
+         dwm.getStatistics().clear();
+         assertEquals(0, dwm.getStatistics().getWorkSuccessful());
+
+         dwm.getDistributedStatistics().clear();
+         assertEquals(0, dwm.getDistributedStatistics().getWorkSuccessful());
       }
       finally
       {

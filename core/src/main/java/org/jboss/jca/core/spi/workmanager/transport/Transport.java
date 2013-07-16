@@ -121,6 +121,12 @@ public interface Transport
    public DistributedWorkManagerStatisticsValues getDistributedStatistics(Address address);
 
    /**
+    * Clear distributed statistics
+    * @param address The address
+    */
+   public void clearDistributedStatistics(Address address);
+
+   /**
     * Delta doWork accepted
     * @param address The address
     */

@@ -80,6 +80,9 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
    /** The JChannel used by this transport **/
    private JChannel channel;
 
+   /** Timeout */
+   private long timeout;
+
    /** the cluster name to join **/
    private String clusterName;
 
@@ -115,21 +118,23 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
 
    private static final short GET_DISTRIBUTED_STATISTICS_METHOD = 14;
 
-   private static final short DELTA_DOWORK_ACCEPTED_METHOD = 15;
+   private static final short CLEAR_DISTRIBUTED_STATISTICS_METHOD = 15;
 
-   private static final short DELTA_DOWORK_REJECTED_METHOD = 16;
+   private static final short DELTA_DOWORK_ACCEPTED_METHOD = 16;
 
-   private static final short DELTA_STARTWORK_ACCEPTED_METHOD = 17;
+   private static final short DELTA_DOWORK_REJECTED_METHOD = 17;
 
-   private static final short DELTA_STARTWORK_REJECTED_METHOD = 18;
+   private static final short DELTA_STARTWORK_ACCEPTED_METHOD = 18;
 
-   private static final short DELTA_SCHEDULEWORK_ACCEPTED_METHOD = 19;
+   private static final short DELTA_STARTWORK_REJECTED_METHOD = 19;
 
-   private static final short DELTA_SCHEDULEWORK_REJECTED_METHOD = 20;
+   private static final short DELTA_SCHEDULEWORK_ACCEPTED_METHOD = 20;
 
-   private static final short DELTA_WORK_SUCCESSFUL_METHOD = 21;
+   private static final short DELTA_SCHEDULEWORK_REJECTED_METHOD = 21;
 
-   private static final short DELTA_WORK_FAILED_METHOD = 22;
+   private static final short DELTA_WORK_SUCCESSFUL_METHOD = 22;
+
+   private static final short DELTA_WORK_FAILED_METHOD = 23;
 
    private static Map<Short, Method> methods = new HashMap<Short, Method>();
 
@@ -201,6 +206,10 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
                      AbstractRemoteTransport.class.getMethod("localGetDistributedStatistics",
                                                              org.jboss.jca.core.spi.workmanager.Address.class));
 
+         methods.put(CLEAR_DISTRIBUTED_STATISTICS_METHOD,
+                     AbstractRemoteTransport.class.getMethod("localClearDistributedStatistics",
+                                                             org.jboss.jca.core.spi.workmanager.Address.class));
+
          methods.put(DELTA_DOWORK_ACCEPTED_METHOD,
                      AbstractRemoteTransport.class.getMethod("localDeltaDoWorkAccepted",
                                                              org.jboss.jca.core.spi.workmanager.Address.class));
@@ -245,6 +254,7 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
       this.clusterName = null;
       this.disp = null;
       this.initialized = false;
+      this.timeout = 10000L;
    }
 
    /**
@@ -528,7 +538,7 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
          return null;
       }
 
-      RequestOptions opts = new RequestOptions(ResponseMode.GET_ALL, 10000);
+      RequestOptions opts = new RequestOptions(ResponseMode.GET_ALL, timeout);
       try
       {
          switch (request)
@@ -688,6 +698,16 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
 
                break;
             }
+            case CLEAR_DISTRIBUTED_STATISTICS : {
+               org.jboss.jca.core.spi.workmanager.Address address =
+                  (org.jboss.jca.core.spi.workmanager.Address) parameters[0];
+
+               disp.callRemoteMethod(destAddress,
+                                     new MethodCall(CLEAR_DISTRIBUTED_STATISTICS_METHOD, address),
+                                     opts);
+
+               break;
+            }
             case DELTA_DOWORK_ACCEPTED : {
                org.jboss.jca.core.spi.workmanager.Address address =
                   (org.jboss.jca.core.spi.workmanager.Address) parameters[0];
@@ -841,6 +861,24 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
    public void setClusterName(String clustername)
    {
       this.clusterName = clustername;
+   }
+
+   /**
+    * Get the timeout
+    * @return The value
+    */
+   public long getTimeout()
+   {
+      return timeout;
+   }
+
+   /**
+    * Set the timeout
+    * @param v The value
+    */
+   public void setTimeout(long v)
+   {
+      timeout = v;
    }
 
    @Override

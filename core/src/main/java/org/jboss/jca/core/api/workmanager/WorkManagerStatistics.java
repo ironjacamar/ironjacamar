@@ -80,4 +80,9 @@ public interface WorkManagerStatistics
     * @return The value
     */
    public int getStartWorkRejected();
+
+   /**
+    * Clear the statistics
+    */
+   public void clear();
 }

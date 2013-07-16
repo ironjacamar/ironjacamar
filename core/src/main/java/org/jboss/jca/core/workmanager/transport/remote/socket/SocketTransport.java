@@ -185,6 +185,11 @@ public class SocketTransport extends AbstractRemoteTransport<String> implements 
       String[] addressPart = address.split(":");
       Socket socket = null;
       ObjectOutputStream oos = null;
+
+      if (trace)
+         log.tracef("%s:%d: sending message=%s to %s:%s", ss.getInetAddress().getHostName(),
+                    ss.getLocalPort(), request, addressPart[0], addressPart[1]);
+
       try
       {
          socket = new Socket(addressPart[0], Integer.valueOf(addressPart[1]));

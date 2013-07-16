@@ -66,6 +66,8 @@ public class ProtocolMessages
 
       /** GET_DISTRIBUTED_STATISTICS */
       GET_DISTRIBUTED_STATISTICS(1, Address.class),
+      /** CLEAR_DISTRIBUTED_STATISTICS */
+      CLEAR_DISTRIBUTED_STATISTICS(1, Address.class),
       /** DELTA_DOWORK_ACCEPTED */
       DELTA_DOWORK_ACCEPTED(1, Address.class),
       /** DELTA_DOWORK_REJECTED */

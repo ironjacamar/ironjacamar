@@ -345,6 +345,21 @@ public class Communication implements Runnable
 
                break;
             }
+            case CLEAR_DISTRIBUTED_STATISTICS : {
+               if (numberOfParameters != 1)
+                  throw new IllegalArgumentException(bundle.invalidNumberOfParameters(numberOfParameters,
+                                                                                      "CLEAR_DISTRIBUTED_STATISTICS"));
+
+               Address id = (Address)wois.readObject();
+
+               if (trace)
+                  log.tracef("%s: CLEAR_DISTRIBUTED_STATISTICS(%s)", socket.getInetAddress(), id);
+
+               transport.localClearDistributedStatistics(id);
+               response = Response.OK_VOID;
+
+               break;
+            }
             case DELTA_DOWORK_ACCEPTED : {
                if (numberOfParameters != 1)
                   throw new IllegalArgumentException(bundle.invalidNumberOfParameters(numberOfParameters,

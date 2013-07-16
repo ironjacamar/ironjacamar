@@ -220,6 +220,22 @@ public class WorkManagerStatisticsImpl implements WorkManagerStatistics
    }
 
    /**
+    * {@inheritDoc}
+    */
+   public synchronized void clear()
+   {
+      active.set(0);
+      successful.set(0);
+      failed.set(0);
+      doWorkAccepted.set(0);
+      doWorkRejected.set(0);
+      scheduleWorkAccepted.set(0);
+      scheduleWorkRejected.set(0);
+      startWorkAccepted.set(0);
+      startWorkRejected.set(0);
+   }
+
+   /**
     * String representation
     * @return The string
     */

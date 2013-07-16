@@ -274,6 +274,41 @@ public abstract class AbstractRemoteTransport<T> implements Transport
     * {@inheritDoc}
     */
    @Override
+   public void clearDistributedStatistics(Address address)
+   {
+      if (trace)
+         log.tracef("CLEAR_DISTRIBUTED_STATISTICS(%s)", address);
+
+      if (!getId().equals(address.getTransportId()))
+         localClearDistributedStatistics(address);
+
+      if (address.getTransportId() != null && getId().equals(address.getTransportId()))
+      {
+         for (Entry<Address, T> entry : nodes.entrySet())
+         {
+            Address a = entry.getKey();
+            if (!getId().equals(a.getTransportId()))
+            {
+               try
+               {
+                  sendMessage(entry.getValue(), Request.CLEAR_DISTRIBUTED_STATISTICS, address);
+               }
+               catch (WorkException e1)
+               {
+                  if (log.isDebugEnabled())
+                  {
+                     log.debug("Error", e1);
+                  }
+               }
+            }
+         }
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public void deltaDoWorkAccepted(Address address)
    {
       if (trace)
@@ -943,6 +978,30 @@ public abstract class AbstractRemoteTransport<T> implements Transport
       }
 
       return null;
+   }
+
+   /**
+    * localClearDistributedStatistics
+    *
+    * @param logicalAddress the logical address
+    */
+   public void localClearDistributedStatistics(Address logicalAddress)
+   {
+      if (trace)
+         log.tracef("LOCAL_CLEAR_DISTRIBUTED_STATISTICS(%s)", logicalAddress);
+
+      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
+      DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(logicalAddress);
+
+      if (dwm != null)
+      {
+         if (dwm.isDistributedStatisticsEnabled())
+         {
+            DistributedWorkManagerStatisticsValues v =
+               new DistributedWorkManagerStatisticsValues(0, 0, 0, 0, 0, 0, 0, 0);
+            dwm.getDistributedStatistics().initialize(v);
+         }
+      }
    }
 
    /**
