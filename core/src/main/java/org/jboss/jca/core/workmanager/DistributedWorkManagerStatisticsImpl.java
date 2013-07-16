@@ -331,6 +331,27 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
    }
 
    /**
+    * {@inheritDoc}
+    */
+   public synchronized void clear()
+   {
+      successful.set(0);
+      failed.set(0);
+      doWorkAccepted.set(0);
+      doWorkRejected.set(0);
+      scheduleWorkAccepted.set(0);
+      scheduleWorkRejected.set(0);
+      startWorkAccepted.set(0);
+      startWorkRejected.set(0);
+
+      if (trace)
+         log.tracef("clear: %s", workManagers);
+
+      if (own != null && transport != null && transport.isInitialized())
+         transport.clearDistributedStatistics(own);
+   }
+
+   /**
     * Send: doWork accepted
     */
    void sendDeltaDoWorkAccepted()
