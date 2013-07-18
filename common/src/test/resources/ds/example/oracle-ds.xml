@@ -10,6 +10,8 @@
       Clearly, its better to have TNS set up properly.
     -->
     <connection-url>jdbc:oracle:thin:@youroraclehost:1521:yoursid</connection-url>
+    <!-- you don't need this but it helps DBAs identify the application associated with a connection -->
+    <connection-property name="v$session.program">IronJacamar</connection-property>
     <driver-class>oracle.jdbc.driver.OracleDriver</driver-class>
     <security>
       <user-name>x</user-name>

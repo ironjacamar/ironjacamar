@@ -5,6 +5,8 @@
 
   <xa-datasource jndi-name="java:/XAOracleDS" pool-name="XAOracleDS">
     <xa-datasource-property name="URL">jdbc:oracle:oci8:@tc</xa-datasource-property>
+    <!-- you don't need this but it helps DBAs identify the application associated with a connection -->
+    <xa-datasource-property name="connectionProperties">v$session.program=IronJacamar</xa-datasource-property>
     <xa-datasource-class>oracle.jdbc.xa.client.OracleXADataSource</xa-datasource-class>
     <xa-pool>
       <is-same-rm-override>false</is-same-rm-override>
