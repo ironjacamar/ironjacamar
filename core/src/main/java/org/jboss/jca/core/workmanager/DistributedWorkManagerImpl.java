@@ -120,8 +120,14 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    /**
     * {@inheritDoc}
     */
-   public void setPolicy(Policy v)
+   public synchronized void setPolicy(Policy v)
    {
+      if (policy != null)
+      {
+         if (policy instanceof NotificationListener)
+            listeners.remove((NotificationListener)policy);
+      }
+
       policy = v;
 
       if (policy != null)
@@ -142,8 +148,14 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    /**
     * {@inheritDoc}
     */
-   public void setSelector(Selector v)
+   public synchronized void setSelector(Selector v)
    {
+      if (selector != null)
+      {
+         if (selector instanceof NotificationListener)
+            listeners.remove((NotificationListener)selector);
+      }
+
       selector = v;
 
       if (selector != null)
@@ -164,8 +176,16 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    /**
     * {@inheritDoc}
     */
-   public void setTransport(Transport v)
+   public synchronized void setTransport(Transport v)
    {
+      if (transport != null)
+      {
+         if (transport instanceof NotificationListener)
+            listeners.remove((NotificationListener)transport);
+
+         removeDistributedStatistics();
+      }
+
       transport = v;
 
       if (transport != null)
@@ -263,26 +283,33 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
     */
    public void localDoWork(Work work) throws WorkException
    {
-      checkTransport();
-
-      if (getLongRunningThreadPool() != null && WorkManagerUtil.isLongRunning(work))
+      if (transport != null)
       {
-         transport.updateLongRunningFree(getLocalAddress(),
-                                         getLongRunningThreadPool().getNumberOfFreeThreads() - 1);
+         checkTransport();
+
+         if (getLongRunningThreadPool() != null && WorkManagerUtil.isLongRunning(work))
+         {
+            transport.updateLongRunningFree(getLocalAddress(),
+                                            getLongRunningThreadPool().getNumberOfFreeThreads() - 1);
+         }
+         else
+         {
+            transport.updateShortRunningFree(getLocalAddress(),
+                                             getShortRunningThreadPool().getNumberOfFreeThreads() - 1);
+         }
+
+         WorkEventListener wel = new WorkEventListener(WorkManagerUtil.isLongRunning(work),
+                                                       getShortRunningThreadPool(),
+                                                       getLongRunningThreadPool(),
+                                                       getLocalAddress(),
+                                                       transport);
+
+         super.doWork(work, WorkManager.INDEFINITE, null, wel);
       }
       else
       {
-         transport.updateShortRunningFree(getLocalAddress(),
-                                          getShortRunningThreadPool().getNumberOfFreeThreads() - 1);
+         super.doWork(work);
       }
-
-      WorkEventListener wel = new WorkEventListener(WorkManagerUtil.isLongRunning(work),
-                                                    getShortRunningThreadPool(),
-                                                    getLongRunningThreadPool(),
-                                                    getLocalAddress(),
-                                                    transport);
-
-      super.doWork(work, WorkManager.INDEFINITE, null, wel);
    }
 
    /**
@@ -290,26 +317,33 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
     */
    public void localScheduleWork(Work work) throws WorkException
    {
-      checkTransport();
-
-      if (getLongRunningThreadPool() != null && WorkManagerUtil.isLongRunning(work))
+      if (transport != null)
       {
-         transport.updateLongRunningFree(getLocalAddress(),
-                                         getLongRunningThreadPool().getNumberOfFreeThreads() - 1);
+         checkTransport();
+
+         if (getLongRunningThreadPool() != null && WorkManagerUtil.isLongRunning(work))
+         {
+            transport.updateLongRunningFree(getLocalAddress(),
+                                            getLongRunningThreadPool().getNumberOfFreeThreads() - 1);
+         }
+         else
+         {
+            transport.updateShortRunningFree(getLocalAddress(),
+                                             getShortRunningThreadPool().getNumberOfFreeThreads() - 1);
+         }
+
+         WorkEventListener wel = new WorkEventListener(WorkManagerUtil.isLongRunning(work),
+                                                       getShortRunningThreadPool(),
+                                                       getLongRunningThreadPool(),
+                                                       getLocalAddress(),
+                                                       transport);
+
+         super.scheduleWork(work, WorkManager.INDEFINITE, null, wel);
       }
       else
       {
-         transport.updateShortRunningFree(getLocalAddress(),
-                                          getShortRunningThreadPool().getNumberOfFreeThreads() - 1);
+         super.scheduleWork(work);
       }
-
-      WorkEventListener wel = new WorkEventListener(WorkManagerUtil.isLongRunning(work),
-                                                    getShortRunningThreadPool(),
-                                                    getLongRunningThreadPool(),
-                                                    getLocalAddress(),
-                                                    transport);
-
-      super.scheduleWork(work, WorkManager.INDEFINITE, null, wel);
    }
 
    /**
@@ -317,26 +351,33 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
     */
    public long localStartWork(Work work) throws WorkException
    {
-      checkTransport();
-
-      if (getLongRunningThreadPool() != null && WorkManagerUtil.isLongRunning(work))
+      if (transport != null)
       {
-         transport.updateLongRunningFree(getLocalAddress(),
-                                         getLongRunningThreadPool().getNumberOfFreeThreads() - 1);
+         checkTransport();
+
+         if (getLongRunningThreadPool() != null && WorkManagerUtil.isLongRunning(work))
+         {
+            transport.updateLongRunningFree(getLocalAddress(),
+                                            getLongRunningThreadPool().getNumberOfFreeThreads() - 1);
+         }
+         else
+         {
+            transport.updateShortRunningFree(getLocalAddress(),
+                                             getShortRunningThreadPool().getNumberOfFreeThreads() - 1);
+         }
+
+         WorkEventListener wel = new WorkEventListener(WorkManagerUtil.isLongRunning(work),
+                                                       getShortRunningThreadPool(),
+                                                       getLongRunningThreadPool(),
+                                                       getLocalAddress(),
+                                                       transport);
+
+         return super.startWork(work, WorkManager.INDEFINITE, null, wel);
       }
       else
       {
-         transport.updateShortRunningFree(getLocalAddress(),
-                                          getShortRunningThreadPool().getNumberOfFreeThreads() - 1);
+         return super.startWork(work);
       }
-
-      WorkEventListener wel = new WorkEventListener(WorkManagerUtil.isLongRunning(work),
-                                                    getShortRunningThreadPool(),
-                                                    getLongRunningThreadPool(),
-                                                    getLocalAddress(),
-                                                    transport);
-
-      return super.startWork(work, WorkManager.INDEFINITE, null, wel);
    }
 
    /**
@@ -491,6 +532,19 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    }
 
    /**
+    * Remove distributed statistics
+    */
+   private synchronized void removeDistributedStatistics()
+   {
+      if (distributedStatistics != null)
+      {
+         listeners.remove((NotificationListener)distributedStatistics);
+         distributedStatistics.setTransport(null);
+         distributedStatistics = null;
+      }
+   }
+
+   /**
     * {@inheritDoc}
     */
    @Override
@@ -501,7 +555,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
 
       super.deltaDoWorkAccepted();
 
-      if (distributedStatisticsEnabled)
+      if (distributedStatisticsEnabled && distributedStatistics != null && transport != null)
       {
          try
          {
@@ -526,7 +580,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
 
       super.deltaDoWorkRejected();
 
-      if (distributedStatisticsEnabled)
+      if (distributedStatisticsEnabled && distributedStatistics != null && transport != null)
       {
          try
          {
@@ -551,7 +605,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
 
       super.deltaStartWorkAccepted();
 
-      if (distributedStatisticsEnabled)
+      if (distributedStatisticsEnabled && distributedStatistics != null && transport != null)
       {
          try
          {
@@ -576,7 +630,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
 
       super.deltaStartWorkRejected();
 
-      if (distributedStatisticsEnabled)
+      if (distributedStatisticsEnabled && distributedStatistics != null && transport != null)
       {
          try
          {
@@ -601,7 +655,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
 
       super.deltaScheduleWorkAccepted();
 
-      if (distributedStatisticsEnabled)
+      if (distributedStatisticsEnabled && distributedStatistics != null && transport != null)
       {
          try
          {
@@ -626,7 +680,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
 
       super.deltaScheduleWorkRejected();
 
-      if (distributedStatisticsEnabled)
+      if (distributedStatisticsEnabled && distributedStatistics != null && transport != null)
       {
          try
          {
@@ -651,7 +705,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
 
       super.deltaWorkSuccessful();
 
-      if (distributedStatisticsEnabled)
+      if (distributedStatisticsEnabled && distributedStatistics != null && transport != null)
       {
          try
          {
@@ -676,7 +730,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
 
       super.deltaWorkFailed();
 
-      if (distributedStatisticsEnabled)
+      if (distributedStatisticsEnabled && distributedStatistics != null && transport != null)
       {
          try
          {
@@ -697,7 +751,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    Address getLocalAddress()
    {
       if (localAddress == null)
-         localAddress = new Address(getId(), getName(), transport.getId());
+         localAddress = new Address(getId(), getName(), transport != null ? transport.getId() : null);
 
       return localAddress;
    }
@@ -707,8 +761,11 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
     */
    public void initialize()
    {
-      distributedStatistics.setOwnId(getLocalAddress());
-      distributedStatistics.setTransport(transport);
+      if (distributedStatistics != null)
+      {
+         distributedStatistics.setOwnId(getLocalAddress());
+         distributedStatistics.setTransport(transport);
+      }
    }
 
    /**
@@ -732,13 +789,13 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
       DistributedWorkManagerStatisticsImpl dwmsi = new DistributedWorkManagerStatisticsImpl();
       wm.setDistributedStatistics(dwmsi);
       
-      if (getPolicy() instanceof NotificationListener)
+      if (getPolicy() != null && getPolicy() instanceof NotificationListener)
          wm.listeners.add((NotificationListener)getPolicy());
 
-      if (getSelector() instanceof NotificationListener)
+      if (getSelector() != null && getSelector() instanceof NotificationListener)
          wm.listeners.add((NotificationListener)getSelector());
 
-      if (getTransport() instanceof NotificationListener)
+      if (getTransport() != null && getTransport() instanceof NotificationListener)
          wm.listeners.add((NotificationListener)getTransport());
 
       wm.listeners.add((NotificationListener)dwmsi);
