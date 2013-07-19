@@ -28,6 +28,8 @@ import org.jboss.jca.core.api.workmanager.WorkManager;
 import org.jboss.jca.core.spi.workmanager.Address;
 import org.jboss.jca.core.spi.workmanager.notification.NotificationListener;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -121,7 +123,9 @@ public class WorkManagerCoordinator
 
                         if (dwm != null)
                         {
-                           for (NotificationListener nl : dwm.getNotificationListeners())
+                           Collection<NotificationListener> copy =
+                              new ArrayList<NotificationListener>(dwm.getNotificationListeners());
+                           for (NotificationListener nl : copy)
                            {
                               nl.join(event.getAddress());
                            }
@@ -134,7 +138,9 @@ public class WorkManagerCoordinator
 
                         if (dwm != null)
                         {
-                           for (NotificationListener nl : dwm.getNotificationListeners())
+                           Collection<NotificationListener> copy =
+                              new ArrayList<NotificationListener>(dwm.getNotificationListeners());
+                           for (NotificationListener nl : copy)
                            {
                               nl.leave(event.getAddress());
                            }
@@ -149,7 +155,9 @@ public class WorkManagerCoordinator
 
                         if (dwm != null)
                         {
-                           for (NotificationListener nl : dwm.getNotificationListeners())
+                           Collection<NotificationListener> copy =
+                              new ArrayList<NotificationListener>(dwm.getNotificationListeners());
+                           for (NotificationListener nl : copy)
                            {
                               nl.updateShortRunningFree(event.getAddress(), event.getValue());
                            }
@@ -162,7 +170,9 @@ public class WorkManagerCoordinator
 
                         if (dwm != null)
                         {
-                           for (NotificationListener nl : dwm.getNotificationListeners())
+                           Collection<NotificationListener> copy =
+                              new ArrayList<NotificationListener>(dwm.getNotificationListeners());
+                           for (NotificationListener nl : copy)
                            {
                               nl.updateLongRunningFree(event.getAddress(), event.getValue());
                            }
@@ -275,7 +285,6 @@ public class WorkManagerCoordinator
             {
                DistributedWorkManager dwm = (DistributedWorkManager)wm;
                dwm.initialize();
-               //dwm.getTransport().register(new Address(wm.getId(), wm.getName(), dwm.getTransport().getId()));
             }
 
             activeWorkmanagers.put(address.getWorkManagerId(), wm);
@@ -385,7 +394,8 @@ public class WorkManagerCoordinator
          if (wm instanceof DistributedWorkManager)
          {
             DistributedWorkManager dwm = (DistributedWorkManager)wm;
-            dwm.getTransport().register(new Address(wm.getId(), wm.getName(), dwm.getTransport().getId()));
+            if (dwm.getTransport() != null)
+               dwm.getTransport().register(new Address(wm.getId(), wm.getName(), dwm.getTransport().getId()));
          }
 
          return wm;
@@ -414,7 +424,15 @@ public class WorkManagerCoordinator
          {
             DistributedWorkManager dwm = (DistributedWorkManager)wm;
             dwm.initialize();
-            dwm.getTransport().register(new Address(wm.getId(), wm.getName(), dwm.getTransport().getId()));
+
+            if (dwm.getTransport() != null)
+            {
+               dwm.getTransport().register(new Address(wm.getId(), wm.getName(), dwm.getTransport().getId()));
+            }
+            else
+            {
+               log.debugf("DistributedWorkManager '%s' doesn't have a transport associated", dwm.getName());
+            }
          }
 
          activeWorkmanagers.put(id, wm);
@@ -453,7 +471,8 @@ public class WorkManagerCoordinator
             if (wm instanceof DistributedWorkManager)
             {
                DistributedWorkManager dwm = (DistributedWorkManager)wm;
-               dwm.getTransport().unregister(new Address(wm.getId(), wm.getName(), dwm.getTransport().getId()));
+               if (dwm.getTransport() != null)
+                  dwm.getTransport().unregister(new Address(wm.getId(), wm.getName(), dwm.getTransport().getId()));
             }
 
             activeWorkmanagers.remove(id);

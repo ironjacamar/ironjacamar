@@ -37,6 +37,8 @@ import org.jboss.jca.core.workmanager.WorkManagerEventQueue;
 import org.jboss.jca.core.workmanager.transport.remote.ProtocolMessages.Request;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -47,9 +49,6 @@ import java.util.concurrent.ExecutorService;
 
 import javax.resource.spi.work.DistributableWork;
 import javax.resource.spi.work.WorkException;
-
-
-
 
 import org.jboss.logging.Logger;
 
@@ -676,7 +675,9 @@ public abstract class AbstractRemoteTransport<T> implements Transport
 
          if (dwm != null)
          {
-            for (NotificationListener nl : dwm.getNotificationListeners())
+            Collection<NotificationListener> copy =
+               new ArrayList<NotificationListener>(dwm.getNotificationListeners());
+            for (NotificationListener nl : copy)
             {
                nl.join(logicalAddress);
             }
@@ -720,7 +721,9 @@ public abstract class AbstractRemoteTransport<T> implements Transport
 
             if (dwm != null)
             {
-               for (NotificationListener nl : dwm.getNotificationListeners())
+               Collection<NotificationListener> copy =
+                  new ArrayList<NotificationListener>(dwm.getNotificationListeners());
+               for (NotificationListener nl : copy)
                {
                   nl.leave(logicalAddress);
                }
@@ -777,7 +780,9 @@ public abstract class AbstractRemoteTransport<T> implements Transport
 
       if (dwm != null)
       {
-         for (NotificationListener nl : dwm.getNotificationListeners())
+         Collection<NotificationListener> copy =
+            new ArrayList<NotificationListener>(dwm.getNotificationListeners());
+         for (NotificationListener nl : copy)
          {
             nl.leave(address);
          }
@@ -908,7 +913,9 @@ public abstract class AbstractRemoteTransport<T> implements Transport
 
       if (dwm != null)
       {
-         for (NotificationListener nl : dwm.getNotificationListeners())
+         Collection<NotificationListener> copy =
+            new ArrayList<NotificationListener>(dwm.getNotificationListeners());
+         for (NotificationListener nl : copy)
          {
             nl.updateShortRunningFree(logicalAddress, freeCount);
          }
@@ -936,7 +943,9 @@ public abstract class AbstractRemoteTransport<T> implements Transport
 
       if (dwm != null)
       {
-         for (NotificationListener nl : dwm.getNotificationListeners())
+         Collection<NotificationListener> copy =
+            new ArrayList<NotificationListener>(dwm.getNotificationListeners());
+         for (NotificationListener nl : copy)
          {
             nl.updateLongRunningFree(logicalAddress, freeCount);
          }
@@ -1018,7 +1027,9 @@ public abstract class AbstractRemoteTransport<T> implements Transport
 
       if (dwm != null)
       {
-         for (NotificationListener nl : dwm.getNotificationListeners())
+         Collection<NotificationListener> copy =
+            new ArrayList<NotificationListener>(dwm.getNotificationListeners());
+         for (NotificationListener nl : copy)
          {
             nl.deltaDoWorkAccepted();
          }
@@ -1039,7 +1050,9 @@ public abstract class AbstractRemoteTransport<T> implements Transport
 
       if (dwm != null)
       {
-         for (NotificationListener nl : dwm.getNotificationListeners())
+         Collection<NotificationListener> copy =
+            new ArrayList<NotificationListener>(dwm.getNotificationListeners());
+         for (NotificationListener nl : copy)
          {
             nl.deltaDoWorkRejected();
          }
@@ -1060,7 +1073,9 @@ public abstract class AbstractRemoteTransport<T> implements Transport
 
       if (dwm != null)
       {
-         for (NotificationListener nl : dwm.getNotificationListeners())
+         Collection<NotificationListener> copy =
+            new ArrayList<NotificationListener>(dwm.getNotificationListeners());
+         for (NotificationListener nl : copy)
          {
             nl.deltaStartWorkAccepted();
          }
@@ -1081,7 +1096,9 @@ public abstract class AbstractRemoteTransport<T> implements Transport
 
       if (dwm != null)
       {
-         for (NotificationListener nl : dwm.getNotificationListeners())
+         Collection<NotificationListener> copy =
+            new ArrayList<NotificationListener>(dwm.getNotificationListeners());
+         for (NotificationListener nl : copy)
          {
             nl.deltaStartWorkRejected();
          }
@@ -1102,7 +1119,9 @@ public abstract class AbstractRemoteTransport<T> implements Transport
 
       if (dwm != null)
       {
-         for (NotificationListener nl : dwm.getNotificationListeners())
+         Collection<NotificationListener> copy =
+            new ArrayList<NotificationListener>(dwm.getNotificationListeners());
+         for (NotificationListener nl : copy)
          {
             nl.deltaScheduleWorkAccepted();
          }
@@ -1123,7 +1142,9 @@ public abstract class AbstractRemoteTransport<T> implements Transport
 
       if (dwm != null)
       {
-         for (NotificationListener nl : dwm.getNotificationListeners())
+         Collection<NotificationListener> copy =
+            new ArrayList<NotificationListener>(dwm.getNotificationListeners());
+         for (NotificationListener nl : copy)
          {
             nl.deltaScheduleWorkRejected();
          }
@@ -1144,7 +1165,9 @@ public abstract class AbstractRemoteTransport<T> implements Transport
 
       if (dwm != null)
       {
-         for (NotificationListener nl : dwm.getNotificationListeners())
+         Collection<NotificationListener> copy =
+            new ArrayList<NotificationListener>(dwm.getNotificationListeners());
+         for (NotificationListener nl : copy)
          {
             nl.deltaWorkSuccessful();
          }
@@ -1165,7 +1188,9 @@ public abstract class AbstractRemoteTransport<T> implements Transport
 
       if (dwm != null)
       {
-         for (NotificationListener nl : dwm.getNotificationListeners())
+         Collection<NotificationListener> copy =
+            new ArrayList<NotificationListener>(dwm.getNotificationListeners());
+         for (NotificationListener nl : copy)
          {
             nl.deltaWorkFailed();
          }
