@@ -327,7 +327,7 @@ public class Annotations
 
       // Display name
       ArrayList<LocalizedXsdString> displayNames = null;
-      if (conAnnotation != null && conAnnotation.description() != null && conAnnotation.displayName().length != 0)
+      if (conAnnotation != null && conAnnotation.displayName() != null && conAnnotation.displayName().length != 0)
       {
          displayNames = new ArrayList<LocalizedXsdString>(conAnnotation.displayName().length);
          for (String displayNameAnnotation : conAnnotation.displayName())
