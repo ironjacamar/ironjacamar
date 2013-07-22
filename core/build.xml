@@ -186,6 +186,7 @@
           <include name="**/*TestCase.class"/>
           <exclude name="**/*BMTestCase.class"/>
           <exclude name="**/*MJVMTestCase.class"/>
+          <exclude name="**/*CrashTestCase.class"/>
         </fileset>
       </batchtest>
 
@@ -247,12 +248,23 @@
        Target: mjvm-test
        ================================= -->
   <target name="mjvm-test" unless="no-mjvm">
+    <mkdir dir="${build.core.dir}/ij" />
+    <copy todir="${build.core.dir}/ij" overwrite="true">
+      <fileset dir="${build.dir}/ij-template"/>
+    </copy>
+    <copy todir="${build.core.dir}/ij" overwrite="true">
+      <fileset dir="src/test/resources/test-instance"/>
+    </copy>
+    <delete file="${build.core.dir}/ij/system/web.xml"/>
+    <delete file="${build.core.dir}/ij/system/console.war"/>
+
+    <jar destfile="${build.core.dir}/ij/lib/ironjacamar-test-support.jar"
+         basedir="${build.core.dir}/test"
+         includes="**/support/**"/>
+
     <path id="ant.lib.path.id">
-      <fileset dir="../target">
-        <include name="*.jar"/>
-      </fileset>
-      <fileset dir="../lib/sjc">
-        <include name="*.jar"/>
+      <fileset dir="${build.core.dir}/ij">
+        <include name="**/*.jar"/>
       </fileset>
     </path>
 
@@ -271,14 +283,9 @@
     <taskdef name="undeploy"
              classname="org.jboss.jca.sjc.ant.Undeploy"
              classpathref="ant.lib.path.id"/>
-
-    <mkdir dir="${build.core.dir}/ij" />
-    <copy todir="${build.core.dir}/ij" overwrite="true">
-      <fileset dir="${build.dir}/ij-template"/>
-    </copy>
-    <copy todir="${build.core.dir}/ij" overwrite="true">
-      <fileset dir="src/test/resources/test-instance"/>
-    </copy>
+    <taskdef name="crash"
+             classname="org.jboss.jca.core.workmanager.support.Crash"
+             classpathref="ant.lib.path.id"/>
 
     <start home="${build.core.dir}/ij" options="${build.core.dir}/ij/bin/ironjacamar.properties"/>
     <waitfor maxwait="15" maxwaitunit="second">
@@ -335,6 +342,9 @@
     <undeploy host="localhost" port="1303" file="src/test/resources/test-instance/dwm-bc-jgroups-ra.xml"/>
     <undeploy host="localhost" port="1303" file="${build.core.dir}/test/work.rar"/>
     <stop home="${build.core.dir}/ij"/>
+
+    <!-- Crash tests -->
+    <echo message="Crash tests"/>
 
   </target>
 
