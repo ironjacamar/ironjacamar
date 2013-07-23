@@ -34,6 +34,8 @@ import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.ResourceAdapterAssociation;
 import javax.resource.spi.work.DistributableWork;
 import javax.resource.spi.work.Work;
+import javax.resource.spi.work.WorkCompletedException;
+import javax.resource.spi.work.WorkException;
 
 import org.jboss.logging.Logger;
 
@@ -42,6 +44,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * An abstract distributed workmanager test
@@ -106,6 +109,9 @@ public abstract class AbstractDistributedWorkManagerTest
 
          DistributedWorkManager dwm = (DistributedWorkManager)wc.getWorkManager();
 
+         dwm.getStatistics().clear();
+         dwm.getDistributedStatistics().clear();
+
          wc.doWork(new MyWork());
          wc.doWork(new MyDistributableWork());
 
@@ -126,6 +132,57 @@ public abstract class AbstractDistributedWorkManagerTest
       }
       finally
       {
+         wc.close();
+      }
+   }
+
+   /**
+    * Test that a work instance can report a failure
+    * @throws Throwable throwable exception
+    */
+   @Test
+   public void testFailure() throws Throwable
+   {
+      log.infof("DWM: %s", getDistributedWorkManager());
+
+      assertNotNull(wcf);
+
+      WorkConnection wc = wcf.getConnection();
+      DistributedWorkManager dwm = null;
+      try
+      {
+         assertNotNull(wc.getWorkManager());
+         assertTrue(wc.getWorkManager() instanceof javax.resource.spi.work.DistributableWorkManager);
+
+         dwm = (DistributedWorkManager)wc.getWorkManager();
+
+         dwm.getStatistics().clear();
+         dwm.getDistributedStatistics().clear();
+
+         wc.doWork(new MyDistributableFailureWork());
+
+         fail("Expected WorkException");
+      }
+      catch (WorkException we)
+      {
+         assertTrue(we instanceof WorkCompletedException);
+
+         WorkCompletedException wce = (WorkCompletedException)we;
+
+         assertNotNull(wce.getCause());
+
+         assertTrue(wce.getCause() instanceof RuntimeException);
+         
+         RuntimeException re = (RuntimeException)wce.getCause();
+
+         assertEquals("FAILURE", re.getMessage());
+      }
+      finally
+      {
+         assertNotNull(dwm);
+         assertNotNull(dwm.getDistributedStatistics());
+         assertEquals(1, dwm.getDistributedStatistics().getWorkFailed());
+
          wc.close();
       }
    }
@@ -276,6 +333,39 @@ public abstract class AbstractDistributedWorkManagerTest
        */
       public CustomParameter()
       {
+      }
+   }
+
+   /**
+    * DistributableWork: Failure
+    */
+   public static class MyDistributableFailureWork implements DistributableWork
+   {
+      /** Serial version uid */
+      private static final long serialVersionUID = 1L;
+
+      /**
+       * Constructor
+       */
+      public MyDistributableFailureWork()
+      {
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public void run()
+      {
+         System.out.println("MyDistributableFailureWork: run");
+         throw new RuntimeException("FAILURE");
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public void release()
+      {
+         System.out.println("MyDistributableFailureWork: release");
       }
    }
 }
