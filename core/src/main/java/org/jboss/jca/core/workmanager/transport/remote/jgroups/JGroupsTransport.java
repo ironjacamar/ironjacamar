@@ -570,6 +570,10 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
                                                                      new MethodCall(GET_WORKMANAGERS_METHOD),
                                                                      opts);
                }
+               catch (WorkException we)
+               {
+                  throw we;
+               }
                catch (Exception e)
                {
                   throw new WorkException(e);
@@ -602,6 +606,10 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
                   returnValue = (Long) disp.callRemoteMethod(destAddress, new MethodCall(PING_METHOD),
                      opts);
                }
+               catch (WorkException we)
+               {
+                  throw we;
+               }
                catch (Exception e)
                {
                   throw new WorkException(e);
@@ -618,6 +626,10 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
                {
                   disp.callRemoteMethod(destAddress,
                                         new MethodCall(DO_WORK_METHOD, address, cb, getBytes(work)), opts);
+               }
+               catch (WorkException we)
+               {
+                  throw we;
                }
                catch (Exception e)
                {
@@ -788,6 +800,10 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
                break;
          }
       }
+      catch (WorkException we)
+      {
+         throw we;
+      }
       catch (Throwable t)
       {
          WorkException we = new WorkException(t.getMessage());
@@ -806,9 +822,17 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
          {
             if (rsp.hasException())
             {
-               WorkException we = new WorkException(rsp.getException().getMessage());
-               we.initCause(rsp.getException());
-               throw we;
+               Throwable t = rsp.getException();
+               if (t instanceof WorkException)
+               {
+                  throw (WorkException)t;
+               }
+               else
+               {
+                  WorkException we = new WorkException(rsp.getException().getMessage());
+                  we.initCause(rsp.getException());
+                  throw we;
+               }
             }
          }
       }
