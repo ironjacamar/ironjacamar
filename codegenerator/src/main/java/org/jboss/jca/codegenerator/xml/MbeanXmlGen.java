@@ -55,8 +55,8 @@ public class MbeanXmlGen extends AbstractXmlGen
       
       Map<String, String> map = new HashMap<String, String>();
       map.put("mbean.name", def.getDefaultValue());
-      map.put("mbean.interface", def.getRaPackage() + "." + def.getMbeanInterfaceClass());
-      map.put("mbean.impl", def.getRaPackage() + "." + def.getMbeanImplClass());
+      map.put("mbean.interface", def.getRaPackage() + ".mbean." + def.getMbeanInterfaceClass());
+      map.put("mbean.impl", def.getRaPackage() + ".mbean." + def.getMbeanImplClass());
       
       Template template = new SimpleTemplate(buildString);
       template.process(map, out);

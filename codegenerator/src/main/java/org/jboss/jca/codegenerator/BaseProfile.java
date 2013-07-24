@@ -494,7 +494,7 @@ public class BaseProfile implements Profile
       try
       {
          outputDir = outputDir + File.separatorChar + "src" + File.separatorChar + 
-            "main" + File.separatorChar + "resources";
+            "main" + File.separatorChar + "resources" + File.separatorChar + "jca";
          FileWriter mbfw = Utils.createFile(mbeanName + ".xml", outputDir);
          MbeanXmlGen mbGen = new MbeanXmlGen();
          mbGen.generate(def, mbfw);
