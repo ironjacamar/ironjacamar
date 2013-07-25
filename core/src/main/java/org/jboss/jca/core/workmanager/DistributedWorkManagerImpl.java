@@ -393,6 +393,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
       }
       else
       {
+         doFirstChecks(work, WorkManager.INDEFINITE, null);
          checkTransport();
 
          DistributableWork dw = (DistributableWork)work;
@@ -428,6 +429,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
       }
       else
       {
+         doFirstChecks(work, WorkManager.INDEFINITE, null);
          checkTransport();
 
          DistributableWork dw = (DistributableWork)work;
@@ -458,6 +460,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
       }
       else
       {
+         doFirstChecks(work, WorkManager.INDEFINITE, null);
          checkTransport();
 
          DistributableWork dw = (DistributableWork)work;
