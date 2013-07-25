@@ -107,6 +107,7 @@
 
     <javac srcdir="${basedir}/src/main/java"
            destdir="${build.dir}"
+           includeantruntime="false"
            classpathref="lib.path.id">
     </javac> 
   </target>
@@ -152,6 +153,7 @@
            classpathref="test.lib.path.id"
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
+           includeantruntime="false"
            optimize="${javac.optimize}">
       <compilerarg value="-Xlint"/>
     </javac> 

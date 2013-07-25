@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.codegenerator.code;
 
+import org.jboss.jca.codegenerator.BasicType;
 import org.jboss.jca.codegenerator.Definition;
 import org.jboss.jca.codegenerator.MethodForConnection;
 import org.jboss.jca.codegenerator.MethodParam;
@@ -796,7 +797,14 @@ public class McCodeGen extends AbstractCodeGen
                {
                   writeEol(out);
                   writeIndent(out, indent + 1);
-                  out.write("return null;");
+                  if (BasicType.isPrimitiveType(method.getReturnType()))
+                  {
+                     out.write("return " + BasicType.defaultValue(method.getReturnType()) + ";");
+                  }
+                  else
+                  {
+                     out.write("return null;");
+                  }
                }
 
                writeRightCurlyBracket(out, indent);
