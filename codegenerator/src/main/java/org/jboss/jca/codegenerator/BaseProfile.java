@@ -24,6 +24,7 @@ package org.jboss.jca.codegenerator;
 import org.jboss.jca.codegenerator.code.AbstractCodeGen;
 import org.jboss.jca.codegenerator.code.AoImplCodeGen;
 import org.jboss.jca.codegenerator.code.AoInterfaceCodeGen;
+import org.jboss.jca.codegenerator.xml.BuildGradleGen;
 import org.jboss.jca.codegenerator.xml.BuildIvyXmlGen;
 import org.jboss.jca.codegenerator.xml.BuildXmlGen;
 import org.jboss.jca.codegenerator.xml.IronjacamarXmlGen;
@@ -76,6 +77,8 @@ public class BaseProfile implements Profile
          generateAntIvyXml(def, def.getOutputDir());
       else if (def.getBuild().equals("maven"))
          generateMavenXml(def, def.getOutputDir());
+      else if (def.getBuild().equals("gradle"))
+         generateGradle(def, def.getOutputDir());
       else
          generateAntXml(def, def.getOutputDir());
 
@@ -390,6 +393,26 @@ public class BaseProfile implements Profile
          PomXmlGen pxGen = new PomXmlGen();
          pxGen.generate(def, pomfw);
          pomfw.close();
+      }
+      catch (IOException ioe)
+      {
+         ioe.printStackTrace();
+      }
+   }
+   
+   /**
+    * generate gradle build.gradle
+    * @param def Definition
+    * @param outputDir output directory
+    */
+   void generateGradle(Definition def, String outputDir)
+   {
+      try
+      {
+         FileWriter bgfw = Utils.createFile("build.gradle", outputDir);
+         BuildGradleGen bgGen = new BuildGradleGen();
+         bgGen.generate(def, bgfw);
+         bgfw.close();
       }
       catch (IOException ioe)
       {

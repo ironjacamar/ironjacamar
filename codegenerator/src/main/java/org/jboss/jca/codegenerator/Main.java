@@ -799,6 +799,11 @@ public class Main
          {
             def.setBuild("maven");
          }
+         else if (buildEnv.equalsIgnoreCase("g") || 
+            buildEnv.equalsIgnoreCase("gradle"))
+         {
+            def.setBuild("gradle");
+         }
          else
             def.setBuild("ant");
       }

@@ -1,0 +1,43 @@
+apply plugin: 'java'
+defaultTasks 'build'
+
+group = '${gradle.package.name}'
+sourceCompatibility = 1.7
+version = '0.0.1'
+
+ext {
+  ijversion = '@VERSION.IRONJACAMAR@'
+}
+jar {
+  manifest {
+    attributes 'Implementation-Title': 'Ironjacamar Test', 'Implementation-Version': version
+  }
+}
+repositories {
+  mavenLocal()
+  mavenRepo name: 'jboss-nexus', url: "http://repository.jboss.org/nexus/content/groups/public/"
+  mavenRepo name: "jboss-snapshots", url: "http://snapshots.jboss.org/maven2/"
+  mavenCentral()
+  mavenRepo name: 'fungal', url: "http://jesperpedersen.github.com/fungal/maven2/"
+}
+dependencies {
+  compile 'org.jboss.ironjacamar:ironjacamar-spec-api:@VERSION.IRONJACAMAR@'
+  testCompile files("${System.properties['java.home']}/../lib/tools.jar") 
+  testCompile 'org.jboss.ironjacamar:ironjacamar-arquillian-embedded:@VERSION.IRONJACAMAR@'
+  testCompile 'org.jboss.ironjacamar:ironjacamar-arquillian-embedded-byteman:@VERSION.IRONJACAMAR@'
+  testCompile 'org.jboss.ironjacamar:ironjacamar-common-api:@VERSION.IRONJACAMAR@'
+  testCompile 'org.jboss.ironjacamar:ironjacamar-common-impl:@VERSION.IRONJACAMAR@'
+  testCompile 'org.jboss.ironjacamar:ironjacamar-common-spi:@VERSION.IRONJACAMAR@'
+  testCompile 'org.jboss.ironjacamar:ironjacamar-core-api:@VERSION.IRONJACAMAR@'
+  testCompile 'org.jboss.ironjacamar:ironjacamar-core-impl:@VERSION.IRONJACAMAR@'
+  testCompile 'org.jboss.ironjacamar:ironjacamar-depchain:@VERSION.IRONJACAMAR@'
+  testCompile 'org.jboss.ironjacamar:ironjacamar-deployers-common:@VERSION.IRONJACAMAR@'
+  testCompile 'org.jboss.ironjacamar:ironjacamar-deployers-fungal:@VERSION.IRONJACAMAR@'
+  testCompile 'org.jboss.ironjacamar:ironjacamar-embedded:@VERSION.IRONJACAMAR@'
+  testCompile 'org.jboss.ironjacamar:ironjacamar-test-eis:@VERSION.IRONJACAMAR@'
+  testCompile 'org.jboss.ironjacamar:ironjacamar-validator:@VERSION.IRONJACAMAR@'
+  testCompile 'junit:junit:4.8.2+'
+}
+test {
+}
+
