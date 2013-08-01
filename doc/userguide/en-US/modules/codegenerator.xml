@@ -43,6 +43,9 @@
           Apache Ant + Ivy build environment
         </listitem>
         <listitem>
+          Gradle build environment
+        </listitem>
+        <listitem>
           Apache Maven build environment
         </listitem>
         <listitem>
@@ -114,7 +117,7 @@
             <tbody>
               <row>
                 <entry>
-                  Profile version (1.6/1.5/1.0)
+                  Profile version (1.7/1.6/1.5/1.0)
                 </entry>
                 <entry>All</entry>
                 <entry>
@@ -136,6 +139,16 @@
               </row>
               <row>
                 <entry>
+                  Package name
+                </entry>
+                <entry>All</entry>
+                <entry>
+                  The package name of the resource adapter
+                </entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>
                   Transaction support (N/NoTransaction/L/LocalTransaction/X/XATransaction)
                 </entry>
                 <entry>All</entry>
@@ -146,11 +159,11 @@
               </row>
               <row>
                 <entry>
-                  Package name
+                  Reauthentication (Y/Yes/N/No)
                 </entry>
                 <entry>All</entry>
                 <entry>
-                  The package name of the resource adapter
+                  If the resource adapter supports reauthentication
                 </entry>
                 <entry></entry>
               </row>
@@ -184,6 +197,16 @@
                   The class name of the resource adapter
                 </entry>
                 <entry>Outbound or Bidirectional</entry>
+              </row>
+              <row>
+                <entry>
+                  Should the resource adapter class be Serializable (Y/Yes/N/No)
+                </entry>
+                <entry>JCA 1.5+</entry>
+                <entry>
+                  Should the resource adapter class be serializable
+                </entry>
+                <entry>Outbound</entry>
               </row>
               <row>
                 <entry>
@@ -338,6 +361,76 @@
               </row>
               <row>
                 <entry>
+                  Include an admin object (Y/Yes/N/No) 
+                </entry>
+                <entry>JCA 1.5+</entry>
+                <entry>
+                  Should an admin object be added to the project
+                </entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>
+                  Use ResourceAdapterAssociation on admin object(Y/Yes/N/No)
+                </entry>
+                <entry>JCA 1.5</entry>
+                <entry>
+                  Associate the admin object instance with the resource adapter instance
+                </entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>
+                  Admin object interface name
+                </entry>
+                <entry>JCA 1.5+</entry>
+                <entry>
+                  The interface name of the admin object
+                </entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>
+                  Admin object class name
+                </entry>
+                <entry>JCA 1.5+</entry>
+                <entry>
+                  The class name of the admin object
+                </entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>
+                  Admin object config properties
+                </entry>
+                <entry>JCA 1.5</entry>
+                <entry>
+                  Include a configuration properties in the admin object instance
+                </entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>
+                  Generate a MBean class (Y/Yes/N/No)
+                </entry>
+                <entry>All</entry>
+                <entry>
+                  Generate a MBean for the resource adapter
+                </entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>
+                  Integrate EIS test server (Y/Yes/N/No)
+                </entry>
+                <entry>All</entry>
+                <entry>
+                  Should the IronJacamar test EIS server be integrated
+                </entry>
+                <entry></entry>
+              </row>
+              <row>
+                <entry>
                   Use JBoss Logging (Y/Yes/N/No) [N]:
                 </entry>
                 <entry>All</entry>
@@ -348,7 +441,7 @@
               </row>
               <row>
                 <entry>
-                  Build environment [A/Ant/I/Ant+Ivy/M/Maven]
+                  Build environment [A/Ant/I/Ant+Ivy/M/Maven/G/Gradle]
                 </entry>
                 <entry>All</entry>
                 <entry>
@@ -465,6 +558,39 @@
               <entry><code>docs</code></entry>
               <entry>
                 Generates the documentation
+              </entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+      </section>
+
+      <section id="codegenerator_gradle">
+        <title>Gradle build environment</title>
+        <para>The Gradle build environment currently support the standard tasks such as</para>
+
+      <table frame="all">
+        <title>Gradle build environment</title>
+        <tgroup cols="2" align="left" colsep="1" rowsep="1">
+          <colspec colname="c1" colwidth="2*"/>
+          <colspec colname="c2" colwidth="3*"/>
+          <thead>
+            <row>
+              <entry align="left">Target</entry>
+              <entry align="left">Desciption</entry>
+            </row>
+          </thead>
+          <tbody>
+            <row>
+              <entry><code>compile</code></entry>
+              <entry>
+                Compiles all the files
+              </entry>
+            </row>
+            <row>
+              <entry><code>test</code></entry>
+              <entry>
+                Executes the tests
               </entry>
             </row>
           </tbody>
