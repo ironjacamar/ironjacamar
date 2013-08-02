@@ -17,7 +17,7 @@
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/hibernate-validator.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-logging.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-stdio.jar"/>
-	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-transaction-api_1.1_spec.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jboss-transaction-api_1.2_spec.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/narayana-jts-integration.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/narayana-jta.jar"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/jnpserver.jar"/>
