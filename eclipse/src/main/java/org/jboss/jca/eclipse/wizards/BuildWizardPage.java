@@ -128,7 +128,7 @@ public class BuildWizardPage extends WizardPage
       label.setText(((CodeGenWizard) getWizard()).getCodegenResourceString("build.env") + ":");
 
       final String[] items =
-      {"Apache Ant", "Apache Ant / Apache Ivy", "Apache Maven"};
+      {"Apache Ant", "Apache Ant / Apache Ivy", "Apache Maven", "Gradle"};
       final Combo combo = new Combo(container, SWT.DROP_DOWN | SWT.READ_ONLY);
       combo.setItems(items);
       combo.setText("Apache Ant");
@@ -149,6 +149,10 @@ public class BuildWizardPage extends WizardPage
             else if (combo.getText().equals("Apache Ant / Apache Ivy"))
             {
                ((CodeGenWizard) getWizard()).getDef().setBuild("ivy");
+            }
+            else if (combo.getText().equals("Gradle"))
+            {
+               ((CodeGenWizard) getWizard()).getDef().setBuild("gradle");
             }
          }
       });
