@@ -148,7 +148,8 @@ public class OracleReauthPlugin implements ReauthPlugin
 
          Object[] params = new Object[] {proxyTypeUserName, props};
 
-         Method openProxySession = c.getClass().getMethod("openProxySession", new Class<?>[] {int.class, Properties.class});
+         Method openProxySession = c.getClass().getMethod("openProxySession",
+                                                          new Class<?>[] {int.class, Properties.class});
          SecurityActions.setAccessible(openProxySession);
          openProxySession.invoke(c, params);
       }
