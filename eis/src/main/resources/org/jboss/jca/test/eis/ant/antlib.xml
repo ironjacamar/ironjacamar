@@ -1,4 +1,0 @@
-<antlib >
-  <taskdef name="start" classname="org.jboss.jca.test.eis.ant.Start"/>
-  <taskdef name="stop" classname="org.jboss.jca.test.eis.ant.Stop"/>
-</antlib>

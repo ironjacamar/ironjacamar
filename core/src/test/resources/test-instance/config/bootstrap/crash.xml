@@ -1,8 +1,0 @@
-<deployment>
-
-  <bean name="CrashVM" 
-        class="org.jboss.jca.core.workmanager.support.CrashVM">
-    <property name="Kernel"><inject bean="Kernel"/></property>
-  </bean>
-
-</deployment>

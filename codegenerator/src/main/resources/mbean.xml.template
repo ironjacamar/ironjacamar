@@ -1,7 +1,0 @@
-<deployment>
-  <bean name="${mbean.name}" interface="${mbean.interface}" class="${mbean.impl}">
-    <property name="MBeanServer">
-        <inject bean="Kernel" property="MBeanServer"/>
-    </property>
-  </bean>
-</deployment>

@@ -18,14 +18,3 @@ Contributing
 * Test [releases](http://www.ironjacamar.org/download.html)
 * Review [pull requests](http://github.com/ironjacamar/ironjacamar/pulls)
 * Start [hacking on IronJacamar](http://www.ironjacamar.org/doc/developerguide/1.1/en-US/html/ch02.html)
-
-Building
---------
-
-### Bundle
-
-            ant clean sjc
-
-### Release
-
-            ant -Declipse.home=/opt/eclipse clean release
