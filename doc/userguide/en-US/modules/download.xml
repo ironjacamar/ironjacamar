@@ -49,10 +49,10 @@ ironjacamar-&lt;major&gt;.&lt;minor&gt;.&lt;patch&gt;.&lt;identifier&gt;
       <para>An example</para>
 
       <programlisting>
-ironjacamar-1.0.0.Final.tar.gz
+ironjacamar-1.1.0.Final.tar.gz
       </programlisting>
 
-      <para>which is the first stable release of the project.</para>
+      <para>which is a stable release of the project.</para>
 
    </section>
 
