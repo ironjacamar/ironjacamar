@@ -42,7 +42,7 @@
 
         <itemizedlist>
           <listitem>
-            Java EE Connector Architecture 1.7 (standalone / Java EE7)
+            Java EE Connector Architecture 1.7 certified (standalone / Java EE7)
           </listitem>
           <listitem>
             Lazy connection manager (JCA chapter 7.16)

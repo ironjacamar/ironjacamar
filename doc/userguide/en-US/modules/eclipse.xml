@@ -145,7 +145,7 @@ copy ironjacamar-eclipse.jar %ECLIPSE_HOME%\plugins
       <para>    
         Sepcify the project name and package name for the project. You can also select the JCA specification version,
         the type of the resource adapter (Outbound/Inbound/Bidirectional), the transaction support level, if the resource adapter
-        will support reauthentication and if annotations used be used for a JCA 1.6 based resource adapter.
+        will support reauthentication and if annotations used be used for a JCA 1.6+ based resource adapter.
       </para>    
 
     </section>
@@ -160,7 +160,7 @@ copy ironjacamar-eclipse.jar %ECLIPSE_HOME%\plugins
       </mediaobject>
       
       <para>    
-        You can choose to include a <code>ResourceAdapter</code> class if the JCA profile version is 1.5 or 1.6
+        You can choose to include a <code>ResourceAdapter</code> class if the JCA profile version is 1.5, 1.6 or 1.7
       </para>    
 
     </section>

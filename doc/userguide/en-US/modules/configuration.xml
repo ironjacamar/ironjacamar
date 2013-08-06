@@ -409,7 +409,8 @@ config/bootstrap/jca.xml
           <para>The deployer for deploying our <code>-ra.xml</code> deployment descriptor is handled
             by a <code>org.jboss.jca.deployers.fungal.RaXmlDeployer</code> bean.</para>
           
-          <para>The deployment descriptor is defined by the <code>resource-adapters-1_0.xsd</code> schema.</para>
+          <para>The deployment descriptor is defined by the <code>resource-adapters-1_0.xsd</code> and
+          <code>resource-adapters-1_1.xsd</code> schemas.</para>
 
           <programlisting language="xml">
 <![CDATA[
@@ -673,27 +674,11 @@ javax.resource.spi.work.WorkContextProvider
 
         <para>interface and returning an instance of <code>javax.resource.spi.work.SecurityContext</code>.</para>
 
-        <para>There is currently support for injecting a callback setup based on the file</para>
-
-        <programlisting>
-config/callback.properties
-        </programlisting>
-
-        <para>The format of the <code>callback.properties</code> file is described in the file.</para>
-        
-        <para>The callback setup can be configured through the <code>Callback</code> bean in the 
-          <code>config/bootstrap/jca.xml</code> file.</para>
-        
-        <programlisting language="xml">
-          <![CDATA[
-<!-- Callback -->
-<bean name="Callback"
-      interface="org.jboss.jca.core.spi.security.Callback"
-      class="org.jboss.jca.core.security.DefaultCallback">
-  <property name="File">${iron.jacamar.home}/config/callback.properties</property>
-</bean>
-           ]]>
-        </programlisting>
+        <para>
+          The security callback is configured through the <code>&gt;workmanager&lt;</code> element for the
+          deployment, either in <code>ironjacamar.xml</code> or in the <code>-ra.xml</code> file. See the schema
+          definitions for further details.
+        </para>
 
         <para>There is support for creating a basic security domain which can provide
           a <code>javax.security.auth.Subject</code> instance to deployments that
@@ -724,8 +709,8 @@ config/callback.properties
    <section id="datasources">
       <title>Datasources</title>
 
-      <para>The IronJacamar project can deploy datasources using the <code>datasources-1_0.xsd</code> or
-         <code>datasources-1_1.xsd</code> schemas.</para>
+      <para>The IronJacamar project can deploy datasources using the <code>datasources-1_0.xsd</code>,
+        <code>datasources-1_1.xsd</code> or <code>datasources-1_2.xsd</code> schemas.</para>
 
       <para>The configuration is done in the</para>
 

@@ -28,7 +28,7 @@ linux.so
  ]]>
       </programlisting>
 
-      <para>See the Java EE Connector Architecture 1.6 specification chapter 20 for further
+      <para>See the Java EE Connector Architecture 1.7 specification chapter 20 for further
         requirements.</para>
 
    </section>
@@ -40,13 +40,13 @@ linux.so
         <code>deploy/</code> directory</para>
 
      <programlisting>
-cp example.rar ironjacamar-1.0.0.Final/deploy
+cp example.rar ironjacamar-1.1.0.Final/deploy
      </programlisting>
 
      <para>on a Un*x based system or</para>
 
      <programlisting>
-copy example.rar ironjacamar-1.0.0.Final\deploy
+copy example.rar ironjacamar-1.1.0.Final\deploy
      </programlisting>
 
      <para>on Windows.</para>
@@ -983,13 +983,13 @@ public void close(Object c) throws ResourceException;
         <code>deploy/</code> directory</para>
         
       <programlisting>
-cp postgres-xa-ds.xml ironjacamar-1.0.0.Final/deploy
+cp postgres-xa-ds.xml ironjacamar-1.1.0.Final/deploy
       </programlisting>
 
       <para>on a Un*x based system or</para>
 
       <programlisting>
-copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
+copy postgres-xa-ds.xml ironjacamar-1.1.0.Final\deploy
       </programlisting>
 
       <para>on Windows.</para>
@@ -997,7 +997,8 @@ copy postgres-xa-ds.xml ironjacamar-1.0.0.Final\deploy
       <para>You will need to install the database JDBC driver into the <code>lib/</code> directory.</para>
       
       <para>You can find examples of datasource definitions in the <code>doc/datasources</code> directory
-      and the schemas: <code>doc/datasources_1_0.xsd</code> and <code>doc/datasources_1_1.xsd</code>.</para>
+      and the schemas: <code>doc/datasources_1_0.xsd</code>, <code>doc/datasources_1_1.xsd</code> and
+      <code>doc/datasources_1_1.xsd</code>.</para>
 
       <section id="deployingds_descriptor">
         <title>Datasource descriptor</title>
