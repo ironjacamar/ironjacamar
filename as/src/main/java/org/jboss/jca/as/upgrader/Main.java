@@ -141,8 +141,9 @@ public class Main
     */
    private static boolean isValid(File root)
    {
-      File f = new File(root, "modules" + File.separator + "org" + File.separator + "jboss" +
-                        File.separator + "ironjacamar");
+      File f = new File(root, "modules" + File.separator + "system" + File.separator +
+                        "layers" + File.separator + "base" + File.separator +
+                        "org" + File.separator + "jboss" + File.separator + "ironjacamar");
 
       return f.exists();
    }
@@ -223,8 +224,8 @@ public class Main
    {
       Http downloader = new Http();
 
-      String fileName = name + "-" + version + ".jar";;
-      String path = RELEASE_REPOSITORY + "/" + name + "/" + version + "/" + fileName;;
+      String fileName = name + "-" + version + ".jar";
+      String path = RELEASE_REPOSITORY + "/" + name + "/" + version + "/" + fileName;
 
       if (!downloader.download(path, new File(destination, fileName)))
          throw new IOException("Could not download: " + path);
@@ -243,8 +244,8 @@ public class Main
    {
       Http downloader = new Http();
 
-      String fileName = name + "-" + snapshotVersion + ".jar";;
-      String path = SNAPSHOT_REPOSITORY + "/" + name + "/" + version + "/" + fileName;;
+      String fileName = name + "-" + snapshotVersion + ".jar";
+      String path = SNAPSHOT_REPOSITORY + "/" + name + "/" + version + "/" + fileName;
 
       if (!downloader.download(path, new File(destination, fileName)))
          throw new IOException("Could not download: " + path);
@@ -257,8 +258,9 @@ public class Main
     */
    private static void move(File root) throws Throwable
    {
-      File ijRoot = new File(root, "modules" + File.separator + "org" + File.separator + "jboss" +
-                             File.separator + "ironjacamar");
+      File ijRoot = new File(root, "modules" + File.separator + "system" + File.separator +
+                             "layers" + File.separator + "base" + File.separator + "org" +
+                             File.separator + "jboss" + File.separator + "ironjacamar");
 
       File apiRoot = new File(ijRoot, "api");
       File implRoot = new File(ijRoot, "impl");
@@ -452,8 +454,9 @@ public class Main
    {
       File fromDirectory = new File(System.getProperty("java.io.tmp"), "ij");
 
-      File ijRoot = new File(root, "modules" + File.separator + "org" + File.separator + "jboss" +
-                             File.separator + "ironjacamar");
+      File ijRoot = new File(root, "modules" + File.separator + "system" + File.separator +
+                             "layers" + File.separator + "base" + File.separator + "org" +
+                             File.separator + "jboss" + File.separator + "ironjacamar");
       File apiRoot = new File(ijRoot, "api");
       File implRoot = new File(ijRoot, "impl");
       File jdbcRoot = new File(ijRoot, "jdbcadapters");
