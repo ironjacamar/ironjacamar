@@ -135,8 +135,8 @@ public class OracleReauthPlugin implements ReauthPlugin
       try
       {
          int proxyTypeUserName = c.getClass().getField("PROXYTYPE_USER_NAME").getInt(c);
-         int proxyUserName = c.getClass().getField("PROXY_USER_NAME").getInt(c);
-         int proxyPassword = c.getClass().getField("PROXY_USER_PASSWORD").getInt(c);
+         String proxyUserName = (String) c.getClass().getField("PROXY_USER_NAME").get(c);
+         String proxyPassword = (String) c.getClass().getField("PROXY_USER_PASSWORD").get(c);
 
          Properties props = new Properties();
          props.put(proxyUserName, userName);
