@@ -79,6 +79,7 @@
            classpathref="lib.path.id"
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
+           encoding="${javac.encoding}"
            optimize="${javac.optimize}">
     </javac> 
   </target>
@@ -123,6 +124,7 @@
            classpathref="test.lib.path.id"
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
+           encoding="${javac.encoding}"
            optimize="${javac.optimize}">
       <compilerarg value="-Xlint"/>
     </javac> 
