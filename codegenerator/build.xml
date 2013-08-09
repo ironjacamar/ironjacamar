@@ -50,6 +50,7 @@
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
            optimize="${javac.optimize}"
+           encoding="${javac.encoding}"
            includeAntRuntime="false">
       <compilerarg value="-Xlint"/>
     </javac> 
@@ -224,6 +225,7 @@
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
            optimize="${javac.optimize}"
+           encoding="${javac.encoding}"
            includeAntRuntime="false">
       <compilerarg value="-Xlint"/>
     </javac> 

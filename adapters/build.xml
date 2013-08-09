@@ -61,6 +61,7 @@
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
            optimize="${javac.optimize}"
+           encoding="${javac.encoding}"
            excludes="**/jdk7/**"
            includeAntRuntime="false">
       <compilerarg value="-Xlint"/>
@@ -74,6 +75,7 @@
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
            optimize="${javac.optimize}"
+           encoding="${javac.encoding}"
            includes="**/jdk7/**"
            includeAntRuntime="false">
       <compilerarg value="-Xlint"/>
@@ -323,6 +325,7 @@
            debug="${javac.debug}"
            deprecation="${javac.deprecation}"
            optimize="${javac.optimize}"
+           encoding="${javac.encoding}"
            includeAntRuntime="false">
       <compilerarg value="-Xlint"/>
     </javac> 
