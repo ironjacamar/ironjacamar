@@ -56,12 +56,12 @@ public class TransactionSynchronizer implements Synchronization
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, TransactionSynchronizer.class.getName());
 
    /** The transaction synchronizations */
-   private static ConcurrentMap<Transaction, TransactionSynchronizer> txSynchs =
-      new ConcurrentHashMap<Transaction, TransactionSynchronizer>();
+   private static ConcurrentMap<Integer, TransactionSynchronizer> txSynchs =
+      new ConcurrentHashMap<Integer, TransactionSynchronizer>();
    
    /** The locks */
-   private static ConcurrentMap<Transaction, Lock> locks =
-      new ConcurrentHashMap<Transaction, Lock>();
+   private static ConcurrentMap<Integer, Lock> locks =
+      new ConcurrentHashMap<Integer, Lock>();
    
    /** The transaction */
    private Transaction tx;
@@ -192,11 +192,12 @@ public class TransactionSynchronizer implements Synchronization
                                                                    TransactionSynchronizationRegistry tsr)
       throws SystemException, RollbackException
    {
-      TransactionSynchronizer result = txSynchs.get(tx);
+      Integer idx = Integer.valueOf(System.identityHashCode(tx));
+      TransactionSynchronizer result = txSynchs.get(idx);
       if (result == null)
       {
          TransactionSynchronizer newResult = new TransactionSynchronizer(tx);
-         result = txSynchs.putIfAbsent(tx, newResult);
+         result = txSynchs.putIfAbsent(idx, newResult);
          if (result == null)
          {
             result = newResult;
@@ -221,7 +222,8 @@ public class TransactionSynchronizer implements Synchronization
     */
    public static Synchronization getCCMSynchronization(Transaction tx)
    {
-      TransactionSynchronizer ts = txSynchs.get(tx);
+      Integer idx = Integer.valueOf(System.identityHashCode(tx));
+      TransactionSynchronizer ts = txSynchs.get(idx);
       if (ts != null)
          return ts.ccmSynch;  
 
@@ -252,11 +254,12 @@ public class TransactionSynchronizer implements Synchronization
     */
    public static void lock(Transaction tx)
    {
-      Lock lock = locks.get(tx);
+      Integer idx = Integer.valueOf(System.identityHashCode(tx));
+      Lock lock = locks.get(idx);
       if (lock == null)
       {
          Lock newLock = new ReentrantLock(true);
-         lock = locks.putIfAbsent(tx, newLock);
+         lock = locks.putIfAbsent(idx, newLock);
          if (lock == null)
          {
             lock = newLock;
@@ -280,7 +283,8 @@ public class TransactionSynchronizer implements Synchronization
     */
    public static void unlock(Transaction tx)
    {
-      Lock lock = locks.get(tx);
+      Integer idx = Integer.valueOf(System.identityHashCode(tx));
+      Lock lock = locks.get(idx);
 
       if (lock != null)
          lock.unlock();
@@ -324,8 +328,9 @@ public class TransactionSynchronizer implements Synchronization
       }
 
       // Cleanup the maps
-      txSynchs.remove(tx);
-      locks.remove(tx);
+      Integer idx = Integer.valueOf(System.identityHashCode(tx));
+      txSynchs.remove(idx);
+      locks.remove(idx);
    }
 
    /**
