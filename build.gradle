@@ -1,0 +1,138 @@
+/*
+ * IronJacamar, a Java EE Connector Architecture implementation
+ * Copyright 2013, Red Hat Inc, and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the Eclipse Public License 1.0 as
+ * published by the Free Software Foundation.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the Eclipse
+ * Public License for more details.
+ *
+ * You should have received a copy of the Eclipse Public License 
+ * along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
+defaultTasks 'build'
+
+// Dependencies
+
+ext {
+  libraries = [
+    jboss_logging: "org.jboss.logging:jboss-logging:3.1.3.GA",
+    jboss_logging_processor: "org.jboss.logging:jboss-logging-processor:1.2.0.Beta1",
+    junit: "junit:junit:4.11"
+  ]
+}
+
+// Java version
+ext.javaLanguageLevel = "1.7"
+
+
+allprojects {
+  repositories {
+    mavenCentral()
+    mavenLocal()
+
+    mavenRepo name: "jboss-nexus", url: "http://repository.jboss.org/nexus/content/groups/public/"
+    mavenRepo name: "jboss-snapshots", url: "http://snapshots.jboss.org/maven2/"
+    mavenRepo name: "fungal", url: "http://jesperpedersen.github.io/fungal/maven2/"
+  }
+}
+
+subprojects { subProject ->
+  apply plugin: 'java'
+  apply plugin: 'checkstyle'
+
+  configurations {
+    jbossLoggingTool {
+      description = "JBoss Logging Tool Processor"
+    }
+  }
+
+  dependencies {
+    compile(libraries.jboss_logging)
+    compile(libraries.jboss_logging_processor)
+
+    testCompile(libraries.junit)
+
+    jbossLoggingTool(libraries.jboss_logging_processor)
+  }
+
+  // Add tools.jar
+  ext.toolsJar = file("${System.getProperty('java.home')}/../lib/tools.jar")
+  if ( ext.toolsJar.exists() ) {
+     dependencies {
+       testCompile files( toolsJar )
+     }
+  }
+
+  targetCompatibility = rootProject.javaLanguageLevel
+  sourceCompatibility = rootProject.javaLanguageLevel
+
+  task compile
+  compile.dependsOn compileJava, processResources, compileTestJava, processTestResources
+
+  sourceSets.all {
+    ext.originalJavaSrcDirs = java.srcDirs
+    ext.generatedLoggingSrcDir = file("${buildDir}/generated/logging/${name}")
+    java.srcDir generatedLoggingSrcDir
+  }
+
+  task generateLoggingClasses(type: JavaCompile) {
+    ext.aptDumpDir = subProject.file( "${buildDir}/tmp/apt/logging" )
+    classpath = compileJava.classpath + configurations.jbossLoggingTool
+    source = sourceSets.main.originalJavaSrcDirs
+    destinationDir = aptDumpDir
+    options.define(
+      compilerArgs: [
+                      "-nowarn",
+                      "-proc:only",
+                      "-encoding", "UTF-8",
+                      "-processor", "org.jboss.logging.processor.apt.LoggingToolsProcessor",
+                      "-s", "$sourceSets.main.generatedLoggingSrcDir.absolutePath",
+                      "-Adebug=true",
+                      "-AskipTranslations=true",
+                      "-source", rootProject.javaLanguageLevel,
+                      "-target", rootProject.javaLanguageLevel,
+                      "-AtranslationFilesPath=${project.rootDir}/src/main/resources"
+
+     ]
+    );
+    outputs.dir sourceSets.main.generatedLoggingSrcDir;
+    doFirst {
+      sourceSets.main.generatedLoggingSrcDir.mkdirs()
+    }
+    doLast {
+      aptDumpDir.delete()
+    }
+  }
+
+  // for the time being eat the annoying output from running the annotation processors
+  generateLoggingClasses.logging.captureStandardError(LogLevel.INFO)
+
+  task generateSources( type: Task )
+  generateSources.dependsOn generateLoggingClasses
+
+  compileJava.dependsOn generateLoggingClasses
+  compileJava.options.define(compilerArgs: ["-proc:none", "-encoding", "UTF-8"])
+  compileTestJava.options.define(compilerArgs: ["-proc:none", "-encoding", "UTF-8"])
+
+  checkstyle {
+    sourceSets = [ subProject.sourceSets.main, subProject.sourceSets.test ]
+    configFile = rootProject.file('tools/checkstyle/checkstyle.xml')
+    showViolations = true
+    ignoreFailures = false
+  }
+
+  checkstyleMain.exclude '**/*_$bundle*'
+  checkstyleMain.exclude '**/*_$logger*'
+}
+
+
