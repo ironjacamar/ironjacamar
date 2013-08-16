@@ -1,0 +1,45 @@
+/*
+ * IronJacamar, a Java EE Connector Architecture implementation
+ * Copyright 2013, Red Hat Inc, and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the Eclipse Public License 1.0 as
+ * published by the Free Software Foundation.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the Eclipse
+ * Public License for more details.
+ *
+ * You should have received a copy of the Eclipse Public License 
+ * along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
+jar {
+  baseName = "ironjacamar-common-impl"
+  dependsOn classes
+  from sourceSets.main.output
+  exclude('org/ironjacamar/common/*', 'org/ironjacamar/common/api/**', 'org/ironjacamar/common/spi/**')
+}
+
+task apiJar(type: Jar) {
+  baseName = "ironjacamar-common-api"
+  dependsOn classes
+  from sourceSets.main.output
+  include('org/ironjacamar/common/*', 'org/ironjacamar/common/api/**')
+}
+
+task spiJar(type: Jar) {
+  baseName = "ironjacamar-common-spi"
+  dependsOn classes
+  from sourceSets.main.output
+  include('org/ironjacamar/common/spi/**')
+}
+
+artifacts {
+  archives apiJar, spiJar
+}
