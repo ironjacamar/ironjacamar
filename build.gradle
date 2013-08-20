@@ -142,4 +142,6 @@ subprojects { subProject ->
   checkstyleMain.exclude '**/*_$logger*'
 }
 
-
+task wrapper(type: Wrapper) {
+  gradleVersion = '1.7'
+}
