@@ -25,6 +25,7 @@ defaultTasks 'build'
 
 ext {
   libraries = [
+    apiviz: "org.jboss.apiviz:apiviz:1.3.2.GA",
     jboss_logging: "org.jboss.logging:jboss-logging:3.1.3.GA",
     jboss_logging_processor: "org.jboss.logging:jboss-logging-processor:1.2.0.Beta1",
     junit: "junit:junit:4.11",
@@ -52,6 +53,9 @@ subprojects { subProject ->
   apply plugin: 'checkstyle'
 
   configurations {
+    apiVizTool {
+      description = "APIViz"
+    }
     jbossLoggingTool {
       description = "JBoss Logging Tool Processor"
     }
@@ -64,6 +68,7 @@ subprojects { subProject ->
 
     testCompile(libraries.junit)
 
+    apiVizTool(libraries.apiviz)
     jbossLoggingTool(libraries.jboss_logging_processor)
   }
 
