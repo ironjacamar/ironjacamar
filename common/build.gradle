@@ -43,3 +43,20 @@ task spiJar(type: Jar) {
 artifacts {
   archives apiJar, spiJar
 }
+
+javadoc {
+  source sourceSets.main.allJava
+  exclude '**/*_$bundle*'
+  exclude '**/*_$logger*'
+  title = "IronJacamar / Common"
+  options.doclet = "org.jboss.apiviz.APIviz"
+  options.docletpath file(configurations.apiVizTool.asPath)
+  options.bottom = "Copyright 2013 IronJacamar (<a href=\"http://www.ironjacamar.org\">http://www.ironjacamar.org</a>)"
+  options.linksOffline 'http://docs.oracle.com/javase/7/docs/api/', 'http://docs.oracle.com/javase/7/docs/api/'
+  doLast{
+     copy {
+       from rootProject.file('tools/api')
+       into 'build/docs/javadoc'
+     }   
+  }
+}

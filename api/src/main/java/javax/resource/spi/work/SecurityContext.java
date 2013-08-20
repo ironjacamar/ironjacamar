@@ -182,8 +182,8 @@ public abstract class SecurityContext implements WorkContext
     * </ul>
     * <p>
     * 
-    * @see JSR 196: Java Authentication SPI for Containers specification and
-    *      related JavaDoc
+    * See JSR 196: Java Authentication SPI for Containers specification and
+    * related JavaDoc for additional information
     * 
     * @param handler
     *            A <code>CallbackHandler</code> provided by the

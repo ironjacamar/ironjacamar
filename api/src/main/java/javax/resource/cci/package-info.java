@@ -19,25 +19,8 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-jar {
-  baseName = "ironjacamar-spec"
-  dependsOn classes
-  from sourceSets.main.output
-}
-
-javadoc {
-  source sourceSets.main.allJava
-  exclude '**/*_$bundle*'
-  exclude '**/*_$logger*'
-  title = "Java EE Connector Architecture 1.7"
-  options.doclet = "org.jboss.apiviz.APIviz"
-  options.docletpath file(configurations.apiVizTool.asPath)
-  options.bottom = "Copyright 2013 IronJacamar (<a href=\"http://www.ironjacamar.org\">http://www.ironjacamar.org</a>)"
-  options.linksOffline 'http://docs.oracle.com/javase/7/docs/api/', 'http://docs.oracle.com/javase/7/docs/api/'
-  doLast{
-     copy {
-       from rootProject.file('tools/api')
-       into 'build/docs/javadoc'
-     }   
-  }
-}
+/**
+ * The javax.resource.cci package contains API specification for the Common
+ * Client Interface (CCI).
+ */
+package javax.resource.cci;
