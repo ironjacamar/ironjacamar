@@ -85,6 +85,7 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.xml.parsers.DocumentBuilder;
@@ -871,12 +872,13 @@ public class Main
     */
    private static void hasDissociatableMcInterface(PrintStream out, String classname, URLClassLoader cl)
    {
+      ManagedConnection mcClz = null;
       try
       {
          out.print("  Sharable: ");
          Class<?> mcfClz = Class.forName(classname, true, cl);
          ManagedConnectionFactory mcf = (ManagedConnectionFactory)mcfClz.newInstance();
-         ManagedConnection mcClz = mcf.createManagedConnection(null, null); 
+         mcClz = mcf.createManagedConnection(null, null); 
 
          if (hasInterface(mcClz.getClass(), "javax.resource.spi.DissociatableManagedConnection"))
          {
@@ -893,6 +895,20 @@ public class Main
          t.printStackTrace(System.err);
          out.println("Unknown");
       }
+      finally
+      {
+         if (mcClz != null)
+         {
+            try
+            {
+               mcClz.destroy();
+            }
+            catch (ResourceException e)
+            {
+               e.printStackTrace();
+            }
+         }
+      }
    }
    
    /**
@@ -904,12 +920,13 @@ public class Main
     */
    private static void hasEnlistableMcInterface(PrintStream out, String classname, URLClassLoader cl)
    {
+      ManagedConnection mcClz = null;
       try
       {
          out.print("  Enlistment: ");
          Class<?> mcfClz = Class.forName(classname, true, cl);
          ManagedConnectionFactory mcf = (ManagedConnectionFactory)mcfClz.newInstance();
-         ManagedConnection mcClz = mcf.createManagedConnection(null, null); 
+         mcClz = mcf.createManagedConnection(null, null); 
 
          if (hasInterface(mcClz.getClass(), "javax.resource.spi.LazyEnlistableManagedConnection"))
          {
@@ -925,6 +942,20 @@ public class Main
          // Nothing we can do
          t.printStackTrace(System.err);
          out.println("Unknown");
+      }
+      finally
+      {
+         if (mcClz != null)
+         {
+            try
+            {
+               mcClz.destroy();
+            }
+            catch (ResourceException e)
+            {
+               e.printStackTrace();
+            }
+         }
       }
    }
    
