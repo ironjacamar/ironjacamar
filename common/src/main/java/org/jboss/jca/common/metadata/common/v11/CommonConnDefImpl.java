@@ -63,15 +63,16 @@ public class CommonConnDefImpl extends org.jboss.jca.common.metadata.common.v10.
     * @param validation validation
     * @param security security
     * @param recovery recovery
+    * @param isXA isXA
     */
    public CommonConnDefImpl(Map<String, String> configProperties, String className, String jndiName,
                             String poolName, Boolean enabled, Boolean useJavaContext, Boolean useCcm,
                             Boolean sharable, Boolean enlistment,
                             CommonPool pool, CommonTimeOut timeOut,
-                            CommonValidation validation, CommonSecurity security, Recovery recovery)
+                            CommonValidation validation, CommonSecurity security, Recovery recovery, Boolean isXA)
    {
       super(configProperties, className, jndiName, poolName, enabled, useJavaContext, useCcm,
-            pool, timeOut, validation, security, recovery);
+            pool, timeOut, validation, security, recovery, isXA);
 
       this.sharable = sharable;
       this.enlistment = enlistment;

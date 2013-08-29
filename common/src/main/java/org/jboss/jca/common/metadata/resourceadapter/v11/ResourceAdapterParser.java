@@ -180,6 +180,7 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
       TransactionSupportEnum transactionSupport = null;
       HashMap<String, String> configProperties = null;
       WorkManager workmanager = null;
+      Boolean isXA = null;
 
       int attributeSize = reader.getAttributeCount();
       for (int i = 0; i < attributeSize; i++)
@@ -234,7 +235,7 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
                   case CONNECTION_DEFINITION : {
                      if (connectionDefinitions == null)
                         connectionDefinitions = new ArrayList<CommonConnDef>();
-                     connectionDefinitions.add(parseConnectionDefinitions(reader));
+                     connectionDefinitions.add(parseConnectionDefinitions(reader, isXA));
                      break;
                   }
                   case BEAN_VALIDATION_GROUP : {
@@ -255,6 +256,10 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
                   }
                   case TRANSACTION_SUPPORT : {
                      transactionSupport = TransactionSupportEnum.valueOf(elementAsString(reader));
+
+                     if (transactionSupport == TransactionSupportEnum.XATransaction)
+                        isXA = Boolean.TRUE;
+
                      break;
                   }
                   case ARCHIVE : {
