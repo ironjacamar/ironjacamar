@@ -65,12 +65,13 @@ public abstract class CommonIronJacamarParser extends AbstractParser
     * parse a single connection-definition tag
     *
     * @param reader the reader
+    * @param isXA Is XA capable
     * @return the parse {@link CommonConnDef} object
     * @throws XMLStreamException XMLStreamException
     * @throws ParserException ParserException
     * @throws ValidateException ValidateException
     */
-   protected CommonConnDef parseConnectionDefinitions(XMLStreamReader reader) throws XMLStreamException,
+   protected CommonConnDef parseConnectionDefinitions(XMLStreamReader reader, Boolean isXA) throws XMLStreamException,
       ParserException, ValidateException
    {
       Map<String, String> configProperties = new HashMap<String, String>();
@@ -89,7 +90,8 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       Boolean useCcm = Boolean.TRUE;
       int attributeSize = reader.getAttributeCount();
 
-      Boolean isXa = Boolean.FALSE;
+      if (isXA == null)
+         isXA = Boolean.FALSE;
 
       for (int i = 0; i < attributeSize; i++)
       {
@@ -137,7 +139,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
 
                   return new CommonConnDefImpl(configProperties, className, jndiName, poolName, enabled,
                                                useJavaContext, useCcm, pool, timeOut, validation,
-                                               security, recovery);
+                                               security, recovery, isXA);
                }
                else
                {
@@ -160,7 +162,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                      break;
                   }
                   case TIMEOUT : {
-                     timeOut = parseTimeOut(reader, isXa);
+                     timeOut = parseTimeOut(reader, isXA);
                      break;
                   }
                   case VALIDATION : {
@@ -171,7 +173,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                      if (pool != null)
                         throw new ParserException(bundle.multiplePools());
                      pool = parseXaPool(reader);
-                     isXa = true;
+                     isXA = Boolean.TRUE;
                      break;
                   }
                   case POOL : {
