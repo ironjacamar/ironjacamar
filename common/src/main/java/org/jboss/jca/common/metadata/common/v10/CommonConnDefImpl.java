@@ -82,6 +82,9 @@ public class CommonConnDefImpl implements CommonConnDef
    /** recovery */
    protected final Recovery recovery;
 
+   /** isXA */
+   protected final Boolean isXA;
+
    /**
     * Create a new ConnectionDefinition.
     *
@@ -97,11 +100,12 @@ public class CommonConnDefImpl implements CommonConnDef
     * @param validation validation
     * @param security security
     * @param recovery recovery
+    * @param isXA isXA
     */
    public CommonConnDefImpl(Map<String, String> configProperties, String className, String jndiName,
                             String poolName, Boolean enabled, Boolean useJavaContext, Boolean useCcm,
                             CommonPool pool, CommonTimeOut timeOut,
-                            CommonValidation validation, CommonSecurity security, Recovery recovery)
+                            CommonValidation validation, CommonSecurity security, Recovery recovery, Boolean isXA)
    {
       super();
       if (configProperties != null)
@@ -124,7 +128,7 @@ public class CommonConnDefImpl implements CommonConnDef
       this.validation = validation;
       this.security = security;
       this.recovery = recovery;
-
+      this.isXA = isXA;
    }
 
    /**
@@ -262,7 +266,7 @@ public class CommonConnDefImpl implements CommonConnDef
    @Override
    public Boolean isXa()
    {
-      return (pool instanceof CommonXaPool);
+      return (pool instanceof CommonXaPool) || isXA != null ? isXA : Boolean.FALSE;
    }
 
    @Override
@@ -282,6 +286,7 @@ public class CommonConnDefImpl implements CommonConnDef
       result = prime * result + ((useJavaContext == null) ? 0 : useJavaContext.hashCode());
       result = prime * result + ((useCcm == null) ? 0 : useCcm.hashCode());
       result = prime * result + ((validation == null) ? 0 : validation.hashCode());
+      result = prime * result + ((isXA == null) ? 0 : isXA.hashCode());
       return result;
    }
 
@@ -378,6 +383,13 @@ public class CommonConnDefImpl implements CommonConnDef
             return false;
       }
       else if (!validation.equals(other.validation))
+         return false;
+      if (isXA == null)
+      {
+         if (other.isXA != null)
+            return false;
+      }
+      else if (!isXA.equals(other.isXA))
          return false;
       return true;
    }

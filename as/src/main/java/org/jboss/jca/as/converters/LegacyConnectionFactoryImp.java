@@ -127,15 +127,17 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
     */
    public void buildResourceAdapterImpl()  throws Exception
    {
+      Boolean isXA = Boolean.FALSE;
       Recovery recovery = null;
       if (transactionSupport.equals(TransactionSupportEnum.XATransaction))
       {
+         isXA = Boolean.TRUE;
          recovery = new Recovery(new CredentialImpl("user", "password", null), null, false);
       }
       CommonConnDefImpl connDef = new CommonConnDefImpl(connConfigProperty, "FIXME", jndiName, poolName,
                                                         Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT, Defaults.USE_CCM,
                                                         Defaults.SHARABLE, Defaults.ENLISTMENT,
-                                                        pool, timeOut, validation, security, recovery);
+                                                        pool, timeOut, validation, security, recovery, isXA);
       
       connectionDefinitions = new ArrayList<CommonConnDef>();
       connectionDefinitions.add(connDef);

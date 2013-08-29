@@ -70,12 +70,13 @@ public abstract class CommonIronJacamarParser extends org.jboss.jca.common.metad
     * parse a single connection-definition tag
     *
     * @param reader the reader
+    * @param isXA Is XA capable
     * @return the parse {@link CommonConnDef} object
     * @throws XMLStreamException XMLStreamException
     * @throws ParserException ParserException
     * @throws ValidateException ValidateException
     */
-   protected CommonConnDef parseConnectionDefinitions(XMLStreamReader reader) throws XMLStreamException,
+   protected CommonConnDef parseConnectionDefinitions(XMLStreamReader reader, Boolean isXA) throws XMLStreamException,
       ParserException, ValidateException
    {
       HashMap<String, String> configProperties = new HashMap<String, String>();
@@ -96,7 +97,8 @@ public abstract class CommonIronJacamarParser extends org.jboss.jca.common.metad
       Boolean enlistment = Defaults.ENLISTMENT;
       int attributeSize = reader.getAttributeCount();
 
-      Boolean isXa = Boolean.FALSE;
+      if (isXA == null)
+         isXA = Boolean.FALSE;
 
       for (int i = 0; i < attributeSize; i++)
       {
@@ -153,7 +155,7 @@ public abstract class CommonIronJacamarParser extends org.jboss.jca.common.metad
                   return new CommonConnDefImpl(configProperties, className, jndiName, poolName, enabled,
                                                useJavaContext, useCcm, sharable, enlistment,
                                                pool, timeOut, validation,
-                                               security, recovery);
+                                               security, recovery, isXA);
                }
                else
                {
@@ -176,7 +178,7 @@ public abstract class CommonIronJacamarParser extends org.jboss.jca.common.metad
                      break;
                   }
                   case TIMEOUT : {
-                     timeOut = parseTimeOut(reader, isXa);
+                     timeOut = parseTimeOut(reader, isXA);
                      break;
                   }
                   case VALIDATION : {
@@ -187,7 +189,7 @@ public abstract class CommonIronJacamarParser extends org.jboss.jca.common.metad
                      if (pool != null)
                         throw new ParserException(bundle.multiplePools());
                      pool = parseXaPool(reader);
-                     isXa = true;
+                     isXA = Boolean.TRUE;
                      break;
                   }
                   case POOL : {

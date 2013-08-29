@@ -519,14 +519,14 @@ public class Main
                      Recovery recovery = new Recovery(new CredentialImpl("user", "password", null), null, false);
                      connImpl = new CommonConnDefImpl(configProperty, mcfClassName, "java:jboss/eis/" + poolName,
                         poolName, Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT, Defaults.USE_CCM, pool, null, null,
-                        secImpl, recovery);
+                        secImpl, recovery, Boolean.TRUE);
                   }
                   else
                   {
                      pool = poolImpl;
                      connImpl = new CommonConnDefImpl(configProperty, mcfClassName, "java:jboss/eis/" + poolName,
                         poolName, Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT, Defaults.USE_CCM, pool, null, null,
-                        secImpl, null);
+                        secImpl, null, Boolean.FALSE);
                   }
 
                   connDefs.add(connImpl);
@@ -728,7 +728,7 @@ public class Main
                                                                "java:jboss/eis/" + poolName, poolName, 
                                                                Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT,
                                                                Defaults.USE_CCM,
-                                                               pool, null, null, secImpl, null);
+                                                               pool, null, null, secImpl, null, Boolean.FALSE);
             connDefs = new ArrayList<CommonConnDef>();
             connDefs.add(connImpl);
          }
