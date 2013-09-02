@@ -49,6 +49,7 @@ import org.jboss.jca.common.metadata.ra.RaParser;
 import org.jboss.jca.common.spi.annotations.repository.AnnotationRepository;
 import org.jboss.jca.common.spi.annotations.repository.AnnotationScanner;
 import org.jboss.jca.common.spi.annotations.repository.AnnotationScannerFactory;
+import org.jboss.jca.core.util.Injection;
 import org.jboss.jca.validator.Validation;
 
 import java.io.BufferedInputStream;
@@ -442,10 +443,10 @@ public class Main
                      hasValidatingMcfInterface(out, mcfClassName, cl);
                      
                      //DissociatableManagedConnection
-                     hasDissociatableMcInterface(out, mcfClassName, cl);
+                     hasDissociatableMcInterface(out, mcfClassName, cl, mcf.getConfigProperties());
                      
                      //LazyEnlistableManagedConnection
-                     hasEnlistableMcInterface(out, mcfClassName, cl);
+                     hasEnlistableMcInterface(out, mcfClassName, cl, mcf.getConfigProperties());
 
                      //CCI
                      String cfi = getValueString(mcf.getConnectionFactoryInterface());
@@ -671,10 +672,10 @@ public class Main
             hasValidatingMcfInterface(out, mcfClassName, cl);
             
             //DissociatableManagedConnection
-            hasDissociatableMcInterface(out, mcfClassName, cl);
+            hasDissociatableMcInterface(out, mcfClassName, cl, ra10.getConfigProperties());
             
             //LazyEnlistableManagedConnection
-            hasEnlistableMcInterface(out, mcfClassName, cl);
+            hasEnlistableMcInterface(out, mcfClassName, cl, ra10.getConfigProperties());
             
             Class<?> cfi = Class.forName(mcfClassName, true, cl);
             out.println("  ConnectionFactory (" + mcfClassName + "):");
@@ -863,31 +864,20 @@ public class Main
       }
    }
    
-   /**
-    * hasDissociatableMcInterface
-    * 
-    * @param out output stream
-    * @param classname classname
-    * @param cl classloader
-    */
-   private static void hasDissociatableMcInterface(PrintStream out, String classname, URLClassLoader cl)
+   private static void hasDissociatableMcInterface(PrintStream out, String classname, URLClassLoader cl, 
+         List<? extends ConfigProperty> listConfProp)
    {
-      hasMcInterface(out, classname, cl, "DissociatableManagedConnection", "Sharable");
+      hasMcInterface(out, classname, cl, listConfProp, "DissociatableManagedConnection", "Sharable");
    }
    
-   /**
-    * hasEnlistableMcInterface
-    * 
-    * @param out output stream
-    * @param classname classname
-    * @param cl classloader
-    */
-   private static void hasEnlistableMcInterface(PrintStream out, String classname, URLClassLoader cl)
+   private static void hasEnlistableMcInterface(PrintStream out, String classname, URLClassLoader cl,
+         List<? extends ConfigProperty> listConfProp)
    {
-      hasMcInterface(out, classname, cl, "LazyEnlistableManagedConnection", "Enlistment");
+      hasMcInterface(out, classname, cl, listConfProp, "LazyEnlistableManagedConnection", "Enlistment");
    }
    
-   private static void hasMcInterface(PrintStream out, String classname, URLClassLoader cl, String mcClassName, String tip)
+   private static void hasMcInterface(PrintStream out, String classname, URLClassLoader cl, 
+         List<? extends ConfigProperty> listConfProp, String mcClassName, String tip)
    {
       ManagedConnection mcClz = null;
       try
@@ -895,6 +885,17 @@ public class Main
          out.print("  " + tip + ": ");
          Class<?> mcfClz = Class.forName(classname, true, cl);
          ManagedConnectionFactory mcf = (ManagedConnectionFactory)mcfClz.newInstance();
+         
+         Injection injector = new Injection(); 
+         for (ConfigProperty cp : listConfProp)
+         {
+            if (!XsdString.isNull(cp.getConfigPropertyValue()))
+            {
+               injector.inject(mcf, cp.getConfigPropertyName().getValue(), 
+                  cp.getConfigPropertyValue().getValue(), cp.getConfigPropertyType().getValue());
+            }
+         }
+         
          mcClz = mcf.createManagedConnection(null, null); 
 
          if (hasInterface(mcClz.getClass(), "javax.resource.spi." + mcClassName))
