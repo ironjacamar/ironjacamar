@@ -872,43 +872,7 @@ public class Main
     */
    private static void hasDissociatableMcInterface(PrintStream out, String classname, URLClassLoader cl)
    {
-      ManagedConnection mcClz = null;
-      try
-      {
-         out.print("  Sharable: ");
-         Class<?> mcfClz = Class.forName(classname, true, cl);
-         ManagedConnectionFactory mcf = (ManagedConnectionFactory)mcfClz.newInstance();
-         mcClz = mcf.createManagedConnection(null, null); 
-
-         if (hasInterface(mcClz.getClass(), "javax.resource.spi.DissociatableManagedConnection"))
-         {
-            out.println("Yes");
-         }
-         else
-         {
-            out.println("No");
-         }
-      }
-      catch (Throwable t)
-      {
-         // Nothing we can do
-         t.printStackTrace(System.err);
-         out.println("Unknown");
-      }
-      finally
-      {
-         if (mcClz != null)
-         {
-            try
-            {
-               mcClz.destroy();
-            }
-            catch (ResourceException e)
-            {
-               e.printStackTrace();
-            }
-         }
-      }
+      hasMcInterface(out, classname, cl, "DissociatableManagedConnection", "Sharable");
    }
    
    /**
@@ -920,15 +884,20 @@ public class Main
     */
    private static void hasEnlistableMcInterface(PrintStream out, String classname, URLClassLoader cl)
    {
+      hasMcInterface(out, classname, cl, "LazyEnlistableManagedConnection", "Enlistment");
+   }
+   
+   private static void hasMcInterface(PrintStream out, String classname, URLClassLoader cl, String mcClassName, String tip)
+   {
       ManagedConnection mcClz = null;
       try
       {
-         out.print("  Enlistment: ");
+         out.print("  " + tip + ": ");
          Class<?> mcfClz = Class.forName(classname, true, cl);
          ManagedConnectionFactory mcf = (ManagedConnectionFactory)mcfClz.newInstance();
          mcClz = mcf.createManagedConnection(null, null); 
 
-         if (hasInterface(mcClz.getClass(), "javax.resource.spi.LazyEnlistableManagedConnection"))
+         if (hasInterface(mcClz.getClass(), "javax.resource.spi." + mcClassName))
          {
             out.println("Yes");
          }
