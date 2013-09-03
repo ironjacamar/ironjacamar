@@ -97,9 +97,11 @@
 
   <dependencies>
     <!-- Maven doesn't handle dependencies well, so logging has to be first -->
-    <dependency org="org.jboss.logging" name="jboss-logging" rev="${version.jboss.logging}" conf="common,ironjacamar-common-impl,ironjacamar-common-impl-papaki,ironjacamar-core-impl,ironjacamar-depchain,ironjacamar-deployers-common,ironjacamar-deployers-fungal,as"/>
+    <dependency org="org.jboss.jdeparser" name="jdeparser" rev="${version.jboss.jdeparser}" conf="common,ironjacamar-depchain,as"/>
+    <dependency org="org.jboss.logging" name="jboss-logging" rev="${version.jboss.logging}" conf="common,ironjacamar-common-impl,ironjacamar-core-impl,ironjacamar-depchain,ironjacamar-deployers-common,ironjacamar-deployers-fungal,as"/>
     <dependency org="org.jboss.logging" name="jboss-logging-processor" rev="${version.jboss.logging-processor}" conf="common,as"/>
     <dependency org="org.jboss.logmanager" name="jboss-logmanager" rev="${version.jboss.logmanager}" conf="common,ironjacamar-depchain,as"/>
+    <dependency org="org.jboss.logmanager" name="log4j-jboss-logmanager" rev="${version.jboss.logmanager.log4j}" conf="common,ironjacamar-depchain,as"/>
 
     <!-- Keep these sorted -->
     <dependency org="apache-logging" name="commons-logging" rev="${version.apache-logging}" conf="common,ironjacamar-depchain"/>
