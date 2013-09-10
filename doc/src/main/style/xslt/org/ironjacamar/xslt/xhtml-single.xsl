@@ -1,4 +1,5 @@
-/*
+<?xml version='1.0'?>
+<!--
  * IronJacamar, a Java EE Connector Architecture implementation
  * Copyright 2013, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
@@ -17,8 +18,14 @@
  * along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
- */
+-->
 
-include "api"
-include "common"
-include "doc"
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+
+    <xsl:import href="classpath:/xslt/org/jboss/pressgang/xhtml-single.xsl"/>
+    <xsl:import href="common-xhtml.xsl"/>
+   
+    <xsl:param name="html.stylesheet" select="'css/ironjacamar-single.css'"/>
+
+</xsl:stylesheet>
+

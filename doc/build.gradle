@@ -1,0 +1,66 @@
+/*
+ * IronJacamar, a Java EE Connector Architecture implementation
+ * Copyright 2013, Red Hat Inc, and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the Eclipse Public License 1.0 as
+ * published by the Free Software Foundation.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the Eclipse
+ * Public License for more details.
+ *
+ * You should have received a copy of the Eclipse Public License 
+ * along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
+defaultTasks 'buildDocs'
+
+jdocbook {
+
+  environment {
+    ext.classpath = configurations.jdocbook
+  }
+
+  // apply shared formatting config
+  format('html_single') {
+    finalName = "index.html"
+    stylesheet = "classpath:/xslt/org/ironjacamar/xslt/xhtml-single.xsl"
+  }
+  format('html') {
+    finalName = "index.html"
+    stylesheet = "classpath:/xslt/org/ironjacamar/xslt/xhtml.xsl"
+  }
+  format('pdf') {
+    finalName = "userguide.pdf"
+    stylesheet = "classpath:/xslt/org/ironjacamar/xslt/pdf.xsl"
+  }
+
+  // book-specific config
+  userguide {
+    masterSourceDocumentName = 'userguide.xml'
+    useRelativeImageUris = false
+  }
+
+  ext.classpath = configurations.jdocbook
+}
+
+[ 'userguide' ].each { bookName ->
+  tasks[ "stageStyles_$bookName" ].doFirst {
+    ext.classesDir = new File("build/docbook/stage/$bookName/fonts")
+    ext.classesDir.mkdirs()
+  }
+  tasks[ "stageStyles_$bookName" ].doLast {
+    logger.lifecycle( "Staging local style resources")
+    copy {
+      into project.file( "build/docbook/stage/$bookName" )
+      from project.file( "src/main/style" )
+      includeEmptyDirs = false
+    }
+  }
+}
