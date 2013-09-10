@@ -108,12 +108,6 @@ public abstract class BaseWrapperManagedConnectionFactory
    /** The password */
    protected String password;
 
-   /** This is used by Local wrapper for all properties, and is left
-    * in this class for ease of writing getConnectionProperties,
-    * which always holds the user/pw.
-    */
-   protected final Properties connectionProps = new Properties();
-
    /** The transaction isolation level */
    protected int transactionIsolation = -1;
 
@@ -940,19 +934,23 @@ public abstract class BaseWrapperManagedConnectionFactory
     *
     * <p>In fact, we have a problem here. Theoretically, there is a possible
     * name collision between config properties and "user"/"password".
+    * @param connectionProps The connection properties
     * @param subject The subject
     * @param cri The connection request info
     * @return The properties
     * @exception ResourceException Thrown if an error occurs
     */
-   protected synchronized Properties getConnectionProperties(Subject subject, ConnectionRequestInfo cri)
+   protected Properties getConnectionProperties(Properties connectionProps, Subject subject, ConnectionRequestInfo cri)
       throws ResourceException
    {
       if (cri != null && cri.getClass() != WrappedConnectionRequestInfo.class)
          throw new ResourceException("Wrong kind of ConnectionRequestInfo: " + cri.getClass());
 
       Properties props = new Properties();
-      props.putAll(connectionProps);
+      
+      if (connectionProps != null && connectionProps.size() > 0)
+         props.putAll(connectionProps);
+
       if (subject != null)
       {
          if (SubjectActions.addMatchingProperties(subject, cri, props, userName, password, this))
