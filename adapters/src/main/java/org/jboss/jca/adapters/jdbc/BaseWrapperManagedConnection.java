@@ -839,7 +839,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
 
    private void checkIdentity(Subject subject, ConnectionRequestInfo cri) throws ResourceException
    {
-      Properties newProps = mcf.getConnectionProperties(subject, cri);
+      Properties newProps = mcf.getConnectionProperties(props, subject, cri);
 
       if (Boolean.TRUE.equals(mcf.getReauthEnabled()))
       {

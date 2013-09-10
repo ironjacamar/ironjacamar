@@ -23,12 +23,15 @@
 package org.jboss.jca.adapters.jdbc.unit;
 
 import org.jboss.jca.adapters.ArquillianJCATestUtils;
+import org.jboss.jca.arquillian.embedded.Inject;
 import org.jboss.jca.embedded.dsl.InputStreamDescriptor;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
+import javax.transaction.UserTransaction;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -86,6 +89,9 @@ public class H2XATestCase
    @Resource(mappedName = "java:/H2XADS")
    private DataSource ds;
 
+   @Inject(name = "UserTransaction")
+   private UserTransaction ut;
+
    //-------------------------------------------------------------------------------------||
    //---------------------- THEN  --------------------------------------------------------||
    //-------------------------------------------------------------------------------------||
@@ -98,9 +104,77 @@ public class H2XATestCase
    public void testBasic() throws Throwable
    {
       assertNotNull(ds);
-      Connection c = ds.getConnection();
-      assertNotNull(c);
-      c.close();
+      assertNotNull(ut);
+
+      boolean commit = true;
+
+      ut.begin();
+
+      Connection c1 = null;
+      Connection c2 = null;
+      
+      try
+      {
+         c1 = ds.getConnection();
+         assertNotNull(c1);
+
+         c2 = ds.getConnection();
+         assertNotNull(c2);
+      }
+      catch (Exception e)
+      {
+         commit = false;
+         throw e;
+      }
+      finally
+      {
+         if (commit)
+         {
+            try
+            {
+               ut.commit();
+            }
+            catch (Exception e)
+            {
+               commit = false;
+            }
+         }
+
+         if (!commit)
+         {
+            try
+            {
+               ut.rollback();
+            }
+            catch (Exception e)
+            {
+               throw e;
+            }
+         }
+
+         if (c1 != null)
+         {
+            try
+            {
+               c1.close();
+            }
+            catch (SQLException se)
+            {
+               // Ignore
+            }
+         }
+         if (c2 != null)
+         {
+            try
+            {
+               c2.close();
+            }
+            catch (SQLException se)
+            {
+               // Ignore
+            }
+         }
+      }
    }
 
 }
