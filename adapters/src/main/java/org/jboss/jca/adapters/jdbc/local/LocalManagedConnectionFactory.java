@@ -76,6 +76,9 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
    /** The connection properties */
    protected String connectionProperties;
 
+   /** The connection properties */
+   protected final Properties connectionProps = new Properties();
+
    private static Map<String, Driver> driverCache = new ConcurrentHashMap<String, Driver>();
 
    /**
@@ -142,7 +145,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
     *
     * @param driverClass The new DriverClass value.
     */
-   public synchronized void setDriverClass(final String driverClass)
+   public void setDriverClass(final String driverClass)
    {
       this.driverClass = driverClass;
       driver = null;
@@ -163,7 +166,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
     *
     * @param dataSourceClass The new DataSourceClass value.
     */
-   public synchronized void setDataSourceClass(final String dataSourceClass)
+   public void setDataSourceClass(final String dataSourceClass)
    {
       this.dataSourceClass = dataSourceClass;
       driver = null;
@@ -210,10 +213,10 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
    /**
     * {@inheritDoc}
     */
-   public synchronized ManagedConnection createManagedConnection(Subject subject, ConnectionRequestInfo cri)
+   public ManagedConnection createManagedConnection(Subject subject, ConnectionRequestInfo cri)
       throws ResourceException
    {
-      Properties props = getConnectionProperties(subject, cri);
+      Properties props = getConnectionProperties(connectionProps, subject, cri);
       // Some friendly drivers (Oracle, you guessed right) modify the props you supply.
       // Since we use our copy to identify compatibility in matchManagedConnection, we need
       // a pristine copy for our own use.  So give the friendly driver a copy.
@@ -447,7 +450,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
    public ManagedConnection matchManagedConnections(final Set mcs, final Subject subject,
                                                     final ConnectionRequestInfo cri) throws ResourceException
    {
-      Properties newProps = getConnectionProperties(subject, cri);
+      Properties newProps = getConnectionProperties(connectionProps, subject, cri);
 
       for (Iterator<?> i = mcs.iterator(); i.hasNext();)
       {
@@ -473,6 +476,19 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       }
 
       return null;
+   }
+
+   /**
+    * Is the properties equal
+    * @param other The other properties
+    * @return True if equal, otherwise false
+    */
+   private boolean isEqual(Properties other)
+   {
+      synchronized (connectionProps)
+      {
+         return connectionProps.equals(other);
+      }
    }
 
    /**
