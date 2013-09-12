@@ -23,12 +23,12 @@
 package org.jboss.jca.adapters.jdbc;
 
 import org.jboss.jca.adapters.jdbc.statistics.JdbcStatisticsPlugin;
-import org.jboss.jca.adapters.jdbc.util.BoundedConcurrentHashMap;
+import org.jboss.jca.adapters.jdbc.util.Cache;
+import org.jboss.jca.adapters.jdbc.util.CacheListener;
+import org.jboss.jca.adapters.jdbc.util.LRUCache;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Iterator;
-import java.util.Map;
 
 import org.jboss.logging.Logger;
 
@@ -39,39 +39,12 @@ import org.jboss.logging.Logger;
  * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
  */
 @SuppressWarnings("unchecked")
-public class PreparedStatementCache
+public class PreparedStatementCache implements CacheListener<CachedPreparedStatement>
 {
-   private static BoundedConcurrentHashMap.Eviction evictionPolicy;
-
    private final Logger log = Logger.getLogger(getClass());
 
-   private BoundedConcurrentHashMap<Key, CachedPreparedStatement> cache;
+   private Cache<Key, CachedPreparedStatement> cache;
    private JdbcStatisticsPlugin statistics;
-
-   static
-   {
-      String cache = SecurityActions.getSystemProperty("ironjacamar.jdbc.cache");
-      if (cache != null)
-      {
-         cache = cache.trim();
-
-         if ("LRU".equals(cache))
-         {
-            evictionPolicy = BoundedConcurrentHashMap.Eviction.LRU;
-         }
-         else if ("LRU_OLD".equals(cache))
-         {
-            evictionPolicy = BoundedConcurrentHashMap.Eviction.LRU_OLD;
-         }
-         else if ("LIRS".equals(cache))
-         {
-            evictionPolicy = BoundedConcurrentHashMap.Eviction.LIRS;
-         }         
-      }
-       
-      if (evictionPolicy == null)
-         evictionPolicy = BoundedConcurrentHashMap.Eviction.LRU_OLD;
-   }
 
    /**
     * Key class
@@ -205,13 +178,8 @@ public class PreparedStatementCache
     */
    public PreparedStatementCache(int max, JdbcStatisticsPlugin stats)
    {
-      BoundedConcurrentHashMap.EvictionListener evictionListener =
-         new PreparedStatementEvictionListener(stats, log);
-
-      this.cache =
-         new BoundedConcurrentHashMap<Key, CachedPreparedStatement>(max, 16, 
-                                                                    evictionPolicy,
-                                                                    evictionListener);
+      this.cache = new LRUCache<Key, CachedPreparedStatement>(max);
+      this.cache.setListener(this);
       this.statistics = stats;
    }
 
@@ -232,7 +200,7 @@ public class PreparedStatementCache
     */
    public void put(Key key, CachedPreparedStatement value)
    {
-      cache.put(key, value);
+      cache.insert(key, value);
    }
 
    /**
@@ -245,57 +213,24 @@ public class PreparedStatementCache
    }
 
    /**
-    * Prepared statement eviction listener
+    * {@inheritDoc}
     */
-   static class PreparedStatementEvictionListener implements BoundedConcurrentHashMap.EvictionListener
+   public void onEviction(CachedPreparedStatement evicted)
    {
-      private JdbcStatisticsPlugin statistics;
-      private Logger log;
-
-      /**
-       * Constructor
-       * @param stats The statistics
-       * @param log The logger
-       */
-      public PreparedStatementEvictionListener(JdbcStatisticsPlugin stats, Logger log)
+      if (evicted != null)
       {
-         this.statistics = stats;
-         this.log = log;
-      }
-
-      /**
-       * Entry eviction
-       * @param evicted The entry
-       */
-      public void onEntryEviction(Map evicted)
-      {
-         if (evicted != null)
+         try
          {
-            Iterator it = evicted.values().iterator();
-            while (it.hasNext())
-            {
-               try
-               {
-                  CachedPreparedStatement ws = (CachedPreparedStatement)it.next();
-                  ws.agedOut();
-               }
-               catch (SQLException e)
-               {
-                  log.debug("Failed closing cached statement", e);
-               }
-               finally
-               {
-                  statistics.deltaPreparedStatementCacheDeleteCount();
-               }
-            }
+            evicted.agedOut();
          }
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      public void onEntryChosenForEviction(Object internalCacheEntry)
-      {
+         catch (SQLException e)
+         {
+            log.debug("Failed closing cached statement", e);
+         }
+         finally
+         {
+            statistics.deltaPreparedStatementCacheDeleteCount();
+         }
       }
    }
 
@@ -306,12 +241,7 @@ public class PreparedStatementCache
    public String toString()
    {
       StringBuilder sb = new StringBuilder("PreparedStatementCache size: ").append(size()).append(" ");
-      Iterator<Key> it = cache.keySet().iterator();
-      while (it.hasNext())
-      {
-         Key key = it.next();
-         sb.append("[").append(key.getSql()).append("] ");
-      }
+      sb.append(cache);
       return sb.toString();
    }
 }
