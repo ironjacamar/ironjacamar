@@ -67,7 +67,8 @@ subprojects { subProject ->
   apply plugin: 'java'
   apply plugin: 'checkstyle'
   apply plugin: 'jdocbook'
-  
+  apply plugin: 'eclipse'
+
   configurations {
     apiVizTool {
       description = "APIViz"
