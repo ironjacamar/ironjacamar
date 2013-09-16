@@ -1,3 +1,14 @@
+# Gradle work directory
 .gradle
+
+# Build output directories
 api/build
 common/build
+doc/build
+
+# Eclipse specific files/directories
+.classpath
+.project
+.settings
+.metadata
+
