@@ -1208,10 +1208,10 @@ public abstract class BaseWrapperManagedConnectionFactory
       }
 
       /**
-       * Run
+       * doCheck
        * @return The result
        */
-      public Boolean run()
+      private Boolean doCheck()
       {
          Set<PasswordCredential> creds = subject.getPrivateCredentials(PasswordCredential.class);
          if (creds != null && creds.size() > 0)
@@ -1255,6 +1255,15 @@ public abstract class BaseWrapperManagedConnectionFactory
       }
 
       /**
+       * Run
+       * @return The result
+       */
+      public Boolean run()
+      {
+         return doCheck();
+      }
+
+      /**
        * Add matching properties
        * @param subject The subject
        * @param cri The connection request info
@@ -1268,7 +1277,15 @@ public abstract class BaseWrapperManagedConnectionFactory
                                            String userName, String password, ManagedConnectionFactory mcf)
       {
          SubjectActions action = new SubjectActions(subject, cri, props, userName, password, mcf);
-         Boolean matched = AccessController.doPrivileged(action);
+         Boolean matched = Boolean.FALSE;
+         if (System.getSecurityManager() == null)
+         {
+            matched = action.doCheck();
+         }
+         else
+         {
+            matched = AccessController.doPrivileged(action);
+         }
          return matched.booleanValue();
       }
    }
