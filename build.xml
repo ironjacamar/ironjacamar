@@ -91,6 +91,13 @@
   <property name="reports.dir" value="${basedir}/reports" />
   <property name="test.dir" value="${reports.dir}" />
 
+  <!-- ================================= 
+       Aggregated Javadoc
+       ================================= -->
+  <property name="build.javadocs.dir" value="${build.dir}/javadocs" />
+  <property name="build.javadocs.api-spi.dir" value="${build.javadocs.dir}/api-spi" />
+  <property name="build.javadocs.all.dir" value="${build.javadocs.dir}/all" />
+
   <property name="javac.debug" value="on" />
   <property name="javac.deprecation" value="on" />
   <property name="javac.optimize" value="off" />
@@ -373,6 +380,109 @@
     <ant dir="as" inheritRefs="true" target="docs"/>
   </target>
   
+  <!-- ================================= 
+       Target: aggregate javadoc
+       ================================= -->
+  <target name="aggregated-javadocs-api-spi" depends="jars">
+    <mkdir dir="${build.javadocs.api-spi.dir}"/>
+    <javadoc packagenames="org.jboss.jca.*"
+             destdir="${build.javadocs.api-spi.dir}"
+             doclet="org.jboss.apiviz.APIviz"
+             docletpathref="main.lib.path.id"
+             author="true"
+             version="true"
+             failonerror="true"
+             windowtitle="IronJacamar API And SPI"
+             doctitle="IronJacamar API And SPI"
+             use="true"
+             additionalparam="-author -version"
+             classpathref="main.lib.path.id"
+             bottom="Copyright &amp;#169; 2013 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
+
+      <packageset dir="${basedir}/api/src/main/java" />
+      <packageset dir="${basedir}/core/src/main/java" defaultexcludes="yes">
+        <include name="**/api/**" />
+        <include name="**/spi/**" />
+      </packageset>
+      <packageset dir="${basedir}/common/src/main/java" defaultexcludes="yes">
+        <include name="**/api/**" />
+        <include name="**/spi/**" />
+      </packageset>
+      <packageset dir="${basedir}/adapters/src/main/java" defaultexcludes="yes">
+        <include name="**/api/**" />
+        <include name="**/spi/**" />
+      </packageset>
+      <packageset dir="${basedir}/as/src/main/java" defaultexcludes="yes">
+        <include name="**/api/**" unless="as" />
+        <include name="**/spi/**" unless="as" />
+      </packageset>
+
+      <link offline="true" href="http://docs.oracle.com/javase/6/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
+    </javadoc>
+    <copy todir="${build.javadocs.api-spi.dir}/" overwrite="true">
+      <fileset dir="${tools.dir}/api"/>
+    </copy>
+  </target>
+
+  <target name="aggregated-javadocs" depends="jars,aggregated-javadocs-api-spi">
+    <mkdir dir="${build.javadocs.all.dir}"/>
+    <javadoc packagenames="org.jboss.jca.*"
+             destdir="${build.javadocs.all.dir}"
+             doclet="org.jboss.apiviz.APIviz"
+             docletpathref="main.lib.path.id"
+             author="true"
+             version="true"
+             failonerror="true"
+             windowtitle="IronJacamar Javadocs"
+             doctitle="IronJacamar Javadocs"
+             use="true"
+             additionalparam="-author -version"
+             classpathref="main.lib.path.id"
+             bottom="Copyright &amp;#169; 2013 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
+
+      <packageset dir="${basedir}/api/src/main/java" />
+      <packageset dir="${basedir}/adapters/src/main/java" />
+      <packageset dir="${basedir}/arquillian/src/main/java">
+        <exclude name="**/*.*" if="as"/>
+      </packageset>
+      <packageset dir="${basedir}/as/src/main/java">
+        <exclude name="**/*.*" if="as"/>
+      </packageset>
+      <packageset dir="${basedir}/codegenerator/src/main/java">
+        <exclude name="**/*.*" if="as"/>
+      </packageset>
+      <packageset dir="${basedir}/common/src/main/java" />
+      <packageset dir="${basedir}/core/src/main/java" />
+      <packageset dir="${basedir}/deployers/src/main/java">
+        <exclude name="**/fungal/**" if="as"/>
+      </packageset>
+      <packageset dir="${basedir}/eclipse/src/main/java">
+        <exclude name="**/*.*" if="as"/>
+      </packageset>
+      <packageset dir="${basedir}/eis/src/main/java">
+        <exclude name="**/*.*" if="as"/>
+      </packageset>
+      <packageset dir="${basedir}/embedded/src/main/java">
+        <exclude name="**/*.*" if="as"/>
+      </packageset>
+      <packageset dir="${basedir}/sjc/src/main/java">
+        <exclude name="**/*.*" if="as"/>
+      </packageset>
+      <packageset dir="${basedir}/validator/src/main/java" />
+      <packageset dir="${basedir}/web/src/main/java">
+        <exclude name="**/*.*" if="as"/>
+      </packageset>
+      
+      <link offline="true" href="http://docs.oracle.com/javase/6/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
+    </javadoc>
+    <copy todir="${build.javadocs.all.dir}/" overwrite="true">
+      <fileset dir="${tools.dir}/api"/>
+    </copy>
+
+  </target>
+
+
+
   <!-- ================================= 
        Target: manual
        ================================= -->
