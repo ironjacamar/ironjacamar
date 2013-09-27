@@ -35,10 +35,19 @@
     <uptodate property="validator._uptodate" targetfile="${target.dir}/${name}-validator.jar" >
       <srcfiles dir= "src/main" includes="**/*"/>
     </uptodate>
+    <uptodate property="validator.tools._uptodate" targetfile="${target.dir}/${name}-validator-cli.jar" >
+      <srcfiles dir= "src/main" includes="**/*"/>
+    </uptodate>
 
     <condition property="validator.uptodate" value="true">
       <or>
         <isset property="validator._uptodate"/>
+        <isset property="as"/>
+      </or>
+    </condition>
+    <condition property="validator.tools.uptodate" value="true">
+      <or>
+        <isset property="validator.tools._uptodate"/>
         <isset property="as"/>
       </or>
     </condition>
@@ -48,7 +57,7 @@
    <!-- ================================= 
         Target: compile
         ================================= -->
-  <target name="compile-base" unless="validator.uptodate">
+  <target name="compile-base" unless="validator._uptodate">
     <mkdir dir="${build.validator.dir}" />
     <mkdir dir="${build.validator.dir}/impl" />
 
@@ -65,7 +74,7 @@
     </javac> 
   </target>
 
-  <target name="compile-tools" unless="validator.uptodate">
+  <target name="compile-tools" unless="validator.tools.uptodate">
     <javac srcdir="src/main"
            destdir="${build.validator.dir}/impl"
            classpathref="main.lib.path.id"

@@ -35,10 +35,19 @@
     <uptodate property="deployers._uptodate" targetfile="${target.dir}/${name}-deployers-common.jar" >
       <srcfiles dir= "src/main" includes="**/*"/>
     </uptodate>
+    <uptodate property="deployers.fungal._uptodate" targetfile="${target.dir}/${name}-deployers-fungal.jar" >
+      <srcfiles dir= "src/main" includes="**/*"/>
+    </uptodate>
 
     <condition property="deployers.uptodate" value="true">
       <or>
         <isset property="deployers._uptodate"/>
+        <isset property="as"/>
+      </or>
+    </condition>
+    <condition property="deployers.fungal.uptodate" value="true">
+      <or>
+        <isset property="deployers.fungal._uptodate"/>
         <isset property="as"/>
       </or>
     </condition>
@@ -47,7 +56,7 @@
   <!-- ================================= 
        Target: compile
        ================================= -->
-  <target name="compile-fungal" unless="deployers.uptodate">
+  <target name="compile-fungal" unless="deployers.fungal.uptodate">
     <javac srcdir="src/main"
            destdir="${build.deployers.dir}/impl"
            classpathref="main.lib.path.id"
@@ -63,7 +72,7 @@
     </javac>
   </target>
 
-  <target name="compile-base" unless="deployers.uptodate">
+  <target name="compile-base" unless="deployers._uptodate">
     <mkdir dir="${build.deployers.dir}" />
     <mkdir dir="${build.deployers.dir}/impl" />
     <javac srcdir="src/main"
