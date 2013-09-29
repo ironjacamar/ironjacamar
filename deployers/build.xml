@@ -36,7 +36,7 @@
       <srcfiles dir= "src/main" includes="**/*"/>
     </uptodate>
     <uptodate property="deployers.fungal._uptodate" targetfile="${target.dir}/${name}-deployers-fungal.jar" >
-      <srcfiles dir= "src/main" includes="**/*"/>
+      <srcfiles dir= "src/main" includes="**/fungal/*"/>
     </uptodate>
 
     <condition property="deployers.uptodate" value="true">

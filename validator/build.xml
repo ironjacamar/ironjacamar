@@ -36,7 +36,7 @@
       <srcfiles dir= "src/main" includes="**/*"/>
     </uptodate>
     <uptodate property="validator.tools._uptodate" targetfile="${target.dir}/${name}-validator-cli.jar" >
-      <srcfiles dir= "src/main" includes="**/*"/>
+      <srcfiles dir= "src/main" includes="**/cli/*"/>
     </uptodate>
 
     <condition property="validator.uptodate" value="true">
