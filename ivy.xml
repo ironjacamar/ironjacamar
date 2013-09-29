@@ -96,11 +96,11 @@
 
   <dependencies>
     <!-- Maven doesn't handle dependencies well, so logging has to be first -->
-    <dependency org="org.jboss.jdeparser" name="jdeparser" rev="${version.jboss.jdeparser}" conf="common,ironjacamar-depchain,as"/>
-    <dependency org="org.jboss.logging" name="jboss-logging" rev="${version.jboss.logging}" conf="common,ironjacamar-common-impl,ironjacamar-core-impl,ironjacamar-depchain,ironjacamar-deployers-common,ironjacamar-deployers-fungal,as"/>
-    <dependency org="org.jboss.logging" name="jboss-logging-processor" rev="${version.jboss.logging-processor}" conf="common,as"/>
-    <dependency org="org.jboss.logmanager" name="jboss-logmanager" rev="${version.jboss.logmanager}" conf="common,ironjacamar-depchain,as"/>
-    <dependency org="org.jboss.logmanager" name="log4j-jboss-logmanager" rev="${version.jboss.logmanager.log4j}" conf="common,ironjacamar-depchain,as"/>
+    <dependency org="org.jboss.jdeparser" name="jdeparser" rev="${version.jboss.jdeparser}" conf="as,common,ironjacamar-depchain"/>
+    <dependency org="org.jboss.logging" name="jboss-logging" rev="${version.jboss.logging}" conf="as,common,ironjacamar-common-impl,ironjacamar-core-impl,ironjacamar-depchain,ironjacamar-deployers-common,ironjacamar-deployers-fungal"/>
+    <dependency org="org.jboss.logging" name="jboss-logging-processor" rev="${version.jboss.logging-processor}" conf="as,common"/>
+    <dependency org="org.jboss.logmanager" name="jboss-logmanager" rev="${version.jboss.logmanager}" conf="as,common,ironjacamar-depchain"/>
+    <dependency org="org.jboss.logmanager" name="log4j-jboss-logmanager" rev="${version.jboss.logmanager.log4j}" conf="as,common,ironjacamar-depchain"/>
 
     <!-- Keep these sorted -->
     <dependency org="apache-logging" name="commons-logging" rev="${version.apache-logging}" conf="common,ironjacamar-depchain"/>
@@ -117,7 +117,7 @@
     <dependency org="javax.el" name="javax.el-api" rev="${version.jetty.el}" conf="jetty"/>
     <dependency org="javax.servlet" name="javax.servlet-api" rev="${version.jetty.servlet}" conf="jetty"/>
     <dependency org="javax.servlet.jsp" name="javax.servlet.jsp-api"  rev="${version.jetty.jsp}" conf="jetty"/>
-    <dependency org="javax.validation" name="validation-api" rev="${version.validation-api}" conf="common,ironjacamar-core-impl,ironjacamar-depchain,ironjacamar-deployers-fungal,as"/>
+    <dependency org="javax.validation" name="validation-api" rev="${version.validation-api}" conf="as,common,ironjacamar-core-impl,ironjacamar-depchain,ironjacamar-deployers-fungal"/>
     <dependency org="jdepend" name="jdepend" rev="${version.jdepend}" conf="tools"/>
     <dependency org="junit" name="junit" rev="${version.junit}" conf="test"/>
     <dependency org="log4j" name="log4j" rev="${version.apache-log4j}" conf="common,ironjacamar-depchain"/>
@@ -148,10 +148,10 @@
       <artifact name="hornetq-ra" type="jar" conf="hornetq"/>
       <artifact name="hornetq-ra" type="rar" conf="hornetq"/>
     </dependency>
-    <dependency org="org.jboss" name="jandex" rev="${version.jboss.jandex}" conf="common,ironjacamar-common-impl,ironjacamar-depchain,as"/>
+    <dependency org="org.jboss" name="jandex" rev="${version.jboss.jandex}" conf="as,common,ironjacamar-common-impl,ironjacamar-depchain"/>
     <dependency org="org.jboss" name="jboss-common-core" rev="${version.jboss.common}" conf="common,ironjacamar-depchain"/>
-    <dependency org="org.jboss" name="jboss-transaction-spi" rev="${version.jboss.ts.spi}" conf="common,ironjacamar-core-api,ironjacamar-core-impl,ironjacamar-depchain,as"/>
-    <dependency org="org.jboss.apiviz" name="apiviz" rev="${version.apiviz}" conf="tools,as"/>
+    <dependency org="org.jboss" name="jboss-transaction-spi" rev="${version.jboss.ts.spi}" conf="as,common,ironjacamar-core-api,ironjacamar-core-impl,ironjacamar-depchain"/>
+    <dependency org="org.jboss.apiviz" name="apiviz" rev="${version.apiviz}" conf="as,tools"/>
     <dependency org="org.jboss.arquillian.config" name="arquillian-config-api" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-arquillian-embedded"/>
     <dependency org="org.jboss.arquillian.config" name="arquillian-config-impl-base" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-arquillian-embedded"/>
     <dependency org="org.jboss.arquillian.config" name="arquillian-config-spi" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-arquillian-embedded"/>
@@ -188,13 +188,13 @@
     <dependency org="org.jboss.shrinkwrap" name="shrinkwrap-spi" rev="${version.jboss.shrinkwrap}" conf="embedded,ironjacamar-depchain"/>
     <dependency org="org.jboss.slf4j" name="slf4j-jboss-logmanager" rev="${version.jboss.slf4j.logmanager}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.jboss.spec.javax.jms" name="jboss-jms-api_1.1_spec" rev="${version.jboss.jms.api}" conf="hornetq"/>
-    <dependency org="org.jboss.spec.javax.security.auth.message" name="jboss-jaspi-api_1.0_spec" rev="${version.jboss.jaspi.api}" conf="common,ironjacamar-core-impl,ironjacamar-depchain,as"/>
-    <dependency org="org.jboss.spec.javax.transaction" name="jboss-transaction-api_1.2_spec" rev="${version.transaction.api}" conf="common,ironjacamar-core-api,ironjacamar-core-impl,ironjacamar-depchain,ironjacamar-deployers-fungal,ironjacamar-spec-api,ironjacamar-jdbc,as"/>
+    <dependency org="org.jboss.spec.javax.security.auth.message" name="jboss-jaspi-api_1.0_spec" rev="${version.jboss.jaspi.api}" conf="as,common,ironjacamar-core-impl,ironjacamar-depchain"/>
+    <dependency org="org.jboss.spec.javax.transaction" name="jboss-transaction-api_1.2_spec" rev="${version.transaction.api}" conf="as,common,ironjacamar-core-api,ironjacamar-core-impl,ironjacamar-depchain,ironjacamar-deployers-fungal,ironjacamar-spec-api,ironjacamar-jdbc"/>
     <dependency org="org.jboss.stdio" name="jboss-stdio" rev="${version.jboss.stdio}" conf="common,ironjacamar-depchain"/>
-    <dependency org="org.jboss.threads" name="jboss-threads" rev="${version.jboss.threads}" conf="common,ironjacamar-core-api,ironjacamar-core-impl,ironjacamar-depchain,as"/>
-    <dependency org="org.jgroups" name="jgroups" rev="${version.jgroups}" conf="common,ironjacamar-depchain,as"/>
+    <dependency org="org.jboss.threads" name="jboss-threads" rev="${version.jboss.threads}" conf="as,common,ironjacamar-core-api,ironjacamar-core-impl,ironjacamar-depchain"/>
+    <dependency org="org.jgroups" name="jgroups" rev="${version.jgroups}" conf="as,common,ironjacamar-depchain"/>
     <dependency org="org.mockito" name="mockito-all" rev="${version.mockito}" conf="test"/>
-    <dependency org="org.picketbox" name="picketbox" rev="${version.jboss.picketbox}" conf="common,ironjacamar-depchain,ironjacamar-core-impl,as"/>
+    <dependency org="org.picketbox" name="picketbox" rev="${version.jboss.picketbox}" conf="as,common,ironjacamar-depchain,ironjacamar-core-impl"/>
     <dependency org="org.slf4j" name="jcl-over-slf4j" rev="${version.slf4j}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.slf4j" name="slf4j-api" rev="${version.slf4j}" conf="common,ironjacamar-depchain"/>
   </dependencies>
