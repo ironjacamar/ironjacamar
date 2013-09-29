@@ -32,16 +32,9 @@
        Target: check
        ================================= -->
   <target name="check">
-    <uptodate property="adapters._uptodate" targetfile="${target.dir}/${name}-jdbc.jar" >
+    <uptodate property="adapters.uptodate" targetfile="${target.dir}/${name}-jdbc.jar" >
       <srcfiles dir= "src/main" includes="**/*"/>
     </uptodate>
-
-    <condition property="adapters.uptodate" value="true">
-      <or>
-        <isset property="adapters._uptodate"/>
-        <isset property="as"/>
-      </or>
-    </condition>
 
     <condition property="jdk7" value="true">
       <isset property="HAVE_JDK_1.7"/>
