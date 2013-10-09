@@ -457,9 +457,6 @@
 
       <packageset dir="${basedir}/api/src/main/java" />
       <packageset dir="${basedir}/adapters/src/main/java" />
-      <packageset dir="${basedir}/arquillian/src/main/java">
-        <exclude name="**/*.*" if="as"/>
-      </packageset>
       <packageset dir="${basedir}/as/src/main/java">
         <exclude name="**/*.*" if="as"/>
       </packageset>
@@ -470,12 +467,6 @@
       <packageset dir="${basedir}/core/src/main/java" />
       <packageset dir="${basedir}/deployers/src/main/java">
         <exclude name="**/fungal/**" if="as"/>
-      </packageset>
-      <packageset dir="${basedir}/eclipse/src/main/java">
-        <exclude name="**/*.*" if="as"/>
-      </packageset>
-      <packageset dir="${basedir}/eis/src/main/java">
-        <exclude name="**/*.*" if="as"/>
       </packageset>
       <packageset dir="${basedir}/embedded/src/main/java">
         <exclude name="**/*.*" if="as"/>
