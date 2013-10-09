@@ -139,6 +139,14 @@ ant &lt;target&gt;
         <para>Builds the API documentation for the project.</para>
       </listitem>
       <listitem>
+        <para>aggregated-javadocs</para>
+        <para>Builds the Aggregated API documentation for the project.</para>
+      </listitem>
+      <listitem>
+        <para>aggregated-javadocs-api-spi</para>
+        <para>Builds the Aggregated API documentation for API/SPI of the project.</para>
+      </listitem>
+      <listitem>
         <para>sjc</para>
         <para>Builds the standalone environment using IronJacamar/SJC.</para>
       </listitem>
