@@ -346,10 +346,8 @@ public abstract class DeploymentTestBase
    public void testSimpleAO(SimpleAdminObject ao, String first, double second)
    {
       assertNotNull(ao);
-      assertTrue(ao instanceof SimpleAdminObjectImpl);
-      SimpleAdminObjectImpl aoi = (SimpleAdminObjectImpl) ao;
-      assertEquals(first, aoi.getFirst());
-      assertEquals(second, (double) aoi.getSecond(), 0);
+      assertEquals(first, ao.getFirst());
+      assertEquals(second, (double) ao.getSecond(), 0);
    }
 
    /**

@@ -21,16 +21,12 @@
  */
 package org.jboss.jca.deployers.test.rars.anno;
 
-import java.io.Serializable;
-
-import javax.resource.Referenceable;
-
 /**
  * AnnoAdminObject
  *
  * @version $Revision: $
  */
-public interface AnnoAdminObject extends Referenceable, Serializable
+public interface AnnoAdminObject
 {
 
    /** 

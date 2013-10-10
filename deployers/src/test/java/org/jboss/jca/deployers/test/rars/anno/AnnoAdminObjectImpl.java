@@ -21,13 +21,8 @@
  */
 package org.jboss.jca.deployers.test.rars.anno;
 
-import javax.naming.NamingException;
-import javax.naming.Reference;
-
 import javax.resource.spi.AdministeredObject;
 import javax.resource.spi.ConfigProperty;
-import javax.resource.spi.ResourceAdapter;
-import javax.resource.spi.ResourceAdapterAssociation;
 
 /**
  * AnnoAdminObjectImpl
@@ -35,17 +30,10 @@ import javax.resource.spi.ResourceAdapterAssociation;
  * @version $Revision: $
  */
 @AdministeredObject(adminObjectInterfaces = { AnnoAdminObject.class })
-public class AnnoAdminObjectImpl implements AnnoAdminObject,
-   ResourceAdapterAssociation
+public class AnnoAdminObjectImpl implements AnnoAdminObject
 {
    /** Serial version uid */
-   private static final long serialVersionUID = 1L;
-
-   /** The resource adapter */
-   private ResourceAdapter ra;
-
-   /** Reference */
-   private Reference reference;
+   private static final long serialVersionUID = 2L;
 
    /** first */
    @ConfigProperty(defaultValue = "12345", description = {"1st", "first" }, 
@@ -101,49 +89,6 @@ public class AnnoAdminObjectImpl implements AnnoAdminObject,
       return second;
    }
 
-   /**
-    * Get the resource adapter
-    *
-    * @return The handle
-    */
-   public ResourceAdapter getResourceAdapter()
-   {
-      return ra;
-   }
-
-   /**
-    * Set the resource adapter
-    *
-    * @param ra The handle
-    */
-   public void setResourceAdapter(ResourceAdapter ra)
-   {
-      this.ra = ra;
-   }
-
-   /**
-    * Get the Reference instance.
-    *
-    * @return Reference instance
-    * @exception NamingException Thrown if a reference can't be obtained
-    */
-   @Override
-   public Reference getReference() throws NamingException
-   {
-      return reference;
-   }
-
-   /**
-    * Set the Reference instance.
-    *
-    * @param reference A Reference instance
-    */
-   @Override
-   public void setReference(Reference reference)
-   {
-      this.reference = reference;
-   }
-
    /** 
     * Returns a hash code value for the object.
     * @return A hash code value for this object.
@@ -195,5 +140,4 @@ public class AnnoAdminObjectImpl implements AnnoAdminObject,
       }
       return result;
    }
-
 }

@@ -134,7 +134,6 @@ public class AnnoAdminObjectImpl1 implements AnnoAdminObject, Serializable, Exte
     * @return Reference instance
     * @exception NamingException Thrown if a reference can't be obtained
     */
-   @Override
    public Reference getReference() throws NamingException
    {
       return reference;
@@ -145,7 +144,6 @@ public class AnnoAdminObjectImpl1 implements AnnoAdminObject, Serializable, Exte
     *
     * @param reference A Reference instance
     */
-   @Override
    public void setReference(Reference reference)
    {
       this.reference = reference;
