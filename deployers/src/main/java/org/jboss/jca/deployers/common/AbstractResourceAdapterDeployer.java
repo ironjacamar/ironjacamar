@@ -86,6 +86,7 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -945,11 +946,57 @@ public abstract class AbstractResourceAdapterDeployer
                               if (ao != null)
                               {
                                  boolean adminObjectBound = false;
+                                 boolean adminObjectVerified = false;
 
-                                 if ((ao instanceof ResourceAdapterAssociation &&
-                                      ao instanceof Serializable &&
-                                      ao instanceof javax.resource.Referenceable) ||
-                                     (ao instanceof javax.naming.Referenceable))
+                                 if (ao instanceof ResourceAdapterAssociation)
+                                 {
+                                    if (ao instanceof Serializable &&
+                                        ao instanceof javax.resource.Referenceable)
+                                    {
+                                       adminObjectVerified = true;
+                                    }
+                                 }
+                                 else
+                                 {
+                                    if (!(ao instanceof javax.naming.Referenceable))
+                                    {
+                                       DelegatorInvocationHandler dih = new DelegatorInvocationHandler(ao);
+
+                                       List<Class<?>> interfaces = new ArrayList<Class<?>>();
+                                       Class<?> clz = ao.getClass();
+                                       while (!clz.equals(Object.class))
+                                       {
+                                          Class<?>[] is = clz.getInterfaces();
+                                          if (is != null)
+                                          {
+                                             for (Class<?> interfaceClass : is)
+                                             {
+                                                if (!interfaceClass.equals(javax.resource.Referenceable.class) &&
+                                                    !interfaceClass.equals(javax.resource.spi.ResourceAdapterAssociation.class) &&
+                                                    !interfaceClass.equals(java.io.Serializable.class) &&
+                                                    !interfaceClass.equals(java.io.Externalizable.class))
+                                                {
+                                                   if (!interfaces.contains(interfaceClass))
+                                                      interfaces.add(interfaceClass);
+                                                }
+                                             }
+                                          }
+
+                                          clz = clz.getSuperclass();
+                                       }
+
+                                       interfaces.add(java.io.Serializable.class);
+                                       interfaces.add(javax.resource.Referenceable.class);
+                                       
+                                       ao = Proxy.newProxyInstance(ao.getClass().getClassLoader(),
+                                                                   interfaces.toArray(new Class<?>[interfaces.size()]),
+                                                                   dih);
+                                    }
+
+                                    adminObjectVerified = true;
+                                 }
+
+                                 if (adminObjectVerified)
                                  {
                                     try
                                     {

@@ -21,18 +21,13 @@
  */
 package org.jboss.jca.deployers.test.rars.inout;
 
-import java.io.Serializable;
-
-import javax.resource.Referenceable;
-
 /**
  * SimpleAdminObject
  *
  * @version $Revision: $
  */
-public interface SimpleAdminObject extends Referenceable, Serializable
+public interface SimpleAdminObject
 {
-
    /** 
     * Set first
     * @param first The value
@@ -56,6 +51,4 @@ public interface SimpleAdminObject extends Referenceable, Serializable
     * @return The value
     */
    public Double getSecond();
-
-
 }

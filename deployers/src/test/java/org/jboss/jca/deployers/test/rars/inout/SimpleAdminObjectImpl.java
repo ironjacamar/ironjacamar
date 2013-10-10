@@ -21,32 +21,13 @@
  */
 package org.jboss.jca.deployers.test.rars.inout;
 
-import java.io.Serializable;
-
-import javax.naming.NamingException;
-import javax.naming.Reference;
-
-import javax.resource.Referenceable;
-import javax.resource.spi.ResourceAdapter;
-import javax.resource.spi.ResourceAdapterAssociation;
-
 /**
  * SimpleAdminObjectImpl
  *
  * @version $Revision: $
  */
-public class SimpleAdminObjectImpl implements SimpleAdminObject,
-   ResourceAdapterAssociation, Referenceable, Serializable
+public class SimpleAdminObjectImpl implements SimpleAdminObject
 {
-   /** Serial version uid */
-   private static final long serialVersionUID = 1L;
-
-   /** The resource adapter */
-   private ResourceAdapter ra;
-
-   /** Reference */
-   private Reference reference;
-
    /** first */
    private String first = "ao";
 
@@ -95,49 +76,6 @@ public class SimpleAdminObjectImpl implements SimpleAdminObject,
    public Double getSecond()
    {
       return second;
-   }
-
-   /**
-    * Get the resource adapter
-    *
-    * @return The handle
-    */
-   public ResourceAdapter getResourceAdapter()
-   {
-      return ra;
-   }
-
-   /**
-    * Set the resource adapter
-    *
-    * @param ra The handle
-    */
-   public void setResourceAdapter(ResourceAdapter ra)
-   {
-      this.ra = ra;
-   }
-
-   /**
-    * Get the Reference instance.
-    *
-    * @return Reference instance
-    * @exception NamingException Thrown if a reference can't be obtained
-    */
-   @Override
-   public Reference getReference() throws NamingException
-   {
-      return reference;
-   }
-
-   /**
-    * Set the Reference instance.
-    *
-    * @param reference A Reference instance
-    */
-   @Override
-   public void setReference(Reference reference)
-   {
-      this.reference = reference;
    }
 
    /** 
@@ -191,5 +129,4 @@ public class SimpleAdminObjectImpl implements SimpleAdminObject,
       }
       return result;
    }
-
 }
