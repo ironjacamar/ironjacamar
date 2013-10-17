@@ -296,6 +296,18 @@ public class XAManagedConnection extends BaseWrapperManagedConnection implements
          }
          catch (XAException e)
          {
+            if (flags == XAResource.TMFAIL)
+            {
+               if (!(e.errorCode >= XAException.XA_RBBASE && e.errorCode < XAException.XA_RBEND))
+               {
+                  // Broken error code from underlying database, fix it
+                  XAException fixed = new XAException(XAException.XA_RBROLLBACK);
+                  fixed.initCause(e);
+
+                  e = fixed;
+               }
+            }
+
             broadcastConnectionError(e);
             throw e;
          }
