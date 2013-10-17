@@ -150,7 +150,7 @@
   <property name="version.jboss.shrinkwrap.descriptors" value="2.0.0-alpha-5"/>
   <property name="version.jboss.slf4j.logmanager" value="1.0.0.GA"/>
   <property name="version.jboss.stdio" value="1.0.1.GA"/>
-  <property name="version.jboss.threads" value="2.0.0.GA"/>
+  <property name="version.jboss.threads" value="2.1.1.Final"/>
   <property name="version.jboss.ts" value="5.0.0.M3"/>
   <property name="version.jboss.ts.spi" value="7.0.1.Final"/>
   <property name="version.jdepend" value="2.9.1"/>
