@@ -21,21 +21,37 @@
  */
 package org.jboss.jca.core.tx.jbossts;
 
-import org.jboss.jca.core.spi.transaction.ConnectableResource;
+import org.jboss.jca.core.CoreLogger;
+import org.jboss.jca.core.spi.transaction.FirstResource;
+import org.jboss.jca.core.spi.transaction.xa.XidWrapper;
 
+import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
+
+import org.jboss.logging.Logger;
 
 /**
- * A connectable XAResourceWrapper.
+ * A first resource XAResourceWrapper.
  * 
+ * @author <a href="wprice@redhat.com">Weston Price</a>
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class ConnectableXAResourceWrapperImpl extends XAResourceWrapperImpl
-   implements ConnectableResource,
-              org.jboss.tm.ConnectableResource
+public class FirstResourceXAResourceWrapperImpl extends XAResourceWrapperImpl
+   implements FirstResource,
+              org.jboss.tm.FirstResource
 {
-   /** The connectable resource */
-   private ConnectableResource cr;
+   /**
+    * Creates a new wrapper instance.
+    * @param resource xaresource
+    * @param productName product name
+    * @param productVersion product version
+    */   
+   public FirstResourceXAResourceWrapperImpl(XAResource resource,
+                                             String productName, String productVersion)
+   {
+      this(resource, false, null, productName, productVersion, null);
+   }
 
    /**
     * Creates a new wrapper instance.
@@ -45,22 +61,12 @@ public class ConnectableXAResourceWrapperImpl extends XAResourceWrapperImpl
     * @param productName product name
     * @param productVersion product version
     * @param jndiName jndi name
-    * @param cr connectable resource
     */   
-   public ConnectableXAResourceWrapperImpl(XAResource resource, boolean pad, Boolean override, 
-                                           String productName, String productVersion,
-                                           String jndiName, ConnectableResource cr)
+   public FirstResourceXAResourceWrapperImpl(XAResource resource, boolean pad, Boolean override, 
+                                             String productName, String productVersion,
+                                             String jndiName)
    {
       super(resource, pad, override, productName, productVersion, jndiName);
-      this.cr = cr;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public AutoCloseable getConnection() throws Exception
-   {
-      return cr.getConnection();
    }
 
    /**
@@ -71,24 +77,14 @@ public class ConnectableXAResourceWrapperImpl extends XAResourceWrapperImpl
       if (object == this)
          return true;
 
-      if (object == null || !(object instanceof ConnectableXAResourceWrapperImpl))
-         return false;
+      if (object == null || !(object instanceof FirstResourceXAResourceWrapperImpl))
+         return false;  
 
-      ConnectableXAResourceWrapperImpl other = (ConnectableXAResourceWrapperImpl)object;
+      FirstResourceXAResourceWrapperImpl other =
+         (FirstResourceXAResourceWrapperImpl)object;
 
       if (!super.equals(other))
          return false;
-
-      if (cr != null)
-      {
-         if (!cr.equals(other.cr))
-            return false;
-      }
-      else
-      {
-         if (other.cr != null)
-            return false;
-      }
 
       return true;
    }
@@ -98,10 +94,6 @@ public class ConnectableXAResourceWrapperImpl extends XAResourceWrapperImpl
     */
    public int hashCode()
    {
-      int result = 31;
-
-      result += cr != null ? 7 * cr.hashCode() : 7;
-
-      return result;
+      return super.hashCode();
    }
 }

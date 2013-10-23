@@ -153,12 +153,13 @@ public interface TransactionIntegration
     * @param productName The product name
     * @param productVersion The product version
     * @param jndiName The JNDI name for the resource
+    * @param firstResource Is the resource a first resource
     * @return The value
     */
    public XAResourceWrapper createXAResourceWrapper(XAResource xares,
                                                     boolean pad, Boolean override, 
                                                     String productName, String productVersion,
-                                                    String jndiName);
+                                                    String jndiName, boolean firstResource);
 
    /**
     * Create a connectable XAResource wrapper instance
@@ -169,10 +170,12 @@ public interface TransactionIntegration
     * @param productVersion The product version
     * @param jndiName The JNDI name for the resource
     * @param cr The connectable resource
+    * @param firstResource Is the resource a first resource
     * @return The value
     */
    public XAResourceWrapper createConnectableXAResourceWrapper(XAResource xares,
                                                                boolean pad, Boolean override, 
                                                                String productName, String productVersion,
-                                                               String jndiName, ConnectableResource cr);
+                                                               String jndiName, ConnectableResource cr,
+                                                               boolean firstResource);
 }

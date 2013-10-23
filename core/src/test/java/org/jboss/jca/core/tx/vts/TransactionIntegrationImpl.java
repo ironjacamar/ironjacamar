@@ -168,14 +168,14 @@ public class TransactionIntegrationImpl implements TransactionIntegration
       return new LocalXAResourceImpl(productName, productVersion, jndiName);
    }
 
-
    /**
     * {@inheritDoc}
     */
    public XAResourceWrapper createConnectableXAResourceWrapper(XAResource xares,
                                                                boolean pad, Boolean override, 
                                                                String productName, String productVersion,
-                                                               String jndiName, ConnectableResource cr)
+                                                               String jndiName, ConnectableResource cr,
+                                                               boolean firstResource)
    {
       return new ConnectableXAResourceWrapperImpl(xares, override, productName, productVersion, jndiName, cr);
    }
@@ -186,7 +186,7 @@ public class TransactionIntegrationImpl implements TransactionIntegration
    public XAResourceWrapper createXAResourceWrapper(XAResource xares,
                                                     boolean pad, Boolean override, 
                                                     String productName, String productVersion,
-                                                    String jndiName)
+                                                    String jndiName, boolean firstResource)
    {
       return new XAResourceWrapperImpl(xares, override, productName, productVersion, jndiName);
    }
