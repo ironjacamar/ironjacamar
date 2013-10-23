@@ -226,7 +226,7 @@ public class XAResourceRecoveryImpl implements org.jboss.jca.core.spi.transactio
                                                        isSameRMOverrideValue,
                                                        eisProductName,
                                                        eisProductVersion,
-                                                       jndiName);
+                                                       jndiName, false);
             }
 
             log.debugf("Recovery XAResource=%s for %s", xaResource, jndiName);
