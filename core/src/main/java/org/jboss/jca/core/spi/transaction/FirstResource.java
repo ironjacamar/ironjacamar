@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2011, Red Hat Inc, and individual contributors
+ * Copyright 2013, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,40 +19,14 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.core.tx.jbossts;
-
-import org.jboss.jca.core.spi.transaction.ConnectableResource;
+package org.jboss.jca.core.spi.transaction;
 
 /**
- * Local connectable XA resource implementation.
+ * A tagging interface to identify an XAResource that should be considered
+ * the first resource, e.g. prepared first.
  * 
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class LocalConnectableXAResourceImpl extends LocalXAResourceImpl 
-   implements ConnectableResource, org.jboss.tm.ConnectableResource
+public interface FirstResource
 {
-   /** Connectable resource */
-   private ConnectableResource cr;
-   
-   /**
-    * Creates a new instance.
-    * @param productName product name
-    * @param productVersion product version
-    * @param jndiName jndi name
-    * @param cr connectable resource
-    */
-   public LocalConnectableXAResourceImpl(String productName, String productVersion,
-                                         String jndiName, ConnectableResource cr)
-   {
-      super(productName, productVersion, jndiName);
-      this.cr = cr;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public AutoCloseable getConnection() throws Exception
-   {
-      return cr.getConnection();
-   }
 }

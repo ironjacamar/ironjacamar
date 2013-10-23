@@ -22,21 +22,19 @@
 package org.jboss.jca.core.tx.jbossts;
 
 import org.jboss.jca.core.spi.transaction.ConnectableResource;
+import org.jboss.jca.core.spi.transaction.FirstResource;
 
 import javax.transaction.xa.XAResource;
 
 /**
- * A connectable XAResourceWrapper.
+ * A first resource connectable XAResourceWrapper.
  * 
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class ConnectableXAResourceWrapperImpl extends XAResourceWrapperImpl
-   implements ConnectableResource,
-              org.jboss.tm.ConnectableResource
+public class FirstResourceConnectableXAResourceWrapperImpl extends ConnectableXAResourceWrapperImpl
+   implements FirstResource,
+              org.jboss.tm.FirstResource
 {
-   /** The connectable resource */
-   private ConnectableResource cr;
-
    /**
     * Creates a new wrapper instance.
     * @param resource xaresource
@@ -47,20 +45,11 @@ public class ConnectableXAResourceWrapperImpl extends XAResourceWrapperImpl
     * @param jndiName jndi name
     * @param cr connectable resource
     */   
-   public ConnectableXAResourceWrapperImpl(XAResource resource, boolean pad, Boolean override, 
-                                           String productName, String productVersion,
-                                           String jndiName, ConnectableResource cr)
+   public FirstResourceConnectableXAResourceWrapperImpl(XAResource resource, boolean pad, Boolean override,
+                                                        String productName, String productVersion,
+                                                        String jndiName, ConnectableResource cr)
    {
-      super(resource, pad, override, productName, productVersion, jndiName);
-      this.cr = cr;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public AutoCloseable getConnection() throws Exception
-   {
-      return cr.getConnection();
+      super(resource, pad, override, productName, productVersion, jndiName, cr);
    }
 
    /**
@@ -71,24 +60,14 @@ public class ConnectableXAResourceWrapperImpl extends XAResourceWrapperImpl
       if (object == this)
          return true;
 
-      if (object == null || !(object instanceof ConnectableXAResourceWrapperImpl))
+      if (object == null || !(object instanceof FirstResourceConnectableXAResourceWrapperImpl))
          return false;
 
-      ConnectableXAResourceWrapperImpl other = (ConnectableXAResourceWrapperImpl)object;
+      FirstResourceConnectableXAResourceWrapperImpl other =
+         (FirstResourceConnectableXAResourceWrapperImpl)object;
 
       if (!super.equals(other))
          return false;
-
-      if (cr != null)
-      {
-         if (!cr.equals(other.cr))
-            return false;
-      }
-      else
-      {
-         if (other.cr != null)
-            return false;
-      }
 
       return true;
    }
@@ -98,10 +77,6 @@ public class ConnectableXAResourceWrapperImpl extends XAResourceWrapperImpl
     */
    public int hashCode()
    {
-      int result = 31;
-
-      result += cr != null ? 7 * cr.hashCode() : 7;
-
-      return result;
+      return super.hashCode();
    }
 }

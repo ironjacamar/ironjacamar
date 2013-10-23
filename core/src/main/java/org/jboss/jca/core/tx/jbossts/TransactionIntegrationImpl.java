@@ -151,18 +151,7 @@ public class TransactionIntegrationImpl implements TransactionIntegration
    }
 
    /**
-    * Create an XAResourceRecovery instance
-    *
-    * @param mcf The managed connection factory
-    * @param pad Should the branch qualifier for Xid's be padded
-    * @param override Should the isSameRM value be overriden; <code>null</code> for instance equally check
-    * @param wrapXAResource Should the XAResource be wrapped
-    * @param recoverUserName The user name for recovery
-    * @param recoverPassword The password for recovery
-    * @param recoverSecurityDomain The security domain for recovery
-    * @param subjectFactory The subject factory
-    * @param plugin The recovery plugin
-    * @return The value
+    * {@inheritDoc}
     */
    public XAResourceRecovery createXAResourceRecovery(ManagedConnectionFactory mcf,
                                                       Boolean pad, Boolean override, 
@@ -178,13 +167,7 @@ public class TransactionIntegrationImpl implements TransactionIntegration
    }
 
    /**
-    * Create a connectable LocalXAResource instance
-    * @param cm The connection manager
-    * @param productName The product name
-    * @param productVersion The product version
-    * @param jndiName The JNDI name for the resource
-    * @param cr The connectable resource
-    * @return The value
+    * {@inheritDoc}
     */
    public LocalXAResource createConnectableLocalXAResource(ConnectionManager cm,
                                                            String productName, String productVersion,
@@ -197,12 +180,7 @@ public class TransactionIntegrationImpl implements TransactionIntegration
    }
 
    /**
-    * Create a LocalXAResource instance
-    * @param cm The connection manager
-    * @param productName The product name
-    * @param productVersion The product version
-    * @param jndiName The JNDI name for the resource
-    * @return The value
+    * {@inheritDoc}
     */
    public LocalXAResource createLocalXAResource(ConnectionManager cm,
                                                 String productName, String productVersion,
@@ -215,42 +193,44 @@ public class TransactionIntegrationImpl implements TransactionIntegration
    }
 
    /**
-    * Create a connectable XAResource wrapper instance
-    * @param xares The XAResource instance
-    * @param pad Should the branch qualifier for Xid's be padded
-    * @param override Should the isSameRM value be overriden; <code>null</code> for instance equally check
-    * @param productName The product name
-    * @param productVersion The product version
-    * @param jndiName The JNDI name for the resource
-    * @param cr The connectable resource
-    * @return The value
+    * {@inheritDoc}
     */
    public XAResourceWrapper createConnectableXAResourceWrapper(XAResource xares,
                                                                boolean pad, Boolean override, 
                                                                String productName, String productVersion,
                                                                String jndiName,
-                                                               ConnectableResource cr)
+                                                               ConnectableResource cr,
+                                                               boolean firstResource)
    {
-      return new ConnectableXAResourceWrapperImpl(xares, pad, override,
-                                                  productName, productVersion, jndiName,
-                                                  cr);
+      if (firstResource)
+      {
+         return new FirstResourceConnectableXAResourceWrapperImpl(xares, pad, override,
+                                                                  productName, productVersion, jndiName,
+                                                                  cr);
+      }
+      else
+      {
+         return new ConnectableXAResourceWrapperImpl(xares, pad, override,
+                                                     productName, productVersion, jndiName,
+                                                     cr);
+      }
    }
 
    /**
-    * Create an XAResource wrapper instance
-    * @param xares The XAResource instance
-    * @param pad Should the branch qualifier for Xid's be padded
-    * @param override Should the isSameRM value be overriden; <code>null</code> for instance equally check
-    * @param productName The product name
-    * @param productVersion The product version
-    * @param jndiName The JNDI name for the resource
-    * @return The value
+    * {@inheritDoc}
     */
    public XAResourceWrapper createXAResourceWrapper(XAResource xares,
                                                     boolean pad, Boolean override, 
                                                     String productName, String productVersion,
-                                                    String jndiName)
+                                                    String jndiName, boolean firstResource)
    {
-      return new XAResourceWrapperImpl(xares, pad, override, productName, productVersion, jndiName);
+      if (firstResource)
+      {
+         return new FirstResourceXAResourceWrapperImpl(xares, pad, override, productName, productVersion, jndiName);
+      }
+      else
+      {
+         return new XAResourceWrapperImpl(xares, pad, override, productName, productVersion, jndiName);
+      }
    }
 }

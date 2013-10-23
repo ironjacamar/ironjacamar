@@ -597,6 +597,13 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
             if (eisProductVersion == null)
                eisProductVersion = getJndiName();
 
+            boolean firstResource = false;
+
+            if (mc instanceof org.jboss.jca.core.spi.transaction.FirstResource)
+            {
+               firstResource = true;
+            }            
+
             if (mc instanceof org.jboss.jca.core.spi.transaction.ConnectableResource)
             {
                org.jboss.jca.core.spi.transaction.ConnectableResource cr =
@@ -606,14 +613,14 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
                                                                              isSameRMOverride, 
                                                                              eisProductName, eisProductVersion,
                                                                              getJndiName(),
-                                                                             cr);
+                                                                             cr, firstResource);
             }
             else
             {
                xaResource = txIntegration.createXAResourceWrapper(mc.getXAResource(), padXid, 
                                                                   isSameRMOverride, 
                                                                   eisProductName, eisProductVersion,
-                                                                  getJndiName());
+                                                                  getJndiName(), firstResource);
             }
 
             if (trace)
