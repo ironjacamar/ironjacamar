@@ -70,4 +70,10 @@ public interface TxConnectionManager extends ConnectionManager, TransactionTimeo
     * @return True if Xids are padded; otherwise false
     */
    public boolean getPadXid();
+
+   /**
+    * Is allow marked for rollback enabled
+    * @return <code>True</code> if set, otherwise <code>false</code>
+    */
+   public boolean isAllowMarkedForRollback();
 }
