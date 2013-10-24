@@ -25,6 +25,7 @@ import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
+import org.jboss.jca.core.connectionmanager.TxConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.transaction.LockKey;
@@ -203,13 +204,18 @@ public class TxConnectionListener extends AbstractConnectionListener
       Transaction threadTx = tm.getTransaction();
       if (threadTx == null || status != Status.STATUS_ACTIVE)
       {
-         String error = "Transaction " + threadTx + " is not active " + TxUtils.getStatusAsString(status);
-         if (trace)
-         {
-            log.trace(error + " cl=" + this);
-         }
+         TxConnectionManager txConnectionManager = (TxConnectionManager)getConnectionManager();
 
-         throw new IllegalStateException(error);
+         if (!txConnectionManager.isAllowMarkedForRollback())
+         {
+            String error = "Transaction " + threadTx + " is not active " + TxUtils.getStatusAsString(status);
+            if (trace)
+            {
+               log.trace(error + " cl=" + this);
+            }
+
+            throw new IllegalStateException(error);
+         }
       }
 
       if (trace)

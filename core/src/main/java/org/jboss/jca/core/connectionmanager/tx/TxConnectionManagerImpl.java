@@ -141,6 +141,9 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
    
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
+
+   /** Allow marked for rollback */
+   private static boolean allowMarkedForRollback = false;
    
    /** Transaction manager instance */
    private transient TransactionManager transactionManager;
@@ -168,6 +171,33 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
 
    /** Same RM override */
    private Boolean isSameRMOverride;
+
+   static
+   {
+      String value = SecurityActions.getSystemProperty("ironjacamar.allow_marked_for_rollback");
+
+      if (value != null && !value.trim().equals(""))
+      {
+         try
+         {
+            int equal = value.indexOf("=");
+            if (equal != -1)
+            {
+               String setting = value.substring(equal + 1);
+               allowMarkedForRollback = Boolean.valueOf(setting);
+            }
+            else
+            {
+               // Assume enable
+               allowMarkedForRollback = true;
+            }
+         }
+         catch (Throwable t)
+         {
+            throw new RuntimeException("Unable to parse ironjacamar.allow_marked_for_rollback: " + value);
+         }
+      }
+   }
    
    /**
     * Constructor
@@ -323,6 +353,14 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
    }
    
    /**
+    * {@inheritDoc}
+    */
+   public boolean isAllowMarkedForRollback()
+   {
+      return allowMarkedForRollback;
+   }
+
+   /**
     * Gets time left.
     * @param errorRollback error rollback
     * @return time left
@@ -354,14 +392,23 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
       try
       {
          Transaction tx = transactionManager.getTransaction();
-         if (tx != null && !TxUtils.isActive(tx))
+         if (tx != null)
          {
-            throw new ResourceException(bundle.transactionNotActive(tx));  
+            if (!allowMarkedForRollback)
+            {
+               if (!TxUtils.isActive(tx))
+                  throw new ResourceException(bundle.transactionNotActive(tx));  
+            }
+            else
+            {
+               if (!TxUtils.isUncommitted(tx))
+                  throw new ResourceException(bundle.transactionNotActive(tx));  
+            }
          }
          
          if (!interleaving)
          {
-            trackByTransaction = tx;  
+            trackByTransaction = tx;
          }
       }
       catch (Throwable t)
