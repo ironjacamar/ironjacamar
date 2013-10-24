@@ -87,7 +87,7 @@ public class EnlistDelistXAInterleavingTestCase extends EnlistDelist
 
          log.infof("Connection=%s", c);
 
-         assertEquals("3D5D", c.getState());
+         assertEquals("3D5DB78", c.getState());
          c.clearState();
          c.close();
       }

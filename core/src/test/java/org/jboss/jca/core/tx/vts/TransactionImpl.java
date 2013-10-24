@@ -44,7 +44,7 @@ import javax.transaction.xa.XAResource;
  */
 public class TransactionImpl implements Transaction, Serializable
 {
-   private static final long serialVersionUID = 2L;
+   private static final long serialVersionUID = 3L;
    private static final XidImpl XID_IMPL = new XidImpl();
    private transient int status;
    private transient Set<Synchronization> syncs;
@@ -253,7 +253,7 @@ public class TransactionImpl implements Transaction, Serializable
       }
 
       if (enlisted != null && !enlisted.isEmpty())
-         checkEnlisted();
+         checkEnlisted(st);
 
       status = st;
 
@@ -330,14 +330,41 @@ public class TransactionImpl implements Transaction, Serializable
 
    /**
     * Check enlisted XAResources
+    * @param status The transaction status
     * @exception IllegalStateException Thrown if there non-TMSUSPENDed XAResources
     */
-   private void checkEnlisted() throws IllegalStateException
+   private void checkEnlisted(int status) throws IllegalStateException
    {
+      // All enlisted resources must be in suspended mode
       for (Integer state : enlisted.values())
       {
          if (state.intValue() != XAResource.TMSUSPEND)
             throw new IllegalStateException("XAResource instances still registrered");
       }
+
+      // All ok, now move them into delisted
+      int flag = XAResource.TMSUCCESS;
+
+      if (status == Status.STATUS_ROLLEDBACK)
+         flag = XAResource.TMFAIL;
+
+      for (XAResource xaRes : enlisted.keySet())
+      {
+         try
+         {
+            xaRes.end(XID_IMPL, flag);
+
+            if (delisted == null)
+               delisted = new HashSet<XAResource>();
+
+            delisted.add(xaRes);
+         }
+         catch (XAException xe)
+         {
+            throw new IllegalStateException("XAResource can't end", xe);
+         }
+      }
+
+      enlisted.clear();
    }
 }
