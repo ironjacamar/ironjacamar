@@ -158,6 +158,9 @@ public class RAXMLGenerator
          Boolean useJavaContext = connConfig.getMcfUseJavaCtx();
          Boolean useCcm = connConfig.getMcfUseCCM();
          CommonPool pool = getCommonPool(connConfig.getPoolConifg());
+         Boolean isXA = Boolean.FALSE;
+         if (connConfig.getPoolConifg().getDefineXA() != null && connConfig.getPoolConifg().getDefineXA())
+            isXA = Boolean.TRUE;
          CommonTimeOut timeOut = getCommonTimeOut(connConfig.getTimeoutConfig());
          CommonValidation validation = getCommonValidation(connConfig.getValidationConfig());
          CommonSecurity security = getCommonSecurity(connConfig.getSecurityConfig());
@@ -167,7 +170,7 @@ public class RAXMLGenerator
                      || recovery != null)
          {
             CommonConnDefImpl commonConn = new CommonConnDefImpl(configProperties, className, jndiName, poolName, 
-                  enabled, useJavaContext, useCcm, pool, timeOut, validation, security, recovery);
+               enabled, useJavaContext, useCcm, pool, timeOut, validation, security, recovery, isXA);
             result.add(commonConn);
          }
       }
