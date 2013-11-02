@@ -549,8 +549,7 @@ public class TxConnectionListener extends AbstractConnectionListener
    public class TransactionSynchronization implements Synchronization
    {
       /**Error message*/
-      private final Throwable failedToEnlist =
-         new Throwable("Unabled to enlist resource, see the previous warnings.");
+      private Throwable failedToEnlist;
 
       /** Transaction */
       protected final Transaction currentTx;
@@ -634,6 +633,7 @@ public class TxConnectionListener extends AbstractConnectionListener
             XAResource resource = getXAResource();
             if (!currentTx.enlistResource(resource))
             {
+               failedToEnlist = new Throwable("Unabled to enlist resource, see the previous warnings.");
                enlistError = failedToEnlist;
             }
          }
