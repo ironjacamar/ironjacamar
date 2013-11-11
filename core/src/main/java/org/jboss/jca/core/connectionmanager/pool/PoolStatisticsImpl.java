@@ -311,17 +311,7 @@ public class PoolStatisticsImpl implements PoolStatistics
     */
    public int getAvailableCount()
    {
-      return getAvailableCount(isEnabled());
-   }
-
-   /**
-    * The available count
-    * @param override True if the value should be returned
-    * @return The value
-    */
-   int getAvailableCount(boolean override)
-   {
-      if (override)
+      if (isEnabled())
       {
          int result = -1;
 
@@ -620,6 +610,8 @@ public class PoolStatisticsImpl implements PoolStatistics
 
       sb.append("[");
 
+      sb.append("Enabled=").append(isEnabled());
+      sb.append(",");
       sb.append(ACTIVE_COUNT).append("=").append(getActiveCount());
       sb.append(",");
       sb.append(AVAILABLE_COUNT).append("=").append(getAvailableCount());

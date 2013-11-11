@@ -187,6 +187,39 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    }
 
    /**
+    * {@inheritDoc}
+    */
+   public boolean isFull()
+   {
+      synchronized (cls)
+      {
+         return checkedOut.size() == maxSize;
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isIdle()
+   {
+      synchronized (cls)
+      {
+         return checkedOut.size() == 0;
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public int getActive()
+   {
+      synchronized (cls)
+      {
+         return cls.size() + checkedOut.size();
+      }
+   }
+
+   /**
     * Check if the pool has reached a certain size
     * @param size The size
     * @return True if reached; otherwise false
@@ -247,12 +280,13 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
       subject = (subject == null) ? defaultSubject : subject;
       cri = (cri == null) ? defaultCri : cri;
-      long startWait = System.currentTimeMillis();
+      long startWait = statistics.isEnabled() ? System.currentTimeMillis() : 0L;
       try
       {
          if (permits.tryAcquire(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS))
          {
-            statistics.deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
+            if (statistics.isEnabled())
+               statistics.deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
 
             //We have a permit to get a connection. Is there one in the pool already?
             ConnectionListener cl = null;
@@ -389,7 +423,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       {
          Thread.interrupted();
 
-         long end = System.currentTimeMillis() - startWait;
+         long end = statistics.isEnabled() ? (System.currentTimeMillis() - startWait) : 0L;
          statistics.deltaTotalBlockingTime(end);
          throw new ResourceException(bundle.interruptedWhileRequestingPermit(end));
       }
@@ -700,10 +734,11 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          // Also avoids unnessary fill checking when all connections are checked out
          try
          {
-            long startWait = System.currentTimeMillis();
+            long startWait = statistics.isEnabled() ? System.currentTimeMillis() : 0L;
             if (permits.tryAcquire(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS))
             {
-               statistics.deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
+               if (statistics.isEnabled())
+                  statistics.deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
                try
                {
                   if (shutdown.get())
@@ -776,12 +811,15 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    private ConnectionListener createConnectionEventListener(Subject subject, ConnectionRequestInfo cri)
       throws ResourceException
    {
-      long start = System.currentTimeMillis();
+      long start = statistics.isEnabled() ? System.currentTimeMillis() : 0L;
 
       ManagedConnection mc = mcf.createManagedConnection(subject, cri);
 
-      statistics.deltaTotalCreationTime(System.currentTimeMillis() - start);
-      statistics.deltaCreatedCount();
+      if (statistics.isEnabled())
+      {
+         statistics.deltaTotalCreationTime(System.currentTimeMillis() - start);
+         statistics.deltaCreatedCount();
+      }
       try
       {
          return clf.createConnectionListener(mc, this);

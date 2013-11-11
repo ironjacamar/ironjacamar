@@ -169,6 +169,30 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
    /**
     * {@inheritDoc}
     */
+   public synchronized boolean isFull()
+   {
+      return checkedOut.size() == poolConfiguration.getMaxSize();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public synchronized boolean isIdle()
+   {
+      return checkedOut.size() == 0;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public synchronized int getActive()
+   {
+      return cls.size() + checkedOut.size();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public void reenable()
    {
       if (poolConfiguration.getIdleTimeoutMinutes() > 0)
@@ -214,7 +238,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       ConnectionListener cl = null;
       boolean verifyConnectionListener = true;
 
-      long startWait = System.currentTimeMillis();
+      long startWait = statistics.isEnabled() ? System.currentTimeMillis() : 0L;
       if (cls.size() > 0)
       {
          if (shutdown.get())
@@ -228,7 +252,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
             try
             {
                cl = cls.poll(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS);
-               statistics.deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
+               if (statistics.isEnabled())
+                  statistics.deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
             }
             catch (InterruptedException ie)
             {
@@ -263,7 +288,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
          try
          {
             cl = cls.poll(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS);
-            statistics.deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
+            if (statistics.isEnabled())
+               statistics.deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
 
             if (shutdown.get())
                throw new RetryableUnavailableException(
@@ -725,12 +751,15 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
    private ConnectionListener createConnectionEventListener(Subject subject, ConnectionRequestInfo cri)
       throws ResourceException
    {
-      long start = System.currentTimeMillis();
+      long start = statistics.isEnabled() ? System.currentTimeMillis() : 0L;
 
       ManagedConnection mc = mcf.createManagedConnection(subject, cri);
 
-      statistics.deltaTotalCreationTime(System.currentTimeMillis() - start);
-      statistics.deltaCreatedCount();
+      if (statistics.isEnabled())
+      {
+         statistics.deltaTotalCreationTime(System.currentTimeMillis() - start);
+         statistics.deltaCreatedCount();
+      }
       try
       {
          return clf.createConnectionListener(mc, this);
