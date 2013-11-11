@@ -716,7 +716,7 @@ public abstract class AbstractPool implements Pool
          Object key = getKey(subject, cri, separateNoTx);
          ManagedConnectionPool mcp = getManagedConnectionPool(key, subject, cri);
 
-         if (mcp.getStatistics().getAvailableCount() > 0)
+         if (!mcp.isFull())
          {
             cl = mcp.getConnection(subject, cri);
             result = true;

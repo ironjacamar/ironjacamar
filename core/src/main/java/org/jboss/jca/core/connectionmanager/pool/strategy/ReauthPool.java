@@ -79,7 +79,7 @@ public class ReauthPool extends AbstractPool
       {
          ManagedConnectionPool ownMcp = getManagedConnectionPool(key, subject, cri);
 
-         if (ownMcp.getStatistics().getIdleCount() == 0)
+         if (!ownMcp.isFull())
          {
             ManagedConnectionPool mcp = getTargetManagedConnectionPool(ownMcp);
 
@@ -148,7 +148,7 @@ public class ReauthPool extends AbstractPool
 
       for (ManagedConnectionPool mcp : getManagedConnectionPools().values())
       {
-         result += mcp.getStatistics().getActiveCount();
+         result += mcp.getActive();
       }
          
       return result;
@@ -166,7 +166,7 @@ public class ReauthPool extends AbstractPool
       
       for (ManagedConnectionPool m : getManagedConnectionPools().values())
       {
-         if (lastUsed > m.getLastUsed() && m.getStatistics().getIdleCount() > 0)
+         if (lastUsed > m.getLastUsed() && m.getActive() > 0)
          {
             if (exclude == null || m != exclude)
             {

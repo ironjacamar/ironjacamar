@@ -196,12 +196,27 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
    }
 
    /**
-    * Is the pool full ?
-    * @return True if full, otherwise false
+    * {@inheritDoc}
     */
    public synchronized boolean isFull()
    {
       return checkedOut.size() == poolConfiguration.getMaxSize();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public synchronized boolean isIdle()
+   {
+      return checkedOut.size() == 0;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public synchronized int getActive()
+   {
+      return cls.size() + checkedOut.size();
    }
 
    /**
@@ -264,7 +279,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       ConnectionListener cl = null;
       boolean verifyConnectionListener = true;
 
-      long startWait = System.currentTimeMillis();
+      long startWait = statistics.isEnabled() ? System.currentTimeMillis() : 0L;
 
       if (isFull())
          statistics.deltaWaitCount();
@@ -282,13 +297,14 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
             try
             {
                cl = cls.poll(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS);
-               statistics.deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
+               if (statistics.isEnabled())
+                  statistics.deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
             }
             catch (InterruptedException ie)
             {
                Thread.interrupted();
 
-               long end = System.currentTimeMillis() - startWait;
+               long end = statistics.isEnabled() ? (System.currentTimeMillis() - startWait) : 0L;
                throw new ResourceException(bundle.interruptedWhileRequestingConnection(end));
             }
          }
@@ -347,7 +363,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
                      poolConfiguration.getBlockingTimeout()));
             }
 
-            statistics.deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
+            if (statistics.isEnabled())
+               statistics.deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
          }
          catch (InterruptedException ie)
          {
@@ -1024,12 +1041,15 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
    private ConnectionListener createConnectionEventListener(Subject subject, ConnectionRequestInfo cri)
       throws ResourceException
    {
-      long start = System.currentTimeMillis();
+      long start = statistics.isEnabled() ? System.currentTimeMillis() : 0L;
 
       ManagedConnection mc = mcf.createManagedConnection(subject, cri);
 
-      statistics.deltaTotalCreationTime(System.currentTimeMillis() - start);
-      statistics.deltaCreatedCount();
+      if (statistics.isEnabled())
+      {
+         statistics.deltaTotalCreationTime(System.currentTimeMillis() - start);
+         statistics.deltaCreatedCount();
+      }
       try
       {
          return clf.createConnectionListener(mc, this);

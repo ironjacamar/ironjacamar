@@ -359,36 +359,21 @@ public class PoolStatisticsImpl implements PoolStatistics
     */
    public int getAvailableCount()
    {
-      return getAvailableCount(isEnabled());
-   }
+      int result = -1;
 
-   /**
-    * The available count
-    * @param override True if the value should be returned
-    * @return The value
-    */
-   int getAvailableCount(boolean override)
-   {
-      if (override)
+      if (mcpPools.size() > 0)
       {
-         int result = -1;
-
-         if (mcpPools.size() > 0)
+         result = 0;
+         for (ManagedConnectionPool mcp : mcpPools.values())
          {
-            result = 0;
-            for (ManagedConnectionPool mcp : mcpPools.values())
-            {
-               result += mcp.getStatistics().getAvailableCount();
-            }
+            result += mcp.getStatistics().getAvailableCount();
          }
-         
-         if (result != -1)
-            return result;
-
-         return maxPoolSize;
       }
+         
+      if (result != -1)
+         return result;
 
-      return 0;
+      return maxPoolSize;
    }
 
    /**
@@ -790,6 +775,8 @@ public class PoolStatisticsImpl implements PoolStatistics
 
       sb.append("[");
 
+      sb.append("Enabled=").append(isEnabled());
+      sb.append(",");
       sb.append(ACTIVE_COUNT).append("=").append(getActiveCount());
       sb.append(",");
       sb.append(AVAILABLE_COUNT).append("=").append(getAvailableCount());
