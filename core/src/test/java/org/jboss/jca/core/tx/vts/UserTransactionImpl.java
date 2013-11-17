@@ -107,7 +107,8 @@ public class UserTransactionImpl implements UserTransactionProvider, UserTransac
       if (tx == null)
          throw new SystemException();
 
-      if (tx.getStatus() == Status.STATUS_ROLLEDBACK ||
+      if (tx.getStatus() == Status.STATUS_ROLLING_BACK ||
+          tx.getStatus() == Status.STATUS_ROLLEDBACK ||
           tx.getStatus() == Status.STATUS_MARKED_ROLLBACK)
          throw new RollbackException();
 

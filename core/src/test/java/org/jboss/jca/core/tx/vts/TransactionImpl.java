@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.core.tx.vts;
 
+import org.jboss.jca.core.spi.transaction.local.LocalXAResource;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,28 +40,40 @@ import javax.transaction.Transaction;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 
+import org.jboss.logging.Logger;
+
 /**
  * A transaction implementation
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class TransactionImpl implements Transaction, Serializable
 {
+   /** The logger */
+   private static Logger log = Logger.getLogger(TransactionImpl.class);
+
    private static final long serialVersionUID = 3L;
    private static final XidImpl XID_IMPL = new XidImpl();
+   private transient Long key;
    private transient int status;
    private transient Set<Synchronization> syncs;
    private transient Map<XAResource, Integer> enlisted;
    private transient Set<XAResource> delisted;
+   private transient Map<Object, Object> resources;
+   private transient boolean fail;
 
    /**
     * Constructor
+    * @param key The transaction key
     */
-   public TransactionImpl()
+   public TransactionImpl(Long key)
    {
+      this.key = key;
       this.status = Status.STATUS_ACTIVE;
       this.syncs = null;
       this.enlisted = null;
       this.delisted = null;
+      this.resources = new HashMap<Object, Object>();
+      this.fail = false;
    }
 
    /**
@@ -78,7 +92,16 @@ public class TransactionImpl implements Transaction, Serializable
       if (status == Status.STATUS_MARKED_ROLLBACK)
          throw new IllegalStateException("Status marked rollback");
 
-      finish(Status.STATUS_COMMITTED);
+      log.tracef("commit(): %s", this);
+
+      if (!fail)
+      {
+         finish(true);
+      }
+      else
+      {
+         finish(false);
+      }
    }
 
    /**
@@ -92,6 +115,8 @@ public class TransactionImpl implements Transaction, Serializable
 
       if (enlisted == null)
          throw new IllegalStateException("No XAResouce instances registrered");
+
+      log.tracef("delistResource(%s, %d): %s", xaRes, flag, this);
 
       if (enlisted.containsKey(xaRes))
       {
@@ -136,6 +161,8 @@ public class TransactionImpl implements Transaction, Serializable
       if (status == Status.STATUS_UNKNOWN)
          throw new IllegalStateException("Status unknown");
 
+      log.tracef("enlistResource(%s): %s", xaRes, this);
+
       if (enlisted == null)
          enlisted = new HashMap<XAResource, Integer>();
 
@@ -158,7 +185,7 @@ public class TransactionImpl implements Transaction, Serializable
       else if (enlisted.containsKey(xaRes))
       {
          if (enlisted.get(xaRes).intValue() != XAResource.TMSUSPEND)
-            throw new IllegalStateException("XAResource not suspended");
+            fail = true;
 
          try
          {
@@ -183,6 +210,8 @@ public class TransactionImpl implements Transaction, Serializable
     */
    public int getStatus() throws SystemException
    {
+      log.tracef("getStatus() => %d: %s", status, this);
+
       return status;
    }
 
@@ -195,6 +224,8 @@ public class TransactionImpl implements Transaction, Serializable
    {
       if (status == Status.STATUS_UNKNOWN)
          throw new IllegalStateException("Status unknown");
+
+      log.tracef("registerSynchronization(%s): %s", sync, this);
 
       if (syncs == null)
          syncs = new HashSet<Synchronization>(1);
@@ -211,7 +242,9 @@ public class TransactionImpl implements Transaction, Serializable
       if (status == Status.STATUS_UNKNOWN)
          throw new IllegalStateException("Status unknown");
 
-      finish(Status.STATUS_ROLLEDBACK);
+      log.tracef("rollback(): %s", this);
+
+      finish(false);
    }
 
    /**
@@ -222,6 +255,8 @@ public class TransactionImpl implements Transaction, Serializable
    {
       if (status == Status.STATUS_UNKNOWN)
          throw new IllegalStateException("Status unknown");
+
+      log.tracef("setRollbackOnly(): %s", this);
 
       status = Status.STATUS_MARKED_ROLLBACK;
    }
@@ -239,11 +274,47 @@ public class TransactionImpl implements Transaction, Serializable
    }
 
    /**
-    * Finish transaction
-    * @param st The status
+    * Put a resource
+    * @param key The key
+    * @param value The value
     */
-   private void finish(int st)
+   void putResource(Object key, Object value)
    {
+      resources.put(key, value);
+   }
+
+   /**
+    * Get a resource
+    * @param key The key
+    * @return The value
+    */
+   Object getResource(Object key)
+   {
+      return resources.get(key);
+   }
+
+   /**
+    * Get the transaction key
+    * @return The value
+    */
+   Long getKey()
+   {
+      return key;
+   }
+
+   /**
+    * Finish transaction
+    * @param commit Commit (true), or rollback (false)
+    */
+   private void finish(boolean commit)
+   {
+      log.tracef("finish(%s): %s", commit, this);
+
+      if (enlisted != null && !enlisted.isEmpty())
+         commit = verifyEnlisted(commit);
+
+      log.tracef("verifyEnlisted(%s): %s", commit, this);
+
       if (syncs != null)
       {
          for (Synchronization s : syncs)
@@ -253,58 +324,71 @@ public class TransactionImpl implements Transaction, Serializable
       }
 
       if (enlisted != null && !enlisted.isEmpty())
-         checkEnlisted(st);
-
-      status = st;
+         checkEnlisted(status);
 
       if (delisted != null && !delisted.isEmpty())
       {
-         if (status == Status.STATUS_COMMITTED)
+         if (commit && delisted.size() > 1)
          {
-            boolean commit = true;
-
             Iterator<XAResource> it = delisted.iterator();
+            status = Status.STATUS_PREPARING;
             while (commit && it.hasNext())
             {
                XAResource xar = it.next();
                try
                {
-                  xar.prepare(XID_IMPL);
+                  if (!(xar instanceof LocalXAResource))
+                     xar.prepare(XID_IMPL);
                }
                catch (Throwable t)
                {
                   commit = false;
                }
             }
-
-            if (!commit)
-               status = Status.STATUS_MARKED_ROLLBACK;
+            status = Status.STATUS_PREPARED;
          }
 
          for (XAResource xar : delisted)
          {
             try
             {
-               if (status == Status.STATUS_COMMITTED)
+               if (commit)
                {
+                  status = Status.STATUS_COMMITTING;
                   xar.commit(XID_IMPL, true);
+                  status = Status.STATUS_COMMITTED;
                }
                else
                {
+                  status = Status.STATUS_ROLLING_BACK;
                   xar.rollback(XID_IMPL);
+                  status = Status.STATUS_ROLLEDBACK;
                }
             }
             catch (Throwable t)
             {
                try
                {
+                  status = Status.STATUS_ROLLING_BACK;
                   xar.rollback(XID_IMPL);
+                  status = Status.STATUS_ROLLEDBACK;
                }
                catch (XAException xe)
                {
                   // Yikes
                } 
             }
+         }
+      }
+      else
+      {
+         if (commit)
+         {
+            status = Status.STATUS_COMMITTED;
+         }
+         else
+         {
+            status = Status.STATUS_ROLLEDBACK;
          }
       }
 
@@ -331,21 +415,38 @@ public class TransactionImpl implements Transaction, Serializable
    /**
     * Check enlisted XAResources
     * @param status The transaction status
+    */
+   private boolean verifyEnlisted(boolean commit)
+   {
+      // No work for rollback
+      if (!commit)
+         return false;
+
+      log.tracef("Enlisted: %s: %s", enlisted, this);
+
+      // All enlisted resources must be in suspended mode
+      for (Integer state : enlisted.values())
+      {
+         if (state.intValue() != XAResource.TMNOFLAGS && state.intValue() != XAResource.TMSUSPEND)
+            return false;
+      }
+
+      return true;
+   }
+
+   /**
+    * Check enlisted XAResources
+    * @param status The transaction status
     * @exception IllegalStateException Thrown if there non-TMSUSPENDed XAResources
     */
    private void checkEnlisted(int status) throws IllegalStateException
    {
-      // All enlisted resources must be in suspended mode
-      for (Integer state : enlisted.values())
-      {
-         if (state.intValue() != XAResource.TMSUSPEND)
-            throw new IllegalStateException("XAResource instances still registrered");
-      }
-
       // All ok, now move them into delisted
       int flag = XAResource.TMSUCCESS;
 
-      if (status == Status.STATUS_ROLLEDBACK)
+      if (status == Status.STATUS_MARKED_ROLLBACK ||
+          status == Status.STATUS_ROLLING_BACK ||
+          status == Status.STATUS_ROLLEDBACK)
          flag = XAResource.TMFAIL;
 
       for (XAResource xaRes : enlisted.keySet())

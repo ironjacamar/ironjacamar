@@ -58,7 +58,10 @@ public class TxRegistry implements Serializable
     */
    public void startTransaction()
    {
-      txs.put(Long.valueOf(Thread.currentThread().getId()), new TransactionImpl());
+      Long key = Long.valueOf(Thread.currentThread().getId());
+      TransactionImpl tx = new TransactionImpl(key);
+
+      txs.put(key, tx);
    }
 
    /**
@@ -67,7 +70,8 @@ public class TxRegistry implements Serializable
     */
    public void commitTransaction() throws SystemException
    {
-      TransactionImpl tx = txs.remove(Long.valueOf(Thread.currentThread().getId()));
+      Long key = Long.valueOf(Thread.currentThread().getId());
+      TransactionImpl tx = txs.get(key);
       if (tx != null)
       {
          try
@@ -79,6 +83,10 @@ public class TxRegistry implements Serializable
             SystemException se = new SystemException("Error during commit");
             se.initCause(t);
             throw se;
+         }
+         finally
+         {
+            txs.remove(key);
          }
       }
       else
@@ -93,7 +101,8 @@ public class TxRegistry implements Serializable
     */
    public void rollbackTransaction() throws SystemException
    {
-      TransactionImpl tx = txs.remove(Long.valueOf(Thread.currentThread().getId()));
+      Long key = Long.valueOf(Thread.currentThread().getId());
+      TransactionImpl tx = txs.get(key);
       if (tx != null)
       {
          try
@@ -105,6 +114,10 @@ public class TxRegistry implements Serializable
             SystemException se = new SystemException("Error during rollback");
             se.initCause(t);
             throw se;
+         }
+         finally
+         {
+            txs.remove(key);
          }
       }
       else

@@ -181,6 +181,7 @@ public class TxConnectionListener extends AbstractConnectionListener
       // No transaction associated with the thread
       TransactionManager tm = getConnectionManager().getTransactionIntegration().getTransactionManager();
       int status = tm.getStatus();
+
       if (status == Status.STATUS_NO_TRANSACTION)
       {
          if (transactionSynchronization != null && transactionSynchronization.currentTx != null)

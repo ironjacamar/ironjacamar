@@ -216,7 +216,8 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
       ConnectionEvent event = new ConnectionEvent(this, ConnectionEvent.CONNECTION_CLOSED);
       event.setConnectionHandle(handle);
 
-      for (ConnectionEventListener cel : listeners)
+      List<ConnectionEventListener> copy = new ArrayList<ConnectionEventListener>(listeners);
+      for (ConnectionEventListener cel : copy)
       {
          cel.connectionClosed(event);
       }
@@ -233,7 +234,8 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
       ConnectionEvent event = new ConnectionEvent(this, ConnectionEvent.CONNECTION_ERROR_OCCURRED, exception);
       event.setConnectionHandle(handle);
 
-      for (ConnectionEventListener cel : listeners)
+      List<ConnectionEventListener> copy = new ArrayList<ConnectionEventListener>(listeners);
+      for (ConnectionEventListener cel : copy)
       {
          cel.connectionErrorOccurred(event);
       }
