@@ -42,6 +42,7 @@ import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionEvent;
 import javax.resource.spi.LocalTransaction;
 import javax.resource.spi.ManagedConnection;
+import javax.transaction.RollbackException;
 import javax.transaction.Status;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
@@ -230,7 +231,18 @@ public class TxConnectionListener extends AbstractConnectionListener
       // different connections in the same transaction concurrently
       TransactionSynchronizer synchronizer = null;
 
-      TransactionSynchronizer.lock(threadTx);
+      try
+      {
+         TransactionSynchronizer.lock(threadTx,
+                                      getConnectionManager().getTransactionIntegration()
+                                      .getTransactionSynchronizationRegistry());
+      }
+      catch (Exception e)
+      {
+         setTrackByTx(false);
+         TxConnectionManagerImpl.rethrowAsSystemException("Exception during lock", threadTx, e);
+      }
+
       try
       {
          // Interleaving should have an unenlisted transaction

@@ -531,7 +531,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
 
          if (tx != null)
          {
-            TransactionSynchronizer.lock(tx);
+            TransactionSynchronizer.lock(tx, transactionSynchronizationRegistry);
             try
             {
                CloseConnectionSynchronization cas = 
