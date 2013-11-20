@@ -24,7 +24,9 @@ package org.jboss.jca.core.connectionmanager.transaction;
 import org.jboss.jca.core.CoreLogger;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.Lock;
@@ -56,8 +58,8 @@ public class TransactionSynchronizer implements Synchronization
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, TransactionSynchronizer.class.getName());
 
    /** The records */
-   private static ConcurrentMap<TransactionKey, Record> records =
-      new ConcurrentHashMap<TransactionKey, Record>();
+   private static ConcurrentMap<Transaction, Record> records =
+      new ConcurrentHashMap<Transaction, Record>();
    
    /** The transaction */
    private Transaction tx;
@@ -188,12 +190,11 @@ public class TransactionSynchronizer implements Synchronization
                                                                    TransactionSynchronizationRegistry tsr)
       throws SystemException, RollbackException
    {
-      TransactionKey key = new TransactionKey(tx);
-      Record record = records.get(key);
+      Record record = records.get(tx);
       if (record == null)
       {
          Record newRecord = new Record(new ReentrantLock(true), new TransactionSynchronizer(tx));
-         record = records.putIfAbsent(key, newRecord);
+         record = records.putIfAbsent(tx, newRecord);
          if (record == null)
          {
             record = newRecord;
@@ -218,8 +219,7 @@ public class TransactionSynchronizer implements Synchronization
     */
    public static Synchronization getCCMSynchronization(Transaction tx)
    {
-      TransactionKey key = new TransactionKey(tx);
-      Record record = records.get(key);
+      Record record = records.get(tx);
       if (record != null)
          return record.getTransactionSynchronizer().ccmSynch;  
 
@@ -254,12 +254,11 @@ public class TransactionSynchronizer implements Synchronization
    public static void lock(Transaction tx, TransactionSynchronizationRegistry tsr)
       throws SystemException, RollbackException
    {
-      TransactionKey key = new TransactionKey(tx);
-      Record record = records.get(key);
+      Record record = records.get(tx);
       if (record == null)
       {
          Record newRecord = new Record(new ReentrantLock(true), new TransactionSynchronizer(tx));
-         record = records.putIfAbsent(key, newRecord);
+         record = records.putIfAbsent(tx, newRecord);
          if (record == null)
          {
             record = newRecord;
@@ -336,9 +335,19 @@ public class TransactionSynchronizer implements Synchronization
          invokeAfter(ccmSynch, status);  
       }
 
-      // Cleanup the maps
-      TransactionKey key = new TransactionKey(tx);
-      records.remove(key);
+      // Cleanup the maps -- only trust TransactionSynchronizer
+      boolean found = false;
+
+      Iterator<Map.Entry<Transaction, Record>> iterator = records.entrySet().iterator();
+      while (!found && iterator.hasNext())
+      {
+         Map.Entry<Transaction, Record> next = iterator.next();
+         if (next.getValue().getTransactionSynchronizer().equals(this))
+         {
+            iterator.remove();
+            found = true;
+         }
+      }
    }
 
    /**
@@ -411,48 +420,6 @@ public class TransactionSynchronizer implements Synchronization
       TransactionSynchronizer getTransactionSynchronizer()
       {
          return txSync;
-      }
-   }
-
-   /**
-    * Transaction key
-    * @author <a href="mailto:smarlow@redhat.com">Scott Marlow</a>
-    * @author <a href="mailto:dimitris@ironjacamar.org">Dimitris Andreadis</a>
-    */
-   static class TransactionKey
-   {
-      private final Transaction tx;
-      private final int hashcode;
-
-      public TransactionKey(Transaction tx)
-      {
-         this.tx = tx;
-         this.hashcode = tx != null ? System.identityHashCode(tx) : 1;
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public boolean equals(Object o)
-      {
-         if (o == this)
-            return true;
-
-         if (o == null || !(o instanceof TransactionKey))
-            return false;
-
-         TransactionKey other = (TransactionKey)o;
-         return this.tx == other.tx;
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      @Override
-      public int hashCode()
-      {
-         return hashcode;
       }
    }
 }
