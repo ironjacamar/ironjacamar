@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2006, Red Hat Middleware LLC, and individual contributors
+ * IronJacamar, a Java EE Connector Architecture implementation
+ * Copyright 2006, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -46,7 +46,7 @@ import org.jboss.logging.Logger;
  * are invoked before the cached connection manager closes any
  * closed connections.
  *
- * @author <a href="mailto:adrian@jboss.org">Adrian Brock</a>
+ * @author <a href="mailto:abrock@redhat.com">Adrian Brock</a>
  * @author gurkanerdogdu
  * @version $Rev$
  */
@@ -55,13 +55,9 @@ public class TransactionSynchronizer implements Synchronization
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, TransactionSynchronizer.class.getName());
 
-   /** The transaction synchronizations */
-   private static ConcurrentMap<Integer, TransactionSynchronizer> txSynchs =
-      new ConcurrentHashMap<Integer, TransactionSynchronizer>();
-   
-   /** The locks */
-   private static ConcurrentMap<Integer, Lock> locks =
-      new ConcurrentHashMap<Integer, Lock>();
+   /** The records */
+   private static ConcurrentMap<TransactionKey, Record> records =
+      new ConcurrentHashMap<TransactionKey, Record>();
    
    /** The transaction */
    private Transaction tx;
@@ -192,26 +188,26 @@ public class TransactionSynchronizer implements Synchronization
                                                                    TransactionSynchronizationRegistry tsr)
       throws SystemException, RollbackException
    {
-      Integer idx = Integer.valueOf(System.identityHashCode(tx));
-      TransactionSynchronizer result = txSynchs.get(idx);
-      if (result == null)
+      TransactionKey key = new TransactionKey(tx);
+      Record record = records.get(key);
+      if (record == null)
       {
-         TransactionSynchronizer newResult = new TransactionSynchronizer(tx);
-         result = txSynchs.putIfAbsent(idx, newResult);
-         if (result == null)
+         Record newRecord = new Record(new ReentrantLock(true), new TransactionSynchronizer(tx));
+         record = records.putIfAbsent(key, newRecord);
+         if (record == null)
          {
-            result = newResult;
+            record = newRecord;
             if (tsr != null)
             {
-               tsr.registerInterposedSynchronization(result);
+               tsr.registerInterposedSynchronization(record.getTransactionSynchronizer());
             }
             else
             {
-               tx.registerSynchronization(result);
+               tx.registerSynchronization(record.getTransactionSynchronizer());
             }
          }
       }
-      return result;
+      return record.getTransactionSynchronizer();
    }
 
    /**
@@ -222,10 +218,10 @@ public class TransactionSynchronizer implements Synchronization
     */
    public static Synchronization getCCMSynchronization(Transaction tx)
    {
-      Integer idx = Integer.valueOf(System.identityHashCode(tx));
-      TransactionSynchronizer ts = txSynchs.get(idx);
-      if (ts != null)
-         return ts.ccmSynch;  
+      TransactionKey key = new TransactionKey(tx);
+      Record record = records.get(key);
+      if (record != null)
+         return record.getTransactionSynchronizer().ccmSynch;  
 
       return null;  
    }
@@ -251,20 +247,34 @@ public class TransactionSynchronizer implements Synchronization
     * Lock for the given transaction
     * 
     * @param tx the transaction
+    * @param tsr the transaction synchronization registry
+    * @throws SystemException sys. exception
+    * @throws RollbackException rollback exception
     */
-   public static void lock(Transaction tx)
+   public static void lock(Transaction tx, TransactionSynchronizationRegistry tsr)
+      throws SystemException, RollbackException
    {
-      Integer idx = Integer.valueOf(System.identityHashCode(tx));
-      Lock lock = locks.get(idx);
-      if (lock == null)
+      TransactionKey key = new TransactionKey(tx);
+      Record record = records.get(key);
+      if (record == null)
       {
-         Lock newLock = new ReentrantLock(true);
-         lock = locks.putIfAbsent(idx, newLock);
-         if (lock == null)
+         Record newRecord = new Record(new ReentrantLock(true), new TransactionSynchronizer(tx));
+         record = records.putIfAbsent(key, newRecord);
+         if (record == null)
          {
-            lock = newLock;
+            record = newRecord;
+            if (tsr != null)
+            {
+               tsr.registerInterposedSynchronization(record.getTransactionSynchronizer());
+            }
+            else
+            {
+               tx.registerSynchronization(record.getTransactionSynchronizer());
+            }
          }
       }
+
+      Lock lock = record.getLock();
 
       try
       {
@@ -283,11 +293,10 @@ public class TransactionSynchronizer implements Synchronization
     */
    public static void unlock(Transaction tx)
    {
-      Integer idx = Integer.valueOf(System.identityHashCode(tx));
-      Lock lock = locks.get(idx);
+      Record record = records.get(tx);
 
-      if (lock != null)
-         lock.unlock();
+      if (record != null)
+         record.getLock().unlock();
    }
 
    /**
@@ -328,9 +337,8 @@ public class TransactionSynchronizer implements Synchronization
       }
 
       // Cleanup the maps
-      Integer idx = Integer.valueOf(System.identityHashCode(tx));
-      txSynchs.remove(idx);
-      locks.remove(idx);
+      TransactionKey key = new TransactionKey(tx);
+      records.remove(key);
    }
 
    /**
@@ -367,4 +375,84 @@ public class TransactionSynchronizer implements Synchronization
          log.transactionErrorInAfterCompletion(tx, synch, t);
       }
    }   
+
+   /**
+    * A record for a transaction
+    */
+   static class Record
+   {
+      private Lock lock;
+      private TransactionSynchronizer txSync;
+
+      /**
+       * Constructor
+       * @param lock The lock
+       * @param txSync The transaction synchronizer
+       */
+      Record(Lock lock, TransactionSynchronizer txSync)
+      {
+         this.lock = lock;
+         this.txSync = txSync;
+      }
+
+      /**
+       * Get the lock
+       * @return The value
+       */
+      Lock getLock()
+      {
+         return lock;
+      }
+
+      /**
+       * Get the transaction synchronizer
+       * @return The synchronizer
+       */
+      TransactionSynchronizer getTransactionSynchronizer()
+      {
+         return txSync;
+      }
+   }
+
+   /**
+    * Transaction key
+    * @author <a href="mailto:smarlow@redhat.com">Scott Marlow</a>
+    * @author <a href="mailto:dimitris@ironjacamar.org">Dimitris Andreadis</a>
+    */
+   static class TransactionKey
+   {
+      private final Transaction tx;
+      private final int hashcode;
+
+      public TransactionKey(Transaction tx)
+      {
+         this.tx = tx;
+         this.hashcode = tx != null ? System.identityHashCode(tx) : 1;
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public boolean equals(Object o)
+      {
+         if (o == this)
+            return true;
+
+         if (o == null || !(o instanceof TransactionKey))
+            return false;
+
+         TransactionKey other = (TransactionKey)o;
+         return this.tx == other.tx;
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      @Override
+      public int hashCode()
+      {
+         return hashcode;
+      }
+   }
 }
