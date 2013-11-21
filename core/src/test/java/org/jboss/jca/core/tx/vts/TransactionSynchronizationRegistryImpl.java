@@ -33,16 +33,20 @@ import javax.transaction.Status;
 import javax.transaction.Synchronization;
 import javax.transaction.TransactionSynchronizationRegistry;
 
+import org.jboss.logging.Logger;
+
 /**
  * A transaction synchronization registry implementation
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class TransactionSynchronizationRegistryImpl implements TransactionSynchronizationRegistry, Serializable
 {
-   private static final long serialVersionUID = 2L;
+   /** The logger */
+   private static Logger log = Logger.getLogger(TransactionSynchronizationRegistryImpl.class);
+
+   private static final long serialVersionUID = 3L;
    private static final String JNDI_NAME = "java:/TransactionSynchronizationRegistry";
    private transient TxRegistry registry;
-   private transient ConcurrentMap<Long, TxEnv> txe;
 
    /**
     * Constructor
@@ -50,7 +54,6 @@ public class TransactionSynchronizationRegistryImpl implements TransactionSynchr
    public TransactionSynchronizationRegistryImpl()
    {
       this.registry = null;
-      this.txe = new ConcurrentHashMap<Long, TxEnv>();
    }
 
    /**
@@ -67,7 +70,12 @@ public class TransactionSynchronizationRegistryImpl implements TransactionSynchr
     */
    public Object getTransactionKey()
    {
-      return getKey();
+      TransactionImpl tx = registry.getTransaction();
+
+      if (tx != null)
+         return tx.getKey();
+
+      return null;
    }
 
    /**
@@ -75,8 +83,10 @@ public class TransactionSynchronizationRegistryImpl implements TransactionSynchr
     */
    public void putResource(Object key, Object value)
    {
-      TxEnv env = getTxEnv();
-      env.getEnvironment().put(key, value);
+      log.tracef("putResource(%s, %s)", key, value);
+
+      TransactionImpl tx = registry.getTransaction();
+      tx.putResource(key, value);
    }
 
    /**
@@ -84,8 +94,12 @@ public class TransactionSynchronizationRegistryImpl implements TransactionSynchr
     */
    public Object getResource(Object key)
    {
-      TxEnv env = getTxEnv();
-      return env.getEnvironment().get(key);
+      TransactionImpl tx = registry.getTransaction();
+      Object result = tx.getResource(key);
+
+      log.tracef("getResource(%s) => %s", key, result);
+
+      return result;
    }
 
    /**
@@ -97,6 +111,8 @@ public class TransactionSynchronizationRegistryImpl implements TransactionSynchr
 
       if (tx == null)
          throw new IllegalStateException();
+
+      log.tracef("registerInterposedSynchronization(%s)", sync);
 
       try
       {
@@ -185,61 +201,5 @@ public class TransactionSynchronizationRegistryImpl implements TransactionSynchr
       context.unbind(JNDI_NAME);
 
       context.close();
-   }
-
-   /**
-    * Get the key
-    * @return The value
-    */
-   private Long getKey()
-   {
-      return Long.valueOf(Thread.currentThread().getId());
-   }
-
-   /**
-    * Get the TxEnv
-    * @return The value
-    */
-   private TxEnv getTxEnv()
-   {
-      Long key = getKey();
-      TxEnv env = txe.get(key);
-      if (env == null)
-      {
-         TxEnv newTxEnv = new TxEnv();
-         env = txe.putIfAbsent(key, newTxEnv);
-         if (env == null)
-         {
-            env = newTxEnv;
-         }
-      }
-
-      return env;
-   }
-
-   /**
-    * Transaction environment
-    */
-   static class TxEnv
-   {
-      private static final long serialVersionUID = 1L;
-      private Map<Object, Object> envs;
-
-      /**
-       * Constructor
-       */
-      TxEnv()
-      {
-         this.envs = new HashMap<Object, Object>(1);
-      }
-
-      /**
-       * Get the environment
-       * @return The value
-       */
-      Map<Object, Object> getEnvironment()
-      {
-         return envs;
-      }
    }
 }
