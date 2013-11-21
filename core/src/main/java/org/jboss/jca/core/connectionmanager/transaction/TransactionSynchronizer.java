@@ -24,7 +24,9 @@ package org.jboss.jca.core.connectionmanager.transaction;
 import org.jboss.jca.core.CoreLogger;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.Lock;
@@ -55,13 +57,9 @@ public class TransactionSynchronizer implements Synchronization
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, TransactionSynchronizer.class.getName());
 
-   /** The transaction synchronizations */
-   private static ConcurrentMap<Integer, TransactionSynchronizer> txSynchs =
-      new ConcurrentHashMap<Integer, TransactionSynchronizer>();
-   
-   /** The locks */
-   private static ConcurrentMap<Integer, Lock> locks =
-      new ConcurrentHashMap<Integer, Lock>();
+   /** The records */
+   private static ConcurrentMap<Transaction, Record> records =
+      new ConcurrentHashMap<Transaction, Record>();
    
    /** The transaction */
    private Transaction tx;
@@ -192,26 +190,25 @@ public class TransactionSynchronizer implements Synchronization
                                                                    TransactionSynchronizationRegistry tsr)
       throws SystemException, RollbackException
    {
-      Integer idx = Integer.valueOf(System.identityHashCode(tx));
-      TransactionSynchronizer result = txSynchs.get(idx);
-      if (result == null)
+      Record record = records.get(tx);
+      if (record == null)
       {
-         TransactionSynchronizer newResult = new TransactionSynchronizer(tx);
-         result = txSynchs.putIfAbsent(idx, newResult);
-         if (result == null)
+         Record newRecord = new Record(new ReentrantLock(true), new TransactionSynchronizer(tx));
+         record = records.putIfAbsent(tx, newRecord);
+         if (record == null)
          {
-            result = newResult;
+            record = newRecord;
             if (tsr != null)
             {
-               tsr.registerInterposedSynchronization(result);
+               tsr.registerInterposedSynchronization(record.getTransactionSynchronizer());
             }
             else
             {
-               tx.registerSynchronization(result);
+               tx.registerSynchronization(record.getTransactionSynchronizer());
             }
          }
       }
-      return result;
+      return record.getTransactionSynchronizer();
    }
 
    /**
@@ -222,10 +219,9 @@ public class TransactionSynchronizer implements Synchronization
     */
    public static Synchronization getCCMSynchronization(Transaction tx)
    {
-      Integer idx = Integer.valueOf(System.identityHashCode(tx));
-      TransactionSynchronizer ts = txSynchs.get(idx);
-      if (ts != null)
-         return ts.ccmSynch;  
+      Record record = records.get(tx);
+      if (record != null)
+         return record.getTransactionSynchronizer().ccmSynch;  
 
       return null;  
    }
@@ -251,20 +247,33 @@ public class TransactionSynchronizer implements Synchronization
     * Lock for the given transaction
     * 
     * @param tx the transaction
+    * @param tsr the transaction synchronization registry
+    * @throws SystemException sys. exception
+    * @throws RollbackException rollback exception
     */
-   public static void lock(Transaction tx)
+   public static void lock(Transaction tx, TransactionSynchronizationRegistry tsr)
+      throws SystemException, RollbackException
    {
-      Integer idx = Integer.valueOf(System.identityHashCode(tx));
-      Lock lock = locks.get(idx);
-      if (lock == null)
+      Record record = records.get(tx);
+      if (record == null)
       {
-         Lock newLock = new ReentrantLock(true);
-         lock = locks.putIfAbsent(idx, newLock);
-         if (lock == null)
+         Record newRecord = new Record(new ReentrantLock(true), new TransactionSynchronizer(tx));
+         record = records.putIfAbsent(tx, newRecord);
+         if (record == null)
          {
-            lock = newLock;
+            record = newRecord;
+            if (tsr != null)
+            {
+               tsr.registerInterposedSynchronization(record.getTransactionSynchronizer());
+            }
+            else
+            {
+               tx.registerSynchronization(record.getTransactionSynchronizer());
+            }
          }
       }
+
+      Lock lock = record.getLock();
 
       try
       {
@@ -283,11 +292,10 @@ public class TransactionSynchronizer implements Synchronization
     */
    public static void unlock(Transaction tx)
    {
-      Integer idx = Integer.valueOf(System.identityHashCode(tx));
-      Lock lock = locks.get(idx);
+      Record record = records.get(tx);
 
-      if (lock != null)
-         lock.unlock();
+      if (record != null)
+         record.getLock().unlock();
    }
 
    /**
@@ -328,9 +336,20 @@ public class TransactionSynchronizer implements Synchronization
       }
 
       // Cleanup the maps
-      Integer idx = Integer.valueOf(System.identityHashCode(tx));
-      txSynchs.remove(idx);
-      locks.remove(idx);
+      if (records.remove(tx) == null)
+      {
+         boolean found = false;
+         Iterator<Map.Entry<Transaction, Record>> iterator = records.entrySet().iterator();
+         while (!found && iterator.hasNext())
+         {
+            Map.Entry<Transaction, Record> next = iterator.next();
+            if (next.getValue().getTransactionSynchronizer().equals(this))
+            {
+               iterator.remove();
+               found = true;
+            }
+         }
+      }
    }
 
    /**
@@ -367,4 +386,42 @@ public class TransactionSynchronizer implements Synchronization
          log.transactionErrorInAfterCompletion(tx, synch, t);
       }
    }   
+
+   /**
+    * A record for a transaction
+    */
+   static class Record
+   {
+      private Lock lock;
+      private TransactionSynchronizer txSync;
+
+      /**
+       * Constructor
+       * @param lock The lock
+       * @param txSync The transaction synchronizer
+       */
+      Record(Lock lock, TransactionSynchronizer txSync)
+      {
+         this.lock = lock;
+         this.txSync = txSync;
+      }
+
+      /**
+       * Get the lock
+       * @return The value
+       */
+      Lock getLock()
+      {
+         return lock;
+      }
+
+      /**
+       * Get the transaction synchronizer
+       * @return The synchronizer
+       */
+      TransactionSynchronizer getTransactionSynchronizer()
+      {
+         return txSync;
+      }
+   }
 }
