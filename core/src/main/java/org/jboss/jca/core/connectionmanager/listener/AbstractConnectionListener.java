@@ -109,8 +109,11 @@ public abstract class AbstractConnectionListener implements ConnectionListener
       this.flushStrategy = flushStrategy;
       this.log = getLogger();
       this.trace = log.isTraceEnabled();
-      this.lastUse = System.currentTimeMillis();
       this.enlisted = false;
+
+      long createdTime = System.currentTimeMillis();
+      this.lastUse = createdTime;
+      this.lastValidated = createdTime;
    }
 
    /**
@@ -190,6 +193,14 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    public long getLastValidatedTime()
    {      
       return lastValidated;
+   }
+
+   /**
+    * {@inheritDoc}
+    */   
+   public long getLastUsedTime()
+   {      
+      return lastUse;
    }
 
    /**

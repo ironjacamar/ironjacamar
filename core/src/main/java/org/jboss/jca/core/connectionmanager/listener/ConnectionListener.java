@@ -170,6 +170,13 @@ public interface ConnectionListener extends org.jboss.jca.core.api.connectionman
    public void setLastValidatedTime(long lastValidated);
 
    /**
+    * Retrieve the last time this connection was used.
+    * 
+    * @return the last time the connection was used
+    */
+   public long getLastUsedTime();
+
+   /**
     * Controls the managed connection / connection pair
     * @param mc The managed connection
     * @param connection The connection; optional

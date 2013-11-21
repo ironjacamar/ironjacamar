@@ -112,7 +112,9 @@ class ManagedConnectionPoolUtility
          for (ConnectionListener cl : available)
          {
             sb.append("  ").append(Integer.toHexString(System.identityHashCode(cl)));
-            sb.append(" (").append(cl.getState()).append(")").append(newLine);
+            sb.append(" (").append(cl.getState()).append(")");
+            sb.append(" (Used: ").append(cl.getLastUsedTime()).append(")");
+            sb.append(" (Validated: ").append(cl.getLastValidatedTime()).append(")").append(newLine);
          }
       }
 
@@ -123,7 +125,8 @@ class ManagedConnectionPoolUtility
          for (ConnectionListener cl : inUse)
          {
             sb.append("  ").append(Integer.toHexString(System.identityHashCode(cl)));
-            sb.append(" (").append(cl.getState()).append(")").append(newLine);
+            sb.append(" (").append(cl.getState()).append(")");
+            sb.append(" (Validated: ").append(cl.getLastValidatedTime()).append(")").append(newLine);
          }
       }
 

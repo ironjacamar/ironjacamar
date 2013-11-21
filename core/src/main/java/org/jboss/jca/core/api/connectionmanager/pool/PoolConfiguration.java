@@ -217,7 +217,7 @@ public class PoolConfiguration
     */
    public boolean isPrefill()
    {
-      return prefill.get();
+      return prefill.get() || initialSize != null;
    }
 
    /**
