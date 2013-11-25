@@ -175,6 +175,30 @@ org.jboss.jca.core.connectionmanager.pool.mcp.LeakDumperManagedConnectionPool
         </warning>
       </section>
 
+      <section id="configuration_ironjacamar_enlistment">
+        <title>Disable enlistment trace</title>
+
+        <para>
+          IronJacamar records transaction enlistment traces in order to help to locate error situations
+          that happens during enlistment of <code>XAResource</code> instances.
+        </para>
+
+        <para>
+          This has a performance overhead of course, so in certain situations you may want to disable
+          these traces.
+        </para>
+
+        <para>
+          IronJacamar has a system property called <code>ironjacamar.disable_enlistment_trace</code>
+          which can be set to <code>true</code> which does this.
+        </para>
+
+        <warning>
+          By disabling the enlistment trace tracking down errors during transaction enlistment will 
+          become much more difficult. So, only add this system property if you know what you are doing.
+        </warning>
+      </section>
+
    </section>
 
    <section id="logging">
