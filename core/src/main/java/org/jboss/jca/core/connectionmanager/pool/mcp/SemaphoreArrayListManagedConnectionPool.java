@@ -786,6 +786,23 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       if (decrementer == null)
          decrementer = DefaultCapacity.DEFAULT_DECREMENTER;
 
+      if (trace)
+      {
+         synchronized (cls)
+         {
+            String method = "removeIdleConnections(" + timeout + ")";
+            log.trace(ManagedConnectionPoolUtility.fullDetails(System.identityHashCode(this), method,
+                                                               mcf, clf, pool, poolConfiguration,
+                                                               cls, checkedOut, statistics));
+         }
+      }
+      else if (debug)
+      {
+         String method = "removeIdleConnections(" + timeout + ")";
+         log.debug(ManagedConnectionPoolUtility.details(method, pool.getName(),
+                                                        statistics.getInUseCount(), maxSize));
+      }
+
       while (destroy)
       {
          synchronized (cls)
@@ -894,6 +911,23 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
       if (!(pool instanceof PrefillPool))
          return;
+
+      if (trace)
+      {
+         synchronized (cls)
+         {
+            String method = "fillTo(" + size + ")";
+            log.trace(ManagedConnectionPoolUtility.fullDetails(System.identityHashCode(this), method,
+                                                               mcf, clf, pool, poolConfiguration,
+                                                               cls, checkedOut, statistics));
+         }
+      }
+      else if (debug)
+      {
+         String method = "fillTo(" + size + ")";
+         log.debug(ManagedConnectionPoolUtility.details(method, pool.getName(),
+                                                        statistics.getInUseCount(), maxSize));
+      }
 
       while (true)
       {
