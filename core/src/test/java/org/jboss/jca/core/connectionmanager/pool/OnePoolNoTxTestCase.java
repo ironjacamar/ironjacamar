@@ -291,7 +291,7 @@ public class OnePoolNoTxTestCase extends PoolTestCaseAbstract
       ManagedConnectionPool mcp = pool.getManagedConnectionPool(key, null, null);
       ManagedConnectionPoolStatistics mcps = mcp.getStatistics();
       mcps.setEnabled(false);
-      assertTrue(mcps.isEnabled());
+      assertFalse(mcps.isEnabled());
       for (String name : mcps.getNames())
       {
          assertNotNull(mcps.getDescription(name));
