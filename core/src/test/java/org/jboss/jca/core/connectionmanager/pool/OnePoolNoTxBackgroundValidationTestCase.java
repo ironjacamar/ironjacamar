@@ -68,7 +68,7 @@ public class OnePoolNoTxBackgroundValidationTestCase extends OnePoolNoTxTestCase
    {
       IronjacamarDescriptor ij = getBasicIJXml(SimpleManagedConnectionFactory.class.getName());
       ConnectionDefinitionType ijCdt = ij.getOrCreateConnectionDefinitions().getOrCreateConnectionDefinition();
-      ijCdt.removeValidation().getOrCreateValidation().backgroundValidation(false).backgroundValidationMillis(60000);
+      ijCdt.removeValidation().getOrCreateValidation().backgroundValidation(false).backgroundValidationMillis(1);
       ijCdt.getOrCreateConfigProperty().name("first").text("invalid");
 
       return ij;

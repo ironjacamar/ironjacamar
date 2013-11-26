@@ -87,7 +87,7 @@ public class EnlistDelistXATestCase extends EnlistDelist
 
          log.infof("Connection=%s", c);
 
-         assertEquals("3B78", c.getState());
+         assertEquals("3B8", c.getState());
          c.clearState();
          c.close();
       }
