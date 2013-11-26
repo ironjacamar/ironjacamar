@@ -1114,6 +1114,23 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       if (trace)
          log.trace("Attempting to  validate connections for pool " + this);
 
+      if (trace)
+      {
+         synchronized (cls)
+         {
+            String method = "validateConnections()";
+            log.trace(ManagedConnectionPoolUtility.fullDetails(System.identityHashCode(this), method,
+                                                               mcf, clf, pool, poolConfiguration,
+                                                               cls, checkedOut, statistics));
+         }
+      }
+      else if (debug)
+      {
+         String method = "validateConnections()";
+         log.debug(ManagedConnectionPoolUtility.details(method, pool.getName(),
+                                                        statistics.getInUseCount(), poolConfiguration.getMaxSize()));
+      }
+
       boolean anyDestroyed = false;
 
       try
