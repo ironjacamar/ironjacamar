@@ -25,7 +25,6 @@ import org.jboss.jca.arquillian.embedded.Inject;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.deployers.test.rars.inout.SimpleAdminObject;
 import org.jboss.jca.deployers.test.rars.inout.SimpleAdminObject1;
-import org.jboss.jca.deployers.test.rars.inout.SimpleAdminObjectImpl;
 import org.jboss.jca.deployers.test.rars.inout.SimpleAdminObjectImpl1;
 import org.jboss.jca.deployers.test.rars.inout.SimpleConnection;
 import org.jboss.jca.deployers.test.rars.inout.SimpleConnection1;

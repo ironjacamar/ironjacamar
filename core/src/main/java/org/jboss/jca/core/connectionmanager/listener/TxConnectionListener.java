@@ -42,7 +42,6 @@ import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionEvent;
 import javax.resource.spi.LocalTransaction;
 import javax.resource.spi.ManagedConnection;
-import javax.transaction.RollbackException;
 import javax.transaction.Status;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;

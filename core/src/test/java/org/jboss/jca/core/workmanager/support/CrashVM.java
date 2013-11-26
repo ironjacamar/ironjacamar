@@ -24,8 +24,6 @@ package org.jboss.jca.core.workmanager.support;
 
 import java.io.Serializable;
 
-import org.jboss.logging.Logger;
-
 import com.github.fungal.api.Kernel;
 import com.github.fungal.api.remote.Command;
 import com.github.fungal.api.remote.Communicator;

@@ -33,8 +33,6 @@ import org.jboss.jca.embedded.dsl.resourceadapters11.api.ConnectionDefinitionsTy
 import org.jboss.jca.embedded.dsl.resourceadapters11.api.ResourceAdapterType;
 import org.jboss.jca.embedded.dsl.resourceadapters11.api.ResourceAdaptersDescriptor;
 
-import java.net.URL;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -54,7 +52,6 @@ import org.jboss.shrinkwrap.descriptor.api.connector15.ResourceadapterType;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -122,7 +119,7 @@ public class SynchronizationNarayanaTestCase
       org.jboss.jca.embedded.dsl.resourceadapters11.api.ConnectionDefinitionType dashRaXmlCdt =
          dashRaXmlCdst.createConnectionDefinition()
             .className(TxLogManagedConnectionFactory.class.getName())
-         .jndiName("java:/eis/TxLogConnectionFactory").poolName("TxLog").useCcm(false);
+            .jndiName("java:/eis/TxLogConnectionFactory").poolName("TxLog").useCcm(false);
 
       if ("XATransaction".equals(tx))
       {

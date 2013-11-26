@@ -54,7 +54,6 @@ import org.jboss.shrinkwrap.descriptor.api.connector15.ResourceadapterType;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -122,7 +121,7 @@ public class SynchronizationTestCase
       org.jboss.jca.embedded.dsl.resourceadapters11.api.ConnectionDefinitionType dashRaXmlCdt =
          dashRaXmlCdst.createConnectionDefinition()
             .className(TxLogManagedConnectionFactory.class.getName())
-         .jndiName("java:/eis/TxLogConnectionFactory").poolName("TxLog").useCcm(false);
+            .jndiName("java:/eis/TxLogConnectionFactory").poolName("TxLog").useCcm(false);
 
       if ("XATransaction".equals(tx))
       {

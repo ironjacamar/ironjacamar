@@ -21,15 +21,9 @@
  */
 package org.jboss.jca.core.tx.jbossts;
 
-import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.spi.transaction.FirstResource;
-import org.jboss.jca.core.spi.transaction.xa.XidWrapper;
 
-import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
-import javax.transaction.xa.Xid;
-
-import org.jboss.logging.Logger;
 
 /**
  * A first resource XAResourceWrapper.

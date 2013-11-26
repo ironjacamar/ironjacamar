@@ -22,10 +22,6 @@
 package org.jboss.jca.core.tx.vts;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
