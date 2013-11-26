@@ -25,8 +25,13 @@ package org.jboss.jca.adapters.jdbc;
 import org.jboss.jca.core.spi.transaction.TransactionTimeoutConfiguration;
 import org.jboss.jca.core.spi.transaction.TxUtils;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.ObjectStreamException;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.StreamCorruptedException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
@@ -55,12 +60,12 @@ import org.jboss.logging.Logger;
  */
 public class WrapperDataSource extends JBossWrapper implements Referenceable, DataSource, Serializable
 {
-   private static final long serialVersionUID = 3570285419164793501L;
+   private static final long serialVersionUID = 1L;
 
    private static Logger spyLogger = Logger.getLogger(Constants.SPY_LOGGER_CATEGORY);
 
-   private final BaseWrapperManagedConnectionFactory mcf;
-   private final ConnectionManager cm;
+   private BaseWrapperManagedConnectionFactory mcf;
+   private ConnectionManager cm;
 
    private PrintWriter logger;
    private Reference reference;
@@ -71,10 +76,17 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
 
    /**
     * Constructor
+    */
+   private WrapperDataSource()
+   {
+   }
+
+   /**
+    * Constructor
     * @param mcf The managed connection factory
     * @param cm The connection manager
     */
-   protected WrapperDataSource(final BaseWrapperManagedConnectionFactory mcf, final ConnectionManager cm)
+   protected WrapperDataSource(BaseWrapperManagedConnectionFactory mcf, ConnectionManager cm)
    {
       this.mcf = mcf;
       this.cm = cm;
@@ -293,5 +305,70 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
             }
          }
       }
+   }
+
+   private BaseWrapperManagedConnectionFactory getManagedConnectionFactory()
+   {
+      return mcf;
+   }
+
+   private ConnectionManager getConnectionManager()
+   {
+      return cm;
+   }
+
+   private PrintWriter getLogger()
+   {
+      return logger;
+   }
+
+   private UserTransaction getUserTransaction()
+   {
+      return userTransaction;
+   }
+
+   private boolean isInitialized()
+   {
+      return initialized;
+   }
+
+   private ConnectionRequestInfo getDefaultCRI()
+   {
+      return defaultCRI;
+   }
+
+   /**
+    * Write
+    */
+   private void writeObject(ObjectOutputStream out) throws IOException
+   {
+      out.writeLong(DataSourceRepository.addDataSource(this));
+   }
+
+   /**
+    * Read
+    */
+   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
+   {
+      WrapperDataSource wd = DataSourceRepository.removeDataSource(in.readLong());
+
+      if (wd == null)
+         throw new IOException("WrapperDataSource is null");
+
+      this.mcf = wd.getManagedConnectionFactory();
+      this.cm = wd.getConnectionManager();
+      this.logger = wd.getLogger();
+      this.reference = wd.getReference();
+      this.userTransaction = wd.getUserTransaction();
+      this.initialized = wd.isInitialized();
+      this.defaultCRI = wd.getDefaultCRI();
+   }
+
+   /**
+    * Read no data - not supported
+    */
+   private void readObjectNoData() throws ObjectStreamException
+   {
+      throw new StreamCorruptedException();
    }
 }
