@@ -65,16 +65,16 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
 
    private static Logger spyLogger = Logger.getLogger(Constants.SPY_LOGGER_CATEGORY);
 
-   private BaseWrapperManagedConnectionFactory mcf;
-   private ConnectionManager cm;
+   private transient BaseWrapperManagedConnectionFactory mcf;
+   private transient ConnectionManager cm;
 
-   private PrintWriter logger;
-   private Reference reference;
-   private TransactionSynchronizationRegistry tsr;
-   private UserTransaction userTransaction;
+   private transient PrintWriter logger;
+   private transient Reference reference;
+   private transient TransactionSynchronizationRegistry tsr;
+   private transient UserTransaction userTransaction;
 
-   private boolean initialized = false;
-   private ConnectionRequestInfo defaultCRI;
+   private transient boolean initialized = false;
+   private transient ConnectionRequestInfo defaultCRI;
 
    /**
     * Constructor
@@ -385,6 +385,7 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
     */
    private void writeObject(ObjectOutputStream out) throws IOException
    {
+      out.defaultWriteObject();
       out.writeLong(DataSourceRepository.addDataSource(this));
    }
 
@@ -393,6 +394,7 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
     */
    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
    {
+      in.defaultReadObject();
       WrapperDataSource wd = DataSourceRepository.removeDataSource(in.readLong());
 
       if (wd == null)
