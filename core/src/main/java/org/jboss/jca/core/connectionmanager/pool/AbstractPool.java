@@ -547,9 +547,35 @@ public abstract class AbstractPool implements Pool
       // with many opportunities for deadlocks.
       // Instead we do a double check after we got the transaction to see
       // whether another thread beat us to the punch.
-      ConnectionListener cl = mcp.getConnection(subject, cri);
-      if (trace)
-         log.tracef("Got connection from pool tracked by transaction=%s tx=%s", cl, trackByTransaction);
+      ConnectionListener cl = null;
+      try
+      {
+         cl = mcp.getConnection(subject, cri);
+         if (trace)
+            log.tracef("Got connection from pool tracked by transaction=%s tx=%s", cl, trackByTransaction);
+      }
+      catch (ResourceException re)
+      {
+         if (re instanceof RetryableException)
+         {
+            if (log.isDebugEnabled())
+               log.debug("Got a RetryableException - trying to reinitialize the pool");
+
+            // Make sure that the managed connection pool is running
+            if (!mcp.isRunning())
+               mcp.reenable();
+
+            //Getting connection from pool
+            cl = mcp.getConnection(subject, cri);
+
+            if (trace)
+               log.tracef("Got connection from pool tracked by transaction=%s tx=%s (retried)", cl, trackByTransaction);
+         }
+         else
+         {
+            throw re;
+         }
+      }
 
       TransactionSynchronizationRegistry tsr = getTransactionSynchronizationRegistry();
       Lock lock = getLock();
