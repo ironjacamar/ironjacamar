@@ -622,10 +622,17 @@ public abstract class AbstractPool implements Pool
       ConnectionListener cl = null;
       try
       {
-         if (((PoolStatisticsImpl)getStatistics()).getAvailableCount(true) > 0)
+         if (getStatistics().isEnabled())
          {
-            cl = getConnection(null, subject, null);
-            result = true;
+            if (getStatistics().getAvailableCount() > 0)
+            {
+               cl = getConnection(null, subject, null);
+               result = true;
+            }
+         }
+         else
+         {
+            log.debug("Test connection: Statistics disabled");
          }
       }
       catch (Throwable ignored)

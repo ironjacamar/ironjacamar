@@ -74,13 +74,31 @@ public interface ManagedConnectionPool extends IdleConnectionRemovalSupport
     * @return True if is emtpy; otherwise false
     */
    public boolean isEmpty();
-   
+
+   /**
+    * Is the pool full ?
+    * @return True if full, otherwise false
+    */
+   public boolean isFull();
+
+   /**
+    * Is the pool idle ?
+    * @return True if idle, otherwise false
+    */
+   public boolean isIdle();
+
    /**
     * Checks if the pool is running or not
     * @return True if is running; otherwise false
     */
    public boolean isRunning();
    
+   /**
+    * Get number of active connections
+    * @return The value
+    */
+   public int getActive();
+
    /**
     * Reenable a pool 
     */

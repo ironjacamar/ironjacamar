@@ -124,27 +124,25 @@ public class StatisticsTestCase
       javax.sql.DataSource sqlDS = (javax.sql.DataSource)context.lookup("java:/H2DS");
       Connection sqlConn = sqlDS.getConnection();
       
-      poolStatistics.setEnabled(oldEnabled);
-      
-      // core statistics should NOT be disabled.
-      assertTrue(poolStatistics.getCreatedCount() >= 1);
-      assertTrue(poolStatistics.getActiveCount() >= 1);
-      assertTrue(poolStatistics.getMaxUsedCount() >= 1);
-      assertTrue(poolStatistics.getDestroyedCount() >= 0);
-      assertTrue(poolStatistics.getAvailableCount() >= 1);
+      assertEquals(0, poolStatistics.getCreatedCount());
+      assertEquals(0, poolStatistics.getActiveCount());
+      assertEquals(0, poolStatistics.getMaxUsedCount());
+      assertEquals(0, poolStatistics.getDestroyedCount());
+      assertEquals(0, poolStatistics.getAvailableCount());
       assertTrue(poolStatistics.getMaxWaitCount() >= 0);
       
+      poolStatistics.setEnabled(oldEnabled);
+
       sqlConn.close();
       
       poolStatistics.clear();
-      // core statistics should NOT be cleared
-      assertTrue(poolStatistics.getCreatedCount() >= 1);
-      assertTrue(poolStatistics.getActiveCount() >= 1);
-      assertTrue(poolStatistics.getMaxUsedCount() >= 1);
-      assertTrue(poolStatistics.getDestroyedCount() >= 0);
-      assertTrue(poolStatistics.getAvailableCount() >= 1);
+
+      assertEquals(0, poolStatistics.getCreatedCount());
+      assertEquals(0, poolStatistics.getActiveCount());
+      assertEquals(0, poolStatistics.getMaxUsedCount());
+      assertEquals(0, poolStatistics.getDestroyedCount());
+      assertEquals(20, poolStatistics.getAvailableCount());
       assertTrue(poolStatistics.getMaxWaitCount() >= 0);
-      
    }
    
    /**
@@ -181,12 +179,12 @@ public class StatisticsTestCase
       assertTrue(poolStatistics.getAvailableCount() < availableCount);
       assertTrue(poolStatistics.getMaxWaitCount() >= 0);
       
-      assertTrue(poolStatistics.getAverageCreationTime() > 0);
+      assertTrue(poolStatistics.getAverageCreationTime() >= 0);
       assertTrue(poolStatistics.getAverageBlockingTime() >= 0);
-      assertTrue(poolStatistics.getMaxCreationTime() > 0);
+      assertTrue(poolStatistics.getMaxCreationTime() >= 0);
       assertTrue(poolStatistics.getTimedOut() >= 0);
       assertTrue(poolStatistics.getTotalBlockingTime() >= 0);
-      assertTrue(poolStatistics.getTotalCreationTime() > 0);
+      assertTrue(poolStatistics.getTotalCreationTime() >= 0);
       
       sqlConn.close();
       sqlConn2.close();
