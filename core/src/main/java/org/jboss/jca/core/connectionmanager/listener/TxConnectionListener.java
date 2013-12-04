@@ -65,6 +65,9 @@ public class TxConnectionListener extends AbstractConnectionListener
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
    
+   /** Disable failed to enlist message */
+   private static boolean disableFailedtoEnlist = false;
+
    /**Transaction synch. instance*/
    private TransactionSynchronization transactionSynchronization;
 
@@ -76,6 +79,33 @@ public class TxConnectionListener extends AbstractConnectionListener
 
    /** Whether there is a local transaction */
    private final AtomicBoolean localTransaction = new AtomicBoolean(false);
+
+   static
+   {
+      String value = SecurityActions.getSystemProperty("ironjacamar.disable_enlistment_trace");
+
+      if (value != null && !value.trim().equals(""))
+      {
+         try
+         {
+            int equal = value.indexOf("=");
+            if (equal != -1)
+            {
+               String setting = value.substring(equal + 1);
+               disableFailedtoEnlist = Boolean.valueOf(setting);
+            }
+            else
+            {
+               // Assume enable
+               disableFailedtoEnlist = true;
+            }
+         }
+         catch (Throwable t)
+         {
+            throw new RuntimeException("Unable to parse ironjacamar.disable_enlistment_trace: " + value);
+         }
+      }
+   }
 
    /**
     * Creates a new tx listener.
@@ -561,8 +591,7 @@ public class TxConnectionListener extends AbstractConnectionListener
    public class TransactionSynchronization implements Synchronization
    {
       /**Error message*/
-      private final Throwable failedToEnlist =
-         new Throwable("Unabled to enlist resource, see the previous warnings.");
+      private final Throwable failedToEnlist;
 
       /** Transaction */
       protected final Transaction currentTx;
@@ -588,6 +617,15 @@ public class TxConnectionListener extends AbstractConnectionListener
          this.wasTrackByTx = trackByTx;
          this.enlisted = false;
          this.enlistError = null;
+
+         if (!disableFailedtoEnlist)
+         {
+            this.failedToEnlist = new Throwable("Unabled to enlist resource, see the previous warnings.");
+         }
+         else
+         {
+            this.failedToEnlist = null;
+         }
       }
 
       /**
@@ -607,7 +645,7 @@ public class TxConnectionListener extends AbstractConnectionListener
 
             // Wrap the error to give a reasonable stacktrace since the resource
             // could have been enlisted by a different thread
-            if (enlistError == failedToEnlist)
+            if (!disableFailedtoEnlist && enlistError == failedToEnlist)
             {
                throw new SystemException(bundle.systemExceptionWhenFailedToEnlistEqualsCurrentTx(
                      failedToEnlist, this.currentTx));
@@ -646,7 +684,14 @@ public class TxConnectionListener extends AbstractConnectionListener
             XAResource resource = getXAResource();
             if (!currentTx.enlistResource(resource))
             {
-               enlistError = failedToEnlist;
+               if (!disableFailedtoEnlist)
+               {
+                  enlistError = failedToEnlist;
+               }
+               else
+               {
+                  enlistError = new Throwable("Failed to enlist");
+               }
             }
          }
          catch (Throwable t)
