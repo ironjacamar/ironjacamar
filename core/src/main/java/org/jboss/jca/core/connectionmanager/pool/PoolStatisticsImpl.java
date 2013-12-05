@@ -755,11 +755,13 @@ public class PoolStatisticsImpl implements PoolStatistics
 
    private void writeObject(ObjectOutputStream out) throws IOException
    {
+      out.defaultWriteObject();
       out.writeInt(maxPoolSize);
    }
 
    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
    {
+      in.defaultReadObject();
       init(in.readInt(), new ConcurrentHashMap<Object, ManagedConnectionPool>());
    }
 

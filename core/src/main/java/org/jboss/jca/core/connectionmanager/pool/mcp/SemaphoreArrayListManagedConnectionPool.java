@@ -170,6 +170,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       this.trace = log.isTraceEnabled();
       this.cls = new ArrayList<ConnectionListener>(this.maxSize);
       this.statistics = new ManagedConnectionPoolStatisticsImpl(maxSize);
+      this.statistics.setEnabled(p.getStatistics().isEnabled());
       this.permits = new Semaphore(maxSize, true, statistics);
       this.supportsLazyAssociation = null;
       this.lastIdleCheck = Long.MIN_VALUE;

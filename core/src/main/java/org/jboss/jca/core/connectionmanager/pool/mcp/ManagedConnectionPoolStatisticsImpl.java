@@ -354,6 +354,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    public void setEnabled(boolean v)
    {
       enabled.set(v);
+      clear();
    }
 
    /**
@@ -732,11 +733,11 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    {
       this.createdCount.set(0);
       this.destroyedCount.set(0);
-      this.maxCreationTime.set(0);
-      this.maxGetTime.set(0);
-      this.maxUsedCount.set(0);
-      this.maxWaitCount.set(0);
-      this.maxWaitTime.set(0L);
+      this.maxCreationTime.set(Long.MIN_VALUE);
+      this.maxGetTime.set(Long.MIN_VALUE);
+      this.maxUsedCount.set(Integer.MIN_VALUE);
+      this.maxWaitCount.set(Integer.MIN_VALUE);
+      this.maxWaitTime.set(Long.MIN_VALUE);
       this.timedOut.set(0);
       this.totalBlockingTime.set(0L);
       this.totalBlockingTimeInvocations.set(0L);
@@ -750,11 +751,13 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
 
    private void writeObject(ObjectOutputStream out) throws IOException
    {
+      out.defaultWriteObject();
       out.writeInt(maxPoolSize);
    }
 
    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
    {
+      in.defaultReadObject();
       init(in.readInt());
    }
 

@@ -152,6 +152,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       this.cls = new ArrayBlockingQueue<ConnectionListener>(pc.getMaxSize(), true);
       this.checkedOut = new ConcurrentSkipListSet<ConnectionListener>();
       this.statistics = new ManagedConnectionPoolStatisticsImpl(pc.getMaxSize());
+      this.statistics.setEnabled(p.getStatistics().isEnabled());
       this.supportsLazyAssociation = null;
       this.lastIdleCheck = Long.MIN_VALUE;
       this.lastUsed = Long.MAX_VALUE;
