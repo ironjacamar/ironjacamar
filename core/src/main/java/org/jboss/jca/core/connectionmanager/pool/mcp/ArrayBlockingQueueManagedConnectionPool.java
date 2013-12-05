@@ -138,6 +138,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       this.cls = new ArrayBlockingQueue<ConnectionListener>(pc.getMaxSize(), true);
       this.checkedOut = new ConcurrentSkipListSet<ConnectionListener>();
       this.statistics = new ManagedConnectionPoolStatisticsImpl(pc.getMaxSize());
+      this.statistics.setEnabled(p.getStatistics().isEnabled());
   
       // Schedule managed connection pool for prefill
       if ((pc.isPrefill() || pc.isStrictMin()) && p instanceof PrefillPool && pc.getMinSize() > 0)
