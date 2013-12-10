@@ -22,7 +22,6 @@
 package org.jboss.jca.eclipse.command;
 
 import org.jboss.jca.eclipse.Activator;
-import org.jboss.jca.eclipse.command.raui.ConnectorHelper;
 import org.jboss.jca.eclipse.command.raui.RAGenerateWizard;
 
 import com.github.fungal.spi.deployers.DeployException;
@@ -153,8 +152,6 @@ public class DeployHandler extends AbstractIronJacamarHandler
          {
             try
             {
-               final ConnectorHelper connectorHelper = new ConnectorHelper();
-               connectorHelper.parseConnectorData(rarFile);
                Display.getDefault().asyncExec(new Runnable()
                {
 
@@ -162,7 +159,7 @@ public class DeployHandler extends AbstractIronJacamarHandler
                   public void run()
                   {
                      WizardDialog wizard = new WizardDialog(shell,
-                           new RAGenerateWizard(rarFile, connectorHelper, project));
+                           new RAGenerateWizard(rarFile, project));
                      wizard.open();
                   }
                });

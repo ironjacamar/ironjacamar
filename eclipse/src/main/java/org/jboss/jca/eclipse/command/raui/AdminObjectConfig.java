@@ -23,6 +23,7 @@ package org.jboss.jca.eclipse.command.raui;
 
 import org.jboss.jca.codegenerator.ConfigPropType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,9 +32,11 @@ import java.util.List;
  * @author <a href="mailto:lgao@redhat.com">Lin Gao</a>
  *
  */
-public class AdminObjectConfig
+public class AdminObjectConfig implements Cloneable
 {
 
+   private boolean active;
+   
    private String clssName;
    
    private String jndiName = null;
@@ -44,7 +47,7 @@ public class AdminObjectConfig
    
    private Boolean useJavaCtx = null;
    
-   private List<ConfigPropType> configProps;
+   private List<ConfigPropType> configProps = new ArrayList<ConfigPropType>();
 
    /**
     * The constructor
@@ -54,6 +57,85 @@ public class AdminObjectConfig
       super();
    }
    
+   @Override
+   public AdminObjectConfig clone()
+   {
+      AdminObjectConfig clone = new AdminObjectConfig();
+      clone.active = this.active;
+      clone.clssName = this.clssName;
+      clone.enabled = this.enabled;
+      clone.jndiName = this.jndiName;
+      clone.poolName = this.poolName;
+      clone.useJavaCtx = this.useJavaCtx;
+      List<ConfigPropType> configProps = new ArrayList<ConfigPropType>();
+      for (ConfigPropType configProp: this.configProps)
+      {
+         configProps.add(cloneConfigPropType(configProp));
+      }
+      clone.configProps = configProps;
+      return clone;
+   }
+   
+   /**
+    * Clone a ConfigPropType instance.
+    * 
+    * @param tobeCloned the ConfigPropType to be cloned.
+    * @return the cloned ConfigPropType
+    */
+   public static ConfigPropType cloneConfigPropType(ConfigPropType tobeCloned)
+   {
+      if (tobeCloned == null)
+      {
+         return null;
+      }
+      ConfigPropType clone = new ConfigPropType();
+      clone.setName(tobeCloned.getName());
+      clone.setRequired(tobeCloned.isRequired());
+      clone.setType(tobeCloned.getType());
+      clone.setValue(tobeCloned.getValue());
+      return clone;
+   }
+   
+   /**
+    * Clones a list of ConfigPropType.
+    * 
+    * @param tobeCloned the to be cloned ConfigPropType list.
+    * @return the cloned ConfigPropType list.
+    */
+   public static List<ConfigPropType> cloneConfigPropTypeList(List<ConfigPropType> tobeCloned)
+   {
+      if (tobeCloned == null)
+      {
+         return null;
+      }
+      List<ConfigPropType> clone = new ArrayList<ConfigPropType>();
+      for (ConfigPropType configProp: tobeCloned)
+      {
+         clone.add(cloneConfigPropType(configProp));
+      }
+      return clone;
+   }
+   
+   /**
+    * @return the active
+    */
+   public boolean isActive()
+   {
+      return active;
+   }
+
+
+
+   /**
+    * @param active the active to set
+    */
+   public void setActive(boolean active)
+   {
+      this.active = active;
+   }
+
+
+
    /**
     * Get clssName
     * @return The clssName
@@ -152,14 +234,4 @@ public class AdminObjectConfig
    {
       return configProps;
    }
-
-   /**
-    * Set configProps
-    * @param configProps The value to set
-    */
-   public void setConfigProps(List<ConfigPropType> configProps)
-   {
-      this.configProps = configProps;
-   }
-   
 }
