@@ -33,8 +33,11 @@ import java.util.List;
  * @author <a href="mailto:lgao@redhat.com">Lin Gao</a>
  *
  */
-public class ConnectionFactoryConfig
+public class ConnectionFactoryConfig implements Cloneable
 {
+   
+   private boolean active;
+   
    // general
    private String mcfClsName;
    private String mcfJndiName;
@@ -42,22 +45,27 @@ public class ConnectionFactoryConfig
    private Boolean mcfEnabled;
    private Boolean mcfUseJavaCtx;
    private Boolean mcfUseCCM;
+   
+   // added for 1.1
+   private Boolean sharable;
+   private Boolean enlistment;
+   
    private List<ConfigPropType> mcfConfigProps = new ArrayList<ConfigPropType>();
    
    // pool
-   private PoolConfig poolConifg;
+   private PoolConfig poolConifg = new PoolConfig();
    
    // security
-   private SecurityConfig securityConfig;
+   private SecurityConfig securityConfig = new SecurityConfig();
    
    // timeout
-   private TimeoutConfig timeoutConfig;
+   private TimeoutConfig timeoutConfig = new TimeoutConfig();
    
    // validation
-   private ValidationConfig validationConfig;
+   private ValidationConfig validationConfig = new ValidationConfig();
    
    // recovery
-   private RecoveryConfig recoveryConfig;
+   private RecoveryConfig recoveryConfig = new RecoveryConfig();
    
    /**
     * The constructor
@@ -67,6 +75,132 @@ public class ConnectionFactoryConfig
       super();
    }
    
+   @Override
+   public ConnectionFactoryConfig clone()
+   {
+      ConnectionFactoryConfig clone = new ConnectionFactoryConfig();
+      clone.active = this.active;
+      clone.enlistment = this.enlistment;
+      clone.mcfClsName = this.mcfClsName;
+      clone.mcfConfigProps = AdminObjectConfig.cloneConfigPropTypeList(mcfConfigProps);
+      clone.mcfEnabled = this.mcfEnabled;
+      clone.mcfJndiName = this.mcfJndiName;
+      clone.mcfPoolName = this.mcfPoolName;
+      clone.mcfUseCCM = this.mcfUseCCM;
+      clone.mcfUseJavaCtx = this.mcfUseJavaCtx;
+      clone.poolConifg = this.poolConifg.clone();
+      clone.recoveryConfig = this.recoveryConfig.clone();
+      clone.securityConfig = this.securityConfig.clone();
+      clone.sharable = this.sharable;
+      clone.timeoutConfig = this.timeoutConfig.clone();
+      clone.validationConfig = this.validationConfig.clone();
+      return clone;
+   }
+   
+   /**
+    * @param mcfConfigProps the mcfConfigProps to set
+    */
+   public void setMcfConfigProps(List<ConfigPropType> mcfConfigProps)
+   {
+      this.mcfConfigProps = mcfConfigProps;
+   }
+
+   /**
+    * @param poolConifg the poolConifg to set
+    */
+   public void setPoolConifg(PoolConfig poolConifg)
+   {
+      this.poolConifg = poolConifg;
+   }
+
+   /**
+    * @param securityConfig the securityConfig to set
+    */
+   public void setSecurityConfig(SecurityConfig securityConfig)
+   {
+      this.securityConfig = securityConfig;
+   }
+
+   /**
+    * @param timeoutConfig the timeoutConfig to set
+    */
+   public void setTimeoutConfig(TimeoutConfig timeoutConfig)
+   {
+      this.timeoutConfig = timeoutConfig;
+   }
+
+   /**
+    * @param validationConfig the validationConfig to set
+    */
+   public void setValidationConfig(ValidationConfig validationConfig)
+   {
+      this.validationConfig = validationConfig;
+   }
+
+   /**
+    * @param recoveryConfig the recoveryConfig to set
+    */
+   public void setRecoveryConfig(RecoveryConfig recoveryConfig)
+   {
+      this.recoveryConfig = recoveryConfig;
+   }
+
+   /**
+    * @return the active
+    */
+   public boolean isActive()
+   {
+      return active;
+   }
+
+
+   /**
+    * @param active the active to set
+    */
+   public void setActive(boolean active)
+   {
+      this.active = active;
+   }
+
+
+
+   /**
+    * @return the sharable
+    */
+   public Boolean getSharable()
+   {
+      return sharable;
+   }
+
+   /**
+    * @param sharable the sharable to set
+    */
+   public void setSharable(Boolean sharable)
+   {
+      this.sharable = sharable;
+   }
+
+
+   /**
+    * @return the enlistment
+    */
+   public Boolean getEnlistment()
+   {
+      return enlistment;
+   }
+
+
+
+   /**
+    * @param enlistment the enlistment to set
+    */
+   public void setEnlistment(Boolean enlistment)
+   {
+      this.enlistment = enlistment;
+   }
+
+
+
    /**
     * Get mcfClsName
     * @return The mcfClsName
@@ -185,30 +319,12 @@ public class ConnectionFactoryConfig
    }
 
    /**
-    * Set mcfConfigProps
-    * @param mcfConfigProps The value to set
-    */
-   public void setMcfConfigProps(List<ConfigPropType> mcfConfigProps)
-   {
-      this.mcfConfigProps = mcfConfigProps;
-   }
-
-   /**
     * Get poolConifg
     * @return The poolConifg
     */
    public PoolConfig getPoolConifg()
    {
       return poolConifg;
-   }
-
-   /**
-    * Set poolConifg
-    * @param poolConifg The value to set
-    */
-   public void setPoolConifg(PoolConfig poolConifg)
-   {
-      this.poolConifg = poolConifg;
    }
 
    /**
@@ -221,30 +337,12 @@ public class ConnectionFactoryConfig
    }
 
    /**
-    * Set securityConfig
-    * @param securityConfig The value to set
-    */
-   public void setSecurityConfig(SecurityConfig securityConfig)
-   {
-      this.securityConfig = securityConfig;
-   }
-
-   /**
     * Get timeoutConfig
     * @return The timeoutConfig
     */
    public TimeoutConfig getTimeoutConfig()
    {
       return timeoutConfig;
-   }
-
-   /**
-    * Set timeoutConfig
-    * @param timeoutConfig The value to set
-    */
-   public void setTimeoutConfig(TimeoutConfig timeoutConfig)
-   {
-      this.timeoutConfig = timeoutConfig;
    }
 
    /**
@@ -256,14 +354,6 @@ public class ConnectionFactoryConfig
       return validationConfig;
    }
 
-   /**
-    * Set validationConfig
-    * @param validationConfig The value to set
-    */
-   public void setValidationConfig(ValidationConfig validationConfig)
-   {
-      this.validationConfig = validationConfig;
-   }
 
    /**
     * Get recoveryConfig
@@ -275,26 +365,19 @@ public class ConnectionFactoryConfig
    }
 
    /**
-    * Set recoveryConfig
-    * @param recoveryConfig The value to set
-    */
-   public void setRecoveryConfig(RecoveryConfig recoveryConfig)
-   {
-      this.recoveryConfig = recoveryConfig;
-   }
-
-   /**
     * PoolConfig is used to configure Pool
     */
-   public static class PoolConfig
+   public static class PoolConfig implements Cloneable
    {
       private Integer minPoolSize;
+      private Integer initialPoolSize;
       private Integer maxPoolSize;
       private Boolean prefill;
       private Boolean useStrictMin;
       private FlushStrategy flushStrategy;
+      private CapacityConfig capacityConfig = new CapacityConfig();
       
-      private Boolean defineXA;
+      private boolean defineXA;
       
       // XA related
       private Boolean overrideIsSameRM;
@@ -302,6 +385,57 @@ public class ConnectionFactoryConfig
       private Boolean noTxSeparatePool;
       private Boolean padXid;
       private Boolean wrapXaResource;
+      
+      
+      @Override
+      public PoolConfig clone()
+      {
+         PoolConfig clone = new PoolConfig();
+         clone.capacityConfig = this.capacityConfig.clone();
+         clone.defineXA = this.defineXA;
+         clone.flushStrategy = this.flushStrategy;
+         clone.initialPoolSize = this.initialPoolSize;
+         clone.interleaving = this.interleaving;
+         clone.maxPoolSize = this.maxPoolSize;
+         clone.minPoolSize = this.minPoolSize;
+         clone.noTxSeparatePool = this.noTxSeparatePool;
+         clone.overrideIsSameRM = this.overrideIsSameRM;
+         clone.padXid = this.padXid;
+         clone.prefill = this.prefill;
+         clone.useStrictMin = this.useStrictMin;
+         clone.wrapXaResource = this.wrapXaResource;
+         return clone;
+      }
+      
+      /**
+       * @param capacityConfig the capacityConfig to set
+       */
+      public void setCapacityConfig(CapacityConfig capacityConfig)
+      {
+         this.capacityConfig = capacityConfig;
+      }
+
+      /**
+       * @return the capacityConfig
+       */
+      public CapacityConfig getCapacityConfig()
+      {
+         return capacityConfig;
+      }
+      /**
+       * @return the initialPoolSize
+       */
+      public Integer getInitialPoolSize()
+      {
+         return initialPoolSize;
+      }
+      /**
+       * @param initialPoolSize the initialPoolSize to set
+       */
+      public void setInitialPoolSize(Integer initialPoolSize)
+      {
+         this.initialPoolSize = initialPoolSize;
+      }
       /**
        * Get minPoolSize
        * @return The minPoolSize
@@ -386,7 +520,7 @@ public class ConnectionFactoryConfig
        * Get defineXA
        * @return The defineXA
        */
-      public Boolean getDefineXA()
+      public boolean getDefineXA()
       {
          return defineXA;
       }
@@ -394,7 +528,7 @@ public class ConnectionFactoryConfig
        * Set defineXA
        * @param defineXA The value to set
        */
-      public void setDefineXA(Boolean defineXA)
+      public void setDefineXA(boolean defineXA)
       {
          this.defineXA = defineXA;
       }
@@ -484,11 +618,22 @@ public class ConnectionFactoryConfig
    /**
     * SecurityConfig is used to configure security
     */
-   public static class SecurityConfig
+   public static class SecurityConfig implements Cloneable
    {
       private Boolean application;
       private String securityDomain;
       private String securityDomainAndApp;
+      
+      @Override
+      public SecurityConfig clone()
+      {
+         SecurityConfig clone = new SecurityConfig();
+         clone.application = this.application;
+         clone.securityDomain = this.securityDomain;
+         clone.securityDomainAndApp = this.securityDomainAndApp;
+         return clone;
+      }
+      
       /**
        * Get application
        * @return The application
@@ -544,13 +689,26 @@ public class ConnectionFactoryConfig
    /**
     * TimeoutConfig is used to configure time out
     */
-   public static class TimeoutConfig
+   public static class TimeoutConfig implements Cloneable
    {
       private Long blockingTimeoutMillis;
       private Long idleTimeoutMinutes;
       private Integer allocateRetry;
       private Long allocateRetryWait;
       private Integer xaResourceTimeout;
+      
+      @Override
+      public TimeoutConfig clone()
+      {
+         TimeoutConfig clone = new TimeoutConfig();
+         clone.allocateRetry = this.allocateRetry;
+         clone.allocateRetryWait = this.allocateRetryWait;
+         clone.blockingTimeoutMillis = this.blockingTimeoutMillis;
+         clone.idleTimeoutMinutes = this.idleTimeoutMinutes;
+         clone.xaResourceTimeout = this.xaResourceTimeout;
+         return clone;
+      }
+      
       /**
        * Get blockingTimeoutMillis
        * @return The blockingTimeoutMillis
@@ -637,11 +795,22 @@ public class ConnectionFactoryConfig
    /**
     * ValidationConifg is used to configure validation
     */
-   public static class ValidationConfig
+   public static class ValidationConfig implements Cloneable
    {
       private Boolean backgroundValidation;
       private Long backgroundValidationMillis;
       private Boolean useFastFail;
+      
+      @Override
+      public ValidationConfig clone()
+      {
+         ValidationConfig clone = new ValidationConfig();
+         clone.backgroundValidation = this.backgroundValidation;
+         clone.backgroundValidationMillis = this.backgroundValidationMillis;
+         clone.useFastFail = this.useFastFail;
+         return clone;
+      }
+      
       /**
        * Get backgroundValidation
        * @return The backgroundValidation
@@ -696,16 +865,44 @@ public class ConnectionFactoryConfig
    /**
     * RecoveryConfig is used to configure recovery
     */
-   public static class RecoveryConfig
+   public static class RecoveryConfig implements Cloneable
    {
       private Boolean noRecovery;
       
       // credential
-      private Credential credential;
+      private Credential credential = new Credential();
       
       // extension
-      private Extension extension;
+      private Extension extension = new Extension();
       
+      @Override
+      public RecoveryConfig clone()
+      {
+         RecoveryConfig clone = new RecoveryConfig();
+         clone.credential = this.credential.clone();
+         clone.extension = this.extension.clone();
+         clone.noRecovery = this.noRecovery;
+         return clone;
+      }
+      
+      /**
+       * @param credential the credential to set
+       */
+      public void setCredential(Credential credential)
+      {
+         this.credential = credential;
+      }
+
+      /**
+       * @param extension the extension to set
+       */
+      public void setExtension(Extension extension)
+      {
+         this.extension = extension;
+      }
+
+
+
       /**
        * Get noRecovery
        * @return The noRecovery
@@ -734,15 +931,6 @@ public class ConnectionFactoryConfig
       }
 
       /**
-       * Set credential
-       * @param credential The value to set
-       */
-      public void setCredential(Credential credential)
-      {
-         this.credential = credential;
-      }
-
-      /**
        * Get extension
        * @return The extension
        */
@@ -751,114 +939,179 @@ public class ConnectionFactoryConfig
          return extension;
       }
 
-      /**
-       * Set extension
-       * @param extension The value to set
-       */
-      public void setExtension(Extension extension)
+   }
+   
+   /**
+    * Capacity configuration for pool
+    *
+    */
+   public static class CapacityConfig implements Cloneable
+   {
+      private Extension incrementer = new Extension();
+      private Extension decrementer = new Extension();
+      
+      @Override
+      public CapacityConfig clone()
       {
-         this.extension = extension;
+         CapacityConfig clone = new CapacityConfig();
+         clone.decrementer = this.decrementer.clone();
+         clone.incrementer = this.incrementer.clone();
+         return clone;
+      }
+      
+      /**
+       * @param incrementer the incrementer to set
+       */
+      public void setIncrementer(Extension incrementer)
+      {
+         this.incrementer = incrementer;
       }
 
       /**
-       * Credential is used on the recovery
+       * @param decrementer the decrementer to set
        */
-      public static class Credential
+      public void setDecrementer(Extension decrementer)
       {
-         private String username;
-         private String password;
-         private String securityDomain;
-         /**
-          * Get username
-          * @return The username
-          */
-         public String getUsername()
-         {
-            return username;
-         }
-         /**
-          * Set username
-          * @param username The value to set
-          */
-         public void setUsername(String username)
-         {
-            this.username = username;
-         }
-         /**
-          * Get password
-          * @return The password
-          */
-         public String getPassword()
-         {
-            return password;
-         }
-         /**
-          * Set password
-          * @param password The value to set
-          */
-         public void setPassword(String password)
-         {
-            this.password = password;
-         }
-         /**
-          * Get securityDomain
-          * @return The securityDomain
-          */
-         public String getSecurityDomain()
-         {
-            return securityDomain;
-         }
-         /**
-          * Set securityDomain
-          * @param securityDomain The value to set
-          */
-         public void setSecurityDomain(String securityDomain)
-         {
-            this.securityDomain = securityDomain;
-         }
-         
+         this.decrementer = decrementer;
       }
 
       /**
-       * Extension is used on the recovery
+       * @return the incrementer
        */
-      public static class Extension
+      public Extension getIncrementer()
       {
-         private String className;
-         private List<ConfigPropType> configProperties = new ArrayList<ConfigPropType>();
-         /**
-          * Get className
-          * @return The className
-          */
-         public String getClassName()
-         {
-            return className;
-         }
-         /**
-          * Set className
-          * @param className The value to set
-          */
-         public void setClassName(String className)
-         {
-            this.className = className;
-         }
-         /**
-          * Get configProperties
-          * @return The configProperties
-          */
-         public List<ConfigPropType> getConfigProperties()
-         {
-            return configProperties;
-         }
-         /**
-          * Set configProperties
-          * @param configProperties The value to set
-          */
-         public void setConfigProperties(List<ConfigPropType> configProperties)
-         {
-            this.configProperties = configProperties;
-         }
+         return incrementer;
       }
+      /**
+       * @return the decrementer
+       */
+      public Extension getDecrementer()
+      {
+         return decrementer;
+      }
+      
+   }
+   
+   /**
+    * Credential is used on the recovery
+    */
+   public static class Credential implements Cloneable
+   {
+      private String username;
+      private String password;
+      private String securityDomain;
+      
+      @Override
+      public Credential clone()
+      {
+         Credential clone = new Credential();
+         clone.username = this.username;
+         clone.password = this.password;
+         clone.securityDomain = this.securityDomain;
+         return clone;
+      }
+      
+      /**
+       * Get username
+       * @return The username
+       */
+      public String getUsername()
+      {
+         return username;
+      }
+      /**
+       * Set username
+       * @param username The value to set
+       */
+      public void setUsername(String username)
+      {
+         this.username = username;
+      }
+      /**
+       * Get password
+       * @return The password
+       */
+      public String getPassword()
+      {
+         return password;
+      }
+      /**
+       * Set password
+       * @param password The value to set
+       */
+      public void setPassword(String password)
+      {
+         this.password = password;
+      }
+      /**
+       * Get securityDomain
+       * @return The securityDomain
+       */
+      public String getSecurityDomain()
+      {
+         return securityDomain;
+      }
+      /**
+       * Set securityDomain
+       * @param securityDomain The value to set
+       */
+      public void setSecurityDomain(String securityDomain)
+      {
+         this.securityDomain = securityDomain;
+      }
+      
+   }
+   
+   /**
+    * Extension is used on the recovery
+    */
+   public static class Extension implements Cloneable
+   {
+      private String className;
+      private List<ConfigPropType> configProperties = new ArrayList<ConfigPropType>();
+      
+      @Override
+      public Extension clone()
+      {
+         Extension clone = new Extension();
+         clone.className = this.className;
+         clone.configProperties = AdminObjectConfig.cloneConfigPropTypeList(configProperties);
+         return clone;
+      }
+      
+      /**
+       * Get className
+       * @return The className
+       */
+      public String getClassName()
+      {
+         return className;
+      }
+      /**
+       * Set className
+       * @param className The value to set
+       */
+      public void setClassName(String className)
+      {
+         this.className = className;
+      }
+      /**
+       * Get configProperties
+       * @return The configProperties
+       */
+      public List<ConfigPropType> getConfigProperties()
+      {
+         return configProperties;
+      }
+
+      /**
+       * @param configProperties the configProperties to set
+       */
+      public void setConfigProperties(List<ConfigPropType> configProperties)
+      {
+         this.configProperties = configProperties;
+      }
+      
    }
    
 }

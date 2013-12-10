@@ -21,15 +21,7 @@
  */
 package org.jboss.jca.eclipse.command.raui;
 
-import org.jboss.jca.codegenerator.ConfigPropType;
-import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
-import org.jboss.jca.common.api.metadata.ra.AdminObject;
-import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -51,18 +43,8 @@ import org.eclipse.swt.widgets.Text;
  */
 public class RAGenerateAOPage extends AbstractRAGenerateWizardPage
 {
-   private final String aoClsName;
-   
-   private final CommonAdminObject commonAO;
-   
-   private final ConnectorHelper connectorHelper;
-   
+
    private final AdminObjectConfig aoConfig;
-   
-   private final List<? extends ConfigProperty> intialAOConfigProperties;
-   
-   private final ResourceAdapterConfig raConfig;
-   
    
    // components which need to be validate
    private Text jndiText;
@@ -71,28 +53,14 @@ public class RAGenerateAOPage extends AbstractRAGenerateWizardPage
    /**
     * The constructor.
     * 
-    * @param wizard the RAGenerateWizard
-    * @param ao the AdminObject
+    * @param aoConfig the AdminObjectConfig
     */
-   public RAGenerateAOPage(RAGenerateWizard wizard, AdminObject ao)
+   public RAGenerateAOPage(AdminObjectConfig aoConfig)
    {
       super("AOPage");
-      this.aoClsName = ao.getAdminobjectClass().getValue();
-      this.intialAOConfigProperties = ao.getConfigProperties();
-      this.connectorHelper = wizard.getConnectorHelper();
-      this.raConfig = wizard.getRaConfig();
-      this.commonAO = this.connectorHelper.getCommonAdminObject(ao);
+      this.aoConfig = aoConfig;
       setTitle(getString("ra.generate.ao.title"));
-      setDescription(getString("ra.generate.ao.description", this.aoClsName));
-      this.aoConfig = new AdminObjectConfig();
-      
-      // class name and jndi name are required.
-      this.aoConfig.setClssName(aoClsName);
-      this.aoConfig.setJndiName(getInitialJndiName());
-      if (isInitialActive())
-      {
-         this.raConfig.getAdminObjectConfigs().add(aoConfig);
-      }
+      setDescription(getString("ra.generate.ao.description", this.aoConfig.getClssName()));
    }
 
    @Override
@@ -116,7 +84,6 @@ public class RAGenerateAOPage extends AbstractRAGenerateWizardPage
       
       final Button activeBtn = new Button(container, SWT.CHECK);
       
-      
       final Group generalGrp = new Group(whole, SWT.SHADOW_IN);
       generalGrp.setText(getString("ra.generate.general.group"));
       generalGrp.setLayout(getLayout());
@@ -125,17 +92,16 @@ public class RAGenerateAOPage extends AbstractRAGenerateWizardPage
       label = new Label(generalGrp, SWT.NULL);
       label.setText(getString("ra.generate.class.name"));
       Label clsNameLabel = new Label(generalGrp, SWT.NULL);
-      clsNameLabel.setText(this.aoClsName);
+      clsNameLabel.setText(this.aoConfig.getClssName());
       
       // jndi name
       label = new Label(generalGrp, SWT.NULL);
       label.setText(getString("ra.generate.jndi.name"));
-      final String jndi = this.getInitialJndiName();
+      final String jndi = this.aoConfig.getJndiName();
       
-      jndiText = createText(generalGrp, jndi);
+      jndiText = UIResources.createText(generalGrp, jndi);
       jndiText.addModifyListener(new ModifyListener()
       {
-         
          @Override
          public void modifyText(ModifyEvent e)
          {
@@ -150,8 +116,8 @@ public class RAGenerateAOPage extends AbstractRAGenerateWizardPage
       // pool name
       label = new Label(generalGrp, SWT.NULL);
       label.setText(getString("ra.generate.pool.name"));
-      final String poolName = this.getInitialPoolName();
-      final Text poolNameText = createText(generalGrp, poolName);
+      final String poolName = this.aoConfig.getPoolName();
+      final Text poolNameText = UIResources.createText(generalGrp, poolName);
       poolNameText.addModifyListener(new ModifyListener()
       {
          
@@ -159,49 +125,33 @@ public class RAGenerateAOPage extends AbstractRAGenerateWizardPage
          public void modifyText(ModifyEvent e)
          {
             String newPoolName = poolNameText.getText().trim();
-            if (newPoolName != null && newPoolName.length() > 0)
-            {
-               if (!newPoolName.equals(getInitialPoolName()))
-               {
-                  aoConfig.setPoolName(newPoolName);
-               }
-               else
-               {
-                  aoConfig.setPoolName(null);
-               }
-            }
+            aoConfig.setPoolName(newPoolName);
          }
       });
       
       // enabled
       label = new Label(generalGrp, SWT.NULL);
       label.setText(getString("ra.generate.enabled"));
-      final Boolean enabled = this.isInitialEnabled();
-      
+      final Boolean enabled = this.aoConfig.isEnabled();
       final Button enableBtn = new Button(generalGrp, SWT.BORDER | SWT.CHECK);
-      enableBtn.setSelection(enabled.booleanValue());
+      enableBtn.setSelection(enabled != null ? enabled : Boolean.TRUE);
+      
       enableBtn.addSelectionListener(new SelectionAdapter()
       {
          @Override
          public void widgetSelected(SelectionEvent e)
          {
-            if (enabled ^ enableBtn.getSelection())
-            {
-               aoConfig.setEnabled(enableBtn.getSelection());
-            }
-            else
-            {
-               aoConfig.setEnabled(null);
-            }
+            aoConfig.setEnabled(enableBtn.getSelection());
          }
       });
       
       // use java context
       label = new Label(generalGrp, SWT.NULL);
       label.setText(getString("ra.generate.use.java.context"));
-      final Boolean useJavaCtx = this.isInitialUseJavaCtx();
+      final Boolean useJavaCtx = this.aoConfig.isUseJavaCtx();
       useJavaCtxBtn = new Button(generalGrp, SWT.BORDER | SWT.CHECK);
-      useJavaCtxBtn.setSelection(useJavaCtx);
+      useJavaCtxBtn.setSelection(useJavaCtx != null ? useJavaCtx : Boolean.TRUE);
+      
       useJavaCtxBtn.addSelectionListener(new SelectionAdapter()
       {
          @Override
@@ -209,23 +159,14 @@ public class RAGenerateAOPage extends AbstractRAGenerateWizardPage
          {
             if (checkInput())
             {
-               if (useJavaCtx ^ useJavaCtxBtn.getSelection())
-               {
-                  aoConfig.setUseJavaCtx(useJavaCtxBtn.getSelection());
-               }
-               else
-               {
-                  aoConfig.setUseJavaCtx(null);
-               }
+               aoConfig.setUseJavaCtx(useJavaCtxBtn.getSelection());
             }
          }
       });
       
-      // config properties
-      final Composite configPropPanel = 
-            createConfigPropertyTableViewer(whole, 
-                  this.connectorHelper.getConfigProps(this.intialAOConfigProperties), 
-                  getString("ra.generate.ao.config.props"));
+      ConfigPropertyComposite configComposite = new ConfigPropertyComposite(getShell(), 
+            this.aoConfig.getConfigProps());
+      final Composite configPropPanel = configComposite.createControl(whole);
       
       // active or not
       activeBtn.addSelectionListener(new SelectionAdapter()
@@ -236,27 +177,22 @@ public class RAGenerateAOPage extends AbstractRAGenerateWizardPage
             boolean active = activeBtn.getSelection();
             generalGrp.setEnabled(active);
             configPropPanel.setEnabled(active);
-            List<AdminObjectConfig> aoConfigs = raConfig.getAdminObjectConfigs();
+            aoConfig.setActive(active);
             if (active)
             {
-               if (!aoConfigs.contains(aoConfig))
-               {
-                  aoConfigs.add(aoConfig);
-               }
                checkInput();
             }
             else
             {
-               aoConfigs.remove(aoConfig);
                updateStatus(null);
             }
             whole.update();
          }
 
       });
-      activeBtn.setSelection(isInitialActive());
-      generalGrp.setEnabled(isInitialActive());
-      configPropPanel.setEnabled(isInitialActive());
+      activeBtn.setSelection(this.aoConfig.isActive());
+      generalGrp.setEnabled(this.aoConfig.isActive());
+      configPropPanel.setEnabled(this.aoConfig.isActive());
       setControl(whole);
    }
    
@@ -288,81 +224,4 @@ public class RAGenerateAOPage extends AbstractRAGenerateWizardPage
          return false;
       }
    }
-   
-   @Override
-   protected void onConfigPropUpdated(TableViewer configPropsTableView, ConfigPropType prop)
-   {
-      List<ConfigPropType> configProps = aoConfig.getConfigProps();
-      if (configProps == null)
-      {
-         configProps = new ArrayList<ConfigPropType>();
-         aoConfig.setConfigProps(configProps);
-      }
-      if (!configProps.contains(prop))
-      {
-         configProps.add(prop);
-      }
-   }
-   
-   /**
-    * Gets default jndi name.
-    * 
-    * @return the jndi name
-    */
-   public String getInitialJndiName()
-   {
-      if (this.commonAO != null)
-      {
-         return this.commonAO.getJndiName();
-      }
-      return null;
-   }
-   
-   /**
-    * Gets default pool name.
-    * 
-    * @return the pool name
-    */
-   public String getInitialPoolName()
-   {
-      if (this.commonAO != null)
-      {
-         return this.commonAO.getPoolName();
-      }
-      return null;
-   }
-   
-   /**
-    * Gets initial enabled state.
-    * 
-    * @return initial enabled state.
-    */
-   public Boolean isInitialEnabled()
-   {
-      if (this.commonAO != null)
-      {
-         return this.commonAO.isEnabled();
-      }
-      return Boolean.valueOf(true);
-   }
-   
-   /**
-    * Gets initial use Java Context state
-    * @return the initial state of use Java Context
-    */
-   public Boolean isInitialUseJavaCtx()
-   {
-      if (this.commonAO != null)
-      {
-         return this.commonAO.isUseJavaContext();
-      }
-      return Boolean.valueOf(true);
-   }
-   
-   
-   private boolean isInitialActive()
-   {
-      return this.commonAO != null;
-   }
-
 }

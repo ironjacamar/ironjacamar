@@ -21,17 +21,10 @@
  */
 package org.jboss.jca.eclipse.command.raui;
 
-import org.jboss.jca.common.api.metadata.ra.AdminObject;
-import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
-import org.jboss.jca.common.api.metadata.ra.ResourceAdapter;
-import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
-import org.jboss.jca.common.api.metadata.ra.ra10.ResourceAdapter10;
-import org.jboss.jca.common.metadata.ra.common.ConnectionDefinitionImpl;
 import org.jboss.jca.eclipse.Activator;
 import org.jboss.jca.eclipse.command.IronJacamarDeployHelper;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -56,9 +49,9 @@ public class RAGenerateWizard extends Wizard
 
    private final String archive;
    
-   private final ConnectorHelper connectorHelper;
-
    private final ResourceAdapterConfig raConfig;
+   
+   private final ResourceAdapterConfig initialConfig;
 
    private boolean deployRAR = false;
 
@@ -66,62 +59,49 @@ public class RAGenerateWizard extends Wizard
     * The constructor.
     * 
     * @param rarFile the rar file
-    * @param connectorHelper the ConnectorHelper
     * @param project the IronJacamar project
     */
-   public RAGenerateWizard(IFile rarFile, ConnectorHelper connectorHelper, IProject project)
+   public RAGenerateWizard(IFile rarFile, IProject project)
    {
       super();
       this.rarFile = rarFile;
       this.project = project;
-      this.connectorHelper = connectorHelper;
+      ResourceAdapterHelper raHelper = new ResourceAdapterHelper();
+      try
+      {
+         this.raConfig = raHelper.parseResourceAdapterConfig(this.rarFile.getLocation().toFile());
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException("Can't parse ResourceAdpater from file: " + this.rarFile.getLocation().
+               toFile().getAbsolutePath(), e);
+      }
       this.archive = rarFile.getName();
-      this.raConfig = new ResourceAdapterConfig();
-      this.raConfig.setArchive(archive);
+      this.initialConfig = this.raConfig.clone();
    }
 
    @Override
    public void addPages()
    {
+      // resource adapter version select
+      addPage(new RAVersionPage(this));
+      
       // general information setting
       addPage(new RAGenerateBasicPage(this));
 
-      List<ConnectionDefinition> mcfs = null;
-      List<AdminObject> aos = null;
-      ResourceAdapter ra = connectorHelper.getResourceAdapter();
-      if (ra instanceof ResourceAdapter1516)
+      List<ConnectionFactoryConfig> connConfigs = this.raConfig.getConnectionDefinitions();
+      List<AdminObjectConfig> aoConfigs = this.raConfig.getAdminObjectConfigs();
+      
+      for (ConnectionFactoryConfig connConfig : connConfigs)
       {
-         ResourceAdapter1516 ra1516 = (ResourceAdapter1516) ra;
-         if (null != ra1516.getOutboundResourceadapter())
-         {
-            mcfs = ra1516.getOutboundResourceadapter().getConnectionDefinitions();
-         }
-         aos = ra1516.getAdminObjects();
+         RAGenerateMCFPage mcfPage = new RAGenerateMCFPage(connConfig);
+         this.raConfig.addVersionChangeListener(mcfPage);
+         addPage(mcfPage);
       }
-      else if (ra instanceof ResourceAdapter10)
+      
+      for (AdminObjectConfig aoConfig : aoConfigs)
       {
-         ResourceAdapter10 ra10 = (ResourceAdapter10) ra;
-         mcfs = new ArrayList<ConnectionDefinition>();
-         mcfs.add(new ConnectionDefinitionImpl(ra10.getManagedConnectionFactoryClass(), ra10.getConfigProperties(),
-               ra10.getConnectionFactoryInterface(), ra10.getConnectionFactoryImplClass(), ra10
-                     .getConnectionInterface(), ra10.getConnectionImplClass(), ra10.getId()));
-      }
-
-      // MCF pages
-      if (mcfs != null)
-      {
-         for (ConnectionDefinition connDef : mcfs)
-         {
-            addPage(new RAGenerateMCFPage(this, connDef));
-         }
-      }
-      // AO pages
-      if (aos != null)
-      {
-         for (AdminObject ao : aos)
-         {
-            addPage(new RAGenerateAOPage(this, ao));
-         }
+         addPage(new RAGenerateAOPage(aoConfig));
       }
       
       // MiscellaneousPage
@@ -147,7 +127,7 @@ public class RAGenerateWizard extends Wizard
             {
                monitor.subTask("Generating " + raXMLFileName);
                RAXMLGenerator raXMLGenerator = new RAXMLGenerator();
-               raXMLGenerator.generateRAXML(raConfig, raXMLFile);
+               raXMLGenerator.generateRAXML(initialConfig, raConfig, raXMLFile);
                
                // refresh project to make the *-ra.xml visible.
                project.refreshLocal(IResource.DEPTH_INFINITE, null);
@@ -239,15 +219,6 @@ public class RAGenerateWizard extends Wizard
    public String getArchive()
    {
       return archive;
-   }
-
-   /**
-    * Get connectorHelper
-    * @return The connectorHelper
-    */
-   public ConnectorHelper getConnectorHelper()
-   {
-      return connectorHelper;
    }
    
 }

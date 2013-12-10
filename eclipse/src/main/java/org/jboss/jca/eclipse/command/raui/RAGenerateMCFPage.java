@@ -22,23 +22,19 @@
 package org.jboss.jca.eclipse.command.raui;
 
 import org.jboss.jca.codegenerator.ConfigPropType;
-import org.jboss.jca.common.api.metadata.common.CommonConnDef;
-import org.jboss.jca.common.api.metadata.common.CommonPool;
-import org.jboss.jca.common.api.metadata.common.CommonSecurity;
-import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
-import org.jboss.jca.common.api.metadata.common.CommonValidation;
-import org.jboss.jca.common.api.metadata.common.CommonXaPool;
-import org.jboss.jca.common.api.metadata.common.Credential;
-import org.jboss.jca.common.api.metadata.common.Extension;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
-import org.jboss.jca.common.api.metadata.common.Recovery;
-import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
+import org.jboss.jca.eclipse.command.raui.ConnectionFactoryConfig.CapacityConfig;
+import org.jboss.jca.eclipse.command.raui.ConnectionFactoryConfig.Extension;
+import org.jboss.jca.eclipse.command.raui.ConnectionFactoryConfig.PoolConfig;
+import org.jboss.jca.eclipse.command.raui.ConnectionFactoryConfig.RecoveryConfig;
+import org.jboss.jca.eclipse.command.raui.ConnectionFactoryConfig.SecurityConfig;
+import org.jboss.jca.eclipse.command.raui.ConnectionFactoryConfig.TimeoutConfig;
+import org.jboss.jca.eclipse.command.raui.ConnectionFactoryConfig.ValidationConfig;
+import org.jboss.jca.eclipse.command.raui.ResourceAdapterConfig.VERSION;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -62,24 +58,12 @@ import org.eclipse.swt.widgets.Text;
  * @author <a href="mailto:lgao@redhat.com">Lin Gao</a>
  *
  */
-public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
+public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage 
+       implements ResourceAdapterConfig.VersionChangeListener
 {
    
-   private final ConnectionDefinition connDef;
-   
-   private final ConnectorHelper connectorHelper;
-   
-   private final CommonConnDef initialConnDef;
-   
-   private final ResourceAdapterConfig raConfig;
-   
    private final ConnectionFactoryConfig connFactoryConfig;
-   
-   private final String mcfClsName;
-   
-   /** The TableViewer in general tab */
-   private Composite generalConfigPropertiesPanel;
-   
+
    private Button xaPoolBtn;
    
    private TabFolder tabContainer;
@@ -104,8 +88,10 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
    
    // pool components
    private Text minPoolSizeText;
+   private Text initialPoolSizeText;
    private Text maxPoolSizeText;
    private Combo flushStrategyCombo;
+   private Group xaPoolGroup;
    
    // timeout components
    private Text blockingTimeoutText;
@@ -116,29 +102,41 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
    
    // validation components
    private Text backgroundValidText;
+   
+   private List<Control> versionEnabledControls = new ArrayList<Control>();
+   
    /**
     * The constructor.
     * 
-    * @param wizard the RAGenerateWizard.
-    * @param connDef the ConnectionDefinition.
+    * @param connConfig the ConnectionFactoryConfig.
     */
-   public RAGenerateMCFPage(RAGenerateWizard wizard, ConnectionDefinition connDef)
+   public RAGenerateMCFPage(ConnectionFactoryConfig connConfig)
    {
       super("MCFPage");
-      this.raConfig = wizard.getRaConfig();
-      this.connDef = connDef;
-      this.connectorHelper = wizard.getConnectorHelper();
-      this.initialConnDef = getCommonConnDef();
-      this.connFactoryConfig = new ConnectionFactoryConfig();
-      this.mcfClsName = this.connDef.getManagedConnectionFactoryClass().getValue();
-      this.connFactoryConfig.setMcfClsName(this.mcfClsName);
-      this.connFactoryConfig.setMcfJndiName(getInitialJndiName());
-      if (isInitialActive())
-      {
-         this.raConfig.getConnectionDefinitions().add(connFactoryConfig);
-      }
+      this.connFactoryConfig = connConfig;
       setTitle(getString("ra.generate.mcf.title"));
-      setDescription(getString("ra.generate.mcf.description", mcfClsName));
+      setDescription(getString("ra.generate.mcf.description", this.connFactoryConfig.getMcfClsName()));
+   }
+   
+   @Override
+   public void versionChanged(VERSION version)
+   {
+      if (VERSION.VERSION_1_0.equals(version))
+      {
+         switchEnabled(false);
+      }
+      else if (VERSION.VERSION_1_1.equals(version))
+      {
+         switchEnabled(true);
+      }
+   }
+   
+   private void switchEnabled(boolean enabled)
+   {
+      for (Control control: this.versionEnabledControls)
+      {
+         control.setEnabled(enabled);
+      }
    }
    
    @Override
@@ -170,25 +168,14 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
          {
             boolean active = activeBtn.getSelection();
             updateComponents(active);
-            List<ConnectionFactoryConfig> connFactoryConfigs = raConfig.getConnectionDefinitions();
-            if (active)
-            {
-               if (!connFactoryConfigs.contains(connFactoryConfig))
-               {
-                  connFactoryConfigs.add(connFactoryConfig);
-               }
-            }
-            else
-            {
-               connFactoryConfigs.remove(connFactoryConfig);
-            }
+            connFactoryConfig.setActive(active);
          }
 
       });
-      activeBtn.setSelection(isInitialActive());
+      activeBtn.setSelection(this.connFactoryConfig.isActive());
       
       tabContainer = new TabFolder(whole, SWT.NONE);
-      tabContainer.setEnabled(isInitialActive());
+      tabContainer.setEnabled(this.connFactoryConfig.isActive());
       
       // general tab
       TabItem generalTab = new TabItem(tabContainer, SWT.NULL);
@@ -245,13 +232,14 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       Label label = new Label(generalGrp, SWT.NULL);
       label.setText(getString("ra.generate.mcf.general.mcf.class"));
       Label mcfClsLabel = new Label(generalGrp, SWT.NULL);
-      mcfClsLabel.setText(this.mcfClsName);
+      String mcfClassName = this.connFactoryConfig.getMcfClsName();
+      mcfClsLabel.setText(mcfClassName != null ? mcfClassName : "");
       
       // jndi name
       label = new Label(generalGrp, SWT.NULL);
       label.setText(getString("ra.generate.jndi.name"));
       final String jndiName = getInitialJndiName();
-      jndiText = createText(generalGrp, jndiName);
+      jndiText = UIResources.createText(generalGrp, jndiName);
       jndiText.addModifyListener(new ModifyListener()
       {
          
@@ -269,21 +257,14 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       label = new Label(generalGrp, SWT.NULL);
       label.setText(getString("ra.generate.pool.name"));
       final String poolName = getInitialPoolName();
-      final Text poolText = createText(generalGrp, poolName);
+      final Text poolText = UIResources.createText(generalGrp, poolName);
       poolText.addModifyListener(new ModifyListener()
       {
          @Override
          public void modifyText(ModifyEvent e)
          {
             String pool = poolText.getText().trim();
-            if (!pool.isEmpty() && !(pool.equals(poolName)))
-            {
-               connFactoryConfig.setMcfPoolName(pool);
-            }
-            else
-            {
-               connFactoryConfig.setMcfPoolName(null);
-            }
+            connFactoryConfig.setMcfPoolName(pool);
          }
       });
       
@@ -298,14 +279,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
          @Override
          public void widgetSelected(SelectionEvent e)
          {
-            if (isEnabled ^ enabledBtn.getSelection())
-            {
-               connFactoryConfig.setMcfEnabled(Boolean.valueOf(enabledBtn.getSelection()));
-            }
-            else
-            {
-               connFactoryConfig.setMcfEnabled(null);
-            }
+            connFactoryConfig.setMcfEnabled(Boolean.valueOf(enabledBtn.getSelection()));
          }
       });
       
@@ -322,14 +296,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
          {
             if (checkGeneralInput())
             {
-               if (useJavaCtx ^ useJavaCtxBtn.getSelection())
-               {
-                  connFactoryConfig.setMcfUseJavaCtx(useJavaCtxBtn.getSelection());
-               }
-               else
-               {
-                  connFactoryConfig.setMcfUseJavaCtx(null);
-               }
+               connFactoryConfig.setMcfUseJavaCtx(useJavaCtxBtn.getSelection());
             }
          }
       });
@@ -345,25 +312,64 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
          @Override
          public void widgetSelected(SelectionEvent e)
          {
-            if (useCcm ^ useCcmBtn.getSelection())
-            {
-               connFactoryConfig.setMcfUseCCM(useCcmBtn.getSelection());
-            }
-            else
-            {
-               connFactoryConfig.setMcfUseCCM(null);
-            }
+            connFactoryConfig.setMcfUseCCM(useCcmBtn.getSelection());
          }
       });
       
-      // config properties
-      this.generalConfigPropertiesPanel = createConfigPropertyTableViewer(whole, 
-            this.connectorHelper.getConfigProps(this.connDef.getConfigProperties()), 
-            getString("ra.generate.mcf.general.mcf.config.props"));
+      // sharable
+      label = new Label(generalGrp, SWT.NULL);
+      label.setText(getString("ra.generate.mcf.general.sharable"));
+      this.versionEnabledControls.add(label);
+      final Button sharableBtn = new Button(generalGrp, SWT.BORDER | SWT.CHECK);
+      this.versionEnabledControls.add(sharableBtn);
+      
+      final Boolean sharable = isMcfSharable();
+      sharableBtn.setSelection(sharable);
+      sharableBtn.addSelectionListener(new SelectionAdapter()
+      {
+         @Override
+         public void widgetSelected(SelectionEvent e)
+         {
+            connFactoryConfig.setSharable(sharableBtn.getSelection());
+         }
+      });
+      
+      // enlistment
+      label = new Label(generalGrp, SWT.NULL);
+      versionEnabledControls.add(label);
+      label.setText(getString("ra.generate.mcf.general.enlistment"));
+      final Button enlistBtn = new Button(generalGrp, SWT.BORDER | SWT.CHECK);
+      versionEnabledControls.add(enlistBtn);
+      final Boolean enlist = isMcfEnlist();
+      enlistBtn.setSelection(enlist);
+      enlistBtn.addSelectionListener(new SelectionAdapter()
+      {
+         @Override
+         public void widgetSelected(SelectionEvent e)
+         {
+            connFactoryConfig.setEnlistment(enlistBtn.getSelection());
+         }
+      });
+      
+      ConfigPropertyComposite configPropComposite = new ConfigPropertyComposite(getShell(), 
+            this.connFactoryConfig.getMcfConfigProps());
+      configPropComposite.createControl(whole);
       
       return whole;
    }
    
+   private Boolean isMcfEnlist()
+   {
+      Boolean enlistment = this.connFactoryConfig.getEnlistment();
+      return enlistment == null ? Boolean.valueOf(false) : enlistment;
+   }
+
+   private Boolean isMcfSharable()
+   {
+      Boolean sharable = this.connFactoryConfig.getSharable();
+      return sharable == null ? Boolean.valueOf(false) : sharable;
+   }
+
    /**
     * Creates Pool configuration control
     * 
@@ -372,26 +378,32 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
     */
    private Composite createPoolControl(Composite parent)
    {
-      Composite whole = new Composite(parent, SWT.NONE);
+      TabFolder poolTab = new TabFolder(parent, SWT.NONE);
+      
+      // general tab
+      TabItem poolTabItem = new TabItem(poolTab, SWT.NONE);
+      poolTabItem.setText(getString("ra.generate.mcf.general.title"));
+      Composite whole = new Composite(poolTab, SWT.NONE);
+      poolTabItem.setControl(whole);
+      
       GridLayout layout = new GridLayout();
       layout.numColumns = 1;
+      layout.verticalSpacing = 9;
       whole.setLayout(layout);
-      CommonPool pool = getPool();
-      CommonXaPool xaPool = null;
-      if (pool instanceof CommonXaPool)
-      {
-         xaPool = (CommonXaPool)pool;
-      }
       
       // pool
       final Composite container = new Composite(whole, SWT.None);
-      container.setLayout(getLayout());
+      GridLayout containerLayout = new GridLayout();
+      containerLayout.numColumns = 2;
+      containerLayout.verticalSpacing = 9;
+      containerLayout.makeColumnsEqualWidth = true;
+      container.setLayout(containerLayout);
       
       // min-pool-size
       Label label = new Label(container, SWT.NULL);
       label.setText(getString("ra.generate.mcf.pool.min.pool.size"));
-      final Integer minPoolSize = getMinPoolSize(pool);
-      minPoolSizeText = createText(container, minPoolSize);
+      final Integer minPoolSize = getMinPoolSize();
+      minPoolSizeText = UIResources.createText(container, minPoolSize);
       minPoolSizeText.addModifyListener(new ModifyListener()
       {
          
@@ -403,21 +415,41 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
                String minPool = minPoolSizeText.getText().trim();
                if (!minPool.isEmpty())
                {
-                  Integer newSize = Integer.valueOf(minPool);
-                  if (newSize != minPoolSize)
-                  {
-                     getPoolConfig().setMinPoolSize(newSize);
-                  }
-                  else
-                  {
-                     getPoolConfig().setMinPoolSize(null);
-                  }
+                  getPoolConfig().setMinPoolSize(Integer.valueOf(minPool));
                }
                else
                {
                   getPoolConfig().setMinPoolSize(null);
                }
-               checkPoolFlushStrategy();
+            }
+         }
+      });
+      
+      // initial-pool-size for version 1.1
+      label = new Label(container, SWT.NULL);
+      versionEnabledControls.add(label);
+      label.setText(getString("ra.generate.mcf.pool.initial.pool.size"));
+      final Integer initialPoolSize = getInitialPoolSize();
+      initialPoolSizeText = UIResources.createText(container, initialPoolSize);
+      versionEnabledControls.add(initialPoolSizeText);
+      initialPoolSizeText.addModifyListener(new ModifyListener()
+      {
+         
+         @Override
+         public void modifyText(ModifyEvent e)
+         {
+            if (checkPoolInput())
+            {
+               String initialPool = initialPoolSizeText.getText().trim();
+               if (!initialPool.isEmpty())
+               {
+                  Integer newSize = Integer.valueOf(initialPool);
+                  getPoolConfig().setInitialPoolSize(newSize);
+               }
+               else
+               {
+                  getPoolConfig().setInitialPoolSize(null);
+               }
             }
          }
       });
@@ -425,8 +457,8 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       // max-pool-size
       label = new Label(container, SWT.NULL);
       label.setText(getString("ra.generate.mcf.pool.max.pool.size"));
-      final Integer maxPoolSize = getMaxPoolSize(pool);
-      maxPoolSizeText = createText(container, maxPoolSize);
+      final Integer maxPoolSize = getMaxPoolSize();
+      maxPoolSizeText = UIResources.createText(container, maxPoolSize);
       maxPoolSizeText.addModifyListener(new ModifyListener()
       {
          
@@ -439,20 +471,12 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
                if (!maxPool.isEmpty())
                {
                   Integer newSize = Integer.valueOf(maxPool);
-                  if (newSize != maxPoolSize)
-                  {
-                     getPoolConfig().setMaxPoolSize(newSize);
-                  }
-                  else
-                  {
-                     getPoolConfig().setMaxPoolSize(null);
-                  }
+                  getPoolConfig().setMaxPoolSize(newSize);
                }
                else
                {
                   getPoolConfig().setMaxPoolSize(null);
                }
-               checkPoolFlushStrategy();
             }
          }
       });
@@ -461,22 +485,14 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       label = new Label(container, SWT.NULL);
       label.setText(getString("ra.generate.mcf.pool.prefill"));
       final Button prefillBtn = new Button(container, SWT.BORDER | SWT.CHECK);
-      final Boolean prefill = isPoolPrefill(pool);
+      final Boolean prefill = isPoolPrefill();
       prefillBtn.setSelection(prefill);
       prefillBtn.addSelectionListener(new SelectionAdapter()
       {
          @Override
          public void widgetSelected(SelectionEvent e)
          {
-            if (prefill ^ prefillBtn.getSelection())
-            {
-               getPoolConfig().setPrefill(prefillBtn.getSelection());
-            }
-            else
-            {
-               getPoolConfig().setPrefill(null);
-            }
-            checkPoolFlushStrategy();
+            getPoolConfig().setPrefill(prefillBtn.getSelection());
          }
       });
       
@@ -484,22 +500,14 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       label = new Label(container, SWT.NULL);
       label.setText(getString("ra.generate.mcf.pool.strict.min.pool.size"));
       final Button useStrictMinBtn = new Button(container, SWT.BORDER | SWT.CHECK);
-      final Boolean useStrictMin = isPoolUseStictMin(pool);
+      final Boolean useStrictMin = isPoolUseStictMin();
       useStrictMinBtn.setSelection(useStrictMin);
       useStrictMinBtn.addSelectionListener(new SelectionAdapter()
       {
          @Override
          public void widgetSelected(SelectionEvent e)
          {
-            if (useStrictMin ^ useStrictMinBtn.getSelection())
-            {
-               getPoolConfig().setUseStrictMin(useStrictMinBtn.getSelection());
-            }
-            else
-            {
-               getPoolConfig().setUseStrictMin(null);
-            }
-            checkPoolFlushStrategy();
+            getPoolConfig().setUseStrictMin(useStrictMinBtn.getSelection());
          }
       });
       
@@ -510,70 +518,106 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       String[] items = new String[]{FlushStrategy.FAILING_CONNECTION_ONLY.getName(), 
             FlushStrategy.IDLE_CONNECTIONS.getName(), FlushStrategy.ENTIRE_POOL.getName()};
       flushStrategyCombo.setItems(items);
-      final FlushStrategy flushStrategy = getPoolFlushStrategy(pool);
+      final FlushStrategy flushStrategy = getPoolFlushStrategy();
+      getPoolConfig().setFlushStrategy(flushStrategy);
       flushStrategyCombo.setText(flushStrategy.getName());
       flushStrategyCombo.addSelectionListener(new SelectionAdapter()
       {
          @Override
          public void widgetSelected(SelectionEvent e)
          {
-            if (!FlushStrategy.forName(flushStrategyCombo.getText()).equals(flushStrategy))
-            {
-               getPoolConfig().setFlushStrategy(FlushStrategy.forName(flushStrategyCombo.getText()));
-            }
-            else
-            {
-               checkPoolFlushStrategy();
-            }
+            getPoolConfig().setFlushStrategy(FlushStrategy.forName(flushStrategyCombo.getText()));
          }
       });
       
-      final Group xaPoolGroup = new Group(whole, SWT.NONE);
-      xaPoolGroup.setText(getString("ra.generate.mcf.pool.xa.title"));
-      GridLayout xaPoolLayout = new GridLayout();
-      xaPoolLayout.numColumns = 2;
-      xaPoolLayout.horizontalSpacing = 108;
-      xaPoolLayout.makeColumnsEqualWidth = true;
+      // capacity tab
+      TabItem capacityTabItem = new TabItem(poolTab, SWT.NONE);
+      capacityTabItem.setText(getString("ra.generate.mcf.pool.capacity.title"));
+      final Composite capacityTabWhole = new Composite(poolTab, SWT.NONE);
+      capacityTabItem.setControl(capacityTabWhole);
+      this.versionEnabledControls.add(capacityTabWhole);
       
-      xaPoolGroup.setLayout(xaPoolLayout);
+      GridLayout capacityTabLayout = new GridLayout();
+      capacityTabLayout.numColumns = 1;
+      capacityTabLayout.verticalSpacing = 9;
+      capacityTabWhole.setLayout(capacityTabLayout);
+      
+      Group incrementerGroup = new Group(capacityTabWhole, SWT.NONE);
+      GridLayout increGroupLayout = new GridLayout();
+      increGroupLayout.numColumns = 1;
+      increGroupLayout.verticalSpacing = 9;
+      incrementerGroup.setLayout(increGroupLayout);
+      this.versionEnabledControls.add(incrementerGroup);
+      incrementerGroup.setText(getString("ra.generate.mcf.pool.capacity.increment"));
+      ExtensionComposite incrExtension = new ExtensionComposite(getShell(), getIncrementer());
+      this.versionEnabledControls.add(incrExtension.createControl(incrementerGroup));
+      
+      Group decrementerGroup = new Group(capacityTabWhole, SWT.NONE);
+      this.versionEnabledControls.add(decrementerGroup);
+      GridLayout decreGroupLayout = new GridLayout();
+      decreGroupLayout.numColumns = 1;
+      decreGroupLayout.verticalSpacing = 9;
+      decrementerGroup.setLayout(decreGroupLayout);
+      decrementerGroup.setText(getString("ra.generate.mcf.pool.capacity.decrement"));
+      ExtensionComposite decrExtension = new ExtensionComposite(getShell(), getDecrementer());
+      this.versionEnabledControls.add(decrExtension.createControl(decrementerGroup));
+      
+      // xa pool tab
+      TabItem xaPoolTabItem = new TabItem(poolTab, SWT.NONE);
+      xaPoolTabItem.setText(getString("ra.generate.mcf.pool.xa.title"));
+      final Composite xaPoolContainerWhole = new Composite(poolTab, SWT.NONE);
+      xaPoolTabItem.setControl(xaPoolContainerWhole);
+      
+      GridLayout xaPoolWholeLayout = new GridLayout();
+      xaPoolWholeLayout.numColumns = 1;
+      xaPoolWholeLayout.verticalSpacing = 9;
+      xaPoolContainerWhole.setLayout(xaPoolWholeLayout);
       
       // define a xa pool ?
-      label = new Label(container, SWT.NULL);
+      final Composite xaPoolContainer = new Composite(xaPoolContainerWhole, SWT.NONE);
+      GridLayout xaPoolContainerLayout = new GridLayout();
+      xaPoolContainerLayout.numColumns = 2;
+      xaPoolContainerLayout.verticalSpacing = 9;
+      xaPoolContainerLayout.makeColumnsEqualWidth = true;
+      xaPoolContainer.setLayout(xaPoolContainerLayout);
+      
+      label = new Label(xaPoolContainer, SWT.NULL);
       label.setText(getString("ra.generate.mcf.pool.define.xa"));
-      xaPoolBtn = new Button(container, SWT.BORDER | SWT.CHECK);
+      xaPoolBtn = new Button(xaPoolContainer, SWT.BORDER | SWT.CHECK);
       xaPoolBtn.addSelectionListener(new SelectionAdapter()
       {
          @Override
          public void widgetSelected(SelectionEvent e)
          {
             xaPoolGroup.setVisible(xaPoolBtn.getSelection());
-            container.update();
+            xaPoolContainer.update();
             getPoolConfig().setDefineXA(xaPoolBtn.getSelection());
          }
       });
-      xaPoolBtn.setSelection(xaPool != null);
-      getPoolConfig().setDefineXA(xaPool != null);
+      
+      xaPoolBtn.setSelection(getPoolConfig().getDefineXA());
+      
+      xaPoolGroup = new Group(xaPoolContainerWhole, SWT.NONE);
+      xaPoolGroup.setText(getString("ra.generate.mcf.pool.xa.title"));
+      GridLayout xaPoolGroupLayout = new GridLayout();
+      xaPoolGroupLayout.numColumns = 2;
+      xaPoolWholeLayout.horizontalSpacing = 108;
+      xaPoolGroupLayout.makeColumnsEqualWidth = true;
+      
+      xaPoolGroup.setLayout(xaPoolGroupLayout);
       
       // is-same-rm-override
       label = new Label(xaPoolGroup, SWT.NULL);
       label.setText(getString("ra.generate.mcf.pool.xa.overide.issamerm"));
       final Button isSameRMOverideBtn = new Button(xaPoolGroup, SWT.BORDER | SWT.CHECK);
-      final Boolean isSameRMOverride = isXAPoolRMOverride(xaPool);
+      final Boolean isSameRMOverride = isXAPoolRMOverride();
       isSameRMOverideBtn.setSelection(isSameRMOverride);
       isSameRMOverideBtn.addSelectionListener(new SelectionAdapter()
       {
          @Override
          public void widgetSelected(SelectionEvent e)
          {
-            if (isSameRMOverride ^ isSameRMOverideBtn.getSelection())
-            {
-               getPoolConfig().setOverrideIsSameRM(isSameRMOverideBtn.getSelection());
-            }
-            else
-            {
-               getPoolConfig().setOverrideIsSameRM(null);
-            }
-            checkPoolFlushStrategy();
+            getPoolConfig().setOverrideIsSameRM(isSameRMOverideBtn.getSelection());
          }
       });
       
@@ -581,27 +625,14 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       label = new Label(xaPoolGroup, SWT.NULL);
       label.setText(getString("ra.generate.mcf.pool.xa.interleaving"));
       final Button interLeavingBtn = new Button(xaPoolGroup, SWT.BORDER | SWT.CHECK);
-      final Boolean interLeaving = isXAPoolInterleaving(xaPool);
+      final Boolean interLeaving = isXAPoolInterleaving();
       interLeavingBtn.setSelection(interLeaving);
       interLeavingBtn.addSelectionListener(new SelectionAdapter()
       {
          @Override
          public void widgetSelected(SelectionEvent e)
          {
-            if (interLeaving ^ interLeavingBtn.getSelection())
-            {
-               getPoolConfig().setInterleaving(interLeavingBtn.getSelection());
-            }
-            else
-            {
-               getPoolConfig().setInterleaving(null);
-            }
-            if (!interLeavingBtn.getSelection())
-            { 
-               // it is boolean-presenceType
-               getPoolConfig().setInterleaving(null);
-            }
-            checkPoolFlushStrategy();
+            getPoolConfig().setInterleaving(interLeavingBtn.getSelection());
          }
       });
       
@@ -609,27 +640,14 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       label = new Label(xaPoolGroup, SWT.NULL);
       label.setText(getString("ra.generate.mcf.pool.xa.seperate.pool"));
       final Button noTxSeparatePoolBtn = new Button(xaPoolGroup, SWT.BORDER | SWT.CHECK);
-      final Boolean noTxSepPool = isXAPoolNoTxSeparatePool(xaPool);
+      final Boolean noTxSepPool = isXAPoolNoTxSeparatePool();
       noTxSeparatePoolBtn.setSelection(noTxSepPool);
       noTxSeparatePoolBtn.addSelectionListener(new SelectionAdapter()
       {
          @Override
          public void widgetSelected(SelectionEvent e)
          {
-            if (noTxSepPool ^ noTxSeparatePoolBtn.getSelection())
-            {
-               getPoolConfig().setNoTxSeparatePool(noTxSeparatePoolBtn.getSelection());
-            }
-            else
-            {
-               getPoolConfig().setNoTxSeparatePool(null);
-            }
-            if (!noTxSeparatePoolBtn.getSelection())
-            {
-               // it is boolean-presenceType
-               getPoolConfig().setNoTxSeparatePool(null);
-            }
-            checkPoolFlushStrategy();
+            getPoolConfig().setNoTxSeparatePool(noTxSeparatePoolBtn.getSelection());
          }
       });
       
@@ -637,22 +655,14 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       label = new Label(xaPoolGroup, SWT.NULL);
       label.setText(getString("ra.generate.mcf.pool.xa.pad.xid"));
       final Button padXidBtn = new Button(xaPoolGroup, SWT.BORDER | SWT.CHECK);
-      final Boolean padXid = isXAPoolPadXid(xaPool);
+      final Boolean padXid = isXAPoolPadXid();
       padXidBtn.setSelection(padXid);
       padXidBtn.addSelectionListener(new SelectionAdapter()
       {
          @Override
          public void widgetSelected(SelectionEvent e)
          {
-            if (padXid ^ padXidBtn.getSelection())
-            {
-               getPoolConfig().setPadXid(padXidBtn.getSelection());
-            }
-            else
-            {
-               getPoolConfig().setPadXid(null);
-            }
-            checkPoolFlushStrategy();
+            getPoolConfig().setPadXid(padXidBtn.getSelection());
          }
       });
       
@@ -660,41 +670,56 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       label = new Label(xaPoolGroup, SWT.NULL);
       label.setText(getString("ra.generate.mcf.pool.xa.wrap.xa.res"));
       final Button wrapXaResBtn = new Button(xaPoolGroup, SWT.BORDER | SWT.CHECK);
-      final Boolean wrapXA = isXAPoolWrapXARes(xaPool);
+      final Boolean wrapXA = isXAPoolWrapXARes();
       wrapXaResBtn.setSelection(wrapXA);
       wrapXaResBtn.addSelectionListener(new SelectionAdapter()
       {
          @Override
          public void widgetSelected(SelectionEvent e)
          {
-            if (wrapXA ^ wrapXaResBtn.getSelection())
-            {
-               getPoolConfig().setWrapXaResource(wrapXaResBtn.getSelection());
-            }
-            else
-            {
-               getPoolConfig().setWrapXaResource(null);
-            }
-            checkPoolFlushStrategy();
+            getPoolConfig().setWrapXaResource(wrapXaResBtn.getSelection());
          }
       });
 
       xaPoolGroup.setVisible(xaPoolBtn.getSelection());
-      return whole;
+      
+      return poolTab;
    }
    
-   /**
-    * Returns the Pool.
-    * 
-    * @return the CommonPool
-    */
-   private CommonPool getPool()
+   private Extension getDecrementer()
    {
-      if (this.initialConnDef != null)
+      CapacityConfig capacityConfig = getCapacityConfig();
+      Extension decrementer = capacityConfig.getDecrementer();
+      if (decrementer == null)
       {
-         return this.initialConnDef.getPool();
+         decrementer = new Extension();
+         capacityConfig.setDecrementer(decrementer);
       }
-      return null;
+      return decrementer;
+   }
+
+   private Extension getIncrementer()
+   {
+      CapacityConfig capacityConfig = getCapacityConfig();
+      Extension incrementer = capacityConfig.getIncrementer();
+      if (incrementer == null)
+      {
+         incrementer = new Extension();
+         capacityConfig.setIncrementer(incrementer);
+      }
+      return incrementer;
+   }
+   
+   private CapacityConfig getCapacityConfig()
+   {
+      PoolConfig poolConfig = getPoolConfig();
+      CapacityConfig capacityConfig = poolConfig.getCapacityConfig();
+      if (capacityConfig == null)
+      {
+         capacityConfig = new CapacityConfig();
+         poolConfig.setCapacityConfig(capacityConfig);
+      }
+      return capacityConfig;
    }
    
    /**
@@ -710,11 +735,6 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       layout.numColumns = 1;
       whole.setLayout(layout);
 
-      CommonSecurity commonSecurity = null;
-      if (this.initialConnDef != null)
-      {
-         commonSecurity = this.initialConnDef.getSecurity();
-      }
       Composite container = new Composite(whole, SWT.NONE);
       container.setLayout(getLayout());
       
@@ -723,21 +743,14 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       Label invisibleLabel = new Label(container, SWT.NULL);
       invisibleLabel.setText("");
       appBtn.setText(getString("ra.generate.mcf.security.application"));
-      final Boolean app = isInitialApplication(commonSecurity);
+      final Boolean app = isInitialApplication();
       appBtn.setSelection(app);
       appBtn.addSelectionListener(new SelectionAdapter()
       {
          @Override
          public void widgetSelected(SelectionEvent e)
          {
-            if (app ^ appBtn.getSelection())
-            {
-               getSecurityConfig().setApplication(appBtn.getSelection());
-            }
-            else
-            {
-               getSecurityConfig().setApplication(null);
-            }
+            getSecurityConfig().setApplication(appBtn.getSelection());
             if (appBtn.getSelection())
             {
                // if application is selected.
@@ -755,7 +768,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       });
 
       // security domain
-      final String securityDomain = getSecurityDomain(commonSecurity);
+      final String securityDomain = getSecurityDomain();
       final Button securityDomainBtn = new Button(container, SWT.RADIO);
       securityDomainBtn.setText(getString("ra.generate.mcf.security.security.domain"));
       securityDomainBtn.setSelection(securityDomain != null);
@@ -769,18 +782,11 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
             securityDomainText.setEnabled(true);
             securityDomainAndAppText.setEnabled(false);
             String security = securityDomainText.getText().trim();
-            if (!security.isEmpty() && !security.equals(securityDomain))
-            {
-               getSecurityConfig().setSecurityDomain(security);
-            }
-            else
-            {
-               getSecurityConfig().setSecurityDomain(null);
-            }
+            getSecurityConfig().setSecurityDomain(security);
          }
       });
       
-      securityDomainText = createText(container, securityDomain);
+      securityDomainText = UIResources.createText(container, securityDomain);
       securityDomainText.setEnabled(securityDomainBtn.getSelection());
       securityDomainText.addModifyListener(new ModifyListener()
       {
@@ -790,19 +796,12 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
          {
             securityDomainBtn.setSelection(true);
             String security = securityDomainText.getText().trim();
-            if (!security.isEmpty() && !security.equals(securityDomain))
-            {
-               getSecurityConfig().setSecurityDomain(security);
-            }
-            else
-            {
-               getSecurityConfig().setSecurityDomain(null);
-            }
+            getSecurityConfig().setSecurityDomain(security);
          }
       });
       
       // securiry domain and application
-      final String securityDomainAndApplication = getSecurityDomainAndApplication(commonSecurity);
+      final String securityDomainAndApplication = getSecurityDomainAndApplication();
       final Button secDomainAndAppBtn = new Button(container, SWT.RADIO);
       secDomainAndAppBtn.setSelection(securityDomainAndApplication != null);
       secDomainAndAppBtn.setText(getString("ra.generate.mcf.security.security.domain.and.application"));
@@ -816,19 +815,12 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
             securityDomainText.setEnabled(false);
             securityDomainAndAppText.setEnabled(true);
             String securityAndApp = securityDomainAndAppText.getText().trim();
-            if (!securityAndApp.isEmpty() && !securityAndApp.equals(securityDomainAndApplication))
-            {
-               getSecurityConfig().setSecurityDomainAndApp(securityAndApp);
-            }
-            else
-            {
-               getSecurityConfig().setSecurityDomainAndApp(null);
-            }
+            getSecurityConfig().setSecurityDomainAndApp(securityAndApp);
          }
       });
       
       
-      securityDomainAndAppText = createText(container, securityDomainAndApplication);
+      securityDomainAndAppText = UIResources.createText(container, securityDomainAndApplication);
       securityDomainAndAppText.setEnabled(secDomainAndAppBtn.getSelection());
       securityDomainAndAppText.addModifyListener(new ModifyListener()
       {
@@ -838,33 +830,11 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
          {
             secDomainAndAppBtn.setSelection(true);
             String securityAndApp = securityDomainAndAppText.getText().trim();
-            if (!securityAndApp.isEmpty() && !securityAndApp.equals(securityDomainAndApplication))
-            {
-               getSecurityConfig().setSecurityDomainAndApp(securityAndApp);
-            }
-            else
-            {
-               getSecurityConfig().setSecurityDomainAndApp(null);
-            }
-            
+            getSecurityConfig().setSecurityDomainAndApp(securityAndApp);
          }
       });
       
       return whole;
-   }
-   
-   /**
-    * Returns the TimeOut.
-    * 
-    * @return the CommonTimeOut
-    */
-   private CommonTimeOut getTimeOut()
-   {
-      if (this.initialConnDef != null)
-      {
-         return this.initialConnDef.getTimeOut();
-      }
-      return null;
    }
    
    /**
@@ -879,7 +849,6 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       GridLayout layout = new GridLayout();
       layout.numColumns = 1;
       whole.setLayout(layout);
-      CommonTimeOut timeOut = getTimeOut();
       
       final Composite container = new Composite(whole, SWT.None);
       container.setLayout(getLayout());
@@ -888,8 +857,8 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       Label label = new Label(container, SWT.NULL);
       label.setText(getString("ra.generate.mcf.timeout.blocking"));
       
-      final Long blockTimeout = getBlockTimeout(timeOut);
-      blockingTimeoutText = createText(container, blockTimeout);
+      final Long blockTimeout = getBlockTimeout();
+      blockingTimeoutText = UIResources.createText(container, blockTimeout);
       blockingTimeoutText.addModifyListener(new ModifyListener()
       {
          
@@ -902,14 +871,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
                if (!newBlockTimeout.isEmpty())
                {
                   Long blkTimeout = Long.valueOf(newBlockTimeout);
-                  if (blkTimeout != blockTimeout)
-                  {
-                     getTimeoutConfig().setBlockingTimeoutMillis(blkTimeout);
-                  }
-                  else
-                  {
-                     getTimeoutConfig().setBlockingTimeoutMillis(null);
-                  }
+                  getTimeoutConfig().setBlockingTimeoutMillis(blkTimeout);
                }
                else
                {
@@ -922,8 +884,8 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       // idle timeout minutes
       label = new Label(container, SWT.NULL);
       label.setText(getString("ra.generate.mcf.timeout.idle"));
-      final Long idleTimeout = getIdleTimeout(timeOut);
-      idleTimeoutText = createText(container, idleTimeout);
+      final Long idleTimeout = getIdleTimeout();
+      idleTimeoutText = UIResources.createText(container, idleTimeout);
       idleTimeoutText.addModifyListener(new ModifyListener()
       {
          
@@ -936,14 +898,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
                if (!newIdleTimeout.isEmpty())
                {
                   Long idle = Long.valueOf(newIdleTimeout);
-                  if (idle != idleTimeout)
-                  {
-                     getTimeoutConfig().setIdleTimeoutMinutes(idle);
-                  }
-                  else
-                  {
-                     getTimeoutConfig().setIdleTimeoutMinutes(null);
-                  }
+                  getTimeoutConfig().setIdleTimeoutMinutes(idle);
                }
                else
                {
@@ -956,8 +911,8 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       // allocate retry
       label = new Label(container, SWT.NULL);
       label.setText(getString("ra.generate.mcf.timeout.allocate.retry"));
-      final Integer allocateRetry = getAllocationRetry(timeOut);
-      allocateRetryText = createText(container, allocateRetry);
+      final Integer allocateRetry = getAllocationRetry();
+      allocateRetryText = UIResources.createText(container, allocateRetry);
       allocateRetryText.addModifyListener(new ModifyListener()
       {
          
@@ -970,14 +925,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
                if (!newAllocateRetry.isEmpty())
                {
                   Integer retry = Integer.valueOf(newAllocateRetry);
-                  if (retry != allocateRetry)
-                  {
-                     getTimeoutConfig().setAllocateRetry(retry);
-                  }
-                  else
-                  {
-                     getTimeoutConfig().setAllocateRetry(null);
-                  }
+                  getTimeoutConfig().setAllocateRetry(retry);
                }
                else
                {
@@ -990,8 +938,8 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       // allocate retry wait
       label = new Label(container, SWT.NULL);
       label.setText(getString("ra.generate.mcf.timeout.allocate.retry.wait"));
-      final Long allocateRetryWait = getAllocateRetryWait(timeOut);
-      allocateRetryWaitText = createText(container, allocateRetryWait);
+      final Long allocateRetryWait = getAllocateRetryWait();
+      allocateRetryWaitText = UIResources.createText(container, allocateRetryWait);
       allocateRetryWaitText.addModifyListener(new ModifyListener()
       {
          
@@ -1004,14 +952,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
                if (!alloRetryWait.isEmpty())
                {
                   Long allocateRetryWaitMillis = Long.valueOf(alloRetryWait);
-                  if (allocateRetryWaitMillis != allocateRetryWait)
-                  {
-                     getTimeoutConfig().setAllocateRetryWait(allocateRetryWaitMillis);
-                  }
-                  else
-                  {
-                     getTimeoutConfig().setAllocateRetryWait(null);
-                  }
+                  getTimeoutConfig().setAllocateRetryWait(allocateRetryWaitMillis);
                }
                else
                {
@@ -1024,8 +965,8 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       // xa resource timeout
       label = new Label(container, SWT.NULL);
       label.setText(getString("ra.generate.mcf.timeout.xa.resource"));
-      final Integer xaResTimeout = getXAResourceTimeout(timeOut);
-      xaResTimeoutText = createText(container, xaResTimeout);
+      final Integer xaResTimeout = getXAResourceTimeout();
+      xaResTimeoutText = UIResources.createText(container, xaResTimeout);
       xaResTimeoutText.addModifyListener(new ModifyListener()
       {
          
@@ -1038,14 +979,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
                if (!xaResourceTimeoutStr.isEmpty())
                {
                   Integer xaResourceTimeout = Integer.valueOf(xaResourceTimeoutStr);
-                  if (xaResourceTimeout != xaResTimeout)
-                  {
-                     getTimeoutConfig().setXaResourceTimeout(xaResourceTimeout);
-                  }
-                  else
-                  {
-                     getTimeoutConfig().setXaResourceTimeout(null);
-                  }
+                  getTimeoutConfig().setXaResourceTimeout(xaResourceTimeout);
                }
                else
                {
@@ -1058,19 +992,6 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       return whole;
    }
    
-   /**
-    * Gets the Validation.
-    * 
-    * @return the CommonValidation
-    */
-   private CommonValidation getValidation()
-   {
-      if (this.initialConnDef != null)
-      {
-         return this.initialConnDef.getValidation();
-      }
-      return null;
-   }
    /**
     * Creates Validation control.
     * 
@@ -1087,20 +1008,18 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       final Composite container = new Composite(whole, SWT.None);
       container.setLayout(getLayout());
       
-      CommonValidation validation = getValidation();
-      
       // background validation
       Label label = new Label(container, SWT.NULL);
       label.setText(getString("ra.generate.mcf.validation.background"));
       final Button backgroundValidationBtn = new Button(container, SWT.BORDER | SWT.CHECK);
-      final Boolean backgroundValidation = isBackgroundValidation(validation);
+      final Boolean backgroundValidation = isBackgroundValidation();
       
       
       // background validation millis
       label = new Label(container, SWT.NULL);
       label.setText(getString("ra.generate.mcf.validation.background.validation.mills"));
-      final Long backgroundValidationMills = getBackgroundValidationMillis(validation);
-      backgroundValidText = createText(container, backgroundValidationMills);
+      final Long backgroundValidationMills = getBackgroundValidationMillis();
+      backgroundValidText = UIResources.createText(container, backgroundValidationMills);
       
       backgroundValidationBtn.addSelectionListener(new SelectionAdapter()
       {
@@ -1108,15 +1027,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
          public void widgetSelected(SelectionEvent e)
          {
             backgroundValidText.setEnabled(backgroundValidationBtn.getSelection());
-            
-            if (backgroundValidation ^ backgroundValidationBtn.getSelection())
-            {
-               getValidationConfig().setBackgroundValidation(backgroundValidationBtn.getSelection());
-            }
-            else
-            {
-               getValidationConfig().setBackgroundValidation(null);
-            }
+            getValidationConfig().setBackgroundValidation(backgroundValidationBtn.getSelection());
          }
       });
       backgroundValidationBtn.setSelection(backgroundValidation);
@@ -1134,14 +1045,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
                if (!bgValidationMills.isEmpty())
                {
                   Long bgValidMills = Long.valueOf(bgValidationMills);
-                  if (bgValidMills != backgroundValidationMills)
-                  {
-                     getValidationConfig().setBackgroundValidationMillis(bgValidMills);
-                  }
-                  else
-                  {
-                     getValidationConfig().setBackgroundValidationMillis(null);
-                  }
+                  getValidationConfig().setBackgroundValidationMillis(bgValidMills);
                }
                else
                {
@@ -1155,39 +1059,18 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       label = new Label(container, SWT.NULL);
       label.setText(getString("ra.generate.mcf.validation.use.fast.fail"));
       final Button useFastFailBtn = new Button(container, SWT.BORDER | SWT.CHECK);
-      final Boolean useFastFail = isValidationUseFastFail(validation);
+      final Boolean useFastFail = isValidationUseFastFail();
       useFastFailBtn.setSelection(useFastFail);
       useFastFailBtn.addSelectionListener(new SelectionAdapter()
       {
          @Override
          public void widgetSelected(SelectionEvent e)
          {
-            if (useFastFail ^ useFastFailBtn.getSelection())
-            {
-               getValidationConfig().setUseFastFail(useFastFailBtn.getSelection());
-            }
-            else
-            {
-               getValidationConfig().setUseFastFail(null);
-            }
+            getValidationConfig().setUseFastFail(useFastFailBtn.getSelection());
          }
       });
       
       return whole;
-   }
-   
-   /**
-    * Gets the Recovery.
-    * 
-    * @return the Recovery
-    */
-   private Recovery getRecovery()
-   {
-      if (this.initialConnDef != null)
-      {
-         return this.initialConnDef.getRecovery();
-      }
-      return null;
    }
    
    /**
@@ -1206,13 +1089,11 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       final Composite container = new Composite(whole, SWT.None);
       container.setLayout(getLayout());
       
-      Recovery recovery = getRecovery();
-      
       // no recovery
       Label label = new Label(container, SWT.NULL);
       label.setText(getString("ra.generate.mcf.recover.no.recovery"));
       final Button noRecoveryBtn = new Button(container, SWT.BORDER | SWT.CHECK);
-      final Boolean isNoRecovery = isNoRecovery(recovery);
+      final Boolean isNoRecovery = isNoRecovery();
       getRecoveryConfig().setNoRecovery(noRecoveryBtn.getSelection());
       noRecoveryBtn.setSelection(isNoRecovery);
       noRecoveryBtn.addSelectionListener(new SelectionAdapter()
@@ -1220,14 +1101,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
          @Override
          public void widgetSelected(SelectionEvent e)
          {
-            if (isNoRecovery ^ noRecoveryBtn.getSelection())
-            {
-               getRecoveryConfig().setNoRecovery(noRecoveryBtn.getSelection());
-            }
-            else
-            {
-               getRecoveryConfig().setNoRecovery(null);
-            }
+            getRecoveryConfig().setNoRecovery(noRecoveryBtn.getSelection());
          }
       });
       
@@ -1236,23 +1110,18 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       credentialGroup.setLayout(getLayout());
       credentialGroup.setText(getString("ra.generate.mcf.recover.credential.title"));
       
-      Credential credential = null;
-      if (recovery != null)
-      {
-         credential = recovery.getCredential();
-      }
       // user name
       label = new Label(credentialGroup, SWT.NULL);
       label.setText(getString("ra.generate.mcf.recover.credential.username"));
-      final String userName = getUserName(credential);
-      userNameText = createText(credentialGroup, userName);
+      final String userName = getUserName();
+      userNameText = UIResources.createText(credentialGroup, userName);
       getRecoveryCredentialConfig().setUsername(userName);
       
       
       // password
       label = new Label(credentialGroup, SWT.NULL);
       label.setText(getString("ra.generate.mcf.recover.credential.password"));
-      String password = getPassword(credential);
+      String password = getPassword();
       if (null == password || password.equals(""))
       {
          password = "password";
@@ -1279,8 +1148,8 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       // security-domain
       label = new Label(credentialGroup, SWT.NULL);
       label.setText(getString("ra.generate.mcf.recover.credential.security.domain"));
-      final String securityDomain = getRecoverySecurityDomain(credential);
-      recoverySecurityDomainText = createText(credentialGroup, securityDomain);
+      final String securityDomain = getRecoverySecurityDomain();
+      recoverySecurityDomainText = UIResources.createText(credentialGroup, securityDomain);
       
       userNameText.addModifyListener(new ModifyListener()
       {
@@ -1291,14 +1160,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
             if (isRecoveryInputValid())
             {
                String newUserName = userNameText.getText().trim();
-               if (!newUserName.equals(userName))
-               {
-                  getRecoveryCredentialConfig().setUsername(newUserName);
-               }
-               else
-               {
-                  getRecoveryCredentialConfig().setUsername(null);
-               }
+               getRecoveryCredentialConfig().setUsername(newUserName);
             }
          }
       });
@@ -1312,14 +1174,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
             if (isRecoveryInputValid())
             {
                String newSecurityDomain = recoverySecurityDomainText.getText().trim();
-               if (!newSecurityDomain.equals(securityDomain))
-               {
-                  getRecoveryCredentialConfig().setSecurityDomain(newSecurityDomain);
-               }
-               else
-               {
-                  getRecoveryCredentialConfig().setSecurityDomain(null);
-               }
+               getRecoveryCredentialConfig().setSecurityDomain(newSecurityDomain);
             }
          }
       });
@@ -1335,16 +1190,11 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       Composite clsNameContainer = new Composite(recoverPluginGrp, SWT.NONE);
       clsNameContainer.setLayout(getLayout());
       
-      Extension recoverPlugin = null;
-      if (recovery != null)
-      {
-         recoverPlugin = recovery.getRecoverPlugin();
-      }
       // class name
       label = new Label(clsNameContainer, SWT.NULL);
       label.setText(getString("ra.generate.class.name"));
-      final String clsName = getRecoveryExtenstionClassName(recoverPlugin);
-      recoveryClsNameText = createText(clsNameContainer, clsName);
+      final String clsName = getRecoveryExtenstionClassName();
+      recoveryClsNameText = UIResources.createText(clsNameContainer, clsName);
       recoveryClsNameText.addModifyListener(new ModifyListener()
       {
          
@@ -1353,41 +1203,18 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
          {
             if (isRecoveryInputValid())
             {
-               if (!recoveryClsNameText.getText().trim().equals(clsName))
-               {
-                  getRecoveryExtensionConfig().setClassName(recoveryClsNameText.getText().trim());
-               }
-               else
-               {
-                  getRecoveryExtensionConfig().setClassName(null);
-               }
+               getRecoveryExtensionConfig().setClassName(recoveryClsNameText.getText().trim());
             }
          }
       });
       
-      Map<String, String> configPropertiesMap = null;
-      if (recoverPlugin != null)
-      {
-         configPropertiesMap = recoverPlugin.getConfigPropertiesMap();
-      }
-      List<ConfigPropType> configProperties = new ArrayList<ConfigPropType>();
-      if (configPropertiesMap != null)
-      {
-         for (Map.Entry<String, String> entry : configPropertiesMap.entrySet())
-         {
-            ConfigPropType configPropType = new ConfigPropType();
-            configPropType.setName(entry.getKey());
-            configPropType.setType("String");
-            configPropType.setValue(entry.getValue());
-            configProperties.add(configPropType);
-         }
-      }
-      createConfigPropertyTableViewer(recoverPluginGrp, configProperties, 
-            getString("ra.generate.mcf.recover.config.props"));
+      List<ConfigPropType> configProperties = getRecoveryConfigProperties();
       
+      ConfigPropertyComposite configPropComposite = new ConfigPropertyComposite(getShell(), configProperties);
+      configPropComposite.createControl(recoverPluginGrp);
       return whole;
    }
-   
+
    /**
     * Validates input in Recovery configuration tab.
     * 
@@ -1416,184 +1243,107 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       return true;
    }
 
-  
-   @Override
-   protected void onConfigPropUpdated(TableViewer configPropsTableView, ConfigPropType prop)
-   {
-      if (configPropsTableView.getTable().getParent().equals(this.generalConfigPropertiesPanel))
-      {
-         // config properties in the general tab
-         List<ConfigPropType> configProps = connFactoryConfig.getMcfConfigProps();
-         if (configProps == null)
-         {
-            configProps = new ArrayList<ConfigPropType>();
-            connFactoryConfig.setMcfConfigProps(configProps);
-         }
-         if (!configProps.contains(prop))
-         {
-            configProps.add(prop);
-         }
-      }
-      else
-      {
-         List<ConfigPropType> configProps = getRecoveryExtensionConfig().getConfigProperties();
-         if (configProps == null)
-         {
-            configProps = new ArrayList<ConfigPropType>();
-            getRecoveryExtensionConfig().setConfigProperties(configProps);
-         }
-         if (!configProps.contains(prop))
-         {
-            configProps.add(prop);
-            isRecoveryInputValid(); // force check class name after config property updated
-         }
-      }
-      
-   }
-
+   
    private void updateComponents(boolean active)
    {
       tabContainer.setEnabled(active);
    }
    
-   private boolean isInitialActive()
+
+   private List<ConfigPropType> getRecoveryConfigProperties()
    {
-      return getCommonConnDef() != null;
+      return getRecoveryConfig().getExtension().getConfigProperties();
    }
    
    private String getInitialJndiName()
    {
-      if (this.initialConnDef != null)
-      {
-         return this.initialConnDef.getJndiName();
-      }
-      return null;
+      return this.connFactoryConfig.getMcfJndiName();
    }
    
    private String getInitialPoolName()
    {
-      if (this.initialConnDef != null)
-      {
-         return this.initialConnDef.getPoolName();
-      }
-      return null;
+      return this.connFactoryConfig.getMcfPoolName();
    }
    
    private Boolean isMcfEnabled()
    {
-      if (this.initialConnDef != null)
-      {
-         return this.initialConnDef.isEnabled();
-      }
-      return Boolean.valueOf(true);
+      Boolean enabled = this.connFactoryConfig.getMcfEnabled();
+      return enabled != null ? enabled : Boolean.valueOf(true);
    }
    
    private Boolean isMcfUseJavaCtx()
    {
-      if (this.initialConnDef != null)
-      {
-         return this.initialConnDef.isUseJavaContext();
-      }
-      return Boolean.valueOf(true);
+      Boolean useJavaCtx = this.connFactoryConfig.getMcfUseJavaCtx();
+      return useJavaCtx != null ? useJavaCtx : Boolean.valueOf(true);
    }
    
    private Boolean isMcfUseCCM()
    {
-      if (this.initialConnDef != null)
-      {
-         return this.initialConnDef.isUseCcm();
-      }
-      return Boolean.valueOf(true);
+      Boolean useCcm = this.connFactoryConfig.getMcfUseCCM();
+      return useCcm != null ? useCcm : Boolean.valueOf(true);
    }
    
-   private Integer getMinPoolSize(CommonPool pool)
+   private Integer getMinPoolSize()
    {
-      if (pool != null)
-      {
-         return pool.getMinPoolSize();
-      }
-      return null;
+      return getPoolConfig().getMinPoolSize();
    }
    
-   private Integer getMaxPoolSize(CommonPool pool)
+   private Integer getInitialPoolSize()
    {
-      if (pool != null)
-      {
-         return pool.getMaxPoolSize();
-      }
-      return null;
+      return getPoolConfig().getInitialPoolSize();
    }
    
-   private Boolean isPoolPrefill(CommonPool pool)
+   private Integer getMaxPoolSize()
    {
-      if (pool != null)
-      {
-         return pool.isPrefill();
-      }
-      return Boolean.valueOf(false);
+      return getPoolConfig().getMaxPoolSize();
    }
    
-   private Boolean isPoolUseStictMin(CommonPool pool)
+   private Boolean isPoolPrefill()
    {
-      if (pool != null)
-      {
-         return pool.isUseStrictMin();
-      }
-      return Boolean.valueOf(false);
+      Boolean preFill = getPoolConfig().isPrefill();
+      return preFill != null ? preFill : Boolean.valueOf(false);
    }
    
-   private FlushStrategy getPoolFlushStrategy(CommonPool pool)
+   private Boolean isPoolUseStictMin()
    {
-      if (pool != null)
-      {
-         return pool.getFlushStrategy();
-      }
-      return FlushStrategy.FAILING_CONNECTION_ONLY;
+      Boolean useStrictMin = getPoolConfig().isUseStrictMin();
+      return useStrictMin != null ? useStrictMin : Boolean.valueOf(false);
    }
    
-   private Boolean isXAPoolRMOverride(CommonXaPool xaPool)
+   private FlushStrategy getPoolFlushStrategy()
    {
-      if (xaPool != null)
-      {
-         return xaPool.isSameRmOverride();
-      }
-      return Boolean.valueOf(false);
+      FlushStrategy flushStrategy = getPoolConfig().getFlushStrategy();
+      return flushStrategy != null ? flushStrategy : FlushStrategy.FAILING_CONNECTION_ONLY;
    }
    
-   private Boolean isXAPoolInterleaving(CommonXaPool xaPool)
+   private Boolean isXAPoolRMOverride()
    {
-      if (xaPool != null)
-      {
-         return xaPool.isInterleaving();
-      }
-      return Boolean.valueOf(false);
+      Boolean rmOverride = getPoolConfig().isOverrideIsSameRM();
+      return rmOverride != null ? rmOverride : Boolean.valueOf(false);
    }
    
-   private Boolean isXAPoolNoTxSeparatePool(CommonXaPool xaPool)
+   private Boolean isXAPoolInterleaving()
    {
-      if (xaPool != null)
-      {
-         return xaPool.isNoTxSeparatePool();
-      }
-      return Boolean.valueOf(false); 
+      Boolean interleaving = getPoolConfig().isInterleaving();
+      return interleaving != null ? interleaving : Boolean.valueOf(false);
    }
    
-   private Boolean isXAPoolPadXid(CommonXaPool xaPool)
+   private Boolean isXAPoolNoTxSeparatePool()
    {
-      if (xaPool != null)
-      {
-         return xaPool.isPadXid();
-      }
-      return Boolean.valueOf(false); 
+      Boolean sep = getPoolConfig().isNoTxSeparatePool();
+      return sep != null ? sep : Boolean.valueOf(false); 
    }
    
-   private Boolean isXAPoolWrapXARes(CommonXaPool xaPool)
+   private Boolean isXAPoolPadXid()
    {
-      if (xaPool != null)
-      {
-         return xaPool.isWrapXaResource();
-      }
-      return Boolean.valueOf(true); 
+      Boolean padXid = getPoolConfig().isPadXid();
+      return padXid != null ? padXid : Boolean.valueOf(false); 
+   }
+   
+   private Boolean isXAPoolWrapXARes()
+   {
+      Boolean wrapXA = getPoolConfig().isWrapXaResource();
+      return wrapXA != null ? wrapXA : Boolean.valueOf(true); 
    }
    
    private ConnectionFactoryConfig.PoolConfig getPoolConfig()
@@ -1601,225 +1351,151 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       ConnectionFactoryConfig.PoolConfig poolConfig = this.connFactoryConfig.getPoolConifg();
       if (poolConfig == null)
       {
-         poolConfig = new ConnectionFactoryConfig.PoolConfig();
+         poolConfig = new PoolConfig();
          this.connFactoryConfig.setPoolConifg(poolConfig);
       }
       return poolConfig;
       
    }
    
-   private Boolean isInitialApplication(CommonSecurity commonSecurity)
+   private SecurityConfig getSecurityConfig()
    {
-      if (commonSecurity != null)
+      SecurityConfig secConfig = this.connFactoryConfig.getSecurityConfig();
+      if (secConfig == null)
       {
-         return commonSecurity.isApplication();
+         secConfig = new SecurityConfig();
+         this.connFactoryConfig.setSecurityConfig(secConfig);
       }
-      return Boolean.valueOf(false);
+      return secConfig;
    }
    
-   private String getSecurityDomain(CommonSecurity commonSecurity)
+   private Boolean isInitialApplication()
    {
-      if (commonSecurity != null)
-      {
-         return commonSecurity.getSecurityDomain();
-      }
-      return null;
+      Boolean app = getSecurityConfig().getApplication();
+      return app != null ? app : Boolean.valueOf(false);
    }
    
-   private String getSecurityDomainAndApplication(CommonSecurity commonSecurity)
+   private String getSecurityDomain()
    {
-      if (commonSecurity != null)
-      {
-         return commonSecurity.getSecurityDomainAndApplication();
-      }
-      return null;
+      return getSecurityConfig().getSecurityDomain();
    }
    
-   private ConnectionFactoryConfig.SecurityConfig getSecurityConfig()
+   private String getSecurityDomainAndApplication()
    {
-      ConnectionFactoryConfig.SecurityConfig securityConfig = this.connFactoryConfig.getSecurityConfig();
-      if (securityConfig == null)
-      {
-         securityConfig = new ConnectionFactoryConfig.SecurityConfig();
-         this.connFactoryConfig.setSecurityConfig(securityConfig);
-      }
-      return securityConfig;
+      return getSecurityConfig().getSecurityDomainAndApp();
    }
    
-   private Long getBlockTimeout(CommonTimeOut timeOut)
+   private TimeoutConfig getTimeoutConfig()
    {
-      if (timeOut != null)
+      TimeoutConfig timeout = this.connFactoryConfig.getTimeoutConfig();
+      if (timeout == null)
       {
-         return timeOut.getBlockingTimeoutMillis();
+         timeout = new TimeoutConfig();
+         this.connFactoryConfig.setTimeoutConfig(timeout);
       }
-      return null;
+      return timeout;
    }
    
-   private Long getIdleTimeout(CommonTimeOut timeOut)
+   private Long getBlockTimeout()
    {
-      if (timeOut != null)
-      {
-         return timeOut.getIdleTimeoutMinutes();
-      }
-      return null;
+      return getTimeoutConfig().getBlockingTimeoutMillis();
    }
    
-   private Integer getAllocationRetry(CommonTimeOut timeOut)
+   private Long getIdleTimeout()
    {
-      if (timeOut != null)
-      {
-         return timeOut.getAllocationRetry();
-      }
-      return null;
+      return getTimeoutConfig().getIdleTimeoutMinutes();
    }
    
-   private Long getAllocateRetryWait(CommonTimeOut timeOut)
+   private Integer getAllocationRetry()
    {
-      if (timeOut != null)
-      {
-         return timeOut.getAllocationRetryWaitMillis();
-      }
-      return null;
+      return getTimeoutConfig().getAllocateRetry();
    }
    
-   private Integer getXAResourceTimeout(CommonTimeOut timeOut)
+   private Long getAllocateRetryWait()
    {
-      if (timeOut != null)
-      {
-         return timeOut.getXaResourceTimeout();
-      }
-      return null;
+      return getTimeoutConfig().getAllocateRetryWait();
    }
    
-   private ConnectionFactoryConfig.TimeoutConfig getTimeoutConfig()
+   private Integer getXAResourceTimeout()
    {
-      ConnectionFactoryConfig.TimeoutConfig timeoutConfig = this.connFactoryConfig.getTimeoutConfig();
-      if (timeoutConfig == null)
-      {
-         timeoutConfig = new ConnectionFactoryConfig.TimeoutConfig();
-         this.connFactoryConfig.setTimeoutConfig(timeoutConfig);
-      }
-      return timeoutConfig;
+      return getTimeoutConfig().getXaResourceTimeout();
    }
    
-   private Boolean isBackgroundValidation(CommonValidation validation)
+   private ValidationConfig getValidationConfig()
    {
-      if (validation != null)
+      ValidationConfig validation = this.connFactoryConfig.getValidationConfig();
+      if (validation == null)
       {
-         return validation.isBackgroundValidation();
+         validation = new ValidationConfig();
+         this.connFactoryConfig.setValidationConfig(validation);
       }
-      return Boolean.valueOf(false);
+      return validation;
    }
    
-   private Long getBackgroundValidationMillis(CommonValidation validation)
+   private Boolean isBackgroundValidation()
    {
-      if (validation != null)
-      {
-         return validation.getBackgroundValidationMillis();
-      }
-      return null;
+      Boolean background = getValidationConfig().getBackgroundValidation();
+      return background != null ? background : Boolean.valueOf(false);
    }
    
-   private Boolean isValidationUseFastFail(CommonValidation validation)
+   private Long getBackgroundValidationMillis()
    {
-      if (validation != null)
-      {
-         return validation.isUseFastFail();
-      }
-      return Boolean.valueOf(false);
+      return getValidationConfig().getBackgroundValidationMillis();
    }
    
-   private ConnectionFactoryConfig.ValidationConfig getValidationConfig()
+   private Boolean isValidationUseFastFail()
    {
-      ConnectionFactoryConfig.ValidationConfig validationConfig = this.connFactoryConfig.getValidationConfig();
-      if (validationConfig == null)
-      {
-         validationConfig = new ConnectionFactoryConfig.ValidationConfig();
-         this.connFactoryConfig.setValidationConfig(validationConfig);
-      }
-      return validationConfig;
+      Boolean fastFail = getValidationConfig().getUseFastFail();
+      return fastFail != null ? fastFail : Boolean.valueOf(false);
    }
    
-   private Boolean isNoRecovery(Recovery recovery)
+   private RecoveryConfig getRecoveryConfig()
    {
-      if (recovery != null)
+      RecoveryConfig recovery = this.connFactoryConfig.getRecoveryConfig();
+      if (recovery == null)
       {
-         return recovery.getNoRecovery();
+         recovery = new RecoveryConfig();
+         this.connFactoryConfig.setRecoveryConfig(recovery);
       }
-      return Boolean.valueOf(true);
-   }
-   private ConnectionFactoryConfig.RecoveryConfig getRecoveryConfig()
-   {
-      ConnectionFactoryConfig.RecoveryConfig recoveryConfig = this.connFactoryConfig.getRecoveryConfig();
-      if (recoveryConfig == null)
-      {
-         recoveryConfig = new ConnectionFactoryConfig.RecoveryConfig();
-         this.connFactoryConfig.setRecoveryConfig(recoveryConfig);
-      }
-      return recoveryConfig;
+      return recovery;
    }
    
-   private String getUserName(Credential credential)
+   private Boolean isNoRecovery()
    {
-      if (credential != null)
-      {
-         return credential.getUserName();
-      }
-      return null;
+      Boolean noRecovery = getRecoveryConfig().getNoRecovery();
+      return noRecovery != null ? noRecovery : Boolean.valueOf(true);
    }
    
-   private String getPassword(Credential credential)
+   private String getUserName()
    {
-      if (credential != null)
-      {
-         return credential.getPassword();
-      }
-      return null;
+      return getRecoveryConfig().getCredential().getUsername();
    }
    
-   private String getRecoverySecurityDomain(Credential credential)
+   private String getPassword()
    {
-      if (credential != null)
-      {
-         return credential.getSecurityDomain();
-      }
-      return null;
+      return getRecoveryConfig().getCredential().getPassword();
    }
    
-   private ConnectionFactoryConfig.RecoveryConfig.Credential getRecoveryCredentialConfig()
+   private String getRecoverySecurityDomain()
    {
-      ConnectionFactoryConfig.RecoveryConfig.Credential credentialConfig = getRecoveryConfig().getCredential();
-      if (credentialConfig == null)
-      {
-         credentialConfig = new ConnectionFactoryConfig.RecoveryConfig.Credential();
-         getRecoveryConfig().setCredential(credentialConfig);
-      }
+      return getRecoveryConfig().getCredential().getSecurityDomain();
+   }
+   
+   private ConnectionFactoryConfig.Credential getRecoveryCredentialConfig()
+   {
+      ConnectionFactoryConfig.Credential credentialConfig = getRecoveryConfig().getCredential();
       return credentialConfig;
    }
    
-   private String getRecoveryExtenstionClassName(Extension extension)
+   private String getRecoveryExtenstionClassName()
    {
-      if (extension != null)
-      {
-         return extension.getClassName();
-      }
-      return null;
+      return getRecoveryConfig().getExtension().getClassName();
    }
    
-   private ConnectionFactoryConfig.RecoveryConfig.Extension getRecoveryExtensionConfig()
+   private ConnectionFactoryConfig.Extension getRecoveryExtensionConfig()
    {
-      ConnectionFactoryConfig.RecoveryConfig.Extension extensionConfig = getRecoveryConfig().getExtension();
-      if (extensionConfig == null)
-      {
-         extensionConfig = new ConnectionFactoryConfig.RecoveryConfig.Extension();
-         getRecoveryConfig().setExtension(extensionConfig);
-      }
+      ConnectionFactoryConfig.Extension extensionConfig = getRecoveryConfig().getExtension();
       return extensionConfig;
-   }
-   
-   private CommonConnDef getCommonConnDef()
-   {
-      return this.connectorHelper.getCommonConnDef(this.connDef.getManagedConnectionFactoryClass().getValue());
    }
    
    /**
@@ -1861,8 +1537,10 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
    {
       String minPool = minPoolSizeText.getText().trim();
       String maxPool = maxPoolSizeText.getText().trim();
+      String initialPool = initialPoolSizeText.getText().trim();
       Integer minPoolSize = null;
       Integer maxPoolSize = null;
+      Integer intialPoolSize = null;
 
       if (!minPool.isEmpty())
       {
@@ -1878,6 +1556,24 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
          catch (NumberFormatException nfe)
          {
             updateStatus(getString("ra.generate.error.min.pool.size.number"));
+            return false;
+         }
+      }
+      
+      if (!initialPool.isEmpty())
+      {
+         try
+         {
+            intialPoolSize = Integer.valueOf(initialPool);
+            if (intialPoolSize < 0)
+            {
+               updateStatus(getString("ra.generate.error.initial.pool.size.larger.than.zero"));
+               return false;
+            }
+         }
+         catch (NumberFormatException nfe)
+         {
+            updateStatus(getString("ra.generate.error.initial.pool.size.number"));
             return false;
          }
       }
@@ -1910,29 +1606,6 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       }
       updateStatus(null);
       return true;
-   }
-   
-   private void checkPoolFlushStrategy()
-   {
-      FlushStrategy initialFlushStrategy = getPoolFlushStrategy(getPool());
-      FlushStrategy flushStrategy = initialFlushStrategy;
-      if (!FlushStrategy.forName(this.flushStrategyCombo.getText()).equals(initialFlushStrategy))
-      {
-         flushStrategy = FlushStrategy.forName(this.flushStrategyCombo.getText());
-      }
-      if (getPoolConfig().getMinPoolSize() != null || getPoolConfig().getMaxPoolSize() != null 
-            || getPoolConfig().isInterleaving() != null || getPoolConfig().isNoTxSeparatePool() != null 
-            || getPoolConfig().isOverrideIsSameRM() != null || getPoolConfig().isPadXid() != null 
-            || getPoolConfig().isPrefill() != null || getPoolConfig().isUseStrictMin() != null 
-            || getPoolConfig().isWrapXaResource() != null)
-      {
-         // FlushStrategy can not be null if any of other property is not null.
-         getPoolConfig().setFlushStrategy(flushStrategy);
-      }
-      else
-      {
-         getPoolConfig().setFlushStrategy(null);
-      }
    }
    
    /**
