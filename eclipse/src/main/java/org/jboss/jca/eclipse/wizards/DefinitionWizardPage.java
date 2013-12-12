@@ -53,7 +53,7 @@ import org.eclipse.swt.widgets.Text;
 
 public class DefinitionWizardPage extends WizardPage
 {
-   private static final String PACKAGE_NAME_PATTERN = "^[a-z|A-Z][\\w|\\.]*[\\w]$";
+   private static final String PACKAGE_NAME_PATTERN = "^[a-zA-Z_\\$][\\w\\$]*(?:\\.[a-zA-Z_\\$][\\w\\$]*)*$";
 
    private Text projectText;
 
@@ -63,6 +63,8 @@ public class DefinitionWizardPage extends WizardPage
    private ISelection selection;
 
    private Combo boundCombo;
+   
+   private Label annotaionlabel;
    
    private Button annotationshButton;
 
@@ -147,8 +149,8 @@ public class DefinitionWizardPage extends WizardPage
          }
       });
 
-      label = new Label(container, SWT.NULL);
-      label.setText(((CodeGenWizard) getWizard()).getCodegenResourceString("use.annotation") + ":");
+      annotaionlabel = new Label(container, SWT.NULL);
+      annotaionlabel.setText(((CodeGenWizard) getWizard()).getCodegenResourceString("use.annotation") + ":");
       annotationshButton = new Button(container, SWT.CHECK);
       annotationshButton.setSelection(true);
       ((CodeGenWizard) getWizard()).getDef().setUseAnnotation(true);
@@ -192,6 +194,7 @@ public class DefinitionWizardPage extends WizardPage
                boundCombo.setText("Outbound");
                annotationshButton.setSelection(false);
                annotationshButton.setEnabled(false);
+               annotaionlabel.setEnabled(false);
                ((CodeGenWizard) getWizard()).getDef().setUseAnnotation(false);
                ((CodeGenWizard) getWizard()).getDef().setSupportOutbound(true);
                ((CodeGenWizard) getWizard()).getDef().setSupportInbound(false);
@@ -208,12 +211,14 @@ public class DefinitionWizardPage extends WizardPage
                {
                   annotationshButton.setEnabled(true);
                   annotationshButton.setSelection(true);
+                  annotaionlabel.setEnabled(true);
                   ((CodeGenWizard) getWizard()).getDef().setUseAnnotation(true);
                }
                else
                {
                   annotationshButton.setSelection(false);
                   annotationshButton.setEnabled(false);
+                  annotaionlabel.setEnabled(false);
                   ((CodeGenWizard) getWizard()).getDef().setUseAnnotation(false);
                }
             }
@@ -313,15 +318,21 @@ public class DefinitionWizardPage extends WizardPage
          updateStatus(pluginPrb.getString("codegen.def.package.name.defined"));
          return;
       }
-      if (packageText.getText().indexOf('.') < 0)
-      {
-         updateStatus(pluginPrb.getString("codegen.def.package.name.validated"));
-         return;
-      }
       
       if (!Pattern.matches(PACKAGE_NAME_PATTERN, packageText.getText()))
       {
-         updateStatus(pluginPrb.getString("codegen.def.package.name.validated"));
+         if (packageText.getText().startsWith(".") || packageText.getText().endsWith("."))
+         {
+            updateStatus(pluginPrb.getString("codegen.def.package.name.validated.dot"));
+            return;
+         }
+         updateStatus(pluginPrb.getString("codegen.def.package.name.validated", packageText.getText()));
+         return;
+      }
+      
+      if (packageText.getText().indexOf('.') < 0)
+      {
+         updateStatus(pluginPrb.getString("codegen.def.package.name.low.level"));
          return;
       }
       
