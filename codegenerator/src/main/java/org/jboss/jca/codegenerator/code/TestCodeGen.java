@@ -170,53 +170,9 @@ public class TestCodeGen extends AbstractCodeGen
       writeIndent(out, indent + 1);
       out.write("JavaArchive ja = ShrinkWrap.create(JavaArchive.class, UUID.randomUUID().toString() + \".jar\");");
       writeEol(out);
+
       writeIndent(out, indent + 1);
-      out.write("ja.addClasses(");
-      
-      if (def.isUseRa())
-      {
-         out.write(def.getRaClass() + ".class, ");
-      }
-      for (int num = 0; num < def.getMcfDefs().size(); num++)
-      {
-         out.write(def.getMcfDefs().get(num).getMcfClass() + ".class, " + 
-            def.getMcfDefs().get(num).getMcClass() + ".class, ");
-         writeEol(out);
-         writeIndent(out, indent + 2);
-         if (def.getMcfDefs().get(num).isUseCciConnection())
-         {
-            if (def.isUseRa())
-            {
-               out.write(def.getMcfDefs().get(num).getCciConnFactoryClass() + ".class, " + 
-                  def.getMcfDefs().get(num).getCciConnFactoryClass() + ".class, " + 
-                  def.getMcfDefs().get(num).getConnMetaClass() + ".class, " + 
-                  def.getRaMetaClass() + ".class, " + 
-                  def.getMcfDefs().get(num).getConnSpecClass() + ".class");
-            }
-            else
-            {
-               out.write(def.getMcfDefs().get(num).getCciConnFactoryClass() + ".class, " + 
-                  def.getMcfDefs().get(num).getCciConnFactoryClass() + ".class, " + 
-                  def.getMcfDefs().get(num).getConnMetaClass() + ".class, " + 
-                  def.getMcfDefs().get(num).getConnSpecClass() + ".class");
-            }
-         }
-         else
-         {
-            out.write(def.getMcfDefs().get(num).getCfInterfaceClass() + ".class, " + 
-               def.getMcfDefs().get(num).getCfClass() + ".class, " + 
-               def.getMcfDefs().get(num).getConnInterfaceClass() + ".class, " + 
-               def.getMcfDefs().get(num).getConnImplClass() + ".class");
-         }
-         if (num < def.getMcfDefs().size() - 1)
-         {
-            out.write(",");
-            writeEol(out);
-            writeIndent(out, indent + 2);
-         }
-      }
-      
-      out.write(");");
+      out.write("ja.addPackages(true, Package.getPackage(\"" + def.getRaPackage() + "\"));");
       writeEol(out);
       writeIndent(out, indent + 1);
       out.write("raa.addAsLibrary(ja);");
