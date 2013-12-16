@@ -13,6 +13,9 @@
          <listitem>
             <para>Sun JDK 1.7.x</para>
          </listitem>
+         <listitem>
+            <para>OpenJDK 1.7.x</para>
+         </listitem>
       </itemizedlist>
 
       <para>Remember to ensure that "javac" and "java" are in your path (or symlinked).</para>
@@ -112,6 +115,10 @@ git remote add upstream git@github.com:ironjacamar/ironjacamar.git
          <listitem>
             <para>1.0</para>
             <para>The development targeting the IronJacamar 1.0 releases.</para>
+         </listitem>
+         <listitem>
+            <para>1.1</para>
+            <para>The development targeting the IronJacamar 1.1 releases.</para>
          </listitem>
       </itemizedlist>
     </section>

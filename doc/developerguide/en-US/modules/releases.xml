@@ -199,7 +199,7 @@ cd target
         in and choosing "Promote" and "Close". The path for the staging repository can be used for
         testing the release.</para>
       
-      <para>Note, that this requires Ivy 2.2.0+ and Maven 2.2.1+.</para>
+      <para>Note, that this requires Maven 3.0.5+.</para>
 
     </section>
 
@@ -213,7 +213,7 @@ cd target
 ./deploy.sh
       </programlisting>
       
-      <para>Note, that this requires Ivy 2.2.0+ and Maven 2.2.1+.</para>
+      <para>Note, that this requires Maven 3.0.5+.</para>
 
     </section>
 
@@ -227,7 +227,7 @@ cd target
 ./install.sh
       </programlisting>
       
-      <para>Note, that this requires Ivy 2.2.0+ and Maven 2.2.1+.</para>
+      <para>Note, that this requires Maven 3.0.5+.</para>
 
     </section>
 

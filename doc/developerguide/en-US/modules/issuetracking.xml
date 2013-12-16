@@ -26,8 +26,20 @@
         </thead>
         <tbody>
           <row>
+            <entry>Arquillian</entry>
+            <entry>The Arquillian integration for the project.</entry>
+          </row>
+          <row>
+            <entry>AS</entry>
+            <entry>The tools that focuses on integration with WildFly.</entry>
+          </row>
+          <row>
             <entry>Build</entry>
             <entry>The build environment for the project.</entry>
+          </row>
+          <row>
+            <entry>Code Generator</entry>
+            <entry>The resource adapter code generator.</entry>
           </row>
           <row>
             <entry>Common</entry>
@@ -38,12 +50,24 @@
             <entry>The core implementation of the project.</entry>
           </row>
           <row>
+            <entry>Documentation</entry>
+            <entry>The documentation (Users Guide / Developers Guide) for the project.</entry>
+          </row>
+          <row>
             <entry>Deployer</entry>
             <entry>The deployers for the project.</entry>
           </row>
           <row>
-            <entry>Documentation</entry>
-            <entry>The documentation (Users Guide / Developers Guide) for the project.</entry>
+            <entry>Eclipse</entry>
+            <entry>The Eclipse plugin for IronJacamar.</entry>
+          </row>
+          <row>
+            <entry>EIS</entry>
+            <entry>The EIS test server.</entry>
+          </row>
+          <row>
+            <entry>Embedded</entry>
+            <entry>The embedded IronJacamar container.</entry>
           </row>
           <row>
             <entry>JDBC</entry>
@@ -52,6 +76,18 @@
           <row>
             <entry>Performance</entry>
             <entry>Performance related work.</entry>
+          </row>
+          <row>
+            <entry>Standalone</entry>
+            <entry>The standalone IronJacamar distribution.</entry>
+          </row>
+          <row>
+            <entry>Test Suite</entry>
+            <entry>The IronJacamar test suite.</entry>
+          </row>
+          <row>
+            <entry>Validator</entry>
+            <entry>The resource adapter validator.</entry>
           </row>
         </tbody>
       </tgroup>
@@ -126,16 +162,12 @@
             <entry>An issue currently being worked on.</entry>
           </row>
           <row>
-            <entry>Reopen</entry>
-            <entry>An issue that needs further work after it has been resolved.</entry>
-          </row>
-          <row>
             <entry>Resolved</entry>
             <entry>An issue which has been implemented.</entry>
           </row>
           <row>
             <entry>Closed</entry>
-            <entry>An issue that has been resolved and is include in a release.</entry>
+            <entry>An issue that has been resolved and is included in a release.</entry>
           </row>
         </tbody>
       </tgroup>
