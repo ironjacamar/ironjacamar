@@ -588,6 +588,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
          kill = true;
 
       checkedOut.remove(cl);
+
       if (statistics.isEnabled())
          statistics.setInUsedCount(checkedOut.size());
 
@@ -639,6 +640,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
 
          doDestroy(cl);
          cl = null;
+
+         prefill();
       }
    }
 
