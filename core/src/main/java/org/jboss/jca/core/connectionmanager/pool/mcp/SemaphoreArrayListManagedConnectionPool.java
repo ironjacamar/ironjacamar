@@ -293,23 +293,26 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             ConnectionListener cl = null;
             do
             {
+               if (shutdown.get())
+               {
+                  permits.release();
+                  throw new RetryableUnavailableException(
+                     bundle.thePoolHasBeenShutdown(pool.getName(),
+                                                   Integer.toHexString(System.identityHashCode(this))));
+               }
+
                synchronized (cls)
                {
-                  if (shutdown.get())
-                  {
-                     permits.release();
-                     throw new RetryableUnavailableException(
-                        bundle.thePoolHasBeenShutdown(pool.getName(),
-                                                      Integer.toHexString(System.identityHashCode(this))));
-                  }
-
                   if (cls.size() > 0)
                   {
                      cl = cls.remove(0);
                      checkedOut.add(cl);
-                     statistics.setInUsedCount(checkedOut.size());
                   }
                }
+
+               if (statistics.isEnabled())
+                  statistics.setInUsedCount(checkedOut.size());
+
                if (cl != null)
                {
                   //Yes, we retrieved a ManagedConnection from the pool. Does it match?
@@ -338,8 +341,10 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                      synchronized (cls)
                      {
                         checkedOut.remove(cl);
-                        statistics.setInUsedCount(checkedOut.size());
                      }
+
+                     if (statistics.isEnabled())
+                        statistics.setInUsedCount(checkedOut.size());
 
                      doDestroy(cl);
                      cl = null;
@@ -351,8 +356,10 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                      synchronized (cls)
                      {
                         checkedOut.remove(cl);
-                        statistics.setInUsedCount(checkedOut.size());
                      }
+
+                     if (statistics.isEnabled())
+                        statistics.setInUsedCount(checkedOut.size());
 
                      doDestroy(cl);
                      cl = null;
@@ -381,8 +388,10 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                synchronized (cls)
                {
                   checkedOut.add(cl);
-                  statistics.setInUsedCount(checkedOut.size());
                }
+
+               if (statistics.isEnabled())
+                  statistics.setInUsedCount(checkedOut.size());
 
                if (trace)
                   log.trace("supplying new ManagedConnection: " + cl);
@@ -404,8 +413,10 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                synchronized (cls)
                {
                   checkedOut.remove(cl);
-                  statistics.setInUsedCount(checkedOut.size());
                }
+
+               if (statistics.isEnabled())
+                  statistics.setInUsedCount(checkedOut.size());
 
                permits.release();
 
@@ -456,9 +467,9 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          if (trace)
             log.trace("ManagedConnection is being returned after it was destroyed: " + cl);
 
-         if (clPermits.containsKey(cl))
+         ConnectionListener present = clPermits.remove(cl);
+         if (present != null)
          {
-            clPermits.remove(cl);
             permits.release();
          }
 
@@ -475,14 +486,13 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          kill = true;
       }
 
+      // We need to destroy this one
+      if (cl.getState() == ConnectionState.DESTROY || cl.getState() == ConnectionState.DESTROYED)
+         kill = true;
+
       synchronized (cls)
       {
-         // We need to destroy this one
-         if (cl.getState() == ConnectionState.DESTROY || cl.getState() == ConnectionState.DESTROYED)
-            kill = true;
-
          checkedOut.remove(cl);
-         statistics.setInUsedCount(checkedOut.size());
 
          // This is really an error
          if (!kill && isSize(poolConfiguration.getMaxSize() + 1))
@@ -514,12 +524,15 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                log.attemptReturnConnectionTwice(cl, new Throwable("STACKTRACE"));
             }
          }
+      }
 
-         if (clPermits.containsKey(cl))
-         {
-            clPermits.remove(cl);
-            permits.release();
-         }
+      if (statistics.isEnabled())
+         statistics.setInUsedCount(checkedOut.size());
+
+      ConnectionListener present = clPermits.remove(cl);
+      if (present != null)
+      {
+         permits.release();
       }
 
       if (kill)
@@ -569,14 +582,15 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
                destroy.add(cl);
 
-               if (clPermits.containsKey(cl))
+               ConnectionListener present = clPermits.remove(cl);
+               if (present != null)
                {
-                  clPermits.remove(cl);
                   permits.release();
                }
             }
 
-            statistics.setInUsedCount(checkedOut.size());
+            if (statistics.isEnabled())
+               statistics.setInUsedCount(checkedOut.size());
          }
 
          // Destroy connections in the pool
@@ -634,7 +648,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             ConnectionListener cl = cls.get(0);
             if (cl.isTimedOut(timeout) && shouldRemove())
             {
-               statistics.deltaTimedOut();
+               if (statistics.isEnabled())
+                  statistics.deltaTimedOut();
 
                // We need to destroy this one
                cls.remove(0);
@@ -744,14 +759,16 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                {
                   if (shutdown.get())
                   {
-                     statistics.setInUsedCount(checkedOut.size());
+                     if (statistics.isEnabled())
+                        statistics.setInUsedCount(checkedOut.size());
                      return;
                   }
 
                   // We already have enough connections
                   if (isSize(poolConfiguration.getMinSize()))
                   {
-                     statistics.setInUsedCount(checkedOut.size());
+                     if (statistics.isEnabled())
+                        statistics.setInUsedCount(checkedOut.size());
                      return;
                   }
 
@@ -766,12 +783,15 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                            log.trace("Filling pool cl=" + cl);
 
                         cls.add(cl);
-                        statistics.setInUsedCount(checkedOut.size() + 1);
+                        
+                        if (statistics.isEnabled())
+                           statistics.setInUsedCount(checkedOut.size() + 1);
                      }
                   }
                   catch (ResourceException re)
                   {
-                     statistics.setInUsedCount(checkedOut.size());
+                     if (statistics.isEnabled())
+                        statistics.setInUsedCount(checkedOut.size());
                      log.unableFillPool(re);
                      return;
                   }
@@ -827,7 +847,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       }
       catch (ResourceException re)
       {
-         statistics.deltaDestroyedCount();
+         if (statistics.isEnabled())
+            statistics.deltaDestroyedCount();
          mc.destroy();
          throw re;
       }
@@ -848,7 +869,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          return;
       }
 
-      statistics.deltaDestroyedCount();
+      if (statistics.isEnabled())
+         statistics.deltaDestroyedCount();
       cl.setState(ConnectionState.DESTROYED);
 
       ManagedConnection mc = cl.getManagedConnection();
