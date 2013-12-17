@@ -413,12 +413,14 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       checkedOut.add(cl);
 
       // Update in used statistics
-      statistics.setInUsedCount(checkedOut.size());
+      if (statistics.isEnabled())
+         statistics.setInUsedCount(checkedOut.size());
       
       if (!verifyConnectionListener)
       {
          lastUsed = System.currentTimeMillis();
-         statistics.deltaTotalGetTime(lastUsed - startWait);
+         if (statistics.isEnabled())
+            statistics.deltaTotalGetTime(lastUsed - startWait);
 
          // Return connection listener
          return cl;
@@ -436,7 +438,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
                   log.trace("supplying ManagedConnection from pool: " + cl);
 
                lastUsed = System.currentTimeMillis();
-               statistics.deltaTotalGetTime(lastUsed - startWait);
+               if (statistics.isEnabled())
+                  statistics.deltaTotalGetTime(lastUsed - startWait);
 
                // Return connection listener
                return cl;
@@ -450,7 +453,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
             log.destroyingConnectionNotSuccessfullyMatched(cl, mcf);
             
             checkedOut.remove(cl);
-            statistics.setInUsedCount(checkedOut.size());
+            if (statistics.isEnabled())
+               statistics.setInUsedCount(checkedOut.size());
             
             doDestroy(cl);
             cl = null;
@@ -460,7 +464,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
             log.throwableWhileTryingMatchManagedConnection(cl, t);
          
             checkedOut.remove(cl);
-            statistics.setInUsedCount(checkedOut.size());
+            if (statistics.isEnabled())
+               statistics.setInUsedCount(checkedOut.size());
 
             doDestroy(cl);
             cl = null;
@@ -502,7 +507,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       try
       {
          cls.put(cl);
-         statistics.deltaCreatedCount();
+         if (statistics.isEnabled())
+            statistics.deltaCreatedCount();
       }
       catch (Throwable t)
       {
@@ -520,7 +526,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
    {
       ConnectionListener cl = cls.poll();
 
-      if (cl != null)
+      if (cl != null && statistics.isEnabled())
          statistics.deltaDestroyedCount();
 
       return cl;
@@ -582,7 +588,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
          kill = true;
 
       checkedOut.remove(cl);
-      statistics.setInUsedCount(checkedOut.size());
+      if (statistics.isEnabled())
+         statistics.setInUsedCount(checkedOut.size());
 
       // This is really an error
       if (!kill && cls.size() >= poolConfiguration.getMaxSize())
@@ -798,7 +805,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
 
             if (destroy)
             {
-               statistics.deltaTimedOut();
+               if (statistics.isEnabled())
+                  statistics.deltaTimedOut();
 
                // We need to destroy this one
                if (destroyConnections == null)
@@ -906,7 +914,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       {
          if (shutdown.get())
          {
-            statistics.setInUsedCount(checkedOut.size());
+            if (statistics.isEnabled())
+               statistics.setInUsedCount(checkedOut.size());
             return;
          }
 
@@ -916,7 +925,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
          try
          {
             cl = createConnectionEventListener(defaultSubject, defaultCri);
-            statistics.setInUsedCount(checkedOut.size() + 1);
+            if (statistics.isEnabled())
+               statistics.setInUsedCount(checkedOut.size() + 1);
                
             if ((checkedOut.size() + cls.size()) < size)
             {
@@ -954,7 +964,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
             }
          }
       }
-      statistics.setInUsedCount(checkedOut.size());
+      if (statistics.isEnabled())
+         statistics.setInUsedCount(checkedOut.size());
    }
 
    /**
@@ -979,7 +990,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       {
          if (shutdown.get())
          {
-            statistics.setInUsedCount(checkedOut.size());
+            if (statistics.isEnabled())
+               statistics.setInUsedCount(checkedOut.size());
             return;
          }
 
@@ -995,7 +1007,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
             try
             {
                cl = createConnectionEventListener(defaultSubject, defaultCri);
-               statistics.setInUsedCount(checkedOut.size() + 1);
+               if (statistics.isEnabled())
+                  statistics.setInUsedCount(checkedOut.size() + 1);
                
                if (!cls.offer(cl))
                {
@@ -1028,7 +1041,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
             }
          }
       }
-      statistics.setInUsedCount(checkedOut.size());
+      if (statistics.isEnabled())
+         statistics.setInUsedCount(checkedOut.size());
    }
 
    /**
@@ -1057,7 +1071,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       }
       catch (ResourceException re)
       {
-         statistics.deltaDestroyedCount();
+         if (statistics.isEnabled())
+            statistics.deltaDestroyedCount();
          mc.destroy();
          throw re;
       }
@@ -1076,7 +1091,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
          return;
       }
 
-      statistics.deltaDestroyedCount();
+      if (statistics.isEnabled())
+         statistics.deltaDestroyedCount();
       cl.setState(ConnectionState.DESTROYED);
 
       ManagedConnection mc = cl.getManagedConnection();
