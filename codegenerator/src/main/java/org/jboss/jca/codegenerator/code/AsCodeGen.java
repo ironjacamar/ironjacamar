@@ -169,8 +169,11 @@ public class AsCodeGen extends PropsCodeGen
       writeEol(out);
       importLogging(def, out);
       
-      out.write("import javax.resource.spi.Activation;");
-      writeEol(out);
+      if (def.isUseAnnotation())
+      {
+         out.write("import javax.resource.spi.Activation;");
+         writeEol(out);
+      }
       out.write("import javax.resource.spi.ActivationSpec;");
       writeEol(out);
       if (def.isUseAnnotation())
