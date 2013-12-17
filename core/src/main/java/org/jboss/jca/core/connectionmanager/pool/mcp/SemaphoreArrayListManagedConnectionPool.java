@@ -490,16 +490,16 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       if (cl.getState() == ConnectionState.DESTROY || cl.getState() == ConnectionState.DESTROYED)
          kill = true;
 
+      // This is really an error
+      if (!kill && isSize(poolConfiguration.getMaxSize() + 1))
+      {
+         log.destroyingReturnedConnectionMaximumPoolSizeExceeded(cl);
+         kill = true;
+      }
+
       synchronized (cls)
       {
          checkedOut.remove(cl);
-
-         // This is really an error
-         if (!kill && isSize(poolConfiguration.getMaxSize() + 1))
-         {
-            log.destroyingReturnedConnectionMaximumPoolSizeExceeded(cl);
-            kill = true;
-         }
 
          // If we are destroying, check the connection is not in the pool
          if (kill)
@@ -542,6 +542,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
          doDestroy(cl);
          cl = null;
+
+         prefill();
       }
    }
 
