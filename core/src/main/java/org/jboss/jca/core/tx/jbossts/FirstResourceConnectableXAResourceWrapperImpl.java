@@ -53,6 +53,23 @@ public class FirstResourceConnectableXAResourceWrapperImpl extends ConnectableXA
    }
 
    /**
+    * Creates a new wrapper instance.
+    * @param resource xaresource
+    * @param pad pad
+    * @param override override
+    * @param productName product name
+    * @param productVersion product version
+    * @param jndiName jndi name
+    * @param cr connectable resource
+    */   
+   public FirstResourceConnectableXAResourceWrapperImpl(XAResource resource, boolean pad, Boolean override,
+                                                        String productName, String productVersion,
+                                                        String jndiName, org.jboss.tm.ConnectableResource cr)
+   {
+      super(resource, pad, override, productName, productVersion, jndiName, cr);
+   }
+
+   /**
     * {@inheritDoc}
     */
    public boolean equals(Object object)

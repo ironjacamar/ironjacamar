@@ -22,6 +22,7 @@
 package org.jboss.jca.core.tx.vts;
 
 import org.jboss.jca.core.spi.transaction.ConnectableResource;
+import org.jboss.jca.core.spi.transaction.ConnectableResourceListener;
 
 /**
  * Local connectable XA resource implementation.
@@ -33,6 +34,9 @@ public class LocalConnectableXAResourceImpl extends LocalXAResourceImpl
 {
    /** Connectable resource */
    private ConnectableResource cr;
+   
+   /** Connectable resource listener */
+   private ConnectableResourceListener crl;
    
    /**
     * Creates a new instance.
@@ -46,13 +50,27 @@ public class LocalConnectableXAResourceImpl extends LocalXAResourceImpl
    {
       super(productName, productVersion, jndiName);
       this.cr = cr;
+      this.crl = null;
    }
 
    /**
     * {@inheritDoc}
     */
-   public AutoCloseable getConnection() throws Exception
+   public Object getConnection() throws Exception
    {
-      return cr.getConnection();
+      Object result = cr.getConnection();
+
+      if (crl != null)
+         crl.handleCreated(result);
+
+      return result;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setConnectableResourceListener(ConnectableResourceListener crl)
+   {
+      this.crl = crl;
    }
 }

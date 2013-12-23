@@ -29,6 +29,7 @@ import org.jboss.jca.core.api.connectionmanager.pool.FlushMode;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
+import org.jboss.jca.core.spi.transaction.ConnectableResourceListener;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -47,7 +48,7 @@ import org.jboss.logging.Messages;
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a> 
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a> 
  */
-public abstract class AbstractConnectionListener implements ConnectionListener
+public abstract class AbstractConnectionListener implements ConnectionListener, ConnectableResourceListener
 {
    private final CoreLogger log;
    
@@ -470,6 +471,26 @@ public abstract class AbstractConnectionListener implements ConnectionListener
     * {@inheritDoc}
     */   
    public void localTransactionStarted(ConnectionEvent event)
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */   
+   public void handleCreated(Object h)
+   {
+      registerConnection(h);
+
+      if (getCachedConnectionManager() != null)
+      {
+         getCachedConnectionManager().registerConnection(getConnectionManager(), this, h, null);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */   
+   public void handleClosed(Object h)
    {
    }
 

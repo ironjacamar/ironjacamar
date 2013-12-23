@@ -31,11 +31,11 @@ import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
 import org.jboss.jca.common.api.metadata.ra.XsdString;
 import org.jboss.jca.common.api.metadata.ra.ra15.Connector15;
 import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapters;
-import org.jboss.jca.common.metadata.ds.v12.DsParser;
-import org.jboss.jca.common.metadata.ironjacamar.v11.IronJacamarParser;
+import org.jboss.jca.common.metadata.ds.v13.DsParser;
+import org.jboss.jca.common.metadata.ironjacamar.v12.IronJacamarParser;
 import org.jboss.jca.common.metadata.ra.RaParser;
 import org.jboss.jca.common.metadata.ra.common.ConfigPropertyImpl;
-import org.jboss.jca.common.metadata.resourceadapter.v11.ResourceAdapterParser;
+import org.jboss.jca.common.metadata.resourceadapter.v12.ResourceAdapterParser;
 
 import java.io.File;
 import java.io.FileInputStream;

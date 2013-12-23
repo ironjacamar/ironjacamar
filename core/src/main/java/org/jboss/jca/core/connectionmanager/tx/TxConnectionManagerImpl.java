@@ -600,18 +600,25 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
          if (eisProductVersion == null)
             eisProductVersion = getJndiName();
 
-         if (mc instanceof org.jboss.jca.core.spi.transaction.ConnectableResource)
+         if (isConnectable())
          {
-            org.jboss.jca.core.spi.transaction.ConnectableResource cr =
-               (org.jboss.jca.core.spi.transaction.ConnectableResource)mc;
+            if (mc instanceof org.jboss.jca.core.spi.transaction.ConnectableResource)
+            {
+               org.jboss.jca.core.spi.transaction.ConnectableResource cr =
+                  (org.jboss.jca.core.spi.transaction.ConnectableResource)mc;
 
-            xaResource = txIntegration.createConnectableLocalXAResource(this, eisProductName, eisProductVersion,
-                                                                        getJndiName(), cr);
+               xaResource = txIntegration.createConnectableLocalXAResource(this, eisProductName, eisProductVersion,
+                                                                           getJndiName(), cr);
+            }
+            else if (txIntegration.isConnectableResource(mc))
+            {
+               xaResource = txIntegration.createConnectableLocalXAResource(this, eisProductName, eisProductVersion,
+                                                                           getJndiName(), mc);
+            }
          }
-         else
-         {
+
+         if (xaResource == null)
             xaResource = txIntegration.createLocalXAResource(this, eisProductName, eisProductVersion, getJndiName());
-         }
     
          if (xaResourceTimeout != 0)
          {
@@ -644,30 +651,35 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
             if (eisProductVersion == null)
                eisProductVersion = getJndiName();
 
-            boolean firstResource = false;
-
-            if (mc instanceof org.jboss.jca.core.spi.transaction.FirstResource)
+            if (isConnectable())
             {
-               firstResource = true;
-            }            
+               if (mc instanceof org.jboss.jca.core.spi.transaction.ConnectableResource)
+               {
+                  org.jboss.jca.core.spi.transaction.ConnectableResource cr =
+                     (org.jboss.jca.core.spi.transaction.ConnectableResource)mc;
 
-            if (mc instanceof org.jboss.jca.core.spi.transaction.ConnectableResource)
-            {
-               org.jboss.jca.core.spi.transaction.ConnectableResource cr =
-                  (org.jboss.jca.core.spi.transaction.ConnectableResource)mc;
-
-               xaResource = txIntegration.createConnectableXAResourceWrapper(mc.getXAResource(), padXid, 
-                                                                             isSameRMOverride, 
-                                                                             eisProductName, eisProductVersion,
-                                                                             getJndiName(),
-                                                                             cr, firstResource);
+                  xaResource = txIntegration.createConnectableXAResourceWrapper(mc.getXAResource(), padXid, 
+                                                                                isSameRMOverride, 
+                                                                                eisProductName, eisProductVersion,
+                                                                                getJndiName(),
+                                                                                cr);
+               }
+               else if (txIntegration.isConnectableResource(mc))
+               {
+                  xaResource = txIntegration.createConnectableXAResourceWrapper(mc.getXAResource(), padXid, 
+                                                                                isSameRMOverride, 
+                                                                                eisProductName, eisProductVersion,
+                                                                                getJndiName(),
+                                                                                mc);
+               }
             }
-            else
+
+            if (xaResource == null)
             {
                xaResource = txIntegration.createXAResourceWrapper(mc.getXAResource(), padXid, 
                                                                   isSameRMOverride, 
                                                                   eisProductName, eisProductVersion,
-                                                                  getJndiName(), firstResource);
+                                                                  getJndiName(), txIntegration.isFirstResource(mc));
             }
 
             if (trace)

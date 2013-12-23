@@ -49,26 +49,34 @@ import org.jboss.logging.Messages;
 public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
 {
    /** The serialVersionUID */
-   private static final long serialVersionUID = -5214100851560229431L;
+   private static final long serialVersionUID = 2L;
 
    /** The bundle */
    private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
-   private final Boolean jta;
+   /** JTA */
+   protected final Boolean jta;
 
-   private final String connectionUrl;
+   /** Connection URL */
+   protected final String connectionUrl;
 
-   private String driverClass;
+   /** Driver class */
+   protected String driverClass;
 
-   private String dataSourceClass;
+   /** DataSource class */
+   protected String dataSourceClass;
 
-   private final String driver;
+   /** Driver */
+   protected final String driver;
 
-   private final HashMap<String, String> connectionProperties;
+   /** Connection properties */
+   protected final Map<String, String> connectionProperties;
 
-   private final String newConnectionSql;
+   /** New connection SQL */
+   protected final String newConnectionSql;
 
-   private final CommonPool pool;
+   /** Pool */
+   protected final CommonPool pool;
 
    /**
     * Create a new DataSourceImpl.

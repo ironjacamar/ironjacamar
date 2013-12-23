@@ -42,9 +42,11 @@ public class CommonConnDefImpl extends org.jboss.jca.common.metadata.common.v10.
    /** The serialVersionUID */
    private static final long serialVersionUID = 3L;
 
-   private final Boolean sharable;
+   /** Sharable */
+   protected final Boolean sharable;
 
-   private final Boolean enlistment;
+   /** Enlistment */
+   protected final Boolean enlistment;
 
    /**
     * Create a new ConnectionDefinition.

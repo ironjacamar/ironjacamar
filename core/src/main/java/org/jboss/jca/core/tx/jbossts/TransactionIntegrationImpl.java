@@ -33,6 +33,7 @@ import org.jboss.jca.core.spi.transaction.xa.XAResourceWrapper;
 import org.jboss.jca.core.spi.transaction.xa.XATerminator;
 
 import javax.resource.spi.ActivationSpec;
+import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.ResourceAdapter;
 import javax.transaction.TransactionManager;
@@ -182,6 +183,20 @@ public class TransactionIntegrationImpl implements TransactionIntegration
    /**
     * {@inheritDoc}
     */
+   public LocalXAResource createConnectableLocalXAResource(ConnectionManager cm,
+                                                           String productName, String productVersion,
+                                                           String jndiName, ManagedConnection mc)
+   {
+      LocalXAResource result = new LocalConnectableXAResourceImpl(productName, productVersion, jndiName,
+                                                                  (org.jboss.tm.ConnectableResource)mc);
+      result.setConnectionManager(cm);
+
+      return result;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public LocalXAResource createLocalXAResource(ConnectionManager cm,
                                                 String productName, String productVersion,
                                                 String jndiName)
@@ -199,10 +214,10 @@ public class TransactionIntegrationImpl implements TransactionIntegration
                                                                boolean pad, Boolean override, 
                                                                String productName, String productVersion,
                                                                String jndiName,
-                                                               ConnectableResource cr,
-                                                               boolean firstResource)
+                                                               ConnectableResource cr)
    {
-      if (firstResource)
+      if (cr instanceof org.jboss.jca.core.spi.transaction.FirstResource ||
+          cr instanceof org.jboss.tm.FirstResource)
       {
          return new FirstResourceConnectableXAResourceWrapperImpl(xares, pad, override,
                                                                   productName, productVersion, jndiName,
@@ -213,6 +228,30 @@ public class TransactionIntegrationImpl implements TransactionIntegration
          return new ConnectableXAResourceWrapperImpl(xares, pad, override,
                                                      productName, productVersion, jndiName,
                                                      cr);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public XAResourceWrapper createConnectableXAResourceWrapper(XAResource xares,
+                                                               boolean pad, Boolean override, 
+                                                               String productName, String productVersion,
+                                                               String jndiName,
+                                                               ManagedConnection mc)
+   {
+      if (mc instanceof org.jboss.jca.core.spi.transaction.FirstResource ||
+          mc instanceof org.jboss.tm.FirstResource)
+      {
+         return new FirstResourceConnectableXAResourceWrapperImpl(xares, pad, override,
+                                                                  productName, productVersion, jndiName,
+                                                                  (org.jboss.tm.ConnectableResource)mc);
+      }
+      else
+      {
+         return new ConnectableXAResourceWrapperImpl(xares, pad, override,
+                                                     productName, productVersion, jndiName,
+                                                     (org.jboss.tm.ConnectableResource)mc);
       }
    }
 
@@ -232,5 +271,23 @@ public class TransactionIntegrationImpl implements TransactionIntegration
       {
          return new XAResourceWrapperImpl(xares, pad, override, productName, productVersion, jndiName);
       }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isFirstResource(ManagedConnection mc)
+   {
+      return mc != null && (mc instanceof org.jboss.jca.core.spi.transaction.FirstResource ||
+                            mc instanceof org.jboss.tm.FirstResource);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isConnectableResource(ManagedConnection mc)
+   {
+      return mc != null && (mc instanceof ConnectableResource ||
+                            mc instanceof org.jboss.tm.ConnectableResource);
    }
 }

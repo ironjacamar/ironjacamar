@@ -22,6 +22,7 @@
 package org.jboss.jca.core.tx.jbossts;
 
 import org.jboss.jca.core.spi.transaction.ConnectableResource;
+import org.jboss.jca.core.spi.transaction.ConnectableResourceListener;
 
 import javax.transaction.xa.XAResource;
 
@@ -35,7 +36,13 @@ public class ConnectableXAResourceWrapperImpl extends XAResourceWrapperImpl
               org.jboss.tm.ConnectableResource
 {
    /** The connectable resource */
-   private ConnectableResource cr;
+   private ConnectableResource cr1;
+
+   /** The connectable resource */
+   private org.jboss.tm.ConnectableResource cr2;
+
+   /** The connectable resource listener */
+   private ConnectableResourceListener crl;
 
    /**
     * Creates a new wrapper instance.
@@ -52,15 +59,66 @@ public class ConnectableXAResourceWrapperImpl extends XAResourceWrapperImpl
                                            String jndiName, ConnectableResource cr)
    {
       super(resource, pad, override, productName, productVersion, jndiName);
-      this.cr = cr;
+      this.cr1 = cr;
+      this.cr2 = null;
+      this.crl = null;
+   }
+
+   /**
+    * Creates a new wrapper instance.
+    * @param resource xaresource
+    * @param pad pad
+    * @param override override
+    * @param productName product name
+    * @param productVersion product version
+    * @param jndiName jndi name
+    * @param cr connectable resource
+    */   
+   public ConnectableXAResourceWrapperImpl(XAResource resource, boolean pad, Boolean override, 
+                                           String productName, String productVersion,
+                                           String jndiName, org.jboss.tm.ConnectableResource cr)
+   {
+      super(resource, pad, override, productName, productVersion, jndiName);
+      this.cr1 = null;
+      this.cr2 = cr;
+      this.crl = null;
    }
 
    /**
     * {@inheritDoc}
     */
-   public AutoCloseable getConnection() throws Exception
+   public Object getConnection() throws Exception
    {
-      return cr.getConnection();
+      Object result = null;
+
+      if (cr1 != null)
+      {
+         result = cr1.getConnection();
+      }
+      else
+      {
+         try
+         {
+            result = cr2.getConnection();
+         }
+         catch (Throwable t)
+         {
+            throw new Exception(t.getMessage(), t);
+         }
+      }
+
+      if (crl != null)
+         crl.handleCreated(result);
+
+      return result;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setConnectableResourceListener(ConnectableResourceListener crl)
+   {
+      this.crl = crl;
    }
 
    /**
@@ -79,14 +137,34 @@ public class ConnectableXAResourceWrapperImpl extends XAResourceWrapperImpl
       if (!super.equals(other))
          return false;
 
-      if (cr != null)
+      if (cr1 != null)
       {
-         if (!cr.equals(other.cr))
+         if (!cr1.equals(other.cr1))
             return false;
       }
       else
       {
-         if (other.cr != null)
+         if (other.cr1 != null)
+            return false;
+      }
+      if (cr2 != null)
+      {
+         if (!cr2.equals(other.cr2))
+            return false;
+      }
+      else
+      {
+         if (other.cr2 != null)
+            return false;
+      }
+      if (crl != null)
+      {
+         if (!crl.equals(other.crl))
+            return false;
+      }
+      else
+      {
+         if (other.crl != null)
             return false;
       }
 
@@ -100,7 +178,9 @@ public class ConnectableXAResourceWrapperImpl extends XAResourceWrapperImpl
    {
       int result = 31;
 
-      result += cr != null ? 7 * cr.hashCode() : 7;
+      result += cr1 != null ? 7 * cr1.hashCode() : 7;
+      result += cr2 != null ? 7 * cr2.hashCode() : 7;
+      result += crl != null ? 7 * crl.hashCode() : 7;
 
       return result;
    }

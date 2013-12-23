@@ -34,5 +34,11 @@ public interface ConnectableResource
     * @return The connection
     * @exception Exception If an error occurs
     */
-   public AutoCloseable getConnection() throws Exception;
+   public Object getConnection() throws Exception;
+
+   /**
+    * Set connectable resource listener
+    * @param crl The connectable resource listener
+    */
+   public void setConnectableResourceListener(ConnectableResourceListener crl);
 }

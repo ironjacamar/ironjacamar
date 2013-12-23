@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:noNamespaceSchemaLocation="http://www.ironjacamar.org/schema/datasources_1_2.xsd"> 
-  <datasource jndi-name="java:jboss/datasources/complexDs" enabled="false" pool-name="complexDs_Pool" jta="false" use-java-context="false" spy="true" use-ccm="false">
+             xsi:noNamespaceSchemaLocation="http://www.ironjacamar.org/schema/datasources_1_3.xsd"> 
+  <datasource jndi-name="java:jboss/datasources/complexDs" enabled="false" pool-name="complexDs_Pool" jta="false" use-java-context="false" spy="true" use-ccm="false" connectable="true">
     <connection-url>
       jdbc:h2:mem:test;DB_CLOSE_DELAY=-1
     </connection-url>
@@ -127,7 +127,7 @@
       <track-statements>nowarn</track-statements>
     </statement>
   </datasource>
-  <xa-datasource jndi-name="java:jboss/xa-datasources/complexXaDs" pool-name="complexXaDs_Pool" use-java-context="true" spy="false" use-ccm="true" enabled="true">
+  <xa-datasource jndi-name="java:jboss/xa-datasources/complexXaDs" pool-name="complexXaDs_Pool" use-java-context="true" spy="false" use-ccm="true" enabled="true" connectable="true">
     <xa-datasource-property name="name1">
       Property1
     </xa-datasource-property>

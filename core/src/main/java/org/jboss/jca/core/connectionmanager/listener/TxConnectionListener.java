@@ -31,6 +31,7 @@ import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.transaction.LockKey;
 import org.jboss.jca.core.connectionmanager.transaction.TransactionSynchronizer;
 import org.jboss.jca.core.connectionmanager.tx.TxConnectionManagerImpl;
+import org.jboss.jca.core.spi.transaction.ConnectableResource;
 import org.jboss.jca.core.spi.transaction.TxUtils;
 import org.jboss.jca.core.spi.transaction.local.LocalXAResource;
 
@@ -134,6 +135,10 @@ public class TxConnectionListener extends AbstractConnectionListener
       if (xaResource instanceof LocalXAResource)
       {
          ((LocalXAResource) xaResource).setConnectionListener(this);
+      }
+      if (xaResource instanceof ConnectableResource)
+      {
+         ((ConnectableResource) xaResource).setConnectableResourceListener(this);
       }
    }
 

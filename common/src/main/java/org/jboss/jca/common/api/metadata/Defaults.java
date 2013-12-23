@@ -69,6 +69,11 @@ public interface Defaults
     */
    public static final Boolean ENLISTMENT = Boolean.TRUE;
    
+   /**
+    * CONNECTABLE
+    */
+   public static final Boolean CONNECTABLE = Boolean.FALSE;
+   
    // POOL
 
    /**
