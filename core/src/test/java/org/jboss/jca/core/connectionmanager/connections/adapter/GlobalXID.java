@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.core.connectionmanager.connections.adapter;
 
+import java.util.Arrays;
+
 import javax.transaction.xa.Xid;
 
 /**
@@ -43,7 +45,7 @@ public class GlobalXID
       for (int i = 0; i < gid.length; ++i)
          hashCode += 37 * gid[i];
 
-      toString = new String(gid).trim();
+      toString = Arrays.toString(gid);
    }
 
    /**
