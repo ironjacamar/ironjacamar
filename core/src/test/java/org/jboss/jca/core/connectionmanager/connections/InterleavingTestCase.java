@@ -44,6 +44,7 @@ import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 import javax.transaction.RollbackException;
 import javax.transaction.Status;
+import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAException;
 
@@ -406,6 +407,8 @@ public class InterleavingTestCase
       
       mcf = new TestManagedConnectionFactory();
       cm = buildTxConnectionManager(mcf);
+
+      TestManagedConnection.noFailure();
    }
 
    private TxConnectionManagerImpl buildTxConnectionManager(ManagedConnectionFactory mcf) throws Throwable
@@ -438,6 +441,8 @@ public class InterleavingTestCase
    @After
    public void after() throws Throwable
    {
+      assertNull(tm.getTransaction());
+
       // Shutdown embedded
       embedded.shutdown();
 

@@ -70,8 +70,8 @@ public class TestManagedConnection  implements ManagedConnection, XAResource, Lo
 
    private AtomicBoolean destroyed = new AtomicBoolean(false);
 
-   private boolean failInPrepare = false;
-   private boolean failInCommit = false;
+   private static boolean failInPrepare = false;
+   private static boolean failInCommit = false;
 
    private static boolean failInStart = false;
    private static boolean failInEnd = false;
@@ -117,10 +117,10 @@ public class TestManagedConnection  implements ManagedConnection, XAResource, Lo
     * @param fail value
     * @param xaCode the code
     */
-   void setFailInPrepare(boolean fail, int xaCode)
+   public static void setFailInPrepare(boolean fail, int xaCode)
    {
-      this.failInPrepare = fail;
-      this.xaCode = xaCode;
+      failInPrepare = fail;
+      xaCode = xaCode;
    }
 
    /**
@@ -128,10 +128,22 @@ public class TestManagedConnection  implements ManagedConnection, XAResource, Lo
     * @param fail value
     * @param xaCode the code
     */
-   void setFailInCommit(boolean fail, int xaCode)
+   public static void setFailInCommit(boolean fail, int xaCode)
    {
-      this.failInCommit = fail;
-      this.xaCode = xaCode;
+      failInCommit = fail;
+      xaCode = xaCode;
+   }
+
+   /**
+    * No failure
+    */
+   public static void noFailure()
+   {
+      failInPrepare = false;
+      failInCommit = false;
+      failInStart = false;
+      failInEnd = false;
+      xaCode = 0;
    }
 
    /**
