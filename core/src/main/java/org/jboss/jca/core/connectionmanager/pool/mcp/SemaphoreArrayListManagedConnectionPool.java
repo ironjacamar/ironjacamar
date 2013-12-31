@@ -542,8 +542,6 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
          doDestroy(cl);
          cl = null;
-
-         prefill();
       }
    }
 
