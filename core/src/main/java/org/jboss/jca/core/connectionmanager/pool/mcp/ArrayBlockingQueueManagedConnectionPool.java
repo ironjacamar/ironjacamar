@@ -485,8 +485,6 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
 
          doDestroy(cl);
          cl = null;
-
-         prefill();
       }
    }
 
