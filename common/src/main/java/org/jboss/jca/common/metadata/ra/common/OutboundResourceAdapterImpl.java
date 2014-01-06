@@ -91,7 +91,10 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
       {
          this.authenticationMechanism = new ArrayList<AuthenticationMechanism>(0);
       }
-      this.reauthenticationSupport = reauthenticationSupport;
+      if (reauthenticationSupport != null)
+         this.reauthenticationSupport = reauthenticationSupport;
+      else
+         this.reauthenticationSupport = Boolean.FALSE;
       this.id = id;
       this.reauthenticationSupportId = reauthenticationSupportId;
       this.transactionSupportId = transactionSupportId;
@@ -179,7 +182,7 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
    @Override
    public boolean getReauthenticationSupport()
    {
-      return reauthenticationSupport;
+      return reauthenticationSupport == null ? false : reauthenticationSupport.booleanValue();
    }
 
    @Override
