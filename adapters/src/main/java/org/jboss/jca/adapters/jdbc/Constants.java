@@ -32,6 +32,9 @@ public class Constants
    /** The spy logger category */
    public static final String SPY_LOGGER_CATEGORY = "jboss.jdbc.spy";
 
+   /** The spy logger prefix for a datasource */
+   public static final String SPY_LOGGER_PREFIX_DATASOURCE = "DataSource";
+
    /** The spy logger prefix for a connection */
    public static final String SPY_LOGGER_PREFIX_CONNECTION = "Connection";
 

@@ -31,6 +31,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.security.PrivilegedAction;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -216,13 +219,12 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
    public ManagedConnection createManagedConnection(Subject subject, ConnectionRequestInfo cri)
       throws ResourceException
    {
-      Properties props = getConnectionProperties(connectionProps, subject, cri);
+      final Properties props = getConnectionProperties(connectionProps, subject, cri);
       // Some friendly drivers (Oracle, you guessed right) modify the props you supply.
       // Since we use our copy to identify compatibility in matchManagedConnection, we need
       // a pristine copy for our own use.  So give the friendly driver a copy.
-      Properties copy = (Properties) props.clone();
-      boolean trace = log.isTraceEnabled();
-      if (trace)
+      final Properties copy = (Properties) props.clone();
+      if (log.isTraceEnabled())
       {
          // Make yet another copy to mask the password
          Properties logCopy = copy;
@@ -237,17 +239,51 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       if (getURLDelimiter() != null && !getURLDelimiter().trim().equals("") && urlSelector == null)
          initUrlSelector();
 
-      if (urlSelector != null)
+      if (subject != null)
       {
-         return getHALocalManagedConnection(props, copy);
+         try
+         {
+            return Subject.doAs(subject, new PrivilegedExceptionAction<ManagedConnection>()
+            {
+               public ManagedConnection run() throws ResourceException
+               {
+                  if (urlSelector != null)
+                  {
+                     return getHALocalManagedConnection(props, copy);
+                  }
+                  else
+                  {
+                     return getLocalManagedConnection(props, copy);
+                  }
+               }
+            });
+         }
+         catch (PrivilegedActionException pe)
+         {
+            if (pe.getException() instanceof ResourceException)
+            {
+               throw (ResourceException)pe.getException();
+            }
+            else
+            {
+               throw new ResourceException(pe);
+            }
+         }
       }
       else
       {
-         return getLocalManagedConnection(props, copy);
+         if (urlSelector != null)
+         {
+            return getHALocalManagedConnection(props, copy);
+         }
+         else
+         {
+            return getLocalManagedConnection(props, copy);
+         }
       }
    }
 
-   private LocalManagedConnection getLocalManagedConnection(Properties props, Properties copy)
+   private LocalManagedConnection getLocalManagedConnection(final Properties props, final Properties copy)
       throws ResourceException
    {
       Connection con = null;
@@ -289,7 +325,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       }
    }
 
-   private LocalManagedConnection getHALocalManagedConnection(Properties props, Properties copy)
+   private LocalManagedConnection getHALocalManagedConnection(final Properties props, final Properties copy)
       throws ResourceException
    {
       boolean trace = log.isTraceEnabled();
