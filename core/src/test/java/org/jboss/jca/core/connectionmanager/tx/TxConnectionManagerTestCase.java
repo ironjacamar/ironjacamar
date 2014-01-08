@@ -432,8 +432,9 @@ public class TxConnectionManagerTestCase
       
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       return (TxConnectionManager) cmf.createTransactional(TransactionSupportLevel.XATransaction, pool,
-                                   null, null, false, null, FlushStrategy.FAILING_CONNECTION_ONLY,
-                                   null, null, ti, null, null, null, null, null);
+                                                           null, null, false, null, false,
+                                                           FlushStrategy.FAILING_CONNECTION_ONLY,
+                                                           null, null, ti, null, null, null, null, null);
    }
 
    /**

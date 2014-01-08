@@ -38,6 +38,12 @@ public interface DataSource extends org.jboss.jca.common.api.metadata.ds.DataSou
    public DsPool getPool();
 
    /**
+    * Get the connectable setting.
+    * @return The value
+    */
+   public Boolean isConnectable();
+
+   /**
     * A Tag.
     */
    public enum Tag
@@ -217,7 +223,12 @@ public interface DataSource extends org.jboss.jca.common.api.metadata.ds.DataSou
       /**
        * jta attribute
        */
-      JTA("jta");
+      JTA("jta"),
+
+      /**
+       * connectable attribute
+       */
+      CONNECTABLE("connectable");
 
       private String name;
 

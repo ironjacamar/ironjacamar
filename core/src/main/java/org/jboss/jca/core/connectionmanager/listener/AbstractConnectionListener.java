@@ -27,6 +27,7 @@ import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
+import org.jboss.jca.core.spi.transaction.ConnectableResourceListener;
 
 import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -47,7 +48,7 @@ import org.jboss.logging.Messages;
  * @version $Rev: $
  *
  */
-public abstract class AbstractConnectionListener implements ConnectionListener
+public abstract class AbstractConnectionListener implements ConnectionListener, ConnectableResourceListener
 {
    private final CoreLogger log;
    
@@ -387,6 +388,26 @@ public abstract class AbstractConnectionListener implements ConnectionListener
     * {@inheritDoc}
     */   
    public void localTransactionStarted(ConnectionEvent event)
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */   
+   public void handleCreated(Object h)
+   {
+      registerConnection(h);
+
+      if (getCachedConnectionManager() != null)
+      {
+         getCachedConnectionManager().registerConnection(getConnectionManager(), this, h, null);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */   
+   public void handleClosed(Object h)
    {
    }
 

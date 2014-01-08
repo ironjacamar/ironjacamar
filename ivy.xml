@@ -167,8 +167,8 @@
     <dependency org="org.jboss.arquillian.test" name="arquillian-test-impl-base" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-embedded-arquillian"/>
     <dependency org="org.jboss.arquillian.test" name="arquillian-test-spi" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-embedded-arquillian"/>
     <dependency org="org.jboss.arquillian.testenricher" name="arquillian-testenricher-resource" rev="${version.arquillian}" conf="arquillian,ironjacamar-depchain,ironjacamar-embedded-arquillian"/>
-    <dependency org="org.jboss.jbossts" name="jbossjta" rev="${version.jboss.ts}" conf="common,ironjacamar-depchain"/>
-    <dependency org="org.jboss.jbossts" name="jbossjta-integration" rev="${version.jboss.ts}" conf="common,ironjacamar-depchain"/>
+    <dependency org="org.jboss.jbossts.jta" name="narayana-jta" rev="${version.jboss.ts}" conf="common,ironjacamar-depchain"/>
+    <dependency org="org.jboss.jbossts.jts" name="jbossjts-integration" rev="${version.jboss.ts}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.jboss.naming" name="jnpserver" rev="${version.jboss.naming}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.jboss.netty" name="netty" rev="${version.jboss.netty}" conf="hornetq"/>
     <dependency org="org.jboss.papaki" name="papaki-core" rev="${version.jboss.papaki}" conf="common,ironjacamar-common-impl-papaki,ironjacamar-depchain"/>

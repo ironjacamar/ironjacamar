@@ -73,7 +73,7 @@ public class PrefillTestCase
 
       NoTxConnectionManager noTxConnectionManager = 
          cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, 
-                                    pool, null, null, false, null, 
+                                    pool, null, null, false, null, false,
                                     FlushStrategy.FAILING_CONNECTION_ONLY,
                                     null, null);
 
@@ -117,7 +117,7 @@ public class PrefillTestCase
 
       NoTxConnectionManager noTxConnectionManager = 
          cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool, 
-                                    null, null, false, null, 
+                                    null, null, false, null, false,
                                     FlushStrategy.FAILING_CONNECTION_ONLY,
                                     null, null);
 
@@ -182,7 +182,7 @@ public class PrefillTestCase
 
       NoTxConnectionManager noTxConnectionManager = 
          cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, app,
-                                    subjectFactory, "domain", false, null, 
+                                    subjectFactory, "domain", false, null, false,
                                     FlushStrategy.FAILING_CONNECTION_ONLY,
                                     null, null);
 
@@ -229,7 +229,7 @@ public class PrefillTestCase
 
       NoTxConnectionManager noTxConnectionManager = 
          cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, app,
-                                    subjectFactory, "domain", false, null, 
+                                    subjectFactory, "domain", false, null, false,
                                     FlushStrategy.FAILING_CONNECTION_ONLY,
                                     null, null);
 

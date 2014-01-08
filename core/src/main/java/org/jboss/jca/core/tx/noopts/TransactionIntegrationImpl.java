@@ -23,6 +23,7 @@ package org.jboss.jca.core.tx.noopts;
 
 import org.jboss.jca.core.api.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
+import org.jboss.jca.core.spi.transaction.ConnectableResource;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.core.spi.transaction.local.LocalXAResource;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
@@ -85,8 +86,7 @@ public class TransactionIntegrationImpl implements TransactionIntegration
    }
 
    /**
-    * Get the transaction manager
-    * @return The value
+    * {@inheritDoc}
     */
    public TransactionManager getTransactionManager()
    {
@@ -94,8 +94,7 @@ public class TransactionIntegrationImpl implements TransactionIntegration
    }
 
    /**
-    * Get the transaction synchronization registry
-    * @return The value
+    * {@inheritDoc}
     */
    public TransactionSynchronizationRegistry getTransactionSynchronizationRegistry()
    {
@@ -103,8 +102,7 @@ public class TransactionIntegrationImpl implements TransactionIntegration
    }
 
    /**
-    * Get the user transaction registry
-    * @return The value
+    * {@inheritDoc}
     */
    public UserTransactionRegistry getUserTransactionRegistry()
    {
@@ -112,8 +110,7 @@ public class TransactionIntegrationImpl implements TransactionIntegration
    }
 
    /**
-    * Get the recovery registry
-    * @return The value
+    * {@inheritDoc}
     */
    public XAResourceRecoveryRegistry getRecoveryRegistry()
    {
@@ -121,8 +118,7 @@ public class TransactionIntegrationImpl implements TransactionIntegration
    }
 
    /**
-    * Get the XATerminator
-    * @return The value
+    * {@inheritDoc}
     */
    public XATerminator getXATerminator()
    {
@@ -130,18 +126,7 @@ public class TransactionIntegrationImpl implements TransactionIntegration
    }
 
    /**
-    * Create an XAResourceRecovery instance
-    *
-    * @param mcf The managed connection factory
-    * @param pad Should the branch qualifier for Xid's be padded
-    * @param override Should the isSameRM value be overriden; <code>null</code> for instance equally check
-    * @param wrapXAResource Should the XAResource be wrapped
-    * @param recoverUserName The user name for recovery
-    * @param recoverPassword The password for recovery
-    * @param recoverSecurityDomain The security domain for recovery
-    * @param subjectFactory The subject factory
-    * @param plugin The recovery plugin
-    * @return The value
+    * {@inheritDoc}
     */
    public XAResourceRecovery createXAResourceRecovery(ResourceAdapter rar,
                                                       ActivationSpec as,
@@ -165,12 +150,7 @@ public class TransactionIntegrationImpl implements TransactionIntegration
    }
 
    /**
-    * Create a LocalXAResource instance
-    * @param cm The connection manager
-    * @param productName The product name
-    * @param productVersion The product version
-    * @param jndiName The JNDI name for the resource
-    * @return The value
+    * {@inheritDoc}
     */
    public LocalXAResource createLocalXAResource(ConnectionManager cm, 
                                                 String productName, String productVersion,
@@ -180,14 +160,17 @@ public class TransactionIntegrationImpl implements TransactionIntegration
    }
 
    /**
-    * Create an XAResource wrapper instance
-    * @param xares The XAResource instance
-    * @param pad Should the branch qualifier for Xid's be padded
-    * @param override Should the isSameRM value be overriden; <code>null</code> for instance equally check
-    * @param productName The product name
-    * @param productVersion The product version
-    * @param jndiName The JNDI name for the resource
-    * @return The value
+    * {@inheritDoc}
+    */
+   public LocalXAResource createConnectableLocalXAResource(ConnectionManager cm, 
+                                                           String productName, String productVersion,
+                                                           String jndiName, ConnectableResource cr)
+   {
+      return new LocalConnectableXAResourceImpl(productName, productVersion, jndiName, cr);
+   }
+
+   /**
+    * {@inheritDoc}
     */
    public XAResourceWrapper createXAResourceWrapper(XAResource xares,
                                                     boolean pad, Boolean override, 

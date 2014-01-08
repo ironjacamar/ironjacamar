@@ -285,7 +285,8 @@ public class XATxConnectionManagerTestCase
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       ConnectionManager connectionManager =
          cmf.createTransactional(TransactionSupportLevel.XATransaction, pool,
-                                 null, null, false, null, FlushStrategy.FAILING_CONNECTION_ONLY,
+                                 null, null, false, null, false,
+                                 FlushStrategy.FAILING_CONNECTION_ONLY,
                                  null, null, ti,
                                  Boolean.FALSE, null, null, null, null);
       assertNotNull(connectionManager);

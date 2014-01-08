@@ -544,7 +544,18 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
          if (eisProductVersion == null)
             eisProductVersion = getJndiName();
 
-         xaResource = txIntegration.createLocalXAResource(this, eisProductName, eisProductVersion, getJndiName());
+         if (isConnectable() && mc instanceof org.jboss.jca.core.spi.transaction.ConnectableResource)
+         {
+            org.jboss.jca.core.spi.transaction.ConnectableResource cr =
+               (org.jboss.jca.core.spi.transaction.ConnectableResource)mc;
+
+            xaResource = txIntegration.createConnectableLocalXAResource(this, eisProductName, eisProductVersion,
+                                                                        getJndiName(), cr);
+         }
+         else
+         {
+            xaResource = txIntegration.createLocalXAResource(this, eisProductName, eisProductVersion, getJndiName());
+         }
     
          if (xaResourceTimeout != 0)
          {

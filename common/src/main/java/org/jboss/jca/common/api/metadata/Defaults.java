@@ -64,6 +64,11 @@ public interface Defaults
     */
    public static final Boolean SHARABLE = Boolean.TRUE;
    
+   /**
+    * CONNECTABLE
+    */
+   public static final Boolean CONNECTABLE = Boolean.FALSE;
+   
    // POOL
 
    /**

@@ -1585,7 +1585,7 @@ public abstract class AbstractResourceAdapterDeployer
                            cm = cmf.createNonTransactional(tsl, pool,
                                                            getSubjectFactory(securityDomain), securityDomain,
                                                            useCCM, getCachedConnectionManager(),
-                                                           flushStrategy,
+                                                           false, flushStrategy,
                                                            allocationRetry, allocationRetryWaitMillis);
                         }
                         else
@@ -1621,7 +1621,7 @@ public abstract class AbstractResourceAdapterDeployer
                            cm = cmf.createTransactional(tsl, pool,
                                                         getSubjectFactory(securityDomain), securityDomain,
                                                         useCCM, getCachedConnectionManager(),
-                                                        flushStrategy,
+                                                        false, flushStrategy,
                                                         allocationRetry, allocationRetryWaitMillis,
                                                         getTransactionIntegration(), interleaving,
                                                         xaResourceTimeout, isSameRMOverride,
@@ -2112,7 +2112,7 @@ public abstract class AbstractResourceAdapterDeployer
                                                                        getSubjectFactory(securityDomain),
                                                                        securityDomain,
                                                                        useCCM, getCachedConnectionManager(),
-                                                                       flushStrategy,
+                                                                       false, flushStrategy,
                                                                        allocationRetry, allocationRetryWaitMillis);
                                     }
                                     else
@@ -2147,7 +2147,7 @@ public abstract class AbstractResourceAdapterDeployer
                                        cm = cmf.createTransactional(tsl, pool,
                                                                     getSubjectFactory(securityDomain), securityDomain,
                                                                     useCCM, getCachedConnectionManager(),
-                                                                    flushStrategy,
+                                                                    false, flushStrategy,
                                                                     allocationRetry, allocationRetryWaitMillis,
                                                                     getTransactionIntegration(),
                                                                     interleaving,
