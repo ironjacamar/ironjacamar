@@ -1569,8 +1569,7 @@ public abstract class AbstractResourceAdapterDeployer
                            }
                         }
 
-                        if (ra10 != null && ra10.getReauthenticationSupport() != null &&
-                            ra10.getReauthenticationSupport().booleanValue())
+                        if (ra10 != null && ra10.getReauthenticationSupport())
                         {
                            strategy = PoolStrategy.REAUTH;
                         }
@@ -2117,7 +2116,8 @@ public abstract class AbstractResourceAdapterDeployer
                                        }
                                     }
 
-                                    if (ra.getOutboundResourceadapter().getReauthenticationSupport())
+                                    if (ra != null && ra.getOutboundResourceadapter() != null &&
+                                        ra.getOutboundResourceadapter().getReauthenticationSupport())
                                     {
                                        strategy = PoolStrategy.REAUTH;
                                     }

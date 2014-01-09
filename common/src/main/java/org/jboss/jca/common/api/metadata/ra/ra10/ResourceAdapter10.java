@@ -98,7 +98,7 @@ public interface ResourceAdapter10 extends ResourceAdapter, MergeableMetadata<Re
     *
     * @return the reauthenticationSupport.
     */
-   public abstract Boolean getReauthenticationSupport();
+   public abstract boolean getReauthenticationSupport();
 
    /**
     * Get the securityPermission.

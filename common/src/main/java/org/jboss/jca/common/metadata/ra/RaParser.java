@@ -707,7 +707,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
       TransactionSupportEnum transactionSupport = null;
       ArrayList<AuthenticationMechanism> authenticationMechanism = new ArrayList<AuthenticationMechanism>();
       ArrayList<ConfigProperty> configProperties = new ArrayList<ConfigProperty>();
-      Boolean reauthenticationSupport = null;
+      boolean reauthenticationSupport = false;
       ArrayList<SecurityPermission> securityPermission = new ArrayList<SecurityPermission>();
       String id = reader.getAttributeValue(null, ResourceAdapter1516.Attribute.ID.getLocalName());
       String rsId = null;
@@ -1065,7 +1065,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
    private OutboundResourceAdapter parseOutboundResourceadapter(XMLStreamReader reader) throws XMLStreamException,
          ParserException
    {
-      Boolean reauthenticationSupport = null;
+      boolean reauthenticationSupport = false;
       TransactionSupportEnum transactionSupport = null;
       ArrayList<ConnectionDefinition> connectionDefinition = new ArrayList<ConnectionDefinition>();
       ArrayList<AuthenticationMechanism> authenticationMechanism = new ArrayList<AuthenticationMechanism>();
