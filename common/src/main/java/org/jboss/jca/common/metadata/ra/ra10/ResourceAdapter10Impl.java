@@ -71,7 +71,7 @@ public class ResourceAdapter10Impl extends AbstractResourceAdapetrImpl implement
 
    private final ArrayList<AuthenticationMechanism> authenticationMechanism;
 
-   private final Boolean reauthenticationSupport;
+   private final boolean reauthenticationSupport;
 
    private final String reauthenticationSupportId;
 
@@ -100,7 +100,7 @@ public class ResourceAdapter10Impl extends AbstractResourceAdapetrImpl implement
    public ResourceAdapter10Impl(XsdString managedConnectionFactoryClass, XsdString connectionFactoryInterface,
       XsdString connectionFactoryImplClass, XsdString connectionInterface, XsdString connectionImplClass,
       TransactionSupportEnum transactionSupport, List<AuthenticationMechanism> authenticationMechanism,
-      List<ConfigProperty> configProperties, Boolean reauthenticationSupport,
+      List<ConfigProperty> configProperties, boolean reauthenticationSupport,
       List<SecurityPermission> securityPermissions, String id, String transactionSupportId,
       String reauthenticationSupportId)
    {
@@ -173,7 +173,7 @@ public class ResourceAdapter10Impl extends AbstractResourceAdapetrImpl implement
    public ResourceAdapter10Impl(XsdString managedConnectionFactoryClass, XsdString connectionFactoryInterface,
       XsdString connectionFactoryImplClass, XsdString connectionInterface, XsdString connectionImplClass,
       TransactionSupportEnum transactionSupport, List<AuthenticationMechanism> authenticationMechanism,
-      List<ConfigProperty> configProperties, Boolean reauthenticationSupport,
+      List<ConfigProperty> configProperties, boolean reauthenticationSupport,
       List<SecurityPermission> securityPermissions, String id)
    {
       this(managedConnectionFactoryClass, connectionFactoryInterface, connectionFactoryImplClass, connectionInterface,
@@ -276,7 +276,7 @@ public class ResourceAdapter10Impl extends AbstractResourceAdapetrImpl implement
     * @return the reauthenticationSupport.
     */
    @Override
-   public Boolean getReauthenticationSupport()
+   public boolean getReauthenticationSupport()
    {
       return reauthenticationSupport;
    }
@@ -339,7 +339,7 @@ public class ResourceAdapter10Impl extends AbstractResourceAdapetrImpl implement
       result = prime * result + ((transactionSupportId == null) ? 0 : transactionSupportId.hashCode());
       result = prime * result +
                ((managedConnectionFactoryClass == null) ? 0 : managedConnectionFactoryClass.hashCode());
-      result = prime * result + ((reauthenticationSupport == null) ? 0 : reauthenticationSupport.hashCode());
+      result = prime * result + (reauthenticationSupport ? 1 : 0);
       result = prime * result + ((securityPermissions == null) ? 0 : securityPermissions.hashCode());
       result = prime * result + ((transactionSupport == null) ? 0 : transactionSupport.hashCode());
       return result;
@@ -425,12 +425,7 @@ public class ResourceAdapter10Impl extends AbstractResourceAdapetrImpl implement
       }
       else if (!managedConnectionFactoryClass.equals(other.managedConnectionFactoryClass))
          return false;
-      if (reauthenticationSupport == null)
-      {
-         if (other.reauthenticationSupport != null)
-            return false;
-      }
-      else if (!reauthenticationSupport.equals(other.reauthenticationSupport))
+      if (reauthenticationSupport != other.reauthenticationSupport)
          return false;
       if (securityPermissions == null)
       {
@@ -484,13 +479,10 @@ public class ResourceAdapter10Impl extends AbstractResourceAdapetrImpl implement
          }
       }
 
-      if (reauthenticationSupport != null)
-      {
-         sb.append("<" + Tag.REAUTHENTICATION_SUPPORT)
-            .append(reauthenticationSupportId == null ? "" : " id=\"" + reauthenticationSupportId + "\"").append(">");
-         sb.append(reauthenticationSupport);
-         sb.append("</" + Tag.REAUTHENTICATION_SUPPORT + ">");
-      }
+      sb.append("<" + Tag.REAUTHENTICATION_SUPPORT)
+         .append(reauthenticationSupportId == null ? "" : " id=\"" + reauthenticationSupportId + "\"").append(">");
+      sb.append(reauthenticationSupport);
+      sb.append("</" + Tag.REAUTHENTICATION_SUPPORT + ">");
 
       if (securityPermissions != null)
       {
@@ -548,9 +540,7 @@ public class ResourceAdapter10Impl extends AbstractResourceAdapetrImpl implement
             : this.connectionInterface;
          List<AuthenticationMechanism> newauthenticationMechanism = MergeUtil.mergeList(this.authenticationMechanism,
             inputMD.authenticationMechanism);
-         Boolean newreauthenticationSupport = this.reauthenticationSupport == null
-            ? inputMD.reauthenticationSupport
-            : this.reauthenticationSupport;
+         boolean newreauthenticationSupport = inputMD.reauthenticationSupport || this.reauthenticationSupport;
          TransactionSupportEnum newtransactionSupport = this.transactionSupport == null
             ? inputMD.transactionSupport
             : this.transactionSupport;

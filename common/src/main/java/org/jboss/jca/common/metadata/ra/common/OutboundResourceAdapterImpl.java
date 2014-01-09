@@ -52,7 +52,7 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
 
    private final ArrayList<AuthenticationMechanism> authenticationMechanism;
 
-   private final Boolean reauthenticationSupport;
+   private final boolean reauthenticationSupport;
 
    private String reauthenticationSupportId;
 
@@ -69,7 +69,7 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
     */
    public OutboundResourceAdapterImpl(List<ConnectionDefinition> connectionDefinition,
       TransactionSupportEnum transactionSupport, List<AuthenticationMechanism> authenticationMechanism,
-      Boolean reauthenticationSupport, String id, String transactionSupportId, String reauthenticationSupportId)
+      boolean reauthenticationSupport, String id, String transactionSupportId, String reauthenticationSupportId)
    {
       super();
       if (connectionDefinition != null)
@@ -106,7 +106,7 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
     */
    public OutboundResourceAdapterImpl(List<ConnectionDefinition> connectionDefinition,
       TransactionSupportEnum transactionSupport, List<AuthenticationMechanism> authenticationMechanism,
-      Boolean reauthenticationSupport, String id)
+      boolean reauthenticationSupport, String id)
    {
       this(connectionDefinition, transactionSupport, authenticationMechanism, reauthenticationSupport, id, null, null);
    }
@@ -222,7 +222,7 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
       result = prime * result + ((connectionDefinition == null) ? 0 : connectionDefinition.hashCode());
       result = prime * result + ((id == null) ? 0 : id.hashCode());
       result = prime * result + ((transactionSupport == null) ? 0 : transactionSupport.hashCode());
-      result = prime * result + ((reauthenticationSupport == null) ? 0 : reauthenticationSupport.hashCode());
+      result = prime * result + (reauthenticationSupport ? 1 : 0);
       result = prime * result + ((transactionSupportId == null) ? 0 : transactionSupportId.hashCode());
       result = prime * result + ((reauthenticationSupportId == null) ? 0 : reauthenticationSupportId.hashCode());
       return result;
@@ -282,14 +282,7 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
       {
          return false;
       }
-      if (reauthenticationSupport == null)
-      {
-         if (other.reauthenticationSupport != null)
-         {
-            return false;
-         }
-      }
-      else if (!reauthenticationSupport.equals(other.reauthenticationSupport))
+      if (reauthenticationSupport != other.reauthenticationSupport)
       {
          return false;
       }
@@ -362,13 +355,10 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
          }
       }
 
-      if (reauthenticationSupport != null)
-      {
-         sb.append("<").append(OutboundResourceAdapter.Tag.REAUTHENTICATION_SUPPORT)
-            .append(reauthenticationSupportId == null ? "" : " id=\"" + reauthenticationSupportId + "\"").append(">");
-         sb.append(reauthenticationSupport);
-         sb.append("</").append(OutboundResourceAdapter.Tag.REAUTHENTICATION_SUPPORT).append(">");
-      }
+      sb.append("<").append(OutboundResourceAdapter.Tag.REAUTHENTICATION_SUPPORT)
+         .append(reauthenticationSupportId == null ? "" : " id=\"" + reauthenticationSupportId + "\"").append(">");
+      sb.append(reauthenticationSupport);
+      sb.append("</").append(OutboundResourceAdapter.Tag.REAUTHENTICATION_SUPPORT).append(">");
 
       sb.append("</outbound-resourceadapter>");
 
