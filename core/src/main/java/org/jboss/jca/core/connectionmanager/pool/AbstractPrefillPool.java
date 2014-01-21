@@ -79,4 +79,14 @@ public abstract class AbstractPrefillPool extends AbstractPool implements Prefil
          }
       }
    }
+
+   /**
+    * Is prefill
+    * @return The value
+    */
+   @Override
+   protected boolean isPrefill()
+   {
+      return getPoolConfiguration().getMinSize() > 0;
+   }
 }

@@ -382,6 +382,14 @@ public interface CoreBundle
    @Message(id = 469, value = "Error during enlistment")
    public String errorDuringEnlistment();
 
+   /**
+    * You are trying to use a connection factory that has been shut down
+    * @param name The name
+    * @return The value
+    */
+   @Message(id = 470, value = "You are trying to use a connection factory that has been shut down: %s")
+   public String tryingUseConnectionFactoryShutDown(String name);
+
    // TRANSACTION SYNCHRONIZER (500)
    
    // POOL MANAGER (600)

@@ -330,6 +330,11 @@
             <entry>Error during enlistment</entry>
           </row>
           <row>
+            <entry>470</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>You are trying to use a connection factory that has been shut down</entry>
+          </row>
+          <row>
             <entry>501</entry>
             <entry><code>WARN</code></entry>
             <entry>Thread is not the enlisting thread</entry>

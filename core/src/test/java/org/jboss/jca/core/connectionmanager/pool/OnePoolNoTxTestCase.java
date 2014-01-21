@@ -182,26 +182,6 @@ public class OnePoolNoTxTestCase extends PoolTestCaseAbstract
 
    /**
     * 
-    * shutdownShouldLeaveSubPoolEmpty
-    * 
-    * @throws Exception in case of unexpected errors
-    */
-   @Test
-   public void shutdownShouldLeaveSubPoolEmpty() throws Exception
-   {
-      AbstractPool pool = getPool();
-      Object key1 = pool.getKey(null, null, true);
-      Object key2 = pool.getKey(null, null, false);
-      pool.getManagedConnectionPool(key1, null, null);
-      pool.getManagedConnectionPool(key2, null, null);
-      assertEquals(pool.getManagedConnectionPools().size(), 2);
-      ((OnePool) pool).shutdown();
-      assertEquals(pool.getManagedConnectionPools().size(), 0);
-
-   }
-
-   /**
-    * 
     * testConnection
     * 
     * @throws Exception in case of unexpected errors

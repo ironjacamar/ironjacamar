@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -95,6 +96,9 @@ public abstract class AbstractPool implements Pool
 
    /** Whether to use separate pools for transactional and non-transaction use */
    private final boolean noTxSeparatePools;
+
+   /** Shutdown */
+   private final AtomicBoolean shutdown = new AtomicBoolean(false);
 
    /** The poolName */
    private String poolName;
@@ -372,6 +376,7 @@ public abstract class AbstractPool implements Pool
       log.debug(poolName + ": flush(" + mode + ")");
 
       Set<ManagedConnectionPool> clearMcpPools = new HashSet<ManagedConnectionPool>();
+      int size = mcpPools.size();
 
       Iterator<ManagedConnectionPool> it = mcpPools.values().iterator();
       while (it.hasNext())
@@ -379,7 +384,7 @@ public abstract class AbstractPool implements Pool
          ManagedConnectionPool mcp = it.next();
          mcp.flush(mode);
 
-         if (mcp.isEmpty())
+         if (mcp.isEmpty() && !isPrefill() && size > 1)
             clearMcpPools.add(mcp);
       }
 
@@ -387,8 +392,11 @@ public abstract class AbstractPool implements Pool
       {
          for (ManagedConnectionPool mcp : clearMcpPools)
          {
-            mcp.shutdown();
-            mcpPools.values().remove(mcp);
+            if (mcp.isEmpty())
+            {
+               mcp.shutdown();
+               mcpPools.values().remove(mcp);
+            }
          }
       }
    }
@@ -401,6 +409,9 @@ public abstract class AbstractPool implements Pool
    {
       ConnectionListener cl = null;
       boolean separateNoTx = false;
+
+      if (shutdown.get())
+         throw new ResourceException(bundle.connectionManagerIsShutdown(poolName));
 
       if (noTxSeparatePools)
       {
@@ -464,10 +475,6 @@ public abstract class AbstractPool implements Pool
          {
             if (log.isDebugEnabled())
                log.debug("Got a RetryableException - trying to reinitialize the pool");
-
-            // Make sure that the managed connection pool is running
-            if (!mcp.isRunning())
-               mcp.reenable();
 
             //Getting connection from pool
             cl = mcp.getConnection(subject, cri);
@@ -562,10 +569,6 @@ public abstract class AbstractPool implements Pool
          {
             if (log.isDebugEnabled())
                log.debug("Got a RetryableException - trying to reinitialize the pool");
-
-            // Make sure that the managed connection pool is running
-            if (!mcp.isRunning())
-               mcp.reenable();
 
             //Getting connection from pool
             cl = mcp.getConnection(subject, cri);
@@ -690,9 +693,10 @@ public abstract class AbstractPool implements Pool
    /**
     * {@inheritDoc}
     */
-   public void shutdown()
+   public synchronized void shutdown()
    {
       log.debug(poolName + ": shutdown");
+      shutdown.set(true);
 
       Iterator<ManagedConnectionPool> it = mcpPools.values().iterator();
       while (it.hasNext())
@@ -732,6 +736,10 @@ public abstract class AbstractPool implements Pool
    {
       boolean result = false;
       ConnectionListener cl = null;
+
+      if (shutdown.get())
+         return false;
+
       try
       {
          boolean separateNoTx = false;
@@ -802,6 +810,24 @@ public abstract class AbstractPool implements Pool
    protected ConcurrentMap<Object, ManagedConnectionPool> getManagedConnectionPools()
    {
       return mcpPools;
+   }
+
+   /**
+    * Get the pool configuration
+    * @return The value
+    */
+   protected PoolConfiguration getPoolConfiguration()
+   {
+      return poolConfiguration;
+   }
+
+   /**
+    * Is prefill
+    * @return The value
+    */
+   protected boolean isPrefill()
+   {
+      return false;
    }
 
    /**
