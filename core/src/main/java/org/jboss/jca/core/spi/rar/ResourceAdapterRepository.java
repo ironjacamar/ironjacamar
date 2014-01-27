@@ -88,4 +88,13 @@ public interface ResourceAdapterRepository
     */
    public List<MessageListener> getMessageListeners(String uniqueId) 
       throws NotFoundException, InstantiationException, IllegalAccessException;
+
+   /**
+    * Set the recovery mode for a resource adapter
+    * @param uniqueId An unique id that represents the deployment
+    * @param isXA Is the resource adapter instance XA capable
+    * @exception NotFoundException Thrown if the unique id isn't registered
+    */
+   public void setRecoveryForResourceAdapter(String uniqueId, boolean isXA)
+      throws NotFoundException;
 }
