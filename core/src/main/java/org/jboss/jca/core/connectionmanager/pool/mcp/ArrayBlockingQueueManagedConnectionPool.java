@@ -39,6 +39,7 @@ import org.jboss.jca.core.connectionmanager.pool.validator.ConnectionValidator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -1343,6 +1344,18 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
             returnConnection(cl, true, true);
          }
       }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public synchronized String[] dumpQueuedThreads()
+   {
+      List<String> result = new ArrayList<String>();
+
+      // Not supported
+
+      return result.toArray(new String[result.size()]);
    }
 
    /**

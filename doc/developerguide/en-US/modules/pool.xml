@@ -41,8 +41,8 @@
     </para>
 
     <para>
-      The <code>Pool</code> interface allows access to the name of the pool, flushing connections, and
-      verifying if a connection can be obtained from the pool.
+      The <code>Pool</code> interface allows access to the name of the pool, flushing connections,
+      verifying if a connection can be obtained from the pool and dump any queued threads.
     </para>
 
     <para>
@@ -333,6 +333,10 @@
       <para>
         <code>detachConnectionListener</code> disassociates the connections attached to the <code>ManagedConnection</code> such that it can be reused in another request through
         <code>DissociatableManagedConnection</code>.
+      </para>
+
+      <para>
+        <code>dumpQueuedThreads()</code> returns a stack trace of each of the queued threads waiting to obtain a <code>ConnectionListener</code> instance.
       </para>
 
     </section>

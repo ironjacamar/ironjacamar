@@ -37,8 +37,10 @@ import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactor
 import org.jboss.jca.core.connectionmanager.transaction.LockKey;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -768,6 +770,29 @@ public abstract class AbstractPool implements Pool
       }
 
       return result;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public synchronized String[] dumpQueuedThreads()
+   {
+      List<String> result = new ArrayList<String>();
+
+      for (ManagedConnectionPool mcp : mcpPools.values())
+      {
+         String[] mcpResult = mcp.dumpQueuedThreads();
+
+         if (mcpResult != null)
+         {
+            for (String s : mcpResult)
+            {
+               result.add(s);
+            }
+         }
+      }
+
+      return result.toArray(new String[result.size()]);
    }
 
    /**
