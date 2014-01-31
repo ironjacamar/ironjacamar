@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="pool">
+  <title>Pool</title>
+
+  <section id="pool_overview">
+    <title>Overview</title>
+
+    <para>
+      The pool controls the physical connection to the target Enterprise Information System, such
+      as a database.
+    </para>
+
+    <para>
+      It is up to the pool to create, hand out and destroy connections in the defined lifecycle
+      based on the configuration parameters supplied by the user.
+    </para>
+
+    <para>
+      The pool architecture
+
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/pool.png" align="center"/>
+        </imageobject>
+      </mediaobject>
+    </para>
+
+    <note>
+      Each of the components in the pool architecture can be accessed by multiple threads at the
+      same time, hence each component needs to make sure that thread safely is maintained.
+    </note>
+
+  </section>
+
+  <section id="pool_public">
+    <title>Public API</title>
+
+    <para>
+      The public API defines the API that programs external to the IronJacamar project can use to
+      configure, and use the pool.
+    </para>
+
+    <para>
+      The <code>Pool</code> interface allows access to the name of the pool, flushing connections, and
+      verifying if a connection can be obtained from the pool.
+    </para>
+
+    <para>
+      The <code>PoolConfiguration</code> class holds the configuration parameters for the pool.
+    </para>
+
+    <para>
+      The <code>FlushMode</code> enum defines the different flush modes supported.
+    </para>
+
+    <para>
+      The <code>PoolStatistics</code> interface defines the statistics available for a pool.
+    </para>
+
+    <para>
+      The package for the public API is <code>org.jboss.jca.core.api.connectionmanager.pool</code>.
+    </para>
+
+  </section>
+
+  <section id="pool_private">
+    <title>Private API</title>
+
+    <para>
+      The private API defines the API that can be used internally IronJacamar to control the pool.
+      The API extends the public API where it makes sense in order to provide a more uniform interface
+      to the implementation.
+    </para>
+
+    <para>
+      The <code>PoolFactory</code> class will create a <code>Pool</code> based upon the passed in
+      configuration.
+    </para>
+
+    <para>
+      The <code>PoolStrategy</code> enum defines how the pool is split based on credential equallity.
+    </para>
+
+    <para>
+      The <code>Pool</code> interface extends the public API with methods that should only be available
+      from with IronJacamar such as getting a connection listener, returning a connection listener, and
+      shutting down the pool.
+    </para>
+
+    <para>
+      The <code>PrefillPool</code> interface defines the contract for pool implementations that supports
+      prefilling of connections upon startup, such as <code>OnePool</code> and <code>PoolBySubject</code>.
+    </para>
+
+    <para>
+      The <code>Capacity</code> interface provides a handle to the policies used for increasing and decreasing
+      the pool.
+    </para>
+
+    <para>
+      The <code>CapacityIncrementer</code> interface defines if a physical connection should be created
+      given the input parameters.
+    </para>
+
+    <para>
+      The <code>CapacityDecrementer</code> interface defines if a physical connection should be destroyed
+      given the input parameters.
+    </para>
+
+    <para>
+      The package for the private API is <code>org.jboss.jca.core.connectionmanager.pool.api</code>.
+    </para>
+
+
+  </section>
+
+  <section id="pool_implementation">
+    <title>Implementation</title>
+
+    <para>
+      The pool implementation provides a concrete implementation of the contracts defined by the public and
+      private APIs.
+    </para>
+
+    <para>
+      The package for the pool implementation is <code>org.jboss.jca.core.connectionmanager.pool</code>.
+    </para>
+
+    <section id="pool_implementation_abstractpool">
+      <title>AbstractPool</title>
+
+      <para>
+        <code>AbstractPool</code> provides the methods that are shared across all pool implementations.
+      </para>
+
+      <para>
+        <code>getKey(Subject, ConnectionRequestInfo, boolean)</code> defines the key used to lookup the
+        <code>ManagedConnectionPool</code> instance. The implementation of this method is different for each
+        pool type.
+      </para>
+
+      <para>
+        <code>getManagedConnectionPool(Object, Subject, ConnectionRequestInfo)</code> retrieves the correct
+        <code>ManagedConnectionPool</code> instance. If the <code>ManagedConnectionPool</code> doesn't yet
+        exists then one is created, and initialized.
+      </para>
+
+      <para>
+        <code>emptyManagedConnectionPool(ManagedConnectionPool)</code> removes a
+        <code>ManagedConnectionPool</code> instance, if unused.
+      </para>
+
+      <para>
+        <code>flush</code> flushes the <code>ManagedConnectionPool</code> instances, based on the
+        <code>FlushMode</code>.
+      </para>
+
+      <para>
+        <code>getConnection(Transaction, Subject, ConnectionRequestInfo)</code> returns a <code>ConnectionListener</code> instance,
+        which has the physical connection to the Enterprise Information System attached. The method uses 3 sub methods to return the
+        correct listener instance. <code>getSimpleConnection</code> returns a <code>ConnectionListener</code> if there is no
+        transaction associated. <code>getTransactionOldConnection</code> returns the <code>ConnectionListener</code> already associated
+        with the transaction, if any. <code>getTransactionNewConnection</code> creates a new <code>ConnectionListener</code>, and associates
+        it with the transaction.
+      </para>
+
+      <para>
+        <code>findConnectionListener</code> finds a specific <code>ConnectionListener</code> instance.
+      </para>
+
+      <para>
+        <code>returnConnectionListener</code> returns a <code>ConnectionListener</code> instance to the correct
+        <code>ManagedConnectionPool</code>.
+      </para>
+
+      <para>
+        <code>shutdown</code> shuts down the pool.
+      </para>
+
+      <para>
+        <code>internalTestConnection(ConnectionRequestInfo, Subject)</code> tries to obtain a <code>ConnectionListener</code>
+        based on the input given.
+      </para>
+
+    </section>
+
+    <section id="pool_implementation_prefill">
+      <title>AbstractPrefillPool</title>
+
+      <para>
+        The <code>AbstractPrefillPool</code> enables the pool to prefill connections during startup, and through its lifecycle.
+      </para>
+
+      <para>
+        <code>prefill(Subject, ConnectionRequestInfo, boolean)</code> handles the prefilling process.
+      </para>
+
+    </section>
+
+    <section id="pool_implementation_types">
+      <title>Pool types</title>
+
+      <para>
+        IronJacamar features 5 different pool types. Each pool type has its own <code>getKey</code> method implementation that
+        defines how a <code>ManagedConnectionPool</code> instance is located.
+      </para>
+
+      <para>
+        <code>OnePool</code> uses one <code>ManagedConnectionPool</code> instance to hold all <code>ConnectionListener</code>s.
+      </para>
+
+      <para>
+        <code>PoolByCri</code> splits the <code>ManagedConnectionPool</code> instances based on the <code>ConnectionRequestInfo</code>
+        instance.
+      </para>
+
+      <para>
+        <code>PoolBySubject</code> splits the <code>ManagedConnectionPool</code> instances based on the <code>Subject</code>
+        instance.
+      </para>
+
+      <para>
+        <code>PoolBySubjectAndCri</code> splits the <code>ManagedConnectionPool</code> instances based on both the
+        <code>ConnectionRequestInfo</code> instance and the <code>Subject</code> instance.
+      </para>
+
+      <para>
+        <code>ReauthPool</code> allows the <code>ConnectionListener</code> instances to reauthenticate, so the
+        <code>ManagedConnectionPool</code> instances can change over time based on the <code>ConnectionRequestInfo</code>
+        and <code>Subject</code> instances.
+      </para>
+
+      <para>
+        The package for the pool types is <code>org.jboss.jca.core.connectionmanager.pool.strategy</code>.
+      </para>
+      
+    </section>
+
+  </section>
+
+  <section id="pool_mcp">
+    <title>ManagedConnectionPool</title>
+
+    <para>
+      The <code>ManagedConnectionPool</code> controls the <code>ConnectionListener</code> instances, which each has
+      a physical connection (<code>ManagedConnection</code>) associated.
+    </para>
+      
+    <para>
+      The package is <code>org.jboss.jca.core.connectionmanager.pool.mcp</code>
+    </para>
+
+    <section id="pool_mcp_private">
+      <title>Private API</title>
+
+      <para>
+        <code>ManagedConnectionPool</code> instances should only be accessed from within IronJacamar, so they only have
+        a private API.
+      </para>
+      
+      <para>
+        The <code>ManagedConnectionPoolFactory</code> class creates a <code>ManagedConnectionPool</code> instance.
+      </para>
+      
+      <para>
+        The <code>ManagedConnectionPool</code> interface defines the methods exposed to the pool, connection validator, and
+        idle remover. These methods includes getting a connection listener, finding a connection listener, and returning a
+        connection listener.
+      </para>
+
+      <para>
+        The <code>ManagedConnectionPoolStatistics</code> interface defines the statistics for the <code>ManagedConnectionPool</code>
+        instance.
+      </para>
+      
+      <para>
+        The <code>ManagedConnectionPoolUtility</code> class defines utility methods for the <code>ManagedConnectionPool</code>
+        instance.
+      </para>
+
+    </section>
+
+    <section id="pool_mcp_implementation">
+      <title>Implementation</title>
+      
+      <para>
+        There are three different implementations of the <code>ManagedConnectionPool</code> interface. <code>SemaphoreArrayListManagedConnectionPool</code>
+        which uses a <code>Semaphore</code> to guard an <code>ArrayList</code> which holds the <code>ConnectionListener</code>s.
+        <code>ArrayBlockingQueueManagedConnectionPool</code> which uses an <code>ArrayBlockingQueue</code> to hold the <code>ConnectionListener</code>s.
+        And <code>LeakDumperManagedConnectionPool</code> which extends <code>SemaphoreArrayListManagedConnectionPool</code>, but reports any leaks upon
+        shutdown.
+      </para>
+
+      <para>
+        <code>getConnection(Subject, ConnectionRequestInfo)</code> provides a <code>ConnectionListener</code>. The method requires a lock in order to
+        obtain a listener, using the specified timeout value. If a listener is avaiable in the pool then it is matched against the <code>ManagedConnectionFactory</code>
+        to verify it is valid, and returned - otherwise it is destroyed. If no listener is available then a new listener is created and returned. In the latter case
+        both prefill and a capacity increase is scheduled in order to prefill to the minimum size, and increase the pool by the specified capacity policy.
+      </para>
+
+      <para>
+        <code>returnConnection(ConnectionListener, boolean, boolean)</code> returns a <code>ConnectionListener</code> into the pool.
+      </para>
+
+      <para>
+        <code>flush(FlushMode)</code> flushes the <code>ConnectionListener</code>s according to the mode. Any listeners marked as bad will be destroyed.
+        Prefill is scheduled at the end in order to maintain the minimum pool size.
+      </para>
+
+      <para>
+        <code>removeIdleConnections</code> is invoked from the idle remover in order to decrement the pool to the desired size based on the <code>CapacityDecrementer</code>
+        policy. If any listeners are destroyed the pool is either scheduled for prefill, or for removal through <code>emptyManagedConnectionPool</code> if empty.
+      </para>
+
+      <para>
+        <code>shutdown</code> shuts the instance down. All listeners are removed.
+      </para>
+
+      <para>
+        <code>fillTo(int)</code> fills the pool to the specified size. The pool filler component uses this method.
+      </para>
+
+      <para>
+        <code>increaseCapacity(Subject, ConnectionRequestInfo)</code> increases the pool based on the <code>CapacityIncrementer</code> policy. The capacity filler component
+        uses this method.
+      </para>
+
+      <para>
+        <code>validateConnections</code> validates that the listeners are valid according to <code>ValidatingManagedConnectionFactory</code>. Any invalid listeners are destroyed
+        and prefill scheduled. The connection validator component uses this method.
+      </para>
+
+      <para>
+        <code>detachConnectionListener</code> disassociates the connections attached to the <code>ManagedConnection</code> such that it can be reused in another request through
+        <code>DissociatableManagedConnection</code>.
+      </para>
+
+    </section>
+
+  </section>
+
+</chapter>
