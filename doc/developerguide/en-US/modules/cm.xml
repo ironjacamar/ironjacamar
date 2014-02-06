@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="cm">
+  <title>Connection manager</title>
+
+  <section id="cm_overview">
+    <title>Overview</title>
+
+    <para>
+      The connection manager defines the interface for resource adapters to allocate connections, which are associated with
+      the physical connections to the target Enterprise Information System, such as a database.
+    </para>
+
+    <para>
+      It is up to the connection manager to use the pool, and enlist the connection listeners in the transactions, if supported.
+    </para>
+
+    <para>
+      The connection manager architecture
+
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/cm.png" align="center"/>
+        </imageobject>
+      </mediaobject>
+    </para>
+
+    <note>
+      Each of the components in the connection manager architecture can be accessed by multiple threads at the
+      same time, hence each component needs to make sure that thread safely is maintained.
+    </note>
+
+  </section>
+
+  <section id="cm_public">
+    <title>Public API</title>
+
+    <para>
+      The public API defines the API that programs external to the IronJacamar project can use to
+      configure, and use the connection manager.
+    </para>
+
+    <para>
+      The <code>ConnectionManager</code> interface allows to associate and dissociate a managed connection
+      with a connection.
+    </para>
+
+    <para>
+      The <code>ConnectionListener</code> interface provides with IronJacamar contract for
+      <code>javax.resource.spi.ConnectionEventListener</code>.
+    </para>
+
+    <para>
+      The package for the public API is <code>org.jboss.jca.core.api.connectionmanager</code>.
+    </para>
+
+  </section>
+
+  <section id="cm_private">
+    <title>Private API</title>
+
+    <para>
+      The private API defines the API that can be used internally IronJacamar to control the connection manager.
+      The API extends the public API where it makes sense in order to provide a more uniform interface
+      to the implementation.
+    </para>
+
+    <para>
+      The <code>ConnectionManagerFactory</code> class can create a <code>ConnectionManager</code> instance.
+    </para>
+
+    <para>
+      The <code>ConnectionManager</code> interface defines the internal API of the connection manager used by IronJacamar.
+    </para>
+
+    <para>
+      The <code>NoTxConnectionManager</code> interface defines the internal API of a non-transactional connection manager.
+    </para>
+
+    <para>
+      The <code>TxConnectionManager</code> interface defines the internal API of a transactional connection manager.
+    </para>
+
+    <para>
+      The <code>ConnectionListener</code> interface defines the internal API of a connection listener, which is associated
+      with a managed connection.
+    </para>
+
+    <para>
+      The package for the private API is <code>org.jboss.jca.core.connectionmanager</code>.
+    </para>
+
+  </section>
+
+  <section id="cm_implementation">
+    <title>Implementation</title>
+
+    <para>
+      The implementation of the connection manager is split in two classes, with a shared base class for common
+      functionality.
+    </para>
+
+    <section id="cm_implementation_abstractconnectionmanager">
+      <title>AbstractConnectionManager</title>
+
+      <para>
+        <code>AbstractConnectionManager</code> provides the methods that are shared across both implementations,
+        <code>NoTxConnectionManagerImpl</code> and <code>TxConnectionManagerImpl</code>.
+      </para>
+
+      <para>
+        <code>getManagedConnection(Transaction, Subject, ConnectionRequestInfo)</code> obtains a
+        <code>ConnectionListener</code> instance from the pool. If an error occurs a retry is performed, if configured.
+      </para>
+
+      <para>
+        <code>returnManagedConnection(ConnectionListener, boolean)</code> returns a
+        <code>ConnectionListener</code> instance to the pool. If an error occurs a retry is performed, if configured.
+      </para>
+
+      <para>
+        <code>allocateConnection(ManagedConnectionFactory, ConnectionRequestInfo)</code> allocates a connection for the
+        managed connection attached to the <code>ConnectionListener</code> instance.
+      </para>
+
+      <para>
+        <code>associateManagedConnection(Object, ManagedConnectionFactory, ConnectionRequestInfo)</code> associates a
+        <code>ManagedConnection</code> with the passed in connection. This is a 
+        <code>LazyAssociatableConnectionManager</code> extension of IronJacamar.
+      </para>
+
+      <para>
+        <code>dissociateManagedConnection(Object, ManagedConnection, ManagedConnectionFactory)</code> dissociates a
+        connection with its <code>ManagedConnection</code> instance. This is a 
+        <code>LazyAssociatableConnectionManager</code> extension of IronJacamar.
+      </para>
+
+      <para>
+        <code>shutdown</code> shuts down the connection manager, and its related pool instance.
+      </para>
+
+    </section>
+
+    <section id="cm_implementation_notxconnectionmanager">
+      <title>NoTxConnectionManagerImpl</title>
+
+      <para>
+        <code>NoTxConnectionManagerImpl</code> provides the implementation for a connection manager configured
+        with <code>NoTransaction</code>.
+      </para>
+
+      <para>
+        <code>createConnectionListener(ManagedConnection, ManagedConnectionPool)</code> creates a
+        <code>NoTxConnectionListener</code> and associates it with the <code>ManagedConnection</code> instance.
+      </para>
+
+    </section>
+
+    <section id="cm_implementation_txconnectionmanager">
+      <title>TxConnectionManagerImpl</title>
+
+      <para>
+        <code>TxConnectionManagerImpl</code> provides the implementation for a connection manager configured
+        with <code>LocalTransaction</code> or <code>XATransaction</code>.
+      </para>
+
+      <para>
+        <code>createConnectionListener(ManagedConnection, ManagedConnectionPool)</code> creates a
+        <code>TxConnectionListener</code> and associates it with the <code>ManagedConnection</code> instance.
+        In case of <code>LocalTransaction</code> a <code>XAResource</code> is created to wrap the local transaction
+        methods of the resource adapter. In case of <code>XATransaction</code> the underlying <code>XAResource</code>
+        instance is wrapped with product information, if configured.
+      </para>
+
+      <para>
+        <code>getManagedConnection(Subject, ConnectionRequestInfo)</code> verifies that a valid transaction
+        exists before creating a <code>ManagedConnection</code>, since there is no point in spending resources
+        on work that is going to be rolled back. <code>ironjacamar.allow_marked_for_rollback</code> overrides
+        this behavior.
+      </para>
+
+      <para>
+        <code>managedConnectionReconnected(ConnectionListener)</code> enlist the
+        <code>ConnectionListener</code> in the transaction.
+      </para>
+
+      <para>
+        <code>managedConnectionDisconnected(ConnectionListener)</code> delist the
+        <code>ConnectionListener</code> from the transaction.
+      </para>
+
+      <para>
+        <code>lazyEnlist(ManagedConnection)</code> handles lazy enlistment scenarios as defined by
+        <code>LazyEnlistableConnectionManager</code>.
+      </para>
+
+    </section>
+
+    <section id="cm_implementation_abstractconnectionlistener">
+      <title>AbstractConnectionListener</title>
+
+      <para>
+        <code>AbstractConnectionListener</code> provides the methods that are shared across both implementations,
+        <code>NoTxConnectionListener</code> and <code>TxConnectionListener</code>. This base class keeps track
+        off the connection handles used for the associated <code>ManagedConnection</code>.
+      </para>
+
+      <para>
+        <code>connectionErrorOccurred(ConnectionEvent)</code> logs the application error, and flushes either the
+        <code>Pool</code> or <code>ManagedConnectionPool</code> depending on the strategy configured.
+      </para>
+
+      <para>
+        <code>controls(ManagedConnection, Object)</code> checks if the <code>ManagedConnection</code> and optional
+        connection is controlled by this connection listener.
+      </para>
+
+      <para>
+        <code>compareTo(Object)</code> is used to sort the connection listeners based on their last used time.
+      </para>
+
+    </section>
+
+    <section id="cm_implementation_notxconnectionlistener">
+      <title>NoTxConnectionListener</title>
+
+      <para>
+        <code>NoTxConnectionListener</code> is the listener for <code>NoTransaction</code> scenarios.
+      </para>
+
+      <para>
+        <code>connectionClosed(ConnectionEvent)</code> dissociates the connection handles, and if there
+        are no handles associated anymore the <code>ManagedConnection</code> is returned to the pool.
+      </para>
+
+    </section>
+
+    <section id="cm_implementation_txconnectionlistener">
+      <title>TxConnectionListener</title>
+
+      <para>
+        <code>TxConnectionListener</code> is the listener for <code>LocalTransaction</code> and
+        <code>XATransaction</code> scenarios.
+      </para>
+
+      <para>
+        <code>used()</code> updates the last used time, and resets the timeout value for the underlying
+        <code>XAResource</code> if in <code>XATransaction</code> mode.
+      </para>
+
+      <para>
+        <code>enlist()</code> enlists the <code>XAResource</code> instances in the transaction through
+        <code>TransactionSynchronization</code> including resources picked up by the <code>CachedConnectionManager</code>.
+      </para>
+
+      <para>
+        <code>delist()</code> delists the <code>XAResource</code> from the transaction in interleaved scenarios.
+      </para>
+
+      <para>
+        <code>dissociate()</code> dissociates the <code>ConnectionListener</code> with the transaction.
+      </para>
+
+      <para>
+        <code>connectionClosed(ConnectionEvent)</code> dissociates a connection handle through <code>wasFreed(Object)</code> and
+        returns the <code>ManagedConnection</code> in interleaved scenarios.
+      </para>
+
+      <para>
+        <code>connectionErrorOccurred(ConnectionEvent)</code> clears any <code>TransactionSynchronization</code> object such
+        that the <code>ManagedConnection</code> can be returned for destruction.
+      </para>
+
+      <para>
+        <code>tidyup()</code> will rollback any left over <code>LocalTransaction</code> instance.
+      </para>
+
+      <para>
+        <code>isManagedConnectionFree()</code> checks if there is exists a <code>TransactionSynchronization</code> object in
+        track by transaction scenarios, since the <code>ManagedConnection</code> can't be returned in that case.
+      </para>
+
+      <para>
+        <code>wasFreed(Object)</code> dissociates a connection handle from the <code>ConnectionListener</code>, or
+        resets the track by transaction flag if <code>null</code> such that the <code>ManagedConnection</code> can
+        be returned.
+      </para>
+
+      <para>
+        The <code>TransactionSynchronization</code> class takes care of enlisting the <code>XAResource</code>
+        in the transaction, in track by transaction scenarios. This is done in its <code>enlist()</code> and its
+        result can be verified in <code>checkEnlisted()</code>. The <code>beforeCompletion()</code> method
+        delists the <code>XAResource</code> from the transaction. The <code>afterCompletion(int)</code> method
+        returns the <code>ManagedConnection</code> to the pool.
+      </para>
+
+    </section>
+
+  </section>
+
+</chapter>
