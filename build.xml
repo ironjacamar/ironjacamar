@@ -32,9 +32,9 @@
        ================================= -->
   <property name="name" value="ironjacamar"/>
   <property name="major" value="1"/>
-  <property name="minor" value="1"/>
-  <property name="patch" value="4"/>
-  <property name="type" value="Final"/>
+  <property name="minor" value="2"/>
+  <property name="patch" value="0"/>
+  <property name="type" value="Beta1"/>
 
   <condition property="version" value="${major}.${minor}.${patch}-SNAPSHOT">
     <isset property="snapshot"/>
