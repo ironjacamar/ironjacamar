@@ -27,6 +27,7 @@
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="modules/testing.xml"/>
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="modules/metadata.xml"/>
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="modules/deployers.xml"/>
+   <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="modules/cm.xml"/>
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="modules/pool.xml"/>
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="modules/standalone.xml"/>
    <xi:include xmlns:xi="http://www.w3.org/2001/XInclude" href="../../userguide/en-US/modules/licenses.xml"/>
