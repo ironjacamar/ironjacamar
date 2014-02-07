@@ -135,7 +135,8 @@
       </para>
 
       <para>
-        <code>shutdown</code> shuts down the connection manager, and its related pool instance.
+        <code>shutdown</code> shuts down the connection manager, and its related pool instance. This is done using
+        synchronization such that any components having a reference will be notified through an error.
       </para>
 
     </section>

@@ -174,7 +174,8 @@
       </para>
 
       <para>
-        <code>shutdown</code> shuts down the pool.
+        <code>shutdown</code> shuts down the pool. This is done using
+        synchronization such that any components having a reference will be notified through an error.
       </para>
 
       <para>
@@ -313,7 +314,8 @@
       </para>
 
       <para>
-        <code>shutdown</code> shuts the instance down. All listeners are removed.
+        <code>shutdown</code> shuts the instance down. All listeners are removed. This is done using
+        synchronization such that any components having a reference will be notified through an error.
       </para>
 
       <para>

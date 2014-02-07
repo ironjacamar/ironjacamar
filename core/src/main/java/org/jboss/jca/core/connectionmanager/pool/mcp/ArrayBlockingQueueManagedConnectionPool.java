@@ -52,7 +52,6 @@ import javax.resource.spi.DissociatableManagedConnection;
 import javax.resource.spi.LazyAssociatableConnectionManager;
 import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.RetryableUnavailableException;
 import javax.resource.spi.ValidatingManagedConnectionFactory;
 import javax.security.auth.Subject;
 
@@ -168,7 +167,20 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
          PoolFiller.fillPool(new FillRequest(this, pc.getInitialSize()));
       }
 
-      reenable();
+      if (poolConfiguration.getIdleTimeoutMinutes() > 0)
+      {
+         //Register removal support
+         IdleRemover.getInstance().registerPool(this, poolConfiguration.getIdleTimeoutMinutes() * 1000L * 60);
+      }
+      
+      if (poolConfiguration.isBackgroundValidation() && poolConfiguration.getBackgroundValidationMillis() > 0)
+      {
+         log.debug("Registering for background validation at interval " + 
+                   poolConfiguration.getBackgroundValidationMillis());
+         
+         //Register validation
+         ConnectionValidator.getInstance().registerPool(this, poolConfiguration.getBackgroundValidationMillis());
+      }
 
       statistics.setMaxWaitCount(-1);
    }
@@ -224,29 +236,6 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
    /**
     * {@inheritDoc}
     */
-   public void reenable()
-   {
-      if (poolConfiguration.getIdleTimeoutMinutes() > 0)
-      {
-         //Register removal support
-         IdleRemover.getInstance().registerPool(this, poolConfiguration.getIdleTimeoutMinutes() * 1000L * 60);
-      }
-      
-      if (poolConfiguration.isBackgroundValidation() && poolConfiguration.getBackgroundValidationMillis() > 0)
-      {
-         log.debug("Registering for background validation at interval " + 
-                   poolConfiguration.getBackgroundValidationMillis());
-         
-         //Register validation
-         ConnectionValidator.getInstance().registerPool(this, poolConfiguration.getBackgroundValidationMillis());
-      }
-
-      shutdown.set(false);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
    public void prefill()
    {
       if (!shutdown.get() &&
@@ -289,7 +278,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       if (cls.size() > 0)
       {
          if (shutdown.get())
-            throw new RetryableUnavailableException(
+            throw new ResourceException(
                bundle.thePoolHasBeenShutdown(pool.getName(),
                                              Integer.toHexString(System.identityHashCode(this))));
          
@@ -353,7 +342,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
             cl = cls.poll(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS);
 
             if (shutdown.get())
-               throw new RetryableUnavailableException(
+               throw new ResourceException(
                   bundle.thePoolHasBeenShutdown(pool.getName(),
                                                 Integer.toHexString(System.identityHashCode(this))));
 
@@ -878,7 +867,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
    /**
     * {@inheritDoc}
     */
-   public void shutdown()
+   public synchronized void shutdown()
    {
       if (trace)
          log.tracef("Shutdown - Pool: %s MCP: %s", pool.getName(), Integer.toHexString(System.identityHashCode(this)));

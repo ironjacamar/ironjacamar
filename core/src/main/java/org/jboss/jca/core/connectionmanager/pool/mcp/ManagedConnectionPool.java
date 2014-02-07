@@ -123,11 +123,6 @@ public interface ManagedConnectionPool extends IdleConnectionRemovalSupport
    public int getActive();
    
    /**
-    * Reenable a pool 
-    */
-   public void reenable();
-   
-   /**
     * Prefill
     */
    public void prefill();

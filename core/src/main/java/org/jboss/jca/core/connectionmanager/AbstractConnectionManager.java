@@ -156,13 +156,15 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    /**
     * Shutdown
     */
-   public void shutdown()
+   public synchronized void shutdown()
    {
       getLogger().debug(jndiName + ": shutdown");
       shutdown.set(true);
 
       if (pool != null)
          pool.shutdown();
+
+      pool = null;
    }
 
    /**
@@ -498,7 +500,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       //Check for pooling!
       if (pool == null)
       {
-         throw new ResourceException(bundle.tryingUseConnectionFactoryShutDown());
+         throw new ResourceException(bundle.tryingUseConnectionFactoryShutDown(jndiName));
       }
 
       //it is an explicit spec requirement that equals be used for matching rather than ==.
@@ -566,7 +568,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       // Check for pooling!
       if (pool == null)
       {
-         throw new ResourceException(bundle.tryingUseConnectionFactoryShutDown());
+         throw new ResourceException(bundle.tryingUseConnectionFactoryShutDown(jndiName));
       }
 
       // It is an explicit spec requirement that equals be used for matching rather than ==.
