@@ -179,4 +179,10 @@ public interface ManagedConnectionPool extends IdleConnectionRemovalSupport
     * @return A connection listener; <code>null</code> if no connection listener was available
     */
    public ConnectionListener removeConnectionListener();
+
+   /**
+    * Dump the queued threads
+    * @return The strack traces of the queued thread, or empty if none
+    */
+   public String[] dumpQueuedThreads();
 }

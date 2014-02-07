@@ -73,4 +73,10 @@ public interface Pool
     * @return The value
     */
    public PoolStatistics getStatistics();
+
+   /**
+    * Dump the queued threads
+    * @return The strack traces of the queued thread, or empty if none
+    */
+   public String[] dumpQueuedThreads();
 }

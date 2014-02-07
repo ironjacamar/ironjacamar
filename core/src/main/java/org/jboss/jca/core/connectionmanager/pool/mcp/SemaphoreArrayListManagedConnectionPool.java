@@ -37,8 +37,10 @@ import org.jboss.jca.core.connectionmanager.pool.idle.IdleRemover;
 import org.jboss.jca.core.connectionmanager.pool.validator.ConnectionValidator;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -68,6 +70,9 @@ import org.jboss.logging.Messages;
  */
 public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectionPool
 {
+   /** New line */
+   private static String newLine = SecurityActions.getSystemProperty("line.separator");
+
    /** The log */
    private CoreLogger log;
 
@@ -1454,6 +1459,59 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             }
          }
       }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public synchronized String[] dumpQueuedThreads()
+   {
+      List<String> result = new ArrayList<String>();
+
+      Collection<Thread> queuedThreads = permits.getQueuedThreads();
+      if (queuedThreads != null)
+      {
+         for (Thread t : queuedThreads)
+         {
+            result.add(dumpQueuedThread(t));
+         }
+      }
+
+      return result.toArray(new String[result.size()]);
+   }
+
+
+   /**
+    * Dump a thread
+    * @param t The thread
+    * @return The stack trace
+    */
+   private String dumpQueuedThread(Thread t)
+   {
+      StringBuilder sb = new StringBuilder();
+
+      // Header
+      sb = sb.append("Queued thread: ");
+      sb = sb.append(t.getName());
+      sb = sb.append(newLine);
+
+      // Body
+      StackTraceElement[] stes = t.getStackTrace();
+      if (stes != null)
+      {
+         for (StackTraceElement ste : stes)
+         {
+            sb = sb.append("  ");
+            sb = sb.append(ste.getClassName());
+            sb = sb.append(":");
+            sb = sb.append(ste.getMethodName());
+            sb = sb.append(":");
+            sb = sb.append(ste.getLineNumber());
+            sb = sb.append(newLine);
+         }
+      }
+
+      return sb.toString();
    }
 
    /**

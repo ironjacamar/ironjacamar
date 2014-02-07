@@ -22,6 +22,7 @@
 
 package org.jboss.jca.core.connectionmanager.pool.mcp;
 
+import java.util.Collection;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -32,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 public class Semaphore extends java.util.concurrent.Semaphore
 {
    /** Serial version uid */
-   private static final long serialVersionUID = 1L;
+   private static final long serialVersionUID = 2L;
 
    /** Statistics */
    private ManagedConnectionPoolStatisticsImpl statistics;
@@ -57,5 +58,14 @@ public class Semaphore extends java.util.concurrent.Semaphore
    {
       statistics.setMaxWaitCount(getQueueLength());
       return super.tryAcquire(timeout, unit);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Collection<Thread> getQueuedThreads()
+   {
+      return super.getQueuedThreads();
    }
 }
