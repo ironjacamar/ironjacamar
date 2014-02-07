@@ -72,6 +72,9 @@ public class EndpointImpl implements Endpoint
    /** Transaction integration */
    private TransactionIntegration transactionIntegration;
 
+   /** XA capable */
+   private boolean xa;
+
    /** The active recovery modules */
    private Map<ActivationSpec, XAResourceRecovery> recovery;
 
@@ -100,9 +103,11 @@ public class EndpointImpl implements Endpoint
     * @param productName The product name
     * @param productVersion The product version
     * @param ti The transaction integration
+    * @param xa XA capable
     */
    EndpointImpl(WeakReference<ResourceAdapter> ra, boolean is16, Set<String> bvg,
-                String productName, String productVersion, TransactionIntegration ti)
+                String productName, String productVersion, TransactionIntegration ti,
+                boolean xa)
    {
       this.ra = ra;
       this.is16 = is16;
@@ -110,6 +115,7 @@ public class EndpointImpl implements Endpoint
       this.productName = productName;
       this.productVersion = productVersion;
       this.transactionIntegration = ti;
+      this.xa = xa;
       this.recovery = new HashMap<ActivationSpec, XAResourceRecovery>();
    }
 
@@ -190,7 +196,7 @@ public class EndpointImpl implements Endpoint
 
       rar.endpointActivation(endpointFactory, spec);
 
-      if (transactionIntegration != null && transactionIntegration.getRecoveryRegistry() != null)
+      if (transactionIntegration != null && transactionIntegration.getRecoveryRegistry() != null && xa)
       {
          XAResourceRecovery xrr = transactionIntegration.createXAResourceRecovery(rar, spec,
                                                                                   productName, productVersion);
@@ -220,7 +226,7 @@ public class EndpointImpl implements Endpoint
       if (rar == null)
          throw new ResourceException(bundle.resourceAdapterInstanceNotActive());
 
-      if (transactionIntegration != null && transactionIntegration.getRecoveryRegistry() != null)
+      if (transactionIntegration != null && transactionIntegration.getRecoveryRegistry() != null && xa)
       {
          XAResourceRecovery xrr = recovery.remove(spec);
          if (xrr != null)

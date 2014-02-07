@@ -1224,6 +1224,7 @@ public abstract class AbstractResourceAdapterDeployer
          List<String> aoJndiNames = new ArrayList<String>();
          List<XAResourceRecovery> recoveryModules = new ArrayList<XAResourceRecovery>(1);
          Callback callback = null;
+         boolean isXA = false;
 
          // Check metadata for JNDI information and activate explicit
          boolean activateDeployment = checkActivation(cmd, ijmd);
@@ -1700,6 +1701,8 @@ public abstract class AbstractResourceAdapterDeployer
 
                            if (tsl == TransactionSupportLevel.XATransaction)
                            {
+                              isXA = true;
+
                               String recoverSecurityDomain = securityDomain;
                               String recoverUser = null;
                               String recoverPassword = null;
@@ -2248,6 +2251,8 @@ public abstract class AbstractResourceAdapterDeployer
                                                                     wrapXAResource, padXid);
                                        if (tsl == TransactionSupportLevel.XATransaction)
                                        {
+                                          isXA = true;
+
                                           String recoverSecurityDomain = securityDomain;
                                           String recoverUser = null;
                                           String recoverPassword = null;
@@ -2564,6 +2569,7 @@ public abstract class AbstractResourceAdapterDeployer
 
                // Register with ResourceAdapterRepository
                resourceAdapterKey = registerResourceAdapterToResourceAdapterRepository(resourceAdapter);
+               setRecoveryForResourceAdapterInResourceAdapterRepository(resourceAdapterKey, isXA);
             }
          }
 
@@ -2887,6 +2893,13 @@ public abstract class AbstractResourceAdapterDeployer
     * @return The key
     */
    protected abstract String registerResourceAdapterToResourceAdapterRepository(ResourceAdapter instance);
+
+   /**
+    * Set recovery mode for a resource adapter in the ResourceAdapterRepository
+    * @param key The key for the resource adapter
+    * @param isXA Is the resource adapter XA capable
+    */
+   protected abstract void setRecoveryForResourceAdapterInResourceAdapterRepository(String key, boolean isXA);
 
    /**
     * Get the transaction Manager. Implementers have to provide right implementation to find and get it

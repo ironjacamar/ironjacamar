@@ -388,6 +388,20 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
          registerResourceAdapter(instance);
    }
 
+   @Override
+   protected void setRecoveryForResourceAdapterInResourceAdapterRepository(String key, boolean isXA)
+   {
+      try
+      {
+         ((RAConfiguration) getConfiguration()).getResourceAdapterRepository().
+            setRecoveryForResourceAdapter(key, isXA);
+      }
+      catch (Throwable t)
+      {
+         log.errorf("Unable to register recovery: %s (%s)", key, isXA);
+      }
+   }
+
    /**
     * Register management view of a connector in JMX
     * @param mgtConnector The management view of the connector

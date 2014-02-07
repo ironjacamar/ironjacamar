@@ -81,6 +81,9 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
    /** Ids */
    private Map<String, AtomicInteger> ids;
 
+   /** Recovery */
+   private Map<String, Boolean> recovery;
+
    /** The metadata repository */
    private MetadataRepository mdr;
 
@@ -117,6 +120,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
    {
       this.rars = new HashMap<String, WeakReference<ResourceAdapter>>();
       this.ids = new HashMap<String, AtomicInteger>();
+      this.recovery = new HashMap<String, Boolean>();
       this.mdr = null;
       this.transactionIntegration = null;
    }
@@ -175,6 +179,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
          throw new NotFoundException(bundle.keyNotRegistered(key));
 
       rars.remove(key);
+      recovery.remove(key);
    }
 
    /**
@@ -318,9 +323,13 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
       Set<String> beanValidationGroups = getBeanValidationGroups(mdrIdentifier);
       String productName = getProductName(mdrIdentifier);
       String productVersion = getProductVersion(mdrIdentifier);
+      Boolean isXA = recovery.get(uniqueId);
+
+      if (isXA == null)
+         isXA = Boolean.TRUE;
 
       return new EndpointImpl(ra, is16, beanValidationGroups,
-                              productName, productVersion, transactionIntegration);
+                              productName, productVersion, transactionIntegration, isXA.booleanValue());
    }
 
    /**
@@ -402,6 +411,24 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
       }
 
       return Collections.emptyList();
+   }
+
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setRecoveryForResourceAdapter(String uniqueId, boolean isXA) throws NotFoundException
+   {
+      if (uniqueId == null)
+         throw new IllegalArgumentException("UniqueId is null");
+
+      if (uniqueId.trim().equals(""))
+         throw new IllegalArgumentException("UniqueId is empty");
+
+      if (!rars.containsKey(uniqueId))
+         throw new NotFoundException(bundle.keyNotRegistered(uniqueId));
+
+      recovery.put(uniqueId, isXA ? Boolean.TRUE : Boolean.FALSE);
    }
 
    /**
