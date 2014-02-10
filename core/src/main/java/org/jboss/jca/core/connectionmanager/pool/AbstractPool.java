@@ -783,7 +783,7 @@ public abstract class AbstractPool implements Pool
    /**
     * {@inheritDoc}
     */
-   public synchronized String[] dumpQueuedThreads()
+   public String[] dumpQueuedThreads()
    {
       List<String> result = new ArrayList<String>();
 
