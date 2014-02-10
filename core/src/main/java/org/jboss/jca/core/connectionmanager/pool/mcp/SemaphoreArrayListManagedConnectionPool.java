@@ -1455,13 +1455,13 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    /**
     * {@inheritDoc}
     */
-   public synchronized String[] dumpQueuedThreads()
+   public String[] dumpQueuedThreads()
    {
       List<String> result = new ArrayList<String>();
 
-      Collection<Thread> queuedThreads = permits.getQueuedThreads();
-      if (queuedThreads != null)
+      if (permits.hasQueuedThreads())
       {
+         Collection<Thread> queuedThreads = new ArrayList<Thread>(permits.getQueuedThreads());
          for (Thread t : queuedThreads)
          {
             result.add(dumpQueuedThread(t));

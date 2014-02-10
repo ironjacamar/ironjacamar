@@ -1338,7 +1338,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
    /**
     * {@inheritDoc}
     */
-   public synchronized String[] dumpQueuedThreads()
+   public String[] dumpQueuedThreads()
    {
       List<String> result = new ArrayList<String>();
 
