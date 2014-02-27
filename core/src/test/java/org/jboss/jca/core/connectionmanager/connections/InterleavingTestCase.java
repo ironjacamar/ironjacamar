@@ -423,7 +423,7 @@ public class InterleavingTestCase
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       TxConnectionManagerImpl tcm =
          (TxConnectionManagerImpl)cmf.createTransactional(TransactionSupportLevel.XATransaction, pool,
-                                                          null, null, false, null,
+                                                          null, null, false, null, false,
                                                           FlushStrategy.FAILING_CONNECTION_ONLY,
                                                           null, null, ti, null, null, null, null, null);
       tcm.setInterleaving(true);

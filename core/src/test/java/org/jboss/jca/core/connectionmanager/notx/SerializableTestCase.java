@@ -68,7 +68,7 @@ public class SerializableTestCase
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
 
       ConnectionManager connectionManager = cmf.createNonTransactional(TransactionSupportLevel.NoTransaction,
-                                                                       pool, null, null, false, null, 
+                                                                       pool, null, null, false, null, false,
                                                                        FlushStrategy.FAILING_CONNECTION_ONLY,
                                                                        null, null);
       assertNotNull(connectionManager);

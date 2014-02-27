@@ -25,10 +25,10 @@ import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
-import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.transaction.TransactionSynchronizer;
 import org.jboss.jca.core.connectionmanager.tx.TxConnectionManagerImpl;
+import org.jboss.jca.core.spi.transaction.ConnectableResource;
 import org.jboss.jca.core.spi.transaction.TxUtils;
 import org.jboss.jca.core.spi.transaction.local.LocalXAResource;
 
@@ -39,7 +39,6 @@ import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionEvent;
 import javax.resource.spi.LocalTransaction;
 import javax.resource.spi.ManagedConnection;
-import javax.transaction.RollbackException;
 import javax.transaction.Status;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
@@ -131,6 +130,10 @@ public class TxConnectionListener extends AbstractConnectionListener
       if (xaResource instanceof LocalXAResource)
       {
          ((LocalXAResource) xaResource).setConnectionListener(this);
+      }
+      if (xaResource instanceof ConnectableResource)
+      {
+         ((ConnectableResource) xaResource).setConnectableResourceListener(this);
       }
    }
 

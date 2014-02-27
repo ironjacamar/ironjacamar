@@ -23,6 +23,7 @@ package org.jboss.jca.core.tx.jbossts;
 
 import org.jboss.jca.core.api.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
+import org.jboss.jca.core.spi.transaction.ConnectableResource;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.core.spi.transaction.local.LocalXAResource;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
@@ -191,6 +192,19 @@ public class TransactionIntegrationImpl implements TransactionIntegration
       LocalXAResource result = new LocalXAResourceImpl(productName, productVersion, jndiName);
       result.setConnectionManager(cm);
 
+      return result;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public LocalXAResource createConnectableLocalXAResource(ConnectionManager cm,
+                                                           String productName, String productVersion,
+                                                           String jndiName, ConnectableResource cr)
+   {
+      LocalXAResource result = new LocalConnectableXAResourceImpl(productName, productVersion, jndiName, cr);
+      result.setConnectionManager(cm);
+      
       return result;
    }
 

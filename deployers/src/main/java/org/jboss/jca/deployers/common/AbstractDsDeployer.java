@@ -499,6 +499,15 @@ public abstract class AbstractDsDeployer
       if (ds.getPool() != null)
          flushStrategy = ds.getPool().getFlushStrategy();
 
+      // Connectable
+      boolean connectable = false;
+      if (ds instanceof org.jboss.jca.common.api.metadata.ds.v11.DataSource)
+      {
+         org.jboss.jca.common.api.metadata.ds.v11.DataSource ds11 =
+            (org.jboss.jca.common.api.metadata.ds.v11.DataSource)ds;
+         connectable = ds11.isConnectable().booleanValue();
+      }
+
       // Select the correct connection manager
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       ConnectionManager cm = null;
@@ -508,7 +517,7 @@ public abstract class AbstractDsDeployer
          cm = cmf.createTransactional(TransactionSupportLevel.LocalTransaction, pool, 
                                       getSubjectFactory(securityDomain), securityDomain,
                                       ds.isUseCcm(), getCachedConnectionManager(),
-                                      flushStrategy,
+                                      connectable, flushStrategy,
                                       allocationRetry, allocationRetryWaitMillis,
                                       getTransactionIntegration(),
                                       null, null, null, null, null);
@@ -518,7 +527,7 @@ public abstract class AbstractDsDeployer
          cm = cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool, 
                                          getSubjectFactory(securityDomain), securityDomain,
                                          ds.isUseCcm(), getCachedConnectionManager(),
-                                         flushStrategy, allocationRetry, allocationRetryWaitMillis);
+                                         false, flushStrategy, allocationRetry, allocationRetryWaitMillis);
       }
 
       cm.setJndiName(jndiName);
@@ -712,7 +721,7 @@ public abstract class AbstractDsDeployer
       ConnectionManager cm =
          cmf.createTransactional(tsl, pool, getSubjectFactory(securityDomain), securityDomain,
                                  ds.isUseCcm(), getCachedConnectionManager(),
-                                 flushStrategy,
+                                 false, flushStrategy,
                                  allocationRetry, allocationRetryWaitMillis,
                                  getTransactionIntegration(), interleaving,
                                  xaResourceTimeout, isSameRMOverride, wrapXAResource, padXid);
