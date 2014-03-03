@@ -31,11 +31,11 @@ import org.jboss.jca.common.api.metadata.ds.Driver;
 import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
 import org.jboss.jca.common.metadata.XMLParserTestBase;
-import org.jboss.jca.common.metadata.ds.v12.DataSourceImpl;
-import org.jboss.jca.common.metadata.ds.v12.DsParser;
 import org.jboss.jca.common.metadata.ds.v12.DsPoolImpl;
 import org.jboss.jca.common.metadata.ds.v12.DsXaPoolImpl;
-import org.jboss.jca.common.metadata.ds.v12.XADataSourceImpl;
+import org.jboss.jca.common.metadata.ds.v13.DataSourceImpl;
+import org.jboss.jca.common.metadata.ds.v13.DsParser;
+import org.jboss.jca.common.metadata.ds.v13.XADataSourceImpl;
 
 import java.util.List;
 import java.util.Map;
@@ -82,6 +82,7 @@ public class DsParserXMLTestCase extends XMLParserTestBase
       assertTrue(ds.isUseJavaContext());
       assertFalse(ds.isSpy());
       assertTrue(ds.isUseCcm());
+      assertFalse(ds.isConnectable());
 
       //XaDs part
       XADataSourceImpl xads = (XADataSourceImpl) dss.getXaDataSource().get(0);
@@ -90,6 +91,7 @@ public class DsParserXMLTestCase extends XMLParserTestBase
       assertFalse(xads.isSpy());
       assertTrue(xads.isUseCcm());
       assertTrue(xads.isEnabled());
+      assertFalse(xads.isConnectable());
 
       DsXaPoolImpl poolXa = (DsXaPoolImpl) xads.getXaPool();
       assertNotNull(poolXa);
@@ -118,6 +120,7 @@ public class DsParserXMLTestCase extends XMLParserTestBase
       assertFalse(ds.isUseJavaContext());
       assertTrue(ds.isSpy());
       assertFalse(ds.isUseCcm());
+      assertTrue(ds.isConnectable());
       assertEquals(ds.getConnectionUrl(), "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1");
       assertEquals(ds.getDriverClass(), "org.hsqldb.jdbcDriver");
       assertEquals(ds.getDataSourceClass(), "org.jboss.as.connector.subsystems.datasources.ModifiableDataSource");
@@ -188,6 +191,7 @@ public class DsParserXMLTestCase extends XMLParserTestBase
       assertFalse(xads.isSpy());
       assertTrue(xads.isUseCcm());
       assertTrue(xads.isEnabled());
+      assertTrue(xads.isConnectable());
       assertEquals(xads.getXaDataSourceClass(), "org.jboss.as.connector.subsystems.datasources.ModifiableXaDataSource");
       assertEquals(xads.getDriver(), "pg");
       checkProperties(xads.getXaDataSourceProperty());

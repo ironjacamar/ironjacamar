@@ -22,6 +22,7 @@
 package org.jboss.jca.core.tx.jbossts;
 
 import org.jboss.jca.core.spi.transaction.ConnectableResource;
+import org.jboss.jca.core.spi.transaction.ConnectableResourceListener;
 
 /**
  * Local connectable XA resource implementation.
@@ -32,7 +33,13 @@ public class LocalConnectableXAResourceImpl extends LocalXAResourceImpl
    implements ConnectableResource, org.jboss.tm.ConnectableResource
 {
    /** Connectable resource */
-   private ConnectableResource cr;
+   private ConnectableResource cr1;
+   
+   /** Connectable resource */
+   private org.jboss.tm.ConnectableResource cr2;
+   
+   /** Connectable resource listener */
+   private ConnectableResourceListener crl;
    
    /**
     * Creates a new instance.
@@ -45,14 +52,61 @@ public class LocalConnectableXAResourceImpl extends LocalXAResourceImpl
                                          String jndiName, ConnectableResource cr)
    {
       super(productName, productVersion, jndiName);
-      this.cr = cr;
+      this.cr1 = cr;
+      this.cr2 = null;
+      this.crl = null;
+   }
+
+   /**
+    * Creates a new instance.
+    * @param productName product name
+    * @param productVersion product version
+    * @param jndiName jndi name
+    * @param cr connectable resource
+    */
+   public LocalConnectableXAResourceImpl(String productName, String productVersion,
+                                         String jndiName, org.jboss.tm.ConnectableResource cr)
+   {
+      super(productName, productVersion, jndiName);
+      this.cr1 = null;
+      this.cr2 = cr;
+      this.crl = null;
    }
 
    /**
     * {@inheritDoc}
     */
-   public AutoCloseable getConnection() throws Exception
+   public Object getConnection() throws Exception
    {
-      return cr.getConnection();
+      Object result = null;
+
+      if (cr1 != null)
+      {
+         result = cr1.getConnection();
+      }
+      else
+      {
+         try
+         {
+            result = cr2.getConnection();
+         }
+         catch (Throwable t)
+         {
+            throw new Exception(t.getMessage(), t);
+         }
+      }
+
+      if (crl != null)
+         crl.handleCreated(result);
+
+      return result;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setConnectableResourceListener(ConnectableResourceListener crl)
+   {
+      this.crl = crl;
    }
 }

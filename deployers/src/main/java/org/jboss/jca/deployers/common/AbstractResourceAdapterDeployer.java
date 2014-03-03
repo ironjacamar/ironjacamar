@@ -1577,6 +1577,7 @@ public abstract class AbstractResourceAdapterDeployer
 
                         Boolean sharable = Defaults.SHARABLE;
                         Boolean enlistment = Defaults.ENLISTMENT;
+                        Boolean connectable = Defaults.CONNECTABLE;
                         if (connectionDefinition != null &&
                             connectionDefinition instanceof org.jboss.jca.common.api.metadata.common.v11.CommonConnDef)
                         {
@@ -1584,6 +1585,13 @@ public abstract class AbstractResourceAdapterDeployer
                               (org.jboss.jca.common.api.metadata.common.v11.CommonConnDef)connectionDefinition;
                            sharable = ccd.isSharable();
                            enlistment = ccd.isEnlistment();
+                        }
+                        if (connectionDefinition != null &&
+                            connectionDefinition instanceof org.jboss.jca.common.api.metadata.common.v12.CommonConnDef)
+                        {
+                           org.jboss.jca.common.api.metadata.common.v12.CommonConnDef ccd =
+                              (org.jboss.jca.common.api.metadata.common.v12.CommonConnDef)connectionDefinition;
+                           connectable = ccd.isConnectable();
                         }
 
                         Pool pool =
@@ -1655,6 +1663,7 @@ public abstract class AbstractResourceAdapterDeployer
                                                            useCCM, getCachedConnectionManager(),
                                                            sharable,
                                                            enlistment,
+                                                           connectable,
                                                            flushStrategy,
                                                            allocationRetry, allocationRetryWaitMillis);
                         }
@@ -1693,6 +1702,7 @@ public abstract class AbstractResourceAdapterDeployer
                                                         useCCM, getCachedConnectionManager(),
                                                         sharable,
                                                         enlistment,
+                                                        connectable,
                                                         flushStrategy,
                                                         allocationRetry, allocationRetryWaitMillis,
                                                         getTransactionIntegration(), interleaving,
@@ -2127,6 +2137,7 @@ public abstract class AbstractResourceAdapterDeployer
 
                                     Boolean sharable = Defaults.SHARABLE;
                                     Boolean enlistment = Defaults.ENLISTMENT;
+                                    Boolean connectable = Defaults.CONNECTABLE;
                                     if (connectionDefinition != null &&
                                         connectionDefinition instanceof
                                         org.jboss.jca.common.api.metadata.common.v11.CommonConnDef)
@@ -2136,6 +2147,15 @@ public abstract class AbstractResourceAdapterDeployer
                                           connectionDefinition;
                                        sharable = ccd.isSharable();
                                        enlistment = ccd.isEnlistment();
+                                    }
+                                    if (connectionDefinition != null &&
+                                        connectionDefinition instanceof
+                                        org.jboss.jca.common.api.metadata.common.v12.CommonConnDef)
+                                    {
+                                       org.jboss.jca.common.api.metadata.common.v12.CommonConnDef ccd =
+                                          (org.jboss.jca.common.api.metadata.common.v12.CommonConnDef)
+                                          connectionDefinition;
+                                       connectable = ccd.isConnectable();
                                     }
 
                                     Pool pool = pf.create(strategy, mcf, pc, noTxSeparatePool.booleanValue(),
@@ -2206,6 +2226,7 @@ public abstract class AbstractResourceAdapterDeployer
                                                                        useCCM, getCachedConnectionManager(),
                                                                        sharable,
                                                                        enlistment,
+                                                                       connectable,
                                                                        flushStrategy,
                                                                        allocationRetry, allocationRetryWaitMillis);
                                     }
@@ -2243,6 +2264,7 @@ public abstract class AbstractResourceAdapterDeployer
                                                                     useCCM, getCachedConnectionManager(),
                                                                     sharable,
                                                                     enlistment,
+                                                                    connectable,
                                                                     flushStrategy,
                                                                     allocationRetry, allocationRetryWaitMillis,
                                                                     getTransactionIntegration(),

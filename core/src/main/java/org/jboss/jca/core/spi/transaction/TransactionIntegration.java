@@ -31,6 +31,7 @@ import org.jboss.jca.core.spi.transaction.xa.XAResourceWrapper;
 import org.jboss.jca.core.spi.transaction.xa.XATerminator;
 
 import javax.resource.spi.ActivationSpec;
+import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.ResourceAdapter;
 import javax.transaction.TransactionManager;
@@ -146,6 +147,19 @@ public interface TransactionIntegration
                                                            String jndiName, ConnectableResource cr);
 
    /**
+    * Create a connectable LocalXAResource instance
+    * @param cm The connection manager
+    * @param productName The product name
+    * @param productVersion The product version
+    * @param jndiName The JNDI name for the resource
+    * @param mc The managed connection
+    * @return The value
+    */
+   public LocalXAResource createConnectableLocalXAResource(ConnectionManager cm, 
+                                                           String productName, String productVersion,
+                                                           String jndiName, ManagedConnection mc);
+
+   /**
     * Create an XAResource wrapper instance
     * @param xares The XAResource instance
     * @param pad Should the branch qualifier for Xid's be padded
@@ -170,12 +184,40 @@ public interface TransactionIntegration
     * @param productVersion The product version
     * @param jndiName The JNDI name for the resource
     * @param cr The connectable resource
-    * @param firstResource Is the resource a first resource
     * @return The value
     */
    public XAResourceWrapper createConnectableXAResourceWrapper(XAResource xares,
                                                                boolean pad, Boolean override, 
                                                                String productName, String productVersion,
-                                                               String jndiName, ConnectableResource cr,
-                                                               boolean firstResource);
+                                                               String jndiName, ConnectableResource cr);
+
+   /**
+    * Create a connectable XAResource wrapper instance
+    * @param xares The XAResource instance
+    * @param pad Should the branch qualifier for Xid's be padded
+    * @param override Should the isSameRM value be overriden; <code>null</code> for instance equally check
+    * @param productName The product name
+    * @param productVersion The product version
+    * @param jndiName The JNDI name for the resource
+    * @param mc The managed connection
+    * @return The value
+    */
+   public XAResourceWrapper createConnectableXAResourceWrapper(XAResource xares,
+                                                               boolean pad, Boolean override, 
+                                                               String productName, String productVersion,
+                                                               String jndiName, ManagedConnection mc);
+
+   /**
+    * Is a first resource
+    * @param mc The managed connection
+    * @return The value
+    */
+   public boolean isFirstResource(ManagedConnection mc);
+
+   /**
+    * Is a connectable resource
+    * @param mc The managed connection
+    * @return The value
+    */
+   public boolean isConnectableResource(ManagedConnection mc);
 }

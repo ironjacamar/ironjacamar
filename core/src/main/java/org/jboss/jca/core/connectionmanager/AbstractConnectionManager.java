@@ -102,6 +102,9 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    /** Enlistment */
    protected Boolean enlistment;
 
+   /** Connectable */
+   protected boolean connectable;
+
    /**
     * Creates a new instance of connection manager.
     */
@@ -226,6 +229,27 @@ public abstract class AbstractConnectionManager implements ConnectionManager
 
       if (trace)
          log.tracef("enlistment=%s", enlistment);
+   }
+
+   /**
+    * Is connectable
+    * @return The value
+    */
+   public boolean isConnectable()
+   {
+      return connectable;
+   }
+
+   /**
+    * Set the connectable flag
+    * @param v The value
+    */
+   public void setConnectable(boolean v)
+   {
+      this.connectable = v;
+
+      if (trace)
+         log.tracef("connectable=%s", connectable);
    }
 
    /**

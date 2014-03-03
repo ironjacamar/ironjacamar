@@ -79,7 +79,8 @@ public class NoTxConnectionManagerTestCase
 
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       connectionManager = 
-         cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool, null, null, false, null, true, true,
+         cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool, null, null, false, null,
+                                    true, true, false,
                                     FlushStrategy.FAILING_CONNECTION_ONLY,
                                     null, null);
       assertNotNull(connectionManager);

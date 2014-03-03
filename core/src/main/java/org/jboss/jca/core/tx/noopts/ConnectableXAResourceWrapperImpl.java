@@ -22,6 +22,7 @@
 package org.jboss.jca.core.tx.noopts;
 
 import org.jboss.jca.core.spi.transaction.ConnectableResource;
+import org.jboss.jca.core.spi.transaction.ConnectableResourceListener;
 
 import javax.transaction.xa.XAResource;
 
@@ -34,6 +35,9 @@ public class ConnectableXAResourceWrapperImpl extends XAResourceWrapperImpl impl
 {
    /** Connectable resource */
    private ConnectableResource cr;
+   
+   /** Connectable resource listener */
+   private ConnectableResourceListener crl;
    
    /**
     * Creates a new wrapper instance.
@@ -50,13 +54,27 @@ public class ConnectableXAResourceWrapperImpl extends XAResourceWrapperImpl impl
    {
       super(resource, override, productName, productVersion, jndiName);
       this.cr = cr;
+      this.crl = null;
    }
 
    /**
     * {@inheritDoc}
     */
-   public AutoCloseable getConnection() throws Exception
+   public Object getConnection() throws Exception
    {
-      return cr.getConnection();
+      Object result = cr.getConnection();
+
+      if (crl != null)
+         crl.handleCreated(result);
+
+      return result;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setConnectableResourceListener(ConnectableResourceListener crl)
+   {
+      this.crl = crl;
    }
 }

@@ -33,6 +33,7 @@ import org.jboss.jca.core.spi.transaction.xa.XAResourceWrapper;
 import org.jboss.jca.core.spi.transaction.xa.XATerminator;
 
 import javax.resource.spi.ActivationSpec;
+import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.ResourceAdapter;
 import javax.transaction.TransactionManager;
@@ -161,6 +162,16 @@ public class TransactionIntegrationImpl implements TransactionIntegration
    /**
     * {@inheritDoc}
     */
+   public LocalXAResource createConnectableLocalXAResource(ConnectionManager cm, 
+                                                           String productName, String productVersion,
+                                                           String jndiName, ManagedConnection mc)
+   {
+      return new LocalConnectableXAResourceImpl(productName, productVersion, jndiName, (ConnectableResource)mc);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public LocalXAResource createLocalXAResource(ConnectionManager cm, 
                                                 String productName, String productVersion,
                                                 String jndiName)
@@ -174,10 +185,21 @@ public class TransactionIntegrationImpl implements TransactionIntegration
    public XAResourceWrapper createConnectableXAResourceWrapper(XAResource xares,
                                                                boolean pad, Boolean override, 
                                                                String productName, String productVersion,
-                                                               String jndiName, ConnectableResource cr,
-                                                               boolean firstResource)
+                                                               String jndiName, ConnectableResource cr)
    {
       return new ConnectableXAResourceWrapperImpl(xares, override, productName, productVersion, jndiName, cr);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public XAResourceWrapper createConnectableXAResourceWrapper(XAResource xares,
+                                                               boolean pad, Boolean override, 
+                                                               String productName, String productVersion,
+                                                               String jndiName, ManagedConnection mc)
+   {
+      return new ConnectableXAResourceWrapperImpl(xares, override, productName, productVersion, jndiName,
+                                                  (ConnectableResource)mc);
    }
 
    /**
@@ -189,5 +211,21 @@ public class TransactionIntegrationImpl implements TransactionIntegration
                                                     String jndiName, boolean firstResource)
    {
       return new XAResourceWrapperImpl(xares, override, productName, productVersion, jndiName);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isFirstResource(ManagedConnection mc)
+   {
+      return mc != null && mc instanceof org.jboss.jca.core.spi.transaction.FirstResource;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isConnectableResource(ManagedConnection mc)
+   {
+      return mc != null && mc instanceof ConnectableResource;
    }
 }

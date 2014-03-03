@@ -25,6 +25,7 @@ package org.jboss.jca.adapters.jdbc;
 import org.jboss.jca.adapters.jdbc.spi.reauth.ReauthPlugin;
 import org.jboss.jca.adapters.jdbc.util.ReentrantLock;
 import org.jboss.jca.core.spi.transaction.ConnectableResource;
+import org.jboss.jca.core.spi.transaction.ConnectableResourceListener;
 
 import java.io.PrintWriter;
 import java.sql.CallableStatement;
@@ -526,9 +527,16 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
    /**
     * {@inheritDoc}
     */
-   public AutoCloseable getConnection() throws Exception
+   public Object getConnection() throws Exception
    {
       return getWrappedConnection();
+   }
+ 
+   /**
+    * {@inheritDoc}
+    */
+   public void setConnectableResourceListener(ConnectableResourceListener crl)
+   {
    }
 
    /**

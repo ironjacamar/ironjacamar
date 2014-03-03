@@ -510,6 +510,16 @@ public abstract class AbstractDsDeployer
       if (ds.getPool() != null)
          flushStrategy = ds.getPool().getFlushStrategy();
 
+      boolean connectable = false;
+      if (ds instanceof org.jboss.jca.common.api.metadata.ds.v13.DataSource)
+      {
+         org.jboss.jca.common.api.metadata.ds.v13.DataSource ds13 =
+            (org.jboss.jca.common.api.metadata.ds.v13.DataSource)ds;
+
+         if (ds13.isConnectable() != null)
+            connectable = ds13.isConnectable().booleanValue();
+      }
+
       // Select the correct connection manager
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       ConnectionManager cm = null;
@@ -519,7 +529,7 @@ public abstract class AbstractDsDeployer
          cm = cmf.createTransactional(TransactionSupportLevel.LocalTransaction, pool, 
                                       getSubjectFactory(securityDomain), securityDomain,
                                       ds.isUseCcm(), getCachedConnectionManager(),
-                                      true, true,
+                                      true, true, connectable,
                                       flushStrategy,
                                       allocationRetry, allocationRetryWaitMillis,
                                       getTransactionIntegration(),
@@ -530,7 +540,7 @@ public abstract class AbstractDsDeployer
          cm = cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool, 
                                          getSubjectFactory(securityDomain), securityDomain,
                                          ds.isUseCcm(), getCachedConnectionManager(),
-                                         true, true,
+                                         true, true, connectable,
                                          flushStrategy, allocationRetry, allocationRetryWaitMillis);
       }
 
@@ -762,13 +772,23 @@ public abstract class AbstractDsDeployer
       if (ds.getXaPool() != null)
          flushStrategy = ds.getXaPool().getFlushStrategy();
 
+      boolean connectable = false;
+      if (ds instanceof org.jboss.jca.common.api.metadata.ds.v13.XaDataSource)
+      {
+         org.jboss.jca.common.api.metadata.ds.v13.XaDataSource xads13 =
+            (org.jboss.jca.common.api.metadata.ds.v13.XaDataSource)ds;
+
+         if (xads13.isConnectable() != null)
+            connectable = xads13.isConnectable().booleanValue();
+      }
+
       // Select the correct connection manager
       TransactionSupportLevel tsl = TransactionSupportLevel.XATransaction;
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       ConnectionManager cm =
          cmf.createTransactional(tsl, pool, getSubjectFactory(securityDomain), securityDomain,
                                  ds.isUseCcm(), getCachedConnectionManager(),
-                                 true, true,
+                                 true, true, connectable,
                                  flushStrategy,
                                  allocationRetry, allocationRetryWaitMillis,
                                  getTransactionIntegration(), interleaving,
