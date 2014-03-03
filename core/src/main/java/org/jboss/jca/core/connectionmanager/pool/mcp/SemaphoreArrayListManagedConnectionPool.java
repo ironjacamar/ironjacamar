@@ -661,16 +661,16 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                log.attemptReturnConnectionTwice(cl, new Throwable("STACKTRACE"));
             }
          }
+
+         ConnectionListener present = clPermits.remove(cl);
+         if (present != null)
+         {
+            permits.release();
+         }
       }
 
       if (statistics.isEnabled())
          statistics.setInUsedCount(checkedOut.size());
-
-      ConnectionListener present = clPermits.remove(cl);
-      if (present != null)
-      {
-         permits.release();
-      }
 
       if (kill)
       {
