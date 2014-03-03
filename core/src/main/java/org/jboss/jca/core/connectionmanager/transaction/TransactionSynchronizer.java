@@ -335,17 +335,21 @@ public class TransactionSynchronizer implements Synchronization
          invokeAfter(ccmSynch, status);  
       }
 
-      // Cleanup the maps -- only trust TransactionSynchronizer
-      boolean found = false;
-
-      Iterator<Map.Entry<Transaction, Record>> iterator = records.entrySet().iterator();
-      while (!found && iterator.hasNext())
+      // Try with hashCode first
+      if (records.remove(tx) == null)
       {
-         Map.Entry<Transaction, Record> next = iterator.next();
-         if (next.getValue().getTransactionSynchronizer().equals(this))
+         // Cleanup the maps -- only trust TransactionSynchronizer
+         boolean found = false;
+
+         Iterator<Map.Entry<Transaction, Record>> iterator = records.entrySet().iterator();
+         while (!found && iterator.hasNext())
          {
-            iterator.remove();
-            found = true;
+            Map.Entry<Transaction, Record> next = iterator.next();
+            if (next.getValue().getTransactionSynchronizer().equals(this))
+            {
+               iterator.remove();
+               found = true;
+            }
          }
       }
    }
