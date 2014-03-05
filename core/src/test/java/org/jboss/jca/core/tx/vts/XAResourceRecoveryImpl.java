@@ -43,6 +43,22 @@ public class XAResourceRecoveryImpl implements XAResourceRecovery
     * {@inheritDoc}
     */
    @Override
+   public void initialize() throws Exception
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void shutdown() throws Exception
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    public XAResource[] getXAResources()
    {
       return new XAResource[0];

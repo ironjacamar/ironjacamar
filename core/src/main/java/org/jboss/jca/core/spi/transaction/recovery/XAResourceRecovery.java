@@ -35,6 +35,18 @@ import javax.transaction.xa.XAResource;
 public interface XAResourceRecovery
 {
    /**
+    * Initialize the recovery plugin
+    * @exception Exception If an error occurs
+    */
+   public void initialize() throws Exception;
+
+   /**
+    * Shutdown the recovery plugin
+    * @exception Exception If an error occurs
+    */
+   public void shutdown() throws Exception;
+
+   /**
     * Provides XAResource(s) to the transaction system for recovery purposes.
     *
     * @return An array of XAResource objects for use in transaction recovery

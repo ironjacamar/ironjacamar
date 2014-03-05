@@ -225,7 +225,20 @@ public abstract class AbstractFungalDeployment implements Deployment
             for (XAResourceRecovery recovery : recoveryModules)
             {
                if (recovery != null)
-                  recoveryRegistry.removeXAResourceRecovery(recovery);
+               {
+                  try
+                  {
+                     recovery.shutdown();
+                  }
+                  catch (Exception e)
+                  {
+                     log.error("Error during recovery shutdown", e);
+                  }
+                  finally
+                  {
+                     recoveryRegistry.removeXAResourceRecovery(recovery);
+                  }
+               }
             }
          }
 

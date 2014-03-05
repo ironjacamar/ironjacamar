@@ -522,6 +522,20 @@ public interface CoreBundle
    @Message(id = 951, value = "Error during connection close")
    public String errorDuringConnectionClose();
    
+   /**
+    * Error during recovery initialization
+    * @return The value
+    */
+   @Message(id = 952, value = "Error during recovery initialization")
+   public String errorDuringRecoveryInitialization();
+   
+   /**
+    * Error during recovery shutdown
+    * @return The value
+    */
+   @Message(id = 953, value = "Error during recovery shutdown")
+   public String errorDuringRecoveryShutdown();
+   
    // SECURITY (1000)
 
    

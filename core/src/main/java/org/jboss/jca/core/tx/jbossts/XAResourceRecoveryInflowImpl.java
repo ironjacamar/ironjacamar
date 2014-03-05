@@ -80,6 +80,22 @@ public class XAResourceRecoveryInflowImpl implements org.jboss.jca.core.spi.tran
    /**
     * {@inheritDoc}
     */
+   @Override
+   public void initialize() throws Exception
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void shutdown() throws Exception
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public void setJndiName(String jndiName)
    {
       this.jndiName = jndiName;
