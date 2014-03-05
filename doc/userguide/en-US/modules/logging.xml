@@ -560,6 +560,16 @@
             <entry>Error during connection close</entry>
           </row>
           <row>
+            <entry>952</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Error during recovery initialization</entry>
+          </row>
+          <row>
+            <entry>953</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Error during recovery shutdown</entry>
+          </row>
+          <row>
             <entry>1001</entry>
             <entry><code>WARN</code></entry>
             <entry>No users.properties were found</entry>

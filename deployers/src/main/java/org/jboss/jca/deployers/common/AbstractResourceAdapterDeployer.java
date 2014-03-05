@@ -1865,6 +1865,7 @@ public abstract class AbstractResourceAdapterDeployer
                               if (recoveryImpl != null)
                               {
                                  recoveryImpl.setJndiName(cm.getJndiName());
+                                 recoveryImpl.initialize();
                                  getTransactionIntegration().
                                     getRecoveryRegistry().addXAResourceRecovery(recoveryImpl);
                               }
@@ -2432,6 +2433,7 @@ public abstract class AbstractResourceAdapterDeployer
                                           if (recoveryImpl != null)
                                           {
                                              recoveryImpl.setJndiName(cm.getJndiName());
+                                             recoveryImpl.initialize();
                                              getTransactionIntegration().
                                                 getRecoveryRegistry().addXAResourceRecovery(recoveryImpl);
                                           }

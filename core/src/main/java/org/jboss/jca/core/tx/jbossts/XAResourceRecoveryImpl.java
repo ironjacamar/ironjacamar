@@ -135,6 +135,24 @@ public class XAResourceRecoveryImpl implements org.jboss.jca.core.spi.transactio
    }
 
    /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void initialize() throws Exception
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void shutdown() throws Exception
+   {
+      if (recoverMC != null)
+         close(recoverMC);
+   }
+
+   /**
     * Set the jndiName.
     *
     * @param jndiName The jndiName to set.

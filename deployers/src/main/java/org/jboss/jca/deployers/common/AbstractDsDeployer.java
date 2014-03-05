@@ -974,6 +974,7 @@ public abstract class AbstractDsDeployer
          if (recoveryImpl != null)
          {
             recoveryImpl.setJndiName(cm.getJndiName());
+            recoveryImpl.initialize();
             getTransactionIntegration().getRecoveryRegistry().addXAResourceRecovery(recoveryImpl);
 
             recovery[0] = recoveryImpl;

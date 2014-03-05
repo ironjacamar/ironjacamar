@@ -204,8 +204,16 @@ public class EndpointImpl implements Endpoint
          if (trace)
             log.tracef("Adding %s for recovery", xrr);
 
-         transactionIntegration.getRecoveryRegistry().addXAResourceRecovery(xrr);
-         recovery.put(spec, xrr);
+         try
+         {
+            xrr.initialize();
+            transactionIntegration.getRecoveryRegistry().addXAResourceRecovery(xrr);
+            recovery.put(spec, xrr);
+         }
+         catch (Exception e)
+         {
+            throw new ResourceException(bundle.errorDuringRecoveryInitialization(), e);
+         }
       }
    }
 
@@ -234,7 +242,18 @@ public class EndpointImpl implements Endpoint
             if (trace)
                log.tracef("Removing %s for recovery", xrr);
 
-            transactionIntegration.getRecoveryRegistry().removeXAResourceRecovery(xrr);
+            try
+            {
+               xrr.shutdown();
+            }
+            catch (Exception e)
+            {
+               throw new ResourceException(bundle.errorDuringRecoveryShutdown(), e);
+            }
+            finally
+            {
+               transactionIntegration.getRecoveryRegistry().removeXAResourceRecovery(xrr);
+            }
          }
       }
 
