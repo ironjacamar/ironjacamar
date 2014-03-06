@@ -36,6 +36,7 @@ import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.ResourceAdapter;
+import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.xa.XAResource;
@@ -227,5 +228,13 @@ public class TransactionIntegrationImpl implements TransactionIntegration
    public boolean isConnectableResource(ManagedConnection mc)
    {
       return mc != null && mc instanceof ConnectableResource;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public Object getIdentifier(Transaction tx)
+   {
+      return tx;
    }
 }

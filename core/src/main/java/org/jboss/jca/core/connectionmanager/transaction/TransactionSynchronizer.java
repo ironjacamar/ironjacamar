@@ -22,6 +22,7 @@
 package org.jboss.jca.core.connectionmanager.transaction;
 
 import org.jboss.jca.core.CoreLogger;
+import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -36,7 +37,6 @@ import javax.transaction.RollbackException;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
-import javax.transaction.TransactionSynchronizationRegistry;
 
 import org.jboss.logging.Logger;
 
@@ -58,11 +58,14 @@ public class TransactionSynchronizer implements Synchronization
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, TransactionSynchronizer.class.getName());
 
    /** The records */
-   private static ConcurrentMap<Transaction, Record> records =
-      new ConcurrentHashMap<Transaction, Record>();
+   private static ConcurrentMap<Object, Record> records =
+      new ConcurrentHashMap<Object, Record>();
    
    /** The transaction */
    private Transaction tx;
+
+   /** The identifier */
+   private Object identifier;
    
    /** The enlisting thread */
    private Thread enlistingThread;
@@ -80,10 +83,12 @@ public class TransactionSynchronizer implements Synchronization
     * Create a new transaction synchronizer
     * 
     * @param tx the transaction to synchronize with
+    * @param id the identifier for the transaction
     */
-   private TransactionSynchronizer(Transaction tx)
+   private TransactionSynchronizer(Transaction tx, Object id)
    {
       this.tx = tx;
+      this.identifier = id;
    }
    
    /**
@@ -181,26 +186,28 @@ public class TransactionSynchronizer implements Synchronization
     * Get a registered transaction synchronizer.
     *
     * @param tx the transaction
-    * @param tsr the transaction synchronization registry
+    * @param ti the transaction integration
     * @throws SystemException sys. exception
     * @throws RollbackException rollback exception
     * @return the registered transaction synchronizer for this transaction
     */
    public static TransactionSynchronizer getRegisteredSynchronizer(Transaction tx, 
-                                                                   TransactionSynchronizationRegistry tsr)
+                                                                   TransactionIntegration ti)
       throws SystemException, RollbackException
    {
-      Record record = records.get(tx);
+      Object id = ti.getIdentifier(tx);
+      Record record = records.get(id);
       if (record == null)
       {
-         Record newRecord = new Record(new ReentrantLock(true), new TransactionSynchronizer(tx));
-         record = records.putIfAbsent(tx, newRecord);
+         Record newRecord = new Record(new ReentrantLock(true), new TransactionSynchronizer(tx, id));
+         record = records.putIfAbsent(id, newRecord);
          if (record == null)
          {
             record = newRecord;
-            if (tsr != null)
+            if (ti.getTransactionSynchronizationRegistry() != null)
             {
-               tsr.registerInterposedSynchronization(record.getTransactionSynchronizer());
+               ti.getTransactionSynchronizationRegistry().
+                  registerInterposedSynchronization(record.getTransactionSynchronizer());
             }
             else
             {
@@ -215,11 +222,12 @@ public class TransactionSynchronizer implements Synchronization
     * Check whether we have a CCM synchronization
     * 
     * @param tx the transaction
+    * @param ti the transaction integration
     * @return synch
     */
-   public static Synchronization getCCMSynchronization(Transaction tx)
+   public static Synchronization getCCMSynchronization(Transaction tx, TransactionIntegration ti)
    {
-      Record record = records.get(tx);
+      Record record = records.get(ti.getIdentifier(tx));
       if (record != null)
          return record.getTransactionSynchronizer().ccmSynch;  
 
@@ -231,15 +239,15 @@ public class TransactionSynchronizer implements Synchronization
     *
     * @param tx the transaction
     * @param synch the synchronization
-    * @param tsr the transaction synchronization registry
+    * @param ti the transaction integration
     * @throws Exception e
     */
    public static void registerCCMSynchronization(Transaction tx,
                                                  Synchronization synch,
-                                                 TransactionSynchronizationRegistry tsr)
+                                                 TransactionIntegration ti)
       throws Exception
    {
-      TransactionSynchronizer ts = getRegisteredSynchronizer(tx, tsr);
+      TransactionSynchronizer ts = getRegisteredSynchronizer(tx, ti);
       ts.ccmSynch = synch;
    }
 
@@ -247,24 +255,26 @@ public class TransactionSynchronizer implements Synchronization
     * Lock for the given transaction
     * 
     * @param tx the transaction
-    * @param tsr the transaction synchronization registry
+    * @param ti the transaction integration
     * @throws SystemException sys. exception
     * @throws RollbackException rollback exception
     */
-   public static void lock(Transaction tx, TransactionSynchronizationRegistry tsr)
+   public static void lock(Transaction tx, TransactionIntegration ti)
       throws SystemException, RollbackException
    {
-      Record record = records.get(tx);
+      Object id = ti.getIdentifier(tx);
+      Record record = records.get(id);
       if (record == null)
       {
-         Record newRecord = new Record(new ReentrantLock(true), new TransactionSynchronizer(tx));
-         record = records.putIfAbsent(tx, newRecord);
+         Record newRecord = new Record(new ReentrantLock(true), new TransactionSynchronizer(tx, id));
+         record = records.putIfAbsent(id, newRecord);
          if (record == null)
          {
             record = newRecord;
-            if (tsr != null)
+            if (ti.getTransactionSynchronizationRegistry() != null)
             {
-               tsr.registerInterposedSynchronization(record.getTransactionSynchronizer());
+               ti.getTransactionSynchronizationRegistry().
+                  registerInterposedSynchronization(record.getTransactionSynchronizer());
             }
             else
             {
@@ -289,10 +299,11 @@ public class TransactionSynchronizer implements Synchronization
     * Unlock for the given transaction
     * 
     * @param tx the transaction
+    * @param ti the transaction integration
     */
-   public static void unlock(Transaction tx)
+   public static void unlock(Transaction tx, TransactionIntegration ti)
    {
-      Record record = records.get(tx);
+      Record record = records.get(ti.getIdentifier(tx));
 
       if (record != null)
          record.getLock().unlock();
@@ -336,13 +347,14 @@ public class TransactionSynchronizer implements Synchronization
       }
 
       // Cleanup the maps
-      if (records.remove(tx) == null)
+      if (records.remove(identifier) == null)
       {
+         // The identifier wasn't stable - scan for it
          boolean found = false;
-         Iterator<Map.Entry<Transaction, Record>> iterator = records.entrySet().iterator();
+         Iterator<Map.Entry<Object, Record>> iterator = records.entrySet().iterator();
          while (!found && iterator.hasNext())
          {
-            Map.Entry<Transaction, Record> next = iterator.next();
+            Map.Entry<Object, Record> next = iterator.next();
             if (next.getValue().getTransactionSynchronizer().equals(this))
             {
                iterator.remove();
