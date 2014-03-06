@@ -29,6 +29,7 @@ import org.jboss.jca.core.connectionmanager.common.MockManagedConnectionFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
+import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 
 import javax.resource.ResourceException;
 import javax.security.auth.Subject;
@@ -40,6 +41,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.mock;
 
 /**
  * AbstractConnectionManagerTestCase.
@@ -74,9 +76,10 @@ public class AbstractConnectionManagerTestCase
    @Test
    public void testGetCachedConnectionManager()
    {
+      TransactionIntegration ti = mock(TransactionIntegration.class);
       AbstractConnectionManager connectionManager = new MockConnectionManager();
       assertNull(connectionManager.getCachedConnectionManager());
-      connectionManager.setCachedConnectionManager(new CachedConnectionManagerImpl(null, null, null));
+      connectionManager.setCachedConnectionManager(new CachedConnectionManagerImpl(ti));
       assertNotNull(connectionManager.getCachedConnectionManager());
    }
 

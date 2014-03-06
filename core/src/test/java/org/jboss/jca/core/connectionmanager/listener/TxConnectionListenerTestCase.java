@@ -145,6 +145,7 @@ public class TxConnectionListenerTestCase
    public void deListShouldCompleteCorrectlyAfterARightEnlist() throws Exception
    {
       //given
+      Object id = new Object();
       TxConnectionManager cm = mock(TxConnectionManager.class);
       TransactionIntegration ti = mock(TransactionIntegration.class);
       TransactionManager tm = mock(TransactionManager.class);
@@ -158,6 +159,7 @@ public class TxConnectionListenerTestCase
       when(tm.getTransaction()).thenReturn(threadTx);
       when(cm.getTransactionIntegration()).thenReturn(ti);
       when(ti.getTransactionManager()).thenReturn(tm);
+      when(ti.getIdentifier((Transaction) anyObject())).thenReturn(id);
 
       TxConnectionListener listener =
          new TxConnectionListener(cm, null, null, null,
@@ -183,6 +185,7 @@ public class TxConnectionListenerTestCase
    public void deListShouldThrowResourceExceptionIfDelistResourceFailOnTx() throws Exception
    {
       //given
+      Object id = new Object();
       TxConnectionManager cm = mock(TxConnectionManager.class);
       TransactionIntegration ti = mock(TransactionIntegration.class);
       TransactionManager tm = mock(TransactionManager.class);
@@ -197,6 +200,7 @@ public class TxConnectionListenerTestCase
       when(tm.getTransaction()).thenReturn(threadTx);
       when(cm.getTransactionIntegration()).thenReturn(ti);
       when(ti.getTransactionManager()).thenReturn(tm);
+      when(ti.getIdentifier((Transaction) anyObject())).thenReturn(id);
 
       TxConnectionListener listener =
          new TxConnectionListener(cm, null, null, null,
@@ -223,12 +227,14 @@ public class TxConnectionListenerTestCase
    public void enlistShouldThrowIllegalStateExceptionWithCurrentTxAndStatusNoTransaction() throws Exception
    {
       //given
+      Object id = new Object();
       TxConnectionManager cm = mock(TxConnectionManager.class);
       TransactionIntegration ti = mock(TransactionIntegration.class);
       TransactionManager tm = mock(TransactionManager.class);
       when(tm.getStatus()).thenReturn(Status.STATUS_NO_TRANSACTION);
       when(cm.getTransactionIntegration()).thenReturn(ti);
       when(ti.getTransactionManager()).thenReturn(tm);
+      when(ti.getIdentifier((Transaction) anyObject())).thenReturn(id);
       TxConnectionListener listener = 
          new TxConnectionListener(cm, null, null, null, 
                                   FlushStrategy.FAILING_CONNECTION_ONLY, null, 0);
@@ -252,12 +258,14 @@ public class TxConnectionListenerTestCase
    public void enlistShouldDoNothingForNoStransaction() throws Exception
    {
       //given
+      Object id = new Object();
       TxConnectionManager cm = mock(TxConnectionManager.class);
       TransactionIntegration ti = mock(TransactionIntegration.class);
       TransactionManager tm = mock(TransactionManager.class);
       when(tm.getStatus()).thenReturn(Status.STATUS_NO_TRANSACTION);
       when(cm.getTransactionIntegration()).thenReturn(ti);
       when(ti.getTransactionManager()).thenReturn(tm);
+      when(ti.getIdentifier((Transaction) anyObject())).thenReturn(id);
       TxConnectionListener listener =
          new TxConnectionListener(cm, null, null, null,
                                   FlushStrategy.FAILING_CONNECTION_ONLY, null, 0);
@@ -281,12 +289,14 @@ public class TxConnectionListenerTestCase
    public void enlistShouldThrowIllegalStateExceptionWithNoActiveTransaction() throws Exception
    {
       //given
+      Object id = new Object();
       TxConnectionManager cm = mock(TxConnectionManager.class);
       TransactionIntegration ti = mock(TransactionIntegration.class);
       TransactionManager tm = mock(TransactionManager.class);
       when(tm.getStatus()).thenReturn(Status.STATUS_COMMITTING);
       when(cm.getTransactionIntegration()).thenReturn(ti);
       when(ti.getTransactionManager()).thenReturn(tm);
+      when(ti.getIdentifier((Transaction) anyObject())).thenReturn(id);
 
       TxConnectionListener listener =
          new TxConnectionListener(cm, null, null, null,
@@ -311,6 +321,7 @@ public class TxConnectionListenerTestCase
    public void enlistShouldThrowIllegalStateExceptionTryingToChangeTransaction() throws Exception
    {
       //given
+      Object id = new Object();
       TxConnectionManager cm = mock(TxConnectionManager.class);
       TransactionIntegration ti = mock(TransactionIntegration.class);
       TransactionManager tm = mock(TransactionManager.class);
@@ -321,6 +332,7 @@ public class TxConnectionListenerTestCase
       when(tm.getTransaction()).thenReturn(threadTx);
       when(cm.getTransactionIntegration()).thenReturn(ti);
       when(ti.getTransactionManager()).thenReturn(tm);
+      when(ti.getIdentifier((Transaction) anyObject())).thenReturn(id);
 
       TxConnectionListener listener =
          new TxConnectionListener(cm, null, null, null,
@@ -345,6 +357,7 @@ public class TxConnectionListenerTestCase
    public void enlistShouldThrowIllegalStateExceptionForCantEnlistAlreadyTx() throws Exception
    {
       //given
+      Object id = new Object();
       TxConnectionManager cm = mock(TxConnectionManager.class);
       TransactionIntegration ti = mock(TransactionIntegration.class);
       TransactionManager tm = mock(TransactionManager.class);
@@ -355,6 +368,7 @@ public class TxConnectionListenerTestCase
       when(tm.getTransaction()).thenReturn(threadTx);
       when(cm.getTransactionIntegration()).thenReturn(ti);
       when(ti.getTransactionManager()).thenReturn(tm);
+      when(ti.getIdentifier((Transaction) anyObject())).thenReturn(id);
 
       TxConnectionListener listener =
          new TxConnectionListener(cm, null, null, null,
@@ -378,6 +392,7 @@ public class TxConnectionListenerTestCase
    public void enlistShouldThrowIllegalStateExceptionForCantEnlistAlreadyTx2() throws Exception
    {
       //given
+      Object id = new Object();
       TxConnectionManager cm = mock(TxConnectionManager.class);
       TransactionIntegration ti = mock(TransactionIntegration.class);
       TransactionManager tm = mock(TransactionManager.class);
@@ -390,6 +405,7 @@ public class TxConnectionListenerTestCase
       when(tm.getTransaction()).thenReturn(threadTx);
       when(cm.getTransactionIntegration()).thenReturn(ti);
       when(ti.getTransactionManager()).thenReturn(tm);
+      when(ti.getIdentifier((Transaction) anyObject())).thenReturn(id);
 
       TxConnectionListener listener =
          new TxConnectionListener(cm, null, null, null,
@@ -413,6 +429,7 @@ public class TxConnectionListenerTestCase
    public void enlistShouldThrowIllegalStateExceptionForNotEnlistedResources() throws Exception
    {
       //given
+      Object id = new Object();
       TxConnectionManager cm = mock(TxConnectionManager.class);
       TransactionIntegration ti = mock(TransactionIntegration.class);
       TransactionManager tm = mock(TransactionManager.class);
@@ -423,6 +440,7 @@ public class TxConnectionListenerTestCase
       when(tm.getTransaction()).thenReturn(threadTx);
       when(cm.getTransactionIntegration()).thenReturn(ti);
       when(ti.getTransactionManager()).thenReturn(tm);
+      when(ti.getIdentifier((Transaction) anyObject())).thenReturn(id);
 
       TxConnectionListener listener =
          new TxConnectionListener(cm, null, null, null,
@@ -446,6 +464,7 @@ public class TxConnectionListenerTestCase
    public void enlistShouldThrowSystemExceptionIfEnlistResourceFail() throws Exception
    {
       //given
+      Object id = new Object();
       TxConnectionManager cm = mock(TxConnectionManager.class);
       TransactionIntegration ti = mock(TransactionIntegration.class);
       TransactionManager tm = mock(TransactionManager.class);
@@ -459,6 +478,7 @@ public class TxConnectionListenerTestCase
       when(tm.getTransaction()).thenReturn(threadTx);
       when(cm.getTransactionIntegration()).thenReturn(ti);
       when(ti.getTransactionManager()).thenReturn(tm);
+      when(ti.getIdentifier((Transaction) anyObject())).thenReturn(id);
 
       TxConnectionListener listener =
          new TxConnectionListener(cm, null, null, null,
@@ -482,6 +502,7 @@ public class TxConnectionListenerTestCase
    public void enlistShouldCompleteWithoutExceptions() throws Exception
    {
       //given
+      Object id = new Object();
       TxConnectionManager cm = mock(TxConnectionManager.class);
       TransactionIntegration ti = mock(TransactionIntegration.class);
       TransactionManager tm = mock(TransactionManager.class);
@@ -494,6 +515,7 @@ public class TxConnectionListenerTestCase
       when(tm.getTransaction()).thenReturn(threadTx);
       when(cm.getTransactionIntegration()).thenReturn(ti);
       when(ti.getTransactionManager()).thenReturn(tm);
+      when(ti.getIdentifier((Transaction) anyObject())).thenReturn(id);
 
       TxConnectionListener listener =
          new TxConnectionListener(cm, null, null, null,

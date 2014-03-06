@@ -269,8 +269,7 @@ public class TxConnectionListener extends AbstractConnectionListener
       try
       {
          TransactionSynchronizer.lock(threadTx,
-                                      getConnectionManager().getTransactionIntegration()
-                                      .getTransactionSynchronizationRegistry());
+                                      getConnectionManager().getTransactionIntegration());
       }
       catch (Exception e)
       {
@@ -313,7 +312,7 @@ public class TxConnectionListener extends AbstractConnectionListener
 
             synchronizer =
                TransactionSynchronizer.getRegisteredSynchronizer(threadTx,
-                  getConnectionManager().getTransactionIntegration().getTransactionSynchronizationRegistry());
+                  getConnectionManager().getTransactionIntegration());
          }
          catch (Throwable t)
          {
@@ -333,7 +332,7 @@ public class TxConnectionListener extends AbstractConnectionListener
       }
       finally
       {
-         TransactionSynchronizer.unlock(threadTx);
+         TransactionSynchronizer.unlock(threadTx, getConnectionManager().getTransactionIntegration());
       }
 
       // Perform the enlistment(s)
@@ -394,8 +393,7 @@ public class TxConnectionListener extends AbstractConnectionListener
                      TransactionSynchronizer synchronizer =
                         TransactionSynchronizer.getRegisteredSynchronizer(tx,
                                                                           getConnectionManager().
-                                                                          getTransactionIntegration().
-                                                                          getTransactionSynchronizationRegistry());
+                                                                          getTransactionIntegration());
 
                      synchronizer.removeEnlisted(synchronization);
                   }

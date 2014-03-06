@@ -34,6 +34,7 @@ import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.ResourceAdapter;
+import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.xa.XAResource;
@@ -220,4 +221,11 @@ public interface TransactionIntegration
     * @return The value
     */
    public boolean isConnectableResource(ManagedConnection mc);
+
+   /**
+    * Get the identifier for the transaction
+    * @param tx The transaction
+    * @return Its stable identifier
+    */
+   public Object getIdentifier(Transaction tx);
 }

@@ -27,8 +27,8 @@ import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionRecord;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionCacheListener;
 import org.jboss.jca.core.connectionmanager.transaction.TransactionSynchronizer;
+import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.core.spi.transaction.TxUtils;
-import org.jboss.jca.core.spi.transaction.usertx.UserTransactionRegistry;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -84,13 +84,8 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
    /** Ignore unknown connections */
    private boolean ignoreConnections = false;
 
-   /** Transaction Manager instance */
-   private TransactionManager transactionManager;
-
-   private TransactionSynchronizationRegistry transactionSynchronizationRegistry;
-
-   /** User transaction registry */
-   private UserTransactionRegistry userTransactionRegistry;
+   /** Transaction integration */
+   private TransactionIntegration transactionIntegration;
 
    /**
     * ThreadLocal that holds current calling meta-programming aware
@@ -118,17 +113,14 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
 
    /**
     * Creates a new instance.
-    * @param transactionManager The transaction manager
-    * @param transactionSynchronizationRegistry the transaction synchronization registry
-    * @param userTransactionRegistry The user transaction registry
+    * @param transactionIntegration The transaction integration
     */
-   public CachedConnectionManagerImpl(TransactionManager transactionManager,
-                                      TransactionSynchronizationRegistry transactionSynchronizationRegistry,
-                                      UserTransactionRegistry userTransactionRegistry)
+   public CachedConnectionManagerImpl(TransactionIntegration transactionIntegration)
    {
-      this.transactionManager = transactionManager;
-      this.transactionSynchronizationRegistry = transactionSynchronizationRegistry;
-      this.userTransactionRegistry = userTransactionRegistry;
+      if (transactionIntegration == null)
+         throw new IllegalArgumentException("TransactionIntegration is null");
+
+      this.transactionIntegration = transactionIntegration;
    }
 
    /**
@@ -137,7 +129,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
     */
    public TransactionManager getTransactionManager()
    {
-      return transactionManager;
+      return transactionIntegration.getTransactionManager();
    }
 
    /**
@@ -146,7 +138,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
     */
    public TransactionSynchronizationRegistry getTransactionSynchronizationRegistry()
    {
-      return transactionSynchronizationRegistry;
+      return transactionIntegration.getTransactionSynchronizationRegistry();
    }
 
    /**
@@ -202,8 +194,8 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
     */
    public void start()
    {
-      if (userTransactionRegistry != null)
-         userTransactionRegistry.addListener(this);
+      if (transactionIntegration.getUserTransactionRegistry() != null)
+         transactionIntegration.getUserTransactionRegistry().addListener(this);
 
       log.debugf("start: %s", this.toString());
    }
@@ -215,8 +207,8 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
    {
       log.debugf("stop: %s", this.toString());
 
-      if (userTransactionRegistry != null)
-         userTransactionRegistry.removeListener(this);
+      if (transactionIntegration.getUserTransactionRegistry() != null)
+         transactionIntegration.getUserTransactionRegistry().removeListener(this);
    }
 
    /**
@@ -524,30 +516,31 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
       try
       {
          Transaction tx = null;
-         if (transactionManager != null)
+         if (getTransactionManager() != null)
          {
-            tx = transactionManager.getTransaction();
+            tx = getTransactionManager().getTransaction();
          }
 
          if (tx != null)
          {
-            TransactionSynchronizer.lock(tx, transactionSynchronizationRegistry);
+            TransactionSynchronizer.lock(tx, transactionIntegration);
             try
             {
                CloseConnectionSynchronization cas = 
-                  (CloseConnectionSynchronization)TransactionSynchronizer.getCCMSynchronization(tx);
+                  (CloseConnectionSynchronization)TransactionSynchronizer.getCCMSynchronization(tx,
+                                                                                                transactionIntegration);
 
                if (cas == null && createIfNotFound && TxUtils.isActive(tx))
                {
                   cas = new CloseConnectionSynchronization();
-                  TransactionSynchronizer.registerCCMSynchronization(tx, cas, transactionSynchronizationRegistry);
+                  TransactionSynchronizer.registerCCMSynchronization(tx, cas, transactionIntegration);
                }
 
                return cas;
             }
             finally
             {
-               TransactionSynchronizer.unlock(tx);
+               TransactionSynchronizer.unlock(tx, transactionIntegration);
             }
          }
       }
@@ -689,9 +682,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
       sb.append("[debug=").append(debug);
       sb.append(" error=").append(error);
       sb.append(" ignoreConnections=").append(ignoreConnections);
-      sb.append(" transactionManager=").append(transactionManager);
-      sb.append(" transactionSynchronizationRegistry=").append(transactionSynchronizationRegistry);
-      sb.append(" userTransactionRegistry=").append(userTransactionRegistry);
+      sb.append(" transactionIntegration=").append(transactionIntegration);
       sb.append(" currentObjects=").append(currentObjects.get());
       sb.append(" objectToConnectionManagerMap=").append(objectToConnectionManagerMap);
       sb.append(" connectionStackTraces=").append(connectionStackTraces);
