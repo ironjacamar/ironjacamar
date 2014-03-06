@@ -85,7 +85,7 @@ public class PoolBySubject extends AbstractPrefillPool
          Subject subject = createSubject(cm.getSubjectFactory(), cm.getSecurityDomain(), mcf);
   
          if (subject != null)
-            return internalTestConnection(subject);
+            return internalTestConnection(null, subject);
       }
       catch (Throwable t)
       {
