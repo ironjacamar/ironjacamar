@@ -71,6 +71,31 @@ public class TestConnectionTestCase
    }
 
    /**
+    * OnePool: No Stat
+    * @throws Exception for exception.
+    */
+   @Test
+   public void testOnePoolNoStat() throws Exception
+   {
+      ConnectionManagerFactory cmf = new ConnectionManagerFactory();
+      ManagedConnectionFactory mcf = new MockManagedConnectionFactory();
+
+      PoolConfiguration config = new PoolConfiguration();
+
+      PoolFactory pf = new PoolFactory();
+      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, config, false);
+      pool.getStatistics().setEnabled(false);
+
+      NoTxConnectionManager noTxConnectionManager = 
+         cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, 
+                                    pool, null, null, false, null, false,
+                                    FlushStrategy.FAILING_CONNECTION_ONLY,
+                                    null, null);
+
+      assertTrue(pool.testConnection());      
+   }
+
+   /**
     * PoolByCri
     * @throws Exception for exception.
     */
@@ -104,6 +129,33 @@ public class TestConnectionTestCase
 
       PoolFactory pf = new PoolFactory();
       Pool pool = pf.create(PoolStrategy.POOL_BY_SUBJECT, mcf, config, false);
+
+      NoTxConnectionManager noTxConnectionManager = 
+         cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool,
+                                    subjectFactory, "domain", false, null, false,
+                                    FlushStrategy.FAILING_CONNECTION_ONLY,
+                                    null, null);
+
+      assertTrue(pool.testConnection());      
+   }
+
+   /**
+    * PoolBySubject: No stat
+    * @throws Exception for exception.
+    */
+   @Test
+   public void testPoolBySubjectNoStat() throws Exception
+   {
+      ConnectionManagerFactory cmf = new ConnectionManagerFactory();
+      ManagedConnectionFactory mcf = new MockManagedConnectionFactory();
+
+      SubjectFactory subjectFactory = new DefaultSubjectFactory("domain", "user", "password");
+
+      PoolConfiguration config = new PoolConfiguration();
+
+      PoolFactory pf = new PoolFactory();
+      Pool pool = pf.create(PoolStrategy.POOL_BY_SUBJECT, mcf, config, false);
+      pool.getStatistics().setEnabled(false);
 
       NoTxConnectionManager noTxConnectionManager = 
          cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool,

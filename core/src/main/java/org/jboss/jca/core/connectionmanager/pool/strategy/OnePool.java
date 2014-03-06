@@ -86,7 +86,7 @@ public class OnePool extends AbstractPrefillPool
     */
    public boolean testConnection()
    {
-      return internalTestConnection(null);
+      return internalTestConnection(null, null);
    }
 
    /**
