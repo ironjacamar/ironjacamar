@@ -49,7 +49,6 @@ import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.RetryableException;
 import javax.security.auth.Subject;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
@@ -444,42 +443,13 @@ public abstract class AbstractPool implements Pool
                                                   final ManagedConnectionPool mcp)
       throws ResourceException
    {
-      ConnectionListener cl = null;
+      // Get connection from the managed connection pool
+      ConnectionListener cl = mcp.getConnection(subject, cri);
 
-      try
-      {
-         // Get connection from the managed connection pool
-         cl = mcp.getConnection(subject, cri);
+      if (trace)
+         log.tracef("Got connection from pool: %s", cl);
 
-         if (trace)
-            log.tracef("Got connection from pool: %s", cl);
-
-         return cl;
-      }
-      catch (ResourceException re)
-      {
-         if (re instanceof RetryableException)
-         {
-            if (log.isDebugEnabled())
-               log.debug("Got a RetryableException - trying to reinitialize the pool");
-
-            // Make sure that the managed connection pool is running
-            if (!mcp.isRunning())
-               mcp.reenable();
-
-            //Getting connection from pool
-            cl = mcp.getConnection(subject, cri);
-
-            if (trace)
-               log.tracef("Got connection from pool (retried): %s", cl);
-
-            return cl;
-         }
-         else
-         {
-            throw re;
-         }
-      }
+      return cl;
    }
 
    /**
@@ -547,35 +517,10 @@ public abstract class AbstractPool implements Pool
       // with many opportunities for deadlocks.
       // Instead we do a double check after we got the transaction to see
       // whether another thread beat us to the punch.
-      ConnectionListener cl = null;
-      try
-      {
-         cl = mcp.getConnection(subject, cri);
-         if (trace)
-            log.tracef("Got connection from pool tracked by transaction=%s tx=%s", cl, trackByTransaction);
-      }
-      catch (ResourceException re)
-      {
-         if (re instanceof RetryableException)
-         {
-            if (log.isDebugEnabled())
-               log.debug("Got a RetryableException - trying to reinitialize the pool");
+      ConnectionListener cl = mcp.getConnection(subject, cri);
 
-            // Make sure that the managed connection pool is running
-            if (!mcp.isRunning())
-               mcp.reenable();
-
-            //Getting connection from pool
-            cl = mcp.getConnection(subject, cri);
-
-            if (trace)
-               log.tracef("Got connection from pool tracked by transaction=%s tx=%s (retried)", cl, trackByTransaction);
-         }
-         else
-         {
-            throw re;
-         }
-      }
+      if (trace)
+         log.tracef("Got connection from pool tracked by transaction=%s tx=%s", cl, trackByTransaction);
 
       TransactionSynchronizationRegistry tsr = getTransactionSynchronizationRegistry();
       Lock lock = getLock();
