@@ -53,6 +53,7 @@ import javax.resource.spi.DissociatableManagedConnection;
 import javax.resource.spi.LazyAssociatableConnectionManager;
 import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
+import javax.resource.spi.RetryableException;
 import javax.resource.spi.ValidatingManagedConnectionFactory;
 import javax.security.auth.Subject;
 
@@ -470,12 +471,16 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             }
             catch (Throwable t)
             {
-               log.throwableWhileAttemptingGetNewGonnection(cl, t);
+               if (cl != null || !(t instanceof RetryableException))
+                  log.throwableWhileAttemptingGetNewGonnection(cl, t);
 
-               // Return permit and rethrow
-               synchronized (cls)
+               if (cl != null)
                {
-                  checkedOut.remove(cl);
+                  // Return permit and rethrow
+                  synchronized (cls)
+                  {
+                     checkedOut.remove(cl);
+                  }
                }
 
                if (statistics.isEnabled())
@@ -483,7 +488,14 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
                permits.release();
 
-               throw new ResourceException(bundle.unexpectedThrowableWhileTryingCreateConnection(cl), t);
+               if (t instanceof ResourceException)
+               {
+                  throw (ResourceException)t;
+               }
+               else
+               {
+                  throw new ResourceException(bundle.unexpectedThrowableWhileTryingCreateConnection(cl), t);
+               }
             }
          }
          else
