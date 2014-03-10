@@ -143,6 +143,11 @@ Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
           <config-property-type>java.lang.Boolean</config-property-type>
         </config-property>            
         <config-property>
+          <description>Validation of connections during getInvalidConnections</description>
+          <config-property-name>BackgroundValidation</config-property-name>
+          <config-property-type>java.lang.Boolean</config-property-type>
+        </config-property>            
+        <config-property>
           <description>Whether to set the query timeout based on the transaction timeout</description>
           <config-property-name>TransactionQueryTimeout</config-property-name>
           <config-property-type>java.lang.Boolean</config-property-type>

@@ -198,6 +198,8 @@ public abstract class BaseWrapperManagedConnectionFactory
 
    private Boolean validateOnMatch = Boolean.TRUE;
 
+   private Boolean backgroundValidation = Boolean.FALSE;
+
    /** Whether to use a try lock */
    private Integer useTryLock = Integer.valueOf(60);
 
@@ -525,6 +527,16 @@ public abstract class BaseWrapperManagedConnectionFactory
     */
    public Boolean getValidateOnMatch()
    {
+      // Implicit enable if possible
+      if (((validateOnMatch == null || Boolean.FALSE.equals(validateOnMatch)) &&
+            (backgroundValidation == null || Boolean.FALSE.equals(backgroundValidation))) &&
+          (validConnectionCheckerClassName != null || checkValidConnectionSQL != null)
+      )
+      {
+         log.infof("Enabling <validate-on-match> for %s", jndiName);
+         validateOnMatch = Boolean.TRUE;
+      }
+
       return this.validateOnMatch;
    }
 
@@ -536,6 +548,25 @@ public abstract class BaseWrapperManagedConnectionFactory
    {
       if (validateOnMatch != null)
          this.validateOnMatch = validateOnMatch;
+   }
+
+   /**
+    * Get the background validation value
+    * @return The value
+    */
+   public Boolean getBackgroundValidation()
+   {
+      return this.backgroundValidation;
+   }
+
+   /**
+    * Set the background validation value
+    * @param v The value
+    */
+   public void setBackgroundValidation(Boolean v)
+   {
+      if (v != null)
+         this.backgroundValidation = v;
    }
 
    /**
@@ -1266,20 +1297,20 @@ public abstract class BaseWrapperManagedConnectionFactory
                }
                else
                {
-                  log.warn("Disabling exception sorter");
+                  log.warn("Disabling exception sorter for " + jndiName);
                   exceptionSorter = new NullExceptionSorter();
                }
             }
             catch (Exception e2)
             {
-               log.warn("exception trying to create exception sorter (disabling):", e2);
+               log.warn("Exception trying to create exception sorter for " + jndiName + " (disabling):", e2);
                exceptionSorter = new NullExceptionSorter();
             }
          }
       }
       catch (Throwable t)
       {
-         log.warn("Error checking exception fatality: ", t);
+         log.warn("Error checking exception fatality for " + jndiName + ": ", t);
       }
       return false;
    }
@@ -1309,13 +1340,13 @@ public abstract class BaseWrapperManagedConnectionFactory
             }
             else
             {
-               log.warn("Disabling valid connection checker");
+               log.warn("Disabling valid connection checker for " + jndiName);
                connectionChecker = new NullValidConnectionChecker();
             }
          }
          catch (Exception e)
          {
-            log.warn("Exception trying to create valid connection checker (disabling):", e);
+            log.warn("Exception trying to create valid connection checker for " + jndiName + " (disabling):", e);
             connectionChecker = new NullValidConnectionChecker();
          }
       }
@@ -1355,13 +1386,13 @@ public abstract class BaseWrapperManagedConnectionFactory
             }
             else
             {
-               log.warn("Disabling stale connection checker");
+               log.warn("Disabling stale connection checker for " + jndiName);
                staleConnectionChecker = new NullStaleConnectionChecker();
             }
          }
          catch (Exception ex2)
          {
-            log.warn("Exception trying to create stale connection checker (disabling) " +
+            log.warn("Exception trying to create stale connection checker for " + jndiName + " (disabling) " +
                      staleConnectionCheckerClassName, ex2);
 
             staleConnectionChecker = new NullStaleConnectionChecker();
