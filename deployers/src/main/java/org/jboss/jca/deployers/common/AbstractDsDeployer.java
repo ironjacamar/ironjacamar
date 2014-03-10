@@ -558,11 +558,12 @@ public abstract class AbstractDsDeployer
 
       pool.setName(poolName);
 
+      injectValue(mcf, "setJndiName", jndiName);
+
       // Spy
       if (ds.isSpy())
       {
          injectValue(mcf, "setSpy", Boolean.TRUE);
-         injectValue(mcf, "setJndiName", jndiName);
       }
 
       // JTA
@@ -808,11 +809,12 @@ public abstract class AbstractDsDeployer
 
       pool.setName(poolName);
 
+      injectValue(mcf, "setJndiName", jndiName);
+
       // Spy
       if (ds.isSpy())
       {
          injectValue(mcf, "setSpy", Boolean.TRUE);
-         injectValue(mcf, "setJndiName", jndiName);
       }
 
       // Url property

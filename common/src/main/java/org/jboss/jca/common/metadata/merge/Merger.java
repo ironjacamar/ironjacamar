@@ -615,6 +615,16 @@ public class Merger
                   break;
                }
 
+               case BACKGROUNDVALIDATION : {
+                  if (ds != null && ds.getValidation() != null)
+                  {
+                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getValidation()
+                        .isBackgroundValidation()));
+                  }
+
+                  break;
+               }
+
                case TRANSACTIONQUERYTIMEOUT : {
                   if (ds != null && ds.getTimeOut() != null)
                   {
@@ -851,6 +861,9 @@ public class Merger
          /** VALIDATEONMATCH **/
          VALIDATEONMATCH("ValidateOnMatch", "java.lang.Boolean",
             "Whether to validate the connection on the ManagedConnectionFactory.matchManagedConnection method"),
+         /** BACKGROUNDVALIDATION **/
+         BACKGROUNDVALIDATION("BackgroundValidation", "java.lang.Boolean",
+            "The connections will be validated part of getInvalidConnections"),
          /** TRANSACTIONQUERYTIMEOUT **/
          TRANSACTIONQUERYTIMEOUT("TransactionQueryTimeout", "java.lang.Boolean",
             "Whether to set the query timeout based on the transaction timeout"),
