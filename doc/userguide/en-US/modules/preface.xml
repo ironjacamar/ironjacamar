@@ -34,6 +34,20 @@
       can be found through our issue tracking system at <ulink url="http://issues.jboss.org/browse/JBJCA">http://issues.jboss.org/browse/JBJCA</ulink>.
     </para>
 
+    <section id="versions_ironjacamar12">
+      <title>IronJacamar 1.2</title>
+
+      <para>
+        Highlights as compared to IronJacamar 1.1:
+
+        <itemizedlist>
+          <listitem>
+            Support for connectable <code>XAResource</code>s
+          </listitem>
+        </itemizedlist>
+      </para>
+    </section>
+
     <section id="versions_ironjacamar11">
       <title>IronJacamar 1.1</title>
 

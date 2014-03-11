@@ -77,6 +77,18 @@
     </programlisting>
   </section>
 
+  <!-- IronJacamar 1.2 -->
+  <section id="ironjacamar12">
+    <title>IronJacamar 1.2</title>
+
+    <programlisting language="xml">
+      <xi:include parse="text" 
+                  href="../../../../common/src/main/resources/schema/ironjacamar_1_2.xsd"
+                  xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+    </programlisting>
+  </section>
+
   <!-- Resource adapters 1.0 -->
   <section id="ra10">
     <title>Resource adapters 1.0</title>
@@ -96,6 +108,18 @@
     <programlisting language="xml">
       <xi:include parse="text" 
                   href="../../../../common/src/main/resources/schema/resource-adapters_1_1.xsd"
+                  xmlns:xi="http://www.w3.org/2001/XInclude"/>
+    </programlisting>
+
+  </section>
+
+  <!-- Resource adapters 1.2 -->
+  <section id="ra12">
+    <title>Resource adapters 1.2</title>
+
+    <programlisting language="xml">
+      <xi:include parse="text" 
+                  href="../../../../common/src/main/resources/schema/resource-adapters_1_2.xsd"
                   xmlns:xi="http://www.w3.org/2001/XInclude"/>
     </programlisting>
 
@@ -132,6 +156,18 @@
     <programlisting language="xml">
       <xi:include parse="text" 
                   href="../../../../common/src/main/resources/schema/datasources_1_2.xsd"
+                  xmlns:xi="http://www.w3.org/2001/XInclude"/>
+    </programlisting>
+
+  </section>
+
+  <!-- Datasources 1.3 -->
+  <section id="ds13">
+    <title>Datasources 1.3</title>
+
+    <programlisting language="xml">
+      <xi:include parse="text" 
+                  href="../../../../common/src/main/resources/schema/datasources_1_3.xsd"
                   xmlns:xi="http://www.w3.org/2001/XInclude"/>
     </programlisting>
 

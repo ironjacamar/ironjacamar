@@ -10,13 +10,13 @@
      <para>Extract the distribution using</para>
 
      <programlisting>
-tar xzf ironjacamar-1.1.0.Final.tar.gz
+tar xzf ironjacamar-1.2.0.Final.tar.gz
      </programlisting>
 
      <para>The distribution will be located in a directory named</para>
 
      <programlisting>
-ironjacamar-1.1.0.Final
+ironjacamar-1.2.0.Final
      </programlisting>
 
    </section>
@@ -27,7 +27,7 @@ ironjacamar-1.1.0.Final
      <para>Extract the distribution using</para>
 
      <programlisting>
-unzip ironjacamar-1.1.0.Final.zip
+unzip ironjacamar-1.2.0.Final.zip
      </programlisting>
 
      <para>or any program capable of handling Zip archives such as WinZip and WinRar.</para>
@@ -35,7 +35,7 @@ unzip ironjacamar-1.1.0.Final.zip
      <para>The distribution will be located in a directory named</para>
 
      <programlisting>
-ironjacamar-1.1.0.Final
+ironjacamar-1.2.0.Final
      </programlisting>
 
    </section>
@@ -94,11 +94,11 @@ ironjacamar-1.1.0.Final
      </para>
 
      <programlisting>
-./as-upgrader.sh 1.1.0.Final /path/to/wildfly/installation
+./as-upgrader.sh 1.2.0.Final /path/to/wildfly/installation
      </programlisting>
 
      <para>
-       where <code>1.1.0.Final</code> is the version identifier of the IronJacamar container
+       where <code>1.2.0.Final</code> is the version identifier of the IronJacamar container
        and the path points to the top-level directory of the WildFly installation.
        You can also use <code>1.1.1-SNAPSHOT</code> in order to upgrade to a patch snapshot build.
      </para>

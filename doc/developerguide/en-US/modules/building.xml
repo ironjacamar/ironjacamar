@@ -120,6 +120,10 @@ git remote add upstream git@github.com:ironjacamar/ironjacamar.git
             <para>1.1</para>
             <para>The development targeting the IronJacamar 1.1 releases.</para>
          </listitem>
+         <listitem>
+            <para>1.2</para>
+            <para>The development targeting the IronJacamar 1.2 releases.</para>
+         </listitem>
       </itemizedlist>
     </section>
 

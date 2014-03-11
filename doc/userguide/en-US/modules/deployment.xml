@@ -40,25 +40,25 @@ linux.so
         <code>deploy/</code> directory</para>
 
      <programlisting>
-cp example.rar ironjacamar-1.1.0.Final/deploy
+cp example.rar ironjacamar-1.2.0.Final/deploy
      </programlisting>
 
      <para>on a Un*x based system or</para>
 
      <programlisting>
-copy example.rar ironjacamar-1.1.0.Final\deploy
+copy example.rar ironjacamar-1.2.0.Final\deploy
      </programlisting>
 
      <para>on Windows.</para>
 
      <para>The resource adapter can be configured and activated through a <code>META-INF/ironjacamar.xml</code>
-       file in the archive. The format of the XML document is defined by the <code>ironjacamar_1_0.xsd</code> or
-       <code>ironjacamar_1_1.xsd</code> schemas.</para>
+       file in the archive. The format of the XML document is defined by the <code>ironjacamar_1_0.xsd</code>,
+       <code>ironjacamar_1_1.xsd</code> or <code>ironjacamar_1_2.xsd</code> schemas.</para>
 
      <para>A resource adapter can also be configured and activated through deployment of a <code>-ra.xml</code>
        file in the <code>deploy/</code> directory - f.ex. <code>deploy/example-ra.xml</code>. The format of the XML 
-       document is defined by the <code>resource-adapters_1_0.xsd</code> or <code>resource-adapters_1_1.xsd</code>
-       schemas - f.ex</para>
+       document is defined by the <code>resource-adapters_1_0.xsd</code>, <code>resource-adapters_1_1.xsd</code> or
+       <code>resource-adapters_1_2.xsd</code> schemas - f.ex</para>
 
      <programlisting language="xml">
 <![CDATA[
@@ -240,6 +240,12 @@ java:/eis/ao/&lt;deploymentName&gt;
                <entry><code>enlistment</code></entry>
                <entry>
                  Defines if the connection should use lazy enlistment if supported (1.1)
+               </entry>
+             </row>
+             <row>
+               <entry><code>connectable</code></entry>
+               <entry>
+                 Allow components to obtain a connection through the <code>XAResource</code> instance (1.2)
                </entry>
              </row>
            </tbody>
@@ -983,13 +989,13 @@ public void close(Object c) throws ResourceException;
         <code>deploy/</code> directory</para>
         
       <programlisting>
-cp postgres-xa-ds.xml ironjacamar-1.1.0.Final/deploy
+cp postgres-xa-ds.xml ironjacamar-1.2.0.Final/deploy
       </programlisting>
 
       <para>on a Un*x based system or</para>
 
       <programlisting>
-copy postgres-xa-ds.xml ironjacamar-1.1.0.Final\deploy
+copy postgres-xa-ds.xml ironjacamar-1.2.0.Final\deploy
       </programlisting>
 
       <para>on Windows.</para>
@@ -997,8 +1003,8 @@ copy postgres-xa-ds.xml ironjacamar-1.1.0.Final\deploy
       <para>You will need to install the database JDBC driver into the <code>lib/</code> directory.</para>
       
       <para>You can find examples of datasource definitions in the <code>doc/datasources</code> directory
-      and the schemas: <code>doc/datasources_1_0.xsd</code>, <code>doc/datasources_1_1.xsd</code> and
-      <code>doc/datasources_1_1.xsd</code>.</para>
+      and the schemas: <code>doc/datasources_1_0.xsd</code>, <code>doc/datasources_1_1.xsd</code>,
+      <code>doc/datasources_1_2.xsd</code> and <code>doc/datasources_1_3.xsd</code>.</para>
 
       <section id="deployingds_descriptor">
         <title>Datasource descriptor</title>
@@ -1069,6 +1075,12 @@ copy postgres-xa-ds.xml ironjacamar-1.1.0.Final\deploy
                   Enable JTA integration (only <code>&lt;datasource&gt;</code>)
                 </entry>
               </row>
+             <row>
+               <entry><code>connectable</code></entry>
+               <entry>
+                 Allow components to obtain a connection through the <code>XAResource</code> instance (1.3)
+               </entry>
+             </row>
             </tbody>
           </tgroup>
         </table>
@@ -1851,9 +1863,6 @@ copy postgres-xa-ds.xml ironjacamar-1.1.0.Final\deploy
             </tbody>
           </tgroup>
         </table>
-
-        <para>The datasource deployment schema is defined in <code>doc/datasources_1_0.xsd</code>
-           and <code>doc/datasources_1_1.xsd</code>.</para>
 
       </section>
 
