@@ -75,7 +75,7 @@ copy ironjacamar-eclipse.jar %ECLIPSE_HOME%\plugins
     </para>
 
     <programlisting>
-/opt/ironjacamar-1.1.0.Beta1
+/opt/ironjacamar-1.2.0.Final
     </programlisting>
 
     <para>
