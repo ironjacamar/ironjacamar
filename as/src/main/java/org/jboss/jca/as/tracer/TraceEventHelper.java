@@ -139,6 +139,10 @@ public class TraceEventHelper
                gotCl = false;
                break;
 
+            case TraceEvent.CLEAR_CONNECTION_LISTENER:
+               explicit = TraceEventStatus.RED;
+               break;
+
             case TraceEvent.ENLIST_CONNECTION_LISTENER:
             case TraceEvent.ENLIST_CONNECTION_LISTENER_FAILED:
             case TraceEvent.ENLIST_INTERLEAVING_CONNECTION_LISTENER:
@@ -160,13 +164,11 @@ public class TraceEventHelper
                break;
 
             case TraceEvent.GET_CONNECTION:
-               if (!knownConnections.add(te.getConnection()))
-                  explicit = TraceEventStatus.RED;
+               knownConnections.add(te.getConnection());
 
                break;
             case TraceEvent.RETURN_CONNECTION:
-               if (!knownConnections.remove(te.getConnection()))
-                  explicit = TraceEventStatus.RED;
+               knownConnections.remove(te.getConnection());
 
                break;
 
@@ -232,7 +234,8 @@ public class TraceEventHelper
       if (te.getType() == TraceEvent.GET_CONNECTION_LISTENER ||
           te.getType() == TraceEvent.GET_CONNECTION_LISTENER_NEW ||
           te.getType() == TraceEvent.GET_INTERLEAVING_CONNECTION_LISTENER ||
-          te.getType() == TraceEvent.GET_INTERLEAVING_CONNECTION_LISTENER_NEW)
+          te.getType() == TraceEvent.GET_INTERLEAVING_CONNECTION_LISTENER_NEW ||
+          te.getType() == TraceEvent.CLEAR_CONNECTION_LISTENER)
          return true;
 
       return false;
@@ -248,7 +251,8 @@ public class TraceEventHelper
       if (te.getType() == TraceEvent.RETURN_CONNECTION_LISTENER ||
           te.getType() == TraceEvent.RETURN_CONNECTION_LISTENER_WITH_KILL ||
           te.getType() == TraceEvent.RETURN_INTERLEAVING_CONNECTION_LISTENER ||
-          te.getType() == TraceEvent.RETURN_INTERLEAVING_CONNECTION_LISTENER_WITH_KILL) 
+          te.getType() == TraceEvent.RETURN_INTERLEAVING_CONNECTION_LISTENER_WITH_KILL ||
+          te.getType() == TraceEvent.CLEAR_CONNECTION_LISTENER)
          return true;
 
       return false;
@@ -261,7 +265,8 @@ public class TraceEventHelper
     */
    public static boolean isRed(TraceEvent te)
    {
-      if (te.getType() == TraceEvent.CLEAR_CONNECTION)
+      if (te.getType() == TraceEvent.CLEAR_CONNECTION ||
+          te.getType() == TraceEvent.CLEAR_CONNECTION_LISTENER)
          return true;
 
       return false;

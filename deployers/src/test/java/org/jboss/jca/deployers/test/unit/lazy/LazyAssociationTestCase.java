@@ -28,6 +28,7 @@ import org.jboss.jca.deployers.test.rars.lazy.LazyConnectionFactory;
 import javax.annotation.Resource;
 
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
 import org.junit.Test;
@@ -41,7 +42,7 @@ import static org.junit.Assert.*;
  */
 public class LazyAssociationTestCase extends LazyTestBase
 {
-
+   private static Logger log = Logger.getLogger(LazyAssociationTestCase.class);
 
    /**
     * Define the deployment
@@ -91,11 +92,11 @@ public class LazyAssociationTestCase extends LazyTestBase
 
          assertFalse(lc.isEnlisted());
          assertTrue(lc.enlist());
-         assertTrue(lc.isEnlisted());
+         assertFalse(lc.isEnlisted());
       }
       catch (Throwable t)
       {
-         t.printStackTrace();
+         log.error(t.getMessage(), t);
 
          fail("Throwable:" + t.getMessage());
       }
@@ -140,7 +141,7 @@ public class LazyAssociationTestCase extends LazyTestBase
       }
       catch (Throwable t)
       {
-         t.printStackTrace();
+         log.error(t.getMessage(), t);
 
          fail("Throwable:" + t.getMessage());
       }

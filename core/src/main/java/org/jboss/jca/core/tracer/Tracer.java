@@ -129,6 +129,17 @@ public class Tracer
    }
 
    /**
+    * Clear connection listener
+    * @param poolName The name of the pool
+    * @param cl The connection listener
+    */
+   public static void clearConnectionListener(String poolName, Object cl)
+   {
+      log.tracef("%s", new TraceEvent(poolName, TraceEvent.CLEAR_CONNECTION_LISTENER,
+                                      Integer.toHexString(System.identityHashCode(cl))));
+   }
+
+   /**
     * Enlist connection listener
     * @param poolName The name of the pool
     * @param cl The connection listener

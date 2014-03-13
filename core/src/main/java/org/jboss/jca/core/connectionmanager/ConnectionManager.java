@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2008-2009, Red Hat Inc, and individual contributors
+ * Copyright 2014, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -24,8 +24,12 @@ package org.jboss.jca.core.connectionmanager;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionCacheListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
-import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
+import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
+import org.jboss.jca.core.spi.transaction.TransactionIntegration;
+
+import javax.resource.ResourceException;
+import javax.resource.spi.ManagedConnection;
 
 import org.jboss.security.SubjectFactory;
 
@@ -35,8 +39,7 @@ import org.jboss.security.SubjectFactory;
  * <ul>
  *    <li>Responsible for managing cached connections over transactional 
  *    components via {@link ConnectionCacheListener}</li>
- *    <li>Responsible for managing connection instances using event listener 
- *    via {@link ConnectionListenerFactory}</li>
+ *    <li>Responsible for managing connection instances using event listener</li>
  * </ul>
  * </p> 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a> 
@@ -44,8 +47,7 @@ import org.jboss.security.SubjectFactory;
  */
 public interface ConnectionManager extends
    org.jboss.jca.core.api.connectionmanager.ConnectionManager,
-   ConnectionCacheListener, 
-   ConnectionListenerFactory
+   ConnectionCacheListener
 {
    /**
     * Get the pool.
@@ -106,4 +108,41 @@ public interface ConnectionManager extends
     * Shutdown
     */
    public void shutdown();
+
+   /**
+    * Create a managed connection listener for the managed connection.
+    * 
+    * @param managedConnection the managed connection
+    * @param mcp the managed connection pool
+    * @return a new connection event listener
+    * @throws ResourceException for any error
+    */
+   public ConnectionListener createConnectionListener(ManagedConnection managedConnection, ManagedConnectionPool mcp)
+      throws ResourceException;
+
+   /**
+    * Determine whether there connection is a transactional.
+    *
+    * @return whether it is a transactional or not
+    */
+   public boolean isTransactional();
+
+   /**
+    * Get the transaction integration.
+    * 
+    * @return the transaction integration
+    */
+   public TransactionIntegration getTransactionIntegration();
+
+   /**
+    * Is sharable
+    * @return The value
+    */
+   public boolean isSharable();
+
+   /**
+    * Is enlistment
+    * @return The value
+    */
+   public boolean isEnlistment();
 }

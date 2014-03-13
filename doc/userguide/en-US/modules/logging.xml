@@ -260,6 +260,11 @@
             <entry>Unchecked throwable in managedConnectionDisconnected()</entry>
           </row>
           <row>
+            <entry>405</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Multiple LocalTransaction connection listeners enlisted</entry>
+          </row>
+          <row>
             <entry>451</entry>
             <entry><code>EXCEPTION</code></entry>
             <entry>The connection manager is shutdown</entry>

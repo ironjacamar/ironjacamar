@@ -255,6 +255,14 @@ public interface CoreLogger extends BasicLogger
    @Message(id = 404, value = "Unchecked throwable in managedConnectionDisconnected() cl=%s")
    public void uncheckedThrowableInManagedConnectionDisconnected(Object cl, @Cause Throwable t);
    
+   /**
+    * Multiple LocalTransaction connection listener enlisted
+    * @param name The pool name
+    * @param cl The ConnectionListener
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 405, value = "Multiple LocalTransaction connection listeners enlisted for %s, cl=%s")
+   public void multipleLocalTransactionConnectionListenerEnlisted(String name, Object cl);
    
    // TRANSACTION SYNCHRONIZER (500)
 

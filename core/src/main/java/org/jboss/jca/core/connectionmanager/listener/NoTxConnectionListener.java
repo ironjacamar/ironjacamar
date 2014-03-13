@@ -59,9 +59,6 @@ public class NoTxConnectionListener extends AbstractConnectionListener
                                  final Boolean tracking)
    {
       super(cm, mc, pool, mcp, flushStrategy, tracking);
-
-      // Always "enlisted"
-      setEnlisted(true);
    }
    
    /**

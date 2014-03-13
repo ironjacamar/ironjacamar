@@ -45,6 +45,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
+import javax.resource.spi.DissociatableManagedConnection;
 import javax.resource.spi.LazyEnlistableManagedConnection;
 import javax.resource.spi.ManagedConnection;
 import javax.security.auth.Subject;
@@ -175,7 +176,6 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
    static
    {
       String value = SecurityActions.getSystemProperty("ironjacamar.allow_marked_for_rollback");
-
       if (value != null && !value.trim().equals(""))
       {
          try
@@ -275,7 +275,6 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
 
       if (v)
       {
-         enlistment = Boolean.FALSE;
          setInterleaving(false);
       }
    }
@@ -511,7 +510,8 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
       Lock result = null;
       try
       {
-         if (transactionSynchronizationRegistry != null && transactionSynchronizationRegistry.getTransactionKey() != null)
+         if (transactionSynchronizationRegistry != null &&
+             transactionSynchronizationRegistry.getTransactionKey() != null)
          {
             result = (Lock)transactionSynchronizationRegistry.getResource(LockKey.INSTANCE);
             if (result == null)
@@ -779,7 +779,105 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
 
          try
          {
-            cl.enlist();
+            if (!isInterleaving())
+            {
+               Lock lock = getLock();
+
+               if (lock == null)
+               {
+                  if (cl != null)
+                  {
+                     if (trace)
+                        log.tracef("Killing connection tracked by transaction=%s", cl);
+
+                     getPool().returnConnection(cl, true);
+                  }
+
+                  throw new ResourceException(bundle.unableObtainLock());
+               }
+
+               try
+               {
+                  lock.lockInterruptibly();
+               }
+               catch (InterruptedException ie)
+               {
+                  Thread.interrupted();
+
+                  if (cl != null)
+                  {
+                     if (trace)
+                        log.tracef("Killing connection tracked by transaction=%s", cl);
+
+                     getPool().returnConnection(cl, true);
+                  }
+
+                  throw new ResourceException(bundle.unableObtainLock(), ie);
+               }
+               try
+               {
+                  ConnectionListener existing =
+                     (ConnectionListener)transactionSynchronizationRegistry.getResource(cl.getManagedConnectionPool());
+
+                  if (existing == null)
+                  {
+                     // We are the first ManagedConnection to enlist in this transaction
+                     if (trace)
+                        log.tracef("New connection tracked by transaction=%s", cl);
+
+                     // We need to set track-by-transaction before we enlist
+                     cl.setTrackByTx(true);
+                     cl.enlist();
+
+                     transactionSynchronizationRegistry.putResource(cl.getManagedConnectionPool(), cl);
+                  }
+                  else
+                  {
+                     if (trace)
+                        log.tracef("Already an enlisted connection in the pool tracked by transaction=%s (new=%s)", existing, cl);
+
+                     if (cl.supportsLazyAssociation())
+                     {
+                        // Dissociate if possible, as the reconnect will pick up the track-by-transaction cl
+                        // and we can return this cl to the pool
+                        DissociatableManagedConnection dmc = (DissociatableManagedConnection)cl.getManagedConnection();
+                        dmc.dissociateConnections();
+
+                        getPool().returnConnection(cl, false);
+                     }
+                     else
+                     {
+                        if (isLocalTransactions())
+                           log.multipleLocalTransactionConnectionListenerEnlisted(getPool().getName(), cl);
+
+                        // Ok, lets enlist and roll the dice
+                        cl.setTrackByTx(true);
+                        cl.enlist();
+                     }
+                  }
+               }
+               catch (Throwable t)
+               {
+                  if (cl != null)
+                  {
+                     if (trace)
+                        log.tracef("Killing connection tracked by transaction=%s", cl);
+
+                     getPool().returnConnection(cl, true);
+                  }
+
+                  throw new ResourceException(bundle.unableGetConnectionListener(), t);
+               }
+               finally
+               {
+                  lock.unlock();
+               }
+            }
+            else
+            {
+               // We always enlist interleaved connection listeners
+               cl.enlist();
+            }
          }
          catch (Throwable t)
          {

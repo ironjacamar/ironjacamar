@@ -34,11 +34,16 @@ public class LazyLocalTransaction implements LocalTransaction
    /** The logger */
    private static Logger log = Logger.getLogger(LazyLocalTransaction.class);
 
+   /** The managed connection */
+   private LazyManagedConnection mc;
+
    /**
     * Constructor
+    * @param mc The managed connection
     */
-   public LazyLocalTransaction()
+   public LazyLocalTransaction(LazyManagedConnection mc)
    {
+      this.mc = mc;
    }
 
    /**
@@ -47,6 +52,7 @@ public class LazyLocalTransaction implements LocalTransaction
    public void begin() throws ResourceException
    {
       log.trace("begin");
+      mc.setEnlisted(true);
    }
 
    /**
@@ -55,6 +61,7 @@ public class LazyLocalTransaction implements LocalTransaction
    public void commit() throws ResourceException
    {
       log.trace("commit");
+      mc.setEnlisted(false);
    }
 
    /**
@@ -63,5 +70,6 @@ public class LazyLocalTransaction implements LocalTransaction
    public void rollback() throws ResourceException
    {
       log.trace("rollback");
+      mc.setEnlisted(false);
    }
 }

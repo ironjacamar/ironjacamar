@@ -256,6 +256,11 @@ public class SDeditGenerator
                writeEOL(fw);
 
                break;
+
+            case TraceEvent.CLEAR_CONNECTION_LISTENER:
+
+               break;
+
             case TraceEvent.ENLIST_CONNECTION_LISTENER:
             case TraceEvent.ENLIST_CONNECTION_LISTENER_FAILED:
                writeString(fw, "cl:tx." + TraceEvent.asText(te));

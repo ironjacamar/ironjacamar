@@ -80,7 +80,7 @@ public class PoolBySubject extends AbstractPrefillPool
    {
       try
       {
-         ConnectionManager cm = (ConnectionManager)getConnectionListenerFactory();
+         ConnectionManager cm = getConnectionManager();
          ManagedConnectionFactory mcf = getManagedConnectionFactory();
        
          Subject subject = createSubject(cm.getSubjectFactory(), cm.getSecurityDomain(), mcf);

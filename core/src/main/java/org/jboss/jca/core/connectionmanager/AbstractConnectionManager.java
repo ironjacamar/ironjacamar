@@ -100,7 +100,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    private boolean sharable;
 
    /** Enlistment */
-   protected Boolean enlistment;
+   protected boolean enlistment;
 
    /** Connectable */
    protected boolean connectable;
@@ -218,7 +218,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
     */
    public boolean isEnlistment()
    {
-      return enlistment != null ? enlistment.booleanValue() : true;
+      return enlistment;
    }
 
    /**
@@ -227,8 +227,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
     */
    public void setEnlistment(boolean v)
    {
-      if (enlistment == null)
-         this.enlistment = Boolean.valueOf(v);
+      this.enlistment = v;
 
       if (trace)
          log.tracef("enlistment=%s", enlistment);
@@ -688,9 +687,14 @@ public abstract class AbstractConnectionManager implements ConnectionManager
             if (trace)
                log.tracef("DissociateManagedConnection: isManagedConnectionFree=%s", cl.isManagedConnectionFree());
 
-            returnManagedConnection(cl, false);
+            if (cl.isManagedConnectionFree())
+            {
+               // TODO - clean up TSR
 
-            return true;
+               returnManagedConnection(cl, false);
+
+               return true;
+            }
          }
       }
       else
