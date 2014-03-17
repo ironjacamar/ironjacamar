@@ -453,7 +453,7 @@ public abstract class CachedPreparedStatement extends JBossWrapper implements Pr
       if (trace)
       {
          Throwable t = new Throwable("PreparedStatement.close() called");
-         t.setStackTrace(Thread.currentThread().getStackTrace());
+         t.setStackTrace(SecurityActions.getStackTrace(Thread.currentThread()));
          log.trace(t.getMessage(), t);
       }
 

@@ -33,10 +33,29 @@ import java.security.PrivilegedAction;
 class SecurityActions
 {
    /**
+    * Get the classloader.
+    * @param c The class
+    * @return The classloader
+    */
+   static ClassLoader getClassLoader(final Class<?> c)
+   {
+      if (System.getSecurityManager() == null)
+         return c.getClassLoader();
+
+      return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>()
+      {
+         public ClassLoader run()
+         {
+            return c.getClassLoader();
+         }
+      });
+   }
+
+   /**
     * Set the context classloader.
     * @param cl classloader
     */
-   public static void setThreadContextClassLoader(final ClassLoader cl)
+   static void setThreadContextClassLoader(final ClassLoader cl)
    {
       if (System.getSecurityManager() == null)
       {
@@ -60,7 +79,7 @@ class SecurityActions
     * Get the context classloader.
     * @return The classloader
     */
-   public static ClassLoader getThreadContextClassLoader()
+   static ClassLoader getThreadContextClassLoader()
    {
       if (System.getSecurityManager() == null)
       {

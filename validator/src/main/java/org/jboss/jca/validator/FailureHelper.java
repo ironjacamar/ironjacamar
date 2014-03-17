@@ -31,7 +31,7 @@ import java.util.ResourceBundle;
 public class FailureHelper
 {
    /** New line character */
-   private static final String NEW_LINE = System.getProperty("line.separator");
+   private static final String NEW_LINE = SecurityActions.getSystemProperty("line.separator");
 
    /** List of failures */
    private final Collection<Failure> failures;

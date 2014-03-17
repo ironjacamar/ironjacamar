@@ -178,7 +178,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       
       ResourceBundle defaultResourceBundle = 
          ResourceBundle.getBundle("poolstatistics", Locale.US, 
-                                  ManagedConnectionPoolStatisticsImpl.class.getClassLoader());
+                                  SecurityActions.getClassLoader(ManagedConnectionPoolStatisticsImpl.class));
       this.rbs = new HashMap<Locale, ResourceBundle>(1);
       this.rbs.put(Locale.US, defaultResourceBundle);
 
@@ -236,7 +236,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       {
          ResourceBundle newResourceBundle =
             ResourceBundle.getBundle("poolstatistics", locale, 
-                                     ManagedConnectionPoolStatisticsImpl.class.getClassLoader());
+                                     SecurityActions.getClassLoader(ManagedConnectionPoolStatisticsImpl.class));
 
          if (newResourceBundle != null)
             rbs.put(locale, newResourceBundle);

@@ -181,7 +181,7 @@ public class CapacityFactory
    {
       try
       {
-         Class<?> c = Class.forName(clz, true, CapacityFactory.class.getClassLoader());
+         Class<?> c = Class.forName(clz, true, SecurityActions.getClassLoader(CapacityFactory.class));
          return c.newInstance();
       }
       catch (Throwable t)

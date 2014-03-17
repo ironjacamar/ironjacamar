@@ -274,7 +274,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
       {
          try
          {
-            clz = Class.forName(className, true, XAManagedConnectionFactory.class.getClassLoader());
+            clz = Class.forName(className, true, SecurityActions.getClassLoader(XAManagedConnectionFactory.class));
          }
          catch (ClassNotFoundException cnfe)
          {
@@ -339,7 +339,8 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
       {
          try
          {
-            clazz = Class.forName(getXADataSourceClass(), true, XAManagedConnectionFactory.class.getClassLoader());
+            clazz = Class.forName(getXADataSourceClass(), true,
+                                  SecurityActions.getClassLoader(XAManagedConnectionFactory.class));
          }
          catch (ClassNotFoundException cnfe)
          {

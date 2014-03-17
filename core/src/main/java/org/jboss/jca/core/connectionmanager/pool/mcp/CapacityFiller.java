@@ -69,7 +69,7 @@ class CapacityFiller implements Runnable
     */
    public void run()
    {
-      final ClassLoader myClassLoader = getClass().getClassLoader();
+      final ClassLoader myClassLoader = SecurityActions.getClassLoader(getClass());
       SecurityActions.setThreadContextClassLoader(myClassLoader);
 
       while (true)

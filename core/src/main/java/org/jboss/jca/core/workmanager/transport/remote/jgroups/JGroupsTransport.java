@@ -910,7 +910,7 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
    {
       if (trace)
       {
-         log.tracef("java.net.preferIPv4Stack=%s", System.getProperty("java.net.preferIPv4Stack"));
+         log.tracef("java.net.preferIPv4Stack=%s", SecurityActions.getSystemProperty("java.net.preferIPv4Stack"));
          log.tracef("viewAccepted called w/ View=%s", view);
       }
 
