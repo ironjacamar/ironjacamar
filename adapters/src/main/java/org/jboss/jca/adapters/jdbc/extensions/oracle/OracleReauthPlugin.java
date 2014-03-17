@@ -65,7 +65,8 @@ public class OracleReauthPlugin implements ReauthPlugin
       {
          try
          {
-            oracleConnection = Class.forName("oracle.jdbc.OracleConnection", true, getClass().getClassLoader());
+            oracleConnection = Class.forName("oracle.jdbc.OracleConnection", true,
+                                             SecurityActions.getClassLoader(getClass()));
          }
          catch (Throwable t)
          {

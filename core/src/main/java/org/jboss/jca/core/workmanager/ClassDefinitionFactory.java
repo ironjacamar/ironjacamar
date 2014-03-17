@@ -83,7 +83,7 @@ public class ClassDefinitionFactory
 
          String clzName = name.replace('.', '/') + ".class";
 
-         is = s.getClass().getClassLoader().getResourceAsStream(clzName);
+         is = SecurityActions.getClassLoader(s.getClass()).getResourceAsStream(clzName);
          int i = is.read();
          while (i != -1)
          {

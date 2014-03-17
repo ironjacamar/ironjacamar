@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2008-2009, Red Hat Inc, and individual contributors
+ * Copyright 2012, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.embedded;
+package org.jboss.jca.deployers.common;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -58,50 +58,16 @@ class SecurityActions
    }
 
    /**
-    * Get a system property
-    * @param name The property name
-    * @return The property value
+    * Load
+    * @param lib The library
     */
-   static String getSystemProperty(final String name)
-   {
-      return (String)AccessController.doPrivileged(new PrivilegedAction<Object>() 
-      {
-         public Object run()
-         {
-            return System.getProperty(name);
-         }
-      });
-   }
-
-   /**
-    * Get a system property
-    * @param name The property name
-    * @param value The default property value
-    * @return The property value
-    */
-   static String getSystemProperty(final String name, final String value)
-   {
-      return (String)AccessController.doPrivileged(new PrivilegedAction<Object>() 
-      {
-         public Object run()
-         {
-            return System.getProperty(name, value);
-         }
-      });
-   }
-
-   /**
-    * Set a system property
-    * @param name The property name
-    * @param value The property value
-    */
-   static void setSystemProperty(final String name, final String value)
+   static void load(final String lib)
    {
       AccessController.doPrivileged(new PrivilegedAction<Object>() 
       {
          public Object run()
          {
-            System.setProperty(name, value);
+            System.load(lib);
             return null;
          }
       });

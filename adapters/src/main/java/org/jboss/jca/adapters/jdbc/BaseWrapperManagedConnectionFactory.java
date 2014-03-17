@@ -774,8 +774,8 @@ public abstract class BaseWrapperManagedConnectionFactory
          try
          {
             clz = Class.forName(reauthPluginClassName, true, 
-                                BaseWrapperManagedConnectionFactory.class.getClassLoader());
-            usedCl = BaseWrapperManagedConnectionFactory.class.getClassLoader();
+                                SecurityActions.getClassLoader(BaseWrapperManagedConnectionFactory.class));
+            usedCl = SecurityActions.getClassLoader(BaseWrapperManagedConnectionFactory.class);
          }
          catch (ClassNotFoundException cnfe)
          {
@@ -909,8 +909,8 @@ public abstract class BaseWrapperManagedConnectionFactory
          try
          {
             clz = Class.forName(connectionListenerClassName, true, 
-                                BaseWrapperManagedConnectionFactory.class.getClassLoader());
-            usedCl = BaseWrapperManagedConnectionFactory.class.getClassLoader();
+                                SecurityActions.getClassLoader(BaseWrapperManagedConnectionFactory.class));
+            usedCl = SecurityActions.getClassLoader(BaseWrapperManagedConnectionFactory.class);
          }
          catch (ClassNotFoundException cnfe)
          {
@@ -1219,7 +1219,8 @@ public abstract class BaseWrapperManagedConnectionFactory
       {
          try
          {
-            clz = Class.forName(plugin, true, BaseWrapperManagedConnectionFactory.class.getClassLoader());
+            clz = Class.forName(plugin, true,
+                                SecurityActions.getClassLoader(BaseWrapperManagedConnectionFactory.class));
          }
          catch (ClassNotFoundException cnfe)
          {

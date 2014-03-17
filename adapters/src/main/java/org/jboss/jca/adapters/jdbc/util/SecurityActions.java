@@ -38,6 +38,25 @@ class SecurityActions
    }
 
    /**
+    * Get the classloader.
+    * @param c The class
+    * @return The classloader
+    */
+   static ClassLoader getClassLoader(final Class<?> c)
+   {
+      if (System.getSecurityManager() == null)
+         return c.getClassLoader();
+
+      return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>()
+      {
+         public ClassLoader run()
+         {
+            return c.getClassLoader();
+         }
+      });
+   }
+
+   /**
     * Get a system property
     * @param name The property name
     * @return The property value
