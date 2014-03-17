@@ -37,7 +37,7 @@ class SecurityActions
     * SetAccessible
     * @param m The method
     */
-   public static void setAccessible(final Method m)
+   static void setAccessible(final Method m)
    {
       if (m == null)
          return;

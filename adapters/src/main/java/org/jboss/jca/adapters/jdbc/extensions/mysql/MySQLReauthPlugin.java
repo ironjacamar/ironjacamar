@@ -64,7 +64,8 @@ public class MySQLReauthPlugin implements ReauthPlugin
       {
          try
          {
-            mysqlConnection = Class.forName("com.mysql.jdbc.Connection", true, getClass().getClassLoader());
+            mysqlConnection = Class.forName("com.mysql.jdbc.Connection", true,
+                                            SecurityActions.getClassLoader(getClass()));
          }
          catch (Throwable t) 
          {

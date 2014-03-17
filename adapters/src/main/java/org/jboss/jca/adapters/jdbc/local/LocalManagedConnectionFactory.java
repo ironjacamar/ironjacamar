@@ -414,7 +414,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       {
          try
          {
-            clz = Class.forName(className, true, LocalManagedConnectionFactory.class.getClassLoader());
+            clz = Class.forName(className, true, SecurityActions.getClassLoader(LocalManagedConnectionFactory.class));
          }
          catch (ClassNotFoundException cnfe)
          {
@@ -593,10 +593,10 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
    {
       boolean trace = log.isTraceEnabled();
 
-      ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+      ClassLoader tccl = SecurityActions.getThreadContextClassLoader();
       try
       {
-         Thread.currentThread().setContextClassLoader(getClassLoaderPlugin().getClassLoader());
+         SecurityActions.setThreadContextClassLoader(getClassLoaderPlugin().getClassLoader());
          driver = DriverManager.getDriver(url);
 
          if (trace)
@@ -613,7 +613,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       }
       finally
       {
-         Thread.currentThread().setContextClassLoader(tccl);
+         SecurityActions.setThreadContextClassLoader(tccl);
       }
    }
 
@@ -638,10 +638,10 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
          if (dataSourceClass == null || dataSourceClass.trim().equals(""))
             throw new ResourceException("DataSourceClass not defined");
 
-         ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+         ClassLoader tccl = SecurityActions.getThreadContextClassLoader();
          try
          {
-            Thread.currentThread().setContextClassLoader(getClassLoaderPlugin().getClassLoader());
+            SecurityActions.setThreadContextClassLoader(getClassLoaderPlugin().getClassLoader());
 
             Class<?> clz = Class.forName(dataSourceClass, true, getClassLoaderPlugin().getClassLoader());
             dataSource = (DataSource)clz.newInstance();
@@ -665,7 +665,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
          }
          finally
          {
-            Thread.currentThread().setContextClassLoader(tccl);
+            SecurityActions.setThreadContextClassLoader(tccl);
          }
       }
 

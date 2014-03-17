@@ -133,10 +133,10 @@ public class ValidatorTask extends Task
    @Override
    public void execute() throws BuildException 
    {
-      ClassLoader oldCL = Thread.currentThread().getContextClassLoader();
+      ClassLoader oldCL = SecurityActions.getThreadContextClassLoader();
       try 
       {
-         Thread.currentThread().setContextClassLoader(ValidatorTask.class.getClassLoader());
+         SecurityActions.setThreadContextClassLoader(SecurityActions.getClassLoader(ValidatorTask.class));
 
          Validation.validate(new File(getRarFile()).toURI().toURL(), 
             getOutputDir(), getCommandLine().getClasspath().list());
@@ -147,7 +147,7 @@ public class ValidatorTask extends Task
       }
       finally
       {
-         Thread.currentThread().setContextClassLoader(oldCL);
+         SecurityActions.setThreadContextClassLoader(oldCL);
       }
    }
 

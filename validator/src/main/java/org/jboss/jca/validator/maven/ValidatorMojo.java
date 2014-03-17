@@ -64,10 +64,10 @@ public class ValidatorMojo extends AbstractMojo
    @Override
    public void execute()  throws MojoExecutionException, MojoFailureException
    {
-      ClassLoader oldCL = Thread.currentThread().getContextClassLoader();
+      ClassLoader oldCL = SecurityActions.getThreadContextClassLoader();
       try 
       {
-         Thread.currentThread().setContextClassLoader(ValidatorMojo.class.getClassLoader());
+         SecurityActions.setThreadContextClassLoader(SecurityActions.getClassLoader(ValidatorMojo.class));
 
          Validation.validate(getRarFile().toURI().toURL(), 
             getOutputDir(), getClasspath());
@@ -78,7 +78,7 @@ public class ValidatorMojo extends AbstractMojo
       }
       finally
       {
-         Thread.currentThread().setContextClassLoader(oldCL);
+         SecurityActions.setThreadContextClassLoader(oldCL);
       }
    }
    
