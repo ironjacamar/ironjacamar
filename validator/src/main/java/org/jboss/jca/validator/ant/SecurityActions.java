@@ -1,8 +1,8 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2008-2009, Red Hat Inc, and individual contributors
+ * Copyright 2014, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * distribution for a full listing of individual contributors. 
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -20,30 +20,24 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.embedded;
+package org.jboss.jca.validator.ant;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
 /**
  * Privileged Blocks
+ * 
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 class SecurityActions
-{ 
-   /**
-    * Constructor
-    */
-   private SecurityActions()
-   {
-   }
-
+{
    /**
     * Get the classloader.
     * @param c The class
     * @return The classloader
     */
-   static ClassLoader getClassLoader(final Class<?> c)
+   public static ClassLoader getClassLoader(final Class<?> c)
    {
       if (System.getSecurityManager() == null)
          return c.getClassLoader();
@@ -58,52 +52,44 @@ class SecurityActions
    }
 
    /**
-    * Get a system property
-    * @param name The property name
-    * @return The property value
+    * Get the context classloader.
+    * @return The classloader
     */
-   static String getSystemProperty(final String name)
+   public static ClassLoader getThreadContextClassLoader()
    {
-      return (String)AccessController.doPrivileged(new PrivilegedAction<Object>() 
+      if (System.getSecurityManager() == null)
+         return Thread.currentThread().getContextClassLoader();
+
+      return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>()
       {
-         public Object run()
+         public ClassLoader run()
          {
-            return System.getProperty(name);
+            return Thread.currentThread().getContextClassLoader();
          }
       });
    }
 
    /**
-    * Get a system property
-    * @param name The property name
-    * @param value The default property value
-    * @return The property value
+    * Set the context classloader.
+    * @param cl classloader
     */
-   static String getSystemProperty(final String name, final String value)
+   public static void setThreadContextClassLoader(final ClassLoader cl)
    {
-      return (String)AccessController.doPrivileged(new PrivilegedAction<Object>() 
+      if (System.getSecurityManager() == null)
       {
-         public Object run()
+         Thread.currentThread().setContextClassLoader(cl);
+      }
+      else
+      {
+         AccessController.doPrivileged(new PrivilegedAction<Object>()
          {
-            return System.getProperty(name, value);
-         }
-      });
-   }
+            public Object run()
+            {
+               Thread.currentThread().setContextClassLoader(cl);
 
-   /**
-    * Set a system property
-    * @param name The property name
-    * @param value The property value
-    */
-   static void setSystemProperty(final String name, final String value)
-   {
-      AccessController.doPrivileged(new PrivilegedAction<Object>() 
-      {
-         public Object run()
-         {
-            System.setProperty(name, value);
-            return null;
-         }
-      });
+               return null;
+            }
+         });
+      }
    }
 }

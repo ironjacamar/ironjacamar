@@ -136,7 +136,7 @@ public class EndpointImpl implements Endpoint
          ClassLoader oldTCCL = SecurityActions.getThreadContextClassLoader();
          try
          {
-            SecurityActions.setThreadContextClassLoader(rar.getClass().getClassLoader());
+            SecurityActions.setThreadContextClassLoader(SecurityActions.getClassLoader(rar.getClass()));
             
             List<Class<?>> groups = new ArrayList<Class<?>>(1);
 
@@ -146,7 +146,7 @@ public class EndpointImpl implements Endpoint
                {
                   try
                   {
-                     Class<?> clz = Class.forName(group, true, rar.getClass().getClassLoader());
+                     Class<?> clz = Class.forName(group, true, SecurityActions.getClassLoader(rar.getClass()));
                      groups.add(clz);
                   }
                   catch (Throwable t)

@@ -61,10 +61,10 @@ public class HandlerSocket implements Runnable
     */
    public void run()
    {
-      ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
+      ClassLoader oldCl = SecurityActions.getThreadContextClassLoader();
       try
       {
-         Thread.currentThread().setContextClassLoader(handler.getClassLoader());
+         SecurityActions.setThreadContextClassLoader(SecurityActions.getClassLoader(handler));
 
          InputStream is = socket.getInputStream();
          OutputStream os = socket.getOutputStream();
@@ -79,7 +79,7 @@ public class HandlerSocket implements Runnable
       finally
       {
          shutdown();
-         Thread.currentThread().setContextClassLoader(oldCl);
+         SecurityActions.setThreadContextClassLoader(oldCl);
       }
    }
 

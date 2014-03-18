@@ -21,6 +21,9 @@
  */
 package org.jboss.jca.common.spi.annotations.repository;
 
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+
 /**
  * The AnnotationScannerFactory which creates an annotation scanner instance
  *
@@ -41,7 +44,7 @@ public class AnnotationScannerFactory
    {
       try
       {
-         Class<?> clz = Class.forName(JANDEX, true, AnnotationScannerFactory.class.getClassLoader());
+         Class<?> clz = Class.forName(JANDEX, true, SecurityActions.getClassLoader(AnnotationScannerFactory.class));
          defaultImplementation = (AnnotationScanner)clz.newInstance();
       }
       catch (Throwable t)
@@ -72,5 +75,34 @@ public class AnnotationScannerFactory
          throw new IllegalStateException("Unable to find an annotation scanner implementation");
 
       return defaultImplementation;
+   }
+
+   private static class SecurityActions
+   {
+      /**
+       * Constructor
+       */
+      private SecurityActions()
+      {
+      }
+
+      /**
+       * Get the classloader.
+       * @param c The class
+       * @return The classloader
+       */
+      static ClassLoader getClassLoader(final Class<?> c)
+      {
+         if (System.getSecurityManager() == null)
+            return c.getClassLoader();
+
+         return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>()
+         {
+            public ClassLoader run()
+            {
+               return c.getClassLoader();
+            }
+         });
+      }
    }
 }

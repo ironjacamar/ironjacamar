@@ -34,7 +34,7 @@ public class Failure implements Serializable
    private static final long serialVersionUID = 1L;
 
    /** New line character */
-   private static final String NEW_LINE = System.getProperty("line.separator");
+   private static final String NEW_LINE = SecurityActions.getSystemProperty("line.separator");
 
    /** Severity */
    private final int severity;

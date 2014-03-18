@@ -125,7 +125,7 @@ public class Injection
          try
          {
             parameterValue = getValue(propertyName, parameterClass, propertyValue, 
-                                      object.getClass().getClassLoader());
+                                      SecurityActions.getClassLoader(object.getClass()));
          }
          catch (Throwable t)
          {
@@ -150,7 +150,7 @@ public class Injection
             try
             {
                fieldValue = getValue(propertyName, fieldClass, propertyValue,
-                                     object.getClass().getClassLoader());
+                                     SecurityActions.getClassLoader(object.getClass()));
             }
             catch (Throwable t)
             {

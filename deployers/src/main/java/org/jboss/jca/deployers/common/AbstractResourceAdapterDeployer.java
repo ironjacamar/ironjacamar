@@ -803,7 +803,8 @@ public abstract class AbstractResourceAdapterDeployer
                            if (trace)
                            {
                               log.trace("ActivationSpec: " + as.getClass().getName());
-                              log.trace("ActivationSpec defined in classloader: " + as.getClass().getClassLoader());
+                              log.trace("ActivationSpec defined in classloader: " +
+                                        SecurityActions.getClassLoader(as.getClass()));
                            }
 
                            // Associate for validation
@@ -936,7 +937,8 @@ public abstract class AbstractResourceAdapterDeployer
                               if (trace)
                               {
                                  log.trace("AdminObject: " + ao.getClass().getName());
-                                 log.trace("AdminObject defined in classloader: " + ao.getClass().getClassLoader());
+                                 log.trace("AdminObject defined in classloader: " +
+                                           SecurityActions.getClassLoader(ao.getClass()));
                               }
 
                               archiveValidationObjects.add(new ValidateObject(Key.ADMIN_OBJECT, ao, aoMeta
@@ -988,7 +990,7 @@ public abstract class AbstractResourceAdapterDeployer
                                        interfaces.add(java.io.Serializable.class);
                                        interfaces.add(javax.resource.Referenceable.class);
                                        
-                                       ao = Proxy.newProxyInstance(ao.getClass().getClassLoader(),
+                                       ao = Proxy.newProxyInstance(SecurityActions.getClassLoader(ao.getClass()),
                                                                    interfaces.toArray(new Class<?>[interfaces.size()]),
                                                                    dih);
                                     }
@@ -1133,7 +1135,7 @@ public abstract class AbstractResourceAdapterDeployer
             {
                try
                {
-                  System.load(lib);
+                  SecurityActions.load(lib);
                   log.debugf("Loaded library: %s", lib);
                }
                catch (Throwable t)
@@ -1356,7 +1358,7 @@ public abstract class AbstractResourceAdapterDeployer
                         {
                            log.trace("ResourceAdapter: " + resourceAdapter.getClass().getName());
                            log.trace("ResourceAdapter defined in classloader: " +
-                                     resourceAdapter.getClass().getClassLoader());
+                                     SecurityActions.getClassLoader(resourceAdapter.getClass()));
                         }
 
                         archiveValidationObjects.add(new ValidateObject(Key.RESOURCE_ADAPTER, resourceAdapter, ra1516
@@ -1496,7 +1498,7 @@ public abstract class AbstractResourceAdapterDeployer
                         {
                            log.trace("ManagedConnectionFactory: " + mcf.getClass().getName());
                            log.trace("ManagedConnectionFactory is defined in classloader: " +
-                                     mcf.getClass().getClassLoader());
+                                     SecurityActions.getClassLoader(mcf.getClass()));
                         }
 
                         mcf.setLogWriter(getLogPrintWriter());
@@ -1792,7 +1794,8 @@ public abstract class AbstractResourceAdapterDeployer
                            if (trace)
                            {
                               log.trace("ConnectionFactory: " + cf.getClass().getName());
-                              log.trace("ConnectionFactory defined in classloader: " + cf.getClass().getClassLoader());
+                              log.trace("ConnectionFactory defined in classloader: " +
+                                        SecurityActions.getClassLoader(cf.getClass()));
                            }
                         }
 
@@ -2043,7 +2046,7 @@ public abstract class AbstractResourceAdapterDeployer
                                     {
                                        log.trace("ManagedConnectionFactory: " + mcf.getClass().getName());
                                        log.trace("ManagedConnectionFactory defined in classloader: " +
-                                                 mcf.getClass().getClassLoader());
+                                                 SecurityActions.getClassLoader(mcf.getClass()));
                                     }
 
                                     mcf.setLogWriter(getLogPrintWriter());
@@ -2344,7 +2347,7 @@ public abstract class AbstractResourceAdapterDeployer
                                        {
                                           log.trace("ConnectionFactory: " + cf.getClass().getName());
                                           log.trace("ConnectionFactory defined in classloader: " +
-                                                    cf.getClass().getClassLoader());
+                                                    SecurityActions.getClassLoader(cf.getClass()));
                                        }
                                     }
 

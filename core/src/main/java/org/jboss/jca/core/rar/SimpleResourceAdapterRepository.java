@@ -275,7 +275,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
                   {
                      try
                      {
-                        ClassLoader cl = rar.getClass().getClassLoader();
+                        ClassLoader cl = SecurityActions.getClassLoader(rar.getClass());
                         Class<?> mlType = Class.forName(ml.getMessagelistenerType().getValue(), true, cl);
 
                         if (mlType.isAssignableFrom(messageListenerType))
@@ -418,7 +418,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
    {
       try
       {
-         ClassLoader cl = rar.getClass().getClassLoader();
+         ClassLoader cl = SecurityActions.getClassLoader(rar.getClass());
 
          Class<?> type = Class.forName(ml.getMessagelistenerType().getValue(), true, cl);
 

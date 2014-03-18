@@ -94,7 +94,8 @@ public class Validator
     */
    public ResourceBundle getResourceBundle()
    {
-      return ResourceBundle.getBundle("validator", Locale.US, Validator.class.getClassLoader());
+      return ResourceBundle.getBundle("validator", Locale.US,
+                                      SecurityActions.getClassLoader(Validator.class));
    }
 
    /**
@@ -157,7 +158,7 @@ public class Validator
       {
          try
          {
-            Class clz = Class.forName(rulesNameArray[i], true, Validator.class.getClassLoader());
+            Class clz = Class.forName(rulesNameArray[i], true, SecurityActions.getClassLoader(Validator.class));
             Rule rule = (Rule) clz.newInstance();
 
             rules.add(rule);

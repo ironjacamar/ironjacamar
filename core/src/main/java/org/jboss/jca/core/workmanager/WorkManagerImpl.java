@@ -1009,11 +1009,11 @@ public class WorkManagerImpl implements WorkManager
 
       if (resourceAdapter != null)
       {
-         if (work.getClass().getClassLoader() instanceof WorkClassLoader)
+         if (SecurityActions.getClassLoader(work.getClass()) instanceof WorkClassLoader)
          {
-            WorkClassLoader wcl = (WorkClassLoader)work.getClass().getClassLoader();
+            WorkClassLoader wcl = (WorkClassLoader)SecurityActions.getClassLoader(work.getClass());
             ResourceAdapterClassLoader racl =
-               new ResourceAdapterClassLoader(resourceAdapter.getClass().getClassLoader(),
+               new ResourceAdapterClassLoader(SecurityActions.getClassLoader(resourceAdapter.getClass()),
                                               wcl);
 
             wcl.setResourceAdapterClassLoader(racl);

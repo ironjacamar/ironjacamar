@@ -288,14 +288,14 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
          Thread currentThread = Thread.currentThread();
          Throwable currentThrowable =
             new Throwable("Detected queued threads during cleanup from: " + currentThread.getName());
-         currentThrowable.setStackTrace(currentThread.getStackTrace());
+         currentThrowable.setStackTrace(SecurityActions.getStackTrace(currentThread));
          mcf.log.warn(currentThrowable.getMessage(), currentThrowable);
 
          Collection<Thread> threads = lock.getQueuedThreads();
          for (Thread thread : threads)
          {
             Throwable t = new Throwable("Queued thread: " + thread.getName());
-            t.setStackTrace(thread.getStackTrace());
+            t.setStackTrace(SecurityActions.getStackTrace(thread));
 
             mcf.log.warn(t.getMessage(), t);
          }
@@ -311,7 +311,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
          if (owner != null)
          {
             Throwable t = new Throwable("Lock owned during cleanup: " + owner.getName());
-            t.setStackTrace(owner.getStackTrace());
+            t.setStackTrace(SecurityActions.getStackTrace(owner));
             mcf.log.warn(t.getMessage(), t);
          }
          else
