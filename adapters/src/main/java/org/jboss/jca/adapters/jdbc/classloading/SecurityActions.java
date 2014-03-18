@@ -1,8 +1,8 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2008, Red Hat Middleware LLC, and individual contributors
+ * IronJacamar, a Java EE Connector Architecture implementation
+ * Copyright 2014, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * distribution for a full listing of individual contributors. 
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -19,35 +19,34 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+
 package org.jboss.jca.adapters.jdbc.classloading;
 
-import org.jboss.jca.adapters.jdbc.spi.ClassLoaderPlugin;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 /**
- *
- * A TCClassLoaderPlugin.
- *
- * @author <a href="stefano.maestri@jboss.com">Stefano Maestri</a>
- *
+ * Privileged Blocks
+ * 
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class TCClassLoaderPlugin implements ClassLoaderPlugin
+class SecurityActions
 {
-
    /**
-    *
-    * Create a new TCClassLoaderPlugin.
-    *
+    * Get the context classloader.
+    * @return The classloader
     */
-   public TCClassLoaderPlugin()
+   public static ClassLoader getThreadContextClassLoader()
    {
+      if (System.getSecurityManager() == null)
+         return Thread.currentThread().getContextClassLoader();
 
+      return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>()
+      {
+         public ClassLoader run()
+         {
+            return Thread.currentThread().getContextClassLoader();
+         }
+      });
    }
-
-   @Override
-   public ClassLoader getClassLoader()
-   {
-      return SecurityActions.getThreadContextClassLoader();
-   }
-
 }
-

@@ -141,7 +141,8 @@ public class PoolStatisticsImpl implements PoolStatistics
       this.enabled = new AtomicBoolean(true);
       
       ResourceBundle defaultResourceBundle = 
-         ResourceBundle.getBundle("poolstatistics", Locale.US, PoolStatisticsImpl.class.getClassLoader());
+         ResourceBundle.getBundle("poolstatistics", Locale.US,
+                                  SecurityActions.getClassLoader(PoolStatisticsImpl.class));
       this.rbs = new HashMap<Locale, ResourceBundle>(1);
       this.rbs.put(Locale.US, defaultResourceBundle);
 
@@ -183,7 +184,8 @@ public class PoolStatisticsImpl implements PoolStatistics
       if (rb == null)
       {
          ResourceBundle newResourceBundle =
-            ResourceBundle.getBundle("poolstatistics", locale, PoolStatisticsImpl.class.getClassLoader());
+            ResourceBundle.getBundle("poolstatistics", locale,
+                                     SecurityActions.getClassLoader(PoolStatisticsImpl.class));
 
          if (newResourceBundle != null)
             rbs.put(locale, newResourceBundle);

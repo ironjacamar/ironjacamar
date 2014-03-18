@@ -118,11 +118,11 @@ class EmbeddedJCA implements Embedded
 
       if (fullProfile)
       {
-         deploy(EmbeddedJCA.class.getClassLoader(), "naming.xml");
-         deploy(EmbeddedJCA.class.getClassLoader(), "transaction.xml");
-         deploy(EmbeddedJCA.class.getClassLoader(), "stdio.xml");
-         deploy(EmbeddedJCA.class.getClassLoader(), "jca.xml");
-         deploy(EmbeddedJCA.class.getClassLoader(), "ds.xml");
+         deploy(SecurityActions.getClassLoader(EmbeddedJCA.class), "naming.xml");
+         deploy(SecurityActions.getClassLoader(EmbeddedJCA.class), "transaction.xml");
+         deploy(SecurityActions.getClassLoader(EmbeddedJCA.class), "stdio.xml");
+         deploy(SecurityActions.getClassLoader(EmbeddedJCA.class), "jca.xml");
+         deploy(SecurityActions.getClassLoader(EmbeddedJCA.class), "ds.xml");
       }
 
       started = true;
@@ -148,11 +148,11 @@ class EmbeddedJCA implements Embedded
 
       if (fullProfile)
       {
-         undeploy(EmbeddedJCA.class.getClassLoader(), "ds.xml");
-         undeploy(EmbeddedJCA.class.getClassLoader(), "jca.xml");
-         undeploy(EmbeddedJCA.class.getClassLoader(), "stdio.xml");
-         undeploy(EmbeddedJCA.class.getClassLoader(), "transaction.xml");
-         undeploy(EmbeddedJCA.class.getClassLoader(), "naming.xml");
+         undeploy(SecurityActions.getClassLoader(EmbeddedJCA.class), "ds.xml");
+         undeploy(SecurityActions.getClassLoader(EmbeddedJCA.class), "jca.xml");
+         undeploy(SecurityActions.getClassLoader(EmbeddedJCA.class), "stdio.xml");
+         undeploy(SecurityActions.getClassLoader(EmbeddedJCA.class), "transaction.xml");
+         undeploy(SecurityActions.getClassLoader(EmbeddedJCA.class), "naming.xml");
       }
 
       kernel.shutdown();

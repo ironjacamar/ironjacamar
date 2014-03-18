@@ -61,7 +61,7 @@ public class ManagedConnectionPoolFactory
       {
          defaultImplementation = Class.forName(clz, 
                                                true, 
-                                               ManagedConnectionPoolFactory.class.getClassLoader());
+                                               SecurityActions.getClassLoader(ManagedConnectionPoolFactory.class));
       }
       catch (Throwable t)
       {
@@ -117,7 +117,7 @@ public class ManagedConnectionPoolFactory
    {
       Class<?> clz = Class.forName(strategy, 
                                    true, 
-                                   ManagedConnectionPoolFactory.class.getClassLoader());
+                                   SecurityActions.getClassLoader(ManagedConnectionPoolFactory.class));
       
       ManagedConnectionPool mcp = (ManagedConnectionPool)clz.newInstance();
       
