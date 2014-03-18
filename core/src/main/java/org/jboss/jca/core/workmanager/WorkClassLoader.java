@@ -65,7 +65,7 @@ public class WorkClassLoader extends ClassLoader
     */
    public WorkClassLoader(ClassBundle cb, ResourceAdapterClassLoader resourceAdapterClassLoader)
    {
-      super(WorkClassLoader.class.getClassLoader());
+      super(SecurityActions.getClassLoader(WorkClassLoader.class));
 
       List<Class<?>> classes = new ArrayList<Class<?>>(cb.getDefinitions().size());
 

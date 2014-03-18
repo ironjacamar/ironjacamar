@@ -1,8 +1,8 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2012, Red Hat Inc, and individual contributors
+ * Copyright 2014, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ * distribution for a full listing of individual contributors. 
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -20,56 +20,57 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.core.workmanager.transport.remote.jgroups;
-
-import org.jboss.jca.core.workmanager.ClassBundle;
-import org.jboss.jca.core.workmanager.WorkClassLoader;
+package org.jboss.jca.test.eis.ant;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
 /**
  * Privileged Blocks
+ * 
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 class SecurityActions
-{ 
+{
    /**
-    * Constructor
+    * Get the context classloader.
+    * @return The classloader
     */
-   private SecurityActions()
+   public static ClassLoader getThreadContextClassLoader()
    {
-   }
+      if (System.getSecurityManager() == null)
+         return Thread.currentThread().getContextClassLoader();
 
-   /**
-    * Get a system property
-    * @param name The property name
-    * @return The property value
-    */
-   static String getSystemProperty(final String name)
-   {
-      return AccessController.doPrivileged(new PrivilegedAction<String>() 
+      return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>()
       {
-         public String run()
+         public ClassLoader run()
          {
-            return System.getProperty(name);
+            return Thread.currentThread().getContextClassLoader();
          }
       });
    }
 
    /**
-    * Create a WorkClassLoader
-    * @param cb The class bundle
-    * @return The class loader
+    * Set the context classloader.
+    * @param cl classloader
     */
-   static WorkClassLoader createWorkClassLoader(final ClassBundle cb)
+   public static void setThreadContextClassLoader(final ClassLoader cl)
    {
-      return AccessController.doPrivileged(new PrivilegedAction<WorkClassLoader>() 
+      if (System.getSecurityManager() == null)
       {
-         public WorkClassLoader run()
+         Thread.currentThread().setContextClassLoader(cl);
+      }
+      else
+      {
+         AccessController.doPrivileged(new PrivilegedAction<Object>()
          {
-            return new WorkClassLoader(cb);
-         }
-      });
+            public Object run()
+            {
+               Thread.currentThread().setContextClassLoader(cl);
+
+               return null;
+            }
+         });
+      }
    }
 }

@@ -83,7 +83,7 @@ public class Start extends AbstractTask
     */
    public void execute() throws BuildException
    {
-      ClassLoader oldCl = Thread.currentThread().getContextClassLoader();
+      ClassLoader oldCl = SecurityActions.getThreadContextClassLoader();
       try
       {
          ClassLoader cl = null;
@@ -105,7 +105,7 @@ public class Start extends AbstractTask
             }
 
             cl = getProject().createClassLoader(Start.class.getClassLoader(), p);
-            Thread.currentThread().setContextClassLoader(cl);
+            SecurityActions.setThreadContextClassLoader(cl);
          }
 
          EISServer eisServer = new EISServer();
@@ -125,7 +125,7 @@ public class Start extends AbstractTask
       }
       finally
       {
-         Thread.currentThread().setContextClassLoader(oldCl);
+         SecurityActions.setThreadContextClassLoader(oldCl);
       }
    }
 

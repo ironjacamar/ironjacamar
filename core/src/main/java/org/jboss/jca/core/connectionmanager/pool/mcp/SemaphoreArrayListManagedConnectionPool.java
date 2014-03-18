@@ -1499,7 +1499,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       sb = sb.append(newLine);
 
       // Body
-      StackTraceElement[] stes = t.getStackTrace();
+      StackTraceElement[] stes = SecurityActions.getStackTrace(t);
       if (stes != null)
       {
          for (StackTraceElement ste : stes)

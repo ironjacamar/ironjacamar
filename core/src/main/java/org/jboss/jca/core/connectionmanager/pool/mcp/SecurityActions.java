@@ -33,6 +33,25 @@ import java.security.PrivilegedAction;
 class SecurityActions
 {
    /**
+    * Get the classloader.
+    * @param c The class
+    * @return The classloader
+    */
+   static ClassLoader getClassLoader(final Class<?> c)
+   {
+      if (System.getSecurityManager() == null)
+         return c.getClassLoader();
+
+      return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>()
+      {
+         public ClassLoader run()
+         {
+            return c.getClassLoader();
+         }
+      });
+   }
+
+   /**
     * Set the context classloader.
     * @param cl classloader
     */
@@ -68,6 +87,25 @@ class SecurityActions
          public String run()
          {
             return System.getProperty(name);
+         }
+      });
+   }
+
+   /**
+    * Get stack trace
+    * @param t The thread
+    * @return The trace
+    */
+   static StackTraceElement[] getStackTrace(final Thread t)
+   {
+      if (System.getSecurityManager() == null)
+         return t.getStackTrace();
+
+      return AccessController.doPrivileged(new PrivilegedAction<StackTraceElement[]>() 
+      {
+         public StackTraceElement[] run()
+         {
+            return t.getStackTrace();
          }
       });
    }
