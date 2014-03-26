@@ -139,6 +139,10 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
    {
       try
       {
+         if (mcf.getSpy().booleanValue())
+            spyLogger.debugf("%s [%s] getConnection()",
+                             mcf.getJndiName(), Constants.SPY_LOGGER_PREFIX_DATASOURCE);
+
          WrappedConnection wc = (WrappedConnection) cm.allocateConnection(mcf, defaultCRI);
          wc.setDataSource(this);
          wc.setSpy(mcf.getSpy().booleanValue());
@@ -159,6 +163,10 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
       ConnectionRequestInfo cri = new WrappedConnectionRequestInfo(user, password);
       try
       {
+         if (mcf.getSpy().booleanValue())
+            spyLogger.debugf("%s [%s] getConnection(%s, ****)",
+                             mcf.getJndiName(), Constants.SPY_LOGGER_PREFIX_DATASOURCE, user);
+
          WrappedConnection wc = (WrappedConnection) cm.allocateConnection(mcf, cri);
          wc.setDataSource(this);
          wc.setSpy(mcf.getSpy().booleanValue());
