@@ -382,7 +382,11 @@ public class TxConnectionListener extends AbstractConnectionListener
                                                                        getTransactionIntegration().
                                                                        getTransactionSynchronizationRegistry());
                   
-                  synchronizer.removeEnlisted(synchronization);
+                  if (!synchronizer.removeEnlisted(synchronization))
+                  {
+                     if (trace)
+                        log.tracef("%s not found in %s", synchronization, synchronizer);
+                  }
                }
 
                if (trace)
