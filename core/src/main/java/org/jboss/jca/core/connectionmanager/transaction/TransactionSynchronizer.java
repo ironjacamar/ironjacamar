@@ -156,6 +156,9 @@ public class TransactionSynchronizer implements Synchronization
     */
    public synchronized boolean removeEnlisted(Synchronization synch)
    {
+      if (enlisted == null)
+         return false;
+
       return enlisted.remove(synch);
    }
    
