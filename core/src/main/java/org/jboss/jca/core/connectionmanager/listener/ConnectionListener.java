@@ -135,10 +135,10 @@ public interface ConnectionListener extends org.jboss.jca.core.api.connectionman
 
    /**
     * Delist the managed connection
-    * 
+    * @return <code>True</code> if the listener was delisted succesfully, otherwise <code>false</code>
     * @throws ResourceException if exception occurs
     */
-   public void delist() throws ResourceException;
+   public boolean delist() throws ResourceException;
 
    /**
     * Get whether the listener is track by transaction

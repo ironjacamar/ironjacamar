@@ -58,6 +58,7 @@ public class ConnectionManagerFactory
     * @param sharable Enable sharable connections
     * @param enlistment Enable enlistment connections
     * @param connectable Enable connectable connections
+    * @param tracking The tracking status
     * @param flushStrategy The flush strategy
     * @param allocationRetry The allocation retry value
     * @param allocationRetryWaitMillis The allocation retry millis value
@@ -72,6 +73,7 @@ public class ConnectionManagerFactory
                                                        final boolean sharable,
                                                        final boolean enlistment,
                                                        final boolean connectable,
+                                                       final Boolean tracking,
                                                        final FlushStrategy flushStrategy,
                                                        final Integer allocationRetry,
                                                        final Long allocationRetryWaitMillis)
@@ -109,6 +111,7 @@ public class ConnectionManagerFactory
                     sharable,
                     enlistment,
                     connectable,
+                    tracking,
                     flushStrategy,
                     allocationRetry, allocationRetryWaitMillis, 
                     null);
@@ -128,6 +131,7 @@ public class ConnectionManagerFactory
     * @param sharable Enable sharable connections
     * @param enlistment Enable enlistment connections
     * @param connectable Enable connectable connections
+    * @param tracking The tracking status
     * @param flushStrategy The flush strategy
     * @param allocationRetry The allocation retry value
     * @param allocationRetryWaitMillis The allocation retry millis value
@@ -148,6 +152,7 @@ public class ConnectionManagerFactory
                                                   final boolean sharable,
                                                   final boolean enlistment,
                                                   final boolean connectable,
+                                                  final Boolean tracking,
                                                   final FlushStrategy flushStrategy,
                                                   final Integer allocationRetry,
                                                   final Long allocationRetryWaitMillis,
@@ -195,6 +200,7 @@ public class ConnectionManagerFactory
                     sharable,
                     enlistment,
                     connectable,
+                    tracking,
                     flushStrategy,
                     allocationRetry, allocationRetryWaitMillis,
                     txIntegration.getTransactionManager());
@@ -214,6 +220,7 @@ public class ConnectionManagerFactory
     * @param sharable Enable sharable connections
     * @param enlistment Enable enlistment connections
     * @param connectable Enable connectable connections
+    * @param tracking The tracking status
     * @param flushStrategy The flush strategy
     * @param allocationRetry The allocation retry value
     * @param allocationRetryWaitMillis The allocation retry millis value
@@ -228,6 +235,7 @@ public class ConnectionManagerFactory
                               boolean sharable,
                               boolean enlistment,
                               boolean connectable,
+                              Boolean tracking,
                               FlushStrategy flushStrategy,
                               Integer allocationRetry,
                               Long allocationRetryWaitMillis,
@@ -253,6 +261,7 @@ public class ConnectionManagerFactory
       cm.setSharable(sharable);
       cm.setEnlistment(enlistment);
       cm.setConnectable(connectable);
+      cm.setTracking(tracking);
    }
 
    /**

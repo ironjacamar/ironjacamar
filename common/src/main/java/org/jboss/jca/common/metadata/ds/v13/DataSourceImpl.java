@@ -46,6 +46,9 @@ public class DataSourceImpl extends org.jboss.jca.common.metadata.ds.v12.DataSou
    /** Connectable */
    protected Boolean connectable;
 
+   /** Tracking */
+   protected Boolean tracking;
+
    /**
     * Create a new DataSourceImpl.
     *
@@ -70,6 +73,7 @@ public class DataSourceImpl extends org.jboss.jca.common.metadata.ds.v12.DataSou
     * @param useccm useccm
     * @param jta jta
     * @param connectable connectable
+    * @param tracking tracking
     * @param pool pool
     * @throws ValidateException ValidateException
     */
@@ -78,7 +82,7 @@ public class DataSourceImpl extends org.jboss.jca.common.metadata.ds.v12.DataSou
                          TimeOut timeOut, DsSecurity security, Statement statement, Validation validation, 
                          String urlDelimiter, String urlSelectorStrategyClassName, String newConnectionSql, 
                          Boolean useJavaContext, String poolName, Boolean enabled, String jndiName, 
-                         Boolean spy, Boolean useccm, Boolean jta, Boolean connectable, DsPool pool)
+                         Boolean spy, Boolean useccm, Boolean jta, Boolean connectable, Boolean tracking, DsPool pool)
       throws ValidateException
    {
       super(connectionUrl, driverClass, dataSourceClass, driver, transactionIsolation, connectionProperties,
@@ -86,6 +90,7 @@ public class DataSourceImpl extends org.jboss.jca.common.metadata.ds.v12.DataSou
             useJavaContext, poolName, enabled, jndiName, spy, useccm, jta, pool);
 
       this.connectable = connectable;
+      this.tracking = tracking;
    }
 
    /**
@@ -97,6 +102,14 @@ public class DataSourceImpl extends org.jboss.jca.common.metadata.ds.v12.DataSou
       return connectable;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Boolean isTracking()
+   {
+      return tracking;
+   }
 
    @Override
    public int hashCode()
@@ -104,6 +117,7 @@ public class DataSourceImpl extends org.jboss.jca.common.metadata.ds.v12.DataSou
       final int prime = 31;
       int result = super.hashCode();
       result = prime * result + ((connectable == null) ? 0 : connectable.hashCode());
+      result = prime * result + ((tracking == null) ? 0 : tracking.hashCode());
       return result;
    }
 
@@ -123,6 +137,13 @@ public class DataSourceImpl extends org.jboss.jca.common.metadata.ds.v12.DataSou
             return false;
       }
       else if (!connectable.equals(other.connectable))
+         return false;
+      if (tracking == null)
+      {
+         if (other.tracking != null)
+            return false;
+      }
+      else if (!tracking.equals(other.tracking))
          return false;
       return true;
    }
@@ -160,6 +181,9 @@ public class DataSourceImpl extends org.jboss.jca.common.metadata.ds.v12.DataSou
 
       if (connectable != null)
          sb.append(" ").append(DataSource.Attribute.CONNECTABLE).append("=\"").append(connectable).append("\"");
+
+      if (tracking != null)
+         sb.append(" ").append(DataSource.Attribute.TRACKING).append("=\"").append(tracking).append("\"");
 
       sb.append(">");
 

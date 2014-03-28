@@ -180,6 +180,31 @@
             <entry>There is something wrong with the pooling</entry>
           </row>
           <row>
+            <entry>314</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Error during beforeCompletion</entry>
+          </row>
+          <row>
+            <entry>315</entry>
+            <entry><code>ERROR</code></entry>
+            <entry>Pool has active handles</entry>
+          </row>
+          <row>
+            <entry>316</entry>
+            <entry><code>ERROR</code></entry>
+            <entry>Handle allocation</entry>
+          </row>
+          <row>
+            <entry>317</entry>
+            <entry><code>ERROR</code></entry>
+            <entry>Transaction boundary</entry>
+          </row>
+          <row>
+            <entry>318</entry>
+            <entry><code>ERROR</code></entry>
+            <entry>Delisting resource in pool failed</entry>
+          </row>
+          <row>
             <entry>351</entry>
             <entry><code>EXCEPTION</code></entry>
             <entry>Not correct type</entry>

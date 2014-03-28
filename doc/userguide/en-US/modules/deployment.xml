@@ -248,6 +248,12 @@ java:/eis/ao/&lt;deploymentName&gt;
                  Allow components to obtain a connection through the <code>XAResource</code> instance (1.2)
                </entry>
              </row>
+             <row>
+               <entry><code>tracking</code></entry>
+               <entry>
+                 Track connection handles across transaction boundaries (1.2)
+               </entry>
+             </row>
            </tbody>
          </tgroup>
        </table>
@@ -1079,6 +1085,12 @@ copy postgres-xa-ds.xml ironjacamar-1.2.0.Final\deploy
                <entry><code>connectable</code></entry>
                <entry>
                  Allow components to obtain a connection through the <code>XAResource</code> instance (1.3)
+               </entry>
+             </row>
+             <row>
+               <entry><code>tracking</code></entry>
+               <entry>
+                 Track connection handles across transaction boundaries (1.3)
                </entry>
              </row>
             </tbody>

@@ -31,6 +31,8 @@ import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.spi.transaction.ConnectableResourceListener;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -78,6 +80,9 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
    
    /** Connection handles */
    protected CopyOnWriteArrayList<Object> connectionHandles = new CopyOnWriteArrayList<Object>();
+
+   /** Connection traces */
+   protected Map<Object, Exception> connectionTraces;
       
    /** Track by transaction or not */
    private final AtomicBoolean trackByTx = new AtomicBoolean(false);
@@ -90,6 +95,9 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
 
    /** Enlisted */
    private boolean enlisted;
+
+   /** Tracking */
+   protected Boolean tracking;
    
    /**
     * Creates a new instance of the listener that is responsible for
@@ -99,9 +107,11 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
     * @param pool pool
     * @param mcp managed connection pool
     * @param flushStrategy flushStrategy
+    * @param tracking tracking
     */
    protected AbstractConnectionListener(ConnectionManager cm, ManagedConnection managedConnection, 
-                                        Pool pool, ManagedConnectionPool mcp, FlushStrategy flushStrategy)
+                                        Pool pool, ManagedConnectionPool mcp, FlushStrategy flushStrategy,
+                                        Boolean tracking)
    {
       this.cm = cm;
       this.managedConnection = managedConnection;
@@ -115,6 +125,11 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
       long createdTime = System.currentTimeMillis();
       this.lastUse = createdTime;
       this.lastValidated = createdTime;
+
+      this.tracking = tracking;
+
+      if (tracking != null && tracking.booleanValue())
+         this.connectionTraces = new HashMap<Object, Exception>();
    }
 
    /**
@@ -169,8 +184,9 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
    /**
     * {@inheritDoc}
     */
-   public void delist() throws ResourceException
+   public boolean delist() throws ResourceException
    {
+      return true;
    }
 
    /**
@@ -259,7 +275,10 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
    {
       if (handle != null)
       {
-         connectionHandles.add(handle);      
+         connectionHandles.add(handle);
+
+         if (tracking != null && tracking.booleanValue())
+            connectionTraces.put(handle, new Exception());
       }
       else
       {
@@ -309,6 +328,9 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
          {
             log.unregisteredHandleNotRegistered(handle, managedConnection);
          }
+
+         if (tracking != null && tracking.booleanValue())
+            connectionTraces.remove(handle);
       }
       else
       {
@@ -335,6 +357,9 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
       }
 
       connectionHandles.clear();
+
+      if (tracking != null && tracking.booleanValue())
+         connectionTraces.clear();
    }
    
 

@@ -47,6 +47,9 @@ public class XADataSourceImpl extends org.jboss.jca.common.metadata.ds.v12.XADat
    /** Connectable */
    protected Boolean connectable;
 
+   /** Tracking */
+   protected Boolean tracking;
+
    /**
     * Create a new XADataSourceImpl.
     *
@@ -65,6 +68,7 @@ public class XADataSourceImpl extends org.jboss.jca.common.metadata.ds.v12.XADat
     * @param spy spy
     * @param useCcm useCcm
     * @param connectable connectable
+    * @param tracking tracking
     * @param xaDataSourceProperty xaDataSourceProperty
     * @param xaDataSourceClass xaDataSourceClass
     * @param driver driver
@@ -77,6 +81,7 @@ public class XADataSourceImpl extends org.jboss.jca.common.metadata.ds.v12.XADat
                            Statement statement, Validation validation, String urlDelimiter, String urlProperty,
                            String urlSelectorStrategyClassName, Boolean useJavaContext, String poolName,
                            Boolean enabled, String jndiName, Boolean spy, Boolean useCcm, Boolean connectable,
+                           Boolean tracking,
                            Map<String, String> xaDataSourceProperty, String xaDataSourceClass, String driver,
                            String newConnectionSql,
                            DsXaPool xaPool, Recovery recovery) throws ValidateException
@@ -86,6 +91,7 @@ public class XADataSourceImpl extends org.jboss.jca.common.metadata.ds.v12.XADat
             xaDataSourceProperty, xaDataSourceClass, driver, newConnectionSql, xaPool, recovery);
 
       this.connectable = connectable;
+      this.tracking = tracking;
    }
 
    /**
@@ -97,12 +103,22 @@ public class XADataSourceImpl extends org.jboss.jca.common.metadata.ds.v12.XADat
       return connectable;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public Boolean isTracking()
+   {
+      return tracking;
+   }
+
    @Override
    public int hashCode()
    {
       final int prime = 31;
       int result = super.hashCode();
       result = prime * result + ((connectable == null) ? 0 : connectable.hashCode());
+      result = prime * result + ((tracking == null) ? 0 : tracking.hashCode());
       return result;
    }
 
@@ -122,6 +138,13 @@ public class XADataSourceImpl extends org.jboss.jca.common.metadata.ds.v12.XADat
             return false;
       }
       else if (!connectable.equals(other.connectable))
+         return false;
+      if (tracking == null)
+      {
+         if (other.tracking != null)
+            return false;
+      }
+      else if (!tracking.equals(other.tracking))
          return false;
       return true;
    }
@@ -156,6 +179,9 @@ public class XADataSourceImpl extends org.jboss.jca.common.metadata.ds.v12.XADat
 
       if (connectable != null)
          sb.append(" ").append(XaDataSource.Attribute.CONNECTABLE).append("=\"").append(connectable).append("\"");
+
+      if (tracking != null)
+         sb.append(" ").append(XaDataSource.Attribute.TRACKING).append("=\"").append(tracking).append("\"");
 
       sb.append(">");
 

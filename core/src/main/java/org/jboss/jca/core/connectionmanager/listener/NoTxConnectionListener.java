@@ -52,11 +52,13 @@ public class NoTxConnectionListener extends AbstractConnectionListener
     * @param pool pool
     * @param mcp mcp
     * @param flushStrategy flushStrategy
+    * @param tracking tracking
     */
    public NoTxConnectionListener(final ConnectionManager cm, final ManagedConnection mc, 
-                                 final Pool pool, final ManagedConnectionPool mcp, final FlushStrategy flushStrategy)
+                                 final Pool pool, final ManagedConnectionPool mcp, final FlushStrategy flushStrategy,
+                                 final Boolean tracking)
    {
-      super(cm, mc, pool, mcp, flushStrategy);
+      super(cm, mc, pool, mcp, flushStrategy, tracking);
 
       // Always "enlisted"
       setEnlisted(true);

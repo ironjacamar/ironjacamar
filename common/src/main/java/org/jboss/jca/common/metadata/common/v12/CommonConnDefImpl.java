@@ -44,6 +44,8 @@ public class CommonConnDefImpl extends org.jboss.jca.common.metadata.common.v11.
 
    private final Boolean connectable;
 
+   private final Boolean tracking;
+
    /**
     * Create a new ConnectionDefinition.
     *
@@ -57,6 +59,7 @@ public class CommonConnDefImpl extends org.jboss.jca.common.metadata.common.v11.
     * @param sharable sharable
     * @param enlistment enlistment
     * @param connectable connectable
+    * @param tracking tracking
     * @param pool pool
     * @param timeOut timeOut
     * @param validation validation
@@ -66,7 +69,7 @@ public class CommonConnDefImpl extends org.jboss.jca.common.metadata.common.v11.
     */
    public CommonConnDefImpl(Map<String, String> configProperties, String className, String jndiName,
                             String poolName, Boolean enabled, Boolean useJavaContext, Boolean useCcm,
-                            Boolean sharable, Boolean enlistment, Boolean connectable,
+                            Boolean sharable, Boolean enlistment, Boolean connectable, Boolean tracking,
                             CommonPool pool, CommonTimeOut timeOut,
                             CommonValidation validation, CommonSecurity security, Recovery recovery, Boolean isXA)
    {
@@ -74,6 +77,7 @@ public class CommonConnDefImpl extends org.jboss.jca.common.metadata.common.v11.
             sharable, enlistment, pool, timeOut, validation, security, recovery, isXA);
 
       this.connectable = connectable;
+      this.tracking = tracking;
    }
 
    /**
@@ -87,12 +91,24 @@ public class CommonConnDefImpl extends org.jboss.jca.common.metadata.common.v11.
       return connectable;
    }
 
+   /**
+    * Get the tracking
+    *
+    * @return the tracking
+    */
+   @Override
+   public final Boolean isTracking()
+   {
+      return tracking;
+   }
+
    @Override
    public int hashCode()
    {
       final int prime = 31;
       int result = super.hashCode();
       result = prime * result + ((connectable == null) ? 0 : connectable.hashCode());
+      result = prime * result + ((tracking == null) ? 0 : tracking.hashCode());
       return result;
    }
 
@@ -115,6 +131,13 @@ public class CommonConnDefImpl extends org.jboss.jca.common.metadata.common.v11.
             return false;
       }
       else if (!connectable.equals(other.connectable))
+         return false;
+      if (tracking == null)
+      {
+         if (other.tracking != null)
+            return false;
+      }
+      else if (!tracking.equals(other.tracking))
          return false;
 
       return true;
@@ -156,6 +179,9 @@ public class CommonConnDefImpl extends org.jboss.jca.common.metadata.common.v11.
 
       if (connectable != null)
          sb.append(" ").append(CommonConnDef.Attribute.CONNECTABLE).append("=\"").append(connectable).append("\"");
+
+      if (tracking != null)
+         sb.append(" ").append(CommonConnDef.Attribute.TRACKING).append("=\"").append(tracking).append("\"");
 
       sb.append(">");
 

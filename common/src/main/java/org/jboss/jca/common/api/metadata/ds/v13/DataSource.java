@@ -39,6 +39,12 @@ public interface DataSource extends org.jboss.jca.common.api.metadata.ds.v12.Dat
    public Boolean isConnectable();
 
    /**
+    * Get the tracking flag
+    * @return <code>null</code> is container default, a value is an override
+    */
+   public Boolean isTracking();
+
+   /**
     * A Tag.
     */
    public enum Tag
@@ -223,7 +229,12 @@ public interface DataSource extends org.jboss.jca.common.api.metadata.ds.v12.Dat
       /**
        * connectable attribute
        */
-      CONNECTABLE("connectable");
+      CONNECTABLE("connectable"),
+
+      /**
+       * tracking attribute
+       */
+      TRACKING("tracking");
 
       private String name;
 

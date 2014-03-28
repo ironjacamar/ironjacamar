@@ -35,7 +35,9 @@ import org.jboss.jca.core.spi.transaction.ConnectableResource;
 import org.jboss.jca.core.spi.transaction.TxUtils;
 import org.jboss.jca.core.spi.transaction.local.LocalXAResource;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 
@@ -118,16 +120,18 @@ public class TxConnectionListener extends AbstractConnectionListener
     * @param pool pool
     * @param mcp mcp
     * @param flushStrategy flushStrategy
+    * @param tracking tracking
     * @param xaResource xaresource instance
     * @param xaResourceTimeout timeout for the XAResource
     * @throws ResourceException if aexception while creating
     */
    public TxConnectionListener(final ConnectionManager cm, final ManagedConnection mc,
                                final Pool pool, final ManagedConnectionPool mcp, final FlushStrategy flushStrategy,
+                               final Boolean tracking,
                                final XAResource xaResource, final int xaResourceTimeout)
       throws ResourceException
    {
-      super(cm, mc, pool, mcp, flushStrategy);
+      super(cm, mc, pool, mcp, flushStrategy, tracking);
 
       this.xaResource = xaResource;
       this.xaResourceTimeout = xaResourceTimeout;
@@ -371,10 +375,12 @@ public class TxConnectionListener extends AbstractConnectionListener
     * {@inheritDoc}
     */
    @Override
-   public void delist() throws ResourceException
+   public boolean delist() throws ResourceException
    {
       if (trace)
          log.trace("delisting " + this);
+
+      boolean success = true;
 
       try
       {
@@ -451,6 +457,8 @@ public class TxConnectionListener extends AbstractConnectionListener
                            else
                            {
                               log.debug("delist-success failed: " + this);
+
+                              success = false;
                            }
                         }
                         else
@@ -468,6 +476,8 @@ public class TxConnectionListener extends AbstractConnectionListener
                            else
                            {
                               log.debug("delist-fail failed: " + this);
+
+                              success = false;
                            }
                         }
                      }
@@ -480,6 +490,8 @@ public class TxConnectionListener extends AbstractConnectionListener
 
          if (trace)
             log.trace("delisted " + this);
+
+         return success;
       }
       catch (ResourceException re)
       {
@@ -604,10 +616,20 @@ public class TxConnectionListener extends AbstractConnectionListener
       {
          if (wasFreed(ce.getConnectionHandle()))
          {
-            delist();
+            boolean success = delist();
+
             if (trace)
                log.trace("isManagedConnectionFree=true mc=" + this.getManagedConnection());
-            this.getConnectionManager().returnManagedConnection(this, false);
+
+            if (success || (tracking != null && !tracking.booleanValue()))
+            {
+               this.getConnectionManager().returnManagedConnection(this, false);
+            }
+            else
+            {
+               log.delistingFailed(getPool().getName(), new Exception());
+               this.getConnectionManager().returnManagedConnection(this, true);
+            }
          }
          else
          {
@@ -927,7 +949,7 @@ public class TxConnectionListener extends AbstractConnectionListener
                }
                else
                {
-                  if (trace)
+                  if (trace && wasTrackByTx)
                      log.tracef("No delistResource for: %s", TxConnectionListener.this);
                }
             }
@@ -987,6 +1009,27 @@ public class TxConnectionListener extends AbstractConnectionListener
                if (wasFreed(null))
                {
                   getConnectionManager().returnManagedConnection(TxConnectionListener.this, false);
+               }
+               else
+               {
+                  if (tracking == null || tracking.booleanValue())
+                  {
+                     log.activeHandles(getPool().getName(), connectionHandles.size());
+
+                     if (tracking != null && tracking.booleanValue())
+                     {
+                        Iterator<Map.Entry<Object, Exception>> it = connectionTraces.entrySet().iterator();
+                        while (it.hasNext())
+                        {
+                           Map.Entry<Object, Exception> entry = it.next();
+                           log.activeHandle(entry.getKey(), entry.getValue());
+                        }
+
+                        log.txConnectionListenerBoundary(new Exception());
+                     }
+
+                     getConnectionManager().returnManagedConnection(TxConnectionListener.this, true);
+                  }
                }
             }
          }

@@ -128,6 +128,28 @@ public class H2XATestCase
       }
       finally
       {
+         if (c1 != null)
+         {
+            try
+            {
+               c1.close();
+            }
+            catch (SQLException se)
+            {
+               // Ignore
+            }
+         }
+         if (c2 != null)
+         {
+            try
+            {
+               c2.close();
+            }
+            catch (SQLException se)
+            {
+               // Ignore
+            }
+         }
          if (commit)
          {
             try
@@ -149,29 +171,6 @@ public class H2XATestCase
             catch (Exception e)
             {
                throw e;
-            }
-         }
-
-         if (c1 != null)
-         {
-            try
-            {
-               c1.close();
-            }
-            catch (SQLException se)
-            {
-               // Ignore
-            }
-         }
-         if (c2 != null)
-         {
-            try
-            {
-               c2.close();
-            }
-            catch (SQLException se)
-            {
-               // Ignore
             }
          }
       }

@@ -113,8 +113,11 @@ public class TransactionImpl implements Transaction, Serializable
       if (status == Status.STATUS_UNKNOWN)
          throw new IllegalStateException("Status unknown");
 
+      if (status != Status.STATUS_ACTIVE && status != Status.STATUS_MARKED_ROLLBACK)
+         throw new IllegalStateException("Status not valid");
+
       if (enlisted == null)
-         throw new IllegalStateException("No XAResouce instances registrered");
+         return false;
 
       log.tracef("delistResource(%s, %d): %s", xaRes, flag, this);
 
@@ -148,7 +151,7 @@ public class TransactionImpl implements Transaction, Serializable
          return true;
       }
 
-      throw new IllegalStateException("Unknown XAResource: " + xaRes);
+      return false;
    }
 
    /**

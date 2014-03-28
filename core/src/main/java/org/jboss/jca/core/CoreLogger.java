@@ -182,6 +182,41 @@ public interface CoreLogger extends BasicLogger
    @Message(id = 314, value = "Error during beforeCompletion: %s")
    public void beforeCompletionErrorOccured(Object cl, @Cause Throwable t);
          
+   /**
+    * Active handles
+    * @param pool The name of the pool
+    * @param number The number of active handles
+    */
+   @LogMessage(level = ERROR)
+   @Message(id = 315, value = "Pool %s has %d active handles")
+   public void activeHandles(String pool, int number);
+         
+   /**
+    * Active handle
+    * @param handle The handle
+    * @param e The trace
+    */
+   @LogMessage(level = ERROR)
+   @Message(id = 316, value = "Handle allocation: %s")
+   public void activeHandle(Object handle, @Cause Exception e);
+         
+   /**
+    * TxConnectionListener boundary
+    * @param e The trace
+    */
+   @LogMessage(level = ERROR)
+   @Message(id = 317, value = "Transaction boundary")
+   public void txConnectionListenerBoundary(@Cause Exception e);
+         
+   /**
+    * TxConnectionListener delisting failed
+    * @param pool The name of the pool
+    * @param e The trace
+    */
+   @LogMessage(level = ERROR)
+   @Message(id = 318, value = "Delisting resource in pool %s failed")
+   public void delistingFailed(String pool, @Cause Exception e);
+         
    // CONNECTION MANAGER (400)
 
    /**

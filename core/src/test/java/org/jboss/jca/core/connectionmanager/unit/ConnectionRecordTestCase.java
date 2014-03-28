@@ -69,7 +69,7 @@ public class ConnectionRecordTestCase
    {
       ConnectionRecord other = 
          new ConnectionRecord(new NoTxConnectionListener(null, null, null, null,
-                                                         FlushStrategy.FAILING_CONNECTION_ONLY), 
+                                                         FlushStrategy.FAILING_CONNECTION_ONLY, null),
                               connection, cri);
       assertNotNull(other.getConnectionListener());
    }
