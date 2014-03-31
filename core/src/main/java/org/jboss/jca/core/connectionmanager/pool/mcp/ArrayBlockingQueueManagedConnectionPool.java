@@ -331,6 +331,9 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
                if (cl != null || !(t instanceof RetryableException))
                   log.throwableWhileAttemptingGetNewGonnection(cl, t);
 
+               if (cl != null)
+                  doDestroy(cl);
+
                if (t instanceof ResourceException)
                {
                   throw (ResourceException)t;
@@ -411,6 +414,9 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
                catch (Throwable t)
                {
                   log.throwableWhileAttemptingGetNewGonnection(cl, t);
+
+                  if (cl != null)
+                     doDestroy(cl);
 
                   throw new ResourceException(bundle.unexpectedThrowableWhileTryingCreateConnection(cl), t);
                }
