@@ -381,6 +381,13 @@ public interface CoreBundle
    @Message(id = 658, value = "Unexpected throwable while trying to create a connection: %s")
    public String unexpectedThrowableWhileTryingCreateConnection(Object obj);
    
+   /**
+    * Unable to get connection listener
+    * @return The value
+    */
+   @Message(id = 659, value = "Unable to get connection listener")
+   public String unableGetConnectionListener();
+
    // NAMING (700)
 
    /**
