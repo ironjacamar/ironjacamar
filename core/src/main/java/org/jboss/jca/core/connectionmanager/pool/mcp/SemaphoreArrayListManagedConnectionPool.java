@@ -308,8 +308,6 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                      cl = cls.remove(0);
                      checkedOut.add(cl);
                   }
-
-                  doDestroy(cl);
                }
 
                if (statistics.isEnabled())
@@ -412,9 +410,14 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                log.throwableWhileAttemptingGetNewGonnection(cl, t);
 
                // Return permit and rethrow
-               synchronized (cls)
+               if (cl != null)
                {
-                  checkedOut.remove(cl);
+                  synchronized (cls)
+                  {
+                     checkedOut.remove(cl);
+                  }
+
+                  doDestroy(cl);
                }
 
                if (statistics.isEnabled())
