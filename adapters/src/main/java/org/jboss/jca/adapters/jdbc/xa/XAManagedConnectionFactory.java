@@ -33,6 +33,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.security.PrivilegedAction;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -388,7 +391,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
    /**
     * {@inheritDoc}
     */
-   public ManagedConnection createManagedConnection(Subject subject, ConnectionRequestInfo cri)
+   public ManagedConnection createManagedConnection(final Subject subject, final ConnectionRequestInfo cri)
       throws javax.resource.ResourceException
    {
       if (urlProperty != null && !urlProperty.trim().equals("") && xadsSelector == null)
@@ -396,7 +399,34 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
 
       if (xadsSelector == null)
       {
-         return getXAManagedConnection(subject, cri);
+         if (subject != null)
+         {
+            try
+            {
+               return Subject.doAs(subject, new PrivilegedExceptionAction<ManagedConnection>()
+               {
+                  public ManagedConnection run() throws ResourceException
+                  {
+                     return getXAManagedConnection(subject, cri);
+                  }
+               });
+            }
+            catch (PrivilegedActionException pe)
+            {
+               if (pe.getException() instanceof ResourceException)
+               {
+                  throw (ResourceException)pe.getException();
+               }
+               else
+               {
+                  throw new ResourceException(pe);
+               }
+            }
+         }
+         else
+         {
+            return getXAManagedConnection(subject, cri);
+         }
       }
 
       while (xadsSelector.hasMore())
@@ -406,14 +436,36 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
          if (log.isTraceEnabled())
             log.trace("Trying to create an XA connection to " + xaData.getUrl());
 
-         try
+         if (subject != null)
          {
-            return getXAManagedConnection(subject, cri);
+            try
+            {
+               return Subject.doAs(subject, new PrivilegedExceptionAction<ManagedConnection>()
+               {
+                  public ManagedConnection run() throws ResourceException
+                  {
+                     return getXAManagedConnection(subject, cri);
+                  }
+               });
+            }
+            catch (PrivilegedActionException pe)
+            {
+               log.warn("Failed to create an XA connection to " + xaData.getUrl() + ": " +
+                        pe.getException().getMessage());
+               xadsSelector.fail(xaData);
+            }
          }
-         catch (ResourceException e)
+         else
          {
-            log.warn("Failed to create an XA connection to " + xaData.getUrl() + ": " + e.getMessage());
-            xadsSelector.fail(xaData);
+            try
+            {
+               return getXAManagedConnection(subject, cri);
+            }
+            catch (ResourceException e)
+            {
+               log.warn("Failed to create an XA connection to " + xaData.getUrl() + ": " + e.getMessage());
+               xadsSelector.fail(xaData);
+            }
          }
       }
 
