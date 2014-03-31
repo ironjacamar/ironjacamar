@@ -446,6 +446,11 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
 
                // The lock may need to be initialized if we are in the first lazy enlistment
                Lock lock = getLock();
+
+               if (lock == null)
+                  rethrowAsSystemException("Unable to obtain lock with JCA lazy enlistment scenario", tx,
+                                           new SystemException("Unable to obtain lock with JCA lazy enlistment scenario"));
+
                try
                {
                   lock.lockInterruptibly();
@@ -459,6 +464,11 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
                try
                {
                   transactionSynchronizationRegistry.putResource(mcp, cl);
+               }
+               catch (Throwable t)
+               {
+                  rethrowAsSystemException("Unable to register JCA lazy enlistment scenario", 
+                                           tx, new SystemException("Unable to register JCA lazy enlistment scenario"));
                }
                finally
                {
@@ -494,19 +504,25 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
 
    /**
     * Get lock
-    * @return The lock
+    * @return The lock; <code>null</code> if TX isn't active
     */
    private Lock getLock()
    {
       Lock result = null;
-
-      if (transactionSynchronizationRegistry != null && transactionSynchronizationRegistry.getTransactionKey() != null)
+      try
       {
-         result = (Lock)transactionSynchronizationRegistry.getResource(LockKey.INSTANCE);
-         if (result == null)
+         if (transactionSynchronizationRegistry != null && transactionSynchronizationRegistry.getTransactionKey() != null)
          {
-            result = initLock();
+            result = (Lock)transactionSynchronizationRegistry.getResource(LockKey.INSTANCE);
+            if (result == null)
+            {
+               result = initLock();
+            }
          }
+      }
+      catch (Throwable t)
+      {
+         // Catch all exceptions
       }
 
       return result;
