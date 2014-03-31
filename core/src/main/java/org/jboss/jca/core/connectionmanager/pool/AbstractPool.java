@@ -252,20 +252,27 @@ public abstract class AbstractPool implements Pool
 
    /**
     * Get lock
-    * @return The lock
+    * @return The lock; <code>null</code> if TX isn't active
     */
    private Lock getLock()
    {
       Lock result = null;
-      TransactionSynchronizationRegistry tsr = getTransactionSynchronizationRegistry();
-
-      if (tsr != null && tsr.getTransactionKey() != null)
+      try
       {
-         result = (Lock)tsr.getResource(LockKey.INSTANCE);
-         if (result == null)
+         TransactionSynchronizationRegistry tsr = getTransactionSynchronizationRegistry();
+
+         if (tsr != null && tsr.getTransactionKey() != null)
          {
-            result = initLock();
+            result = (Lock)tsr.getResource(LockKey.INSTANCE);
+            if (result == null)
+            {
+               result = initLock();
+            }
          }
+      }
+      catch (Throwable t)
+      {
+         // Catch all exceptions
       }
 
       return result;
@@ -441,7 +448,10 @@ public abstract class AbstractPool implements Pool
    {
       TransactionSynchronizationRegistry tsr = getTransactionSynchronizationRegistry();
       Lock lock = getLock();
-      
+
+      if (lock == null)
+         throw new ResourceException(bundle.unableObtainLock());
+
       try
       {
          lock.lockInterruptibly();
@@ -464,6 +474,10 @@ public abstract class AbstractPool implements Pool
          }
 
          return null;
+      }
+      catch (Throwable t)
+      {
+         throw new ResourceException(bundle.unableGetConnectionListener(), t);
       }
       finally
       {
@@ -498,6 +512,20 @@ public abstract class AbstractPool implements Pool
 
       TransactionSynchronizationRegistry tsr = getTransactionSynchronizationRegistry();
       Lock lock = getLock();
+
+      if (lock == null)
+      {
+         if (cl != null)
+         {
+            if (trace)
+               log.tracef("Killing connection tracked by transaction=%s tx=%s", cl, trackByTransaction);
+
+            mcp.returnConnection(cl, true);
+         }
+
+         throw new ResourceException(bundle.unableObtainLock());
+      }
+
       try
       {
          lock.lockInterruptibly();
@@ -505,6 +533,14 @@ public abstract class AbstractPool implements Pool
       catch (InterruptedException ie)
       {
          Thread.interrupted();
+
+         if (cl != null)
+         {
+            if (trace)
+               log.tracef("Killing connection tracked by transaction=%s tx=%s", cl, trackByTransaction);
+
+            mcp.returnConnection(cl, true);
+         }
 
          throw new ResourceException(bundle.unableObtainLock(), ie);
       }
@@ -533,6 +569,18 @@ public abstract class AbstractPool implements Pool
             log.tracef("Using connection from pool tracked by transaction=%s tx=%s", cl, trackByTransaction);
 
          return cl;
+      }
+      catch (Throwable t)
+      {
+         if (cl != null)
+         {
+            if (trace)
+               log.tracef("Killing connection tracked by transaction=%s tx=%s", cl, trackByTransaction);
+
+            mcp.returnConnection(cl, true);
+         }
+
+         throw new ResourceException(bundle.unableGetConnectionListener(), t);
       }
       finally
       {
