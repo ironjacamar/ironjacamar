@@ -481,6 +481,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                   {
                      checkedOut.remove(cl);
                   }
+
+                  doDestroy(cl);
                }
 
                if (statistics.isEnabled())
