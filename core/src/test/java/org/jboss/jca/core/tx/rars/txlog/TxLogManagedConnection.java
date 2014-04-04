@@ -190,6 +190,8 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
       if (listener == null)
          throw new IllegalArgumentException("Listener is null");
 
+      log.tracef("addConnectionEventListener(%s)", listener);
+
       listeners.add(listener);
    }
 
@@ -202,6 +204,8 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
    {
       if (listener == null)
          throw new IllegalArgumentException("Listener is null");
+
+      log.tracef("removeConnectionEventListener(%s)", listener);
 
       listeners.remove(listener);
    }

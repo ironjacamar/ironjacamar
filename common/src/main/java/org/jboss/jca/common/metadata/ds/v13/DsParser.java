@@ -82,6 +82,7 @@ public class DsParser extends org.jboss.jca.common.metadata.ds.v12.DsParser impl
       Boolean spy = Defaults.SPY;
       Boolean useCcm = Defaults.USE_CCM;
       Boolean connectable = Defaults.CONNECTABLE;
+      Boolean tracking = Defaults.TRACKING;
 
       for (org.jboss.jca.common.api.metadata.ds.v13.XaDataSource.Attribute attribute :
               org.jboss.jca.common.api.metadata.ds.v13.XaDataSource.Attribute.values())
@@ -116,6 +117,10 @@ public class DsParser extends org.jboss.jca.common.metadata.ds.v12.DsParser impl
                connectable = attributeAsBoolean(reader, attribute.getLocalName(), Defaults.CONNECTABLE);
                break;
             }
+            case TRACKING : {
+               tracking = attributeAsBoolean(reader, attribute.getLocalName(), Defaults.TRACKING);
+               break;
+            }
             default :
                break;
          }
@@ -133,7 +138,7 @@ public class DsParser extends org.jboss.jca.common.metadata.ds.v12.DsParser impl
                   return new XADataSourceImpl(transactionIsolation, timeOutSettings, securitySettings,
                                               statementSettings, validationSettings, urlDelimiter, urlProperty,
                                               urlSelectorStrategyClassName, useJavaContext, poolName, enabled,
-                                              jndiName, spy, useCcm, connectable, xaDataSourceProperty,
+                                              jndiName, spy, useCcm, connectable, tracking, xaDataSourceProperty,
                                               xaDataSourceClass, driver, newConnectionSql, xaPool, recovery);
                }
                else
@@ -249,6 +254,7 @@ public class DsParser extends org.jboss.jca.common.metadata.ds.v12.DsParser impl
       Boolean useCcm = Defaults.USE_CCM;
       Boolean jta = Defaults.JTA;
       Boolean connectable = Defaults.CONNECTABLE;
+      Boolean tracking = Defaults.TRACKING;
 
       for (org.jboss.jca.common.api.metadata.ds.v13.DataSource.Attribute attribute :
               org.jboss.jca.common.api.metadata.ds.v13.DataSource.Attribute.values())
@@ -287,6 +293,10 @@ public class DsParser extends org.jboss.jca.common.metadata.ds.v12.DsParser impl
                connectable = attributeAsBoolean(reader, attribute.getLocalName(), Defaults.CONNECTABLE);
                break;
             }
+            case TRACKING : {
+               tracking = attributeAsBoolean(reader, attribute.getLocalName(), Defaults.TRACKING);
+               break;
+            }
             default :
                break;
          }
@@ -304,7 +314,7 @@ public class DsParser extends org.jboss.jca.common.metadata.ds.v12.DsParser impl
                                             connectionProperties, timeOutSettings, securitySettings,
                                             statementSettings, validationSettings, urlDelimiter,
                                             urlSelectorStrategyClassName, newConnectionSql, useJavaContext, poolName,
-                                            enabled, jndiName, spy, useCcm, jta, connectable, pool);
+                                            enabled, jndiName, spy, useCcm, jta, connectable, tracking, pool);
                }
                else
                {

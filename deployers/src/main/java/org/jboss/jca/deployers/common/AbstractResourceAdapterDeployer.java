@@ -1580,6 +1580,7 @@ public abstract class AbstractResourceAdapterDeployer
                         Boolean sharable = Defaults.SHARABLE;
                         Boolean enlistment = Defaults.ENLISTMENT;
                         Boolean connectable = Defaults.CONNECTABLE;
+                        Boolean tracking = Defaults.TRACKING;
                         if (connectionDefinition != null &&
                             connectionDefinition instanceof org.jboss.jca.common.api.metadata.common.v11.CommonConnDef)
                         {
@@ -1594,6 +1595,7 @@ public abstract class AbstractResourceAdapterDeployer
                            org.jboss.jca.common.api.metadata.common.v12.CommonConnDef ccd =
                               (org.jboss.jca.common.api.metadata.common.v12.CommonConnDef)connectionDefinition;
                            connectable = ccd.isConnectable();
+                           tracking = ccd.isTracking();
                         }
 
                         Pool pool =
@@ -1666,6 +1668,7 @@ public abstract class AbstractResourceAdapterDeployer
                                                            sharable,
                                                            enlistment,
                                                            connectable,
+                                                           tracking,
                                                            flushStrategy,
                                                            allocationRetry, allocationRetryWaitMillis);
                         }
@@ -1705,6 +1708,7 @@ public abstract class AbstractResourceAdapterDeployer
                                                         sharable,
                                                         enlistment,
                                                         connectable,
+                                                        tracking,
                                                         flushStrategy,
                                                         allocationRetry, allocationRetryWaitMillis,
                                                         getTransactionIntegration(), interleaving,
@@ -2142,6 +2146,7 @@ public abstract class AbstractResourceAdapterDeployer
                                     Boolean sharable = Defaults.SHARABLE;
                                     Boolean enlistment = Defaults.ENLISTMENT;
                                     Boolean connectable = Defaults.CONNECTABLE;
+                                    Boolean tracking = Defaults.TRACKING;
                                     if (connectionDefinition != null &&
                                         connectionDefinition instanceof
                                         org.jboss.jca.common.api.metadata.common.v11.CommonConnDef)
@@ -2160,6 +2165,7 @@ public abstract class AbstractResourceAdapterDeployer
                                           (org.jboss.jca.common.api.metadata.common.v12.CommonConnDef)
                                           connectionDefinition;
                                        connectable = ccd.isConnectable();
+                                       tracking = ccd.isTracking();
                                     }
 
                                     Pool pool = pf.create(strategy, mcf, pc, noTxSeparatePool.booleanValue(),
@@ -2231,6 +2237,7 @@ public abstract class AbstractResourceAdapterDeployer
                                                                        sharable,
                                                                        enlistment,
                                                                        connectable,
+                                                                       tracking,
                                                                        flushStrategy,
                                                                        allocationRetry, allocationRetryWaitMillis);
                                     }
@@ -2269,6 +2276,7 @@ public abstract class AbstractResourceAdapterDeployer
                                                                     sharable,
                                                                     enlistment,
                                                                     connectable,
+                                                                    tracking,
                                                                     flushStrategy,
                                                                     allocationRetry, allocationRetryWaitMillis,
                                                                     getTransactionIntegration(),

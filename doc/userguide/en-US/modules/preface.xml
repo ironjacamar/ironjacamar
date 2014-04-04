@@ -44,6 +44,9 @@
           <listitem>
             Support for connectable <code>XAResource</code>s
           </listitem>
+          <listitem>
+            Support tracking of connection handles across transaction boundaries
+          </listitem>
         </itemizedlist>
       </para>
     </section>

@@ -105,6 +105,9 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    /** Connectable */
    protected boolean connectable;
 
+   /** Tracking */
+   protected Boolean tracking;
+
    /**
     * Creates a new instance of connection manager.
     */
@@ -250,6 +253,27 @@ public abstract class AbstractConnectionManager implements ConnectionManager
 
       if (trace)
          log.tracef("connectable=%s", connectable);
+   }
+
+   /**
+    * Get tracking
+    * @return The value
+    */
+   public Boolean getTracking()
+   {
+      return tracking;
+   }
+
+   /**
+    * Set the tracking flag
+    * @param v The value
+    */
+   public void setTracking(Boolean v)
+   {
+      this.tracking = v;
+
+      if (trace)
+         log.tracef("tracking=%s", tracking);
    }
 
    /**

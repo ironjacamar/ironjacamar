@@ -74,6 +74,11 @@ public interface Defaults
     */
    public static final Boolean CONNECTABLE = Boolean.FALSE;
    
+   /**
+    * TRACKING
+    */
+   public static final Boolean TRACKING = null;
+   
    // POOL
 
    /**

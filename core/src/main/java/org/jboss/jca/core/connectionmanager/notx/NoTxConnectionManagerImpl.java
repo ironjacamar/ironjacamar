@@ -83,7 +83,7 @@ public class NoTxConnectionManagerImpl extends AbstractConnectionManager impleme
       throws ResourceException
    {
       ConnectionListener cli = new NoTxConnectionListener(this, managedConnection, getPool(), 
-                                                          mcp, getFlushStrategy());
+                                                          mcp, getFlushStrategy(), getTracking());
       managedConnection.addConnectionEventListener(cli);
 
       return cli;

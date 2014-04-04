@@ -38,6 +38,12 @@ public interface XaDataSource extends org.jboss.jca.common.api.metadata.ds.v12.X
    public Boolean isConnectable();
 
    /**
+    * Get the tracking flag
+    * @return <code>null</code> is container default, a value is an override
+    */
+   public Boolean isTracking();
+
+   /**
     * A Tag.
     *
     * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
@@ -221,7 +227,12 @@ public interface XaDataSource extends org.jboss.jca.common.api.metadata.ds.v12.X
       /** connectable attribute
       *
       */
-      CONNECTABLE("connectable");
+      CONNECTABLE("connectable"),
+
+      /** tracking attribute
+      *
+      */
+      TRACKING("tracking");
 
       private String name;
 

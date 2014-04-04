@@ -38,6 +38,12 @@ public interface CommonConnDef extends org.jboss.jca.common.api.metadata.common.
    public Boolean isConnectable();
 
    /**
+    * Get the tracking flag
+    * @return <code>null</code> is container default, a value is an override
+    */
+   public Boolean isTracking();
+
+   /**
     *
     * A Tag.
     *
@@ -202,7 +208,11 @@ public interface CommonConnDef extends org.jboss.jca.common.api.metadata.common.
       /** connectable attribute
       *
       */
-      CONNECTABLE("connectable");
+      CONNECTABLE("connectable"),
+      /** tracking attribute
+      *
+      */
+      TRACKING("tracking");
 
       private String name;
 
