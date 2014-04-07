@@ -917,7 +917,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
     */
    public void fillTo(int size)
    {
-      if (poolConfiguration.getMinSize() <= 0)
+      if (size <= 0)
          return;
 
       if (!(poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()))
