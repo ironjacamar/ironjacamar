@@ -47,13 +47,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class PoolStatisticsImpl implements PoolStatistics
 {
    /** Serial version uid */
-   private static final long serialVersionUID = 5L;
+   private static final long serialVersionUID = 6L;
 
    private static final String ACTIVE_COUNT = "ActiveCount";
    private static final String AVAILABLE_COUNT = "AvailableCount";
    private static final String AVERAGE_BLOCKING_TIME = "AverageBlockingTime";
    private static final String AVERAGE_CREATION_TIME = "AverageCreationTime";
    private static final String AVERAGE_GET_TIME = "AverageGetTime";
+   private static final String AVERAGE_USAGE_TIME = "AverageUsageTime";
    private static final String BLOCKING_FAILURE_COUNT = "BlockingFailureCount";
    private static final String CREATED_COUNT = "CreatedCount";
    private static final String DESTROYED_COUNT = "DestroyedCount";
@@ -61,6 +62,7 @@ public class PoolStatisticsImpl implements PoolStatistics
    private static final String IN_USE_COUNT = "InUseCount";
    private static final String MAX_CREATION_TIME = "MaxCreationTime";
    private static final String MAX_GET_TIME = "MaxGetTime";
+   private static final String MAX_USAGE_TIME = "MaxUsageTime";
    private static final String MAX_USED_COUNT = "MaxUsedCount";
    private static final String MAX_WAIT_COUNT = "MaxWaitCount";
    private static final String MAX_WAIT_TIME = "MaxWaitTime";
@@ -68,6 +70,7 @@ public class PoolStatisticsImpl implements PoolStatistics
    private static final String TOTAL_BLOCKING_TIME = "TotalBlockingTime";
    private static final String TOTAL_CREATION_TIME = "TotalCreationTime";
    private static final String TOTAL_GET_TIME = "TotalGetTime";
+   private static final String TOTAL_USAGE_TIME = "TotalUsageTime";
    private static final String WAIT_COUNT = "WaitCount";
 
    private int maxPoolSize;
@@ -115,6 +118,9 @@ public class PoolStatisticsImpl implements PoolStatistics
       n.add(AVERAGE_GET_TIME);
       t.put(AVERAGE_GET_TIME, long.class);
 
+      n.add(AVERAGE_USAGE_TIME);
+      t.put(AVERAGE_USAGE_TIME, long.class);
+
       n.add(BLOCKING_FAILURE_COUNT);
       t.put(BLOCKING_FAILURE_COUNT, int.class);
 
@@ -136,6 +142,9 @@ public class PoolStatisticsImpl implements PoolStatistics
       n.add(MAX_GET_TIME);
       t.put(MAX_GET_TIME, long.class);
 
+      n.add(MAX_USAGE_TIME);
+      t.put(MAX_USAGE_TIME, long.class);
+
       n.add(MAX_USED_COUNT);
       t.put(MAX_USED_COUNT, int.class);
 
@@ -156,6 +165,9 @@ public class PoolStatisticsImpl implements PoolStatistics
 
       n.add(TOTAL_GET_TIME);
       t.put(TOTAL_GET_TIME, long.class);
+
+      n.add(TOTAL_USAGE_TIME);
+      t.put(TOTAL_USAGE_TIME, long.class);
 
       n.add(WAIT_COUNT);
       t.put(WAIT_COUNT, int.class);
@@ -250,6 +262,10 @@ public class PoolStatisticsImpl implements PoolStatistics
       {
          return getAverageGetTime();
       }
+      else if (AVERAGE_USAGE_TIME.equals(name))
+      {
+         return getAverageUsageTime();
+      }
       else if (BLOCKING_FAILURE_COUNT.equals(name))
       {
          return getBlockingFailureCount();
@@ -278,6 +294,10 @@ public class PoolStatisticsImpl implements PoolStatistics
       {
          return getMaxGetTime();
       }
+      else if (MAX_USAGE_TIME.equals(name))
+      {
+         return getMaxUsageTime();
+      }
       else if (MAX_USED_COUNT.equals(name))
       {
          return getMaxUsedCount();
@@ -305,6 +325,10 @@ public class PoolStatisticsImpl implements PoolStatistics
       else if (TOTAL_GET_TIME.equals(name))
       {
          return getTotalGetTime();
+      }
+      else if (TOTAL_USAGE_TIME.equals(name))
+      {
+         return getTotalUsageTime();
       }
       else if (WAIT_COUNT.equals(name))
       {
@@ -427,6 +451,26 @@ public class PoolStatisticsImpl implements PoolStatistics
          }
 
          return invocations != 0 ? getTotalGetTime() / invocations : 0;
+      }
+
+      return 0;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getAverageUsageTime()
+   {
+      if (isEnabled())
+      {
+         long invocations = 0;
+
+         for (ManagedConnectionPool mcp : mcpPools.values())
+         {
+            invocations += mcp.getStatistics().getTotalUsageInvocations();
+         }
+
+         return invocations != 0 ? getTotalUsageTime() / invocations : 0;
       }
 
       return 0;
@@ -566,6 +610,28 @@ public class PoolStatisticsImpl implements PoolStatistics
          for (ManagedConnectionPool mcp : mcpPools.values())
          {
             long v = mcp.getStatistics().getMaxGetTime();
+            if (v > result)
+               result = v;
+         }
+
+         return result != Long.MIN_VALUE ? result : 0;
+      }
+
+      return 0;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getMaxUsageTime()
+   {
+      if (isEnabled())
+      {
+         long result = Long.MIN_VALUE;
+
+         for (ManagedConnectionPool mcp : mcpPools.values())
+         {
+            long v = mcp.getStatistics().getMaxUsageTime();
             if (v > result)
                result = v;
          }
@@ -727,6 +793,26 @@ public class PoolStatisticsImpl implements PoolStatistics
    /**
     * {@inheritDoc}
     */
+   public long getTotalUsageTime()
+   {
+      if (isEnabled())
+      {
+         long result = 0;
+
+         for (ManagedConnectionPool mcp : mcpPools.values())
+         {
+            result += mcp.getStatistics().getTotalUsageTime();
+         }
+
+         return result;
+      }
+
+      return 0;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public int getWaitCount()
    {
       if (isEnabled())
@@ -791,6 +877,8 @@ public class PoolStatisticsImpl implements PoolStatistics
       sb.append(",");
       sb.append(AVERAGE_GET_TIME).append("=").append(getAverageGetTime());
       sb.append(",");
+      sb.append(AVERAGE_USAGE_TIME).append("=").append(getAverageUsageTime());
+      sb.append(",");
       sb.append(BLOCKING_FAILURE_COUNT).append("=").append(getBlockingFailureCount());
       sb.append(",");
       sb.append(CREATED_COUNT).append("=").append(getCreatedCount());
@@ -805,6 +893,8 @@ public class PoolStatisticsImpl implements PoolStatistics
       sb.append(",");
       sb.append(MAX_GET_TIME).append("=").append(getMaxGetTime());
       sb.append(",");
+      sb.append(MAX_USAGE_TIME).append("=").append(getMaxUsageTime());
+      sb.append(",");
       sb.append(MAX_USED_COUNT).append("=").append(getMaxUsedCount());
       sb.append(",");
       sb.append(MAX_WAIT_COUNT).append("=").append(getMaxWaitCount());
@@ -818,6 +908,8 @@ public class PoolStatisticsImpl implements PoolStatistics
       sb.append(TOTAL_CREATION_TIME).append("=").append(getTotalCreationTime());
       sb.append(",");
       sb.append(TOTAL_GET_TIME).append("=").append(getTotalGetTime());
+      sb.append(",");
+      sb.append(TOTAL_USAGE_TIME).append("=").append(getTotalUsageTime());
       sb.append(",");
       sb.append(WAIT_COUNT).append("=").append(getWaitCount());
 

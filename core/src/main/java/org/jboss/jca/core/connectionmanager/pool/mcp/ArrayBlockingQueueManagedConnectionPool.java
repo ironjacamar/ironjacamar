@@ -553,6 +553,9 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
     */
    public void returnConnection(ConnectionListener cl, boolean kill, boolean cleanup)
    {
+      if (statistics.isEnabled() && cl.getState() != ConnectionState.DESTROYED)
+         statistics.deltaTotalUsageTime(System.currentTimeMillis() - cl.getLastUsedTime());
+
       if (trace)
       {
          String method = "returnConnection(" + Integer.toHexString(System.identityHashCode(cl)) + ", " + kill + ")";
