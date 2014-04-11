@@ -44,13 +44,14 @@ import java.util.concurrent.atomic.AtomicLong;
 public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoolStatistics
 {
    /** Serial version uid */
-   private static final long serialVersionUID = 7L;
+   private static final long serialVersionUID = 8L;
 
    private static final String ACTIVE_COUNT = "ActiveCount";
    private static final String AVAILABLE_COUNT = "AvailableCount";
    private static final String AVERAGE_BLOCKING_TIME = "AverageBlockingTime";
    private static final String AVERAGE_CREATION_TIME = "AverageCreationTime";
    private static final String AVERAGE_GET_TIME = "AverageGetTime";
+   private static final String AVERAGE_POOL_TIME = "AveragePoolTime";
    private static final String AVERAGE_USAGE_TIME = "AverageUsageTime";
    private static final String BLOCKING_FAILURE_COUNT = "BlockingFailureCount";
    private static final String CREATED_COUNT = "CreatedCount";
@@ -59,6 +60,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    private static final String IN_USE_COUNT = "InUseCount";
    private static final String MAX_CREATION_TIME = "MaxCreationTime";
    private static final String MAX_GET_TIME = "MaxGetTime";
+   private static final String MAX_POOL_TIME = "MaxPoolTime";
    private static final String MAX_USAGE_TIME = "MaxUsageTime";
    private static final String MAX_USED_COUNT = "MaxUsedCount";
    private static final String MAX_WAIT_COUNT = "MaxWaitCount";
@@ -69,6 +71,8 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    private static final String TOTAL_CREATION_TIME = "TotalCreationTime";
    private static final String TOTAL_GET_TIME = "TotalGetTime";
    private static final String TOTAL_GET_TIME_INVOCATIONS = "TotalGetTimeInvocations";
+   private static final String TOTAL_POOL_TIME = "TotalPoolTime";
+   private static final String TOTAL_POOL_TIME_INVOCATIONS = "TotalPoolTimeInvocations";
    private static final String TOTAL_USAGE_TIME = "TotalUsageTime";
    private static final String TOTAL_USAGE_TIME_INVOCATIONS = "TotalUsageTimeInvocations";
    private static final String WAIT_COUNT = "WaitCount";
@@ -85,6 +89,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    private transient AtomicInteger maxUsedCount;
    private transient AtomicLong maxCreationTime;
    private transient AtomicLong maxGetTime;
+   private transient AtomicLong maxPoolTime;
    private transient AtomicLong maxUsageTime;
    private transient AtomicInteger maxWaitCount;
    private transient AtomicLong maxWaitTime;
@@ -94,6 +99,8 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    private transient AtomicLong totalCreationTime;
    private transient AtomicLong totalGetTime;
    private transient AtomicLong totalGetTimeInvocations;
+   private transient AtomicLong totalPoolTime;
+   private transient AtomicLong totalPoolTimeInvocations;
    private transient AtomicLong totalUsageTime;
    private transient AtomicLong totalUsageTimeInvocations;
    private transient AtomicInteger inUseCount;
@@ -135,6 +142,9 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       n.add(AVERAGE_GET_TIME);
       t.put(AVERAGE_GET_TIME, long.class);
 
+      n.add(AVERAGE_POOL_TIME);
+      t.put(AVERAGE_POOL_TIME, long.class);
+
       n.add(AVERAGE_USAGE_TIME);
       t.put(AVERAGE_USAGE_TIME, long.class);
 
@@ -158,6 +168,9 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
 
       n.add(MAX_GET_TIME);
       t.put(MAX_GET_TIME, long.class);
+
+      n.add(MAX_POOL_TIME);
+      t.put(MAX_POOL_TIME, long.class);
 
       n.add(MAX_USAGE_TIME);
       t.put(MAX_USAGE_TIME, long.class);
@@ -183,6 +196,9 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       n.add(TOTAL_GET_TIME);
       t.put(TOTAL_GET_TIME, long.class);
 
+      n.add(TOTAL_POOL_TIME);
+      t.put(TOTAL_POOL_TIME, long.class);
+
       n.add(TOTAL_USAGE_TIME);
       t.put(TOTAL_USAGE_TIME, long.class);
 
@@ -203,6 +219,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       this.destroyedCount = new AtomicInteger(0);
       this.maxCreationTime = new AtomicLong(Long.MIN_VALUE);
       this.maxGetTime = new AtomicLong(Long.MIN_VALUE);
+      this.maxPoolTime = new AtomicLong(Long.MIN_VALUE);
       this.maxUsageTime = new AtomicLong(Long.MIN_VALUE);
       this.maxUsedCount = new AtomicInteger(Integer.MIN_VALUE);
       this.maxWaitCount = new AtomicInteger(Integer.MIN_VALUE);
@@ -213,6 +230,8 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       this.totalCreationTime = new AtomicLong(0);
       this.totalGetTime = new AtomicLong(0);
       this.totalGetTimeInvocations = new AtomicLong(0);
+      this.totalPoolTime = new AtomicLong(0);
+      this.totalPoolTimeInvocations = new AtomicLong(0);
       this.totalUsageTime = new AtomicLong(0);
       this.totalUsageTimeInvocations = new AtomicLong(0);
       this.inUseCount = new AtomicInteger(0);
@@ -295,6 +314,10 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       {
          return getAverageGetTime();
       }
+      else if (AVERAGE_POOL_TIME.equals(name))
+      {
+         return getAveragePoolTime();
+      }
       else if (AVERAGE_USAGE_TIME.equals(name))
       {
          return getAverageUsageTime();
@@ -327,6 +350,10 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       {
          return getMaxGetTime();
       }
+      else if (MAX_POOL_TIME.equals(name))
+      {
+         return getMaxPoolTime();
+      }
       else if (MAX_USAGE_TIME.equals(name))
       {
          return getMaxUsageTime();
@@ -358,6 +385,10 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       else if (TOTAL_GET_TIME.equals(name))
       {
          return getTotalGetTime();
+      }
+      else if (TOTAL_POOL_TIME.equals(name))
+      {
+         return getTotalPoolTime();
       }
       else if (TOTAL_USAGE_TIME.equals(name))
       {
@@ -441,6 +472,17 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
          return 0L;
 
       return totalGetTimeInvocations.get() != 0 ? totalGetTime.get() / totalGetTimeInvocations.get() : 0;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getAveragePoolTime()
+   {
+      if (!enabled.get())
+         return 0L;
+
+      return totalPoolTimeInvocations.get() != 0 ? totalPoolTime.get() / totalPoolTimeInvocations.get() : 0;
    }
 
    /**
@@ -618,6 +660,17 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    /**
     * {@inheritDoc}
     */
+   public long getMaxPoolTime()
+   {
+      if (!enabled.get())
+         return 0L;
+
+      return maxPoolTime.get() != Long.MIN_VALUE ? maxPoolTime.get() : 0;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public long getMaxUsageTime()
    {
       if (!enabled.get())
@@ -762,6 +815,44 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    /**
     * {@inheritDoc}
     */
+   public long getTotalPoolTime()
+   {
+      if (!enabled.get())
+         return 0L;
+
+      return totalPoolTime.get();
+   }
+
+   /**
+    * Add delta to total pool time
+    * @param delta The value
+    */
+   public void deltaTotalPoolTime(long delta)
+   {
+      if (enabled.get() && delta > 0)
+      {
+         totalPoolTime.addAndGet(delta);
+         totalPoolTimeInvocations.incrementAndGet();
+
+         if (delta > maxPoolTime.get())
+            maxPoolTime.set(delta);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getTotalPoolInvocations()
+   {
+      if (!enabled.get())
+         return 0L;
+
+      return totalPoolTimeInvocations.get();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public long getTotalUsageTime()
    {
       if (!enabled.get())
@@ -826,6 +917,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       this.destroyedCount.set(0);
       this.maxCreationTime.set(Long.MIN_VALUE);
       this.maxGetTime.set(Long.MIN_VALUE);
+      this.maxPoolTime.set(Long.MIN_VALUE);
       this.maxUsageTime.set(Long.MIN_VALUE);
       this.maxUsedCount.set(Integer.MIN_VALUE);
       this.maxWaitCount.set(Integer.MIN_VALUE);
@@ -836,6 +928,8 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       this.totalCreationTime.set(0L);
       this.totalGetTime.set(0L);
       this.totalGetTimeInvocations.set(0L);
+      this.totalPoolTime.set(0L);
+      this.totalPoolTimeInvocations.set(0L);
       this.totalUsageTime.set(0L);
       this.totalUsageTimeInvocations.set(0L);
       this.inUseCount.set(0);
@@ -879,6 +973,8 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       sb.append(",");
       sb.append(AVERAGE_GET_TIME).append("=").append(getAverageCreationTime());
       sb.append(",");
+      sb.append(AVERAGE_POOL_TIME).append("=").append(getAveragePoolTime());
+      sb.append(",");
       sb.append(AVERAGE_USAGE_TIME).append("=").append(getAverageUsageTime());
       sb.append(",");
       sb.append(BLOCKING_FAILURE_COUNT).append("=").append(getBlockingFailureCount());
@@ -894,6 +990,8 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       sb.append(MAX_CREATION_TIME).append("=").append(getMaxCreationTime());
       sb.append(",");
       sb.append(MAX_GET_TIME).append("=").append(getMaxGetTime());
+      sb.append(",");
+      sb.append(MAX_POOL_TIME).append("=").append(getMaxPoolTime());
       sb.append(",");
       sb.append(MAX_USAGE_TIME).append("=").append(getMaxUsageTime());
       sb.append(",");
@@ -914,6 +1012,10 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       sb.append(TOTAL_GET_TIME).append("=").append(getTotalGetTime());
       sb.append(",");
       sb.append(TOTAL_GET_TIME_INVOCATIONS).append("=").append(totalGetTimeInvocations.get());
+      sb.append(",");
+      sb.append(TOTAL_POOL_TIME).append("=").append(getTotalPoolTime());
+      sb.append(",");
+      sb.append(TOTAL_POOL_TIME_INVOCATIONS).append("=").append(totalPoolTimeInvocations.get());
       sb.append(",");
       sb.append(TOTAL_USAGE_TIME).append("=").append(getTotalUsageTime());
       sb.append(",");

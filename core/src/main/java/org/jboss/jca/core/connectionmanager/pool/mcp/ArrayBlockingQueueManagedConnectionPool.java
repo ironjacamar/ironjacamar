@@ -444,7 +444,10 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
 
                lastUsed = System.currentTimeMillis();
                if (statistics.isEnabled())
+               {
                   statistics.deltaTotalGetTime(lastUsed - startWait);
+                  statistics.deltaTotalPoolTime(lastUsed - cl.getLastUsedTime());
+               }
 
                // Return connection listener
                return cl;

@@ -61,6 +61,12 @@ public interface PoolStatistics extends StatisticsPlugin
    public long getAverageGetTime();
 
    /**
+    * Get the average time for a connection in the pool (milliseconds)
+    * @return The value
+    */
+   public long getAveragePoolTime();
+
+   /**
     * Get the average time spent using a connection (milliseconds)
     * @return The value
     */
@@ -109,6 +115,12 @@ public interface PoolStatistics extends StatisticsPlugin
    public long getMaxGetTime();
 
    /**
+    * Get max pool time (milliseconds)
+    * @return The value
+    */
+   public long getMaxPoolTime();
+
+   /**
     * Get max usage time (milliseconds)
     * @return The value
     */
@@ -155,6 +167,12 @@ public interface PoolStatistics extends StatisticsPlugin
     * @return The value
     */
    public long getTotalGetTime();
+
+   /**
+    * Get the total time for connections in the pool (milliseconds)
+    * @return The value
+    */
+   public long getTotalPoolTime();
 
    /**
     * Get the total time spent using connections (milliseconds)
