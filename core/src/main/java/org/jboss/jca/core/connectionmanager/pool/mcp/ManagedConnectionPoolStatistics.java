@@ -44,6 +44,12 @@ public interface ManagedConnectionPoolStatistics extends PoolStatistics
    public long getTotalGetInvocations();
 
    /**
+    * Get the total number of pool invocations
+    * @return The value
+    */
+   public long getTotalPoolInvocations();
+
+   /**
     * Get the total number of usage invocations
     * @return The value
     */

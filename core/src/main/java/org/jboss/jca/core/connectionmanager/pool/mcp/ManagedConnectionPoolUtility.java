@@ -82,6 +82,7 @@ class ManagedConnectionPoolUtility
                              ManagedConnectionPoolStatistics mcps)
    {
       StringBuilder sb = new StringBuilder(1024);
+      long now = System.currentTimeMillis();
 
       sb.append(method).append(newLine);
       sb.append("ManagedConnectionPool: ").append(Integer.toHexString(identifier)).append(newLine);
@@ -114,7 +115,8 @@ class ManagedConnectionPoolUtility
             sb.append("  ").append(Integer.toHexString(System.identityHashCode(cl)));
             sb.append(" (").append(cl.getState()).append(")");
             sb.append(" (Used: ").append(cl.getLastUsedTime()).append(")");
-            sb.append(" (Validated: ").append(cl.getLastValidatedTime()).append(")").append(newLine);
+            sb.append(" (Validated: ").append(cl.getLastValidatedTime()).append(")");
+            sb.append(" (Pool: ").append(now - cl.getLastUsedTime()).append(")").append(newLine);
          }
       }
 
@@ -122,11 +124,11 @@ class ManagedConnectionPoolUtility
       sb.append("InUse (").append(inUseSize).append("):").append(newLine);
       if (inUse != null)
       {
-         long now = System.currentTimeMillis();
          for (ConnectionListener cl : inUse)
          {
             sb.append("  ").append(Integer.toHexString(System.identityHashCode(cl)));
             sb.append(" (").append(cl.getState()).append(")");
+            sb.append(" (Used: ").append(cl.getLastUsedTime()).append(")");
             sb.append(" (Validated: ").append(cl.getLastValidatedTime()).append(")");
             sb.append(" (Usage: ").append(now - cl.getLastUsedTime()).append(")").append(newLine);
          }
@@ -138,6 +140,7 @@ class ManagedConnectionPoolUtility
       sb.append("  AverageBlockingTime: ").append(mcps.getAverageBlockingTime()).append(newLine);
       sb.append("  AverageCreationTime: ").append(mcps.getAverageCreationTime()).append(newLine);
       sb.append("  AverageGetTime: ").append(mcps.getAverageGetTime()).append(newLine);
+      sb.append("  AveragePoolTime: ").append(mcps.getAveragePoolTime()).append(newLine);
       sb.append("  AverageUsageTime: ").append(mcps.getAverageUsageTime()).append(newLine);
       sb.append("  BlockingFailureCount: ").append(mcps.getBlockingFailureCount()).append(newLine);
       sb.append("  CreatedCount: ").append(mcps.getCreatedCount()).append(newLine);
@@ -146,6 +149,7 @@ class ManagedConnectionPoolUtility
       sb.append("  InUseCount: ").append(mcps.getInUseCount()).append(newLine);
       sb.append("  MaxCreationTime: ").append(mcps.getMaxCreationTime()).append(newLine);
       sb.append("  MaxGetTime: ").append(mcps.getMaxGetTime()).append(newLine);
+      sb.append("  MaxPoolTime: ").append(mcps.getMaxPoolTime()).append(newLine);
       sb.append("  MaxUsageTime: ").append(mcps.getMaxUsageTime()).append(newLine);
       sb.append("  MaxUsedCount: ").append(mcps.getMaxUsedCount()).append(newLine);
       sb.append("  MaxWaitCount: ").append(mcps.getMaxWaitCount()).append(newLine);
@@ -154,6 +158,7 @@ class ManagedConnectionPoolUtility
       sb.append("  TotalBlockingTime: ").append(mcps.getTotalBlockingTime()).append(newLine);
       sb.append("  TotalCreationTime: ").append(mcps.getTotalCreationTime()).append(newLine);
       sb.append("  TotalGetTime: ").append(mcps.getTotalGetTime()).append(newLine);
+      sb.append("  TotalPoolTime: ").append(mcps.getTotalPoolTime()).append(newLine);
       sb.append("  TotalUsageTime: ").append(mcps.getTotalUsageTime()).append(newLine);
       sb.append("  WaitCount: ").append(mcps.getWaitCount());
 
