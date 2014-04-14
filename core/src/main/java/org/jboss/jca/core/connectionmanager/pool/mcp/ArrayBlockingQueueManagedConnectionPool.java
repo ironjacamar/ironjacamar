@@ -812,7 +812,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       {
          // Check the first in the list
          ConnectionListener cl = cls.peek();
-         if (cl != null && shouldRemove())
+         if (cl != null)
          {
             destroy = decrementer.shouldDestroy(cl, timeout,
                                                 cls.size() + checkedOut.size(),
@@ -821,23 +821,33 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
 
             if (destroy)
             {
-               if (statistics.isEnabled())
-                  statistics.deltaTimedOut();
-
-               // We need to destroy this one
-               if (destroyConnections == null)
-                  destroyConnections = new ArrayList<ConnectionListener>(1);
-
-               cl = cls.poll();
-
-               if (cl != null)
+               if (shouldRemove())
                {
-                  destroyConnections.add(cl);
-                  destroyed++;
+                  if (statistics.isEnabled())
+                     statistics.deltaTimedOut();
+
+                  // We need to destroy this one
+                  if (destroyConnections == null)
+                     destroyConnections = new ArrayList<ConnectionListener>(1);
+
+                  cl = cls.poll();
+
+                  if (cl != null)
+                  {
+                     if (trace)
+                        log.trace("Idle connection cl=" + cl);
+
+                     destroyConnections.add(cl);
+                     destroyed++;
+                  }
+                  else
+                  {
+                     // The connection list were empty
+                     destroy = false;
+                  }
                }
                else
                {
-                  // The connection list were empty
                   destroy = false;
                }
             }
