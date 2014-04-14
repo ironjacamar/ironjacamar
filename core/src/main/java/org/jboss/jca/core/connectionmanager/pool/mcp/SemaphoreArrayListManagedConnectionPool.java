@@ -879,19 +879,29 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                                                 poolConfiguration.getMinSize(),
                                                 destroyed);
 
-            if (destroy && shouldRemove())
+            if (destroy)
             {
-               if (statistics.isEnabled())
-                  statistics.deltaTimedOut();
+               if (shouldRemove())
+               {
+                  if (statistics.isEnabled())
+                     statistics.deltaTimedOut();
 
-               // We need to destroy this one
-               cls.remove(0);
+                  if (trace)
+                     log.trace("Idle connection cl=" + cl);
 
-               if (destroyConnections == null)
-                  destroyConnections = new ArrayList<ConnectionListener>(1);
+                  // We need to destroy this one
+                  cls.remove(0);
 
-               destroyConnections.add(cl);
-               destroyed++;
+                  if (destroyConnections == null)
+                     destroyConnections = new ArrayList<ConnectionListener>(1);
+
+                  destroyConnections.add(cl);
+                  destroyed++;
+               }
+               else
+               {
+                  destroy = false;
+               }
             }
          }
       }
