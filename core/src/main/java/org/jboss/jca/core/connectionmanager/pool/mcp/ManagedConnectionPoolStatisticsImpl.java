@@ -27,11 +27,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -71,7 +72,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
 
    private int maxPoolSize;
 
-   private transient Set<String> names;
+   private transient SortedSet<String> names;
    private transient Map<String, Class> types;
    private transient Map<Locale, ResourceBundle> rbs;
 
@@ -110,7 +111,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
    {
       this.maxPoolSize = maxPoolSize;
 
-      Set<String> n = new HashSet<String>();
+      SortedSet<String> n = new TreeSet<String>();
       Map<String, Class> t = new HashMap<String, Class>();
 
       n.add(ACTIVE_COUNT);
@@ -173,7 +174,7 @@ public class ManagedConnectionPoolStatisticsImpl implements ManagedConnectionPoo
       n.add(WAIT_COUNT);
       t.put(WAIT_COUNT, int.class);
 
-      this.names = Collections.unmodifiableSet(n);
+      this.names = Collections.unmodifiableSortedSet(n);
       this.types = Collections.unmodifiableMap(t);
       
       ResourceBundle defaultResourceBundle = 
