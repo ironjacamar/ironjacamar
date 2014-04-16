@@ -95,7 +95,7 @@ public class TransactionManagerImpl implements TransactionManager, Serializable
           tx.getStatus() == Status.STATUS_MARKED_ROLLBACK)
          throw new RollbackException();
 
-      registry.endTransaction();
+      registry.commitTransaction();
    }
 
    /**
@@ -144,7 +144,7 @@ public class TransactionManagerImpl implements TransactionManager, Serializable
       if (tx == null)
          throw new IllegalStateException();
 
-      registry.endTransaction();
+      registry.rollbackTransaction();
    }
 
    /**
