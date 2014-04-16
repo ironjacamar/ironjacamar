@@ -25,6 +25,8 @@ import java.io.Serializable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import javax.transaction.SystemException;
+
 /**
  * The transaction registry
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
@@ -56,15 +58,72 @@ public class TxRegistry implements Serializable
     */
    public void startTransaction()
    {
-      txs.put(Long.valueOf(Thread.currentThread().getId()), new TransactionImpl());
+      Long key = Long.valueOf(Thread.currentThread().getId());
+      TransactionImpl tx = new TransactionImpl(key);
+
+      txs.put(key, tx);
    }
 
    /**
-    * End a transaction
+    * Commit a transaction
+    * @exception SystemException Thrown if an error occurs
     */
-   public void endTransaction()
+   public void commitTransaction() throws SystemException
    {
-      txs.remove(Long.valueOf(Thread.currentThread().getId()));
+      Long key = Long.valueOf(Thread.currentThread().getId());
+      TransactionImpl tx = txs.get(key);
+      if (tx != null)
+      {
+         try
+         {
+            tx.commit();
+         }
+         catch (Throwable t)
+         {
+            SystemException se = new SystemException("Error during commit");
+            se.initCause(t);
+            throw se;
+         }
+         finally
+         {
+            txs.remove(key);
+         }
+      }
+      else
+      {
+         throw new IllegalStateException("No transaction to commit");
+      }
+   }
+
+   /**
+    * Rollback a transaction
+    * @exception SystemException Thrown if an error occurs
+    */
+   public void rollbackTransaction() throws SystemException
+   {
+      Long key = Long.valueOf(Thread.currentThread().getId());
+      TransactionImpl tx = txs.get(key);
+      if (tx != null)
+      {
+         try
+         {
+            tx.rollback();
+         }
+         catch (Throwable t)
+         {
+            SystemException se = new SystemException("Error during rollback");
+            se.initCause(t);
+            throw se;
+         }
+         finally
+         {
+            txs.remove(key);
+         }
+      }
+      else
+      {
+         throw new IllegalStateException("No transaction to rollback");
+      }
    }
 
    /**

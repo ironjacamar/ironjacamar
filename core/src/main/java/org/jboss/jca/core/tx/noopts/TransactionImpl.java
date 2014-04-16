@@ -22,7 +22,9 @@
 package org.jboss.jca.core.tx.noopts;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.transaction.HeuristicMixedException;
@@ -40,19 +42,22 @@ import javax.transaction.xa.XAResource;
  */
 public class TransactionImpl implements Transaction, Serializable
 {
-   private static final long serialVersionUID = 2L;
+   private static final long serialVersionUID = 3L;
+   private transient Long key;
    private transient int status;
    private transient Set<Synchronization> syncs;
-   private transient Set<XAResource> xas;
+   private transient Map<Object, Object> resources;
 
    /**
     * Constructor
+    * @param key The transaction key
     */
-   public TransactionImpl()
+   public TransactionImpl(Long key)
    {
+      this.key = key;
       this.status = Status.STATUS_ACTIVE;
       this.syncs = null;
-      this.xas = null;
+      this.resources = new HashMap<Object, Object>();
    }
 
    /**
@@ -65,7 +70,13 @@ public class TransactionImpl implements Transaction, Serializable
                                IllegalStateException,
                                SystemException
    {
-      finish(Status.STATUS_COMMITTED);
+      if (status == Status.STATUS_UNKNOWN)
+         throw new IllegalStateException("Status unknown");
+
+      if (status == Status.STATUS_MARKED_ROLLBACK)
+         throw new IllegalStateException("Status marked rollback");
+
+      finish(true);
    }
 
    /**
@@ -74,10 +85,13 @@ public class TransactionImpl implements Transaction, Serializable
    public boolean delistResource(XAResource xaRes, int flag) throws IllegalStateException,
                                                                     SystemException
    {
-      if (xas == null)
-         return false;
+      if (status == Status.STATUS_UNKNOWN)
+         throw new IllegalStateException("Status unknown");
 
-      return xas.remove(xaRes);
+      if (status != Status.STATUS_ACTIVE && status != Status.STATUS_MARKED_ROLLBACK)
+         throw new IllegalStateException("Status not valid");
+
+      return true;
    }
 
    /**
@@ -87,10 +101,10 @@ public class TransactionImpl implements Transaction, Serializable
                                                           IllegalStateException,
                                                           SystemException
    {
-      if (xas == null)
-         xas = new HashSet<XAResource>(1);
+      if (status == Status.STATUS_UNKNOWN)
+         throw new IllegalStateException("Status unknown");
 
-      return xas.add(xaRes);
+      return true;
    }
 
    /**
@@ -108,6 +122,9 @@ public class TransactionImpl implements Transaction, Serializable
                                                                     IllegalStateException,
                                                                     SystemException
    {
+      if (status == Status.STATUS_UNKNOWN)
+         throw new IllegalStateException("Status unknown");
+
       if (syncs == null)
          syncs = new HashSet<Synchronization>(1);
 
@@ -120,7 +137,10 @@ public class TransactionImpl implements Transaction, Serializable
    public void rollback() throws IllegalStateException,
                                  SystemException
    {
-      finish(Status.STATUS_ROLLEDBACK);
+      if (status == Status.STATUS_UNKNOWN)
+         throw new IllegalStateException("Status unknown");
+
+      finish(false);
    }
 
    /**
@@ -129,6 +149,9 @@ public class TransactionImpl implements Transaction, Serializable
    public void setRollbackOnly() throws IllegalStateException,
                                         SystemException
    {
+      if (status == Status.STATUS_UNKNOWN)
+         throw new IllegalStateException("Status unknown");
+
       status = Status.STATUS_MARKED_ROLLBACK;
    }
 
@@ -138,14 +161,46 @@ public class TransactionImpl implements Transaction, Serializable
     */
    boolean getRollbackOnly()
    {
+      if (status == Status.STATUS_UNKNOWN)
+         throw new IllegalStateException("Status unknown");
+
       return status == Status.STATUS_MARKED_ROLLBACK;
    }
 
    /**
-    * Finish transaction
-    * @param st The status
+    * Put a resource
+    * @param key The key
+    * @param value The value
     */
-   private void finish(int st)
+   void putResource(Object key, Object value)
+   {
+      resources.put(key, value);
+   }
+
+   /**
+    * Get a resource
+    * @param key The key
+    * @return The value
+    */
+   Object getResource(Object key)
+   {
+      return resources.get(key);
+   }
+
+   /**
+    * Get the transaction key
+    * @return The value
+    */
+   Long getKey()
+   {
+      return key;
+   }
+
+   /**
+    * Finish transaction
+    * @param commit Commit (true), or rollback (false)
+    */
+   private void finish(boolean commit)
    {
       if (syncs != null)
       {
@@ -155,7 +210,14 @@ public class TransactionImpl implements Transaction, Serializable
          }
       }
 
-      status = st;
+      if (commit)
+      {
+         status = Status.STATUS_COMMITTED;
+      }
+      else
+      {
+         status = Status.STATUS_ROLLEDBACK;
+      }
 
       if (syncs != null)
       {
@@ -164,5 +226,10 @@ public class TransactionImpl implements Transaction, Serializable
             s.afterCompletion(status);
          }
       }
+
+      status = Status.STATUS_UNKNOWN;
+
+      if (syncs != null)
+         syncs = null;
    }
 }

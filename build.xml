@@ -583,6 +583,14 @@
   </target>
   
   <!-- ================================= 
+       Target: perf-test
+       ================================= -->
+  <target name="perf-test" depends="prepare-test">
+    <mkdir dir="${reports.dir}/core" />
+    <ant dir="core" inheritRefs="true" target="perf-test"/>
+  </target>
+  
+  <!-- ================================= 
        Target: artifacts
        ================================= -->
   <target name="artifacts-base">
