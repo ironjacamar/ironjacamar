@@ -30,11 +30,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -78,7 +79,7 @@ public class PoolStatisticsImpl implements PoolStatistics
 
    private int maxPoolSize;
    private transient ConcurrentMap<Object, ManagedConnectionPool> mcpPools;
-   private transient Set<String> names;
+   private transient SortedSet<String> names;
    private transient Map<String, Class> types;
    private transient AtomicBoolean enabled;
    private transient Map<Locale, ResourceBundle> rbs;
@@ -103,7 +104,7 @@ public class PoolStatisticsImpl implements PoolStatistics
       this.maxPoolSize = maxPoolSize;
       this.mcpPools = mcpPools;
 
-      Set<String> n = new HashSet<String>();
+      SortedSet<String> n = new TreeSet<String>();
       Map<String, Class> t = new HashMap<String, Class>();
 
       n.add(ACTIVE_COUNT);
@@ -184,7 +185,7 @@ public class PoolStatisticsImpl implements PoolStatistics
       n.add(WAIT_COUNT);
       t.put(WAIT_COUNT, int.class);
 
-      this.names = Collections.unmodifiableSet(n);
+      this.names = Collections.unmodifiableSortedSet(n);
       this.types = Collections.unmodifiableMap(t);
       this.enabled = new AtomicBoolean(true);
       
