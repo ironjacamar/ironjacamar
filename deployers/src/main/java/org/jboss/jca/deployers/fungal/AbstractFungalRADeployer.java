@@ -468,7 +468,6 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
                      Set<String> writeStatAttributes = new HashSet<String>();
                      writeStatAttributes.add("Enabled");
                      Set<String> excludeStatAttributes = new HashSet<String>();
-                     excludeStatAttributes.add("Names");
                      Set<String> excludeStatOperations = new HashSet<String>();
                      excludeStatOperations.add("delta(.)*");
                      
@@ -535,7 +534,6 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
                      Set<String> writeStatAttributes = new HashSet<String>();
                      writeStatAttributes.add("Enabled");
                      Set<String> excludeStatAttributes = new HashSet<String>();
-                     excludeStatAttributes.add("Names");
                      Set<String> excludeStatOperations = new HashSet<String>();
                      excludeStatOperations.add("delta(.)*");
                      
@@ -586,7 +584,6 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
                      Set<String> writeStatAttributes = new HashSet<String>();
                      writeStatAttributes.add("Enabled");
                      Set<String> excludeStatAttributes = new HashSet<String>();
-                     excludeStatAttributes.add("Names");
                      Set<String> excludeStatOperations = new HashSet<String>();
                      excludeStatOperations.add("delta(.)*");
 
@@ -648,7 +645,6 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
                      Set<String> writeStatAttributes = new HashSet<String>();
                      writeStatAttributes.add("Enabled");
                      Set<String> excludeStatAttributes = new HashSet<String>();
-                     excludeStatAttributes.add("Names");
                      Set<String> excludeStatOperations = new HashSet<String>();
                      excludeStatOperations.add("delta(.)*");
 

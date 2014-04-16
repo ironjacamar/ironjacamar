@@ -457,7 +457,6 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
                      Set<String> writeAttributes = new HashSet<String>();
                      writeAttributes.add("Enabled");
                      Set<String> excludeAttributes = new HashSet<String>();
-                     excludeAttributes.add("Names");
                      Set<String> excludeOperations = new HashSet<String>();
                      excludeOperations.add("delta(.)*");
 
@@ -478,7 +477,6 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
                   Set<String> writeAttributes = new HashSet<String>();
                   writeAttributes.add("Enabled");
                   Set<String> excludeAttributes = new HashSet<String>();
-                  excludeAttributes.add("Names");
                   Set<String> excludeOperations = new HashSet<String>();
                   excludeOperations.add("delta(.)*");
 
