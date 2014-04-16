@@ -447,6 +447,81 @@ opreport -l --output-file=&lt;filename&gt;
       </section>
 
     </section>
+
+    <section id="performance_test_suite">
+      <title>Performance test suite</title>
+
+      <para>
+        IronJacamar features a basic performance test suite that tests interaction with
+        a transaction manager.
+      </para>
+
+      <para>
+        The test suite is executed by
+      </para>
+      <programlisting>
+ant perf-test
+      </programlisting>
+      <para>
+        which will run the tests, and output its data into the generated JUnit output.
+      </para>
+
+      <para>
+        The setup of the performance test suite is controlled in the
+      </para>
+      <programlisting>
+org.jboss.jca.core.tx.perf.Performance
+      </programlisting>
+      <para>
+        class, where the following settings can be altered
+        <itemizedlist>
+          <listitem>
+            CLIENTS: The number of clients in each run
+          </listitem>
+          <listitem>
+            POOL_SIZES: The pool size in each run
+          </listitem>
+          <listitem>
+            THREAD_POOL_SIZE: The thread pool size in each run
+          </listitem>
+          <listitem>
+            RAMP_UP_ITERATIONS: The number of iterations that the ramp-up should perform
+          </listitem>
+          <listitem>
+            TRANSACTIONS_PER_CLIENT: The number of transactions each client should perform
+          </listitem>
+          <listitem>
+            STATISTICS: Should statistics be enabled
+          </listitem>
+        </itemizedlist>
+      </para>
+
+      <para>
+        A report can be generated using
+      </para>
+      <programlisting>
+org.jboss.jca.core.tx.perf.PerfReport
+      </programlisting>
+      <para>
+        which takes 3 arguments; output from NoopTS run, output from Narayana/MEM run and
+        Narayana/FILE run.
+      </para>
+
+      <para>
+        The data is presented on the console, and a GNU plot script is generated.
+      </para>
+
+      <para>
+        The GNU plot can be generated using
+      </para>
+      <programlisting>
+gnuplot perf.plot
+      </programlisting>
+      <para>
+        which will generate a <code>perf.png</code> file with the graphs.
+      </para>
+    </section>
+
   </section>
 
 </chapter>
