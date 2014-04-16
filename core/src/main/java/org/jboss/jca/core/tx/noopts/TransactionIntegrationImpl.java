@@ -130,8 +130,7 @@ public class TransactionIntegrationImpl implements TransactionIntegration
    /**
     * {@inheritDoc}
     */
-   public XAResourceRecovery createXAResourceRecovery(ResourceAdapter rar,
-                                                      ActivationSpec as,
+   public XAResourceRecovery createXAResourceRecovery(ResourceAdapter rar, ActivationSpec as,
                                                       String productName, String productVersion)
    {
       return new XAResourceRecoveryImpl();
@@ -180,7 +179,6 @@ public class TransactionIntegrationImpl implements TransactionIntegration
    {
       return new LocalXAResourceImpl(productName, productVersion, jndiName);
    }
-
 
    /**
     * {@inheritDoc}

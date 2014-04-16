@@ -21,7 +21,6 @@
  */
 package org.jboss.jca.core.tx.noopts;
 
-import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.api.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.api.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.spi.transaction.local.LocalXAException;
@@ -32,8 +31,6 @@ import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
-import org.jboss.logging.Messages;
-
 /**
  * Local XA resource implementation.
  * 
@@ -41,9 +38,6 @@ import org.jboss.logging.Messages;
  */
 public class LocalXAResourceImpl implements LocalXAResource, XAResourceWrapper
 {
-   /** The bundle */
-   private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
-   
    /** Product name */
    private String productName;
 
@@ -107,7 +101,7 @@ public class LocalXAResourceImpl implements LocalXAResource, XAResourceWrapper
     */
    public void forget(Xid xid) throws XAException
    {
-      throw new LocalXAException(bundle.forgetNotSupportedInLocalTx(), XAException.XAER_RMERR);
+      throw new LocalXAException("Error", XAException.XAER_RMERR);
    }
    
    /**
@@ -139,7 +133,7 @@ public class LocalXAResourceImpl implements LocalXAResource, XAResourceWrapper
     */
    public Xid[] recover(int flag) throws XAException
    {
-      throw new LocalXAException(bundle.noRecoverWithLocalTxResourceManagers(), XAException.XAER_RMERR);
+      throw new LocalXAException("Error", XAException.XAER_RMERR);
    }
 
    /**
