@@ -25,16 +25,11 @@ import javax.resource.ResourceException;
 
 import javax.resource.spi.ManagedConnectionMetaData;
 
-import org.jboss.logging.Logger;
-
 /**
  * PerfManagedConnectionMetaData
  */
 public class PerfManagedConnectionMetaData implements ManagedConnectionMetaData
 {
-   /** The logger */
-   private static Logger log = Logger.getLogger(PerfManagedConnectionMetaData.class.getName());
-
    /**
     * Default constructor
     */

@@ -21,31 +21,21 @@
  */
 package org.jboss.jca.core.tx.rars.perf;
 
-import org.jboss.logging.Logger;
-
 /**
  * PerfConnectionImpl
  */
 public class PerfConnectionImpl implements PerfConnection
 {
-   /** The logger */
-   private static Logger log = Logger.getLogger(PerfConnectionImpl.class.getName());
-
    /** ManagedConnection */
    private PerfManagedConnection mc;
-
-   /** ManagedConnectionFactory */
-   private PerfManagedConnectionFactory mcf;
 
    /**
     * Default constructor
     * @param mc PerfManagedConnection
-    * @param mcf PerfManagedConnectionFactory
     */
-   public PerfConnectionImpl(PerfManagedConnection mc, PerfManagedConnectionFactory mcf)
+   public PerfConnectionImpl(PerfManagedConnection mc)
    {
       this.mc = mc;
-      this.mcf = mcf;
    }
 
    /**
@@ -53,21 +43,6 @@ public class PerfConnectionImpl implements PerfConnection
     */
    public void close()
    {
-      mc.closeHandle(this);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public String toString()
-   {
-      StringBuilder sb = new StringBuilder();
-
-      sb.append("PerfConnection@").append(Integer.toHexString(System.identityHashCode(this)));
-      sb.append("[mc=").append(mc);
-      sb.append("]");
-
-      return sb.toString();
+      mc.closeHandle();
    }
 }

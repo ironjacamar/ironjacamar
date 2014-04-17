@@ -91,6 +91,8 @@
   <property name="reports.dir" value="${basedir}/reports" />
   <property name="test.dir" value="${reports.dir}" />
 
+  <property name="jprofiler.dir" value="/usr/local/jprofiler8/"/>
+
   <!-- ================================= 
        Aggregated Javadoc
        ================================= -->
@@ -588,6 +590,14 @@
   <target name="perf-test" depends="prepare-test">
     <mkdir dir="${reports.dir}/core" />
     <ant dir="core" inheritRefs="true" target="perf-test"/>
+  </target>
+  
+  <!-- ================================= 
+       Target: jprofiler
+       ================================= -->
+  <target name="jprofiler" depends="prepare-test">
+    <mkdir dir="${reports.dir}/core" />
+    <ant dir="core" inheritRefs="true" target="jprofiler"/>
   </target>
   
   <!-- ================================= 

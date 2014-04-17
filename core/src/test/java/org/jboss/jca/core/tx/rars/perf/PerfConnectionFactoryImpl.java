@@ -27,8 +27,6 @@ import javax.naming.Reference;
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionManager;
 
-import org.jboss.logging.Logger;
-
 /**
  * PerfConnectionFactoryImpl
  */
@@ -36,9 +34,6 @@ public class PerfConnectionFactoryImpl implements PerfConnectionFactory
 {
    /** The serial version UID */
    private static final long serialVersionUID = 1L;
-
-   /** The logger */
-   private static Logger log = Logger.getLogger(PerfConnectionFactoryImpl.class.getName());
 
    /** Reference */
    private Reference reference;

@@ -485,6 +485,9 @@ org.jboss.jca.core.tx.perf.Performance
             THREAD_POOL_SIZE: The thread pool size in each run
           </listitem>
           <listitem>
+            DO_RAMP_UP: Should ramp up be performed
+          </listitem>
+          <listitem>
             RAMP_UP_ITERATIONS: The number of iterations that the ramp-up should perform
           </listitem>
           <listitem>
@@ -492,6 +495,9 @@ org.jboss.jca.core.tx.perf.Performance
           </listitem>
           <listitem>
             STATISTICS: Should statistics be enabled
+          </listitem>
+          <listitem>
+            RECORD_ENLISTMENT_TRACES: Should enlistment be recorded
           </listitem>
         </itemizedlist>
       </para>
@@ -520,6 +526,18 @@ gnuplot perf.plot
       <para>
         which will generate a <code>perf.png</code> file with the graphs.
       </para>
+
+      <para>
+        There is integration with JProfiler through the
+      </para>
+      <programlisting>
+ant jprofiler
+      </programlisting>
+      <para>
+        task. It is required to define the installation directory and the session
+        id before the task is executed.
+      </para>
+
     </section>
 
   </section>
