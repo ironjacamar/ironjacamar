@@ -33,8 +33,6 @@ import javax.resource.spi.ManagedConnectionFactory;
 
 import javax.security.auth.Subject;
 
-import org.jboss.logging.Logger;
-
 /**
  * PerfManagedConnectionFactory
  */
@@ -42,9 +40,6 @@ public class PerfManagedConnectionFactory implements ManagedConnectionFactory
 {
    /** The serial version UID */
    private static final long serialVersionUID = 1L;
-
-   /** The logger */
-   private static Logger log = Logger.getLogger(PerfManagedConnectionFactory.class.getName());
 
    /** The logwriter */
    private PrintWriter logwriter;
@@ -66,7 +61,6 @@ public class PerfManagedConnectionFactory implements ManagedConnectionFactory
     */
    public Object createConnectionFactory(ConnectionManager cxManager) throws ResourceException
    {
-      log.trace("createConnectionFactory()");
       return new PerfConnectionFactoryImpl(this, cxManager);
    }
 
@@ -92,7 +86,6 @@ public class PerfManagedConnectionFactory implements ManagedConnectionFactory
    public ManagedConnection createManagedConnection(Subject subject,
          ConnectionRequestInfo cxRequestInfo) throws ResourceException
    {
-      log.trace("createManagedConnection()");
       return new PerfManagedConnection(this);
    }
 
@@ -108,19 +101,7 @@ public class PerfManagedConnectionFactory implements ManagedConnectionFactory
    public ManagedConnection matchManagedConnections(Set connectionSet,
          Subject subject, ConnectionRequestInfo cxRequestInfo) throws ResourceException
    {
-      log.trace("matchManagedConnections()");
-      ManagedConnection result = null;
-      Iterator it = connectionSet.iterator();
-      while (result == null && it.hasNext())
-      {
-         ManagedConnection mc = (ManagedConnection)it.next();
-         if (mc instanceof PerfManagedConnection)
-         {
-            result = mc;
-         }
-
-      }
-      return result;
+      return (ManagedConnection)connectionSet.iterator().next();
    }
 
    /**

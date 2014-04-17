@@ -39,16 +39,11 @@ import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 
-import org.jboss.logging.Logger;
-
 /**
  * PerfManagedConnection
  */
 public class PerfManagedConnection implements ManagedConnection, LocalTransaction, XAResource
 {
-   /** The logger */
-   private static Logger log = Logger.getLogger(PerfManagedConnection.class.getName());
-
    /** The logwriter */
    private PrintWriter logwriter;
 
@@ -61,6 +56,12 @@ public class PerfManagedConnection implements ManagedConnection, LocalTransactio
    /** Connection */
    private PerfConnectionImpl connection;
 
+   /** Close event */
+   private ConnectionEvent closeEvent;
+
+   /** Error event */
+   private ConnectionEvent errorEvent;
+
    /**
     * Default constructor
     * @param mcf mcf
@@ -70,7 +71,13 @@ public class PerfManagedConnection implements ManagedConnection, LocalTransactio
       this.mcf = mcf;
       this.logwriter = null;
       this.listeners = Collections.synchronizedList(new ArrayList<ConnectionEventListener>(1));
-      this.connection = null;
+      this.connection = new PerfConnectionImpl(this);
+
+      this.closeEvent = new ConnectionEvent(this, ConnectionEvent.CONNECTION_CLOSED);
+      this.closeEvent.setConnectionHandle(connection);
+
+      this.errorEvent = new ConnectionEvent(this, ConnectionEvent.CONNECTION_ERROR_OCCURRED, new Exception());
+      this.errorEvent.setConnectionHandle(connection);
    }
 
    /**
@@ -86,7 +93,6 @@ public class PerfManagedConnection implements ManagedConnection, LocalTransactio
                                ConnectionRequestInfo cxRequestInfo)
       throws ResourceException
    {
-      connection = new PerfConnectionImpl(this, mcf);
       return connection;
    }
 
@@ -137,8 +143,6 @@ public class PerfManagedConnection implements ManagedConnection, LocalTransactio
       if (listener == null)
          throw new IllegalArgumentException("Listener is null");
 
-      log.tracef("addConnectionEventListener(%s)", listener);
-
       listeners.add(listener);
    }
 
@@ -152,43 +156,28 @@ public class PerfManagedConnection implements ManagedConnection, LocalTransactio
       if (listener == null)
          throw new IllegalArgumentException("Listener is null");
 
-      log.tracef("removeConnectionEventListener(%s)", listener);
-
       listeners.remove(listener);
    }
 
    /**
     * Close handle
-    *
-    * @param handle The handle
     */
-   void closeHandle(PerfConnection handle)
+   void closeHandle()
    {
-      ConnectionEvent event = new ConnectionEvent(this, ConnectionEvent.CONNECTION_CLOSED);
-      event.setConnectionHandle(handle);
-
-      List<ConnectionEventListener> copy = new ArrayList<ConnectionEventListener>(listeners);
-      for (ConnectionEventListener cel : copy)
+      for (ConnectionEventListener cel : listeners)
       {
-         cel.connectionClosed(event);
+         cel.connectionClosed(closeEvent);
       }
    }
 
    /**
     * Error handle
-    *
-    * @param handle The handle
-    * @param exception The exception
     */
-   void errorHandle(PerfConnection handle, Exception exception)
+   void errorHandle()
    {
-      ConnectionEvent event = new ConnectionEvent(this, ConnectionEvent.CONNECTION_ERROR_OCCURRED, exception);
-      event.setConnectionHandle(handle);
-
-      List<ConnectionEventListener> copy = new ArrayList<ConnectionEventListener>(listeners);
-      for (ConnectionEventListener cel : copy)
+      for (ConnectionEventListener cel : listeners)
       {
-         cel.connectionErrorOccurred(event);
+         cel.connectionErrorOccurred(errorEvent);
       }
    }
 
@@ -222,7 +211,6 @@ public class PerfManagedConnection implements ManagedConnection, LocalTransactio
     */
    public LocalTransaction getLocalTransaction() throws ResourceException
    {
-      log.trace("getLocalTransaction()");
       return this;
    }
 
@@ -234,7 +222,6 @@ public class PerfManagedConnection implements ManagedConnection, LocalTransactio
     */
    public XAResource getXAResource() throws ResourceException
    {
-      log.trace("getXAResource()");
       return this;
    }
 
