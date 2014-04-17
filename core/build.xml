@@ -407,6 +407,41 @@
   </target>
 
   <!-- ================================= 
+       Target: jprofiler
+       ================================= -->
+  <target name="jprofiler">
+    <!-- Override logging -->
+    <copy file="src/test/resources/perf-logging.properties"
+          tofile="${build.core.dir}/test/logging.properties"
+          overwrite="true"
+          force="true"/>
+
+    <taskdef name="profile"
+             classname="com.jprofiler.ant.ProfileTask"
+             classpath="${jprofiler.dir}/bin/ant.jar"/>
+
+    <profile classname="org.jboss.jca.core.tx.perf.NoopTSPerfTestCase" offline="true" sessionid="114">
+      <sysproperty key="archives.dir" value="${build.core.dir}"/>
+      <sysproperty key="java.util.logging.manager" value="org.jboss.logmanager.LogManager"/>
+      <sysproperty key="log4j.defaultInitOverride" value="true"/>
+      <sysproperty key="org.jboss.logging.Logger.pluginClass" value="org.jboss.logging.logmanager.LoggerPluginImpl"/>
+      <sysproperty key="test.dir" value="${test.dir}"/>
+      <classpath>
+        <pathelement location="${build.core.dir}/test"/>
+        <fileset dir="${target.dir}" includes="*.jar"/>
+        <fileset dir="${lib.dir}/common" includes="*.jar" />
+        <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
+        <fileset dir="${lib.dir}/embedded" includes="*.jar" />
+        <fileset dir="${lib.dir}/byteman" includes="*.jar" />
+        <fileset dir="${lib.dir}/hornetq" includes="*.jar" />
+        <fileset dir="${lib.dir}/sjc" includes="*.jar" />
+        <fileset dir="${lib.dir}/test" includes="*.jar" />
+        <fileset dir="${java.home}/../lib/" includes="tools.jar" />
+      </classpath>
+    </profile>
+  </target>
+
+  <!-- ================================= 
        Target: one-test
        ================================= -->
   <target name="one-test" depends="prepare-test">

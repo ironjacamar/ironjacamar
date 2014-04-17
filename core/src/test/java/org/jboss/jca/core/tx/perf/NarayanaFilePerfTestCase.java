@@ -71,6 +71,8 @@ public class NarayanaFilePerfTestCase extends Performance
          throw new IllegalStateException("RAActivator not defined");
 
       raa.setEnabled(false);
+
+      printSettings();
    }
 
    /**
@@ -98,5 +100,14 @@ public class NarayanaFilePerfTestCase extends Performance
 
       // Set embedded to null
       embedded = null;
+   }
+
+   /**
+    * Main
+    * @param args The arguments
+    */
+   public static void main(String[] args)
+   {
+      org.junit.runner.JUnitCore.main(NarayanaFilePerfTestCase.class.getName());
    }
 }

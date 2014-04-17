@@ -32,6 +32,7 @@ import org.jboss.jca.embedded.dsl.resourceadapters12.api.ResourceAdapterType;
 import org.jboss.jca.embedded.dsl.resourceadapters12.api.ResourceAdaptersDescriptor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -81,6 +82,7 @@ public class Performance
    private static final int[] POOL_SIZES = {1, 10, 25, 50, 100, 150, 200, 250, 300};
    private static final int[] THREAD_POOL_SIZES = {1, 10, 25, 50, 100, 150, 200, 250, 300};
 
+   private static final boolean DO_RAMP_UP = true;
    private static final int RAMP_UP_ITERATIONS = 1;
    private static final int TRANSACTIONS_PER_CLIENT = 200;
    private static final boolean STATISTICS = false;
@@ -213,11 +215,6 @@ public class Performance
     */
    public void rampUp(ResourceAdaptersDescriptor dashRaXml, int poolSize, int threadPoolSize)
    {
-      int cycles = RAMP_UP_ITERATIONS * poolSize;
-
-      Context context = null;
-      PerfConnection c = null;
-
       this.resourceAdapter = createRar();
       this.resourceAdapterActivation = dashRaXml;
 
@@ -230,6 +227,7 @@ public class Performance
          this.es = Executors.newCachedThreadPool();
       }
 
+      Context context = null;
       try
       {
          embedded.deploy(resourceAdapter);
@@ -237,25 +235,30 @@ public class Performance
 
          toggleStatistics();
 
-         context = new InitialContext();
-
-         UserTransaction ut = (UserTransaction)context.lookup("java:/UserTransaction");
-         assertNotNull(ut);
-
-         PerfConnectionFactory cf = (PerfConnectionFactory)context.lookup("java:/eis/PerfConnectionFactory");
-         assertNotNull(cf);
-
-         CountDownLatch done = new CountDownLatch(cycles);
-
-         List<Client> clientList = new ArrayList<Client>(cycles);
-         for (int i = 0; i < cycles; i++)
+         if (DO_RAMP_UP)
          {
-            clientList.add(new Client(cf, ut, done));
+            int cycles = RAMP_UP_ITERATIONS * poolSize;
+
+            context = new InitialContext();
+
+            UserTransaction ut = (UserTransaction)context.lookup("java:/UserTransaction");
+            assertNotNull(ut);
+
+            PerfConnectionFactory cf = (PerfConnectionFactory)context.lookup("java:/eis/PerfConnectionFactory");
+            assertNotNull(cf);
+
+            CountDownLatch done = new CountDownLatch(cycles);
+
+            List<Client> clientList = new ArrayList<Client>(cycles);
+            for (int i = 0; i < cycles; i++)
+            {
+               clientList.add(new Client(cf, ut, done));
+            }
+            
+            es.invokeAll(clientList);
+
+            done.await();
          }
-
-         es.invokeAll(clientList);
-
-         done.await();
       }
       catch (Throwable t)
       {
@@ -646,5 +649,20 @@ public class Performance
             log.fatal("PERF-DATA: " + entry.getKey() + "," + result.getKey() + "," + result.getValue());
          }
       }
+   }
+
+   /**
+    * Print settings
+    */
+   static void printSettings()
+   {
+      log.errorf("Clients: %s", Arrays.toString(CLIENTS));
+      log.errorf("Pool sizes: %s", Arrays.toString(POOL_SIZES));
+      log.errorf("Threads: %s", Arrays.toString(THREAD_POOL_SIZES));
+      log.errorf("RampUp: %s", DO_RAMP_UP);
+      log.errorf("RampUp iterations: %s", RAMP_UP_ITERATIONS);
+      log.errorf("Transactions: %s", TRANSACTIONS_PER_CLIENT);
+      log.errorf("Statistics: %s", STATISTICS);
+      log.errorf("Record enlistment: %s", RECORD_ENLISTMENT_TRACES);
    }
 }
