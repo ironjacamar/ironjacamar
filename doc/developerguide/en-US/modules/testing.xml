@@ -493,6 +493,9 @@ org.jboss.jca.core.tx.perf.Performance
           <listitem>
             STATISTICS: Should statistics be enabled
           </listitem>
+          <listitem>
+            RECORD_ENLISTMENT_TRACES: Should enlistment be recorded
+          </listitem>
         </itemizedlist>
       </para>
 

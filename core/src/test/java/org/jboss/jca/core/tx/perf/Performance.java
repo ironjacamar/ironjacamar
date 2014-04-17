@@ -84,6 +84,7 @@ public class Performance
    private static final int RAMP_UP_ITERATIONS = 1;
    private static final int TRANSACTIONS_PER_CLIENT = 200;
    private static final boolean STATISTICS = false;
+   private static final boolean RECORD_ENLISTMENT_TRACES = false;
 
    /** Embedded */
    protected static Embedded embedded = null;
@@ -104,6 +105,9 @@ public class Performance
    {
       if (STATISTICS)
          System.setProperty("ironjacamar.embedded.management", "true");
+
+      if (!RECORD_ENLISTMENT_TRACES)
+         System.setProperty("ironjacamar.disable_enlistment_trace", "true");
    }
 
    /**
