@@ -499,6 +499,15 @@ org.jboss.jca.core.tx.perf.Performance
           <listitem>
             RECORD_ENLISTMENT_TRACES: Should enlistment be recorded
           </listitem>
+          <listitem>
+            USE_TRANSACTION_FOR_NOTRANSACTION: Use a transaction for NoTransaction scenario
+          </listitem>
+          <listitem>
+            TX_BEGIN_DURATION: The number of milliseconds spent in the resource during tx.begin()
+          </listitem>
+          <listitem>
+            TX_COMMIT_DURATION: The number of milliseconds spent in the resource during tx.commit()
+          </listitem>
         </itemizedlist>
       </para>
 

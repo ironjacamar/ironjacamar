@@ -44,12 +44,37 @@ public class PerfManagedConnectionFactory implements ManagedConnectionFactory
    /** The logwriter */
    private PrintWriter logwriter;
 
+   /** Transaction begin duration */
+   private Long txBeginDuration;
+
+   /** Transaction commit duration */
+   private Long txCommitDuration;
+
    /**
     * Default constructor
     */
    public PerfManagedConnectionFactory()
    {
+      this.txBeginDuration = Long.valueOf(0);
+      this.txCommitDuration = Long.valueOf(0);
+   }
 
+   /**
+    * Set the transaction begin duration
+    * @param v The value
+    */
+   public void setTxBeginDuration(Long v)
+   {
+      txBeginDuration = v;
+   }
+
+   /**
+    * Set the transaction commit duration
+    * @param v The value
+    */
+   public void setTxCommitDuration(Long v)
+   {
+      txCommitDuration = v;
    }
 
    /**
@@ -86,7 +111,7 @@ public class PerfManagedConnectionFactory implements ManagedConnectionFactory
    public ManagedConnection createManagedConnection(Subject subject,
          ConnectionRequestInfo cxRequestInfo) throws ResourceException
    {
-      return new PerfManagedConnection(this);
+      return new PerfManagedConnection(this, txBeginDuration.longValue(), txCommitDuration.longValue());
    }
 
    /**

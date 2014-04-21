@@ -87,6 +87,10 @@ public class Performance
    private static final int TRANSACTIONS_PER_CLIENT = 200;
    private static final boolean STATISTICS = false;
    private static final boolean RECORD_ENLISTMENT_TRACES = false;
+   private static final boolean USE_TRANSACTION_FOR_NOTRANSACTION = true;
+
+   private static final long TX_BEGIN_DURATION = 0L;
+   private static final long TX_COMMIT_DURATION = 0L;
 
    /** Embedded */
    protected static Embedded embedded = null;
@@ -105,8 +109,7 @@ public class Performance
 
    static
    {
-      if (STATISTICS)
-         System.setProperty("ironjacamar.embedded.management", "true");
+      System.setProperty("ironjacamar.embedded.management", "true");
 
       if (!RECORD_ENLISTMENT_TRACES)
          System.setProperty("ironjacamar.disable_enlistment_trace", "true");
@@ -162,10 +165,15 @@ public class Performance
             .className(PerfManagedConnectionFactory.class.getName())
             .jndiName("java:/eis/PerfConnectionFactory").poolName("Perf");
 
+      dashRaXmlCdt.createConfigProperty().name("TxBeginDuration").text(Long.toString(TX_BEGIN_DURATION));
+      dashRaXmlCdt.createConfigProperty().name("TxCommitDuration").text(Long.toString(TX_COMMIT_DURATION));
+
       if ("XATransaction".equals(tx))
       {
          org.jboss.jca.embedded.dsl.resourceadapters12.api.XaPoolType dashRaXmlPt = dashRaXmlCdt.getOrCreateXaPool()
             .minPoolSize(poolSize).initialPoolSize(poolSize).maxPoolSize(poolSize).prefill(Boolean.TRUE);
+
+         dashRaXmlCdt.getOrCreateRecovery().noRecovery(Boolean.TRUE);
       }
       else
       {
@@ -312,10 +320,11 @@ public class Performance
     * Base
     *
     * @param clients The number of clients
+    * @param useTx Use transactions
     * @return The result
     * @throws Throwable Thrown in case of an error
     */
-   public int testBase(int clients) throws Throwable
+   public int testBase(int clients, boolean useTx) throws Throwable
    {
       int result = 0;
       Context context = null;
@@ -335,21 +344,25 @@ public class Performance
          List<Client> clientList = new ArrayList<Client>(clients);
          for (int i = 0; i < clients; i++)
          {
-            clientList.add(new Client(cf, ut, done));
+            clientList.add(new Client(cf, useTx ? ut : null, done));
          }
 
          clearStatistics();
 
-         long start = System.currentTimeMillis();
+         long start = System.nanoTime();
 
          List<Future<Integer>> futures = es.invokeAll(clientList);
 
          done.await();
 
-         long end = System.currentTimeMillis();
+         long end = System.nanoTime();
 
-         long duration = end - start;
-         double seconds = duration / 1000.0;
+         double millis = (end - start) / 1000000.0;
+
+         if (millis <= 0.0)
+            millis = 1.0;
+
+         double seconds = millis / 1000.0;
 
          int totalTxs = 0;
          for (Future<Integer> f : futures)
@@ -418,18 +431,21 @@ public class Performance
          {
             for (int i = 0; i < TRANSACTIONS_PER_CLIENT; i++)
             {
-               ut.begin();
+               if (ut != null)
+                  ut.begin();
 
                pc = pcf.getConnection();
                pc.close();
 
-               ut.commit();
+               if (ut != null)
+                  ut.commit();
+
                success++;
             }
          }
          catch (Exception e)
          {
-            // Ignore
+            log.fatal(e.getMessage(), e);
          }
          finally
          {
@@ -571,13 +587,13 @@ public class Performance
     *
     * @throws Throwable Thrown in case of an error
     */
-   @Test
+   @Test(timeout = 180000)
    public void testNo() throws Throwable
    {
       for (int i = 0; i < CLIENTS.length; i++)
       {
          rampUp(createNoTxDeployment(POOL_SIZES[i]), POOL_SIZES[i], THREAD_POOL_SIZES[i]);
-         insertResult("NoTransaction", CLIENTS[i], testBase(CLIENTS[i]));
+         insertResult("NoTransaction", CLIENTS[i], testBase(CLIENTS[i], USE_TRANSACTION_FOR_NOTRANSACTION));
          rampDown("NoTransaction", CLIENTS[i]);
       }
    }
@@ -587,13 +603,13 @@ public class Performance
     *
     * @throws Throwable Thrown in case of an error
     */
-   @Test
+   @Test(timeout = 180000)
    public void testLocal() throws Throwable
    {
       for (int i = 0; i < CLIENTS.length; i++)
       {
          rampUp(createLocalTxDeployment(POOL_SIZES[i]), POOL_SIZES[i], THREAD_POOL_SIZES[i]);
-         insertResult("LocalTransaction", CLIENTS[i], testBase(CLIENTS[i]));
+         insertResult("LocalTransaction", CLIENTS[i], testBase(CLIENTS[i], true));
          rampDown("LocalTransaction", CLIENTS[i]);
       }
    }
@@ -603,13 +619,13 @@ public class Performance
     *
     * @throws Throwable Thrown in case of an error
     */
-   @Test
+   @Test(timeout = 180000)
    public void testXA() throws Throwable
    {
       for (int i = 0; i < CLIENTS.length; i++)
       {
          rampUp(createXATxDeployment(POOL_SIZES[i]), POOL_SIZES[i], THREAD_POOL_SIZES[i]);
-         insertResult("XATransaction", CLIENTS[i], testBase(CLIENTS[i]));
+         insertResult("XATransaction", CLIENTS[i], testBase(CLIENTS[i], true));
          rampDown("XATransaction", CLIENTS[i]);
       }
    }
@@ -664,5 +680,8 @@ public class Performance
       log.errorf("Transactions: %s", TRANSACTIONS_PER_CLIENT);
       log.errorf("Statistics: %s", STATISTICS);
       log.errorf("Record enlistment: %s", RECORD_ENLISTMENT_TRACES);
+      log.errorf("Use TX for NoTransaction: %s", USE_TRANSACTION_FOR_NOTRANSACTION);
+      log.errorf("Transaction begin duration: %s", TX_BEGIN_DURATION);
+      log.errorf("Transaction commit duration: %s", TX_COMMIT_DURATION);
    }
 }
