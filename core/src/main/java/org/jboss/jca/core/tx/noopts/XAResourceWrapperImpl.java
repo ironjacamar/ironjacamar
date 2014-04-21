@@ -79,6 +79,7 @@ public class XAResourceWrapperImpl implements XAResourceWrapper
     */
    public void commit(Xid xid, boolean onePhase) throws XAException
    {
+      xaResource.commit(xid, onePhase);
    }
 
    /**
@@ -86,6 +87,7 @@ public class XAResourceWrapperImpl implements XAResourceWrapper
     */
    public void end(Xid xid, int flags) throws XAException
    {
+      xaResource.end(xid, flags);
    }
 
    /**
@@ -93,6 +95,7 @@ public class XAResourceWrapperImpl implements XAResourceWrapper
     */
    public void forget(Xid xid) throws XAException
    {
+      xaResource.forget(xid);
    }
 
    /**
@@ -100,7 +103,7 @@ public class XAResourceWrapperImpl implements XAResourceWrapper
     */
    public int getTransactionTimeout() throws XAException
    {
-      return 0;
+      return xaResource.getTransactionTimeout();
    }
 
    /**
@@ -137,7 +140,7 @@ public class XAResourceWrapperImpl implements XAResourceWrapper
     */
    public int prepare(Xid xid) throws XAException
    {
-      return XAResource.XA_OK;
+      return xaResource.prepare(xid);
    }
 
    /**
@@ -145,7 +148,7 @@ public class XAResourceWrapperImpl implements XAResourceWrapper
     */
    public Xid[] recover(int flag) throws XAException
    {
-      return new Xid[0];
+      return xaResource.recover(flag);
    }
 
    /**
@@ -153,6 +156,7 @@ public class XAResourceWrapperImpl implements XAResourceWrapper
     */
    public void rollback(Xid xid) throws XAException
    {
+      xaResource.rollback(xid);
    }
 
    /**
@@ -160,7 +164,7 @@ public class XAResourceWrapperImpl implements XAResourceWrapper
     */
    public boolean setTransactionTimeout(int flag) throws XAException
    {
-      return true;
+      return xaResource.setTransactionTimeout(flag);
    }
 
    /**
@@ -168,6 +172,7 @@ public class XAResourceWrapperImpl implements XAResourceWrapper
     */
    public void start(Xid xid, int flags) throws XAException
    {
+      xaResource.start(xid, flags);
    }
 
    /**

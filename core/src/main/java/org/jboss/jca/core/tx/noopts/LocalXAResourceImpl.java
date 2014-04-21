@@ -27,6 +27,7 @@ import org.jboss.jca.core.spi.transaction.local.LocalXAException;
 import org.jboss.jca.core.spi.transaction.local.LocalXAResource;
 import org.jboss.jca.core.spi.transaction.xa.XAResourceWrapper;
 
+import javax.resource.ResourceException;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
@@ -38,6 +39,12 @@ import javax.transaction.xa.Xid;
  */
 public class LocalXAResourceImpl implements LocalXAResource, XAResourceWrapper
 {
+   /** Connection listener */
+   private ConnectionListener cl;
+
+   /**Connection manager*/
+   private ConnectionManager connectionManager = null;
+
    /** Product name */
    private String productName;
 
@@ -56,6 +63,8 @@ public class LocalXAResourceImpl implements LocalXAResource, XAResourceWrapper
    public LocalXAResourceImpl(String productName, String productVersion,
                               String jndiName)
    {
+      this.cl = null;
+      this.connectionManager = null;
       this.productName = productName;
       this.productVersion = productVersion;
       this.jndiName = jndiName;
@@ -66,6 +75,7 @@ public class LocalXAResourceImpl implements LocalXAResource, XAResourceWrapper
     */
    public void setConnectionManager(ConnectionManager connectionManager)
    {
+      this.connectionManager = connectionManager;
    }
 
    /**
@@ -73,6 +83,7 @@ public class LocalXAResourceImpl implements LocalXAResource, XAResourceWrapper
     */
    public void setConnectionListener(ConnectionListener cl)
    {
+      this.cl = cl;
    }
 
    /**
@@ -80,6 +91,14 @@ public class LocalXAResourceImpl implements LocalXAResource, XAResourceWrapper
     */
    public void start(Xid xid, int flags) throws XAException
    {
+      try
+      {
+         cl.getManagedConnection().getLocalTransaction().begin();
+      }
+      catch (ResourceException re)
+      {
+         throw new LocalXAException("start", XAException.XAER_RMERR, re);
+      }
    }
 
    /**
@@ -94,6 +113,15 @@ public class LocalXAResourceImpl implements LocalXAResource, XAResourceWrapper
     */
    public void commit(Xid xid, boolean onePhase) throws XAException
    {
+      try
+      {
+         cl.getManagedConnection().getLocalTransaction().commit();
+      }
+      catch (ResourceException re)
+      {
+         connectionManager.returnManagedConnection(cl, true);
+         throw new LocalXAException("commit", XAException.XA_RBROLLBACK, re);
+      }
    }
 
    /**
@@ -141,6 +169,15 @@ public class LocalXAResourceImpl implements LocalXAResource, XAResourceWrapper
     */
    public void rollback(Xid xid) throws XAException
    {
+      try
+      {
+         cl.getManagedConnection().getLocalTransaction().rollback();
+      }
+      catch (ResourceException re)
+      {
+         connectionManager.returnManagedConnection(cl, true);
+         throw new LocalXAException("rollback", XAException.XAER_RMERR, re);
+      }
    }
 
    /**

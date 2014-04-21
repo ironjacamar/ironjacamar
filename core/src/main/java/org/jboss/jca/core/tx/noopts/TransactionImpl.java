@@ -56,7 +56,7 @@ public class TransactionImpl implements Transaction, Serializable
    {
       this.key = key;
       this.status = Status.STATUS_ACTIVE;
-      this.syncs = null;
+      this.syncs = new HashSet<Synchronization>();
       this.resources = new HashMap<Object, Object>();
    }
 
@@ -124,9 +124,6 @@ public class TransactionImpl implements Transaction, Serializable
    {
       if (status == Status.STATUS_UNKNOWN)
          throw new IllegalStateException("Status unknown");
-
-      if (syncs == null)
-         syncs = new HashSet<Synchronization>(1);
 
       syncs.add(sync);
    }
@@ -197,17 +194,22 @@ public class TransactionImpl implements Transaction, Serializable
    }
 
    /**
+    * Active
+    */
+   void active()
+   {
+      status = Status.STATUS_ACTIVE;
+   }
+
+   /**
     * Finish transaction
     * @param commit Commit (true), or rollback (false)
     */
    private void finish(boolean commit)
    {
-      if (syncs != null)
+      for (Synchronization s : syncs)
       {
-         for (Synchronization s : syncs)
-         {
-            s.beforeCompletion();
-         }
+         s.beforeCompletion();
       }
 
       if (commit)
@@ -219,17 +221,13 @@ public class TransactionImpl implements Transaction, Serializable
          status = Status.STATUS_ROLLEDBACK;
       }
 
-      if (syncs != null)
+      for (Synchronization s : syncs)
       {
-         for (Synchronization s : syncs)
-         {
-            s.afterCompletion(status);
-         }
+         s.afterCompletion(status);
       }
 
       status = Status.STATUS_UNKNOWN;
-
-      if (syncs != null)
-         syncs = null;
+      syncs.clear();
+      resources.clear();
    }
 }
