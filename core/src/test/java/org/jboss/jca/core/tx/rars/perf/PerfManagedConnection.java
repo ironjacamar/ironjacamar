@@ -50,6 +50,12 @@ public class PerfManagedConnection implements ManagedConnection, LocalTransactio
    /** ManagedConnectionFactory */
    private PerfManagedConnectionFactory mcf;
 
+   /** Transaction begin duration */
+   private long txBeginDuration;
+
+   /** Transaction commit duration */
+   private long txCommitDuration;
+
    /** Listeners */
    private List<ConnectionEventListener> listeners;
 
@@ -65,10 +71,14 @@ public class PerfManagedConnection implements ManagedConnection, LocalTransactio
    /**
     * Default constructor
     * @param mcf mcf
+    * @param tb Transaction begin duration
+    * @param tc Transaction commit duration
     */
-   public PerfManagedConnection(PerfManagedConnectionFactory mcf)
+   public PerfManagedConnection(PerfManagedConnectionFactory mcf, long tb, long tc)
    {
       this.mcf = mcf;
+      this.txBeginDuration = tb;
+      this.txCommitDuration = tc;
       this.logwriter = null;
       this.listeners = Collections.synchronizedList(new ArrayList<ConnectionEventListener>(1));
       this.connection = new PerfConnectionImpl(this);
@@ -243,6 +253,18 @@ public class PerfManagedConnection implements ManagedConnection, LocalTransactio
     */
    public void begin() throws ResourceException
    {
+      if (txBeginDuration > 0)
+      {
+         try
+         {
+            Thread.sleep(txBeginDuration);
+         }
+         catch (Exception e)
+         {
+            // Ignore
+         }
+      }
+
       ConnectionEvent ce = new ConnectionEvent(this, ConnectionEvent.LOCAL_TRANSACTION_STARTED);
       
       for (ConnectionEventListener cel : listeners)
@@ -256,6 +278,18 @@ public class PerfManagedConnection implements ManagedConnection, LocalTransactio
     */
    public void commit() throws ResourceException
    {
+      if (txCommitDuration > 0)
+      {
+         try
+         {
+            Thread.sleep(txCommitDuration);
+         }
+         catch (Exception e)
+         {
+            // Ignore
+         }
+      }
+
       ConnectionEvent ce = new ConnectionEvent(this, ConnectionEvent.LOCAL_TRANSACTION_COMMITTED);
       
       for (ConnectionEventListener cel : listeners)
@@ -269,6 +303,18 @@ public class PerfManagedConnection implements ManagedConnection, LocalTransactio
     */
    public void rollback() throws ResourceException
    {
+      if (txCommitDuration > 0)
+      {
+         try
+         {
+            Thread.sleep(txCommitDuration);
+         }
+         catch (Exception e)
+         {
+            // Ignore
+         }
+      }
+
       ConnectionEvent ce = new ConnectionEvent(this, ConnectionEvent.LOCAL_TRANSACTION_ROLLEDBACK);
       
       for (ConnectionEventListener cel : listeners)
@@ -284,6 +330,17 @@ public class PerfManagedConnection implements ManagedConnection, LocalTransactio
     */
    public void start(Xid xid, int flags) throws XAException
    {
+      if (txBeginDuration > 0)
+      {
+         try
+         {
+            Thread.sleep(txBeginDuration);
+         }
+         catch (Exception e)
+         {
+            // Ignore
+         }
+      }
    }
 
    /**
@@ -291,6 +348,17 @@ public class PerfManagedConnection implements ManagedConnection, LocalTransactio
     */
    public void commit(Xid xid, boolean onePhase) throws XAException
    {
+      if (txCommitDuration > 0)
+      {
+         try
+         {
+            Thread.sleep(txCommitDuration);
+         }
+         catch (Exception e)
+         {
+            // Ignore
+         }
+      }
    }
 
    /**
@@ -298,6 +366,17 @@ public class PerfManagedConnection implements ManagedConnection, LocalTransactio
     */
    public void rollback(Xid xid) throws XAException
    {
+      if (txCommitDuration > 0)
+      {
+         try
+         {
+            Thread.sleep(txCommitDuration);
+         }
+         catch (Exception e)
+         {
+            // Ignore
+         }
+      }
    }
 
    /**

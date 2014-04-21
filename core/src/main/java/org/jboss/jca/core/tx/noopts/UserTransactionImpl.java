@@ -82,9 +82,9 @@ public class UserTransactionImpl implements UserTransactionProvider, UserTransac
                               SystemException
    {
       Transaction tx = registry.getTransaction();
-      
-      if (tx != null)
-         throw new NotSupportedException();
+
+      if (tx != null && tx.getStatus() != Status.STATUS_UNKNOWN)
+         throw new SystemException();
 
       registry.startTransaction();
 
