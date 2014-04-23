@@ -84,6 +84,10 @@ public class TransactionSynchronizer implements Synchronization
    private TransactionSynchronizer(Transaction tx)
    {
       this.tx = tx;
+      this.enlistingThread = null;
+      this.unenlisted = new ArrayList<Synchronization>(1);
+      this.enlisted = new ArrayList<Synchronization>(1);
+      this.ccmSynch = null;
    }
    
    /**
@@ -142,9 +146,6 @@ public class TransactionSynchronizer implements Synchronization
     */
    public synchronized void addEnlisted(Synchronization synch)
    {
-      if (enlisted == null)
-         enlisted = new ArrayList<Synchronization>(1);
-
       enlisted.add(synch);
    }
    
@@ -156,9 +157,6 @@ public class TransactionSynchronizer implements Synchronization
     */
    public synchronized boolean removeEnlisted(Synchronization synch)
    {
-      if (enlisted == null)
-         return false;
-
       return enlisted.remove(synch);
    }
    
@@ -306,17 +304,14 @@ public class TransactionSynchronizer implements Synchronization
     */
    public void beforeCompletion()
    {
-      if (enlisted != null)
-      {
-         for (Synchronization synch : enlisted)
-         {
-            invokeBefore(synch);
-         }
-      }
-      
       if (ccmSynch != null)
       {
          invokeBefore(ccmSynch);  
+      }
+
+      for (Synchronization synch : enlisted)
+      {
+         invokeBefore(synch);
       }
    }
 
@@ -325,17 +320,14 @@ public class TransactionSynchronizer implements Synchronization
     */
    public void afterCompletion(int status)
    {
-      if (enlisted != null)
-      {
-         for (Synchronization synch : enlisted)
-         {
-            invokeAfter(synch, status);
-         }
-      }
-      
       if (ccmSynch != null)
       {
          invokeAfter(ccmSynch, status);  
+      }
+
+      for (Synchronization synch : enlisted)
+      {
+         invokeAfter(synch, status);
       }
 
       // Cleanup the maps
