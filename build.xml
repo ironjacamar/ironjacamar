@@ -923,6 +923,10 @@
         <batchtest todir="${reports.dir}/jacoco/tests">
           <fileset dir="${build.dir}/common/test">
             <include name="**/*TestCase.class"/>
+            <exclude name="**/*BMTestCase.class"/>
+            <exclude name="**/*MJVMTestCase.class"/>
+            <exclude name="**/*CrashTestCase.class"/>
+            <exclude name="**/*PerfTestCase.class"/>
           </fileset>
         </batchtest>
       </junit>
@@ -964,7 +968,10 @@
         <batchtest todir="${reports.dir}/jacoco/tests">
           <fileset dir="${build.dir}/core/test">
             <include name="**/*TestCase.class"/>
+            <exclude name="**/*BMTestCase.class"/>
             <exclude name="**/*MJVMTestCase.class"/>
+            <exclude name="**/*CrashTestCase.class"/>
+            <exclude name="**/*PerfTestCase.class"/>
           </fileset>
         </batchtest>
       </junit>
@@ -1006,6 +1013,10 @@
         <batchtest todir="${reports.dir}/jacoco/tests">
           <fileset dir="${build.dir}/deployers/test">
             <include name="**/*TestCase.class"/>
+            <exclude name="**/*BMTestCase.class"/>
+            <exclude name="**/*MJVMTestCase.class"/>
+            <exclude name="**/*CrashTestCase.class"/>
+            <exclude name="**/*PerfTestCase.class"/>
           </fileset>
         </batchtest>
       </junit>
@@ -1048,6 +1059,10 @@
         <batchtest todir="${reports.dir}/jacoco/tests">
           <fileset dir="${build.dir}/embedded/test">
             <include name="**/*TestCase.class"/>
+            <exclude name="**/*BMTestCase.class"/>
+            <exclude name="**/*MJVMTestCase.class"/>
+            <exclude name="**/*CrashTestCase.class"/>
+            <exclude name="**/*PerfTestCase.class"/>
           </fileset>
         </batchtest>
       </junit>
@@ -1089,6 +1104,10 @@
         <batchtest todir="${reports.dir}/jacoco/tests">
           <fileset dir="${build.dir}/arquillian/test">
             <include name="**/*TestCase.class"/>
+            <exclude name="**/*BMTestCase.class"/>
+            <exclude name="**/*MJVMTestCase.class"/>
+            <exclude name="**/*CrashTestCase.class"/>
+            <exclude name="**/*PerfTestCase.class"/>
           </fileset>
         </batchtest>
       </junit>
@@ -1130,6 +1149,10 @@
         <batchtest todir="${reports.dir}/jacoco/tests">
           <fileset dir="${build.dir}/validator/test">
             <include name="**/*TestCase.class"/>
+            <exclude name="**/*BMTestCase.class"/>
+            <exclude name="**/*MJVMTestCase.class"/>
+            <exclude name="**/*CrashTestCase.class"/>
+            <exclude name="**/*PerfTestCase.class"/>
           </fileset>
         </batchtest>
       </junit>
@@ -1171,6 +1194,10 @@
         <batchtest todir="${reports.dir}/jacoco/tests">
           <fileset dir="${build.dir}/codegenerator/test">
             <include name="**/*TestCase.class"/>
+            <exclude name="**/*BMTestCase.class"/>
+            <exclude name="**/*MJVMTestCase.class"/>
+            <exclude name="**/*CrashTestCase.class"/>
+            <exclude name="**/*PerfTestCase.class"/>
           </fileset>
         </batchtest>
       </junit>
@@ -1214,6 +1241,10 @@
         <batchtest todir="${reports.dir}/jacoco/tests">
           <fileset dir="${build.dir}/adapters/test">
             <include name="**/*TestCase.class"/>
+            <exclude name="**/*BMTestCase.class"/>
+            <exclude name="**/*MJVMTestCase.class"/>
+            <exclude name="**/*CrashTestCase.class"/>
+            <exclude name="**/*PerfTestCase.class"/>
           </fileset>
         </batchtest>
       </junit>
