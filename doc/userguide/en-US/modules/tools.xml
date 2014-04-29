@@ -171,4 +171,56 @@
 
   </section>
 
+  <section id="tools_tracer">
+    <title>Tracer tool</title>
+
+    <para>
+      Debugging Java EE Connector Architecture scenarios can be a complex task, as the interaction
+      between the application and the resource adapter depends both on the implementation of the resource
+      adapter but also on how it is configured.
+    </para>
+
+    <para>
+      IronJacamar features a tracer tool that will help users to get an overview of the interactions
+      performed between the application and resource adapter.
+    </para>
+
+    <para>
+      The tracer produces machine readable codes at the <code>TRACE</code> logging category
+    </para>
+    <programlisting>
+org.jboss.jca.core.tracer
+    </programlisting>
+    <para>
+      which can then be processed with the <code>tracer-report</code> tool, located in <code>docs/as/</code>.
+    </para>
+
+    <para>
+      The tool is executed with
+    </para>
+    <programlisting>
+./tracer-report.sh logfile
+    </programlisting>
+    <para>
+      where <code>logfile</code> contains the <code>TRACE</code> logging.
+    </para>
+
+    <para>
+      The output are HTML reports that shows the interaction performed by all active resource adapters, and the
+      applications using them.
+    </para>
+
+    <para>
+      In addition, a UML sequence diagram is produced for valid interaction scenarios, which can be converted into
+      an image using the <code>SDedit</code> application.
+    </para>
+
+    <para>
+      For invalid interaction scenarios the tool will try and highlight the issue such that the collected log between the
+      two timestamps identified can be investigated.
+    </para>
+
+  </section>
+
+
 </chapter>

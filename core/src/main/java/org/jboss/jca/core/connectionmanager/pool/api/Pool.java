@@ -81,6 +81,18 @@ public interface Pool extends org.jboss.jca.core.api.connectionmanager.pool.Pool
    public void setCapacity(Capacity c);
 
    /**
+    * Get the interleaving flag
+    * @return The value
+    */
+   public boolean isInterleaving();
+
+   /**
+    * Set the interleaving flag
+    * @param v The value
+    */
+   public void setInterleaving(boolean v);
+
+   /**
     * Get a connection
     * 
     * @param trackByTransaction for transaction stickiness

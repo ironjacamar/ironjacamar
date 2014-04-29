@@ -34,6 +34,7 @@ import org.jboss.jca.core.connectionmanager.tx.TxConnectionManagerImpl;
 import org.jboss.jca.core.spi.transaction.ConnectableResource;
 import org.jboss.jca.core.spi.transaction.TxUtils;
 import org.jboss.jca.core.spi.transaction.local.LocalXAResource;
+import org.jboss.jca.core.tracer.Tracer;
 
 import java.util.Iterator;
 import java.util.List;
@@ -171,7 +172,8 @@ public class TxConnectionListener extends AbstractConnectionListener
          }
          catch (XAException e)
          {
-            log.debug("XAException happend during return for: " + getPool().getName(), e);
+            log.debug("XAException happend during return for: " + getPool() != null ? getPool().getName() : "Unknown",
+                      e);
          }
       }
    }
@@ -449,6 +451,10 @@ public class TxConnectionListener extends AbstractConnectionListener
 
                            boolean successResult = tx.delistResource(getXAResource(), XAResource.TMSUCCESS);
 
+                           if (Tracer.isEnabled())
+                              Tracer.delistConnectionListener(getPool() != null ? getPool().getName() : null, this,
+                                                              true, true);
+
                            if (successResult)
                            {
                               if (trace)
@@ -457,7 +463,6 @@ public class TxConnectionListener extends AbstractConnectionListener
                            else
                            {
                               log.debug("delist-success failed: " + this);
-
                               success = false;
                            }
                         }
@@ -468,6 +473,10 @@ public class TxConnectionListener extends AbstractConnectionListener
 
                            boolean failResult = tx.delistResource(getXAResource(), XAResource.TMFAIL);
                            
+                           if (Tracer.isEnabled())
+                              Tracer.delistConnectionListener(getPool() != null ? getPool().getName() : null, this,
+                                                              false, true);
+
                            if (failResult)
                            {
                               if (trace)
@@ -627,7 +636,7 @@ public class TxConnectionListener extends AbstractConnectionListener
             }
             else
             {
-               log.delistingFailed(getPool().getName(), new Exception());
+               log.delistingFailed(getPool() != null ? getPool().getName() : "Unknown", new Exception());
                this.getConnectionManager().returnManagedConnection(this, true);
             }
          }
@@ -871,6 +880,11 @@ public class TxConnectionListener extends AbstractConnectionListener
             XAResource resource = getXAResource();
             if (!currentTx.enlistResource(resource))
             {
+               if (Tracer.isEnabled())
+                  Tracer.enlistConnectionListener(getPool() != null ? getPool().getName() : null, 
+                                                  TxConnectionListener.this, false,
+                                                  !TxConnectionListener.this.isTrackByTx());
+
                if (!disableFailedtoEnlist)
                {
                   enlistError = failedToEnlist;
@@ -880,10 +894,22 @@ public class TxConnectionListener extends AbstractConnectionListener
                   enlistError = new Throwable("Failed to enlist");
                }
             }
+            else
+            {
+               if (Tracer.isEnabled())
+                  Tracer.enlistConnectionListener(getPool() != null ? getPool().getName() : null,
+                                                  TxConnectionListener.this, true,
+                                                  !TxConnectionListener.this.isTrackByTx());
+            }
          }
          catch (Throwable t)
          {
             enlistError = t;
+
+            if (Tracer.isEnabled())
+               Tracer.enlistConnectionListener(getPool() != null ? getPool().getName() : null,
+                                               TxConnectionListener.this, false,
+                                               !TxConnectionListener.this.isTrackByTx());
          }
 
          synchronized (this)
@@ -931,6 +957,10 @@ public class TxConnectionListener extends AbstractConnectionListener
                            log.tracef("delistResource(%s, TMSUCCESS)", TxConnectionListener.this.getXAResource());
 
                         currentTx.delistResource(TxConnectionListener.this.getXAResource(), XAResource.TMSUCCESS);
+
+                        if (Tracer.isEnabled())
+                           Tracer.delistConnectionListener(getPool() != null ? getPool().getName() : null,
+                                                           TxConnectionListener.this, true, false);
                      }
                      else
                      {
@@ -938,6 +968,10 @@ public class TxConnectionListener extends AbstractConnectionListener
                            log.tracef("delistResource(%s, TMFAIL)", TxConnectionListener.this.getXAResource());
 
                         currentTx.delistResource(TxConnectionListener.this.getXAResource(), XAResource.TMFAIL);
+
+                        if (Tracer.isEnabled())
+                           Tracer.delistConnectionListener(getPool() != null ? getPool().getName() : null,
+                                                           TxConnectionListener.this, false, false);
                      }
                   }
                   else
@@ -1014,7 +1048,7 @@ public class TxConnectionListener extends AbstractConnectionListener
                {
                   if (tracking == null || tracking.booleanValue())
                   {
-                     log.activeHandles(getPool().getName(), connectionHandles.size());
+                     log.activeHandles(getPool() != null ? getPool().getName() : "Unknown", connectionHandles.size());
 
                      if (tracking != null && tracking.booleanValue())
                      {
@@ -1026,6 +1060,15 @@ public class TxConnectionListener extends AbstractConnectionListener
                         }
 
                         log.txConnectionListenerBoundary(new Exception());
+                     }
+
+                     if (Tracer.isEnabled())
+                     {
+                        for (Object c : connectionHandles)
+                        {
+                           Tracer.clearConnection(getPool() != null ? getPool().getName() : null,
+                                                  TxConnectionListener.this, c);
+                        }
                      }
 
                      getConnectionManager().returnManagedConnection(TxConnectionListener.this, true);

@@ -36,6 +36,7 @@ import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactory;
 import org.jboss.jca.core.connectionmanager.transaction.LockKey;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
+import org.jboss.jca.core.tracer.Tracer;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -111,6 +112,9 @@ public abstract class AbstractPool implements Pool
    /** The capacity */
    private Capacity capacity;
 
+   /** Interleaving */
+   private boolean interleaving;
+
    /**
     * Create a new base pool.
     *
@@ -136,6 +140,7 @@ public abstract class AbstractPool implements Pool
       this.trace = log.isTraceEnabled();
       this.statistics = new PoolStatisticsImpl(pc.getMaxSize(), mcpPools);
       this.capacity = null;
+      this.interleaving = false;
    }
 
    /**
@@ -182,6 +187,22 @@ public abstract class AbstractPool implements Pool
    public void setCapacity(Capacity c)
    {
       capacity = c;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isInterleaving()
+   {
+      return interleaving;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setInterleaving(boolean v)
+   {
+      interleaving = v;
    }
 
    /**
@@ -559,7 +580,7 @@ public abstract class AbstractPool implements Pool
             if (trace)
                log.tracef("Killing connection tracked by transaction=%s tx=%s", cl, trackByTransaction);
 
-            mcp.returnConnection(cl, true);
+            returnConnection(cl, true);
          }
 
          throw new ResourceException(bundle.unableObtainLock());
@@ -578,7 +599,7 @@ public abstract class AbstractPool implements Pool
             if (trace)
                log.tracef("Killing connection tracked by transaction=%s tx=%s", cl, trackByTransaction);
 
-            mcp.returnConnection(cl, true);
+            returnConnection(cl, true);
          }
 
          throw new ResourceException(bundle.unableObtainLock(), ie);
@@ -591,7 +612,7 @@ public abstract class AbstractPool implements Pool
 
          if (other != null)
          {
-            mcp.returnConnection(cl, false);
+            returnConnection(cl, false);
 
             if (trace)
                log.tracef("Another thread already got a connection tracked by transaction=%s tx=%s",
@@ -616,7 +637,7 @@ public abstract class AbstractPool implements Pool
             if (trace)
                log.tracef("Killing connection tracked by transaction=%s tx=%s", cl, trackByTransaction);
 
-            mcp.returnConnection(cl, true);
+            returnConnection(cl, true);
          }
 
          throw new ResourceException(bundle.unableGetConnectionListener(), t);
@@ -666,6 +687,9 @@ public abstract class AbstractPool implements Pool
       cl.setTrackByTx(false);
       //Get connection listener pool
       ManagedConnectionPool mcp = cl.getManagedConnectionPool();
+
+      if (Tracer.isEnabled())
+         Tracer.returnConnectionListener(poolName, cl, kill, interleaving);
 
       //Return connection to the pool
       mcp.returnConnection(cl, kill);

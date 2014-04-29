@@ -35,6 +35,7 @@ import org.jboss.jca.core.connectionmanager.pool.api.PrefillPool;
 import org.jboss.jca.core.connectionmanager.pool.capacity.DefaultCapacity;
 import org.jboss.jca.core.connectionmanager.pool.idle.IdleRemover;
 import org.jboss.jca.core.connectionmanager.pool.validator.ConnectionValidator;
+import org.jboss.jca.core.tracer.Tracer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -388,6 +389,9 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                            statistics.deltaTotalPoolTime(lastUsed - cl.getLastUsedTime());
                         }
 
+                        if (Tracer.isEnabled())
+                           Tracer.getConnectionListener(pool.getName(), cl, true, pool.isInterleaving());
+
                         return cl;
                      }
 
@@ -469,6 +473,9 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                // Trigger capacity increase
                if (pool.getCapacity().getIncrementer() != null)
                   CapacityFiller.schedule(new CapacityRequest(this, subject, cri));
+               
+               if (Tracer.isEnabled())
+                  Tracer.getConnectionListener(pool.getName(), cl, false, pool.isInterleaving());
 
                return cl;
             }

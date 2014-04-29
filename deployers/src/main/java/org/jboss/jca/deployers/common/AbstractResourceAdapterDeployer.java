@@ -1702,6 +1702,8 @@ public abstract class AbstractResourceAdapterDeployer
                               recoveryMD = connectionDefinition.getRecovery();
                            }
 
+                           pool.setInterleaving(interleaving.booleanValue());
+
                            cm = cmf.createTransactional(tsl, pool,
                                                         getSubjectFactory(securityDomain), securityDomain,
                                                         useCCM, getCachedConnectionManager(),
@@ -2269,6 +2271,8 @@ public abstract class AbstractResourceAdapterDeployer
 
                                           recoveryMD = connectionDefinition.getRecovery();
                                        }
+
+                                       pool.setInterleaving(interleaving.booleanValue());
 
                                        cm = cmf.createTransactional(tsl, pool,
                                                                     getSubjectFactory(securityDomain), securityDomain,

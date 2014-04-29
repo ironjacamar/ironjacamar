@@ -35,6 +35,7 @@ import org.jboss.jca.core.connectionmanager.pool.api.PrefillPool;
 import org.jboss.jca.core.connectionmanager.pool.capacity.DefaultCapacity;
 import org.jboss.jca.core.connectionmanager.pool.idle.IdleRemover;
 import org.jboss.jca.core.connectionmanager.pool.validator.ConnectionValidator;
+import org.jboss.jca.core.tracer.Tracer;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -427,6 +428,9 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
          if (statistics.isEnabled())
             statistics.deltaTotalGetTime(lastUsed - startWait);
 
+         if (Tracer.isEnabled())
+            Tracer.getConnectionListener(pool.getName(), cl, false, pool.isInterleaving());
+
          // Return connection listener
          return cl;
       }
@@ -448,6 +452,9 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
                   statistics.deltaTotalGetTime(lastUsed - startWait);
                   statistics.deltaTotalPoolTime(lastUsed - cl.getLastUsedTime());
                }
+
+               if (Tracer.isEnabled())
+                  Tracer.getConnectionListener(pool.getName(), cl, true, pool.isInterleaving());
 
                // Return connection listener
                return cl;

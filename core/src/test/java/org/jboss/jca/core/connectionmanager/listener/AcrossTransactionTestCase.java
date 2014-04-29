@@ -164,6 +164,15 @@ public class AcrossTransactionTestCase
    }
 
    /**
+    * Create a NoTransaction deployment
+    * @return The resource adapter descriptor
+    */
+   public ResourceAdaptersDescriptor createNoTxDeployment()
+   {
+      return createDeployment("NoTransaction", false);
+   }
+
+   /**
     * Base
     *
     * @param dashRaXml The deployment metadata
@@ -233,6 +242,18 @@ public class AcrossTransactionTestCase
    }
 
    /**
+    * No
+    *
+    * @throws Throwable Thrown in case of an error
+    */
+   @Test
+   public void testNo() throws Throwable
+   {
+      log.infof("testNo()");
+      testBase(createNoTxDeployment(), "");
+   }
+
+   /**
     * Local
     *
     * @throws Throwable Thrown in case of an error
@@ -240,6 +261,7 @@ public class AcrossTransactionTestCase
    @Test
    public void testLocal() throws Throwable
    {
+      log.infof("testLocal()");
       testBase(createLocalTxDeployment(), "");
    }
 
@@ -251,6 +273,7 @@ public class AcrossTransactionTestCase
    @Test
    public void testXA() throws Throwable
    {
+      log.infof("testXA()");
       testBase(createXATxDeployment(), "");
    }
 
@@ -262,6 +285,7 @@ public class AcrossTransactionTestCase
    @Test
    public void testXAInterleaving() throws Throwable
    {
+      log.infof("testXAInterleaving()");
       testBase(createXATxDeployment(true), "3B8");
    }
 

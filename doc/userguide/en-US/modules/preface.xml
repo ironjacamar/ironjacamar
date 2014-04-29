@@ -47,6 +47,9 @@
           <listitem>
             Support tracking of connection handles across transaction boundaries
           </listitem>
+          <listitem>
+            Event tracer for easier debugging
+          </listitem>
         </itemizedlist>
       </para>
     </section>
