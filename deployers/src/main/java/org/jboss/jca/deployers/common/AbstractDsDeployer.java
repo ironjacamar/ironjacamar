@@ -760,6 +760,8 @@ public abstract class AbstractDsDeployer
          padXid = ds.getXaPool().isPadXid();
       }
 
+      pool.setInterleaving(interleaving.booleanValue());
+
       // Register data sources
       mgtDs.setJndiName(jndiName);
       mgtDs.setPoolConfiguration(pc);

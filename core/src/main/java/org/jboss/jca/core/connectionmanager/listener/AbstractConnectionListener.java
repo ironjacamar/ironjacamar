@@ -30,6 +30,7 @@ import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.spi.transaction.ConnectableResourceListener;
+import org.jboss.jca.core.tracer.Tracer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -277,6 +278,9 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
       {
          connectionHandles.add(handle);
 
+         if (Tracer.isEnabled())
+            Tracer.getConnection(pool != null ? pool.getName() : null, this, handle);
+
          if (tracking != null && tracking.booleanValue())
             connectionTraces.put(handle, new Exception());
       }
@@ -329,6 +333,9 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
             log.unregisteredHandleNotRegistered(handle, managedConnection);
          }
 
+         if (Tracer.isEnabled())
+            Tracer.returnConnection(pool != null ? pool.getName() : null, this, handle);
+
          if (tracking != null && tracking.booleanValue())
             connectionTraces.remove(handle);
       }
@@ -353,6 +360,14 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
          for (Object handle : connectionHandles)
          {
             getCachedConnectionManager().unregisterConnection(getConnectionManager(), handle);
+         }
+      }
+
+      if (Tracer.isEnabled())
+      {
+         for (Object handle : connectionHandles)
+         {
+            Tracer.returnConnection(pool != null ? pool.getName() : null, this, handle);
          }
       }
 
