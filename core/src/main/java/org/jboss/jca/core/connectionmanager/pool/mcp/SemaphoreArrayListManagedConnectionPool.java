@@ -657,7 +657,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          kill = true;
       }
 
-      synchronized (cls)
+      /*synchronized (cls)
       {
          checkedOut.remove(cl);
 
@@ -690,6 +690,37 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          {
             permits.release();
          }
+      }*/
+      if (kill)
+      {
+    	 synchronized (cls) 
+    	 {
+    	    checkedOut.remove(cl);
+    	    cls.remove(cl);
+		 }
+    	 if (null != clPermits.remove(cl))
+    	 {
+    		 permits.release();
+    	 }
+      }
+      else
+      {
+    	 cl.used();
+    	 synchronized (cls) 
+    	 {
+		    if (!cls.contains(cl))
+		    {
+		    	cls.add(cl);
+		    }
+		    else
+		    {
+		    	log.attemptReturnConnectionTwice(cl, new Throwable("STACKTRACE"));
+		    }
+		    if (null != clPermits.remove(cl))
+	    	{
+	    	    permits.release();
+	    	}
+		}
       }
 
       if (statistics.isEnabled())
