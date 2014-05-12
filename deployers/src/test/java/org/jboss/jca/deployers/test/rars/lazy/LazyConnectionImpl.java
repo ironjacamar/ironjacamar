@@ -71,7 +71,7 @@ public class LazyConnectionImpl implements LazyConnection
     */
    public boolean isManagedConnectionSet()
    {
-      log.trace("isManagedConnectionSet()");
+      log.tracef("%s: isManagedConnectionSet() => %s", this, mc != null);
 
       return mc != null;
    }
@@ -82,8 +82,8 @@ public class LazyConnectionImpl implements LazyConnection
     */
    public boolean closeManagedConnection()
    {
-      log.trace("closeManagedConnection()");
-      
+      log.tracef("%s: closeManagedConnection()", this);
+
       if (mc != null)
       {
          try
@@ -115,7 +115,7 @@ public class LazyConnectionImpl implements LazyConnection
     */
    public boolean associate()
    {
-      log.trace("associate()");
+      log.tracef("%s: associate()", this);
       if (mc == null)
       {
          if (cm instanceof LazyAssociatableConnectionManager)
@@ -171,7 +171,7 @@ public class LazyConnectionImpl implements LazyConnection
     */
    public void close()
    {
-      log.trace("close()");
+      log.tracef("%s: close()", this);
       if (mc != null)
       {
          mc.closeHandle(this);
@@ -192,7 +192,7 @@ public class LazyConnectionImpl implements LazyConnection
     */
    void setManagedConnection(LazyManagedConnection mc)
    {
-      log.trace("setManagedConnection(" + mc + ")");
+      log.tracef("%s: setManagedConnection(" + mc + ")", this);
       this.mc = mc;
    }
 }

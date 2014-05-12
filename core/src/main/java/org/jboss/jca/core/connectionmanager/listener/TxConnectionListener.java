@@ -436,11 +436,11 @@ public class TxConnectionListener extends AbstractConnectionListener
                    isManagedConnectionFree() &&
                    isEnlisted())
                {
-                  ConnectionListenerFactory clf = (ConnectionListenerFactory)getConnectionManager();
-                  if (clf.getTransactionIntegration() != null &&
-                      clf.getTransactionIntegration().getTransactionManager() != null)
+                  if (getConnectionManager().getTransactionIntegration() != null &&
+                      getConnectionManager().getTransactionIntegration().getTransactionManager() != null)
                   {
-                     Transaction tx = clf.getTransactionIntegration().getTransactionManager().getTransaction();
+                     Transaction tx = getConnectionManager().getTransactionIntegration().
+                        getTransactionManager().getTransaction();
 
                      if (TxUtils.isUncommitted(tx))
                      {
@@ -531,11 +531,19 @@ public class TxConnectionListener extends AbstractConnectionListener
 
          if (status != Status.STATUS_NO_TRANSACTION)
          {
-            Transaction tx = tm.getTransaction();
-            boolean delistResult = tx.delistResource(getXAResource(), XAResource.TMSUCCESS);
+            if (isEnlisted())
+            {
+               Transaction tx = tm.getTransaction();
+               boolean delistResult = tx.delistResource(getXAResource(), XAResource.TMSUCCESS);
 
-            if (trace)
-               log.tracef("dissociate: delistResult=%s", delistResult);
+               if (trace)
+                  log.tracef("dissociate: delistResult=%s", delistResult);
+            }
+            else
+            {
+               if (trace)
+                  log.tracef("dissociate: not enlisted (%s)", this);
+            }
 
             if (isTrackByTx())
             {
@@ -814,6 +822,9 @@ public class TxConnectionListener extends AbstractConnectionListener
          {
             this.failedToEnlist = null;
          }
+
+         if (trace)
+            log.tracef("%s: Constructor", toString());
       }
 
       /**
@@ -1042,6 +1053,7 @@ public class TxConnectionListener extends AbstractConnectionListener
 
                if (wasFreed(null))
                {
+                  TxConnectionListener.this.setEnlisted(false);
                   getConnectionManager().returnManagedConnection(TxConnectionListener.this, false);
                }
                else

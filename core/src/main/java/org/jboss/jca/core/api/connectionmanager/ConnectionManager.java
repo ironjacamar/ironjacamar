@@ -26,6 +26,7 @@ import org.jboss.jca.core.api.connectionmanager.listener.ConnectionListener;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
+import javax.resource.spi.LazyAssociatableConnectionManager;
 import javax.resource.spi.LazyEnlistableConnectionManager;
 import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
@@ -36,7 +37,9 @@ import javax.resource.spi.ManagedConnectionFactory;
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface ConnectionManager extends javax.resource.spi.ConnectionManager, LazyEnlistableConnectionManager
+public interface ConnectionManager extends javax.resource.spi.ConnectionManager,
+                                           LazyAssociatableConnectionManager,
+                                           LazyEnlistableConnectionManager
 {
    /**
     * Associate a managed connection to a logical connection

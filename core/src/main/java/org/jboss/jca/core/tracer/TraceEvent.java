@@ -52,6 +52,9 @@ public class TraceEvent
    /** Return interleaving connection listener with kill */
    public static final int RETURN_INTERLEAVING_CONNECTION_LISTENER_WITH_KILL = 13;
 
+   /** Clear connection listener */
+   public static final int CLEAR_CONNECTION_LISTENER = 14;
+
    /** Enlist connection listener */
    public static final int ENLIST_CONNECTION_LISTENER = 20;
 
@@ -232,6 +235,8 @@ public class TraceEvent
             return "returnConnectionListener() (I)";
          case RETURN_INTERLEAVING_CONNECTION_LISTENER_WITH_KILL:
             return "returnConnectionListener(true) (I)";
+         case CLEAR_CONNECTION_LISTENER:
+            return "clearConnectionListener()";
          case ENLIST_CONNECTION_LISTENER:
             return "enlistResource()";
          case ENLIST_CONNECTION_LISTENER_FAILED:

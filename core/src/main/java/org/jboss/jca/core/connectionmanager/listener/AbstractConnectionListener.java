@@ -34,7 +34,7 @@ import org.jboss.jca.core.tracer.Tracer;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.resource.ResourceException;
@@ -80,7 +80,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
    private ConnectionState state = ConnectionState.NORMAL;
    
    /** Connection handles */
-   protected CopyOnWriteArrayList<Object> connectionHandles = new CopyOnWriteArrayList<Object>();
+   protected CopyOnWriteArraySet<Object> connectionHandles = new CopyOnWriteArraySet<Object>();
 
    /** Connection traces */
    protected Map<Object, Exception> connectionTraces;
@@ -249,7 +249,10 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
     * {@inheritDoc}
     */   
    public boolean isManagedConnectionFree()
-   {      
+   {
+      if (trace)
+         log.tracef("[%s] isManagedConnectionFree: %s", getIdentifier(), connectionHandles.isEmpty());
+
       return connectionHandles.isEmpty();
    }
 
@@ -280,6 +283,10 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
 
          if (Tracer.isEnabled())
             Tracer.getConnection(pool != null ? pool.getName() : null, this, handle);
+
+         if (trace)
+            log.tracef("[%s] registerConnection: %s [size=%s] (%s)", getIdentifier(), handle,
+                       connectionHandles.size(), connectionHandles);
 
          if (tracking != null && tracking.booleanValue())
             connectionTraces.put(handle, new Exception());
@@ -345,9 +352,8 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
       }
       
       if (trace)
-      {
-         log.trace("unregisterConnection: " + connectionHandles.size() + " handles left");  
-      }            
+         log.tracef("[%s] unregisterConnection: " + connectionHandles.size() + " handles left (%s)",
+                    getIdentifier(), connectionHandles);
    }
    
    /**
@@ -355,6 +361,9 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
     */
    public  void unregisterConnections()
    {
+      if (trace)
+         log.tracef("[%s] unregisterConnections", getIdentifier());
+
       if (getCachedConnectionManager() != null)
       {
          for (Object handle : connectionHandles)
@@ -495,6 +504,22 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
 
    /**
     * {@inheritDoc}
+    */
+   public boolean supportsLazyAssociation()
+   {
+      return managedConnection instanceof javax.resource.spi.DissociatableManagedConnection;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean supportsLazyEnlistment()
+   {
+      return managedConnection instanceof javax.resource.spi.LazyEnlistableManagedConnection;
+   }
+
+   /**
+    * {@inheritDoc}
     */   
    public void localTransactionCommitted(ConnectionEvent event)
    {
@@ -553,6 +578,17 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
          return -1;
 
       return 1;
+   }
+
+   /**
+    * Get string identifier
+    * @return The value
+    */
+   private String getIdentifier()
+   {
+      StringBuffer buffer = new StringBuffer(100);
+      buffer.append(getClass().getSimpleName()).append('@').append(Integer.toHexString(System.identityHashCode(this)));
+      return buffer.toString();
    }
 
    /**

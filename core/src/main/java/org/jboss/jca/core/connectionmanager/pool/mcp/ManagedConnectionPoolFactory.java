@@ -23,7 +23,7 @@
 package org.jboss.jca.core.connectionmanager.pool.mcp;
 
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
-import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
+import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 
 import javax.resource.spi.ConnectionRequestInfo;
@@ -80,7 +80,7 @@ public class ManagedConnectionPoolFactory
     * Create a managed connection pool using the default implementation strategy
     * 
     * @param mcf the managed connection factory
-    * @param clf the connection listener factory
+    * @param cm the connection manager
     * @param subject the subject
     * @param cri the connection request info
     * @param pc the pool configuration
@@ -88,13 +88,13 @@ public class ManagedConnectionPoolFactory
     * @return The initialized managed connection pool
     * @exception Throwable Thrown in case of an error
     */
-   public ManagedConnectionPool create(ManagedConnectionFactory mcf, ConnectionListenerFactory clf, Subject subject,
+   public ManagedConnectionPool create(ManagedConnectionFactory mcf, ConnectionManager cm, Subject subject,
                                        ConnectionRequestInfo cri, PoolConfiguration pc, Pool p) 
       throws Throwable
    {
       ManagedConnectionPool mcp = (ManagedConnectionPool)defaultImplementation.newInstance();
       
-      return init(mcp, mcf, clf, subject, cri, pc, p);
+      return init(mcp, mcf, cm, subject, cri, pc, p);
    }
 
    /**
@@ -102,7 +102,7 @@ public class ManagedConnectionPoolFactory
     * 
     * @param strategy Fullt qualified class name for the managed connection pool strategy
     * @param mcf the managed connection factory
-    * @param clf the connection listener factory
+    * @param cm the connection manager
     * @param subject the subject
     * @param cri the connection request info
     * @param pc the pool configuration
@@ -111,7 +111,7 @@ public class ManagedConnectionPoolFactory
     * @exception Throwable Thrown in case of an error
     */
    public ManagedConnectionPool create(String strategy, 
-                                       ManagedConnectionFactory mcf, ConnectionListenerFactory clf, Subject subject,
+                                       ManagedConnectionFactory mcf, ConnectionManager cm, Subject subject,
                                        ConnectionRequestInfo cri, PoolConfiguration pc, Pool p)
       throws Throwable
    {
@@ -121,14 +121,14 @@ public class ManagedConnectionPoolFactory
       
       ManagedConnectionPool mcp = (ManagedConnectionPool)clz.newInstance();
       
-      return init(mcp, mcf, clf, subject, cri, pc, p);
+      return init(mcp, mcf, cm, subject, cri, pc, p);
    }
 
    /**
     * Initialize
     * @param mcp The managed connection pool
     * @param mcf the managed connection factory
-    * @param clf the connection listener factory
+    * @param cm the connection manager
     * @param subject the subject
     * @param cri the connection request info
     * @param pc the pool configuration
@@ -136,10 +136,10 @@ public class ManagedConnectionPoolFactory
     * @return The initialized managed connection pool
     */
    private ManagedConnectionPool init(ManagedConnectionPool mcp, 
-                                      ManagedConnectionFactory mcf, ConnectionListenerFactory clf, Subject subject,
+                                      ManagedConnectionFactory mcf, ConnectionManager cm, Subject subject,
                                       ConnectionRequestInfo cri, PoolConfiguration pc, Pool p)
    {
-      mcp.initialize(mcf, clf, subject, cri, pc, p);
+      mcp.initialize(mcf, cm, subject, cri, pc, p);
 
       return mcp;
    }
