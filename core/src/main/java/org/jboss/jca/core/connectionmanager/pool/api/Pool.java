@@ -22,8 +22,8 @@
 package org.jboss.jca.core.connectionmanager.pool.api;
 
 import org.jboss.jca.core.CoreLogger;
+import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
-import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 
 import javax.resource.ResourceException;
@@ -62,11 +62,11 @@ public interface Pool extends org.jboss.jca.core.api.connectionmanager.pool.Pool
    public ManagedConnectionFactory getManagedConnectionFactory();
 
    /**
-    * Set the connection listener factory.
+    * Set the connection manager
     * 
-    * @param clf the connection event listener factory
+    * @param cm the connection manager
     */
-   public void setConnectionListenerFactory(ConnectionListenerFactory clf);
+   public void setConnectionManager(ConnectionManager cm);
 
    /**
     * Get the capacity policy

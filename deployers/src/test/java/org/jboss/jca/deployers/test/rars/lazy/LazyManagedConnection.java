@@ -108,10 +108,10 @@ public class LazyManagedConnection implements ManagedConnection, DissociatableMa
       this.lazyXAResource = null;
 
       if (localTransaction)
-         this.lazyLocalTransaction = new LazyLocalTransaction();
+         this.lazyLocalTransaction = new LazyLocalTransaction(this);
 
       if (xaTransaction)
-         this.lazyXAResource = new LazyXAResource();
+         this.lazyXAResource = new LazyXAResource(this);
    }
 
    /**
@@ -128,7 +128,9 @@ public class LazyManagedConnection implements ManagedConnection, DissociatableMa
       log.trace("getConnection()");
 
       if (connection != null)
+      {
          connection.setManagedConnection(null);
+      }
          
       connection = new LazyConnectionImpl(this, mcf, cm, cxRequestInfo);
       return connection;
@@ -146,7 +148,9 @@ public class LazyManagedConnection implements ManagedConnection, DissociatableMa
       log.trace("associateConnection()");
 
       if (this.connection != null)
+      {
          this.connection.setManagedConnection(null);
+      }
 
       if (connection != null)
       {
@@ -200,12 +204,6 @@ public class LazyManagedConnection implements ManagedConnection, DissociatableMa
    public void destroy() throws ResourceException
    {
       log.trace("destroy()");
-
-      if (connection != null)
-      {
-         connection.setManagedConnection(null);
-         connection = null;
-      }
    }
 
    /**
@@ -244,6 +242,15 @@ public class LazyManagedConnection implements ManagedConnection, DissociatableMa
    }
 
    /**
+    * Set enlisted
+    * @param v The value
+    */
+   void setEnlisted(boolean v)
+   {
+      enlisted = v;
+   }
+
+   /**
     * Enlist
     * @return boolean
     */
@@ -255,7 +262,6 @@ public class LazyManagedConnection implements ManagedConnection, DissociatableMa
          {
             LazyEnlistableConnectionManager lecm = (LazyEnlistableConnectionManager)cm;
             lecm.lazyEnlist(this);
-            enlisted = true;
             return true;
          }
       }

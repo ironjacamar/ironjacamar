@@ -35,11 +35,16 @@ public class LazyXAResource implements XAResource
    /** The logger */
    private static Logger log = Logger.getLogger(LazyXAResource.class);
 
+   /** The managed connection */
+   private LazyManagedConnection mc;
+
    /**
     * Constructor
+    * @param mc The managed connection
     */
-   public LazyXAResource()
+   public LazyXAResource(LazyManagedConnection mc)
    {
+      this.mc = mc;
    }
 
    /**
@@ -48,6 +53,7 @@ public class LazyXAResource implements XAResource
    public void commit(Xid xid, boolean onePhase) throws XAException
    {
       log.tracef("commit(%s, %s)", xid, onePhase);
+      mc.setEnlisted(false);
    }
 
    /**
@@ -112,6 +118,7 @@ public class LazyXAResource implements XAResource
    public void rollback(Xid xid) throws XAException
    {
       log.tracef("rollback(%s)", xid);
+      mc.setEnlisted(false);
    }
 
    /**
@@ -129,5 +136,6 @@ public class LazyXAResource implements XAResource
    public void start(Xid xid, int flags) throws XAException
    {
       log.tracef("start(%s, %s)", xid, flags);
+      mc.setEnlisted(true);
    }
 }

@@ -24,8 +24,8 @@ package org.jboss.jca.core.connectionmanager.pool.mcp;
 
 import org.jboss.jca.core.api.connectionmanager.pool.FlushMode;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
+import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
-import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.idle.IdleConnectionRemovalSupport;
 
@@ -52,13 +52,13 @@ public interface ManagedConnectionPool extends IdleConnectionRemovalSupport
     * Initialize the managed connection pool
     * 
     * @param mcf The managed connection factory
-    * @param clf The connection listener factory
+    * @param cm The connection manager
     * @param subject The subject
     * @param cri The connection request info
     * @param pc The pool configuration
     * @param p The pool
     */
-   public void initialize(ManagedConnectionFactory mcf, ConnectionListenerFactory clf, Subject subject,
+   public void initialize(ManagedConnectionFactory mcf, ConnectionManager cm, Subject subject,
                           ConnectionRequestInfo cri, PoolConfiguration pc, Pool p);
 
    /**

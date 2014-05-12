@@ -27,8 +27,8 @@ import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.connectionmanager.pool.FlushMode;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
+import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
-import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Capacity;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.capacity.DefaultCapacity;
@@ -84,8 +84,8 @@ public abstract class AbstractPool implements Pool
    /** The managed connection factory for this pool */
    private final ManagedConnectionFactory mcf;
 
-   /** The connection listener factory for this pool*/
-   private ConnectionListenerFactory clf;
+   /** The connection manager for this pool*/
+   private ConnectionManager cm;
 
    /** The pool parameters */
    private final PoolConfiguration poolConfiguration;
@@ -209,7 +209,7 @@ public abstract class AbstractPool implements Pool
          if (mcp == null)
          {
             ManagedConnectionPoolFactory mcpf = new ManagedConnectionPoolFactory();
-            ManagedConnectionPool newMcp = mcpf.create(mcf, clf, subject, cri, poolConfiguration, this);
+            ManagedConnectionPool newMcp = mcpf.create(mcf, cm, subject, cri, poolConfiguration, this);
 
             mcp = mcpPools.putIfAbsent(key, newMcp);
             if (mcp == null)
@@ -234,8 +234,8 @@ public abstract class AbstractPool implements Pool
     */
    protected TransactionIntegration getTransactionIntegration()
    {
-      if (clf != null)
-         return clf.getTransactionIntegration();
+      if (cm != null)
+         return cm.getTransactionIntegration();
 
       return null;
    }
@@ -408,7 +408,7 @@ public abstract class AbstractPool implements Pool
 
       if (noTxSeparatePools)
       {
-         separateNoTx = clf.isTransactional();
+         separateNoTx = cm.isTransactional();
       }
 
       // Get specific managed connection pool key
@@ -536,6 +536,14 @@ public abstract class AbstractPool implements Pool
       if (trace)
          log.tracef("Got connection from pool tracked by transaction=%s tx=%s", cl, trackByTransaction);
 
+      if (cm.isEnlistment() && cl.supportsLazyEnlistment())
+      {
+         if (trace)
+            log.tracef("Lazy enlistment connection from pool tracked by transaction=%s tx=%s", cl, trackByTransaction);
+
+         return cl;
+      }
+
       TransactionSynchronizationRegistry tsr = getTransactionSynchronizationRegistry();
       Lock lock = getLock();
 
@@ -662,20 +670,20 @@ public abstract class AbstractPool implements Pool
    }
 
    /**
-    * Get the connection listener factory
+    * Get the connection manager
     * @return The value
     */
-   protected ConnectionListenerFactory getConnectionListenerFactory()
+   protected ConnectionManager getConnectionManager()
    {
-      return clf;
+      return cm;
    }
 
    /**
     * {@inheritDoc}
     */
-   public void setConnectionListenerFactory(ConnectionListenerFactory clf)
+   public void setConnectionManager(ConnectionManager cm)
    {
-      this.clf = clf;
+      this.cm = cm;
    }
 
    /**
@@ -729,7 +737,7 @@ public abstract class AbstractPool implements Pool
 
          if (noTxSeparatePools)
          {
-            separateNoTx = clf.isTransactional();
+            separateNoTx = cm.isTransactional();
          }
 
          Object key = getKey(subject, cri, separateNoTx);

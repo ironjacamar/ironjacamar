@@ -29,9 +29,9 @@ import javax.annotation.Resource;
 import javax.transaction.UserTransaction;
 
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -44,6 +44,8 @@ import static org.junit.Assert.*;
  */
 public class LazyAssociationXATransactionInterleavingTestCase extends LazyTestBase
 {
+   private static Logger log = Logger.getLogger(LazyAssociationXATransactionInterleavingTestCase.class);
+
    //-------------------------------------------------------------------------------------||
    //---------------------- GIVEN --------------------------------------------------------||
    //-------------------------------------------------------------------------------------||
@@ -107,7 +109,7 @@ public class LazyAssociationXATransactionInterleavingTestCase extends LazyTestBa
       }
       catch (Throwable t)
       {
-         t.printStackTrace();
+         log.error(t.getMessage(), t);
          status = false;
          fail("Throwable:" + t.getMessage());
       }
@@ -128,15 +130,16 @@ public class LazyAssociationXATransactionInterleavingTestCase extends LazyTestBa
    }
 
    /**
-    * Two connections - one managed connection
+    * Two connections - one managed connection - without enlistment
     * @exception Throwable Thrown if case of an error
     */
-   @Ignore
-   public void testTwoConnections() throws Throwable
+   @Test
+   public void testTwoConnectionsWithoutEnlistment() throws Throwable
    {
       assertNotNull(connectionFactory);
       assertNotNull(userTransaction);
 
+      boolean status = true;
       userTransaction.begin();
 
       LazyConnection lc1 = null;
@@ -149,11 +152,24 @@ public class LazyAssociationXATransactionInterleavingTestCase extends LazyTestBa
 
          lc2 = connectionFactory.getConnection();
 
-         fail("Got two connections");
+         assertTrue(lc2.isManagedConnectionSet());
+         assertFalse(lc1.isManagedConnectionSet());
+
+         assertTrue(lc2.closeManagedConnection());
+
+         assertFalse(lc1.isManagedConnectionSet());
+         assertFalse(lc2.isManagedConnectionSet());
+
+         assertTrue(lc1.associate());
+
+         assertTrue(lc1.isManagedConnectionSet());
+         assertFalse(lc2.isManagedConnectionSet());
       }
       catch (Throwable t)
       {
-         // Ok
+         log.error(t.getMessage(), t);
+         status = false;
+         fail("Throwable:" + t.getMessage());
       }
       finally
       {
@@ -163,7 +179,66 @@ public class LazyAssociationXATransactionInterleavingTestCase extends LazyTestBa
          if (lc2 != null)
             lc2.close();
 
-         userTransaction.rollback();
+         if (status)
+         {
+            userTransaction.commit();
+         }
+         else
+         {
+            userTransaction.rollback();
+         }
+      }
+   }
+
+   /**
+    * Two connections - one managed connection - with enlistment
+    * @exception Throwable Thrown if case of an error
+    */
+   @Test
+   public void testTwoConnectionsWithEnlistment() throws Throwable
+   {
+      assertNotNull(connectionFactory);
+      assertNotNull(userTransaction);
+
+      boolean status = true;
+      userTransaction.begin();
+
+      LazyConnection lc1 = null;
+      LazyConnection lc2 = null;
+      try
+      {
+         lc1 = connectionFactory.getConnection();
+
+         assertTrue(lc1.isManagedConnectionSet());
+         assertFalse(lc1.isEnlisted());
+         assertTrue(lc1.enlist());
+         assertTrue(lc1.isEnlisted());
+
+         lc2 = connectionFactory.getConnection();
+
+         fail("Got two connections");
+      }
+      catch (Exception e)
+      {
+         log.info(e.getMessage(), e);
+         status = false;
+      }
+      finally
+      {
+         if (lc1 != null)
+            lc1.close();
+
+         if (lc2 != null)
+            lc2.close();
+
+         if (status)
+         {
+            userTransaction.commit();
+         }
+         else
+         {
+            userTransaction.rollback();
+         }
       }
    }
 }

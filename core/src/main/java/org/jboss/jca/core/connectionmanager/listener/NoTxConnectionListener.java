@@ -57,9 +57,6 @@ public class NoTxConnectionListener extends AbstractConnectionListener
                                  final Pool pool, final ManagedConnectionPool mcp, final FlushStrategy flushStrategy)
    {
       super(cm, mc, pool, mcp, flushStrategy);
-
-      // Always "enlisted"
-      setEnlisted(true);
    }
    
    /**

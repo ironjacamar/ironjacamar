@@ -40,6 +40,9 @@
           <max-pool-size>1</max-pool-size>
           <interleaving/>
         </xa-pool>
+        <timeout>
+          <blocking-timeout-millis>100</blocking-timeout-millis>
+        </timeout>
       </connection-definition>
     </connection-definitions>
   </resource-adapter>

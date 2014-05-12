@@ -23,8 +23,8 @@
 package org.jboss.jca.core.connectionmanager.pool.mcp;
 
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
+import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
-import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 
 import java.util.Collection;
@@ -68,7 +68,7 @@ class ManagedConnectionPoolUtility
     * @param identifier The managed connection pool identifier
     * @param method The method identifier
     * @param mcf The managed connection factory
-    * @param clf The connection listener factory
+    * @param cm The connection manager
     * @param pool The pool
     * @param pc The pool configuration
     * @param available The available connection listeners
@@ -77,7 +77,7 @@ class ManagedConnectionPoolUtility
     * @return The state
     */
    static String fullDetails(int identifier, String method, ManagedConnectionFactory mcf,
-                             ConnectionListenerFactory clf, Pool pool, PoolConfiguration pc,
+                             ConnectionManager cm, Pool pool, PoolConfiguration pc,
                              Collection<ConnectionListener> available, Collection<ConnectionListener> inUse,
                              ManagedConnectionPoolStatistics mcps)
    {
@@ -89,9 +89,9 @@ class ManagedConnectionPoolUtility
       sb.append("ManagedConnectionFactory:").append(newLine);
       sb.append("  Class: ").append(mcf.getClass().getName()).append(newLine);
       sb.append("  Object: ").append(Integer.toHexString(System.identityHashCode(mcf))).append(newLine);
-      sb.append("ConnectionListenerFactory:").append(newLine);
-      sb.append("  Class: ").append(clf.getClass().getName()).append(newLine);
-      sb.append("  Object: ").append(Integer.toHexString(System.identityHashCode(clf))).append(newLine);
+      sb.append("ConnectionManager:").append(newLine);
+      sb.append("  Class: ").append(cm.getClass().getName()).append(newLine);
+      sb.append("  Object: ").append(Integer.toHexString(System.identityHashCode(cm))).append(newLine);
       sb.append("Pool:").append(newLine);
       sb.append("  Name: ").append(pool.getName()).append(newLine);
       sb.append("PoolConfiguration:").append(newLine);
