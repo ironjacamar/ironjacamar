@@ -29,9 +29,9 @@ import javax.annotation.Resource;
 import javax.transaction.UserTransaction;
 
 import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -43,6 +43,7 @@ import static org.junit.Assert.*;
  */
 public class LazyAssociationLocalTransactionTestCase extends LazyTestBase
 {
+   private static Logger log = Logger.getLogger(LazyAssociationLocalTransactionTestCase.class);
 
    //-------------------------------------------------------------------------------------||
    //---------------------- GIVEN --------------------------------------------------------||
@@ -80,6 +81,8 @@ public class LazyAssociationLocalTransactionTestCase extends LazyTestBase
    @Test
    public void testBasic() throws Throwable
    {
+      log.infof("testBasic: Start");
+
       assertNotNull(connectionFactory);
       assertNotNull(userTransaction);
 
@@ -102,12 +105,12 @@ public class LazyAssociationLocalTransactionTestCase extends LazyTestBase
          assertTrue(lc.isManagedConnectionSet());
 
          assertFalse(lc.isEnlisted());
-         assertFalse(lc.enlist());
-         assertFalse(lc.isEnlisted());
+         assertTrue(lc.enlist());
+         assertTrue(lc.isEnlisted());
       }
       catch (Throwable t)
       {
-         t.printStackTrace();
+         log.error(t.getMessage(), t);
          status = false;
          fail("Throwable:" + t.getMessage());
       }
@@ -124,16 +127,20 @@ public class LazyAssociationLocalTransactionTestCase extends LazyTestBase
          {
             userTransaction.rollback();
          }
+
+         log.infof("testBasic: End");
       }
    }
 
    /**
-    * Two connections - one managed connection
+    * Two connections - one managed connection - without enlistment
     * @exception Throwable Thrown if case of an error
     */
-   @Ignore
-   public void testTwoConnections() throws Throwable
+   @Test
+   public void testTwoConnectionsWithoutEnlistment() throws Throwable
    {
+      log.infof("testTwoConnectionsWithoutEnlistment: Start");
+
       assertNotNull(connectionFactory);
       assertNotNull(userTransaction);
 
@@ -148,24 +155,32 @@ public class LazyAssociationLocalTransactionTestCase extends LazyTestBase
 
          assertTrue(lc1.isManagedConnectionSet());
 
+         log.infof("testTwoConnectionsWithoutEnlistment: Before 2nd getConnection");
+
          lc2 = connectionFactory.getConnection();
 
          assertTrue(lc2.isManagedConnectionSet());
          assertFalse(lc1.isManagedConnectionSet());
+
+         log.infof("testTwoConnectionsWithoutEnlistment: Before closeManagedConnection");
 
          assertTrue(lc2.closeManagedConnection());
 
          assertFalse(lc1.isManagedConnectionSet());
          assertFalse(lc2.isManagedConnectionSet());
 
+         log.infof("testTwoConnectionsWithoutEnlistment: Before associate");
+
          assertTrue(lc1.associate());
 
          assertTrue(lc1.isManagedConnectionSet());
          assertFalse(lc2.isManagedConnectionSet());
+
+         log.infof("testTwoConnectionsWithoutEnlistment: After associate");
       }
       catch (Throwable t)
       {
-         t.printStackTrace();
+         log.error(t.getMessage(), t);
          status = false;
          fail("Throwable:" + t.getMessage());
       }
@@ -185,6 +200,76 @@ public class LazyAssociationLocalTransactionTestCase extends LazyTestBase
          {
             userTransaction.rollback();
          }
+
+         log.infof("testTwoConnectionsWithoutEnlistment: End");
+      }
+   }
+
+   /**
+    * Two connections - one managed connection - with enlistment
+    * @exception Throwable Thrown if case of an error
+    */
+   @Test
+   public void testTwoConnectionsWithEnlistment() throws Throwable
+   {
+      log.infof("testTwoConnectionsWithEnlistment: Start");
+
+      assertNotNull(connectionFactory);
+      assertNotNull(userTransaction);
+
+      boolean status = true;
+      userTransaction.begin();
+
+      LazyConnection lc1 = null;
+      LazyConnection lc2 = null;
+      try
+      {
+         lc1 = connectionFactory.getConnection();
+
+         assertTrue(lc1.isManagedConnectionSet());
+         assertFalse(lc1.isEnlisted());
+         assertTrue(lc1.enlist());
+         assertTrue(lc1.isEnlisted());
+
+         lc2 = connectionFactory.getConnection();
+
+         assertTrue(lc2.isManagedConnectionSet());
+         assertFalse(lc1.isManagedConnectionSet());
+
+         assertTrue(lc2.closeManagedConnection());
+
+         assertFalse(lc1.isManagedConnectionSet());
+         assertFalse(lc2.isManagedConnectionSet());
+
+         assertTrue(lc1.associate());
+
+         assertTrue(lc1.isManagedConnectionSet());
+         assertFalse(lc2.isManagedConnectionSet());
+      }
+      catch (Throwable t)
+      {
+         log.error(t.getMessage(), t);
+         status = false;
+         fail("Throwable:" + t.getMessage());
+      }
+      finally
+      {
+         if (lc1 != null)
+            lc1.close();
+
+         if (lc2 != null)
+            lc2.close();
+
+         if (status)
+         {
+            userTransaction.commit();
+         }
+         else
+         {
+            userTransaction.rollback();
+         }
+
+         log.infof("testTwoConnectionsWithEnlistment: End");
       }
    }
 }

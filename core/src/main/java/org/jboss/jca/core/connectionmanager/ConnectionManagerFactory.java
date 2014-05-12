@@ -225,7 +225,7 @@ public class ConnectionManagerFactory
                               Long allocationRetryWaitMillis,
                               TransactionManager tm)
    {
-      pool.setConnectionListenerFactory(cm);
+      pool.setConnectionManager(cm);
       cm.setPool(pool);
 
       cm.setSubjectFactory(subjectFactory);

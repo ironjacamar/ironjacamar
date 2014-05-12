@@ -189,4 +189,16 @@ public interface ConnectionListener extends org.jboss.jca.core.api.connectionman
     * @throws ResourceException if exception occurs
     */
    public void dissociate() throws ResourceException;
+
+   /**
+    * Supports lazy association
+    * @return <code>True</code> if supported, otherwise <code>false</code>
+    */
+   public boolean supportsLazyAssociation();
+
+   /**
+    * Supports lazy enlistment
+    * @return <code>True</code> if supported, otherwise <code>false</code>
+    */
+   public boolean supportsLazyEnlistment();
 }

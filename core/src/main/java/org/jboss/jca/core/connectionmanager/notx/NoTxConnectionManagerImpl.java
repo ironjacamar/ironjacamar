@@ -35,7 +35,6 @@ import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import java.util.Collection;
 
 import javax.resource.ResourceException;
-import javax.resource.spi.LazyAssociatableConnectionManager;
 import javax.resource.spi.ManagedConnection;
 import javax.transaction.SystemException;
 
@@ -48,8 +47,7 @@ import org.jboss.logging.Messages;
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class NoTxConnectionManagerImpl extends AbstractConnectionManager implements NoTxConnectionManager,
-                                                                                    LazyAssociatableConnectionManager
+public class NoTxConnectionManagerImpl extends AbstractConnectionManager implements NoTxConnectionManager
 {
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, NoTxConnectionManager.class.getName());
