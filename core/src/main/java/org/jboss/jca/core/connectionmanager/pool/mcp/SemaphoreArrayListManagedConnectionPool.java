@@ -657,13 +657,11 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          kill = true;
       }
 
-      /*synchronized (cls)
+      if (kill)
       {
-         checkedOut.remove(cl);
-
-         // If we are destroying, check the connection is not in the pool
-         if (kill)
+         synchronized (cls) 
          {
+            checkedOut.remove(cl);
             // Adrian Brock: A resource adapter can asynchronously notify us that
             // a connection error occurred.
             // This could happen while the connection is not checked out.
@@ -671,56 +669,30 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             // I have twice had to reinstate this line of code, PLEASE DO NOT REMOVE IT!
             cls.remove(cl);
          }
-         // return to the pool
-         else
+         if (null != clPermits.remove(cl))
          {
-            cl.used();
+            permits.release();
+         }
+      }
+      else
+      {
+         cl.used();
+         synchronized (cls) 
+         {
             if (!cls.contains(cl))
             {
+               checkedOut.remove(cl);
                cls.add(cl);
             }
             else
             {
                log.attemptReturnConnectionTwice(cl, new Throwable("STACKTRACE"));
             }
+            if (null != clPermits.remove(cl))
+            {
+               permits.release();
+            }
          }
-
-         ConnectionListener present = clPermits.remove(cl);
-         if (present != null)
-         {
-            permits.release();
-         }
-      }*/
-      if (kill)
-      {
-    	 synchronized (cls) 
-    	 {
-    	    checkedOut.remove(cl);
-    	    cls.remove(cl);
-		 }
-    	 if (null != clPermits.remove(cl))
-    	 {
-    		 permits.release();
-    	 }
-      }
-      else
-      {
-    	 cl.used();
-    	 synchronized (cls) 
-    	 {
-		    if (!cls.contains(cl))
-		    {
-		    	cls.add(cl);
-		    }
-		    else
-		    {
-		    	log.attemptReturnConnectionTwice(cl, new Throwable("STACKTRACE"));
-		    }
-		    if (null != clPermits.remove(cl))
-	    	{
-	    	    permits.release();
-	    	}
-		}
       }
 
       if (statistics.isEnabled())
