@@ -485,10 +485,13 @@
         <include name="schema/datasources_1_0.xsd"/>
         <include name="schema/datasources_1_1.xsd"/>
         <include name="schema/datasources_1_2.xsd"/>
+        <include name="schema/datasources_1_3.xsd"/>
         <include name="schema/resource-adapters_1_0.xsd"/>
         <include name="schema/resource-adapters_1_1.xsd"/>
+        <include name="schema/resource-adapters_1_2.xsd"/>
         <include name="schema/ironjacamar_1_0.xsd"/>
         <include name="schema/ironjacamar_1_1.xsd"/>
+        <include name="schema/ironjacamar_1_2.xsd"/>
         <include name="schema/j2ee_1_4.xsd"/>
         <include name="schema/javaee_6.xsd"/>
         <include name="schema/javaee_7.xsd"/>
