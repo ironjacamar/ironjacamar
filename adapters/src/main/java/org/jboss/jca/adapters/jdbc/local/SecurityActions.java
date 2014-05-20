@@ -23,7 +23,12 @@
 package org.jboss.jca.adapters.jdbc.local;
 
 import java.security.AccessController;
+import java.security.Principal;
 import java.security.PrivilegedAction;
+import java.util.Set;
+
+import javax.security.auth.Subject;
+
 
 /**
  * Privileged Blocks
@@ -55,7 +60,7 @@ class SecurityActions
     * Get the context classloader.
     * @return The classloader
     */
-   public static ClassLoader getThreadContextClassLoader()
+   static ClassLoader getThreadContextClassLoader()
    {
       if (System.getSecurityManager() == null)
          return Thread.currentThread().getContextClassLoader();
@@ -73,7 +78,7 @@ class SecurityActions
     * Set the context classloader.
     * @param cl classloader
     */
-   public static void setThreadContextClassLoader(final ClassLoader cl)
+   static void setThreadContextClassLoader(final ClassLoader cl)
    {
       if (System.getSecurityManager() == null)
       {
@@ -88,6 +93,35 @@ class SecurityActions
                Thread.currentThread().setContextClassLoader(cl);
 
                return null;
+            }
+         });
+      }
+   }
+
+   /**
+    * Create a Subject
+    * @param readOnly Is the Subject read-only
+    * @param principals The principals
+    * @param pubCredentials The public credentials
+    * @param privCredentials The private credentials
+    * @return The instance
+    */
+   static Subject createSubject(final boolean readOnly,
+                                final Set<? extends Principal> principals,
+                                final Set<?> pubCredentials,
+                                final Set<?> privCredentials)
+   {
+      if (System.getSecurityManager() == null)
+      {
+         return new Subject(readOnly, principals, pubCredentials, privCredentials);
+      }
+      else
+      {
+         return AccessController.doPrivileged(new PrivilegedAction<Subject>()
+         {
+            public Subject run()
+            {
+               return new Subject(readOnly, principals, pubCredentials, privCredentials);
             }
          });
       }

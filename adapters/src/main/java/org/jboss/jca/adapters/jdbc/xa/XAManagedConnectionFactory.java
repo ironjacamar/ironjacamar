@@ -399,15 +399,21 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
 
       if (xadsSelector == null)
       {
-         if (subject != null)
+         final Subject copySubject = subject != null ?
+            SecurityActions.createSubject(false, subject.getPrincipals(),
+                                          subject.getPublicCredentials(),
+                                          subject.getPrivateCredentials()) : null;
+
+
+         if (copySubject != null)
          {
             try
             {
-               return Subject.doAs(subject, new PrivilegedExceptionAction<ManagedConnection>()
+               return Subject.doAs(copySubject, new PrivilegedExceptionAction<ManagedConnection>()
                {
                   public ManagedConnection run() throws ResourceException
                   {
-                     return getXAManagedConnection(subject, cri);
+                     return getXAManagedConnection(copySubject, cri);
                   }
                });
             }
@@ -436,15 +442,20 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
          if (log.isTraceEnabled())
             log.trace("Trying to create an XA connection to " + xaData.getUrl());
 
-         if (subject != null)
+         final Subject copySubject = subject != null ?
+            SecurityActions.createSubject(false, subject.getPrincipals(),
+                                          subject.getPublicCredentials(),
+                                          subject.getPrivateCredentials()) : null;
+
+         if (copySubject != null)
          {
             try
             {
-               return Subject.doAs(subject, new PrivilegedExceptionAction<ManagedConnection>()
+               return Subject.doAs(copySubject, new PrivilegedExceptionAction<ManagedConnection>()
                {
                   public ManagedConnection run() throws ResourceException
                   {
-                     return getXAManagedConnection(subject, cri);
+                     return getXAManagedConnection(copySubject, cri);
                   }
                });
             }

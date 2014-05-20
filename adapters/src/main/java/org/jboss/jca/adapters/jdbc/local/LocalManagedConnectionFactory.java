@@ -224,6 +224,13 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       // Since we use our copy to identify compatibility in matchManagedConnection, we need
       // a pristine copy for our own use.  So give the friendly driver a copy.
       final Properties copy = (Properties) props.clone();
+      Subject copySubject = null;
+
+      if (subject != null)
+         copySubject = SecurityActions.createSubject(false, subject.getPrincipals(),
+                                                     subject.getPublicCredentials(),
+                                                     subject.getPrivateCredentials());
+
       if (log.isTraceEnabled())
       {
          // Make yet another copy to mask the password
@@ -239,11 +246,11 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       if (getURLDelimiter() != null && !getURLDelimiter().trim().equals("") && urlSelector == null)
          initUrlSelector();
 
-      if (subject != null)
+      if (copySubject != null)
       {
          try
          {
-            return Subject.doAs(subject, new PrivilegedExceptionAction<ManagedConnection>()
+            return Subject.doAs(copySubject, new PrivilegedExceptionAction<ManagedConnection>()
             {
                public ManagedConnection run() throws ResourceException
                {
