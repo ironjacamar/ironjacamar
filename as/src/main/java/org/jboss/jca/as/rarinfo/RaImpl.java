@@ -21,10 +21,10 @@
  */
 package org.jboss.jca.as.rarinfo;
 
-import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
-import org.jboss.jca.common.api.metadata.common.v10.CommonConnDef;
-import org.jboss.jca.common.metadata.resourceadapter.v10.ResourceAdapterImpl;
+import org.jboss.jca.common.api.metadata.resourceadapter.AdminObject;
+import org.jboss.jca.common.api.metadata.resourceadapter.ConnectionDefinition;
+import org.jboss.jca.common.metadata.resourceadapter.ActivationImpl;
 
 import java.util.List;
 import java.util.Map;
@@ -37,11 +37,11 @@ import java.util.Map;
  */
 public class RaImpl
 {
-   private ResourceAdapterImpl raImpl = null;
+   private ActivationImpl raImpl = null;
 
    private TransactionSupportEnum transactionSupport;
-   private List<CommonConnDef> connectionDefinitions;
-   private List<CommonAdminObject> adminObjects;
+   private List<ConnectionDefinition> connectionDefinitions;
+   private List<AdminObject> adminObjects;
    private Map<String, String> raConfigProperties;
    private String rarName;
 
@@ -54,8 +54,9 @@ public class RaImpl
     * @param adminObjects adminObjects
     * @param raConfigProperties raConfigProperties
     */
-   public RaImpl(String rarName, TransactionSupportEnum transactionSupport, List<CommonConnDef> connectionDefinitions,
-         List<CommonAdminObject> adminObjects, Map<String, String> raConfigProperties)
+   public RaImpl(String rarName, TransactionSupportEnum transactionSupport,
+                 List<ConnectionDefinition> connectionDefinitions,
+                 List<AdminObject> adminObjects, Map<String, String> raConfigProperties)
    {
       this.rarName = rarName;
       this.transactionSupport = transactionSupport;
@@ -70,8 +71,8 @@ public class RaImpl
     */
    public void buildResourceAdapterImpl()  throws Exception
    {
-      raImpl = new ResourceAdapterImpl(rarName, transactionSupport, connectionDefinitions, adminObjects,
-            raConfigProperties, null, null);
+      raImpl = new ActivationImpl(null, rarName, transactionSupport, connectionDefinitions, adminObjects,
+                                  raConfigProperties, null, null, null);
    }
    
    @Override

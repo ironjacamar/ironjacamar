@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.deployers.test.unit.connector15;
 
-import org.jboss.jca.common.metadata.ra.ra15.Connector15Impl;
+import org.jboss.jca.common.metadata.spec.ConnectorImpl;
 import org.jboss.jca.deployers.test.DeploymentTestBase;
 import org.jboss.jca.deployers.test.rars.inout.SimpleAdminObject;
 import org.jboss.jca.deployers.test.rars.inout.SimpleAdminObject1;
@@ -53,7 +53,7 @@ public abstract class Activation15TestBase extends DeploymentTestBase
    @Override
    public void checkMetadata(String piId) throws Exception
    {
-      assertTrue(mdr.getResourceAdapter(piId) instanceof Connector15Impl);
+      assertTrue(mdr.getResourceAdapter(piId) instanceof ConnectorImpl);
    }
 
    /**

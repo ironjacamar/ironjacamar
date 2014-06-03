@@ -22,8 +22,8 @@
 
 package org.jboss.jca.core.mdr;
 
-import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
-import org.jboss.jca.common.api.metadata.ra.Connector;
+import org.jboss.jca.common.api.metadata.resourceadapter.Activation;
+import org.jboss.jca.common.api.metadata.spec.Connector;
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.spi.mdr.AlreadyExistsException;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
@@ -57,8 +57,8 @@ public class SimpleMetadataRepository implements MetadataRepository
    /** Resource adapter roots */
    private ConcurrentMap<String, File> raRoots;
 
-   /** IronJacamar metadata */
-   private Map<String, IronJacamar> ironJacamar;
+   /** Activation metadata */
+   private Map<String, Activation> activations;
 
    /** JNDI mappings */
    private ConcurrentMap<String, Map<String, List<String>>> jndiMappings;
@@ -70,14 +70,14 @@ public class SimpleMetadataRepository implements MetadataRepository
    {
       this.raTemplates = new ConcurrentHashMap<String, Connector>();
       this.raRoots = new ConcurrentHashMap<String, File>();
-      this.ironJacamar = Collections.synchronizedMap(new HashMap<String, IronJacamar>());
+      this.activations = Collections.synchronizedMap(new HashMap<String, Activation>());
       this.jndiMappings = new ConcurrentHashMap<String, Map<String, List<String>>>();
    }
 
    /**
     * {@inheritDoc}
     */
-   public void registerResourceAdapter(String uniqueId, File root, Connector md, IronJacamar ijmd)
+   public void registerResourceAdapter(String uniqueId, File root, Connector md, Activation a)
       throws AlreadyExistsException
    {
       if (uniqueId == null)
@@ -92,14 +92,14 @@ public class SimpleMetadataRepository implements MetadataRepository
       if (md == null)
          throw new IllegalArgumentException("Connector is null");
 
-      // The IronJacamar metadata object can be null
+      // The Activation metadata object can be null
 
       if (raTemplates.containsKey(uniqueId))
          throw new AlreadyExistsException(bundle.keyNotRegistered(uniqueId));
 
       raTemplates.put(uniqueId, md);
       raRoots.put(uniqueId, root);
-      ironJacamar.put(uniqueId, ijmd);
+      activations.put(uniqueId, a);
    }
 
    /**
@@ -118,7 +118,7 @@ public class SimpleMetadataRepository implements MetadataRepository
 
       raTemplates.remove(uniqueId);
       raRoots.remove(uniqueId);
-      ironJacamar.remove(uniqueId);
+      activations.remove(uniqueId);
    }
 
    /**
@@ -183,7 +183,7 @@ public class SimpleMetadataRepository implements MetadataRepository
    /**
     * {@inheritDoc}
     */
-   public IronJacamar getIronJacamar(String uniqueId) throws NotFoundException
+   public Activation getActivation(String uniqueId) throws NotFoundException
    {
       if (uniqueId == null)
          throw new IllegalArgumentException("UniqueId is null");
@@ -191,10 +191,10 @@ public class SimpleMetadataRepository implements MetadataRepository
       if (uniqueId.trim().equals(""))
          throw new IllegalArgumentException("UniqueId is empty");
 
-      if (!ironJacamar.containsKey(uniqueId))
+      if (!activations.containsKey(uniqueId))
          throw new NotFoundException(bundle.keyNotRegistered(uniqueId));
 
-      return ironJacamar.get(uniqueId);
+      return activations.get(uniqueId);
    }
 
    /**
@@ -339,7 +339,7 @@ public class SimpleMetadataRepository implements MetadataRepository
       sb.append("[");
       sb.append(" raTemplates=").append(raTemplates);
       sb.append(" raRoots=").append(raRoots);
-      sb.append(" ironJacamar=").append(ironJacamar);
+      sb.append(" activations=").append(activations);
       sb.append(" jndiMappings=").append(jndiMappings);
       sb.append("]");
 

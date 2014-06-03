@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.validator.rules;
 
-import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
+import org.jboss.jca.common.api.metadata.spec.ConfigProperty;
 import org.jboss.jca.validator.Failure;
 import org.jboss.jca.validator.Severity;
 import org.jboss.jca.validator.ValidateClass;

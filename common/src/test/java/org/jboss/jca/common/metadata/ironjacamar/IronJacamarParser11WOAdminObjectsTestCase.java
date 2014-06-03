@@ -22,13 +22,12 @@
 package org.jboss.jca.common.metadata.ironjacamar;
 
 import org.jboss.jca.common.api.metadata.JCAMetadata;
-import org.jboss.jca.common.api.metadata.common.CommonPool;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
+import org.jboss.jca.common.api.metadata.common.Pool;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
-import org.jboss.jca.common.api.metadata.common.v11.CommonConnDef;
+import org.jboss.jca.common.api.metadata.resourceadapter.ConnectionDefinition;
 import org.jboss.jca.common.metadata.XMLParserTestBase;
-import org.jboss.jca.common.metadata.ironjacamar.v11.IronJacamarImpl;
-import org.jboss.jca.common.metadata.ironjacamar.v11.IronJacamarParser;
+import org.jboss.jca.common.metadata.resourceadapter.ActivationImpl;
 
 import java.util.List;
 
@@ -66,17 +65,17 @@ public class IronJacamarParser11WOAdminObjectsTestCase extends XMLParserTestBase
    @Override
    public void checkMetadata(JCAMetadata result)
    {
-      IronJacamarImpl ra = (IronJacamarImpl) result;
+      ActivationImpl ra = (ActivationImpl) result;
       
       assertEquals(null, ra.getBootstrapContext());
       assertEquals(null, ra.getBeanValidationGroups());
       assertEquals(null, ra.getConfigProperties());
       assertEquals(ra.getTransactionSupport(), TransactionSupportEnum.LocalTransaction);
       
-      List<org.jboss.jca.common.api.metadata.common.CommonConnDef> cds = ra.getConnectionDefinitions();
+      List<ConnectionDefinition> cds = ra.getConnectionDefinitions();
       assertEquals(1, cds.size());
       //conn-def 1
-      CommonConnDef cd = (CommonConnDef) cds.get(0);
+      ConnectionDefinition cd = cds.get(0);
       assertEquals(null, cd.getClassName());
       assertEquals("java:jboss/name9", cd.getJndiName());
       assertEquals(null, cd.getPoolName());
@@ -88,7 +87,7 @@ public class IronJacamarParser11WOAdminObjectsTestCase extends XMLParserTestBase
       assertTrue(cd.isUseJavaContext());
       
       assertFalse(cd.isXa());
-      CommonPool pool = (CommonPool) cd.getPool();
+      Pool pool = cd.getPool();
       assertFalse(pool.isPrefill());
       assertFalse(pool.isUseStrictMin());
       //default values

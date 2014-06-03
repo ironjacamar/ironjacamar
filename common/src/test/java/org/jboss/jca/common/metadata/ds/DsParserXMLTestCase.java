@@ -31,11 +31,6 @@ import org.jboss.jca.common.api.metadata.ds.Driver;
 import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
 import org.jboss.jca.common.metadata.XMLParserTestBase;
-import org.jboss.jca.common.metadata.ds.v12.DsPoolImpl;
-import org.jboss.jca.common.metadata.ds.v12.DsXaPoolImpl;
-import org.jboss.jca.common.metadata.ds.v13.DataSourceImpl;
-import org.jboss.jca.common.metadata.ds.v13.DsParser;
-import org.jboss.jca.common.metadata.ds.v13.XADataSourceImpl;
 
 import java.util.List;
 import java.util.Map;

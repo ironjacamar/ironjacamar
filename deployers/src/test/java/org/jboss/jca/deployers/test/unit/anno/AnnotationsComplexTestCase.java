@@ -22,23 +22,23 @@
 package org.jboss.jca.deployers.test.unit.anno;
 
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
-import org.jboss.jca.common.api.metadata.ra.AdminObject;
-import org.jboss.jca.common.api.metadata.ra.AuthenticationMechanism;
-import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
-import org.jboss.jca.common.api.metadata.ra.Connector;
-import org.jboss.jca.common.api.metadata.ra.Connector.Version;
-import org.jboss.jca.common.api.metadata.ra.CredentialInterfaceEnum;
-import org.jboss.jca.common.api.metadata.ra.Icon;
-import org.jboss.jca.common.api.metadata.ra.InboundResourceAdapter;
-import org.jboss.jca.common.api.metadata.ra.LicenseType;
-import org.jboss.jca.common.api.metadata.ra.MessageListener;
-import org.jboss.jca.common.api.metadata.ra.Messageadapter;
-import org.jboss.jca.common.api.metadata.ra.ResourceAdapter;
-import org.jboss.jca.common.api.metadata.ra.SecurityPermission;
-import org.jboss.jca.common.metadata.ra.common.OutboundResourceAdapterImpl;
-import org.jboss.jca.common.metadata.ra.common.ResourceAdapter1516Impl;
-import org.jboss.jca.common.metadata.ra.ra16.Activationspec16Impl;
-import org.jboss.jca.common.metadata.ra.ra16.Connector16Impl;
+import org.jboss.jca.common.api.metadata.spec.AdminObject;
+import org.jboss.jca.common.api.metadata.spec.AuthenticationMechanism;
+import org.jboss.jca.common.api.metadata.spec.ConnectionDefinition;
+import org.jboss.jca.common.api.metadata.spec.Connector;
+import org.jboss.jca.common.api.metadata.spec.Connector.Version;
+import org.jboss.jca.common.api.metadata.spec.CredentialInterfaceEnum;
+import org.jboss.jca.common.api.metadata.spec.Icon;
+import org.jboss.jca.common.api.metadata.spec.InboundResourceAdapter;
+import org.jboss.jca.common.api.metadata.spec.LicenseType;
+import org.jboss.jca.common.api.metadata.spec.MessageListener;
+import org.jboss.jca.common.api.metadata.spec.Messageadapter;
+import org.jboss.jca.common.api.metadata.spec.ResourceAdapter;
+import org.jboss.jca.common.api.metadata.spec.SecurityPermission;
+import org.jboss.jca.common.metadata.spec.ActivationSpecImpl;
+import org.jboss.jca.common.metadata.spec.ConnectorImpl;
+import org.jboss.jca.common.metadata.spec.OutboundResourceAdapterImpl;
+import org.jboss.jca.common.metadata.spec.ResourceAdapterImpl;
 
 import java.util.List;
 
@@ -68,10 +68,10 @@ public class AnnotationsComplexTestCase extends AnnotationsTestBase
    @Override
    protected void checkConnector(Connector connector)
    {
-      assertTrue(connector instanceof Connector16Impl);
-      assertEquals(connector.getVersion(), Version.V_16);
+      assertTrue(connector instanceof ConnectorImpl);
+      assertEquals(connector.getVersion(), Version.V_17);
 
-      Connector16Impl con = (Connector16Impl) connector;
+      ConnectorImpl con = (ConnectorImpl) connector;
       assertEquals(null, con.getId());
       assertFalse(con.isMetadataComplete());
       assertEquals("", con.getModuleName());
@@ -95,8 +95,8 @@ public class AnnotationsComplexTestCase extends AnnotationsTestBase
       assertTrue(license.isLicenseRequired());
 
       ResourceAdapter rai = con.getResourceadapter();
-      assertTrue(rai instanceof ResourceAdapter1516Impl);
-      ResourceAdapter1516Impl ra = (ResourceAdapter1516Impl) rai;
+      assertTrue(rai instanceof ResourceAdapterImpl);
+      ResourceAdapterImpl ra = (ResourceAdapterImpl) rai;
       
       assertEquals(pack + ".AnnoResourceAdapter", ra.getResourceadapterClass());
 
@@ -157,7 +157,7 @@ public class AnnotationsComplexTestCase extends AnnotationsTestBase
 
       for (MessageListener ml : mls)
       {
-         Activationspec16Impl as = (Activationspec16Impl) ml.getActivationspec();
+         ActivationSpecImpl as = (ActivationSpecImpl) ml.getActivationspec();
          assertTrue(valuesAreEqual(as.getActivationspecClass(), pack + ".AnnoActivationSpec"));
          checkProperties(as.getConfigProperties(), "Character", "C", "Double", "0.5");
          assertNotNull(as.getRequiredConfigProperties());

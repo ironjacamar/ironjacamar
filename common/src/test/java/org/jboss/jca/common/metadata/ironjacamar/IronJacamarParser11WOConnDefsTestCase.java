@@ -22,10 +22,9 @@
 package org.jboss.jca.common.metadata.ironjacamar;
 
 import org.jboss.jca.common.api.metadata.JCAMetadata;
-import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
+import org.jboss.jca.common.api.metadata.resourceadapter.AdminObject;
 import org.jboss.jca.common.metadata.XMLParserTestBase;
-import org.jboss.jca.common.metadata.ironjacamar.v11.IronJacamarImpl;
-import org.jboss.jca.common.metadata.ironjacamar.v11.IronJacamarParser;
+import org.jboss.jca.common.metadata.resourceadapter.ActivationImpl;
 
 import java.util.List;
 
@@ -63,7 +62,7 @@ public class IronJacamarParser11WOConnDefsTestCase extends XMLParserTestBase
    @Override
    public void checkMetadata(JCAMetadata result)
    {
-      IronJacamarImpl ra = (IronJacamarImpl) result;
+      ActivationImpl ra = (ActivationImpl) result;
       
       assertEquals(null, ra.getBootstrapContext());
       assertEquals(null, ra.getBeanValidationGroups());
@@ -72,10 +71,10 @@ public class IronJacamarParser11WOConnDefsTestCase extends XMLParserTestBase
       
       assertEquals(null, ra.getConnectionDefinitions());
       
-      List<CommonAdminObject> aos = ra.getAdminObjects();
+      List<AdminObject> aos = ra.getAdminObjects();
       assertEquals(1, aos.size());
       //admin object 1
-      CommonAdminObject ao = aos.get(0);
+      AdminObject ao = aos.get(0);
       assertEquals(null, ao.getClassName());
       assertEquals("java:jboss/name9", ao.getJndiName());
       assertEquals(null, ao.getPoolName());

@@ -34,10 +34,10 @@ import org.jboss.logging.Messages;
  * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
-public class TimeOutImpl extends org.jboss.jca.common.metadata.common.CommonTimeOutImpl implements TimeOut
+public class TimeOutImpl extends org.jboss.jca.common.metadata.common.TimeOutImpl implements TimeOut
 {
    /** The serialVersionUID */
-   private static final long serialVersionUID = -8797718258493768716L;
+   private static final long serialVersionUID = 1L;
 
    /** The bundle */
    private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);

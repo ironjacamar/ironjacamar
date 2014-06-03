@@ -22,16 +22,13 @@
 package org.jboss.jca.validator;
 
 import org.jboss.jca.common.annotations.Annotations;
-import org.jboss.jca.common.api.metadata.ra.AdminObject;
-import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
-import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
-import org.jboss.jca.common.api.metadata.ra.Connector;
-import org.jboss.jca.common.api.metadata.ra.Connector.Version;
-import org.jboss.jca.common.api.metadata.ra.MessageListener;
-import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
-import org.jboss.jca.common.api.metadata.ra.XsdString;
-import org.jboss.jca.common.api.metadata.ra.ra10.Connector10;
-import org.jboss.jca.common.api.metadata.ra.ra16.Activationspec16;
+import org.jboss.jca.common.api.metadata.spec.AdminObject;
+import org.jboss.jca.common.api.metadata.spec.ConfigProperty;
+import org.jboss.jca.common.api.metadata.spec.ConnectionDefinition;
+import org.jboss.jca.common.api.metadata.spec.Connector;
+import org.jboss.jca.common.api.metadata.spec.Connector.Version;
+import org.jboss.jca.common.api.metadata.spec.MessageListener;
+import org.jboss.jca.common.api.metadata.spec.XsdString;
 import org.jboss.jca.common.metadata.MetadataFactory;
 import org.jboss.jca.common.spi.annotations.repository.AnnotationRepository;
 import org.jboss.jca.common.spi.annotations.repository.AnnotationScanner;
@@ -263,14 +260,14 @@ public class Validation
    {
       List<Validate> result = new ArrayList<Validate>();
 
-      if (!(cmd instanceof Connector10) && cmd.getResourceadapter() != null
-            && ((ResourceAdapter1516) cmd.getResourceadapter()).getResourceadapterClass() != null)
+      if (cmd.getVersion() != Version.V_10 && cmd.getResourceadapter() != null &&
+          cmd.getResourceadapter().getResourceadapterClass() != null)
       {
          try
          {
-            Class<?> clazz = Class.forName(((ResourceAdapter1516) cmd.getResourceadapter()).getResourceadapterClass(),
-                  true, cl);
-            List<? extends ConfigProperty> configProperties = cmd.getResourceadapter().getConfigProperties();
+            Class<?> clazz = Class.forName(cmd.getResourceadapter().getResourceadapterClass(),
+                                           true, cl);
+            List<ConfigProperty> configProperties = cmd.getResourceadapter().getConfigProperties();
 
             ValidateClass vc = new ValidateClass(Key.RESOURCE_ADAPTER, clazz, configProperties);
             result.add(vc);
@@ -300,13 +297,12 @@ public class Validation
    {
       List<Validate> result = new ArrayList<Validate>();
 
-      if (cmd.getResourceadapter() != null
-            && cmd.getVersion() != Version.V_10
-            && ((ResourceAdapter1516) cmd.getResourceadapter()).getOutboundResourceadapter() != null
-            && ((ResourceAdapter1516) cmd.getResourceadapter()).getOutboundResourceadapter().
-                  getConnectionDefinitions() != null)
+      if (cmd.getVersion() != Version.V_10 &&
+          cmd.getResourceadapter() != null &&
+          cmd.getResourceadapter().getOutboundResourceadapter() != null &&
+          cmd.getResourceadapter().getOutboundResourceadapter().getConnectionDefinitions() != null)
       {
-         List<ConnectionDefinition> cdMetas = ((ResourceAdapter1516) cmd.getResourceadapter())
+         List<ConnectionDefinition> cdMetas = cmd.getResourceadapter()
                .getOutboundResourceadapter().getConnectionDefinitions();
          if (cdMetas.size() > 0)
          {
@@ -317,7 +313,7 @@ public class Validation
                   try
                   {
                      Class<?> clazz = Class.forName(cdMeta.getManagedConnectionFactoryClass().getValue(), true, cl);
-                     List<? extends ConfigProperty> configProperties = cdMeta.getConfigProperties();
+                     List<ConfigProperty> configProperties = cdMeta.getConfigProperties();
 
                      ValidateClass vc = new ValidateClass(Key.MANAGED_CONNECTION_FACTORY, clazz, configProperties);
                      result.add(vc);
@@ -352,14 +348,13 @@ public class Validation
    {
       List<Validate> result = new ArrayList<Validate>();
 
-      if (cmd.getResourceadapter() != null
-            && cmd.getVersion() != Version.V_10
-            && ((ResourceAdapter1516) cmd.getResourceadapter()).getInboundResourceadapter() != null &&
-            ((ResourceAdapter1516) cmd.getResourceadapter()).getInboundResourceadapter().getMessageadapter() != null &&
-            ((ResourceAdapter1516) cmd.getResourceadapter()).getInboundResourceadapter().getMessageadapter()
-                  .getMessagelisteners() != null)
+      if (cmd.getVersion() != Version.V_10 &&
+          cmd.getResourceadapter() != null &&
+          cmd.getResourceadapter().getInboundResourceadapter() != null &&
+          cmd.getResourceadapter().getInboundResourceadapter().getMessageadapter() != null &&
+          cmd.getResourceadapter().getInboundResourceadapter().getMessageadapter().getMessagelisteners() != null)
       {
-         List<MessageListener> mlMetas = ((ResourceAdapter1516) cmd.getResourceadapter())
+         List<MessageListener> mlMetas = cmd.getResourceadapter()
                .getInboundResourceadapter().getMessageadapter()
                .getMessagelisteners();
          if (mlMetas.size() > 0)
@@ -370,14 +365,14 @@ public class Validation
                      && !mlMeta.getActivationspec().getActivationspecClass().equals(XsdString.NULL_XSDSTRING))
                {
 
-                  if (mlMeta.getActivationspec() instanceof Activationspec16)
+                  if (mlMeta.getActivationspec().getConfigProperties() != null &&
+                      mlMeta.getActivationspec().getConfigProperties().size() > 0)
                   {
                      try
                      {
                         Class<?> clazz = Class.forName(mlMeta.getActivationspec().getActivationspecClass().getValue(),
                                                        true, cl);
-                        List<? extends ConfigProperty> configProperties = 
-                           ((Activationspec16)mlMeta.getActivationspec()).getConfigProperties();
+                        List<ConfigProperty> configProperties = mlMeta.getActivationspec().getConfigProperties();
 
                         ValidateClass vc = new ValidateClass(Key.ACTIVATION_SPEC, clazz, configProperties);
                         result.add(vc);
@@ -411,11 +406,11 @@ public class Validation
    {
       List<Validate> result = new ArrayList<Validate>();
 
-      if (cmd.getResourceadapter() != null
-            && cmd.getVersion() != Version.V_10
-            && ((ResourceAdapter1516) cmd.getResourceadapter()).getAdminObjects() != null)
+      if (cmd.getVersion() != Version.V_10 &&
+          cmd.getResourceadapter() != null && 
+          cmd.getResourceadapter().getAdminObjects() != null)
       {
-         List<AdminObject> aoMetas = ((ResourceAdapter1516) cmd.getResourceadapter()).getAdminObjects();
+         List<AdminObject> aoMetas = cmd.getResourceadapter().getAdminObjects();
          if (aoMetas.size() > 0)
          {
             for (AdminObject aoMeta : aoMetas)
@@ -427,7 +422,7 @@ public class Validation
                   try
                   {
                      Class<?> clazz = Class.forName(aoMeta.getAdminobjectClass().getValue(), true, cl);
-                     List<? extends ConfigProperty> configProperties = aoMeta.getConfigProperties();
+                     List<ConfigProperty> configProperties = aoMeta.getConfigProperties();
 
                      ValidateClass vc = new ValidateClass(Key.ADMIN_OBJECT, clazz, configProperties);
                      result.add(vc);

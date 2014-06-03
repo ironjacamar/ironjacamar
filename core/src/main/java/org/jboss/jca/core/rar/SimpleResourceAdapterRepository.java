@@ -22,16 +22,13 @@
 
 package org.jboss.jca.core.rar;
 
-import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
-import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
-import org.jboss.jca.common.api.metadata.ra.Connector;
-import org.jboss.jca.common.api.metadata.ra.RequiredConfigProperty;
-import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
-import org.jboss.jca.common.api.metadata.ra.XsdString;
-import org.jboss.jca.common.api.metadata.ra.ra15.Activationspec15;
-import org.jboss.jca.common.api.metadata.ra.ra15.Connector15;
-import org.jboss.jca.common.api.metadata.ra.ra16.Activationspec16;
-import org.jboss.jca.common.api.metadata.ra.ra16.Connector16;
+import org.jboss.jca.common.api.metadata.resourceadapter.Activation;
+import org.jboss.jca.common.api.metadata.spec.Activationspec;
+import org.jboss.jca.common.api.metadata.spec.ConfigProperty;
+import org.jboss.jca.common.api.metadata.spec.Connector;
+import org.jboss.jca.common.api.metadata.spec.Connector.Version;
+import org.jboss.jca.common.api.metadata.spec.RequiredConfigProperty;
+import org.jboss.jca.common.api.metadata.spec.XsdString;
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
@@ -52,8 +49,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.resource.spi.ResourceAdapter;
 
 import org.jboss.logging.Logger;
 import org.jboss.logging.Messages;
@@ -76,7 +71,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
    private static Set<Class<?>> approvedTypes;
 
    /** Resource adapters */
-   private Map<String, WeakReference<ResourceAdapter>> rars;
+   private Map<String, WeakReference<javax.resource.spi.ResourceAdapter>> rars;
 
    /** Ids */
    private Map<String, AtomicInteger> ids;
@@ -118,7 +113,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
     */
    public SimpleResourceAdapterRepository()
    {
-      this.rars = new HashMap<String, WeakReference<ResourceAdapter>>();
+      this.rars = new HashMap<String, WeakReference<javax.resource.spi.ResourceAdapter>>();
       this.ids = new HashMap<String, AtomicInteger>();
       this.recovery = new HashMap<String, Boolean>();
       this.mdr = null;
@@ -146,7 +141,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
    /**
     * {@inheritDoc}
     */
-   public synchronized String registerResourceAdapter(ResourceAdapter ra) 
+   public synchronized String registerResourceAdapter(javax.resource.spi.ResourceAdapter ra) 
    {
       if (ra == null)
          throw new IllegalArgumentException("ResourceAdapter is null");
@@ -162,7 +157,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
 
       String key = clzName + "#" + id.incrementAndGet();
 
-      rars.put(key, new WeakReference<ResourceAdapter>(ra));
+      rars.put(key, new WeakReference<javax.resource.spi.ResourceAdapter>(ra));
 
       return key;
    }
@@ -185,7 +180,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
    /**
     * {@inheritDoc}
     */
-   public synchronized ResourceAdapter getResourceAdapter(String uniqueId) throws NotFoundException
+   public synchronized javax.resource.spi.ResourceAdapter getResourceAdapter(String uniqueId) throws NotFoundException
    {
       if (uniqueId == null)
          throw new IllegalArgumentException("UniqueId is null");
@@ -196,7 +191,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
       if (!rars.containsKey(uniqueId))
          throw new NotFoundException(bundle.keyNotRegistered(uniqueId));
 
-      WeakReference<ResourceAdapter> ra = rars.get(uniqueId);
+      WeakReference<javax.resource.spi.ResourceAdapter> ra = rars.get(uniqueId);
 
       if (ra.get() == null)
          throw new NotFoundException(bundle.keyNotRegistered(uniqueId));
@@ -225,17 +220,17 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
       
       Set<String> result = new HashSet<String>();
 
-      Iterator<Map.Entry<String, WeakReference<ResourceAdapter>>> it = rars.entrySet().iterator();
+      Iterator<Map.Entry<String, WeakReference<javax.resource.spi.ResourceAdapter>>> it = rars.entrySet().iterator();
       while (it.hasNext())
       {
-         Map.Entry<String, WeakReference<ResourceAdapter>> entry = it.next();
+         Map.Entry<String, WeakReference<javax.resource.spi.ResourceAdapter>> entry = it.next();
 
          String raKey = entry.getKey();
-         WeakReference<ResourceAdapter> ra = entry.getValue();
+         WeakReference<javax.resource.spi.ResourceAdapter> ra = entry.getValue();
 
          if (ra.get() != null)
          {
-            ResourceAdapter rar = ra.get();
+            javax.resource.spi.ResourceAdapter rar = ra.get();
             Connector md = null;
 
             Set<String> mdrKeys = mdr.getResourceAdapters();
@@ -248,10 +243,9 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
                {
                   Connector c = mdr.getResourceAdapter(mdrId);
             
-                  if (c.getResourceadapter() != null && c.getResourceadapter() instanceof ResourceAdapter1516)
+                  if (c.getResourceadapter() != null)
                   {
-                     ResourceAdapter1516 ra1516 = (ResourceAdapter1516)c.getResourceadapter();
-                     String clz = ra1516.getResourceadapterClass();
+                     String clz = c.getResourceadapter().getResourceadapterClass();
 
                      if (rar.getClass().getName().equals(clz))
                         md = c;
@@ -264,19 +258,19 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
                }
             }
 
-            if (md != null && md.getResourceadapter() != null && md.getResourceadapter() instanceof ResourceAdapter1516)
+            if (md != null && md.getResourceadapter() != null)
             {
-               ResourceAdapter1516 ra1516 = (ResourceAdapter1516)md.getResourceadapter();
+               org.jboss.jca.common.api.metadata.spec.ResourceAdapter raSpec = md.getResourceadapter();
 
-               if (ra1516.getInboundResourceadapter() != null &&
-                   ra1516.getInboundResourceadapter().getMessageadapter() != null &&
-                   ra1516.getInboundResourceadapter().getMessageadapter().getMessagelisteners() != null &&
-                   ra1516.getInboundResourceadapter().getMessageadapter().getMessagelisteners().size() > 0)
+               if (raSpec.getInboundResourceadapter() != null &&
+                   raSpec.getInboundResourceadapter().getMessageadapter() != null &&
+                   raSpec.getInboundResourceadapter().getMessageadapter().getMessagelisteners() != null &&
+                   raSpec.getInboundResourceadapter().getMessageadapter().getMessagelisteners().size() > 0)
                {
-                  List<org.jboss.jca.common.api.metadata.ra.MessageListener> listeners =
-                     ra1516.getInboundResourceadapter().getMessageadapter().getMessagelisteners();
+                  List<org.jboss.jca.common.api.metadata.spec.MessageListener> listeners =
+                     raSpec.getInboundResourceadapter().getMessageadapter().getMessagelisteners();
 
-                  for (org.jboss.jca.common.api.metadata.ra.MessageListener ml : listeners)
+                  for (org.jboss.jca.common.api.metadata.spec.MessageListener ml : listeners)
                   {
                      try
                      {
@@ -313,7 +307,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
       if (!rars.containsKey(uniqueId))
          throw new NotFoundException(bundle.keyNotRegistered(uniqueId));
 
-      WeakReference<ResourceAdapter> ra = rars.get(uniqueId);
+      WeakReference<javax.resource.spi.ResourceAdapter> ra = rars.get(uniqueId);
 
       if (ra.get() == null)
          throw new NotFoundException(bundle.keyNotRegistered(uniqueId));
@@ -347,7 +341,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
       if (!rars.containsKey(uniqueId))
          throw new NotFoundException(bundle.keyNotRegistered(uniqueId));
 
-      WeakReference<ResourceAdapter> ra = rars.get(uniqueId);
+      WeakReference<javax.resource.spi.ResourceAdapter> ra = rars.get(uniqueId);
 
       if (ra.get() == null)
          throw new NotFoundException(bundle.keyNotRegistered(uniqueId));
@@ -355,7 +349,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
       if (mdr == null)
          throw new IllegalStateException("MDR is null");
       
-      ResourceAdapter rar = ra.get();
+      javax.resource.spi.ResourceAdapter rar = ra.get();
       Connector md = null;
 
       Set<String> mdrKeys = mdr.getResourceAdapters();
@@ -368,10 +362,9 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
          {
             Connector c = mdr.getResourceAdapter(mdrId);
             
-            if (c.getResourceadapter() != null && c.getResourceadapter() instanceof ResourceAdapter1516)
+            if (c.getResourceadapter() != null)
             {
-               ResourceAdapter1516 ra1516 = (ResourceAdapter1516)c.getResourceadapter();
-               String clz = ra1516.getResourceadapterClass();
+               String clz = c.getResourceadapter().getResourceadapterClass();
 
                if (rar.getClass().getName().equals(clz))
                   md = c;
@@ -386,22 +379,22 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
       if (md == null)
          throw new NotFoundException(bundle.unableLookupResourceAdapterInMDR(uniqueId));
 
-      if (md.getResourceadapter() != null && md.getResourceadapter() instanceof ResourceAdapter1516)
+      if (md.getResourceadapter() != null)
       {
-         ResourceAdapter1516 ra1516 = (ResourceAdapter1516)md.getResourceadapter();
+         org.jboss.jca.common.api.metadata.spec.ResourceAdapter raSpec = md.getResourceadapter();
 
-         if (ra1516.getInboundResourceadapter() != null &&
-             ra1516.getInboundResourceadapter().getMessageadapter() != null &&
-             ra1516.getInboundResourceadapter().getMessageadapter().getMessagelisteners() != null &&
-             ra1516.getInboundResourceadapter().getMessageadapter().getMessagelisteners().size() > 0)
+         if (raSpec.getInboundResourceadapter() != null &&
+             raSpec.getInboundResourceadapter().getMessageadapter() != null &&
+             raSpec.getInboundResourceadapter().getMessageadapter().getMessagelisteners() != null &&
+             raSpec.getInboundResourceadapter().getMessageadapter().getMessagelisteners().size() > 0)
          {
-            List<org.jboss.jca.common.api.metadata.ra.MessageListener> listeners =
-               ra1516.getInboundResourceadapter().getMessageadapter().getMessagelisteners();
+            List<org.jboss.jca.common.api.metadata.spec.MessageListener> listeners =
+               raSpec.getInboundResourceadapter().getMessageadapter().getMessagelisteners();
 
             List<org.jboss.jca.core.spi.rar.MessageListener> result =
                new ArrayList<org.jboss.jca.core.spi.rar.MessageListener>(listeners.size());
 
-            for (org.jboss.jca.common.api.metadata.ra.MessageListener ml : listeners)
+            for (org.jboss.jca.common.api.metadata.spec.MessageListener ml : listeners)
             {
                result.add(createMessageListener(rar, ml));
             }
@@ -440,7 +433,8 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
     * @exception IllegalAccessException Thrown if object access is inaccessible
     */
    private org.jboss.jca.core.spi.rar.MessageListener 
-   createMessageListener(ResourceAdapter rar, org.jboss.jca.common.api.metadata.ra.MessageListener ml)
+   createMessageListener(javax.resource.spi.ResourceAdapter rar,
+                         org.jboss.jca.common.api.metadata.spec.MessageListener ml)
       throws InstantiationException, IllegalAccessException
    {
       try
@@ -453,24 +447,20 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
          Set<String> requiredConfigProperties = new HashSet<String>();
          Map<String, String> valueProperties = new HashMap<String, String>();
 
-         Activationspec15 as = ml.getActivationspec();
+         Activationspec as = ml.getActivationspec();
          Class<?> asClz = Class.forName(as.getActivationspecClass().getValue(), true, cl);
 
-         if (as instanceof Activationspec16)
+         if (as.getConfigProperties() != null && as.getConfigProperties().size() > 0)
          {
-            List<? extends ConfigProperty> cps = ((Activationspec16)as).getConfigProperties();
-            if (cps != null && cps.size() > 0)
+            for (ConfigProperty cp : as.getConfigProperties())
             {
-               for (ConfigProperty cp : cps)
-               {
-                  String name = cp.getConfigPropertyName().getValue();
-                  Class<?> ct = Class.forName(cp.getConfigPropertyType().getValue(), true, cl);
+               String name = cp.getConfigPropertyName().getValue();
+               Class<?> ct = Class.forName(cp.getConfigPropertyType().getValue(), true, cl);
 
-                  configProperties.put(name, ct);
+               configProperties.put(name, ct);
 
-                  if (cp.getConfigPropertyValue() != null && cp.getConfigPropertyValue().getValue() != null)
-                     valueProperties.put(name, cp.getConfigPropertyValue().getValue());
-               }
+               if (cp.getConfigPropertyValue() != null && cp.getConfigPropertyValue().getValue() != null)
+                  valueProperties.put(name, cp.getConfigPropertyValue().getValue());
             }
          }
 
@@ -548,21 +538,21 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
     * @param ra The resource adapter
     * @return The identifier
     */
-   private String getMDRIdentifier(ResourceAdapter ra)
+   private String getMDRIdentifier(javax.resource.spi.ResourceAdapter ra)
    {
       for (String id : mdr.getResourceAdapters())
       {
          try
          {
             Connector raXml = mdr.getResourceAdapter(id);
-            if (raXml != null && raXml instanceof Connector15)
+            if (raXml != null)
             {
                if (raXml.getResourceadapter() != null)
                {
-                  ResourceAdapter1516 ra1516 = (ResourceAdapter1516)raXml.getResourceadapter();
-                  if (ra1516.getResourceadapterClass() != null && !ra1516.getResourceadapterClass().equals(""))
+                  org.jboss.jca.common.api.metadata.spec.ResourceAdapter raSpec = raXml.getResourceadapter();
+                  if (raSpec.getResourceadapterClass() != null && !raSpec.getResourceadapterClass().equals(""))
                   {
-                     if (ra.getClass().getName().equals(ra1516.getResourceadapterClass()))
+                     if (ra.getClass().getName().equals(raSpec.getResourceadapterClass()))
                         return id;
                   }
                }
@@ -592,7 +582,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
          Connector raXml = mdr.getResourceAdapter(id);
          if (raXml != null)
          {
-            return (raXml instanceof Connector16);
+            return (raXml.getVersion() == Version.V_16 || raXml.getVersion() == Version.V_17);
          }
       }
       catch (Throwable t)
@@ -615,11 +605,11 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
 
       try
       {
-         IronJacamar ij = mdr.getIronJacamar(id);
-         if (ij != null && ij.getBeanValidationGroups() != null && ij.getBeanValidationGroups().size() > 0)
+         Activation a = mdr.getActivation(id);
+         if (a != null && a.getBeanValidationGroups() != null && a.getBeanValidationGroups().size() > 0)
          {
             Set<String> groups = new HashSet<String>();
-            for (String group : ij.getBeanValidationGroups())
+            for (String group : a.getBeanValidationGroups())
             {
                groups.add(group);
             }
@@ -675,12 +665,8 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
          Connector raXml = mdr.getResourceAdapter(id);
          if (raXml != null)
          {
-            if (raXml instanceof Connector15)
-            {
-               Connector15 ra15 = (Connector15)raXml;
-               if (!XsdString.isNull(ra15.getResourceadapterVersion()))
-                  return ((Connector15)raXml).getResourceadapterVersion().getValue();
-            }
+            if (!XsdString.isNull(raXml.getResourceadapterVersion()))
+               return raXml.getResourceadapterVersion().getValue();
          }
       }
       catch (Throwable t)

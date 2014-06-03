@@ -21,15 +21,12 @@
  */
 package org.jboss.jca.common.api.metadata.ds;
 
-
 import org.jboss.jca.common.api.metadata.JCAMetadata;
 import org.jboss.jca.common.api.metadata.ValidatableMetadata;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-
 
 /**
  *
@@ -40,7 +37,6 @@ import java.util.Map;
  */
 public interface DataSources extends JCAMetadata, ValidatableMetadata
 {
-
    /**
     * Get the datasource.
     *

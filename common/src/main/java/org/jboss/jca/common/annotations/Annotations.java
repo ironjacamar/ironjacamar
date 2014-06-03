@@ -25,39 +25,40 @@ package org.jboss.jca.common.annotations;
 import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.CommonLogger;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
-import org.jboss.jca.common.api.metadata.ra.AdminObject;
-import org.jboss.jca.common.api.metadata.ra.AuthenticationMechanism;
-import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
-import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
-import org.jboss.jca.common.api.metadata.ra.Connector;
-import org.jboss.jca.common.api.metadata.ra.Connector.Version;
-import org.jboss.jca.common.api.metadata.ra.CredentialInterfaceEnum;
-import org.jboss.jca.common.api.metadata.ra.Icon;
-import org.jboss.jca.common.api.metadata.ra.InboundResourceAdapter;
-import org.jboss.jca.common.api.metadata.ra.LicenseType;
-import org.jboss.jca.common.api.metadata.ra.LocalizedXsdString;
-import org.jboss.jca.common.api.metadata.ra.MessageListener;
-import org.jboss.jca.common.api.metadata.ra.OutboundResourceAdapter;
-import org.jboss.jca.common.api.metadata.ra.RequiredConfigProperty;
-import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
-import org.jboss.jca.common.api.metadata.ra.SecurityPermission;
-import org.jboss.jca.common.api.metadata.ra.XsdString;
-import org.jboss.jca.common.api.metadata.ra.ra16.Activationspec16;
-import org.jboss.jca.common.api.metadata.ra.ra16.ConfigProperty16;
-import org.jboss.jca.common.api.metadata.ra.ra16.Connector16;
+import org.jboss.jca.common.api.metadata.spec.Activationspec;
+import org.jboss.jca.common.api.metadata.spec.AdminObject;
+import org.jboss.jca.common.api.metadata.spec.AuthenticationMechanism;
+import org.jboss.jca.common.api.metadata.spec.ConfigProperty;
+import org.jboss.jca.common.api.metadata.spec.ConnectionDefinition;
+import org.jboss.jca.common.api.metadata.spec.Connector;
+import org.jboss.jca.common.api.metadata.spec.Connector.Version;
+import org.jboss.jca.common.api.metadata.spec.CredentialInterfaceEnum;
+import org.jboss.jca.common.api.metadata.spec.Icon;
+import org.jboss.jca.common.api.metadata.spec.InboundResourceAdapter;
+import org.jboss.jca.common.api.metadata.spec.LicenseType;
+import org.jboss.jca.common.api.metadata.spec.LocalizedXsdString;
+import org.jboss.jca.common.api.metadata.spec.MessageListener;
+import org.jboss.jca.common.api.metadata.spec.OutboundResourceAdapter;
+import org.jboss.jca.common.api.metadata.spec.RequiredConfigProperty;
+import org.jboss.jca.common.api.metadata.spec.ResourceAdapter;
+import org.jboss.jca.common.api.metadata.spec.SecurityPermission;
+import org.jboss.jca.common.api.metadata.spec.XsdString;
 import org.jboss.jca.common.api.validator.ValidateException;
-import org.jboss.jca.common.metadata.ra.common.AdminObjectImpl;
-import org.jboss.jca.common.metadata.ra.common.AuthenticationMechanismImpl;
-import org.jboss.jca.common.metadata.ra.common.ConnectionDefinitionImpl;
-import org.jboss.jca.common.metadata.ra.common.InboundResourceAdapterImpl;
-import org.jboss.jca.common.metadata.ra.common.MessageAdapterImpl;
-import org.jboss.jca.common.metadata.ra.common.MessageListenerImpl;
-import org.jboss.jca.common.metadata.ra.common.OutboundResourceAdapterImpl;
-import org.jboss.jca.common.metadata.ra.common.ResourceAdapter1516Impl;
-import org.jboss.jca.common.metadata.ra.common.SecurityPermissionImpl;
-import org.jboss.jca.common.metadata.ra.ra16.Activationspec16Impl;
-import org.jboss.jca.common.metadata.ra.ra16.ConfigProperty16Impl;
-import org.jboss.jca.common.metadata.ra.ra16.Connector16Impl;
+import org.jboss.jca.common.metadata.spec.ActivationSpecImpl;
+import org.jboss.jca.common.metadata.spec.AdminObjectImpl;
+import org.jboss.jca.common.metadata.spec.AuthenticationMechanismImpl;
+import org.jboss.jca.common.metadata.spec.ConfigPropertyImpl;
+import org.jboss.jca.common.metadata.spec.ConnectionDefinitionImpl;
+import org.jboss.jca.common.metadata.spec.ConnectorImpl;
+import org.jboss.jca.common.metadata.spec.IconImpl;
+import org.jboss.jca.common.metadata.spec.InboundResourceAdapterImpl;
+import org.jboss.jca.common.metadata.spec.LicenseTypeImpl;
+import org.jboss.jca.common.metadata.spec.MessageAdapterImpl;
+import org.jboss.jca.common.metadata.spec.MessageListenerImpl;
+import org.jboss.jca.common.metadata.spec.OutboundResourceAdapterImpl;
+import org.jboss.jca.common.metadata.spec.RequiredConfigPropertyImpl;
+import org.jboss.jca.common.metadata.spec.ResourceAdapterImpl;
+import org.jboss.jca.common.metadata.spec.SecurityPermissionImpl;
 import org.jboss.jca.common.spi.annotations.repository.Annotation;
 import org.jboss.jca.common.spi.annotations.repository.AnnotationRepository;
 
@@ -120,13 +121,12 @@ public class Annotations
       throws Exception
    {
       // Process annotations
-      if (connector == null || connector.getVersion() == Version.V_16)
+      if (connector == null || (connector.getVersion() == Version.V_16 || connector.getVersion() == Version.V_17))
       {
-
          boolean isMetadataComplete = false;
-         if (connector != null && connector instanceof Connector16)
+         if (connector != null)
          {
-            isMetadataComplete = ((Connector16) connector).isMetadataComplete();
+            isMetadataComplete = connector.isMetadataComplete();
          }
 
          if (connector == null || !isMetadataComplete)
@@ -139,7 +139,7 @@ public class Annotations
             else
             {
                Connector annotationsConnector = process(annotationRepository,
-                  ((ResourceAdapter1516) connector.getResourceadapter()).getResourceadapterClass(),
+                  ((ResourceAdapter) connector.getResourceadapter()).getResourceadapterClass(),
                   classLoader);
                connector = connector.merge(annotationsConnector);
             }
@@ -176,7 +176,7 @@ public class Annotations
       */
 
       // @ConfigProperty
-      Map<Metadatas, ArrayList<ConfigProperty16>> configPropertiesMap =
+      Map<Metadatas, ArrayList<ConfigProperty>> configPropertiesMap =
          processConfigProperty(annotationRepository, classLoader);
 
       // @ConnectionDefinitions
@@ -237,8 +237,8 @@ public class Annotations
    private Connector processConnector(AnnotationRepository annotationRepository, ClassLoader classLoader, 
                                       String xmlResourceAdapterClass,
                                       ArrayList<ConnectionDefinition> connectionDefinitions,
-                                      ArrayList<ConfigProperty16> configProperties,
-                                      ArrayList<ConfigProperty16> plainConfigProperties,
+                                      ArrayList<ConfigProperty> configProperties,
+                                      ArrayList<ConfigProperty> plainConfigProperties,
                                       InboundResourceAdapter inboundResourceadapter,
                                       ArrayList<AdminObject> adminObjs)
       throws Exception
@@ -303,8 +303,8 @@ public class Annotations
    private Connector attachConnector(String raClass, ClassLoader classLoader,
                                      javax.resource.spi.Connector conAnnotation,
                                      ArrayList<ConnectionDefinition> connectionDefinitions,
-                                     ArrayList<ConfigProperty16> configProperties,
-                                     ArrayList<ConfigProperty16> plainConfigProperties,
+                                     ArrayList<ConfigProperty> configProperties,
+                                     ArrayList<ConfigProperty> plainConfigProperties,
                                      InboundResourceAdapter inboundResourceadapter,
                                      ArrayList<AdminObject> adminObjs)
       throws Exception
@@ -356,10 +356,10 @@ public class Annotations
       }
       LicenseType license = null;
       if (conAnnotation != null)
-         license = new LicenseType(licenseDescriptions, conAnnotation.licenseRequired(), null);
+         license = new LicenseTypeImpl(licenseDescriptions, conAnnotation.licenseRequired(), null, null);
 
       // RequiredWorkContext
-      ArrayList<String> requiredWorkContexts = null;
+      ArrayList<XsdString> requiredWorkContexts = null;
       Class<? extends WorkContext>[] requiredWorkContextAnnotations = null;
 
       if (conAnnotation != null)
@@ -367,7 +367,7 @@ public class Annotations
 
       if (requiredWorkContextAnnotations != null)
       {
-         requiredWorkContexts = new ArrayList<String>(requiredWorkContextAnnotations.length);
+         requiredWorkContexts = new ArrayList<XsdString>(requiredWorkContextAnnotations.length);
          for (Class<? extends WorkContext> requiredWorkContext : requiredWorkContextAnnotations)
          {
 
@@ -376,7 +376,7 @@ public class Annotations
                if (trace)
                   log.trace("RequiredWorkContext=" + requiredWorkContext.getName());
 
-               requiredWorkContexts.add(requiredWorkContext.getName());
+               requiredWorkContexts.add(new XsdString(requiredWorkContext.getName(), null));
             }
          }
       }
@@ -396,7 +396,7 @@ public class Annotations
             for (String smallIconAnnotation : conAnnotation.smallIcon())
             {
                if (smallIconAnnotation != null && !smallIconAnnotation.trim().equals(""))
-                  icons.add(new Icon(new XsdString(smallIconAnnotation, null), null, null));
+                  icons.add(new IconImpl(new XsdString(smallIconAnnotation, null), null, null, null));
             }
          }
          if (conAnnotation.largeIcon() != null && conAnnotation.largeIcon().length > 0)
@@ -404,7 +404,7 @@ public class Annotations
             for (String largeIconAnnotation : conAnnotation.largeIcon())
             {
                if (largeIconAnnotation != null && !largeIconAnnotation.trim().equals(""))
-                  icons.add(new Icon(null, new XsdString(largeIconAnnotation, null),  null));
+                  icons.add(new IconImpl(null, new XsdString(largeIconAnnotation, null), null, null));
             }
          }
       }
@@ -432,7 +432,8 @@ public class Annotations
       OutboundResourceAdapter outboundResourceadapter = new OutboundResourceAdapterImpl(connectionDefinitions,
                                                                                         transactionSupport,
                                                                                         authenticationMechanisms,
-                                                                                        reauthenticationSupport, null);
+                                                                                        reauthenticationSupport, null,
+                                                                                        null, null);
 
       // Security permission
       ArrayList<SecurityPermission> securityPermissions = null;
@@ -449,32 +450,32 @@ public class Annotations
       {
          Set<String> raClasses = getClasses(raClass, classLoader);
 
-         for (ConfigProperty configProperty16 : plainConfigProperties)
+         for (ConfigProperty configProperty : plainConfigProperties)
          {
-            if (raClasses.contains(((ConfigProperty16Impl) configProperty16).getAttachedClassName()))
+            if (raClasses.contains(((ConfigPropertyImpl) configProperty).getAttachedClassName()))
             {
                if (trace)
-                  log.tracef("Attaching: %s (%s)", configProperty16, raClass);
+                  log.tracef("Attaching: %s (%s)", configProperty, raClass);
                   
-               validProperties.add(configProperty16);
+               validProperties.add(configProperty);
             }
          }
       }
 
       validProperties.trimToSize();
 
-      ResourceAdapter1516Impl resourceAdapter = new ResourceAdapter1516Impl(raClass, validProperties,
-                                                                            outboundResourceadapter,
-                                                                            inboundResourceadapter, adminObjs,
-                                                                            securityPermissions, null);
+      ResourceAdapterImpl resourceAdapter = new ResourceAdapterImpl(new XsdString(raClass, null), validProperties,
+                                                                    outboundResourceadapter,
+                                                                    inboundResourceadapter, adminObjs,
+                                                                    securityPermissions, null);
 
       XsdString resourceadapterVersion = null;
       if (conAnnotation != null && conAnnotation.version() != null && !conAnnotation.version().trim().equals(""))
          resourceadapterVersion = new XsdString(conAnnotation.version(), null);
 
-      return new Connector16Impl("", vendorName, eisType, resourceadapterVersion, license, resourceAdapter,
-                                 requiredWorkContexts, false, descriptions, displayNames, icons, null);
-
+      return new ConnectorImpl(Version.V_17, new XsdString("", null), vendorName, eisType, resourceadapterVersion,
+                               license, resourceAdapter,
+                               requiredWorkContexts, false, descriptions, displayNames, icons, null);
    }
 
    private ArrayList<SecurityPermission> processSecurityPermissions(
@@ -536,7 +537,7 @@ public class Annotations
                                                                          CredentialInterfaceEnum
                                                                             .valueOf(authMechanismAnnotation
                                                                                .credentialInterface()
-                                                                               .name()), null));
+                                                                                     .name()), null, null));
          }
       }
       return authenticationMechanisms;
@@ -697,15 +698,15 @@ public class Annotations
 
       if (configProperties != null)
       {
-         for (ConfigProperty configProperty16 : configProperties)
+         for (ConfigProperty configProperty : configProperties)
 
          {
-            if (mcf.equals(((ConfigProperty16Impl) configProperty16).getAttachedClassName()))
+            if (mcf.equals(((ConfigPropertyImpl) configProperty).getAttachedClassName()))
             {
                if (trace)
-                  log.tracef("Attaching: %s (%s)", configProperty16, mcf);
+                  log.tracef("Attaching: %s (%s)", configProperty, mcf);
                   
-               validProperties.add(configProperty16);
+               validProperties.add(configProperty);
             }
          }
       }
@@ -713,14 +714,14 @@ public class Annotations
       {
          Set<String> mcfClasses = getClasses(mcf, classLoader);
 
-         for (ConfigProperty configProperty16 : plainConfigProperties)
+         for (ConfigProperty configProperty : plainConfigProperties)
          {
-            if (mcfClasses.contains(((ConfigProperty16Impl) configProperty16).getAttachedClassName()))
+            if (mcfClasses.contains(((ConfigPropertyImpl) configProperty).getAttachedClassName()))
             {
                if (trace)
-                  log.tracef("Attaching: %s (%s)", configProperty16, mcf);
+                  log.tracef("Attaching: %s (%s)", configProperty, mcf);
                   
-               validProperties.add(configProperty16);
+               validProperties.add(configProperty);
             }
          }
       }
@@ -744,15 +745,15 @@ public class Annotations
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private Map<Metadatas, ArrayList<ConfigProperty16>> processConfigProperty(AnnotationRepository annotationRepository,
+   private Map<Metadatas, ArrayList<ConfigProperty>> processConfigProperty(AnnotationRepository annotationRepository,
                                                                              ClassLoader classLoader)
       throws Exception
    {
-      Map<Metadatas, ArrayList<ConfigProperty16>> valueMap = null;
+      Map<Metadatas, ArrayList<ConfigProperty>> valueMap = null;
       Collection<Annotation> values = annotationRepository.getAnnotation(javax.resource.spi.ConfigProperty.class);
       if (values != null)
       {
-         valueMap = new HashMap<Annotations.Metadatas, ArrayList<ConfigProperty16>>();
+         valueMap = new HashMap<Annotations.Metadatas, ArrayList<ConfigProperty>>();
          for (Annotation annotation : values)
          {
             javax.resource.spi.ConfigProperty configPropertyAnnotation = (javax.resource.spi.ConfigProperty) annotation
@@ -790,30 +791,31 @@ public class Annotations
 
             if (hasInterface(attachedClass, "javax.resource.spi.ResourceAdapter"))
             {
-               ConfigProperty16 cfgMeta = new ConfigProperty16Impl(descriptions, configPropertyName,
-                                                                   configPropertyType,
-                                                                   configPropertyValue, configPropertyIgnore,
-                                                                   configPropertySupportsDynamicUpdates,
-                                                                   configPropertyConfidential, null);
+               ConfigProperty cfgMeta = new ConfigPropertyImpl(descriptions, configPropertyName,
+                                                               configPropertyType,
+                                                               configPropertyValue, configPropertyIgnore,
+                                                               configPropertySupportsDynamicUpdates,
+                                                               configPropertyConfidential, null, false,
+                                                               attachedClassName, null, null, null);
                if (valueMap.get(Metadatas.RA) == null)
                {
-                  valueMap.put(Metadatas.RA, new ArrayList<ConfigProperty16>());
+                  valueMap.put(Metadatas.RA, new ArrayList<ConfigProperty>());
                }
                valueMap.get(Metadatas.RA).add(cfgMeta);
             }
             else
             {
-               ConfigProperty16 cfgMeta = new ConfigProperty16Impl(descriptions, configPropertyName,
-                                                                   configPropertyType,
-                                                                   configPropertyValue, configPropertyIgnore,
-                                                                   configPropertySupportsDynamicUpdates,
-                                                                   configPropertyConfidential, null,
-                                                                   attachedClassName);
+               ConfigProperty cfgMeta = new ConfigPropertyImpl(descriptions, configPropertyName,
+                                                               configPropertyType,
+                                                               configPropertyValue, configPropertyIgnore,
+                                                               configPropertySupportsDynamicUpdates,
+                                                               configPropertyConfidential, null, false,
+                                                               attachedClassName, null, null, null);
                if (hasInterface(attachedClass, "javax.resource.spi.ManagedConnectionFactory"))
                {
                   if (valueMap.get(Metadatas.MANAGED_CONN_FACTORY) == null)
                   {
-                     valueMap.put(Metadatas.MANAGED_CONN_FACTORY, new ArrayList<ConfigProperty16>());
+                     valueMap.put(Metadatas.MANAGED_CONN_FACTORY, new ArrayList<ConfigProperty>());
                   }
                   valueMap.get(Metadatas.MANAGED_CONN_FACTORY).add(cfgMeta);
                }
@@ -821,12 +823,12 @@ public class Annotations
                {
                   if (hasNotNull(annotationRepository, annotation))
                   {
-                     ((ConfigProperty16Impl)cfgMeta).setMandatory(true);
+                     ((ConfigPropertyImpl)cfgMeta).setMandatory(true);
                   }
 
                   if (valueMap.get(Metadatas.ACTIVATION_SPEC) == null)
                   {
-                     valueMap.put(Metadatas.ACTIVATION_SPEC, new ArrayList<ConfigProperty16>());
+                     valueMap.put(Metadatas.ACTIVATION_SPEC, new ArrayList<ConfigProperty>());
                   }
                   valueMap.get(Metadatas.ACTIVATION_SPEC).add(cfgMeta);
                }
@@ -834,7 +836,7 @@ public class Annotations
                {
                   if (valueMap.get(Metadatas.ADMIN_OBJECT) == null)
                   {
-                     valueMap.put(Metadatas.ADMIN_OBJECT, new ArrayList<ConfigProperty16>());
+                     valueMap.put(Metadatas.ADMIN_OBJECT, new ArrayList<ConfigProperty>());
                   }
                   valueMap.get(Metadatas.ADMIN_OBJECT).add(cfgMeta);
                }
@@ -842,12 +844,12 @@ public class Annotations
                {
                   if (hasNotNull(annotationRepository, annotation))
                   {
-                     ((ConfigProperty16Impl)cfgMeta).setMandatory(true);
+                     ((ConfigPropertyImpl)cfgMeta).setMandatory(true);
                   }
 
                   if (valueMap.get(Metadatas.PLAIN) == null)
                   {
-                     valueMap.put(Metadatas.PLAIN, new ArrayList<ConfigProperty16>());
+                     valueMap.put(Metadatas.PLAIN, new ArrayList<ConfigProperty>());
                   }
                   valueMap.get(Metadatas.PLAIN).add(cfgMeta);
                }
@@ -939,8 +941,8 @@ public class Annotations
     * @exception Exception Thrown if an error occurs
     */
    private ArrayList<AdminObject> processAdministeredObject(AnnotationRepository annotationRepository,
-      ClassLoader classLoader, ArrayList<ConfigProperty16> configProperties,
-      ArrayList<ConfigProperty16> plainConfigProperties)
+      ClassLoader classLoader, ArrayList<ConfigProperty> configProperties,
+      ArrayList<ConfigProperty> plainConfigProperties)
       throws Exception
    {
       ArrayList<AdminObject> adminObjs = null;
@@ -985,14 +987,14 @@ public class Annotations
 
             if (configProperties != null)
             {
-               for (ConfigProperty configProperty16 : configProperties)
+               for (ConfigProperty configProperty : configProperties)
                {
-                  if (aoClassName.equals(((ConfigProperty16Impl) configProperty16).getAttachedClassName()))
+                  if (aoClassName.equals(((ConfigPropertyImpl) configProperty).getAttachedClassName()))
                   {
                      if (trace)
-                        log.tracef("Attaching: %s (%s)", configProperty16, aoClassName);
+                        log.tracef("Attaching: %s (%s)", configProperty, aoClassName);
                   
-                     validProperties.add(configProperty16);
+                     validProperties.add(configProperty);
                   }
                }
             }
@@ -1000,14 +1002,14 @@ public class Annotations
             {
                Set<String> aoClasses = getClasses(aoClassName, classLoader);
 
-               for (ConfigProperty configProperty16 : plainConfigProperties)
+               for (ConfigProperty configProperty : plainConfigProperties)
                {
-                  if (aoClasses.contains(((ConfigProperty16Impl) configProperty16).getAttachedClassName()))
+                  if (aoClasses.contains(((ConfigPropertyImpl) configProperty).getAttachedClassName()))
                   {
                      if (trace)
-                        log.tracef("Attaching: %s (%s)", configProperty16, aoClassName);
+                        log.tracef("Attaching: %s (%s)", configProperty, aoClassName);
                   
-                     validProperties.add(configProperty16);
+                     validProperties.add(configProperty);
                   }
                }
             }
@@ -1034,8 +1036,8 @@ public class Annotations
     * @exception Exception Thrown if an error occurs
     */
    private InboundResourceAdapter processActivation(AnnotationRepository annotationRepository, ClassLoader classLoader,
-                                                    ArrayList<ConfigProperty16> configProperties,
-                                                    ArrayList<ConfigProperty16> plainConfigProperties)
+                                                    ArrayList<ConfigProperty> configProperties,
+                                                    ArrayList<ConfigProperty> plainConfigProperties)
       throws Exception
    {
       ArrayList<MessageListener> listeners = new ArrayList<MessageListener>();
@@ -1062,8 +1064,8 @@ public class Annotations
     * @exception Exception Thrown if an error occurs
     */
    private ArrayList<MessageListener> attachActivation(Annotation annotation, ClassLoader classLoader,
-                                                       ArrayList<ConfigProperty16> configProperties,
-                                                       ArrayList<ConfigProperty16> plainConfigProperties)
+                                                       ArrayList<ConfigProperty> configProperties,
+                                                       ArrayList<ConfigProperty> plainConfigProperties)
       throws Exception
    {
       ArrayList<ConfigProperty> validProperties = new ArrayList<ConfigProperty>();
@@ -1071,20 +1073,20 @@ public class Annotations
 
       if (configProperties != null)
       {
-         for (ConfigProperty configProperty16 : configProperties)
+         for (ConfigProperty configProperty : configProperties)
          {
-            if (annotation.getClassName().equals(((ConfigProperty16Impl) configProperty16).getAttachedClassName()))
+            if (annotation.getClassName().equals(((ConfigPropertyImpl) configProperty).getAttachedClassName()))
             {
-               validProperties.add(configProperty16);
+               validProperties.add(configProperty);
 
-               if (configProperty16.isMandatory())
+               if (configProperty.isMandatory())
                {
                   if (requiredConfigProperties == null)
                      requiredConfigProperties = new ArrayList<RequiredConfigProperty>(1);
 
-                  requiredConfigProperties.add(new RequiredConfigProperty(null,
-                                                                          configProperty16.getConfigPropertyName(),
-                                                                          null));
+                  requiredConfigProperties.add(new RequiredConfigPropertyImpl(null,
+                                                                              configProperty.getConfigPropertyName(),
+                                                                              null));
                }
             }
          }
@@ -1092,20 +1094,20 @@ public class Annotations
       if (plainConfigProperties != null)
       {
          Set<String> asClasses = getClasses(annotation.getClassName(), classLoader);
-         for (ConfigProperty configProperty16 : plainConfigProperties)
+         for (ConfigProperty configProperty : plainConfigProperties)
          {
-            if (asClasses.contains(((ConfigProperty16Impl) configProperty16).getAttachedClassName()))
+            if (asClasses.contains(((ConfigPropertyImpl) configProperty).getAttachedClassName()))
             {
-               validProperties.add(configProperty16);
+               validProperties.add(configProperty);
 
-               if (configProperty16.isMandatory())
+               if (configProperty.isMandatory())
                {
                   if (requiredConfigProperties == null)
                      requiredConfigProperties = new ArrayList<RequiredConfigProperty>(1);
 
-                  requiredConfigProperties.add(new RequiredConfigProperty(null,
-                                                                          configProperty16.getConfigPropertyName(),
-                                                                          null));
+                  requiredConfigProperties.add(new RequiredConfigPropertyImpl(null,
+                                                                              configProperty.getConfigPropertyName(),
+                                                                              null));
                }
             }
          }
@@ -1122,10 +1124,10 @@ public class Annotations
          messageListeners = new ArrayList<MessageListener>(activation.messageListeners().length);
          for (Class asClass : activation.messageListeners())
          {
-            Activationspec16 asMeta = new Activationspec16Impl(new XsdString(annotation.getClassName(), null),
-                                                               requiredConfigProperties,
-                                                               validProperties,
-                                                               null);
+            Activationspec asMeta = new ActivationSpecImpl(new XsdString(annotation.getClassName(), null),
+                                                           requiredConfigProperties,
+                                                           validProperties,
+                                                           null);
             MessageListener mlMeta = new MessageListenerImpl(new XsdString(asClass.getName(), null), asMeta, null);
             messageListeners.add(mlMeta);
 

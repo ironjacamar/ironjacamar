@@ -33,10 +33,8 @@ import java.util.Map;
  * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
-public interface TimeOut extends org.jboss.jca.common.api.metadata.common.CommonTimeOut, ValidatableMetadata
+public interface TimeOut extends org.jboss.jca.common.api.metadata.common.TimeOut, ValidatableMetadata
 {
-
-
    /**
     * Get the setTxQuertTimeout.
     *

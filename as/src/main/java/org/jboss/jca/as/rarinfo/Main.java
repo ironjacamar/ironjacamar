@@ -23,29 +23,25 @@ package org.jboss.jca.as.rarinfo;
 
 import org.jboss.jca.common.annotations.Annotations;
 import org.jboss.jca.common.api.metadata.Defaults;
-import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
-import org.jboss.jca.common.api.metadata.common.CommonPool;
+import org.jboss.jca.common.api.metadata.common.Pool;
 import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
-import org.jboss.jca.common.api.metadata.common.v10.CommonConnDef;
-import org.jboss.jca.common.api.metadata.ra.AdminObject;
-import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
-import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
-import org.jboss.jca.common.api.metadata.ra.Connector;
-import org.jboss.jca.common.api.metadata.ra.Connector.Version;
-import org.jboss.jca.common.api.metadata.ra.MessageListener;
-import org.jboss.jca.common.api.metadata.ra.RequiredConfigProperty;
-import org.jboss.jca.common.api.metadata.ra.ResourceAdapter;
-import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
-import org.jboss.jca.common.api.metadata.ra.XsdString;
-import org.jboss.jca.common.api.metadata.ra.ra10.ResourceAdapter10;
-import org.jboss.jca.common.metadata.common.CommonAdminObjectImpl;
-import org.jboss.jca.common.metadata.common.CommonPoolImpl;
-import org.jboss.jca.common.metadata.common.CommonSecurityImpl;
-import org.jboss.jca.common.metadata.common.CommonXaPoolImpl;
+import org.jboss.jca.common.api.metadata.resourceadapter.AdminObject;
+import org.jboss.jca.common.api.metadata.resourceadapter.ConnectionDefinition;
+import org.jboss.jca.common.api.metadata.spec.ConfigProperty;
+import org.jboss.jca.common.api.metadata.spec.Connector;
+import org.jboss.jca.common.api.metadata.spec.Connector.Version;
+import org.jboss.jca.common.api.metadata.spec.MessageListener;
+import org.jboss.jca.common.api.metadata.spec.RequiredConfigProperty;
+import org.jboss.jca.common.api.metadata.spec.ResourceAdapter;
+import org.jboss.jca.common.api.metadata.spec.XsdString;
 import org.jboss.jca.common.metadata.common.CredentialImpl;
-import org.jboss.jca.common.metadata.common.v10.CommonConnDefImpl;
-import org.jboss.jca.common.metadata.ra.RaParser;
+import org.jboss.jca.common.metadata.common.PoolImpl;
+import org.jboss.jca.common.metadata.common.SecurityImpl;
+import org.jboss.jca.common.metadata.common.XaPoolImpl;
+import org.jboss.jca.common.metadata.resourceadapter.AdminObjectImpl;
+import org.jboss.jca.common.metadata.resourceadapter.ConnectionDefinitionImpl;
+import org.jboss.jca.common.metadata.spec.RaParser;
 import org.jboss.jca.common.spi.annotations.repository.AnnotationRepository;
 import org.jboss.jca.common.spi.annotations.repository.AnnotationScanner;
 import org.jboss.jca.common.spi.annotations.repository.AnnotationScannerFactory;
@@ -274,14 +270,13 @@ public class Main
          
          String version;
          String type = "";
-         ResourceAdapter ra;
+         ResourceAdapter ra = connector.getResourceadapter();
          boolean reauth = false;
          if (connector.getVersion() == Version.V_10)
          {
             version = "1.0";
-            ra = connector.getResourceadapter();
             type = "OutBound";
-            reauth = ((ResourceAdapter10)ra).getReauthenticationSupport();
+            reauth = ra.getOutboundResourceadapter().getReauthenticationSupport();
          }
          else
          {
@@ -291,22 +286,20 @@ public class Main
                version = "1.6";
             else
                version = "1.7";
-            ResourceAdapter1516 ra1516 = (ResourceAdapter1516)connector.getResourceadapter();
-            ra = ra1516;
-            if (ra1516.getOutboundResourceadapter() != null)
+            if (ra.getOutboundResourceadapter() != null)
             {
-               reauth = ra1516.getOutboundResourceadapter().getReauthenticationSupport();
-               if (ra1516.getInboundResourceadapter() != null &&
-                   ra1516.getInboundResourceadapter().getMessageadapter() != null &&
-                   ra1516.getInboundResourceadapter().getMessageadapter().getMessagelisteners() != null &&
-                   ra1516.getInboundResourceadapter().getMessageadapter().getMessagelisteners().size() > 0)
+               reauth = ra.getOutboundResourceadapter().getReauthenticationSupport();
+               if (ra.getInboundResourceadapter() != null &&
+                   ra.getInboundResourceadapter().getMessageadapter() != null &&
+                   ra.getInboundResourceadapter().getMessageadapter().getMessagelisteners() != null &&
+                   ra.getInboundResourceadapter().getMessageadapter().getMessagelisteners().size() > 0)
                   type = "Bidirectional";
                else
                   type = "OutBound";
             }
             else
             {
-               if (ra1516.getInboundResourceadapter() != null)
+               if (ra.getInboundResourceadapter() != null)
                   type = "InBound";
                else
                {
@@ -352,388 +345,314 @@ public class Main
          String mcfClassName = "";
          Map<String, String> raConfigProperties = null;
          TransactionSupportEnum transSupport = TransactionSupportEnum.NoTransaction;
-         List<CommonAdminObject> adminObjects = null;
-         List<CommonConnDef> connDefs = null;
+         List<AdminObject> adminObjects = null;
+         List<ConnectionDefinition> connDefs = null;
 
-         CommonSecurityImpl secImpl = new CommonSecurityImpl("", "", true);
-         CommonPoolImpl poolImpl = new CommonPoolImpl(0, 10, Defaults.PREFILL, Defaults.USE_STRICT_MIN, 
-               Defaults.FLUSH_STRATEGY);
-         CommonXaPoolImpl xaPoolImpl = new CommonXaPoolImpl(0, 10, Defaults.PREFILL, Defaults.USE_STRICT_MIN, 
-               Defaults.FLUSH_STRATEGY, Defaults.IS_SAME_RM_OVERRIDE, Defaults.INTERLEAVING,
-               Defaults.PAD_XID, Defaults.WRAP_XA_RESOURCE, Defaults.NO_TX_SEPARATE_POOL);
+         SecurityImpl secImpl = new SecurityImpl("", "", true);
+         PoolImpl poolImpl = new PoolImpl(0, null, 10, Defaults.PREFILL, Defaults.USE_STRICT_MIN, 
+                                          Defaults.FLUSH_STRATEGY, null);
+         XaPoolImpl xaPoolImpl = new XaPoolImpl(0, null, 10, Defaults.PREFILL, Defaults.USE_STRICT_MIN, 
+                                                Defaults.FLUSH_STRATEGY, null, Defaults.IS_SAME_RM_OVERRIDE,
+                                                Defaults.INTERLEAVING,
+                                                Defaults.PAD_XID, Defaults.WRAP_XA_RESOURCE,
+                                                Defaults.NO_TX_SEPARATE_POOL);
 
-         if (connector.getVersion() != Version.V_10)
-         {
-            ResourceAdapter1516 ra1516 = (ResourceAdapter1516)ra;
-            Map<String, String> introspected;
+         Map<String, String> introspected;
             
-            if (ra1516.getResourceadapterClass() != null && !ra1516.getResourceadapterClass().equals(""))
-            {
-               out.println();
-               out.println("Resource-adapter:");
-               out.println("-----------------");
-               out.println("Class: " + ra1516.getResourceadapterClass());
+         if (ra.getResourceadapterClass() != null && !ra.getResourceadapterClass().equals(""))
+         {
+            out.println();
+            out.println("Resource-adapter:");
+            out.println("-----------------");
+            out.println("Class: " + ra.getResourceadapterClass());
                
-               introspected = getIntrospectedProperties(ra1516.getResourceadapterClass(), cl);
+            introspected = getIntrospectedProperties(ra.getResourceadapterClass(), cl);
 
-               if (ra1516.getConfigProperties() != null)
+            if (ra.getConfigProperties() != null)
+            {
+               raConfigProperties = new HashMap<String, String>();
+               for (ConfigProperty cp : ra.getConfigProperties())
                {
-                  raConfigProperties = new HashMap<String, String>();
-                  for (ConfigProperty cp : ra1516.getConfigProperties())
+                  raConfigProperties.put(getValueString(cp.getConfigPropertyName()),
+                                         getValueString(cp.getConfigPropertyValue()));
+                  
+                  removeIntrospectedValue(introspected, getValueString(cp.getConfigPropertyName()));
+                  
+                  out.println("  Config-property: " + getValueString(cp.getConfigPropertyName()) + " ("
+                              + getValueString(cp.getConfigPropertyType()) + ")");
+               }
+            }
+
+            if (introspected != null && !introspected.isEmpty())
+            {
+               for (Map.Entry<String, String> entry : introspected.entrySet())
+               {
+                  out.println("  Introspected Config-property: " + entry.getKey() + " (" + entry.getValue() + ")");
+               }
+            }
+
+            if (introspected == null)
+               out.println("  Unable to resolve introspected config-property's");
+            
+         }
+
+         int line = 0;
+         Set<String> sameClassnameSet = new HashSet<String>();
+         boolean needPrint = true;
+
+         if (ra.getOutboundResourceadapter() != null)
+         {
+            out.println();
+            out.println("Managed-connection-factory:");
+            out.println("---------------------------");
+            
+            if (ra.getOutboundResourceadapter().getConnectionDefinitions() != null)
+               connDefs = new ArrayList<ConnectionDefinition>();
+               
+            transSupport = ra.getOutboundResourceadapter().getTransactionSupport();
+            for (org.jboss.jca.common.api.metadata.spec.ConnectionDefinition mcf :
+                    ra.getOutboundResourceadapter().getConnectionDefinitions())
+            {
+               mcfClassName = getValueString(mcf.getManagedConnectionFactoryClass());
+               if (!sameClassnameSet.contains(mcfClassName))
+               {
+                  sameClassnameSet.add(mcfClassName);
+                  if (line != 0)
                   {
-                     raConfigProperties.put(getValueString(cp.getConfigPropertyName()),
-                           getValueString(cp.getConfigPropertyValue()));
-
-                     removeIntrospectedValue(introspected, getValueString(cp.getConfigPropertyName()));
-
-                     out.println("  Config-property: " + getValueString(cp.getConfigPropertyName()) + " ("
-                           + getValueString(cp.getConfigPropertyType()) + ")");
+                     out.println();
                   }
+                  line++;
+                  out.println("Class: " + mcfClassName);
+                  needPrint = true;
+               }
+               else
+               {
+                  needPrint = false;
+               }
+                  
+               if (needPrint)
+               {
+                  //ValidatingManagedConnectionFactory
+                  hasValidatingMcfInterface(out, mcfClassName, cl);
+                  
+                  //DissociatableManagedConnection
+                  hasDissociatableMcInterface(out, mcfClassName, cl, mcf.getConfigProperties());
+                     
+                  //LazyEnlistableManagedConnection
+                  hasEnlistableMcInterface(out, mcfClassName, cl, mcf.getConfigProperties());
+
+                  //CCI
+                  String cfi = getValueString(mcf.getConnectionFactoryInterface());
+                  try
+                  {
+                     out.print("  CCI: ");
+                     Class<?> clazz = Class.forName(cfi, true, cl);
+
+                     if (hasInterface(clazz, "javax.resource.cci.ConnectionFactory"))
+                     {
+                        out.println("Yes");
+                     }
+                     else
+                     {
+                        out.println("No");
+                        
+                        out.println("  ConnectionFactory (" + cfi + "):");
+                        outputMethodInfo(out, clazz, cl);
+                        
+                        Class<?> ci = Class.forName(getValueString(mcf.getConnectionInterface()), true, cl);
+                        out.println("  Connection (" + getValueString(mcf.getConnectionInterface()) + "):");
+                        outputMethodInfo(out, ci, cl);
+                     }
+                  }
+                  catch (Throwable t)
+                  {
+                     // Nothing we can do
+                     t.printStackTrace(System.err);
+                     out.println("Unknown");
+                  }
+               }
+                  
+               Map<String, String> configProperty = null;
+               if (mcf.getConfigProperties() != null)
+                  configProperty = new HashMap<String, String>();
+
+               introspected = getIntrospectedProperties(mcfClassName, cl);
+
+               for (ConfigProperty cp : mcf.getConfigProperties())
+               {
+                  configProperty.put(getValueString(cp.getConfigPropertyName()), 
+                                     getValueString(cp.getConfigPropertyValue()));
+
+                  removeIntrospectedValue(introspected, getValueString(cp.getConfigPropertyName()));
+                     
+                  if (needPrint)
+                     out.println("  Config-property: " + getValueString(cp.getConfigPropertyName()) + " (" +
+                                 getValueString(cp.getConfigPropertyType()) + ")");
                }
 
                if (introspected != null && !introspected.isEmpty())
                {
                   for (Map.Entry<String, String> entry : introspected.entrySet())
                   {
-                     out.println("  Introspected Config-property: " + entry.getKey() + " (" + entry.getValue() + ")");
+                     if (needPrint)
+                        out.println("  Introspected Config-property: " + entry.getKey() + " (" +
+                                    entry.getValue() + ")");
                   }
                }
 
                if (introspected == null)
                   out.println("  Unable to resolve introspected config-property's");
 
-            }
-
-            int line = 0;
-            Set<String> sameClassnameSet = new HashSet<String>();
-            boolean needPrint = true;
-
-            if (ra1516.getOutboundResourceadapter() != null)
-            {
-               out.println();
-               out.println("Managed-connection-factory:");
-               out.println("---------------------------");
-               
-               if (ra1516.getOutboundResourceadapter().getConnectionDefinitions() != null)
-                  connDefs = new ArrayList<CommonConnDef>();
-               
-               transSupport = ra1516.getOutboundResourceadapter().getTransactionSupport();
-               for (ConnectionDefinition mcf : ra1516.getOutboundResourceadapter().getConnectionDefinitions())
+               String poolName = getValueString(mcf.getConnectionInterface()).substring(
+                  getValueString(mcf.getConnectionInterface()).lastIndexOf('.') + 1);
+               Pool pool = null;
+               ConnectionDefinitionImpl connImpl;
+               if (transSupport.equals(TransactionSupportEnum.XATransaction))
                {
-                  mcfClassName = getValueString(mcf.getManagedConnectionFactoryClass());
-                  if (!sameClassnameSet.contains(mcfClassName))
+                  pool = xaPoolImpl;
+                  Recovery recovery = new Recovery(new CredentialImpl("user", "password", null), null, false);
+                  connImpl = new ConnectionDefinitionImpl(configProperty, mcfClassName, "java:jboss/eis/" + poolName,
+                                                          poolName, Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT,
+                                                          Defaults.USE_CCM, Defaults.SHARABLE, Defaults.ENLISTMENT,
+                                                          Defaults.CONNECTABLE, Defaults.TRACKING, pool, null, null,
+                                                          secImpl, recovery, Boolean.TRUE);
+               }
+               else
+               {
+                  pool = poolImpl;
+                  connImpl = new ConnectionDefinitionImpl(configProperty, mcfClassName, "java:jboss/eis/" + poolName,
+                                                          poolName, Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT,
+                                                          Defaults.USE_CCM, Defaults.SHARABLE, Defaults.ENLISTMENT,
+                                                          Defaults.CONNECTABLE, Defaults.TRACKING, pool, null, null,
+                                                          secImpl, null, Boolean.FALSE);
+               }
+               
+               connDefs.add(connImpl);
+            }
+            
+         }
+
+         line = 0;
+         sameClassnameSet.clear();
+
+         if (ra.getAdminObjects() != null && ra.getAdminObjects().size() > 0)
+         {
+            out.println();
+            out.println("Admin-object:");
+            out.println("-------------");
+            adminObjects = new ArrayList<AdminObject>();
+
+            for (org.jboss.jca.common.api.metadata.spec.AdminObject ao : ra.getAdminObjects())
+            {
+               String aoClassname = getValueString(ao.getAdminobjectClass());
+               if (!sameClassnameSet.contains(aoClassname))
+               {
+                  sameClassnameSet.add(aoClassname);
+                  if (line != 0)
                   {
-                     sameClassnameSet.add(mcfClassName);
-                     if (line != 0)
-                     {
-                        out.println();
-                     }
-                     line++;
-                     out.println("Class: " + mcfClassName);
-                     needPrint = true;
+                     out.println();
                   }
-                  else
-                  {
-                     needPrint = false;
-                  }
+                  line++;
+                  out.println("Class: " + aoClassname);
+                  out.println("  Interface: " + getValueString(ao.getAdminobjectInterface()));
+                  needPrint = true;
+               }
+               else
+               {
+                  needPrint = false;
+               }
+
+               String poolName = aoClassname.substring(aoClassname.lastIndexOf('.') + 1);
+               Map<String, String> configProperty = null;
+               if (ao.getConfigProperties() != null)
+                  configProperty = new HashMap<String, String>();
+               
+               introspected = getIntrospectedProperties(aoClassname, cl);
+               
+               for (ConfigProperty cp : ao.getConfigProperties())
+               {
+                  configProperty.put(getValueString(cp.getConfigPropertyName()), 
+                                     getValueString(cp.getConfigPropertyValue()));
+                  
+                  removeIntrospectedValue(introspected, getValueString(cp.getConfigPropertyName()));
                   
                   if (needPrint)
-                  {
-                     //ValidatingManagedConnectionFactory
-                     hasValidatingMcfInterface(out, mcfClassName, cl);
-                     
-                     //DissociatableManagedConnection
-                     hasDissociatableMcInterface(out, mcfClassName, cl, mcf.getConfigProperties());
-                     
-                     //LazyEnlistableManagedConnection
-                     hasEnlistableMcInterface(out, mcfClassName, cl, mcf.getConfigProperties());
-
-                     //CCI
-                     String cfi = getValueString(mcf.getConnectionFactoryInterface());
-                     try
-                     {
-                        out.print("  CCI: ");
-                        Class<?> clazz = Class.forName(cfi, true, cl);
-
-                        if (hasInterface(clazz, "javax.resource.cci.ConnectionFactory"))
-                        {
-                           out.println("Yes");
-                        }
-                        else
-                        {
-                           out.println("No");
-                           
-                           out.println("  ConnectionFactory (" + cfi + "):");
-                           outputMethodInfo(out, clazz, cl);
-                           
-                           Class<?> ci = Class.forName(getValueString(mcf.getConnectionInterface()), true, cl);
-                           out.println("  Connection (" + getValueString(mcf.getConnectionInterface()) + "):");
-                           outputMethodInfo(out, ci, cl);
-                        }
-                     }
-                     catch (Throwable t)
-                     {
-                        // Nothing we can do
-                        t.printStackTrace(System.err);
-                        out.println("Unknown");
-                     }
-                  }
-                  
-                  Map<String, String> configProperty = null;
-                  if (mcf.getConfigProperties() != null)
-                     configProperty = new HashMap<String, String>();
-
-                  introspected = getIntrospectedProperties(mcfClassName, cl);
-
-                  for (ConfigProperty cp : mcf.getConfigProperties())
-                  {
-                     configProperty.put(getValueString(cp.getConfigPropertyName()), 
-                                        getValueString(cp.getConfigPropertyValue()));
-
-                     removeIntrospectedValue(introspected, getValueString(cp.getConfigPropertyName()));
-                     
-                     if (needPrint)
-                        out.println("  Config-property: " + getValueString(cp.getConfigPropertyName()) + " (" +
-                                    getValueString(cp.getConfigPropertyType()) + ")");
-                  }
-
-                  if (introspected != null && !introspected.isEmpty())
-                  {
-                     for (Map.Entry<String, String> entry : introspected.entrySet())
-                     {
-                        if (needPrint)
-                           out.println("  Introspected Config-property: " + entry.getKey() + " (" +
-                                       entry.getValue() + ")");
-                     }
-                  }
-
-                  if (introspected == null)
-                     out.println("  Unable to resolve introspected config-property's");
-
-                  String poolName = getValueString(mcf.getConnectionInterface()).substring(
-                     getValueString(mcf.getConnectionInterface()).lastIndexOf('.') + 1);
-                  CommonPool pool = null;
-                  CommonConnDefImpl connImpl;
-                  if (transSupport.equals(TransactionSupportEnum.XATransaction))
-                  {
-                     pool = xaPoolImpl;
-                     Recovery recovery = new Recovery(new CredentialImpl("user", "password", null), null, false);
-                     connImpl = new CommonConnDefImpl(configProperty, mcfClassName, "java:jboss/eis/" + poolName,
-                        poolName, Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT, Defaults.USE_CCM, pool, null, null,
-                        secImpl, recovery, Boolean.TRUE);
-                  }
-                  else
-                  {
-                     pool = poolImpl;
-                     connImpl = new CommonConnDefImpl(configProperty, mcfClassName, "java:jboss/eis/" + poolName,
-                        poolName, Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT, Defaults.USE_CCM, pool, null, null,
-                        secImpl, null, Boolean.FALSE);
-                  }
-
-                  connDefs.add(connImpl);
+                     out.println("  Config-property: " + getValueString(cp.getConfigPropertyName()) + " (" +
+                                 getValueString(cp.getConfigPropertyType()) + ")");
                }
 
-            }
-
-            line = 0;
-            sameClassnameSet.clear();
-
-            if (ra1516.getAdminObjects() != null && ra1516.getAdminObjects().size() > 0)
-            {
-               out.println();
-               out.println("Admin-object:");
-               out.println("-------------");
-               adminObjects = new ArrayList<CommonAdminObject>();
-
-               for (AdminObject ao : ra1516.getAdminObjects())
+               if (introspected != null && !introspected.isEmpty())
                {
-                  String aoClassname = getValueString(ao.getAdminobjectClass());
-                  if (!sameClassnameSet.contains(aoClassname))
+                  for (Map.Entry<String, String> entry : introspected.entrySet())
                   {
-                     sameClassnameSet.add(aoClassname);
-                     if (line != 0)
-                     {
-                        out.println();
-                     }
-                     line++;
-                     out.println("Class: " + aoClassname);
-                     out.println("  Interface: " + getValueString(ao.getAdminobjectInterface()));
-                     needPrint = true;
-                  }
-                  else
-                  {
-                     needPrint = false;
-                  }
-
-                  String poolName = aoClassname.substring(aoClassname.lastIndexOf('.') + 1);
-                  Map<String, String> configProperty = null;
-                  if (ao.getConfigProperties() != null)
-                     configProperty = new HashMap<String, String>();
-               
-                  introspected = getIntrospectedProperties(aoClassname, cl);
-               
-                  for (ConfigProperty cp : ao.getConfigProperties())
-                  {
-                     configProperty.put(getValueString(cp.getConfigPropertyName()), 
-                                        getValueString(cp.getConfigPropertyValue()));
-                     
-                     removeIntrospectedValue(introspected, getValueString(cp.getConfigPropertyName()));
-                  
                      if (needPrint)
-                        out.println("  Config-property: " + getValueString(cp.getConfigPropertyName()) + " (" +
-                                    getValueString(cp.getConfigPropertyType()) + ")");
+                        out.println("  Introspected Config-property: " + entry.getKey() + " (" +
+                                    entry.getValue() + ")");
                   }
-
-                  if (introspected != null && !introspected.isEmpty())
-                  {
-                     for (Map.Entry<String, String> entry : introspected.entrySet())
-                     {
-                        if (needPrint)
-                           out.println("  Introspected Config-property: " + entry.getKey() + " (" +
-                                       entry.getValue() + ")");
-                     }
-                  }
+               }
                   
-                  if (introspected == null)
-                     out.println("  Unable to resolve introspected config-property's");
+               if (introspected == null)
+                  out.println("  Unable to resolve introspected config-property's");
 
-                  CommonAdminObjectImpl aoImpl = new CommonAdminObjectImpl(configProperty, aoClassname,
-                     "java:jboss/eis/ao/" + poolName, poolName, Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT);
-                  adminObjects.add(aoImpl);
-               }
-            }
-            
-            line = 0;
-            sameClassnameSet.clear();
-
-            if (ra1516.getInboundResourceadapter() != null && 
-                ra1516.getInboundResourceadapter().getMessageadapter() != null &&
-                ra1516.getInboundResourceadapter().getMessageadapter().getMessagelisteners() != null &&
-                ra1516.getInboundResourceadapter().getMessageadapter().getMessagelisteners().size() > 0)
-            {
-               out.println();
-               out.println("Activation-spec:");
-               out.println("----------------");
-               for (MessageListener ml : 
-                  ra1516.getInboundResourceadapter().getMessageadapter().getMessagelisteners())
-               {
-                  String asClassname = getValueString(ml.getActivationspec().getActivationspecClass());
-                  if (!sameClassnameSet.contains(asClassname))
-                  {
-                     sameClassnameSet.add(asClassname);
-                     if (line != 0)
-                     {
-                        out.println();
-                     }
-                     line++;
-                     out.println("Class: " + asClassname);
-                     out.println("  Message-listener: " + getValueString(ml.getMessagelistenerType()));
-
-                     introspected = getIntrospectedProperties(asClassname, cl);
-
-                     if (ml.getActivationspec() != null && 
-                         ml.getActivationspec().getRequiredConfigProperties() != null)
-                     {
-                        for (RequiredConfigProperty cp :  ml.getActivationspec().getRequiredConfigProperties())
-                        {
-                           removeIntrospectedValue(introspected, getValueString(cp.getConfigPropertyName()));
-                           
-                           out.println("  Required-config-property: " + getValueString(cp.getConfigPropertyName()));
-                        }
-                     }
-
-                     if (introspected != null && !introspected.isEmpty())
-                     {
-                        for (Map.Entry<String, String> entry : introspected.entrySet())
-                        {
-                           out.println("  Introspected Config-property: " + entry.getKey() + " (" +
-                                       entry.getValue() + ")");
-                        }
-                     }
-
-                     if (introspected == null)
-                        out.println("  Unable to resolve introspected config-property's");
-                  }
-               }
+               AdminObjectImpl aoImpl = new AdminObjectImpl(configProperty, aoClassname,
+                  "java:jboss/eis/ao/" + poolName, poolName, Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT);
+               adminObjects.add(aoImpl);
             }
          }
-         else
+            
+         line = 0;
+         sameClassnameSet.clear();
+
+         if (ra.getInboundResourceadapter() != null && 
+             ra.getInboundResourceadapter().getMessageadapter() != null &&
+             ra.getInboundResourceadapter().getMessageadapter().getMessagelisteners() != null &&
+             ra.getInboundResourceadapter().getMessageadapter().getMessagelisteners().size() > 0)
          {
-            out.println("Managed-connection-factory:");
-            out.println("---------------------------");
-
-            ResourceAdapter10 ra10 = (ResourceAdapter10)ra;
-            out.println("Class: " + ra10.getManagedConnectionFactoryClass());
-            
-            mcfClassName = getValueString(ra10.getManagedConnectionFactoryClass());
-            transSupport = ra10.getTransactionSupport();
-            
-            //ValidatingManagedConnectionFactory
-            hasValidatingMcfInterface(out, mcfClassName, cl);
-            
-            //DissociatableManagedConnection
-            hasDissociatableMcInterface(out, mcfClassName, cl, ra10.getConfigProperties());
-            
-            //LazyEnlistableManagedConnection
-            hasEnlistableMcInterface(out, mcfClassName, cl, ra10.getConfigProperties());
-            
-            Class<?> cfi = Class.forName(mcfClassName, true, cl);
-            out.println("  ConnectionFactory (" + mcfClassName + "):");
-            outputMethodInfo(out, cfi, cl);
-            
-            Class<?> ci = Class.forName(getValueString(ra10.getConnectionInterface()), true, cl);
-            out.println("  Connection (" + getValueString(ra10.getConnectionInterface()) + "):");
-            outputMethodInfo(out, ci, cl);
-            
-            Map<String, String> configProperty = null;
-            if (ra10.getConfigProperties() != null)
-               configProperty = new HashMap<String, String>();
-
-            Map<String, String> introspected =
-               getIntrospectedProperties(mcfClassName, cl);
-
-            for (ConfigProperty cp : ra10.getConfigProperties())
+            out.println();
+            out.println("Activation-spec:");
+            out.println("----------------");
+            for (MessageListener ml : 
+                    ra.getInboundResourceadapter().getMessageadapter().getMessagelisteners())
             {
-               configProperty.put(getValueString(cp.getConfigPropertyName()), 
-                                  getValueString(cp.getConfigPropertyValue()));
-               
-               removeIntrospectedValue(introspected, getValueString(cp.getConfigPropertyName()));
-               
-               out.println("  Config-property: " + getValueString(cp.getConfigPropertyName()) + " (" +
-                           getValueString(cp.getConfigPropertyType()) + ")");
-            }
-            
-            if (introspected != null && !introspected.isEmpty())
-            {
-               for (Map.Entry<String, String> entry : introspected.entrySet())
+               String asClassname = getValueString(ml.getActivationspec().getActivationspecClass());
+               if (!sameClassnameSet.contains(asClassname))
                {
-                  out.println("  Introspected Config-property: " + entry.getKey() + " (" +
-                              entry.getValue() + ")");
+                  sameClassnameSet.add(asClassname);
+                  if (line != 0)
+                  {
+                     out.println();
+                  }
+                  line++;
+                  out.println("Class: " + asClassname);
+                  out.println("  Message-listener: " + getValueString(ml.getMessagelistenerType()));
+
+                  introspected = getIntrospectedProperties(asClassname, cl);
+
+                  if (ml.getActivationspec() != null && 
+                      ml.getActivationspec().getRequiredConfigProperties() != null)
+                  {
+                     for (RequiredConfigProperty cp :  ml.getActivationspec().getRequiredConfigProperties())
+                     {
+                        removeIntrospectedValue(introspected, getValueString(cp.getConfigPropertyName()));
+                           
+                        out.println("  Required-config-property: " + getValueString(cp.getConfigPropertyName()));
+                     }
+                  }
+
+                  if (introspected != null && !introspected.isEmpty())
+                  {
+                     for (Map.Entry<String, String> entry : introspected.entrySet())
+                     {
+                        out.println("  Introspected Config-property: " + entry.getKey() + " (" +
+                                    entry.getValue() + ")");
+                     }
+                  }
+
+                  if (introspected == null)
+                     out.println("  Unable to resolve introspected config-property's");
                }
             }
-
-            if (introspected == null)
-               out.println("  Unable to resolve introspected config-property's");
-
-            String poolName = mcfClassName.substring(mcfClassName.lastIndexOf('.') + 1);
-            CommonPool pool = null;
-            if (transSupport.equals(TransactionSupportEnum.XATransaction))
-            {
-               pool = xaPoolImpl;
-            }
-            else
-            {
-               pool = poolImpl;
-            }
-            CommonConnDefImpl connImpl = new CommonConnDefImpl(configProperty, mcfClassName, 
-                                                               "java:jboss/eis/" + poolName, poolName, 
-                                                               Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT,
-                                                               Defaults.USE_CCM,
-                                                               pool, null, null, secImpl, null, Boolean.FALSE);
-            connDefs = new ArrayList<CommonConnDef>();
-            connDefs.add(connImpl);
          }
-         
 
          RaImpl raImpl = new RaImpl(archiveFile, transSupport, connDefs, adminObjects, raConfigProperties);
          raImpl.buildResourceAdapterImpl();
@@ -1043,22 +962,8 @@ public class Main
 
       if (cmd.getVersion() == Version.V_16 || cmd.getVersion() == Version.V_17)
       {
-         if (cmd.getVersion() == Version.V_16)
-         {
-            org.jboss.jca.common.api.metadata.ra.ra16.Connector16 cmd16 =
-               (org.jboss.jca.common.api.metadata.ra.ra16.Connector16)cmd;
-
-            if (!cmd16.isMetadataComplete())
-               return true;
-         }
-         else
-         {
-            org.jboss.jca.common.api.metadata.ra.ra17.Connector17 cmd17 =
-               (org.jboss.jca.common.api.metadata.ra.ra17.Connector17)cmd;
-
-            if (!cmd17.isMetadataComplete())
-               return true;
-         }
+         if (!cmd.isMetadataComplete())
+            return true;
       }
 
       return false;

@@ -35,7 +35,7 @@ import java.util.Map;
  * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
-public interface Validation extends org.jboss.jca.common.api.metadata.common.CommonValidation, ValidatableMetadata
+public interface Validation extends org.jboss.jca.common.api.metadata.common.Validation, ValidatableMetadata
 {
 
    /**

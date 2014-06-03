@@ -24,30 +24,21 @@ package org.jboss.jca.eclipse.command.raui;
 import org.jboss.jca.codegenerator.ConfigPropType;
 import org.jboss.jca.common.annotations.Annotations;
 import org.jboss.jca.common.api.metadata.common.Capacity;
-import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
-import org.jboss.jca.common.api.metadata.common.CommonConnDef;
-import org.jboss.jca.common.api.metadata.common.CommonPool;
-import org.jboss.jca.common.api.metadata.common.CommonSecurity;
-import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
-import org.jboss.jca.common.api.metadata.common.CommonValidation;
-import org.jboss.jca.common.api.metadata.common.CommonXaPool;
+import org.jboss.jca.common.api.metadata.common.Pool;
 import org.jboss.jca.common.api.metadata.common.Recovery;
+import org.jboss.jca.common.api.metadata.common.Security;
+import org.jboss.jca.common.api.metadata.common.TimeOut;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
-import org.jboss.jca.common.api.metadata.common.v11.ConnDefPool;
-import org.jboss.jca.common.api.metadata.common.v11.ConnDefXaPool;
-import org.jboss.jca.common.api.metadata.common.v11.WorkManager;
-import org.jboss.jca.common.api.metadata.common.v11.WorkManagerSecurity;
-import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
-import org.jboss.jca.common.api.metadata.ra.AdminObject;
-import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
-import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
-import org.jboss.jca.common.api.metadata.ra.Connector;
-import org.jboss.jca.common.api.metadata.ra.ResourceAdapter;
-import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
-import org.jboss.jca.common.api.metadata.ra.ra10.ResourceAdapter10;
+import org.jboss.jca.common.api.metadata.common.Validation;
+import org.jboss.jca.common.api.metadata.common.XaPool;
+import org.jboss.jca.common.api.metadata.resourceadapter.Activation;
+import org.jboss.jca.common.api.metadata.resourceadapter.WorkManager;
+import org.jboss.jca.common.api.metadata.resourceadapter.WorkManagerSecurity;
+import org.jboss.jca.common.api.metadata.spec.ConfigProperty;
+import org.jboss.jca.common.api.metadata.spec.Connector;
+import org.jboss.jca.common.api.metadata.spec.ResourceAdapter;
 import org.jboss.jca.common.metadata.MetadataFactory;
 import org.jboss.jca.common.metadata.merge.Merger;
-import org.jboss.jca.common.metadata.ra.common.ConnectionDefinitionImpl;
 import org.jboss.jca.common.spi.annotations.repository.AnnotationRepository;
 import org.jboss.jca.common.spi.annotations.repository.AnnotationScanner;
 import org.jboss.jca.common.spi.annotations.repository.AnnotationScannerFactory;
@@ -130,7 +121,7 @@ public class ResourceAdapterHelper
       FileUtil fileUtil = new FileUtil();
       File root = fileUtil.extract(rarFile, new File(System.getProperty("java.io.tmpdir")));
       Connector cmd = null;
-      IronJacamar ijmd = null;
+      Activation ijmd = null;
       try
       {
          MetadataFactory metadataFactory = new MetadataFactory();
@@ -165,69 +156,47 @@ public class ResourceAdapterHelper
       return raConfig;
    }
    
-   private WorkManagerConfig getWorkManagerConfig(IronJacamar ijmd)
+   private WorkManagerConfig getWorkManagerConfig(Activation ijmd)
    {
       WorkManagerConfig workManagerConfig = new WorkManagerConfig();
-      if (ijmd instanceof org.jboss.jca.common.api.metadata.ironjacamar.v11.IronJacamar)
+      WorkManager workManager = ijmd.getWorkManager();
+      if (workManager != null)
       {
-         org.jboss.jca.common.api.metadata.ironjacamar.v11.IronJacamar ij11 = 
-               (org.jboss.jca.common.api.metadata.ironjacamar.v11.IronJacamar)ijmd;
-         WorkManager workManager = ij11.getWorkManager();
-         if (workManager != null)
+         WorkManagerSecurity workSec = workManager.getSecurity();
+         if (workSec != null)
          {
-            WorkManagerSecurity workSec = workManager.getSecurity();
-            if (workSec != null)
-            {
-               workManagerConfig.setDefaultPricipal(workSec.getDefaultPrincipal());
-               workManagerConfig.setDomain(workSec.getDomain());
-               workManagerConfig.setMappingRequired(workSec.isMappingRequired());
-               workManagerConfig.setDefaultGroups(new ArrayList<>(workSec.getDefaultGroups()));
-               workManagerConfig.setGroupMap(new HashMap<String, String>(workSec.getGroupMappings()));
-               workManagerConfig.setUserMap(new HashMap<String, String>(workSec.getUserMappings()));
-            }
+            workManagerConfig.setDefaultPricipal(workSec.getDefaultPrincipal());
+            workManagerConfig.setDomain(workSec.getDomain());
+            workManagerConfig.setMappingRequired(workSec.isMappingRequired());
+            workManagerConfig.setDefaultGroups(new ArrayList<>(workSec.getDefaultGroups()));
+            workManagerConfig.setGroupMap(new HashMap<String, String>(workSec.getGroupMappings()));
+            workManagerConfig.setUserMap(new HashMap<String, String>(workSec.getUserMappings()));
          }
       }
       return workManagerConfig;
    }
 
-   private List<ConnectionFactoryConfig> getConnectionDefinitions(Connector cmd, IronJacamar ijmd)
+   private List<ConnectionFactoryConfig> getConnectionDefinitions(Connector cmd, Activation ijmd)
    {
       List<ConnectionFactoryConfig> connConfigs = new ArrayList<ConnectionFactoryConfig>();
-      List<ConnectionDefinition> mcfs = null;
+      List<org.jboss.jca.common.api.metadata.spec.ConnectionDefinition> mcfs = null;
       ResourceAdapter ra = cmd.getResourceadapter();
-      if (ra instanceof ResourceAdapter1516)
-      {
-         ResourceAdapter1516 ra1516 = (ResourceAdapter1516) ra;
-         if (null != ra1516.getOutboundResourceadapter())
-         {
-            mcfs = ra1516.getOutboundResourceadapter().getConnectionDefinitions();
-         }
-      }
-      else if (ra instanceof ResourceAdapter10)
-      {
-         ResourceAdapter10 ra10 = (ResourceAdapter10) ra;
-         mcfs = new ArrayList<ConnectionDefinition>();
-         mcfs.add(new ConnectionDefinitionImpl(ra10.getManagedConnectionFactoryClass(), ra10.getConfigProperties(),
-               ra10.getConnectionFactoryInterface(), ra10.getConnectionFactoryImplClass(), ra10
-                     .getConnectionInterface(), ra10.getConnectionImplClass(), ra10.getId()));
-      }
+
+      mcfs = ra.getOutboundResourceadapter().getConnectionDefinitions();
+
       if (mcfs != null)
       {
-         for (ConnectionDefinition connDef: mcfs)
+         for (org.jboss.jca.common.api.metadata.spec.ConnectionDefinition connDef: mcfs)
          {
             ConnectionFactoryConfig connConfig = new ConnectionFactoryConfig();
-            CommonConnDef commonConnDef = getCommonConnDef(ijmd, connDef);
+            org.jboss.jca.common.api.metadata.resourceadapter.ConnectionDefinition commonConnDef =
+               getCommonConnDef(ijmd, connDef);
+
             if (commonConnDef != null)
             {
                connConfig.setActive(true);
-               if (commonConnDef instanceof org.jboss.jca.common.api.metadata.common.v11.CommonConnDef)
-               {
-                  org.jboss.jca.common.api.metadata.common.v11.CommonConnDef connDef11 = 
-                        (org.jboss.jca.common.api.metadata.common.v11.CommonConnDef)commonConnDef;
-                  connConfig.setEnlistment(connDef11.isEnlistment());
-                  connConfig.setSharable(connDef11.isSharable());
-               }
-               
+               connConfig.setEnlistment(commonConnDef.isEnlistment());
+               connConfig.setSharable(commonConnDef.isSharable());               
                connConfig.setMcfClsName(commonConnDef.getClassName());
                connConfig.setMcfConfigProps(getConfigPropTypes(connDef.getConfigProperties(), 
                      commonConnDef.getConfigProperties()));
@@ -249,10 +218,12 @@ public class ResourceAdapterHelper
       return connConfigs;
    }
    
-   private ValidationConfig getValidationConfig(ConnectionDefinition connDef, CommonConnDef commonConnDef)
+   private ValidationConfig
+   getValidationConfig(org.jboss.jca.common.api.metadata.spec.ConnectionDefinition connDef,
+                       org.jboss.jca.common.api.metadata.resourceadapter.ConnectionDefinition commonConnDef)
    {
       ValidationConfig validationConfig = new ValidationConfig();
-      CommonValidation validation = commonConnDef.getValidation();
+      Validation validation = commonConnDef.getValidation();
       if (validation != null)
       {
          validationConfig.setBackgroundValidation(validation.isBackgroundValidation());
@@ -262,10 +233,12 @@ public class ResourceAdapterHelper
       return validationConfig;
    }
 
-   private TimeoutConfig getTimeoutConfig(ConnectionDefinition connDef, CommonConnDef commonConnDef)
+   private TimeoutConfig
+   getTimeoutConfig(org.jboss.jca.common.api.metadata.spec.ConnectionDefinition connDef,
+                    org.jboss.jca.common.api.metadata.resourceadapter.ConnectionDefinition commonConnDef)
    {
       TimeoutConfig timeOutConfig = new TimeoutConfig();
-      CommonTimeOut timeout = commonConnDef.getTimeOut();
+      TimeOut timeout = commonConnDef.getTimeOut();
       if (timeout != null)
       {
          timeOutConfig.setAllocateRetry(timeout.getAllocationRetry());
@@ -277,10 +250,12 @@ public class ResourceAdapterHelper
       return timeOutConfig;
    }
 
-   private SecurityConfig getSecurityConfig(ConnectionDefinition connDef, CommonConnDef commonConnDef)
+   private SecurityConfig
+   getSecurityConfig(org.jboss.jca.common.api.metadata.spec.ConnectionDefinition connDef,
+                     org.jboss.jca.common.api.metadata.resourceadapter.ConnectionDefinition commonConnDef)
    {
       SecurityConfig secConfig = new SecurityConfig();
-      CommonSecurity security = commonConnDef.getSecurity();
+      Security security = commonConnDef.getSecurity();
       if (security != null)
       {
          secConfig.setApplication(secConfig.getApplication());
@@ -290,7 +265,9 @@ public class ResourceAdapterHelper
       return secConfig;
    }
 
-   private RecoveryConfig getRecoveryConfig(ConnectionDefinition connDef, CommonConnDef commonConnDef)
+   private RecoveryConfig
+   getRecoveryConfig(org.jboss.jca.common.api.metadata.spec.ConnectionDefinition connDef,
+                     org.jboss.jca.common.api.metadata.resourceadapter.ConnectionDefinition commonConnDef)
    {
       RecoveryConfig recoveryConfig = new RecoveryConfig();
       Recovery recovery = commonConnDef.getRecovery();
@@ -327,38 +304,30 @@ public class ResourceAdapterHelper
       return extConfig;
    }
 
-   private PoolConfig getPoolConfig(ConnectionDefinition connDef, CommonConnDef commonConnDef)
+   private PoolConfig
+   getPoolConfig(org.jboss.jca.common.api.metadata.spec.ConnectionDefinition connDef,
+                 org.jboss.jca.common.api.metadata.resourceadapter.ConnectionDefinition commonConnDef)
    {
       PoolConfig poolConfig = new PoolConfig();
-      CommonPool commonPool = commonConnDef.getPool();
+      Pool commonPool = commonConnDef.getPool();
       if (commonPool != null)
       {
          poolConfig.setFlushStrategy(commonPool.getFlushStrategy());
          poolConfig.setMinPoolSize(commonPool.getMinPoolSize());
+         poolConfig.setInitialPoolSize(commonPool.getInitialPoolSize());
          poolConfig.setMaxPoolSize(commonPool.getMaxPoolSize());
          poolConfig.setPrefill(commonPool.isPrefill());
          poolConfig.setUseStrictMin(commonPool.isUseStrictMin());
-         if (commonPool instanceof CommonXaPool)
+         poolConfig.setCapacityConfig(getCapacityConfig(commonPool.getCapacity()));
+         if (commonPool instanceof XaPool)
          {
-            CommonXaPool xaPool = (CommonXaPool)commonPool;
+            XaPool xaPool = (XaPool)commonPool;
             poolConfig.setDefineXA(true);
             poolConfig.setInterleaving(xaPool.isInterleaving());
             poolConfig.setNoTxSeparatePool(xaPool.isNoTxSeparatePool());
             poolConfig.setOverrideIsSameRM(xaPool.isSameRmOverride());
             poolConfig.setPadXid(xaPool.isPadXid());
             poolConfig.setWrapXaResource(xaPool.isWrapXaResource());
-         }
-         if (commonPool instanceof ConnDefPool)
-         {
-            ConnDefPool connDefPool = (ConnDefPool)commonPool;
-            poolConfig.setInitialPoolSize(connDefPool.getInitialPoolSize());
-            poolConfig.setCapacityConfig(getCapacityConfig(connDefPool.getCapacity()));
-         }
-         if (commonPool instanceof ConnDefXaPool)
-         {
-            ConnDefXaPool connDefPool = (ConnDefXaPool)commonPool;
-            poolConfig.setInitialPoolSize(connDefPool.getInitialPoolSize());
-            poolConfig.setCapacityConfig(getCapacityConfig(connDefPool.getCapacity()));
          }
       }
       return poolConfig;
@@ -375,11 +344,13 @@ public class ResourceAdapterHelper
       return capacityConfig;
    }
 
-   private CommonConnDef getCommonConnDef(IronJacamar ijmd, ConnectionDefinition connDef)
+   private org.jboss.jca.common.api.metadata.resourceadapter.ConnectionDefinition
+   getCommonConnDef(Activation ijmd, org.jboss.jca.common.api.metadata.spec.ConnectionDefinition connDef)
    {
       if (null != ijmd)
       {
-         for (CommonConnDef commonConnDef : ijmd.getConnectionDefinitions())
+         for (org.jboss.jca.common.api.metadata.resourceadapter.ConnectionDefinition commonConnDef :
+                 ijmd.getConnectionDefinitions())
          {
             if (connDef.getManagedConnectionFactoryClass().getValue().equals(commonConnDef.getClassName()))
             {
@@ -390,37 +361,34 @@ public class ResourceAdapterHelper
       return null;
    }
 
-   private List<AdminObjectConfig> getAdminObjectConfigs(Connector cmd, IronJacamar ijmd)
+   private List<AdminObjectConfig> getAdminObjectConfigs(Connector cmd, Activation ijmd)
    {
       List<AdminObjectConfig> aoConfigs = new ArrayList<AdminObjectConfig>();
       ResourceAdapter ra = cmd.getResourceadapter();
-      if (ra instanceof ResourceAdapter1516)
+      for (org.jboss.jca.common.api.metadata.spec.AdminObject ao: ra.getAdminObjects())
       {
-         ResourceAdapter1516 ra1516 = (ResourceAdapter1516) ra;
-         for (AdminObject ao: ra1516.getAdminObjects())
+         AdminObjectConfig aoConfig = new AdminObjectConfig();
+         aoConfig.setClssName(ao.getAdminobjectClass().getValue());
+         org.jboss.jca.common.api.metadata.resourceadapter.AdminObject commonAO = getCommonAdminObject(ao, ijmd);
+         if (commonAO != null)
          {
-            AdminObjectConfig aoConfig = new AdminObjectConfig();
-            aoConfig.setClssName(ao.getAdminobjectClass().getValue());
-            CommonAdminObject commonAO = getCommonAdminObject(ao, ijmd);
-            if (commonAO != null)
-            {
-               aoConfig.setActive(true);
-               aoConfig.setEnabled(commonAO.isEnabled());
-               aoConfig.setJndiName(commonAO.getJndiName());
-               aoConfig.setPoolName(commonAO.getPoolName());
-               aoConfig.setUseJavaCtx(commonAO.isUseJavaContext());
-            }
-            aoConfigs.add(aoConfig);
+            aoConfig.setActive(true);
+            aoConfig.setEnabled(commonAO.isEnabled());
+            aoConfig.setJndiName(commonAO.getJndiName());
+            aoConfig.setPoolName(commonAO.getPoolName());
+            aoConfig.setUseJavaCtx(commonAO.isUseJavaContext());
          }
+         aoConfigs.add(aoConfig);
       }
       return aoConfigs;
    }
    
-   private CommonAdminObject getCommonAdminObject(AdminObject ao, IronJacamar ijmd)
+   private org.jboss.jca.common.api.metadata.resourceadapter.AdminObject
+   getCommonAdminObject(org.jboss.jca.common.api.metadata.spec.AdminObject ao, Activation ijmd)
    {
       if (ijmd != null)
       {
-         for (CommonAdminObject commonAO : ijmd.getAdminObjects())
+         for (org.jboss.jca.common.api.metadata.resourceadapter.AdminObject commonAO : ijmd.getAdminObjects())
          {
             if (commonAO.getClassName().equals(ao.getAdminobjectClass().getValue()))
             {
@@ -434,18 +402,11 @@ public class ResourceAdapterHelper
    private List<ConfigPropType> getConfigProperties(Connector cmd)
    {
       List<ConfigPropType> result = new ArrayList<ConfigPropType>();
-      List<? extends ConfigProperty> configProperties = null;
+      List<ConfigProperty> configProperties = null;
       ResourceAdapter ra = cmd.getResourceadapter();
-      if (ra instanceof ResourceAdapter1516)
-      {
-         ResourceAdapter1516 ra1516 = (ResourceAdapter1516) ra;
-         configProperties = ra1516.getConfigProperties();
-      }
-      else if (ra instanceof ResourceAdapter10)
-      {
-         ResourceAdapter10 ra10 = (ResourceAdapter10) ra;
-         configProperties = ra10.getConfigProperties();
-      }
+
+      configProperties = ra.getConfigProperties();
+
       if (configProperties != null)
       {
          for (ConfigProperty configProp : configProperties)
@@ -485,21 +446,12 @@ public class ResourceAdapterHelper
    private TransactionSupportEnum getTransactionSupportEnum(Connector cmd)
    {
       ResourceAdapter ra = cmd.getResourceadapter();
-      if (ra instanceof ResourceAdapter1516)
-      {
-         ResourceAdapter1516 ra1516 = (ResourceAdapter1516) ra;
-         return ra1516.getOutboundResourceadapter() == null ? TransactionSupportEnum.NoTransaction : ra1516
-               .getOutboundResourceadapter().getTransactionSupport();
-      }
-      else if (ra instanceof ResourceAdapter10)
-      {
-         ResourceAdapter10 ra10 = (ResourceAdapter10) ra;
-         return ra10.getTransactionSupport();
-      }
-      return null;
+
+      return ra.getOutboundResourceadapter() == null ? TransactionSupportEnum.NoTransaction :
+         ra.getOutboundResourceadapter().getTransactionSupport();
    }
 
-   private List<String> getBeanValidationGrp(IronJacamar ijmd)
+   private List<String> getBeanValidationGrp(Activation ijmd)
    {
       if (ijmd != null)
       {
@@ -508,7 +460,7 @@ public class ResourceAdapterHelper
       return null;
    }
 
-   private String getBootStrapContext(IronJacamar ijmd)
+   private String getBootStrapContext(Activation ijmd)
    {
       if (ijmd != null)
       {
@@ -524,7 +476,7 @@ public class ResourceAdapterHelper
     * @param valueMap the map which contains the value specified
     * @return the ConfigPropType list
     */
-   public static List<ConfigPropType> getConfigPropTypes(List<? extends ConfigProperty> configProperties, 
+   public static List<ConfigPropType> getConfigPropTypes(List<ConfigProperty> configProperties, 
          Map<String, String> valueMap)
    {
       List<ConfigPropType> result = new ArrayList<ConfigPropType>();

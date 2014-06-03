@@ -49,16 +49,28 @@ public abstract class XMLParserTestBase extends ParserTestBase
 
       JCAMetadata result =  doParse(getFile(parsedFileName));
       checkMetadata(result);
-      JCAMetadata result1 =  reParse(result);
-      checkMetadata(result1);
-      checkEquals(result, result1);
-      if (result instanceof CopyableMetaData)
+      if (metadataCheckEqual())
       {
-         JCAMetadata result2 = (JCAMetadata)((CopyableMetaData)result).copy();
-         checkMetadata(result2);
-         checkEquals(result, result2);
-         checkEquals(result1, result2);
+         JCAMetadata result1 =  reParse(result);
+         checkMetadata(result1);
+         checkEquals(result, result1);
+         if (result instanceof CopyableMetaData)
+         {
+            JCAMetadata result2 = (JCAMetadata)((CopyableMetaData)result).copy();
+            checkMetadata(result2);
+            checkEquals(result, result2);
+            checkEquals(result1, result2);
+         }
       }
+   }
+
+   /**
+    * metadata check equal
+    * @return perform check
+    */
+   public boolean metadataCheckEqual()
+   {
+      return true;
    }
 
    /**

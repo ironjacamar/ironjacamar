@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.common.api.metadata;
 
-import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
+import org.jboss.jca.common.api.metadata.spec.ConfigProperty;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -71,8 +71,8 @@ public class MergeUtil
     * @param right right side List to merge
     * @return merged List
     */
-   public static List<? extends ConfigProperty> mergeConfigList(
-         List<? extends ConfigProperty> left, List<? extends ConfigProperty> right)
+   public static List<ConfigProperty> mergeConfigList(
+         List<ConfigProperty> left, List<ConfigProperty> right)
    {
       ArrayList<ConfigProperty> newList = new ArrayList<ConfigProperty>((left == null ? 0 : left.size())
             + (right == null ? 0 : right.size()));

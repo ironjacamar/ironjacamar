@@ -25,11 +25,11 @@ package org.jboss.jca.deployers.fungal;
 import org.jboss.jca.common.api.metadata.ds.DataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSources;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource;
-import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
-import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
-import org.jboss.jca.common.api.metadata.ra.Connector;
-import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
-import org.jboss.jca.common.metadata.ds.v12.DsParser;
+import org.jboss.jca.common.api.metadata.spec.ConfigProperty;
+import org.jboss.jca.common.api.metadata.spec.ConnectionDefinition;
+import org.jboss.jca.common.api.metadata.spec.Connector;
+import org.jboss.jca.common.api.metadata.spec.ResourceAdapter;
+import org.jboss.jca.common.metadata.ds.DsParser;
 import org.jboss.jca.common.metadata.merge.Merger;
 import org.jboss.jca.core.naming.ExplicitJndiStrategy;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
@@ -505,8 +505,8 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
       Connector md = mdr.getResourceAdapter(uniqueId);
       md = merger.mergeConnectorAndDs(ds, md);
       // Get the first connection definition as there is only one
-      ResourceAdapter1516 ra1516 = (ResourceAdapter1516) md.getResourceadapter();
-      List<ConnectionDefinition> cds = ra1516.getOutboundResourceadapter().getConnectionDefinitions();
+      ResourceAdapter ra = md.getResourceadapter();
+      List<ConnectionDefinition> cds = ra.getOutboundResourceadapter().getConnectionDefinitions();
       ConnectionDefinition cd = cds.get(0);
 
       // ManagedConnectionFactory
@@ -526,8 +526,8 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
       md = merger.mergeConnectorAndDs(ds, md);
 
       // Get the first connection definition as there is only one
-      ResourceAdapter1516 ra1516 = (ResourceAdapter1516) md.getResourceadapter();
-      List<ConnectionDefinition> cds = ra1516.getOutboundResourceadapter().getConnectionDefinitions();
+      ResourceAdapter ra = md.getResourceadapter();
+      List<ConnectionDefinition> cds = ra.getOutboundResourceadapter().getConnectionDefinitions();
       ConnectionDefinition cd = cds.get(0);
 
       // ManagedConnectionFactory

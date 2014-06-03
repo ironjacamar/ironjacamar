@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.validator;
 
-import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
+import org.jboss.jca.common.api.metadata.spec.ConfigProperty;
 
 import java.util.List;
 

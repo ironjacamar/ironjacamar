@@ -21,8 +21,8 @@
  */
 package org.jboss.jca.core.mdr;
 
-import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
-import org.jboss.jca.common.api.metadata.ra.Connector;
+import org.jboss.jca.common.api.metadata.resourceadapter.Activation;
+import org.jboss.jca.common.api.metadata.spec.Connector;
 import org.jboss.jca.core.spi.mdr.AlreadyExistsException;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.mdr.NotFoundException;
@@ -66,9 +66,9 @@ public class MetadataRepositoryTestCase
       String uniqueId = null;
       File root = new File(".");
       Connector md = mock(Connector.class);
-      IronJacamar ijmd = mock(IronJacamar.class);
+      Activation a = mock(Activation.class);
 
-      mdr.registerResourceAdapter(null, root, md, ijmd);
+      mdr.registerResourceAdapter(null, root, md, a);
    }
 
    /**
@@ -83,9 +83,9 @@ public class MetadataRepositoryTestCase
       String uniqueId = "";
       File root = new File(".");
       Connector md = mock(Connector.class);
-      IronJacamar ijmd = mock(IronJacamar.class);
+      Activation a = mock(Activation.class);
 
-      mdr.registerResourceAdapter(uniqueId, root, md, ijmd);
+      mdr.registerResourceAdapter(uniqueId, root, md, a);
    }
 
    /**
@@ -100,9 +100,9 @@ public class MetadataRepositoryTestCase
       String uniqueId = "KEY";
       File root = null;
       Connector md = mock(Connector.class);
-      IronJacamar ijmd = mock(IronJacamar.class);
+      Activation a = mock(Activation.class);
 
-      mdr.registerResourceAdapter(uniqueId, root, md, ijmd);
+      mdr.registerResourceAdapter(uniqueId, root, md, a);
    }
 
    /**
@@ -117,9 +117,9 @@ public class MetadataRepositoryTestCase
       String uniqueId = "KEY";
       File root = new File(".");
       Connector md = null;
-      IronJacamar ijmd = mock(IronJacamar.class);
+      Activation a = mock(Activation.class);
 
-      mdr.registerResourceAdapter(uniqueId, root, md, ijmd);
+      mdr.registerResourceAdapter(uniqueId, root, md, a);
    }
 
    /**
@@ -134,10 +134,10 @@ public class MetadataRepositoryTestCase
       String uniqueId = "KEY";
       File root = new File(".");
       Connector md = mock(Connector.class);
-      IronJacamar ijmd = mock(IronJacamar.class);
+      Activation a = mock(Activation.class);
 
-      mdr.registerResourceAdapter(uniqueId, root, md, ijmd);
-      mdr.registerResourceAdapter(uniqueId, root, md, ijmd);
+      mdr.registerResourceAdapter(uniqueId, root, md, a);
+      mdr.registerResourceAdapter(uniqueId, root, md, a);
    }
 
    /**
@@ -152,9 +152,9 @@ public class MetadataRepositoryTestCase
       String uniqueId = "KEY";
       File root = new File(".");
       Connector md = mock(Connector.class);
-      IronJacamar ijmd = mock(IronJacamar.class);
+      Activation a = mock(Activation.class);
 
-      mdr.registerResourceAdapter(uniqueId, root, md, ijmd);
+      mdr.registerResourceAdapter(uniqueId, root, md, a);
    }
 
    /**
@@ -211,9 +211,9 @@ public class MetadataRepositoryTestCase
       String uniqueId = "KEY";
       File root = new File(".");
       Connector md = mock(Connector.class);
-      IronJacamar ijmd = mock(IronJacamar.class);
+      Activation a = mock(Activation.class);
 
-      mdr.registerResourceAdapter(uniqueId, root, md, ijmd);
+      mdr.registerResourceAdapter(uniqueId, root, md, a);
       mdr.unregisterResourceAdapter(uniqueId);
    }
 
@@ -271,9 +271,9 @@ public class MetadataRepositoryTestCase
       String uniqueId = "KEY";
       File root = new File(".");
       Connector md = mock(Connector.class);
-      IronJacamar ijmd = mock(IronJacamar.class);
+      Activation a = mock(Activation.class);
 
-      mdr.registerResourceAdapter(uniqueId, root, md, ijmd);
+      mdr.registerResourceAdapter(uniqueId, root, md, a);
 
       Connector cmd = mdr.getResourceAdapter(uniqueId);
 
@@ -312,9 +312,9 @@ public class MetadataRepositoryTestCase
       String uniqueId = "KEY";
       File root = new File(".");
       Connector md = mock(Connector.class);
-      IronJacamar ijmd = mock(IronJacamar.class);
+      Activation a = mock(Activation.class);
 
-      mdr.registerResourceAdapter(uniqueId, root, md, ijmd);
+      mdr.registerResourceAdapter(uniqueId, root, md, a);
 
       ids = mdr.getResourceAdapters();
       assertNotNull(ids);
@@ -376,9 +376,9 @@ public class MetadataRepositoryTestCase
       String uniqueId = "KEY";
       File root = new File(".");
       Connector md = mock(Connector.class);
-      IronJacamar ijmd = mock(IronJacamar.class);
+      Activation a = mock(Activation.class);
 
-      mdr.registerResourceAdapter(uniqueId, root, md, ijmd);
+      mdr.registerResourceAdapter(uniqueId, root, md, a);
 
       File f = mdr.getRoot(uniqueId);
       assertEquals(root, f);
@@ -395,7 +395,7 @@ public class MetadataRepositoryTestCase
 
       String uniqueId = null;
 
-      IronJacamar ijmd = mdr.getIronJacamar(uniqueId);
+      Activation a = mdr.getActivation(uniqueId);
    }
 
    /**
@@ -409,7 +409,7 @@ public class MetadataRepositoryTestCase
 
       String uniqueId = "";
 
-      IronJacamar ijmd = mdr.getIronJacamar(uniqueId);
+      Activation a = mdr.getActivation(uniqueId);
    }
 
    /**
@@ -423,7 +423,7 @@ public class MetadataRepositoryTestCase
 
       String uniqueId = "KEY";
 
-      IronJacamar ijmd = mdr.getIronJacamar(uniqueId);
+      Activation a = mdr.getActivation(uniqueId);
    }
 
    /**
@@ -438,12 +438,12 @@ public class MetadataRepositoryTestCase
       String uniqueId = "KEY";
       File root = new File(".");
       Connector md = mock(Connector.class);
-      IronJacamar ijmd = mock(IronJacamar.class);
+      Activation a = mock(Activation.class);
 
-      mdr.registerResourceAdapter(uniqueId, root, md, ijmd);
+      mdr.registerResourceAdapter(uniqueId, root, md, a);
 
-      IronJacamar ij = mdr.getIronJacamar(uniqueId);
-      assertEquals(ijmd, ij);
+      Activation a2 = mdr.getActivation(uniqueId);
+      assertEquals(a, a2);
    }
 
    /**
@@ -489,9 +489,9 @@ public class MetadataRepositoryTestCase
 
       File root = new File(".");
       Connector md = mock(Connector.class);
-      IronJacamar ijmd = mock(IronJacamar.class);
+      Activation a = mock(Activation.class);
 
-      mdr.registerResourceAdapter(uniqueId, root, md, ijmd);
+      mdr.registerResourceAdapter(uniqueId, root, md, a);
 
       assertTrue(mdr.hasResourceAdapter(uniqueId));
    }

@@ -23,12 +23,12 @@ package org.jboss.jca.common.metadata.ds;
 
 import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.api.metadata.ds.CommonDataSource;
+import org.jboss.jca.common.api.metadata.ds.DataSource;
 import org.jboss.jca.common.api.metadata.ds.DsSecurity;
 import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.TimeOut;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
 import org.jboss.jca.common.api.metadata.ds.Validation;
-import org.jboss.jca.common.api.metadata.ds.v10.DataSource;
 import org.jboss.jca.common.api.validator.ValidateException;
 
 import org.jboss.logging.Messages;
@@ -42,57 +42,56 @@ import org.jboss.logging.Messages;
  */
 public abstract class DataSourceAbstractImpl implements CommonDataSource
 {
-
    /** The serialVersionUID */
    private static final long serialVersionUID = -5612846950298960159L;
 
    /** The bundle */
-   private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
+   protected static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
    /**
    * transactionIsolation
    */
-   protected final TransactionIsolation transactionIsolation;
+   protected TransactionIsolation transactionIsolation;
 
    /**
    * timeOut
    */
-   protected final TimeOut timeOut;
+   protected TimeOut timeOut;
 
    /**
    * security
    */
-   protected final DsSecurity security;
+   protected DsSecurity security;
 
    /**
    * statement
    */
-   protected final Statement statement;
+   protected Statement statement;
 
    /**
    * validation
    */
-   protected final Validation validation;
+   protected Validation validation;
 
    /**
    * urlDelimiter
    */
-   protected final String urlDelimiter;
+   protected String urlDelimiter;
 
    /**
    * urlSelectorStrategyClassName
    */
-   protected final String urlSelectorStrategyClassName;
+   protected String urlSelectorStrategyClassName;
 
    /**
    * useJavaContext
    */
-   protected final Boolean useJavaContext;
+   protected Boolean useJavaContext;
 
    /**
    * poolName
    */
-   protected final String poolName;
+   protected String poolName;
 
    /**
    * enabled
@@ -102,17 +101,30 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
    /**
    * jndiName
    */
-   protected final String jndiName;
+   protected String jndiName;
 
    /**
    * spy
    */
-   protected final Boolean spy;
+   protected Boolean spy;
 
    /**
    * use-ccm
    */
-   protected final Boolean useCcm;
+   protected Boolean useCcm;
+
+   /** Driver */
+   protected String driver;
+
+   /** New connection SQL */
+   protected String newConnectionSql;
+
+   /** Connectable */
+   protected Boolean connectable;
+
+   /** Tracking */
+   protected Boolean tracking;
+
 
    /**
     * Create a new DataSourceAbstractImpl.
@@ -130,15 +142,20 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
     * @param jndiName jndiName
     * @param spy spy
     * @param useCcm useCcm
+    * @param driver driver
+    * @param newConnectionSql newConnectionSql
+    * @param connectable connectable
+    * @param tracking tracking
     * @throws ValidateException ValidateException
     */
    protected DataSourceAbstractImpl(TransactionIsolation transactionIsolation, TimeOut timeOut,
-      DsSecurity security, Statement statement, Validation validation, String urlDelimiter,
-      String urlSelectorStrategyClassName, Boolean useJavaContext, String poolName, Boolean enabled, String jndiName,
-      Boolean spy, Boolean useCcm)
+                                    DsSecurity security, Statement statement, Validation validation,
+                                    String urlDelimiter, String urlSelectorStrategyClassName,
+                                    Boolean useJavaContext, String poolName, Boolean enabled, String jndiName,
+                                    Boolean spy, Boolean useCcm, String driver, String newConnectionSql,
+                                    Boolean connectable, Boolean tracking)
       throws ValidateException
    {
-      super();
       this.transactionIsolation = transactionIsolation;
       this.timeOut = timeOut;
       this.security = security;
@@ -152,127 +169,156 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
       this.jndiName = jndiName;
       this.spy = spy;
       this.useCcm = useCcm;
+      this.driver = driver;
+      this.newConnectionSql = newConnectionSql;
+      this.connectable = connectable;
+      this.tracking = tracking;
       partialCommonValidation();
    }
 
    /**
-    * Get the transactionIsolation.
-    *
-    * @return the transactionIsolation.
+    * {@inheritDoc}
     */
-
-   @Override
-   public final TransactionIsolation getTransactionIsolation()
+   public TransactionIsolation getTransactionIsolation()
    {
       return transactionIsolation;
    }
 
    /**
-    * Get the timeOut
-    *
-    * @return the timeOut.
+    * {@inheritDoc}
     */
-
-   @Override
-   public final TimeOut getTimeOut()
+   public TimeOut getTimeOut()
    {
       return timeOut;
    }
 
    /**
-    * Get the security.
-    *
-    * @return the security.
+    * {@inheritDoc}
     */
-
-   @Override
-   public final DsSecurity getSecurity()
+   public DsSecurity getSecurity()
    {
       return security;
    }
 
    /**
-    * Get the validation.
-    *
-    * @return the validation.
+    * {@inheritDoc}
     */
-
-   @Override
-   public final Validation getValidation()
+   public Validation getValidation()
    {
       return validation;
    }
 
    /**
-    * Get the useJavaContext.
-    *
-    * @return the useJavaContext.
+    * {@inheritDoc}
     */
+   public Statement getStatement()
+   {
+      return statement;
+   }
 
-   @Override
-   public final Boolean isUseJavaContext()
+   /**
+    * {@inheritDoc}
+    */
+   public String getUrlDelimiter()
+   {
+      return urlDelimiter;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String getUrlSelectorStrategyClassName()
+   {
+      return urlSelectorStrategyClassName;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public Boolean isUseJavaContext()
    {
       return useJavaContext;
    }
 
    /**
-    * Get the poolName.
-    *
-    * @return the poolName.
+    * {@inheritDoc}
     */
-
-   @Override
-   public final String getPoolName()
+   public String getPoolName()
    {
       return poolName;
    }
 
    /**
-    * Get the enabled.
-    *
-    * @return the enabled.
+    * {@inheritDoc}
     */
-
-   @Override
-   public final Boolean isEnabled()
+   public Boolean isEnabled()
    {
       return enabled;
    }
 
    /**
-    * Get the jndiName.
-    *
-    * @return the jndiName.
+    * {@inheritDoc}
     */
-
-   @Override
-   public final String getJndiName()
+   public String getJndiName()
    {
       return jndiName;
    }
 
    /**
-    * Get the spy
-    *
-    * @return the spy.
+    * {@inheritDoc}
     */
-
-   @Override
-   public final Boolean isSpy()
+   public Boolean isSpy()
    {
       return spy;
    }
 
    /**
-    * Get the use ccm
-    *
-    * @return the use ccm.
+    * {@inheritDoc}
     */
-
-   @Override
-   public final Boolean isUseCcm()
+   public Boolean isUseCcm()
    {
       return useCcm;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String getDriver()
+   {
+      return driver;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String getNewConnectionSql()
+   {
+      return newConnectionSql;
+   }
+
+
+   /**
+    * {@inheritDoc}
+    */
+   public Boolean isConnectable()
+   {
+      return connectable;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public Boolean isTracking()
+   {
+      return tracking;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setEnabled(Boolean enabled)
+   {
+      this.enabled = enabled;
    }
 
    /**
@@ -300,7 +346,9 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
          this.validation.validate();
    }
 
-   @Override
+   /**
+    * {@inheritDoc}
+    */
    public int hashCode()
    {
       final int prime = 31;
@@ -317,10 +365,16 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
                ((urlSelectorStrategyClassName == null) ? 0 : urlSelectorStrategyClassName.hashCode());
       result = prime * result + ((useJavaContext == null) ? 0 : useJavaContext.hashCode());
       result = prime * result + ((validation == null) ? 0 : validation.hashCode());
+      result = prime * result + ((driver == null) ? 0 : driver.hashCode());
+      result = prime * result + ((newConnectionSql == null) ? 0 : newConnectionSql.hashCode());
+      result = prime * result + ((connectable == null) ? 0 : connectable.hashCode());
+      result = prime * result + ((tracking == null) ? 0 : tracking.hashCode());
       return result;
    }
 
-   @Override
+   /**
+    * {@inheritDoc}
+    */
    public boolean equals(Object obj)
    {
       if (this == obj)
@@ -402,13 +456,37 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
       }
       else if (!validation.equals(other.validation))
          return false;
-      return true;
-   }
+      if (driver == null)
+      {
+         if (other.driver != null)
+            return false;
+      }
+      else if (!driver.equals(other.driver))
+         return false;
+      if (newConnectionSql == null)
+      {
+         if (other.newConnectionSql != null)
+            return false;
+      }
+      else if (!newConnectionSql.equals(other.newConnectionSql))
+         return false;
 
-   @Override
-   public final void setEnabled(Boolean enabled)
-   {
-      this.enabled = enabled;
+      if (connectable == null)
+      {
+         if (other.connectable != null)
+            return false;
+      }
+      else if (!connectable.equals(other.connectable))
+         return false;
+      if (tracking == null)
+      {
+         if (other.tracking != null)
+            return false;
+      }
+      else if (!tracking.equals(other.tracking))
+         return false;
+
+      return true;
    }
 
    /**

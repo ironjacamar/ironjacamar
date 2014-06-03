@@ -22,10 +22,10 @@
 
 package org.jboss.jca.deployers.fungal;
 
-import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
-import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
-import org.jboss.jca.common.api.metadata.ra.Connector;
-import org.jboss.jca.common.api.metadata.ra.XsdString;
+import org.jboss.jca.common.api.metadata.resourceadapter.Activation;
+import org.jboss.jca.common.api.metadata.spec.ConfigProperty;
+import org.jboss.jca.common.api.metadata.spec.Connector;
+import org.jboss.jca.common.api.metadata.spec.XsdString;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
@@ -374,11 +374,11 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
    }
 
    @Override
-   protected void registerResourceAdapterToMDR(URL url, File root, Connector cmd, IronJacamar ijmd)
+   protected void registerResourceAdapterToMDR(URL url, File root, Connector cmd, Activation activation)
       throws org.jboss.jca.core.spi.mdr.AlreadyExistsException
    {
       ((RAConfiguration) getConfiguration()).getMetadataRepository().
-         registerResourceAdapter(url.toExternalForm(), root, cmd, ijmd);
+         registerResourceAdapter(url.toExternalForm(), root, cmd, activation);
    }
 
    @Override

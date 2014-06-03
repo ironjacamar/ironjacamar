@@ -23,21 +23,21 @@ package org.jboss.jca.as.converters;
 
 import org.jboss.jca.common.api.metadata.Defaults;
 import org.jboss.jca.common.api.metadata.common.Capacity;
-import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
-import org.jboss.jca.common.api.metadata.common.CommonPool;
+import org.jboss.jca.common.api.metadata.common.Pool;
 import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
-import org.jboss.jca.common.api.metadata.common.v11.CommonConnDef;
-import org.jboss.jca.common.api.metadata.common.v11.WorkManager;
-import org.jboss.jca.common.metadata.common.CommonAdminObjectImpl;
-import org.jboss.jca.common.metadata.common.CommonPoolImpl;
-import org.jboss.jca.common.metadata.common.CommonSecurityImpl;
-import org.jboss.jca.common.metadata.common.CommonTimeOutImpl;
-import org.jboss.jca.common.metadata.common.CommonValidationImpl;
+import org.jboss.jca.common.api.metadata.resourceadapter.AdminObject;
+import org.jboss.jca.common.api.metadata.resourceadapter.ConnectionDefinition;
+import org.jboss.jca.common.api.metadata.resourceadapter.WorkManager;
 import org.jboss.jca.common.metadata.common.CredentialImpl;
-import org.jboss.jca.common.metadata.common.v11.CommonConnDefImpl;
-import org.jboss.jca.common.metadata.common.v11.ConnDefXaPoolImpl;
-import org.jboss.jca.common.metadata.resourceadapter.v11.ResourceAdapterImpl;
+import org.jboss.jca.common.metadata.common.PoolImpl;
+import org.jboss.jca.common.metadata.common.SecurityImpl;
+import org.jboss.jca.common.metadata.common.TimeOutImpl;
+import org.jboss.jca.common.metadata.common.ValidationImpl;
+import org.jboss.jca.common.metadata.common.XaPoolImpl;
+import org.jboss.jca.common.metadata.resourceadapter.ActivationImpl;
+import org.jboss.jca.common.metadata.resourceadapter.AdminObjectImpl;
+import org.jboss.jca.common.metadata.resourceadapter.ConnectionDefinitionImpl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,23 +52,23 @@ import java.util.Map;
  */
 public class LegacyConnectionFactoryImp implements TxConnectionFactory
 {
-   private ResourceAdapterImpl raImpl = null;
+   private ActivationImpl raImpl = null;
 
    private TransactionSupportEnum transactionSupport;
-   private List<CommonConnDef> connectionDefinitions;
-   private List<CommonAdminObject> adminObjects;
+   private List<ConnectionDefinition> connectionDefinitions;
+   private List<AdminObject> adminObjects;
    //private Map<String, String> configProperties;
    //private List<String> beanValidationGroups;
    //private String bootstrapContext;
 
 
-   private CommonTimeOutImpl timeOut = null;
+   private TimeOutImpl timeOut = null;
    
-   private CommonSecurityImpl security = null;
+   private SecurityImpl security = null;
    
-   private CommonValidationImpl validation = null;
+   private ValidationImpl validation = null;
 
-   private CommonPool pool = null;
+   private Pool pool = null;
    
    private WorkManager workmanager = null;
 
@@ -134,15 +134,16 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
          isXA = Boolean.TRUE;
          recovery = new Recovery(new CredentialImpl("user", "password", null), null, false);
       }
-      CommonConnDefImpl connDef = new CommonConnDefImpl(connConfigProperty, "FIXME", jndiName, poolName,
-                                                        Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT, Defaults.USE_CCM,
-                                                        Defaults.SHARABLE, Defaults.ENLISTMENT,
-                                                        pool, timeOut, validation, security, recovery, isXA);
+      ConnectionDefinitionImpl connDef =
+         new ConnectionDefinitionImpl(connConfigProperty, "FIXME", jndiName, poolName,
+                                      Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT, Defaults.USE_CCM,
+                                      Defaults.SHARABLE, Defaults.ENLISTMENT, Defaults.CONNECTABLE, Defaults.TRACKING,
+                                      pool, timeOut, validation, security, recovery, isXA);
       
-      connectionDefinitions = new ArrayList<CommonConnDef>();
+      connectionDefinitions = new ArrayList<ConnectionDefinition>();
       connectionDefinitions.add(connDef);
-      raImpl = new ResourceAdapterImpl("ID", rarName, transactionSupport, connectionDefinitions, adminObjects,
-            rarConfigProperty, null, null, workmanager);
+      raImpl = new ActivationImpl("ID", rarName, transactionSupport, connectionDefinitions, adminObjects,
+                                  rarConfigProperty, null, null, workmanager);
    }
    
    @Override
@@ -166,7 +167,7 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
    public LegacyConnectionFactoryImp buildTimeOut(Long blockingTimeoutMillis, Long idleTimeoutMinutes, 
          Integer allocationRetry, Long allocationRetryWaitMillis, Integer xaResourceTimeout) throws Exception
    {
-      timeOut = new CommonTimeOutImpl(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry,
+      timeOut = new TimeOutImpl(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry,
             allocationRetryWaitMillis, xaResourceTimeout);
       return this;
    }
@@ -183,7 +184,7 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
    public LegacyConnectionFactoryImp buildValidation(Boolean backgroundValidation, Long backgroundValidationMillis, 
          Boolean useFastFail) throws Exception
    {
-      validation = new CommonValidationImpl(backgroundValidation, backgroundValidationMillis, useFastFail);
+      validation = new ValidationImpl(backgroundValidation, backgroundValidationMillis, useFastFail);
       return this;
    }
 
@@ -203,11 +204,12 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
          Boolean prefill, Capacity capacity, Boolean noTxSeparatePool, Boolean interleaving) throws Exception
    {
       if (transactionSupport == TransactionSupportEnum.XATransaction)
-         pool = new ConnDefXaPoolImpl(minPoolSize, minPoolSize, maxPoolSize, prefill, Defaults.USE_STRICT_MIN, 
+         pool = new XaPoolImpl(minPoolSize, null, maxPoolSize, prefill, Defaults.USE_STRICT_MIN, 
             Defaults.FLUSH_STRATEGY, capacity, Defaults.IS_SAME_RM_OVERRIDE, interleaving, Defaults.PAD_XID, 
             Defaults.WRAP_XA_RESOURCE, noTxSeparatePool);
       else
-         pool = new CommonPoolImpl(minPoolSize, maxPoolSize, prefill, Defaults.USE_STRICT_MIN, Defaults.FLUSH_STRATEGY);
+         pool = new PoolImpl(minPoolSize, null, maxPoolSize, prefill, Defaults.USE_STRICT_MIN,
+                             Defaults.FLUSH_STRATEGY, capacity);
       this.noTxSeparatePool = noTxSeparatePool;
       this.setInterleaving(interleaving);
       return this;
@@ -225,7 +227,7 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
    public LegacyConnectionFactoryImp buildSecurity(String securityDomainManaged,
          String securityDomainAndApplicationManaged, boolean applicationManaged) throws Exception
    {
-      security = new CommonSecurityImpl(securityDomainManaged, securityDomainAndApplicationManaged, applicationManaged);
+      security = new SecurityImpl(securityDomainManaged, securityDomainAndApplicationManaged, applicationManaged);
       return this;
    }
    
@@ -246,10 +248,10 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
    {
       if (adminObjects == null)
       {
-         adminObjects = new ArrayList<CommonAdminObject>();
+         adminObjects = new ArrayList<AdminObject>();
       }
       adminObjects.add(
-            new CommonAdminObjectImpl(configProperties, className, jndiName, poolName, enabled, useJavaContext));
+            new AdminObjectImpl(configProperties, className, jndiName, poolName, enabled, useJavaContext));
       return this;
    }
    

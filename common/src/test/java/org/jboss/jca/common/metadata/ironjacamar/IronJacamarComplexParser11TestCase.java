@@ -22,20 +22,19 @@
 package org.jboss.jca.common.metadata.ironjacamar;
 
 import org.jboss.jca.common.api.metadata.JCAMetadata;
-import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
-import org.jboss.jca.common.api.metadata.common.CommonSecurity;
-import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
-import org.jboss.jca.common.api.metadata.common.CommonValidation;
 import org.jboss.jca.common.api.metadata.common.Credential;
 import org.jboss.jca.common.api.metadata.common.Extension;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.common.api.metadata.common.Recovery;
+import org.jboss.jca.common.api.metadata.common.Security;
+import org.jboss.jca.common.api.metadata.common.TimeOut;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
-import org.jboss.jca.common.api.metadata.common.v11.CommonConnDef;
-import org.jboss.jca.common.api.metadata.common.v11.ConnDefXaPool;
+import org.jboss.jca.common.api.metadata.common.Validation;
+import org.jboss.jca.common.api.metadata.common.XaPool;
+import org.jboss.jca.common.api.metadata.resourceadapter.AdminObject;
+import org.jboss.jca.common.api.metadata.resourceadapter.ConnectionDefinition;
 import org.jboss.jca.common.metadata.XMLParserTestBase;
-import org.jboss.jca.common.metadata.ironjacamar.v11.IronJacamarImpl;
-import org.jboss.jca.common.metadata.ironjacamar.v11.IronJacamarParser;
+import org.jboss.jca.common.metadata.resourceadapter.ActivationImpl;
 
 import java.util.List;
 import java.util.Map;
@@ -75,7 +74,7 @@ public class IronJacamarComplexParser11TestCase extends XMLParserTestBase
    public void checkMetadata(JCAMetadata result)
    {
 
-      IronJacamarImpl ra = (IronJacamarImpl) result;
+      ActivationImpl ra = (ActivationImpl) result;
       assertEquals("someContext", ra.getBootstrapContext());
       List<String> bvg = ra.getBeanValidationGroups();
       assertEquals(2, bvg.size());
@@ -87,10 +86,10 @@ public class IronJacamarComplexParser11TestCase extends XMLParserTestBase
       assertEquals(cp.get("Property1"), "A");
       assertEquals(cp.get("Property2"), "B");
 
-      List<org.jboss.jca.common.api.metadata.common.CommonConnDef> cds = ra.getConnectionDefinitions();
+      List<org.jboss.jca.common.api.metadata.resourceadapter.ConnectionDefinition> cds = ra.getConnectionDefinitions();
       assertEquals(3, cds.size());
       //conn-def 1
-      CommonConnDef cd = (CommonConnDef) cds.get(0);
+      ConnectionDefinition cd = cds.get(0);
       assertEquals("Class1", cd.getClassName());
       assertEquals("java:jboss/name1", cd.getJndiName());
       assertEquals("Pool1", cd.getPoolName());
@@ -107,9 +106,9 @@ public class IronJacamarComplexParser11TestCase extends XMLParserTestBase
 
       assertTrue(cd.isXa());
       assertNotNull(cd.getPool());
-      assertTrue(cd.getPool() instanceof ConnDefXaPool);
+      assertTrue(cd.getPool() instanceof XaPool);
 
-      ConnDefXaPool xaPool = (ConnDefXaPool) cd.getPool();
+      XaPool xaPool = (XaPool) cd.getPool();
       assertEquals(1, (int) xaPool.getMinPoolSize());
       assertEquals(2, (int) xaPool.getInitialPoolSize());
       assertEquals(5, (int) xaPool.getMaxPoolSize());
@@ -133,19 +132,19 @@ public class IronJacamarComplexParser11TestCase extends XMLParserTestBase
       assertTrue(xaPool.isPadXid());
       assertFalse(xaPool.isWrapXaResource());
 
-      CommonSecurity cs = cd.getSecurity();
+      Security cs = cd.getSecurity();
       assertTrue(cs.isApplication());
       assertEquals(null, cs.getSecurityDomain());
       assertEquals(null, cs.getSecurityDomainAndApplication());
 
-      CommonTimeOut cto = cd.getTimeOut();
+      TimeOut cto = cd.getTimeOut();
       assertEquals(5000, (long) cto.getBlockingTimeoutMillis());
       assertEquals(4, (long) cto.getIdleTimeoutMinutes());
       assertEquals(2, (int) cto.getAllocationRetry());
       assertEquals(3000, (long) cto.getAllocationRetryWaitMillis());
       assertEquals(300, (long) cto.getXaResourceTimeout());
 
-      CommonValidation cv = cd.getValidation();
+      Validation cv = cd.getValidation();
       assertEquals(5000, (long) cv.getBackgroundValidationMillis());
       assertTrue(cv.isBackgroundValidation());
       assertTrue(cv.isUseFastFail());
@@ -166,7 +165,7 @@ public class IronJacamarComplexParser11TestCase extends XMLParserTestBase
       assertEquals(cp.get("Property6"), "true");
 
       //conn-def 2
-      cd = (CommonConnDef) cds.get(1);
+      cd = cds.get(1);
       assertEquals("Class2", cd.getClassName());
       assertEquals("java:jboss/name2", cd.getJndiName());
       assertEquals(null, cd.getPoolName());
@@ -180,7 +179,7 @@ public class IronJacamarComplexParser11TestCase extends XMLParserTestBase
       assertEquals(0, cp.size());
 
       assertTrue(cd.isXa());
-      xaPool = (ConnDefXaPool) cd.getPool();
+      xaPool = (XaPool) cd.getPool();
       //default values
       assertEquals(0, (int) xaPool.getMinPoolSize());
       assertEquals(20, (int) xaPool.getMaxPoolSize());
@@ -216,7 +215,7 @@ public class IronJacamarComplexParser11TestCase extends XMLParserTestBase
       assertEquals(null, cd.getTimeOut());
 
       //conn-def 3
-      cd = (CommonConnDef) cds.get(2);
+      cd = cds.get(2);
       assertEquals("Class3", cd.getClassName());
       assertEquals("java:jboss/name3", cd.getJndiName());
       assertEquals(null, cd.getPoolName());
@@ -231,7 +230,7 @@ public class IronJacamarComplexParser11TestCase extends XMLParserTestBase
       assertEquals(0, cp.size());
 
       assertTrue(cd.isXa());
-      xaPool = (ConnDefXaPool) cd.getPool();
+      xaPool = (XaPool) cd.getPool();
       //default values
       assertEquals(0, (int) xaPool.getMinPoolSize());
       assertEquals(20, (int) xaPool.getMaxPoolSize());
@@ -259,10 +258,10 @@ public class IronJacamarComplexParser11TestCase extends XMLParserTestBase
       assertEquals(null, rec.getCredential());
       assertEquals(null, rec.getRecoverPlugin());
 
-      List<CommonAdminObject> aos = ra.getAdminObjects();
+      List<AdminObject> aos = ra.getAdminObjects();
       assertEquals(2, aos.size());
       //admin object 1
-      CommonAdminObject ao = aos.get(0);
+      AdminObject ao = aos.get(0);
       assertEquals("Class4", ao.getClassName());
       assertEquals("java:jboss/name4", ao.getJndiName());
       assertEquals("Pool4", ao.getPoolName());

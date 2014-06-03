@@ -21,21 +21,22 @@
  */
 package org.jboss.jca.as.converters;
 
+import org.jboss.jca.common.api.metadata.Defaults;
 import org.jboss.jca.common.api.metadata.common.Extension;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
+import org.jboss.jca.common.api.metadata.ds.DsPool;
 import org.jboss.jca.common.api.metadata.ds.DsSecurity;
 import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.Statement.TrackStatementsEnum;
 import org.jboss.jca.common.api.metadata.ds.TimeOut;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
 import org.jboss.jca.common.api.metadata.ds.Validation;
-import org.jboss.jca.common.api.metadata.ds.v12.DsPool;
+import org.jboss.jca.common.metadata.ds.DataSourceImpl;
+import org.jboss.jca.common.metadata.ds.DsPoolImpl;
 import org.jboss.jca.common.metadata.ds.DsSecurityImpl;
 import org.jboss.jca.common.metadata.ds.StatementImpl;
 import org.jboss.jca.common.metadata.ds.TimeOutImpl;
 import org.jboss.jca.common.metadata.ds.ValidationImpl;
-import org.jboss.jca.common.metadata.ds.v12.DataSourceImpl;
-import org.jboss.jca.common.metadata.ds.v12.DsPoolImpl;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -128,10 +129,10 @@ public class LegacyTxDataSourceImpl implements LocalTxDataSource
    public void buildDataSourceImpl()  throws Exception
    {
       dsImpl = new DataSourceImpl(connectionUrl, driverClass, dataSourceClass, driver, transactionIsolation,
-            connectionProperties, timeOut, security,
-            statement, validation, urlDelimiter,
-            urlSelectorStrategyClassName, newConnectionSql, useJavaContext, poolName,
-            enabled, jndiName, spy, useCcm, jta, pool);
+                                  connectionProperties, timeOut, security,
+                                  statement, validation, urlDelimiter,
+                                  urlSelectorStrategyClassName, newConnectionSql, useJavaContext, poolName,
+                                  enabled, jndiName, spy, useCcm, jta, Defaults.CONNECTABLE, Defaults.TRACKING, pool);
    }
    
    @Override

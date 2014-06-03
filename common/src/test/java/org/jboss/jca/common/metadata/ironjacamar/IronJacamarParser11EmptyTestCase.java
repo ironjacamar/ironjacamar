@@ -23,8 +23,7 @@ package org.jboss.jca.common.metadata.ironjacamar;
 
 import org.jboss.jca.common.api.metadata.JCAMetadata;
 import org.jboss.jca.common.metadata.XMLParserTestBase;
-import org.jboss.jca.common.metadata.ironjacamar.v11.IronJacamarImpl;
-import org.jboss.jca.common.metadata.ironjacamar.v11.IronJacamarParser;
+import org.jboss.jca.common.metadata.resourceadapter.ActivationImpl;
 
 import org.junit.BeforeClass;
 
@@ -60,7 +59,7 @@ public class IronJacamarParser11EmptyTestCase extends XMLParserTestBase
    @Override
    public void checkMetadata(JCAMetadata result)
    {
-      IronJacamarImpl ra = (IronJacamarImpl) result;
+      ActivationImpl ra = (ActivationImpl) result;
       
       assertEquals(null, ra.getBootstrapContext());
       assertEquals(null, ra.getBeanValidationGroups());

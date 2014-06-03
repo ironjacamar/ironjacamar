@@ -22,8 +22,6 @@
 package org.jboss.jca.eclipse.wizards;
 
 import org.jboss.jca.codegenerator.ConfigPropType;
-import org.jboss.jca.common.api.metadata.ra.ra16.Connector16;
-import org.jboss.jca.common.api.metadata.ra.ra17.Connector17;
 
 import java.util.List;
 
@@ -218,7 +216,7 @@ public class AddPropertyDialog extends Dialog
          propertyRequired = Boolean.parseBoolean(initialValues[3]);
          final Button requiredButton = new Button(comp, SWT.CHECK);
          requiredButton.setSelection(propertyRequired);
-         if (version.equals(Connector16.XML_VERSION) || version.equals(Connector17.XML_VERSION))
+         if ("1.6".equals(version) || "1.7".equals(version))
          {
             requiredButton.addSelectionListener(new SelectionAdapter()
             {

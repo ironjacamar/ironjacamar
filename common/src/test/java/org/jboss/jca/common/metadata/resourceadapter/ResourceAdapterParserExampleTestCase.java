@@ -22,7 +22,6 @@
 package org.jboss.jca.common.metadata.resourceadapter;
 
 import org.jboss.jca.common.metadata.ParserTestBase;
-import org.jboss.jca.common.metadata.resourceadapter.v11.ResourceAdapterParser;
 
 import org.junit.BeforeClass;
 import org.junit.Test;

@@ -22,7 +22,7 @@
 package org.jboss.jca.deployers.test.unit.connector16;
 
 import org.jboss.jca.arquillian.embedded.Inject;
-import org.jboss.jca.common.metadata.ra.ra16.Connector16Impl;
+import org.jboss.jca.common.metadata.spec.ConnectorImpl;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.rar.Endpoint;
 import org.jboss.jca.core.spi.rar.MessageListener;
@@ -261,7 +261,7 @@ public class Ra16inoutijmultiannoTestCase
       String piId = ids.iterator().next();
       assertNotNull(piId);
       assertNotNull(mdr.getResourceAdapter(piId));
-      assertTrue(mdr.getResourceAdapter(piId) instanceof Connector16Impl);
+      assertTrue(mdr.getResourceAdapter(piId) instanceof ConnectorImpl);
    }
 
 }

@@ -22,7 +22,7 @@
 package org.jboss.jca.deployers.test.unit.connector16;
 
 import org.jboss.jca.arquillian.embedded.Inject;
-import org.jboss.jca.common.metadata.ra.ra16.Connector16Impl;
+import org.jboss.jca.common.metadata.spec.ConnectorImpl;
 import org.jboss.jca.core.spi.rar.Endpoint;
 import org.jboss.jca.core.spi.rar.MessageListener;
 import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
@@ -67,7 +67,7 @@ public abstract class Activation16TestBase extends Activation15TestBase
    @Override
    public void checkMetadata(String piId) throws Exception
    {
-      assertTrue(mdr.getResourceAdapter(piId) instanceof Connector16Impl);
+      assertTrue(mdr.getResourceAdapter(piId) instanceof ConnectorImpl);
    }
 
    /**

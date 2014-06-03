@@ -22,7 +22,7 @@
 
 package org.jboss.jca.deployers.test.unit.connector10;
 
-import org.jboss.jca.common.metadata.ra.ra10.Connector10Impl;
+import org.jboss.jca.common.metadata.spec.ConnectorImpl;
 import org.jboss.jca.deployers.test.DeploymentTestBase;
 import org.jboss.jca.deployers.test.rars.inout.SimpleConnectionFactory;
 import org.jboss.jca.deployers.test.rars.inout.SimpleConnectionFactory1;
@@ -60,7 +60,7 @@ public class ActivationTestCase extends DeploymentTestBase
    @Override
    public void checkMetadata(String piId) throws Exception
    {
-      assertTrue(mdr.getResourceAdapter(piId) instanceof Connector10Impl);
+      assertTrue(mdr.getResourceAdapter(piId) instanceof ConnectorImpl);
    }
 
    /**

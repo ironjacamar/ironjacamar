@@ -23,38 +23,29 @@
 package org.jboss.jca.deployers.common;
 
 import org.jboss.jca.common.api.metadata.Defaults;
-import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
-import org.jboss.jca.common.api.metadata.common.CommonConnDef;
-import org.jboss.jca.common.api.metadata.common.CommonPool;
-import org.jboss.jca.common.api.metadata.common.CommonSecurity;
-import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
-import org.jboss.jca.common.api.metadata.common.CommonValidation;
-import org.jboss.jca.common.api.metadata.common.CommonXaPool;
 import org.jboss.jca.common.api.metadata.common.Credential;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.common.api.metadata.common.Recovery;
+import org.jboss.jca.common.api.metadata.common.Security;
+import org.jboss.jca.common.api.metadata.common.TimeOut;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
-import org.jboss.jca.common.api.metadata.common.v11.WorkManagerSecurity;
-import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
-import org.jboss.jca.common.api.metadata.ra.AdminObject;
-import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
-import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
-import org.jboss.jca.common.api.metadata.ra.Connector;
-import org.jboss.jca.common.api.metadata.ra.Connector.Version;
-import org.jboss.jca.common.api.metadata.ra.MessageListener;
-import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
-import org.jboss.jca.common.api.metadata.ra.XsdString;
-import org.jboss.jca.common.api.metadata.ra.ra10.ResourceAdapter10;
-import org.jboss.jca.common.api.metadata.ra.ra16.Activationspec16;
-import org.jboss.jca.common.api.metadata.ra.ra16.Connector16;
-import org.jboss.jca.common.metadata.ra.common.ConfigPropertyImpl;
+import org.jboss.jca.common.api.metadata.common.Validation;
+import org.jboss.jca.common.api.metadata.common.XaPool;
+import org.jboss.jca.common.api.metadata.resourceadapter.Activation;
+import org.jboss.jca.common.api.metadata.resourceadapter.ConnectionDefinition;
+import org.jboss.jca.common.api.metadata.resourceadapter.WorkManagerSecurity;
+import org.jboss.jca.common.api.metadata.spec.ConfigProperty;
+import org.jboss.jca.common.api.metadata.spec.Connector;
+import org.jboss.jca.common.api.metadata.spec.Connector.Version;
+import org.jboss.jca.common.api.metadata.spec.MessageListener;
+import org.jboss.jca.common.api.metadata.spec.XsdString;
+import org.jboss.jca.common.metadata.spec.ConfigPropertyImpl;
 import org.jboss.jca.core.api.bootstrap.CloneableBootstrapContext;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.bootstrapcontext.BootstrapContextCoordinator;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
-import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
 import org.jboss.jca.core.connectionmanager.pool.api.PrefillPool;
@@ -84,8 +75,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.security.AccessController;
@@ -105,9 +94,7 @@ import java.util.jar.JarFile;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ActivationSpec;
-import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.ResourceAdapterAssociation;
 import javax.resource.spi.TransactionSupport;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
@@ -332,16 +319,13 @@ public abstract class AbstractResourceAdapterDeployer
     * @throws DeployException DeployException Thrown if the resource adapter cant be started
     */
    @SuppressWarnings("unchecked")
-   protected void startContext(ResourceAdapter resourceAdapter,
+   protected void startContext(javax.resource.spi.ResourceAdapter resourceAdapter,
                                String bootstrapContextIdentifier, String bootstrapContextName,
                                Callback cb)
       throws DeployException
    {
       try
       {
-         Class clz = resourceAdapter.getClass();
-         Method start = clz.getMethod("start", new Class[]{BootstrapContext.class});
-
          CloneableBootstrapContext cbc = 
             BootstrapContextCoordinator.getInstance().createBootstrapContext(bootstrapContextIdentifier,
                                                                              bootstrapContextName);
@@ -351,12 +335,7 @@ public abstract class AbstractResourceAdapterDeployer
          if (cb != null)
             ((org.jboss.jca.core.api.workmanager.WorkManager)cbc.getWorkManager()).setCallbackSecurity(cb);
 
-         start.invoke(resourceAdapter, new Object[]{cbc});
-      }
-      catch (InvocationTargetException ite)
-      {
-         throw new DeployException(bundle.unableToStartResourceAdapter(resourceAdapter.getClass().getName()),
-                                   ite.getTargetException());
+         resourceAdapter.start(cbc);
       }
       catch (Throwable t)
       {
@@ -371,7 +350,8 @@ public abstract class AbstractResourceAdapterDeployer
     * @throws DeployException DeployException Thrown if the resource adapter cant be started
     */
    @SuppressWarnings("unchecked")
-   protected void associateResourceAdapter(ResourceAdapter resourceAdapter, Object object) throws DeployException
+   protected void associateResourceAdapter(javax.resource.spi.ResourceAdapter resourceAdapter, Object object)
+      throws DeployException
    {
       if (resourceAdapter != null && object != null)
       {
@@ -379,11 +359,8 @@ public abstract class AbstractResourceAdapterDeployer
          {
             try
             {
-               Class clz = object.getClass();
-
-               Method setResourceAdapter = clz.getMethod("setResourceAdapter", new Class[]{ResourceAdapter.class});
-
-               setResourceAdapter.invoke(object, new Object[]{resourceAdapter});
+               ResourceAdapterAssociation raa = (ResourceAdapterAssociation)object;
+               raa.setResourceAdapter(resourceAdapter);
             }
             catch (Throwable t)
             {
@@ -398,26 +375,18 @@ public abstract class AbstractResourceAdapterDeployer
     * @param ra The metadata
     * @return The classes
     */
-   private Set<String> findManagedConnectionFactories(org.jboss.jca.common.api.metadata.ra.ResourceAdapter ra)
+   private Set<String> findManagedConnectionFactories(org.jboss.jca.common.api.metadata.spec.ResourceAdapter ra)
    {
       Set<String> result = new HashSet<String>(1);
 
       if (ra != null)
       {
-         if (ra instanceof ResourceAdapter10)
+         if (ra.getOutboundResourceadapter() != null)
          {
-            result.add(((ResourceAdapter10)ra).getManagedConnectionFactoryClass().getValue());
-         }
-         else
-         {
-            ResourceAdapter1516 ra1516 = (ResourceAdapter1516)ra;
-            if (ra1516.getOutboundResourceadapter() != null)
+            for (org.jboss.jca.common.api.metadata.spec.ConnectionDefinition cd : 
+                    ra.getOutboundResourceadapter().getConnectionDefinitions())
             {
-               for (org.jboss.jca.common.api.metadata.ra.ConnectionDefinition cd : 
-                       ra1516.getOutboundResourceadapter().getConnectionDefinitions())
-               {
-                  result.add(cd.getManagedConnectionFactoryClass().getValue());
-               }
+               result.add(cd.getManagedConnectionFactoryClass().getValue());
             }
          }
       }
@@ -430,21 +399,17 @@ public abstract class AbstractResourceAdapterDeployer
     * @param ra The metadata
     * @return The classes
     */
-   private Set<String> resolveAdminObjects(org.jboss.jca.common.api.metadata.ra.ResourceAdapter ra)
+   private Set<String> resolveAdminObjects(org.jboss.jca.common.api.metadata.spec.ResourceAdapter ra)
    {
       Set<String> result = new HashSet<String>(1);
 
       if (ra != null)
       {
-         if (ra instanceof ResourceAdapter1516)
+         if (ra.getAdminObjects() != null)
          {
-            ResourceAdapter1516 ra1516 = (ResourceAdapter1516)ra;
-            if (ra1516.getAdminObjects() != null)
+            for (org.jboss.jca.common.api.metadata.spec.AdminObject ao : ra.getAdminObjects())
             {
-               for (org.jboss.jca.common.api.metadata.ra.AdminObject ao : ra1516.getAdminObjects())
-               {
-                  result.add(ao.getAdminobjectClass().getValue());
-               }
+               result.add(ao.getAdminobjectClass().getValue());
             }
          }
       }
@@ -461,18 +426,19 @@ public abstract class AbstractResourceAdapterDeployer
     * @return The metadata; <code>null</code> if none could be found
     * @exception DeployException Thrown in case of configuration error
     */
-   protected Set<CommonConnDef> findConnectionDefinitions(String clz, Set<String> mcfs, List<CommonConnDef> defs,
-                                                          ClassLoader cl)
+   protected Set<ConnectionDefinition> findConnectionDefinitions(String clz, Set<String> mcfs,
+                                                                 List<ConnectionDefinition> defs,
+                                                                 ClassLoader cl)
       throws DeployException
    {
-      Set<CommonConnDef> result = null;
+      Set<ConnectionDefinition> result = null;
 
       if (mcfs != null && defs != null)
       {
          // If there is only one we will return that
          if (mcfs.size() == 1 && defs.size() == 1)
          {
-            CommonConnDef cd = defs.get(0);
+            ConnectionDefinition cd = defs.get(0);
 
             if (cd.getClassName() != null && !clz.equals(cd.getClassName()))
             {
@@ -492,7 +458,7 @@ public abstract class AbstractResourceAdapterDeployer
 
             if (add)
             {
-               result = new HashSet<CommonConnDef>(1);
+               result = new HashSet<ConnectionDefinition>(1);
                result.add(cd);
 
                return result;
@@ -503,7 +469,7 @@ public abstract class AbstractResourceAdapterDeployer
          if (clz == null)
             throw new IllegalArgumentException(bundle.undefinedManagedConnectionFactory());
 
-         for (CommonConnDef cd : defs)
+         for (ConnectionDefinition cd : defs)
          {
             if (cd.getClassName() == null)
             {
@@ -514,7 +480,7 @@ public abstract class AbstractResourceAdapterDeployer
                if (clz.equals(cd.getClassName()))
                {
                   if (result == null)
-                     result = new HashSet<CommonConnDef>();
+                     result = new HashSet<ConnectionDefinition>();
 
                   result.add(cd);
                }
@@ -614,17 +580,19 @@ public abstract class AbstractResourceAdapterDeployer
     * @return The metadata; <code>null</code> if none could be found
     * @exception DeployException Thrown in case of configuration error
     */
-   protected Set<CommonAdminObject> findAdminObjects(String clz, Set<String> aos, List<CommonAdminObject> defs)
+   protected Set<org.jboss.jca.common.api.metadata.resourceadapter.AdminObject> findAdminObjects(String clz,
+      Set<String> aos,
+      List<org.jboss.jca.common.api.metadata.resourceadapter.AdminObject> defs)
       throws DeployException
    {
-      Set<CommonAdminObject> result = null;
+      Set<org.jboss.jca.common.api.metadata.resourceadapter.AdminObject> result = null;
 
       if (aos != null && defs != null)
       {
          // If there is only one we will return that
          if (aos.size() == 1 && defs.size() == 1)
          {
-            org.jboss.jca.common.api.metadata.common.CommonAdminObject cao = defs.get(0);
+            org.jboss.jca.common.api.metadata.resourceadapter.AdminObject cao = defs.get(0);
 
             if (cao.getClassName() != null && !clz.equals(cao.getClassName()))
             {
@@ -632,7 +600,7 @@ public abstract class AbstractResourceAdapterDeployer
                throw new DeployException(clz + " not a valid admin object");
             }
 
-            result = new HashSet<CommonAdminObject>(1);
+            result = new HashSet<org.jboss.jca.common.api.metadata.resourceadapter.AdminObject>(1);
             result.add(cao);
 
             return result;
@@ -642,7 +610,7 @@ public abstract class AbstractResourceAdapterDeployer
          if (clz == null)
             throw new IllegalArgumentException(bundle.undefinedAdminObject());
 
-         for (org.jboss.jca.common.api.metadata.common.CommonAdminObject cao : defs)
+         for (org.jboss.jca.common.api.metadata.resourceadapter.AdminObject cao : defs)
          {
             if (cao.getClassName() == null)
             {
@@ -653,7 +621,7 @@ public abstract class AbstractResourceAdapterDeployer
                if (clz.equals(cao.getClassName()))
                {
                   if (result == null)
-                     result = new HashSet<CommonAdminObject>();
+                     result = new HashSet<org.jboss.jca.common.api.metadata.resourceadapter.AdminObject>();
 
                   result.add(cao);
                }
@@ -671,7 +639,8 @@ public abstract class AbstractResourceAdapterDeployer
     * @param vp The validation parameters
     * @return The configuration
     */
-   protected PoolConfiguration createPoolConfiguration(CommonPool pp, CommonTimeOut tp, CommonValidation vp)
+   protected PoolConfiguration createPoolConfiguration(org.jboss.jca.common.api.metadata.common.Pool pp,
+                                                       TimeOut tp, Validation vp)
    {
       PoolConfiguration pc = new PoolConfiguration();
 
@@ -680,22 +649,8 @@ public abstract class AbstractResourceAdapterDeployer
          if (pp.getMinPoolSize() != null)
             pc.setMinSize(pp.getMinPoolSize().intValue());
 
-         if (pp instanceof org.jboss.jca.common.api.metadata.common.v11.ConnDefPool)
-         {
-            org.jboss.jca.common.api.metadata.common.v11.ConnDefPool cdp =
-               (org.jboss.jca.common.api.metadata.common.v11.ConnDefPool)pp;
-
-            if (cdp.getInitialPoolSize() != null)
-               pc.setInitialSize(cdp.getInitialPoolSize().intValue());
-         }
-         else if (pp instanceof org.jboss.jca.common.api.metadata.common.v11.ConnDefXaPool)
-         {
-            org.jboss.jca.common.api.metadata.common.v11.ConnDefXaPool cdxp =
-               (org.jboss.jca.common.api.metadata.common.v11.ConnDefXaPool)pp;
-
-            if (cdxp.getInitialPoolSize() != null)
-               pc.setInitialSize(cdxp.getInitialPoolSize().intValue());
-         }
+         if (pp.getInitialPoolSize() != null)
+            pc.setInitialSize(pp.getInitialPoolSize().intValue());
 
          if (pp.getMaxPoolSize() != null)
             pc.setMaxSize(pp.getMaxPoolSize().intValue());
@@ -754,19 +709,23 @@ public abstract class AbstractResourceAdapterDeployer
     * @return failures updated after implemented operations
     * @throws DeployException DeployException in case of error
     */
-   protected Set<Failure> initActivationSpec(ClassLoader cl, Connector cmd, ResourceAdapter resourceAdapter,
-      List<Validate> archiveValidationObjects, List<Object> beanValidationObjects, Set<Failure> failures, URL url,
-      boolean activateDeployment) throws DeployException
+   protected Set<Failure> initActivationSpec(ClassLoader cl, Connector cmd,
+                                             javax.resource.spi.ResourceAdapter resourceAdapter,
+                                             List<Validate> archiveValidationObjects,
+                                             List<Object> beanValidationObjects,
+                                             Set<Failure> failures, URL url,
+                                             boolean activateDeployment)
+      throws DeployException
    {
       // ActivationSpec
       if (cmd.getVersion() != Version.V_10)
       {
-         ResourceAdapter1516 ra1516 = (ResourceAdapter1516) cmd.getResourceadapter();
-         if (ra1516 != null && ra1516.getInboundResourceadapter() != null &&
-             ra1516.getInboundResourceadapter().getMessageadapter() != null &&
-             ra1516.getInboundResourceadapter().getMessageadapter().getMessagelisteners() != null)
+         org.jboss.jca.common.api.metadata.spec.ResourceAdapter raSpec = cmd.getResourceadapter();
+         if (raSpec != null && raSpec.getInboundResourceadapter() != null &&
+             raSpec.getInboundResourceadapter().getMessageadapter() != null &&
+             raSpec.getInboundResourceadapter().getMessageadapter().getMessagelisteners() != null)
          {
-            List<MessageListener> mlMetas = ra1516.getInboundResourceadapter().getMessageadapter()
+            List<MessageListener> mlMetas = raSpec.getInboundResourceadapter().getMessageadapter()
                .getMessagelisteners();
 
             if (mlMetas.size() > 0)
@@ -776,10 +735,10 @@ public abstract class AbstractResourceAdapterDeployer
                   if (mlMD.getActivationspec() != null &&
                       mlMD.getActivationspec().getActivationspecClass().getValue() != null)
                   {
-                     List<? extends ConfigProperty> asCps = null;
-                     if (mlMD.getActivationspec() instanceof Activationspec16)
+                     List<ConfigProperty> asCps = null;
+                     if (mlMD.getActivationspec().getConfigProperties() != null)
                      {
-                        asCps = ((Activationspec16)mlMD.getActivationspec()).getConfigProperties();
+                        asCps = mlMD.getActivationspec().getConfigProperties();
                      }
 
                      failures = validateArchive(
@@ -833,8 +792,7 @@ public abstract class AbstractResourceAdapterDeployer
     * @param deploymentName The deployment name
     * @param activateDeployment activateDeployment
     * @param resourceAdapter The resource adapter instance
-    * @param aosRaXml Admin object definitions from -ra.xml
-    * @param aosIronJacamar Admin object definitions from ironjacamar.xml
+    * @param aosAct Admin object definitions from activation
     * @param aos The resulting array of admin objects
     * @param aoJndiNames The resulting array of JNDI names
     * @param mgtConnector The management view of the connector
@@ -842,29 +800,29 @@ public abstract class AbstractResourceAdapterDeployer
     * @throws DeployException DeployException in case of errors
     */
    protected Set<Failure> initAdminObject(Connector cmd, ClassLoader cl, List<Validate> archiveValidationObjects,
-      List<Object> beanValidationObjects, Set<Failure> failures,
-      URL url, String deploymentName, boolean activateDeployment, ResourceAdapter resourceAdapter,
-      List<org.jboss.jca.common.api.metadata.common.CommonAdminObject> aosRaXml,
-      List<org.jboss.jca.common.api.metadata.common.CommonAdminObject> aosIronJacamar,
-      List<Object> aos, List<String> aoJndiNames,
-      org.jboss.jca.core.api.management.Connector mgtConnector)
+                                          List<Object> beanValidationObjects, Set<Failure> failures,
+                                          URL url, String deploymentName, boolean activateDeployment,
+                                          javax.resource.spi.ResourceAdapter resourceAdapter,
+                                          List<org.jboss.jca.common.api.metadata.resourceadapter.AdminObject> aosAct,
+                                          List<Object> aos, List<String> aoJndiNames,
+                                          org.jboss.jca.core.api.management.Connector mgtConnector)
       throws DeployException
    {
       // AdminObject
       if (cmd.getVersion() != Version.V_10)
       {
-         ResourceAdapter1516 ra1516 = (ResourceAdapter1516) cmd.getResourceadapter();
-         if (ra1516 != null && ra1516.getAdminObjects() != null)
+         org.jboss.jca.common.api.metadata.spec.ResourceAdapter raSpec = cmd.getResourceadapter();
+         if (raSpec != null && raSpec.getAdminObjects() != null)
          {
-            List<AdminObject> aoMetas = ra1516.getAdminObjects();
+            List<org.jboss.jca.common.api.metadata.spec.AdminObject> aoMetas = raSpec.getAdminObjects();
             if (aoMetas.size() > 0)
             {
-               Set<String> aosClz = resolveAdminObjects(ra1516);
+               Set<String> aosClz = resolveAdminObjects(raSpec);
                Set<String> processedAos = new HashSet<String>();
 
                for (int i = 0; i < aoMetas.size(); i++)
                {
-                  AdminObject aoMeta = aoMetas.get(i);
+                  org.jboss.jca.common.api.metadata.spec.AdminObject aoMeta = aoMetas.get(i);
 
                   log.debugf("Activating: %s", aoMeta);
 
@@ -884,19 +842,14 @@ public abstract class AbstractResourceAdapterDeployer
                      if (!(getConfiguration().getArchiveValidationFailOnError() && hasFailuresLevel(failures,
                         Severity.ERROR)))
                      {
-                        Set<CommonAdminObject> adminObjects = null;
+                        Set<org.jboss.jca.common.api.metadata.resourceadapter.AdminObject> adminObjects = null;
 
-                        if (aosRaXml != null)
-                           adminObjects = findAdminObjects(aoClz, aosClz, aosRaXml);
+                        if (aosAct != null)
+                           adminObjects = findAdminObjects(aoClz, aosClz, aosAct);
 
-                        if (adminObjects == null && aosIronJacamar != null)
-                           adminObjects = findAdminObjects(aoClz, aosClz, aosIronJacamar);
-
-                        if (!requireExplicitJndiBindings() &&
-                            aosRaXml == null && aosIronJacamar == null &&
-                            aosClz.size() == 1)
+                        if (!requireExplicitJndiBindings() && aosAct == null && aosClz.size() == 1)
                         {
-                           adminObjects = new HashSet<CommonAdminObject>(1);
+                           adminObjects = new HashSet<org.jboss.jca.common.api.metadata.resourceadapter.AdminObject>(1);
                            adminObjects.add(null);
                         }
 
@@ -904,7 +857,8 @@ public abstract class AbstractResourceAdapterDeployer
                         {
                            Injection injector = new Injection();
 
-                           for (CommonAdminObject adminObject : adminObjects)
+                           for (org.jboss.jca.common.api.metadata.resourceadapter.AdminObject adminObject :
+                                   adminObjects)
                            {
                               Object ao = initAndInject(aoClz, aoMeta.getConfigProperties(), cl);
 
@@ -974,7 +928,7 @@ public abstract class AbstractResourceAdapterDeployer
                                              for (Class<?> interfaceClass : is)
                                              {
                                                 if (!interfaceClass.equals(javax.resource.Referenceable.class) &&
-                                                    !interfaceClass.equals(javax.resource.spi.ResourceAdapterAssociation.class) &&
+                                                    !interfaceClass.equals(ResourceAdapterAssociation.class) &&
                                                     !interfaceClass.equals(java.io.Serializable.class) &&
                                                     !interfaceClass.equals(java.io.Externalizable.class))
                                                 {
@@ -1148,34 +1102,7 @@ public abstract class AbstractResourceAdapterDeployer
    }
 
    /**
-   *
-   * create objects and inject value for this depployment. it is a general method returning a {@link CommonDeployment}
-   * to be used to exchange objects needed to real injection in the container
-   *
-   * @param url url
-   * @param deploymentName deploymentName
-   * @param root root
-   * @param cl cl
-   * @param cmd connector md
-   * @param ijmd ironjacamar md
-   * @return return the exchange POJO with value useful for injection in the container (fungal or AS)
-   * @throws DeployException DeployException
-   * @throws ResourceException ResourceException
-   * @throws ValidatorException ValidatorException
-   * @throws org.jboss.jca.core.spi.mdr.AlreadyExistsException AlreadyExistsException
-   * @throws ClassNotFoundException ClassNotFoundException
-   * @throws Throwable Throwable
-   */
-   protected CommonDeployment createObjectsAndInjectValue(URL url, String deploymentName, File root, ClassLoader cl,
-      Connector cmd, IronJacamar ijmd) throws DeployException, ResourceException, ValidatorException,
-      org.jboss.jca.core.spi.mdr.AlreadyExistsException, ClassNotFoundException, Throwable
-   {
-      return createObjectsAndInjectValue(url, deploymentName, root, cl, cmd, ijmd, null);
-   }
-
-   /**
-    *
-    * create objects and inject value for this depployment. it is a general method returning a {@link CommonDeployment}
+    * create objects and inject value for this deployment. it is a general method returning a {@link CommonDeployment}
     * to be used to exchange objects needed to real injection in the container
     *
     * @param url url
@@ -1183,8 +1110,7 @@ public abstract class AbstractResourceAdapterDeployer
     * @param root root
     * @param cl cl
     * @param cmd connector md
-    * @param ijmd ironjacamar md
-    * @param raxml Resource Adapter from -ra.xml definition
+    * @param activation activation md
     * @return return the exchange POJO with value useful for injection in the container (fungal or AS)
     * @throws DeployException DeployException
     * @throws ResourceException ResourceException
@@ -1194,7 +1120,7 @@ public abstract class AbstractResourceAdapterDeployer
     * @throws Throwable Throwable
     */
    protected CommonDeployment createObjectsAndInjectValue(URL url, String deploymentName, File root, ClassLoader cl,
-      Connector cmd, IronJacamar ijmd, org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter raxml)
+                                                          Connector cmd, Activation activation)
       throws DeployException, ResourceException, ValidatorException,
       org.jboss.jca.core.spi.mdr.AlreadyExistsException,
              ClassNotFoundException, Throwable
@@ -1213,7 +1139,7 @@ public abstract class AbstractResourceAdapterDeployer
          org.jboss.jca.core.api.management.Connector mgtConnector =
             new org.jboss.jca.core.api.management.Connector(mgtUniqueId);
 
-         ResourceAdapter resourceAdapter = null;
+         javax.resource.spi.ResourceAdapter resourceAdapter = null;
          Map<String, String> raConfigProperties = null;
          String resourceAdapterKey = null;
          String bootstrapContextIdentifier = null;
@@ -1229,13 +1155,12 @@ public abstract class AbstractResourceAdapterDeployer
          boolean isXA = false;
 
          // Check metadata for JNDI information and activate explicit
-         boolean activateDeployment = checkActivation(cmd, ijmd);
+         boolean activateDeployment = checkActivation(cmd, activation);
 
          if (log.isTraceEnabled())
          {
             log.tracef("Connector=%s", cmd);
-            log.tracef("IronJacamar=%s", ijmd);
-            log.tracef("RaXML=%s", raxml);
+            log.tracef("Activation=%s", activation);
             log.tracef("ActivateDeployment=%s", activateDeployment);
          }
 
@@ -1244,50 +1169,27 @@ public abstract class AbstractResourceAdapterDeployer
             loadNativeLibraries(root);
 
          // Setup WorkManager security
-         if ((ijmd != null && ijmd instanceof org.jboss.jca.common.api.metadata.ironjacamar.v11.IronJacamar) ||
-             (raxml != null && raxml instanceof org.jboss.jca.common.api.metadata.resourceadapter.v11.ResourceAdapter))
+         if (activation != null && activation.getWorkManager() != null &&
+             activation.getWorkManager().getSecurity() != null)
          {
-            WorkManagerSecurity ws = null;
-
-            if (ijmd != null)
-            {
-               org.jboss.jca.common.api.metadata.ironjacamar.v11.IronJacamar ij11 =
-                  (org.jboss.jca.common.api.metadata.ironjacamar.v11.IronJacamar)ijmd;
-
-               if (ij11.getWorkManager() != null && ij11.getWorkManager().getSecurity() != null)
-               {
-                  ws = ij11.getWorkManager().getSecurity();
-               }
-            }
-
-            if (raxml != null)
-            {
-               org.jboss.jca.common.api.metadata.resourceadapter.v11.ResourceAdapter raxml11 =
-                  (org.jboss.jca.common.api.metadata.resourceadapter.v11.ResourceAdapter)raxml;
-
-               if (raxml11.getWorkManager() != null && raxml11.getWorkManager().getSecurity() != null)
-               {
-                  ws = raxml11.getWorkManager().getSecurity();
-               }
-            }
-
-            callback = createCallback(ws);
+            callback = createCallback(activation.getWorkManager().getSecurity());
          }
 
          // Create objects and inject values
          if (cmd != null)
          {
+            org.jboss.jca.common.api.metadata.spec.ResourceAdapter ra = cmd.getResourceadapter();
+
             // ResourceAdapter
             if (cmd.getVersion() != Version.V_10)
             {
                if (cmd.getVersion() == Version.V_16 || cmd.getVersion() == Version.V_17)
                {
-                  Connector16 cmd16 = (Connector16)cmd;
-                  if (cmd16.getRequiredWorkContexts() != null && cmd16.getRequiredWorkContexts().size() > 0)
+                  if (cmd.getRequiredWorkContexts() != null && cmd.getRequiredWorkContexts().size() > 0)
                   {
                      CloneableBootstrapContext bc =
                         BootstrapContextCoordinator.getInstance().getDefaultBootstrapContext();
-                     for (String requiredWorkContext : cmd16.getRequiredWorkContexts())
+                     for (String requiredWorkContext : cmd.getRequiredWorkContexts())
                      {
                         try
                         {
@@ -1307,11 +1209,10 @@ public abstract class AbstractResourceAdapterDeployer
                   }
                }
 
-               ResourceAdapter1516 ra1516 = (ResourceAdapter1516) cmd.getResourceadapter();
-               if (ra1516 != null && ra1516.getResourceadapterClass() != null)
+               if (ra != null && ra.getResourceadapterClass() != null)
                {
                   failures = validateArchive(url,
-                     Arrays.asList((Validate) new ValidateClass(Key.RESOURCE_ADAPTER, ra1516
+                     Arrays.asList((Validate) new ValidateClass(Key.RESOURCE_ADAPTER, ra
                         .getResourceadapterClass(), cl, cmd.getResourceadapter().getConfigProperties())), failures);
 
                   if (!(getConfiguration().getArchiveValidationFailOnError() && hasFailuresLevel(failures,
@@ -1319,19 +1220,16 @@ public abstract class AbstractResourceAdapterDeployer
                   {
                      if (activateDeployment)
                      {
-                        String raClz = ra1516.getResourceadapterClass();
-                        Object or = initAndInject(raClz, ra1516.getConfigProperties(), cl);
+                        String raClz = ra.getResourceadapterClass();
+                        Object or = initAndInject(raClz, ra.getConfigProperties(), cl);
 
-                        if (or == null || !(or instanceof ResourceAdapter))
+                        if (or == null || !(or instanceof javax.resource.spi.ResourceAdapter))
                            throw new DeployException(bundle.invalidResourceAdapter(raClz));
 
-                        resourceAdapter = (ResourceAdapter)or;
+                        resourceAdapter = (javax.resource.spi.ResourceAdapter)or;
 
-                        if (raxml != null)
-                           raConfigProperties = raxml.getConfigProperties();
-
-                        if (raConfigProperties == null && ijmd != null)
-                           raConfigProperties = ijmd.getConfigProperties();
+                        if (activation != null)
+                           raConfigProperties = activation.getConfigProperties();
 
                         if (raConfigProperties != null)
                         {
@@ -1362,7 +1260,7 @@ public abstract class AbstractResourceAdapterDeployer
                                      SecurityActions.getClassLoader(resourceAdapter.getClass()));
                         }
 
-                        archiveValidationObjects.add(new ValidateObject(Key.RESOURCE_ADAPTER, resourceAdapter, ra1516
+                        archiveValidationObjects.add(new ValidateObject(Key.RESOURCE_ADAPTER, resourceAdapter, ra
                            .getConfigProperties()));
                         beanValidationObjects.add(resourceAdapter);
 
@@ -1371,7 +1269,7 @@ public abstract class AbstractResourceAdapterDeployer
                            org.jboss.jca.core.api.management.ResourceAdapter mgtRa =
                               new org.jboss.jca.core.api.management.ResourceAdapter(resourceAdapter);
 
-                           mgtRa.getConfigProperties().addAll(createManagementView(ra1516.getConfigProperties()));
+                           mgtRa.getConfigProperties().addAll(createManagementView(ra.getConfigProperties()));
                            mgtConnector.setResourceAdapter(mgtRa);
                         }
                      }
@@ -1379,1134 +1277,553 @@ public abstract class AbstractResourceAdapterDeployer
                }
             }
 
-            // ManagedConnectionFactory
-            if (cmd.getVersion() == Version.V_10)
+            if (ra != null && ra.getOutboundResourceadapter() != null &&
+                ra.getOutboundResourceadapter().getConnectionDefinitions() != null)
             {
-               ResourceAdapter10 ra10 = (ResourceAdapter10) cmd.getResourceadapter();
-
-               if (raxml != null && raxml.getConfigProperties() != null && raxml.getConfigProperties().size() > 0)
+               List<org.jboss.jca.common.api.metadata.spec.ConnectionDefinition> cdMetas =
+                  ra.getOutboundResourceadapter().getConnectionDefinitions();
+               if (cdMetas.size() > 0)
                {
-                  for (String s : raxml.getConfigProperties().keySet())
+                  Set<String> mcfs = findManagedConnectionFactories(ra);
+                  Set<String> processedMcfs = new HashSet<String>();
+
+                  for (int cdIndex = 0; cdIndex < cdMetas.size(); cdIndex++)
                   {
-                     log.invalidConfigProperty(s);
-                  }
-               }
-
-               if (ijmd != null && ijmd.getConfigProperties() != null && ijmd.getConfigProperties().size() > 0)
-               {
-                  for (String s : ijmd.getConfigProperties().keySet())
-                  {
-                     log.invalidConfigProperty(s);
-                  }
-               }
-
-               Set<String> mcfs = findManagedConnectionFactories(ra10);
-
-               Set<CommonConnDef> connectionDefinitions = null;
-
-               if (raxml != null)
-               {
-                  List<CommonConnDef> cdDefs = raxml.getConnectionDefinitions();
-
-                  if (cdDefs != null)
-                  {
-                     connectionDefinitions = 
-                        findConnectionDefinitions(ra10.getManagedConnectionFactoryClass().getValue(), mcfs, cdDefs, cl);
-                  }
-               }
-
-               if (connectionDefinitions == null && ijmd != null)
-               {
-                  List<CommonConnDef> cdDefs = ijmd.getConnectionDefinitions();
-
-                  if (cdDefs != null)
-                  {
-                     connectionDefinitions =
-                        findConnectionDefinitions(ra10.getManagedConnectionFactoryClass().getValue(), mcfs, cdDefs, cl);
-                  }
-               }
-
-               if (!requireExplicitJndiBindings() && raxml == null && ijmd == null && mcfs.size() == 1)
-               {
-                  connectionDefinitions = new HashSet<CommonConnDef>(1);
-                  connectionDefinitions.add(null);
-               }
-
-               if (activateDeployment && connectionDefinitions != null)
-               {
-                  String cfIntClz = ra10.getConnectionFactoryInterface().getValue();
-                  if (!verifyClass(cfIntClz, cl))
-                     throw new DeployException(bundle.invalidConnectionFactoryInterface(cfIntClz));
-                  
-                  String cfImplClz = ra10.getConnectionFactoryImplClass().getValue();
-                  if (!verifyClass(cfImplClz, cl))
-                     throw new DeployException(bundle.invalidConnectionFactoryImplementation(cfImplClz));
-
-                  if (!verifyInstance(cfIntClz, cfImplClz, cl))
-                     throw new DeployException(bundle.
-                        invalidConnectionFactoryImplementationDueToInterface(cfImplClz, cfIntClz));
-                  
-                  String cIntClz = ra10.getConnectionInterface().getValue();
-                  if (!verifyClass(cIntClz, cl))
-                     throw new DeployException(bundle.invalidConnectionInterface(cIntClz));
-                  
-                  String cImplClz = ra10.getConnectionImplClass().getValue();
-                  if (!verifyClass(cImplClz, cl))
-                     throw new DeployException(bundle.invalidConnectionImplementation(cImplClz));
-
-                  if (!verifyInstance(cIntClz, cImplClz, cl))
-                     throw new DeployException(bundle.invalidConnectionImplementationDueToInterface(cImplClz, cIntClz));
-                  
-                  for (CommonConnDef connectionDefinition : connectionDefinitions)
-                  {
-                     log.debugf("Activating: %s", connectionDefinition);
-
-                     if (connectionDefinition == null || connectionDefinition.isEnabled())
-                     {
-                        String mcfClz = ra10.getManagedConnectionFactoryClass().getValue();
-                        Object om = initAndInject(mcfClz, ra10.getConfigProperties(), cl);
-
-                        if (om == null || !(om instanceof ManagedConnectionFactory))
-                           throw new DeployException(bundle.invalidManagedConnectionFactory(mcfClz));
-
-                        ManagedConnectionFactory mcf = (ManagedConnectionFactory)om;
-
-                        if (connectionDefinition != null &&
-                            connectionDefinition.getConfigProperties() != null)
-                        {
-                           Injection injector = new Injection();
-                           Iterator<Map.Entry<String, String>> it =
-                              connectionDefinition.getConfigProperties().entrySet().iterator();
-
-                           while (it.hasNext())
-                           {
-                              Map.Entry<String, String> entry = it.next();
-                                    
-                              try
-                              {
-                                 injector.inject(mcf, entry.getKey(), entry.getValue());
-                              }
-                              catch (Throwable t)
-                              {
-                                 throw new DeployException(bundle.unableToInject(mcf.getClass().getName(),
-                                                                                 entry.getKey(),
-                                                                                 entry.getValue()));
-                              }
-                           }
-                        }
-
-                        if (trace)
-                        {
-                           log.trace("ManagedConnectionFactory: " + mcf.getClass().getName());
-                           log.trace("ManagedConnectionFactory is defined in classloader: " +
-                                     SecurityActions.getClassLoader(mcf.getClass()));
-                        }
-
-                        mcf.setLogWriter(getLogPrintWriter());
-
-                        archiveValidationObjects.add(new ValidateObject(Key.MANAGED_CONNECTION_FACTORY, mcf, ra10
-                                                                        .getConfigProperties()));
-                        beanValidationObjects.add(mcf);
-                        associateResourceAdapter(resourceAdapter, mcf);
-                        // Create the pool
-                        PoolConfiguration pc = null;
-                        FlushStrategy flushStrategy = null;
-
-                        if (connectionDefinition != null)
-                        {
-                           pc = createPoolConfiguration(connectionDefinition.getPool(),
-                                                        connectionDefinition.getTimeOut(),
-                                                        connectionDefinition.getValidation());
-
-                           if (connectionDefinition.getPool() != null)
-                              flushStrategy = connectionDefinition.getPool().getFlushStrategy();
-                        }
-                        else
-                        {
-                           // Default default settings
-                           pc = createPoolConfiguration(null, null, null);
-                        }
-
-                        if (flushStrategy == null)
-                           flushStrategy = FlushStrategy.FAILING_CONNECTION_ONLY;
-
-                        PoolFactory pf = new PoolFactory();
-
-                        Boolean noTxSeparatePool = Defaults.NO_TX_SEPARATE_POOL;
-
-                        if (connectionDefinition != null &&
-                            connectionDefinition.getPool() != null &&
-                            connectionDefinition.isXa())
-                        {
-                           CommonXaPool xaPool = (CommonXaPool)connectionDefinition.getPool();
-                           if (xaPool != null)
-                              noTxSeparatePool = xaPool.isNoTxSeparatePool();
-                        }
-
-                        PoolStrategy strategy = PoolStrategy.ONE_POOL;
-                        String securityDomain = null;
-
-                        CommonSecurity security = null;
-                        if (connectionDefinition != null && connectionDefinition.getSecurity() != null)
-                        {
-                           security = connectionDefinition.getSecurity();
-                        }
-
-                        if (security != null)
-                        {
-                           if (security.isApplication())
-                           {
-                              strategy = PoolStrategy.POOL_BY_CRI;
-                           }
-                           else if (security.getSecurityDomain() != null &&
-                                    security.getSecurityDomain().trim().length() != 0)
-                           {
-                              strategy = PoolStrategy.POOL_BY_SUBJECT;
-                              securityDomain = security.getSecurityDomain();
-                           }
-                           else if (security.getSecurityDomainAndApplication() != null &&
-                                    security.getSecurityDomainAndApplication().trim().length() != 0)
-                           {
-                              strategy = PoolStrategy.POOL_BY_SUBJECT_AND_CRI;
-                              securityDomain = security.getSecurityDomainAndApplication();
-                           }
-                        }
-
-                        if (ra10 != null && ra10.getReauthenticationSupport())
-                        {
-                           strategy = PoolStrategy.REAUTH;
-                        }
-
-                        Boolean sharable = Defaults.SHARABLE;
-                        Boolean enlistment = Defaults.ENLISTMENT;
-                        Boolean connectable = Defaults.CONNECTABLE;
-                        Boolean tracking = Defaults.TRACKING;
-                        if (connectionDefinition != null &&
-                            connectionDefinition instanceof org.jboss.jca.common.api.metadata.common.v11.CommonConnDef)
-                        {
-                           org.jboss.jca.common.api.metadata.common.v11.CommonConnDef ccd =
-                              (org.jboss.jca.common.api.metadata.common.v11.CommonConnDef)connectionDefinition;
-                           sharable = ccd.isSharable();
-                           enlistment = ccd.isEnlistment();
-                        }
-                        if (connectionDefinition != null &&
-                            connectionDefinition instanceof org.jboss.jca.common.api.metadata.common.v12.CommonConnDef)
-                        {
-                           org.jboss.jca.common.api.metadata.common.v12.CommonConnDef ccd =
-                              (org.jboss.jca.common.api.metadata.common.v12.CommonConnDef)connectionDefinition;
-                           connectable = ccd.isConnectable();
-                           tracking = ccd.isTracking();
-                        }
-
-                        Pool pool =
-                           pf.create(strategy, mcf, pc, noTxSeparatePool.booleanValue(), sharable.booleanValue());
-
-                        // Capacity
-                        applyCapacity(connectionDefinition, pool);
-
-                        // Add a connection manager
-                        ConnectionManagerFactory cmf = new ConnectionManagerFactory();
-                        ConnectionManager cm = null;
-
-                        TransactionSupportEnum tsmd = TransactionSupportEnum.NoTransaction;
-                        if (raxml != null && raxml.getTransactionSupport() != null)
-                        {
-                           tsmd = raxml.getTransactionSupport();
-                        }
-                        else if (ijmd != null && ijmd.getTransactionSupport() != null)
-                        {
-                           tsmd = ijmd.getTransactionSupport();
-                        }
-                        else
-                        {
-                           tsmd = ra10.getTransactionSupport();
-                        }
-
-                        TransactionSupportLevel tsl = TransactionSupportLevel.NoTransaction;
-
-                        if (tsmd == TransactionSupportEnum.NoTransaction)
-                        {
-                           tsl = TransactionSupportLevel.NoTransaction;
-                        }
-                        else if (tsmd == TransactionSupportEnum.LocalTransaction)
-                        {
-                           tsl = TransactionSupportLevel.LocalTransaction;
-                        }
-                        else if (tsmd == TransactionSupportEnum.XATransaction)
-                        {
-                           tsl = TransactionSupportLevel.XATransaction;
-                        }
-
-                        // Section 7.13 -- Read from metadata -> overwrite with specified value if present
-                        if (mcf instanceof TransactionSupport)
-                           tsl = ((TransactionSupport) mcf).getTransactionSupport();
-
-                        // XAResource recovery
-                        XAResourceRecovery recoveryImpl = null;
-                        boolean enableRecovery = false;
-
-                        // Connection manager properties
-                        Integer allocationRetry = null;
-                        Long allocationRetryWaitMillis = null;
-
-                        if (connectionDefinition != null && connectionDefinition.getTimeOut() != null)
-                        {
-                           allocationRetry = connectionDefinition.getTimeOut().getAllocationRetry();
-                           allocationRetryWaitMillis = connectionDefinition.getTimeOut().getAllocationRetryWaitMillis();
-                        }
+                     org.jboss.jca.common.api.metadata.spec.ConnectionDefinition cdMeta = cdMetas.get(cdIndex);
+                     String mcfClz = cdMeta.getManagedConnectionFactoryClass().getValue();
                         
-                        Boolean useCCM = Boolean.TRUE;
-                        if (connectionDefinition != null)
-                           useCCM = connectionDefinition.isUseCcm();
+                     if (processedMcfs.contains(mcfClz))
+                        continue;
 
-                        // Select the correct connection manager
-                        if (tsl == TransactionSupportLevel.NoTransaction)
-                        {
-                           cm = cmf.createNonTransactional(tsl, pool,
-                                                           getSubjectFactory(securityDomain), securityDomain,
-                                                           useCCM, getCachedConnectionManager(),
-                                                           sharable,
-                                                           enlistment,
-                                                           connectable,
-                                                           tracking,
-                                                           flushStrategy,
-                                                           allocationRetry, allocationRetryWaitMillis);
-                        }
-                        else
-                        {
-                           Boolean interleaving = Defaults.INTERLEAVING;
-                           Integer xaResourceTimeout = null;
-                           Boolean isSameRMOverride = Defaults.IS_SAME_RM_OVERRIDE;
-                           Boolean wrapXAResource = Defaults.WRAP_XA_RESOURCE;
-                           Boolean padXid = Defaults.PAD_XID;
-                           Recovery recoveryMD = null;
+                     processedMcfs.add(mcfClz);
 
-                           if (connectionDefinition != null && connectionDefinition.isXa())
-                           {
-                              CommonXaPool xaPool = (CommonXaPool)connectionDefinition.getPool();
+                     log.debugf("CdMeta: %s", cdMeta);
 
-                              if (xaPool != null)
-                              {
-                                 interleaving = xaPool.isInterleaving();
-                                 isSameRMOverride = xaPool.isSameRmOverride();
-                                 wrapXAResource = xaPool.isWrapXaResource();
-                                 padXid = xaPool.isPadXid();
-                              }
+                     failures = validateArchive(url,
+                        Arrays.asList((Validate) new ValidateClass(Key.MANAGED_CONNECTION_FACTORY, mcfClz,
+                                                                   cl, cdMeta.getConfigProperties())),
+                                                failures);
 
-                              CommonTimeOut timeout = connectionDefinition.getTimeOut();
-                              if (timeout != null)
-                              {
-                                 xaResourceTimeout = timeout.getXaResourceTimeout();
-                              }
-                              
-                              recoveryMD = connectionDefinition.getRecovery();
-                           }
-
-                           pool.setInterleaving(interleaving.booleanValue());
-
-                           cm = cmf.createTransactional(tsl, pool,
-                                                        getSubjectFactory(securityDomain), securityDomain,
-                                                        useCCM, getCachedConnectionManager(),
-                                                        sharable,
-                                                        enlistment,
-                                                        connectable,
-                                                        tracking,
-                                                        flushStrategy,
-                                                        allocationRetry, allocationRetryWaitMillis,
-                                                        getTransactionIntegration(), interleaving,
-                                                        xaResourceTimeout, isSameRMOverride,
-                                                        wrapXAResource, padXid);
-
-                           if (tsl == TransactionSupportLevel.XATransaction)
-                           {
-                              isXA = true;
-
-                              String recoverSecurityDomain = securityDomain;
-                              String recoverUser = null;
-                              String recoverPassword = null;
-                              if (recoveryMD == null || recoveryMD.getNoRecovery() == null ||
-                                  !recoveryMD.getNoRecovery())
-                              {
-                                 // If we have an XAResourceRecoveryRegistry and the deployment is XA
-                                 // lets register it for XA Resource Recovery using the "recovery"
-                                 // definition. Fallback to the standard definitions
-                                 // for user name, password. Keep a seperate reference to the
-                                 // security-domain
-                                 enableRecovery = true;
-
-                                 Credential credential =
-                                    recoveryMD != null ? recoveryMD.getCredential() : null;
-
-                                 if (credential != null)
-                                 {
-                                    recoverSecurityDomain = credential.getSecurityDomain();
-
-                                    recoverUser = credential.getUserName();
-                                    recoverPassword = credential.getPassword();
-                                 }
-
-                                 if (log.isDebugEnabled())
-                                 {
-                                    log.debug("RecoverUser=" + recoverUser);
-                                    log.debug("RecoverSecurityDomain=" + recoverSecurityDomain);
-                                 }
-
-                                 if (recoverUser != null || recoverSecurityDomain != null)
-                                 {
-                                    RecoveryPlugin plugin = null;
-                                    if (recoveryMD != null && recoveryMD.getRecoverPlugin() != null &&
-                                        recoveryMD.getRecoverPlugin().getClassName() != null)
-                                    {
-                                       List<ConfigProperty> configProperties =
-                                          new ArrayList<ConfigProperty>(recoveryMD
-                                                                        .getRecoverPlugin()
-                                                                        .getConfigPropertiesMap().size());
-                                       
-                                       for (Map.Entry<String, String> property :
-                                               recoveryMD.getRecoverPlugin().
-                                               getConfigPropertiesMap().entrySet())
-                                       {
-                                          ConfigProperty c =
-                                             new ConfigPropertyImpl(null,
-                                                                    new XsdString(property.getKey(), null),
-                                                                    XsdString.NULL_XSDSTRING,
-                                                                    new XsdString(property.getValue(), null),
-                                                                    null);
-                                          configProperties.add(c);
-                                       }
-                                       
-                                       plugin =
-                                          (RecoveryPlugin)initAndInject(recoveryMD
-                                                                        .getRecoverPlugin().getClassName(),
-                                                                        configProperties, cl);
-                                    }
-                                    else
-                                    {
-                                       plugin = new DefaultRecoveryPlugin();
-                                    }
-                                 
-                                    recoveryImpl =
-                                       getTransactionIntegration().
-                                          createXAResourceRecovery(mcf,
-                                                                   padXid,
-                                                                   isSameRMOverride,
-                                                                   wrapXAResource,
-                                                                   recoverUser,
-                                                                   recoverPassword,
-                                                                   recoverSecurityDomain,
-                                                                   getSubjectFactory(recoverSecurityDomain),
-                                                                   plugin);
-                                 }
-                              }
-                           }
-                        }
-
-                        // ConnectionFactory
-                        Object cf = mcf.createConnectionFactory(cm);
-
-                        if (cf == null)
-                        {
-                           log.nullConnectionFactory();
-                        }
-                        else
-                        {
-                           if (trace)
-                           {
-                              log.trace("ConnectionFactory: " + cf.getClass().getName());
-                              log.trace("ConnectionFactory defined in classloader: " +
-                                        SecurityActions.getClassLoader(cf.getClass()));
-                           }
-                        }
-
-                        archiveValidationObjects.add(new ValidateObject(Key.CONNECTION_FACTORY, cf));
-
-                        if (cf != null && cf instanceof Serializable &&
-                            cf instanceof javax.resource.Referenceable)
-                        {
-                           String jndiName;
-                           if (connectionDefinition != null)
-                           {
-                              jndiName = buildJndiName(connectionDefinition.getJndiName(),
-                                                       connectionDefinition.isUseJavaContext());
-                              
-                              bindConnectionFactory(url, deploymentName, cf, jndiName);
-                              cfs.add(cf);
-                              cfJndiNames.add(jndiName);
-
-                              cm.setJndiName(jndiName);
-                              cfCMs.add(cm);
-                              
-                              String poolName = null;
-                              
-                              if (connectionDefinition != null)
-                                 poolName = connectionDefinition.getPoolName();
-                              
-                              if (poolName == null)
-                                 poolName = jndiName;
-                              
-                              pool.setName(poolName);
-                           }
-                           else
-                           {
-                              String[] bindCfJndiNames = bindConnectionFactory(url, deploymentName, cf);
-                           
-                              cfs.add(cf);
-                              cfJndiNames.addAll(Arrays.asList(bindCfJndiNames));
-                              
-                              cm.setJndiName(bindCfJndiNames[0]);
-                              cfCMs.add(cm);
-                              
-                              String poolName = null;
-                              
-                              if (connectionDefinition != null)
-                                 poolName = connectionDefinition.getPoolName();
-                              
-                              if (poolName == null)
-                                 poolName = cfJndiNames.get(0);
-                              
-                              jndiName = poolName;
-                              pool.setName(poolName);
-                           }
-                           
-                           // Verify recovery settings, but always add the module to align deployment data
-                           if (enableRecovery && getTransactionIntegration().getRecoveryRegistry() != null)
-                           {
-                              if (recoveryImpl != null)
-                              {
-                                 recoveryImpl.setJndiName(cm.getJndiName());
-                                 recoveryImpl.initialize();
-                                 getTransactionIntegration().
-                                    getRecoveryRegistry().addXAResourceRecovery(recoveryImpl);
-                              }
-                              else
-                              {
-                                 log.missingRecovery(cm.getJndiName());
-                              }
-                           }
-                           recoveryModules.add(recoveryImpl);
-
-                           if (activateDeployment)
-                           {
-                              org.jboss.jca.core.api.management.ConnectionFactory mgtCf =
-                                 new org.jboss.jca.core.api.management.ConnectionFactory(cf, mcf);
-                              
-                              mgtCf.setPoolConfiguration(pc);
-                              mgtCf.setPool(pool);
-                              mgtCf.setJndiName(jndiName);
-                              
-                              mgtCf.getManagedConnectionFactory().getConfigProperties().
-                                 addAll(createManagementView(ra10.getConfigProperties()));
-                              
-                              mgtConnector.getConnectionFactories().add(mgtCf);
-                              
-                              // Prefill
-                              if (pool instanceof PrefillPool)
-                              {
-                                 PrefillPool pp = (PrefillPool)pool;
-                                 SubjectFactory subjectFactory = getSubjectFactory(securityDomain);
-                                 Subject subject = null;
-                                 
-                                 if (subjectFactory != null)
-                                    subject = createSubject(subjectFactory, securityDomain, mcf);
-                                 
-                                 pp.prefill(subject, null, noTxSeparatePool.booleanValue());
-                              }
-                           }
-                        }
-                        else
-                        {
-                           log.connectionFactoryNotBound(mcf.getClass().getName());
-
-                           if (cf != null)
-                           {
-                              log.connectionFactoryNotSpecCompliant(cf.getClass().getName());
-                           }
-                           else
-                           {
-                              log.connectionFactoryNotSpecCompliant(mcf.getClass().getName());
-                           }
-                        }
-                     }
-                  }
-               } 
-               else
-               {
-                  log.debug("No activation: " + ra10.getManagedConnectionFactoryClass().getValue());
-               }
-            }
-            else
-            {
-               ResourceAdapter1516 ra = (ResourceAdapter1516) cmd.getResourceadapter();
-               if (ra != null && ra.getOutboundResourceadapter() != null &&
-                   ra.getOutboundResourceadapter().getConnectionDefinitions() != null)
-               {
-                  List<ConnectionDefinition> cdMetas = ra.getOutboundResourceadapter().getConnectionDefinitions();
-                  if (cdMetas.size() > 0)
-                  {
-                     Set<String> mcfs = findManagedConnectionFactories(ra);
-                     Set<String> processedMcfs = new HashSet<String>();
-
-                     for (int cdIndex = 0; cdIndex < cdMetas.size(); cdIndex++)
+                     if (!(getConfiguration().getArchiveValidationFailOnError() && hasFailuresLevel(failures,
+                                                                                                    Severity.ERROR)))
                      {
-                        ConnectionDefinition cdMeta = cdMetas.get(cdIndex);
-                        String mcfClz = cdMeta.getManagedConnectionFactoryClass().getValue();
-                        
-                        if (processedMcfs.contains(mcfClz))
-                           continue;
+                        Set<ConnectionDefinition> connectionDefinitions = null;
 
-                        processedMcfs.add(mcfClz);
-
-                        log.debugf("CdMeta: %s", cdMeta);
-
-                        failures = validateArchive(url,
-                           Arrays.asList((Validate) new ValidateClass(Key.MANAGED_CONNECTION_FACTORY, mcfClz,
-                                                                      cl, cdMeta.getConfigProperties())),
-                                                   failures);
-
-                        if (!(getConfiguration().getArchiveValidationFailOnError() && hasFailuresLevel(failures,
-                           Severity.ERROR)))
+                        if (activation != null)
                         {
-                           Set<CommonConnDef> connectionDefinitions = null;
-
-                           if (raxml != null)
-                           {
-                              List<CommonConnDef> cdDefs = raxml.getConnectionDefinitions();
+                           List<ConnectionDefinition> cdDefs = activation.getConnectionDefinitions();
                            
-                              if (cdDefs != null)
-                              {
-                                 connectionDefinitions =
-                                    findConnectionDefinitions(mcfClz, mcfs, cdDefs, cl);
-                              }
-                           }
-
-                           if (connectionDefinitions == null && ijmd != null)
+                           if (cdDefs != null)
                            {
-                              List<CommonConnDef> cdDefs = ijmd.getConnectionDefinitions();
+                              connectionDefinitions =
+                                 findConnectionDefinitions(mcfClz, mcfs, cdDefs, cl);
+                           }
+                        }
+
+                        if (!requireExplicitJndiBindings() && activation == null && mcfs.size() == 1)
+                        {
+                           connectionDefinitions = new HashSet<ConnectionDefinition>(1);
+                           connectionDefinitions.add(null);
+                        }
+
+                        if (activateDeployment && connectionDefinitions != null)
+                        {
+                           log.debugf("ConnectionDefinitions: %s", connectionDefinitions.size());
                               
-                              if (cdDefs != null)
-                              {
-                                 connectionDefinitions = 
-                                    findConnectionDefinitions(mcfClz, mcfs, cdDefs, cl);
-                              }
-                           }
-
-                           if (!requireExplicitJndiBindings() && raxml == null && ijmd == null && mcfs.size() == 1)
-                           {
-                              connectionDefinitions = new HashSet<CommonConnDef>(1);
-                              connectionDefinitions.add(null);
-                           }
-
-                           if (activateDeployment && connectionDefinitions != null)
-                           {
-                              log.debugf("ConnectionDefinitions: %s", connectionDefinitions.size());
-                              
-                              String cfIntClz = cdMeta.getConnectionFactoryInterface().getValue();
-                              if (!verifyClass(cfIntClz, cl))
-                                 throw new DeployException(bundle.invalidConnectionFactoryInterface(cfIntClz));
+                           String cfIntClz = cdMeta.getConnectionFactoryInterface().getValue();
+                           if (!verifyClass(cfIntClz, cl))
+                              throw new DeployException(bundle.invalidConnectionFactoryInterface(cfIntClz));
                   
-                              String cfImplClz = cdMeta.getConnectionFactoryImplClass().getValue();
-                              if (!verifyClass(cfImplClz, cl))
-                                 throw new DeployException(bundle.invalidConnectionFactoryImplementation(cfImplClz));
+                           String cfImplClz = cdMeta.getConnectionFactoryImplClass().getValue();
+                           if (!verifyClass(cfImplClz, cl))
+                              throw new DeployException(bundle.invalidConnectionFactoryImplementation(cfImplClz));
 
-                              if (!verifyInstance(cfIntClz, cfImplClz, cl))
-                                 throw new DeployException(bundle.
-                                    invalidConnectionFactoryImplementationDueToInterface(cfImplClz, cfIntClz));
+                           if (!verifyInstance(cfIntClz, cfImplClz, cl))
+                              throw new DeployException(bundle.
+                                 invalidConnectionFactoryImplementationDueToInterface(cfImplClz, cfIntClz));
                               
-                              String cIntClz = cdMeta.getConnectionInterface().getValue();
-                              if (!verifyClass(cIntClz, cl))
-                                 throw new DeployException(bundle.invalidConnectionInterface(cIntClz));
+                           String cIntClz = cdMeta.getConnectionInterface().getValue();
+                           if (!verifyClass(cIntClz, cl))
+                              throw new DeployException(bundle.invalidConnectionInterface(cIntClz));
                               
-                              String cImplClz = cdMeta.getConnectionImplClass().getValue();
-                              if (!verifyClass(cImplClz, cl))
-                                 throw new DeployException(bundle.invalidConnectionImplementation(cImplClz));
+                           String cImplClz = cdMeta.getConnectionImplClass().getValue();
+                           if (!verifyClass(cImplClz, cl))
+                              throw new DeployException(bundle.invalidConnectionImplementation(cImplClz));
                               
-                              if (!verifyInstance(cIntClz, cImplClz, cl))
-                                 throw new 
-                                    DeployException(bundle.invalidConnectionImplementationDueToInterface(cImplClz,
+                           if (!verifyInstance(cIntClz, cImplClz, cl))
+                              throw new 
+                                 DeployException(bundle.invalidConnectionImplementationDueToInterface(cImplClz,
                                                                                                          cIntClz));
 
-                              for (CommonConnDef connectionDefinition : connectionDefinitions)
+                           for (ConnectionDefinition connectionDefinition : connectionDefinitions)
+                           {
+                              log.debugf("Activating: %s", connectionDefinition);
+
+                              if (connectionDefinition == null || connectionDefinition.isEnabled())
                               {
-                                 log.debugf("Activating: %s", connectionDefinition);
+                                 Object om = initAndInject(mcfClz, cdMeta.getConfigProperties(), cl);
 
-                                 if (connectionDefinition == null || connectionDefinition.isEnabled())
+                                 if (om == null || !(om instanceof ManagedConnectionFactory))
+                                    throw new DeployException(bundle.invalidManagedConnectionFactory(mcfClz));
+
+                                 ManagedConnectionFactory mcf = (ManagedConnectionFactory)om;
+
+                                 if (connectionDefinition != null &&
+                                     connectionDefinition.getConfigProperties() != null)
                                  {
-                                    Object om = initAndInject(mcfClz, cdMeta.getConfigProperties(), cl);
+                                    Injection injector = new Injection();
+                                    Iterator<Map.Entry<String, String>> it =
+                                       connectionDefinition.getConfigProperties().entrySet().iterator();
 
-                                    if (om == null || !(om instanceof ManagedConnectionFactory))
-                                       throw new DeployException(bundle.invalidManagedConnectionFactory(mcfClz));
-
-                                    ManagedConnectionFactory mcf = (ManagedConnectionFactory)om;
-
-                                    if (connectionDefinition != null &&
-                                        connectionDefinition.getConfigProperties() != null)
+                                    while (it.hasNext())
                                     {
-                                       Injection injector = new Injection();
-                                       Iterator<Map.Entry<String, String>> it =
-                                          connectionDefinition.getConfigProperties().entrySet().iterator();
-
-                                       while (it.hasNext())
-                                       {
-                                          Map.Entry<String, String> entry = it.next();
+                                       Map.Entry<String, String> entry = it.next();
                                           
-                                          try
-                                          {
-                                             injector.inject(mcf, entry.getKey(), entry.getValue());
-                                          }
-                                          catch (Throwable t)
-                                          {
-                                             throw new DeployException(bundle.unableToInject(mcf.getClass().getName(),
-                                                                                             entry.getKey(),
-                                                                                             entry.getValue()));
-                                          }
+                                       try
+                                       {
+                                          injector.inject(mcf, entry.getKey(), entry.getValue());
+                                       }
+                                       catch (Throwable t)
+                                       {
+                                          throw new DeployException(bundle.unableToInject(mcf.getClass().getName(),
+                                                                                          entry.getKey(),
+                                                                                          entry.getValue()));
                                        }
                                     }
+                                 }
 
-                                    if (trace)
-                                    {
-                                       log.trace("ManagedConnectionFactory: " + mcf.getClass().getName());
-                                       log.trace("ManagedConnectionFactory defined in classloader: " +
-                                                 SecurityActions.getClassLoader(mcf.getClass()));
-                                    }
+                                 if (trace)
+                                 {
+                                    log.trace("ManagedConnectionFactory: " + mcf.getClass().getName());
+                                    log.trace("ManagedConnectionFactory defined in classloader: " +
+                                              SecurityActions.getClassLoader(mcf.getClass()));
+                                 }
 
-                                    mcf.setLogWriter(getLogPrintWriter());
+                                 mcf.setLogWriter(getLogPrintWriter());
 
-                                    archiveValidationObjects.add(new ValidateObject(Key.MANAGED_CONNECTION_FACTORY, mcf,
+                                 archiveValidationObjects.add(new ValidateObject(Key.MANAGED_CONNECTION_FACTORY, mcf,
                                                                                     cdMeta.getConfigProperties()));
-                                    beanValidationObjects.add(mcf);
-                                    associateResourceAdapter(resourceAdapter, mcf);
+                                 beanValidationObjects.add(mcf);
+                                 associateResourceAdapter(resourceAdapter, mcf);
 
-                                    // Create the pool
-                                    PoolConfiguration pc = null;
-                                    FlushStrategy flushStrategy = FlushStrategy.FAILING_CONNECTION_ONLY;
+                                 // Create the pool
+                                 PoolConfiguration pc = null;
+                                 FlushStrategy flushStrategy = FlushStrategy.FAILING_CONNECTION_ONLY;
 
-                                    if (connectionDefinition != null)
-                                    {
-                                       pc = createPoolConfiguration(connectionDefinition.getPool(),
-                                                                    connectionDefinition.getTimeOut(),
-                                                                    connectionDefinition.getValidation());
+                                 if (connectionDefinition != null)
+                                 {
+                                    pc = createPoolConfiguration(connectionDefinition.getPool(),
+                                                                 connectionDefinition.getTimeOut(),
+                                                                 connectionDefinition.getValidation());
 
-                                       if (connectionDefinition.getPool() != null)
-                                          flushStrategy = connectionDefinition.getPool().getFlushStrategy();
-                                    }
-                                    else
-                                    {
-                                       // Default default settings
-                                       pc = createPoolConfiguration(null, null, null);
-                                    }
-
-                                    if (flushStrategy == null)
-                                       flushStrategy = FlushStrategy.FAILING_CONNECTION_ONLY;
+                                    if (connectionDefinition.getPool() != null)
+                                       flushStrategy = connectionDefinition.getPool().getFlushStrategy();
+                                 }
+                                 else
+                                 {
+                                    // Default default settings
+                                    pc = createPoolConfiguration(null, null, null);
+                                 }
+                                 
+                                 if (flushStrategy == null)
+                                    flushStrategy = FlushStrategy.FAILING_CONNECTION_ONLY;
                                        
-                                    PoolFactory pf = new PoolFactory();
+                                 PoolFactory pf = new PoolFactory();
 
-                                    Boolean noTxSeparatePool = Defaults.NO_TX_SEPARATE_POOL;
-                                    if (connectionDefinition != null &&
-                                        connectionDefinition.getPool() != null &&
-                                        connectionDefinition.isXa())
+                                 Boolean noTxSeparatePool = Defaults.NO_TX_SEPARATE_POOL;
+                                 if (connectionDefinition != null &&
+                                     connectionDefinition.getPool() != null &&
+                                     connectionDefinition.isXa())
+                                 {
+                                    XaPool xaPool = (XaPool)connectionDefinition.getPool();
+                                    if (xaPool != null)
+                                       noTxSeparatePool = xaPool.isNoTxSeparatePool();
+                                 }
+
+                                 Security security = null;
+                                 if (connectionDefinition != null && connectionDefinition.getSecurity() != null)
+                                 {
+                                    security = connectionDefinition.getSecurity();
+                                 }
+
+                                 PoolStrategy strategy = PoolStrategy.ONE_POOL;
+                                 String securityDomain = null;
+
+                                 if (security != null)
+                                 {
+                                    if (security.isApplication())
                                     {
-                                       CommonXaPool xaPool = (CommonXaPool)connectionDefinition.getPool();
-                                       if (xaPool != null)
-                                          noTxSeparatePool = xaPool.isNoTxSeparatePool();
+                                       strategy = PoolStrategy.POOL_BY_CRI;
                                     }
-
-                                    CommonSecurity security = null;
-                                    if (connectionDefinition != null && connectionDefinition.getSecurity() != null)
+                                    else if (security.getSecurityDomain() != null &&
+                                             security.getSecurityDomain().trim().length() != 0)
                                     {
-                                       security = connectionDefinition.getSecurity();
+                                       strategy = PoolStrategy.POOL_BY_SUBJECT;
+                                       securityDomain = security.getSecurityDomain();
                                     }
-
-                                    PoolStrategy strategy = PoolStrategy.ONE_POOL;
-                                    String securityDomain = null;
-
-                                    if (security != null)
+                                    else if (security.getSecurityDomainAndApplication() != null &&
+                                             security.getSecurityDomainAndApplication().trim().length() != 0)
                                     {
-                                       if (security.isApplication())
-                                       {
-                                          strategy = PoolStrategy.POOL_BY_CRI;
-                                       }
-                                       else if (security.getSecurityDomain() != null &&
-                                                security.getSecurityDomain().trim().length() != 0)
-                                       {
-                                          strategy = PoolStrategy.POOL_BY_SUBJECT;
-                                          securityDomain = security.getSecurityDomain();
-                                       }
-                                       else if (security.getSecurityDomainAndApplication() != null &&
-                                                security.getSecurityDomainAndApplication().trim().length() != 0)
-                                       {
-                                          strategy = PoolStrategy.POOL_BY_SUBJECT_AND_CRI;
-                                          securityDomain = security.getSecurityDomainAndApplication();
-                                       }
+                                       strategy = PoolStrategy.POOL_BY_SUBJECT_AND_CRI;
+                                       securityDomain = security.getSecurityDomainAndApplication();
                                     }
+                                 }
 
-                                    if (ra != null && ra.getOutboundResourceadapter() != null &&
-                                        ra.getOutboundResourceadapter().getReauthenticationSupport())
-                                    {
-                                       strategy = PoolStrategy.REAUTH;
-                                    }
+                                 if (ra != null && ra.getOutboundResourceadapter() != null &&
+                                     ra.getOutboundResourceadapter().getReauthenticationSupport())
+                                 {
+                                    strategy = PoolStrategy.REAUTH;
+                                 }
 
-                                    Boolean sharable = Defaults.SHARABLE;
-                                    Boolean enlistment = Defaults.ENLISTMENT;
-                                    Boolean connectable = Defaults.CONNECTABLE;
-                                    Boolean tracking = Defaults.TRACKING;
-                                    if (connectionDefinition != null &&
-                                        connectionDefinition instanceof
-                                        org.jboss.jca.common.api.metadata.common.v11.CommonConnDef)
-                                    {
-                                       org.jboss.jca.common.api.metadata.common.v11.CommonConnDef ccd =
-                                          (org.jboss.jca.common.api.metadata.common.v11.CommonConnDef)
-                                          connectionDefinition;
-                                       sharable = ccd.isSharable();
-                                       enlistment = ccd.isEnlistment();
-                                    }
-                                    if (connectionDefinition != null &&
-                                        connectionDefinition instanceof
-                                        org.jboss.jca.common.api.metadata.common.v12.CommonConnDef)
-                                    {
-                                       org.jboss.jca.common.api.metadata.common.v12.CommonConnDef ccd =
-                                          (org.jboss.jca.common.api.metadata.common.v12.CommonConnDef)
-                                          connectionDefinition;
-                                       connectable = ccd.isConnectable();
-                                       tracking = ccd.isTracking();
-                                    }
+                                 Boolean sharable = Defaults.SHARABLE;
+                                 Boolean enlistment = Defaults.ENLISTMENT;
+                                 Boolean connectable = Defaults.CONNECTABLE;
+                                 Boolean tracking = Defaults.TRACKING;
 
-                                    Pool pool = pf.create(strategy, mcf, pc, noTxSeparatePool.booleanValue(),
-                                                          sharable.booleanValue());
+                                 if (connectionDefinition != null)
+                                 {
+                                    sharable = connectionDefinition.isSharable();
+                                    enlistment = connectionDefinition.isEnlistment();
+                                    connectable = connectionDefinition.isConnectable();
+                                    tracking = connectionDefinition.isTracking();
+                                 }
 
-                                    // Capacity
-                                    applyCapacity(connectionDefinition, pool);
+                                 org.jboss.jca.core.connectionmanager.pool.api.Pool pool =
+                                    pf.create(strategy, mcf, pc, noTxSeparatePool.booleanValue(),
+                                              sharable.booleanValue());
+
+                                 // Capacity
+                                 applyCapacity(connectionDefinition, pool);
                                     
-                                    // Add a connection manager
-                                    ConnectionManagerFactory cmf = new ConnectionManagerFactory();
-                                    ConnectionManager cm = null;
-                                    TransactionSupportLevel tsl = TransactionSupportLevel.NoTransaction;
-                                    TransactionSupportEnum tsmd = TransactionSupportEnum.NoTransaction;
-                                    if (raxml != null && raxml.getTransactionSupport() != null)
-                                    {
-                                       tsmd = raxml.getTransactionSupport();
-                                    }
-                                    else if (ijmd != null && ijmd.getTransactionSupport() != null)
-                                    {
-                                       tsmd = ijmd.getTransactionSupport();
-                                    }
-                                    else
-                                    {
-                                       tsmd = ra.getOutboundResourceadapter().getTransactionSupport();
-                                    }
+                                 // Add a connection manager
+                                 ConnectionManagerFactory cmf = new ConnectionManagerFactory();
+                                 ConnectionManager cm = null;
+                                 TransactionSupportLevel tsl = TransactionSupportLevel.NoTransaction;
+                                 TransactionSupportEnum tsmd = TransactionSupportEnum.NoTransaction;
+                                 if (activation != null && activation.getTransactionSupport() != null)
+                                 {
+                                    tsmd = activation.getTransactionSupport();
+                                 }
+                                 else
+                                 {
+                                    tsmd = ra.getOutboundResourceadapter().getTransactionSupport();
+                                 }
 
-                                    if (tsmd == TransactionSupportEnum.NoTransaction)
-                                    {
-                                       tsl = TransactionSupportLevel.NoTransaction;
-                                    }
-                                    else if (tsmd == TransactionSupportEnum.LocalTransaction)
-                                    {
-                                       tsl = TransactionSupportLevel.LocalTransaction;
-                                    }
-                                    else if (tsmd == TransactionSupportEnum.XATransaction)
-                                    {
-                                       tsl = TransactionSupportLevel.XATransaction;
-                                    }
+                                 if (tsmd == TransactionSupportEnum.NoTransaction)
+                                 {
+                                    tsl = TransactionSupportLevel.NoTransaction;
+                                 }
+                                 else if (tsmd == TransactionSupportEnum.LocalTransaction)
+                                 {
+                                    tsl = TransactionSupportLevel.LocalTransaction;
+                                 }
+                                 else if (tsmd == TransactionSupportEnum.XATransaction)
+                                 {
+                                    tsl = TransactionSupportLevel.XATransaction;
+                                 }
 
-                                    // Section 7.13 -- Read from metadata -> overwrite with specified value if present
-                                    if (mcf instanceof TransactionSupport)
-                                       tsl = ((TransactionSupport) mcf).getTransactionSupport();
+                                 // Section 7.13 -- Read from metadata -> overwrite with specified value if present
+                                 if (mcf instanceof TransactionSupport)
+                                    tsl = ((TransactionSupport) mcf).getTransactionSupport();
 
-                                    // XAResource recovery
-                                    XAResourceRecovery recoveryImpl = null;
-                                    boolean enableRecovery = false;
+                                 // XAResource recovery
+                                 XAResourceRecovery recoveryImpl = null;
+                                 boolean enableRecovery = false;
 
-                                    // Connection manager properties
-                                    Integer allocationRetry = null;
-                                    Long allocationRetryWaitMillis = null;
-                                    if (connectionDefinition != null && connectionDefinition.getTimeOut() != null)
-                                    {
-                                       allocationRetry = connectionDefinition.getTimeOut().getAllocationRetry();
-                                       allocationRetryWaitMillis =
-                                          connectionDefinition.getTimeOut().getAllocationRetryWaitMillis();
-                                    }
+                                 // Connection manager properties
+                                 Integer allocationRetry = null;
+                                 Long allocationRetryWaitMillis = null;
+                                 if (connectionDefinition != null && connectionDefinition.getTimeOut() != null)
+                                 {
+                                    allocationRetry = connectionDefinition.getTimeOut().getAllocationRetry();
+                                    allocationRetryWaitMillis =
+                                       connectionDefinition.getTimeOut().getAllocationRetryWaitMillis();
+                                 }
 
-                                    Boolean useCCM = Boolean.TRUE;
-                                    if (connectionDefinition != null)
-                                       useCCM = connectionDefinition.isUseCcm();
+                                 Boolean useCCM = Boolean.TRUE;
+                                 if (connectionDefinition != null)
+                                    useCCM = connectionDefinition.isUseCcm();
 
-                                    // Select the correct connection manager
-                                    if (tsl == TransactionSupportLevel.NoTransaction)
-                                    {
-                                       cm = cmf.createNonTransactional(tsl, pool,
-                                                                       getSubjectFactory(securityDomain),
-                                                                       securityDomain,
-                                                                       useCCM, getCachedConnectionManager(),
-                                                                       sharable,
-                                                                       enlistment,
-                                                                       connectable,
-                                                                       tracking,
-                                                                       flushStrategy,
-                                                                       allocationRetry, allocationRetryWaitMillis);
-                                    }
-                                    else
-                                    {
-                                       Boolean interleaving = Defaults.INTERLEAVING;
-                                       Integer xaResourceTimeout = null;
-                                       Boolean isSameRMOverride = Defaults.IS_SAME_RM_OVERRIDE;
-                                       Boolean wrapXAResource = Defaults.WRAP_XA_RESOURCE;
-                                       Boolean padXid = Defaults.PAD_XID;
-                                       Recovery recoveryMD = null;
-                                       if (connectionDefinition != null && connectionDefinition.isXa())
-                                       {
-                                          CommonXaPool xaPool = (CommonXaPool)connectionDefinition.getPool();
-
-                                          if (xaPool != null)
-                                          {
-                                             interleaving = xaPool.isInterleaving();
-                                             isSameRMOverride = xaPool.isSameRmOverride();
-                                             wrapXAResource = xaPool.isWrapXaResource();
-                                             padXid = xaPool.isPadXid();
-                                          }
-
-                                          CommonTimeOut timeout = connectionDefinition.getTimeOut();
-                                          if (timeout != null)
-                                          {
-                                             xaResourceTimeout = timeout.getXaResourceTimeout();
-                                          }
-
-                                          recoveryMD = connectionDefinition.getRecovery();
-                                       }
-
-                                       pool.setInterleaving(interleaving.booleanValue());
-
-                                       cm = cmf.createTransactional(tsl, pool,
-                                                                    getSubjectFactory(securityDomain), securityDomain,
+                                 // Select the correct connection manager
+                                 if (tsl == TransactionSupportLevel.NoTransaction)
+                                 {
+                                    cm = cmf.createNonTransactional(tsl, pool,
+                                                                    getSubjectFactory(securityDomain),
+                                                                    securityDomain,
                                                                     useCCM, getCachedConnectionManager(),
                                                                     sharable,
                                                                     enlistment,
                                                                     connectable,
                                                                     tracking,
                                                                     flushStrategy,
-                                                                    allocationRetry, allocationRetryWaitMillis,
-                                                                    getTransactionIntegration(),
-                                                                    interleaving,
-                                                                    xaResourceTimeout, isSameRMOverride,
-                                                                    wrapXAResource, padXid);
-                                       if (tsl == TransactionSupportLevel.XATransaction)
+                                                                    allocationRetry, allocationRetryWaitMillis);
+                                 }
+                                 else
+                                 {
+                                    Boolean interleaving = Defaults.INTERLEAVING;
+                                    Integer xaResourceTimeout = null;
+                                    Boolean isSameRMOverride = Defaults.IS_SAME_RM_OVERRIDE;
+                                    Boolean wrapXAResource = Defaults.WRAP_XA_RESOURCE;
+                                    Boolean padXid = Defaults.PAD_XID;
+                                    Recovery recoveryMD = null;
+                                    if (connectionDefinition != null && connectionDefinition.isXa())
+                                    {
+                                       XaPool xaPool = (XaPool)connectionDefinition.getPool();
+
+                                       if (xaPool != null)
                                        {
-                                          isXA = true;
+                                          interleaving = xaPool.isInterleaving();
+                                          isSameRMOverride = xaPool.isSameRmOverride();
+                                          wrapXAResource = xaPool.isWrapXaResource();
+                                          padXid = xaPool.isPadXid();
+                                       }
 
-                                          String recoverSecurityDomain = securityDomain;
-                                          String recoverUser = null;
-                                          String recoverPassword = null;
-                                          if (recoveryMD == null || recoveryMD.getNoRecovery() == null ||
-                                              !recoveryMD.getNoRecovery())
+                                       TimeOut timeout = connectionDefinition.getTimeOut();
+                                       if (timeout != null)
+                                       {
+                                          xaResourceTimeout = timeout.getXaResourceTimeout();
+                                       }
+                                       
+                                       recoveryMD = connectionDefinition.getRecovery();
+                                    }
+
+                                    pool.setInterleaving(interleaving.booleanValue());
+
+                                    cm = cmf.createTransactional(tsl, pool,
+                                                                 getSubjectFactory(securityDomain), securityDomain,
+                                                                 useCCM, getCachedConnectionManager(),
+                                                                 sharable,
+                                                                 enlistment,
+                                                                 connectable,
+                                                                 tracking,
+                                                                 flushStrategy,
+                                                                 allocationRetry, allocationRetryWaitMillis,
+                                                                 getTransactionIntegration(),
+                                                                 interleaving,
+                                                                 xaResourceTimeout, isSameRMOverride,
+                                                                 wrapXAResource, padXid);
+                                    if (tsl == TransactionSupportLevel.XATransaction)
+                                    {
+                                       isXA = true;
+
+                                       String recoverSecurityDomain = securityDomain;
+                                       String recoverUser = null;
+                                       String recoverPassword = null;
+                                       if (recoveryMD == null || recoveryMD.getNoRecovery() == null ||
+                                           !recoveryMD.getNoRecovery())
+                                       {
+                                          // If we have an XAResourceRecoveryRegistry and the deployment is XA
+                                          // lets register it for XA Resource Recovery using the "recovery"
+                                          // definition. Fallback to the standard definitions
+                                          // for user name, password. Keep a seperate reference to the
+                                          // security-domain
+                                          enableRecovery = true;
+
+                                          Credential credential =
+                                             recoveryMD != null ? recoveryMD.getCredential() : null;
+
+                                          if (credential != null)
                                           {
-                                             // If we have an XAResourceRecoveryRegistry and the deployment is XA
-                                             // lets register it for XA Resource Recovery using the "recovery"
-                                             // definition. Fallback to the standard definitions
-                                             // for user name, password. Keep a seperate reference to the
-                                             // security-domain
-                                             enableRecovery = true;
+                                             recoverSecurityDomain = credential.getSecurityDomain();
+                                             
+                                             recoverUser = credential.getUserName();
+                                             recoverPassword = credential.getPassword();
+                                          }
 
-                                             Credential credential =
-                                                recoveryMD != null ? recoveryMD.getCredential() : null;
+                                          if (log.isDebugEnabled())
+                                          {
+                                             log.debug("RecoverUser=" + recoverUser);
+                                             log.debug("RecoverSecurityDomain=" + recoverSecurityDomain);
+                                          }
 
-                                             if (credential != null)
+                                          if (recoverUser != null || recoverSecurityDomain != null)
+                                          {
+                                             RecoveryPlugin plugin = null;
+                                             if (recoveryMD != null && recoveryMD.getRecoverPlugin() != null &&
+                                                 recoveryMD.getRecoverPlugin().getClassName() != null)
                                              {
-                                                recoverSecurityDomain = credential.getSecurityDomain();
-
-                                                recoverUser = credential.getUserName();
-                                                recoverPassword = credential.getPassword();
-                                             }
-
-                                             if (log.isDebugEnabled())
-                                             {
-                                                log.debug("RecoverUser=" + recoverUser);
-                                                log.debug("RecoverSecurityDomain=" + recoverSecurityDomain);
-                                             }
-
-                                             if (recoverUser != null || recoverSecurityDomain != null)
-                                             {
-                                                RecoveryPlugin plugin = null;
-                                                if (recoveryMD != null && recoveryMD.getRecoverPlugin() != null &&
-                                                    recoveryMD.getRecoverPlugin().getClassName() != null)
+                                                List<ConfigProperty> configProperties =
+                                                   new ArrayList<ConfigProperty>(recoveryMD
+                                                                                 .getRecoverPlugin()
+                                                                                 .getConfigPropertiesMap()
+                                                                                 .size());
+                                                
+                                                for (Map.Entry<String, String> property :
+                                                        recoveryMD.getRecoverPlugin().
+                                                        getConfigPropertiesMap().entrySet())
                                                 {
-                                                   List<ConfigProperty> configProperties =
-                                                      new ArrayList<ConfigProperty>(recoveryMD
-                                                                                    .getRecoverPlugin()
-                                                                                    .getConfigPropertiesMap()
-                                                                                    .size());
+                                                   ConfigProperty c =
+                                                      new ConfigPropertyImpl(null,
+                                                                             new XsdString(property.getKey(), null),
+                                                                             XsdString.NULL_XSDSTRING,
+                                                                             new XsdString(property.getValue(), null),
+                                                                             Boolean.FALSE, Boolean.FALSE,
+                                                                             Boolean.FALSE,
+                                                                             null, false,
+                                                                             null, null, null, null);
 
-                                                   for (Map.Entry<String, String> property :
-                                                           recoveryMD.getRecoverPlugin().
-                                                           getConfigPropertiesMap().entrySet())
-                                                   {
-                                                      ConfigProperty c =
-                                                         new ConfigPropertyImpl(null,
-                                                                                new XsdString(property.getKey(), null),
-                                                                                XsdString.NULL_XSDSTRING,
-                                                                                new XsdString(property.getValue(),
-                                                                                              null),
-                                                                                null);
-                                                      configProperties.add(c);
-                                                   }
-
-                                                   plugin =
-                                                      (RecoveryPlugin)initAndInject(recoveryMD
-                                                                                    .getRecoverPlugin()
-                                                                                    .getClassName(),
-                                                                                    configProperties, cl);
-                                                }
-                                                else
-                                                {
-                                                   plugin = new DefaultRecoveryPlugin();
+                                                   configProperties.add(c);
                                                 }
 
-                                                recoveryImpl =
-                                                   getTransactionIntegration().
-                                                      createXAResourceRecovery(mcf,
-                                                                               padXid,
-                                                                               isSameRMOverride,
-                                                                               wrapXAResource,
-                                                                               recoverUser,
-                                                                               recoverPassword,
-                                                                               recoverSecurityDomain,
-                                                                               getSubjectFactory(recoverSecurityDomain),
-                                                                               plugin);
+                                                plugin =
+                                                   (RecoveryPlugin)initAndInject(recoveryMD
+                                                                                 .getRecoverPlugin()
+                                                                                 .getClassName(),
+                                                                                 configProperties, cl);
                                              }
+                                             else
+                                             {
+                                                plugin = new DefaultRecoveryPlugin();
+                                             }
+
+                                             recoveryImpl =
+                                                getTransactionIntegration().
+                                                   createXAResourceRecovery(mcf,
+                                                                            padXid,
+                                                                            isSameRMOverride,
+                                                                            wrapXAResource,
+                                                                            recoverUser,
+                                                                            recoverPassword,
+                                                                            recoverSecurityDomain,
+                                                                            getSubjectFactory(recoverSecurityDomain),
+                                                                            plugin);
                                           }
                                        }
                                     }
+                                 }
 
-                                    // ConnectionFactory
-                                    Object cf = mcf.createConnectionFactory(cm);
-
-                                    if (cf == null)
+                                 // ConnectionFactory
+                                 Object cf = mcf.createConnectionFactory(cm);
+                                 
+                                 if (cf == null)
+                                 {
+                                    log.nullConnectionFactory();
+                                 }
+                                 else
+                                 {
+                                    if (trace)
                                     {
-                                       log.nullConnectionFactory();
+                                       log.trace("ConnectionFactory: " + cf.getClass().getName());
+                                       log.trace("ConnectionFactory defined in classloader: " +
+                                                 SecurityActions.getClassLoader(cf.getClass()));
                                     }
-                                    else
-                                    {
-                                       if (trace)
-                                       {
-                                          log.trace("ConnectionFactory: " + cf.getClass().getName());
-                                          log.trace("ConnectionFactory defined in classloader: " +
-                                                    SecurityActions.getClassLoader(cf.getClass()));
-                                       }
-                                    }
+                                 }
 
-                                    archiveValidationObjects.add(new ValidateObject(Key.CONNECTION_FACTORY, cf));
+                                 archiveValidationObjects.add(new ValidateObject(Key.CONNECTION_FACTORY, cf));
 
-                                    if (cf != null && cf instanceof Serializable &&
-                                        cf instanceof javax.resource.Referenceable)
+                                 if (cf != null && cf instanceof Serializable &&
+                                     cf instanceof javax.resource.Referenceable)
+                                 {
+                                    String jndiName;
+                                    if (connectionDefinition != null)
                                     {
-                                       String jndiName;
+                                       jndiName = buildJndiName(connectionDefinition.getJndiName(),
+                                                                connectionDefinition.isUseJavaContext());
+                                       
+                                       bindConnectionFactory(url, deploymentName, cf, jndiName);
+                                       cfs.add(cf);
+                                       cfJndiNames.add(jndiName);
+
+                                       cm.setJndiName(jndiName);
+                                       cfCMs.add(cm);
+
+                                       String poolName = null;
                                        if (connectionDefinition != null)
                                        {
-                                          jndiName = buildJndiName(connectionDefinition.getJndiName(),
-                                                                   connectionDefinition.isUseJavaContext());
-
-                                          bindConnectionFactory(url, deploymentName, cf, jndiName);
-                                          cfs.add(cf);
-                                          cfJndiNames.add(jndiName);
-
-                                          cm.setJndiName(jndiName);
-                                          cfCMs.add(cm);
-
-                                          String poolName = null;
-                                          if (connectionDefinition != null)
-                                          {
-                                             poolName = connectionDefinition.getPoolName();
-                                          }
-
-                                          if (poolName == null)
-                                             poolName = jndiName;
-
-                                          pool.setName(poolName);
-                                       }
-                                       else
-                                       {
-                                          String[] bindCfJndiNames = bindConnectionFactory(url, deploymentName, cf);
-                                          cfs.add(cf);
-                                          cfJndiNames.addAll(Arrays.asList(bindCfJndiNames));
-
-                                          cm.setJndiName(bindCfJndiNames[0]);
-                                          cfCMs.add(cm);
-
-                                          String poolName = null;
-                                          if (connectionDefinition != null)
-                                          {
-                                             poolName = connectionDefinition.getPoolName();
-                                          }
-
-                                          if (poolName == null)
-                                             poolName = cfJndiNames.get(0);
-
-                                          jndiName = poolName;
-                                          pool.setName(poolName);
+                                          poolName = connectionDefinition.getPoolName();
                                        }
 
-                                       // Verify recovery settings, but always add the module to align deployment data
-                                       if (enableRecovery && getTransactionIntegration().getRecoveryRegistry() != null)
-                                       {
-                                          if (recoveryImpl != null)
-                                          {
-                                             recoveryImpl.setJndiName(cm.getJndiName());
-                                             recoveryImpl.initialize();
-                                             getTransactionIntegration().
-                                                getRecoveryRegistry().addXAResourceRecovery(recoveryImpl);
-                                          }
-                                          else
-                                          {
-                                             log.missingRecovery(cm.getJndiName());
-                                          }
-                                       }
-                                       recoveryModules.add(recoveryImpl);
-
-                                       if (activateDeployment)
-                                       {
-                                          org.jboss.jca.core.api.management.ConnectionFactory mgtCf =
-                                             new org.jboss.jca.core.api.management.ConnectionFactory(cf, mcf);
-                                          
-                                          mgtCf.setPoolConfiguration(pc);
-                                          mgtCf.setPool(pool);
-                                          mgtCf.setJndiName(jndiName);
-                                          
-                                          mgtCf.getManagedConnectionFactory().getConfigProperties().
-                                             addAll(createManagementView(cdMeta.getConfigProperties()));
-                                          
-                                          mgtConnector.getConnectionFactories().add(mgtCf);
-
-                                          // Prefill
-                                          if (pool instanceof PrefillPool)
-                                          {
-                                             PrefillPool pp = (PrefillPool)pool;
-                                             SubjectFactory subjectFactory = getSubjectFactory(securityDomain);
-                                             Subject subject = null;
-                                             
-                                             if (subjectFactory != null)
-                                                subject = createSubject(subjectFactory, securityDomain, mcf);
-
-                                             pp.prefill(subject, null, noTxSeparatePool.booleanValue());
-                                          }
-                                       }
+                                       if (poolName == null)
+                                          poolName = jndiName;
+                                       
+                                       pool.setName(poolName);
                                     }
                                     else
                                     {
-                                       log.connectionFactoryNotBound(mcf.getClass().getName());
+                                       String[] bindCfJndiNames = bindConnectionFactory(url, deploymentName, cf);
+                                       cfs.add(cf);
+                                       cfJndiNames.addAll(Arrays.asList(bindCfJndiNames));
 
-                                       if (cf != null)
+                                       cm.setJndiName(bindCfJndiNames[0]);
+                                       cfCMs.add(cm);
+
+                                       String poolName = null;
+                                       if (connectionDefinition != null)
                                        {
-                                          log.connectionFactoryNotSpecCompliant(cf.getClass().getName());
+                                          poolName = connectionDefinition.getPoolName();
+                                       }
+
+                                       if (poolName == null)
+                                          poolName = cfJndiNames.get(0);
+                                       
+                                       jndiName = poolName;
+                                       pool.setName(poolName);
+                                    }
+
+                                    // Verify recovery settings, but always add the module to align deployment data
+                                    if (enableRecovery && getTransactionIntegration().getRecoveryRegistry() != null)
+                                    {
+                                       if (recoveryImpl != null)
+                                       {
+                                          recoveryImpl.setJndiName(cm.getJndiName());
+                                          recoveryImpl.initialize();
+                                          getTransactionIntegration().
+                                             getRecoveryRegistry().addXAResourceRecovery(recoveryImpl);
                                        }
                                        else
                                        {
-                                          log.connectionFactoryNotSpecCompliant(mcf.getClass().getName());
+                                          log.missingRecovery(cm.getJndiName());
                                        }
+                                    }
+                                    recoveryModules.add(recoveryImpl);
+
+                                    if (activateDeployment)
+                                    {
+                                       org.jboss.jca.core.api.management.ConnectionFactory mgtCf =
+                                          new org.jboss.jca.core.api.management.ConnectionFactory(cf, mcf);
+                                          
+                                       mgtCf.setPoolConfiguration(pc);
+                                       mgtCf.setPool(pool);
+                                       mgtCf.setJndiName(jndiName);
+                                          
+                                       mgtCf.getManagedConnectionFactory().getConfigProperties().
+                                          addAll(createManagementView(cdMeta.getConfigProperties()));
+                                          
+                                       mgtConnector.getConnectionFactories().add(mgtCf);
+
+                                       // Prefill
+                                       if (pool instanceof PrefillPool)
+                                       {
+                                          PrefillPool pp = (PrefillPool)pool;
+                                          SubjectFactory subjectFactory = getSubjectFactory(securityDomain);
+                                          Subject subject = null;
+                                             
+                                          if (subjectFactory != null)
+                                             subject = createSubject(subjectFactory, securityDomain, mcf);
+
+                                          pp.prefill(subject, null, noTxSeparatePool.booleanValue());
+                                       }
+                                    }
+                                 }
+                                 else
+                                 {
+                                    log.connectionFactoryNotBound(mcf.getClass().getName());
+
+                                    if (cf != null)
+                                    {
+                                       log.connectionFactoryNotSpecCompliant(cf.getClass().getName());
+                                    }
+                                    else
+                                    {
+                                       log.connectionFactoryNotSpecCompliant(mcf.getClass().getName());
                                     }
                                  }
                               }
                            }
-                           else
-                           {
-                              log.debug("No activation: " + mcfClz);
-                           }
+                        }
+                        else
+                        {
+                           log.debug("No activation: " + mcfClz);
                         }
                      }
                   }
@@ -2518,8 +1835,7 @@ public abstract class AbstractResourceAdapterDeployer
 
             failures = initAdminObject(cmd, cl, archiveValidationObjects, beanValidationObjects, failures, url,
                                        deploymentName, activateDeployment, resourceAdapter, 
-                                       raxml != null ? raxml.getAdminObjects() : null, ijmd != null
-                                       ? ijmd.getAdminObjects() : null, aos, aoJndiNames,
+                                       activation != null ? activation.getAdminObjects() : null, aos, aoJndiNames,
                                        activateDeployment ? mgtConnector : null);
          }
 
@@ -2547,7 +1863,7 @@ public abstract class AbstractResourceAdapterDeployer
             try
             {
                // Register with MDR
-               registerResourceAdapterToMDR(url, root, cmd, ijmd);
+               registerResourceAdapterToMDR(url, root, cmd, activation);
             }
             catch (org.jboss.jca.core.spi.mdr.AlreadyExistsException e)
             {
@@ -2563,11 +1879,11 @@ public abstract class AbstractResourceAdapterDeployer
             {
                List<Class> groupsClasses = null;
 
-               if (ijmd != null && ijmd.getBeanValidationGroups() != null &&
-                   ijmd.getBeanValidationGroups().size() > 0)
+               if (activation != null && activation.getBeanValidationGroups() != null &&
+                   activation.getBeanValidationGroups().size() > 0)
                {
                   groupsClasses = new ArrayList<Class>();
-                  for (String group : ijmd.getBeanValidationGroups())
+                  for (String group : activation.getBeanValidationGroups())
                   {
                      groupsClasses.add(Class.forName(group, true, cl));
                   }
@@ -2587,16 +1903,10 @@ public abstract class AbstractResourceAdapterDeployer
             if (resourceAdapter != null)
             {
                String bootstrapContextName = null;
-               if (raxml != null && raxml.getBootstrapContext() != null &&
-                   !raxml.getBootstrapContext().trim().equals(""))
+               if (activation != null && activation.getBootstrapContext() != null &&
+                   !activation.getBootstrapContext().trim().equals(""))
                {
-                  bootstrapContextName = raxml.getBootstrapContext();
-               }
-
-               if (bootstrapContextName == null && ijmd != null && ijmd.getBootstrapContext() != null &&
-                   !ijmd.getBootstrapContext().trim().equals(""))
-               {
-                  bootstrapContextName = ijmd.getBootstrapContext();
+                  bootstrapContextName = activation.getBootstrapContext();
                }
 
                bootstrapContextIdentifier =
@@ -2779,31 +2089,18 @@ public abstract class AbstractResourceAdapterDeployer
          {
             org.jboss.jca.core.api.management.ConfigProperty mgtCp = null;
 
-            if (cp instanceof org.jboss.jca.common.api.metadata.ra.ra16.ConfigProperty16)
-            {
-               org.jboss.jca.common.api.metadata.ra.ra16.ConfigProperty16 cp16 =
-                  (org.jboss.jca.common.api.metadata.ra.ra16.ConfigProperty16) cp;
+            Boolean dynamic = cp.getConfigPropertySupportsDynamicUpdates();
+            if (dynamic == null)
+               dynamic = Boolean.FALSE;
 
-               Boolean dynamic = cp16.getConfigPropertySupportsDynamicUpdates();
-               if (dynamic == null)
-                  dynamic = Boolean.FALSE;
+            Boolean confidential = cp.getConfigPropertyConfidential();
+            if (confidential == null)
+               confidential = Boolean.FALSE;
 
-               Boolean confidential = cp16.getConfigPropertyConfidential();
-               if (confidential == null)
-                  confidential = Boolean.FALSE;
-
-               mgtCp =
-                  new org.jboss.jca.core.api.management.ConfigProperty(
-                                                                       cp.getConfigPropertyName().getValue(),
-                                                                       dynamic.booleanValue(),
-                                                                       confidential.booleanValue());
-            }
-            else
-            {
-               mgtCp =
-                  new org.jboss.jca.core.api.management.ConfigProperty(
-                                                                       cp.getConfigPropertyName().getValue());
-            }
+            mgtCp =
+               new org.jboss.jca.core.api.management.ConfigProperty(cp.getConfigPropertyName().getValue(),
+                                                                    dynamic.booleanValue(),
+                                                                    confidential.booleanValue());
 
             result.add(mgtCp);
          }
@@ -2840,32 +2137,17 @@ public abstract class AbstractResourceAdapterDeployer
     * @param connectionDefinition The connection definition
     * @param pool The pool
     */
-   protected void applyCapacity(CommonConnDef connectionDefinition, Pool pool)
+   protected void applyCapacity(ConnectionDefinition connectionDefinition,
+                                org.jboss.jca.core.connectionmanager.pool.api.Pool pool)
    {
-      if (connectionDefinition != null &&
-          connectionDefinition instanceof org.jboss.jca.common.api.metadata.common.v11.CommonConnDef)
+      if (connectionDefinition != null)
       {
-         org.jboss.jca.common.api.metadata.common.v11.CommonConnDef ccd11 =
-            (org.jboss.jca.common.api.metadata.common.v11.CommonConnDef)connectionDefinition;
-
-         if (ccd11.getPool() != null)
+         if (connectionDefinition.getPool() != null)
          {
-            if (ccd11.getPool() instanceof org.jboss.jca.common.api.metadata.common.v11.ConnDefPool)
-            {
-               org.jboss.jca.common.api.metadata.common.v11.ConnDefPool cdp11 =
-                  (org.jboss.jca.common.api.metadata.common.v11.ConnDefPool)ccd11.getPool();
+            org.jboss.jca.common.api.metadata.common.Pool cdp = connectionDefinition.getPool();
                                  
-               if (cdp11.getCapacity() != null)
-                  pool.setCapacity(CapacityFactory.create(cdp11.getCapacity()));
-            }
-            else if (ccd11.getPool() instanceof org.jboss.jca.common.api.metadata.common.v11.ConnDefXaPool)
-            {
-               org.jboss.jca.common.api.metadata.common.v11.ConnDefXaPool cdxp11 =
-                  (org.jboss.jca.common.api.metadata.common.v11.ConnDefXaPool)ccd11.getPool();
-               
-               if (cdxp11.getCapacity() != null)
-                  pool.setCapacity(CapacityFactory.create(cdxp11.getCapacity()));
-            }
+            if (cdp.getCapacity() != null)
+               pool.setCapacity(CapacityFactory.create(cdp.getCapacity()));
          }
       }
    }
@@ -2882,22 +2164,8 @@ public abstract class AbstractResourceAdapterDeployer
 
       if (cmd.getVersion() == Version.V_16 || cmd.getVersion() == Version.V_17)
       {
-         if (cmd.getVersion() == Version.V_16)
-         {
-            org.jboss.jca.common.api.metadata.ra.ra16.Connector16 cmd16 =
-               (org.jboss.jca.common.api.metadata.ra.ra16.Connector16)cmd;
-
-            if (!cmd16.isMetadataComplete())
-               return true;
-         }
-         else
-         {
-            org.jboss.jca.common.api.metadata.ra.ra17.Connector17 cmd17 =
-               (org.jboss.jca.common.api.metadata.ra.ra17.Connector17)cmd;
-
-            if (!cmd17.isMetadataComplete())
-               return true;
-         }
+         if (!cmd.isMetadataComplete())
+            return true;
       }
 
       return false;
@@ -2919,10 +2187,10 @@ public abstract class AbstractResourceAdapterDeployer
     * @param url url
     * @param root root
     * @param cmd cmd
-    * @param ijmd ijmd
+    * @param activation activation
     * @throws org.jboss.jca.core.spi.mdr.AlreadyExistsException AlreadyExistsException
     */
-   protected abstract void registerResourceAdapterToMDR(URL url, File root, Connector cmd, IronJacamar ijmd)
+   protected abstract void registerResourceAdapterToMDR(URL url, File root, Connector cmd, Activation activation)
       throws org.jboss.jca.core.spi.mdr.AlreadyExistsException;
 
    /**
@@ -2931,7 +2199,8 @@ public abstract class AbstractResourceAdapterDeployer
     * @param instance the instance
     * @return The key
     */
-   protected abstract String registerResourceAdapterToResourceAdapterRepository(ResourceAdapter instance);
+   protected abstract String
+   registerResourceAdapterToResourceAdapterRepository(javax.resource.spi.ResourceAdapter instance);
 
    /**
     * Set recovery mode for a resource adapter in the ResourceAdapterRepository
@@ -3014,10 +2283,10 @@ public abstract class AbstractResourceAdapterDeployer
    /**
     * Check if the resource adapter should be activated based on the ironjacamar.xml input
     * @param cmd cmd cmd The connector metadata
-    * @param ijmd ijmd ijmd The IronJacamar metadata
+    * @param activation The activation metadata
     * @return True if the deployment should be activated; otherwise false
     */
-   protected abstract boolean checkActivation(Connector cmd, IronJacamar ijmd);
+   protected abstract boolean checkActivation(Connector cmd, Activation activation);
 
    /**
     * Initialize and inject configuration properties into container

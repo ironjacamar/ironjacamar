@@ -40,8 +40,8 @@ import org.jboss.jca.common.api.metadata.Defaults;
 import org.jboss.jca.common.api.metadata.common.Capacity;
 import org.jboss.jca.common.api.metadata.common.Extension;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
-import org.jboss.jca.common.metadata.common.v11.WorkManagerImpl;
-import org.jboss.jca.common.metadata.common.v11.WorkManagerSecurityImpl;
+import org.jboss.jca.common.metadata.resourceadapter.WorkManagerImpl;
+import org.jboss.jca.common.metadata.resourceadapter.WorkManagerSecurityImpl;
 
 import java.io.InputStream;
 import java.io.OutputStream;

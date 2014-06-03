@@ -150,8 +150,16 @@ public abstract class ParserTestBase
    {
       String metadatas = m1.toString() + "\n" + m2.toString();
       assertEquals("Strings are not equal.\n" + metadatas, m1.toString(), m2.toString());
-      assertTrue("Objects are not equal:\n" + metadatas, m1.equals(m2));
-
+      try
+      {
+         assertTrue("Objects are not equal:\n" + metadatas, m1.equals(m2));
+      }
+      catch (Throwable t)
+      {
+         log.info("Hash1: " + m1.hashCode());
+         log.info("Hash2: " + m2.hashCode());
+         throw t;
+      }
    }
 
    /**
@@ -208,7 +216,8 @@ public abstract class ParserTestBase
          }
          catch (Throwable t)
          {
-            fail(xmlFile.toString() + t.getMessage());
+            log.error(xmlFile.toString() + ": " + t.getMessage(), t);
+            fail(xmlFile.toString() + ": " + t.getMessage());
          }
       }
    }

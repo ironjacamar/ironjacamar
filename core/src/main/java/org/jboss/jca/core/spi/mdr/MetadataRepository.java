@@ -22,8 +22,8 @@
 
 package org.jboss.jca.core.spi.mdr;
 
-import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
-import org.jboss.jca.common.api.metadata.ra.Connector;
+import org.jboss.jca.common.api.metadata.resourceadapter.Activation;
+import org.jboss.jca.common.api.metadata.spec.Connector;
 
 import java.io.File;
 import java.util.List;
@@ -42,10 +42,10 @@ public interface MetadataRepository
     * @param uniqueId An unique id that represents the deployment
     * @param root The deployment root
     * @param md The connector metadata
-    * @param ijmd The IronJacamar metadata
+    * @param a The Activation metadata
     * @exception AlreadyExistsException Thrown if the unique id is already registered
     */
-   public void registerResourceAdapter(String uniqueId, File root, Connector md, IronJacamar ijmd) 
+   public void registerResourceAdapter(String uniqueId, File root, Connector md, Activation a) 
       throws AlreadyExistsException;
 
    /**
@@ -85,12 +85,12 @@ public interface MetadataRepository
    public File getRoot(String uniqueId) throws NotFoundException;
 
    /**
-    * Get the IronJacamar metadata for a resource adapter deployment
+    * Get the Activation metadata for a resource adapter deployment
     * @param uniqueId An unique id that represents the deployment
     * @return The metadata
     * @exception NotFoundException Thrown if the unique id isn't registered
     */
-   public IronJacamar getIronJacamar(String uniqueId) throws NotFoundException;
+   public Activation getActivation(String uniqueId) throws NotFoundException;
 
    /**
     * Register a JNDI mapping for a unique id

@@ -21,38 +21,31 @@
  */
 package org.jboss.jca.common.metadata.merge;
 
-import org.jboss.jca.common.api.metadata.common.CommonIronJacamar;
 import org.jboss.jca.common.api.metadata.common.Credential;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ds.CommonDataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSource;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource;
-import org.jboss.jca.common.api.metadata.ra.AdminObject;
-import org.jboss.jca.common.api.metadata.ra.AuthenticationMechanism;
-import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
-import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
-import org.jboss.jca.common.api.metadata.ra.Connector;
-import org.jboss.jca.common.api.metadata.ra.Connector.Version;
-import org.jboss.jca.common.api.metadata.ra.Icon;
-import org.jboss.jca.common.api.metadata.ra.InboundResourceAdapter;
-import org.jboss.jca.common.api.metadata.ra.LicenseType;
-import org.jboss.jca.common.api.metadata.ra.LocalizedXsdString;
-import org.jboss.jca.common.api.metadata.ra.OutboundResourceAdapter;
-import org.jboss.jca.common.api.metadata.ra.ResourceAdapter;
-import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
-import org.jboss.jca.common.api.metadata.ra.SecurityPermission;
-import org.jboss.jca.common.api.metadata.ra.XsdString;
-import org.jboss.jca.common.api.metadata.ra.ra16.ConfigProperty16;
-import org.jboss.jca.common.metadata.ra.common.AbstractResourceAdapetrImpl;
-import org.jboss.jca.common.metadata.ra.common.ConfigPropertyImpl;
-import org.jboss.jca.common.metadata.ra.common.ConnectionDefinitionImpl;
-import org.jboss.jca.common.metadata.ra.common.OutboundResourceAdapterImpl;
-import org.jboss.jca.common.metadata.ra.common.ResourceAdapter1516Impl;
-import org.jboss.jca.common.metadata.ra.ra10.Connector10Impl;
-import org.jboss.jca.common.metadata.ra.ra10.ResourceAdapter10Impl;
-import org.jboss.jca.common.metadata.ra.ra15.Connector15Impl;
-import org.jboss.jca.common.metadata.ra.ra16.ConfigProperty16Impl;
-import org.jboss.jca.common.metadata.ra.ra16.Connector16Impl;
+import org.jboss.jca.common.api.metadata.resourceadapter.Activation;
+import org.jboss.jca.common.api.metadata.spec.AdminObject;
+import org.jboss.jca.common.api.metadata.spec.AuthenticationMechanism;
+import org.jboss.jca.common.api.metadata.spec.ConfigProperty;
+import org.jboss.jca.common.api.metadata.spec.ConnectionDefinition;
+import org.jboss.jca.common.api.metadata.spec.Connector;
+import org.jboss.jca.common.api.metadata.spec.Connector.Version;
+import org.jboss.jca.common.api.metadata.spec.Icon;
+import org.jboss.jca.common.api.metadata.spec.InboundResourceAdapter;
+import org.jboss.jca.common.api.metadata.spec.LicenseType;
+import org.jboss.jca.common.api.metadata.spec.LocalizedXsdString;
+import org.jboss.jca.common.api.metadata.spec.OutboundResourceAdapter;
+import org.jboss.jca.common.api.metadata.spec.ResourceAdapter;
+import org.jboss.jca.common.api.metadata.spec.SecurityPermission;
+import org.jboss.jca.common.api.metadata.spec.XsdString;
+import org.jboss.jca.common.metadata.spec.ConfigPropertyImpl;
+import org.jboss.jca.common.metadata.spec.ConnectionDefinitionImpl;
+import org.jboss.jca.common.metadata.spec.ConnectorImpl;
+import org.jboss.jca.common.metadata.spec.OutboundResourceAdapterImpl;
+import org.jboss.jca.common.metadata.spec.ResourceAdapterImpl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -79,34 +72,26 @@ public class Merger
    *   No new property is added)
    */
    public List<ConfigProperty> mergeConfigProperties(Map<String, String> ijProperties,
-      List<? extends ConfigProperty> original)
+      List<ConfigProperty> original)
    {
       List<ConfigProperty> mergedProperties = new ArrayList<ConfigProperty>(original.size());
       for (ConfigProperty c : original)
       {
          if (ijProperties != null && ijProperties.containsKey(c.getConfigPropertyName().getValue()))
          {
-            if (c instanceof ConfigProperty16)
-            {
-               ConfigProperty16 c16 = (ConfigProperty16) c;
-               XsdString newValue = new XsdString(ijProperties.get(c.getConfigPropertyName().getValue()), c
-                  .getConfigPropertyValue().getId(), c.getConfigPropertyValue().getTag());
-               ConfigProperty16 newProp = new ConfigProperty16Impl(c.getDescriptions(), c.getConfigPropertyName(),
-                                                                   c.getConfigPropertyType(), newValue,
-                                                                   c16.getConfigPropertyIgnore(),
-                                                                   c16.getConfigPropertySupportsDynamicUpdates(),
-                                                                   c16.getConfigPropertyConfidential(), c.getId());
-               mergedProperties.add(newProp);
-            }
-            else
-            {
-               XsdString newValue = new XsdString(ijProperties.get(c.getConfigPropertyName().getValue()), c
-                  .getConfigPropertyValue().getId(), c.getConfigPropertyValue().getTag());
-               ConfigProperty newProp = new ConfigPropertyImpl(c.getDescriptions(), c.getConfigPropertyName(),
-                                                               c.getConfigPropertyType(), newValue, c.getId());
-               mergedProperties.add(newProp);
-            }
+            XsdString newValue = new XsdString(ijProperties.get(c.getConfigPropertyName().getValue()), c
+                                               .getConfigPropertyValue().getId(), c.getConfigPropertyValue().getTag());
+            ConfigProperty newProp = new ConfigPropertyImpl(c.getDescriptions(), c.getConfigPropertyName(),
+                                                            c.getConfigPropertyType(), newValue,
+                                                            c.getConfigPropertyIgnore(),
+                                                            c.getConfigPropertySupportsDynamicUpdates(),
+                                                            c.getConfigPropertyConfidential(), c.getId(),
+                                                            c.isMandatory(),
+                                                            c.getAttachedClassName(), c.getConfigPropertyIgnoreId(),
+                                                            c.getConfigPropertySupportsDynamicUpdatesId(),
+                                                            c.getConfigPropertyConfidentialId());
 
+            mergedProperties.add(newProp);
          }
          else
          {
@@ -118,14 +103,14 @@ public class Merger
 
    /**
     *
-    * Merge a {@link Connector} and a {@link CommonIronJacamar} passing also Matcher to identify {@link AdminObject}
+    * Merge a {@link Connector} and a {@link Activation} passing also Matcher to identify {@link AdminObject}
     * and {@link ConnectionDefinition} to merge inside the passed objects
     *
-    * @param ij the {@link CommonIronJacamar} object
+    * @param ij the {@link Activation} object
     * @param conn {@link Connector} object
     * @return The merged {@link Connector}
     */
-   public Connector mergeConnectorWithCommonIronJacamar(CommonIronJacamar ij, Connector conn)
+   public Connector mergeConnectorWithCommonIronJacamar(Activation ij, Connector conn)
    {
       if (ij == null)
          return conn;
@@ -134,75 +119,59 @@ public class Merger
       mergeTransactionSupport(ij, conn);
 
       // merge RA onfigProperties;
-      List<? extends ConfigProperty> original = conn.getResourceadapter().getConfigProperties();
-      List<? extends ConfigProperty> newProperties = this.mergeConfigProperties(ij.getConfigProperties(), original);
+      List<ConfigProperty> original = conn.getResourceadapter().getConfigProperties();
+      List<ConfigProperty> newProperties = this.mergeConfigProperties(ij.getConfigProperties(), original);
 
-      ((AbstractResourceAdapetrImpl) conn.getResourceadapter()).forceNewConfigPropertiesContent(newProperties);
+      ((ResourceAdapterImpl) conn.getResourceadapter()).forceConfigProperties(newProperties);
 
       if (conn.getVersion() != Version.V_10)
       {
          //merge adminObjects;
 
-         ResourceAdapter1516 ra1516 = (ResourceAdapter1516) conn.getResourceadapter();
-         if (ra1516 != null && ra1516.getAdminObjects() != null)
+         ResourceAdapter ra = conn.getResourceadapter();
+         if (ra != null && ra.getAdminObjects() != null)
          {
-            List<AdminObject> newAdminObjects = new ArrayList<AdminObject>(ra1516.getAdminObjects().size());
-            for (AdminObject adminObj : ra1516.getAdminObjects())
+            List<AdminObject> newAdminObjects = new ArrayList<AdminObject>(ra.getAdminObjects().size());
+            for (AdminObject adminObj : ra.getAdminObjects())
             {
-
-
                AdminObject newAdminObj = adminObj;
-
                newAdminObjects.add(newAdminObj);
-
             }
-            ((ResourceAdapter1516Impl) ra1516).forceAdminObjectsContent(newAdminObjects);
+            ((ResourceAdapterImpl) ra).forceAdminObjects(newAdminObjects);
          }
          //merge connectionDefinitions;
-         if (ra1516 != null && ra1516.getOutboundResourceadapter() != null &&
-             ra1516.getOutboundResourceadapter().getConnectionDefinitions() != null)
+         if (ra != null && ra.getOutboundResourceadapter() != null &&
+             ra.getOutboundResourceadapter().getConnectionDefinitions() != null)
          {
-            List<ConnectionDefinition> newConDefs = new ArrayList<ConnectionDefinition>(ra1516
+            List<ConnectionDefinition> newConDefs = new ArrayList<ConnectionDefinition>(ra
                .getOutboundResourceadapter().getConnectionDefinitions().size());
-            for (ConnectionDefinition conDef : ra1516.getOutboundResourceadapter().getConnectionDefinitions())
+            for (ConnectionDefinition conDef : ra.getOutboundResourceadapter().getConnectionDefinitions())
             {
-
                ConnectionDefinition newConDef = conDef;
-
                newConDefs.add(newConDef);
-
             }
-            ((OutboundResourceAdapterImpl) ra1516.getOutboundResourceadapter())
-               .forceConnectionDefinitionsContent(newConDefs);
+            ((OutboundResourceAdapterImpl) ra.getOutboundResourceadapter())
+               .forceConnectionDefinitions(newConDefs);
          }
-
       }
 
       return conn;
    }
 
-   private void mergeTransactionSupport(CommonIronJacamar ij, Connector conn)
+   private void mergeTransactionSupport(Activation ij, Connector conn)
    {
       if (ij.getTransactionSupport() != null)
       {
-         if (conn.getVersion() == Version.V_10 && conn.getResourceadapter() != null)
+         if (conn.getResourceadapter() != null)
          {
-            ((ResourceAdapter10Impl) conn.getResourceadapter()).forceNewTrasactionSupport(ij.getTransactionSupport());
-         }
-         else
-         {
-            if (conn.getResourceadapter() != null)
+            ResourceAdapter ra = conn.getResourceadapter();
+            if (ra.getOutboundResourceadapter() != null)
             {
-               ResourceAdapter1516 ra1516 = (ResourceAdapter1516) conn.getResourceadapter();
-               if (ra1516.getOutboundResourceadapter() != null)
-               {
-                  ((OutboundResourceAdapterImpl) ra1516.getOutboundResourceadapter()).forceNewTrasactionSupport(ij
-                     .getTransactionSupport());
-               }
+               ((OutboundResourceAdapterImpl) ra.getOutboundResourceadapter()).
+                  forceTransactionSupport(ij.getTransactionSupport());
             }
          }
       }
-
    }
 
    /**
@@ -249,7 +218,7 @@ public class Merger
       XsdString vendorName = null;
       List<LocalizedXsdString> description = null;
       XsdString resourceadapterVersion = null;
-      String moduleName = null;
+      XsdString moduleName = null;
       XsdString eisType = null;
       LicenseType license = null;
       List<LocalizedXsdString> displayNames = null;
@@ -270,15 +239,29 @@ public class Merger
                connectioDefProperties.addAll(raConfigProperties);
             }
          }
-         ResourceAdapter resourceadapter = new ResourceAdapter10Impl(managedconnectionfactoryClass,
-                                                                     connectionfactoryInterface,
-                                                                     connectionfactoryImplClass, connectionInterface,
-                                                                     connectionImplClass, transactionSupport,
-                                                                     authenticationMechanism, connectioDefProperties,
-                                                                     reauthenticationSupport, securityPermissions, id);
 
-         Connector newConnector = new Connector10Impl(vendorName, eisType, resourceadapterVersion,
-                                                      license, resourceadapter, description, displayNames, icons, id);
+         List<ConnectionDefinition> cds = new ArrayList<ConnectionDefinition>(1);
+         ConnectionDefinition cd = new ConnectionDefinitionImpl(managedconnectionfactoryClass,
+                                                                connectioDefProperties,
+                                                                connectionfactoryInterface,
+                                                                connectionfactoryImplClass,
+                                                                connectionInterface, 
+                                                                connectionImplClass, id);
+         cds.add(cd);
+
+         OutboundResourceAdapter ora = new OutboundResourceAdapterImpl(cds,
+                                                                       transactionSupport,
+                                                                       authenticationMechanism,
+                                                                       reauthenticationSupport,
+                                                                       id, null, null);
+
+         //building and returning object
+         ResourceAdapter resourceadapter = new ResourceAdapterImpl(null, null, ora, null, null,
+                                                                   securityPermissions, id);
+
+         Connector newConnector = new ConnectorImpl(Version.V_10, null, vendorName, eisType, resourceadapterVersion,
+                                                    license, resourceadapter, null, true,
+                                                    description, displayNames, icons, id);
 
          return newConnector.merge(connector);
       }
@@ -296,29 +279,39 @@ public class Merger
                                                                                            transactionSupport,
                                                                                            authenticationMechanism,
                                                                                            reauthenticationSupport,
-                                                                                           id);
+                                                                                           id, null, null);
+
          String resourceadapterClass = null;
          InboundResourceAdapter inboundResourceadapter = null;
-         ResourceAdapter1516 resourceadapter = new ResourceAdapter1516Impl(resourceadapterClass, raConfigProperties,
-                                                                           outboundResourceadapter,
-                                                                           inboundResourceadapter, adminobjects,
-                                                                           securityPermissions, id);
+         ResourceAdapter resourceadapter = new ResourceAdapterImpl(new XsdString(resourceadapterClass, null),
+                                                                   raConfigProperties,
+                                                                   outboundResourceadapter,
+                                                                   inboundResourceadapter, adminobjects,
+                                                                   securityPermissions, id);
 
-         if (connector.getVersion() == Version.V_16)
+         if (connector.getVersion() == Version.V_17)
          {
-            List<String> requiredWorkContexts = null;
-            boolean metadataComplete = false;
+            Connector newConnector = new ConnectorImpl(Version.V_17, moduleName, vendorName, eisType,
+                                                       resourceadapterVersion,
+                                                       license, resourceadapter, null,
+                                                       false, description, displayNames, icons, id);
 
-            Connector newConnector = new Connector16Impl(moduleName, vendorName, eisType, resourceadapterVersion,
-                                                         license, resourceadapter, requiredWorkContexts,
-                                                         metadataComplete, description, displayNames, icons, id);
+            return newConnector.merge(connector);
+         }
+         else if (connector.getVersion() == Version.V_16)
+         {
+            Connector newConnector = new ConnectorImpl(Version.V_16, moduleName, vendorName, eisType,
+                                                       resourceadapterVersion,
+                                                       license, resourceadapter, null,
+                                                       false, description, displayNames, icons, id);
 
             return newConnector.merge(connector);
          }
          else if (connector.getVersion() == Version.V_15)
          {
-            Connector newConnector = new Connector15Impl(vendorName, eisType, resourceadapterVersion, license,
-                                                         resourceadapter, description, displayNames, icons, id);
+            Connector newConnector = new ConnectorImpl(Version.V_15, null, vendorName, eisType, resourceadapterVersion,
+                                                       license, resourceadapter, null, true, description, displayNames,
+                                                       icons, id);
 
             return newConnector.merge(connector);
          }
@@ -328,23 +321,22 @@ public class Merger
 
    }
 
-   private List<? extends ConfigProperty> extractProperties(Connector connector)
+   private List<ConfigProperty> extractProperties(Connector connector)
    {
-      List<? extends ConfigProperty> originalProperties = null;
+      List<ConfigProperty> originalProperties = null;
       if (connector.getVersion() == Version.V_10)
       {
          originalProperties = connector.getResourceadapter().getConfigProperties();
       }
       else
       {
-
-         if (connector.getResourceadapter() != null && connector.getResourceadapter() instanceof ResourceAdapter1516)
+         if (connector.getResourceadapter() != null)
          {
-            ResourceAdapter1516 ra1516 = ((ResourceAdapter1516) connector.getResourceadapter());
-            if (ra1516.getOutboundResourceadapter() != null &&
-                ra1516.getOutboundResourceadapter().getConnectionDefinitions() != null)
+            ResourceAdapter ra = connector.getResourceadapter();
+            if (ra.getOutboundResourceadapter() != null &&
+                ra.getOutboundResourceadapter().getConnectionDefinitions() != null)
             {
-               originalProperties = ra1516.getOutboundResourceadapter().getConnectionDefinitions().get(0)
+               originalProperties = ra.getOutboundResourceadapter().getConnectionDefinitions().get(0)
                   .getConfigProperties();
             }
          }
@@ -353,7 +345,7 @@ public class Merger
    }
 
    private static List<ConfigProperty> createConfigProperties(CommonDataSource cds,
-      List<? extends ConfigProperty> originalProperties)
+      List<ConfigProperty> originalProperties)
    {
       DataSource ds = null;
       XaDataSource xads = null;
@@ -741,7 +733,8 @@ public class Merger
       {
 
          return new ConfigPropertyImpl(prototype.getDescription(), prototype.getLocalName(),
-                                       prototype.getLocalType(), new XsdString(value, null), null);
+                                       prototype.getLocalType(), new XsdString(value, null), Boolean.FALSE,
+                                       Boolean.FALSE, Boolean.FALSE, null, false, null, null, null, null);
       }
 
       /**
@@ -756,7 +749,10 @@ public class Merger
       {
 
          return new ConfigPropertyImpl(prototype.getDescription(), prototype.getLocalName(),
-                                       prototype.getLocalType(), new XsdString(String.valueOf(value), null), null);
+                                       prototype.getLocalType(), new XsdString(String.valueOf(value), null),
+                                       Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, null, false,
+                                       null, null, null, null);
+
       }
 
       /**
@@ -771,7 +767,9 @@ public class Merger
       {
 
          return new ConfigPropertyImpl(prototype.getDescription(), prototype.getLocalName(),
-                                       prototype.getLocalType(), new XsdString(String.valueOf(value), null), null);
+                                       prototype.getLocalType(), new XsdString(String.valueOf(value), null),
+                                       Boolean.FALSE, Boolean.FALSE, Boolean.FALSE, null, false,
+                                       null, null, null, null);
       }
 
       /**

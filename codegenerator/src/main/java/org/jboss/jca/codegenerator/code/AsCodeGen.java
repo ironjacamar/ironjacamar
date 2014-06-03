@@ -23,7 +23,7 @@ package org.jboss.jca.codegenerator.code;
 
 import org.jboss.jca.codegenerator.ConfigPropType;
 import org.jboss.jca.codegenerator.Definition;
-import org.jboss.jca.common.api.metadata.ra.ra15.Connector15;
+import org.jboss.jca.common.api.metadata.spec.Connector.Version;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -96,7 +96,7 @@ public class AsCodeGen extends PropsCodeGen
    @Override
    void writeDefaultConstructor(Definition def, Writer out, int indent) throws IOException
    {
-      if (!def.getVersion().equals(Connector15.XML_VERSION))
+      if (!def.getVersion().equals(Version.V_15.getLocalName()))
       {
          super.writeDefaultConstructor(def, out, indent);
          return;

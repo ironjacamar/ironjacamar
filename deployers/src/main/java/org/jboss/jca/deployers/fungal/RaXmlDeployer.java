@@ -22,11 +22,11 @@
 
 package org.jboss.jca.deployers.fungal;
 
-import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
-import org.jboss.jca.common.api.metadata.ra.Connector;
-import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapters;
+import org.jboss.jca.common.api.metadata.resourceadapter.Activation;
+import org.jboss.jca.common.api.metadata.resourceadapter.Activations;
+import org.jboss.jca.common.api.metadata.spec.Connector;
 import org.jboss.jca.common.metadata.merge.Merger;
-import org.jboss.jca.common.metadata.resourceadapter.v12.ResourceAdapterParser;
+import org.jboss.jca.common.metadata.resourceadapter.ResourceAdapterParser;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
 import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
@@ -175,21 +175,21 @@ public final class RaXmlDeployer extends AbstractFungalRADeployer
          // Parse metadata
          is = new FileInputStream(f);
          ResourceAdapterParser parser = new ResourceAdapterParser();
-         ResourceAdapters raXmlDeployment = parser.parse(is);
+         Activations raXmlDeployment = parser.parse(is);
 
-         int size = raXmlDeployment.getResourceAdapters().size();
+         int size = raXmlDeployment.getActivations().size();
          if (size == 1)
          {
-            return doDeploy(url, raXmlDeployment.getResourceAdapters().get(0), parent);
+            return doDeploy(url, raXmlDeployment.getActivations().get(0), parent);
          }
          else
          {
             deployments = new ArrayList<Deployment>(size);
 
-            for (org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter raxml : raXmlDeployment
-               .getResourceAdapters())
+            for (org.jboss.jca.common.api.metadata.resourceadapter.Activation activation : raXmlDeployment
+               .getActivations())
             {
-               Deployment raDeployment = doDeploy(url, raxml, parent);
+               Deployment raDeployment = doDeploy(url, activation, parent);
                deployments.add(raDeployment);
                kernel.getMainDeployer().registerDeployment(raDeployment);
             }
@@ -232,14 +232,14 @@ public final class RaXmlDeployer extends AbstractFungalRADeployer
     * @return The deployment
     * @exception DeployException Thrown if an error occurs during deployment
     */
-   private Deployment doDeploy(URL url, org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter raxml,
+   private Deployment doDeploy(URL url, org.jboss.jca.common.api.metadata.resourceadapter.Activation activation,
       ClassLoader parent) throws DeployException
    {
       ClassLoader oldTCCL = SecurityActions.getThreadContextClassLoader();
       try
       {
          // Find the archive in MDR
-         String archive = raxml.getArchive();
+         String archive = activation.getArchive();
          URL deployment = null;
          Set<String> deployments = ((RAConfiguration) getConfiguration()).getMetadataRepository().getResourceAdapters();
 
@@ -256,13 +256,12 @@ public final class RaXmlDeployer extends AbstractFungalRADeployer
 
          MetadataRepository mdr = ((RAConfiguration) getConfiguration()).getMetadataRepository();
          Connector cmd = mdr.getResourceAdapter(deployment.toExternalForm());
-         IronJacamar ijmd = mdr.getIronJacamar(deployment.toExternalForm());
          File root = mdr.getRoot(deployment.toExternalForm());
 
          if (cmd != null)
             cmd = (Connector)cmd.copy();
 
-         cmd = (new Merger()).mergeConnectorWithCommonIronJacamar(raxml, cmd);
+         cmd = (new Merger()).mergeConnectorWithCommonIronJacamar(activation, cmd);
          // Create classloader
          URL[] urls = getUrls(root);
          KernelClassLoader cl = null;
@@ -278,7 +277,7 @@ public final class RaXmlDeployer extends AbstractFungalRADeployer
 
          String deploymentName = archive.substring(0, archive.indexOf(".rar"));
 
-         CommonDeployment c = createObjectsAndInjectValue(url, deploymentName, root, cl, cmd, ijmd, raxml);
+         CommonDeployment c = createObjectsAndInjectValue(url, deploymentName, root, cl, cmd, activation);
 
          List<ObjectName> ons = null;
          if (c.isActivateDeployment())
@@ -321,7 +320,7 @@ public final class RaXmlDeployer extends AbstractFungalRADeployer
    }
 
    @Override
-   protected boolean checkActivation(Connector cmd, IronJacamar ijmd)
+   protected boolean checkActivation(Connector cmd, Activation activation)
    {
       return true;
    }

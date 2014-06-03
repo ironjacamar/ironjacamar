@@ -23,36 +23,34 @@ package org.jboss.jca.eclipse.command.raui;
 
 import org.jboss.jca.codegenerator.ConfigPropType;
 import org.jboss.jca.common.api.metadata.common.Capacity;
-import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
-import org.jboss.jca.common.api.metadata.common.CommonPool;
-import org.jboss.jca.common.api.metadata.common.CommonSecurity;
-import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
-import org.jboss.jca.common.api.metadata.common.CommonValidation;
 import org.jboss.jca.common.api.metadata.common.Credential;
 import org.jboss.jca.common.api.metadata.common.Extension;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
+import org.jboss.jca.common.api.metadata.common.Pool;
 import org.jboss.jca.common.api.metadata.common.Recovery;
+import org.jboss.jca.common.api.metadata.common.Security;
+import org.jboss.jca.common.api.metadata.common.TimeOut;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
-import org.jboss.jca.common.api.metadata.common.v10.CommonConnDef;
-import org.jboss.jca.common.api.metadata.common.v11.WorkManager;
-import org.jboss.jca.common.api.metadata.common.v11.WorkManagerSecurity;
-import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapter;
-import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapters;
+import org.jboss.jca.common.api.metadata.common.Validation;
+import org.jboss.jca.common.api.metadata.resourceadapter.Activation;
+import org.jboss.jca.common.api.metadata.resourceadapter.Activations;
+import org.jboss.jca.common.api.metadata.resourceadapter.AdminObject;
+import org.jboss.jca.common.api.metadata.resourceadapter.ConnectionDefinition;
+import org.jboss.jca.common.api.metadata.resourceadapter.WorkManager;
+import org.jboss.jca.common.api.metadata.resourceadapter.WorkManagerSecurity;
 import org.jboss.jca.common.api.validator.ValidateException;
-import org.jboss.jca.common.metadata.common.CommonAdminObjectImpl;
-import org.jboss.jca.common.metadata.common.CommonPoolImpl;
-import org.jboss.jca.common.metadata.common.CommonSecurityImpl;
-import org.jboss.jca.common.metadata.common.CommonTimeOutImpl;
-import org.jboss.jca.common.metadata.common.CommonValidationImpl;
-import org.jboss.jca.common.metadata.common.CommonXaPoolImpl;
 import org.jboss.jca.common.metadata.common.CredentialImpl;
-import org.jboss.jca.common.metadata.common.v10.CommonConnDefImpl;
-import org.jboss.jca.common.metadata.common.v11.ConnDefPoolImpl;
-import org.jboss.jca.common.metadata.common.v11.ConnDefXaPoolImpl;
-import org.jboss.jca.common.metadata.common.v11.WorkManagerImpl;
-import org.jboss.jca.common.metadata.common.v11.WorkManagerSecurityImpl;
-import org.jboss.jca.common.metadata.resourceadapter.ResourceAdaptersImpl;
-import org.jboss.jca.common.metadata.resourceadapter.v10.ResourceAdapterImpl;
+import org.jboss.jca.common.metadata.common.PoolImpl;
+import org.jboss.jca.common.metadata.common.SecurityImpl;
+import org.jboss.jca.common.metadata.common.TimeOutImpl;
+import org.jboss.jca.common.metadata.common.ValidationImpl;
+import org.jboss.jca.common.metadata.common.XaPoolImpl;
+import org.jboss.jca.common.metadata.resourceadapter.ActivationImpl;
+import org.jboss.jca.common.metadata.resourceadapter.ActivationsImpl;
+import org.jboss.jca.common.metadata.resourceadapter.AdminObjectImpl;
+import org.jboss.jca.common.metadata.resourceadapter.ConnectionDefinitionImpl;
+import org.jboss.jca.common.metadata.resourceadapter.WorkManagerImpl;
+import org.jboss.jca.common.metadata.resourceadapter.WorkManagerSecurityImpl;
 import org.jboss.jca.eclipse.command.raui.ConnectionFactoryConfig.CapacityConfig;
 import org.jboss.jca.eclipse.command.raui.ConnectionFactoryConfig.PoolConfig;
 import org.jboss.jca.eclipse.command.raui.ConnectionFactoryConfig.RecoveryConfig;
@@ -116,17 +114,17 @@ public class RAXMLGenerator
       {
          throw new IllegalArgumentException("OutputFile can not be null, and it must not be a directory.");
       }
-      List<ResourceAdapter> resourceAdapters = new ArrayList<ResourceAdapter>();
+      List<Activation> resourceAdapters = new ArrayList<Activation>();
       
       if (raConfig.getVersion().equals(ResourceAdapterConfig.VERSION.VERSION_1_0))
       {
          // resource adapter 1.0
-         ResourceAdapter ra10Impl = getResourceAdapter10(raConfig);
+         Activation ra10Impl = getResourceAdapter10(raConfig);
          resourceAdapters.add(ra10Impl);
       }
       else if (raConfig.getVersion().equals(ResourceAdapterConfig.VERSION.VERSION_1_1))
       {
-         ResourceAdapter ra11Impl = getResourceAdapter11(raConfig);
+         Activation ra11Impl = getResourceAdapter11(raConfig);
          resourceAdapters.add(ra11Impl);
       }
       else
@@ -134,7 +132,7 @@ public class RAXMLGenerator
          throw new IllegalStateException("Unkown Version: " + raConfig.getVersion());
       }
       
-      ResourceAdapters ras = new ResourceAdaptersImpl(resourceAdapters);
+      Activations ras = new ActivationsImpl(resourceAdapters);
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
       DocumentBuilder db = dbf.newDocumentBuilder();
       Document doc = db.parse(new InputSource(new StringReader(ras.toString())));
@@ -148,42 +146,44 @@ public class RAXMLGenerator
       serializer.transform(new DOMSource(doc), new StreamResult(new FileOutputStream(outputFile)));
    }
 
-   private ResourceAdapter getResourceAdapter10(ResourceAdapterConfig raConfig)
+   private Activation getResourceAdapter10(ResourceAdapterConfig raConfig)
    {
       String archive = raConfig.getArchive();
       TransactionSupportEnum transactionSupport = raConfig.getTransactionSupport();
-      List<CommonConnDef> connectionDefinitions10 = getRaCommonConnDef10(raConfig.getConnectionDefinitions());
-      List<CommonAdminObject> adminObjects = getAdminObjects(raConfig.getAdminObjectConfigs());
+      List<ConnectionDefinition> connectionDefinitions10 = getRaCommonConnDef10(raConfig.getConnectionDefinitions());
+      List<AdminObject> adminObjects = getAdminObjects(raConfig.getAdminObjectConfigs());
       
-      ResourceAdapterImpl ra10Impl = new ResourceAdapterImpl(archive, transactionSupport, 
-            connectionDefinitions10, adminObjects, getConfigProperties(raConfig.getConfigProperties()), 
-            raConfig.getBeanValidationGroups(), raConfig.getBootstrapContext());
+      ActivationImpl ra10Impl = new ActivationImpl(null, archive, transactionSupport, 
+                                                   connectionDefinitions10, adminObjects,
+                                                   getConfigProperties(raConfig.getConfigProperties()), 
+                                                   raConfig.getBeanValidationGroups(),
+                                                   raConfig.getBootstrapContext(), null);
       
       return ra10Impl;
    }
    
-   private ResourceAdapter getResourceAdapter11(ResourceAdapterConfig raConfig)
+   private Activation getResourceAdapter11(ResourceAdapterConfig raConfig)
    {
       String archive = raConfig.getArchive();
       String id = raConfig.getId();
       TransactionSupportEnum transactionSupport = raConfig.getTransactionSupport();
-      List<org.jboss.jca.common.api.metadata.common.v11.CommonConnDef> connectionDefinitions11 = 
+      List<ConnectionDefinition> connectionDefinitions11 = 
             getRaCommonConnDef11(raConfig.getConnectionDefinitions());
-      List<CommonAdminObject> adminObjects = getAdminObjects(raConfig.getAdminObjectConfigs());
+      List<AdminObject> adminObjects = getAdminObjects(raConfig.getAdminObjectConfigs());
       WorkManager workManager = getWorkManager(raConfig);
-      org.jboss.jca.common.metadata.resourceadapter.v11.ResourceAdapterImpl ra11Impl = 
-            new org.jboss.jca.common.metadata.resourceadapter.v11.ResourceAdapterImpl(id, archive, 
+      ActivationImpl ra11Impl = 
+            new ActivationImpl(id, archive, 
                   transactionSupport, connectionDefinitions11, adminObjects, 
                   getConfigProperties(raConfig.getConfigProperties()), raConfig.getBeanValidationGroups(), 
                   raConfig.getBootstrapContext(), workManager);
       return ra11Impl;
    }
 
-   private List<org.jboss.jca.common.api.metadata.common.v11.CommonConnDef> getRaCommonConnDef11(
+   private List<ConnectionDefinition> getRaCommonConnDef11(
          List<ConnectionFactoryConfig> connectionDefinitions)
    {
-      List<org.jboss.jca.common.api.metadata.common.v11.CommonConnDef> result = 
-            new ArrayList<org.jboss.jca.common.api.metadata.common.v11.CommonConnDef>();
+      List<ConnectionDefinition> result = 
+            new ArrayList<ConnectionDefinition>();
       for (ConnectionFactoryConfig connConfig : connectionDefinitions)
       {
          if (!connConfig.isActive())
@@ -199,21 +199,23 @@ public class RAXMLGenerator
          Boolean useCcm = connConfig.getMcfUseCCM();
          Boolean sharable = connConfig.getSharable();
          Boolean enlistment = connConfig.getEnlistment();
-         CommonPool pool = getCommonPool(connConfig.getPoolConifg(), VERSION.VERSION_1_1);
+         Pool pool = getCommonPool(connConfig.getPoolConifg(), VERSION.VERSION_1_1);
          boolean isXA = connConfig.getPoolConifg().getDefineXA();
          
-         CommonTimeOut timeOut = getCommonTimeOut(connConfig.getTimeoutConfig());
-         CommonValidation validation = getCommonValidation(connConfig.getValidationConfig());
-         CommonSecurity security = getCommonSecurity(connConfig.getSecurityConfig());
+         TimeOut timeOut = getCommonTimeOut(connConfig.getTimeoutConfig());
+         Validation validation = getCommonValidation(connConfig.getValidationConfig());
+         Security security = getCommonSecurity(connConfig.getSecurityConfig());
          Recovery recovery = getRecovery(connConfig.getRecoveryConfig());
          if (className != null || jndiName != null || poolName != null || enabled != null || useJavaContext != null 
                || useCcm != null || pool != null || timeOut != null || validation != null || security != null 
                      || recovery != null)
          {
-            org.jboss.jca.common.api.metadata.common.v11.CommonConnDef commonConn = 
-                  new org.jboss.jca.common.metadata.common.v11.CommonConnDefImpl(configProperties, className, jndiName,
-                        poolName, enabled, useJavaContext, useCcm, sharable, enlistment, pool, timeOut, validation, 
-                        security, recovery, isXA);
+            ConnectionDefinition commonConn = 
+                  new ConnectionDefinitionImpl(configProperties, className, jndiName,
+                                               poolName, enabled, useJavaContext, useCcm, sharable,
+                                               enlistment, null, null, pool, timeOut, validation, 
+                                               security, recovery, isXA);
+
             result.add(commonConn);
          }
       }
@@ -235,9 +237,9 @@ public class RAXMLGenerator
       return workManager;
    }
 
-   private List<CommonConnDef> getRaCommonConnDef10(List<ConnectionFactoryConfig> connectionFactoryConfigs)
+   private List<ConnectionDefinition> getRaCommonConnDef10(List<ConnectionFactoryConfig> connectionFactoryConfigs)
    {
-      List<CommonConnDef> result = new ArrayList<CommonConnDef>();
+      List<ConnectionDefinition> result = new ArrayList<ConnectionDefinition>();
       for (ConnectionFactoryConfig connConfig : connectionFactoryConfigs)
       {
          if (!connConfig.isActive())
@@ -251,18 +253,22 @@ public class RAXMLGenerator
          Boolean enabled = connConfig.getMcfEnabled();
          Boolean useJavaContext = connConfig.getMcfUseJavaCtx();
          Boolean useCcm = connConfig.getMcfUseCCM();
-         CommonPool pool = getCommonPool(connConfig.getPoolConifg(), VERSION.VERSION_1_0);
+         Pool pool = getCommonPool(connConfig.getPoolConifg(), VERSION.VERSION_1_0);
          boolean isXA = connConfig.getPoolConifg().getDefineXA();
-         CommonTimeOut timeOut = getCommonTimeOut(connConfig.getTimeoutConfig());
-         CommonValidation validation = getCommonValidation(connConfig.getValidationConfig());
-         CommonSecurity security = getCommonSecurity(connConfig.getSecurityConfig());
+         TimeOut timeOut = getCommonTimeOut(connConfig.getTimeoutConfig());
+         Validation validation = getCommonValidation(connConfig.getValidationConfig());
+         Security security = getCommonSecurity(connConfig.getSecurityConfig());
          Recovery recovery = getRecovery(connConfig.getRecoveryConfig());
          if (className != null || jndiName != null || poolName != null || enabled != null || useJavaContext != null 
                || useCcm != null || pool != null || timeOut != null || validation != null || security != null 
                      || recovery != null)
          {
-            CommonConnDefImpl commonConn = new CommonConnDefImpl(configProperties, className, jndiName, poolName, 
-               enabled, useJavaContext, useCcm, pool, timeOut, validation, security, recovery, isXA);
+            ConnectionDefinitionImpl commonConn =
+               new ConnectionDefinitionImpl(configProperties, className, jndiName, poolName, 
+                                            enabled, useJavaContext, useCcm,
+                                            null, null, null, null,
+                                            pool, timeOut,
+                                            validation, security, recovery, isXA);
             result.add(commonConn);
          }
       }
@@ -350,7 +356,7 @@ public class RAXMLGenerator
       }
    }
 
-   private CommonSecurity getCommonSecurity(SecurityConfig securityConfig)
+   private Security getCommonSecurity(SecurityConfig securityConfig)
    {
       if (securityConfig == null)
       {
@@ -370,7 +376,7 @@ public class RAXMLGenerator
       }
       try
       {
-         return new CommonSecurityImpl(securityDomainManaged, securityDomainAndApplicationManaged, applicationManaged);
+         return new SecurityImpl(securityDomainManaged, securityDomainAndApplicationManaged, applicationManaged);
       }
       catch (ValidateException e)
       {
@@ -378,7 +384,7 @@ public class RAXMLGenerator
       }
    }
 
-   private CommonValidation getCommonValidation(ValidationConfig validationConfig)
+   private Validation getCommonValidation(ValidationConfig validationConfig)
    {
       if (validationConfig == null)
       {
@@ -394,7 +400,7 @@ public class RAXMLGenerator
       Boolean useFastFail = validationConfig.getUseFastFail();
       try
       {
-         return new CommonValidationImpl(backgroundValidation, backgroundValidationMillis, useFastFail);
+         return new ValidationImpl(backgroundValidation, backgroundValidationMillis, useFastFail);
       }
       catch (ValidateException e)
       {
@@ -402,7 +408,7 @@ public class RAXMLGenerator
       }
    }
 
-   private CommonTimeOut getCommonTimeOut(TimeoutConfig timeoutConfig)
+   private TimeOut getCommonTimeOut(TimeoutConfig timeoutConfig)
    {
       if (timeoutConfig == null)
       {
@@ -421,7 +427,7 @@ public class RAXMLGenerator
       Integer xaResourceTimeout = timeoutConfig.getXaResourceTimeout();
       try
       {
-         CommonTimeOut timeout = new CommonTimeOutImpl(blockingTimeoutMillis, idleTimeoutMinutes, 
+         TimeOut timeout = new TimeOutImpl(blockingTimeoutMillis, idleTimeoutMinutes, 
                allocationRetry, allocationRetryWaitMillis, xaResourceTimeout);
          return timeout;
       }
@@ -431,7 +437,7 @@ public class RAXMLGenerator
       }
    }
 
-   private CommonPool getCommonPool(PoolConfig poolConfig, VERSION version)
+   private Pool getCommonPool(PoolConfig poolConfig, VERSION version)
    {
       if (poolConfig == null)
       {
@@ -447,7 +453,7 @@ public class RAXMLGenerator
       {
          return null;
       }
-      CommonPool pool = null;
+      Pool pool = null;
       Integer minPoolSize = poolConfig.getMinPoolSize();
       Integer maxPoolSize = poolConfig.getMaxPoolSize();
       Integer initialPoolSize = poolConfig.getInitialPoolSize();
@@ -490,29 +496,15 @@ public class RAXMLGenerator
             Boolean padXid = poolConfig.isPadXid();
             Boolean wrapXaResource = poolConfig.isWrapXaResource();
             Boolean noTxSeparatePool = poolConfig.isNoTxSeparatePool();
-            if (VERSION.VERSION_1_0.equals(version))
-            {
-               pool = new CommonXaPoolImpl(minPoolSize, maxPoolSize, prefill, useStrictMin, 
-                     flushStrategy, isSameRmOverride, interleaving, padXid, wrapXaResource, noTxSeparatePool);
-            }
-            else if (VERSION.VERSION_1_1.equals(version))
-            {
-               pool = new ConnDefXaPoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin, 
-                     flushStrategy, capacity, isSameRmOverride, interleaving, padXid, wrapXaResource, 
-                     noTxSeparatePool);
-            }
+
+            pool = new XaPoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin, 
+                                  flushStrategy, capacity, isSameRmOverride, interleaving, padXid, wrapXaResource, 
+                                  noTxSeparatePool);
          }
          else
          {
-            if (VERSION.VERSION_1_0.equals(version))
-            {
-               pool = new CommonPoolImpl(minPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy);
-            }
-            else if (VERSION.VERSION_1_1.equals(version))
-            {
-               pool = new ConnDefPoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin, 
-                     flushStrategy, capacity);
-            }
+            pool = new PoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin, 
+                                flushStrategy, capacity);
          }
       }
       catch (ValidateException e)
@@ -522,15 +514,15 @@ public class RAXMLGenerator
       return pool;
    }
 
-   private List<CommonAdminObject> getAdminObjects(List<AdminObjectConfig> adminObjectConfigs)
+   private List<AdminObject> getAdminObjects(List<AdminObjectConfig> adminObjectConfigs)
    {
-      List<CommonAdminObject> result = new ArrayList<CommonAdminObject>();
+      List<AdminObject> result = new ArrayList<AdminObject>();
       for (AdminObjectConfig config : adminObjectConfigs)
       {
          if (config.isActive())
          {
             Map<String, String> configProps = getConfigProperties(config.getConfigProps());
-            CommonAdminObject commonAO = new CommonAdminObjectImpl(configProps, config.getClssName(),  
+            AdminObject commonAO = new AdminObjectImpl(configProps, config.getClssName(),  
                   config.getJndiName(), config.getPoolName(), config.isEnabled(), config.isUseJavaCtx());
             result.add(commonAO);
          }

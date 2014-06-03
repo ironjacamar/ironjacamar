@@ -22,21 +22,22 @@
 package org.jboss.jca.deployers.common;
 
 import org.jboss.jca.common.api.metadata.Defaults;
-import org.jboss.jca.common.api.metadata.common.CommonPool;
-import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
-import org.jboss.jca.common.api.metadata.common.CommonValidation;
 import org.jboss.jca.common.api.metadata.common.Credential;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.metadata.ds.CommonDataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSources;
+import org.jboss.jca.common.api.metadata.ds.DsPool;
+import org.jboss.jca.common.api.metadata.ds.DsXaPool;
+import org.jboss.jca.common.api.metadata.ds.TimeOut;
+import org.jboss.jca.common.api.metadata.ds.Validation;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource;
-import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
-import org.jboss.jca.common.api.metadata.ra.XsdString;
-import org.jboss.jca.common.metadata.ds.v10.DataSourceImpl;
-import org.jboss.jca.common.metadata.ds.v10.XADataSourceImpl;
-import org.jboss.jca.common.metadata.ra.common.ConfigPropertyImpl;
+import org.jboss.jca.common.api.metadata.spec.ConfigProperty;
+import org.jboss.jca.common.api.metadata.spec.XsdString;
+import org.jboss.jca.common.metadata.ds.DataSourceImpl;
+import org.jboss.jca.common.metadata.ds.XADataSourceImpl;
+import org.jboss.jca.common.metadata.spec.ConfigPropertyImpl;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.api.management.ManagementRepository;
@@ -437,12 +438,9 @@ public abstract class AbstractDsDeployer
       PoolStrategy strategy = PoolStrategy.ONE_POOL;
 
       boolean allowMultipleUsers = false;
-      if (ds.getPool() != null && ds.getPool() instanceof org.jboss.jca.common.api.metadata.ds.v11.DsPool)
+      if (ds.getPool() != null)
       {
-         org.jboss.jca.common.api.metadata.ds.v11.DsPool dsPool =
-            (org.jboss.jca.common.api.metadata.ds.v11.DsPool)ds.getPool();
-
-         if (dsPool.isAllowMultipleUsers() != null && dsPool.isAllowMultipleUsers().booleanValue())
+         if (ds.getPool().isAllowMultipleUsers() != null && ds.getPool().isAllowMultipleUsers().booleanValue())
          {
             strategy = PoolStrategy.POOL_BY_CRI;
             allowMultipleUsers = true;
@@ -475,13 +473,10 @@ public abstract class AbstractDsDeployer
       Pool pool = pf.create(strategy, mcf, pc, false, true);
 
       // Capacity
-      if (ds.getPool() != null && ds.getPool() instanceof org.jboss.jca.common.api.metadata.ds.v12.DsPool)
+      if (ds.getPool() != null)
       {
-         org.jboss.jca.common.api.metadata.ds.v12.DsPool dsPool =
-            (org.jboss.jca.common.api.metadata.ds.v12.DsPool)ds.getPool();
-
-         if (dsPool.getCapacity() != null)
-            pool.setCapacity(CapacityFactory.create(dsPool.getCapacity()));
+         if (ds.getPool().getCapacity() != null)
+            pool.setCapacity(CapacityFactory.create(ds.getPool().getCapacity()));
       }
 
       // Connection manager properties
@@ -510,18 +505,8 @@ public abstract class AbstractDsDeployer
       if (ds.getPool() != null)
          flushStrategy = ds.getPool().getFlushStrategy();
 
-      boolean connectable = false;
-      Boolean tracking = null;
-      if (ds instanceof org.jboss.jca.common.api.metadata.ds.v13.DataSource)
-      {
-         org.jboss.jca.common.api.metadata.ds.v13.DataSource ds13 =
-            (org.jboss.jca.common.api.metadata.ds.v13.DataSource)ds;
-
-         if (ds13.isConnectable() != null)
-            connectable = ds13.isConnectable().booleanValue();
-
-         tracking = ds13.isTracking();
-      }
+      boolean connectable = ds.isConnectable() == null ? false : ds.isConnectable().booleanValue();
+      Boolean tracking = ds.isTracking();
 
       // Select the correct connection manager
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
@@ -608,10 +593,9 @@ public abstract class AbstractDsDeployer
       }
 
       // ConnectionListener
-      if (ds.getPool() != null && ds.getPool() instanceof org.jboss.jca.common.api.metadata.ds.v12.DsPool)
+      if (ds.getPool() != null)
       {
-         org.jboss.jca.common.api.metadata.ds.v12.DsPool dsPool =
-            (org.jboss.jca.common.api.metadata.ds.v12.DsPool)ds.getPool();
+         DsPool dsPool = ds.getPool();
 
          if (dsPool.getConnectionListener() != null)
          {
@@ -689,10 +673,9 @@ public abstract class AbstractDsDeployer
       PoolStrategy strategy = PoolStrategy.ONE_POOL;
 
       boolean allowMultipleUsers = false;
-      if (ds.getXaPool() != null && ds.getXaPool() instanceof org.jboss.jca.common.api.metadata.ds.v11.DsXaPool)
+      if (ds.getXaPool() != null)
       {
-         org.jboss.jca.common.api.metadata.ds.v11.DsXaPool dsXaPool =
-            (org.jboss.jca.common.api.metadata.ds.v11.DsXaPool)ds.getXaPool();
+         DsXaPool dsXaPool = ds.getXaPool();
 
          if (dsXaPool.isAllowMultipleUsers() != null && dsXaPool.isAllowMultipleUsers().booleanValue())
          {
@@ -727,10 +710,9 @@ public abstract class AbstractDsDeployer
       Pool pool = pf.create(strategy, mcf, pc, noTxSeparatePool.booleanValue(), true);
 
       // Capacity
-      if (ds.getXaPool() != null && ds.getXaPool() instanceof org.jboss.jca.common.api.metadata.ds.v12.DsXaPool)
+      if (ds.getXaPool() != null)
       {
-         org.jboss.jca.common.api.metadata.ds.v12.DsXaPool dsXaPool =
-            (org.jboss.jca.common.api.metadata.ds.v12.DsXaPool)ds.getXaPool();
+         DsXaPool dsXaPool = ds.getXaPool();
 
          if (dsXaPool.getCapacity() != null)
             pool.setCapacity(CapacityFactory.create(dsXaPool.getCapacity()));
@@ -778,18 +760,8 @@ public abstract class AbstractDsDeployer
       if (ds.getXaPool() != null)
          flushStrategy = ds.getXaPool().getFlushStrategy();
 
-      boolean connectable = false;
-      Boolean tracking = null;
-      if (ds instanceof org.jboss.jca.common.api.metadata.ds.v13.XaDataSource)
-      {
-         org.jboss.jca.common.api.metadata.ds.v13.XaDataSource xads13 =
-            (org.jboss.jca.common.api.metadata.ds.v13.XaDataSource)ds;
-
-         if (xads13.isConnectable() != null)
-            connectable = xads13.isConnectable().booleanValue();
-
-         tracking = xads13.isTracking();
-      }
+      boolean connectable = ds.isConnectable() == null ? false : ds.isConnectable().booleanValue();
+      Boolean tracking = ds.isTracking();
 
       // Select the correct connection manager
       TransactionSupportLevel tsl = TransactionSupportLevel.XATransaction;
@@ -826,13 +798,7 @@ public abstract class AbstractDsDeployer
       }
 
       // Url property
-      if (ds instanceof org.jboss.jca.common.api.metadata.ds.v12.XaDataSource)
-      {
-         org.jboss.jca.common.api.metadata.ds.v12.XaDataSource xads12 =
-            (org.jboss.jca.common.api.metadata.ds.v12.XaDataSource)ds;
-         
-         injectValue(mcf, "setURLProperty", xads12.getUrlProperty());
-      }
+      injectValue(mcf, "setURLProperty", ds.getUrlProperty());
 
       // Reauth
       if (strategy == PoolStrategy.REAUTH)
@@ -863,10 +829,9 @@ public abstract class AbstractDsDeployer
       }
 
       // ConnectionListener
-      if (ds.getXaPool() != null && ds.getXaPool() instanceof org.jboss.jca.common.api.metadata.ds.v12.DsXaPool)
+      if (ds.getXaPool() != null)
       {
-         org.jboss.jca.common.api.metadata.ds.v12.DsXaPool dsXaPool =
-            (org.jboss.jca.common.api.metadata.ds.v12.DsXaPool)ds.getXaPool();
+         DsXaPool dsXaPool = ds.getXaPool();
 
          if (dsXaPool.getConnectionListener() != null)
          {
@@ -954,7 +919,9 @@ public abstract class AbstractDsDeployer
                                             new XsdString(property.getKey(), null),
                                             XsdString.NULL_XSDSTRING,
                                             new XsdString(property.getValue(), null),
-                                            null);
+                                            Boolean.FALSE, Boolean.FALSE, Boolean.FALSE,
+                                            null, false, null, null, null, null);
+
                   configProperties.add(c);
                }
 
@@ -1047,7 +1014,8 @@ public abstract class AbstractDsDeployer
     * @param vp The validation parameters
     * @return The configuration
     */
-   private PoolConfiguration createPoolConfiguration(CommonPool pp, CommonTimeOut tp, CommonValidation vp)
+   private PoolConfiguration createPoolConfiguration(org.jboss.jca.common.api.metadata.common.Pool pp,
+                                                     TimeOut tp, Validation vp)
    {
       PoolConfiguration pc = new PoolConfiguration();
 
@@ -1056,21 +1024,8 @@ public abstract class AbstractDsDeployer
          if (pp.getMinPoolSize() != null)
             pc.setMinSize(pp.getMinPoolSize().intValue());
 
-         if (pp instanceof org.jboss.jca.common.api.metadata.ds.v12.DsPool)
-         {
-            org.jboss.jca.common.api.metadata.ds.v12.DsPool dsp =
-               (org.jboss.jca.common.api.metadata.ds.v12.DsPool)pp;
-            if (dsp.getInitialPoolSize() != null)
-               pc.setInitialSize(dsp.getInitialPoolSize().intValue());
-         }
-
-         if (pp instanceof org.jboss.jca.common.api.metadata.ds.v12.DsXaPool)
-         {
-            org.jboss.jca.common.api.metadata.ds.v12.DsXaPool dsp =
-               (org.jboss.jca.common.api.metadata.ds.v12.DsXaPool)pp;
-            if (dsp.getInitialPoolSize() != null)
-               pc.setInitialSize(dsp.getInitialPoolSize().intValue());
-         }
+         if (pp.getInitialPoolSize() != null)
+            pc.setInitialSize(pp.getInitialPoolSize().intValue());
 
          if (pp.getMaxPoolSize() != null)
             pc.setMaxSize(pp.getMaxPoolSize().intValue());

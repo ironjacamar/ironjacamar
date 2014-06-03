@@ -27,9 +27,6 @@ import org.jboss.jca.codegenerator.JCA10Profile;
 import org.jboss.jca.codegenerator.JCA15Profile;
 import org.jboss.jca.codegenerator.JCA16Profile;
 import org.jboss.jca.codegenerator.JCA17Profile;
-import org.jboss.jca.common.api.metadata.ra.ra15.Connector15;
-import org.jboss.jca.common.api.metadata.ra.ra16.Connector16;
-import org.jboss.jca.common.api.metadata.ra.ra17.Connector17;
 import org.jboss.jca.eclipse.Activator;
 import org.jboss.jca.eclipse.IronJacamarProjectNature;
 import org.jboss.jca.eclipse.preferences.PreferenceConstants;
@@ -245,11 +242,11 @@ public class CodeGenWizard extends Wizard implements INewWizard
       def.setOutputDir(path);
 
       BaseProfile profile;
-      if (def.getVersion().equals(Connector17.XML_VERSION))
+      if ("1.7".equals(def.getVersion()))
          profile = new JCA17Profile();
-      else if (def.getVersion().equals(Connector16.XML_VERSION))
+      else if ("1.6".equals(def.getVersion()))
          profile = new JCA16Profile();
-      else if (def.getVersion().equals(Connector15.XML_VERSION))
+      else if ("1.5".equals(def.getVersion()))
          profile = new JCA15Profile();
       else
          profile = new JCA10Profile();
@@ -344,7 +341,7 @@ public class CodeGenWizard extends Wizard implements INewWizard
 
    private boolean willResourcesGenerated()
    {
-      if (def.getVersion().equals("1.0") || def.getVersion().equals(Connector15.XML_VERSION))
+      if (def.getVersion().equals("1.0") || def.getVersion().equals("1.5"))
       {
          return true;
       }

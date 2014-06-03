@@ -23,19 +23,18 @@ package org.jboss.jca.common.metadata.merge;
 
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ds.DataSources;
-import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
-import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
-import org.jboss.jca.common.api.metadata.ra.Connector;
-import org.jboss.jca.common.api.metadata.ra.Connector.Version;
-import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
-import org.jboss.jca.common.api.metadata.ra.XsdString;
-import org.jboss.jca.common.api.metadata.ra.ra15.Connector15;
-import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapters;
-import org.jboss.jca.common.metadata.ds.v13.DsParser;
-import org.jboss.jca.common.metadata.ironjacamar.v12.IronJacamarParser;
-import org.jboss.jca.common.metadata.ra.RaParser;
-import org.jboss.jca.common.metadata.ra.common.ConfigPropertyImpl;
-import org.jboss.jca.common.metadata.resourceadapter.v12.ResourceAdapterParser;
+import org.jboss.jca.common.api.metadata.resourceadapter.Activation;
+import org.jboss.jca.common.api.metadata.resourceadapter.Activations;
+import org.jboss.jca.common.api.metadata.spec.ConfigProperty;
+import org.jboss.jca.common.api.metadata.spec.Connector;
+import org.jboss.jca.common.api.metadata.spec.Connector.Version;
+import org.jboss.jca.common.api.metadata.spec.ResourceAdapter;
+import org.jboss.jca.common.api.metadata.spec.XsdString;
+import org.jboss.jca.common.metadata.ds.DsParser;
+import org.jboss.jca.common.metadata.ironjacamar.IronJacamarParser;
+import org.jboss.jca.common.metadata.resourceadapter.ResourceAdapterParser;
+import org.jboss.jca.common.metadata.spec.ConfigPropertyImpl;
+import org.jboss.jca.common.metadata.spec.RaParser;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -87,20 +86,20 @@ public class MergerTestCase
          //when
          DataSources ds = dsparser.parse(is);
 
-         List<? extends ConfigProperty> properties = null;
-         ResourceAdapter1516 resourceAdapter1516 = (ResourceAdapter1516) connector.getResourceadapter();
-         if (connector.getResourceadapter() != null && connector.getResourceadapter() instanceof ResourceAdapter1516
-               && resourceAdapter1516.getOutboundResourceadapter() != null
-               && resourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions() != null)
+         List<ConfigProperty> properties = null;
+         ResourceAdapter resourceAdapter = connector.getResourceadapter();
+         if (resourceAdapter != null &&
+             resourceAdapter.getOutboundResourceadapter() != null &&
+             resourceAdapter.getOutboundResourceadapter().getConnectionDefinitions() != null)
          {
-            properties = resourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions().get(0)
-                  .getConfigProperties();
+            properties = resourceAdapter.getOutboundResourceadapter().getConnectionDefinitions().get(0)
+               .getConfigProperties();
          }
 
          //verify pre-condition
-         assertThat(resourceAdapter1516.getOutboundResourceadapter().getTransactionSupport(),
+         assertThat(resourceAdapter.getOutboundResourceadapter().getTransactionSupport(),
                is(TransactionSupportEnum.LocalTransaction));
-         assertThat(resourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions().get(0)
+         assertThat(resourceAdapter.getOutboundResourceadapter().getConnectionDefinitions().get(0)
                .getManagedConnectionFactoryClass().getValue(), equalTo("org.jboss.jca.adapters.jdbc.local."
                + "LocalManagedConnectionFactory"));
 
@@ -108,44 +107,44 @@ public class MergerTestCase
          Merger m = new Merger();
          Connector merged = m.mergeConnectorAndDs(ds.getDataSource().get(0), connector);
          //then
-         assertThat(merged, instanceOf(Connector15.class));
+         assertThat(merged, instanceOf(Connector.class));
          assertThat(merged.getVersion(), is(Version.V_15));
 
-         List<? extends ConfigProperty> mergedProperties = null;
+         List<ConfigProperty> mergedProperties = null;
 
-         ResourceAdapter1516 mergedResourceAdapter1516 = (ResourceAdapter1516) merged.getResourceadapter();
-         if (connector.getResourceadapter() != null && connector.getResourceadapter() instanceof ResourceAdapter1516
-               && resourceAdapter1516.getOutboundResourceadapter() != null
-               && resourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions() != null)
+         ResourceAdapter mergedResourceAdapter = merged.getResourceadapter();
+         if (mergedResourceAdapter != null &&
+             mergedResourceAdapter.getOutboundResourceadapter() != null &&
+             mergedResourceAdapter.getOutboundResourceadapter().getConnectionDefinitions() != null)
          {
-            mergedProperties = mergedResourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions().get(0)
-                  .getConfigProperties();
+            mergedProperties = mergedResourceAdapter.getOutboundResourceadapter().getConnectionDefinitions().get(0)
+               .getConfigProperties();
          }
          //then merged properties are presents
-         assertThat((List<ConfigProperty>) mergedProperties, hasItem(Merger.ConfigPropertyFactory.createConfigProperty(
+         assertThat(mergedProperties, hasItem(Merger.ConfigPropertyFactory.createConfigProperty(
                Merger.ConfigPropertyFactory.Prototype.USERNAME, "x")));
-         assertThat((List<ConfigProperty>) mergedProperties, hasItem(Merger.ConfigPropertyFactory.createConfigProperty(
+         assertThat(mergedProperties, hasItem(Merger.ConfigPropertyFactory.createConfigProperty(
                Merger.ConfigPropertyFactory.Prototype.PASSWORD, "y")));
-         assertThat((List<ConfigProperty>) mergedProperties, hasItem(Merger.ConfigPropertyFactory.createConfigProperty(
+         assertThat(mergedProperties, hasItem(Merger.ConfigPropertyFactory.createConfigProperty(
                Merger.ConfigPropertyFactory.Prototype.CONNECTIONURL,
                "jdbc:postgresql://[servername]:[port]/[database name]")));
-         assertThat((List<ConfigProperty>) mergedProperties, hasItem(Merger.ConfigPropertyFactory.createConfigProperty(
+         assertThat(mergedProperties, hasItem(Merger.ConfigPropertyFactory.createConfigProperty(
                Merger.ConfigPropertyFactory.Prototype.DRIVERCLASS, "org.postgresql.Driver")));
 
          //then metadata read from ra.xml still present (not deleted by merge)
-         assertThat(mergedResourceAdapter1516.getOutboundResourceadapter().getTransactionSupport(),
+         assertThat(mergedResourceAdapter.getOutboundResourceadapter().getTransactionSupport(),
                is(TransactionSupportEnum.LocalTransaction));
-         assertThat(mergedResourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions().get(0)
+         assertThat(mergedResourceAdapter.getOutboundResourceadapter().getConnectionDefinitions().get(0)
                .getManagedConnectionFactoryClass().getValue(),
                equalTo("org.jboss.jca.adapters.jdbc.local.LocalManagedConnectionFactory"));
 
          //then it have empty property for not set ones
-         assertThat((List<ConfigProperty>) mergedProperties,
+         assertThat(mergedProperties,
                not(hasItem(Merger.ConfigPropertyFactory.createConfigProperty(
                      Merger.ConfigPropertyFactory.Prototype.PREPAREDSTATEMENTCACHESIZE, ""))));
 
          //then it does not contain property not in ra.xml
-         assertThat((List<ConfigProperty>) mergedProperties,
+         assertThat(mergedProperties,
                not(hasItem(Merger.ConfigPropertyFactory.createConfigProperty(
                      Merger.ConfigPropertyFactory.Prototype.XADATASOURCEPROPERTIES, ""))));
 
@@ -184,20 +183,20 @@ public class MergerTestCase
          //when
          DataSources ds = dsparser.parse(is);
 
-         List<? extends ConfigProperty> properties = null;
-         ResourceAdapter1516 resourceAdapter1516 = (ResourceAdapter1516) connector.getResourceadapter();
-         if (connector.getResourceadapter() != null && connector.getResourceadapter() instanceof ResourceAdapter1516
-               && resourceAdapter1516.getOutboundResourceadapter() != null
-               && resourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions() != null)
+         List<ConfigProperty> properties = null;
+         ResourceAdapter resourceAdapter = connector.getResourceadapter();
+         if (resourceAdapter != null &&
+             resourceAdapter.getOutboundResourceadapter() != null &&
+             resourceAdapter.getOutboundResourceadapter().getConnectionDefinitions() != null)
          {
-            properties = resourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions().get(0)
-                  .getConfigProperties();
+            properties = resourceAdapter.getOutboundResourceadapter().getConnectionDefinitions().get(0)
+               .getConfigProperties();
          }
 
          //verify pre-condition
-         assertThat(resourceAdapter1516.getOutboundResourceadapter().getTransactionSupport(),
+         assertThat(resourceAdapter.getOutboundResourceadapter().getTransactionSupport(),
                is(TransactionSupportEnum.XATransaction));
-         assertThat(resourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions().get(0)
+         assertThat(resourceAdapter.getOutboundResourceadapter().getConnectionDefinitions().get(0)
                .getManagedConnectionFactoryClass().getValue(),
                equalTo("org.jboss.jca.adapters.jdbc.xa.XAManagedConnectionFactory"));
 
@@ -205,43 +204,43 @@ public class MergerTestCase
          Merger mf = new Merger();
          Connector merged = mf.mergeConnectorAndDs(ds.getXaDataSource().get(0), connector);
          //then
-         assertThat(merged, instanceOf(Connector15.class));
+         assertThat(merged, instanceOf(Connector.class));
          assertThat(merged.getVersion(), is(Version.V_15));
 
-         List<? extends ConfigProperty> mergedProperties = null;
+         List<ConfigProperty> mergedProperties = null;
 
-         ResourceAdapter1516 mergedResourceAdapter1516 = (ResourceAdapter1516) merged.getResourceadapter();
-         if (connector.getResourceadapter() != null && connector.getResourceadapter() instanceof ResourceAdapter1516
-               && resourceAdapter1516.getOutboundResourceadapter() != null
-               && resourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions() != null)
+         ResourceAdapter mergedResourceAdapter = merged.getResourceadapter();
+         if (mergedResourceAdapter != null &&
+             mergedResourceAdapter.getOutboundResourceadapter() != null &&
+             mergedResourceAdapter.getOutboundResourceadapter().getConnectionDefinitions() != null)
          {
-            mergedProperties = mergedResourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions().get(0)
-                  .getConfigProperties();
+            mergedProperties = mergedResourceAdapter.getOutboundResourceadapter().getConnectionDefinitions().get(0)
+               .getConfigProperties();
          }
 
          //then merged properties are presents
 
-         assertThat((List<ConfigProperty>) mergedProperties, hasItem(Merger.ConfigPropertyFactory.createConfigProperty(
+         assertThat(mergedProperties, hasItem(Merger.ConfigPropertyFactory.createConfigProperty(
                Merger.ConfigPropertyFactory.Prototype.XADATASOURCEPROPERTIES,
                "DatabaseName=database_name;User=user;ServerName=server_name;PortNumber=5432;" + "Password=password;")));
 
-         assertThat((List<ConfigProperty>) mergedProperties, hasItem(Merger.ConfigPropertyFactory.createConfigProperty(
+         assertThat(mergedProperties, hasItem(Merger.ConfigPropertyFactory.createConfigProperty(
                Merger.ConfigPropertyFactory.Prototype.XADATASOURCECLASS, "org.postgresql.xa.PGXADataSource")));
 
          //then metadata read from ra.xml still present (not deleted by merge)
-         assertThat(mergedResourceAdapter1516.getOutboundResourceadapter().getTransactionSupport(),
+         assertThat(mergedResourceAdapter.getOutboundResourceadapter().getTransactionSupport(),
                is(TransactionSupportEnum.XATransaction));
-         assertThat(mergedResourceAdapter1516.getOutboundResourceadapter().getConnectionDefinitions().get(0)
+         assertThat(mergedResourceAdapter.getOutboundResourceadapter().getConnectionDefinitions().get(0)
                .getManagedConnectionFactoryClass().getValue(),
                equalTo("org.jboss.jca.adapters.jdbc.xa.XAManagedConnectionFactory"));
 
          //then it have empty property for not set ones
-         assertThat((List<ConfigProperty>) mergedProperties,
+         assertThat(mergedProperties,
                not(hasItem(Merger.ConfigPropertyFactory.createConfigProperty(
                      Merger.ConfigPropertyFactory.Prototype.PREPAREDSTATEMENTCACHESIZE, ""))));
 
          //then it does not contain property not in ra.xml
-         assertThat((List<ConfigProperty>) mergedProperties,
+         assertThat(mergedProperties,
                not(hasItem(Merger.ConfigPropertyFactory.createConfigProperty(
                      Merger.ConfigPropertyFactory.Prototype.CONNECTIONURL, ""))));
 
@@ -276,14 +275,14 @@ public class MergerTestCase
                .getResource("merger/ra-merging-with-connector.xml").toURI());
          is = new FileInputStream(xmlFile);
          ResourceAdapterParser raparser = new ResourceAdapterParser();
-         ResourceAdapters ra = raparser.parse(is);
+         Activations ra = raparser.parse(is);
 
          assertThat(connector, notNullValue());
-         assertThat(ra.getResourceAdapters().get(0), notNullValue());
+         assertThat(ra.getActivations().get(0), notNullValue());
 
          //when
          Merger mf = new Merger();
-         Connector merged = mf.mergeConnectorWithCommonIronJacamar(ra.getResourceAdapters().get(0), connector);
+         Connector merged = mf.mergeConnectorWithCommonIronJacamar(ra.getActivations().get(0), connector);
          //then
 
          assertThat(merged, notNullValue());
@@ -318,34 +317,36 @@ public class MergerTestCase
             .getResource("merger/ironjacamar-merging-with-connector.xml").toURI());
          is = new FileInputStream(xmlFile);
          IronJacamarParser raparser = new IronJacamarParser();
-         IronJacamar ij = raparser.parse(is);
+         Activation ij = raparser.parse(is);
 
          assertThat(connector, notNullValue());
          assertThat(ij, notNullValue());
-         assertThat(((ResourceAdapter1516) connector.getResourceadapter()).getOutboundResourceadapter()
-            .getConnectionDefinitions().size(), is(1));
+         assertThat(connector.getResourceadapter().getOutboundResourceadapter()
+                    .getConnectionDefinitions().size(), is(1));
 
          //when
          Merger mf = new Merger();
          Connector merged = mf.mergeConnectorWithCommonIronJacamar(ij, connector);
          //then
-         ConfigProperty expectedConfigProp = new ConfigPropertyImpl(null,
-               new XsdString("StringRAR", null, "config-property-name"),
-               new XsdString("java.lang.String", null, "config-property-type"),
-               new XsdString("XMLOVERRIDE", null, "config-property-value"), null);
+         ConfigProperty expectedConfigProp =
+            new ConfigPropertyImpl(null,
+                                   new XsdString("StringRAR", null, "config-property-name"),
+                                   new XsdString("java.lang.String", null, "config-property-type"),
+                                   new XsdString("XMLOVERRIDE", null, "config-property-value"),
+                                   null, null, null, null, false, null, null, null, null);
          assertThat(merged, notNullValue());
-         assertThat((List<ConfigProperty>) connector.getResourceadapter().getConfigProperties(),
+         assertThat(connector.getResourceadapter().getConfigProperties(),
             hasItem(expectedConfigProp));
          assertThat(merged.getEisType(), equalTo(connector.getEisType()));
          assertThat(merged.getVersion(), equalTo(connector.getVersion()));
-         assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getResourceadapterClass(),
-            equalTo(((ResourceAdapter1516) connector.getResourceadapter()).getResourceadapterClass()));
-         assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getOutboundResourceadapter(),
-            is(((ResourceAdapter1516) connector.getResourceadapter()).getOutboundResourceadapter()));
-         assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getOutboundResourceadapter()
+         assertThat(merged.getResourceadapter().getResourceadapterClass(),
+            equalTo(connector.getResourceadapter().getResourceadapterClass()));
+         assertThat(merged.getResourceadapter().getOutboundResourceadapter(),
+            is(connector.getResourceadapter().getOutboundResourceadapter()));
+         assertThat(merged.getResourceadapter().getOutboundResourceadapter()
             .getConnectionDefinitions().size(), is(1));
-         assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getInboundResourceadapter(),
-            equalTo(((ResourceAdapter1516) connector.getResourceadapter()).getInboundResourceadapter()));
+         assertThat(merged.getResourceadapter().getInboundResourceadapter(),
+            equalTo(connector.getResourceadapter().getInboundResourceadapter()));
       }
       finally
       {
@@ -377,17 +378,17 @@ public class MergerTestCase
             .getResource("merger/ironjacamar-merging-with-connector-distributivity1.xml").toURI());
          is = new FileInputStream(xmlFile);
          IronJacamarParser ijParser = new IronJacamarParser();
-         IronJacamar ij1 = ijParser.parse(is);
+         Activation ij1 = ijParser.parse(is);
 
          xmlFile = new File(Thread.currentThread().getContextClassLoader()
             .getResource("merger/ironjacamar-merging-with-connector-distributivity2.xml").toURI());
          is = new FileInputStream(xmlFile);
-         IronJacamar ij2 = ijParser.parse(is);
+         Activation ij2 = ijParser.parse(is);
 
          assertThat(connector, notNullValue());
          assertThat(ij1, notNullValue());
          assertThat(ij2, notNullValue());
-         assertThat(((ResourceAdapter1516) connector.getResourceadapter()).getOutboundResourceadapter()
+         assertThat(connector.getResourceadapter().getOutboundResourceadapter()
             .getConnectionDefinitions().size(), is(1));
 
          //when
@@ -398,41 +399,45 @@ public class MergerTestCase
          Connector merged2 = mf.mergeConnectorWithCommonIronJacamar(ij2, connector);
          merged2 = mf.mergeConnectorWithCommonIronJacamar(ij1, connector);
          //then
-         ConfigProperty expectedConfigProp = new ConfigPropertyImpl(null,
-               new XsdString("StringRAR", null, "config-property-name"),
-               new XsdString("java.lang.String", null, "config-property-type"),
-               new XsdString("XMLOVERRIDE", null, "config-property-value"), null);
-         ConfigProperty expectedConfigProp2 = new ConfigPropertyImpl(null,
-               new XsdString("StringRAR2", null, "config-property-name"),
-               new XsdString("java.lang.String", null, "config-property-type"),
-               new XsdString("XMLOVERRIDE", null, "config-property-value"), null);
+         ConfigProperty expectedConfigProp =
+            new ConfigPropertyImpl(null,
+                                   new XsdString("StringRAR", null, "config-property-name"),
+                                   new XsdString("java.lang.String", null, "config-property-type"),
+                                   new XsdString("XMLOVERRIDE", null, "config-property-value"),
+                                   null, null, null, null, false, null, null, null, null);
+         ConfigProperty expectedConfigProp2 =
+            new ConfigPropertyImpl(null,
+                                   new XsdString("StringRAR2", null, "config-property-name"),
+                                   new XsdString("java.lang.String", null, "config-property-type"),
+                                   new XsdString("XMLOVERRIDE", null, "config-property-value"),
+                                   null, null, null, null, false, null, null, null, null);
          assertThat(merged, notNullValue());
-         assertThat((List<ConfigProperty>) connector.getResourceadapter().getConfigProperties(),
+         assertThat(connector.getResourceadapter().getConfigProperties(),
             hasItems(expectedConfigProp, expectedConfigProp2));
          assertThat(merged.getEisType(), equalTo(connector.getEisType()));
          assertThat(merged.getVersion(), equalTo(connector.getVersion()));
-         assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getResourceadapterClass(),
-            equalTo(((ResourceAdapter1516) connector.getResourceadapter()).getResourceadapterClass()));
-         assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getOutboundResourceadapter(),
-            is(((ResourceAdapter1516) connector.getResourceadapter()).getOutboundResourceadapter()));
-         assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getOutboundResourceadapter()
+         assertThat(merged.getResourceadapter().getResourceadapterClass(),
+            equalTo(connector.getResourceadapter().getResourceadapterClass()));
+         assertThat(merged.getResourceadapter().getOutboundResourceadapter(),
+            is(connector.getResourceadapter().getOutboundResourceadapter()));
+         assertThat(merged.getResourceadapter().getOutboundResourceadapter()
             .getConnectionDefinitions().size(), is(1));
-         assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getInboundResourceadapter(),
-            equalTo(((ResourceAdapter1516) connector.getResourceadapter()).getInboundResourceadapter()));
+         assertThat(merged.getResourceadapter().getInboundResourceadapter(),
+            equalTo(connector.getResourceadapter().getInboundResourceadapter()));
 
          assertThat(merged2, notNullValue());
-         assertThat((List<ConfigProperty>) connector.getResourceadapter().getConfigProperties(),
+         assertThat(connector.getResourceadapter().getConfigProperties(),
             hasItems(expectedConfigProp, expectedConfigProp2));
          assertThat(merged2.getEisType(), equalTo(connector.getEisType()));
          assertThat(merged2.getVersion(), equalTo(connector.getVersion()));
-         assertThat(((ResourceAdapter1516) merged2.getResourceadapter()).getResourceadapterClass(),
-            equalTo(((ResourceAdapter1516) connector.getResourceadapter()).getResourceadapterClass()));
-         assertThat(((ResourceAdapter1516) merged2.getResourceadapter()).getOutboundResourceadapter(),
-            is(((ResourceAdapter1516) connector.getResourceadapter()).getOutboundResourceadapter()));
-         assertThat(((ResourceAdapter1516) merged2.getResourceadapter()).getOutboundResourceadapter()
+         assertThat(merged2.getResourceadapter().getResourceadapterClass(),
+            equalTo(connector.getResourceadapter().getResourceadapterClass()));
+         assertThat(merged2.getResourceadapter().getOutboundResourceadapter(),
+            is(connector.getResourceadapter().getOutboundResourceadapter()));
+         assertThat(merged2.getResourceadapter().getOutboundResourceadapter()
             .getConnectionDefinitions().size(), is(1));
-         assertThat(((ResourceAdapter1516) merged2.getResourceadapter()).getInboundResourceadapter(),
-            equalTo(((ResourceAdapter1516) connector.getResourceadapter()).getInboundResourceadapter()));
+         assertThat(merged2.getResourceadapter().getInboundResourceadapter(),
+            equalTo(connector.getResourceadapter().getInboundResourceadapter()));
       }
       finally
       {
@@ -464,34 +469,36 @@ public class MergerTestCase
             .getResource("merger/ironjacamar-merging-with-connector.xml").toURI());
          is = new FileInputStream(xmlFile);
          IronJacamarParser raparser = new IronJacamarParser();
-         IronJacamar ij = raparser.parse(is);
+         Activation ij = raparser.parse(is);
 
          assertThat(connector, notNullValue());
          assertThat(ij, notNullValue());
-         assertThat(((ResourceAdapter1516) connector.getResourceadapter()).getOutboundResourceadapter()
+         assertThat(connector.getResourceadapter().getOutboundResourceadapter()
             .getConnectionDefinitions().size(), is(1));
 
          //when
          Merger mf = new Merger();
          Connector merged = mf.mergeConnectorWithCommonIronJacamar(ij, connector);
 
-         ConfigProperty expectedConfigProp = new ConfigPropertyImpl(null,
-               new XsdString("StringRAR", null, "config-property-name"),
-               new XsdString("java.lang.String", null, "config-property-type"),
-               new XsdString("XMLOVERRIDE", null, "config-property-value"), null);
+         ConfigProperty expectedConfigProp =
+            new ConfigPropertyImpl(null,
+                                   new XsdString("StringRAR", null, "config-property-name"),
+                                   new XsdString("java.lang.String", null, "config-property-type"),
+                                   new XsdString("XMLOVERRIDE", null, "config-property-value"),
+                                   null, null, null, null, false, null, null, null, null);
          assertThat(merged, notNullValue());
-         assertThat((List<ConfigProperty>) connector.getResourceadapter().getConfigProperties(),
+         assertThat(connector.getResourceadapter().getConfigProperties(),
             hasItem(expectedConfigProp));
          assertThat(merged.getEisType(), equalTo(connector.getEisType()));
          assertThat(merged.getVersion(), equalTo(connector.getVersion()));
-         assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getResourceadapterClass(),
-            equalTo(((ResourceAdapter1516) connector.getResourceadapter()).getResourceadapterClass()));
-         assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getOutboundResourceadapter(),
-            is(((ResourceAdapter1516) connector.getResourceadapter()).getOutboundResourceadapter()));
-         assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getOutboundResourceadapter()
+         assertThat(merged.getResourceadapter().getResourceadapterClass(),
+            equalTo(connector.getResourceadapter().getResourceadapterClass()));
+         assertThat(merged.getResourceadapter().getOutboundResourceadapter(),
+            is(connector.getResourceadapter().getOutboundResourceadapter()));
+         assertThat(merged.getResourceadapter().getOutboundResourceadapter()
             .getConnectionDefinitions().size(), is(1));
-         assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getInboundResourceadapter(),
-            equalTo(((ResourceAdapter1516) connector.getResourceadapter()).getInboundResourceadapter()));
+         assertThat(merged.getResourceadapter().getInboundResourceadapter(),
+            equalTo(connector.getResourceadapter().getInboundResourceadapter()));
 
          //another time!!
          merged = mf.mergeConnectorWithCommonIronJacamar(ij, merged);
@@ -499,18 +506,18 @@ public class MergerTestCase
          //then
 
          assertThat(merged, notNullValue());
-         assertThat((List<ConfigProperty>) connector.getResourceadapter().getConfigProperties(),
+         assertThat(connector.getResourceadapter().getConfigProperties(),
             hasItem(expectedConfigProp));
          assertThat(merged.getEisType(), equalTo(connector.getEisType()));
          assertThat(merged.getVersion(), equalTo(connector.getVersion()));
-         assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getResourceadapterClass(),
-            equalTo(((ResourceAdapter1516) connector.getResourceadapter()).getResourceadapterClass()));
-         assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getOutboundResourceadapter(),
-            is(((ResourceAdapter1516) connector.getResourceadapter()).getOutboundResourceadapter()));
-         assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getOutboundResourceadapter()
+         assertThat(merged.getResourceadapter().getResourceadapterClass(),
+            equalTo(connector.getResourceadapter().getResourceadapterClass()));
+         assertThat(merged.getResourceadapter().getOutboundResourceadapter(),
+            is(connector.getResourceadapter().getOutboundResourceadapter()));
+         assertThat(merged.getResourceadapter().getOutboundResourceadapter()
             .getConnectionDefinitions().size(), is(1));
-         assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getInboundResourceadapter(),
-            equalTo(((ResourceAdapter1516) connector.getResourceadapter()).getInboundResourceadapter()));
+         assertThat(merged.getResourceadapter().getInboundResourceadapter(),
+            equalTo(connector.getResourceadapter().getInboundResourceadapter()));
 
       }
       finally
@@ -543,35 +550,37 @@ public class MergerTestCase
             .getResource("merger/ironjacamar-merging-with-connector-withNewProperty.xml").toURI());
          is = new FileInputStream(xmlFile);
          IronJacamarParser raparser = new IronJacamarParser();
-         IronJacamar ij = raparser.parse(is);
+         Activation ij = raparser.parse(is);
 
          assertThat(connector, notNullValue());
          assertThat(ij, notNullValue());
-         assertThat(((ResourceAdapter1516) connector.getResourceadapter()).getOutboundResourceadapter()
+         assertThat(connector.getResourceadapter().getOutboundResourceadapter()
             .getConnectionDefinitions().size(), is(1));
 
          //when
          Merger mf = new Merger();
          Connector merged = mf.mergeConnectorWithCommonIronJacamar(ij, connector);
          //then
-         ConfigProperty expectedConfigProp = new ConfigPropertyImpl(null,
-               new XsdString("StringRAR", null, "config-property-name"),
-               new XsdString("java.lang.String", null, "config-property-type"),
-               new XsdString("XMLOVERRIDE", null, "config-property-value"), null);
+         ConfigProperty expectedConfigProp =
+            new ConfigPropertyImpl(null,
+                                   new XsdString("StringRAR", null, "config-property-name"),
+                                   new XsdString("java.lang.String", null, "config-property-type"),
+                                   new XsdString("XMLOVERRIDE", null, "config-property-value"),
+                                   null, null, null, null, false, null, null, null, null);
          assertThat(merged, notNullValue());
          assertThat(connector.getResourceadapter().getConfigProperties().size(), is(1));
-         assertThat((List<ConfigProperty>) connector.getResourceadapter().getConfigProperties(),
+         assertThat(connector.getResourceadapter().getConfigProperties(),
             hasItem(expectedConfigProp));
          assertThat(merged.getEisType(), equalTo(connector.getEisType()));
          assertThat(merged.getVersion(), equalTo(connector.getVersion()));
-         assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getResourceadapterClass(),
-            equalTo(((ResourceAdapter1516) connector.getResourceadapter()).getResourceadapterClass()));
-         assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getOutboundResourceadapter(),
-            is(((ResourceAdapter1516) connector.getResourceadapter()).getOutboundResourceadapter()));
-         assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getOutboundResourceadapter()
+         assertThat(merged.getResourceadapter().getResourceadapterClass(),
+            equalTo(connector.getResourceadapter().getResourceadapterClass()));
+         assertThat(merged.getResourceadapter().getOutboundResourceadapter(),
+            is(connector.getResourceadapter().getOutboundResourceadapter()));
+         assertThat(merged.getResourceadapter().getOutboundResourceadapter()
             .getConnectionDefinitions().size(), is(1));
-         assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getInboundResourceadapter(),
-            equalTo(((ResourceAdapter1516) connector.getResourceadapter()).getInboundResourceadapter()));
+         assertThat(merged.getResourceadapter().getInboundResourceadapter(),
+            equalTo(connector.getResourceadapter().getInboundResourceadapter()));
       }
       finally
       {
@@ -604,27 +613,29 @@ public class MergerTestCase
             .getResource("merger/ironjacamar-merging-admi-obj.xml").toURI());
          is = new FileInputStream(xmlFile);
          IronJacamarParser raparser = new IronJacamarParser();
-         IronJacamar ij = raparser.parse(is);
+         Activation ij = raparser.parse(is);
 
          assertThat(connector, notNullValue());
          assertThat(ij, notNullValue());
-         assertThat(((ResourceAdapter1516) connector.getResourceadapter()).getAdminObjects().size(), is(1));
+         assertThat(connector.getResourceadapter().getAdminObjects().size(), is(1));
 
          //when
          Merger mf = new Merger();
          Connector merged = mf.mergeConnectorWithCommonIronJacamar(ij, connector);
          //then
-         ConfigProperty expectedConfigProp = new ConfigPropertyImpl(null,
-               new XsdString("StringAdmin", null, "config-property-name"),
-               new XsdString("java.lang.String", null, "config-property-type"),
-               new XsdString("default", null, "config-property-value"), null);
+         ConfigProperty expectedConfigProp =
+            new ConfigPropertyImpl(null,
+                                   new XsdString("StringAdmin", null, "config-property-name"),
+                                   new XsdString("java.lang.String", null, "config-property-type"),
+                                   new XsdString("default", null, "config-property-value"),
+                                   null, null, null, null, false, null, null, null, null);
          assertThat(merged, notNullValue());
          assertThat(connector.getResourceadapter().getConfigProperties().size(), is(1));
-         assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getAdminObjects().size(), is(1));
-         assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getAdminObjects().get(0)
+         assertThat(merged.getResourceadapter().getAdminObjects().size(), is(1));
+         assertThat(merged.getResourceadapter().getAdminObjects().get(0)
             .getConfigProperties().size(), is(1));
          assertThat(
-            (List<ConfigProperty>) ((ResourceAdapter1516) merged.getResourceadapter()).getAdminObjects().get(0)
+            merged.getResourceadapter().getAdminObjects().get(0)
                .getConfigProperties(), hasItem(expectedConfigProp));
       }
       finally
@@ -658,27 +669,29 @@ public class MergerTestCase
             .getResource("merger/ironjacamar-merging-admi-obj-notenabled.xml").toURI());
          is = new FileInputStream(xmlFile);
          IronJacamarParser raparser = new IronJacamarParser();
-         IronJacamar ij = raparser.parse(is);
+         Activation ij = raparser.parse(is);
 
          assertThat(connector, notNullValue());
          assertThat(ij, notNullValue());
-         assertThat(((ResourceAdapter1516) connector.getResourceadapter()).getAdminObjects().size(), is(1));
+         assertThat(connector.getResourceadapter().getAdminObjects().size(), is(1));
 
          //when
          Merger mf = new Merger();
          Connector merged = mf.mergeConnectorWithCommonIronJacamar(ij, connector);
          //then
-         ConfigProperty expectedConfigProp = new ConfigPropertyImpl(null,
-               new XsdString("StringAdmin", null, "config-property-name"),
-               new XsdString("java.lang.String", null, "config-property-type"),
-               new XsdString("default", null, "config-property-value"), null);
+         ConfigProperty expectedConfigProp =
+            new ConfigPropertyImpl(null,
+                                   new XsdString("StringAdmin", null, "config-property-name"),
+                                   new XsdString("java.lang.String", null, "config-property-type"),
+                                   new XsdString("default", null, "config-property-value"),
+                                   null, null, null, null, false, null, null, null, null);
          assertThat(merged, notNullValue());
          assertThat(connector.getResourceadapter().getConfigProperties().size(), is(1));
-         assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getAdminObjects().size(), is(1));
-         assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getAdminObjects().get(0)
+         assertThat(merged.getResourceadapter().getAdminObjects().size(), is(1));
+         assertThat(merged.getResourceadapter().getAdminObjects().get(0)
             .getConfigProperties().size(), is(1));
          assertThat(
-            (List<ConfigProperty>) ((ResourceAdapter1516) merged.getResourceadapter()).getAdminObjects().get(0)
+            merged.getResourceadapter().getAdminObjects().get(0)
                .getConfigProperties(), hasItem(expectedConfigProp));
       }
       finally
@@ -711,27 +724,29 @@ public class MergerTestCase
             .getResource("merger/ironjacamar-merging-admi-obj-notmatching.xml").toURI());
          is = new FileInputStream(xmlFile);
          IronJacamarParser raparser = new IronJacamarParser();
-         IronJacamar ij = raparser.parse(is);
+         Activation ij = raparser.parse(is);
 
          assertThat(connector, notNullValue());
          assertThat(ij, notNullValue());
-         assertThat(((ResourceAdapter1516) connector.getResourceadapter()).getAdminObjects().size(), is(1));
+         assertThat(connector.getResourceadapter().getAdminObjects().size(), is(1));
 
          //when
          Merger mf = new Merger();
          Connector merged = mf.mergeConnectorWithCommonIronJacamar(ij, connector);
          //then
-         ConfigProperty expectedConfigProp = new ConfigPropertyImpl(null,
-               new XsdString("StringAdmin", null, "config-property-name"),
-               new XsdString("java.lang.String", null, "config-property-type"),
-               new XsdString("default", null, "config-property-value"), null);
+         ConfigProperty expectedConfigProp =
+            new ConfigPropertyImpl(null,
+                                   new XsdString("StringAdmin", null, "config-property-name"),
+                                   new XsdString("java.lang.String", null, "config-property-type"),
+                                   new XsdString("default", null, "config-property-value"),
+                                   null, null, null, null, false, null, null, null, null);
          assertThat(merged, notNullValue());
          assertThat(connector.getResourceadapter().getConfigProperties().size(), is(1));
-         assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getAdminObjects().size(), is(1));
-         assertThat(((ResourceAdapter1516) merged.getResourceadapter()).getAdminObjects().get(0)
+         assertThat(merged.getResourceadapter().getAdminObjects().size(), is(1));
+         assertThat(merged.getResourceadapter().getAdminObjects().get(0)
             .getConfigProperties().size(), is(1));
          assertThat(
-            (List<ConfigProperty>) ((ResourceAdapter1516) merged.getResourceadapter()).getAdminObjects().get(0)
+            merged.getResourceadapter().getAdminObjects().get(0)
                .getConfigProperties(), hasItem(expectedConfigProp));
       }
       finally

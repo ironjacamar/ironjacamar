@@ -23,12 +23,11 @@ package org.jboss.jca.deployers.test.unit.anno;
 
 import org.jboss.jca.common.annotations.Annotations;
 import org.jboss.jca.common.annotations.repository.jandex.AnnotationScannerImpl;
-import org.jboss.jca.common.api.metadata.ra.ConfigProperty;
-import org.jboss.jca.common.api.metadata.ra.Connector;
-import org.jboss.jca.common.api.metadata.ra.Icon;
-import org.jboss.jca.common.api.metadata.ra.LocalizedXsdString;
-import org.jboss.jca.common.api.metadata.ra.XsdString;
-import org.jboss.jca.common.api.metadata.ra.ra16.ConfigProperty16;
+import org.jboss.jca.common.api.metadata.spec.ConfigProperty;
+import org.jboss.jca.common.api.metadata.spec.Connector;
+import org.jboss.jca.common.api.metadata.spec.Icon;
+import org.jboss.jca.common.api.metadata.spec.LocalizedXsdString;
+import org.jboss.jca.common.api.metadata.spec.XsdString;
 import org.jboss.jca.common.spi.annotations.repository.AnnotationRepository;
 import org.jboss.jca.common.spi.annotations.repository.AnnotationScanner;
 
@@ -155,15 +154,13 @@ public abstract class AnnotationsTestBase
     * @param secondType - type of second property
     * @param secondValue - value of second property
     */
-   protected void checkProperties(List<? extends ConfigProperty> cps, String firstType, String firstValue,
+   protected void checkProperties(List<ConfigProperty> cps, String firstType, String firstValue,
       String secondType, String secondValue)
    {
       assertEquals(2, cps.size());
 
-      @SuppressWarnings("unchecked")
-      List<ConfigProperty16> cp = (List<ConfigProperty16>) cps;
-      assertTrue(isPropertyCorrect(cp, "first", firstType, firstValue, "1st", "first", true, false, true));
-      assertTrue(isPropertyCorrect(cp, "second", secondType, secondValue, "2nd", "second", false, true, false));
+      assertTrue(isPropertyCorrect(cps, "first", firstType, firstValue, "1st", "first", true, false, true));
+      assertTrue(isPropertyCorrect(cps, "second", secondType, secondValue, "2nd", "second", false, true, false));
    }
 
    /**
@@ -181,10 +178,10 @@ public abstract class AnnotationsTestBase
     * @param confident - is property confidential?
     * @return true, if list contains ConfigProperty with all these parameters set
     */
-   protected boolean isPropertyCorrect(List<ConfigProperty16> cps, String name, String type, String value, String desc1,
+   protected boolean isPropertyCorrect(List<ConfigProperty> cps, String name, String type, String value, String desc1,
       String desc2, boolean ignore, boolean dynamic, boolean confident)
    {
-      for (ConfigProperty16 p : cps)
+      for (ConfigProperty p : cps)
       {
          if (valuesAreEqual(p.getConfigPropertyName(), name) &&
              valuesAreEqual(p.getConfigPropertyType(), "java.lang." + type) &&

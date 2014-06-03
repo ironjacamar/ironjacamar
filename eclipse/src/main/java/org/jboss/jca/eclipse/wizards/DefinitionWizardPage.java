@@ -21,9 +21,6 @@
  */
 package org.jboss.jca.eclipse.wizards;
 
-import org.jboss.jca.common.api.metadata.ra.ra15.Connector15;
-import org.jboss.jca.common.api.metadata.ra.ra16.Connector16;
-import org.jboss.jca.common.api.metadata.ra.ra17.Connector17;
 import org.jboss.jca.eclipse.ResourceBundles;
 
 import java.util.regex.Pattern;
@@ -175,11 +172,11 @@ public class DefinitionWizardPage extends WizardPage
       Label label = new Label(container, SWT.NULL);
       label.setText(((CodeGenWizard) getWizard()).getCodegenResourceString("profile.version") + ":");
 
-      final String[] items = {Connector17.XML_VERSION, Connector16.XML_VERSION, Connector15.XML_VERSION, "1.0"};
+      final String[] items = {"1.7", "1.6", "1.5", "1.0"};
       final Combo combo = new Combo(container, SWT.DROP_DOWN | SWT.READ_ONLY);
       combo.setItems(items);
-      combo.setText(Connector17.XML_VERSION);
-      ((CodeGenWizard) getWizard()).getDef().setVersion(Connector17.XML_VERSION);
+      combo.setText("1.7");
+      ((CodeGenWizard) getWizard()).getDef().setVersion("1.7");
 
       combo.addSelectionListener(new SelectionAdapter()
       {
@@ -207,7 +204,7 @@ public class DefinitionWizardPage extends WizardPage
                boundCombo.setText("Outbound");
                ((CodeGenWizard) getWizard()).getDef().setSupportOutbound(true);
                ((CodeGenWizard) getWizard()).getDef().setSupportInbound(false);
-               if (combo.getText().equals(Connector16.XML_VERSION) || combo.getText().equals(Connector17.XML_VERSION))
+               if (combo.getText().equals("1.6") || combo.getText().equals("1.7"))
                {
                   annotationshButton.setEnabled(true);
                   annotationshButton.setSelection(true);

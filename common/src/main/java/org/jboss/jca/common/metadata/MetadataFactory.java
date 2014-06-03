@@ -23,10 +23,10 @@
 package org.jboss.jca.common.metadata;
 
 import org.jboss.jca.common.CommonLogger;
-import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
-import org.jboss.jca.common.api.metadata.ra.Connector;
-import org.jboss.jca.common.metadata.ironjacamar.v11.IronJacamarParser;
-import org.jboss.jca.common.metadata.ra.RaParser;
+import org.jboss.jca.common.api.metadata.resourceadapter.Activation;
+import org.jboss.jca.common.api.metadata.spec.Connector;
+import org.jboss.jca.common.metadata.ironjacamar.IronJacamarParser;
+import org.jboss.jca.common.metadata.spec.RaParser;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -102,9 +102,9 @@ public class MetadataFactory
     * @return The metadata
     * @exception Exception Thrown if an error occurs
     */
-   public IronJacamar getIronJacamarMetaData(File root) throws Exception
+   public Activation getIronJacamarMetaData(File root) throws Exception
    {
-      IronJacamar result = null;
+      Activation result = null;
 
       File metadataFile = new File(root, "/META-INF/ironjacamar.xml");
 

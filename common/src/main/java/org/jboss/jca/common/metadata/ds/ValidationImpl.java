@@ -38,11 +38,11 @@ import org.jboss.logging.Messages;
  * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
-public class ValidationImpl extends org.jboss.jca.common.metadata.common.CommonValidationImpl implements Validation
+public class ValidationImpl extends org.jboss.jca.common.metadata.common.ValidationImpl implements Validation
 {
 
    /** The serialVersionUID */
-   private static final long serialVersionUID = 7816717816552118419L;
+   private static final long serialVersionUID = 1L;
 
    /** The bundle */
    private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);

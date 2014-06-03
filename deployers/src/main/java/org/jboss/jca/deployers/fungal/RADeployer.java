@@ -23,13 +23,11 @@
 package org.jboss.jca.deployers.fungal;
 
 import org.jboss.jca.common.annotations.Annotations;
-import org.jboss.jca.common.api.metadata.ironjacamar.IronJacamar;
-import org.jboss.jca.common.api.metadata.ra.AdminObject;
-import org.jboss.jca.common.api.metadata.ra.ConnectionDefinition;
-import org.jboss.jca.common.api.metadata.ra.Connector;
-import org.jboss.jca.common.api.metadata.ra.Connector.Version;
-import org.jboss.jca.common.api.metadata.ra.ResourceAdapter1516;
-import org.jboss.jca.common.api.metadata.ra.ra10.ResourceAdapter10;
+import org.jboss.jca.common.api.metadata.resourceadapter.Activation;
+import org.jboss.jca.common.api.metadata.spec.AdminObject;
+import org.jboss.jca.common.api.metadata.spec.ConnectionDefinition;
+import org.jboss.jca.common.api.metadata.spec.Connector;
+import org.jboss.jca.common.api.metadata.spec.ResourceAdapter;
 import org.jboss.jca.common.metadata.MetadataFactory;
 import org.jboss.jca.common.metadata.merge.Merger;
 import org.jboss.jca.common.spi.annotations.repository.AnnotationRepository;
@@ -152,7 +150,7 @@ public final class RADeployer extends AbstractFungalRADeployer implements Deploy
          // Parse metadata
          MetadataFactory metadataFactory = new MetadataFactory();
          Connector cmd = metadataFactory.getStandardMetaData(root);
-         IronJacamar ijmd = metadataFactory.getIronJacamarMetaData(root);
+         Activation activation = metadataFactory.getIronJacamarMetaData(root);
 
          // Annotation scanning
          if (scanArchive(cmd))
@@ -167,9 +165,9 @@ public final class RADeployer extends AbstractFungalRADeployer implements Deploy
          cmd.validate();
 
          // Merge metadata
-         cmd = (new Merger()).mergeConnectorWithCommonIronJacamar(ijmd, cmd);
+         cmd = (new Merger()).mergeConnectorWithCommonIronJacamar(activation, cmd);
 
-         CommonDeployment c = createObjectsAndInjectValue(url, deploymentName, root, cl, cmd, ijmd);
+         CommonDeployment c = createObjectsAndInjectValue(url, deploymentName, root, cl, cmd, activation);
 
          List<ObjectName> ons = null;
          if (c.isActivateDeployment())
@@ -219,82 +217,75 @@ public final class RADeployer extends AbstractFungalRADeployer implements Deploy
    /**
     * Check if the resource adapter should be activated based on the ironjacamar.xml input
     * @param cmd The connector metadata
-    * @param ijmd The IronJacamar metadata
+    * @param activation The activation metadata
     * @return True if the deployment should be activated; otherwise false
     */
    @Override
-   protected boolean checkActivation(Connector cmd, IronJacamar ijmd)
+   protected boolean checkActivation(Connector cmd, Activation activation)
    {
       if (cmd != null)
       {
          Set<String> raMcfClasses = new HashSet<String>();
          Set<String> raAoClasses = new HashSet<String>();
 
-         if (cmd.getVersion() == Version.V_10)
+         ResourceAdapter ra = cmd.getResourceadapter();
+         if (ra != null && ra.getOutboundResourceadapter() != null &&
+             ra.getOutboundResourceadapter().getConnectionDefinitions() != null)
          {
-            ResourceAdapter10 ra10 = (ResourceAdapter10) cmd.getResourceadapter();
-            raMcfClasses.add(ra10.getManagedConnectionFactoryClass().getValue());
-         }
-         else
-         {
-            ResourceAdapter1516 ra = (ResourceAdapter1516) cmd.getResourceadapter();
-            if (ra != null && ra.getOutboundResourceadapter() != null &&
-                ra.getOutboundResourceadapter().getConnectionDefinitions() != null)
+            List<ConnectionDefinition> cdMetas = ra.getOutboundResourceadapter().getConnectionDefinitions();
+            if (cdMetas.size() > 0)
             {
-               List<ConnectionDefinition> cdMetas = ra.getOutboundResourceadapter().getConnectionDefinitions();
-               if (cdMetas.size() > 0)
+               for (ConnectionDefinition cdMeta : cdMetas)
                {
-                  for (ConnectionDefinition cdMeta : cdMetas)
-                  {
-                     raMcfClasses.add(cdMeta.getManagedConnectionFactoryClass().getValue());
-                  }
+                  raMcfClasses.add(cdMeta.getManagedConnectionFactoryClass().getValue());
                }
             }
-
-            if (ra != null && ra.getAdminObjects() != null)
-            {
-               List<AdminObject> aoMetas = ra.getAdminObjects();
-               if (aoMetas.size() > 0)
-               {
-                  for (AdminObject aoMeta : aoMetas)
-                  {
-                     raAoClasses.add(aoMeta.getAdminobjectClass().getValue());
-                  }
-               }
-            }
-
-            // Pure inflow
-            if (raMcfClasses.size() == 0 && raAoClasses.size() == 0)
-               return true;
          }
 
-         if (ijmd != null)
+         if (ra != null && ra.getAdminObjects() != null)
          {
-            if (ijmd.getConnectionDefinitions() != null)
+            List<AdminObject> aoMetas = ra.getAdminObjects();
+            if (aoMetas.size() > 0)
             {
-               for (org.jboss.jca.common.api.metadata.common.CommonConnDef def : ijmd.getConnectionDefinitions())
+               for (AdminObject aoMeta : aoMetas)
+               {
+                  raAoClasses.add(aoMeta.getAdminobjectClass().getValue());
+               }
+            }
+         }
+
+         // Pure inflow
+         if (raMcfClasses.size() == 0 && raAoClasses.size() == 0)
+            return true;
+
+         if (activation != null)
+         {
+            if (activation.getConnectionDefinitions() != null)
+            {
+               for (org.jboss.jca.common.api.metadata.resourceadapter.ConnectionDefinition def :
+                       activation.getConnectionDefinitions())
                {
                   String clz = def.getClassName();
                   
                   if (raMcfClasses.contains(clz))
                      return true;
                }
-               if (raMcfClasses.size() == 1 && ijmd.getConnectionDefinitions().size() == 1)
+               if (raMcfClasses.size() == 1 && activation.getConnectionDefinitions().size() == 1)
                {
                   return true;
                }
             }
 
-            if (ijmd.getAdminObjects() != null)
+            if (activation.getAdminObjects() != null)
             {
-               for (org.jboss.jca.common.api.metadata.common.CommonAdminObject def : ijmd.getAdminObjects())
+               for (org.jboss.jca.common.api.metadata.resourceadapter.AdminObject def : activation.getAdminObjects())
                {
                   String clz = def.getClassName();
 
                   if (raAoClasses.contains(clz))
                      return true;
                }
-               if (raAoClasses.size() == 1 && ijmd.getAdminObjects().size() == 1)
+               if (raAoClasses.size() == 1 && activation.getAdminObjects().size() == 1)
                {
                   return true;
                }

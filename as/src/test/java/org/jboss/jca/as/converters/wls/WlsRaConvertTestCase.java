@@ -25,16 +25,15 @@ package org.jboss.jca.as.converters.wls;
 import org.jboss.jca.as.converters.WlsRaConverter;
 import org.jboss.jca.as.converters.wls.api.metadata.WeblogicConnector;
 import org.jboss.jca.as.converters.wls.metadata.WeblogicRaPasrer;
-import org.jboss.jca.common.api.metadata.common.CommonAdminObject;
-import org.jboss.jca.common.api.metadata.common.CommonConnDef;
-import org.jboss.jca.common.api.metadata.common.CommonPool;
-import org.jboss.jca.common.api.metadata.common.CommonTimeOut;
-import org.jboss.jca.common.api.metadata.common.CommonValidation;
-import org.jboss.jca.common.api.metadata.common.v11.ConnDefXaPool;
-import org.jboss.jca.common.api.metadata.common.v11.WorkManager;
-import org.jboss.jca.common.api.metadata.resourceadapter.ResourceAdapters;
-import org.jboss.jca.common.api.metadata.resourceadapter.v11.ResourceAdapter;
-import org.jboss.jca.common.metadata.resourceadapter.v11.ResourceAdapterParser;
+import org.jboss.jca.common.api.metadata.common.Pool;
+import org.jboss.jca.common.api.metadata.common.TimeOut;
+import org.jboss.jca.common.api.metadata.common.Validation;
+import org.jboss.jca.common.api.metadata.resourceadapter.Activation;
+import org.jboss.jca.common.api.metadata.resourceadapter.Activations;
+import org.jboss.jca.common.api.metadata.resourceadapter.AdminObject;
+import org.jboss.jca.common.api.metadata.resourceadapter.ConnectionDefinition;
+import org.jboss.jca.common.api.metadata.resourceadapter.WorkManager;
+import org.jboss.jca.common.metadata.resourceadapter.ResourceAdapterParser;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -44,7 +43,6 @@ import java.util.Map;
 
 import org.jboss.logging.Logger;
 
-//import org.junit.Ignore;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -77,10 +75,10 @@ public class WlsRaConvertTestCase
       
       ResourceAdapterParser raParser = new ResourceAdapterParser();
       InputStream ijRaIn = WlsRaConvertTestCase.class.getClassLoader().getResourceAsStream("wlsra/" + ijRaFilesName);
-      ResourceAdapters ras = raParser.parse(ijRaIn);
-      List<?> listRa = ras.getResourceAdapters();
+      Activations ras = raParser.parse(ijRaIn);
+      List<Activation> listRa = ras.getActivations();
       assertNotNull(listRa);
-      ResourceAdapter target = (ResourceAdapter)listRa.get(0);
+      Activation target = listRa.get(0);
       assertNotNull(target);
 
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -88,9 +86,9 @@ public class WlsRaConvertTestCase
       converter.convert(wlsConnector, baos);
       
       ByteArrayInputStream bais = new ByteArrayInputStream(baos.toString().getBytes());
-      List<?> listRb = raParser.parse(bais).getResourceAdapters();
+      List<Activation> listRb = raParser.parse(bais).getActivations();
       assertNotNull(listRb);
-      ResourceAdapter source = (ResourceAdapter)listRb.get(0);
+      Activation source = listRb.get(0);
       assertNotNull(source);
 
       
@@ -104,14 +102,14 @@ public class WlsRaConvertTestCase
       asesertSecurity(source.getWorkManager(), target.getWorkManager());
    }
 
-   private void assertAdminObjects(List<CommonAdminObject> source, List<CommonAdminObject> target)
+   private void assertAdminObjects(List<AdminObject> source, List<AdminObject> target)
    {
       checkListEqualSize(source, target);
       
       for (int i = 0; i < source.size(); i++)
       {
-         CommonAdminObject aoSource =  source.get(i);
-         CommonAdminObject aoTarget =  target.get(i);
+         AdminObject aoSource =  source.get(i);
+         AdminObject aoTarget =  target.get(i);
          assertEquals(aoSource.getClassName(), aoTarget.getClassName());
          assertEquals(aoSource.getJndiName(), aoTarget.getJndiName());
          assertEquals(aoSource.getConfigProperties().size(), aoTarget.getConfigProperties().size());
@@ -140,14 +138,14 @@ public class WlsRaConvertTestCase
       }
    }
 
-   private void assertResourceAdapter(List<CommonConnDef> source, List<CommonConnDef> target)
+   private void assertResourceAdapter(List<ConnectionDefinition> source, List<ConnectionDefinition> target)
    {
       checkListEqualSize(source, target);
       
       for (int i = 0; i < source.size(); i++)
       {
-         CommonConnDef raSource =  source.get(i);
-         CommonConnDef raTarget =  target.get(i);
+         ConnectionDefinition raSource =  source.get(i);
+         ConnectionDefinition raTarget =  target.get(i);
          checkMapEqualSize(raSource.getConfigProperties(), raTarget.getConfigProperties());
          assertConfigProps(raSource.getConfigProperties(), raTarget.getConfigProperties());
          assertEquals(raSource.getJndiName(), raTarget.getJndiName());
@@ -159,23 +157,22 @@ public class WlsRaConvertTestCase
       }
    }
 
-   private void assertPool(CommonPool source, CommonPool target)
+   private void assertPool(Pool source, Pool target)
    {
       assertNotNull(source);
       assertNotNull(target);
       assertEquals(source.getMinPoolSize(), target.getMinPoolSize());
       assertEquals(source.getMaxPoolSize(), target.getMaxPoolSize());
 
-      assertNotNull(((ConnDefXaPool)source).getCapacity());
-      assertNotNull(((ConnDefXaPool)target).getCapacity());
-      assertEquals(
-            ((ConnDefXaPool)source).getCapacity().getIncrementer().
-            getConfigPropertiesMap().get("Size"), 
-            ((ConnDefXaPool)target).getCapacity().getIncrementer().
-            getConfigPropertiesMap().get("Size"));
+      assertNotNull(source.getCapacity());
+      assertNotNull(target.getCapacity());
+      assertEquals(source.getCapacity().getIncrementer().
+                   getConfigPropertiesMap().get("Size"), 
+                   target.getCapacity().getIncrementer().
+                   getConfigPropertiesMap().get("Size"));
    }
    
-   private void assertTimeout(CommonTimeOut source, CommonTimeOut target)
+   private void assertTimeout(TimeOut source, TimeOut target)
    {
       assertNotNull(source);
       assertNotNull(target);
@@ -184,7 +181,7 @@ public class WlsRaConvertTestCase
       assertEquals(source.getAllocationRetryWaitMillis(), target.getAllocationRetryWaitMillis());
    }
    
-   private void assertValidation(CommonValidation source, CommonValidation target)
+   private void assertValidation(Validation source, Validation target)
    {
       assertNotNull(source);
       assertNotNull(target);

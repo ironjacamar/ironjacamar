@@ -21,24 +21,24 @@
  */
 package org.jboss.jca.as.converters;
 
-
+import org.jboss.jca.common.api.metadata.Defaults;
 import org.jboss.jca.common.api.metadata.common.Extension;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.metadata.ds.DsSecurity;
+import org.jboss.jca.common.api.metadata.ds.DsXaPool;
 import org.jboss.jca.common.api.metadata.ds.Statement;
 import org.jboss.jca.common.api.metadata.ds.Statement.TrackStatementsEnum;
 import org.jboss.jca.common.api.metadata.ds.TimeOut;
 import org.jboss.jca.common.api.metadata.ds.TransactionIsolation;
 import org.jboss.jca.common.api.metadata.ds.Validation;
-import org.jboss.jca.common.api.metadata.ds.v12.DsXaPool;
 import org.jboss.jca.common.metadata.common.CredentialImpl;
 import org.jboss.jca.common.metadata.ds.DsSecurityImpl;
+import org.jboss.jca.common.metadata.ds.DsXaPoolImpl;
 import org.jboss.jca.common.metadata.ds.StatementImpl;
 import org.jboss.jca.common.metadata.ds.TimeOutImpl;
 import org.jboss.jca.common.metadata.ds.ValidationImpl;
-import org.jboss.jca.common.metadata.ds.v12.DsXaPoolImpl;
-import org.jboss.jca.common.metadata.ds.v12.XADataSourceImpl;
+import org.jboss.jca.common.metadata.ds.XADataSourceImpl;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -140,10 +140,11 @@ public class LegacyXaDataSourceImp implements XaDataSource
    public void buildXaDataSourceImpl()  throws Exception
    {
       dsImpl = new XADataSourceImpl(transactionIsolation, timeOut, security,
-            statement, validation, urlDelimiter, "", urlSelectorStrategyClassName, 
-            useJavaContext, poolName, enabled, jndiName, spy, useCcm, 
-            xaDataSourceProperty, xaDataSourceClass, driver, newConnectionSql, 
-            xaPool, recovery);
+                                    statement, validation, urlDelimiter, "|", urlSelectorStrategyClassName, 
+                                    useJavaContext, poolName, enabled, jndiName, spy, useCcm,
+                                    Defaults.CONNECTABLE, Defaults.TRACKING,
+                                    xaDataSourceProperty, xaDataSourceClass, driver, newConnectionSql, 
+                                    xaPool, recovery);
    }
    
    @Override

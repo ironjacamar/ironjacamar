@@ -21,12 +21,12 @@
  */
 package org.jboss.jca.deployers.test.unit.anno;
 
-import org.jboss.jca.common.api.metadata.ra.AdminObject;
-import org.jboss.jca.common.api.metadata.ra.Connector;
-import org.jboss.jca.common.api.metadata.ra.Connector.Version;
-import org.jboss.jca.common.api.metadata.ra.ResourceAdapter;
-import org.jboss.jca.common.metadata.ra.common.ResourceAdapter1516Impl;
-import org.jboss.jca.common.metadata.ra.ra16.Connector16Impl;
+import org.jboss.jca.common.api.metadata.spec.AdminObject;
+import org.jboss.jca.common.api.metadata.spec.Connector;
+import org.jboss.jca.common.api.metadata.spec.Connector.Version;
+import org.jboss.jca.common.api.metadata.spec.ResourceAdapter;
+import org.jboss.jca.common.metadata.spec.ConnectorImpl;
+import org.jboss.jca.common.metadata.spec.ResourceAdapterImpl;
 import org.jboss.jca.deployers.test.rars.anno.AnnoResourceAdapter;
 import org.jboss.jca.deployers.test.rars.anno.variants.AnnoAdminObjectImpl;
 
@@ -59,14 +59,14 @@ public class DefaultAdminObjectTestCase extends AnnotationsTestBase
    @Override
    protected void checkConnector(Connector connector)
    {
-      assertTrue(connector instanceof Connector16Impl);
-      assertEquals(connector.getVersion(), Version.V_16);
+      assertTrue(connector instanceof ConnectorImpl);
+      assertEquals(connector.getVersion(), Version.V_17);
 
-      Connector16Impl con = (Connector16Impl) connector;
+      ConnectorImpl con = (ConnectorImpl) connector;
 
       ResourceAdapter rai = con.getResourceadapter();
-      assertTrue(rai instanceof ResourceAdapter1516Impl);
-      ResourceAdapter1516Impl ra = (ResourceAdapter1516Impl) rai;
+      assertTrue(rai instanceof ResourceAdapterImpl);
+      ResourceAdapterImpl ra = (ResourceAdapterImpl) rai;
 
       List<AdminObject> aos = ra.getAdminObjects();
       assertEquals(1, aos.size());

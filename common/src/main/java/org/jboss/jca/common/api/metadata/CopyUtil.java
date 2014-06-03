@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.common.api.metadata;
 
-import org.jboss.jca.common.api.metadata.ra.XsdString;
+import org.jboss.jca.common.api.metadata.spec.XsdString;
 
 import java.util.ArrayList;
 import java.util.List;
