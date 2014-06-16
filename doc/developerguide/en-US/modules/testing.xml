@@ -508,6 +508,9 @@ org.jboss.jca.core.tx.perf.Performance
           <listitem>
             TX_COMMIT_DURATION: The number of milliseconds spent in the resource during tx.commit()
           </listitem>
+          <listitem>
+            MCP_IMPL: The implementation class of ManagedConnectionPool
+          </listitem>
         </itemizedlist>
       </para>
 

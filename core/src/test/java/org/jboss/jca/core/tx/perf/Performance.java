@@ -92,6 +92,9 @@ public class Performance
    private static final long TX_BEGIN_DURATION = 0L;
    private static final long TX_COMMIT_DURATION = 0L;
 
+   private static final String MCP_IMPL =
+      org.jboss.jca.core.connectionmanager.pool.mcp.SemaphoreArrayListManagedConnectionPool.class.getName();
+
    /** Embedded */
    protected static Embedded embedded = null;
 
@@ -109,6 +112,7 @@ public class Performance
 
    static
    {
+      System.setProperty("ironjacamar.mcp", MCP_IMPL);
       System.setProperty("ironjacamar.embedded.management", "true");
 
       if (!RECORD_ENLISTMENT_TRACES)
@@ -672,6 +676,7 @@ public class Performance
     */
    static void printSettings()
    {
+      log.errorf("MCP: %s", MCP_IMPL);
       log.errorf("Clients: %s", Arrays.toString(CLIENTS));
       log.errorf("Pool sizes: %s", Arrays.toString(POOL_SIZES));
       log.errorf("Threads: %s", Arrays.toString(THREAD_POOL_SIZES));
