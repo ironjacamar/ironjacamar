@@ -540,6 +540,17 @@ gnuplot perf.plot
       </para>
 
       <para>
+        Performance reports can be averaged using
+      </para>
+      <programlisting>
+org.jboss.jca.core.tx.perf.AvgReport
+      </programlisting>
+      <para>
+        which takes the .dat files from the <code>PerfReport</code> applications and generates
+        a <code>perf-avg.dat</code> and a <code>perf-avg.plot</code> file.
+      </para>
+
+      <para>
         There is integration with JProfiler through the
       </para>
       <programlisting>
