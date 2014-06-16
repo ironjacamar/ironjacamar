@@ -341,6 +341,12 @@
         <code>dumpQueuedThreads()</code> returns a stack trace of each of the queued threads waiting to obtain a <code>ConnectionListener</code> instance.
       </para>
 
+      <important>
+        The <code>ConnectionListener</code> implements <code>java.lang.Comparable</code>, so <code>ConnectionListener.used()</code> must
+        be called before returning it to the data structure controlling the free connections. There may be a time interval between the call
+        and the actual return.
+      </important>
+
     </section>
 
   </section>

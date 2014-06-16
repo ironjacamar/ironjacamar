@@ -663,24 +663,32 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          kill = true;
       }
 
-      synchronized (cls)
+      // If we are destroying, check the connection is not in the pool
+      if (kill)
       {
-         checkedOut.remove(cl);
-
-         // If we are destroying, check the connection is not in the pool
-         if (kill)
+         synchronized (cls)
          {
             // Adrian Brock: A resource adapter can asynchronously notify us that
             // a connection error occurred.
             // This could happen while the connection is not checked out.
             // e.g. JMS can do this via an ExceptionListener on the connection.
             // I have twice had to reinstate this line of code, PLEASE DO NOT REMOVE IT!
+            checkedOut.remove(cl);
             cls.remove(cl);
+
+            if (clPermits.remove(cl) != null)
+            {
+               permits.release();
+            }
          }
-         // return to the pool
-         else
+      }
+      // return to the pool
+      else
+      {
+         cl.used();
+         synchronized (cls)
          {
-            cl.used();
+            checkedOut.remove(cl);
             if (!cls.contains(cl))
             {
                cls.add(cl);
@@ -689,12 +697,11 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             {
                log.attemptReturnConnectionTwice(cl, new Throwable("STACKTRACE"));
             }
-         }
 
-         ConnectionListener present = clPermits.remove(cl);
-         if (present != null)
-         {
-            permits.release();
+            if (clPermits.remove(cl) != null)
+            {
+               permits.release();
+            }
          }
       }
 
