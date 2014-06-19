@@ -23,7 +23,7 @@ package org.jboss.jca.codegenerator.code;
 
 import org.jboss.jca.codegenerator.ConfigPropType;
 import org.jboss.jca.codegenerator.Definition;
-import org.jboss.jca.common.api.metadata.spec.Connector.Version;
+import org.jboss.jca.codegenerator.Version;
 
 import java.io.IOException;
 import java.io.Writer;
