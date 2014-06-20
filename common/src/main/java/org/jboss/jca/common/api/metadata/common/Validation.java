@@ -36,6 +36,13 @@ import java.util.Map;
 public interface Validation extends JCAMetadata
 {
    /**
+    * Get the validateOnMatch.
+    *
+    * @return the validateOnMatch.
+    */
+   public Boolean isValidateOnMatch();
+
+   /**
     * Get the backgroundValidation.
     *
     * @return the backgroundValidation.
@@ -69,6 +76,11 @@ public interface Validation extends JCAMetadata
        *
        */
       UNKNOWN(null),
+
+      /**
+       * validateOnMatch tag
+       */
+      VALIDATE_ON_MATCH("validate-on-match"),
 
       /**
        * background-validation tag

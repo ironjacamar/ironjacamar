@@ -48,6 +48,9 @@ public class PoolConfiguration
    /** Idle timeout period. Default 30 mins */
    private AtomicInteger idleTimeoutMinutes;
 
+   /** Validate on match validation */
+   private AtomicBoolean validateOnMatch;
+   
    /** Background validation */
    private AtomicBoolean backgroundValidation;
    
@@ -76,6 +79,7 @@ public class PoolConfiguration
       maxSize = new AtomicInteger(20);
       blockingTimeout = new AtomicLong(30000);
       idleTimeoutMinutes = new AtomicInteger(30);
+      validateOnMatch = new AtomicBoolean(false);
       backgroundValidation = new AtomicBoolean(false);
       backgroundValidationMillis = new AtomicLong(0);
       prefill = new AtomicBoolean(false);
@@ -179,10 +183,29 @@ public class PoolConfiguration
    }
 
    /**
+    * @return Should validate on match validation be performed
+    */
+   public boolean isValidateOnMatch()
+   {
+      return validateOnMatch.get();
+   }
+
+   /**
+    * @param v Should validate on match validation be performed 
+    */
+   public void setValidateOnMatch(boolean v)
+   {
+      this.validateOnMatch.set(v);
+   }
+
+   /**
     * @return Should background validation be performed
     */
    public boolean isBackgroundValidation()
    {
+      if (isValidateOnMatch())
+         return false;
+
       return backgroundValidation.get();
    }
 
@@ -275,6 +298,7 @@ public class PoolConfiguration
       sb.append(" maxSize=").append(maxSize.get());
       sb.append(" blockingTimeout=").append(blockingTimeout.get());
       sb.append(" idleTimeoutMinutes=").append(idleTimeoutMinutes.get());
+      sb.append(" validateOnMatch=").append(validateOnMatch.get());
       sb.append(" backgroundValidation=").append(backgroundValidation.get());
       sb.append(" backgroundValidationMillis=").append(backgroundValidationMillis.get());
       sb.append(" prefill=").append(prefill.get());

@@ -894,6 +894,7 @@ public abstract class AbstractParser
       ParserException, 
       ValidateException
    {
+      Boolean validateOnMatch = Defaults.VALIDATE_ON_MATCH;
       Boolean useFastFail = Defaults.USE_FAST_FAIL;
       Boolean backgroundValidation = Defaults.BACKGROUND_VALIDATION;
       Long backgroundValidationMillis = null;
@@ -905,8 +906,7 @@ public abstract class AbstractParser
             case END_ELEMENT : {
                if (ConnectionDefinition.Tag.forName(reader.getLocalName()) == ConnectionDefinition.Tag.VALIDATION)
                {
-
-                  return new ValidationImpl(backgroundValidation, backgroundValidationMillis, useFastFail);
+                  return new ValidationImpl(validateOnMatch, backgroundValidation, backgroundValidationMillis, useFastFail);
                }
                else
                {
@@ -920,6 +920,10 @@ public abstract class AbstractParser
             case START_ELEMENT : {
                switch (Validation.Tag.forName(reader.getLocalName()))
                {
+                  case VALIDATE_ON_MATCH : {
+                     validateOnMatch = elementAsBoolean(reader);
+                     break;
+                  }
                   case BACKGROUND_VALIDATION_MILLIS : {
                      backgroundValidationMillis = elementAsLong(reader);
                      break;

@@ -461,6 +461,23 @@ public interface CoreLogger extends BasicLogger
    @Message(id = 619, value = "Invalid property '%s' with value '%s' for %s")
    public void invalidCapacityOption(String key, String value, String policy);
    
+   /**
+    * ValidateOnMatch was specified with a non compliant ManagedConnectionFactory interface
+    * @param mcf The ManagedConnectionFactory
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 620, value = "Warning: ValidateOnMatch validation was specified with a non compliant " +
+            "ManagedConnectionFactory: %s")
+   public void validateOnMatchNonCompliantManagedConnectionFactory(String mcf);
+   
+   /**
+    * Destroying connection that could not be validated
+    * @param cl The ConnectionListener
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 621, value = "Destroying connection that could not be validated: %s")
+   public void destroyingConnectionNotValidated(Object cl);
+
    // NAMING (700)
 
    /**

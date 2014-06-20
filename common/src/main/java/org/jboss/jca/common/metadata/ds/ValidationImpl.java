@@ -40,22 +40,19 @@ import org.jboss.logging.Messages;
  */
 public class ValidationImpl extends org.jboss.jca.common.metadata.common.ValidationImpl implements Validation
 {
-
    /** The serialVersionUID */
    private static final long serialVersionUID = 1L;
 
    /** The bundle */
    private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
-   private final Extension validConnectionChecker;
+   private Extension validConnectionChecker;
 
-   private final String checkValidConnectionSql;
+   private String checkValidConnectionSql;
 
-   private final Boolean validateOnMatch;
+   private Extension staleConnectionChecker;
 
-   private final Extension staleConnectionChecker;
-
-   private final Extension exceptionSorter;
+   private Extension exceptionSorter;
 
    /**
     * Create a new ValidationImpl.
@@ -74,78 +71,49 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.Validat
       Extension validConnectionChecker, String checkValidConnectionSql, Boolean validateOnMatch,
       Extension staleConnectionChecker, Extension exceptionSorter) throws ValidateException
    {
-      super(backgroundValidation, backgroundValidationMillis, useFastFail);
+      super(validateOnMatch, backgroundValidation, backgroundValidationMillis, useFastFail);
       this.validConnectionChecker = validConnectionChecker;
       this.checkValidConnectionSql = checkValidConnectionSql;
-      this.validateOnMatch = validateOnMatch;
       this.staleConnectionChecker = staleConnectionChecker;
       this.exceptionSorter = exceptionSorter;
       this.validate();
    }
 
    /**
-    * Get the checkValidConnectionSql.
-    *
-    * @return the checkValidConnectionSql.
+    * {@inheritDoc}
     */
-   @Override
-   public final String getCheckValidConnectionSql()
+   public String getCheckValidConnectionSql()
    {
       return checkValidConnectionSql;
    }
 
    /**
-    * Get the validateOnMatch.
-    *
-    * @return the validateOnMatch.
+    * {@inheritDoc}
     */
-   @Override
-   public final Boolean isValidateOnMatch()
-   {
-      return validateOnMatch;
-   }
-
-   /**
-    * Get the validConnectionChecker.
-    *
-    * @return the validConnectionChecker.
-    */
-   public final Extension getValidConnectionChecker()
+   public Extension getValidConnectionChecker()
    {
       return validConnectionChecker;
    }
 
    /**
-    * Get the validateOnMatch.
-    *
-    * @return the validateOnMatch.
+    * {@inheritDoc}
     */
-   public final Boolean getValidateOnMatch()
-   {
-      return validateOnMatch;
-   }
-
-   /**
-    * Get the staleConnectionChecker.
-    *
-    * @return the staleConnectionChecker.
-    */
-   public final Extension getStaleConnectionChecker()
+   public Extension getStaleConnectionChecker()
    {
       return staleConnectionChecker;
    }
 
    /**
-    * Get the exceptionSorter.
-    *
-    * @return the exceptionSorter.
+    * {@inheritDoc}
     */
-   public final Extension getExceptionSorter()
+   public Extension getExceptionSorter()
    {
       return exceptionSorter;
    }
 
-   @Override
+   /**
+    * {@inheritDoc}
+    */
    public void validate() throws ValidateException
    {
       if (this.backgroundValidationMillis != null && this.backgroundValidationMillis < 0)
@@ -189,7 +157,9 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.Validat
       }
    }
 
-   @Override
+   /**
+    * {@inheritDoc}
+    */
    public String toString()
    {
       StringBuilder sb = new StringBuilder();
@@ -314,7 +284,9 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.Validat
       return sb.toString();
    }
 
-   @Override
+   /**
+    * {@inheritDoc}
+    */
    public int hashCode()
    {
       final int prime = 31;
@@ -323,11 +295,12 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.Validat
       result = prime * result + ((exceptionSorter == null) ? 0 : exceptionSorter.hashCode());
       result = prime * result + ((staleConnectionChecker == null) ? 0 : staleConnectionChecker.hashCode());
       result = prime * result + ((validConnectionChecker == null) ? 0 : validConnectionChecker.hashCode());
-      result = prime * result + ((validateOnMatch == null) ? 0 : validateOnMatch.hashCode());
       return result;
    }
 
-   @Override
+   /**
+    * {@inheritDoc}
+    */
    public boolean equals(Object obj)
    {
       if (this == obj)
@@ -364,13 +337,6 @@ public class ValidationImpl extends org.jboss.jca.common.metadata.common.Validat
             return false;
       }
       else if (!validConnectionChecker.equals(other.validConnectionChecker))
-         return false;
-      if (validateOnMatch == null)
-      {
-         if (other.validateOnMatch != null)
-            return false;
-      }
-      else if (!validateOnMatch.equals(other.validateOnMatch))
          return false;
       return true;
    }

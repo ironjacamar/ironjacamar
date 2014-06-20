@@ -62,11 +62,12 @@ import javax.security.auth.Subject;
 import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.UserTransaction;
 
+import org.jboss.logging.Logger;
+
 import org.ietf.jgss.GSSCredential;
 import org.ietf.jgss.GSSException;
 import org.ietf.jgss.GSSName;
 import org.ietf.jgss.Oid;
-import org.jboss.logging.Logger;
 
 /**
  * BaseWrapperManagedConnectionFactory
@@ -199,10 +200,6 @@ public abstract class BaseWrapperManagedConnectionFactory
 
    /** URL selector strategy class name */
    protected String urlSelectorStrategyClassName;
-
-   private Boolean validateOnMatch = Boolean.TRUE;
-
-   private Boolean backgroundValidation = Boolean.FALSE;
 
    /** Whether to use a try lock */
    private Integer useTryLock = Integer.valueOf(60);
@@ -526,54 +523,6 @@ public abstract class BaseWrapperManagedConnectionFactory
    }
 
    /**
-    * Get the validate on match value
-    * @return The value
-    */
-   public Boolean getValidateOnMatch()
-   {
-      // Implicit enable if possible
-      if (((validateOnMatch == null || Boolean.FALSE.equals(validateOnMatch)) &&
-            (backgroundValidation == null || Boolean.FALSE.equals(backgroundValidation))) &&
-          (validConnectionCheckerClassName != null || checkValidConnectionSQL != null)
-      )
-      {
-         log.infof("Enabling <validate-on-match> for %s", jndiName);
-         validateOnMatch = Boolean.TRUE;
-      }
-
-      return this.validateOnMatch;
-   }
-
-   /**
-    * Set the validate on match value
-    * @param validateOnMatch The value
-    */
-   public void setValidateOnMatch(Boolean validateOnMatch)
-   {
-      if (validateOnMatch != null)
-         this.validateOnMatch = validateOnMatch;
-   }
-
-   /**
-    * Get the background validation value
-    * @return The value
-    */
-   public Boolean getBackgroundValidation()
-   {
-      return this.backgroundValidation;
-   }
-
-   /**
-    * Set the background validation value
-    * @param v The value
-    */
-   public void setBackgroundValidation(Boolean v)
-   {
-      if (v != null)
-         this.backgroundValidation = v;
-   }
-
-   /**
     * Get the exception sorter class name
     * @return The value
     */
@@ -608,8 +557,6 @@ public abstract class BaseWrapperManagedConnectionFactory
    {
       validConnectionCheckerClassName = value;
    }
-
-
 
    /**
     * Is transaction query timeout set

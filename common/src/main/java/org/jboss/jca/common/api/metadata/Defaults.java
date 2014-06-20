@@ -166,7 +166,7 @@ public interface Defaults
    /**
     * Background validation
     */
-   public static final Boolean BACKGROUND_VALIDATION = Boolean.FALSE;
+   public static final Boolean BACKGROUND_VALIDATION = null;
 
    /**
     * Use fast fail
@@ -176,7 +176,7 @@ public interface Defaults
    /**
     * Validate on match
     */
-   public static final Boolean VALIDATE_ON_MATCH = Boolean.FALSE;
+   public static final Boolean VALIDATE_ON_MATCH = null;
 
    //security
    /**

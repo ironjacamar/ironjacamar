@@ -98,6 +98,7 @@ import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.ResourceAdapterAssociation;
 import javax.resource.spi.TransactionSupport;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
+import javax.resource.spi.ValidatingManagedConnectionFactory;
 import javax.resource.spi.security.PasswordCredential;
 import javax.resource.spi.work.WorkContext;
 import javax.security.auth.Subject;
@@ -673,6 +674,9 @@ public abstract class AbstractResourceAdapterDeployer
 
       if (vp != null)
       {
+         if (vp.isValidateOnMatch() != null)
+            pc.setValidateOnMatch(vp.isValidateOnMatch().booleanValue());
+
          if (vp.isBackgroundValidation() != null)
             pc.setBackgroundValidation(vp.isBackgroundValidation().booleanValue());
 
@@ -1423,6 +1427,24 @@ public abstract class AbstractResourceAdapterDeployer
                                  {
                                     // Default default settings
                                     pc = createPoolConfiguration(null, null, null);
+                                 }
+
+                                 // Check validation
+                                 if (connectionDefinition != null)
+                                 {
+                                    if (connectionDefinition.getValidation() == null ||
+                                        (connectionDefinition.getValidation().isValidateOnMatch() == null &&
+                                         connectionDefinition.getValidation().isBackgroundValidation() == null))
+                                    {
+                                       if (!pc.isValidateOnMatch() && !pc.isBackgroundValidation())
+                                       {
+                                          if (mcf instanceof ValidatingManagedConnectionFactory)
+                                          {
+                                             log.enablingValidateOnMatch(connectionDefinition.getJndiName());
+                                             pc.setValidateOnMatch(true);
+                                          }
+                                       }
+                                    }
                                  }
                                  
                                  if (flushStrategy == null)

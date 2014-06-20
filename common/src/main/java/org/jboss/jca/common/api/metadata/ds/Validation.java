@@ -53,13 +53,6 @@ public interface Validation extends org.jboss.jca.common.api.metadata.common.Val
    public String getCheckValidConnectionSql();
 
    /**
-    * Get the validateOnMatch.
-    *
-    * @return the validateOnMatch.
-    */
-   public Boolean isValidateOnMatch();
-
-   /**
     * Get the staleConnectionChecker
     *
     * @return the staleConnectionChecker

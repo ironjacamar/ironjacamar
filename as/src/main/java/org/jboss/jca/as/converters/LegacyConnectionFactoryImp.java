@@ -184,7 +184,7 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
    public LegacyConnectionFactoryImp buildValidation(Boolean backgroundValidation, Long backgroundValidationMillis, 
          Boolean useFastFail) throws Exception
    {
-      validation = new ValidationImpl(backgroundValidation, backgroundValidationMillis, useFastFail);
+      validation = new ValidationImpl(Boolean.FALSE, backgroundValidation, backgroundValidationMillis, useFastFail);
       return this;
    }
 

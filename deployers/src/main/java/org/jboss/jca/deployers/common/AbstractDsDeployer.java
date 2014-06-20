@@ -434,6 +434,17 @@ public abstract class AbstractDsDeployer
       // Create the pool
       PoolConfiguration pc = createPoolConfiguration(ds.getPool(), ds.getTimeOut(), ds.getValidation());
 
+      // Check validation
+      if (ds.getValidation() != null && !pc.isValidateOnMatch() && !pc.isBackgroundValidation())
+      {
+         if (ds.getValidation().getValidConnectionChecker() != null ||
+             ds.getValidation().getCheckValidConnectionSql() != null)
+         {
+            log.enablingValidateOnMatch(jndiName);
+            pc.setValidateOnMatch(true);
+         }
+      }
+
       PoolFactory pf = new PoolFactory();
       PoolStrategy strategy = PoolStrategy.ONE_POOL;
 
@@ -663,6 +674,17 @@ public abstract class AbstractDsDeployer
       initAndInjectClassLoaderPlugin(mcf, ds);
       // Create the pool
       PoolConfiguration pc = createPoolConfiguration(ds.getXaPool(), ds.getTimeOut(), ds.getValidation());
+
+      // Check validation
+      if (ds.getValidation() != null && !pc.isValidateOnMatch() && !pc.isBackgroundValidation())
+      {
+         if (ds.getValidation().getValidConnectionChecker() != null ||
+             ds.getValidation().getCheckValidConnectionSql() != null)
+         {
+            log.enablingValidateOnMatch(jndiName);
+            pc.setValidateOnMatch(true);
+         }
+      }
 
       Boolean noTxSeparatePool = Defaults.NO_TX_SEPARATE_POOL;
 
@@ -1048,6 +1070,9 @@ public abstract class AbstractDsDeployer
 
       if (vp != null)
       {
+         if (vp.isValidateOnMatch() != null)
+            pc.setValidateOnMatch(vp.isValidateOnMatch().booleanValue());
+
          if (vp.isBackgroundValidation() != null)
             pc.setBackgroundValidation(vp.isBackgroundValidation().booleanValue());
 

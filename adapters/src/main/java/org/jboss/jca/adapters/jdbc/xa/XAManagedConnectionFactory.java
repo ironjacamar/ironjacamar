@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.sql.SQLException;
@@ -549,11 +548,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
             }
             else if (mc.getProperties().equals(newProps))
             {
-               //Next check to see if we are validating on matchManagedConnections
-               if ((getValidateOnMatch() && mc.checkValid()) || !getValidateOnMatch())
-               {
-                  return mc;
-               }
+               return mc;
             }
          }
       }

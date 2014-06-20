@@ -31,7 +31,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.sql.Connection;
@@ -283,7 +282,8 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       }
    }
 
-   private LocalManagedConnection createLocalManagedConnection(final String url, final Properties props, final Properties copy)
+   private LocalManagedConnection createLocalManagedConnection(final String url, final Properties props,
+                                                               final Properties copy)
       throws ResourceException
    {
       // We need to register with the DriverManager if there is a driver class no matter what
@@ -502,11 +502,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
             }
             else if (mc.getProperties().equals(newProps))
             {
-               //Next check to see if we are validating on matchManagedConnections
-               if ((getValidateOnMatch() && mc.checkValid()) || !getValidateOnMatch())
-               {
-                  return mc;
-               }
+               return mc;
             }
          }
       }

@@ -380,25 +380,57 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                      Object matchedMC = mcf.matchManagedConnections(Collections.singleton(cl.getManagedConnection()),
                                                                     subject, cri);
 
+                     boolean valid = true;
                      if (matchedMC != null)
                      {
-                        if (trace)
-                           log.trace("supplying ManagedConnection from pool: " + cl);
-
-                        clPermits.put(cl, cl);
-
-                        lastUsed = System.currentTimeMillis();
-
-                        if (statistics.isEnabled())
+                        if (poolConfiguration.isValidateOnMatch())
                         {
-                           statistics.deltaTotalGetTime(lastUsed - startWait);
-                           statistics.deltaTotalPoolTime(lastUsed - cl.getLastUsedTime());
+                           if (mcf instanceof ValidatingManagedConnectionFactory)
+                           {
+                              try
+                              {
+                                 ValidatingManagedConnectionFactory vcf = (ValidatingManagedConnectionFactory) mcf;
+                                 Set candidateSet = Collections.singleton(cl.getManagedConnection());
+                                 candidateSet = vcf.getInvalidConnections(candidateSet);
+
+                                 if (candidateSet != null && candidateSet.size() > 0)
+                                 {
+                                    valid = false;
+                                 }
+                              }
+                              catch (Throwable t)
+                              {
+                                 valid = false;
+                                 if (trace)
+                                    log.tracef("Exception while ValidateOnMatch: " + t.getMessage(), t);
+                              }
+                           }
+                           else
+                           {
+                              log.validateOnMatchNonCompliantManagedConnectionFactory(mcf.getClass().getName());
+                           }
                         }
 
-                        if (Tracer.isEnabled())
-                           Tracer.getConnectionListener(pool.getName(), cl, true, pool.isInterleaving());
+                        if (valid)
+                        {
+                           if (trace)
+                              log.trace("supplying ManagedConnection from pool: " + cl);
 
-                        return cl;
+                           clPermits.put(cl, cl);
+
+                           lastUsed = System.currentTimeMillis();
+
+                           if (statistics.isEnabled())
+                           {
+                              statistics.deltaTotalGetTime(lastUsed - startWait);
+                              statistics.deltaTotalPoolTime(lastUsed - cl.getLastUsedTime());
+                           }
+
+                           if (Tracer.isEnabled())
+                              Tracer.getConnectionListener(pool.getName(), cl, true, pool.isInterleaving());
+
+                           return cl;
+                        }
                      }
 
                      // Match did not succeed but no exception was thrown.
@@ -406,7 +438,14 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                      // connection died while being checked.  We need to
                      // distinguish these cases, but for now we always
                      // destroy the connection.
-                     log.destroyingConnectionNotSuccessfullyMatched(cl);
+                     if (valid)
+                     {
+                        log.destroyingConnectionNotSuccessfullyMatched(cl);
+                     }
+                     else
+                     {
+                        log.destroyingConnectionNotValidated(cl);
+                     }
 
                      synchronized (cls)
                      {

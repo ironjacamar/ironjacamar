@@ -42,6 +42,9 @@ public class ValidationImpl implements Validation
    /** The bundle */
    private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
+   /** validateOnMatch **/
+   protected Boolean validateOnMatch;
+
    /** backgroundValidation **/
    protected Boolean backgroundValidation;
 
@@ -54,18 +57,30 @@ public class ValidationImpl implements Validation
    /**
     * Constructor
     *
+    * @param validateOnMatch validateOnMatch
     * @param backgroundValidation backgroundValidation
     * @param backgroundValidationMillis backgroundValidationMillis
     * @param useFastFail useFastFail
     * @throws ValidateException in case of error
     */
-   public ValidationImpl(Boolean backgroundValidation, Long backgroundValidationMillis, Boolean useFastFail)
+   public ValidationImpl(Boolean validateOnMatch,
+                         Boolean backgroundValidation, Long backgroundValidationMillis,
+                         Boolean useFastFail)
       throws ValidateException
    {
+      this.validateOnMatch = validateOnMatch;
       this.backgroundValidation = backgroundValidation;
       this.backgroundValidationMillis = backgroundValidationMillis;
       this.useFastFail = useFastFail;
       partialCommonValidate();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public Boolean isValidateOnMatch()
+   {
+      return validateOnMatch;
    }
 
    /**
@@ -111,6 +126,7 @@ public class ValidationImpl implements Validation
    {
       final int prime = 31;
       int result = 1;
+      result = prime * result + ((validateOnMatch == null) ? 0 : validateOnMatch.hashCode());
       result = prime * result + ((backgroundValidation == null) ? 0 : backgroundValidation.hashCode());
       result = prime * result + ((backgroundValidationMillis == null) ? 0 : backgroundValidationMillis.hashCode());
       result = prime * result + ((useFastFail == null) ? 0 : useFastFail.hashCode());
@@ -129,6 +145,13 @@ public class ValidationImpl implements Validation
       if (!(obj instanceof ValidationImpl))
          return false;
       ValidationImpl other = (ValidationImpl) obj;
+      if (validateOnMatch == null)
+      {
+         if (other.validateOnMatch != null)
+            return false;
+      }
+      else if (!validateOnMatch.equals(other.validateOnMatch))
+         return false;
       if (backgroundValidation == null)
       {
          if (other.backgroundValidation != null)
@@ -161,6 +184,13 @@ public class ValidationImpl implements Validation
       StringBuilder sb = new StringBuilder(1024);
 
       sb.append("<validation>");
+
+      if (validateOnMatch != null)
+      {
+         sb.append("<").append(Validation.Tag.VALIDATE_ON_MATCH).append(">");
+         sb.append(validateOnMatch);
+         sb.append("</").append(Validation.Tag.VALIDATE_ON_MATCH).append(">");
+      }
 
       if (backgroundValidation != null)
       {

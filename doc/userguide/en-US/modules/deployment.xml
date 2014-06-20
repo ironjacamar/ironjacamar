@@ -602,6 +602,15 @@ java:/eis/ao/&lt;deploymentName&gt;
              </row>
            </thead>
            <tbody>
+              <row>
+                <entry><code>validate-on-match</code></entry>
+                <entry>
+                  The validate-on-match element indicates whether or not connection 
+                  level validation should be done when a connection factory attempts to match 
+                  a managed connection for a given set. This is typically exclusive to the 
+                  use of background validation (1.2)
+                </entry>
+              </row>
              <row>
                <entry><code>background-validation</code></entry>
                <entry>

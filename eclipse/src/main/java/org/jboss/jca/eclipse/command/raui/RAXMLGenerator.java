@@ -400,7 +400,7 @@ public class RAXMLGenerator
       Boolean useFastFail = validationConfig.getUseFastFail();
       try
       {
-         return new ValidationImpl(backgroundValidation, backgroundValidationMillis, useFastFail);
+         return new ValidationImpl(Boolean.FALSE, backgroundValidation, backgroundValidationMillis, useFastFail);
       }
       catch (ValidateException e)
       {

@@ -597,26 +597,6 @@ public class Merger
                   break;
                }
 
-               case VALIDATEONMATCH : {
-                  if (ds != null && ds.getValidation() != null)
-                  {
-                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getValidation()
-                        .isValidateOnMatch()));
-                  }
-
-                  break;
-               }
-
-               case BACKGROUNDVALIDATION : {
-                  if (ds != null && ds.getValidation() != null)
-                  {
-                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getValidation()
-                        .isBackgroundValidation()));
-                  }
-
-                  break;
-               }
-
                case TRANSACTIONQUERYTIMEOUT : {
                   if (ds != null && ds.getTimeOut() != null)
                   {
@@ -662,6 +642,14 @@ public class Merger
                   break;
                }
                case URLPROPERTY :
+                  if (xads != null && xads.getUrlProperty() != null && !xads.getUrlProperty().trim().equals(""))
+                  {
+                     configProperties
+                        .add(ConfigPropertyFactory.createConfigProperty(prototype, xads.getUrlProperty()));
+                  }
+
+                  break;
+
                case CONNECTIONPROPERTIES : {
                   if (ds != null && ds.getConnectionProperties() != null)
                   {
@@ -856,12 +844,6 @@ public class Merger
          /** TRACKSTATEMENTS **/
          TRACKSTATEMENTS("TrackStatements", "java.lang.String",
             "Whether to track unclosed statements - false/true/nowarn"),
-         /** VALIDATEONMATCH **/
-         VALIDATEONMATCH("ValidateOnMatch", "java.lang.Boolean",
-            "Whether to validate the connection on the ManagedConnectionFactory.matchManagedConnection method"),
-         /** BACKGROUNDVALIDATION **/
-         BACKGROUNDVALIDATION("BackgroundValidation", "java.lang.Boolean",
-            "The connections will be validated part of getInvalidConnections"),
          /** TRANSACTIONQUERYTIMEOUT **/
          TRANSACTIONQUERYTIMEOUT("TransactionQueryTimeout", "java.lang.Boolean",
             "Whether to set the query timeout based on the transaction timeout"),

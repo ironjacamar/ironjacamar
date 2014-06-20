@@ -475,6 +475,16 @@
             <entry>Invalid capacity property</entry>
           </row>
           <row>
+            <entry>620</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Warning: ValidateOnMatch validation was specified with a non compliant ManagedConnectionFactory interface</entry>
+          </row>
+          <row>
+            <entry>621</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Destroying connection that could not be validated</entry>
+          </row>
+          <row>
             <entry>651</entry>
             <entry><code>EXCEPTION</code></entry>
             <entry>Unable to get managed connection pool</entry>
@@ -973,6 +983,11 @@
             <entry>20017</entry>
             <entry><code>WARN</code></entry>
             <entry>Invalid archive</entry>
+          </row>
+          <row>
+            <entry>20018</entry>
+            <entry><code>INFO</code></entry>
+            <entry>Enabling &lt;validate-on-match&gt;</entry>
           </row>
           <row>
             <entry>20051</entry>
