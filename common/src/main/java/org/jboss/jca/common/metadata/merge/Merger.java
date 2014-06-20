@@ -660,6 +660,20 @@ public class Merger
                   break;
                }
                case URLPROPERTY :
+                  if (xads != null)
+                  {
+                     if (xads instanceof org.jboss.jca.common.api.metadata.ds.v12.XaDataSource)
+                     {
+                        org.jboss.jca.common.api.metadata.ds.v12.XaDataSource xads12 =
+                           (org.jboss.jca.common.api.metadata.ds.v12.XaDataSource)xads;
+
+                        if (xads12.getUrlProperty() != null && !xads12.getUrlProperty().trim().equals(""))
+                           configProperties
+                              .add(ConfigPropertyFactory.createConfigProperty(prototype, xads12.getUrlProperty()));
+                     }
+                  }
+
+                  break;
                case CONNECTIONPROPERTIES : {
                   if (ds != null && ds.getConnectionProperties() != null)
                   {
