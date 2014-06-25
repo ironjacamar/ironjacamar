@@ -62,6 +62,8 @@ public class DataSourceConverter
    {
       LegacyDsParser parser = new LegacyDsParser();
       DataSources ds = parser.parse(in);
+      if (ds == null)
+         return;
 
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
       DocumentBuilder db = dbf.newDocumentBuilder();

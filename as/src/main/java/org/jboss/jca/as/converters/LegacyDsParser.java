@@ -246,7 +246,7 @@ public class LegacyDsParser extends AbstractParser
       TrackStatementsEnum trackStatements = TrackStatementsEnum.FALSE;
       
       TransactionIsolation transactionIsolation = TransactionIsolation.TRANSACTION_NONE;
-      String securityDomain = DEFAULT_SECURITY_DOMAIN;
+      String securityDomain = null;
       //Extension reauthPlugin = null;
       
       Boolean backgroundValidation = Defaults.BACKGROUND_VALIDATION;
@@ -311,6 +311,7 @@ public class LegacyDsParser extends AbstractParser
                   case SECURITY_DOMAIN :
                   case SECURITY_DOMAIN_AND_APPLICATION : {
                      securityDomain = elementAsString(reader);
+                     userName = null;
                      break;
                   }
                   case XA_DATASOURCE_PROPERTY : {
@@ -396,8 +397,8 @@ public class LegacyDsParser extends AbstractParser
                      break;
                   }
                   case USER_NAME : {
-                     userName = elementAsString(reader);
-                     securityDomain = null;
+                     if (securityDomain == null)
+                        userName = elementAsString(reader);
                      break;
                   }
                   case MAX_POOL_SIZE : {
@@ -543,7 +544,7 @@ public class LegacyDsParser extends AbstractParser
       Boolean setTxQueryTimeout = Defaults.SET_TX_QUERY_TIMEOUT;
       
       TransactionIsolation transactionIsolation = TransactionIsolation.TRANSACTION_NONE;
-      String securityDomain = DEFAULT_SECURITY_DOMAIN;
+      String securityDomain = null;
       //Extension reauthPlugin = null;
       
       Boolean backgroundValidation = Defaults.BACKGROUND_VALIDATION;
@@ -611,6 +612,7 @@ public class LegacyDsParser extends AbstractParser
                   case SECURITY_DOMAIN :
                   case SECURITY_DOMAIN_AND_APPLICATION : {
                      securityDomain = elementAsString(reader);
+                     userName = null;
                      break;
                   }
                   
@@ -659,8 +661,8 @@ public class LegacyDsParser extends AbstractParser
                      break;
                   }
                   case USER_NAME : {
-                     userName = elementAsString(reader);
-                     securityDomain = null;
+                     if (securityDomain == null)
+                        userName = elementAsString(reader);
                      break;
                   }
                   case MAX_POOL_SIZE : {
