@@ -72,6 +72,7 @@ public class NoopTSPerfTestCase extends Performance
 
       raa.setEnabled(false);
 
+      beforeRun();
       printSettings();
    }
 
@@ -82,6 +83,7 @@ public class NoopTSPerfTestCase extends Performance
    @AfterClass
    public static void afterClass() throws Throwable
    {
+      afterRun();
       dumpData();
 
       // Undeploy

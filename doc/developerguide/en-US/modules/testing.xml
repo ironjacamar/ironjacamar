@@ -482,9 +482,6 @@ org.jboss.jca.core.tx.perf.Performance
             POOL_SIZES: The pool size in each run
           </listitem>
           <listitem>
-            THREAD_POOL_SIZE: The thread pool size in each run
-          </listitem>
-          <listitem>
             DO_RAMP_UP: Should ramp up be performed
           </listitem>
           <listitem>
@@ -559,6 +556,12 @@ ant jprofiler
       <para>
         task. It is required to define the installation directory and the session
         id before the task is executed.
+      </para>
+
+      <para>
+        The Bash scripts <code>perf-jprofiler.sh</code> and <code>perf-flightrecorder.sh</code>,
+        both located in <code>core/src/test/resource</code> can be used as a template for
+        command line based runs.
       </para>
 
     </section>

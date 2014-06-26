@@ -59,6 +59,7 @@ public class NarayanaMemPerfTestCase extends Performance
 
       raa.setEnabled(false);
 
+      beforeRun();
       printSettings();
    }
 
@@ -69,6 +70,7 @@ public class NarayanaMemPerfTestCase extends Performance
    @AfterClass
    public static void afterClass() throws Throwable
    {
+      afterRun();
       dumpData();
 
       // Shutdown embedded
@@ -84,6 +86,39 @@ public class NarayanaMemPerfTestCase extends Performance
     */
    public static void main(String[] args)
    {
-      org.junit.runner.JUnitCore.main(NarayanaMemPerfTestCase.class.getName());
+      if (args.length == 0)
+      {
+         org.junit.runner.JUnitCore.main(NarayanaMemPerfTestCase.class.getName());
+      }
+      else
+      {
+         try
+         {
+            beforeClass();
+
+            NarayanaMemPerfTestCase test = new NarayanaMemPerfTestCase();
+            int count = Integer.valueOf(args[0]);
+            for (int i = 0; i < count; i++)
+            {
+               test.testXA();
+            }
+         }
+         catch (Throwable t)
+         {
+            log.fatal(t.getMessage(), t);
+         }
+         finally
+         {
+            try
+            {
+               afterClass();
+            }
+            catch (Throwable ignore)
+            {
+               // Ignore
+            }
+         }
+      }
+      System.exit(0);
    }
 }

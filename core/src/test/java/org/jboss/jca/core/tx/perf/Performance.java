@@ -44,7 +44,9 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
@@ -80,7 +82,6 @@ public class Performance
    /** Settings */
    private static final int[] CLIENTS = {1, 10, 25, 50, 100, 150, 200, 250, 300};
    private static final int[] POOL_SIZES = {1, 10, 25, 50, 100, 150, 200, 250, 300};
-   private static final int[] THREAD_POOL_SIZES = {1, 10, 25, 50, 100, 150, 200, 250, 300};
 
    private static final boolean DO_RAMP_UP = true;
    private static final int RAMP_UP_ITERATIONS = 1;
@@ -108,7 +109,7 @@ public class Performance
 
    private ResourceAdapterArchive resourceAdapter;
    private ResourceAdaptersDescriptor resourceAdapterActivation;
-   private ExecutorService es;
+   private static ExecutorService es;
 
    static
    {
@@ -223,21 +224,11 @@ public class Performance
     *
     * @param dashRaXml The deployment metadata
     * @param poolSize The pool size
-    * @param threadPoolSize The thread pool size
     */
-   public void rampUp(ResourceAdaptersDescriptor dashRaXml, int poolSize, int threadPoolSize)
+   public void rampUp(ResourceAdaptersDescriptor dashRaXml, int poolSize)
    {
       this.resourceAdapter = createRar();
       this.resourceAdapterActivation = dashRaXml;
-
-      if (threadPoolSize > 0)
-      {
-         this.es = Executors.newFixedThreadPool(threadPoolSize);
-      }
-      else
-      {
-         this.es = Executors.newCachedThreadPool();
-      }
 
       Context context = null;
       try
@@ -299,8 +290,6 @@ public class Performance
     */
    public void rampDown(String type, int clients)
    {
-      es.shutdown();
-
       dumpStatistics(type, clients);
 
       try
@@ -316,7 +305,6 @@ public class Performance
       {
          resourceAdapter = null;
          resourceAdapterActivation = null;
-         es = null;
       }
    }
 
@@ -596,7 +584,7 @@ public class Performance
    {
       for (int i = 0; i < CLIENTS.length; i++)
       {
-         rampUp(createNoTxDeployment(POOL_SIZES[i]), POOL_SIZES[i], THREAD_POOL_SIZES[i]);
+         rampUp(createNoTxDeployment(POOL_SIZES[i]), POOL_SIZES[i]);
          insertResult("NoTransaction", CLIENTS[i], testBase(CLIENTS[i], USE_TRANSACTION_FOR_NOTRANSACTION));
          rampDown("NoTransaction", CLIENTS[i]);
       }
@@ -612,7 +600,7 @@ public class Performance
    {
       for (int i = 0; i < CLIENTS.length; i++)
       {
-         rampUp(createLocalTxDeployment(POOL_SIZES[i]), POOL_SIZES[i], THREAD_POOL_SIZES[i]);
+         rampUp(createLocalTxDeployment(POOL_SIZES[i]), POOL_SIZES[i]);
          insertResult("LocalTransaction", CLIENTS[i], testBase(CLIENTS[i], true));
          rampDown("LocalTransaction", CLIENTS[i]);
       }
@@ -628,7 +616,7 @@ public class Performance
    {
       for (int i = 0; i < CLIENTS.length; i++)
       {
-         rampUp(createXATxDeployment(POOL_SIZES[i]), POOL_SIZES[i], THREAD_POOL_SIZES[i]);
+         rampUp(createXATxDeployment(POOL_SIZES[i]), POOL_SIZES[i]);
          insertResult("XATransaction", CLIENTS[i], testBase(CLIENTS[i], true));
          rampDown("XATransaction", CLIENTS[i]);
       }
@@ -679,7 +667,7 @@ public class Performance
       log.errorf("MCP: %s", MCP_IMPL);
       log.errorf("Clients: %s", Arrays.toString(CLIENTS));
       log.errorf("Pool sizes: %s", Arrays.toString(POOL_SIZES));
-      log.errorf("Threads: %s", Arrays.toString(THREAD_POOL_SIZES));
+      log.errorf("Threads: %s", CLIENTS[CLIENTS.length - 1]);
       log.errorf("RampUp: %s", DO_RAMP_UP);
       log.errorf("RampUp iterations: %s", RAMP_UP_ITERATIONS);
       log.errorf("Transactions: %s", TRANSACTIONS_PER_CLIENT);
@@ -688,5 +676,46 @@ public class Performance
       log.errorf("Use TX for NoTransaction: %s", USE_TRANSACTION_FOR_NOTRANSACTION);
       log.errorf("Transaction begin duration: %s", TX_BEGIN_DURATION);
       log.errorf("Transaction commit duration: %s", TX_COMMIT_DURATION);
+   }
+
+   /**
+    * beforeRun
+    */
+   static void beforeRun()
+   {
+      es = Executors.newFixedThreadPool(CLIENTS[CLIENTS.length - 1], new PerformanceThreadFactory());
+   }
+
+   /**
+    * afterRun
+    */
+   static void afterRun()
+   {
+      es.shutdown();
+   }
+
+   /**
+    * Performance thread factory
+    */
+   static class PerformanceThreadFactory implements ThreadFactory
+   {
+      private AtomicInteger counter;
+
+      /**
+       * Constructor
+       */
+      PerformanceThreadFactory()
+      {
+         counter = new AtomicInteger(0);
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public Thread newThread(Runnable r)
+      {
+         StringBuilder sb = new StringBuilder().append("Performance client ").append(counter.incrementAndGet());
+         return new Thread(r, sb.toString());
+      }
    }
 }
