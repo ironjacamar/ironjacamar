@@ -22,7 +22,6 @@
 package org.jboss.jca.core.tx.jbossts;
 
 import org.jboss.jca.core.CoreLogger;
-import org.jboss.jca.core.spi.transaction.xa.XidWrapper;
 
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
@@ -101,7 +100,6 @@ public class XAResourceWrapperImpl implements org.jboss.jca.core.spi.transaction
     */
    public void commit(Xid xid, boolean onePhase) throws XAException
    {
-      xid = convertXid(xid);
       xaResource.commit(xid, onePhase);
    }
 
@@ -110,7 +108,6 @@ public class XAResourceWrapperImpl implements org.jboss.jca.core.spi.transaction
     */
    public void end(Xid xid, int flags) throws XAException
    {
-      xid = convertXid(xid);
       xaResource.end(xid, flags);
    }
 
@@ -119,7 +116,6 @@ public class XAResourceWrapperImpl implements org.jboss.jca.core.spi.transaction
     */
    public void forget(Xid xid) throws XAException
    {
-      xid = convertXid(xid);
       xaResource.forget(xid);
    }
 
@@ -165,7 +161,6 @@ public class XAResourceWrapperImpl implements org.jboss.jca.core.spi.transaction
     */
    public int prepare(Xid xid) throws XAException
    {
-      xid = convertXid(xid);
       return xaResource.prepare(xid);
    }
 
@@ -182,7 +177,6 @@ public class XAResourceWrapperImpl implements org.jboss.jca.core.spi.transaction
     */
    public void rollback(Xid xid) throws XAException
    {
-      xid = convertXid(xid);      
       xaResource.rollback(xid);
    }
 
@@ -199,7 +193,6 @@ public class XAResourceWrapperImpl implements org.jboss.jca.core.spi.transaction
     */
    public void start(Xid xid, int flags) throws XAException
    {
-      xid = convertXid(xid);
       xaResource.start(xid, flags);
    }
 
@@ -238,19 +231,6 @@ public class XAResourceWrapperImpl implements org.jboss.jca.core.spi.transaction
       return jndiName;
    }
    
-   /**
-    * Return wrapper for given xid.
-    * @param xid xid
-    * @return return wrapper
-    */
-   private Xid convertXid(Xid xid)
-   {
-      if (xid instanceof XidWrapper)
-         return xid;
-      else
-         return new XidWrapperImpl(xid, pad, jndiName);
-   }
-
    /**
     * {@inheritDoc}
     */
