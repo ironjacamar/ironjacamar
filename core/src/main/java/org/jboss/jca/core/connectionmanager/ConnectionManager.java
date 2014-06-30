@@ -26,6 +26,7 @@ import org.jboss.jca.core.connectionmanager.listener.ConnectionCacheListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
+import org.jboss.jca.core.spi.graceful.GracefulShutdown;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 
 import javax.resource.ResourceException;
@@ -47,7 +48,8 @@ import org.jboss.security.SubjectFactory;
  */
 public interface ConnectionManager extends
    org.jboss.jca.core.api.connectionmanager.ConnectionManager,
-   ConnectionCacheListener
+   ConnectionCacheListener,
+   GracefulShutdown
 {
    /**
     * Get the pool.
@@ -103,11 +105,6 @@ public interface ConnectionManager extends
     * @param c connection
     */
    public void unregisterAssociation(ConnectionListener cl, Object c);
-
-   /**
-    * Shutdown
-    */
-   public void shutdown();
 
    /**
     * Create a managed connection listener for the managed connection.

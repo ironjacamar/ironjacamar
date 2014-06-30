@@ -206,6 +206,20 @@ public abstract class AbstractPool implements Pool
    }
 
    /**
+    * {@inheritDoc}
+    */
+   public boolean isIdle()
+   {
+      for (ManagedConnectionPool mcp : mcpPools.values())
+      {
+         if (!mcp.isIdle())
+            return false;
+      }
+
+      return true;
+   }
+
+   /**
     * Retrieve the key for this request.
     *
     * @param subject the subject

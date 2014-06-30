@@ -26,6 +26,7 @@ import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
+import org.jboss.jca.core.api.connectionmanager.pool.FlushMode;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionState;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
@@ -37,6 +38,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.resource.ResourceException;
@@ -90,6 +95,12 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    /** Startup/ShutDown flag */
    private final AtomicBoolean shutdown = new AtomicBoolean(false);
 
+   /** Scheduled executor for graceful shutdown */
+   private ScheduledExecutorService scheduledExecutorService;
+
+   /** Graceful job */
+   private ScheduledFuture scheduledGraceful;
+
    /** Cached connection manager */
    private CachedConnectionManager cachedConnectionManager;
 
@@ -115,6 +126,8 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    {
       this.log = getLogger();
       this.trace = log.isTraceEnabled();
+      this.scheduledExecutorService = null;
+      this.scheduledGraceful = null;
    }
 
    /**
@@ -160,7 +173,66 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    }
 
    /**
-    * Shutdown
+    * {@inheritDoc}
+    */
+   public boolean cancelShutdown()
+   {
+      if (scheduledGraceful != null)
+      {
+         boolean result = scheduledGraceful.cancel(false);
+
+         if (result)
+         {
+            shutdown.set(false);
+            scheduledGraceful = null;
+         }
+         else
+         {
+            return false;
+         }
+      }
+      else if (pool == null)
+      {
+         return false;
+      }
+      else
+      {
+         shutdown.set(false);
+      }
+
+      return true;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void prepareShutdown()
+   {
+      shutdown.set(true);
+
+      if (pool != null)
+         pool.flush(FlushMode.GRACEFULLY);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void prepareShutdown(int shutdown)
+   {
+      prepareShutdown();
+
+      if (shutdown > 0 && scheduledGraceful == null)
+      {
+         if (scheduledExecutorService == null)
+            scheduledExecutorService = Executors.newScheduledThreadPool(1);
+
+         scheduledGraceful =
+            scheduledExecutorService.schedule(new ConnectionManagerShutdown(this), shutdown, TimeUnit.SECONDS);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
     */
    public synchronized void shutdown()
    {
@@ -171,6 +243,31 @@ public abstract class AbstractConnectionManager implements ConnectionManager
          pool.shutdown();
 
       pool = null;
+
+      if (scheduledExecutorService != null)
+         scheduledExecutorService.shutdownNow();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isShutdown()
+   {
+      return shutdown.get();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public int getDelay()
+   {
+      if (scheduledGraceful != null)
+         return (int)scheduledGraceful.getDelay(TimeUnit.SECONDS);
+
+      if (shutdown.get())
+         return Integer.MIN_VALUE;
+      
+      return Integer.MAX_VALUE;
    }
 
    /**
@@ -537,6 +634,9 @@ public abstract class AbstractConnectionManager implements ConnectionManager
             log.resourceExceptionReturningConnection(cl.getManagedConnection(), re);
          }
       }
+
+      if (shutdown.get() && localStrategy.isIdle())
+         shutdown();
    }
 
    /**

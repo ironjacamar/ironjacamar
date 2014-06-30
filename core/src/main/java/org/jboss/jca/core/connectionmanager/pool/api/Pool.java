@@ -93,6 +93,12 @@ public interface Pool extends org.jboss.jca.core.api.connectionmanager.pool.Pool
    public void setInterleaving(boolean v);
 
    /**
+    * Is the pool idle
+    * @return True if idle, otherwise false
+    */
+   public boolean isIdle();
+
+   /**
     * Get a connection
     * 
     * @param trackByTransaction for transaction stickiness

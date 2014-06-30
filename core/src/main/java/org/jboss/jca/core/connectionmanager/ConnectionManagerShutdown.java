@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2011, Red Hat Inc, and individual contributors
+ * Copyright 2014, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -20,47 +20,30 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.core.spi.graceful;
+package org.jboss.jca.core.connectionmanager;
 
 /**
- * The SPI for graceful shutdown
- * 
+ * Shutdown a ConnectionManager
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface GracefulShutdown
+class ConnectionManagerShutdown implements Runnable
 {
-   /**
-    * Cancel shutdown
-    * @return True if the shutdown was canceled; false otherwise
-    */
-   public boolean cancelShutdown();
+   private ConnectionManager cm;
 
    /**
-    * Signal the component to prepare for shutdown
+    * Constructor
+    * @param cm The connection manager
     */
-   public void prepareShutdown();
+   ConnectionManagerShutdown(ConnectionManager cm)
+   {
+      this.cm = cm;
+   }
 
    /**
-    * Signal the component to prepare for shutdown
-    * @param shutdown The number of seconds after which shutdown is forced
+    * {@inheritDoc}
     */
-   public void prepareShutdown(int shutdown);
-
-   /**
-    * Shutdown the component
-    */
-   public void shutdown();
-
-   /**
-    * Is the component shutdown
-    * @return True if shutdown; false if active
-    */
-   public boolean isShutdown();
-
-   /**
-    * Get the delay until shutdown occurs
-    * @return The number of seconds, <code>Integer.MAX_VALUE</code> for active,
-    *         or <code>Integer.MIN_VALUE</code> for inactive
-    */
-   public int getDelay();
+   public void run()
+   {
+      cm.shutdown();
+   }
 }

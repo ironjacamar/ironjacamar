@@ -245,6 +245,280 @@ public class ShutdownTestCase
    }
 
    /**
+    * Test getConnection followed by prepare shutdown
+    * @throws Throwable throwable exception
+    */
+   @Test
+   public void testGetConnectionPrepareShutdown() throws Throwable
+   {
+      Context context = null;
+
+      ResourceAdapterArchive raa = createArchiveDeployment();
+      ResourceAdaptersDescriptor dashRaXml = createActivationDeployment();
+
+      try
+      {
+         embedded.deploy(raa);
+         embedded.deploy(dashRaXml);
+
+         context = new InitialContext();
+
+         SimpleConnectionFactory cf = (SimpleConnectionFactory)context.lookup("java:/eis/SimpleConnectionFactory");
+         assertNotNull(cf);
+
+         SimpleConnection c = cf.getConnection();
+
+         ConnectionManager cm = ConnectionManagerUtil.extract(cf);
+         assertNotNull(cm);
+         cm.prepareShutdown();
+
+         SimpleConnection c2 = null;
+         try
+         {
+            c2 = cf.getConnection();
+            fail("Got 2nd connection");
+         }
+         catch (Exception inner)
+         {
+            // Ok
+         }
+
+         c.close();
+
+         assertNull(cm.getPool());
+      }
+      catch (Exception e)
+      {
+         fail("Should not be here");
+         log.error(e.getMessage(), e);
+      }
+      finally
+      {
+         embedded.undeploy(dashRaXml);
+         embedded.undeploy(raa);
+
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+      }
+   }
+
+   /**
+    * Test getConnection followed by prepare shutdown, and cancel
+    * @throws Throwable throwable exception
+    */
+   @Test
+   public void testGetConnectionPrepareShutdownAndCancel() throws Throwable
+   {
+      Context context = null;
+
+      ResourceAdapterArchive raa = createArchiveDeployment();
+      ResourceAdaptersDescriptor dashRaXml = createActivationDeployment();
+
+      try
+      {
+         embedded.deploy(raa);
+         embedded.deploy(dashRaXml);
+
+         context = new InitialContext();
+
+         SimpleConnectionFactory cf = (SimpleConnectionFactory)context.lookup("java:/eis/SimpleConnectionFactory");
+         assertNotNull(cf);
+
+         SimpleConnection c = cf.getConnection();
+
+         ConnectionManager cm = ConnectionManagerUtil.extract(cf);
+         assertNotNull(cm);
+         cm.prepareShutdown();
+
+         SimpleConnection c2 = null;
+         try
+         {
+            c2 = cf.getConnection();
+            fail("Got 2nd connection");
+         }
+         catch (Exception inner)
+         {
+            // Ok
+         }
+
+         cm.cancelShutdown();
+
+         c.close();
+
+         assertNotNull(cm.getPool());
+      }
+      catch (Exception e)
+      {
+         fail("Should not be here");
+         log.error(e.getMessage(), e);
+      }
+      finally
+      {
+         embedded.undeploy(dashRaXml);
+         embedded.undeploy(raa);
+
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+      }
+   }
+
+   /**
+    * Test getConnection followed by prepare shutdown with seconds
+    * @throws Throwable throwable exception
+    */
+   @Test
+   public void testGetConnectionPrepareShutdownWithSeconds() throws Throwable
+   {
+      Context context = null;
+
+      ResourceAdapterArchive raa = createArchiveDeployment();
+      ResourceAdaptersDescriptor dashRaXml = createActivationDeployment();
+
+      try
+      {
+         embedded.deploy(raa);
+         embedded.deploy(dashRaXml);
+
+         context = new InitialContext();
+
+         SimpleConnectionFactory cf = (SimpleConnectionFactory)context.lookup("java:/eis/SimpleConnectionFactory");
+         assertNotNull(cf);
+
+         SimpleConnection c = cf.getConnection();
+
+         ConnectionManager cm = ConnectionManagerUtil.extract(cf);
+         assertNotNull(cm);
+         cm.prepareShutdown(1);
+
+         Thread.sleep(1500L);
+
+         SimpleConnection c2 = null;
+         try
+         {
+            c2 = cf.getConnection();
+            fail("Got 2nd connection");
+         }
+         catch (Exception inner)
+         {
+            // Ok
+         }
+
+         c.close();
+
+         assertNull(cm.getPool());
+      }
+      catch (Exception e)
+      {
+         fail("Should not be here");
+         log.error(e.getMessage(), e);
+      }
+      finally
+      {
+         embedded.undeploy(dashRaXml);
+         embedded.undeploy(raa);
+
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+      }
+   }
+
+   /**
+    * Test getConnection followed by prepare shutdown with seconds, and cancel
+    * @throws Throwable throwable exception
+    */
+   @Test
+   public void testGetConnectionPrepareShutdownWithSecondsAndCancel() throws Throwable
+   {
+      Context context = null;
+
+      ResourceAdapterArchive raa = createArchiveDeployment();
+      ResourceAdaptersDescriptor dashRaXml = createActivationDeployment();
+
+      try
+      {
+         embedded.deploy(raa);
+         embedded.deploy(dashRaXml);
+
+         context = new InitialContext();
+
+         SimpleConnectionFactory cf = (SimpleConnectionFactory)context.lookup("java:/eis/SimpleConnectionFactory");
+         assertNotNull(cf);
+
+         SimpleConnection c = cf.getConnection();
+
+         ConnectionManager cm = ConnectionManagerUtil.extract(cf);
+         assertNotNull(cm);
+         cm.prepareShutdown(1);
+
+         SimpleConnection c2 = null;
+         try
+         {
+            c2 = cf.getConnection();
+            fail("Got 2nd connection");
+         }
+         catch (Exception inner)
+         {
+            // Ok
+         }
+
+         cm.cancelShutdown();
+
+         c.close();
+
+         assertNotNull(cm.getPool());
+      }
+      catch (Exception e)
+      {
+         fail("Should not be here");
+         log.error(e.getMessage(), e);
+      }
+      finally
+      {
+         embedded.undeploy(dashRaXml);
+         embedded.undeploy(raa);
+
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+      }
+   }
+
+   /**
     * Lifecycle start, before the suite is executed
     * @throws Throwable throwable exception
     */

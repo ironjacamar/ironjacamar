@@ -38,7 +38,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -120,6 +123,12 @@ public class WorkManagerImpl implements WorkManager
    /** Shutdown */
    private AtomicBoolean shutdown;
 
+   /** Scheduled executor for graceful shutdown */
+   private ScheduledExecutorService scheduledExecutorService;
+
+   /** Graceful job */
+   private ScheduledFuture scheduledGraceful;
+
    /** Active work wrappers */
    private Set<WorkWrapper> activeWorkWrappers;
 
@@ -149,6 +158,8 @@ public class WorkManagerImpl implements WorkManager
       validatedWork = new HashSet<String>();
       resourceAdapter = null;
       shutdown = new AtomicBoolean(false);
+      scheduledExecutorService = null;
+      scheduledGraceful = null;
       activeWorkWrappers = new HashSet<WorkWrapper>();
       statisticsEnabled = true;
       statistics = new WorkManagerStatisticsImpl();
@@ -789,7 +800,25 @@ public class WorkManagerImpl implements WorkManager
     */
    public boolean cancelShutdown()
    {
-      shutdown.set(false);
+      if (scheduledGraceful != null)
+      {
+         boolean result = scheduledGraceful.cancel(false);
+
+         if (result)
+         {
+            shutdown.set(false);
+            scheduledGraceful = null;
+         }
+         else
+         {
+            return false;
+         }
+      }
+      else
+      {
+         shutdown.set(false);
+      }
+
       return true;
    }
 
@@ -799,6 +828,23 @@ public class WorkManagerImpl implements WorkManager
    public void prepareShutdown()
    {
       shutdown.set(true);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void prepareShutdown(int shutdown)
+   {
+      prepareShutdown();
+
+      if (shutdown > 0 && scheduledGraceful == null)
+      {
+         if (scheduledExecutorService == null)
+            scheduledExecutorService = Executors.newScheduledThreadPool(1);
+
+         scheduledGraceful =
+            scheduledExecutorService.schedule(new WorkManagerShutdown(this), shutdown, TimeUnit.SECONDS);
+      }
    }
 
    /**
@@ -815,6 +861,9 @@ public class WorkManagerImpl implements WorkManager
             ww.getWork().release();
          }
       }
+
+      if (scheduledExecutorService != null)
+         scheduledExecutorService.shutdownNow();
    }
 
    /**
@@ -823,6 +872,20 @@ public class WorkManagerImpl implements WorkManager
    public boolean isShutdown()
    {
       return shutdown.get();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public int getDelay()
+   {
+      if (scheduledGraceful != null)
+         return (int)scheduledGraceful.getDelay(TimeUnit.SECONDS);
+
+      if (shutdown.get())
+         return Integer.MIN_VALUE;
+      
+      return Integer.MAX_VALUE;
    }
 
    /**
