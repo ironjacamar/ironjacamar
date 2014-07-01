@@ -23,6 +23,7 @@
 package org.jboss.jca.core.workmanager;
 
 import org.jboss.jca.core.api.workmanager.WorkManager;
+import org.jboss.jca.core.spi.graceful.GracefulCallback;
 
 /**
  * Shutdown a WorkManager
@@ -31,14 +32,17 @@ import org.jboss.jca.core.api.workmanager.WorkManager;
 class WorkManagerShutdown implements Runnable
 {
    private WorkManager wm;
+   private GracefulCallback cb;
 
    /**
     * Constructor
     * @param wm The work manager
+    * @param cb The callback
     */
-   WorkManagerShutdown(WorkManager wm)
+   WorkManagerShutdown(WorkManager wm, GracefulCallback cb)
    {
       this.wm = wm;
+      this.cb = cb;
    }
 
    /**
@@ -47,5 +51,8 @@ class WorkManagerShutdown implements Runnable
    public void run()
    {
       wm.shutdown();
+
+      if (cb != null)
+         cb.done();
    }
 }

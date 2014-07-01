@@ -30,6 +30,7 @@ import org.jboss.jca.core.api.connectionmanager.pool.FlushMode;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionState;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
+import org.jboss.jca.core.spi.graceful.GracefulCallback;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 
 import java.util.Collection;
@@ -219,6 +220,14 @@ public abstract class AbstractConnectionManager implements ConnectionManager
     */
    public void prepareShutdown(int shutdown)
    {
+      prepareShutdown(shutdown, null);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void prepareShutdown(int shutdown, GracefulCallback cb)
+   {
       prepareShutdown();
 
       if (shutdown > 0 && scheduledGraceful == null)
@@ -227,7 +236,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
             scheduledExecutorService = Executors.newScheduledThreadPool(1);
 
          scheduledGraceful =
-            scheduledExecutorService.schedule(new ConnectionManagerShutdown(this), shutdown, TimeUnit.SECONDS);
+            scheduledExecutorService.schedule(new ConnectionManagerShutdown(this, cb), shutdown, TimeUnit.SECONDS);
       }
    }
 

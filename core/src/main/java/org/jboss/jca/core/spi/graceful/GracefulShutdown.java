@@ -47,6 +47,13 @@ public interface GracefulShutdown
    public void prepareShutdown(int shutdown);
 
    /**
+    * Signal the component to prepare for shutdown
+    * @param shutdown The number of seconds after which shutdown is forced
+    * @param cb The callback handle
+    */
+   public void prepareShutdown(int shutdown, GracefulCallback cb);
+
+   /**
     * Shutdown the component
     */
    public void shutdown();

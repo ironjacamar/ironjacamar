@@ -28,6 +28,7 @@ import org.jboss.jca.core.api.workmanager.DistributableContext;
 import org.jboss.jca.core.api.workmanager.StatisticsExecutor;
 import org.jboss.jca.core.api.workmanager.WorkManager;
 import org.jboss.jca.core.api.workmanager.WorkManagerStatistics;
+import org.jboss.jca.core.spi.graceful.GracefulCallback;
 import org.jboss.jca.core.spi.security.Callback;
 import org.jboss.jca.core.spi.transaction.xa.XATerminator;
 
@@ -835,6 +836,14 @@ public class WorkManagerImpl implements WorkManager
     */
    public void prepareShutdown(int shutdown)
    {
+      prepareShutdown(shutdown, null);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void prepareShutdown(int shutdown, GracefulCallback cb)
+   {
       prepareShutdown();
 
       if (shutdown > 0 && scheduledGraceful == null)
@@ -843,7 +852,7 @@ public class WorkManagerImpl implements WorkManager
             scheduledExecutorService = Executors.newScheduledThreadPool(1);
 
          scheduledGraceful =
-            scheduledExecutorService.schedule(new WorkManagerShutdown(this), shutdown, TimeUnit.SECONDS);
+            scheduledExecutorService.schedule(new WorkManagerShutdown(this, cb), shutdown, TimeUnit.SECONDS);
       }
    }
 

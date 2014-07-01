@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2014, Red Hat Inc, and individual contributors
+ * Copyright 2011, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -20,38 +20,17 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.core.connectionmanager;
-
-import org.jboss.jca.core.spi.graceful.GracefulCallback;
+package org.jboss.jca.core.spi.graceful;
 
 /**
- * Shutdown a ConnectionManager
+ * The graceful callback
+ * 
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-class ConnectionManagerShutdown implements Runnable
+public interface GracefulCallback
 {
-   private ConnectionManager cm;
-   private GracefulCallback cb;
-
    /**
-    * Constructor
-    * @param cm The connection manager
-    * @param cb The callback
+    * Done
     */
-   ConnectionManagerShutdown(ConnectionManager cm, GracefulCallback cb)
-   {
-      this.cm = cm;
-      this.cb = cb;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void run()
-   {
-      cm.shutdown();
-
-      if (cb != null)
-         cb.done();
-   }
+   public void done();
 }

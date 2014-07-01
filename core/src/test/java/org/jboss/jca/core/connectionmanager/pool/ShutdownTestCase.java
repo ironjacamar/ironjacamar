@@ -28,6 +28,7 @@ import org.jboss.jca.core.connectionmanager.rar.SimpleConnectionFactory;
 import org.jboss.jca.core.connectionmanager.rar.SimpleConnectionFactoryImpl;
 import org.jboss.jca.core.connectionmanager.rar.SimpleConnectionImpl;
 import org.jboss.jca.core.connectionmanager.rar.SimpleManagedConnectionFactory;
+import org.jboss.jca.core.spi.graceful.GracefulCallback;
 import org.jboss.jca.deployers.fungal.RAActivator;
 import org.jboss.jca.embedded.Embedded;
 import org.jboss.jca.embedded.EmbeddedFactory;
@@ -515,6 +516,98 @@ public class ShutdownTestCase
                // Ignore
             }
          }
+      }
+   }
+
+   /**
+    * Test getConnection followed by prepare shutdown with seconds, and callback
+    * @throws Throwable throwable exception
+    */
+   @Test
+   public void testGetConnectionPrepareShutdownWithSecondsAndCallback() throws Throwable
+   {
+      Context context = null;
+
+      ResourceAdapterArchive raa = createArchiveDeployment();
+      ResourceAdaptersDescriptor dashRaXml = createActivationDeployment();
+
+      try
+      {
+         embedded.deploy(raa);
+         embedded.deploy(dashRaXml);
+
+         context = new InitialContext();
+
+         SimpleConnectionFactory cf = (SimpleConnectionFactory)context.lookup("java:/eis/SimpleConnectionFactory");
+         assertNotNull(cf);
+
+         SimpleConnection c = cf.getConnection();
+
+         ConnectionManager cm = ConnectionManagerUtil.extract(cf);
+         assertNotNull(cm);
+
+         ShutdownCallback cb = new ShutdownCallback();
+
+         cm.prepareShutdown(1, cb);
+
+         Thread.sleep(1500L);
+
+         c.close();
+
+         assertNull(cm.getPool());
+         assertTrue(cb.wasCalled());
+      }
+      catch (Exception e)
+      {
+         fail("Should not be here");
+         log.error(e.getMessage(), e);
+      }
+      finally
+      {
+         embedded.undeploy(dashRaXml);
+         embedded.undeploy(raa);
+
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+      }
+   }
+
+   /**
+    * Callback
+    */
+   static class ShutdownCallback implements GracefulCallback
+   {
+      private boolean called;
+
+      ShutdownCallback()
+      {
+         this.called = false;
+      }
+
+      /**
+       * Was called
+       * @return The result
+       */
+      boolean wasCalled()
+      {
+         return called;
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public void done()
+      {
+         called = true;
       }
    }
 
