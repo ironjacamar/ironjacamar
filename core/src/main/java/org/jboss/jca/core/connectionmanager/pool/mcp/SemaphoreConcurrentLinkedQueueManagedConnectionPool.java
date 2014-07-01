@@ -387,54 +387,56 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
 
                      if (matchedMC != null)
                      {
-                         if (poolConfiguration.isValidateOnMatch())
-                         {
-                             if (mcf instanceof ValidatingManagedConnectionFactory)
-                             {
-                                 try
+                        if (poolConfiguration.isValidateOnMatch())
+                        {
+                           if (mcf instanceof ValidatingManagedConnectionFactory)
+                           {
+                              try
+                              {
+                                 ValidatingManagedConnectionFactory vcf = (ValidatingManagedConnectionFactory) mcf;
+                                 Set candidateSet =
+                                    Collections.singleton(clw.getConnectionListener().getManagedConnection());
+                                 candidateSet = vcf.getInvalidConnections(candidateSet);
+
+                                 if (candidateSet != null && candidateSet.size() > 0)
                                  {
-                                     ValidatingManagedConnectionFactory vcf = (ValidatingManagedConnectionFactory) mcf;
-                                     Set candidateSet = Collections.singleton(clw.getConnectionListener().getManagedConnection());
-                                     candidateSet = vcf.getInvalidConnections(candidateSet);
-
-                                     if (candidateSet != null && candidateSet.size() > 0)
-                                     {
-                                         valid = false;
-                                     }
+                                    valid = false;
                                  }
-                                 catch (Throwable t)
-                                 {
-                                     valid = false;
-                                     if (trace)
-                                         log.tracef("Exception while ValidateOnMatch: " + t.getMessage(), t);
-                                 }
-                             }
-                             else
-                             {
-                                 log.validateOnMatchNonCompliantManagedConnectionFactory(mcf.getClass().getName());
-                             }
-                         }
+                              }
+                              catch (Throwable t)
+                              {
+                                 valid = false;
+                                 if (trace)
+                                    log.tracef("Exception while ValidateOnMatch: " + t.getMessage(), t);
+                              }
+                           }
+                           else
+                           {
+                              log.validateOnMatchNonCompliantManagedConnectionFactory(mcf.getClass().getName());
+                           }
+                        }
 
-                         if (valid)
-                         {
-                             if (trace)
-                                 log.trace("supplying ManagedConnection from pool: " + clw.getConnectionListener());
+                        if (valid)
+                        {
+                           if (trace)
+                              log.trace("supplying ManagedConnection from pool: " + clw.getConnectionListener());
 
-                             lastUsed = System.currentTimeMillis();
+                           lastUsed = System.currentTimeMillis();
 
-                             if (statistics.isEnabled())
-                             {
-                                 statistics.deltaTotalGetTime(lastUsed - startWait);
-                                 statistics.deltaTotalPoolTime(lastUsed - clw.getConnectionListener().getLastUsedTime());
-                             }
+                           if (statistics.isEnabled())
+                           {
+                              statistics.deltaTotalGetTime(lastUsed - startWait);
+                              statistics.deltaTotalPoolTime(lastUsed - clw.getConnectionListener().getLastUsedTime());
+                           }
 
-                             if (Tracer.isEnabled())
-                                 Tracer.getConnectionListener(pool.getName(), clw.getConnectionListener(), true, pool.isInterleaving());
+                           if (Tracer.isEnabled())
+                              Tracer.getConnectionListener(pool.getName(), clw.getConnectionListener(),
+                                                           true, pool.isInterleaving());
 
-                             clw.setHasPermit(true);
+                           clw.setHasPermit(true);
 
-                             return clw.getConnectionListener();
-                         }
+                           return clw.getConnectionListener();
+                        }
                      }
 
                      // Match did not succeed but no exception was
@@ -445,7 +447,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                      // destroy the connection.
                      if (valid)
                      {
-                         log.destroyingConnectionNotSuccessfullyMatched(clw.getConnectionListener());
+                        log.destroyingConnectionNotSuccessfullyMatched(clw.getConnectionListener());
                      }
                      else
                      {
@@ -675,12 +677,13 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
          // REMOVE IT!
          clq.remove(clw);
          ConnectionListenerWrapper wrapper = cls.remove(cl);
-         if (wrapper != null){
+         if (wrapper != null)
+         {
             poolSize.decrementAndGet();
             if (wrapper.isCheckedOut())
             {
-                wrapper.setCheckedOut(false);
-                checkedOutSize.decrementAndGet();
+               wrapper.setCheckedOut(false);
+               checkedOutSize.decrementAndGet();
             }
          }
       }
@@ -757,7 +760,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                   entry.getValue().setCheckedOut(false);
                   checkedOutSize.decrementAndGet();
                }
-               if (entry.getValue()._hasPermit)
+               if (entry.getValue().hasPermit())
                {
                   entry.getValue().setHasPermit(false);
                   permits.release();
@@ -1367,7 +1370,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
       if (clw != null) 
       {
          removeConnectionListenerFromPool(clw);
-    	  
+         
          if (clw.getConnectionListener() != null) 
          {
             if (clw.getConnectionListener().getState() == ConnectionState.DESTROYED) 
@@ -1618,7 +1621,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
    {
       synchronized (cls) 
       {
-    	 ConnectionListener cl = null;
+         ConnectionListener cl = null;
          try 
          {
             for (Entry<ConnectionListener, ConnectionListenerWrapper> entry : cls.entrySet()) 
@@ -1706,7 +1709,8 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
    {
       StringBuilder sb = new StringBuilder();
 
-      sb.append("SemaphoreConcurrentLinkedQueueManagedConnectionPool@").append(Integer.toHexString(System.identityHashCode(this)));
+      sb.append("SemaphoreConcurrentLinkedQueueManagedConnectionPool@");
+      sb.append(Integer.toHexString(System.identityHashCode(this)));
       sb.append("[pool=").append(pool.getName());
       sb.append("]");
 
@@ -1721,10 +1725,9 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
     */
    class ConnectionListenerWrapper 
    {
-
-      private ConnectionListener _connectionListener;
-      private boolean _checkedOut;
-      private boolean _hasPermit;
+      private ConnectionListener cl;
+      private boolean checkedOut;
+      private boolean hasPermit;
 
       /**
        * Constructor
@@ -1756,9 +1759,9 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
        */
       public ConnectionListenerWrapper(ConnectionListener connectionListener, boolean checkedOut, boolean hasPermit) 
       {
-         this._connectionListener = connectionListener;
-         this._checkedOut = checkedOut;
-         this._hasPermit = hasPermit;
+         this.cl = connectionListener;
+         this.checkedOut = checkedOut;
+         this.hasPermit = hasPermit;
       }
 
       /**
@@ -1768,7 +1771,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
        */
       public ConnectionListener getConnectionListener() 
       {
-         return _connectionListener;
+         return cl;
       }
 
       /**
@@ -1778,7 +1781,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
        */
       public void setConnectionListener(ConnectionListener connectionListener) 
       {
-         this._connectionListener = connectionListener;
+         this.cl = connectionListener;
       }
 
       /**
@@ -1788,7 +1791,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
        */
       public boolean isCheckedOut() 
       {
-         return _checkedOut;
+         return checkedOut;
       }
 
       /**
@@ -1798,7 +1801,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
        */
       public void setCheckedOut(boolean checkedOut)
       {
-         this._checkedOut = checkedOut;
+         this.checkedOut = checkedOut;
       }
 
       /**
@@ -1808,7 +1811,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
        */
       public boolean hasPermit() 
       {
-         return _hasPermit;
+         return hasPermit;
       }
 
       /**
@@ -1818,7 +1821,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
        */
       public void setHasPermit(boolean hasPermit) 
       {
-         this._hasPermit = hasPermit;
+         this.hasPermit = hasPermit;
       }
    }
 }
