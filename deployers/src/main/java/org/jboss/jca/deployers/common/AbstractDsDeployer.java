@@ -805,10 +805,14 @@ public abstract class AbstractDsDeployer
          Credential credential = recoveryMD != null ? recoveryMD.getCredential() : null;
          if (credential != null)
          {
-            recoverSecurityDomain = credential.getSecurityDomain();
+            if (credential.getSecurityDomain() != null)
+               recoverSecurityDomain = credential.getSecurityDomain();
 
-            recoverUser = credential.getUserName();
-            recoverPassword = credential.getPassword();
+            if (credential.getUserName() != null)
+               recoverUser = credential.getUserName();
+
+            if (credential.getPassword() != null)
+               recoverPassword = credential.getPassword();
          }
 
          if (log.isDebugEnabled())
@@ -817,7 +821,9 @@ public abstract class AbstractDsDeployer
             log.debug("RecoverSecurityDomain=" + recoverSecurityDomain);
          }
 
-         if (recoverUser != null || recoverSecurityDomain != null)
+         if ((recoverUser != null && !recoverUser.trim().equals("") &&
+              recoverPassword != null && !recoverPassword.trim().equals("")) ||
+             (recoverSecurityDomain != null && !recoverSecurityDomain.trim().equals("")))
          {
             RecoveryPlugin plugin = null;
 
