@@ -745,18 +745,12 @@ public class TxConnectionListener extends AbstractConnectionListener
     * @param handle The handle; if <code>null</code> track-by-tx is changed
     * @return True if the managed connection was freed
     */
-   synchronized boolean wasFreed(Object handle)
+   boolean wasFreed(Object handle)
    {
       if (handle != null)
       {
-         if (isManagedConnectionFree())
-         {
-            // This shouldn't really happen now all the state is changed atomically
-            return false;
-         }
-
-         // Change the number of handles
-         getConnectionManager().unregisterAssociation(this, handle);
+         // Unregister the handle
+         unregisterConnection(handle);
       }
       else
       {
