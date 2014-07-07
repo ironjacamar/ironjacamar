@@ -1646,7 +1646,8 @@ public abstract class AbstractResourceAdapterDeployer
 
                                           if (credential != null)
                                           {
-                                             recoverSecurityDomain = credential.getSecurityDomain();
+                                             if (credential.getSecurityDomain() != null)
+                                                recoverSecurityDomain = credential.getSecurityDomain();
                                              
                                              recoverUser = credential.getUserName();
                                              recoverPassword = credential.getPassword();
@@ -1658,7 +1659,10 @@ public abstract class AbstractResourceAdapterDeployer
                                              log.debug("RecoverSecurityDomain=" + recoverSecurityDomain);
                                           }
 
-                                          if (recoverUser != null || recoverSecurityDomain != null)
+                                          if ((recoverUser != null && !recoverUser.trim().equals("") &&
+                                               recoverPassword != null && !recoverPassword.trim().equals("")) ||
+                                              (recoverSecurityDomain != null &&
+                                               !recoverSecurityDomain.trim().equals("")))
                                           {
                                              RecoveryPlugin plugin = null;
                                              if (recoveryMD != null && recoveryMD.getRecoverPlugin() != null &&
