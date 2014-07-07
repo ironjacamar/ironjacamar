@@ -113,7 +113,8 @@ public class Performance
 
    static
    {
-      System.setProperty("ironjacamar.mcp", MCP_IMPL);
+      if (System.getProperty("ironjacamar.mcp") == null)
+         System.setProperty("ironjacamar.mcp", MCP_IMPL);
       System.setProperty("ironjacamar.embedded.management", "true");
 
       if (!RECORD_ENLISTMENT_TRACES)
@@ -664,7 +665,7 @@ public class Performance
     */
    static void printSettings()
    {
-      log.errorf("MCP: %s", MCP_IMPL);
+      log.errorf("MCP: %s", System.getProperty("ironjacamar.mcp"));
       log.errorf("Clients: %s", Arrays.toString(CLIENTS));
       log.errorf("Pool sizes: %s", Arrays.toString(POOL_SIZES));
       log.errorf("Threads: %s", CLIENTS[CLIENTS.length - 1]);
