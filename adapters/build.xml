@@ -35,10 +35,6 @@
     <uptodate property="adapters.uptodate" targetfile="${target.dir}/${name}-jdbc.jar" >
       <srcfiles dir= "src/main" includes="**/*"/>
     </uptodate>
-
-    <condition property="jdk7" value="true">
-      <isset property="HAVE_JDK_1.7"/>
-    </condition>
   </target>
 
   <!-- ================================= 
@@ -56,12 +52,15 @@
            optimize="${javac.optimize}"
            encoding="${javac.encoding}"
            nowarn="true"
+           excludes="**/jdk7/**,**/jdk8/**"
            includeAntRuntime="false">
       <compilerarg value="-Xlint"/>
       <compilerarg value="-AgeneratedTranslationFilesPath=${build.adapters.dir}/impl"/>
       <compilerarg value="-AtranslationFilesPath=${build.adapters.dir}/impl"/>
     </javac> 
+  </target>
 
+  <target name="compile-jdk8" if="HAVE_JDK_1.8">
     <javac srcdir="src/main"
            destdir="${build.adapters.dir}/impl"
            classpathref="main.lib.path.id"
@@ -69,13 +68,13 @@
            deprecation="${javac.deprecation}"
            optimize="${javac.optimize}"
            encoding="${javac.encoding}"
-           excludes="**/jdk7/**"
+           includes="**/jdk8/**"
            includeAntRuntime="false">
       <compilerarg value="-Xlint"/>
     </javac> 
   </target>
 
-  <target name="compile-jdk7" if="jdk7">
+  <target name="compile-jdk7" unless="HAVE_JDK_1.8">
     <javac srcdir="src/main"
            destdir="${build.adapters.dir}/impl"
            classpathref="main.lib.path.id"
@@ -92,6 +91,7 @@
   <target name="compile" depends="check" unless="adapters.uptodate">
     <ant inheritRefs="true" target="compile-base"/>
     <ant inheritRefs="true" target="compile-jdk7"/>
+    <ant inheritRefs="true" target="compile-jdk8"/>
   </target>
 
   <!-- ================================= 

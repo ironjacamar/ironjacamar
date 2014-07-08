@@ -25,6 +25,7 @@
          xmlns:ivy="antlib:org.apache.ivy.ant">
 
   <available classname="java.util.concurrent.ForkJoinPool" property="HAVE_JDK_1.7"/>
+  <available classname="java.time.Clock" property="HAVE_JDK_1.8"/>
   <available classname="com.ibm.tools.attach.javaSE.Attachment" property="IBM"/>
 
   <!-- ================================= 
@@ -41,10 +42,10 @@
   </condition>
   <property name="version" value="${major}.${minor}.${patch}.${type}"/>
 
-  <condition property="jdk_version" value="JDK7">
-    <isset property="HAVE_JDK_1.7"/>
+  <condition property="jdk_version" value="JDK8">
+    <isset property="HAVE_JDK_1.8"/>
   </condition>
-  <property name="jdk_version" value="N/A"/>
+  <property name="jdk_version" value="JDK7"/>
 
   <!-- ================================= 
        Maven repository settings
