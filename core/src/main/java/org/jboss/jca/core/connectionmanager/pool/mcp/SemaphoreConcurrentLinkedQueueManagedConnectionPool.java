@@ -937,7 +937,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
          ConnectionListenerWrapper clw = clwIter.next();
 
          destroy = decrementer.shouldDestroy(clw.getConnectionListener(),
-               timeout, cls.size() + checkedOutSize.get(),
+               timeout, poolSize.get(),
                poolConfiguration.getMinSize(), destroyed);
 
          if (destroy) 
