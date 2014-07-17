@@ -29,8 +29,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.net.InetAddress;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -197,7 +195,7 @@ public class Injection
       while (!clz.equals(Object.class))
       {
          List<Method> hits = null;
-         Method[] methods = clz.getDeclaredMethods();
+         Method[] methods = SecurityActions.getDeclaredMethods(clz);
          for (int i = 0; i < methods.length; i++)
          {
             final Method method = methods[i];
@@ -208,14 +206,7 @@ public class Injection
                   if (hits == null)
                      hits = new ArrayList<Method>(1);
 
-                  AccessController.doPrivileged(new PrivilegedAction<Object>() 
-                  {
-                     public Object run()
-                     {
-                        method.setAccessible(true);
-                        return null;
-                     }
-                  });
+                  SecurityActions.setAccessible(method);
 
                   hits.add(method);
                }
@@ -262,7 +253,7 @@ public class Injection
       while (!clz.equals(Object.class))
       {
          List<Field> hits = null;
-         Field[] fields = clz.getDeclaredFields();
+         Field[] fields = SecurityActions.getDeclaredFields(clz);
          for (int i = 0; i < fields.length; i++)
          {
             final Field field = fields[i];
@@ -273,14 +264,7 @@ public class Injection
                   if (hits == null)
                      hits = new ArrayList<Field>(1);
 
-                  AccessController.doPrivileged(new PrivilegedAction<Object>() 
-                  {
-                     public Object run()
-                     {
-                        field.setAccessible(true);
-                        return null;
-                     }
-                  });
+                  SecurityActions.setAccessible(field);
 
                   hits.add(field);
                }
@@ -416,7 +400,7 @@ public class Injection
          {
             try
             {
-               Constructor<?> constructor = clz.getConstructor(String.class);
+               Constructor<?> constructor = SecurityActions.getConstructor(clz, String.class);
                v = constructor.newInstance(substituredValue);
             }
             catch (Throwable t)
@@ -424,7 +408,7 @@ public class Injection
                // Try static String valueOf method
                try
                {
-                  Method valueOf = clz.getMethod("valueOf", String.class);
+                  Method valueOf = SecurityActions.getMethod(clz, "valueOf", String.class);
                   v = valueOf.invoke((Object)null, substituredValue);
                }
                catch (Throwable inner)

@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2008-2009, Red Hat Inc, and individual contributors
+ * Copyright 2008, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,9 +19,9 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.jboss.jca.validator.rules.mcf;
 
-package org.jboss.jca.core.recovery;
-
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -40,20 +40,37 @@ class SecurityActions
    }
 
    /**
-    * Invoke setAccessible on a method
-    * @param m The method
-    * @param value The value
+    * Get the constructor
+    * @param c The class
+    * @param params The parameters
+    * @return The constructor
+    * @exception NoSuchMethodException If a matching method is not found.
     */
-   static void setAccessible(final Method m, final boolean value)
+   static Constructor<?> getConstructor(final Class<?> c, final Class<?>... params)
+      throws NoSuchMethodException
    {
-      AccessController.doPrivileged(new PrivilegedAction<Object>() 
+      if (System.getSecurityManager() == null)
+         return c.getConstructor(params);
+
+      Constructor<?> result = AccessController.doPrivileged(new PrivilegedAction<Constructor<?>>()
       {
-         public Object run()
+         public Constructor<?> run()
          {
-            m.setAccessible(value);
-            return null;
+            try
+            {
+               return c.getConstructor(params);
+            }
+            catch (NoSuchMethodException e)
+            {
+               return null;
+            }
          }
       });
+
+      if (result != null)
+         return result;
+
+      throw new NoSuchMethodException();
    }
 
    /**
@@ -64,11 +81,11 @@ class SecurityActions
     * @return The method
     * @exception NoSuchMethodException If a matching method is not found.
     */
-   static Method getMethod(final Class<?> c, final String name, final Class<?>... params)
+   static Method getDeclaredMethod(final Class<?> c, final String name, final Class<?>... params)
       throws NoSuchMethodException
    {
       if (System.getSecurityManager() == null)
-         return c.getMethod(name, params);
+         return c.getDeclaredMethod(name, params);
 
       Method result = AccessController.doPrivileged(new PrivilegedAction<Method>()
       {
@@ -76,7 +93,7 @@ class SecurityActions
          {
             try
             {
-               return c.getMethod(name, params);
+               return c.getDeclaredMethod(name, params);
             }
             catch (NoSuchMethodException e)
             {

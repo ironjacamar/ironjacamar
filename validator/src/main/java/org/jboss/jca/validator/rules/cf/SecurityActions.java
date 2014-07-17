@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2008-2009, Red Hat Inc, and individual contributors
+ * Copyright 2008, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,10 +19,9 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.jboss.jca.validator.rules.cf;
 
-package org.jboss.jca.core.recovery;
-
-import java.lang.reflect.Method;
+import java.lang.reflect.Constructor;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
@@ -40,43 +39,25 @@ class SecurityActions
    }
 
    /**
-    * Invoke setAccessible on a method
-    * @param m The method
-    * @param value The value
-    */
-   static void setAccessible(final Method m, final boolean value)
-   {
-      AccessController.doPrivileged(new PrivilegedAction<Object>() 
-      {
-         public Object run()
-         {
-            m.setAccessible(value);
-            return null;
-         }
-      });
-   }
-
-   /**
-    * Get the method
+    * Get the constructor
     * @param c The class
-    * @param name The name
     * @param params The parameters
-    * @return The method
+    * @return The constructor
     * @exception NoSuchMethodException If a matching method is not found.
     */
-   static Method getMethod(final Class<?> c, final String name, final Class<?>... params)
+   static Constructor<?> getConstructor(final Class<?> c, final Class<?>... params)
       throws NoSuchMethodException
    {
       if (System.getSecurityManager() == null)
-         return c.getMethod(name, params);
+         return c.getConstructor(params);
 
-      Method result = AccessController.doPrivileged(new PrivilegedAction<Method>()
+      Constructor<?> result = AccessController.doPrivileged(new PrivilegedAction<Constructor<?>>()
       {
-         public Method run()
+         public Constructor<?> run()
          {
             try
             {
-               return c.getMethod(name, params);
+               return c.getConstructor(params);
             }
             catch (NoSuchMethodException e)
             {

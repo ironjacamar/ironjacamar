@@ -129,7 +129,7 @@ public class ConfigurableRecoveryPlugin implements RecoveryPlugin
          {
             try
             {
-               Method method = c.getClass().getMethod("isValid", new Class[] {int.class});
+               Method method = SecurityActions.getMethod(c.getClass(), "isValid", new Class[] {int.class});
                SecurityActions.setAccessible(method, true);
                Boolean b = (Boolean)method.invoke(c, new Object[] {Integer.valueOf(isValidValue)});
                return b.booleanValue();
@@ -175,7 +175,7 @@ public class ConfigurableRecoveryPlugin implements RecoveryPlugin
             {
                try
                {
-                  Method method = c.getClass().getMethod(closeMethod, (Class<?>[])null);
+                  Method method = SecurityActions.getMethod(c.getClass(), closeMethod, (Class<?>[])null);
                   SecurityActions.setAccessible(method, true);
                   method.invoke(c, (Object[])null);
                }

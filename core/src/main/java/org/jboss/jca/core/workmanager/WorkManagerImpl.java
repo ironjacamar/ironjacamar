@@ -1032,7 +1032,7 @@ public class WorkManagerImpl implements WorkManager
    {
       try
       {
-         Method method = workClass.getMethod(methodName, new Class[0]);
+         Method method = SecurityActions.getMethod(workClass, methodName, new Class[0]);
          if (Modifier.isSynchronized(method.getModifiers()))
             return true;
       }

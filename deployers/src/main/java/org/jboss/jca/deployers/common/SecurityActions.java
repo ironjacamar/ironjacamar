@@ -22,6 +22,8 @@
 
 package org.jboss.jca.deployers.common;
 
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
@@ -68,6 +70,45 @@ class SecurityActions
          public Object run()
          {
             System.load(lib);
+            return null;
+         }
+      });
+   }
+
+
+   /**
+    * Get the methods
+    * @param c The class
+    * @return The methods
+    */
+   static Method[] getMethods(final Class<?> c)
+   {
+      if (System.getSecurityManager() == null)
+         return c.getMethods();
+
+      return AccessController.doPrivileged(new PrivilegedAction<Method[]>()
+      {
+         public Method[] run()
+         {
+            return c.getMethods();
+         }
+      });
+   }
+
+   /**
+    * Set accessible
+    * @param ao The object
+    */
+   static void setAccessible(final AccessibleObject ao)
+   {
+      if (System.getSecurityManager() == null)
+         ao.setAccessible(true);
+
+      AccessController.doPrivileged(new PrivilegedAction<Object>()
+      {
+         public Object run()
+         {
+            ao.setAccessible(true);
             return null;
          }
       });

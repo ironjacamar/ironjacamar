@@ -568,7 +568,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
             exception = connectionStackTraces.remove(connectionHandle);
          }
 
-         Method m = connectionHandle.getClass().getMethod("close", new Class[]{});
+         Method m = SecurityActions.getMethod(connectionHandle.getClass(), "close", new Class[]{});
 
          try
          {

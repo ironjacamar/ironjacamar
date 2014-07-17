@@ -65,7 +65,7 @@ public class AOConstructor implements Rule
       {
          try
          {
-            vo.getClazz().getConstructor((Class[])null);
+            SecurityActions.getConstructor(vo.getClazz(), (Class[])null);
          }
          catch (Throwable t)
          {

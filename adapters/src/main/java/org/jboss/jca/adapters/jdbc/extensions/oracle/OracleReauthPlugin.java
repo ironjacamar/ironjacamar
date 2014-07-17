@@ -89,7 +89,7 @@ public class OracleReauthPlugin implements ReauthPlugin
 
       try
       {
-         oracleConnection.getMethod("openProxySession", new Class<?>[] {int.class, Properties.class});
+         SecurityActions.getMethod(oracleConnection, "openProxySession", new Class<?>[] {int.class, Properties.class});
       }
       catch (Throwable t)
       {
@@ -98,7 +98,7 @@ public class OracleReauthPlugin implements ReauthPlugin
 
       try
       {
-         oracleConnection.getField("PROXYTYPE_USER_NAME");
+         SecurityActions.getField(oracleConnection, "PROXYTYPE_USER_NAME");
       }
       catch (Throwable t)
       {
@@ -107,7 +107,7 @@ public class OracleReauthPlugin implements ReauthPlugin
 
       try
       {
-         oracleConnection.getField("PROXY_USER_NAME");
+         SecurityActions.getField(oracleConnection, "PROXY_USER_NAME");
       }
       catch (Throwable t)
       {
@@ -116,7 +116,7 @@ public class OracleReauthPlugin implements ReauthPlugin
 
       try
       {
-         oracleConnection.getField("PROXY_USER_PASSWORD");
+         SecurityActions.getField(oracleConnection, "PROXY_USER_PASSWORD");
       }
       catch (Throwable t)
       {
@@ -135,9 +135,9 @@ public class OracleReauthPlugin implements ReauthPlugin
    {
       try
       {
-         int proxyTypeUserName = c.getClass().getField("PROXYTYPE_USER_NAME").getInt(c);
-         String proxyUserName = (String) c.getClass().getField("PROXY_USER_NAME").get(c);
-         String proxyPassword = (String) c.getClass().getField("PROXY_USER_PASSWORD").get(c);
+         int proxyTypeUserName = SecurityActions.getField(c.getClass(), "PROXYTYPE_USER_NAME").getInt(c);
+         String proxyUserName = (String) SecurityActions.getField(c.getClass(), "PROXY_USER_NAME").get(c);
+         String proxyPassword = (String) SecurityActions.getField(c.getClass(), "PROXY_USER_PASSWORD").get(c);
 
          Properties props = new Properties();
          props.put(proxyUserName, userName);
@@ -149,8 +149,8 @@ public class OracleReauthPlugin implements ReauthPlugin
 
          Object[] params = new Object[] {proxyTypeUserName, props};
 
-         Method openProxySession = c.getClass().getMethod("openProxySession",
-                                                          new Class<?>[] {int.class, Properties.class});
+         Method openProxySession = SecurityActions.getMethod(c.getClass(), "openProxySession",
+                                                             new Class<?>[] {int.class, Properties.class});
          SecurityActions.setAccessible(openProxySession);
          openProxySession.invoke(c, params);
       }

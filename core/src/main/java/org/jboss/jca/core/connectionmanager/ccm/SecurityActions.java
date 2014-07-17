@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.core.recovery;
+package org.jboss.jca.core.connectionmanager.ccm;
 
 import java.lang.reflect.Method;
 import java.security.AccessController;
@@ -37,23 +37,6 @@ class SecurityActions
     */
    private SecurityActions()
    {
-   }
-
-   /**
-    * Invoke setAccessible on a method
-    * @param m The method
-    * @param value The value
-    */
-   static void setAccessible(final Method m, final boolean value)
-   {
-      AccessController.doPrivileged(new PrivilegedAction<Object>() 
-      {
-         public Object run()
-         {
-            m.setAccessible(value);
-            return null;
-         }
-      });
    }
 
    /**

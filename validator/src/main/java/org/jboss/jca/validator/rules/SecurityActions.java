@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2008-2009, Red Hat Inc, and individual contributors
+ * Copyright 2012, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.core.recovery;
+package org.jboss.jca.validator.rules;
 
 import java.lang.reflect.Method;
 import java.security.AccessController;
@@ -37,23 +37,6 @@ class SecurityActions
     */
    private SecurityActions()
    {
-   }
-
-   /**
-    * Invoke setAccessible on a method
-    * @param m The method
-    * @param value The value
-    */
-   static void setAccessible(final Method m, final boolean value)
-   {
-      AccessController.doPrivileged(new PrivilegedAction<Object>() 
-      {
-         public Object run()
-         {
-            m.setAccessible(value);
-            return null;
-         }
-      });
    }
 
    /**

@@ -22,6 +22,7 @@
 
 package org.jboss.jca.core.rar;
 
+import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
@@ -113,4 +114,24 @@ class SecurityActions
          }
       });
    }
+
+   /**
+    * Get the methods
+    * @param c The class
+    * @return The methods
+    */
+   static Method[] getMethods(final Class<?> c)
+   {
+      if (System.getSecurityManager() == null)
+         return c.getMethods();
+
+      return AccessController.doPrivileged(new PrivilegedAction<Method[]>()
+      {
+         public Method[] run()
+         {
+            return c.getMethods();
+         }
+      });
+   }
+
 }

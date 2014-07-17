@@ -70,7 +70,7 @@ public class MCFEquals implements Rule
          {
             try
             {
-               clz.getDeclaredMethod("equals", new Class[] {Object.class});
+               SecurityActions.getDeclaredMethod(clz, "equals", new Class[] {Object.class});
                error = false;
             }
             catch (Throwable t)

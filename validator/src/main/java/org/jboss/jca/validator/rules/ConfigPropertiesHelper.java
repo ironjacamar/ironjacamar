@@ -129,7 +129,7 @@ public class ConfigPropertiesHelper
          methodName += cpmd.getConfigPropertyName().getValue().substring(1);
       }
 
-      Method method = vo.getClazz().getMethod(methodName, (Class[])null);
+      Method method = SecurityActions.getMethod(vo.getClazz(), methodName, (Class[])null);
 
       if (!VALID_TYPES.contains(method.getReturnType()))
       {

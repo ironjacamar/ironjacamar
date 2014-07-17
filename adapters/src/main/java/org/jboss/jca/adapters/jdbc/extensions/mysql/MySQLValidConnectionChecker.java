@@ -67,7 +67,7 @@ public class MySQLValidConnectionChecker implements ValidConnectionChecker, Seri
 
       try
       {
-         ping = c.getClass().getMethod("ping", (Class[])null);
+         ping = SecurityActions.getMethod(c.getClass(), "ping", (Class[])null);
          SecurityActions.setAccessible(ping);
       }
       catch (Throwable t)

@@ -90,7 +90,7 @@ public class ClassBundleFactory
             log.tracef("No interfaces for: %s", s.getClass().getName());
       }
 
-      classes = s.getClass().getDeclaredClasses();
+      classes = SecurityActions.getDeclaredClasses(s.getClass());
       if (classes != null && classes.length > 0)
       {
          for (Class<?> clz : classes)
@@ -181,7 +181,7 @@ public class ClassBundleFactory
       {
          try
          {
-            Field[] fields = c.getDeclaredFields();
+            Field[] fields = SecurityActions.getDeclaredFields(c);
             if (fields.length > 0)
             {
                for (Field f : fields)

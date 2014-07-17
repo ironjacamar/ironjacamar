@@ -1204,7 +1204,7 @@ public class Annotations
          {
             try
             {
-               Field field = clz.getDeclaredField(annotation.getMemberName());
+               Field field = SecurityActions.getDeclaredField(clz, annotation.getMemberName());
                
                if (type == null || type.equals(Object.class) || type.equals(field.getType()))
                {
@@ -1242,7 +1242,7 @@ public class Annotations
          {
             try
             {
-               Method method = clz.getDeclaredMethod(annotation.getMemberName(), parameters);
+               Method method = SecurityActions.getDeclaredMethod(clz, annotation.getMemberName(), parameters);
 
                if (void.class.equals(method.getReturnType()))
                {

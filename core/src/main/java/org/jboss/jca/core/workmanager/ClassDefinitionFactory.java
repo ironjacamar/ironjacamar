@@ -128,8 +128,8 @@ public class ClassDefinitionFactory
       {
          try
          {
-            Field svuf = clz.getDeclaredField("serialVersionUID");
-            svuf.setAccessible(true);
+            Field svuf = SecurityActions.getDeclaredField(clz, "serialVersionUID");
+            SecurityActions.setAccessible(svuf);
             return svuf;
          }
          catch (Throwable t)

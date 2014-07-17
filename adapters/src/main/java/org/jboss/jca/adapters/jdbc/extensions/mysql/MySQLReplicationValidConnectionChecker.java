@@ -73,7 +73,7 @@ public class MySQLReplicationValidConnectionChecker implements ValidConnectionCh
 
       try
       {
-         isValid = c.getClass().getMethod("isValid", new Class<?>[] {});
+         isValid = SecurityActions.getMethod(c.getClass(), "isValid", new Class<?>[] {});
          SecurityActions.setAccessible(isValid);
       }
       catch (Throwable t)
@@ -85,7 +85,7 @@ public class MySQLReplicationValidConnectionChecker implements ValidConnectionCh
       {
          try
          {
-            ping = c.getClass().getMethod("ping", (Class[])null);
+            ping = SecurityActions.getMethod(c.getClass(), "ping", (Class[])null);
             SecurityActions.setAccessible(ping);
          }
          catch (Throwable t)

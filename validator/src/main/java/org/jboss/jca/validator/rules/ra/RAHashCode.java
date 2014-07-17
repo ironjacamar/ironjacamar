@@ -70,7 +70,7 @@ public class RAHashCode implements Rule
          {
             try
             {
-               clz.getDeclaredMethod("hashCode", (Class[])null);
+               SecurityActions.getDeclaredMethod(clz, "hashCode", (Class[])null);
                error = false;
             }
             catch (Throwable t)

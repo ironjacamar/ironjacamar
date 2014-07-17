@@ -77,7 +77,7 @@ public class MCGetMetaData implements Rule
             try
             {
                Class clz = vo.getClazz();
-               Method gmd = clz.getMethod("getMetaData", (Class[])null);
+               Method gmd = SecurityActions.getMethod(clz, "getMetaData", (Class[])null);
                Object md = gmd.invoke(vo.getObject(), (Object[])null);
    
                if (md == null)

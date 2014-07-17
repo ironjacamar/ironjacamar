@@ -143,100 +143,104 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
       try
       {
          methods.put(JOIN_METHOD, 
-                     JGroupsTransport.class.getMethod("join",
-                                                      org.jboss.jca.core.spi.workmanager.Address.class,
-                                                      org.jgroups.Address.class));
+                     SecurityActions.getMethod(JGroupsTransport.class, "join",
+                                               org.jboss.jca.core.spi.workmanager.Address.class,
+                                               org.jgroups.Address.class));
          
          methods.put(LEAVE_METHOD, 
-                     JGroupsTransport.class.getMethod("leave",
-                                                      org.jgroups.Address.class));
+                     SecurityActions.getMethod(JGroupsTransport.class, "leave",
+                                               org.jgroups.Address.class));
          
          methods.put(PING_METHOD,
-                     AbstractRemoteTransport.class.getMethod("localPing"));
+                     SecurityActions.getMethod(AbstractRemoteTransport.class, "localPing"));
 
          methods.put(GET_WORKMANAGERS_METHOD,
-                     JGroupsTransport.class.getMethod("getWorkManagers"));
+                     SecurityActions.getMethod(JGroupsTransport.class, "getWorkManagers"));
 
          methods.put(WORKMANAGER_ADD_METHOD, 
-                     JGroupsTransport.class.getMethod("addWorkManager",
-                                                      org.jboss.jca.core.spi.workmanager.Address.class,
-                                                      org.jgroups.Address.class));
+                     SecurityActions.getMethod(JGroupsTransport.class, "addWorkManager",
+                                               org.jboss.jca.core.spi.workmanager.Address.class,
+                                               org.jgroups.Address.class));
 
          methods.put(WORKMANAGER_REMOVE_METHOD, 
-                     AbstractRemoteTransport.class.getMethod("localWorkManagerRemove",
-                                                             org.jboss.jca.core.spi.workmanager.Address.class));
+                     SecurityActions.getMethod(AbstractRemoteTransport.class, "localWorkManagerRemove",
+                                               org.jboss.jca.core.spi.workmanager.Address.class));
 
          methods.put(DO_WORK_METHOD, 
-                     JGroupsTransport.class.getMethod("executeDoWork",
-                                                      org.jboss.jca.core.spi.workmanager.Address.class,
-                                                      ClassBundle.class,
-                                                      byte[].class));
+                     SecurityActions.getMethod(JGroupsTransport.class, "executeDoWork",
+                                               org.jboss.jca.core.spi.workmanager.Address.class,
+                                               ClassBundle.class,
+                                               byte[].class));
 
          methods.put(START_WORK_METHOD,
-                     JGroupsTransport.class.getMethod("executeStartWork",
-                                                      org.jboss.jca.core.spi.workmanager.Address.class,
-                                                      ClassBundle.class,
-                                                      byte[].class));
+                     SecurityActions.getMethod(JGroupsTransport.class, "executeStartWork",
+                                               org.jboss.jca.core.spi.workmanager.Address.class,
+                                               ClassBundle.class,
+                                               byte[].class));
 
          methods.put(SCHEDULE_WORK_METHOD,
-                     JGroupsTransport.class.getMethod("executeScheduleWork",
-                                                      org.jboss.jca.core.spi.workmanager.Address.class,
-                                                      ClassBundle.class,
-                                                      byte[].class));
+                     SecurityActions.getMethod(JGroupsTransport.class, "executeScheduleWork",
+                                               org.jboss.jca.core.spi.workmanager.Address.class,
+                                               ClassBundle.class,
+                                               byte[].class));
 
          methods.put(GET_SHORTRUNNING_FREE_METHOD,
-                     AbstractRemoteTransport.class.getMethod("localGetShortRunningFree",
-                                                             org.jboss.jca.core.spi.workmanager.Address.class));
+                     SecurityActions.getMethod(AbstractRemoteTransport.class, "localGetShortRunningFree",
+                                               org.jboss.jca.core.spi.workmanager.Address.class));
 
          methods.put(GET_LONGRUNNING_FREE_METHOD,
-                     AbstractRemoteTransport.class.getMethod("localGetLongRunningFree",
-                                                             org.jboss.jca.core.spi.workmanager.Address.class));
+                     SecurityActions.getMethod(AbstractRemoteTransport.class, "localGetLongRunningFree",
+                                               org.jboss.jca.core.spi.workmanager.Address.class));
 
          methods.put(UPDATE_SHORTRUNNING_FREE_METHOD,
-                     AbstractRemoteTransport.class.getMethod("localUpdateShortRunningFree",
-                                                             org.jboss.jca.core.spi.workmanager.Address.class,
-                                                             Long.class));
+                     SecurityActions.getMethod(AbstractRemoteTransport.class, "localUpdateShortRunningFree",
+                                               org.jboss.jca.core.spi.workmanager.Address.class,
+                                               Long.class));
 
          methods.put(UPDATE_LONGRUNNING_FREE_METHOD,
-                     AbstractRemoteTransport.class.getMethod("localUpdateLongRunningFree",
-                                                             org.jboss.jca.core.spi.workmanager.Address.class,
-                                                             Long.class));
+                     SecurityActions.getMethod(AbstractRemoteTransport.class, "localUpdateLongRunningFree",
+                                               org.jboss.jca.core.spi.workmanager.Address.class,
+                                               Long.class));
 
          methods.put(GET_DISTRIBUTED_STATISTICS_METHOD,
-                     AbstractRemoteTransport.class.getMethod("localGetDistributedStatistics",
-                                                             org.jboss.jca.core.spi.workmanager.Address.class));
+                     SecurityActions.getMethod(AbstractRemoteTransport.class, "localGetDistributedStatistics",
+                                               org.jboss.jca.core.spi.workmanager.Address.class));
 
          methods.put(CLEAR_DISTRIBUTED_STATISTICS_METHOD,
-                     AbstractRemoteTransport.class.getMethod("localClearDistributedStatistics",
-                                                             org.jboss.jca.core.spi.workmanager.Address.class));
+                     SecurityActions.getMethod(AbstractRemoteTransport.class, "localClearDistributedStatistics",
+                                               org.jboss.jca.core.spi.workmanager.Address.class));
 
          methods.put(DELTA_DOWORK_ACCEPTED_METHOD,
-                     AbstractRemoteTransport.class.getMethod("localDeltaDoWorkAccepted",
-                                                             org.jboss.jca.core.spi.workmanager.Address.class));
+                     SecurityActions.getMethod(AbstractRemoteTransport.class, "localDeltaDoWorkAccepted",
+                                               org.jboss.jca.core.spi.workmanager.Address.class));
 
          methods.put(DELTA_DOWORK_REJECTED_METHOD,
-                     AbstractRemoteTransport.class.getMethod("localDeltaDoWorkRejected",
-                                                             org.jboss.jca.core.spi.workmanager.Address.class));
+                     SecurityActions.getMethod(AbstractRemoteTransport.class, "localDeltaDoWorkRejected",
+                                               org.jboss.jca.core.spi.workmanager.Address.class));
 
          methods.put(DELTA_STARTWORK_ACCEPTED_METHOD,
-                     AbstractRemoteTransport.class.getMethod("localDeltaStartWorkAccepted",
-                                                             org.jboss.jca.core.spi.workmanager.Address.class));
+                     SecurityActions.getMethod(AbstractRemoteTransport.class, "localDeltaStartWorkAccepted",
+                                               org.jboss.jca.core.spi.workmanager.Address.class));
+
          methods.put(DELTA_STARTWORK_REJECTED_METHOD,
-                     AbstractRemoteTransport.class.getMethod("localDeltaStartWorkRejected",
-                                                             org.jboss.jca.core.spi.workmanager.Address.class));
+                     SecurityActions.getMethod(AbstractRemoteTransport.class, "localDeltaStartWorkRejected",
+                                               org.jboss.jca.core.spi.workmanager.Address.class));
 
          methods.put(DELTA_SCHEDULEWORK_ACCEPTED_METHOD,
-                     AbstractRemoteTransport.class.getMethod("localDeltaScheduleWorkAccepted",
-                                                             org.jboss.jca.core.spi.workmanager.Address.class));
+                     SecurityActions.getMethod(AbstractRemoteTransport.class, "localDeltaScheduleWorkAccepted",
+                                               org.jboss.jca.core.spi.workmanager.Address.class));
+
          methods.put(DELTA_SCHEDULEWORK_REJECTED_METHOD,
-                     AbstractRemoteTransport.class.getMethod("localDeltaScheduleWorkRejected",
-                                                             org.jboss.jca.core.spi.workmanager.Address.class));
+                     SecurityActions.getMethod(AbstractRemoteTransport.class, "localDeltaScheduleWorkRejected",
+                                               org.jboss.jca.core.spi.workmanager.Address.class));
 
-         methods.put(DELTA_WORK_SUCCESSFUL_METHOD, AbstractRemoteTransport.class.getMethod("localDeltaWorkSuccessful",
-                                                             org.jboss.jca.core.spi.workmanager.Address.class));
+         methods.put(DELTA_WORK_SUCCESSFUL_METHOD,
+                     SecurityActions.getMethod(AbstractRemoteTransport.class, "localDeltaWorkSuccessful",
+                                               org.jboss.jca.core.spi.workmanager.Address.class));
 
-         methods.put(DELTA_WORK_FAILED_METHOD, AbstractRemoteTransport.class.getMethod("localDeltaWorkFailed",
-                                                             org.jboss.jca.core.spi.workmanager.Address.class));
+         methods.put(DELTA_WORK_FAILED_METHOD,
+                     SecurityActions.getMethod(AbstractRemoteTransport.class, "localDeltaWorkFailed",
+                                               org.jboss.jca.core.spi.workmanager.Address.class));
       }
       catch (NoSuchMethodException e)
       {

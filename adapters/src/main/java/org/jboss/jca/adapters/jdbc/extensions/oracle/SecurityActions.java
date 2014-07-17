@@ -22,6 +22,7 @@
 
 package org.jboss.jca.adapters.jdbc.extensions.oracle;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -92,5 +93,74 @@ class SecurityActions
             return null;
          }
       });
+   }
+
+   /**
+    * Get the field
+    * @param c The class
+    * @param name The name
+    * @return The field
+    * @exception NoSuchFieldException If a matching field is not found.
+    */
+   static Field getField(final Class<?> c, final String name)
+      throws NoSuchFieldException
+   {
+      if (System.getSecurityManager() == null)
+         return c.getField(name);
+
+      Field result = AccessController.doPrivileged(new PrivilegedAction<Field>()
+      {
+         public Field run()
+         {
+            try
+            {
+               return c.getField(name);
+            }
+            catch (NoSuchFieldException e)
+            {
+               return null;
+            }
+         }
+      });
+
+      if (result != null)
+         return result;
+
+      throw new NoSuchFieldException();
+   }
+
+   /**
+    * Get the method
+    * @param c The class
+    * @param name The name
+    * @param params The parameters
+    * @return The method
+    * @exception NoSuchMethodException If a matching method is not found.
+    */
+   static Method getMethod(final Class<?> c, final String name, final Class<?>... params)
+      throws NoSuchMethodException
+   {
+      if (System.getSecurityManager() == null)
+         return c.getMethod(name, params);
+
+      Method result = AccessController.doPrivileged(new PrivilegedAction<Method>()
+      {
+         public Method run()
+         {
+            try
+            {
+               return c.getMethod(name, params);
+            }
+            catch (NoSuchMethodException e)
+            {
+               return null;
+            }
+         }
+      });
+
+      if (result != null)
+         return result;
+
+      throw new NoSuchMethodException();
    }
 }

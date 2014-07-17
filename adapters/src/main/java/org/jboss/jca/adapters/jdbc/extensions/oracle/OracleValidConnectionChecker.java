@@ -58,7 +58,7 @@ public class OracleValidConnectionChecker implements ValidConnectionChecker, Ser
    {
       try
       {
-         Method ping = c.getClass().getMethod("pingDatabase", (Class<?>[])null);
+         Method ping = SecurityActions.getMethod(c.getClass(), "pingDatabase", (Class<?>[])null);
          SecurityActions.setAccessible(ping);
 
          Integer status = (Integer) ping.invoke(c, (Object[])null);

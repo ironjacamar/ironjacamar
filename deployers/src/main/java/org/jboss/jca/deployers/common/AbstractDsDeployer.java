@@ -1102,13 +1102,13 @@ public abstract class AbstractDsDeployer
    private void injectValue(Object o, String methodName, Object value) throws Exception
    {
       // Method has to be public
-      Method[] methods = o.getClass().getMethods();
+      Method[] methods = SecurityActions.getMethods(o.getClass());
       boolean found = false;
 
       for (int i = 0; !found && i < methods.length; i++)
       {
          Method m = methods[i];
-         m.setAccessible(true);
+         SecurityActions.setAccessible(m);
 
          if (m.getName().equals(methodName) && m.getParameterTypes().length == 1)
          {

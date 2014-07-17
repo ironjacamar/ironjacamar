@@ -116,7 +116,7 @@ public class AnnotationImpl implements Annotation
             {
                try
                {
-                  Field field = clazz.getDeclaredField(memberName);
+                  Field field = SecurityActions.getDeclaredField(clazz, memberName);
                   return field.getAnnotation(annotationClass);
                }
                catch (Throwable t)
@@ -139,7 +139,7 @@ public class AnnotationImpl implements Annotation
             {
                try
                {
-                  Method method = clazz.getDeclaredMethod(memberName, params);
+                  Method method = SecurityActions.getDeclaredMethod(clazz, memberName, params);
                   return method.getAnnotation(annotationClass);
                }
                catch (Throwable t)

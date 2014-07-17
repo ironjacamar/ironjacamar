@@ -88,7 +88,7 @@ public class MySQLReauthPlugin implements ReauthPlugin
 
       try
       {
-         mysqlConnection.getMethod("changeUser", new Class[] {String.class, String.class});
+         SecurityActions.getMethod(mysqlConnection, "changeUser", new Class[] {String.class, String.class});
       }
       catch (Throwable t)
       {
@@ -108,7 +108,8 @@ public class MySQLReauthPlugin implements ReauthPlugin
       Object[] params = new Object[] {userName, password};
       try
       {
-         Method changeUser = c.getClass().getMethod("changeUser", new Class[] {String.class, String.class});
+         Method changeUser = SecurityActions.getMethod(c.getClass(), "changeUser",
+                                                       new Class[] {String.class, String.class});
          SecurityActions.setAccessible(changeUser);
          changeUser.invoke(c, params);
       }
