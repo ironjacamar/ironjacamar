@@ -62,7 +62,18 @@ public class URLXASelector implements URLXASelectorStrategy
     */
    public boolean hasMore()
    {
-      return currentIndex < data.size() - 1;
+      if (current != null)
+         return true;
+
+      if (currentIndex < data.size())
+      {
+         return true;
+      }
+      else
+      {
+         currentIndex = 0;
+         return false;
+      }
    }
 
    /**
@@ -73,12 +84,7 @@ public class URLXASelector implements URLXASelectorStrategy
       if (current != null)
          return current;
 
-      currentIndex++;
-
-      if (currentIndex == data.size())
-         currentIndex = 0;
-
-      current = data.get(currentIndex);
+      current = data.get(currentIndex++);
       return current;
    }
 
@@ -97,7 +103,7 @@ public class URLXASelector implements URLXASelectorStrategy
    public void reset()
    {
       current = null;
-      currentIndex = -1;
+      currentIndex = 0;
    }
 
    /**
