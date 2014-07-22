@@ -61,7 +61,18 @@ public class URLSelector implements URLSelectorStrategy
     */
    public boolean hasMore()
    {
-      return currentIndex < urls.size() - 1;
+      if (currentUrl != null)
+         return true;
+
+      if (currentIndex < urls.size())
+      {
+         return true;
+      }
+      else
+      {
+         currentIndex = 0;
+         return false;
+      }
    }
 
    /**
@@ -72,12 +83,7 @@ public class URLSelector implements URLSelectorStrategy
       if (currentUrl != null)
          return currentUrl;
 
-      currentIndex++;
-
-      if (currentIndex == urls.size())
-         currentIndex = 0;
-
-      currentUrl = urls.get(currentIndex);
+      currentUrl = urls.get(currentIndex++);
       return currentUrl;
    }
 
@@ -96,7 +102,7 @@ public class URLSelector implements URLSelectorStrategy
    public void reset()
    {
       currentUrl = null;
-      currentIndex = -1;
+      currentIndex = 0;
    }
 
    /**
