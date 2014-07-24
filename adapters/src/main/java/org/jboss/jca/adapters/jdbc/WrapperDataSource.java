@@ -271,7 +271,7 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
          if (status != Status.STATUS_ACTIVE && status != Status.STATUS_PREPARING &&
              status != Status.STATUS_PREPARED && status != Status.STATUS_COMMITTING)
          {
-            throw new SQLException("Transaction cannot proceed " + TxUtils.getStatusAsString(status));
+            throw new SQLException(bundle.transactionCannotProceed(TxUtils.getStatusAsString(status)));
          }
       }
       catch (SQLException se)

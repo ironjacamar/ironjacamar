@@ -74,7 +74,7 @@ public class LocalManagedConnection extends BaseWrapperManagedConnection impleme
     */
    public XAResource getXAResource() throws ResourceException
    {
-      throw new ResourceException("Local tx only!");
+      throw new ResourceException(bundle.localTransactionOnly());
    }
 
    /**
@@ -168,7 +168,7 @@ public class LocalManagedConnection extends BaseWrapperManagedConnection impleme
                }
             }
             else
-               throw new ResourceException("Trying to begin a nested local tx");
+               throw new ResourceException(bundle.localTransactionNested());
          }
       }
       finally

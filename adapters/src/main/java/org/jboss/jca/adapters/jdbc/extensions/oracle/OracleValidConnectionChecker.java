@@ -69,8 +69,7 @@ public class OracleValidConnectionChecker implements ValidConnectionChecker, Ser
       }
       catch (Exception e)
       {
-         // What do we do here? Assume it is a misconfiguration
-         log.warn("Unexpected error in pingDatabase", e);
+         return new SQLException("pingDatabase failed", e);
       }
 
       // OK

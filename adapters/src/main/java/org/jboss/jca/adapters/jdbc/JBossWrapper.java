@@ -22,9 +22,13 @@
 
 package org.jboss.jca.adapters.jdbc;
 
+import org.jboss.jca.adapters.AdaptersBundle;
+
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.sql.Wrapper;
+
+import org.jboss.logging.Messages;
 
 /**
  * JBossWrapper.
@@ -36,6 +40,9 @@ public class JBossWrapper implements Serializable
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = -4097918663681033085L;
+
+   /** The bundle */
+   protected static AdaptersBundle bundle = Messages.getBundle(AdaptersBundle.class);
 
    /**
     * Constructor
@@ -86,7 +93,7 @@ public class JBossWrapper implements Serializable
       if (wrapped != null && iface.isAssignableFrom(wrapped.getClass()))
          return iface.cast(wrapped);
 
-      throw new SQLException("Not a wrapper for: " + iface.getName());
+      throw new SQLException(bundle.notWrapperFor(iface.getName()));
    }
 
    /**

@@ -55,6 +55,20 @@
            deprecation="${javac.deprecation}"
            optimize="${javac.optimize}"
            encoding="${javac.encoding}"
+           nowarn="true"
+           includeAntRuntime="false">
+      <compilerarg value="-Xlint"/>
+      <compilerarg value="-AgeneratedTranslationFilesPath=${build.adapters.dir}/impl"/>
+      <compilerarg value="-AtranslationFilesPath=${build.adapters.dir}/impl"/>
+    </javac> 
+
+    <javac srcdir="src/main"
+           destdir="${build.adapters.dir}/impl"
+           classpathref="main.lib.path.id"
+           debug="${javac.debug}"
+           deprecation="${javac.deprecation}"
+           optimize="${javac.optimize}"
+           encoding="${javac.encoding}"
            excludes="**/jdk7/**"
            includeAntRuntime="false">
       <compilerarg value="-Xlint"/>
@@ -95,7 +109,8 @@
          indexMetaInf="true"
          update="true"
          level="9"
-         includes="**/jdbc/**,**/*.properties">
+         includes="**/*.class,**/*.properties"
+         excludes="**/*.java">
       <manifest>
         <attribute name="Implementation-Title" value="IronJacamar JDBC Resource Adapter"/>
         <attribute name="Implementation-Version" value="${version}"/>

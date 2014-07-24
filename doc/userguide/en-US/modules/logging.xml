@@ -1079,4 +1079,351 @@
     </table>
   </section>
 
+  <section id="logging_codes_adapters">
+    <title>Adapters: 030000 - 039999</title>
+
+    <table frame="all">
+      <title>Logging codes for deployers</title>
+      <tgroup cols="3" align="left" colsep="1" rowsep="1">
+        <colspec colname="c1" colwidth="*"/>
+        <colspec colname="c2" colwidth="*"/>
+        <colspec colname="c3" colwidth="6*"/>
+        <thead>
+          <row>
+            <entry align="left">Code</entry>
+            <entry align="left">Level</entry>
+            <entry align="left">Description</entry>
+          </row>
+        </thead>
+        <tbody>
+          <row>
+            <entry>30000</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Unable to load connection listener</entry>
+          </row>
+          <row>
+            <entry>30001</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Disabling exception sorter</entry>
+          </row>
+          <row>
+            <entry>30002</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Disabling exception sorter</entry>
+          </row>
+          <row>
+            <entry>30003</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Error checking exception fatality</entry>
+          </row>
+          <row>
+            <entry>30004</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Disabling validation connection checker</entry>
+          </row>
+          <row>
+            <entry>30005</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Disabling validation connection checker</entry>
+          </row>
+          <row>
+            <entry>30006</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Disabling stale connection checker</entry>
+          </row>
+          <row>
+            <entry>30007</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Disabling stale connection checker</entry>
+          </row>
+          <row>
+            <entry>30020</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Detected queued threads during cleanup</entry>
+          </row>
+          <row>
+            <entry>30021</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Queued thread</entry>
+          </row>
+          <row>
+            <entry>30022</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Lock owned during cleanup</entry>
+          </row>
+          <row>
+            <entry>30023</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Lock is locked during cleanup without an owner</entry>
+          </row>
+          <row>
+            <entry>30024</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Error resetting transaction isolation</entry>
+          </row>
+          <row>
+            <entry>30025</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Error during connection listener activation</entry>
+          </row>
+          <row>
+            <entry>30026</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Error during connection listener passivation</entry>
+          </row>
+          <row>
+            <entry>30040</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Closing a statement you left open, please do your own housekeeping</entry>
+          </row>
+          <row>
+            <entry>30041</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Error during closing a statement</entry>
+          </row>
+          <row>
+            <entry>30050</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Error creating connection</entry>
+          </row>
+          <row>
+            <entry>30051</entry>
+            <entry><code>ERROR</code></entry>
+            <entry>Unable to load undefined URLSelectStrategy</entry>
+          </row>
+          <row>
+            <entry>30052</entry>
+            <entry><code>ERROR</code></entry>
+            <entry>Unable to load URLSelectStrategy</entry>
+          </row>
+          <row>
+            <entry>30053</entry>
+            <entry><code>ERROR</code></entry>
+            <entry>Unable to load URLSelectStrategy</entry>
+          </row>
+          <row>
+            <entry>30054</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Error creating XA connection</entry>
+          </row>
+          <row>
+            <entry>30055</entry>
+            <entry><code>ERROR</code></entry>
+            <entry>Unable to load undefined URLXASelectStrategy</entry>
+          </row>
+          <row>
+            <entry>30056</entry>
+            <entry><code>ERROR</code></entry>
+            <entry>Unable to load URLXASelectStrategy</entry>
+          </row>
+          <row>
+            <entry>30057</entry>
+            <entry><code>ERROR</code></entry>
+            <entry>Unable to load URLXASelectStrategy</entry>
+          </row>
+          <row>
+            <entry>31000</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Resource Adapter does not support running in a non-managed environment</entry>
+          </row>
+          <row>
+            <entry>31001</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Error during loading reauth plugin</entry>
+          </row>
+          <row>
+            <entry>31002</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Error during loading connection listener plugin</entry>
+          </row>
+          <row>
+            <entry>31003</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Wrong kind of ConnectionRequestInfo</entry>
+          </row>
+          <row>
+            <entry>31004</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>No matching credentials in Subject</entry>
+          </row>
+          <row>
+            <entry>31010</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Wrong connection handle to associate</entry>
+          </row>
+          <row>
+            <entry>31011</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Still active locks</entry>
+          </row>
+          <row>
+            <entry>31012</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Unable to obtain lock</entry>
+          </row>
+          <row>
+            <entry>31013</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Interrupted attempting lock</entry>
+          </row>
+          <row>
+            <entry>31014</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Connection has been destroyed</entry>
+          </row>
+          <row>
+            <entry>31015</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Error during reauthentication</entry>
+          </row>
+          <row>
+            <entry>31016</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Wrong credentials passed to getConnection</entry>
+          </row>
+          <row>
+            <entry>31017</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>You cannot set autocommit during a managed transaction</entry>
+          </row>
+          <row>
+            <entry>31018</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>You cannot set read only during a managed transaction</entry>
+          </row>
+          <row>
+            <entry>31019</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>You cannot commit during a managed transaction</entry>
+          </row>
+          <row>
+            <entry>31020</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>You cannot commit with autocommit set</entry>
+          </row>
+          <row>
+            <entry>31021</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>You cannot rollback during a managed transaction</entry>
+          </row>
+          <row>
+            <entry>31022</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>You cannot rollback with autocommit set</entry>
+          </row>
+          <row>
+            <entry>31030</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Not wrapper for</entry>
+          </row>
+          <row>
+            <entry>31040</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Connection is not associated with a managed connection</entry>
+          </row>
+          <row>
+            <entry>31041</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Connection handle has been closed and is unusable</entry>
+          </row>
+          <row>
+            <entry>31042</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Method is not implemented by JDBC driver</entry>
+          </row>
+          <row>
+            <entry>31050</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>The result set is closed</entry>
+          </row>
+          <row>
+            <entry>31060</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>The statement is closed</entry>
+          </row>
+          <row>
+            <entry>31070</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Transaction cannot proceed</entry>
+          </row>
+          <row>
+            <entry>31080</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>DriverClass is undefined</entry>
+          </row>
+          <row>
+            <entry>31081</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>ConnectionURL is undefined</entry>
+          </row>
+          <row>
+            <entry>31082</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Unable to create connection from datasource</entry>
+          </row>
+          <row>
+            <entry>31083</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Wrong driver class for this connection URL</entry>
+          </row>
+          <row>
+            <entry>31084</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Unable to create connection</entry>
+          </row>
+          <row>
+            <entry>31085</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Unable to create connection from URL</entry>
+          </row>
+          <row>
+            <entry>31086</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>No DriverClass specified for URL</entry>
+          </row>
+          <row>
+            <entry>31087</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Failed to register DriverClass</entry>
+          </row>
+          <row>
+            <entry>31088</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>DataSourceClass is undefined</entry>
+          </row>
+          <row>
+            <entry>31089</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Failed to load datasource</entry>
+          </row>
+          <row>
+            <entry>31090</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>LocalTransaction only</entry>
+          </row>
+          <row>
+            <entry>31091</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Trying to begin a nested LocalTransaction</entry>
+          </row>
+          <row>
+            <entry>31100</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Could not load connection properties</entry>
+          </row>
+          <row>
+            <entry>31101</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>XADataSourceClass is undefined</entry>
+          </row>
+          <row>
+            <entry>31102</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Failed to load XA datasource</entry>
+          </row>
+        </tbody>
+      </tgroup>
+    </table>
+  </section>
+
 </appendix>

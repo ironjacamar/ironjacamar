@@ -31,7 +31,6 @@ import org.jboss.jca.adapters.jdbc.util.Injection;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
@@ -163,7 +162,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
          }
          catch (IOException ioe)
          {
-            throw new ResourceException("Could not load connection properties", ioe);
+            throw new ResourceException(bundle.unableToLoadConnectionProperties(), ioe);
          }
       }
 
@@ -246,7 +245,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
 
       if (className == null || className.trim().equals(""))
       {
-         log.error("Unable to load undefined URLXASelectStrategy");
+         log.undefinedURLXASelectStrategy(getJndiName());
          return null;
       }
 
@@ -280,13 +279,13 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
          }
          catch (ClassNotFoundException cnfe)
          {
-            log.error("Unable to load: " + className);
+            // Not found
          }
       }
 
       if (clz == null)
       {
-         log.error("Unable to load defined URLXASelectStrategy: " + className);
+         log.errorURLXASelectStrategy(className, getJndiName());
          return null;
       }
 
@@ -299,7 +298,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
       }
       catch (Throwable t)
       {
-         log.error("URLXASelectStrategy:" + t.getMessage(), t);
+         log.errorURLXASelectStrategyExt(className, getJndiName(), t);
       }
 
       return result;
@@ -310,7 +309,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
    {
       if (getXADataSourceClass() == null)
       {
-         throw new ResourceException("No XADataSourceClass supplied!");
+         throw new ResourceException(bundle.xaDatasourceClassNull());
       }
 
       XADataSource xads = null;
@@ -346,7 +345,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
          }
          catch (ClassNotFoundException cnfe)
          {
-            throw new ResourceException("Class not found for XADataSource " + getXADataSourceClass(), cnfe);
+            throw new ResourceException(bundle.failedToLoadXADataSource(getXADataSourceClass()), cnfe);
          }
       }
 
@@ -363,25 +362,9 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
             injector.inject(xads, name, value);
          }
       }
-      catch (InstantiationException ie)
+      catch (Throwable t)
       {
-         throw new ResourceException("Could not create an XADataSource: ", ie);
-      }
-      catch (IllegalAccessException iae)
-      {
-         throw new ResourceException("Could not set a property: ", iae);
-      }
-      catch (IllegalArgumentException iae)
-      {
-         throw new ResourceException("Could not set a property: ", iae);
-      }
-      catch (InvocationTargetException ite)
-      {
-         throw new ResourceException("Could not invoke setter on XADataSource: ", ite);
-      }
-      catch (NoSuchMethodException nsme)
-      {
-         throw new ResourceException("Could not find accessor on XADataSource: ", nsme);
+         throw new ResourceException(bundle.failedToLoadXADataSource(getXADataSourceClass()), t);
       }
 
       return xads;
@@ -449,8 +432,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
             }
             catch (PrivilegedActionException pe)
             {
-               log.warn("Failed to create an XA connection to " + xaData.getUrl() + ": " +
-                        pe.getException().getMessage());
+               log.errorCreatingXAConnection(xaData.getUrl(), pe.getException());
                xadsSelector.fail(xaData);
             }
          }
@@ -462,7 +444,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
             }
             catch (ResourceException e)
             {
-               log.warn("Failed to create an XA connection to " + xaData.getUrl() + ": " + e.getMessage());
+               log.errorCreatingXAConnection(xaData.getUrl(), e);
                xadsSelector.fail(xaData);
             }
          }
@@ -471,8 +453,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
       xadsSelector.reset();
 
       // we have supposedly tried all the urls
-      throw new ResourceException("Could not create connection using any of the URLs: " +
-                                  xadsSelector.getData());
+      throw new ResourceException(bundle.unableToCreateConnectionFromURL(xadsSelector.getData()));
    }
 
    /**
@@ -510,7 +491,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
          {
             // Ignore
          }
-         throw new ResourceException("Could not create connection", e);
+         throw new ResourceException(bundle.unableToCreateConnection(), e);
       }
    }
 
@@ -622,7 +603,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
       if (xads == null)
       {
          if (xaDataSourceClass == null)
-            throw new ResourceException("No XADataSourceClass supplied!");
+            throw new ResourceException(bundle.xaDatasourceClassNull());
 
          try
          {
@@ -639,29 +620,9 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
                injector.inject(xads, name, value);
             }
          }
-         catch (ClassNotFoundException cnfe)
+         catch (Throwable t)
          {
-            throw new ResourceException("Class not found for XADataSource " + xaDataSourceClass, cnfe);
-         }
-         catch (InstantiationException ie)
-         {
-            throw new ResourceException("Could not create an XADataSource: ", ie);
-         }
-         catch (IllegalAccessException iae)
-         {
-            throw new ResourceException("Could not set a property: ", iae);
-         }
-         catch (IllegalArgumentException iae)
-         {
-            throw new ResourceException("Could not set a property: ", iae);
-         }
-         catch (InvocationTargetException ite)
-         {
-            throw new ResourceException("Could not invoke setter on XADataSource: ", ite);
-         }
-         catch (NoSuchMethodException nsme)
-         {
-            throw new ResourceException("Could not find accessor on XADataSource: ", nsme);
+            throw new ResourceException(bundle.failedToLoadXADataSource(getXADataSourceClass()), t);
          }
       }
       return xads;

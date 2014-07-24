@@ -67,7 +67,6 @@ public class MSSQLValidConnectionChecker implements ValidConnectionChecker, Seri
       }
       catch (SQLException e)
       {
-         log.warn("warning: connection validation failed for current managed connection.");
          sqe = e;
       }
       finally
@@ -81,7 +80,7 @@ public class MSSQLValidConnectionChecker implements ValidConnectionChecker, Seri
          }
          catch (SQLException e)
          {
-            log.warn("simple close failed for managed connection", e);
+            // Nothing
          }
       }
 

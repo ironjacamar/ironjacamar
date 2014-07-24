@@ -101,10 +101,10 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
    {
       // check some invariants before they come back to haunt us
       if (driverClass == null && dataSourceClass == null)
-         throw new ResourceException("driverClass is null");
+         throw new ResourceException(bundle.driverClassNull());
 
       if (connectionURL == null && driverClass != null)
-         throw new ResourceException("connectionURL is null");
+         throw new ResourceException(bundle.connectionURLNull());
 
       return super.createConnectionFactory(cm);
    }
@@ -307,19 +307,18 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
             DataSource d = getDataSource();
             con = d.getConnection(copy.getProperty("user"), copy.getProperty("password"));
             if (con == null)
-               throw new ResourceException("Unable to create connection from datasource");
+               throw new ResourceException(bundle.unableToCreateConnectionFromDataSource());
          }
          else if (driverClass != null)
          {
             Driver d = getDriver(url);
             con = d.connect(url, copy);
             if (con == null)
-               throw new ResourceException("Wrong driver class [" + d.getClass() + "] for this connection URL [" +
-                                           url + "]");
+               throw new ResourceException(bundle.wrongDriverClass(d.getClass().getName(), url));
          }
          else
          {
-            throw new ResourceException("Unable to create connection");
+            throw new ResourceException(bundle.unableToCreateConnection());
          }
 
          return new LocalManagedConnection(this, con, props, transactionIsolation, preparedStatementCacheSize);
@@ -337,7 +336,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
                // Ignore
             }
          }
-         throw new ResourceException("Could not create connection", e);
+         throw new ResourceException(bundle.unableToCreateConnection(), e);
       }
    }
 
@@ -365,7 +364,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
          }
          catch (Exception e)
          {
-            log.warn("Failed to create connection for " + url + ": " + e.getMessage());
+            log.errorCreatingConnection(url, e);
             urlSelector.fail(url);
          }
       }
@@ -374,8 +373,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       urlSelector.reset();
 
       // we have supposedly tried all the urls
-      throw new ResourceException("Could not create connection using any of the URLs: " +
-                                  urlSelector.getData());
+      throw new ResourceException(bundle.unableToCreateConnectionFromURL(urlSelector.getData()));
    }
 
    /**
@@ -420,7 +418,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
 
       if (className == null || className.trim().equals(""))
       {
-         log.error("Unable to load undefined URLSelectStrategy");
+         log.undefinedURLSelectStrategy(getJndiName());
          return null;
       }
 
@@ -454,13 +452,13 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
          }
          catch (ClassNotFoundException cnfe)
          {
-            log.error("Unable to load: " + className);
+            // Not found
          }
       }
 
       if (clz == null)
       {
-         log.error("Unable to load defined URLSelectStrategy: " + className);
+         log.errorURLSelectStrategy(className, getJndiName());
          return null;
       }
 
@@ -473,7 +471,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       }
       catch (Throwable t)
       {
-         log.error("URLSelectStrategy:" + t.getMessage(), t);
+         log.errorURLSelectStrategyExt(className, getJndiName(), t);
       }
 
       return result;
@@ -588,7 +586,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
 
       if (driverClass == null)
       {
-         throw new ResourceException("No Driver class specified (url = " + url + ")!");
+         throw new ResourceException(bundle.noDriverClassForURL(url));
       }
 
       String driverKey = url.substring(0, url.indexOf(":", 6));
@@ -615,7 +613,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       }
       catch (Exception e)
       {
-         throw new ResourceException("Failed to register driver for: " + driverClass, e);
+         throw new ResourceException(bundle.failedToRegisterDriverClass(driverClass), e);
       }
 
       return driver;
@@ -668,7 +666,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       if (dataSource == null)
       {
          if (dataSourceClass == null || dataSourceClass.trim().equals(""))
-            throw new ResourceException("DataSourceClass not defined");
+            throw new ResourceException(bundle.datasourceClassNull());
 
          ClassLoader tccl = SecurityActions.getThreadContextClassLoader();
          try
@@ -693,7 +691,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
          }
          catch (Throwable t)
          {
-            throw new ResourceException("Failed to load datasource: " + dataSourceClass, t);
+            throw new ResourceException(bundle.failedToLoadDataSource(dataSourceClass), t);
          }
          finally
          {

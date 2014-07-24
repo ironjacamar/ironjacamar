@@ -84,7 +84,7 @@ public class SybaseValidConnectionChecker implements ValidConnectionChecker, Ser
          }
          catch (SQLException ignore)
          {
-            log.warn("JDBC resource for " + this + " could not be closed");
+            // Nothing
          }
 
          try
@@ -94,7 +94,7 @@ public class SybaseValidConnectionChecker implements ValidConnectionChecker, Ser
          }
          catch (SQLException ignore)
          {
-            log.warn("JDBC resource for " + this + " could not be closed");
+            // Nothing
          }
       }
 

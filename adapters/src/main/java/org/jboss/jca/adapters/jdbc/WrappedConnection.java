@@ -22,6 +22,8 @@
 
 package org.jboss.jca.adapters.jdbc;
 
+import org.jboss.jca.adapters.AdaptersLogger;
+
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.CallableStatement;
@@ -60,7 +62,7 @@ import org.jboss.logging.Logger;
  */
 public abstract class WrappedConnection extends JBossWrapper implements Connection
 {
-   private static Logger log = Logger.getLogger(WrappedConnection.class);
+   private static AdaptersLogger log = Logger.getMessageLogger(AdaptersLogger.class, WrappedConnection.class.getName());
 
    /** The spy logger */
    protected static Logger spyLogger = Logger.getLogger(Constants.SPY_LOGGER_CATEGORY);
@@ -152,7 +154,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       else
       {
-         throw new SQLException("Connection is not associated with a managed connection." + this);
+         throw new SQLException(bundle.connectionNotAssociated(this.toString()));
       }
    }
 
@@ -248,7 +250,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
                      if (trackStatements == BaseWrapperManagedConnectionFactory.TRACK_STATEMENTS_TRUE_INT)
                      {
                         Throwable stackTrace = entry.getValue();
-                        log.warn("Closing a statement you left open, please do your own housekeeping", stackTrace);
+                        log.closingStatement(jndiName, stackTrace);
                      }
                      try
                      {
@@ -256,7 +258,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
                      }
                      catch (Throwable t)
                      {
-                        log.warn("Exception trying to close statement:", t);
+                        log.errorDuringClosingStatement(jndiName, t);
                      }
                   }
                }
@@ -1613,9 +1615,9 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    protected void checkStatus() throws SQLException
    {
       if (closed)
-         throw new SQLException("Connection handle has been closed and is unusable");
+         throw new SQLException(bundle.connectionClosed());
       if (mc == null)
-         throw new SQLException("Connection handle is not currently associated with a ManagedConnection");
+         throw new SQLException(bundle.connectionNotAssociated(this.toString()));
       checkTransactionActive();
    }
 
@@ -1633,7 +1635,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       Throwable result = null;
       if (t instanceof AbstractMethodError)
       {
-         t = new SQLFeatureNotSupportedException("Method is not implemented by JDBC driver", t);
+         t = new SQLFeatureNotSupportedException(bundle.methodNotImplemented(), t);
       }
 
       if (mc != null)
@@ -1728,7 +1730,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     * Get the logger
     * @return The value
     */
-   Logger getLogger()
+   AdaptersLogger getLogger()
    {
       return log;
    }

@@ -22,6 +22,8 @@
 
 package org.jboss.jca.adapters.jdbc;
 
+import org.jboss.jca.adapters.AdaptersBundle;
+import org.jboss.jca.adapters.AdaptersLogger;
 import org.jboss.jca.adapters.jdbc.classloading.TCClassLoaderPlugin;
 import org.jboss.jca.adapters.jdbc.extensions.novendor.NullExceptionSorter;
 import org.jboss.jca.adapters.jdbc.extensions.novendor.NullStaleConnectionChecker;
@@ -63,6 +65,7 @@ import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.UserTransaction;
 
 import org.jboss.logging.Logger;
+import org.jboss.logging.Messages;
 
 import org.ietf.jgss.GSSCredential;
 import org.ietf.jgss.GSSException;
@@ -76,10 +79,7 @@ import org.ietf.jgss.Oid;
  * @author <a href="mailto:abrock@redhat.com">Adrian Brock</a>
  * @author <a href="mailto:wprice@redhat.com">Weston Price</a>
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
- *
- * @version $Revision: 105426 $
  */
-
 public abstract class BaseWrapperManagedConnectionFactory
    implements ManagedConnectionFactory, ValidatingManagedConnectionFactory, Statistics, Serializable
 {
@@ -105,7 +105,10 @@ public abstract class BaseWrapperManagedConnectionFactory
    public static final String TRACK_STATEMENTS_NOWARN = "nowarn";
 
    /** The logger */
-   protected final Logger log = Logger.getLogger(getClass());
+   protected final AdaptersLogger log = Logger.getMessageLogger(AdaptersLogger.class, getClass().getName());
+
+   /** The bundle */
+   protected static AdaptersBundle bundle = Messages.getBundle(AdaptersBundle.class);
 
    /** The print writer */
    private PrintWriter printWriter;
@@ -284,7 +287,7 @@ public abstract class BaseWrapperManagedConnectionFactory
     */
    public Object createConnectionFactory() throws ResourceException
    {
-      throw new ResourceException("Resource Adapter does not currently support running in a non-managed environment.");
+      throw new ResourceException(bundle.nonManagedEnvironment());
    }
 
    /**
@@ -761,7 +764,7 @@ public abstract class BaseWrapperManagedConnectionFactory
          }
          catch (ClassNotFoundException cnfe)
          {
-            throw new ResourceException("Error during loading reauth plugin", cnfe);
+            throw new ResourceException(bundle.errorDuringLoadingReauthPlugin(), cnfe);
          }
       }
 
@@ -797,7 +800,7 @@ public abstract class BaseWrapperManagedConnectionFactory
       }
       catch (Throwable t)
       {
-         throw new ResourceException("Error during loading reauth plugin", t);
+         throw new ResourceException(bundle.errorDuringLoadingReauthPlugin(), t);
       }
    }
 
@@ -896,7 +899,7 @@ public abstract class BaseWrapperManagedConnectionFactory
          }
          catch (ClassNotFoundException cnfe)
          {
-            throw new ResourceException("Error during loading connection listener", cnfe);
+            throw new ResourceException(bundle.errorDuringLoadingConnectionListenerPlugin(), cnfe);
          }
       }
 
@@ -932,7 +935,7 @@ public abstract class BaseWrapperManagedConnectionFactory
       }
       catch (Throwable t)
       {
-         throw new ResourceException("Error during loading connection listener plugin", t);
+         throw new ResourceException(bundle.errorDuringLoadingConnectionListenerPlugin(), t);
       }
    }
 
@@ -951,7 +954,7 @@ public abstract class BaseWrapperManagedConnectionFactory
       }
       catch (ResourceException re)
       {
-         log.warn(re.getMessage(), re);
+         log.unableToLoadConnectionListener(re.getMessage(), re);
       }
 
       return null;
@@ -1127,7 +1130,7 @@ public abstract class BaseWrapperManagedConnectionFactory
       throws ResourceException
    {
       if (cri != null && cri.getClass() != WrappedConnectionRequestInfo.class)
-         throw new ResourceException("Wrong kind of ConnectionRequestInfo: " + cri.getClass());
+         throw new ResourceException(bundle.wrongConnectionRequestInfo(cri.getClass().getName()));
 
       Properties props = new Properties();
       
@@ -1141,7 +1144,7 @@ public abstract class BaseWrapperManagedConnectionFactory
          if (SubjectActions.addMatchingProperties(subject, lcri, props, userName, password, this))
             return props;
 
-         throw new ResourceException("No matching credentials in Subject!");
+         throw new ResourceException(bundle.noMatchingCredentials());
       }
 
       if (lcri != null)
@@ -1170,10 +1173,10 @@ public abstract class BaseWrapperManagedConnectionFactory
    Object loadPlugin(String plugin, Properties props) throws Exception
    {
       if (plugin == null)
-         throw new Exception("Plugin is null");
+         throw new IllegalArgumentException("Plugin is null");
 
       if (plugin.trim().equals(""))
-         throw new Exception("Plugin isn't defined");
+         throw new IllegalArgumentException("Plugin isn't defined");
 
       Class<?> clz = null;
       try
@@ -1236,7 +1239,7 @@ public abstract class BaseWrapperManagedConnectionFactory
          if (exceptionSorter != null)
             return exceptionSorter.isExceptionFatal(e);
 
-         if (exceptionSorterClassName != null)
+         if (exceptionSorterClassName != null && !exceptionSorterClassName.trim().equals(""))
          {
             try
             {
@@ -1249,20 +1252,20 @@ public abstract class BaseWrapperManagedConnectionFactory
                }
                else
                {
-                  log.warn("Disabling exception sorter for " + jndiName);
+                  log.disableExceptionSorter(jndiName);
                   exceptionSorter = new NullExceptionSorter();
                }
             }
             catch (Exception e2)
             {
-               log.warn("Exception trying to create exception sorter for " + jndiName + " (disabling):", e2);
+               log.disableExceptionSorterExt(jndiName, e2);
                exceptionSorter = new NullExceptionSorter();
             }
          }
       }
       catch (Throwable t)
       {
-         log.warn("Error checking exception fatality for " + jndiName + ": ", t);
+         log.errorDuringExceptionSorter(jndiName, t);
       }
       return false;
    }
@@ -1279,7 +1282,7 @@ public abstract class BaseWrapperManagedConnectionFactory
          return connectionChecker.isValidConnection(c);
 
       // Class specified
-      if (validConnectionCheckerClassName != null)
+      if (validConnectionCheckerClassName != null && !validConnectionCheckerClassName.trim().equals(""))
       {
          try
          {
@@ -1292,13 +1295,13 @@ public abstract class BaseWrapperManagedConnectionFactory
             }
             else
             {
-               log.warn("Disabling valid connection checker for " + jndiName);
+               log.disableValidationChecker(jndiName);
                connectionChecker = new NullValidConnectionChecker();
             }
          }
          catch (Exception e)
          {
-            log.warn("Exception trying to create valid connection checker for " + jndiName + " (disabling):", e);
+            log.disableValidationCheckerExt(jndiName, e);
             connectionChecker = new NullValidConnectionChecker();
          }
       }
@@ -1325,7 +1328,7 @@ public abstract class BaseWrapperManagedConnectionFactory
       if (staleConnectionChecker != null)
          return staleConnectionChecker.isStaleConnection(e);
 
-      if (staleConnectionCheckerClassName != null)
+      if (staleConnectionCheckerClassName != null && !staleConnectionCheckerClassName.trim().equals(""))
       {
          try
          {
@@ -1338,15 +1341,13 @@ public abstract class BaseWrapperManagedConnectionFactory
             }
             else
             {
-               log.warn("Disabling stale connection checker for " + jndiName);
+               log.disableStaleChecker(jndiName);
                staleConnectionChecker = new NullStaleConnectionChecker();
             }
          }
          catch (Exception ex2)
          {
-            log.warn("Exception trying to create stale connection checker for " + jndiName + " (disabling) " +
-                     staleConnectionCheckerClassName, ex2);
-
+            log.disableStaleCheckerExt(jndiName, ex2);
             staleConnectionChecker = new NullStaleConnectionChecker();
          }
       }

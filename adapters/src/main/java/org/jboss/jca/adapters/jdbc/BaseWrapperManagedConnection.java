@@ -22,6 +22,8 @@
 
 package org.jboss.jca.adapters.jdbc;
 
+import org.jboss.jca.adapters.AdaptersBundle;
+import org.jboss.jca.adapters.AdaptersLogger;
 import org.jboss.jca.adapters.jdbc.spi.reauth.ReauthPlugin;
 import org.jboss.jca.adapters.jdbc.util.ReentrantLock;
 import org.jboss.jca.core.spi.transaction.ConnectableResource;
@@ -52,7 +54,7 @@ import javax.resource.spi.ManagedConnectionMetaData;
 import javax.resource.spi.ResourceAdapterInternalException;
 import javax.security.auth.Subject;
 
-import org.jboss.logging.Logger;
+import org.jboss.logging.Messages;
 
 /**
  * BaseWrapperManagedConnection
@@ -70,6 +72,9 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
 
    /** JDBC 4.1 factory */
    private static final String JDBC41_FACTORY = "org.jboss.jca.adapters.jdbc.jdk7.WrappedConnectionFactoryJDK7";
+
+   /** The bundle */
+   protected static AdaptersBundle bundle = Messages.getBundle(AdaptersBundle.class);
 
    /** Trace logging */
    private boolean trace;
@@ -244,7 +249,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
    public void associateConnection(Object handle) throws ResourceException
    {
       if (!(handle instanceof WrappedConnection))
-         throw new ResourceException("Wrong kind of connection handle to associate " + handle);
+         throw new ResourceException(bundle.wrongConnectionHandle(handle.toString()));
 
       WrappedConnection wc = (WrappedConnection)handle;
       wc.setManagedConnection(this);
@@ -290,7 +295,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
          Throwable currentThrowable =
             new Throwable("Detected queued threads during cleanup from: " + currentThread.getName());
          currentThrowable.setStackTrace(SecurityActions.getStackTrace(currentThread));
-         mcf.log.warn(currentThrowable.getMessage(), currentThrowable);
+         mcf.log.queuedThreadName(currentThread.getName(), currentThrowable);
 
          Collection<Thread> threads = lock.getQueuedThreads();
          for (Thread thread : threads)
@@ -298,7 +303,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
             Throwable t = new Throwable("Queued thread: " + thread.getName());
             t.setStackTrace(SecurityActions.getStackTrace(thread));
 
-            mcf.log.warn(t.getMessage(), t);
+            mcf.log.queuedThread(thread.getName(), t);
          }
 
          // Double-check
@@ -313,11 +318,11 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
          {
             Throwable t = new Throwable("Lock owned during cleanup: " + owner.getName());
             t.setStackTrace(SecurityActions.getStackTrace(owner));
-            mcf.log.warn(t.getMessage(), t);
+            mcf.log.lockOwned(owner.getName(), t);
          }
          else
          {
-            mcf.log.warn("Lock is locked during cleanup without an owner");
+            mcf.log.lockOwnedWithoutOwner();
          }
          
          // Double-check
@@ -349,20 +354,14 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
             }
             catch (SQLException e)
             {
-               mcf.log.warn("Error resetting transaction isolation ", e);
+               mcf.log.transactionIsolationReset(mcf.getJndiName(), e);
             }
          }
       }
 
       if (isActive)
       {
-         // I'm recreating the lock object when we return to the pool
-         // because it looks too nasty to expect the connection handle
-         // to unlock properly in certain race conditions
-         // where the dissociation of the managed connection is "random".
-         //lock = new ReentrantLock(true);
-
-         throw new ResourceException("Still active locks");
+         throw new ResourceException(bundle.activeLocks());
       }
    }
 
@@ -392,12 +391,12 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
       try
       {
          if (!lock.tryLock(tryLock, TimeUnit.SECONDS))
-            throw new SQLException("Unable to obtain lock in " + tryLock + " seconds: " + this);
+            throw new SQLException(bundle.unableToObtainLock(tryLock, this));
       }
       catch (InterruptedException e)
       {
          Thread.currentThread().interrupt();
-         throw new SQLException("Interrupted attempting lock: " + this);
+         throw new SQLException(bundle.interruptedWhileLock(this));
       }
    }
    
@@ -565,7 +564,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
                }
                catch (SQLException se)
                {
-                  mcf.log.warn("Error during passivated", se);
+                  mcf.log.errorDuringConnectionListenerPassivation(mcf.getJndiName(), se);
                }
             }
          }
@@ -682,7 +681,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
    Connection getRealConnection() throws SQLException
    {
       if (con == null)
-         throw new SQLException("Connection has been destroyed!!!");
+         throw new SQLException(bundle.connectionDestroyed());
 
       return con;
    }
@@ -840,7 +839,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
     * Get the logger
     * @return The value
     */
-   protected Logger getLog()
+   protected AdaptersLogger getLog()
    {
       return mcf.log;
    }
@@ -869,14 +868,14 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
             }
             catch (SQLException se)
             {
-               throw new ResourceException("Error during reauthentication", se);
+               throw new ResourceException(bundle.errorDuringReauthentication(), se);
             }
          }
       }
       else
       {
          if (!props.equals(newProps))
-            throw new ResourceException("Wrong credentials passed to getConnection!");
+            throw new ResourceException(bundle.wrongCredentials());
       }
    }
 
@@ -973,7 +972,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
          {
             if (!ignoreInManagedAutoCommitCalls)
             {
-               throw new SQLException("You cannot set autocommit during a managed transaction!");
+               throw new SQLException(bundle.autocommitManagedTransaction());
             }
             else
             {
@@ -1032,7 +1031,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
       synchronized (stateLock)
       {
          if (inManagedTransaction)
-            throw new SQLException("You cannot set read only during a managed transaction!");
+            throw new SQLException(bundle.readonlyManagedTransaction());
 
          this.jdbcReadOnly = readOnly;
       }
@@ -1070,10 +1069,10 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
       synchronized (stateLock)
       {
          if (inManagedTransaction)
-            throw new SQLException("You cannot commit during a managed transaction!");
+            throw new SQLException(bundle.commitManagedTransaction());
 
          if (jdbcAutoCommit)
-            throw new SQLException("You cannot commit with autocommit set!");
+            throw new SQLException(bundle.commitAutocommit());
       }
       con.commit();
 
@@ -1115,9 +1114,9 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
       synchronized (stateLock)
       {
          if (inManagedTransaction)
-            throw new SQLException("You cannot rollback during a managed transaction!");
+            throw new SQLException(bundle.rollbackManagedTransaction());
          if (jdbcAutoCommit)
-            throw new SQLException("You cannot rollback with autocommit set!");
+            throw new SQLException(bundle.rollbackAutocommit());
       }
       con.rollback();
 
@@ -1160,10 +1159,10 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
       synchronized (stateLock)
       {
          if (inManagedTransaction)
-            throw new SQLException("You cannot rollback during a managed transaction!");
+            throw new SQLException(bundle.rollbackManagedTransaction());
 
          if (jdbcAutoCommit)
-            throw new SQLException("You cannot rollback with autocommit set!");
+            throw new SQLException(bundle.rollbackAutocommit());
       }
       con.rollback(savepoint);
    }
@@ -1231,7 +1230,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
                }
                catch (SQLException se)
                {
-                  mcf.log.warn("Error during activated", se);
+                  mcf.log.errorDuringConnectionListenerActivation(mcf.getJndiName(), se);
                }
             }
          }

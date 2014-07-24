@@ -119,7 +119,7 @@ public class XAManagedConnection extends BaseWrapperManagedConnection implements
                }
             }
             else
-               throw new ResourceException("Trying to begin a nested local tx");
+               throw new ResourceException(bundle.localTransactionNested());
          }
       }
       finally

@@ -108,7 +108,6 @@ public class MySQLReplicationValidConnectionChecker implements ValidConnectionCh
             }
             else
             {
-               log.warn("Unexpected error", e);
                return new SQLException("IsValid failed: " + e.toString());
             }
          }
@@ -127,7 +126,6 @@ public class MySQLReplicationValidConnectionChecker implements ValidConnectionCh
             }
             else
             {
-               log.warn("Unexpected error", e);
                return new SQLException("Ping failed: " + e.toString());
             }
          }
@@ -151,7 +149,6 @@ public class MySQLReplicationValidConnectionChecker implements ValidConnectionCh
             }
             else
             {
-               log.warn("Unexpected error", e);
                return new SQLException("SELECT 1 failed: " + e.toString());
             }
          }

@@ -1321,7 +1321,7 @@ public abstract class WrappedStatement extends JBossWrapper implements Statement
    void checkState() throws SQLException
    {
       if (closed.get())
-         throw new SQLException("The statement is closed.");
+         throw new SQLException(bundle.statementClosed());
    }
 
    /**

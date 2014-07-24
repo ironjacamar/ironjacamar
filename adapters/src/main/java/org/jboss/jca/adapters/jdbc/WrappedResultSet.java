@@ -4078,7 +4078,7 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
    void checkState() throws SQLException
    {
       if (closed.get())
-         throw new SQLException("The result set is closed.");
+         throw new SQLException(bundle.resultSetClosed());
    }
 
    /**
