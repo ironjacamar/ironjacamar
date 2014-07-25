@@ -1142,6 +1142,11 @@
             <entry>Disabling stale connection checker</entry>
           </row>
           <row>
+            <entry>30008</entry>
+            <entry><code>WARN</code></entry>
+            <entry>HA setup detected</entry>
+          </row>
+          <row>
             <entry>30020</entry>
             <entry><code>WARN</code></entry>
             <entry>Detected queued threads during cleanup</entry>

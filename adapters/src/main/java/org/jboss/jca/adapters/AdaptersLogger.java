@@ -110,6 +110,14 @@ public interface AdaptersLogger extends BasicLogger
    @Message(id = 30007, value = "Disabling stale connection checker for: %s")
    public void disableStaleCheckerExt(String jndi, @Cause Throwable t);
 
+   /**
+    * HA detected
+    * @param jndi The JNDI name
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 30008, value = "HA setup detected for %s")
+   public void haDetected(String jndi);
+
    // BaseWrapperManagedConnection
 
    /**

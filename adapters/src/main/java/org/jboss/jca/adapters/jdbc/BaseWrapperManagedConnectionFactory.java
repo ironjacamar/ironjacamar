@@ -294,6 +294,9 @@ public abstract class BaseWrapperManagedConnectionFactory
     */
    public Object createConnectionFactory(ConnectionManager cm) throws ResourceException
    {
+      if (getURLDelimiter() != null && !getURLDelimiter().trim().equals(""))
+         log.haDetected(getJndiName());
+
       return new WrapperDataSource(this, cm);
    }
 
