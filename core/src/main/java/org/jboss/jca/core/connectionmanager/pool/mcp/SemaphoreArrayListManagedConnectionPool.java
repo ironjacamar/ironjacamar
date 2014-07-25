@@ -899,7 +899,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    {
       boolean remove = true;
 
-      if (poolConfiguration.isStrictMin())
+      if (poolConfiguration.isStrictMin() && pool instanceof PrefillPool)
       {
          // Add 1 to min-pool-size since it is strict
          remove = isSize(poolConfiguration.getMinSize() + 1);

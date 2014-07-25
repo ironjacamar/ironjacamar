@@ -812,7 +812,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
    {      
       boolean remove = true;
       
-      if (poolConfiguration.isStrictMin())
+      if (poolConfiguration.isStrictMin() && pool instanceof PrefillPool)
       {
          remove = cls.size() > poolConfiguration.getMinSize();
          
