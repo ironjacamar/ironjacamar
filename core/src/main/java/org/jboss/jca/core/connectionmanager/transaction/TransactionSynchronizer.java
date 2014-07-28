@@ -57,6 +57,9 @@ public class TransactionSynchronizer implements Synchronization
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, TransactionSynchronizer.class.getName());
 
+   /** Trace */
+   private static boolean trace = log.isTraceEnabled();
+
    /** The records */
    private static ConcurrentMap<Transaction, Record> records =
       new ConcurrentHashMap<Transaction, Record>();
@@ -201,13 +204,39 @@ public class TransactionSynchronizer implements Synchronization
          if (record == null)
          {
             record = newRecord;
-            if (tsr != null)
+
+            if (trace)
+               log.tracef("Adding: %s [%s]", System.identityHashCode(tx), tx.toString());
+
+            try
             {
-               tsr.registerInterposedSynchronization(record.getTransactionSynchronizer());
+               if (tsr != null)
+               {
+                  tsr.registerInterposedSynchronization(record.getTransactionSynchronizer());
+               }
+               else
+               {
+                  tx.registerSynchronization(record.getTransactionSynchronizer());
+               }
             }
-            else
+            catch (Throwable t)
             {
-               tx.registerSynchronization(record.getTransactionSynchronizer());
+               records.remove(tx);
+
+               if (t instanceof SystemException)
+               {
+                  throw (SystemException)t;
+               }
+               else if (t instanceof RollbackException)
+               {
+                  throw (RollbackException)t;
+               }
+               else
+               {
+                  SystemException se = new SystemException(t.getMessage());
+                  se.initCause(t);
+                  throw se;
+               }
             }
          }
       }
@@ -265,13 +294,39 @@ public class TransactionSynchronizer implements Synchronization
          if (record == null)
          {
             record = newRecord;
-            if (tsr != null)
+
+            if (trace)
+               log.tracef("Adding: %s [%s]", System.identityHashCode(tx), tx.toString());
+
+            try
             {
-               tsr.registerInterposedSynchronization(record.getTransactionSynchronizer());
+               if (tsr != null)
+               {
+                  tsr.registerInterposedSynchronization(record.getTransactionSynchronizer());
+               }
+               else
+               {
+                  tx.registerSynchronization(record.getTransactionSynchronizer());
+               }
             }
-            else
+            catch (Throwable t)
             {
-               tx.registerSynchronization(record.getTransactionSynchronizer());
+               records.remove(tx);
+
+               if (t instanceof SystemException)
+               {
+                  throw (SystemException)t;
+               }
+               else if (t instanceof RollbackException)
+               {
+                  throw (RollbackException)t;
+               }
+               else
+               {
+                  SystemException se = new SystemException(t.getMessage());
+                  se.initCause(t);
+                  throw se;
+               }
             }
          }
       }
@@ -354,6 +409,21 @@ public class TransactionSynchronizer implements Synchronization
                found = true;
             }
          }
+
+         if (found)
+         {
+            if (trace)
+               log.tracef("Removed: %s [%s]", System.identityHashCode(tx), tx.toString());
+         }
+         else
+         {
+            log.transactionNotFound(tx);
+         }
+      }
+      else
+      {
+         if (trace)
+            log.tracef("Removed: %s [%s]", System.identityHashCode(tx), tx.toString());
       }
    }
 

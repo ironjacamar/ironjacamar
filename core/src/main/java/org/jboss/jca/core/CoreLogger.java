@@ -246,6 +246,13 @@ public interface CoreLogger extends BasicLogger
    @Message(id = 503, value = "Transaction %s error in afterCompletion %s")
    public void transactionErrorInAfterCompletion(Object transaction, Object synch, @Cause Throwable t);
    
+   /**
+    * Transaction not found
+    * @param transaction transaction
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 504, value = "Transaction not found: %s")
+   public void transactionNotFound(Object transaction);
 
    // POOL MANAGER (600)
 

@@ -300,6 +300,11 @@
             <entry>Transaction error in afterCompletion</entry>
           </row>
           <row>
+            <entry>504</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Transaction not found</entry>
+          </row>
+          <row>
             <entry>601</entry>
             <entry><code>INFO</code></entry>
             <entry>ConnectionValidator has been interrupted</entry>
