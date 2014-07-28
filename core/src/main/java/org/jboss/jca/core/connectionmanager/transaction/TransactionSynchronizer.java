@@ -62,7 +62,7 @@ public class TransactionSynchronizer implements Synchronization
 
    /** The records */
    private static ConcurrentMap<Object, Record> records =
-      new ConcurrentHashMap<Object, Record>();
+      new ConcurrentHashMap<Object, Record>(512, 0.75f, 512);
    
    /** The transaction */
    private Transaction tx;
@@ -399,20 +399,21 @@ public class TransactionSynchronizer implements Synchronization
       if (records.remove(identifier) == null)
       {
          // The identifier wasn't stable - scan for it
-         boolean found = false;
+         Object altKey = null;
          Iterator<Map.Entry<Object, Record>> iterator = records.entrySet().iterator();
-         while (!found && iterator.hasNext())
+         while (altKey == null && iterator.hasNext())
          {
             Map.Entry<Object, Record> next = iterator.next();
             if (next.getValue().getTransactionSynchronizer().equals(this))
             {
-               iterator.remove();
-               found = true;
+               altKey = next.getKey();
             }
          }
 
-         if (found)
+         if (altKey != null)
          {
+            records.remove(altKey);
+
             if (trace)
                log.tracef("Removed: %s [%s]", System.identityHashCode(identifier), identifier.toString());
          }
