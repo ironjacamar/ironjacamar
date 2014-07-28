@@ -57,6 +57,9 @@ public class TransactionSynchronizer implements Synchronization
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, TransactionSynchronizer.class.getName());
 
+   /** Trace */
+   private static boolean trace = log.isTraceEnabled();
+
    /** The records */
    private static ConcurrentMap<Object, Record> records =
       new ConcurrentHashMap<Object, Record>();
@@ -204,14 +207,40 @@ public class TransactionSynchronizer implements Synchronization
          if (record == null)
          {
             record = newRecord;
-            if (ti.getTransactionSynchronizationRegistry() != null)
+
+            if (trace)
+               log.tracef("Adding: %s [%s]", System.identityHashCode(id), id.toString());
+
+            try
             {
-               ti.getTransactionSynchronizationRegistry().
-                  registerInterposedSynchronization(record.getTransactionSynchronizer());
+               if (ti.getTransactionSynchronizationRegistry() != null)
+               {
+                  ti.getTransactionSynchronizationRegistry().
+                     registerInterposedSynchronization(record.getTransactionSynchronizer());
+               }
+               else
+               {
+                  tx.registerSynchronization(record.getTransactionSynchronizer());
+               }
             }
-            else
+            catch (Throwable t)
             {
-               tx.registerSynchronization(record.getTransactionSynchronizer());
+               records.remove(id);
+
+               if (t instanceof SystemException)
+               {
+                  throw (SystemException)t;
+               }
+               else if (t instanceof RollbackException)
+               {
+                  throw (RollbackException)t;
+               }
+               else
+               {
+                  SystemException se = new SystemException(t.getMessage());
+                  se.initCause(t);
+                  throw se;
+               }
             }
          }
       }
@@ -271,14 +300,40 @@ public class TransactionSynchronizer implements Synchronization
          if (record == null)
          {
             record = newRecord;
-            if (ti.getTransactionSynchronizationRegistry() != null)
+
+            if (trace)
+               log.tracef("Adding: %s [%s]", System.identityHashCode(id), id.toString());
+
+            try
             {
-               ti.getTransactionSynchronizationRegistry().
-                  registerInterposedSynchronization(record.getTransactionSynchronizer());
+               if (ti.getTransactionSynchronizationRegistry() != null)
+               {
+                  ti.getTransactionSynchronizationRegistry().
+                     registerInterposedSynchronization(record.getTransactionSynchronizer());
+               }
+               else
+               {
+                  tx.registerSynchronization(record.getTransactionSynchronizer());
+               }
             }
-            else
+            catch (Throwable t)
             {
-               tx.registerSynchronization(record.getTransactionSynchronizer());
+               records.remove(id);
+
+               if (t instanceof SystemException)
+               {
+                  throw (SystemException)t;
+               }
+               else if (t instanceof RollbackException)
+               {
+                  throw (RollbackException)t;
+               }
+               else
+               {
+                  SystemException se = new SystemException(t.getMessage());
+                  se.initCause(t);
+                  throw se;
+               }
             }
          }
       }
@@ -355,6 +410,21 @@ public class TransactionSynchronizer implements Synchronization
                found = true;
             }
          }
+
+         if (found)
+         {
+            if (trace)
+               log.tracef("Removed: %s [%s]", System.identityHashCode(identifier), identifier.toString());
+         }
+         else
+         {
+            log.transactionNotFound(identifier);
+         }
+      }
+      else
+      {
+         if (trace)
+            log.tracef("Removed: %s [%s]", System.identityHashCode(identifier), identifier.toString());
       }
    }
 
