@@ -397,21 +397,22 @@ public class TransactionSynchronizer implements Synchronization
       if (records.remove(tx) == null)
       {
          // Cleanup the maps -- only trust TransactionSynchronizer
-         boolean found = false;
+         Object altKey = null;
 
          Iterator<Map.Entry<Transaction, Record>> iterator = records.entrySet().iterator();
-         while (!found && iterator.hasNext())
+         while (altKey == null && iterator.hasNext())
          {
             Map.Entry<Transaction, Record> next = iterator.next();
             if (next.getValue().getTransactionSynchronizer().equals(this))
             {
-               iterator.remove();
-               found = true;
+               altKey = next.getKey();
             }
          }
 
-         if (found)
+         if (altKey != null)
          {
+            records.remove(altKey);
+
             if (trace)
                log.tracef("Removed: %s [%s]", System.identityHashCode(tx), tx.toString());
          }
