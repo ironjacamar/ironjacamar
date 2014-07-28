@@ -452,7 +452,8 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
 
          if (tx != null)
          {
-            TransactionSynchronizer.lock(tx, transactionSynchronizationRegistry);
+            if (createIfNotFound)
+               TransactionSynchronizer.lock(tx, transactionSynchronizationRegistry);
             try
             {
                CloseConnectionSynchronization cas = 
@@ -468,7 +469,8 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
             }
             finally
             {
-               TransactionSynchronizer.unlock(tx);
+               if (createIfNotFound)
+                  TransactionSynchronizer.unlock(tx);
             }
          }
       }
