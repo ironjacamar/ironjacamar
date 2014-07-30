@@ -31,6 +31,7 @@ import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionState;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.spi.graceful.GracefulCallback;
+import org.jboss.jca.core.spi.security.SubjectFactory;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 
 import java.util.Collection;
@@ -55,8 +56,6 @@ import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 
 import org.jboss.logging.Messages;
-
-import org.jboss.security.SubjectFactory;
 
 /**
  * AbstractConnectionManager.

@@ -42,6 +42,11 @@
     </constructor>
   </bean>
 
+  <!-- PicketBox -->
+  <bean name="PicketBox"
+        class="org.jboss.jca.core.security.picketbox.PicketBoxSecurityIntegration">
+  </bean> 
+
   <!-- Work Manager -->
   <bean name="WorkManager" 
         interface="org.jboss.jca.core.api.WorkManager" 
@@ -55,6 +60,11 @@
 
     <!-- The XA terminator -->
     <property name="XATerminator"><inject bean="TransactionIntegration" property="XATerminator"/></property>
+
+    <!-- The security integration module -->
+    <property name="SecurityIntegration">
+       <inject bean="PicketBox"/>
+    </property>
 
     <destroy method="shutdown"/>
   </bean>

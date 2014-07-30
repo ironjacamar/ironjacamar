@@ -24,6 +24,7 @@ package org.jboss.jca.core.api.workmanager;
 
 import org.jboss.jca.core.spi.graceful.GracefulShutdown;
 import org.jboss.jca.core.spi.security.Callback;
+import org.jboss.jca.core.spi.security.SecurityIntegration;
 import org.jboss.jca.core.spi.transaction.xa.XATerminator;
 
 import javax.resource.spi.ResourceAdapter;
@@ -136,6 +137,18 @@ public interface WorkManager extends javax.resource.spi.work.WorkManager, Gracef
     * @param v The value
     */
    public void setCallbackSecurity(Callback v);
+
+   /**
+    * Get the security integration module
+    * @return The value
+    */
+   public SecurityIntegration getSecurityIntegration();
+
+   /**
+    * Set security integration module
+    * @param v The value
+    */
+   public void setSecurityIntegration(SecurityIntegration v);
 
    /**
     * Get the statistics

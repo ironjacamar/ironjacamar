@@ -27,12 +27,11 @@ import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.connectionmanager.notx.NoTxConnectionManagerImpl;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.tx.TxConnectionManagerImpl;
+import org.jboss.jca.core.spi.security.SubjectFactory;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 import javax.transaction.TransactionManager;
-
-import org.jboss.security.SubjectFactory;
 
 /**
  * The connection manager factory.

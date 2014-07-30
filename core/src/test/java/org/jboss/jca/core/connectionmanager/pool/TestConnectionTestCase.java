@@ -30,11 +30,10 @@ import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
 import org.jboss.jca.core.security.DefaultSubjectFactory;
+import org.jboss.jca.core.spi.security.SubjectFactory;
 
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
-
-import org.jboss.security.SubjectFactory;
 
 import org.junit.Test;
 

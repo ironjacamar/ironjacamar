@@ -93,6 +93,11 @@
         interface="org.jboss.jca.core.spi.security.Callback"
         class="org.jboss.jca.core.security.DefaultCallback"/>
 
+  <!-- PicketBox -->
+  <bean name="PicketBox"
+        class="org.jboss.jca.core.security.picketbox.PicketBoxSecurityIntegration">
+  </bean> 
+
   <!-- Idle remover -->
   <bean name="IdleRemover">
     <constructor factoryClass="org.jboss.jca.core.connectionmanager.pool.idle.IdleRemover"
@@ -126,6 +131,11 @@
 
     <!-- The callback security module -->
     <property name="CallbackSecurity"><inject bean="Callback"/></property>
+
+    <!-- The security integration module -->
+    <property name="SecurityIntegration">
+       <inject bean="PicketBox"/>
+    </property>
 
     <destroy method="shutdown"/>
   </bean>
@@ -210,7 +220,7 @@
 
   <!-- SubjectFactory -->
   <bean name="DefaultSecurityDomain"
-        interface="org.jboss.security.SubjectFactory"
+        interface="org.jboss.jca.core.spi.security.SubjectFactory"
         class="org.jboss.jca.core.security.DefaultSubjectFactory">
     <property name="SecurityDomain">DefaultSecurityDomain</property>
     <property name="UserName">user</property>

@@ -51,6 +51,7 @@ import org.jboss.jca.core.connectionmanager.pool.capacity.CapacityFactory;
 import org.jboss.jca.core.recovery.DefaultRecoveryPlugin;
 import org.jboss.jca.core.spi.mdr.NotFoundException;
 import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
+import org.jboss.jca.core.spi.security.SubjectFactory;
 import org.jboss.jca.core.spi.statistics.Statistics;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
@@ -75,7 +76,6 @@ import javax.resource.spi.security.PasswordCredential;
 import javax.security.auth.Subject;
 
 import org.jboss.logging.Messages;
-import org.jboss.security.SubjectFactory;
 
 /**
  * An abstract deployer implementation for datasources

@@ -30,6 +30,7 @@ import org.jboss.jca.core.api.workmanager.WorkManager;
 import org.jboss.jca.core.api.workmanager.WorkManagerStatistics;
 import org.jboss.jca.core.spi.graceful.GracefulCallback;
 import org.jboss.jca.core.spi.security.Callback;
+import org.jboss.jca.core.spi.security.SecurityIntegration;
 import org.jboss.jca.core.spi.transaction.xa.XATerminator;
 
 import java.lang.reflect.Method;
@@ -117,6 +118,9 @@ public class WorkManagerImpl implements WorkManager
 
    /** Security module for callback */
    private Callback callbackSecurity;
+
+   /** Security integration module */
+   private SecurityIntegration securityIntegration;
 
    /** Resource adapter */
    private ResourceAdapter resourceAdapter;
@@ -322,6 +326,24 @@ public class WorkManagerImpl implements WorkManager
    }
 
    /**
+    * Get the security integration module
+    * @return The value
+    */
+   public SecurityIntegration getSecurityIntegration()
+   {
+      return securityIntegration;
+   }
+
+   /**
+    * Set security intergation module
+    * @param v The value
+    */
+   public void setSecurityIntegration(SecurityIntegration v)
+   {
+      securityIntegration = v;
+   }
+
+   /**
     * Get the resource adapter
     * @return The value
     */
@@ -390,6 +412,7 @@ public class WorkManagerImpl implements WorkManager
       wm.setXATerminator(getXATerminator());
       wm.setSpecCompliant(isSpecCompliant());
       wm.setCallbackSecurity(getCallbackSecurity());
+      wm.setSecurityIntegration(getSecurityIntegration());
       wm.setStatistics(statistics);
 
       return wm;
@@ -433,7 +456,7 @@ public class WorkManagerImpl implements WorkManager
 
          final CountDownLatch completedLatch = new CountDownLatch(1);
 
-         wrapper = new WorkWrapper(this, work, execContext, workListener, null, completedLatch,
+         wrapper = new WorkWrapper(this, securityIntegration, work, execContext, workListener, null, completedLatch,
                                    System.currentTimeMillis());
 
          setup(wrapper, workListener);
@@ -538,7 +561,7 @@ public class WorkManagerImpl implements WorkManager
 
          final CountDownLatch startedLatch = new CountDownLatch(1);
 
-         wrapper = new WorkWrapper(this, work, execContext, workListener, startedLatch, null,
+         wrapper = new WorkWrapper(this, securityIntegration, work, execContext, workListener, startedLatch, null,
                                    System.currentTimeMillis());
 
          setup(wrapper, workListener);
@@ -641,7 +664,7 @@ public class WorkManagerImpl implements WorkManager
             execContext = new ExecutionContext();
          }
 
-         wrapper = new WorkWrapper(this, work, execContext, workListener, null, null,
+         wrapper = new WorkWrapper(this, securityIntegration, work, execContext, workListener, null, null,
                                    System.currentTimeMillis());
 
          setup(wrapper, workListener);
@@ -1354,6 +1377,7 @@ public class WorkManagerImpl implements WorkManager
       sb.append(" xaTerminator=").append(xaTerminator);
       sb.append(" validatedWork=").append(validatedWork);
       sb.append(" callbackSecurity=").append(callbackSecurity);
+      sb.append(" securityIntegration=").append(securityIntegration);
       sb.append(" resourceAdapter=").append(resourceAdapter);
       sb.append(" shutdown=").append(shutdown);
       sb.append(" activeWorkWrappers=[");

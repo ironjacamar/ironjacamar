@@ -21,13 +21,12 @@
  */
 package org.jboss.jca.core.security;
 
+import org.jboss.jca.core.spi.security.SubjectFactory;
+
 import java.security.Principal;
 
 import javax.resource.spi.security.PasswordCredential;
 import javax.security.auth.Subject;
-
-import org.jboss.security.SimplePrincipal;
-import org.jboss.security.SubjectFactory;
 
 /**
  * Implements a basic subject factory

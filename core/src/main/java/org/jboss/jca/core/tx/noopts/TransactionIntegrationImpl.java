@@ -23,6 +23,7 @@ package org.jboss.jca.core.tx.noopts;
 
 import org.jboss.jca.core.api.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
+import org.jboss.jca.core.spi.security.SubjectFactory;
 import org.jboss.jca.core.spi.transaction.ConnectableResource;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.core.spi.transaction.local.LocalXAResource;
@@ -40,8 +41,6 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.xa.XAResource;
-
-import org.jboss.security.SubjectFactory;
 
 /**
  * This class provide an implementation of the transaction integration for

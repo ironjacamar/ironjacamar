@@ -740,7 +740,7 @@ javax.resource.spi.work.WorkContextProvider
           <![CDATA[
 <!-- SubjectFactory -->
 <bean name="DefaultSecurityDomain"
-      interface="org.jboss.security.SubjectFactory"
+      interface="org.jboss.jca.core.spi.security.SubjectFactory"
       class="org.jboss.jca.core.security.DefaultSubjectFactory">
   <property name="SecurityDomain">DefaultSecurityDomain</property>
   <property name="UserName">user</property>

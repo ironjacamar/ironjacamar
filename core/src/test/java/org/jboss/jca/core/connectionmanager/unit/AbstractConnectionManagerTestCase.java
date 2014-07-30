@@ -29,12 +29,11 @@ import org.jboss.jca.core.connectionmanager.common.MockManagedConnectionFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
+import org.jboss.jca.core.spi.security.SubjectFactory;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 
 import javax.resource.ResourceException;
 import javax.security.auth.Subject;
-
-import org.jboss.security.SubjectFactory;
 
 import org.junit.Test;
 

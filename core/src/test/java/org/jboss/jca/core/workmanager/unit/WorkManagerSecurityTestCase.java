@@ -25,6 +25,7 @@ package org.jboss.jca.core.workmanager.unit;
 import org.jboss.jca.arquillian.embedded.Configuration;
 import org.jboss.jca.arquillian.embedded.Inject;
 import org.jboss.jca.core.api.workmanager.WorkManager;
+import org.jboss.jca.core.security.SimplePrincipal;
 import org.jboss.jca.core.workmanager.rars.dwm.WorkConnection;
 import org.jboss.jca.core.workmanager.rars.dwm.WorkConnectionFactory;
 import org.jboss.jca.embedded.dsl.InputStreamDescriptor;
@@ -50,8 +51,6 @@ import javax.security.auth.message.callback.GroupPrincipalCallback;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.logging.Logger;
-import org.jboss.security.SecurityContextAssociation;
-import org.jboss.security.SimplePrincipal;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
@@ -186,7 +185,10 @@ public class WorkManagerSecurityTestCase
       WorkConnection wc = wcf.getConnection();
       try
       {
-         MyWork myWork = new MyWork();
+         WorkManager wm = (WorkManager)wc.getWorkManager();
+         assertNotNull(wm);
+
+         MyWork myWork = new MyWork(wm);
          wc.doWork(myWork);
 
          log.infof("Principals=%s", myWork.getPrincipals());
@@ -218,14 +220,17 @@ public class WorkManagerSecurityTestCase
    public static class MyWork implements Work, WorkContextProvider
    {
       private static final long serialVersionUID = 1L;
+      private WorkManager wm;
       private Set<Principal> principals;
       private String[] roles;
 
       /**
        * Constructor
+       * @param wm The work manager
        */
-      public MyWork()
+      public MyWork(WorkManager wm)
       {
+         this.wm = wm;
          this.principals = null;
          this.roles = null;
       }
@@ -247,12 +252,14 @@ public class WorkManagerSecurityTestCase
       {
          log.info("MyWork: run");
 
-         org.jboss.security.SecurityContext securityContext = SecurityContextAssociation.getSecurityContext();
-         if (securityContext != null && securityContext.getSubjectInfo() != null)
+         org.jboss.jca.core.spi.security.SecurityContext securityContext =
+            wm.getSecurityIntegration().getSecurityContext();
+
+         if (securityContext != null)
          {
             log.infof("SecurityContext=%s", securityContext);
 
-            Subject subject = securityContext.getSubjectInfo().getAuthenticatedSubject();
+            Subject subject = securityContext.getAuthenticatedSubject();
             if (subject != null)
             {
                log.infof("Subject=%s", subject);
@@ -264,16 +271,7 @@ public class WorkManagerSecurityTestCase
                   principals = subject.getPrincipals();
                }
 
-               org.jboss.security.identity.RoleGroup pbRoles = securityContext.getUtil().getRoles();
-               if (pbRoles != null)
-               {
-                  List<String> l = new ArrayList<String>(pbRoles.getRoles().size());
-                  for (org.jboss.security.identity.Role role : pbRoles.getRoles())
-                  {
-                     l.add(role.getRoleName());
-                  }
-                  roles = l.toArray(new String[l.size()]);
-               }
+               roles = securityContext.getRoles();
             }
          }
       }

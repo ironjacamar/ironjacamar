@@ -54,6 +54,7 @@ import org.jboss.jca.core.recovery.DefaultRecoveryPlugin;
 import org.jboss.jca.core.security.CallbackImpl;
 import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
 import org.jboss.jca.core.spi.security.Callback;
+import org.jboss.jca.core.spi.security.SubjectFactory;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
 import org.jboss.jca.core.util.Injection;
@@ -105,7 +106,6 @@ import javax.security.auth.Subject;
 import javax.transaction.TransactionManager;
 
 import org.jboss.logging.Messages;
-import org.jboss.security.SubjectFactory;
 
 /**
  * An abstract resource adapter deployer which contains common functionality

@@ -33,12 +33,11 @@ import org.jboss.jca.core.connectionmanager.pool.api.PrefillPool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolStatistics;
 import org.jboss.jca.core.security.DefaultSubjectFactory;
+import org.jboss.jca.core.spi.security.SubjectFactory;
 
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 import javax.security.auth.Subject;
-
-import org.jboss.security.SubjectFactory;
 
 import org.junit.Test;
 

@@ -27,12 +27,11 @@ import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.spi.graceful.GracefulShutdown;
+import org.jboss.jca.core.spi.security.SubjectFactory;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnection;
-
-import org.jboss.security.SubjectFactory;
 
 /**
  * Internal connection manager contract.

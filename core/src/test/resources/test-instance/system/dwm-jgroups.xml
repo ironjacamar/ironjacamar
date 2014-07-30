@@ -77,6 +77,11 @@
     <stop method="shutdown"/>
   </bean>
 
+  <!-- PicketBox -->
+  <bean name="PicketBoxJGroups"
+        class="org.jboss.jca.core.security.picketbox.PicketBoxSecurityIntegration">
+  </bean> 
+
   <!-- DistributedWorkManagerJGroups -->
   <bean name="DistributedWorkManagerJGroups"
         interface="org.jboss.jca.core.api.workmanager.DistributedWorkManager"
@@ -98,6 +103,11 @@
     <!-- The callback security module -->
     <property name="CallbackSecurity">
        <inject bean="Callback"/>
+    </property>
+
+    <!-- The security integration module -->
+    <property name="SecurityIntegration">
+       <inject bean="PicketBoxJGroups"/>
     </property>
 
     <!-- The policy -->

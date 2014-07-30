@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.core.security;
+package org.jboss.jca.core.security.picketbox;
 
 import org.jboss.jca.core.CoreLogger;
 
@@ -40,17 +40,17 @@ import org.jboss.logging.Logger;
 import org.jboss.security.auth.callback.JASPICallbackHandler;
 
 /**
- * An implementation of the callback SPI for explicit security settings
+ * An implementation of the callback SPI using PicketBox
  * 
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class CallbackHandlerImpl implements CallbackHandler, Serializable
+public class PicketBoxCallbackHandler implements CallbackHandler, Serializable
 {
    /** Serial version uid */
    private static final long serialVersionUID = 1L;
 
    /** Log instance */
-   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, CallbackHandlerImpl.class.getName());
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, PicketBoxCallbackHandler.class.getName());
 
    /** Trace */
    private static boolean trace = log.isTraceEnabled();
@@ -61,7 +61,7 @@ public class CallbackHandlerImpl implements CallbackHandler, Serializable
    /**
     * Constructor
     */
-   public CallbackHandlerImpl()
+   public PicketBoxCallbackHandler()
    {
       this(null);
    }
@@ -70,7 +70,7 @@ public class CallbackHandlerImpl implements CallbackHandler, Serializable
     * Constructor
     * @param mappings The mappings
     */
-   public CallbackHandlerImpl(org.jboss.jca.core.spi.security.Callback mappings)
+   public PicketBoxCallbackHandler(org.jboss.jca.core.spi.security.Callback mappings)
    {
       this.mappings = mappings;
    }
@@ -172,7 +172,7 @@ public class CallbackHandlerImpl implements CallbackHandler, Serializable
    {
       StringBuilder sb = new StringBuilder();
 
-      sb.append("CallbackHandlerImpl@").append(Integer.toHexString(System.identityHashCode(this)));
+      sb.append("PicketBoxCallbackHandler@").append(Integer.toHexString(System.identityHashCode(this)));
       sb.append("[mappings=").append(mappings);
       sb.append("]");
 

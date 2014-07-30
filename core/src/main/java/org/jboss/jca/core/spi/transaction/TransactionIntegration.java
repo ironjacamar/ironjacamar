@@ -23,6 +23,7 @@ package org.jboss.jca.core.spi.transaction;
 
 import org.jboss.jca.core.api.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
+import org.jboss.jca.core.spi.security.SubjectFactory;
 import org.jboss.jca.core.spi.transaction.local.LocalXAResource;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecoveryRegistry;
@@ -38,8 +39,6 @@ import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.xa.XAResource;
-
-import org.jboss.security.SubjectFactory;
 
 /**
  * This interface defines the contract for a transaction manager integration

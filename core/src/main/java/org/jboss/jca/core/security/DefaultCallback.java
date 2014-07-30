@@ -42,7 +42,6 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 
 import org.jboss.logging.Logger;
-import org.jboss.security.SimplePrincipal;
 
 /**
  * A default implementation of the callback security SPI.

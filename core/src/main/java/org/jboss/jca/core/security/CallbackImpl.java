@@ -36,7 +36,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.jboss.logging.Logger;
-import org.jboss.security.SimplePrincipal;
 
 /**
  * An implementation of the callback SPI for explicit security settings

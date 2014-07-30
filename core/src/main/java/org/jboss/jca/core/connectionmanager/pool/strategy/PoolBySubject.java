@@ -26,6 +26,7 @@ import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.AbstractPrefillPool;
+import org.jboss.jca.core.spi.security.SubjectFactory;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;
@@ -38,7 +39,6 @@ import javax.resource.spi.security.PasswordCredential;
 import javax.security.auth.Subject;
 
 import org.jboss.logging.Logger;
-import org.jboss.security.SubjectFactory;
 
 /**
  * Pool implementation that uses subject.

@@ -28,6 +28,7 @@ import org.jboss.jca.common.api.metadata.spec.Connector;
 import org.jboss.jca.common.api.metadata.spec.XsdString;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
+import org.jboss.jca.core.spi.security.SubjectFactory;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.deployers.common.AbstractResourceAdapterDeployer;
 import org.jboss.jca.deployers.common.DeployException;
@@ -50,8 +51,6 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.resource.spi.ResourceAdapter;
 import javax.transaction.TransactionManager;
-
-import org.jboss.security.SubjectFactory;
 
 import com.github.fungal.api.Kernel;
 import com.github.fungal.api.util.Injection;

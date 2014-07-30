@@ -24,7 +24,7 @@ package org.jboss.jca.core.workmanager;
 
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
-import org.jboss.jca.core.security.CallbackHandlerImpl;
+import org.jboss.jca.core.spi.security.SecurityIntegration;
 
 import java.security.Principal;
 import java.util.ArrayList;
@@ -53,9 +53,6 @@ import javax.transaction.xa.Xid;
 
 import org.jboss.logging.Logger;
 import org.jboss.logging.Messages;
-
-import org.jboss.security.SecurityContextAssociation;
-import org.jboss.security.SecurityContextFactory;
 
 /**
  * Wraps the resource adapter's work.
@@ -90,6 +87,9 @@ public class WorkWrapper implements Runnable
    /** The work manager */
    private WorkManagerImpl workManager;
 
+   /** The security integration */
+   private SecurityIntegration securityIntegration;
+
    /** The start time */
    private long startTime;
 
@@ -106,6 +106,7 @@ public class WorkWrapper implements Runnable
     * Create a new WorkWrapper
     *
     * @param workManager the work manager
+    * @param si The security integration
     * @param work the work
     * @param executionContext the execution context
     * @param workListener the WorkListener
@@ -115,6 +116,7 @@ public class WorkWrapper implements Runnable
     * @throws IllegalArgumentException for null work, execution context or a negative start timeout
     */
    public WorkWrapper(WorkManagerImpl workManager, 
+                      SecurityIntegration si,
                       Work work, 
                       ExecutionContext executionContext, 
                       WorkListener workListener,
@@ -124,12 +126,17 @@ public class WorkWrapper implements Runnable
    {
       super();
 
+      if (workManager == null)
+         throw new IllegalArgumentException("Null work manager");
+      if (si == null)
+         throw new IllegalArgumentException("Null security integration");
       if (work == null)
          throw new IllegalArgumentException("Null work");
       if (executionContext == null)
          throw new IllegalArgumentException("Null execution context");
 
       this.workManager = workManager;
+      this.securityIntegration = si;
       this.work = work;
       this.executionContext = executionContext;
       this.workListener = workListener;
@@ -206,7 +213,7 @@ public class WorkWrapper implements Runnable
       ClassLoader oldCL = SecurityActions.getThreadContextClassLoader();
       SecurityActions.setThreadContextClassLoader(work.getClass().getClassLoader());
 
-      org.jboss.security.SecurityContext oldSC = SecurityContextAssociation.getSecurityContext();
+      org.jboss.jca.core.spi.security.SecurityContext oldSC = securityIntegration.getSecurityContext();
 
       try
       {
@@ -237,7 +244,7 @@ public class WorkWrapper implements Runnable
             workListener.workCompleted(event);
          }
 
-         SecurityContextAssociation.setSecurityContext(oldSC);
+         securityIntegration.setSecurityContext(oldSC);
          SecurityActions.setThreadContextClassLoader(oldCL);
 
          if (startedLatch != null)
@@ -305,17 +312,17 @@ public class WorkWrapper implements Runnable
          try
          {
             // Security context
-            org.jboss.security.SecurityContext sc = null;
+            org.jboss.jca.core.spi.security.SecurityContext sc = null;
 
             // Setup callback handler
             CallbackHandler cbh = null;
             if (workManager.getCallbackSecurity() != null && workManager.getCallbackSecurity().isMappingRequired())
             {
-               cbh = new CallbackHandlerImpl(workManager.getCallbackSecurity());
+               cbh = securityIntegration.createCallbackHandler(workManager.getCallbackSecurity());
             }
 
             if (cbh == null)
-               cbh = new CallbackHandlerImpl();
+               cbh = securityIntegration.createCallbackHandler();
 
             // Subjects for execution environment
             Subject executionSubject = null;
@@ -324,7 +331,7 @@ public class WorkWrapper implements Runnable
             if (trace)
                log.tracef("Callback security: %s", workManager.getCallbackSecurity());
 
-            if (SecurityContextAssociation.getSecurityContext() == null ||
+            if (securityIntegration.getSecurityContext() == null ||
                 workManager.getCallbackSecurity().getDomain() != null)
             {
                String scDomain = workManager.getCallbackSecurity().getDomain();
@@ -338,18 +345,18 @@ public class WorkWrapper implements Runnable
                   throw new WorkException(bundle.securityContextSetupFailedSinceCallbackSecurityDomainWasEmpty());
                }
 
-               sc = SecurityContextFactory.createSecurityContext(scDomain);
-               SecurityContextAssociation.setSecurityContext(sc);
+               sc = securityIntegration.createSecurityContext(scDomain);
+               securityIntegration.setSecurityContext(sc);
             }
             else
             {
-               sc = SecurityContextAssociation.getSecurityContext();
+               sc = securityIntegration.getSecurityContext();
 
                if (trace)
                   log.tracef("Using security context: %s", sc);
             }
 
-            executionSubject = sc.getSubjectInfo().getAuthenticatedSubject();
+            executionSubject = sc.getAuthenticatedSubject();
 
             if (executionSubject == null)
             {
@@ -402,7 +409,7 @@ public class WorkWrapper implements Runnable
                log.tracef("Setting authenticated subject (%s) on security context (%s)", executionSubject, sc);
 
             // Set the authenticated subject
-            sc.getSubjectInfo().setAuthenticatedSubject(executionSubject);
+            sc.setAuthenticatedSubject(executionSubject);
 
             // Fire complete for security context
             fireWorkContextSetupComplete(securityContext);

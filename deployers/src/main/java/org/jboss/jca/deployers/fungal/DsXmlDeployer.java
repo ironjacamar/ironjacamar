@@ -35,6 +35,7 @@ import org.jboss.jca.core.naming.ExplicitJndiStrategy;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.mdr.NotFoundException;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
+import org.jboss.jca.core.spi.security.SubjectFactory;
 import org.jboss.jca.deployers.DeployersLogger;
 import org.jboss.jca.deployers.common.AbstractDsDeployer;
 import org.jboss.jca.deployers.common.CommonDeployment;
@@ -56,7 +57,6 @@ import javax.management.ObjectName;
 import javax.resource.spi.ManagedConnectionFactory;
 
 import org.jboss.logging.Logger;
-import org.jboss.security.SubjectFactory;
 
 import com.github.fungal.api.Kernel;
 import com.github.fungal.api.util.Injection;

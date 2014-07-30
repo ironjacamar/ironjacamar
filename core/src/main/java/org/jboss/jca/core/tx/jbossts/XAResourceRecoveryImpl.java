@@ -23,7 +23,9 @@ package org.jboss.jca.core.tx.jbossts;
 
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.recovery.ValidatingManagedConnectionFactoryRecoveryPlugin;
+import org.jboss.jca.core.security.SimplePrincipal;
 import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
+import org.jboss.jca.core.spi.security.SubjectFactory;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 
 import java.security.AccessController;
@@ -41,8 +43,6 @@ import javax.security.auth.Subject;
 import javax.transaction.xa.XAResource;
 
 import org.jboss.logging.Logger;
-import org.jboss.security.SimplePrincipal;
-import org.jboss.security.SubjectFactory;
 
 /**
  * An XAResourceRecovery implementation.
