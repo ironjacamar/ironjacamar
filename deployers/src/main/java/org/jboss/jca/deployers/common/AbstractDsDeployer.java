@@ -38,9 +38,11 @@ import org.jboss.jca.common.api.metadata.spec.XsdString;
 import org.jboss.jca.common.metadata.ds.DataSourceImpl;
 import org.jboss.jca.common.metadata.ds.XADataSourceImpl;
 import org.jboss.jca.common.metadata.spec.ConfigPropertyImpl;
+import org.jboss.jca.core.api.bootstrap.CloneableBootstrapContext;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.api.management.ManagementRepository;
+import org.jboss.jca.core.bootstrapcontext.BootstrapContextCoordinator;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
@@ -64,6 +66,7 @@ import java.net.URL;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -71,6 +74,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.resource.spi.ManagedConnectionFactory;
+import javax.resource.spi.ResourceAdapter;
+import javax.resource.spi.ResourceAdapterAssociation;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 import javax.resource.spi.security.PasswordCredential;
 import javax.security.auth.Subject;
@@ -219,6 +224,15 @@ public abstract class AbstractDsDeployer
          List<org.jboss.jca.core.api.management.DataSource> mgts =
             new ArrayList<org.jboss.jca.core.api.management.DataSource>(1);
 
+         String uniqueId = uniqueJdbcLocalId != null ? uniqueJdbcLocalId : uniqueJdbcXAId;
+         Map<String, String> props = new HashMap<String, String>();
+         ResourceAdapter resourceAdapter = createRa(uniqueId, parentClassLoader);
+         String resourceAdapterKey = null;
+         String bootstrapContextIdentifier =
+            BootstrapContextCoordinator.getInstance().createIdentifier(resourceAdapter.getClass().getName(),
+                                                                       props,
+                                                                       null);
+
          if (uniqueJdbcLocalId != null)
          {
             List<DataSource> ds = dataSources.getDataSource();
@@ -282,7 +296,8 @@ public abstract class AbstractDsDeployer
                         }
 
                         Object cf = deployDataSource(dataSource, jndiName,
-                                                     uniqueJdbcLocalId, cm, mgtDataSource, jdbcLocalDeploymentCl);
+                                                     uniqueJdbcLocalId, cm, resourceAdapter,
+                                                     mgtDataSource, jdbcLocalDeploymentCl);
 
                         bindConnectionFactory(deploymentName, jndiName, cf);
 
@@ -338,7 +353,7 @@ public abstract class AbstractDsDeployer
                         }
 
                         Object cf = deployXADataSource(xaDataSource,
-                                                       jndiName, uniqueJdbcXAId, cm,
+                                                       jndiName, uniqueJdbcXAId, cm, resourceAdapter,
                                                        recovery,
                                                        mgtDataSource,
                                                        jdbcXADeploymentCl);
@@ -365,7 +380,13 @@ public abstract class AbstractDsDeployer
                log.error("Deployment of XA datasources disabled since jdbc-xa.rar couldn't be found");
          }
 
-         return new CommonDeployment(url, deploymentName, true, null, null, null, cfs.toArray(new Object[cfs.size()]),
+         resourceAdapterKey = registerResourceAdapterToResourceAdapterRepository(resourceAdapter);
+         startContext(resourceAdapter, bootstrapContextIdentifier);
+
+         return new CommonDeployment(url, deploymentName, true,
+                                     resourceAdapter, resourceAdapterKey, 
+                                     bootstrapContextIdentifier,
+                                     cfs.toArray(new Object[cfs.size()]),
                                      jndis.toArray(new String[jndis.size()]),
                                      cms.toArray(new ConnectionManager[cms.size()]),
                                      null, null,
@@ -420,15 +441,18 @@ public abstract class AbstractDsDeployer
     * @param jndiName The JNDI name
     * @param uniqueId The unique id for the resource adapter
     * @param cma The connection manager array
+    * @param resourceAdapter The resource adapter
     * @param mgtDs The management of a datasource
     * @param cl The class loader
     * @return The connection factory
     * @exception Throwable Thrown if an error occurs during deployment
     */
    private Object deployDataSource(DataSource ds, String jndiName, String uniqueId, ConnectionManager[] cma,
+                                   ResourceAdapter resourceAdapter,
                                    org.jboss.jca.core.api.management.DataSource mgtDs, ClassLoader cl) throws Throwable
    {
       ManagedConnectionFactory mcf = createMcf(ds, uniqueId, cl);
+      associateResourceAdapter(resourceAdapter, mcf);
 
       initAndInjectClassLoaderPlugin(mcf, ds);
       // Create the pool
@@ -658,6 +682,7 @@ public abstract class AbstractDsDeployer
     * @param jndiName The JNDI name
     * @param uniqueId The unique id for the resource adapter
     * @param cma The connection manager array
+    * @param resourceAdapter The resource adapter
     * @param recovery The recovery module
     * @param mgtDs The management of a datasource
     * @param cl The class loader
@@ -665,11 +690,12 @@ public abstract class AbstractDsDeployer
     * @exception Throwable Thrown if an error occurs during deployment
     */
    private Object deployXADataSource(XaDataSource ds, String jndiName, String uniqueId, ConnectionManager[] cma,
-                                     XAResourceRecovery[] recovery,
+                                     ResourceAdapter resourceAdapter, XAResourceRecovery[] recovery,
                                      org.jboss.jca.core.api.management.DataSource mgtDs, ClassLoader cl)
       throws Throwable
    {
       ManagedConnectionFactory mcf = createMcf(ds, uniqueId, cl);
+      associateResourceAdapter(resourceAdapter, mcf);
 
       initAndInjectClassLoaderPlugin(mcf, ds);
       // Create the pool
@@ -1006,6 +1032,81 @@ public abstract class AbstractDsDeployer
       // ConnectionFactory
       return mcf.createConnectionFactory(cm);
    }
+
+   /**
+    * Start the resource adapter
+    * @param resourceAdapter The resource adapter
+    * @param bootstrapContextIdentifier The bootstrap context identifier
+    * @throws DeployException DeployException Thrown if the resource adapter cant be started
+    */
+   @SuppressWarnings("unchecked")
+   protected void startContext(javax.resource.spi.ResourceAdapter resourceAdapter, String bootstrapContextIdentifier)
+      throws DeployException
+   {
+      try
+      {
+         CloneableBootstrapContext cbc = 
+            BootstrapContextCoordinator.getInstance().createBootstrapContext(bootstrapContextIdentifier,
+                                                                             null);
+
+         cbc.setResourceAdapter(resourceAdapter);
+
+         resourceAdapter.start(cbc);
+      }
+      catch (Throwable t)
+      {
+         throw new DeployException(bundle.unableToStartResourceAdapter(resourceAdapter.getClass().getName()), t);
+      }
+   }
+
+   /**
+    * Associate resource adapter with ojects if they implement ResourceAdapterAssociation
+    * @param resourceAdapter resourceAdapter resourceAdapter The resource adapter
+    * @param object object object The of possible association object
+    * @throws DeployException DeployException Thrown if the resource adapter cant be started
+    */
+   @SuppressWarnings("unchecked")
+   protected void associateResourceAdapter(ResourceAdapter resourceAdapter, Object object)
+      throws DeployException
+   {
+      if (resourceAdapter != null && object != null)
+      {
+         if (object instanceof ResourceAdapterAssociation)
+         {
+            try
+            {
+               ResourceAdapterAssociation raa = (ResourceAdapterAssociation)object;
+               raa.setResourceAdapter(resourceAdapter);
+            }
+            catch (Throwable t)
+            {
+               throw new DeployException(bundle.unableToAssociate(object.getClass().getName()), t);
+            }
+         }
+      }
+   }
+
+   /**
+    * Create Ra
+    *
+    * @param uniqueId the uniqueId
+    * @param cl the classloader
+    * @return the resource adapter
+    * @throws NotFoundException in case it's not found in cl
+    * @throws Exception in case of other error
+    * @throws DeployException in case of deploy error
+    */
+   protected abstract ResourceAdapter createRa(String uniqueId, ClassLoader cl)
+      throws NotFoundException, Exception, DeployException;
+
+   /**
+    * Register the ResourceAdapter to the ResourceAdapterRepository. Implementer should provide the implementation
+    * to get repository and do the registration
+    * @param instance the instance
+    * @return The key
+    */
+   protected abstract String
+   registerResourceAdapterToResourceAdapterRepository(javax.resource.spi.ResourceAdapter instance);
 
    /**
     * Create Mcf for xads

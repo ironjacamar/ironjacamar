@@ -58,11 +58,12 @@ import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnectionFactory;
+import javax.resource.spi.ResourceAdapter;
+import javax.resource.spi.ResourceAdapterAssociation;
 import javax.resource.spi.ValidatingManagedConnectionFactory;
 import javax.resource.spi.security.PasswordCredential;
 import javax.security.auth.Subject;
 import javax.transaction.TransactionSynchronizationRegistry;
-import javax.transaction.UserTransaction;
 
 import org.jboss.logging.Logger;
 import org.jboss.logging.Messages;
@@ -81,7 +82,8 @@ import org.ietf.jgss.Oid;
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public abstract class BaseWrapperManagedConnectionFactory
-   implements ManagedConnectionFactory, ValidatingManagedConnectionFactory, Statistics, Serializable
+   implements ManagedConnectionFactory, ValidatingManagedConnectionFactory, ResourceAdapterAssociation,
+              Statistics, Serializable
 {
    /** @since 4.0.1 */
    static final long serialVersionUID = -84923705377702088L;
@@ -109,6 +111,9 @@ public abstract class BaseWrapperManagedConnectionFactory
 
    /** The bundle */
    protected static AdaptersBundle bundle = Messages.getBundle(AdaptersBundle.class);
+
+   /** The resource adapter */
+   private JDBCResourceAdapter jdbcRA;
 
    /** The print writer */
    private PrintWriter printWriter;
@@ -230,12 +235,6 @@ public abstract class BaseWrapperManagedConnectionFactory
    /** The JNDI name for the user transaction */
    private String userTransactionJndiName;
 
-   /** UserTransaction object */
-   private UserTransaction userTransaction;
-
-   /** TransactionSynchronizationRegistry object */
-   private TransactionSynchronizationRegistry tsr;
-
    /** The statistics plugin */
    private JdbcStatisticsPlugin statisticsPlugin = new JdbcStatisticsPlugin();
 
@@ -256,6 +255,22 @@ public abstract class BaseWrapperManagedConnectionFactory
     */
    public BaseWrapperManagedConnectionFactory ()
    {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public ResourceAdapter getResourceAdapter()
+   {
+      return jdbcRA;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setResourceAdapter(ResourceAdapter ra)
+   {
+      this.jdbcRA = (JDBCResourceAdapter)ra;
    }
 
    /**
@@ -997,63 +1012,6 @@ public abstract class BaseWrapperManagedConnectionFactory
    }
 
    /**
-    * Get the user transaction JNDI name
-    * @return The value
-    */
-   public String getUserTransactionJndiName()
-   {
-      if (userTransactionJndiName == null || userTransactionJndiName.trim().equals(""))
-         return "java:/UserTransaction";
-
-      return userTransactionJndiName;
-   }
-
-   /**
-    * Set the user transaction JNDI name
-    * @param v The value
-    */
-   public void setUserTransactionJndiName(String v)
-   {
-      this.userTransactionJndiName = v;
-   }
-
-   /**
-    * Get the user transaction
-    * @return The value
-    */
-   protected UserTransaction getUserTransaction()
-   {
-      return userTransaction;
-   }
-
-   /**
-    * Set the user transaction
-    * @param v The value
-    */
-   protected void setUserTransaction(UserTransaction v)
-   {
-      this.userTransaction = v;
-   }
-
-   /**
-    * Get the transaction synchronization registry
-    * @return The value
-    */
-   protected TransactionSynchronizationRegistry getTransactionSynchronizationRegistry()
-   {
-      return tsr;
-   }
-
-   /**
-    * Set the transaction synchronization registry
-    * @param v The value
-    */
-   protected void setTransactionSynchronizationRegistry(TransactionSynchronizationRegistry v)
-   {
-      this.tsr = v;
-   }
-
-   /**
     * Get the statistics plugin
     * @return The value
     */
@@ -1079,6 +1037,15 @@ public abstract class BaseWrapperManagedConnectionFactory
    {
       if (v != null)
          this.jta = v;
+   }
+
+   /**
+    * Get the TSR
+    * @return The instance
+    */
+   TransactionSynchronizationRegistry getTransactionSynchronizationRegistry()
+   {
+      return jdbcRA.getTransactionSynchronizationRegistry();
    }
 
    /**

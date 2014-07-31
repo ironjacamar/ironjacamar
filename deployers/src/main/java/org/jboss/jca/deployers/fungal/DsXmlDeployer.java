@@ -35,6 +35,7 @@ import org.jboss.jca.core.naming.ExplicitJndiStrategy;
 import org.jboss.jca.core.spi.mdr.MetadataRepository;
 import org.jboss.jca.core.spi.mdr.NotFoundException;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
+import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
 import org.jboss.jca.core.spi.security.SubjectFactory;
 import org.jboss.jca.deployers.DeployersLogger;
 import org.jboss.jca.deployers.common.AbstractDsDeployer;
@@ -87,6 +88,9 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
    /** Metadata repository */
    private MetadataRepository mdr;
 
+   /** ResourceAdapter repository */
+   private ResourceAdapterRepository resourceAdapterRepository;
+
    /** Driver registry */
    private DriverRegistry driverRegistry;
 
@@ -99,6 +103,7 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
       this.jdbcLocal = null;
       this.jdbcXA = null;
       this.mdr = null;
+      this.resourceAdapterRepository = null;
       this.driverRegistry = null;
    }
 
@@ -226,6 +231,9 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
                                                           kernel.getName());
 
          return new DsXmlDeployment(c.getURL(), c.getDeploymentName(),
+                                    c.getResourceAdapter(), c.getResourceAdapterKey(),
+                                    c.getBootstrapContextIdentifier(),
+                                    resourceAdapterRepository,
                                     c.getCfs(), c.getCfJndiNames(), c.getConnectionManagers(),
                                     c.getRecovery(), getXAResourceRecoveryRegistry(),
                                     c.getDataSources(), getManagementRepository(),
@@ -342,6 +350,9 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
 
       if (mdr == null)
          throw new IllegalStateException("MetadataRepository not defined");
+
+      if (resourceAdapterRepository == null)
+         throw new IllegalStateException("ResourceAdapterRepository not defined");
 
       if (jdbcLocal == null)
          throw new IllegalStateException("JDBCLocal not defined");
@@ -497,6 +508,26 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
 
 
    @Override
+   protected javax.resource.spi.ResourceAdapter createRa(String uniqueId, ClassLoader cl)
+      throws NotFoundException, Exception, DeployException
+   {
+      Connector md = mdr.getResourceAdapter(uniqueId);
+      ResourceAdapter ra = md.getResourceadapter();
+      List<? extends ConfigProperty> l = new ArrayList<ConfigProperty>();
+
+      javax.resource.spi.ResourceAdapter rar =
+         (javax.resource.spi.ResourceAdapter)initAndInject(ra.getResourceadapterClass(), l, cl);
+
+      return rar;
+   }
+
+   @Override
+   protected String registerResourceAdapterToResourceAdapterRepository(javax.resource.spi.ResourceAdapter instance)
+   {
+      return getResourceAdapterRepository().registerResourceAdapter(instance);
+   }
+
+   @Override
    protected ManagedConnectionFactory createMcf(XaDataSource ds, String uniqueId, ClassLoader cl)
       throws NotFoundException, Exception, DeployException
    {
@@ -555,4 +586,21 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
       return mdr;
    }
 
+   /**
+    * Set the resource adapter repository
+    * @param value The value
+    */
+   public void setResourceAdapterRepository(ResourceAdapterRepository value)
+   {
+      resourceAdapterRepository = value;
+   }
+
+   /**
+    * Get the resource adapter repository
+    * @return The handle
+    */
+   public ResourceAdapterRepository getResourceAdapterRepository()
+   {
+      return resourceAdapterRepository;
+   }
 }

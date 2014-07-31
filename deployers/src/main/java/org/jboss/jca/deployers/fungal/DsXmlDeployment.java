@@ -24,9 +24,11 @@ package org.jboss.jca.deployers.fungal;
 
 import org.jboss.jca.core.api.management.DataSource;
 import org.jboss.jca.core.api.management.ManagementRepository;
+import org.jboss.jca.core.bootstrapcontext.BootstrapContextCoordinator;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.naming.ExplicitJndiStrategy;
 import org.jboss.jca.core.spi.naming.JndiStrategy;
+import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecoveryRegistry;
 import org.jboss.jca.deployers.DeployersLogger;
@@ -38,6 +40,7 @@ import java.util.List;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
+import javax.resource.spi.ResourceAdapter;
 
 import org.jboss.logging.Logger;
 
@@ -58,6 +61,18 @@ public class DsXmlDeployment implements Deployment
 
    /** The deployment name */
    private String deploymentName;
+
+   /** The resource adapter instance */
+   private ResourceAdapter ra;
+
+   /** The resource adapter instance key */
+   private String raKey;
+
+   /** The bootstrap context identifier */
+   private String bootstrapContextId;
+
+   /** The resource adapter repository */
+   private ResourceAdapterRepository rar;
 
    /** The connection factories */
    private Object[] cfs;
@@ -93,6 +108,10 @@ public class DsXmlDeployment implements Deployment
     * Constructor
     * @param deployment The deployment
     * @param deploymentName The unique deployment name
+    * @param ra The resource adapter instance if present
+    * @param raKey The resource adapter instance key if present
+    * @param bootstrapContextId The bootstrap context identifier
+    * @param resourceAdapterRepository The resource adapter repository
     * @param cfs The connection factories
     * @param jndis The JNDI names for the factories
     * @param cms The connection managers
@@ -106,6 +125,8 @@ public class DsXmlDeployment implements Deployment
     */
    public DsXmlDeployment(URL deployment, 
                           String deploymentName,
+                          ResourceAdapter ra, String raKey, String bootstrapContextId,
+                          ResourceAdapterRepository resourceAdapterRepository,
                           Object[] cfs, String[] jndis, ConnectionManager[] cms,
                           XAResourceRecovery[] recoveryModules, XAResourceRecoveryRegistry recoveryRegistry,
                           DataSource[] dataSources, ManagementRepository managementRepository,
@@ -114,6 +135,10 @@ public class DsXmlDeployment implements Deployment
    {
       this.deployment = deployment;
       this.deploymentName = deploymentName;
+      this.ra = ra;
+      this.raKey = raKey;
+      this.bootstrapContextId = bootstrapContextId;
+      this.rar = resourceAdapterRepository;
       this.cfs = cfs;
       this.jndis = jndis;
       this.cms = cms;
@@ -223,6 +248,26 @@ public class DsXmlDeployment implements Deployment
          {
             log.warn("Exception during JNDI unbinding", t);
          }
+      }
+      
+      if (raKey != null && rar != null)
+      {
+         try
+         {
+            rar.unregisterResourceAdapter(raKey);
+         }
+         catch (org.jboss.jca.core.spi.rar.NotFoundException nfe)
+         {
+            log.warn("Exception during unregistering deployment", nfe);
+         }
+      }
+
+      if (ra != null)
+      {
+         ra.stop();
+         ra = null;
+
+         BootstrapContextCoordinator.getInstance().removeBootstrapContext(bootstrapContextId);
       }
    }
 
