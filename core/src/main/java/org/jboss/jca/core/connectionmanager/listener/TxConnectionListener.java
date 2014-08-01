@@ -79,6 +79,9 @@ public class TxConnectionListener extends AbstractConnectionListener
    /** Whether there is a local transaction */
    private final AtomicBoolean localTransaction = new AtomicBoolean(false);
 
+   /** Nuke connection on boundary */
+   private boolean killConnectionOnBoundary;
+
    static
    {
       String value = SecurityActions.getSystemProperty("ironjacamar.disable_enlistment_trace");
@@ -126,6 +129,7 @@ public class TxConnectionListener extends AbstractConnectionListener
 
       this.xaResource = xaResource;
       this.xaResourceTimeout = xaResourceTimeout;
+      this.killConnectionOnBoundary = false;
 
       if (xaResource instanceof LocalXAResource)
       {
@@ -134,6 +138,14 @@ public class TxConnectionListener extends AbstractConnectionListener
       if (xaResource instanceof ConnectableResource)
       {
          ((ConnectableResource) xaResource).setConnectableResourceListener(this);
+      }
+
+      // Kill connection on boundary logic
+      String value = SecurityActions.getSystemProperty("ironjacamar.kill_connection_on_boundary");
+      if (value != null && !value.trim().equals(""))
+      {
+         if (pool.getName().equals(value))
+            killConnectionOnBoundary = true;
       }
    }
 
@@ -782,6 +794,11 @@ public class TxConnectionListener extends AbstractConnectionListener
             if (wasFreed(null))
             {
                getConnectionManager().returnManagedConnection(TxConnectionListener.this, false);
+            }
+            else if (killConnectionOnBoundary)
+            {
+               log.activeHandles(getPool() != null ? getPool().getName() : "Unknown", connectionHandles.size());
+               getConnectionManager().returnManagedConnection(TxConnectionListener.this, true);
             }
          }
       }

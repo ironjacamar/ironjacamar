@@ -77,7 +77,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
    private ConnectionState state = ConnectionState.NORMAL;
    
    /** Connection handles */
-   private final CopyOnWriteArrayList<Object> connectionHandles = new CopyOnWriteArrayList<Object>();
+   protected final CopyOnWriteArrayList<Object> connectionHandles = new CopyOnWriteArrayList<Object>();
       
    /** Track by transaction or not */
    private final AtomicBoolean trackByTx = new AtomicBoolean(false);

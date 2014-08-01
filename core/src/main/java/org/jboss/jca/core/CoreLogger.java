@@ -173,7 +173,15 @@ public interface CoreLogger extends BasicLogger
    @LogMessage(level = ERROR)
    @Message(id = 313, value = "There is something wrong with the pooling")
    public void somethingWrongWithPooling(@Cause Throwable t);
-   
+
+   /**
+    * Active handles
+    * @param pool The name of the pool
+    * @param number The number of active handles
+    */
+   @LogMessage(level = ERROR)
+   @Message(id = 315, value = "Pool %s has %d active handles")
+   public void activeHandles(String pool, int number);
    
    // CONNECTION MANAGER (400)
 
