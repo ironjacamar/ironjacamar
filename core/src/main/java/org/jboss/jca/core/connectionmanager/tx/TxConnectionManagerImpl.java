@@ -692,10 +692,19 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
 
             if (xaResource == null)
             {
-               xaResource = txIntegration.createXAResourceWrapper(mc.getXAResource(), padXid, 
-                                                                  isSameRMOverride, 
-                                                                  eisProductName, eisProductVersion,
-                                                                  getJndiName(), txIntegration.isFirstResource(mc));
+               XAResource xar = mc.getXAResource();
+
+               if (!(xar instanceof org.jboss.jca.core.spi.transaction.xa.XAResourceWrapper))
+               {
+                  xaResource = txIntegration.createXAResourceWrapper(xar, padXid,
+                                                                     isSameRMOverride,
+                                                                     eisProductName, eisProductVersion,
+                                                                     getJndiName(), txIntegration.isFirstResource(mc));
+               }
+               else
+               {
+                  xaResource = xar;
+               }
             }
 
             if (trace)

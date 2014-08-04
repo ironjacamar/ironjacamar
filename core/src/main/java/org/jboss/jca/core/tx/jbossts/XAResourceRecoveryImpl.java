@@ -215,7 +215,7 @@ public class XAResourceRecoveryImpl implements org.jboss.jca.core.spi.transactio
                }
             }
             
-            if (wrapXAResource)
+            if (wrapXAResource && !(xaResource instanceof org.jboss.jca.core.spi.transaction.xa.XAResourceWrapper))
             {
                String eisProductName = null;
                String eisProductVersion = null;
