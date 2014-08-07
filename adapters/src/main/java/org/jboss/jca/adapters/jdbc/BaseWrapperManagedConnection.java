@@ -508,7 +508,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
       }
       else
       {
-         getLog().warn("Destroying connection that is not valid, due to the following exception: " + con, e);
+         getLog().invalidConnection(con.toString(), e);
          broadcastConnectionError(e);
          return false;
       }
@@ -668,7 +668,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
          }
          catch (Throwable t)
          {
-            getLog().warn("Error notifying of connection error for listener: " + cel, t);
+            getLog().errorNotifyingConnectionListener(cel.toString(), t);
          }
       }
    }

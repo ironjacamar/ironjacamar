@@ -251,7 +251,7 @@ public class XAManagedConnection extends BaseWrapperManagedConnection implements
          }
          catch (SQLException e)
          {
-            getLog().warn("Error setting state ", e);
+            getLog().errorCheckingState(e);
          }
 
          try

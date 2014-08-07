@@ -1177,6 +1177,16 @@
             <entry>Error during connection listener passivation</entry>
           </row>
           <row>
+            <entry>30027</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Destroying connection that is not valid, due to the following exception</entry>
+          </row>
+          <row>
+            <entry>30028</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Error notifying of connection error for listener</entry>
+          </row>
+          <row>
             <entry>30040</entry>
             <entry><code>WARN</code></entry>
             <entry>Closing a statement you left open, please do your own housekeeping</entry>
@@ -1185,6 +1195,16 @@
             <entry>30041</entry>
             <entry><code>WARN</code></entry>
             <entry>Error during closing a statement</entry>
+          </row>
+          <row>
+            <entry>30042</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Closing a result set you left open, please do your own housekeeping</entry>
+          </row>
+          <row>
+            <entry>30043</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Error during closing a result set</entry>
           </row>
           <row>
             <entry>30050</entry>
@@ -1225,6 +1245,11 @@
             <entry>30057</entry>
             <entry><code>ERROR</code></entry>
             <entry>Unable to load URLXASelectStrategy</entry>
+          </row>
+          <row>
+            <entry>30060</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Error checking state</entry>
           </row>
           <row>
             <entry>31000</entry>

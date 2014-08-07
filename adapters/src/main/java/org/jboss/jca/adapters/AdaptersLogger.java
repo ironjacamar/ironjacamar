@@ -173,6 +173,25 @@ public interface AdaptersLogger extends BasicLogger
    @Message(id = 30026, value = "Error during connection listener passivation for: %s")
    public void errorDuringConnectionListenerPassivation(String msg, @Cause Throwable t);
 
+   /**
+    * Invalid connection
+    * @param msg The message
+    * @param t The throwable
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 30027, value = "Destroying connection that is not valid, due to the following exception: %s")
+   public void invalidConnection(String msg, @Cause Throwable t);
+
+   /**
+    * Error notifying a connection listener
+    * @param msg The message
+    * @param t The throwable
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 30028, value = "Error notifying of connection error for listener: %s")
+   public void errorNotifyingConnectionListener(String msg, @Cause Throwable t);
+
+
    // WrappedConnection
 
    /**
@@ -192,6 +211,24 @@ public interface AdaptersLogger extends BasicLogger
    @LogMessage(level = WARN)
    @Message(id = 30041, value = "Error during closing a statement for: %s")
    public void errorDuringClosingStatement(String msg, @Cause Throwable t);
+
+   /**
+    * Closing result set
+    * @param msg The message
+    * @param t The throwable
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 30042, value = "Closing a result set you left open, please do your own housekeeping for: %s")
+   public void closingResultSet(String msg, @Cause Throwable t);
+
+   /**
+    * Error during closing result set
+    * @param msg The message
+    * @param t The throwable
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 30043, value = "Error during closing a result set for: %s")
+   public void errorDuringClosingResultSet(String msg, @Cause Throwable t);
 
    // LocalManagedConnectionFactory
 
@@ -268,4 +305,14 @@ public interface AdaptersLogger extends BasicLogger
    @LogMessage(level = ERROR)
    @Message(id = 30057, value = "Unable to load %s URLXASelectStrategy for: %s")
    public void errorURLXASelectStrategyExt(String msg, String jndi, @Cause Throwable t);
+
+   // XAManagedConnection
+
+   /**
+    * Error checking state
+    * @param t The throwable
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 30060, value = "Error checking state")
+   public void errorCheckingState(@Cause Throwable t);
 }

@@ -1398,7 +1398,7 @@ public abstract class WrappedStatement extends JBossWrapper implements Statement
             if (lc.getTrackStatements() == BaseWrapperManagedConnectionFactory.TRACK_STATEMENTS_TRUE_INT)
             {
                Throwable stackTrace = entry.getValue();
-               lc.getLogger().warn("Closing a result set you left open! Please close it yourself.", stackTrace);
+               lc.getLogger().closingResultSet(resultSet.toString(), stackTrace);
             }
 
             try
@@ -1407,7 +1407,7 @@ public abstract class WrappedStatement extends JBossWrapper implements Statement
             }
             catch (Throwable t)
             {
-               lc.getLogger().warn("Error closing a result set you left open! Please close it yourself.", t);
+               lc.getLogger().errorDuringClosingResultSet(resultSet.toString(), t);
             }
          }
 
