@@ -539,10 +539,29 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
    }
 
    /**
+    * Error a handle
+    * @param handle The handle
+    */
+   void errorHandle(WrappedConnection handle)
+   {
+      returnHandle(handle, true);
+   }
+
+   /**
     * Close a handle
     * @param handle The handle
     */
    void closeHandle(WrappedConnection handle)
+   {
+      returnHandle(handle, false);
+   }
+
+   /**
+    * Return a handle
+    * @param handle The handle
+    * @param error Is the handle in error
+    */
+   private void returnHandle(WrappedConnection handle, boolean error)
    {
       synchronized (stateLock)
       {
@@ -579,13 +598,32 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
 
       if (copy != null)
       {
-         ConnectionEvent ce = new ConnectionEvent(this, ConnectionEvent.CONNECTION_CLOSED);
+         ConnectionEvent ce = null;
+
+         if (!error)
+         {
+            ce = new ConnectionEvent(this, ConnectionEvent.CONNECTION_CLOSED);
+         }
+         else
+         {
+            ce = new ConnectionEvent(this, ConnectionEvent.CONNECTION_ERROR_OCCURRED,
+                                     new SQLException(bundle.invalidConnection()));
+         }
+
          ce.setConnectionHandle(handle);
 
          for (Iterator<ConnectionEventListener> i = copy.iterator(); i.hasNext();)
          {
             ConnectionEventListener cel = i.next();
-            cel.connectionClosed(ce);
+
+            if (!error)
+            {
+               cel.connectionClosed(ce);
+            }
+            else
+            {
+               cel.connectionErrorOccurred(ce);
+            }
          }
       }
    }

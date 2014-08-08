@@ -168,6 +168,13 @@ public interface AdaptersBundle
    @Message(id = 31022, value = "You cannot rollback with autocommit set")
    public String rollbackAutocommit();
 
+   /**
+    * Invalid connection
+    * @return The value
+    */
+   @Message(id = 31023, value = "Invalid connection")
+   public String invalidConnection();
+
    // JBossWrapper
 
    /**

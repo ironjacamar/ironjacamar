@@ -225,14 +225,34 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    }
 
    /**
+    * Invalidate a connection
+    * @exception SQLException if a database access error occurs
+    */
+   public void invalidate() throws SQLException
+   {
+      if (spy)
+         spyLogger.debugf("%s [%s] invalidate()", jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
+
+      returnConnection(true);
+   }
+
+   /**
     * {@inheritDoc}
     */
    public void close() throws SQLException
    {
-      closed = true;
-
       if (spy)
          spyLogger.debugf("%s [%s] close()", jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
+
+      returnConnection(false);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   private void returnConnection(boolean error) throws SQLException
+   {
+      closed = true;
 
       if (mc != null)
       {
@@ -264,7 +284,14 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
                }
             }
          }
-         mc.closeHandle(this);
+         if (!error)
+         {
+            mc.closeHandle(this);
+         }
+         else
+         {
+            mc.errorHandle(this);
+         }
       }
       mc = null;
       dataSource = null;

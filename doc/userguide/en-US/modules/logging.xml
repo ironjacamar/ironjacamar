@@ -1342,6 +1342,11 @@
             <entry>You cannot rollback with autocommit set</entry>
           </row>
           <row>
+            <entry>31023</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Invalid connection</entry>
+          </row>
+          <row>
             <entry>31030</entry>
             <entry><code>EXCEPTION</code></entry>
             <entry>Not wrapper for</entry>
