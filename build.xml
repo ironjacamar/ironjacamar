@@ -33,7 +33,7 @@
   <property name="name" value="ironjacamar"/>
   <property name="major" value="1"/>
   <property name="minor" value="0"/>
-  <property name="patch" value="27"/>
+  <property name="patch" value="28"/>
   <property name="type" value="Final"/>
 
   <condition property="version" value="${major}.${minor}.${patch}-SNAPSHOT">
