@@ -94,7 +94,7 @@ public class RAXMLGenerator
    {
       super();
    }
-   
+
    /**
     * Generates the *-ra.xml file.
     * 
@@ -106,36 +106,13 @@ public class RAXMLGenerator
    public void generateRAXML(ResourceAdapterConfig initialConfig, ResourceAdapterConfig raConfig, File outputFile)
       throws Exception
    {
-      if (raConfig == null)
-      {
-         throw new IllegalArgumentException("ResourceAdapterConfig can not be null.");
-      }
       if (outputFile == null || outputFile.isDirectory())
       {
          throw new IllegalArgumentException("OutputFile can not be null, and it must not be a directory.");
       }
-      List<Activation> resourceAdapters = new ArrayList<Activation>();
-      
-      if (raConfig.getVersion().equals(ResourceAdapterConfig.VERSION.VERSION_1_0))
-      {
-         // resource adapter 1.0
-         Activation ra10Impl = getResourceAdapter10(raConfig);
-         resourceAdapters.add(ra10Impl);
-      }
-      else if (raConfig.getVersion().equals(ResourceAdapterConfig.VERSION.VERSION_1_1))
-      {
-         Activation ra11Impl = getResourceAdapter11(raConfig);
-         resourceAdapters.add(ra11Impl);
-      }
-      else
-      {
-         throw new IllegalStateException("Unkown Version: " + raConfig.getVersion());
-      }
-      
-      Activations ras = new ActivationsImpl(resourceAdapters);
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
       DocumentBuilder db = dbf.newDocumentBuilder();
-      Document doc = db.parse(new InputSource(new StringReader(ras.toString())));
+      Document doc = db.parse(new InputSource(new StringReader(generateRAXMLString(initialConfig, raConfig))));
 
       TransformerFactory tfactory = TransformerFactory.newInstance();
       Transformer serializer = tfactory.newTransformer();
@@ -146,44 +123,60 @@ public class RAXMLGenerator
       serializer.transform(new DOMSource(doc), new StreamResult(new FileOutputStream(outputFile)));
    }
 
-   private Activation getResourceAdapter10(ResourceAdapterConfig raConfig)
+   /**
+    * Generates the string represents the changed during the wizard.
+    * 
+    * @param initialConfig the initial ResourceAdapterConfig
+    * @param raConfig modified of cloned initial ResourceAdapterConfig
+    * @return a String which comply with resource_adapters_1_{1,2,3}.xsd file
+    * @throws Exception any Exception during the generation
+    */
+   public String generateRAXMLString(ResourceAdapterConfig initialConfig, ResourceAdapterConfig raConfig)
+      throws Exception
    {
-      String archive = raConfig.getArchive();
-      TransactionSupportEnum transactionSupport = raConfig.getTransactionSupport();
-      List<ConnectionDefinition> connectionDefinitions10 = getRaCommonConnDef10(raConfig.getConnectionDefinitions());
-      List<AdminObject> adminObjects = getAdminObjects(raConfig.getAdminObjectConfigs());
-      
-      ActivationImpl ra10Impl = new ActivationImpl(null, archive, transactionSupport, 
-                                                   connectionDefinitions10, adminObjects,
-                                                   getConfigProperties(raConfig.getConfigProperties()), 
-                                                   raConfig.getBeanValidationGroups(),
-                                                   raConfig.getBootstrapContext(), null);
-      
-      return ra10Impl;
-   }
-   
-   private Activation getResourceAdapter11(ResourceAdapterConfig raConfig)
-   {
-      String archive = raConfig.getArchive();
-      String id = raConfig.getId();
-      TransactionSupportEnum transactionSupport = raConfig.getTransactionSupport();
-      List<ConnectionDefinition> connectionDefinitions11 = 
-            getRaCommonConnDef11(raConfig.getConnectionDefinitions());
-      List<AdminObject> adminObjects = getAdminObjects(raConfig.getAdminObjectConfigs());
-      WorkManager workManager = getWorkManager(raConfig);
-      ActivationImpl ra11Impl = 
-            new ActivationImpl(id, archive, 
-                  transactionSupport, connectionDefinitions11, adminObjects, 
-                  getConfigProperties(raConfig.getConfigProperties()), raConfig.getBeanValidationGroups(), 
-                  raConfig.getBootstrapContext(), workManager);
-      return ra11Impl;
+      if (raConfig == null)
+      {
+         throw new IllegalArgumentException("ResourceAdapterConfig can not be null.");
+      }
+      List<Activation> resourceAdapters = new ArrayList<Activation>();
+      resourceAdapters.add(getResourceAdapter(raConfig));
+
+      Activations ras = new ActivationsImpl(resourceAdapters);
+      return ras.toString();
    }
 
-   private List<ConnectionDefinition> getRaCommonConnDef11(
-         List<ConnectionFactoryConfig> connectionDefinitions)
+   private Activation getResourceAdapter(ResourceAdapterConfig raConfig)
    {
-      List<ConnectionDefinition> result = 
-            new ArrayList<ConnectionDefinition>();
+      VERSION version = raConfig.getVersion();
+      String archive = raConfig.getArchive();
+      TransactionSupportEnum transactionSupport = raConfig.getTransactionSupport();
+      List<ConnectionDefinition> connectionDefinitions = getRaCommonConnDef(raConfig.getConnectionDefinitions(),
+            version);
+      List<AdminObject> adminObjects = getAdminObjects(raConfig.getAdminObjectConfigs());
+      if (VERSION.VERSION_1_1.equals(version) || VERSION.VERSION_1_2.equals(version))
+      {
+         String id = raConfig.getId();
+         WorkManager workManager = getWorkManager(raConfig);
+         return new ActivationImpl(id, archive, transactionSupport, connectionDefinitions, adminObjects,
+               getConfigProperties(raConfig.getConfigProperties()), raConfig.getBeanValidationGroups(),
+               raConfig.getBootstrapContext(), workManager);
+      }
+      else if (VERSION.VERSION_1_0.equals(version))
+      {
+         return new ActivationImpl(null, archive, transactionSupport, connectionDefinitions, adminObjects,
+               getConfigProperties(raConfig.getConfigProperties()), raConfig.getBeanValidationGroups(),
+               raConfig.getBootstrapContext(), null);
+      }
+      else
+      {
+         throw new RuntimeException("Unsupported resource adapter version: " + version.toString());
+      }
+   }
+
+   private List<ConnectionDefinition> getRaCommonConnDef(List<ConnectionFactoryConfig> connectionDefinitions,
+         VERSION version)
+   {
+      List<ConnectionDefinition> result = new ArrayList<ConnectionDefinition>();
       for (ConnectionFactoryConfig connConfig : connectionDefinitions)
       {
          if (!connConfig.isActive())
@@ -197,31 +190,56 @@ public class RAXMLGenerator
          Boolean enabled = connConfig.getMcfEnabled();
          Boolean useJavaContext = connConfig.getMcfUseJavaCtx();
          Boolean useCcm = connConfig.getMcfUseCCM();
-         Boolean sharable = connConfig.getSharable();
-         Boolean enlistment = connConfig.getEnlistment();
-         Pool pool = getCommonPool(connConfig.getPoolConifg(), VERSION.VERSION_1_1);
+
+         Pool pool = getCommonPool(connConfig.getPoolConifg(), version);
          boolean isXA = connConfig.getPoolConifg().getDefineXA();
-         
          TimeOut timeOut = getCommonTimeOut(connConfig.getTimeoutConfig());
-         Validation validation = getCommonValidation(connConfig.getValidationConfig());
+         Validation validation = getCommonValidation(connConfig.getValidationConfig(), version);
          Security security = getCommonSecurity(connConfig.getSecurityConfig());
          Recovery recovery = getRecovery(connConfig.getRecoveryConfig());
-         if (className != null || jndiName != null || poolName != null || enabled != null || useJavaContext != null 
-               || useCcm != null || pool != null || timeOut != null || validation != null || security != null 
-                     || recovery != null)
+         if (className != null || jndiName != null || poolName != null || enabled != null || useJavaContext != null
+               || useCcm != null || pool != null || timeOut != null || validation != null || security != null
+               || recovery != null)
          {
-            ConnectionDefinition commonConn = 
-                  new ConnectionDefinitionImpl(configProperties, className, jndiName,
-                                               poolName, enabled, useJavaContext, useCcm, sharable,
-                                               enlistment, null, null, pool, timeOut, validation, 
-                                               security, recovery, isXA);
-
-            result.add(commonConn);
+            if (VERSION.VERSION_1_1.equals(version) || VERSION.VERSION_1_2.equals(version))
+            {
+               // for 1.1+
+               Boolean sharable = connConfig.getSharable();
+               Boolean enlistment = connConfig.getEnlistment();
+               if (VERSION.VERSION_1_2.equals(version))
+               {
+                  // for 1.2+
+                  Boolean connectable = connConfig.getConnectable();
+                  Boolean tracking = connConfig.getTracking();
+                  result.add(new ConnectionDefinitionImpl(configProperties, className, jndiName, poolName, enabled,
+                        useJavaContext, useCcm, sharable, enlistment, connectable, tracking, pool, timeOut, validation,
+                        security, recovery, isXA));
+               }
+               else
+               {
+                  result.add(new ConnectionDefinitionImpl(configProperties, className, jndiName, poolName, enabled,
+                        useJavaContext, useCcm, sharable, enlistment, null, null, pool, timeOut, validation, security,
+                        recovery, isXA));
+               }
+            }
+            else if (VERSION.VERSION_1_0.equals(version))
+            {
+               result.add(new ConnectionDefinitionImpl(configProperties, className, jndiName, poolName, enabled,
+                     useJavaContext, useCcm, null, null, null, null, pool, timeOut, validation, security, recovery,
+                     isXA));
+            }
+            else
+            {
+               throw new RuntimeException("Unsupported Version: " + version.toString());
+            }
          }
       }
       return result.isEmpty() ? null : result;
    }
 
+   /**
+    * WorkManager is used for resource_adapters_1.1+.
+    */
    private WorkManager getWorkManager(ResourceAdapterConfig raConfig)
    {
       WorkManagerConfig workManagerConfig = raConfig.getWorkManagerConfig();
@@ -231,48 +249,14 @@ public class RAXMLGenerator
       List<String> defaultGroups = workManagerConfig.getDefaultGroups();
       Map<String, String> userMappings = workManagerConfig.getUserMap();
       Map<String, String> groupMappings = workManagerConfig.getGroupMap();
-      WorkManagerSecurity security = new WorkManagerSecurityImpl(mappingRequired, domain, defaultPrincipal, 
-            defaultGroups, userMappings, groupMappings);
-      WorkManagerImpl workManager = new WorkManagerImpl(security);
-      return workManager;
-   }
-
-   private List<ConnectionDefinition> getRaCommonConnDef10(List<ConnectionFactoryConfig> connectionFactoryConfigs)
-   {
-      List<ConnectionDefinition> result = new ArrayList<ConnectionDefinition>();
-      for (ConnectionFactoryConfig connConfig : connectionFactoryConfigs)
+      if (mappingRequired != null || domain != null || defaultPrincipal != null || !defaultGroups.isEmpty()
+            || !userMappings.isEmpty() || !groupMappings.isEmpty())
       {
-         if (!connConfig.isActive())
-         {
-            continue;
-         }
-         Map<String, String> configProperties = getConfigProperties(connConfig.getMcfConfigProps());
-         String className = connConfig.getMcfClsName();
-         String jndiName = connConfig.getMcfJndiName();
-         String poolName = connConfig.getMcfPoolName();
-         Boolean enabled = connConfig.getMcfEnabled();
-         Boolean useJavaContext = connConfig.getMcfUseJavaCtx();
-         Boolean useCcm = connConfig.getMcfUseCCM();
-         Pool pool = getCommonPool(connConfig.getPoolConifg(), VERSION.VERSION_1_0);
-         boolean isXA = connConfig.getPoolConifg().getDefineXA();
-         TimeOut timeOut = getCommonTimeOut(connConfig.getTimeoutConfig());
-         Validation validation = getCommonValidation(connConfig.getValidationConfig());
-         Security security = getCommonSecurity(connConfig.getSecurityConfig());
-         Recovery recovery = getRecovery(connConfig.getRecoveryConfig());
-         if (className != null || jndiName != null || poolName != null || enabled != null || useJavaContext != null 
-               || useCcm != null || pool != null || timeOut != null || validation != null || security != null 
-                     || recovery != null)
-         {
-            ConnectionDefinitionImpl commonConn =
-               new ConnectionDefinitionImpl(configProperties, className, jndiName, poolName, 
-                                            enabled, useJavaContext, useCcm,
-                                            null, null, null, null,
-                                            pool, timeOut,
-                                            validation, security, recovery, isXA);
-            result.add(commonConn);
-         }
+         WorkManagerSecurity security = new WorkManagerSecurityImpl(mappingRequired, domain, defaultPrincipal,
+               defaultGroups, userMappings, groupMappings);
+         return new WorkManagerImpl(security);
       }
-      return result.isEmpty() ? null : result;
+      return null;
    }
 
    private Recovery getRecovery(RecoveryConfig recoveryConfig)
@@ -291,7 +275,7 @@ public class RAXMLGenerator
          }
          else if (credential != null && extension == null)
          {
-            if (credential.getUsername() == null && credential.getPassword() == null 
+            if (credential.getUsername() == null && credential.getPassword() == null
                   && credential.getSecurityDomain() == null)
             {
                return null;
@@ -306,8 +290,8 @@ public class RAXMLGenerator
          }
          else if (credential != null && extension != null)
          {
-            if (credential.getUsername() == null && credential.getPassword() == null 
-                  && credential.getSecurityDomain() == null && extension.getClassName() == null 
+            if (credential.getUsername() == null && credential.getPassword() == null
+                  && credential.getSecurityDomain() == null && extension.getClassName() == null
                   && extension.getConfigProperties().isEmpty())
             {
                return null;
@@ -329,7 +313,7 @@ public class RAXMLGenerator
       {
          Credential credential = null;
          // userName and securityDomain can not be not-null together.
-         if (credentialConfig != null)
+         if (userName != null || securityDomain != null)
          {
             credential = new CredentialImpl(userName, password, securityDomain);
          }
@@ -342,7 +326,7 @@ public class RAXMLGenerator
             configPropertiesMap = getConfigProperties(extensionConfig.getConfigProperties());
          }
          Extension extension = null;
-         
+
          // className is required.
          if (className != null)
          {
@@ -362,7 +346,7 @@ public class RAXMLGenerator
       {
          return null;
       }
-      if ((securityConfig.getApplication() == null) && (securityConfig.getSecurityDomain() == null) 
+      if ((securityConfig.getApplication() == null) && (securityConfig.getSecurityDomain() == null)
             && (securityConfig.getSecurityDomainAndApp() == null))
       {
          return null;
@@ -384,13 +368,16 @@ public class RAXMLGenerator
       }
    }
 
-   private Validation getCommonValidation(ValidationConfig validationConfig)
+   /**
+    * From version 1.2, validate-on-match is added.
+    */
+   private Validation getCommonValidation(ValidationConfig validationConfig, VERSION version)
    {
       if (validationConfig == null)
       {
          return null;
       }
-      if (validationConfig.getBackgroundValidation() == null 
+      if (validationConfig.getBackgroundValidation() == null && validationConfig.getValidOnMatch() == null
             && validationConfig.getBackgroundValidationMillis() == null && validationConfig.getUseFastFail() == null)
       {
          return null;
@@ -400,7 +387,15 @@ public class RAXMLGenerator
       Boolean useFastFail = validationConfig.getUseFastFail();
       try
       {
-         return new ValidationImpl(Boolean.FALSE, backgroundValidation, backgroundValidationMillis, useFastFail);
+         if (VERSION.VERSION_1_2.equals(version))
+         {
+            Boolean validOnMatch = validationConfig.getValidOnMatch();
+            return new ValidationImpl(validOnMatch, backgroundValidation, backgroundValidationMillis, useFastFail);
+         }
+         else
+         { // null
+            return new ValidationImpl(null, backgroundValidation, backgroundValidationMillis, useFastFail);
+         }
       }
       catch (ValidateException e)
       {
@@ -414,8 +409,8 @@ public class RAXMLGenerator
       {
          return null;
       }
-      if (timeoutConfig.getAllocateRetry() == null && timeoutConfig.getAllocateRetryWait() == null 
-            && timeoutConfig.getBlockingTimeoutMillis() == null && timeoutConfig.getIdleTimeoutMinutes() == null 
+      if (timeoutConfig.getAllocateRetry() == null && timeoutConfig.getAllocateRetryWait() == null
+            && timeoutConfig.getBlockingTimeoutMillis() == null && timeoutConfig.getIdleTimeoutMinutes() == null
             && timeoutConfig.getXaResourceTimeout() == null)
       {
          return null;
@@ -427,8 +422,8 @@ public class RAXMLGenerator
       Integer xaResourceTimeout = timeoutConfig.getXaResourceTimeout();
       try
       {
-         TimeOut timeout = new TimeOutImpl(blockingTimeoutMillis, idleTimeoutMinutes, 
-               allocationRetry, allocationRetryWaitMillis, xaResourceTimeout);
+         TimeOut timeout = new TimeOutImpl(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry,
+               allocationRetryWaitMillis, xaResourceTimeout);
          return timeout;
       }
       catch (ValidateException e)
@@ -443,12 +438,12 @@ public class RAXMLGenerator
       {
          return null;
       }
-      if (poolConfig.isInterleaving() == null && poolConfig.isNoTxSeparatePool() == null 
-            && poolConfig.isOverrideIsSameRM() == null && poolConfig.isPadXid() == null 
-            && poolConfig.isPrefill() == null && poolConfig.isUseStrictMin() == null 
-            && poolConfig.getFlushStrategy() == null && poolConfig.getMaxPoolSize() == null 
-            && poolConfig.getMinPoolSize() == null && poolConfig.getInitialPoolSize() == null 
-            && poolConfig.getCapacityConfig().getIncrementer().getClassName() == null 
+      if (poolConfig.isInterleaving() == null && poolConfig.isNoTxSeparatePool() == null
+            && poolConfig.isOverrideIsSameRM() == null && poolConfig.isPadXid() == null
+            && poolConfig.isPrefill() == null && poolConfig.isUseStrictMin() == null
+            && poolConfig.getFlushStrategy() == null && poolConfig.getMaxPoolSize() == null
+            && poolConfig.getMinPoolSize() == null && poolConfig.getInitialPoolSize() == null
+            && poolConfig.getCapacityConfig().getIncrementer().getClassName() == null
             && poolConfig.getCapacityConfig().getDecrementer().getClassName() == null)
       {
          return null;
@@ -464,20 +459,20 @@ public class RAXMLGenerator
       try
       {
          Capacity capacity = null;
-         if (VERSION.VERSION_1_1.equals(version))
+         if (VERSION.VERSION_1_1.equals(version) || VERSION.VERSION_1_2.equals(version))
          {
             String increMenterClassName = capacityConfig.getIncrementer().getClassName();
-            Map<String, String> increMenterConfigPropsMap = 
-                  getConfigProperties(capacityConfig.getIncrementer().getConfigProperties());
+            Map<String, String> increMenterConfigPropsMap = getConfigProperties(capacityConfig.getIncrementer()
+                  .getConfigProperties());
             Extension incrementer = null;
             if (increMenterClassName != null && increMenterClassName.length() > 0)
             {
                incrementer = new Extension(increMenterClassName, increMenterConfigPropsMap);
             }
-            
+
             String decreMenterClassName = capacityConfig.getDecrementer().getClassName();
-            Map<String, String> decreMenterConfigPropsMap = 
-                  getConfigProperties(capacityConfig.getDecrementer().getConfigProperties());
+            Map<String, String> decreMenterConfigPropsMap = getConfigProperties(capacityConfig.getDecrementer()
+                  .getConfigProperties());
             Extension decrementer = null;
             if (decreMenterClassName != null && decreMenterClassName.length() > 0)
             {
@@ -497,14 +492,13 @@ public class RAXMLGenerator
             Boolean wrapXaResource = poolConfig.isWrapXaResource();
             Boolean noTxSeparatePool = poolConfig.isNoTxSeparatePool();
 
-            pool = new XaPoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin, 
-                                  flushStrategy, capacity, isSameRmOverride, interleaving, padXid, wrapXaResource, 
-                                  noTxSeparatePool);
+            pool = new XaPoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy,
+                  capacity, isSameRmOverride, interleaving, padXid, wrapXaResource, noTxSeparatePool);
          }
          else
          {
-            pool = new PoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin, 
-                                flushStrategy, capacity);
+            pool = new PoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy,
+                  capacity);
          }
       }
       catch (ValidateException e)
@@ -522,14 +516,14 @@ public class RAXMLGenerator
          if (config.isActive())
          {
             Map<String, String> configProps = getConfigProperties(config.getConfigProps());
-            AdminObject commonAO = new AdminObjectImpl(configProps, config.getClssName(),  
-                  config.getJndiName(), config.getPoolName(), config.isEnabled(), config.isUseJavaCtx());
+            AdminObject commonAO = new AdminObjectImpl(configProps, config.getClssName(), config.getJndiName(),
+                  config.getPoolName(), config.isEnabled(), config.isUseJavaCtx());
             result.add(commonAO);
          }
       }
       return result;
    }
-   
+
    /**
     * Gets the ConfigPropery maps.
     * 

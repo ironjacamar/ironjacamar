@@ -35,38 +35,49 @@ import java.util.List;
  */
 public class ConnectionFactoryConfig implements Cloneable
 {
-   
+
    private boolean active;
-   
+
    // general
    private String mcfClsName;
+
    private String mcfJndiName;
+
    private String mcfPoolName;
+
    private Boolean mcfEnabled;
+
    private Boolean mcfUseJavaCtx;
+
    private Boolean mcfUseCCM;
-   
+
    // added for 1.1
    private Boolean sharable;
+
    private Boolean enlistment;
-   
+
+   // added for 1.2
+   private Boolean connectable;
+
+   private Boolean tracking;
+
    private List<ConfigPropType> mcfConfigProps = new ArrayList<ConfigPropType>();
-   
+
    // pool
    private PoolConfig poolConifg = new PoolConfig();
-   
+
    // security
    private SecurityConfig securityConfig = new SecurityConfig();
-   
+
    // timeout
    private TimeoutConfig timeoutConfig = new TimeoutConfig();
-   
+
    // validation
    private ValidationConfig validationConfig = new ValidationConfig();
-   
+
    // recovery
    private RecoveryConfig recoveryConfig = new RecoveryConfig();
-   
+
    /**
     * The constructor
     */
@@ -74,7 +85,7 @@ public class ConnectionFactoryConfig implements Cloneable
    {
       super();
    }
-   
+
    @Override
    public ConnectionFactoryConfig clone()
    {
@@ -94,9 +105,43 @@ public class ConnectionFactoryConfig implements Cloneable
       clone.sharable = this.sharable;
       clone.timeoutConfig = this.timeoutConfig.clone();
       clone.validationConfig = this.validationConfig.clone();
+      clone.connectable = this.connectable;
+      clone.tracking = this.tracking;
       return clone;
    }
-   
+
+   /**
+    * @return the connectable
+    */
+   public Boolean getConnectable()
+   {
+      return connectable;
+   }
+
+   /**
+    * @param connectable the connectable to set
+    */
+   public void setConnectable(Boolean connectable)
+   {
+      this.connectable = connectable;
+   }
+
+   /**
+    * @return the tracking
+    */
+   public Boolean getTracking()
+   {
+      return tracking;
+   }
+
+   /**
+    * @param tracking the tracking to set
+    */
+   public void setTracking(Boolean tracking)
+   {
+      this.tracking = tracking;
+   }
+
    /**
     * @param mcfConfigProps the mcfConfigProps to set
     */
@@ -153,7 +198,6 @@ public class ConnectionFactoryConfig implements Cloneable
       return active;
    }
 
-
    /**
     * @param active the active to set
     */
@@ -161,8 +205,6 @@ public class ConnectionFactoryConfig implements Cloneable
    {
       this.active = active;
    }
-
-
 
    /**
     * @return the sharable
@@ -180,7 +222,6 @@ public class ConnectionFactoryConfig implements Cloneable
       this.sharable = sharable;
    }
 
-
    /**
     * @return the enlistment
     */
@@ -189,8 +230,6 @@ public class ConnectionFactoryConfig implements Cloneable
       return enlistment;
    }
 
-
-
    /**
     * @param enlistment the enlistment to set
     */
@@ -198,8 +237,6 @@ public class ConnectionFactoryConfig implements Cloneable
    {
       this.enlistment = enlistment;
    }
-
-
 
    /**
     * Get mcfClsName
@@ -354,7 +391,6 @@ public class ConnectionFactoryConfig implements Cloneable
       return validationConfig;
    }
 
-
    /**
     * Get recoveryConfig
     * @return The recoveryConfig
@@ -370,23 +406,32 @@ public class ConnectionFactoryConfig implements Cloneable
    public static class PoolConfig implements Cloneable
    {
       private Integer minPoolSize;
+
       private Integer initialPoolSize;
+
       private Integer maxPoolSize;
+
       private Boolean prefill;
+
       private Boolean useStrictMin;
+
       private FlushStrategy flushStrategy;
+
       private CapacityConfig capacityConfig = new CapacityConfig();
-      
+
       private boolean defineXA;
-      
+
       // XA related
       private Boolean overrideIsSameRM;
+
       private Boolean interleaving;
+
       private Boolean noTxSeparatePool;
+
       private Boolean padXid;
+
       private Boolean wrapXaResource;
-      
-      
+
       @Override
       public PoolConfig clone()
       {
@@ -406,7 +451,7 @@ public class ConnectionFactoryConfig implements Cloneable
          clone.wrapXaResource = this.wrapXaResource;
          return clone;
       }
-      
+
       /**
        * @param capacityConfig the capacityConfig to set
        */
@@ -422,6 +467,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          return capacityConfig;
       }
+
       /**
        * @return the initialPoolSize
        */
@@ -429,6 +475,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          return initialPoolSize;
       }
+
       /**
        * @param initialPoolSize the initialPoolSize to set
        */
@@ -436,6 +483,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          this.initialPoolSize = initialPoolSize;
       }
+
       /**
        * Get minPoolSize
        * @return The minPoolSize
@@ -444,6 +492,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          return minPoolSize;
       }
+
       /**
        * Set minPoolSize
        * @param minPoolSize The value to set
@@ -452,6 +501,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          this.minPoolSize = minPoolSize;
       }
+
       /**
        * Get maxPoolSize
        * @return The maxPoolSize
@@ -460,6 +510,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          return maxPoolSize;
       }
+
       /**
        * Set maxPoolSize
        * @param maxPoolSize The value to set
@@ -468,6 +519,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          this.maxPoolSize = maxPoolSize;
       }
+
       /**
        * Get prefill
        * @return The prefill
@@ -476,6 +528,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          return prefill;
       }
+
       /**
        * Set prefill
        * @param prefill The value to set
@@ -484,6 +537,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          this.prefill = prefill;
       }
+
       /**
        * Get useStrictMin
        * @return The useStrictMin
@@ -492,6 +546,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          return useStrictMin;
       }
+
       /**
        * Set useStrictMin
        * @param useStrictMin The value to set
@@ -500,6 +555,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          this.useStrictMin = useStrictMin;
       }
+
       /**
        * Get flushStrategy
        * @return The flushStrategy
@@ -508,6 +564,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          return flushStrategy;
       }
+
       /**
        * Set flushStrategy
        * @param flushStrategy The value to set
@@ -516,6 +573,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          this.flushStrategy = flushStrategy;
       }
+
       /**
        * Get defineXA
        * @return The defineXA
@@ -524,6 +582,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          return defineXA;
       }
+
       /**
        * Set defineXA
        * @param defineXA The value to set
@@ -532,6 +591,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          this.defineXA = defineXA;
       }
+
       /**
        * Get overrideIsSameRM
        * @return The overrideIsSameRM
@@ -540,6 +600,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          return overrideIsSameRM;
       }
+
       /**
        * Set overrideIsSameRM
        * @param overrideIsSameRM The value to set
@@ -548,6 +609,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          this.overrideIsSameRM = overrideIsSameRM;
       }
+
       /**
        * Get interleaving
        * @return The interleaving
@@ -556,6 +618,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          return interleaving;
       }
+
       /**
        * Set interleaving
        * @param interleaving The value to set
@@ -564,6 +627,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          this.interleaving = interleaving;
       }
+
       /**
        * Get createSubPool
        * @return The createSubPool
@@ -572,6 +636,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          return noTxSeparatePool;
       }
+
       /**
        * Set createSubPool
        * @param noTxSeparatePool The value to set
@@ -580,6 +645,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          this.noTxSeparatePool = noTxSeparatePool;
       }
+
       /**
        * Get xidPad
        * @return The xidPad
@@ -588,6 +654,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          return padXid;
       }
+
       /**
        * Set xidPad
        * @param padXid The value to set
@@ -596,6 +663,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          this.padXid = padXid;
       }
+
       /**
        * Get wrapXARes
        * @return The wrapXARes
@@ -604,6 +672,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          return wrapXaResource;
       }
+
       /**
        * Set wrapXARes
        * @param wrapXaResource The value to set
@@ -612,7 +681,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          this.wrapXaResource = wrapXaResource;
       }
-      
+
    }
 
    /**
@@ -621,9 +690,11 @@ public class ConnectionFactoryConfig implements Cloneable
    public static class SecurityConfig implements Cloneable
    {
       private Boolean application;
+
       private String securityDomain;
+
       private String securityDomainAndApp;
-      
+
       @Override
       public SecurityConfig clone()
       {
@@ -633,7 +704,7 @@ public class ConnectionFactoryConfig implements Cloneable
          clone.securityDomainAndApp = this.securityDomainAndApp;
          return clone;
       }
-      
+
       /**
        * Get application
        * @return The application
@@ -642,6 +713,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          return application;
       }
+
       /**
        * Set application
        * @param application The value to set
@@ -650,6 +722,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          this.application = application;
       }
+
       /**
        * Get securityDomain
        * @return The securityDomain
@@ -658,6 +731,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          return securityDomain;
       }
+
       /**
        * Set securityDomain
        * @param securityDomain The value to set
@@ -666,6 +740,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          this.securityDomain = securityDomain;
       }
+
       /**
        * Get securityDomainAndApp
        * @return The securityDomainAndApp
@@ -674,6 +749,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          return securityDomainAndApp;
       }
+
       /**
        * Set securityDomainAndApp
        * @param securityDomainAndApp The value to set
@@ -682,21 +758,24 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          this.securityDomainAndApp = securityDomainAndApp;
       }
-      
-      
+
    }
-   
+
    /**
     * TimeoutConfig is used to configure time out
     */
    public static class TimeoutConfig implements Cloneable
    {
       private Long blockingTimeoutMillis;
+
       private Long idleTimeoutMinutes;
+
       private Integer allocateRetry;
+
       private Long allocateRetryWait;
+
       private Integer xaResourceTimeout;
-      
+
       @Override
       public TimeoutConfig clone()
       {
@@ -708,7 +787,7 @@ public class ConnectionFactoryConfig implements Cloneable
          clone.xaResourceTimeout = this.xaResourceTimeout;
          return clone;
       }
-      
+
       /**
        * Get blockingTimeoutMillis
        * @return The blockingTimeoutMillis
@@ -717,6 +796,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          return blockingTimeoutMillis;
       }
+
       /**
        * Set blockingTimeoutMillis
        * @param blockingTimeoutMillis The value to set
@@ -725,6 +805,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          this.blockingTimeoutMillis = blockingTimeoutMillis;
       }
+
       /**
        * Get idleTimeoutMinutes
        * @return The idleTimeoutMinutes
@@ -733,6 +814,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          return idleTimeoutMinutes;
       }
+
       /**
        * Set idleTimeoutMinutes
        * @param idleTimeoutMinutes The value to set
@@ -741,6 +823,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          this.idleTimeoutMinutes = idleTimeoutMinutes;
       }
+
       /**
        * Get allocateRetry
        * @return The allocateRetry
@@ -749,6 +832,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          return allocateRetry;
       }
+
       /**
        * Set allocateRetry
        * @param allocateRetry The value to set
@@ -757,6 +841,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          this.allocateRetry = allocateRetry;
       }
+
       /**
        * Get allocateRetryWait
        * @return The allocateRetryWait
@@ -765,6 +850,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          return allocateRetryWait;
       }
+
       /**
        * Set allocateRetryWait
        * @param allocateRetryWait The value to set
@@ -773,6 +859,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          this.allocateRetryWait = allocateRetryWait;
       }
+
       /**
        * Get xaResourceTimeout
        * @return The xaResourceTimeout
@@ -781,6 +868,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          return xaResourceTimeout;
       }
+
       /**
        * Set xaResourceTimeout
        * @param xaResourceTimeout The value to set
@@ -791,16 +879,20 @@ public class ConnectionFactoryConfig implements Cloneable
       }
 
    }
-   
+
    /**
     * ValidationConifg is used to configure validation
     */
    public static class ValidationConfig implements Cloneable
    {
       private Boolean backgroundValidation;
+
       private Long backgroundValidationMillis;
+
       private Boolean useFastFail;
-      
+
+      private Boolean validOnMatch;
+
       @Override
       public ValidationConfig clone()
       {
@@ -808,9 +900,27 @@ public class ConnectionFactoryConfig implements Cloneable
          clone.backgroundValidation = this.backgroundValidation;
          clone.backgroundValidationMillis = this.backgroundValidationMillis;
          clone.useFastFail = this.useFastFail;
+         clone.validOnMatch = this.validOnMatch;
          return clone;
       }
-      
+
+      /**
+       * @return the validOnMatch
+       */
+      public Boolean getValidOnMatch()
+      {
+         return validOnMatch;
+      }
+
+      /**
+       * @param validOnMatch
+       *            the validOnMatch to set
+       */
+      public void setValidOnMatch(Boolean validOnMatch)
+      {
+         this.validOnMatch = validOnMatch;
+      }
+
       /**
        * Get backgroundValidation
        * @return The backgroundValidation
@@ -819,6 +929,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          return backgroundValidation;
       }
+
       /**
        * Set backgroundValidation
        * @param backgroundValidation The value to set
@@ -827,6 +938,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          this.backgroundValidation = backgroundValidation;
       }
+
       /**
        * Get backgroundValidationMillis
        * @return The backgroundValidationMillis
@@ -835,6 +947,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          return backgroundValidationMillis;
       }
+
       /**
        * Set backgroundValidationMillis
        * @param backgroundValidationMillis The value to set
@@ -843,6 +956,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          this.backgroundValidationMillis = backgroundValidationMillis;
       }
+
       /**
        * Get useFastFail
        * @return The useFastFail
@@ -851,6 +965,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          return useFastFail;
       }
+
       /**
        * Set useFastFail
        * @param useFastFail The value to set
@@ -859,22 +974,22 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          this.useFastFail = useFastFail;
       }
-      
+
    }
-   
+
    /**
     * RecoveryConfig is used to configure recovery
     */
    public static class RecoveryConfig implements Cloneable
    {
       private Boolean noRecovery;
-      
+
       // credential
       private Credential credential = new Credential();
-      
+
       // extension
       private Extension extension = new Extension();
-      
+
       @Override
       public RecoveryConfig clone()
       {
@@ -884,7 +999,7 @@ public class ConnectionFactoryConfig implements Cloneable
          clone.noRecovery = this.noRecovery;
          return clone;
       }
-      
+
       /**
        * @param credential the credential to set
        */
@@ -900,8 +1015,6 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          this.extension = extension;
       }
-
-
 
       /**
        * Get noRecovery
@@ -940,7 +1053,7 @@ public class ConnectionFactoryConfig implements Cloneable
       }
 
    }
-   
+
    /**
     * Capacity configuration for pool
     *
@@ -948,8 +1061,9 @@ public class ConnectionFactoryConfig implements Cloneable
    public static class CapacityConfig implements Cloneable
    {
       private Extension incrementer = new Extension();
+
       private Extension decrementer = new Extension();
-      
+
       @Override
       public CapacityConfig clone()
       {
@@ -958,7 +1072,7 @@ public class ConnectionFactoryConfig implements Cloneable
          clone.incrementer = this.incrementer.clone();
          return clone;
       }
-      
+
       /**
        * @param incrementer the incrementer to set
        */
@@ -982,6 +1096,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          return incrementer;
       }
+
       /**
        * @return the decrementer
        */
@@ -989,18 +1104,20 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          return decrementer;
       }
-      
+
    }
-   
+
    /**
     * Credential is used on the recovery
     */
    public static class Credential implements Cloneable
    {
       private String username;
+
       private String password;
+
       private String securityDomain;
-      
+
       @Override
       public Credential clone()
       {
@@ -1010,7 +1127,7 @@ public class ConnectionFactoryConfig implements Cloneable
          clone.securityDomain = this.securityDomain;
          return clone;
       }
-      
+
       /**
        * Get username
        * @return The username
@@ -1019,6 +1136,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          return username;
       }
+
       /**
        * Set username
        * @param username The value to set
@@ -1027,6 +1145,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          this.username = username;
       }
+
       /**
        * Get password
        * @return The password
@@ -1035,6 +1154,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          return password;
       }
+
       /**
        * Set password
        * @param password The value to set
@@ -1043,6 +1163,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          this.password = password;
       }
+
       /**
        * Get securityDomain
        * @return The securityDomain
@@ -1051,6 +1172,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          return securityDomain;
       }
+
       /**
        * Set securityDomain
        * @param securityDomain The value to set
@@ -1059,17 +1181,18 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          this.securityDomain = securityDomain;
       }
-      
+
    }
-   
+
    /**
     * Extension is used on the recovery
     */
    public static class Extension implements Cloneable
    {
       private String className;
+
       private List<ConfigPropType> configProperties = new ArrayList<ConfigPropType>();
-      
+
       @Override
       public Extension clone()
       {
@@ -1078,7 +1201,7 @@ public class ConnectionFactoryConfig implements Cloneable
          clone.configProperties = AdminObjectConfig.cloneConfigPropTypeList(configProperties);
          return clone;
       }
-      
+
       /**
        * Get className
        * @return The className
@@ -1087,6 +1210,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          return className;
       }
+
       /**
        * Set className
        * @param className The value to set
@@ -1095,6 +1219,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          this.className = className;
       }
+
       /**
        * Get configProperties
        * @return The configProperties
@@ -1111,7 +1236,7 @@ public class ConnectionFactoryConfig implements Cloneable
       {
          this.configProperties = configProperties;
       }
-      
+
    }
-   
+
 }

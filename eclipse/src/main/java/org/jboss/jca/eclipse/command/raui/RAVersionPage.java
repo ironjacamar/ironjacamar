@@ -80,7 +80,8 @@ public class RAVersionPage extends AbstractRAGenerateWizardPage
       label.setText(getString("ra.generate.version.select.label"));
       
       final String[] items =
-      {ResourceAdapterConfig.VERSION.VERSION_1_0.getVersion(), ResourceAdapterConfig.VERSION.VERSION_1_1.getVersion()};
+      {ResourceAdapterConfig.VERSION.VERSION_1_2.getVersion(), ResourceAdapterConfig.VERSION.VERSION_1_1.getVersion()
+            , ResourceAdapterConfig.VERSION.VERSION_1_0.getVersion()};
       final Combo combo = new Combo(generalGrp, SWT.DROP_DOWN | SWT.READ_ONLY);
       combo.setItems(items);
       combo.setText(this.wizard.getRaConfig().getVersion().getVersion());

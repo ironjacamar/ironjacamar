@@ -143,7 +143,7 @@ public class ResourceAdapterHelper
       }
       
       raConfig.setBootstrapContext(getBootStrapContext(ijmd));
-      raConfig.setVersion(VERSION.VERSION_1_1); // default to 1.1
+      raConfig.setVersion(VERSION.VERSION_1_2); // default to 1.2
       raConfig.setBeanValidationGroups(getBeanValidationGrp(ijmd));
       raConfig.setAdminObjectConfigs(getAdminObjectConfigs(cmd, ijmd));
       raConfig.setArchive(fileName);

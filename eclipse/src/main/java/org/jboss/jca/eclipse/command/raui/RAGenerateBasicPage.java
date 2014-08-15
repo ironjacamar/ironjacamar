@@ -54,8 +54,6 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 
-
-
 /**
  * Basic page for settings of: archive; transactionsupport; bootstrapcontext; beanvalidationgroups;
  * config-properties; whether deploy the rar first.
@@ -63,15 +61,17 @@ import org.eclipse.swt.widgets.Text;
  * @author <a href="mailto:lgao@redhat.com">Lin Gao</a>
  *
  */
-public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements 
-    ResourceAdapterConfig.VersionChangeListener
+public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage
+      implements
+         ResourceAdapterConfig.VersionChangeListener
 {
 
    private final ResourceAdapterConfig raConfig;
+
    private final ResourceAdapterConfig.WorkManagerConfig workManagerConfig;
-   
+
    private List<Control> switchEnabledOnVersion = new ArrayList<Control>();
-   
+
    /**
     * The constructor.
     * 
@@ -87,7 +87,6 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
       this.workManagerConfig = this.raConfig.getWorkManagerConfig();
    }
 
-   
    @Override
    public void versionChanged(VERSION version)
    {
@@ -100,16 +99,15 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
          switchEnabled(true);
       }
    }
-   
+
    private void switchEnabled(boolean enabled)
    {
-      for (Control control: this.switchEnabledOnVersion)
+      for (Control control : this.switchEnabledOnVersion)
       {
          control.setEnabled(enabled);
       }
    }
-   
-   
+
    /**
     * Creates work manager security control
     * 
@@ -123,14 +121,14 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
       layout.numColumns = 1;
       layout.verticalSpacing = 5;
       whole.setLayout(layout);
-      
+
       final Composite container = new Composite(whole, SWT.None);
       GridLayout containerLayout = new GridLayout();
       containerLayout.numColumns = 2;
       containerLayout.verticalSpacing = 2;
       containerLayout.makeColumnsEqualWidth = true;
       container.setLayout(containerLayout);
-      
+
       // mapping required
       Label label = new Label(container, SWT.NULL);
       this.switchEnabledOnVersion.add(label);
@@ -148,7 +146,7 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
             container.update();
          }
       });
-     
+
       // domain
       label = new Label(container, SWT.NULL);
       this.switchEnabledOnVersion.add(label);
@@ -160,14 +158,14 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
       domainTxt.setLayoutData(gridData(280));
       domainTxt.addModifyListener(new ModifyListener()
       {
-         
+
          @Override
          public void modifyText(ModifyEvent event)
          {
             workManagerConfig.setDomain(domainTxt.getText());
          }
       });
-      
+
       // default principal
       label = new Label(container, SWT.NULL);
       this.switchEnabledOnVersion.add(label);
@@ -179,37 +177,39 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
       principalTxt.setLayoutData(gridData(280));
       principalTxt.addModifyListener(new ModifyListener()
       {
-         
+
          @Override
          public void modifyText(ModifyEvent event)
          {
             workManagerConfig.setDefaultPricipal(principalTxt.getText());
          }
       });
-      
+
       // default groups
       Label defaultGroups = new Label(whole, SWT.NULL);
       this.switchEnabledOnVersion.add(defaultGroups);
       defaultGroups.setText(getString("ra.generate.general.workmanager.groups"));
-      
+
       final Composite defaultGrpsContainer = new Composite(whole, SWT.NONE);
       GridLayout defaultGrpsLayout = new GridLayout();
       defaultGrpsLayout.numColumns = 2;
       defaultGrpsLayout.verticalSpacing = 5;
       defaultGrpsContainer.setLayout(defaultGrpsLayout);
-      
-      String groupsTabHeaders[] = {getString("ra.generate.general.workmanager.table.group")};
-      final ColumnLayoutData[] defaultGrpsLayoutData = {new ColumnWeightData(300)};
 
-      final TableViewer defaultGroupsTableViewer = 
-            UIResources.createTableViewer(defaultGrpsContainer, groupsTabHeaders, defaultGrpsLayoutData);
+      String groupsTabHeaders[] =
+      {getString("ra.generate.general.workmanager.table.group")};
+      final ColumnLayoutData[] defaultGrpsLayoutData =
+      {new ColumnWeightData(300)};
+
+      final TableViewer defaultGroupsTableViewer = UIResources.createTableViewer(defaultGrpsContainer,
+            groupsTabHeaders, defaultGrpsLayoutData);
       switchEnabledOnVersion.add(defaultGroupsTableViewer.getControl());
       final List<String> initialDefaultGroups = getDefaultGroups();
-      final StringValuesContentProvider<String> contentProvider = new StringValuesContentProvider<String>
-      (defaultGroupsTableViewer, initialDefaultGroups);
-      
+      final StringValuesContentProvider<String> contentProvider = new StringValuesContentProvider<String>(
+            defaultGroupsTableViewer, initialDefaultGroups);
+
       defaultGroupsTableViewer.setContentProvider(contentProvider);
-      
+
       Composite buttonGroup = new Composite(defaultGrpsContainer, SWT.NONE);
       GridLayout layoutBtns = new GridLayout();
       layoutBtns.marginHeight = 0;
@@ -217,10 +217,10 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
       buttonGroup.setLayout(layoutBtns);
       buttonGroup.setLayoutData(new GridData(GridData.FILL_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL));
       buttonGroup.setFont(buttonGroup.getFont());
-      
+
       final Map<String, String> defaultGroupsMap = new HashMap<String, String>();
       final String groupKey = "ra.generate.general.workmanager.group.label";
-      
+
       final Button addBtn = UIResources.createPushButton(buttonGroup, getString("command.add.name"));
       switchEnabledOnVersion.add(addBtn);
       addBtn.addSelectionListener(new SelectionAdapter()
@@ -229,7 +229,7 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
          public void widgetSelected(SelectionEvent e)
          {
             defaultGroupsMap.put(groupKey, "");
-            StringInputDialog dialog = new StringInputDialog(defaultGroupsTableViewer.getControl().getShell(), 
+            StringInputDialog dialog = new StringInputDialog(defaultGroupsTableViewer.getControl().getShell(),
                   getString("ra.generate.general.workmanager.group.add.title"), defaultGroupsMap);
             if (dialog.open() == Window.CANCEL)
             {
@@ -255,16 +255,16 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
          public void widgetSelected(SelectionEvent e)
          {
             IStructuredSelection selection = (IStructuredSelection) defaultGroupsTableViewer.getSelection();
-            String initialValue = (String)selection.getFirstElement();
-            
+            String initialValue = (String) selection.getFirstElement();
+
             defaultGroupsMap.put(groupKey, initialValue);
-            StringInputDialog dialog = new StringInputDialog(defaultGroupsTableViewer.getControl().getShell(), 
+            StringInputDialog dialog = new StringInputDialog(defaultGroupsTableViewer.getControl().getShell(),
                   getString("ra.generate.general.workmanager.group.edit.title"), defaultGroupsMap);
             if (dialog.open() == Window.CANCEL)
             {
                return;
             }
-            
+
             String value = dialog.getValues().get(groupKey);
             if (value != null && value.length() > 0 && !value.equals(initialValue))
             {
@@ -289,7 +289,7 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
             IStructuredSelection selection = (IStructuredSelection) defaultGroupsTableViewer.getSelection();
             if (selection != null)
             {
-               String value = (String)selection.getFirstElement();
+               String value = (String) selection.getFirstElement();
                if (initialDefaultGroups.remove(value))
                {
                   contentProvider.remove(value);
@@ -298,43 +298,45 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
             defaultGrpsContainer.update();
          }
       });
-      
+
       defaultGroupsTableViewer.addSelectionChangedListener(new ISelectionChangedListener()
       {
-         
+
          @Override
          public void selectionChanged(SelectionChangedEvent event)
          {
-            editBtn.setEnabled(defaultGroupsTableViewer.getSelection() != null 
+            editBtn.setEnabled(defaultGroupsTableViewer.getSelection() != null
                   && !defaultGroupsTableViewer.getSelection().isEmpty());
-            delBtn.setEnabled(defaultGroupsTableViewer.getSelection() != null 
+            delBtn.setEnabled(defaultGroupsTableViewer.getSelection() != null
                   && !defaultGroupsTableViewer.getSelection().isEmpty());
          }
       });
-      
+
       // user mappings
       Label userMappings = new Label(whole, SWT.NULL);
       switchEnabledOnVersion.add(userMappings);
       userMappings.setText(getString("ra.generate.general.workmanager.user.mappings"));
-      
+
       final Composite userMappingsContainer = new Composite(whole, SWT.NONE);
       GridLayout userMappingLayout = new GridLayout();
       userMappingLayout.numColumns = 2;
       userMappingLayout.verticalSpacing = 5;
       userMappingsContainer.setLayout(userMappingLayout);
-      
-      String userMappingTabHeaders[] = {getString("ra.generate.general.workmanager.table.mappings.from"), 
-            getString("ra.generate.general.workmanager.table.mappings.to")};
-      final ColumnLayoutData[] userMappingLayoutData = {new ColumnWeightData(150), new ColumnWeightData(150)};
 
-      final TableViewer userMappingTabViewer = 
-            UIResources.createTableViewer(userMappingsContainer, userMappingTabHeaders, userMappingLayoutData);
+      String userMappingTabHeaders[] =
+      {getString("ra.generate.general.workmanager.table.mappings.from"),
+            getString("ra.generate.general.workmanager.table.mappings.to")};
+      final ColumnLayoutData[] userMappingLayoutData =
+      {new ColumnWeightData(150), new ColumnWeightData(150)};
+
+      final TableViewer userMappingTabViewer = UIResources.createTableViewer(userMappingsContainer,
+            userMappingTabHeaders, userMappingLayoutData);
       List<String[]> initialValues = new ArrayList<String[]>();
       switchEnabledOnVersion.add(userMappingTabViewer.getControl());
       Map<String, String> initialUserMaps = getInitialUserMaps();
       if (initialUserMaps != null)
       {
-         for (Map.Entry<String, String> entry: initialUserMaps.entrySet())
+         for (Map.Entry<String, String> entry : initialUserMaps.entrySet())
          {
             String[] rowLine = new String[2];
             rowLine[0] = entry.getKey();
@@ -342,11 +344,11 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
             initialValues.add(rowLine);
          }
       }
-      
+
       final StringValuesContentProvider<String[]> userMappingContentProvider = 
             new StringValuesContentProvider<String[]>(userMappingTabViewer, initialValues);
       userMappingTabViewer.setContentProvider(userMappingContentProvider);
-      
+
       buttonGroup = new Composite(userMappingsContainer, SWT.NONE);
       layoutBtns = new GridLayout();
       layoutBtns.marginHeight = 0;
@@ -354,14 +356,14 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
       buttonGroup.setLayout(layoutBtns);
       buttonGroup.setLayoutData(new GridData(GridData.FILL_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL));
       buttonGroup.setFont(buttonGroup.getFont());
-      
+
       final Map<String, String> userMap = raConfig.getWorkManagerConfig().getUserMap();
-//      userMap.putAll(initialUserMaps);
-      
+      //      userMap.putAll(initialUserMaps);
+
       final Map<String, String> userMapsData = new LinkedHashMap<String, String>();
       final String userMapKeyFrom = "ra.generate.general.workmanager.table.mappings.from";
       final String userMapKeyTo = "ra.generate.general.workmanager.table.mappings.to";
-      
+
       final Button addUserMapBtn = UIResources.createPushButton(buttonGroup, getString("command.add.name"));
       this.switchEnabledOnVersion.add(addUserMapBtn);
       addUserMapBtn.addSelectionListener(new SelectionAdapter()
@@ -371,7 +373,7 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
          {
             userMapsData.put(userMapKeyFrom, "");
             userMapsData.put(userMapKeyTo, "");
-            StringInputDialog dialog = new StringInputDialog(userMappingTabViewer.getControl().getShell(), 
+            StringInputDialog dialog = new StringInputDialog(userMappingTabViewer.getControl().getShell(),
                   getString("ra.generate.general.workmanager.usermap.add.title"), userMapsData);
             if (dialog.open() == Window.CANCEL)
             {
@@ -382,7 +384,8 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
             if (from != null && from.length() > 0)
             {
                userMap.put(from, to);
-               userMappingContentProvider.add(new String[]{from, to});
+               userMappingContentProvider.add(new String[]
+               {from, to});
             }
             userMappingsContainer.update();
          }
@@ -395,18 +398,18 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
          public void widgetSelected(SelectionEvent e)
          {
             IStructuredSelection selection = (IStructuredSelection) userMappingTabViewer.getSelection();
-            String[] initialValue = (String[])selection.getFirstElement();
-            
+            String[] initialValue = (String[]) selection.getFirstElement();
+
             userMapsData.put(userMapKeyFrom, initialValue[0]);
             userMapsData.put(userMapKeyTo, initialValue[1]);
-            
-            StringInputDialog dialog = new StringInputDialog(userMappingTabViewer.getControl().getShell(), 
+
+            StringInputDialog dialog = new StringInputDialog(userMappingTabViewer.getControl().getShell(),
                   getString("ra.generate.general.workmanager.usermap.edit.title"), userMapsData);
             if (dialog.open() == Window.CANCEL)
             {
                return;
             }
-            
+
             String from = dialog.getValues().get(userMapKeyFrom);
             String to = dialog.getValues().get(userMapKeyTo);
             if (from != null && from.length() > 0 && to != null && to.length() > 0)
@@ -416,7 +419,8 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
                   return;
                }
                userMap.put(from, to);
-               userMappingContentProvider.update(initialValue, new String[]{from, to});
+               userMappingContentProvider.update(initialValue, new String[]
+               {from, to});
             }
             userMappingsContainer.update();
          }
@@ -431,8 +435,8 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
             IStructuredSelection selection = (IStructuredSelection) userMappingTabViewer.getSelection();
             if (selection != null)
             {
-               String[] value = (String[])selection.getFirstElement();
-               
+               String[] value = (String[]) selection.getFirstElement();
+
                if (userMap.containsKey(value[0]))
                {
                   userMap.remove(value[0]);
@@ -442,44 +446,45 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
             userMappingsContainer.update();
          }
       });
-      
+
       userMappingTabViewer.addSelectionChangedListener(new ISelectionChangedListener()
       {
-         
+
          @Override
          public void selectionChanged(SelectionChangedEvent event)
          {
-            editUserMapBtn.setEnabled(userMappingTabViewer.getSelection() != null 
+            editUserMapBtn.setEnabled(userMappingTabViewer.getSelection() != null
                   && !userMappingTabViewer.getSelection().isEmpty());
-            delUserMapBtn.setEnabled(userMappingTabViewer.getSelection() != null 
+            delUserMapBtn.setEnabled(userMappingTabViewer.getSelection() != null
                   && !userMappingTabViewer.getSelection().isEmpty());
          }
       });
-      
-      
+
       // group mappings
       Label groupMappings = new Label(whole, SWT.NULL);
       switchEnabledOnVersion.add(groupMappings);
       groupMappings.setText(getString("ra.generate.general.workmanager.group.mappings"));
-      
+
       final Composite groupMappingsContainer = new Composite(whole, SWT.NONE);
       GridLayout groupMappingLayout = new GridLayout();
       groupMappingLayout.numColumns = 2;
       groupMappingLayout.verticalSpacing = 5;
       groupMappingsContainer.setLayout(groupMappingLayout);
-      
-      String groupMappingTabHeaders[] = {getString("ra.generate.general.workmanager.table.mappings.from"), 
-            getString("ra.generate.general.workmanager.table.mappings.to")};
-      final ColumnLayoutData[] groupMappingLayoutData = {new ColumnWeightData(150), new ColumnWeightData(150)};
 
-      final TableViewer groupMappingTabViewer = 
-            UIResources.createTableViewer(groupMappingsContainer, groupMappingTabHeaders, groupMappingLayoutData);
+      String groupMappingTabHeaders[] =
+      {getString("ra.generate.general.workmanager.table.mappings.from"),
+            getString("ra.generate.general.workmanager.table.mappings.to")};
+      final ColumnLayoutData[] groupMappingLayoutData =
+      {new ColumnWeightData(150), new ColumnWeightData(150)};
+
+      final TableViewer groupMappingTabViewer = UIResources.createTableViewer(groupMappingsContainer,
+            groupMappingTabHeaders, groupMappingLayoutData);
       initialValues = new ArrayList<String[]>();
       switchEnabledOnVersion.add(groupMappingTabViewer.getControl());
       Map<String, String> initialGroupMaps = getInitialGroupMaps();
       if (initialGroupMaps != null)
       {
-         for (Map.Entry<String, String> entry: initialGroupMaps.entrySet())
+         for (Map.Entry<String, String> entry : initialGroupMaps.entrySet())
          {
             String[] rowLine = new String[2];
             rowLine[0] = entry.getKey();
@@ -487,11 +492,11 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
             initialValues.add(rowLine);
          }
       }
-      
+
       final StringValuesContentProvider<String[]> groupMappingContentProvider = 
             new StringValuesContentProvider<String[]>(groupMappingTabViewer, initialValues);
       groupMappingTabViewer.setContentProvider(groupMappingContentProvider);
-      
+
       buttonGroup = new Composite(groupMappingsContainer, SWT.NONE);
       layoutBtns = new GridLayout();
       layoutBtns.marginHeight = 0;
@@ -499,14 +504,14 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
       buttonGroup.setLayout(layoutBtns);
       buttonGroup.setLayoutData(new GridData(GridData.FILL_VERTICAL | GridData.HORIZONTAL_ALIGN_FILL));
       buttonGroup.setFont(buttonGroup.getFont());
-      
+
       final Map<String, String> groupMap = raConfig.getWorkManagerConfig().getGroupMap();
-//      groupMap.putAll(initialGroupMaps);
-      
+      //      groupMap.putAll(initialGroupMaps);
+
       final Map<String, String> groupMapsData = new LinkedHashMap<String, String>();
       final String groupMapKeyFrom = "ra.generate.general.workmanager.table.mappings.from";
       final String groupMapKeyTo = "ra.generate.general.workmanager.table.mappings.to";
-      
+
       final Button addGroupMapBtn = UIResources.createPushButton(buttonGroup, getString("command.add.name"));
       switchEnabledOnVersion.add(addGroupMapBtn);
       addGroupMapBtn.addSelectionListener(new SelectionAdapter()
@@ -516,7 +521,7 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
          {
             groupMapsData.put(groupMapKeyFrom, "");
             groupMapsData.put(groupMapKeyTo, "");
-            StringInputDialog dialog = new StringInputDialog(groupMappingTabViewer.getControl().getShell(), 
+            StringInputDialog dialog = new StringInputDialog(groupMappingTabViewer.getControl().getShell(),
                   getString("ra.generate.general.workmanager.groupmap.add.title"), groupMapsData);
             if (dialog.open() == Window.CANCEL)
             {
@@ -527,7 +532,8 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
             if (from != null && from.length() > 0)
             {
                groupMap.put(from, to);
-               groupMappingContentProvider.add(new String[]{from, to});
+               groupMappingContentProvider.add(new String[]
+               {from, to});
             }
             groupMappingsContainer.update();
          }
@@ -540,18 +546,18 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
          public void widgetSelected(SelectionEvent e)
          {
             IStructuredSelection selection = (IStructuredSelection) groupMappingTabViewer.getSelection();
-            String[] initialValue = (String[])selection.getFirstElement();
-            
+            String[] initialValue = (String[]) selection.getFirstElement();
+
             groupMapsData.put(groupMapKeyFrom, initialValue[0]);
             groupMapsData.put(groupMapKeyTo, initialValue[1]);
-            
-            StringInputDialog dialog = new StringInputDialog(groupMappingTabViewer.getControl().getShell(), 
+
+            StringInputDialog dialog = new StringInputDialog(groupMappingTabViewer.getControl().getShell(),
                   getString("ra.generate.general.workmanager.groupmap.edit.title"), groupMapsData);
             if (dialog.open() == Window.CANCEL)
             {
                return;
             }
-            
+
             String from = dialog.getValues().get(groupMapKeyFrom);
             String to = dialog.getValues().get(groupMapKeyTo);
             if (from != null && from.length() > 0 && to != null && to.length() > 0)
@@ -561,7 +567,8 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
                   return;
                }
                groupMap.put(from, to);
-               groupMappingContentProvider.update(initialValue, new String[]{from, to});
+               groupMappingContentProvider.update(initialValue, new String[]
+               {from, to});
             }
             groupMappingsContainer.update();
          }
@@ -576,8 +583,8 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
             IStructuredSelection selection = (IStructuredSelection) groupMappingTabViewer.getSelection();
             if (selection != null)
             {
-               String[] value = (String[])selection.getFirstElement();
-               
+               String[] value = (String[]) selection.getFirstElement();
+
                if (groupMap.containsKey(value[0]))
                {
                   groupMap.remove(value[0]);
@@ -587,24 +594,23 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
             groupMappingsContainer.update();
          }
       });
-      
+
       groupMappingTabViewer.addSelectionChangedListener(new ISelectionChangedListener()
       {
-         
+
          @Override
          public void selectionChanged(SelectionChangedEvent event)
          {
-            editGroupMapBtn.setEnabled(groupMappingTabViewer.getSelection() != null 
+            editGroupMapBtn.setEnabled(groupMappingTabViewer.getSelection() != null
                   && !groupMappingTabViewer.getSelection().isEmpty());
-            delGroupMapBtn.setEnabled(groupMappingTabViewer.getSelection() != null 
+            delGroupMapBtn.setEnabled(groupMappingTabViewer.getSelection() != null
                   && !groupMappingTabViewer.getSelection().isEmpty());
          }
       });
-      
+
       return whole;
    }
-   
-   
+
    private Map<String, String> getInitialGroupMaps()
    {
       if (this.workManagerConfig != null)
@@ -613,7 +619,6 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
       }
       return null;
    }
-
 
    private Map<String, String> getInitialUserMaps()
    {
@@ -624,7 +629,6 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
       return null;
    }
 
-
    private List<String> getDefaultGroups()
    {
       if (this.workManagerConfig != null)
@@ -634,7 +638,6 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
       return null;
    }
 
-
    private String getInitialPrincipal()
    {
       if (this.workManagerConfig != null)
@@ -643,7 +646,6 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
       }
       return null;
    }
-
 
    private String getInitialDomain()
    {
@@ -658,11 +660,14 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
    {
       if (this.workManagerConfig != null)
       {
-         return this.workManagerConfig.isMappingRequired();
+         Boolean mappingRequired = this.workManagerConfig.isMappingRequired();
+         if (mappingRequired != null)
+         {
+            return mappingRequired;
+         }
       }
       return Boolean.FALSE;
    }
-
 
    private GridData gridData(int width)
    {
@@ -670,7 +675,7 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
       gridData.widthHint = width;
       return gridData;
    }
-   
+
    private Composite createGeneralControl(Composite parent)
    {
       Composite whole = new Composite(parent, SWT.NULL);
@@ -680,7 +685,7 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
 
       final Group generalGrp = new Group(whole, SWT.SHADOW_IN);
       generalGrp.setText(getString("ra.generate.general.group"));
-      
+
       layout = new GridLayout();
       generalGrp.setLayout(layout);
       layout.numColumns = 2;
@@ -696,7 +701,7 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
       // enable id if version is 1.1
       Label idLabel = new Label(generalGrp, SWT.NULL);
       idLabel.setText(getString("ra.generate.general.id"));
-      
+
       final Text idText = new Text(generalGrp, SWT.BORDER | SWT.SINGLE);
       GridData gridData = new GridData();
       gridData.widthHint = 100;
@@ -713,7 +718,7 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
       });
       switchEnabledOnVersion.add(idLabel);
       switchEnabledOnVersion.add(idText);
-      
+
       // transaction support
       label = new Label(generalGrp, SWT.NULL);
       label.setText(getString("ra.generate.general.transaction"));
@@ -758,25 +763,26 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
 
       Label beanValidLabel = new Label(whole, SWT.NULL);
       beanValidLabel.setText(getString("ra.generate.general.bean.validate.group"));
-      
+
       final Composite beanValidContainer = new Composite(whole, SWT.NONE);
       GridLayout beanValidLayout = new GridLayout();
       beanValidLayout.numColumns = 2;
       beanValidLayout.verticalSpacing = 9;
-      
+
       beanValidContainer.setLayout(beanValidLayout);
-      
+
       // bean validation groups
-      String fTableColumnHeaders[] = {getString("ra.generate.general.bean.validate.group.table.header")};
-      final ColumnLayoutData[] fTableColumnLayouts = {new ColumnWeightData(300)};
-      
-      final TableViewer beanValidTableViewer = 
-            UIResources.createTableViewer(beanValidContainer, fTableColumnHeaders, fTableColumnLayouts);
+      String fTableColumnHeaders[] =
+      {getString("ra.generate.general.bean.validate.group.table.header")};
+      final ColumnLayoutData[] fTableColumnLayouts =
+      {new ColumnWeightData(300)};
+
+      final TableViewer beanValidTableViewer = UIResources.createTableViewer(beanValidContainer, fTableColumnHeaders,
+            fTableColumnLayouts);
       List<String> initialBeanValidationGroups = this.raConfig.getBeanValidationGroups();
-      final StringValuesContentProvider<String> contentProvider = new StringValuesContentProvider<String>
-      (beanValidTableViewer, initialBeanValidationGroups);
+      final StringValuesContentProvider<String> contentProvider = new StringValuesContentProvider<String>(
+            beanValidTableViewer, initialBeanValidationGroups);
       beanValidTableViewer.setContentProvider(contentProvider);
-      
 
       Composite buttonGroup = new Composite(beanValidContainer, SWT.NONE);
       GridLayout layoutBtns = new GridLayout();
@@ -791,7 +797,7 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
          @Override
          public void widgetSelected(SelectionEvent e)
          {
-            BeanValidateGroupDialog dialog = new BeanValidateGroupDialog(beanValidTableViewer.getControl().getShell(), 
+            BeanValidateGroupDialog dialog = new BeanValidateGroupDialog(beanValidTableViewer.getControl().getShell(),
                   getString("ra.generate.general.bean.validate.group.dialog.add.title"), null);
             if (dialog.open() == Window.CANCEL)
             {
@@ -813,8 +819,8 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
          public void widgetSelected(SelectionEvent e)
          {
             IStructuredSelection selection = (IStructuredSelection) beanValidTableViewer.getSelection();
-            String initialValue = (String)selection.getFirstElement();
-            BeanValidateGroupDialog dialog = new BeanValidateGroupDialog(beanValidTableViewer.getControl().getShell(), 
+            String initialValue = (String) selection.getFirstElement();
+            BeanValidateGroupDialog dialog = new BeanValidateGroupDialog(beanValidTableViewer.getControl().getShell(),
                   getString("ra.generate.general.bean.validate.group.dialog.edit.title"), initialValue);
             if (dialog.open() == Window.CANCEL)
             {
@@ -838,32 +844,32 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
             IStructuredSelection selection = (IStructuredSelection) beanValidTableViewer.getSelection();
             if (selection != null)
             {
-               String beanValidGrp = (String)selection.getFirstElement();
+               String beanValidGrp = (String) selection.getFirstElement();
                contentProvider.remove(beanValidGrp);
             }
             beanValidContainer.update();
          }
       });
-      
+
       beanValidTableViewer.addSelectionChangedListener(new ISelectionChangedListener()
       {
-         
+
          @Override
          public void selectionChanged(SelectionChangedEvent event)
          {
-            editBtn.setEnabled(beanValidTableViewer.getSelection() != null 
+            editBtn.setEnabled(beanValidTableViewer.getSelection() != null
                   && !beanValidTableViewer.getSelection().isEmpty());
-            delBtn.setEnabled(beanValidTableViewer.getSelection() != null 
+            delBtn.setEnabled(beanValidTableViewer.getSelection() != null
                   && !beanValidTableViewer.getSelection().isEmpty());
          }
       });
 
-      ConfigPropertyComposite configPropComposite = new ConfigPropertyComposite(getShell(), 
+      ConfigPropertyComposite configPropComposite = new ConfigPropertyComposite(getShell(),
             this.raConfig.getConfigProperties());
       configPropComposite.createControl(whole);
       return whole;
    }
-   
+
    @Override
    public void createControl(Composite parent)
    {
@@ -872,20 +878,20 @@ public class RAGenerateBasicPage extends AbstractRAGenerateWizardPage implements
       wholeLayout.numColumns = 1;
       wholeLayout.verticalSpacing = 6;
       whole.setLayout(wholeLayout);
-      
+
       TabFolder tabContainer = new TabFolder(whole, SWT.NONE);
-      
+
       // general tab
       TabItem generalTab = new TabItem(tabContainer, SWT.NULL);
       generalTab.setText(getString("ra.generate.mcf.general.title"));
       generalTab.setControl(createGeneralControl(tabContainer));
-      
+
       // security tab
       TabItem securityTab = new TabItem(tabContainer, SWT.NULL);
       securityTab.setText(getString("ra.generate.general.workmanager.security.title"));
       securityTab.setControl(createWorkManagerSecurity(tabContainer));
       setControl(whole);
-      
+
       this.switchEnabledOnVersion.add(securityTab.getControl());
       versionChanged(raConfig.getVersion());
    }

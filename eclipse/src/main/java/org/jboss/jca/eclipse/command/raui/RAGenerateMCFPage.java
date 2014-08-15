@@ -32,8 +32,9 @@ import org.jboss.jca.eclipse.command.raui.ConnectionFactoryConfig.TimeoutConfig;
 import org.jboss.jca.eclipse.command.raui.ConnectionFactoryConfig.ValidationConfig;
 import org.jboss.jca.eclipse.command.raui.ResourceAdapterConfig.VERSION;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -103,7 +104,7 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
    // validation components
    private Text backgroundValidText;
    
-   private List<Control> versionEnabledControls = new ArrayList<Control>();
+   private HashMap<Control, VERSION> versionSensitiveControls = new HashMap<Control, VERSION>();
    
    /**
     * The constructor.
@@ -121,21 +122,9 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
    @Override
    public void versionChanged(VERSION version)
    {
-      if (VERSION.VERSION_1_0.equals(version))
+      for (Map.Entry<Control, VERSION> entry: this.versionSensitiveControls.entrySet())
       {
-         switchEnabled(false);
-      }
-      else if (VERSION.VERSION_1_1.equals(version))
-      {
-         switchEnabled(true);
-      }
-   }
-   
-   private void switchEnabled(boolean enabled)
-   {
-      for (Control control: this.versionEnabledControls)
-      {
-         control.setEnabled(enabled);
+         entry.getKey().setEnabled(entry.getValue().ordinal() <= version.ordinal());
       }
    }
    
@@ -319,9 +308,9 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       // sharable
       label = new Label(generalGrp, SWT.NULL);
       label.setText(getString("ra.generate.mcf.general.sharable"));
-      this.versionEnabledControls.add(label);
+      addVersionSensibleControls(label, VERSION.VERSION_1_1);
       final Button sharableBtn = new Button(generalGrp, SWT.BORDER | SWT.CHECK);
-      this.versionEnabledControls.add(sharableBtn);
+      addVersionSensibleControls(sharableBtn, VERSION.VERSION_1_1);
       
       final Boolean sharable = isMcfSharable();
       sharableBtn.setSelection(sharable);
@@ -336,10 +325,10 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       
       // enlistment
       label = new Label(generalGrp, SWT.NULL);
-      versionEnabledControls.add(label);
+      addVersionSensibleControls(label, VERSION.VERSION_1_1);
       label.setText(getString("ra.generate.mcf.general.enlistment"));
       final Button enlistBtn = new Button(generalGrp, SWT.BORDER | SWT.CHECK);
-      versionEnabledControls.add(enlistBtn);
+      addVersionSensibleControls(enlistBtn, VERSION.VERSION_1_1);
       final Boolean enlist = isMcfEnlist();
       enlistBtn.setSelection(enlist);
       enlistBtn.addSelectionListener(new SelectionAdapter()
@@ -351,6 +340,40 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
          }
       });
       
+      // connectable
+      label = new Label(generalGrp, SWT.NULL);
+      addVersionSensibleControls(label, VERSION.VERSION_1_2);
+      label.setText(getString("ra.generate.mcf.general.connectable"));
+      final Button connectableBtn = new Button(generalGrp, SWT.BORDER | SWT.CHECK);
+      addVersionSensibleControls(connectableBtn, VERSION.VERSION_1_2);
+      final Boolean connetable = isMcfConnectable();
+      connectableBtn.setSelection(connetable);
+      connectableBtn.addSelectionListener(new SelectionAdapter()
+      {
+         @Override
+         public void widgetSelected(SelectionEvent e)
+         {
+            connFactoryConfig.setConnectable(connectableBtn.getSelection());
+         }
+      });
+      
+      // tracking
+      label = new Label(generalGrp, SWT.NULL);
+      addVersionSensibleControls(label, VERSION.VERSION_1_2);
+      label.setText(getString("ra.generate.mcf.general.tracking"));
+      final Button trackingBtn = new Button(generalGrp, SWT.BORDER | SWT.CHECK);
+      addVersionSensibleControls(trackingBtn, VERSION.VERSION_1_2);
+      final Boolean tracking = isMcfTracking();
+      trackingBtn.setSelection(tracking);
+      trackingBtn.addSelectionListener(new SelectionAdapter()
+      {
+         @Override
+         public void widgetSelected(SelectionEvent e)
+         {
+            connFactoryConfig.setTracking(trackingBtn.getSelection());
+         }
+      });
+      
       ConfigPropertyComposite configPropComposite = new ConfigPropertyComposite(getShell(), 
             this.connFactoryConfig.getMcfConfigProps());
       configPropComposite.createControl(whole);
@@ -358,6 +381,18 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       return whole;
    }
    
+   private Boolean isMcfConnectable()
+   {
+      Boolean connectable = this.connFactoryConfig.getConnectable();
+      return connectable == null ? Boolean.FALSE : connectable;
+   }
+
+   private Boolean isMcfTracking()
+   {
+      Boolean tracking = this.connFactoryConfig.getTracking();
+      return tracking == null ? Boolean.FALSE : tracking;
+   }
+
    private Boolean isMcfEnlist()
    {
       Boolean enlistment = this.connFactoryConfig.getEnlistment();
@@ -427,11 +462,11 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       
       // initial-pool-size for version 1.1
       label = new Label(container, SWT.NULL);
-      versionEnabledControls.add(label);
+      addVersionSensibleControls(label, VERSION.VERSION_1_1);
       label.setText(getString("ra.generate.mcf.pool.initial.pool.size"));
       final Integer initialPoolSize = getInitialPoolSize();
       initialPoolSizeText = UIResources.createText(container, initialPoolSize);
-      versionEnabledControls.add(initialPoolSizeText);
+      addVersionSensibleControls(initialPoolSizeText, VERSION.VERSION_1_1);
       initialPoolSizeText.addModifyListener(new ModifyListener()
       {
          
@@ -530,12 +565,12 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
          }
       });
       
-      // capacity tab
+      // capacity tab from 1.1
       TabItem capacityTabItem = new TabItem(poolTab, SWT.NONE);
       capacityTabItem.setText(getString("ra.generate.mcf.pool.capacity.title"));
       final Composite capacityTabWhole = new Composite(poolTab, SWT.NONE);
       capacityTabItem.setControl(capacityTabWhole);
-      this.versionEnabledControls.add(capacityTabWhole);
+      addVersionSensibleControls(capacityTabWhole, VERSION.VERSION_1_1);
       
       GridLayout capacityTabLayout = new GridLayout();
       capacityTabLayout.numColumns = 1;
@@ -547,20 +582,20 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       increGroupLayout.numColumns = 1;
       increGroupLayout.verticalSpacing = 9;
       incrementerGroup.setLayout(increGroupLayout);
-      this.versionEnabledControls.add(incrementerGroup);
+      addVersionSensibleControls(incrementerGroup, VERSION.VERSION_1_1);
       incrementerGroup.setText(getString("ra.generate.mcf.pool.capacity.increment"));
       ExtensionComposite incrExtension = new ExtensionComposite(getShell(), getIncrementer());
-      this.versionEnabledControls.add(incrExtension.createControl(incrementerGroup));
+      addVersionSensibleControls(incrExtension.createControl(incrementerGroup), VERSION.VERSION_1_1);
       
       Group decrementerGroup = new Group(capacityTabWhole, SWT.NONE);
-      this.versionEnabledControls.add(decrementerGroup);
+      addVersionSensibleControls(decrementerGroup, VERSION.VERSION_1_1);
       GridLayout decreGroupLayout = new GridLayout();
       decreGroupLayout.numColumns = 1;
       decreGroupLayout.verticalSpacing = 9;
       decrementerGroup.setLayout(decreGroupLayout);
       decrementerGroup.setText(getString("ra.generate.mcf.pool.capacity.decrement"));
       ExtensionComposite decrExtension = new ExtensionComposite(getShell(), getDecrementer());
-      this.versionEnabledControls.add(decrExtension.createControl(decrementerGroup));
+      addVersionSensibleControls(decrExtension.createControl(decrementerGroup), VERSION.VERSION_1_1);
       
       // xa pool tab
       TabItem xaPoolTabItem = new TabItem(poolTab, SWT.NONE);
@@ -1014,7 +1049,6 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
       final Button backgroundValidationBtn = new Button(container, SWT.BORDER | SWT.CHECK);
       final Boolean backgroundValidation = isBackgroundValidation();
       
-      
       // background validation millis
       label = new Label(container, SWT.NULL);
       label.setText(getString("ra.generate.mcf.validation.background.validation.mills"));
@@ -1070,9 +1104,32 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
          }
       });
       
+      // validate-on-match
+      label = new Label(container, SWT.NULL);
+      label.setText(getString("ra.generate.mcf.validation.validate.on.match"));
+      addVersionSensibleControls(label, VERSION.VERSION_1_2);
+      final Button validOnMatchBtn = new Button(container, SWT.BORDER | SWT.CHECK);
+      addVersionSensibleControls(validOnMatchBtn, VERSION.VERSION_1_2);
+      final Boolean validOnMatch = isValidOnMatch();
+      validOnMatchBtn.addSelectionListener(new SelectionAdapter()
+      {
+         @Override
+         public void widgetSelected(SelectionEvent e)
+         {
+            getValidationConfig().setValidOnMatch(validOnMatchBtn.getSelection());
+         }
+      });
+      validOnMatchBtn.setSelection(validOnMatch);
+      
       return whole;
    }
    
+   private void addVersionSensibleControls(Control control, VERSION version)
+   {
+      versionSensitiveControls.put(control, version);
+   }
+   
+
    /**
     * Creates Recover control.
     * 
@@ -1430,6 +1487,12 @@ public class RAGenerateMCFPage extends AbstractRAGenerateWizardPage
          this.connFactoryConfig.setValidationConfig(validation);
       }
       return validation;
+   }
+   
+   private Boolean isValidOnMatch()
+   {
+      Boolean validOnMatch = getValidationConfig().getValidOnMatch();
+      return validOnMatch != null ? validOnMatch : Boolean.valueOf(false);
    }
    
    private Boolean isBackgroundValidation()

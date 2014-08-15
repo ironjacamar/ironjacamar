@@ -39,8 +39,9 @@ public class ResourceAdapterConfig implements Cloneable
 {
 
    /**
-    * The Version enum
-    *
+    * The Version enum.
+    * 
+    * Declare them from low version to high version
     */
    public enum VERSION
    {
@@ -48,7 +49,10 @@ public class ResourceAdapterConfig implements Cloneable
       VERSION_1_0("1.0"),
       
       /** Version 1.1 */
-      VERSION_1_1("1.1");
+      VERSION_1_1("1.1"),
+      
+      /** Version 1.2 **/
+      VERSION_1_2("1.2");
       
       private String version;
       
@@ -86,12 +90,16 @@ public class ResourceAdapterConfig implements Cloneable
          {
             return VERSION_1_1;
          }
+         else if ("1.2".equals(version))
+         {
+            return VERSION_1_2;
+         }
          throw new IllegalArgumentException("Unkown version: " + version);
       }
       
    }
    
-   private VERSION version = VERSION.VERSION_1_1;
+   private VERSION version = VERSION.VERSION_1_2;
    
    private List<VersionChangeListener> versionListeners = new ArrayList<VersionChangeListener>();
    
@@ -368,7 +376,7 @@ public class ResourceAdapterConfig implements Cloneable
     */
    public static class WorkManagerConfig implements Cloneable
    {
-      private boolean mappingRequired;
+      private Boolean mappingRequired;
       private String domain;
       private String defaultPricipal;
       private List<String> defaultGroups = new ArrayList<String>();
@@ -421,14 +429,14 @@ public class ResourceAdapterConfig implements Cloneable
       /**
        * @return the mappingRequired
        */
-      public boolean isMappingRequired()
+      public Boolean isMappingRequired()
       {
          return mappingRequired;
       }
       /**
        * @param mappingRequired the mappingRequired to set
        */
-      public void setMappingRequired(boolean mappingRequired)
+      public void setMappingRequired(Boolean mappingRequired)
       {
          this.mappingRequired = mappingRequired;
       }

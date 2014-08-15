@@ -21,8 +21,15 @@
  */
 package org.jboss.jca.eclipse.command.raui;
 
+
+import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.eclipse.command.raui.ConnectionFactoryConfig.Credential;
 import org.jboss.jca.eclipse.command.raui.ConnectionFactoryConfig.Extension;
+import org.jboss.jca.eclipse.command.raui.ConnectionFactoryConfig.ValidationConfig;
+import org.jboss.jca.eclipse.command.raui.ResourceAdapterConfig.VERSION;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -106,6 +113,71 @@ public class ResourceAdapterConfigTest
       Assert.assertNotNull(capacityConfig.getDecrementer());
       Assert.assertNotNull(capacityConfig.getDecrementer().getConfigProperties());
       
+   }
+   
+   /**
+    * Tests ra xml generated string for version 1.2
+    * @throws Exception just throws the exception if any
+    */
+   @Test
+   public void testGenerateRAXMLString12() throws Exception
+   {
+      ResourceAdapterConfig raConfig = new ResourceAdapterConfig();
+      raConfig.setVersion(VERSION.VERSION_1_2);
+      raConfig.setArchive("test.rar");
+      raConfig.setId("test-ra");
+      raConfig.setBootstrapContext("bootStrapContext");
+      raConfig.setTransactionSupport(TransactionSupportEnum.LocalTransaction);
+      List<String> beanValidationGroups = new ArrayList<String>();
+      beanValidationGroups.add("valiationGroup1");
+      beanValidationGroups.add("valiationGroup2");
+      raConfig.setBeanValidationGroups(beanValidationGroups);
+      
+      RAXMLGenerator generator = new RAXMLGenerator();
+      String raXML = generator.generateRAXMLString(null, raConfig);
+      String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><resource-adapters>"
+            + "<resource-adapter id=\"test-ra\"><archive>test.rar</archive>"
+            + "<bean-validation-groups><bean-validation-group>valiationGroup1</bean-validation-group>"
+            + "<bean-validation-group>valiationGroup2</bean-validation-group></bean-validation-groups>"
+            + "<bootstrap-context>bootStrapContext</bootstrap-context>"
+            + "<transaction-support>LocalTransaction</transaction-support></resource-adapter></resource-adapters>";
+      Assert.assertEquals(expected, raXML);
+      
+      List<ConnectionFactoryConfig> connDefs = raConfig.getConnectionDefinitions();
+      ConnectionFactoryConfig connDef = new ConnectionFactoryConfig();
+      connDef.setActive(true);
+      connDef.setConnectable(Boolean.TRUE);
+      connDef.setMcfClsName("org.jboss.jca.sample.MCF");
+      connDef.setMcfJndiName("java:/eis/MCF");
+      connDef.setTracking(Boolean.TRUE);
+      connDefs.add(connDef);
+      
+      raXML = generator.generateRAXMLString(null, raConfig);
+      expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><resource-adapters><resource-adapter id=\"test-ra\">"
+            + "<archive>test.rar</archive><bean-validation-groups>"
+            + "<bean-validation-group>valiationGroup1</bean-validation-group>"
+            + "<bean-validation-group>valiationGroup2</bean-validation-group></bean-validation-groups>"
+            + "<bootstrap-context>bootStrapContext</bootstrap-context>"
+            + "<transaction-support>LocalTransaction</transaction-support><connection-definitions>"
+            + "<connection-definition class-name=\"org.jboss.jca.sample.MCF\" jndi-name=\"java:/eis/MCF\""
+            + " connectable=\"true\" tracking=\"true\"></connection-definition></connection-definitions>"
+            + "</resource-adapter></resource-adapters>";
+      Assert.assertEquals(expected, raXML);
+      
+      ValidationConfig validationConfig = connDef.getValidationConfig();
+      validationConfig.setValidOnMatch(Boolean.TRUE);
+      
+      raXML = generator.generateRAXMLString(null, raConfig);
+      expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><resource-adapters><resource-adapter id=\"test-ra\">"
+            + "<archive>test.rar</archive><bean-validation-groups>"
+            + "<bean-validation-group>valiationGroup1</bean-validation-group>"
+            + "<bean-validation-group>valiationGroup2</bean-validation-group></bean-validation-groups>"
+            + "<bootstrap-context>bootStrapContext</bootstrap-context>"
+            + "<transaction-support>LocalTransaction</transaction-support><connection-definitions>"
+            + "<connection-definition class-name=\"org.jboss.jca.sample.MCF\" jndi-name=\"java:/eis/MCF\" "
+            + "connectable=\"true\" tracking=\"true\"><validation><validate-on-match>true</validate-on-match>"
+            + "</validation></connection-definition></connection-definitions></resource-adapter></resource-adapters>";
+      Assert.assertEquals(expected, raXML);
    }
    
 }
