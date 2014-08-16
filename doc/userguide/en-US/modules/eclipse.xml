@@ -296,12 +296,32 @@ copy ironjacamar-eclipse.jar %ECLIPSE_HOME%\plugins
 
       <mediaobject>
         <imageobject>
+          <imagedata fileref="images/eclipse-ra-version.png" align="center"/>
+        </imageobject>
+      </mediaobject>
+
+      <para>
+        In the first wizard page, selects version of the resource adapter. Some configurations may not be available when version is changed.
+      </para>
+
+      <mediaobject>
+        <imageobject>
           <imagedata fileref="images/eclipse-ra-general.png" align="center"/>
         </imageobject>
       </mediaobject>
 
       <para>
-        There is a wizard page for each ManagedConnectionFactory if the resource adapter is outbound or bidirectional.
+        In the general information page, set up the transaction support, bootstrap context, bean validation groups and id if the version is 1.1+.
+      </para>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/eclipse-ra-workmanager.png" align="center"/>
+        </imageobject>
+      </mediaobject>
+
+      <para>
+        From IronJacamar 1.1, a workmanager tab is added to configure workmanager security mappings.
       </para>
 
       <mediaobject>
@@ -311,12 +331,40 @@ copy ironjacamar-eclipse.jar %ECLIPSE_HOME%\plugins
       </mediaobject>
 
       <para>
-        The ManagedConnectionFactory can be activated by selecting the 'Activate' checkbox.
+        There is a wizard page for each ManagedConnectionFactory if the resource adapter is outbound or bidirectional.
+      </para>
+      <para>
+        The ManagedConnectionFactory can be activated by selecting the 'Activate' checkbox. 
       </para>
 
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/eclipse-ra-mcf-pool.png" align="center"/>
+        </imageobject>
+      </mediaobject>
 
       <para>
-        There is a wizard page for each AdminObject if the resource adapter includes one or more instances.
+        Configure connection pool in the 'pool configuration' tab.
+      </para>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/eclipse-ra-mcf-pool-xa.png" align="center"/>
+        </imageobject>
+      </mediaobject>
+
+      <para>
+        Configure XA connection pool in the 'XA pool' sub tab.
+      </para>
+
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/eclipse-ra-mcf-pool-capacity.png" align="center"/>
+        </imageobject>
+      </mediaobject>
+
+      <para>
+        From IronJacamar 1.1 on, a capacity sub tab is added in 'pool configuration' tab to configure policy of connection pool
       </para>
 
       <mediaobject>
@@ -324,6 +372,10 @@ copy ironjacamar-eclipse.jar %ECLIPSE_HOME%\plugins
           <imagedata fileref="images/eclipse-ra-ao.png" align="center"/>
         </imageobject>
       </mediaobject>
+
+      <para>
+        There is a wizard page for each AdminObject if the resource adapter includes one or more instances.
+      </para>
 
       <para>
         The AdminObject can be activated by selecting the 'Activate' checkbox.
