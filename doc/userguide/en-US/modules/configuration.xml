@@ -199,6 +199,40 @@ org.jboss.jca.core.connectionmanager.pool.mcp.LeakDumperManagedConnectionPool
         </warning>
       </section>
 
+      <section id="configuration_ironjacamar_delistresource">
+        <title>Disable <code>delistResource</code> calls</title>
+
+        <para>
+          IronJacamar calls <code>transaction.enlistResource(xaResource)</code> for the <code>ManagedConnection</code>
+          when it is enlisting in the transaction.
+        </para>
+
+        <para>
+          IronJacamar will also call <code>transaction.delistResource(xaResource, flag)</code> once the
+          <code>ManagedConnection</code> should be disassociated with the transaction. This typically happens
+          on the transaction boundary (<code>beforeCompletion</code>) before the connection is returned to
+          the pool (<code>afterCompletion</code>). This is done as part of the transaction specification contract.
+        </para>
+
+        <para>
+          However, in certain scenarios you may want to disable this call, as other <code>Synchronization</code>
+          objects may still want the connection enlisted in the transaction, and hence it depends on the
+          ordering of these objects.
+        </para>
+
+        <para>
+          IronJacamar has a system property called <code>ironjacamar.no_delist_resource</code>
+          which is a <code>','</code> separated list of pool names where <code>delistResource</code>
+          shouldn't be called. Disabling the <code>delistResource</code> call for all pools can be done
+          by defining <code>ironjacamar.no_delist_resource_all</code>.
+        </para>
+
+        <warning>
+          By disabling the <code>delistResource</code> call it is up to the resource manager and transaction
+          manager to make sure that the connection is delisted from the transaction in all cases.
+        </warning>
+      </section>
+
    </section>
 
    <section id="logging">
