@@ -35,6 +35,7 @@ import org.jboss.jca.core.spi.transaction.TxUtils;
 import org.jboss.jca.core.spi.transaction.local.LocalXAResource;
 
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 
@@ -83,6 +84,9 @@ public class TxConnectionListener extends AbstractConnectionListener
    /** Whether there is a local transaction */
    private final AtomicBoolean localTransaction = new AtomicBoolean(false);
 
+   /** Delist resource */
+   private boolean doDelistResource;
+
    static
    {
       String value = SecurityActions.getSystemProperty("ironjacamar.disable_enlistment_trace");
@@ -130,10 +134,27 @@ public class TxConnectionListener extends AbstractConnectionListener
 
       this.xaResource = xaResource;
       this.xaResourceTimeout = xaResourceTimeout;
+      this.doDelistResource = true;
 
       if (xaResource instanceof LocalXAResource)
       {
          ((LocalXAResource) xaResource).setConnectionListener(this);
+      }
+
+      String value = SecurityActions.getSystemProperty("ironjacamar.no_delist_resource");
+      if (value != null && !value.trim().equals(""))
+      {
+         StringTokenizer st = new StringTokenizer(value, ",");
+         while (doDelistResource && st.hasMoreTokens())
+         {
+            if (getPool().getName().equals(st.nextToken()))
+               doDelistResource = false;
+         }
+      }
+      value = SecurityActions.getSystemProperty("ironjacamar.no_delist_resource_all");
+      if (value != null && !value.trim().equals(""))
+      {
+         doDelistResource = false;
       }
    }
 
@@ -423,7 +444,8 @@ public class TxConnectionListener extends AbstractConnectionListener
                // SUCCESS / FAIL
                if (!getState().equals(ConnectionState.DESTROYED) &&
                    isManagedConnectionFree() &&
-                   isEnlisted())
+                   isEnlisted() &&
+                   doDelistResource)
                {
                   if (getConnectionManager().getTransactionIntegration() != null &&
                       getConnectionManager().getTransactionIntegration().getTransactionManager() != null)
@@ -509,11 +531,14 @@ public class TxConnectionListener extends AbstractConnectionListener
          {
             if (isEnlisted())
             {
-               Transaction tx = tm.getTransaction();
-               boolean delistResult = tx.delistResource(getXAResource(), XAResource.TMSUCCESS);
+               if (doDelistResource)
+               {
+                  Transaction tx = tm.getTransaction();
+                  boolean delistResult = tx.delistResource(getXAResource(), XAResource.TMSUCCESS);
 
-               if (trace)
-                  log.tracef("dissociate: delistResult=%s", delistResult);
+                  if (trace)
+                     log.tracef("dissociate: delistResult=%s", delistResult);
+               }
             }
             else
             {
@@ -907,7 +932,7 @@ public class TxConnectionListener extends AbstractConnectionListener
          {
             try
             {
-               if (this.equals(transactionSynchronization) && wasTrackByTx)
+               if (this.equals(transactionSynchronization) && wasTrackByTx && doDelistResource)
                {
                   if (TxUtils.isUncommitted(currentTx))
                   {
