@@ -384,7 +384,7 @@
              additionalparam="-author -version"
              classpath="${build.embedded.dir}/impl"
              classpathref="main.lib.path.id"
-             bottom="Copyright &amp;#169; 2013 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
+             bottom="Copyright &amp;#169; 2014 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
       <fileset dir="src/main/java"/>
       <fileset dir="${build.embedded.dir}/src/main/java"
                excludes="**/impl/**"/>
@@ -550,7 +550,7 @@
              additionalparam="-author -version"
              classpath="${build.embedded.dir}/impl"
              classpathref="main.lib.path.id"
-             bottom="Copyright &amp;#169; 2013 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
+             bottom="Copyright &amp;#169; 2014 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
       <fileset dir="src/main/java"/>
       <fileset dir="${build.embedded.dir}/src/main/java"
                excludes="**/impl/**"/>

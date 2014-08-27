@@ -148,7 +148,7 @@
              additionalparam="-author -version"
              classpath="${build.common.dir}/impl"
              classpathref="main.lib.path.id"
-             bottom="Copyright &amp;#169; 2013 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
+             bottom="Copyright &amp;#169; 2014 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
       <link offline="true" href="http://docs.oracle.com/javase/6/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
     </javadoc>
     <copy todir="${target.dir}/docs/common" overwrite="true">
@@ -337,7 +337,7 @@
              additionalparam="-author -version"
              classpath="${build.common.dir}/impl"
              classpathref="main.lib.path.id"
-             bottom="Copyright &amp;#169; 2013 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
+             bottom="Copyright &amp;#169; 2014 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
 
       <packageset dir="src/main/java" defaultexcludes="yes">
         <include name="**/common/api/**"/>
@@ -375,7 +375,7 @@
              additionalparam="-author -version"
              classpath="${build.common.dir}/impl"
              classpathref="main.lib.path.id"
-             bottom="Copyright &amp;#169; 2013 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
+             bottom="Copyright &amp;#169; 2014 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
 
       <packageset dir="src/main/java" defaultexcludes="yes">
         <include name="**/common/spi/**"/>
@@ -413,7 +413,7 @@
              additionalparam="-author -version"
              classpath="${build.common.dir}/impl"
              classpathref="main.lib.path.id"
-             bottom="Copyright &amp;#169; 2013 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
+             bottom="Copyright &amp;#169; 2014 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
 
       <packageset dir="src/main/java" defaultexcludes="yes">
         <exclude name="**/common/api/**"/>

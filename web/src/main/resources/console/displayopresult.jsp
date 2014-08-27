@@ -95,7 +95,7 @@
   <table width="100%" class="copyright">
     <tr>
       <td class="copyright">
-        Copyright &#169; 2013  <a href="http://www.ironjacamar.org/" target="_blank">IronJacamar</a>
+        Copyright &#169; 2014  <a href="http://www.ironjacamar.org/" target="_blank">IronJacamar</a>
       </td>
     </tr>
   </table>

@@ -147,7 +147,7 @@
              additionalparam="-author -version"
              classpath="${build.eclipse.dir}"
              classpathref="main.lib.path.id"
-             bottom="Copyright &amp;#169; 2013 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
+             bottom="Copyright &amp;#169; 2014 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
       <link offline="true" href="http://docs.oracle.com/javase/6/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
     </javadoc>
     <copy todir="${build.eclipse.dir}/docs" overwrite="true">

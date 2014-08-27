@@ -393,7 +393,7 @@
              use="true"
              additionalparam="-author -version"
              classpathref="main.lib.path.id"
-             bottom="Copyright &amp;#169; 2013 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
+             bottom="Copyright &amp;#169; 2014 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
 
       <packageset dir="${basedir}/api/src/main/java" />
       <packageset dir="${basedir}/core/src/main/java" defaultexcludes="yes">
@@ -449,7 +449,7 @@
              use="true"
              additionalparam="-author -version"
              classpathref="main.lib.path.id"
-             bottom="Copyright &amp;#169; 2013 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
+             bottom="Copyright &amp;#169; 2014 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
 
       <packageset dir="${basedir}/api/src/main/java" />
       <packageset dir="${basedir}/adapters/src/main/java" />
