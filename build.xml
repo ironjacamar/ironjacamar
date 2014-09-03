@@ -26,6 +26,7 @@
 
   <available classname="java.lang.management.LockInfo" property="HAVE_JDK_1.6"/>
   <available classname="java.util.concurrent.ForkJoinPool" property="HAVE_JDK_1.7"/>
+  <available classname="java.time.Clock" property="HAVE_JDK_1.8"/>
 
   <!-- ================================= 
        Project              
@@ -308,7 +309,8 @@
        Target: init              
        ================================= -->
   <target name="init" depends="init-as-path">
-    <fail message="IronJacamar requires JDK6+" unless="HAVE_JDK_1.6"/>
+    <fail message="IronJacamar requires JDK6/7" unless="HAVE_JDK_1.6"/>
+    <fail message="IronJacamar requires JDK6/7" if="HAVE_JDK_1.8"/>
   
     <ivy:settings file="${basedir}/ivy.settings.xml"/>
 
