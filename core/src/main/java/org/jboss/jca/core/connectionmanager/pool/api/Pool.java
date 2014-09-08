@@ -84,6 +84,12 @@ public interface Pool extends org.jboss.jca.core.api.connectionmanager.pool.Pool
       throws ResourceException;
 
    /**
+    * Is shutdown
+    * @return The value
+    */
+   public boolean isShutdown();
+
+   /**
     * Shutdown the pool
     */
    public void shutdown();

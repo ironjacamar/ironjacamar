@@ -39,13 +39,13 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.RetryableException;
 import javax.security.auth.Subject;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
@@ -75,6 +75,9 @@ public abstract class AbstractPool implements Pool
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
    
+   /** Startup/ShutDown flag */
+   private final AtomicBoolean shutdown = new AtomicBoolean(false);
+
    /** The managed connection pools, maps key --> pool */
    private final ConcurrentMap<Object, ManagedConnectionPool> mcpPools =
       new ConcurrentHashMap<Object, ManagedConnectionPool>();
@@ -352,6 +355,9 @@ public abstract class AbstractPool implements Pool
       ConnectionListener cl = null;
       boolean separateNoTx = false;
 
+      if (shutdown.get())
+         throw new ResourceException(bundle.connectionManagerIsShutdown(poolName));
+
       if (noTxSeparatePools)
       {
          separateNoTx = clf.isTransactional();
@@ -396,42 +402,13 @@ public abstract class AbstractPool implements Pool
                                                   final ManagedConnectionPool mcp)
       throws ResourceException
    {
-      ConnectionListener cl = null;
+      // Get connection from the managed connection pool
+      ConnectionListener cl = mcp.getConnection(subject, cri);
 
-      try
-      {
-         // Get connection from the managed connection pool
-         cl = mcp.getConnection(subject, cri);
+      if (trace)
+         log.tracef("Got connection from pool: %s", cl);
 
-         if (trace)
-            log.tracef("Got connection from pool: %s", cl);
-
-         return cl;
-      }
-      catch (ResourceException re)
-      {
-         if (re instanceof RetryableException)
-         {
-            if (log.isDebugEnabled())
-               log.debug("Got a RetryableException - trying to reinitialize the pool");
-
-            // Make sure that the managed connection pool is running
-            if (!mcp.isRunning())
-               mcp.reenable();
-
-            //Getting connection from pool
-            cl = mcp.getConnection(subject, cri);
-
-            if (trace)
-               log.tracef("Got connection from pool (retried): %s", cl);
-
-            return cl;
-         }
-         else
-         {
-            throw re;
-         }
-      }
+      return cl;
    }
 
    /**
@@ -632,9 +609,18 @@ public abstract class AbstractPool implements Pool
    /**
     * {@inheritDoc}
     */
+   public boolean isShutdown()
+   {
+      return shutdown.get();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public void shutdown()
    {
       log.debug(poolName + ": shutdown");
+      shutdown.set(true);
 
       Iterator<ManagedConnectionPool> it = mcpPools.values().iterator();
       while (it.hasNext())

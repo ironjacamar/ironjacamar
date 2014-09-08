@@ -40,13 +40,11 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.RetryableUnavailableException;
 import javax.resource.spi.ValidatingManagedConnectionFactory;
 import javax.security.auth.Subject;
 
@@ -113,9 +111,6 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    /** The checked out connections */
    private final ArrayList<ConnectionListener> checkedOut = new ArrayList<ConnectionListener>();
 
-   /** Whether the pool has been shutdown */
-   private final AtomicBoolean shutdown = new AtomicBoolean(false);
-
    /** Statistics */
    private ManagedConnectionPoolStatisticsImpl statistics;
 
@@ -173,7 +168,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
     */
    public boolean isRunning()
    {
-      return !shutdown.get();
+      return !pool.isShutdown();
    }
 
    /**
@@ -254,8 +249,6 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          //Register validation
          ConnectionValidator.getInstance().registerPool(this, poolConfiguration.getBackgroundValidationMillis());
       }
-
-      shutdown.set(false);
    }
 
    /**
@@ -293,10 +286,10 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             ConnectionListener cl = null;
             do
             {
-               if (shutdown.get())
+               if (!isRunning())
                {
                   permits.release();
-                  throw new RetryableUnavailableException(
+                  throw new ResourceException(
                      bundle.thePoolHasBeenShutdown(pool.getName(),
                                                    Integer.toHexString(System.identityHashCode(this))));
                }
@@ -624,7 +617,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       }
 
       // Trigger prefill
-      if (!shutdown.get() &&
+      if (isRunning() &&
           poolConfiguration.getMinSize() > 0 &&
           (poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) &&
           pool instanceof PrefillPool)
@@ -684,7 +677,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             cl = null;
          }
 
-         if (!shutdown.get())
+         if (isRunning())
          {
             // Let prefill and use-strict-min be the same
             boolean emptyManagedConnectionPool = false;
@@ -720,7 +713,6 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       if (trace)
          log.tracef("Shutdown - Pool: %s MCP: %s", pool.getName(), Integer.toHexString(System.identityHashCode(this)));
 
-      shutdown.set(true);
       IdleRemover.getInstance().unregisterPool(this);
       ConnectionValidator.getInstance().unregisterPool(this);
 
@@ -762,7 +754,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                   statistics.deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
                try
                {
-                  if (shutdown.get())
+                  if (!isRunning())
                   {
                      if (statistics.isEnabled())
                         statistics.setInUsedCount(checkedOut.size());
@@ -988,7 +980,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             permits.release();
 
             if (anyDestroyed &&
-                !shutdown.get() &&
+                isRunning() &&
                 poolConfiguration.getMinSize() > 0 &&
                 (poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) &&
                 pool instanceof PrefillPool)

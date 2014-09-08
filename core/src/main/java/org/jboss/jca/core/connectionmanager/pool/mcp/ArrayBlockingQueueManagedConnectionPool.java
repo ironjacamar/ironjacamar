@@ -40,13 +40,11 @@ import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.RetryableUnavailableException;
 import javax.resource.spi.ValidatingManagedConnectionFactory;
 import javax.security.auth.Subject;
 
@@ -94,9 +92,6 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
 
    /** The checked out connections */
    private ConcurrentSkipListSet<ConnectionListener> checkedOut;
-
-   /** Whether the pool has been shutdown */
-   private AtomicBoolean shutdown = new AtomicBoolean(false);
 
    /** Statistics */
    private ManagedConnectionPoolStatisticsImpl statistics;
@@ -156,7 +151,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
     */
    public boolean isRunning()
    {
-      return !shutdown.get();
+      return !pool.isShutdown();
    }
 
    /**
@@ -210,8 +205,6 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
          //Register validation
          ConnectionValidator.getInstance().registerPool(this, poolConfiguration.getBackgroundValidationMillis());
       }
-
-      shutdown.set(false);
    }
 
    /**
@@ -242,8 +235,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       long startWait = statistics.isEnabled() ? System.currentTimeMillis() : 0L;
       if (cls.size() > 0)
       {
-         if (shutdown.get())
-            throw new RetryableUnavailableException(
+         if (!isRunning())
+            throw new ResourceException(
                bundle.thePoolHasBeenShutdown(pool.getName(),
                                              Integer.toHexString(System.identityHashCode(this))));
          
@@ -295,8 +288,8 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
             if (statistics.isEnabled())
                statistics.deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
 
-            if (shutdown.get())
-               throw new RetryableUnavailableException(
+            if (!isRunning())
+               throw new ResourceException(
                   bundle.thePoolHasBeenShutdown(pool.getName(),
                                                 Integer.toHexString(System.identityHashCode(this))));
          }
@@ -556,7 +549,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       }
 
       // Trigger prefill
-      if (!shutdown.get() && 
+      if (isRunning() && 
           poolConfiguration.getMinSize() > 0 &&
           (poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) &&
           pool instanceof PrefillPool)
@@ -618,7 +611,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
             cl = null;
          }
 
-         if (!shutdown.get())
+         if (isRunning())
          {
             // Let prefill and use-strict-min be the same
             boolean emptyManagedConnectionPool = false;
@@ -654,7 +647,6 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       if (trace)
          log.tracef("Shutdown - Pool: %s MCP: %s", pool.getName(), Integer.toHexString(System.identityHashCode(this)));
 
-      shutdown.set(true);
       IdleRemover.getInstance().unregisterPool(this);
       ConnectionValidator.getInstance().unregisterPool(this);
 
@@ -685,7 +677,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
 
       while (poolConfiguration.getMinSize() - (cls.size() + checkedOut.size()) > 0)
       {
-         if (shutdown.get())
+         if (!isRunning())
          {
             statistics.setInUsedCount(checkedOut.size());
             return;
@@ -890,7 +882,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       finally
       {
          if (anyDestroyed &&
-             !shutdown.get() &&
+             isRunning() &&
              poolConfiguration.getMinSize() > 0 &&
              (poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) &&
              pool instanceof PrefillPool)
