@@ -762,6 +762,14 @@ public abstract class AbstractPool implements Pool
    /**
     * {@inheritDoc}
     */
+   public boolean isShutdown()
+   {
+      return shutdown.get();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public synchronized void shutdown()
    {
       log.debug(poolName + ": shutdown");

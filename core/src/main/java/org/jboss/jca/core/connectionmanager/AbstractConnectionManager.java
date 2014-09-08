@@ -50,6 +50,7 @@ import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
+import javax.resource.spi.RetryableException;
 import javax.resource.spi.security.PasswordCredential;
 import javax.security.auth.Subject;
 import javax.transaction.SystemException;
@@ -191,13 +192,13 @@ public abstract class AbstractConnectionManager implements ConnectionManager
             return false;
          }
       }
-      else if (pool == null)
+      else if (shutdown.get())
       {
-         return false;
+         shutdown.set(false);
       }
       else
       {
-         shutdown.set(false);
+         return false;
       }
 
       return true;
@@ -249,8 +250,6 @@ public abstract class AbstractConnectionManager implements ConnectionManager
 
       if (pool != null)
          pool.shutdown();
-
-      pool = null;
 
       if (scheduledExecutorService != null)
          scheduledExecutorService.shutdownNow();
@@ -537,9 +536,14 @@ public abstract class AbstractConnectionManager implements ConnectionManager
          failure = e;
 
          // Retry?
-         if (allocationRetry != 0)
+         if (allocationRetry != 0 || e instanceof RetryableException)
          {
-            for (int i = 0; i < allocationRetry; i++)
+            int to = allocationRetry;
+
+            if (allocationRetry == 0 && e instanceof RetryableException)
+               to = 1;
+
+            for (int i = 0; i < to; i++)
             {
                if (shutdown.get())
                {
@@ -547,10 +551,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
                }
 
                if (trace)
-               {
-                  log.trace("Attempting allocation retry for cri=" + cri);
-               }
-
+                  log.tracef("%s: Attempting allocation retry (%s, %s, %s)", jndiName, transaction, subject, cri);
 
                if (Thread.currentThread().isInterrupted())
                {
@@ -606,7 +607,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       ConnectionListener cl = (ConnectionListener)bcl;
 
       Pool localStrategy = cl.getPool();
-      if (localStrategy != pool)
+      if (localStrategy != pool || shutdown.get())
       {
          kill = true;
       }
@@ -653,7 +654,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    public Object allocateConnection(ManagedConnectionFactory mcf, ConnectionRequestInfo cri) throws ResourceException
    {
       //Check for pooling!
-      if (pool == null)
+      if (pool == null || shutdown.get())
       {
          throw new ResourceException(bundle.tryingUseConnectionFactoryShutDown(jndiName));
       }
@@ -721,7 +722,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       throws ResourceException
    {
       // Check for pooling!
-      if (pool == null)
+      if (pool == null || shutdown.get())
       {
          throw new ResourceException(bundle.tryingUseConnectionFactoryShutDown(jndiName));
       }

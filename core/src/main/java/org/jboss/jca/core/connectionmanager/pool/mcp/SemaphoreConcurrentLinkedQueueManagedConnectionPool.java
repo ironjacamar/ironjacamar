@@ -48,7 +48,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.resource.ResourceException;
@@ -56,7 +55,7 @@ import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.DissociatableManagedConnection;
 import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.RetryableUnavailableException;
+import javax.resource.spi.RetryableException;
 import javax.resource.spi.ValidatingManagedConnectionFactory;
 import javax.security.auth.Subject;
 
@@ -124,9 +123,6 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
 
    /** The permits used to control who can checkout a connection */
    private Semaphore permits;
-
-   /** Whether the pool has been shutdown */
-   private final AtomicBoolean shutdown = new AtomicBoolean(false);
 
    /** Statistics */
    private ManagedConnectionPoolStatisticsImpl statistics;
@@ -218,8 +214,6 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
          ConnectionValidator.getInstance().registerPool(this,
                poolConfiguration.getBackgroundValidationMillis());
       }
-
-      shutdown.set(false);
    }
 
    /**
@@ -227,7 +221,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
     */
    public boolean isRunning() 
    {
-      return !shutdown.get();
+      return !pool.isShutdown();
    }
 
    /**
@@ -279,7 +273,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
     */
    public void prefill() 
    {
-      if (!shutdown.get()
+      if (isRunning()
             && (poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) && 
             pool instanceof PrefillPool && 
             poolConfiguration.getMinSize() > 0)
@@ -360,11 +354,11 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
             ConnectionListenerWrapper clw = null;
             do 
             {
-               if (shutdown.get()) 
+               if (!isRunning()) 
                {
                   permits.release();
 
-                  throw new RetryableUnavailableException(
+                  throw new ResourceException(
                      bundle.thePoolHasBeenShutdown(pool.getName(),
                                                         Integer.toHexString(System.identityHashCode(this))));
                }
@@ -519,7 +513,8 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
             } 
             catch (Throwable t) 
             {
-               log.throwableWhileAttemptingGetNewGonnection(clw.getConnectionListener(), t);
+               if ((clw != null && clw.getConnectionListener() != null) || !(t instanceof RetryableException))
+                  log.throwableWhileAttemptingGetNewGonnection(clw != null ? clw.getConnectionListener() : null, t);
 
                // Return permit and rethrow
                if (clw != null) 
@@ -533,7 +528,8 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                permits.release();
 
                throw new ResourceException(
-                     bundle.unexpectedThrowableWhileTryingCreateConnection(clw.getConnectionListener()), t);
+                  bundle.unexpectedThrowableWhileTryingCreateConnection(
+                     clw != null ? clw.getConnectionListener() : null), t);
             }
          } 
          else 
@@ -990,7 +986,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
             clw = null;
          }
 
-         if (!shutdown.get()) 
+         if (isRunning()) 
          {
             // Let prefill and use-strict-min be the same
             boolean emptyManagedConnectionPool = false;
@@ -1027,7 +1023,6 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
          log.tracef("Shutdown - Pool: %s MCP: %s", pool.getName(),
                Integer.toHexString(System.identityHashCode(this)));
 
-      shutdown.set(true);
       IdleRemover.getInstance().unregisterPool(this);
       ConnectionValidator.getInstance().unregisterPool(this);
 
@@ -1102,7 +1097,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                   statistics.deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
                try 
                {
-                  if (shutdown.get()) 
+                  if (!isRunning()) 
                   {
                      if (statistics.isEnabled())
                         statistics.setInUsedCount(checkedOutSize.get());
@@ -1184,7 +1179,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                   statistics.deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
                try 
                {
-                  if (shutdown.get()) 
+                  if (!isRunning()) 
                   {
                      statistics.setInUsedCount(checkedOutSize.get());
                      return;

@@ -176,6 +176,8 @@ public class RetryTestCase
          embedded.deploy(raa);
          embedded.deploy(dashRaXml);
 
+         RetryManagedConnectionFactory.clearRetryableCounter();
+
          context = new InitialContext();
 
          RetryConnectionFactory cf = (RetryConnectionFactory)context.lookup("java:/eis/RetryConnectionFactory");
@@ -189,7 +191,7 @@ public class RetryTestCase
       catch (Exception e)
       {
          log.info("Error: " + e.getMessage(), e);
-         assertEquals(1, RetryManagedConnectionFactory.getRetryableCounter());
+         assertEquals(2, RetryManagedConnectionFactory.getRetryableCounter());
       }
       finally
       {
@@ -228,6 +230,8 @@ public class RetryTestCase
       {
          embedded.deploy(raa);
          embedded.deploy(dashRaXml);
+
+         RetryManagedConnectionFactory.clearRetryableCounter();
 
          context = new InitialContext();
 
@@ -283,6 +287,8 @@ public class RetryTestCase
          embedded.deploy(raa);
          embedded.deploy(dashRaXml);
 
+         RetryManagedConnectionFactory.clearRetryableCounter();
+
          context = new InitialContext();
 
          ut = (UserTransaction)context.lookup("java:/UserTransaction");
@@ -301,7 +307,7 @@ public class RetryTestCase
       catch (Exception e)
       {
          log.info("Error: " + e.getMessage(), e);
-         assertEquals(1, RetryManagedConnectionFactory.getRetryableCounter());
+         assertEquals(2, RetryManagedConnectionFactory.getRetryableCounter());
       }
       finally
       {
@@ -343,6 +349,8 @@ public class RetryTestCase
       {
          embedded.deploy(raa);
          embedded.deploy(dashRaXml);
+
+         RetryManagedConnectionFactory.clearRetryableCounter();
 
          context = new InitialContext();
 

@@ -157,7 +157,6 @@ public class ShutdownTestCase
          ConnectionManager cm = ConnectionManagerUtil.extract(cf);
          assertNotNull(cm);
          cm.shutdown();
-         assertNull(cm.getPool());
 
          SimpleConnection c = cf.getConnection();
          c.close();
@@ -214,8 +213,6 @@ public class ShutdownTestCase
          ConnectionManager cm = ConnectionManagerUtil.extract(cf);
          assertNotNull(cm);
          cm.shutdown();
-
-         assertNull(cm.getPool());
 
          assertTrue(c.isDetached());
 
@@ -285,8 +282,6 @@ public class ShutdownTestCase
          }
 
          c.close();
-
-         assertNull(cm.getPool());
       }
       catch (Exception e)
       {
@@ -423,8 +418,6 @@ public class ShutdownTestCase
          }
 
          c.close();
-
-         assertNull(cm.getPool());
       }
       catch (Exception e)
       {
@@ -554,7 +547,6 @@ public class ShutdownTestCase
 
          c.close();
 
-         assertNull(cm.getPool());
          assertTrue(cb.wasCalled());
       }
       catch (Exception e)
