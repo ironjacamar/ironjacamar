@@ -42,6 +42,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -77,6 +78,9 @@ public abstract class AbstractPool implements Pool
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
    
+   /** Startup/ShutDown flag */
+   private final AtomicBoolean shutdown = new AtomicBoolean(false);
+
    /** The managed connection pools, maps key --> pool */
    private final ConcurrentMap<Object, ManagedConnectionPool> mcpPools =
       new ConcurrentHashMap<Object, ManagedConnectionPool>();
@@ -406,6 +410,9 @@ public abstract class AbstractPool implements Pool
       ConnectionListener cl = null;
       boolean separateNoTx = false;
 
+      if (shutdown.get())
+         throw new ResourceException(bundle.connectionManagerIsShutdown(poolName));
+
       if (noTxSeparatePools)
       {
          separateNoTx = cm.isTransactional();
@@ -689,9 +696,18 @@ public abstract class AbstractPool implements Pool
    /**
     * {@inheritDoc}
     */
+   public boolean isShutdown()
+   {
+      return shutdown.get();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public void shutdown()
    {
       log.debug(poolName + ": shutdown");
+      shutdown.set(true);
 
       Iterator<ManagedConnectionPool> it = mcpPools.values().iterator();
       while (it.hasNext())
