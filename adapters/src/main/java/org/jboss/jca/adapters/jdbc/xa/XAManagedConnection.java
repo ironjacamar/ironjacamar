@@ -397,7 +397,7 @@ public class XAManagedConnection extends BaseWrapperManagedConnection implements
    
    private boolean isFailedXA(int errorCode)
    {
-      return !(errorCode >= XAException.XA_RBBASE && errorCode < XAException.XA_RBEND);      
+      return !(errorCode >= XAException.XA_RBBASE && errorCode <= XAException.XA_RBEND);
    }
 
    /**
