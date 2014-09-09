@@ -1,0 +1,30 @@
+<connection-factories>
+
+    <tx-connection-factory>
+       <jndi-name>activemq/QueueConnectionFactory</jndi-name>
+       <xa-transaction/>
+       <track-connection-by-tx/>
+       <rar-name>activemq-ra.rar</rar-name>
+
+       <connection-definition>javax.jms.QueueConnectionFactory</connection-definition>
+
+       <ServerUrl>vm://localhost</ServerUrl>
+       <!--
+       <UserName>sa</UserName>
+       <Password></Password>
+       -->
+       <min-pool-size>1</min-pool-size>
+       <max-pool-size>200</max-pool-size>
+       <blocking-timeout-millis>30000</blocking-timeout-millis>
+       <idle-timeout-minutes>3</idle-timeout-minutes>
+    </tx-connection-factory>
+    
+    <mbean code="org.jboss.resource.deployment.AdminObject" name="activemq.queue:name=outboundQueue">
+       <attribute name="JNDIName">activemq/queue/outbound</attribute>
+       <depends optional-attribute-name="RARName">jboss.jca:service=RARDeployment,name='activemq-ra.rar'</depends>
+
+       <attribute name="Type">javax.jms.Queue</attribute>
+       <attribute name="Properties">PhysicalName=queue.outbound</attribute>
+    </mbean> 
+
+</connection-factories>

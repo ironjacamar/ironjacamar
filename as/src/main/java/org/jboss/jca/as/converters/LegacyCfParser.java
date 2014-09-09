@@ -178,21 +178,24 @@ public class LegacyCfParser extends AbstractParser
                            cfImpl = (LegacyConnectionFactoryImp)noTxConnectionFactory.get(0);
                         else
                            cfImpl = (LegacyConnectionFactoryImp)txConnectionFactory.get(0);
+                        String poolName = jndiName;
                         if (!jndiName.startsWith("java"))
                            jndiName = "java:/" + jndiName;
                         String props = mbean.get(0).getAttributes().get("Properties");
                         String[] strs = null;
                         if (props != null)
-                           strs = props.split(" ");
+                           strs = props.split("\\s");
                         if (strs != null && strs.length > 0)
                         {
                            for (String str : strs)
                            {
+                              if (str.indexOf("=") < 0)
+                                 continue;
                               String[] prop = str.split("=");
                               cps.put(prop[0], prop[1]);
                            }
                         }
-                        cfImpl.buildAdminObejcts("FIXME", jndiName, "", cps, 
+                        cfImpl.buildAdminObejcts("FIXME", jndiName, poolName, cps, 
                            Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT);
                         cfImpl.buildResourceAdapterImpl();
                      }
