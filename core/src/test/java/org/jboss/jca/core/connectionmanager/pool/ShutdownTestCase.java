@@ -350,6 +350,9 @@ public class ShutdownTestCase
 
          c.close();
 
+         c2 = cf.getConnection();
+         c2.close();
+
          assertNotNull(cm.getPool());
       }
       catch (Exception e)
@@ -485,6 +488,9 @@ public class ShutdownTestCase
          cm.cancelShutdown();
 
          c.close();
+
+         c2 = cf.getConnection();
+         c2.close();
 
          assertNotNull(cm.getPool());
       }

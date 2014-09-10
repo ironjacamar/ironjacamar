@@ -147,6 +147,17 @@ public interface Pool extends org.jboss.jca.core.api.connectionmanager.pool.Pool
    public void shutdown();
 
    /**
+    * Prepare Shutdown
+    */
+   public void prepareShutdown();
+
+   /**
+    * Cancel shutdown
+    * @return True if the shutdown was canceled; false otherwise
+    */
+   public boolean cancelShutdown();
+
+   /**
     * Remove the matching managed connection pool if the pool is empty
     * @param pool The pool
     */

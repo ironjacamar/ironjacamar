@@ -26,7 +26,6 @@ import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
-import org.jboss.jca.core.api.connectionmanager.pool.FlushMode;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionState;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
@@ -185,6 +184,10 @@ public abstract class AbstractConnectionManager implements ConnectionManager
          if (result)
          {
             shutdown.set(false);
+
+            if (pool != null)
+               pool.cancelShutdown();
+
             scheduledGraceful = null;
          }
          else
@@ -195,6 +198,9 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       else if (shutdown.get())
       {
          shutdown.set(false);
+
+         if (pool != null)
+            pool.cancelShutdown();
       }
       else
       {
@@ -212,7 +218,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       shutdown.set(true);
 
       if (pool != null)
-         pool.flush(FlushMode.GRACEFULLY);
+         pool.prepareShutdown();
    }
 
    /**

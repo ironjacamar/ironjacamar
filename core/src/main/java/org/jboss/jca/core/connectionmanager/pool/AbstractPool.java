@@ -788,6 +788,41 @@ public abstract class AbstractPool implements Pool
    /**
     * {@inheritDoc}
     */
+   public void prepareShutdown()
+   {
+      log.debug(poolName + ": prepareShutdown");
+      shutdown.set(true);
+
+      flush(FlushMode.GRACEFULLY);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean cancelShutdown()
+   {
+      log.debug(poolName + ": cancelShutdown");
+
+      if (shutdown.get())
+      {
+         shutdown.set(false);
+
+         Iterator<ManagedConnectionPool> it = mcpPools.values().iterator();
+         while (it.hasNext())
+         {
+            ManagedConnectionPool mcp = it.next();
+            mcp.prefill();
+         }
+
+         return true;
+      }
+      
+      return false;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public PoolStatistics getStatistics()
    {
       return statistics;
