@@ -43,22 +43,22 @@ public class XAResourceWrapperImpl implements org.jboss.jca.core.spi.transaction
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, XAResourceWrapperImpl.class.getName());
    
    /** The XA resource */
-   private XAResource xaResource;
+   private final XAResource xaResource;
    
    /** Pad */
-   private boolean pad;
+   private final boolean pad;
 
    /** Override Rm Value */
-   private Boolean overrideRmValue;
+   private final Boolean overrideRmValue;
 
    /** Product name */
-   private String productName;
+   private final String productName;
 
    /** Product version */
-   private String productVersion;
+   private final String productVersion;
    
    /** Product version */
-   private String jndiName;
+   private final String jndiName;
    
    /** Cached hashCode() */
    private transient int cachedHashCode;

@@ -56,6 +56,7 @@ import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
 import org.jboss.jca.core.spi.security.Callback;
 import org.jboss.jca.core.spi.security.SubjectFactory;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
+import org.jboss.jca.core.spi.transaction.XAResourceStatistics;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
 import org.jboss.jca.core.util.Injection;
 import org.jboss.jca.deployers.DeployersBundle;
@@ -1702,6 +1703,14 @@ public abstract class AbstractResourceAdapterDeployer
                                                 plugin = new DefaultRecoveryPlugin();
                                              }
 
+                                             XAResourceStatistics xastat = null;
+
+                                             if (pool.getStatistics() != null &&
+                                                 pool.getStatistics() instanceof XAResourceStatistics)
+                                             {
+                                                xastat = (XAResourceStatistics)pool.getStatistics();
+                                             }
+
                                              recoveryImpl =
                                                 getTransactionIntegration().
                                                    createXAResourceRecovery(mcf,
@@ -1712,7 +1721,8 @@ public abstract class AbstractResourceAdapterDeployer
                                                                             recoverPassword,
                                                                             recoverSecurityDomain,
                                                                             getSubjectFactory(recoverSecurityDomain),
-                                                                            plugin);
+                                                                            plugin,
+                                                                            xastat);
                                           }
                                        }
                                     }

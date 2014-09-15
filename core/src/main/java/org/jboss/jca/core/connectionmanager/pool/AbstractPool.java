@@ -846,6 +846,9 @@ public abstract class AbstractPool implements Pool
     */
    protected boolean internalTestConnection(ConnectionRequestInfo cri, Subject subject)
    {
+      log.debug(poolName + ": testConnection(" + cri + ", " + subject + ")");
+      log.debug(poolName + ":   Statistics=" + statistics);
+
       boolean result = false;
       ConnectionListener cl = null;
 

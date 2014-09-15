@@ -27,6 +27,7 @@ import org.jboss.jca.core.security.SimplePrincipal;
 import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
 import org.jboss.jca.core.spi.security.SubjectFactory;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
+import org.jboss.jca.core.spi.transaction.XAResourceStatistics;
 
 import java.security.AccessController;
 import java.security.Principal;
@@ -76,6 +77,8 @@ public class XAResourceRecoveryImpl implements org.jboss.jca.core.spi.transactio
 
    private final RecoveryPlugin plugin;
 
+   private final XAResourceStatistics xastat;
+
    private ManagedConnection recoverMC;
 
    private String jndiName;
@@ -93,13 +96,15 @@ public class XAResourceRecoveryImpl implements org.jboss.jca.core.spi.transactio
     * @param recoverSecurityDomain recoverSecurityDomain
     * @param subjectFactory subjectFactory
     * @param plugin recovery plugin
+    * @param xastat The XAResource statistics implementation
     */
    public XAResourceRecoveryImpl(TransactionIntegration ti,
                                  ManagedConnectionFactory mcf,
                                  Boolean padXid, Boolean isSameRMOverrideValue, Boolean wrapXAResource,
                                  String recoverUserName, String recoverPassword, String recoverSecurityDomain,
                                  SubjectFactory subjectFactory,
-                                 RecoveryPlugin plugin)
+                                 RecoveryPlugin plugin,
+                                 XAResourceStatistics xastat)
    {
       if (ti == null)
          throw new IllegalArgumentException("TransactionIntegration is null");
@@ -129,6 +134,8 @@ public class XAResourceRecoveryImpl implements org.jboss.jca.core.spi.transactio
       {
          this.plugin = plugin;
       }
+
+      this.xastat = xastat;
 
       this.recoverMC = null;
       this.jndiName = null;
@@ -244,7 +251,8 @@ public class XAResourceRecoveryImpl implements org.jboss.jca.core.spi.transactio
                                                        isSameRMOverrideValue,
                                                        eisProductName,
                                                        eisProductVersion,
-                                                       jndiName, false);
+                                                       jndiName, false,
+                                                       xastat);
             }
 
             log.debugf("Recovery XAResource=%s for %s", xaResource, jndiName);

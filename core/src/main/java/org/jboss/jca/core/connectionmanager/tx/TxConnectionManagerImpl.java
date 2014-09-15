@@ -33,6 +33,7 @@ import org.jboss.jca.core.connectionmanager.transaction.LockKey;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.core.spi.transaction.TransactionTimeoutConfiguration;
 import org.jboss.jca.core.spi.transaction.TxUtils;
+import org.jboss.jca.core.spi.transaction.XAResourceStatistics;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -360,6 +361,21 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
    }
 
    /**
+    * Get the XAResource statistics instance, if supported
+    * @return The value
+    */
+   private XAResourceStatistics getXAResourceStatistics()
+   {
+      if (getPool() != null && getPool().getStatistics() != null &&
+          getPool().getStatistics() instanceof XAResourceStatistics)
+      {
+         return (XAResourceStatistics)getPool().getStatistics();
+      }
+
+      return null;
+   }
+
+   /**
     * Gets time left.
     * @param errorRollback error rollback
     * @return time left
@@ -624,17 +640,20 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
                   (org.jboss.jca.core.spi.transaction.ConnectableResource)mc;
 
                xaResource = txIntegration.createConnectableLocalXAResource(this, eisProductName, eisProductVersion,
-                                                                           getJndiName(), cr);
+                                                                           getJndiName(), cr,
+                                                                           getXAResourceStatistics());
             }
             else if (txIntegration.isConnectableResource(mc))
             {
                xaResource = txIntegration.createConnectableLocalXAResource(this, eisProductName, eisProductVersion,
-                                                                           getJndiName(), mc);
+                                                                           getJndiName(), mc,
+                                                                           getXAResourceStatistics());
             }
          }
 
          if (xaResource == null)
-            xaResource = txIntegration.createLocalXAResource(this, eisProductName, eisProductVersion, getJndiName());
+            xaResource = txIntegration.createLocalXAResource(this, eisProductName, eisProductVersion, getJndiName(),
+                                                             getXAResourceStatistics());
     
          if (xaResourceTimeout != 0)
          {
@@ -678,7 +697,8 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
                                                                                 isSameRMOverride, 
                                                                                 eisProductName, eisProductVersion,
                                                                                 getJndiName(),
-                                                                                cr);
+                                                                                cr,
+                                                                                getXAResourceStatistics());
                }
                else if (txIntegration.isConnectableResource(mc))
                {
@@ -686,7 +706,8 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
                                                                                 isSameRMOverride, 
                                                                                 eisProductName, eisProductVersion,
                                                                                 getJndiName(),
-                                                                                mc);
+                                                                                mc,
+                                                                                getXAResourceStatistics());
                }
             }
 
@@ -699,7 +720,8 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
                   xaResource = txIntegration.createXAResourceWrapper(xar, padXid,
                                                                      isSameRMOverride,
                                                                      eisProductName, eisProductVersion,
-                                                                     getJndiName(), txIntegration.isFirstResource(mc));
+                                                                     getJndiName(), txIntegration.isFirstResource(mc),
+                                                                     getXAResourceStatistics());
                }
                else
                {

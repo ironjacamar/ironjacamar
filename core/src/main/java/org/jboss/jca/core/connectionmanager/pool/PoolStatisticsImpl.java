@@ -24,6 +24,7 @@ package org.jboss.jca.core.connectionmanager.pool;
 
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
+import org.jboss.jca.core.spi.transaction.XAResourceStatistics;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -39,16 +40,17 @@ import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Pool statistics
  *
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class PoolStatisticsImpl implements PoolStatistics
+public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
 {
    /** Serial version uid */
-   private static final long serialVersionUID = 7L;
+   private static final long serialVersionUID = 8L;
 
    private static final String ACTIVE_COUNT = "ActiveCount";
    private static final String AVAILABLE_COUNT = "AvailableCount";
@@ -77,12 +79,63 @@ public class PoolStatisticsImpl implements PoolStatistics
    private static final String TOTAL_USAGE_TIME = "TotalUsageTime";
    private static final String WAIT_COUNT = "WaitCount";
 
+   private static final String XA_COMMIT_COUNT = "XACommitCount";
+   private static final String XA_COMMIT_AVERAGE_TIME = "XACommitAverageTime";
+   private static final String XA_COMMIT_TOTAL_TIME = "XACommitTotalTime";
+   private static final String XA_COMMIT_MAX_TIME = "XACommitMaxTime";
+   private static final String XA_END_COUNT = "XAEndCount";
+   private static final String XA_END_AVERAGE_TIME = "XAEndAverageTime";
+   private static final String XA_END_TOTAL_TIME = "XAEndTotalTime";
+   private static final String XA_END_MAX_TIME = "XAEndMaxTime";
+   private static final String XA_FORGET_COUNT = "XAForgetCount";
+   private static final String XA_FORGET_AVERAGE_TIME = "XAForgetAverageTime";
+   private static final String XA_FORGET_TOTAL_TIME = "XAForgetTotalTime";
+   private static final String XA_FORGET_MAX_TIME = "XAForgetMaxTime";
+   private static final String XA_PREPARE_COUNT = "XAPrepareCount";
+   private static final String XA_PREPARE_AVERAGE_TIME = "XAPrepareAverageTime";
+   private static final String XA_PREPARE_TOTAL_TIME = "XAPrepareTotalTime";
+   private static final String XA_PREPARE_MAX_TIME = "XAPrepareMaxTime";
+   private static final String XA_RECOVER_COUNT = "XARecoverCount";
+   private static final String XA_RECOVER_AVERAGE_TIME = "XARecoverAverageTime";
+   private static final String XA_RECOVER_TOTAL_TIME = "XARecoverTotalTime";
+   private static final String XA_RECOVER_MAX_TIME = "XARecoverMaxTime";
+   private static final String XA_ROLLBACK_COUNT = "XARollbackCount";
+   private static final String XA_ROLLBACK_AVERAGE_TIME = "XARollbackAverageTime";
+   private static final String XA_ROLLBACK_TOTAL_TIME = "XARollbackTotalTime";
+   private static final String XA_ROLLBACK_MAX_TIME = "XARollbackMaxTime";
+   private static final String XA_START_COUNT = "XAStartCount";
+   private static final String XA_START_AVERAGE_TIME = "XAStartAverageTime";
+   private static final String XA_START_TOTAL_TIME = "XAStartTotalTime";
+   private static final String XA_START_MAX_TIME = "XAStartMaxTime";
+
    private int maxPoolSize;
    private transient ConcurrentMap<Object, ManagedConnectionPool> mcpPools;
    private transient SortedSet<String> names;
    private transient Map<String, Class> types;
    private transient AtomicBoolean enabled;
    private transient Map<Locale, ResourceBundle> rbs;
+
+   private transient AtomicLong commitCount;
+   private transient AtomicLong commitTotalTime;
+   private transient AtomicLong commitMaxTime;
+   private transient AtomicLong endCount;
+   private transient AtomicLong endTotalTime;
+   private transient AtomicLong endMaxTime;
+   private transient AtomicLong forgetCount;
+   private transient AtomicLong forgetTotalTime;
+   private transient AtomicLong forgetMaxTime;
+   private transient AtomicLong prepareCount;
+   private transient AtomicLong prepareTotalTime;
+   private transient AtomicLong prepareMaxTime;
+   private transient AtomicLong recoverCount;
+   private transient AtomicLong recoverTotalTime;
+   private transient AtomicLong recoverMaxTime;
+   private transient AtomicLong rollbackCount;
+   private transient AtomicLong rollbackTotalTime;
+   private transient AtomicLong rollbackMaxTime;
+   private transient AtomicLong startCount;
+   private transient AtomicLong startTotalTime;
+   private transient AtomicLong startMaxTime;
 
    /**
     * Constructor
@@ -103,6 +156,28 @@ public class PoolStatisticsImpl implements PoolStatistics
    {
       this.maxPoolSize = maxPoolSize;
       this.mcpPools = mcpPools;
+
+      this.commitCount = new AtomicLong(0L);
+      this.commitTotalTime = new AtomicLong(0L);
+      this.commitMaxTime = new AtomicLong(0L);
+      this.endCount = new AtomicLong(0L);
+      this.endTotalTime = new AtomicLong(0L);
+      this.endMaxTime = new AtomicLong(0L);
+      this.forgetCount = new AtomicLong(0L);
+      this.forgetTotalTime = new AtomicLong(0L);
+      this.forgetMaxTime = new AtomicLong(0L);
+      this.prepareCount = new AtomicLong(0L);
+      this.prepareTotalTime = new AtomicLong(0L);
+      this.prepareMaxTime = new AtomicLong(0L);
+      this.recoverCount = new AtomicLong(0L);
+      this.recoverTotalTime = new AtomicLong(0L);
+      this.recoverMaxTime = new AtomicLong(0L);
+      this.rollbackCount = new AtomicLong(0L);
+      this.rollbackTotalTime = new AtomicLong(0L);
+      this.rollbackMaxTime = new AtomicLong(0L);
+      this.startCount = new AtomicLong(0L);
+      this.startTotalTime = new AtomicLong(0L);
+      this.startMaxTime = new AtomicLong(0L);
 
       SortedSet<String> n = new TreeSet<String>();
       Map<String, Class> t = new HashMap<String, Class>();
@@ -184,6 +259,69 @@ public class PoolStatisticsImpl implements PoolStatistics
 
       n.add(WAIT_COUNT);
       t.put(WAIT_COUNT, int.class);
+
+      n.add(XA_COMMIT_COUNT);
+      t.put(XA_COMMIT_COUNT, long.class);
+      n.add(XA_COMMIT_AVERAGE_TIME);
+      t.put(XA_COMMIT_AVERAGE_TIME, long.class);
+      n.add(XA_COMMIT_TOTAL_TIME);
+      t.put(XA_COMMIT_TOTAL_TIME, long.class);
+      n.add(XA_COMMIT_MAX_TIME);
+      t.put(XA_COMMIT_MAX_TIME, long.class);
+
+      n.add(XA_END_COUNT);
+      t.put(XA_END_COUNT, long.class);
+      n.add(XA_END_AVERAGE_TIME);
+      t.put(XA_END_AVERAGE_TIME, long.class);
+      n.add(XA_END_TOTAL_TIME);
+      t.put(XA_END_TOTAL_TIME, long.class);
+      n.add(XA_END_MAX_TIME);
+      t.put(XA_END_MAX_TIME, long.class);
+
+      n.add(XA_FORGET_COUNT);
+      t.put(XA_FORGET_COUNT, long.class);
+      n.add(XA_FORGET_AVERAGE_TIME);
+      t.put(XA_FORGET_AVERAGE_TIME, long.class);
+      n.add(XA_FORGET_TOTAL_TIME);
+      t.put(XA_FORGET_TOTAL_TIME, long.class);
+      n.add(XA_FORGET_MAX_TIME);
+      t.put(XA_FORGET_MAX_TIME, long.class);
+
+      n.add(XA_PREPARE_COUNT);
+      t.put(XA_PREPARE_COUNT, long.class);
+      n.add(XA_PREPARE_AVERAGE_TIME);
+      t.put(XA_PREPARE_AVERAGE_TIME, long.class);
+      n.add(XA_PREPARE_TOTAL_TIME);
+      t.put(XA_PREPARE_TOTAL_TIME, long.class);
+      n.add(XA_PREPARE_MAX_TIME);
+      t.put(XA_PREPARE_MAX_TIME, long.class);
+
+      n.add(XA_RECOVER_COUNT);
+      t.put(XA_RECOVER_COUNT, long.class);
+      n.add(XA_RECOVER_AVERAGE_TIME);
+      t.put(XA_RECOVER_AVERAGE_TIME, long.class);
+      n.add(XA_RECOVER_TOTAL_TIME);
+      t.put(XA_RECOVER_TOTAL_TIME, long.class);
+      n.add(XA_RECOVER_MAX_TIME);
+      t.put(XA_RECOVER_MAX_TIME, long.class);
+
+      n.add(XA_ROLLBACK_COUNT);
+      t.put(XA_ROLLBACK_COUNT, long.class);
+      n.add(XA_ROLLBACK_AVERAGE_TIME);
+      t.put(XA_ROLLBACK_AVERAGE_TIME, long.class);
+      n.add(XA_ROLLBACK_TOTAL_TIME);
+      t.put(XA_ROLLBACK_TOTAL_TIME, long.class);
+      n.add(XA_ROLLBACK_MAX_TIME);
+      t.put(XA_ROLLBACK_MAX_TIME, long.class);
+
+      n.add(XA_START_COUNT);
+      t.put(XA_START_COUNT, long.class);
+      n.add(XA_START_AVERAGE_TIME);
+      t.put(XA_START_AVERAGE_TIME, long.class);
+      n.add(XA_START_TOTAL_TIME);
+      t.put(XA_START_TOTAL_TIME, long.class);
+      n.add(XA_START_MAX_TIME);
+      t.put(XA_START_MAX_TIME, long.class);
 
       this.names = Collections.unmodifiableSortedSet(n);
       this.types = Collections.unmodifiableMap(t);
@@ -358,6 +496,118 @@ public class PoolStatisticsImpl implements PoolStatistics
       else if (WAIT_COUNT.equals(name))
       {
          return getWaitCount();
+      }
+      else if (XA_COMMIT_COUNT.equals(name))
+      {
+         return getCommitCount();
+      }
+      else if (XA_COMMIT_AVERAGE_TIME.equals(name))
+      {
+         return getCommitAverageTime();
+      }
+      else if (XA_COMMIT_TOTAL_TIME.equals(name))
+      {
+         return getCommitTotalTime();
+      }
+      else if (XA_COMMIT_MAX_TIME.equals(name))
+      {
+         return getCommitMaxTime();
+      }
+      else if (XA_END_COUNT.equals(name))
+      {
+         return getEndCount();
+      }
+      else if (XA_END_AVERAGE_TIME.equals(name))
+      {
+         return getEndAverageTime();
+      }
+      else if (XA_END_TOTAL_TIME.equals(name))
+      {
+         return getEndTotalTime();
+      }
+      else if (XA_END_MAX_TIME.equals(name))
+      {
+         return getEndMaxTime();
+      }
+      else if (XA_FORGET_COUNT.equals(name))
+      {
+         return getForgetCount();
+      }
+      else if (XA_FORGET_AVERAGE_TIME.equals(name))
+      {
+         return getForgetAverageTime();
+      }
+      else if (XA_FORGET_TOTAL_TIME.equals(name))
+      {
+         return getForgetTotalTime();
+      }
+      else if (XA_FORGET_MAX_TIME.equals(name))
+      {
+         return getForgetMaxTime();
+      }
+      else if (XA_PREPARE_COUNT.equals(name))
+      {
+         return getPrepareCount();
+      }
+      else if (XA_PREPARE_AVERAGE_TIME.equals(name))
+      {
+         return getPrepareAverageTime();
+      }
+      else if (XA_PREPARE_TOTAL_TIME.equals(name))
+      {
+         return getPrepareTotalTime();
+      }
+      else if (XA_PREPARE_MAX_TIME.equals(name))
+      {
+         return getPrepareMaxTime();
+      }
+      else if (XA_RECOVER_COUNT.equals(name))
+      {
+         return getRecoverCount();
+      }
+      else if (XA_RECOVER_AVERAGE_TIME.equals(name))
+      {
+         return getRecoverAverageTime();
+      }
+      else if (XA_RECOVER_TOTAL_TIME.equals(name))
+      {
+         return getRecoverTotalTime();
+      }
+      else if (XA_RECOVER_MAX_TIME.equals(name))
+      {
+         return getRecoverMaxTime();
+      }
+      else if (XA_ROLLBACK_COUNT.equals(name))
+      {
+         return getRollbackCount();
+      }
+      else if (XA_ROLLBACK_AVERAGE_TIME.equals(name))
+      {
+         return getRollbackAverageTime();
+      }
+      else if (XA_ROLLBACK_TOTAL_TIME.equals(name))
+      {
+         return getRollbackTotalTime();
+      }
+      else if (XA_ROLLBACK_MAX_TIME.equals(name))
+      {
+         return getRollbackMaxTime();
+      }
+      else if (XA_START_COUNT.equals(name))
+      {
+         return getStartCount();
+      }
+      else if (XA_START_AVERAGE_TIME.equals(name))
+      {
+         return getStartAverageTime();
+      }
+      else if (XA_START_TOTAL_TIME.equals(name))
+      {
+         return getStartTotalTime();
+      }
+      else if (XA_START_MAX_TIME.equals(name))
+      {
+         return getStartMaxTime();
       }
 
       return null;
@@ -920,8 +1170,464 @@ public class PoolStatisticsImpl implements PoolStatistics
    /**
     * {@inheritDoc}
     */
+   public long getCommitCount()
+   {
+      if (!isEnabled())
+         return 0L;
+
+      return commitCount.get();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getCommitTotalTime()
+   {
+      if (!isEnabled())
+         return 0L;
+
+      return commitTotalTime.get();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getCommitAverageTime()
+   {
+      if (!isEnabled())
+         return 0L;
+
+      if (commitCount.get() > 0)
+         return commitTotalTime.get() / commitCount.get();
+
+      return 0L;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getCommitMaxTime()
+   {
+      if (!isEnabled())
+         return 0L;
+
+      return commitMaxTime.get();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void deltaCommit(long time)
+   {
+      if (time > 0)
+      {
+         commitCount.incrementAndGet();
+         commitTotalTime.addAndGet(time);
+
+         if (time > commitMaxTime.get())
+            commitMaxTime.set(time);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getEndCount()
+   {
+      if (!isEnabled())
+         return 0L;
+
+      return endCount.get();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getEndTotalTime()
+   {
+      if (!isEnabled())
+         return 0L;
+
+      return endTotalTime.get();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getEndAverageTime()
+   {
+      if (!isEnabled())
+         return 0L;
+
+      if (endCount.get() > 0)
+         return endTotalTime.get() / endCount.get();
+
+      return 0L;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getEndMaxTime()
+   {
+      if (!isEnabled())
+         return 0L;
+
+      return endMaxTime.get();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void deltaEnd(long time)
+   {
+      if (time > 0)
+      {
+         endCount.incrementAndGet();
+         endTotalTime.addAndGet(time);
+
+         if (time > endMaxTime.get())
+            endMaxTime.set(time);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getForgetCount()
+   {
+      if (!isEnabled())
+         return 0L;
+
+      return forgetCount.get();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getForgetTotalTime()
+   {
+      if (!isEnabled())
+         return 0L;
+
+      return forgetTotalTime.get();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getForgetAverageTime()
+   {
+      if (!isEnabled())
+         return 0L;
+
+      if (forgetCount.get() > 0)
+         return forgetTotalTime.get() / forgetCount.get();
+
+      return 0L;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getForgetMaxTime()
+   {
+      if (!isEnabled())
+         return 0L;
+
+      return forgetMaxTime.get();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void deltaForget(long time)
+   {
+      if (time > 0)
+      {
+         forgetCount.incrementAndGet();
+         forgetTotalTime.addAndGet(time);
+
+         if (time > forgetMaxTime.get())
+            forgetMaxTime.set(time);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getPrepareCount()
+   {
+      if (!isEnabled())
+         return 0L;
+
+      return prepareCount.get();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getPrepareTotalTime()
+   {
+      if (!isEnabled())
+         return 0L;
+
+      return prepareTotalTime.get();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getPrepareAverageTime()
+   {
+      if (!isEnabled())
+         return 0L;
+
+      if (prepareCount.get() > 0)
+         return prepareTotalTime.get() / prepareCount.get();
+
+      return 0L;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getPrepareMaxTime()
+   {
+      if (!isEnabled())
+         return 0L;
+
+      return prepareMaxTime.get();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void deltaPrepare(long time)
+   {
+      if (time > 0)
+      {
+         prepareCount.incrementAndGet();
+         prepareTotalTime.addAndGet(time);
+
+         if (time > prepareMaxTime.get())
+            prepareMaxTime.set(time);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getRecoverCount()
+   {
+      if (!isEnabled())
+         return 0L;
+
+      return recoverCount.get();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getRecoverTotalTime()
+   {
+      if (!isEnabled())
+         return 0L;
+
+      return recoverTotalTime.get();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getRecoverAverageTime()
+   {
+      if (!isEnabled())
+         return 0L;
+
+      if (recoverCount.get() > 0)
+         return recoverTotalTime.get() / recoverCount.get();
+
+      return 0L;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getRecoverMaxTime()
+   {
+      if (!isEnabled())
+         return 0L;
+
+      return recoverMaxTime.get();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void deltaRecover(long time)
+   {
+      if (time > 0)
+      {
+         recoverCount.incrementAndGet();
+         recoverTotalTime.addAndGet(time);
+
+         if (time > recoverMaxTime.get())
+            recoverMaxTime.set(time);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getRollbackCount()
+   {
+      if (!isEnabled())
+         return 0L;
+
+      return rollbackCount.get();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getRollbackTotalTime()
+   {
+      if (!isEnabled())
+         return 0L;
+
+      return rollbackTotalTime.get();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getRollbackAverageTime()
+   {
+      if (!isEnabled())
+         return 0L;
+
+      if (rollbackCount.get() > 0)
+         return rollbackTotalTime.get() / rollbackCount.get();
+
+      return 0L;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getRollbackMaxTime()
+   {
+      if (!isEnabled())
+         return 0L;
+
+      return rollbackMaxTime.get();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void deltaRollback(long time)
+   {
+      if (time > 0)
+      {
+         rollbackCount.incrementAndGet();
+         rollbackTotalTime.addAndGet(time);
+
+         if (time > rollbackMaxTime.get())
+            rollbackMaxTime.set(time);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getStartCount()
+   {
+      if (!isEnabled())
+         return 0L;
+
+      return startCount.get();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getStartTotalTime()
+   {
+      if (!isEnabled())
+         return 0L;
+
+      return startTotalTime.get();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getStartAverageTime()
+   {
+      if (!isEnabled())
+         return 0L;
+
+      if (startCount.get() > 0)
+         return startTotalTime.get() / startCount.get();
+
+      return 0L;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getStartMaxTime()
+   {
+      if (!isEnabled())
+         return 0L;
+
+      return startMaxTime.get();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void deltaStart(long time)
+   {
+      if (time > 0)
+      {
+         startCount.incrementAndGet();
+         startTotalTime.addAndGet(time);
+
+         if (time > startMaxTime.get())
+            startMaxTime.set(time);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public void clear()
    {
+      this.commitCount = new AtomicLong(0L);
+      this.commitTotalTime = new AtomicLong(0L);
+      this.commitMaxTime = new AtomicLong(0L);
+      this.endCount = new AtomicLong(0L);
+      this.endTotalTime = new AtomicLong(0L);
+      this.endMaxTime = new AtomicLong(0L);
+      this.forgetCount = new AtomicLong(0L);
+      this.forgetTotalTime = new AtomicLong(0L);
+      this.forgetMaxTime = new AtomicLong(0L);
+      this.prepareCount = new AtomicLong(0L);
+      this.prepareTotalTime = new AtomicLong(0L);
+      this.prepareMaxTime = new AtomicLong(0L);
+      this.recoverCount = new AtomicLong(0L);
+      this.recoverTotalTime = new AtomicLong(0L);
+      this.recoverMaxTime = new AtomicLong(0L);
+      this.rollbackCount = new AtomicLong(0L);
+      this.rollbackTotalTime = new AtomicLong(0L);
+      this.rollbackMaxTime = new AtomicLong(0L);
+      this.startCount = new AtomicLong(0L);
+      this.startTotalTime = new AtomicLong(0L);
+      this.startMaxTime = new AtomicLong(0L);
+
       for (ManagedConnectionPool mcp : mcpPools.values())
       {
          mcp.getStatistics().clear();
@@ -1005,6 +1711,63 @@ public class PoolStatisticsImpl implements PoolStatistics
       sb.append(TOTAL_USAGE_TIME).append("=").append(getTotalUsageTime());
       sb.append(",");
       sb.append(WAIT_COUNT).append("=").append(getWaitCount());
+
+      sb.append(",");
+      sb.append(XA_COMMIT_COUNT).append("=").append(getCommitCount());
+      sb.append(",");
+      sb.append(XA_COMMIT_AVERAGE_TIME).append("=").append(getCommitAverageTime());
+      sb.append(",");
+      sb.append(XA_COMMIT_TOTAL_TIME).append("=").append(getCommitTotalTime());
+      sb.append(",");
+      sb.append(XA_COMMIT_MAX_TIME).append("=").append(getCommitMaxTime());
+      sb.append(",");
+      sb.append(XA_END_COUNT).append("=").append(getEndCount());
+      sb.append(",");
+      sb.append(XA_END_AVERAGE_TIME).append("=").append(getEndAverageTime());
+      sb.append(",");
+      sb.append(XA_END_TOTAL_TIME).append("=").append(getEndTotalTime());
+      sb.append(",");
+      sb.append(XA_END_MAX_TIME).append("=").append(getEndMaxTime());
+      sb.append(",");
+      sb.append(XA_FORGET_COUNT).append("=").append(getForgetCount());
+      sb.append(",");
+      sb.append(XA_FORGET_AVERAGE_TIME).append("=").append(getForgetAverageTime());
+      sb.append(",");
+      sb.append(XA_FORGET_TOTAL_TIME).append("=").append(getForgetTotalTime());
+      sb.append(",");
+      sb.append(XA_FORGET_MAX_TIME).append("=").append(getForgetMaxTime());
+      sb.append(",");
+      sb.append(XA_PREPARE_COUNT).append("=").append(getPrepareCount());
+      sb.append(",");
+      sb.append(XA_PREPARE_AVERAGE_TIME).append("=").append(getPrepareAverageTime());
+      sb.append(",");
+      sb.append(XA_PREPARE_TOTAL_TIME).append("=").append(getPrepareTotalTime());
+      sb.append(",");
+      sb.append(XA_PREPARE_MAX_TIME).append("=").append(getPrepareMaxTime());
+      sb.append(",");
+      sb.append(XA_RECOVER_COUNT).append("=").append(getRecoverCount());
+      sb.append(",");
+      sb.append(XA_RECOVER_AVERAGE_TIME).append("=").append(getRecoverAverageTime());
+      sb.append(",");
+      sb.append(XA_RECOVER_TOTAL_TIME).append("=").append(getRecoverTotalTime());
+      sb.append(",");
+      sb.append(XA_RECOVER_MAX_TIME).append("=").append(getRecoverMaxTime());
+      sb.append(",");
+      sb.append(XA_ROLLBACK_COUNT).append("=").append(getRollbackCount());
+      sb.append(",");
+      sb.append(XA_ROLLBACK_AVERAGE_TIME).append("=").append(getRollbackAverageTime());
+      sb.append(",");
+      sb.append(XA_ROLLBACK_TOTAL_TIME).append("=").append(getRollbackTotalTime());
+      sb.append(",");
+      sb.append(XA_ROLLBACK_MAX_TIME).append("=").append(getRollbackMaxTime());
+      sb.append(",");
+      sb.append(XA_START_COUNT).append("=").append(getStartCount());
+      sb.append(",");
+      sb.append(XA_START_AVERAGE_TIME).append("=").append(getStartAverageTime());
+      sb.append(",");
+      sb.append(XA_START_TOTAL_TIME).append("=").append(getStartTotalTime());
+      sb.append(",");
+      sb.append(XA_START_MAX_TIME).append("=").append(getStartMaxTime());
 
       sb.append("]");
       

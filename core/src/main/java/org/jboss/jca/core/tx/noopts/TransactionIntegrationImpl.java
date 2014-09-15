@@ -26,6 +26,7 @@ import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
 import org.jboss.jca.core.spi.security.SubjectFactory;
 import org.jboss.jca.core.spi.transaction.ConnectableResource;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
+import org.jboss.jca.core.spi.transaction.XAResourceStatistics;
 import org.jboss.jca.core.spi.transaction.local.LocalXAResource;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecoveryRegistry;
@@ -144,7 +145,8 @@ public class TransactionIntegrationImpl implements TransactionIntegration
                                                       String recoverUserName, String recoverPassword, 
                                                       String recoverSecurityDomain,
                                                       SubjectFactory subjectFactory,
-                                                      RecoveryPlugin plugin)
+                                                      RecoveryPlugin plugin,
+                                                      XAResourceStatistics xastat)
    {
       return new XAResourceRecoveryImpl();
    }
@@ -154,7 +156,8 @@ public class TransactionIntegrationImpl implements TransactionIntegration
     */
    public LocalXAResource createConnectableLocalXAResource(ConnectionManager cm, 
                                                            String productName, String productVersion,
-                                                           String jndiName, ConnectableResource cr)
+                                                           String jndiName, ConnectableResource cr,
+                                                           XAResourceStatistics xastat)
    {
       return new LocalConnectableXAResourceImpl(productName, productVersion, jndiName, cr);
    }
@@ -164,7 +167,8 @@ public class TransactionIntegrationImpl implements TransactionIntegration
     */
    public LocalXAResource createConnectableLocalXAResource(ConnectionManager cm, 
                                                            String productName, String productVersion,
-                                                           String jndiName, ManagedConnection mc)
+                                                           String jndiName, ManagedConnection mc,
+                                                           XAResourceStatistics xastat)
    {
       return new LocalConnectableXAResourceImpl(productName, productVersion, jndiName, (ConnectableResource)mc);
    }
@@ -174,7 +178,8 @@ public class TransactionIntegrationImpl implements TransactionIntegration
     */
    public LocalXAResource createLocalXAResource(ConnectionManager cm, 
                                                 String productName, String productVersion,
-                                                String jndiName)
+                                                String jndiName,
+                                                XAResourceStatistics xastat)
    {
       return new LocalXAResourceImpl(productName, productVersion, jndiName);
    }
@@ -185,7 +190,8 @@ public class TransactionIntegrationImpl implements TransactionIntegration
    public XAResourceWrapper createConnectableXAResourceWrapper(XAResource xares,
                                                                boolean pad, Boolean override, 
                                                                String productName, String productVersion,
-                                                               String jndiName, ConnectableResource cr)
+                                                               String jndiName, ConnectableResource cr,
+                                                               XAResourceStatistics xastat)
    {
       return new ConnectableXAResourceWrapperImpl(xares, override, productName, productVersion, jndiName, cr);
    }
@@ -196,7 +202,8 @@ public class TransactionIntegrationImpl implements TransactionIntegration
    public XAResourceWrapper createConnectableXAResourceWrapper(XAResource xares,
                                                                boolean pad, Boolean override, 
                                                                String productName, String productVersion,
-                                                               String jndiName, ManagedConnection mc)
+                                                               String jndiName, ManagedConnection mc,
+                                                               XAResourceStatistics xastat)
    {
       return new ConnectableXAResourceWrapperImpl(xares, override, productName, productVersion, jndiName,
                                                   (ConnectableResource)mc);
@@ -208,7 +215,8 @@ public class TransactionIntegrationImpl implements TransactionIntegration
    public XAResourceWrapper createXAResourceWrapper(XAResource xares,
                                                     boolean pad, Boolean override, 
                                                     String productName, String productVersion,
-                                                    String jndiName, boolean firstResource)
+                                                    String jndiName, boolean firstResource,
+                                                    XAResourceStatistics xastat)
    {
       return new XAResourceWrapperImpl(xares, override, productName, productVersion, jndiName);
    }

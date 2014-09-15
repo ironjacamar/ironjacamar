@@ -56,6 +56,7 @@ import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
 import org.jboss.jca.core.spi.security.SubjectFactory;
 import org.jboss.jca.core.spi.statistics.Statistics;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
+import org.jboss.jca.core.spi.transaction.XAResourceStatistics;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecoveryRegistry;
 import org.jboss.jca.deployers.DeployersBundle;
@@ -987,6 +988,13 @@ public abstract class AbstractDsDeployer
                plugin = new DefaultRecoveryPlugin();
             }
 
+            XAResourceStatistics xastat = null;
+
+            if (pool.getStatistics() != null && pool.getStatistics() instanceof XAResourceStatistics)
+            {
+               xastat = (XAResourceStatistics)pool.getStatistics();
+            }
+
             recoveryImpl =
                getTransactionIntegration().createXAResourceRecovery(mcf,
                                                                     padXid,
@@ -996,7 +1004,8 @@ public abstract class AbstractDsDeployer
                                                                     recoverPassword,
                                                                     recoverSecurityDomain,
                                                                     getSubjectFactory(recoverSecurityDomain),
-                                                                    plugin);
+                                                                    plugin,
+                                                                    xastat);
          }
       }
 

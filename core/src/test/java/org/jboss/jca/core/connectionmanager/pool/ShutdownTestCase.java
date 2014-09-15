@@ -586,6 +586,9 @@ public class ShutdownTestCase
    {
       private boolean called;
 
+      /**
+       * Constructor
+       */
       ShutdownCallback()
       {
          this.called = false;

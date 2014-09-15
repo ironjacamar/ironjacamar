@@ -111,6 +111,7 @@ public interface TransactionIntegration
     * @param recoverSecurityDomain The security domain for recovery
     * @param subjectFactory The subject factory
     * @param plugin The recovery plugin
+    * @param xastat The XAResource statistics implementation
     * @return The value
     */
    public XAResourceRecovery createXAResourceRecovery(ManagedConnectionFactory mcf,
@@ -119,7 +120,8 @@ public interface TransactionIntegration
                                                       String recoverUserName, String recoverPassword, 
                                                       String recoverSecurityDomain,
                                                       SubjectFactory subjectFactory,
-                                                      RecoveryPlugin plugin);
+                                                      RecoveryPlugin plugin,
+                                                      XAResourceStatistics xastat);
 
    /**
     * Create a LocalXAResource instance
@@ -127,11 +129,13 @@ public interface TransactionIntegration
     * @param productName The product name
     * @param productVersion The product version
     * @param jndiName The JNDI name for the resource
+    * @param xastat The XAResource statistics implementation
     * @return The value
     */
    public LocalXAResource createLocalXAResource(ConnectionManager cm, 
                                                 String productName, String productVersion,
-                                                String jndiName);
+                                                String jndiName,
+                                                XAResourceStatistics xastat);
 
    /**
     * Create a connectable LocalXAResource instance
@@ -140,11 +144,13 @@ public interface TransactionIntegration
     * @param productVersion The product version
     * @param jndiName The JNDI name for the resource
     * @param cr The connectable resource
+    * @param xastat The XAResource statistics implementation
     * @return The value
     */
    public LocalXAResource createConnectableLocalXAResource(ConnectionManager cm, 
                                                            String productName, String productVersion,
-                                                           String jndiName, ConnectableResource cr);
+                                                           String jndiName, ConnectableResource cr,
+                                                           XAResourceStatistics xastat);
 
    /**
     * Create a connectable LocalXAResource instance
@@ -153,11 +159,13 @@ public interface TransactionIntegration
     * @param productVersion The product version
     * @param jndiName The JNDI name for the resource
     * @param mc The managed connection
+    * @param xastat The XAResource statistics implementation
     * @return The value
     */
    public LocalXAResource createConnectableLocalXAResource(ConnectionManager cm, 
                                                            String productName, String productVersion,
-                                                           String jndiName, ManagedConnection mc);
+                                                           String jndiName, ManagedConnection mc,
+                                                           XAResourceStatistics xastat);
 
    /**
     * Create an XAResource wrapper instance
@@ -168,12 +176,14 @@ public interface TransactionIntegration
     * @param productVersion The product version
     * @param jndiName The JNDI name for the resource
     * @param firstResource Is the resource a first resource
+    * @param xastat The XAResource statistics implementation
     * @return The value
     */
    public XAResourceWrapper createXAResourceWrapper(XAResource xares,
                                                     boolean pad, Boolean override, 
                                                     String productName, String productVersion,
-                                                    String jndiName, boolean firstResource);
+                                                    String jndiName, boolean firstResource,
+                                                    XAResourceStatistics xastat);
 
    /**
     * Create a connectable XAResource wrapper instance
@@ -184,12 +194,14 @@ public interface TransactionIntegration
     * @param productVersion The product version
     * @param jndiName The JNDI name for the resource
     * @param cr The connectable resource
+    * @param xastat The XAResource statistics implementation
     * @return The value
     */
    public XAResourceWrapper createConnectableXAResourceWrapper(XAResource xares,
                                                                boolean pad, Boolean override, 
                                                                String productName, String productVersion,
-                                                               String jndiName, ConnectableResource cr);
+                                                               String jndiName, ConnectableResource cr,
+                                                               XAResourceStatistics xastat);
 
    /**
     * Create a connectable XAResource wrapper instance
@@ -200,12 +212,14 @@ public interface TransactionIntegration
     * @param productVersion The product version
     * @param jndiName The JNDI name for the resource
     * @param mc The managed connection
+    * @param xastat The XAResource statistics implementation
     * @return The value
     */
    public XAResourceWrapper createConnectableXAResourceWrapper(XAResource xares,
                                                                boolean pad, Boolean override, 
                                                                String productName, String productVersion,
-                                                               String jndiName, ManagedConnection mc);
+                                                               String jndiName, ManagedConnection mc,
+                                                               XAResourceStatistics xastat);
 
    /**
     * Is a first resource

@@ -26,6 +26,7 @@ import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
 import org.jboss.jca.core.spi.security.SubjectFactory;
 import org.jboss.jca.core.spi.transaction.ConnectableResource;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
+import org.jboss.jca.core.spi.transaction.XAResourceStatistics;
 import org.jboss.jca.core.spi.transaction.local.LocalXAResource;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecovery;
 import org.jboss.jca.core.spi.transaction.recovery.XAResourceRecoveryRegistry;
@@ -160,11 +161,12 @@ public class TransactionIntegrationImpl implements TransactionIntegration
                                                       String recoverUserName, String recoverPassword, 
                                                       String recoverSecurityDomain,
                                                       SubjectFactory subjectFactory,
-                                                      RecoveryPlugin plugin)
+                                                      RecoveryPlugin plugin,
+                                                      XAResourceStatistics xastat)
    {
       return new XAResourceRecoveryImpl(this, mcf, pad, override, wrapXAResource,
                                         recoverUserName, recoverPassword, recoverSecurityDomain,
-                                        subjectFactory, plugin);
+                                        subjectFactory, plugin, xastat);
    }
 
    /**
@@ -172,9 +174,18 @@ public class TransactionIntegrationImpl implements TransactionIntegration
     */
    public LocalXAResource createConnectableLocalXAResource(ConnectionManager cm,
                                                            String productName, String productVersion,
-                                                           String jndiName, ConnectableResource cr)
+                                                           String jndiName, ConnectableResource cr,
+                                                           XAResourceStatistics xastat)
    {
-      LocalXAResource result = new LocalConnectableXAResourceImpl(productName, productVersion, jndiName, cr);
+      LocalXAResource result = null;
+      if (xastat != null && xastat.isEnabled())
+      {
+         result = new LocalConnectableXAResourceStatImpl(productName, productVersion, jndiName, cr, xastat);
+      }
+      else
+      {
+         result = new LocalConnectableXAResourceImpl(productName, productVersion, jndiName, cr);
+      }
       result.setConnectionManager(cm);
 
       return result;
@@ -185,10 +196,21 @@ public class TransactionIntegrationImpl implements TransactionIntegration
     */
    public LocalXAResource createConnectableLocalXAResource(ConnectionManager cm,
                                                            String productName, String productVersion,
-                                                           String jndiName, ManagedConnection mc)
+                                                           String jndiName, ManagedConnection mc,
+                                                           XAResourceStatistics xastat)
    {
-      LocalXAResource result = new LocalConnectableXAResourceImpl(productName, productVersion, jndiName,
-                                                                  (org.jboss.tm.ConnectableResource)mc);
+      LocalXAResource result = null;
+      if (xastat != null && xastat.isEnabled())
+      {
+         result = new LocalConnectableXAResourceStatImpl(productName, productVersion, jndiName,
+                                                         (org.jboss.tm.ConnectableResource)mc,
+                                                         xastat);
+      }
+      else
+      {
+         result = new LocalConnectableXAResourceImpl(productName, productVersion, jndiName,
+                                                     (org.jboss.tm.ConnectableResource)mc);
+      }
       result.setConnectionManager(cm);
 
       return result;
@@ -199,9 +221,18 @@ public class TransactionIntegrationImpl implements TransactionIntegration
     */
    public LocalXAResource createLocalXAResource(ConnectionManager cm,
                                                 String productName, String productVersion,
-                                                String jndiName)
+                                                String jndiName,
+                                                XAResourceStatistics xastat)
    {
-      LocalXAResource result = new LocalXAResourceImpl(productName, productVersion, jndiName);
+      LocalXAResource result = null;
+      if (xastat != null && xastat.isEnabled())
+      {
+         result = new LocalXAResourceStatImpl(productName, productVersion, jndiName, xastat);
+      }
+      else
+      {
+         result = new LocalXAResourceImpl(productName, productVersion, jndiName);
+      }
       result.setConnectionManager(cm);
 
       return result;
@@ -214,20 +245,39 @@ public class TransactionIntegrationImpl implements TransactionIntegration
                                                                boolean pad, Boolean override, 
                                                                String productName, String productVersion,
                                                                String jndiName,
-                                                               ConnectableResource cr)
+                                                               ConnectableResource cr,
+                                                               XAResourceStatistics xastat)
    {
       if (cr instanceof org.jboss.jca.core.spi.transaction.FirstResource ||
           cr instanceof org.jboss.tm.FirstResource)
       {
-         return new FirstResourceConnectableXAResourceWrapperImpl(xares, pad, override,
-                                                                  productName, productVersion, jndiName,
-                                                                  cr);
+         if (xastat != null && xastat.isEnabled())
+         {
+            return new FirstResourceConnectableXAResourceWrapperStatImpl(xares, pad, override,
+                                                                         productName, productVersion, jndiName,
+                                                                         cr, xastat);
+         }
+         else
+         {
+            return new FirstResourceConnectableXAResourceWrapperImpl(xares, pad, override,
+                                                                     productName, productVersion, jndiName,
+                                                                     cr);
+         }
       }
       else
       {
-         return new ConnectableXAResourceWrapperImpl(xares, pad, override,
-                                                     productName, productVersion, jndiName,
-                                                     cr);
+         if (xastat != null && xastat.isEnabled())
+         {
+            return new ConnectableXAResourceWrapperStatImpl(xares, pad, override,
+                                                            productName, productVersion, jndiName,
+                                                            cr, xastat);
+         }
+         else
+         {
+            return new ConnectableXAResourceWrapperImpl(xares, pad, override,
+                                                        productName, productVersion, jndiName,
+                                                        cr);
+         }
       }
    }
 
@@ -238,20 +288,40 @@ public class TransactionIntegrationImpl implements TransactionIntegration
                                                                boolean pad, Boolean override, 
                                                                String productName, String productVersion,
                                                                String jndiName,
-                                                               ManagedConnection mc)
+                                                               ManagedConnection mc,
+                                                               XAResourceStatistics xastat)
    {
       if (mc instanceof org.jboss.jca.core.spi.transaction.FirstResource ||
           mc instanceof org.jboss.tm.FirstResource)
       {
-         return new FirstResourceConnectableXAResourceWrapperImpl(xares, pad, override,
-                                                                  productName, productVersion, jndiName,
-                                                                  (org.jboss.tm.ConnectableResource)mc);
+         if (xastat != null && xastat.isEnabled())
+         {
+            return new FirstResourceConnectableXAResourceWrapperStatImpl(xares, pad, override,
+                                                                         productName, productVersion, jndiName,
+                                                                         (org.jboss.tm.ConnectableResource)mc,
+                                                                         xastat);
+         }
+         else
+         {
+            return new FirstResourceConnectableXAResourceWrapperImpl(xares, pad, override,
+                                                                     productName, productVersion, jndiName,
+                                                                     (org.jboss.tm.ConnectableResource)mc);
+         }
       }
       else
       {
-         return new ConnectableXAResourceWrapperImpl(xares, pad, override,
-                                                     productName, productVersion, jndiName,
-                                                     (org.jboss.tm.ConnectableResource)mc);
+         if (xastat != null && xastat.isEnabled())
+         {
+            return new ConnectableXAResourceWrapperStatImpl(xares, pad, override,
+                                                            productName, productVersion, jndiName,
+                                                            (org.jboss.tm.ConnectableResource)mc, xastat);
+         }
+         else
+         {
+            return new ConnectableXAResourceWrapperImpl(xares, pad, override,
+                                                        productName, productVersion, jndiName,
+                                                        (org.jboss.tm.ConnectableResource)mc);
+         }
       }
    }
 
@@ -261,15 +331,31 @@ public class TransactionIntegrationImpl implements TransactionIntegration
    public XAResourceWrapper createXAResourceWrapper(XAResource xares,
                                                     boolean pad, Boolean override, 
                                                     String productName, String productVersion,
-                                                    String jndiName, boolean firstResource)
+                                                    String jndiName, boolean firstResource,
+                                                    XAResourceStatistics xastat)
    {
       if (firstResource)
       {
-         return new FirstResourceXAResourceWrapperImpl(xares, pad, override, productName, productVersion, jndiName);
+         if (xastat != null && xastat.isEnabled())
+         {
+            return new FirstResourceXAResourceWrapperStatImpl(xares, pad, override, productName, productVersion,
+                                                              jndiName, xastat);
+         }
+         else
+         {
+            return new FirstResourceXAResourceWrapperImpl(xares, pad, override, productName, productVersion, jndiName);
+         }
       }
       else
       {
-         return new XAResourceWrapperImpl(xares, pad, override, productName, productVersion, jndiName);
+         if (xastat != null && xastat.isEnabled())
+         {
+            return new XAResourceWrapperStatImpl(xares, pad, override, productName, productVersion, jndiName, xastat);
+         }
+         else
+         {
+            return new XAResourceWrapperImpl(xares, pad, override, productName, productVersion, jndiName);
+         }
       }
    }
 
@@ -278,8 +364,7 @@ public class TransactionIntegrationImpl implements TransactionIntegration
     */
    public boolean isFirstResource(ManagedConnection mc)
    {
-      return mc != null && (mc instanceof org.jboss.jca.core.spi.transaction.FirstResource ||
-                            mc instanceof org.jboss.tm.FirstResource);
+      return mc != null && mc instanceof org.jboss.tm.FirstResource;
    }
 
    /**
@@ -287,8 +372,7 @@ public class TransactionIntegrationImpl implements TransactionIntegration
     */
    public boolean isConnectableResource(ManagedConnection mc)
    {
-      return mc != null && (mc instanceof ConnectableResource ||
-                            mc instanceof org.jboss.tm.ConnectableResource);
+      return mc != null && mc instanceof org.jboss.tm.ConnectableResource;
    }
 
    /**
