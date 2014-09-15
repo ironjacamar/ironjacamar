@@ -43,22 +43,22 @@ public class XAResourceWrapperImpl implements org.jboss.jca.core.spi.transaction
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, XAResourceWrapperImpl.class.getName());
    
    /** The XA resource */
-   private XAResource xaResource;
+   private final XAResource xaResource;
    
    /** Pad */
-   private boolean pad;
+   private final boolean pad;
 
    /** Override Rm Value */
-   private Boolean overrideRmValue;
+   private final Boolean overrideRmValue;
 
    /** Product name */
-   private String productName;
+   private final String productName;
 
    /** Product version */
-   private String productVersion;
+   private final String productVersion;
    
    /** Product version */
-   private String jndiName;
+   private final String jndiName;
    
    /** Cached hashCode() */
    private transient int cachedHashCode;
@@ -101,7 +101,9 @@ public class XAResourceWrapperImpl implements org.jboss.jca.core.spi.transaction
     */
    public void commit(Xid xid, boolean onePhase) throws XAException
    {
-      xid = convertXid(xid);
+      if (pad)
+         xid = convertXid(xid);
+
       xaResource.commit(xid, onePhase);
    }
 
@@ -110,7 +112,9 @@ public class XAResourceWrapperImpl implements org.jboss.jca.core.spi.transaction
     */
    public void end(Xid xid, int flags) throws XAException
    {
-      xid = convertXid(xid);
+      if (pad)
+         xid = convertXid(xid);
+
       xaResource.end(xid, flags);
    }
 
@@ -119,7 +123,9 @@ public class XAResourceWrapperImpl implements org.jboss.jca.core.spi.transaction
     */
    public void forget(Xid xid) throws XAException
    {
-      xid = convertXid(xid);
+      if (pad)
+         xid = convertXid(xid);
+
       xaResource.forget(xid);
    }
 
@@ -165,7 +171,9 @@ public class XAResourceWrapperImpl implements org.jboss.jca.core.spi.transaction
     */
    public int prepare(Xid xid) throws XAException
    {
-      xid = convertXid(xid);
+      if (pad)
+         xid = convertXid(xid);
+
       return xaResource.prepare(xid);
    }
 
@@ -182,7 +190,9 @@ public class XAResourceWrapperImpl implements org.jboss.jca.core.spi.transaction
     */
    public void rollback(Xid xid) throws XAException
    {
-      xid = convertXid(xid);      
+      if (pad)
+         xid = convertXid(xid);
+
       xaResource.rollback(xid);
    }
 
@@ -199,7 +209,9 @@ public class XAResourceWrapperImpl implements org.jboss.jca.core.spi.transaction
     */
    public void start(Xid xid, int flags) throws XAException
    {
-      xid = convertXid(xid);
+      if (pad)
+         xid = convertXid(xid);
+
       xaResource.start(xid, flags);
    }
 
