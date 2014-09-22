@@ -64,10 +64,10 @@ import javax.security.auth.Subject;
 import org.jboss.logging.Messages;
 
 /**
- * The internal implementation
+ * ManagedConnectionPool implementation based on a semaphore and ConcurrentLinkedQueue
  * 
  * @author <a href="mailto:johara@redhat.com">John O'Hara</a>
- * @version $Revision: 1 $
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements ManagedConnectionPool 
 {
@@ -622,7 +622,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
          if (trace)
             log.trace("ManagedConnection is being returned after it was destroyed: " + cl);
 
-         if (clw.hasPermit()) 
+         if (clw != null && clw.hasPermit()) 
          {
             clw.setHasPermit(false);
             permits.release();
@@ -645,7 +645,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
       }
 
       // We need to destroy this one
-      if (cl.getState() == ConnectionState.DESTROY || cl.getState() == ConnectionState.DESTROYED)
+      if (clw == null || cl.getState() == ConnectionState.DESTROY || cl.getState() == ConnectionState.DESTROYED)
          kill = true;
 
       // This is really an error
@@ -659,31 +659,20 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
       if (kill) 
       {
          // Adrian Brock: A resource adapter can asynchronously notify us
-         // that
-         // a connection error occurred.
+         // that a connection error occurred.
          // This could happen while the connection is not checked out.
          // e.g. JMS can do this via an ExceptionListener on the connection.
          // I have twice had to reinstate this line of code, PLEASE DO NOT
          // REMOVE IT!
-         clq.remove(clw);
-         ConnectionListenerWrapper wrapper = cls.remove(cl);
-         if (wrapper != null)
-         {
-            poolSize.decrementAndGet();
-            if (wrapper.isCheckedOut())
-            {
-               wrapper.setCheckedOut(false);
-               checkedOutSize.decrementAndGet();
-            }
-         }
+         cls.remove(cl);
       }
       // return to the pool
       else 
       {
          cl.used();
-         if (!clq.contains(cl)) 
+         if (!clq.contains(clw)) 
          {
-            clq.add(cls.get(cl));
+            clq.add(clw);
          } 
          else 
          {
@@ -1613,7 +1602,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                
                if (entry.getValue().isCheckedOut()) 
                {
-                  if (!cl.isEnlisted()) 
+                  if (!cl.isEnlisted() && cl.getManagedConnection() instanceof DissociatableManagedConnection) 
                   {
                      if (trace)
                         log.tracef("Detach: %s", cl);
@@ -1660,26 +1649,26 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
     */
    private void removeConnectionListenerFromPool(ConnectionListenerWrapper clw)
    {
-
-      if (clw.getConnectionListener() != null)
-         clq.remove(clw.getConnectionListener());
-
-      // remove connection listener from pool
-      // ConcurrentHashMap does *not* not allow null to be used as a key or value, 
-      // so null indicates cls did not contain the ConnectionListenerWrapper 
-      if (cls.remove(clw) != null)
-         poolSize.decrementAndGet();
-
-      //update counter and statistics
-      if (clw.isCheckedOut()) 
+      if (clw != null)
       {
-         clw.setCheckedOut(false);
-         checkedOutSize.decrementAndGet();
+         clq.remove(clw);
+
+         // remove connection listener from pool
+         // ConcurrentHashMap does *not* not allow null to be used as a key or value, 
+         // so null indicates cls did not contain the ConnectionListenerWrapper 
+         if (clw.getConnectionListener() != null && cls.remove(clw.getConnectionListener()) != null)
+            poolSize.decrementAndGet();
+
+         //update counter and statistics
+         if (clw.isCheckedOut()) 
+         {
+            clw.setCheckedOut(false);
+            checkedOutSize.decrementAndGet();
+         }
+
+         if (statistics.isEnabled())
+            statistics.setInUsedCount(checkedOutSize.get());
       }
-
-      if (statistics.isEnabled())
-         statistics.setInUsedCount(checkedOutSize.get());
-
    }
    
    /**
@@ -1704,9 +1693,9 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
     * Connection Listener wrapper to retain connection listener pool state
     * 
     * @author <a href="mailto:johara@redhat.com">John O'Hara</a>
-    * @version $Revision: 1 $
+    * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
     */
-   class ConnectionListenerWrapper 
+   static class ConnectionListenerWrapper 
    {
       private ConnectionListener cl;
       private boolean checkedOut;

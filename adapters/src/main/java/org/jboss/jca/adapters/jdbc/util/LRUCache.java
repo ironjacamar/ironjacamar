@@ -197,6 +197,7 @@ public class LRUCache<K, V> implements Cache<K, V>
     */
    private void cacheMiss()
    {
+      mList.entryCacheMiss();
    }
 
    /**
@@ -241,6 +242,7 @@ public class LRUCache<K, V> implements Cache<K, V>
          mHead = null;
          mTail = null;
          mCount = 0;
+         mCacheMiss = 0;
       }
 
       /**
@@ -261,7 +263,7 @@ public class LRUCache<K, V> implements Cache<K, V>
 
          entryPromotion(entry);
 
-         entry.mTime = System.currentTimeMillis();
+         entry.updateTimestamp();
          if (entry.mPrev == null)
          {
             if (entry.mNext == null)
@@ -431,6 +433,14 @@ public class LRUCache<K, V> implements Cache<K, V>
       }
 
       /**
+       * Entry cache miss
+       */
+      protected void entryCacheMiss()
+      {
+         mCacheMiss += 1;
+      }
+
+      /**
        * Callback that signals that the capacity of the cache is changed.
        * @param oldCapacity the capacity before the change happened
        */
@@ -456,13 +466,13 @@ public class LRUCache<K, V> implements Cache<K, V>
        */
       public String toString()
       {
-         String s = Integer.toHexString(super.hashCode());
-         s += " size: " + mCount;
+         StringBuilder sb = new StringBuilder(Integer.toHexString(super.hashCode()));
+         sb.append(" size: ").append(mCount);
          for (LRUCacheEntry<K, V> entry = mHead; entry != null; entry = entry.mNext)
          {
-            s += "\n" + entry;
+            sb.append("\n").append(entry);
          }
-         return s;
+         return sb.toString();
       }
    }
 

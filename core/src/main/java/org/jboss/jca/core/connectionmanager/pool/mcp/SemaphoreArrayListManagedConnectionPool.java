@@ -1513,7 +1513,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             while (it.hasNext())
             {
                cl = it.next();
-               if (!cl.isEnlisted())
+               if (!cl.isEnlisted() && cl.getManagedConnection() instanceof DissociatableManagedConnection)
                {
                   if (trace)
                      log.tracef("Detach: %s", cl);

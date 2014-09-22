@@ -370,13 +370,13 @@ public class Annotations
          requiredWorkContexts = new ArrayList<XsdString>(requiredWorkContextAnnotations.length);
          for (Class<? extends WorkContext> requiredWorkContext : requiredWorkContextAnnotations)
          {
-
-            if (!requiredWorkContexts.contains(requiredWorkContext.getName()))
+            XsdString xs = new XsdString(requiredWorkContext.getName(), null);
+            if (!requiredWorkContexts.contains(xs))
             {
                if (trace)
                   log.trace("RequiredWorkContext=" + requiredWorkContext.getName());
 
-               requiredWorkContexts.add(new XsdString(requiredWorkContext.getName(), null));
+               requiredWorkContexts.add(xs);
             }
          }
       }
