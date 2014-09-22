@@ -399,7 +399,16 @@ public abstract class AbstractPool implements Pool
                ManagedConnectionPool other = it.next();
                if (other == pool && pool.isEmpty())
                {
-                  pool.shutdown();
+                  try
+                  {
+                     pool.shutdown();
+                  }
+                  catch (Exception e)
+                  {
+                     // Should not happen
+                     log.trace("MCP.shutdown: " + e.getMessage(), e);
+                  }
+
                   it.remove();
                   break;
                }
@@ -445,7 +454,15 @@ public abstract class AbstractPool implements Pool
       while (it.hasNext())
       {
          ManagedConnectionPool mcp = it.next();
-         mcp.flush(mode);
+         try
+         {
+            mcp.flush(mode);
+         }
+         catch (Exception e)
+         {
+            // Should not happen
+            log.trace("MCP.flush: " + e.getMessage(), e);
+         }
 
          if (mcp.isEmpty() && !isPrefill() && size > 1)
             clearMcpPools.add(mcp);
@@ -457,7 +474,15 @@ public abstract class AbstractPool implements Pool
          {
             if (mcp.isEmpty())
             {
-               mcp.shutdown();
+               try
+               {
+                  mcp.shutdown();
+               }
+               catch (Exception e)
+               {
+                  // Should not happen
+                  log.trace("MCP.shutdown: " + e.getMessage(), e);
+               }
                mcpPools.values().remove(mcp);
             }
          }
@@ -779,7 +804,15 @@ public abstract class AbstractPool implements Pool
       while (it.hasNext())
       {
          ManagedConnectionPool mcp = it.next();
-         mcp.shutdown();
+         try
+         {
+            mcp.shutdown();
+         }
+         catch (Exception e)
+         {
+            // Should not happen
+            log.trace("MCP.shutdown: " + e.getMessage(), e);
+         }
       }
 
       mcpPools.clear();
@@ -806,12 +839,23 @@ public abstract class AbstractPool implements Pool
       if (shutdown.get())
       {
          shutdown.set(false);
-
-         Iterator<ManagedConnectionPool> it = mcpPools.values().iterator();
-         while (it.hasNext())
+         
+         if (isPrefill())
          {
-            ManagedConnectionPool mcp = it.next();
-            mcp.prefill();
+            Iterator<ManagedConnectionPool> it = mcpPools.values().iterator();
+            while (it.hasNext())
+            {
+               ManagedConnectionPool mcp = it.next();
+               try
+               {
+                  mcp.prefill();
+               }
+               catch (Exception e)
+               {
+                  // Should not happen
+                  log.trace("MCP.prefill: " + e.getMessage(), e);
+               }
+            }
          }
 
          return true;
@@ -850,6 +894,7 @@ public abstract class AbstractPool implements Pool
       log.debug(poolName + ":   Statistics=" + statistics);
 
       boolean result = false;
+      boolean kill = false;
       ConnectionListener cl = null;
 
       if (shutdown.get())
@@ -873,9 +918,9 @@ public abstract class AbstractPool implements Pool
             result = true;
          }
       }
-      catch (Throwable ignored)
+      catch (Throwable t)
       {
-         // Ignore
+         kill = true;
       }
       finally
       {
@@ -883,7 +928,7 @@ public abstract class AbstractPool implements Pool
          {
             try
             {
-               returnConnection(cl, false);
+               returnConnection(cl, kill);
             }
             catch (ResourceException ire)
             {

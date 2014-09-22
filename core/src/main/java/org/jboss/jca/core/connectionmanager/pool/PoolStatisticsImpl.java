@@ -633,6 +633,8 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
       {
          mcp.getStatistics().setEnabled(v);
       }
+
+      clear();
    }
 
    /**

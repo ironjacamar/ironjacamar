@@ -264,6 +264,15 @@ public interface CoreLogger extends BasicLogger
    @Message(id = 405, value = "Multiple LocalTransaction connection listeners enlisted for %s, cl=%s")
    public void multipleLocalTransactionConnectionListenerEnlisted(String name, Object cl);
    
+   /**
+    * Throwable in returning connection
+    * @param mc The ManagedConnection name
+    * @param t The exception
+    */
+   @LogMessage(level = ERROR)
+   @Message(id = 406, value = "Throwable in returning connection: %s")
+   public void throwableReturningConnection(Object mc, @Cause Throwable t);
+
    // TRANSACTION SYNCHRONIZER (500)
 
    /**

@@ -311,7 +311,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
       if (isFull())
       {
-         statistics.deltaWaitCount();
+         if (statistics.isEnabled())
+            statistics.deltaWaitCount();
 
          if (pool.isSharable() && (supportsLazyAssociation == null || supportsLazyAssociation.booleanValue()))
          {
@@ -551,7 +552,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          }
          else
          {
-            statistics.deltaBlockingFailureCount();
+            if (statistics.isEnabled())
+               statistics.deltaBlockingFailureCount();
 
             // We timed out
             throw new ResourceException(bundle.noMManagedConnectionsAvailableWithinConfiguredBlockingTimeout(
@@ -812,7 +814,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             ConnectionListener cl = cls.remove(0);
             boolean kill = true;
 
-            if (FlushMode.INVALID == mode)
+            if (FlushMode.INVALID == mode && cl.getState().equals(ConnectionState.NORMAL))
             {
                if (mcf instanceof ValidatingManagedConnectionFactory)
                {

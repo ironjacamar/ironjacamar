@@ -586,6 +586,10 @@ public abstract class AbstractConnectionManager implements ConnectionManager
             }
          }
       }
+      catch (Exception e)
+      {
+         failure = e;
+      }
       finally
       {
          if (isInterrupted || innerIsInterrupted)
@@ -642,11 +646,26 @@ public abstract class AbstractConnectionManager implements ConnectionManager
          // these errors
          if (kill)
          {
-            log.debug("resourceException killing connection (error retrieving from pool?)", re);
+            log.debug("ResourceException killing connection", re);
          }
          else
          {
             log.resourceExceptionReturningConnection(cl.getManagedConnection(), re);
+         }
+      }
+      catch (Exception e)
+      {
+         try
+         {
+            // Something is very wrong, so lets set the state up-front
+            if (cl.getState().equals(ConnectionState.NORMAL))
+               cl.setState(ConnectionState.DESTROY);
+
+            localStrategy.returnConnection(cl, true);
+         }
+         catch (Throwable t)
+         {
+            log.throwableReturningConnection(cl.getManagedConnection(), t);
          }
       }
 
