@@ -500,6 +500,9 @@ org.jboss.jca.core.tx.perf.Performance
             USE_TRANSACTION_FOR_NOTRANSACTION: Use a transaction for NoTransaction scenario
           </listitem>
           <listitem>
+            USE_CCM: Register connections with the cached connection manager
+          </listitem>
+          <listitem>
             TX_BEGIN_DURATION: The number of milliseconds spent in the resource during tx.begin()
           </listitem>
           <listitem>

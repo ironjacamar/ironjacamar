@@ -30,4 +30,9 @@ public interface PerfConnection
     * Close
     */
    public void close();
+
+   /**
+    * Error
+    */
+   public void error();
 }

@@ -62,12 +62,6 @@ public class PerfManagedConnection implements ManagedConnection, LocalTransactio
    /** Connection */
    private PerfConnectionImpl connection;
 
-   /** Close event */
-   private ConnectionEvent closeEvent;
-
-   /** Error event */
-   private ConnectionEvent errorEvent;
-
    /**
     * Default constructor
     * @param mcf mcf
@@ -82,12 +76,6 @@ public class PerfManagedConnection implements ManagedConnection, LocalTransactio
       this.logwriter = null;
       this.listeners = Collections.synchronizedList(new ArrayList<ConnectionEventListener>(1));
       this.connection = new PerfConnectionImpl(this);
-
-      this.closeEvent = new ConnectionEvent(this, ConnectionEvent.CONNECTION_CLOSED);
-      this.closeEvent.setConnectionHandle(connection);
-
-      this.errorEvent = new ConnectionEvent(this, ConnectionEvent.CONNECTION_ERROR_OCCURRED, new Exception());
-      this.errorEvent.setConnectionHandle(connection);
    }
 
    /**
@@ -174,7 +162,11 @@ public class PerfManagedConnection implements ManagedConnection, LocalTransactio
     */
    void closeHandle()
    {
-      for (ConnectionEventListener cel : listeners)
+      ConnectionEvent closeEvent = new ConnectionEvent(this, ConnectionEvent.CONNECTION_CLOSED);
+      closeEvent.setConnectionHandle(connection);
+
+      List<ConnectionEventListener> copy = new ArrayList<ConnectionEventListener>(listeners);
+      for (ConnectionEventListener cel : copy)
       {
          cel.connectionClosed(closeEvent);
       }
@@ -185,7 +177,12 @@ public class PerfManagedConnection implements ManagedConnection, LocalTransactio
     */
    void errorHandle()
    {
-      for (ConnectionEventListener cel : listeners)
+      ConnectionEvent errorEvent = new ConnectionEvent(this, ConnectionEvent.CONNECTION_ERROR_OCCURRED,
+                                                       new Exception());
+      errorEvent.setConnectionHandle(connection);
+
+      List<ConnectionEventListener> copy = new ArrayList<ConnectionEventListener>(listeners);
+      for (ConnectionEventListener cel : copy)
       {
          cel.connectionErrorOccurred(errorEvent);
       }

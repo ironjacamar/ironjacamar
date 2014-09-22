@@ -48,12 +48,14 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.transaction.Status;
 import javax.transaction.UserTransaction;
 
 import org.jboss.logging.Logger;
@@ -89,6 +91,7 @@ public class Performance
    private static final boolean STATISTICS = false;
    private static final boolean RECORD_ENLISTMENT_TRACES = false;
    private static final boolean USE_TRANSACTION_FOR_NOTRANSACTION = true;
+   private static final boolean USE_CCM = false;
 
    private static final long TX_BEGIN_DURATION = 0L;
    private static final long TX_COMMIT_DURATION = 0L;
@@ -169,7 +172,8 @@ public class Performance
       org.jboss.jca.embedded.dsl.resourceadapters12.api.ConnectionDefinitionType dashRaXmlCdt =
          dashRaXmlCdst.createConnectionDefinition()
             .className(PerfManagedConnectionFactory.class.getName())
-            .jndiName("java:/eis/PerfConnectionFactory").poolName("Perf");
+            .jndiName("java:/eis/PerfConnectionFactory").poolName("Perf")
+            .useCcm(USE_CCM);
 
       dashRaXmlCdt.createConfigProperty().name("TxBeginDuration").text(Long.toString(TX_BEGIN_DURATION));
       dashRaXmlCdt.createConfigProperty().name("TxCommitDuration").text(Long.toString(TX_COMMIT_DURATION));
@@ -267,6 +271,8 @@ public class Performance
       catch (Throwable t)
       {
          log.error(t.getMessage(), t);
+         afterRun();
+         beforeRun();
       }
       finally
       {
@@ -370,6 +376,8 @@ public class Performance
       catch (Throwable t)
       {
          log.error(t.getMessage(), t);
+         afterRun();
+         beforeRun();
          fail(t.getMessage());
       }
       finally
@@ -429,6 +437,7 @@ public class Performance
 
                pc = pcf.getConnection();
                pc.close();
+               pc = null;
 
                if (ut != null)
                   ut.commit();
@@ -436,9 +445,31 @@ public class Performance
                success++;
             }
          }
-         catch (Exception e)
+         catch (Throwable t)
          {
-            log.fatal(e.getMessage(), e);
+            log.fatal("Thread: " + Thread.currentThread().getName() + ", " + t.getMessage(), t);
+
+            if (pc != null)
+            {
+               pc.error();
+               pc = null;
+            }
+
+            if (ut != null)
+            {
+               int status = ut.getStatus();
+               if (status == Status.STATUS_ACTIVE || status == Status.STATUS_MARKED_ROLLBACK)
+               {
+                  try
+                  {
+                     ut.rollback();
+                  }
+                  catch (Exception inner)
+                  {
+                     log.error("Rollback: Thread: " + Thread.currentThread().getName(), inner);
+                  }
+               }
+            }
          }
          finally
          {
@@ -473,7 +504,8 @@ public class Performance
 
          if (mbeanServer != null)
          {
-            mbeanServer.invoke(on, "setEnabled", new Object[] {STATISTICS}, new String[] {boolean.class.getName()});
+            Attribute attribute = new Attribute("Enabled", STATISTICS);
+            mbeanServer.setAttribute(on, attribute);
          }
          else
          {
@@ -693,6 +725,7 @@ public class Performance
    static void afterRun()
    {
       es.shutdown();
+      es = null;
    }
 
    /**

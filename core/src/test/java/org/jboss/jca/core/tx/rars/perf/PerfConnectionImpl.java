@@ -45,4 +45,12 @@ public class PerfConnectionImpl implements PerfConnection
    {
       mc.closeHandle();
    }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void error()
+   {
+      mc.errorHandle();
+   }
 }

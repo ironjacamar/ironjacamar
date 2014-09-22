@@ -22,7 +22,6 @@
 package org.jboss.jca.core.tx.rars.perf;
 
 import java.io.PrintWriter;
-import java.util.Iterator;
 import java.util.Set;
 
 import javax.resource.ResourceException;
