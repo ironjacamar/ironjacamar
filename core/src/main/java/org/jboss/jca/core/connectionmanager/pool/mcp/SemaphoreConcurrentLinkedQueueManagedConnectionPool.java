@@ -45,6 +45,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
@@ -146,20 +148,11 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
    /**
     * {@inheritDoc}
     */
-   public long getLastUsed() 
-   {
-      return lastUsed;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
    public void initialize(ManagedConnectionFactory mcf, ConnectionManager cm, Subject subject,
            ConnectionRequestInfo cri, PoolConfiguration pc, Pool p)
    {
       if (mcf == null)
-         throw new IllegalArgumentException(
-               "ManagedConnectionFactory is null");
+         throw new IllegalArgumentException("ManagedConnectionFactory is null");
 
       if (cm == null)
          throw new IllegalArgumentException("ConnectionManager is null");
@@ -219,6 +212,14 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
    /**
     * {@inheritDoc}
     */
+   public long getLastUsed() 
+   {
+      return lastUsed;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public boolean isRunning() 
    {
       return !pool.isShutdown();
@@ -237,7 +238,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
     */
    public boolean isFull() 
    {
-      return poolSize.get() == maxSize;
+      return checkedOutSize.get() == maxSize;
    }
 
    /**
@@ -259,8 +260,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
    /**
     * Check if the pool has reached a certain size
     * 
-    * @param size
-    *            The size
+    * @param size The size
     * @return True if reached; otherwise false
     */
    private boolean isSize(int size) 
@@ -273,10 +273,10 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
     */
    public void prefill() 
    {
-      if (isRunning()
-            && (poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) && 
-            pool instanceof PrefillPool && 
-            poolConfiguration.getMinSize() > 0)
+      if (isRunning() &&
+          (poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) && 
+          pool instanceof PrefillPool && 
+          poolConfiguration.getMinSize() > 0)
          PoolFiller.fillPool(new FillRequest(this, poolConfiguration.getMinSize()));
    }
 
@@ -290,8 +290,8 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
          synchronized (cls)
          {
             String method = "getConnection(" + subject + ", " + cri + ")";
-            List<ConnectionListener> checkedOut = new ArrayList<ConnectionListener>();
-            List<ConnectionListener> available = new ArrayList<ConnectionListener>();
+            SortedSet<ConnectionListener> checkedOut = new TreeSet<ConnectionListener>();
+            SortedSet<ConnectionListener> available = new TreeSet<ConnectionListener>();
             for (Entry<ConnectionListener, ConnectionListenerWrapper> entry : cls.entrySet()) 
             {
                if (entry.getValue().isCheckedOut())
@@ -299,11 +299,8 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                else
                   available.add(entry.getKey());
             }
-            Collections.sort(checkedOut);
-            Collections.sort(available);
-            log.trace(ManagedConnectionPoolUtility.fullDetails(
-                  System.identityHashCode(this), method, mcf, cm, pool,
-                  poolConfiguration, available, checkedOut, statistics));
+            log.trace(ManagedConnectionPoolUtility.fullDetails(System.identityHashCode(this), method, mcf, cm, pool,
+                                                               poolConfiguration, available, checkedOut, statistics));
          }
       } 
       else if (debug) 
@@ -317,7 +314,8 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
 
       if (isFull()) 
       {
-         statistics.deltaWaitCount();
+         if (statistics.isEnabled())
+            statistics.deltaWaitCount();
 
          if (pool.isSharable() && (supportsLazyAssociation == null || supportsLazyAssociation.booleanValue())) 
          {
@@ -328,14 +326,13 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
             {
                if (trace)
                   log.tracef("Trying to detach - Pool: %s MCP: %s", pool.getName(), 
-                     Integer.toHexString(System.identityHashCode(this)));
+                             Integer.toHexString(System.identityHashCode(this)));
 
                if (!detachConnectionListener()) 
                {
                   if (trace)
-                     log.tracef(
-                           "Detaching didn't succeed - Pool: %s MCP: %s", pool.getName(), 
-                           Integer.toHexString(System.identityHashCode(this)));
+                     log.tracef("Detaching didn't succeed - Pool: %s MCP: %s", pool.getName(), 
+                                Integer.toHexString(System.identityHashCode(this)));
                }
             }
          }
@@ -349,8 +346,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
             if (statistics.isEnabled())
                statistics.deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
 
-            // We have a permit to get a connection. Is there one in the
-            // pool already?
+            // We have a permit to get a connection. Is there one in the pool already?
             ConnectionListenerWrapper clw = null;
             do 
             {
@@ -360,7 +356,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
 
                   throw new ResourceException(
                      bundle.thePoolHasBeenShutdown(pool.getName(),
-                                                        Integer.toHexString(System.identityHashCode(this))));
+                                                   Integer.toHexString(System.identityHashCode(this))));
                }
 
                clw = clq.poll();
@@ -507,7 +503,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
 
                if (Tracer.isEnabled())
                   Tracer.getConnectionListener(pool.getName(), clw.getConnectionListener(), false, 
-                     pool.isInterleaving());
+                                               pool.isInterleaving());
 
                return clw.getConnectionListener();
             } 
@@ -536,8 +532,8 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
          {
             // We timed out
             throw new ResourceException(
-                  bundle.noMManagedConnectionsAvailableWithinConfiguredBlockingTimeout(
-                     poolConfiguration.getBlockingTimeout()));
+               bundle.noMManagedConnectionsAvailableWithinConfiguredBlockingTimeout(
+                  poolConfiguration.getBlockingTimeout()));
          }
 
       } 
@@ -599,8 +595,8 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
          synchronized (cls)
          {
             String method = "returnConnection(" + Integer.toHexString(System.identityHashCode(cl)) + ", " + kill + ")";
-            List<ConnectionListener> checkedOut = new ArrayList<ConnectionListener>();
-            List<ConnectionListener> available = new ArrayList<ConnectionListener>();
+            SortedSet<ConnectionListener> checkedOut = new TreeSet<ConnectionListener>();
+            SortedSet<ConnectionListener> available = new TreeSet<ConnectionListener>();
             for (Entry<ConnectionListener, ConnectionListenerWrapper> entry : cls.entrySet()) 
             {
                if (entry.getValue().isCheckedOut())
@@ -608,8 +604,6 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                else
                   available.add(entry.getKey());
             }
-            Collections.sort(checkedOut);
-            Collections.sort(available);
             log.trace(ManagedConnectionPoolUtility.fullDetails(
                   System.identityHashCode(this), method, mcf, cm, pool,
                   poolConfiguration, available, checkedOut, statistics));
@@ -737,15 +731,13 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
          {
             if (trace) 
             {
-               List<ConnectionListener> checkedOut = new ArrayList<ConnectionListener>();
+               SortedSet<ConnectionListener> checkedOut = new TreeSet<ConnectionListener>();
                for (Entry<ConnectionListener, ConnectionListenerWrapper> entry : cls.entrySet()) 
                {
                   if (entry.getValue().isCheckedOut())
                      checkedOut.add(entry.getKey());
                }
-               Collections.sort(checkedOut);
                log.trace("Flushing pool checkedOut=" + checkedOut + " inPool=" + cls);
-
             }
 
             // Mark checked out connections as requiring destruction
@@ -753,28 +745,29 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
             {
                if (entry.getValue().isCheckedOut()) 
                {
+                  if (trace)
+                     log.trace("Flush marking checked out connection for destruction " + entry.getKey());
+
                   entry.getValue().setCheckedOut(false);
                   checkedOutSize.decrementAndGet();
+
+                  if (entry.getValue().hasPermit())
+                  {
+                     entry.getValue().setHasPermit(false);
+                     permits.release();
+                  }
+
+                  entry.getKey().setState(ConnectionState.DESTROY);
+
+                  if (destroy == null)
+                     destroy = new ArrayList<ConnectionListenerWrapper>(1);
+
+                  destroy.add(entry.getValue());
+
+                  clq.remove(entry.getValue());
+                  cls.remove(entry.getKey());
+                  poolSize.decrementAndGet();
                }
-               if (entry.getValue().hasPermit())
-               {
-                  entry.getValue().setHasPermit(false);
-                  permits.release();
-               }
-
-               if (trace)
-                  log.trace("Flush marking checked out connection for destruction " + entry.getKey());
-
-               entry.getKey().setState(ConnectionState.DESTROY);
-
-               if (destroy == null)
-                  destroy = new ArrayList<ConnectionListenerWrapper>(1);
-
-               destroy.add(entry.getValue());
-
-               clq.remove(entry.getValue());
-               cls.remove(entry.getKey());
-               poolSize.decrementAndGet();
             }
 
             if (statistics.isEnabled())
@@ -784,13 +777,12 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
          {
             if (trace) 
             {
-               List<ConnectionListener> checkedOut = new ArrayList<ConnectionListener>();
+               SortedSet<ConnectionListener> checkedOut = new TreeSet<ConnectionListener>();
                for (Entry<ConnectionListener, ConnectionListenerWrapper> entry : cls.entrySet()) 
                {
                   if (entry.getValue().isCheckedOut())
                      checkedOut.add(entry.getKey());
                }
-               Collections.sort(checkedOut);
                log.trace("Gracefully flushing pool checkedOut=" + checkedOut + " inPool=" + cls);
             }
 
@@ -814,7 +806,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
             ConnectionListenerWrapper clw = clqIter.next();
             boolean kill = true;
 
-            if (FlushMode.INVALID == mode) 
+            if (FlushMode.INVALID == mode && clw.getConnectionListener().getState().equals(ConnectionState.NORMAL)) 
             {
                if (mcf instanceof ValidatingManagedConnectionFactory) 
                {
@@ -901,8 +893,8 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
          synchronized (cls) 
          {
             String method = "removeIdleConnections(" + timeout + ")";
-            List<ConnectionListener> checkedOut = new ArrayList<ConnectionListener>();
-            List<ConnectionListener> available = new ArrayList<ConnectionListener>();
+            SortedSet<ConnectionListener> checkedOut = new TreeSet<ConnectionListener>();
+            SortedSet<ConnectionListener> available = new TreeSet<ConnectionListener>();
             for (Entry<ConnectionListener, ConnectionListenerWrapper> entry : cls.entrySet()) 
             {
                if (entry.getValue().isCheckedOut())
@@ -910,8 +902,6 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                else
                   available.add(entry.getKey());
             }
-            Collections.sort(checkedOut);
-            Collections.sort(available);
             log.trace(ManagedConnectionPoolUtility.fullDetails(
                   System.identityHashCode(this), method, mcf, cm, pool,
                   poolConfiguration, available, checkedOut, statistics));
@@ -933,8 +923,8 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
          ConnectionListenerWrapper clw = clwIter.next();
 
          destroy = decrementer.shouldDestroy(clw.getConnectionListener(),
-               timeout, poolSize.get(),
-               poolConfiguration.getMinSize(), destroyed);
+                                             timeout, poolSize.get(),
+                                             poolConfiguration.getMinSize(), destroyed);
 
          if (destroy) 
          {
@@ -1061,8 +1051,8 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
          synchronized (cls) 
          {
             String method = "fillTo(" + size + ")";
-            List<ConnectionListener> checkedOut = new ArrayList<ConnectionListener>();
-            List<ConnectionListener> available = new ArrayList<ConnectionListener>();
+            SortedSet<ConnectionListener> checkedOut = new TreeSet<ConnectionListener>();
+            SortedSet<ConnectionListener> available = new TreeSet<ConnectionListener>();
             for (Entry<ConnectionListener, ConnectionListenerWrapper> entry : cls.entrySet()) 
             {
                if (entry.getValue().isCheckedOut())
@@ -1070,8 +1060,6 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                else
                   available.add(entry.getKey());
             }
-            Collections.sort(checkedOut);
-            Collections.sort(available);
             log.trace(ManagedConnectionPoolUtility.fullDetails(
                   System.identityHashCode(this), method, mcf, cm, pool,
                   poolConfiguration, available, checkedOut, statistics));
