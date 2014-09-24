@@ -22,8 +22,6 @@
 
 package org.jboss.jca.core.connectionmanager;
 
-import org.jboss.jca.core.spi.graceful.GracefulCallback;
-
 /**
  * Shutdown a ConnectionManager
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
@@ -31,17 +29,14 @@ import org.jboss.jca.core.spi.graceful.GracefulCallback;
 class ConnectionManagerShutdown implements Runnable
 {
    private ConnectionManager cm;
-   private GracefulCallback cb;
 
    /**
     * Constructor
     * @param cm The connection manager
-    * @param cb The callback
     */
-   ConnectionManagerShutdown(ConnectionManager cm, GracefulCallback cb)
+   ConnectionManagerShutdown(ConnectionManager cm)
    {
       this.cm = cm;
-      this.cb = cb;
    }
 
    /**
@@ -50,8 +45,5 @@ class ConnectionManagerShutdown implements Runnable
    public void run()
    {
       cm.shutdown();
-
-      if (cb != null)
-         cb.done();
    }
 }

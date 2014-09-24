@@ -134,6 +134,9 @@ public class WorkManagerImpl implements WorkManager
    /** Graceful job */
    private ScheduledFuture scheduledGraceful;
 
+   /** Graceful call back */
+   private GracefulCallback gracefulCallback;
+
    /** Active work wrappers */
    private Set<WorkWrapper> activeWorkWrappers;
 
@@ -165,6 +168,7 @@ public class WorkManagerImpl implements WorkManager
       shutdown = new AtomicBoolean(false);
       scheduledExecutorService = null;
       scheduledGraceful = null;
+      gracefulCallback = null;
       activeWorkWrappers = new HashSet<WorkWrapper>();
       statisticsEnabled = true;
       statistics = new WorkManagerStatisticsImpl();
@@ -831,16 +835,30 @@ public class WorkManagerImpl implements WorkManager
          if (result)
          {
             shutdown.set(false);
+
+            if (gracefulCallback != null)
+               gracefulCallback.cancel();
+
             scheduledGraceful = null;
+            gracefulCallback = null;
          }
          else
          {
             return false;
          }
       }
-      else
+      else if (shutdown.get())
       {
          shutdown.set(false);
+
+         if (gracefulCallback != null)
+            gracefulCallback.cancel();
+
+         gracefulCallback = null;
+      }
+      else
+      {
+         return false;
       }
 
       return true;
@@ -851,40 +869,62 @@ public class WorkManagerImpl implements WorkManager
     */
    public void prepareShutdown()
    {
+      prepareShutdown(0, null);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void prepareShutdown(GracefulCallback cb)
+   {
+      prepareShutdown(0, cb);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void prepareShutdown(int seconds)
+   {
+      prepareShutdown(seconds, null);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void prepareShutdown(int seconds, GracefulCallback cb)
+   {
       shutdown.set(true);
-   }
 
-   /**
-    * {@inheritDoc}
-    */
-   public void prepareShutdown(int shutdown)
-   {
-      prepareShutdown(shutdown, null);
-   }
+      if (gracefulCallback == null) 
+         gracefulCallback = cb;
 
-   /**
-    * {@inheritDoc}
-    */
-   public void prepareShutdown(int shutdown, GracefulCallback cb)
-   {
-      prepareShutdown();
-
-      if (shutdown > 0 && scheduledGraceful == null)
+      if (seconds > 0)
       {
-         if (scheduledExecutorService == null)
-            scheduledExecutorService = Executors.newScheduledThreadPool(1);
+         if (scheduledGraceful == null)
+         {
+            if (scheduledExecutorService == null)
+               scheduledExecutorService = Executors.newScheduledThreadPool(1);
 
-         scheduledGraceful =
-            scheduledExecutorService.schedule(new WorkManagerShutdown(this, cb), shutdown, TimeUnit.SECONDS);
+            scheduledGraceful =
+               scheduledExecutorService.schedule(new WorkManagerShutdown(this), seconds, TimeUnit.SECONDS);
+         }
+      }
+      else
+      {
+         synchronized (activeWorkWrappers)
+         {
+            if (activeWorkWrappers.size() == 0)
+               shutdown();
+         }
       }
    }
 
    /**
     * {@inheritDoc}
     */
-   public void shutdown()
+   public synchronized void shutdown()
    {
-      prepareShutdown();
+      shutdown.set(true);
 
       synchronized (activeWorkWrappers)
       {
@@ -895,7 +935,20 @@ public class WorkManagerImpl implements WorkManager
       }
 
       if (scheduledExecutorService != null)
+      {
+         if (scheduledGraceful != null && !scheduledGraceful.isDone())
+            scheduledGraceful.cancel(true);
+
+         scheduledGraceful = null;
          scheduledExecutorService.shutdownNow();
+         scheduledExecutorService = null;
+      }
+
+      if (gracefulCallback != null)
+      {
+         gracefulCallback.done();
+         gracefulCallback = null;
+      }
    }
 
    /**

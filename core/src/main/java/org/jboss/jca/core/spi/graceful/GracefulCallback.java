@@ -30,7 +30,13 @@ package org.jboss.jca.core.spi.graceful;
 public interface GracefulCallback
 {
    /**
-    * Done
+    * This method is triggered when a shutdown is cancelled
+    */
+   public void cancel();
+
+   /**
+    * This method is triggered when either there are no active
+    * connections, or the specified timeout has occurred
     */
    public void done();
 }

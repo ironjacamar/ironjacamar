@@ -380,6 +380,82 @@ public class ShutdownTestCase
    }
 
    /**
+    * Test getConnection followed by prepare shutdown, and cancel with call back
+    * @throws Throwable throwable exception
+    */
+   @Test
+   public void testGetConnectionPrepareShutdownAndCancelWithCallback() throws Throwable
+   {
+      Context context = null;
+
+      ResourceAdapterArchive raa = createArchiveDeployment();
+      ResourceAdaptersDescriptor dashRaXml = createActivationDeployment();
+
+      try
+      {
+         embedded.deploy(raa);
+         embedded.deploy(dashRaXml);
+
+         context = new InitialContext();
+
+         SimpleConnectionFactory cf = (SimpleConnectionFactory)context.lookup("java:/eis/SimpleConnectionFactory");
+         assertNotNull(cf);
+
+         SimpleConnection c = cf.getConnection();
+
+         ConnectionManager cm = ConnectionManagerUtil.extract(cf);
+         assertNotNull(cm);
+
+         ShutdownCallback cb = new ShutdownCallback();
+
+         cm.prepareShutdown(cb);
+
+         SimpleConnection c2 = null;
+         try
+         {
+            c2 = cf.getConnection();
+            fail("Got 2nd connection");
+         }
+         catch (Exception inner)
+         {
+            // Ok
+         }
+
+         cm.cancelShutdown();
+
+         c.close();
+
+         c2 = cf.getConnection();
+         c2.close();
+
+         assertNotNull(cm.getPool());
+         assertTrue(cb.wasCancelCalled());
+      }
+      catch (Exception e)
+      {
+         fail("Should not be here");
+         log.error(e.getMessage(), e);
+      }
+      finally
+      {
+         embedded.undeploy(dashRaXml);
+         embedded.undeploy(raa);
+
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+      }
+   }
+
+   /**
     * Test getConnection followed by prepare shutdown with seconds
     * @throws Throwable throwable exception
     */
@@ -553,7 +629,66 @@ public class ShutdownTestCase
 
          c.close();
 
-         assertTrue(cb.wasCalled());
+         assertTrue(cb.wasDoneCalled());
+      }
+      catch (Exception e)
+      {
+         fail("Should not be here");
+         log.error(e.getMessage(), e);
+      }
+      finally
+      {
+         embedded.undeploy(dashRaXml);
+         embedded.undeploy(raa);
+
+         if (context != null)
+         {
+            try
+            {
+               context.close();
+            }
+            catch (NamingException ne)
+            {
+               // Ignore
+            }
+         }
+      }
+   }
+
+   /**
+    * Test getConnection followed by prepare shutdown, and callback
+    * @throws Throwable throwable exception
+    */
+   @Test
+   public void testGetConnectionPrepareShutdownAndCallback() throws Throwable
+   {
+      Context context = null;
+
+      ResourceAdapterArchive raa = createArchiveDeployment();
+      ResourceAdaptersDescriptor dashRaXml = createActivationDeployment();
+
+      try
+      {
+         embedded.deploy(raa);
+         embedded.deploy(dashRaXml);
+
+         context = new InitialContext();
+
+         SimpleConnectionFactory cf = (SimpleConnectionFactory)context.lookup("java:/eis/SimpleConnectionFactory");
+         assertNotNull(cf);
+
+         SimpleConnection c = cf.getConnection();
+
+         ConnectionManager cm = ConnectionManagerUtil.extract(cf);
+         assertNotNull(cm);
+
+         ShutdownCallback cb = new ShutdownCallback();
+
+         cm.prepareShutdown(cb);
+
+         c.close();
+
+         assertTrue(cb.wasDoneCalled());
       }
       catch (Exception e)
       {
@@ -584,23 +719,42 @@ public class ShutdownTestCase
     */
    static class ShutdownCallback implements GracefulCallback
    {
-      private boolean called;
+      private boolean cancelCalled;
+      private boolean doneCalled;
 
       /**
        * Constructor
        */
       ShutdownCallback()
       {
-         this.called = false;
+         this.cancelCalled = false;
+         this.doneCalled = false;
       }
 
       /**
-       * Was called
+       * Was cancel called
        * @return The result
        */
-      boolean wasCalled()
+      boolean wasCancelCalled()
       {
-         return called;
+         return cancelCalled;
+      }
+
+      /**
+       * Was done called
+       * @return The result
+       */
+      boolean wasDoneCalled()
+      {
+         return doneCalled;
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public void cancel()
+      {
+         cancelCalled = true;
       }
 
       /**
@@ -608,7 +762,7 @@ public class ShutdownTestCase
        */
       public void done()
       {
-         called = true;
+         doneCalled = true;
       }
    }
 

@@ -101,6 +101,9 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    /** Graceful job */
    private ScheduledFuture scheduledGraceful;
 
+   /** Graceful call back */
+   private GracefulCallback gracefulCallback;
+
    /** Cached connection manager */
    private CachedConnectionManager cachedConnectionManager;
 
@@ -128,6 +131,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       this.trace = log.isTraceEnabled();
       this.scheduledExecutorService = null;
       this.scheduledGraceful = null;
+      this.gracefulCallback = null;
    }
 
    /**
@@ -185,10 +189,14 @@ public abstract class AbstractConnectionManager implements ConnectionManager
          {
             shutdown.set(false);
 
+            if (gracefulCallback != null)
+               gracefulCallback.cancel();
+
             if (pool != null)
                pool.cancelShutdown();
 
             scheduledGraceful = null;
+            gracefulCallback = null;
          }
          else
          {
@@ -199,8 +207,13 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       {
          shutdown.set(false);
 
+         if (gracefulCallback != null)
+            gracefulCallback.cancel();
+
          if (pool != null)
             pool.cancelShutdown();
+
+         gracefulCallback = null;
       }
       else
       {
@@ -215,34 +228,53 @@ public abstract class AbstractConnectionManager implements ConnectionManager
     */
    public void prepareShutdown()
    {
+      prepareShutdown(0, null);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void prepareShutdown(GracefulCallback cb)
+   {
+      prepareShutdown(0, cb);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void prepareShutdown(int seconds)
+   {
+      prepareShutdown(seconds, null);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void prepareShutdown(int seconds, GracefulCallback cb)
+   {
       shutdown.set(true);
+
+      if (gracefulCallback == null) 
+         gracefulCallback = cb;
 
       if (pool != null)
          pool.prepareShutdown();
-   }
 
-   /**
-    * {@inheritDoc}
-    */
-   public void prepareShutdown(int shutdown)
-   {
-      prepareShutdown(shutdown, null);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void prepareShutdown(int shutdown, GracefulCallback cb)
-   {
-      prepareShutdown();
-
-      if (shutdown > 0 && scheduledGraceful == null)
+      if (seconds > 0)
       {
-         if (scheduledExecutorService == null)
-            scheduledExecutorService = Executors.newScheduledThreadPool(1);
+         if (scheduledGraceful == null)
+         {
+            if (scheduledExecutorService == null)
+               scheduledExecutorService = Executors.newScheduledThreadPool(1);
 
-         scheduledGraceful =
-            scheduledExecutorService.schedule(new ConnectionManagerShutdown(this, cb), shutdown, TimeUnit.SECONDS);
+            scheduledGraceful =
+               scheduledExecutorService.schedule(new ConnectionManagerShutdown(this), seconds, TimeUnit.SECONDS);
+         }
+      }
+      else
+      {
+         if (pool != null && pool.isIdle())
+            shutdown();
       }
    }
 
@@ -258,7 +290,20 @@ public abstract class AbstractConnectionManager implements ConnectionManager
          pool.shutdown();
 
       if (scheduledExecutorService != null)
+      {
+         if (scheduledGraceful != null && !scheduledGraceful.isDone())
+            scheduledGraceful.cancel(true);
+
+         scheduledGraceful = null;
          scheduledExecutorService.shutdownNow();
+         scheduledExecutorService = null;
+      }
+
+      if (gracefulCallback != null)
+      {
+         gracefulCallback.done();
+         gracefulCallback = null;
+      }
    }
 
    /**
@@ -669,7 +714,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
          }
       }
 
-      if (shutdown.get() && localStrategy.isIdle())
+      if (shutdown.get() && pool.isIdle())
          shutdown();
    }
 
