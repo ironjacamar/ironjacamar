@@ -23,14 +23,12 @@ package org.jboss.jca.core.tx.jbossts;
 
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.recovery.ValidatingManagedConnectionFactoryRecoveryPlugin;
-import org.jboss.jca.core.security.SimplePrincipal;
 import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
 import org.jboss.jca.core.spi.security.SubjectFactory;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.core.spi.transaction.XAResourceStatistics;
 
 import java.security.AccessController;
-import java.security.Principal;
 import java.security.PrivilegedAction;
 import java.util.HashSet;
 import java.util.Set;
@@ -295,19 +293,7 @@ public class XAResourceRecoveryImpl implements org.jboss.jca.core.spi.transactio
                log.debugf("Recovery user name=%s", recoverUserName);
 
                // User name and password use-case
-               Subject subject = new Subject();
-
-               // Principals
-               Principal p = new SimplePrincipal(recoverUserName);
-               subject.getPrincipals().add(p);
-
-               // PrivateCredentials
-               PasswordCredential pc = new PasswordCredential(recoverUserName, recoverPassword.toCharArray());
-               pc.setManagedConnectionFactory(mcf);
-               subject.getPrivateCredentials().add(pc);
-
-               // PublicCredentials
-               // None
+               Subject subject = SecurityActions.createSubject(recoverUserName, recoverPassword, mcf);
 
                log.debugf("Recovery Subject=%s", subject);
 
@@ -323,9 +309,9 @@ public class XAResourceRecoveryImpl implements org.jboss.jca.core.spi.transactio
 
                   if (domain != null && subjectFactory != null)
                   {
-                     Subject subject = subjectFactory.createSubject(domain);
+                     Subject subject = SecurityActions.createSubject(subjectFactory, domain);
                      
-                     Set<PasswordCredential> pcs = subject.getPrivateCredentials(PasswordCredential.class);
+                     Set<PasswordCredential> pcs = SecurityActions.getPasswordCredentials(subject);
                      if (pcs.size() > 0)
                      {
                         for (PasswordCredential pc : pcs)

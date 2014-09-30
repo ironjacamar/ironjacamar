@@ -226,9 +226,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       Subject copySubject = null;
 
       if (subject != null)
-         copySubject = SecurityActions.createSubject(false, subject.getPrincipals(),
-                                                     subject.getPublicCredentials(),
-                                                     subject.getPrivateCredentials());
+         copySubject = SecurityActions.createSubject(false, subject);
 
       if (log.isTraceEnabled())
       {

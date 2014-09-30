@@ -2,7 +2,7 @@
  * IronJacamar, a Java EE Connector Architecture implementation
  * Copyright 2014, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors. 
+ * distribution for a full listing of individual contributors.
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as
@@ -20,67 +20,66 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.adapters.jdbc.xa;
+package org.jboss.jca.core.connectionmanager;
+
+import org.jboss.jca.core.spi.security.SubjectFactory;
 
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.Set;
 
+import javax.resource.spi.security.PasswordCredential;
 import javax.security.auth.Subject;
 
 /**
  * Privileged Blocks
- * 
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 class SecurityActions
-{
+{ 
    /**
-    * Get the classloader.
-    * @param c The class
-    * @return The classloader
+    * Constructor
     */
-   static ClassLoader getClassLoader(final Class<?> c)
+   private SecurityActions()
+   {
+   }
+
+   /**
+    * Get a Subject instance
+    * @param subjectFactory The subject factory
+    * @param domain The domain
+    * @return The instance
+    */
+   static Subject createSubject(final SubjectFactory subjectFactory, final String domain)
    {
       if (System.getSecurityManager() == null)
-         return c.getClassLoader();
+         return subjectFactory.createSubject(domain);
 
-      return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>()
+      return AccessController.doPrivileged(new PrivilegedAction<Subject>() 
       {
-         public ClassLoader run()
+         public Subject run()
          {
-            return c.getClassLoader();
+            return subjectFactory.createSubject(domain);
          }
       });
    }
 
    /**
-    * Create a Subject
-    * @param readOnly Is the Subject read-only
-    * @param subject The original subject
-    * @return The instance
+    * Get the PasswordCredential from the Subject
+    * @param subject The subject
+    * @return The instances
     */
-   static Subject createSubject(final boolean readOnly,
-                                final Subject subject)
+   static Set<PasswordCredential> getPasswordCredentials(final Subject subject)
    {
       if (System.getSecurityManager() == null)
+         return subject.getPrivateCredentials(PasswordCredential.class);
+
+      return AccessController.doPrivileged(new PrivilegedAction<Set<PasswordCredential>>() 
       {
-         return new Subject(readOnly,
-                            subject.getPrincipals(),
-                            subject.getPublicCredentials(),
-                            subject.getPrivateCredentials());
-      }
-      else
-      {
-         return AccessController.doPrivileged(new PrivilegedAction<Subject>()
+         public Set<PasswordCredential> run()
          {
-            public Subject run()
-            {
-               return new Subject(readOnly,
-                                  subject.getPrincipals(),
-                                  subject.getPublicCredentials(),
-                                  subject.getPrivateCredentials());
-            }
-         });
-      }
+            return subject.getPrivateCredentials(PasswordCredential.class);
+         }
+      });
    }
 }

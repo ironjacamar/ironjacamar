@@ -1079,8 +1079,8 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    public abstract TransactionIntegration getTransactionIntegration();
 
    /**
-    * Gets subject.
-    * @return subject
+    * Get a subject
+    * @return The subject
     */
    private Subject getSubject()
    {
@@ -1088,10 +1088,10 @@ public abstract class AbstractConnectionManager implements ConnectionManager
 
       if (subjectFactory != null && securityDomain != null)
       {
-         subject = subjectFactory.createSubject(securityDomain);
+         subject = SecurityActions.createSubject(subjectFactory, securityDomain);
 
-         Set<PasswordCredential> credentials = subject.getPrivateCredentials(PasswordCredential.class);
-         if (credentials.size() > 0)
+         Set<PasswordCredential> credentials = SecurityActions.getPasswordCredentials(subject);
+         if (credentials != null && credentials.size() > 0)
          {
             ManagedConnectionFactory pcMcf = getManagedConnectionFactory();
             for (PasswordCredential pc : credentials)

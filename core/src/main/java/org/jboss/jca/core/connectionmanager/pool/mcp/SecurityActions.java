@@ -25,6 +25,8 @@ package org.jboss.jca.core.connectionmanager.pool.mcp;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
+import javax.security.auth.Subject;
+
 /**
  * Privileged Blocks
  * 
@@ -108,5 +110,48 @@ class SecurityActions
             return t.getStackTrace();
          }
       });
+   }
+
+   /**
+    * Get the hash code for a Subject
+    * @param subject The Subject
+    * @return The hash code
+    */
+   static int hashCode(final Subject subject)
+   {
+      if (System.getSecurityManager() == null)
+         return subject.hashCode();
+
+      Integer hashCode = AccessController.doPrivileged(new PrivilegedAction<Integer>() 
+      {
+         public Integer run()
+         {
+            return subject.hashCode();
+         }
+      });
+
+      return hashCode.intValue();
+   }
+
+   /**
+    * Verify if two Subject's are equal
+    * @param s1 The first Subject
+    * @param s2 The second Subject
+    * @return True if equal; otherwise false
+    */
+   static boolean equals(final Subject s1, final Subject s2)
+   {
+      if (System.getSecurityManager() == null)
+         return s1 != null ? s1.equals(s2) : s2 == null;
+
+      Boolean equals = AccessController.doPrivileged(new PrivilegedAction<Boolean>() 
+      {
+         public Boolean run()
+         {
+            return s1 != null ? s1.equals(s2) : s2 == null;
+         }
+      });
+
+      return equals.booleanValue();
    }
 }

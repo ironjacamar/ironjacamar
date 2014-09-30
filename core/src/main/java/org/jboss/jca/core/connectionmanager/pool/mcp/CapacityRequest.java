@@ -88,7 +88,7 @@ class CapacityRequest
    {
       int result = 31;
       result += 7 * mcp.hashCode();
-      result += subject != null ? 7 * subject.hashCode() : 7;
+      result += subject != null ? 7 * SecurityActions.hashCode(subject) : 7;
       result += cri != null ? 7 * cri.hashCode() : 7;
       return result;
    }
@@ -122,7 +122,7 @@ class CapacityRequest
          if (other.subject != null)
             return false;
       }
-      else if (!subject.equals(other.subject))
+      else if (!SecurityActions.equals(subject, other.subject))
          return false;
 
       if (cri == null)

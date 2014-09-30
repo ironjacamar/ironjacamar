@@ -381,10 +381,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
 
       if (xadsSelector == null)
       {
-         final Subject copySubject = subject != null ?
-            SecurityActions.createSubject(false, subject.getPrincipals(),
-                                          subject.getPublicCredentials(),
-                                          subject.getPrivateCredentials()) : null;
+         final Subject copySubject = subject != null ? SecurityActions.createSubject(false, subject) : null;
 
          if (copySubject != null)
          {
@@ -423,10 +420,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
          if (log.isTraceEnabled())
             log.trace("Trying to create an XA connection to " + xaData.getUrl());
 
-         final Subject copySubject = subject != null ?
-            SecurityActions.createSubject(false, subject.getPrincipals(),
-                                          subject.getPublicCredentials(),
-                                          subject.getPrivateCredentials()) : null;
+         final Subject copySubject = subject != null ? SecurityActions.createSubject(false, subject) : null;
 
          if (copySubject != null)
          {
