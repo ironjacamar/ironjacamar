@@ -42,10 +42,16 @@
 
         <itemizedlist>
           <listitem>
+            Support for graceful shutdown of <code>ConnectionManager</code> and <code>WorkManager</code>
+          </listitem>
+          <listitem>
             Support for connectable <code>XAResource</code>s
           </listitem>
           <listitem>
             Support tracking of connection handles across transaction boundaries
+          </listitem>
+          <listitem>
+            Additional statistics for pools
           </listitem>
           <listitem>
             Event tracer for easier debugging
@@ -189,8 +195,9 @@
     <para>
       Adrian Brock, Carlo de Wolf, Gurkan Erdogdu, Bruno Georges, Paul Gier, Jason Greene, Stefan Guilhen, 
       Jonathan Halliday, Søren Hilmer, Ales Justin, Vicky Kak,  Aslak Knutsen, Sacha Labourey, Mark Little, Alexey Loubyansky, 
-      Patrick MacDonald, Scott Marlow, Shelly McGowan, Andrig Miller, Marcus Moyses, Weston Price, Andrew Lee Rubinger, Heiko Rupp,
-      Anil Saldhana, Scott Stark, Clebert Suconic, Andy Taylor, Vladimir Vasilev, Jeremy Whiting, Yang Yong and Leslie York.
+      Patrick MacDonald, Scott Marlow, Shelly McGowan, Andrig Miller, Marcus Moyses, John O'Hara, Weston Price,
+      Andrew Lee Rubinger, Heiko Rupp, Anil Saldhana, Scott Stark, Clebert Suconic, Andy Taylor, Vladimir Vasilev,
+      Jeremy Whiting, Yang Yong and Leslie York.
     </para>
 
   </section>
@@ -198,7 +205,7 @@
   <section id="license">
     <title>License</title>
 
-    <para>Copyright © 2013 Red Hat, Inc. and others.</para>
+    <para>Copyright © 2014 Red Hat, Inc. and others.</para>
     <para>The text of and illustrations in this document are licensed by Red Hat under
       a Creative Commons Attribution–Share Alike 3.0 Unported license ("CC-BY-SA").</para>
     <para>An explanation of CC-BY-SA is available at 
