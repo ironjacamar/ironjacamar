@@ -97,6 +97,7 @@ public class PeriodicExecutionTestCase
          Thread.sleep(2000);
          work.setThrowWorkAException(true);
          assertTrue("work should start periodically, runs counted:" + work.getCounter(), work.getCounter() > 1);
+         bootstrapContextCoordinator.removeBootstrapContext("id");
       }
       catch (UnavailableException e)
       {

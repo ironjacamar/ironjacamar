@@ -92,6 +92,11 @@ public interface CloneableBootstrapContext extends Cloneable, BootstrapContext
    public void setXATerminator(XATerminator xt);
 
    /**
+    * Shutdown
+    */
+   public void shutdown();
+
+   /**
     * Clone the BootstrapContext implementation
     * @return A copy of the implementation
     * @exception CloneNotSupportedException Thrown if the copy operation isn't supported

@@ -27,7 +27,9 @@ import org.jboss.jca.core.api.workmanager.DistributableContext;
 import org.jboss.jca.core.api.workmanager.WorkManager;
 import org.jboss.jca.core.workmanager.WorkManagerCoordinator;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.Timer;
 
@@ -60,6 +62,9 @@ public class BaseCloneableBootstrapContext implements CloneableBootstrapContext
    /** Supported contexts */
    private Set<Class> supportedContexts;
 
+   /** Timers */
+   private List<Timer> timers;
+
    /** The id */
    private String id;
 
@@ -81,6 +86,8 @@ public class BaseCloneableBootstrapContext implements CloneableBootstrapContext
       this.supportedContexts.add(SecurityContext.class);
       this.supportedContexts.add(TransactionContext.class);
       this.supportedContexts.add(DistributableContext.class);
+
+      this.timers = null;
 
       this.id = null;
       this.name = null;
@@ -211,7 +218,35 @@ public class BaseCloneableBootstrapContext implements CloneableBootstrapContext
     */
    public Timer createTimer()
    {
-      return new Timer(true);
+      StringBuilder sb = new StringBuilder();
+
+      if (name != null)
+      {
+         sb.append(name);
+         if (id != null)
+            sb.append(":");
+      }
+
+      if (id != null)
+         sb.append(id);
+
+      Timer t = null;
+
+      if (sb.length() > 0)
+      {
+         t = new Timer(sb.toString(), true);
+      }
+      else
+      {
+         t = new Timer(true);
+      }
+
+      if (timers == null)
+         timers = new ArrayList<Timer>();
+
+      timers.add(t);
+
+      return t;
    }
 
    /**
@@ -225,6 +260,21 @@ public class BaseCloneableBootstrapContext implements CloneableBootstrapContext
          return false;
 
       return supportedContexts.contains(workContextClass);
+   }
+
+   /**
+    * Shutdown
+    */
+   public void shutdown()
+   {
+      if (timers != null)
+      {
+         for (Timer t : timers)
+         {
+            t.cancel();
+            t.purge();
+         }
+      }
    }
 
    /**

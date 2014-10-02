@@ -236,8 +236,10 @@ public class BootstrapContextCoordinator
          int newValue = i.intValue() - 1;
          if (newValue == 0)
          {
-            activeBootstrapContexts.remove(id);
+            CloneableBootstrapContext cbc = activeBootstrapContexts.remove(id);
             refCountBootstrapContexts.remove(id);
+
+            cbc.shutdown();
 
             WorkManagerCoordinator.getInstance().removeWorkManager(id);
          }
