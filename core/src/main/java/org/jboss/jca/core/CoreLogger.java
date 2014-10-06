@@ -398,6 +398,15 @@ public interface CoreLogger extends BasicLogger
    @LogMessage(level = WARN)
    @Message(id = 615, value = "Destroying active connection in pool: %s (%s)")
    public void destroyingActiveConnection(String poolName, Object mc);
+
+   /**
+    * Connection leak
+    * @param poolName The pool name
+    * @param t The trace
+    */
+   @LogMessage(level = ERROR)
+   @Message(id = 616, value = "Leak detected in pool: %s")
+   public void connectionLeak(String poolName, @Cause Throwable t);
    
    // NAMING (700)
 

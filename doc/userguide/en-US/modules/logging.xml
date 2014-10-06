@@ -385,6 +385,11 @@
             <entry>Destroying active connection in pool</entry>
           </row>
           <row>
+            <entry>616</entry>
+            <entry><code>ERROR</code></entry>
+            <entry>Leak detected in pool</entry>
+          </row>
+          <row>
             <entry>651</entry>
             <entry><code>EXCEPTION</code></entry>
             <entry>Unable to get managed connection pool</entry>
