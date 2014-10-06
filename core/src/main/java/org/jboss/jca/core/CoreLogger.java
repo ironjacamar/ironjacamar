@@ -221,7 +221,15 @@ public interface CoreLogger extends BasicLogger
    @Message(id = 404, value = "Unchecked throwable in managedConnectionDisconnected() cl=%s")
    public void uncheckedThrowableInManagedConnectionDisconnected(Object cl, @Cause Throwable t);
    
-   
+   /**
+    * Throwable in returning connection
+    * @param mc The ManagedConnection name
+    * @param t The exception
+    */
+   @LogMessage(level = ERROR)
+   @Message(id = 406, value = "Throwable in returning connection: %s")
+   public void throwableReturningConnection(Object mc, @Cause Throwable t);
+
    // TRANSACTION SYNCHRONIZER (500)
 
    /**

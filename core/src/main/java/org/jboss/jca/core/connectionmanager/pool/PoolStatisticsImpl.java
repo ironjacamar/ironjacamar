@@ -286,6 +286,8 @@ public class PoolStatisticsImpl implements PoolStatistics
       {
          mcp.getStatistics().setEnabled(v);
       }
+
+      clear();
    }
 
    /**

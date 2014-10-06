@@ -300,7 +300,16 @@ public abstract class AbstractPool implements Pool
                ManagedConnectionPool other = it.next();
                if (other == pool && pool.isEmpty())
                {
-                  pool.shutdown();
+                  try
+                  {
+                     pool.shutdown();
+                  }
+                  catch (Exception e)
+                  {
+                     // Should not happen
+                     log.trace("MCP.shutdown: " + e.getMessage(), e);
+                  }
+
                   it.remove();
                   break;
                }
@@ -330,7 +339,15 @@ public abstract class AbstractPool implements Pool
       while (it.hasNext())
       {
          ManagedConnectionPool mcp = it.next();
-         mcp.flush(kill);
+         try
+         {
+            mcp.flush(kill);
+         }
+         catch (Exception e)
+         {
+            // Should not happen
+            log.trace("MCP.flush: " + e.getMessage(), e);
+         }
 
          if (mcp.isEmpty())
             clearMcpPools.add(mcp);
@@ -340,7 +357,15 @@ public abstract class AbstractPool implements Pool
       {
          for (ManagedConnectionPool mcp : clearMcpPools)
          {
-            mcp.shutdown();
+            try
+            {
+               mcp.shutdown();
+            }
+            catch (Exception e)
+            {
+               // Should not happen
+               log.trace("MCP.shutdown: " + e.getMessage(), e);
+            }
             mcpPools.values().remove(mcp);
          }
       }
@@ -626,7 +651,15 @@ public abstract class AbstractPool implements Pool
       while (it.hasNext())
       {
          ManagedConnectionPool mcp = it.next();
-         mcp.shutdown();
+         try
+         {
+            mcp.shutdown();
+         }
+         catch (Exception e)
+         {
+            // Should not happen
+            log.trace("MCP.shutdown: " + e.getMessage(), e);
+         }
       }
 
       mcpPools.clear();
@@ -654,6 +687,7 @@ public abstract class AbstractPool implements Pool
    protected boolean internalTestConnection(ConnectionRequestInfo cri, Subject subject)
    {
       boolean result = false;
+      boolean kill = false;
       ConnectionListener cl = null;
       try
       {
@@ -673,9 +707,9 @@ public abstract class AbstractPool implements Pool
             result = true;
          }
       }
-      catch (Throwable ignored)
+      catch (Throwable t)
       {
-         // Ignore
+         kill = true;
       }
       finally
       {
@@ -683,7 +717,7 @@ public abstract class AbstractPool implements Pool
          {
             try
             {
-               returnConnection(cl, false);
+               returnConnection(cl, kill);
             }
             catch (ResourceException ire)
             {
