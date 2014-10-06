@@ -84,6 +84,25 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
 
    private static Map<String, Driver> driverCache = new ConcurrentHashMap<String, Driver>();
 
+   private static boolean preferDataSourceClass = false;
+
+   static
+   {
+      String dsClass = SecurityActions.getSystemProperty("ironjacamar.jdbc.prefer_datasource_class");
+      if (dsClass != null)
+      {
+         try
+         {
+            preferDataSourceClass = Boolean.valueOf(dsClass);
+         }
+         catch (Exception e)
+         {
+            // Assume true
+            preferDataSourceClass = true;
+         }
+      }
+   }
+
    /**
     * Constructor
     */
@@ -297,6 +316,15 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       try
       {
          if (driverClass != null)
+         {
+            getDriver(getConnectionURL());
+         }
+
+         boolean useDriver = !preferDataSourceClass;
+         if (!useDriver && (dataSourceClass == null || dataSourceClass.trim().equals("")))
+            useDriver = true;
+
+         if (driverClass != null && useDriver)
          {
             String url = getConnectionURL();
             Driver d = getDriver(url);

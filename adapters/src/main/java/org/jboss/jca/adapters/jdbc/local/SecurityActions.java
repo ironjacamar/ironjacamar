@@ -126,4 +126,23 @@ class SecurityActions
          });
       }
    }
+
+   /**
+    * Get a system property
+    * @param name The property name
+    * @return The property value
+    */
+   static String getSystemProperty(final String name)
+   {
+      if (System.getSecurityManager() == null)
+         return System.getProperty(name);
+
+      return AccessController.doPrivileged(new PrivilegedAction<String>() 
+      {
+         public String run()
+         {
+            return System.getProperty(name);
+         }
+      });
+   }
 }
