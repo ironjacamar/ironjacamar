@@ -29,6 +29,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -62,6 +64,10 @@ public class LeakDumperManagedConnectionPool extends SemaphoreArrayListManagedCo
    private final ConcurrentMap<ConnectionListener, Throwable> tracker =
       new ConcurrentHashMap<ConnectionListener, Throwable>();
 
+   /** The time map of connection listeners */
+   private final ConcurrentMap<ConnectionListener, Long> times =
+      new ConcurrentHashMap<ConnectionListener, Long>();
+
    static
    {
       String f = SecurityActions.getSystemProperty("ironjacamar.leaklog");
@@ -88,6 +94,7 @@ public class LeakDumperManagedConnectionPool extends SemaphoreArrayListManagedCo
       ConnectionListener cl = super.getConnection(subject, cri);
 
       tracker.put(cl, new Throwable("ALLOCATION LEAK"));
+      times.put(cl, Long.valueOf(System.currentTimeMillis()));
 
       return cl;
    }
@@ -99,6 +106,7 @@ public class LeakDumperManagedConnectionPool extends SemaphoreArrayListManagedCo
    public void returnConnection(ConnectionListener cl, boolean kill)
    {
       tracker.remove(cl);
+      times.remove(cl);
       super.returnConnection(cl, kill);
    }
 
@@ -111,12 +119,14 @@ public class LeakDumperManagedConnectionPool extends SemaphoreArrayListManagedCo
       if (tracker.containsKey(cl))
       {
          Throwable t = tracker.get(cl);
-         log.connectionLeak(getPoolName(), t);
+         Long l = times.get(cl);
+         log.connectionLeak(getPoolName(), Integer.toHexString(System.identityHashCode(cl)), l.longValue(), t);
 
          if (useFile)
-            dump(t);
+            dump(cl, t, l.longValue());
 
          tracker.remove(cl);
+         times.remove(cl);
       }
 
       super.doDestroy(cl);
@@ -130,19 +140,27 @@ public class LeakDumperManagedConnectionPool extends SemaphoreArrayListManagedCo
    {
       if (tracker.size() > 0)
       {
-         for (Throwable t : tracker.values())
+         Iterator<Map.Entry<ConnectionListener, Throwable>> it = tracker.entrySet().iterator();
+         while (it.hasNext())
          {
-            log.connectionLeak(getPoolName(), t);
+            Map.Entry<ConnectionListener, Throwable> entry = it.next();
+            Long l = times.get(entry.getKey());
+
+            log.connectionLeak(getPoolName(), Integer.toHexString(System.identityHashCode(entry.getKey())),
+                               l.longValue(), entry.getValue());
 
             if (useFile)
-               dump(t);
+               dump(entry.getKey(), entry.getValue(), l.longValue());
          }
+
+         tracker.clear();
+         times.clear();
       }
 
       super.shutdown();
    }
 
-   private void dump(Throwable t)
+   private void dump(ConnectionListener cl, Throwable t, long time)
    {
       synchronized (leakLock)
       {
@@ -155,6 +173,14 @@ public class LeakDumperManagedConnectionPool extends SemaphoreArrayListManagedCo
 
             ps.print("Leak detected in pool: ");
             ps.println(getPoolName());
+
+            ps.print("  ConnectionListener: ");
+            ps.println(Integer.toHexString(System.identityHashCode(cl)));
+
+            ps.print("  Allocation timestamp: ");
+            ps.println(time);
+
+            ps.println("  Allocation stacktrack:");
 
             t.printStackTrace(ps);
 

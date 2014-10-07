@@ -402,11 +402,13 @@ public interface CoreLogger extends BasicLogger
    /**
     * Connection leak
     * @param poolName The pool name
+    * @param id The connection listener id
+    * @param time The timestamp
     * @param t The trace
     */
    @LogMessage(level = ERROR)
-   @Message(id = 616, value = "Leak detected in pool: %s")
-   public void connectionLeak(String poolName, @Cause Throwable t);
+   @Message(id = 616, value = "Leak detected in pool: %s (%s) (%d)")
+   public void connectionLeak(String poolName, String id, long time, @Cause Throwable t);
    
    // NAMING (700)
 
