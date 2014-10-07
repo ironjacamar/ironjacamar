@@ -21,4 +21,3 @@
 
 include "api"
 include "common"
-include "doc"
