@@ -19,6 +19,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-include "api"
-include "common"
-include "testsuite"
+/**
+ * Test cases for the metadata api
+ */
+package org.ironjacamar.common.api.metadata;

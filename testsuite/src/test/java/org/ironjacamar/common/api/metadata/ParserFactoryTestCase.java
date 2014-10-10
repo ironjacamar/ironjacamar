@@ -42,9 +42,10 @@ public class ParserFactoryTestCase
 
    /**
     * Test there is a instance of each parser
+    * @exception Exception Thrown in case of an error
     */
    @Test
-   public void testParsers()
+   public void testParsers() throws Exception
    {
       Parser raXmlParser = ParserFactory.getParser(ParserFactory.RA_XML);
       assertNull(raXmlParser);
