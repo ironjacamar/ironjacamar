@@ -92,8 +92,10 @@ public class WARDeployment implements Deployment
     */
    public void destroy()
    {
-      log.debug("Undeploying: " + archive.toExternalForm());
-
+      if (log.isDebugEnabled())
+      {
+         log.debug("Undeploying: " + archive.toExternalForm());
+      }
       if (handler != null)
       {
          try

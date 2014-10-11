@@ -385,7 +385,7 @@ public abstract class AbstractPool implements Pool
     */
    public synchronized void emptyManagedConnectionPool(ManagedConnectionPool pool)
    {
-      log.debug(poolName + ": emptyManagedConnectionPool(" + pool + ")");
+      log.debugf("%s: emptyManagedConnectionPool(%s)", poolName, pool);
 
       if (pool != null)
       {
@@ -445,7 +445,7 @@ public abstract class AbstractPool implements Pool
     */
    public synchronized void flush(FlushMode mode)
    {
-      log.debug(poolName + ": flush(" + mode + ")");
+      log.debugf("%s: flush(%s)", poolName, mode);
 
       Set<ManagedConnectionPool> clearMcpPools = new HashSet<ManagedConnectionPool>();
       int size = mcpPools.size();
@@ -797,7 +797,7 @@ public abstract class AbstractPool implements Pool
     */
    public synchronized void shutdown()
    {
-      log.debug(poolName + ": shutdown");
+      log.debugf("%s: shutdown", poolName);
       shutdown.set(true);
 
       Iterator<ManagedConnectionPool> it = mcpPools.values().iterator();
@@ -811,7 +811,7 @@ public abstract class AbstractPool implements Pool
          catch (Exception e)
          {
             // Should not happen
-            log.trace("MCP.shutdown: " + e.getMessage(), e);
+            log.tracef(e, "MCP.shutdown: %s", e.getMessage());
          }
       }
 
@@ -823,7 +823,7 @@ public abstract class AbstractPool implements Pool
     */
    public void prepareShutdown()
    {
-      log.debug(poolName + ": prepareShutdown");
+      log.debugf("%s: prepareShutdown", poolName);
       shutdown.set(true);
 
       flush(FlushMode.GRACEFULLY);
@@ -834,7 +834,7 @@ public abstract class AbstractPool implements Pool
     */
    public boolean cancelShutdown()
    {
-      log.debug(poolName + ": cancelShutdown");
+      log.debugf("%s: cancelShutdown", poolName);
 
       if (shutdown.get())
       {
@@ -890,8 +890,8 @@ public abstract class AbstractPool implements Pool
     */
    protected boolean internalTestConnection(ConnectionRequestInfo cri, Subject subject)
    {
-      log.debug(poolName + ": testConnection(" + cri + ", " + subject + ")");
-      log.debug(poolName + ":   Statistics=" + statistics);
+      log.debugf("%s: testConnection(%s, %s)", poolName, cri, subject);
+      log.debugf("%s:   Statistics=%s", poolName, statistics);
 
       boolean result = false;
       boolean kill = false;

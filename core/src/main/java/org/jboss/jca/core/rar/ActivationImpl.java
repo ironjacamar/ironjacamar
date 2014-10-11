@@ -144,7 +144,7 @@ public class ActivationImpl implements Activation
             }
             catch (Throwable t)
             {
-               log.debug("Ignoring: " + propertyName + " (" + propertyValue + ")", t);
+               log.debugf(t, "Ignoring: %s (%s)", propertyName, propertyValue);
             }
          }
       }

@@ -43,7 +43,6 @@ import org.eclipse.jetty.webapp.WebAppContext;
 public class WARDeployer implements Deployer
 {
    private static Logger log = Logger.getLogger(WARDeployer.class);
-   private static boolean trace = log.isTraceEnabled();
 
    private WebServer webServer;
        
@@ -97,8 +96,10 @@ public class WARDeployer implements Deployer
     */
    public synchronized Deployment deploy(URL url, Context context, ClassLoader parent) throws DeployException
    {
-      log.debug("Deploying: " + url.toExternalForm());
-
+      if (log.isDebugEnabled())
+      {
+         log.debug("Deploying: " + url.toExternalForm());
+      }
       try
       {
          String path = url.toExternalForm();
@@ -164,8 +165,8 @@ public class WARDeployer implements Deployer
          if (!tmpDeployment.mkdirs())
             throw new IOException("Unable to create " + tmpDeployment);
 
-         log.debug("ContextPath=" + contextPath);
-         log.debug("TmpPath=" + tmpPath);
+         log.debugf("ContextPath=%s", contextPath);
+         log.debugf("TmpPath=%s", tmpPath);
 
          WebAppContext webapp = new WebAppContext();
          webapp.setContextPath(contextPath);

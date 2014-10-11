@@ -176,8 +176,10 @@ public class DsXmlDeployment implements Deployment
     */
    public void stop()
    {
-      log.debug("Undeploying: " + deployment.toExternalForm());
-
+      if (log.isDebugEnabled())
+      {
+         log.debug("Undeploying: " + deployment.toExternalForm());
+      }
       if (objectNames != null && mbeanServer != null)
       {
          for (ObjectName on : objectNames)

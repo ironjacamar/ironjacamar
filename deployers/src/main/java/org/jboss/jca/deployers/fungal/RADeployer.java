@@ -109,8 +109,10 @@ public final class RADeployer extends AbstractFungalRADeployer implements Deploy
    public synchronized com.github.fungal.spi.deployers.Deployment deploy(URL url, Context context, ClassLoader parent)
       throws DeployException
    {
-      log.debug("Deploying: " + url.toExternalForm());
-
+      if (log.isDebugEnabled())
+      {
+         log.debug("Deploying: " + url.toExternalForm());
+      }
       ClassLoader oldTCCL = SecurityActions.getThreadContextClassLoader();
       try
       {

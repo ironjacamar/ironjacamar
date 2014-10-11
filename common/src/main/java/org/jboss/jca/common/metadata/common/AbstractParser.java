@@ -906,7 +906,8 @@ public abstract class AbstractParser
             case END_ELEMENT : {
                if (ConnectionDefinition.Tag.forName(reader.getLocalName()) == ConnectionDefinition.Tag.VALIDATION)
                {
-                  return new ValidationImpl(validateOnMatch, backgroundValidation, backgroundValidationMillis, useFastFail);
+                  return new ValidationImpl(validateOnMatch, backgroundValidation, backgroundValidationMillis,
+                                            useFastFail);
                }
                else
                {

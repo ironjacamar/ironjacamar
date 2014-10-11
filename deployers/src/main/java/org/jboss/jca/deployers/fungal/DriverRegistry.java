@@ -122,7 +122,7 @@ public class DriverRegistry
                }
                catch (Throwable t)
                {
-                  log.debug("Exception for driver: " + driver, t);
+                  log.debugf(t, "Exception for driver: %s", driver);
                }
                finally
                {

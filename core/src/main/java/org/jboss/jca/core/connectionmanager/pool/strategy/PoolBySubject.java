@@ -90,7 +90,7 @@ public class PoolBySubject extends AbstractPrefillPool
       }
       catch (Throwable t)
       {
-         log.debug("Error during testConnection: " + t.getMessage(), t); 
+         log.debugf(t, "Error during testConnection: %s", t.getMessage());
       }
 
       return false;

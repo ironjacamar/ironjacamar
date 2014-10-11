@@ -1005,7 +1005,7 @@ public abstract class AbstractResourceAdapterDeployer
                         }
                         else
                         {
-                           log.debug("No activation: " + aoClz);
+                           log.debugf("No activation: %s", aoClz);
                         }
                      }
                   }
@@ -1859,7 +1859,7 @@ public abstract class AbstractResourceAdapterDeployer
                         }
                         else
                         {
-                           log.debug("No activation: " + mcfClz);
+                           log.debugf("No activation: %s", mcfClz);
                         }
                      }
                   }
@@ -1964,7 +1964,10 @@ public abstract class AbstractResourceAdapterDeployer
          }
          else
          {
-            log.debug("Activated: " + url.toExternalForm());
+            if (log.isDebugEnabled())
+            {
+               log.debug("Activated: " + url.toExternalForm());
+            }
          }
 
          Object[] cfObjs = cfs.size() > 0 ? cfs.toArray(new Object[cfs.size()]) : null;

@@ -203,8 +203,10 @@ public abstract class AbstractFungalDeployment implements Deployment
    {
       if (activator)
       {
-         log.debug("Undeploying: " + deployment.toExternalForm());
-         
+         if (log.isDebugEnabled())
+         {
+            log.debug("Undeploying: " + deployment.toExternalForm());
+         }
          if (server != null && objectNames != null)
          {
             for (ObjectName on : objectNames)

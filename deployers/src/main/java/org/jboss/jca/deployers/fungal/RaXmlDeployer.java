@@ -161,8 +161,10 @@ public final class RaXmlDeployer extends AbstractFungalRADeployer
    @Override
    public synchronized Deployment deploy(URL url, Context context, ClassLoader parent) throws DeployException
    {
-      log.debug("Deploying: " + url.toExternalForm());
-
+      if (log.isDebugEnabled())
+      {
+         log.debug("Deploying: " + url.toExternalForm());
+      }
       ClassLoader oldTCCL = SecurityActions.getThreadContextClassLoader();
       InputStream is = null;
       try

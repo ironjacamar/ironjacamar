@@ -154,7 +154,7 @@ public class JNDIViewer
             }
             catch (Throwable t)
             {
-               log.debug("Invalid LinkRef for: " + name, t);
+               log.debugf(t, "Invalid LinkRef for: %s", name);
                buffer.append("invalid]");
             }
          }

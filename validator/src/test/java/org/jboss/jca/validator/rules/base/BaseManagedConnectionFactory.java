@@ -167,7 +167,7 @@ public class BaseManagedConnectionFactory implements ManagedConnectionFactory, R
     */
    public void setResourceAdapter(ResourceAdapter ra)
    {
-      log.debug("call setResourceAdapter(" + ra + ")");
+      log.debugf("call setResourceAdapter(%s)", ra);
       this.ra = ra;
    }
 

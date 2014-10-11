@@ -464,7 +464,8 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
 
                if (lock == null)
                   rethrowAsSystemException("Unable to obtain lock with JCA lazy enlistment scenario", tx,
-                                           new SystemException("Unable to obtain lock with JCA lazy enlistment scenario"));
+                                           new SystemException(
+                                                            "Unable to obtain lock with JCA lazy enlistment scenario"));
 
                try
                {
@@ -657,7 +658,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
     
          if (xaResourceTimeout != 0)
          {
-            log.debug("XAResource transaction timeout cannot be set for local transactions: " + getJndiName());  
+            log.debugf("XAResource transaction timeout cannot be set for local transactions: %s", getJndiName());
          }
       }      
       else
@@ -750,7 +751,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
                }
                else
                {
-                  log.debug("XAResource does not support transaction timeout configuration: " + getJndiName());
+                  log.debugf("XAResource does not support transaction timeout configuration: %s", getJndiName());
                }
             }
             catch (XAException e)
@@ -865,7 +866,8 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
                   else
                   {
                      if (trace)
-                        log.tracef("Already an enlisted connection in the pool tracked by transaction=%s (new=%s)", existing, cl);
+                        log.tracef("Already an enlisted connection in the pool tracked by transaction=%s (new=%s)",
+                                   existing, cl);
 
                      if (cl.supportsLazyAssociation())
                      {

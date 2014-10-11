@@ -181,7 +181,7 @@ public class ConfigurableRecoveryPlugin implements RecoveryPlugin
                }
                catch (Throwable t)
                {
-                  log.debug("Error during connection " + closeMethod + "()", t);
+                  log.debugf(t, "Error during connection %s()", closeMethod);
                   throw new ResourceException(bundle.errorDuringConnectionClose(), t);
                }
             }

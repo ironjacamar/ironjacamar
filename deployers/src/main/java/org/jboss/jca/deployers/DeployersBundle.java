@@ -159,7 +159,8 @@ public interface DeployersBundle
     * @param implClz The implementation class name
     * @return The value
     */
-   @Message(id = 20066, value = "Connection factory implementation (%s) doesn't implement connection factory interface (%s)")
+   @Message(id = 20066, value = "Connection factory implementation (%s) "
+         + "doesn't implement connection factory interface (%s)")
    public String invalidConnectionFactoryImplementationDueToInterface(String intClz, String implClz);
 
    /**

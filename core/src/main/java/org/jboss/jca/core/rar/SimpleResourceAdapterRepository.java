@@ -560,7 +560,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
          }
          catch (Throwable t)
          {
-            log.debug("Exception while loading id: " + id, t);
+            log.debugf(t, "Exception while loading id: %s", id);
          }
       }
 
@@ -587,7 +587,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
       }
       catch (Throwable t)
       {
-         log.debug("Exception while loading ra.xml: " + id, t);
+         log.debugf(t, "Exception while loading ra.xml: %s", id);
       }
 
       return false;
@@ -618,7 +618,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
       }
       catch (Throwable t)
       {
-         log.debug("Exception while loading ironjacamar.xml: " + id, t);
+         log.debugf(t, "Exception while loading ironjacamar.xml: %s", id);
       }
 
       return null;
@@ -644,7 +644,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
       }
       catch (Throwable t)
       {
-         log.debug("Exception while loading ra.xml: " + id, t);
+         log.debugf(t, "Exception while loading ra.xml: %s", id);
       }
 
       return "";
@@ -671,7 +671,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
       }
       catch (Throwable t)
       {
-         log.debug("Exception while loading ra.xml: " + id, t);
+         log.debugf(t, "Exception while loading ra.xml: %s", id);
       }
 
       return "";

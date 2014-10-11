@@ -222,12 +222,12 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
             {
                xadsSelector = new URLXASelector();
                xadsSelector.init(xaDataList);
-               log.debug("Default URLXASelectorStrategy is being used : " + xadsSelector);
+               log.debugf("Default URLXASelectorStrategy is being used : %s", xadsSelector);
             }
             else
             {
                xadsSelector = initUrlSelectorClass(getUrlSelectorStrategyClassName(), xaDataList);
-               log.debug("Customized URLXASelectorStrategy is being used : " + xadsSelector);
+               log.debugf("Customized URLXASelectorStrategy is being used : %s", xadsSelector);
             }
          }
       }

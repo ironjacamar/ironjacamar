@@ -402,12 +402,12 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       {
          this.urlSelector = new URLSelector();
          this.urlSelector.init(urlsList);
-         log.debug("Default URLSelectorStrategy is being used : " + urlSelector);
+         log.debugf("Default URLSelectorStrategy is being used : %s", urlSelector);
       }
       else
       {
          this.urlSelector = initUrlSelectorClass(getUrlSelectorStrategyClassName(), urlsList);
-         log.debug("Customized URLSelectorStrategy is being used : " + urlSelector);
+         log.debugf("Customized URLSelectorStrategy is being used : %s", urlSelector);
       }
    }
 
@@ -612,7 +612,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
          driver = (Driver)clazz.newInstance();
 
          DriverManager.registerDriver(driver);
-         log.debug("Driver loaded and instance created:" + driver);
+         log.debugf("Driver loaded and instance created:%s", driver);
 
          driverCache.put(driverKey, driver);
       }

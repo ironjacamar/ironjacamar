@@ -283,7 +283,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
     */
    public synchronized void shutdown()
    {
-      getLogger().debug(jndiName + ": shutdown");
+      getLogger().debugf("%s: shutdown", jndiName);
       shutdown.set(true);
 
       if (pool != null)

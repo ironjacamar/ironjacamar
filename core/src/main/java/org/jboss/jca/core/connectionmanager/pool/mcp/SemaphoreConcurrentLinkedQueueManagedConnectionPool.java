@@ -1364,7 +1364,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
             }
             catch (Throwable t) 
             {
-               log.debug("Exception destroying ManagedConnection " + clw.getConnectionListener(), t);
+               log.debugf(t, "Exception destroying ManagedConnection %s", clw.getConnectionListener());
             }
 
             mc.removeConnectionEventListener(clw.getConnectionListener());

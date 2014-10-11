@@ -274,7 +274,7 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
             }
             catch (Throwable t)
             {
-               log.debug("Ignoring: " + deployment);
+               log.debugf(t, "Ignoring: %s", deployment);
             }
          }
       }
@@ -457,8 +457,10 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
    private Deployment deploy(URL url, ClassLoader parent) throws DeployException
    {
 
-      log.debug("Deploying: " + url.toExternalForm());
-
+      if (log.isDebugEnabled())
+      {
+         log.debug("Deploying: " + url.toExternalForm());
+      }
       ClassLoader oldTCCL = SecurityActions.getThreadContextClassLoader();
       try
       {

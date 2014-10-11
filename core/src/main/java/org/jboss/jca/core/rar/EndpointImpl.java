@@ -157,7 +157,7 @@ public class EndpointImpl implements Endpoint
                   }
                   catch (Throwable t)
                   {
-                     log.debug("Unable to load bean validation group: " + group, t);
+                     log.debugf(t, "Unable to load bean validation group: %s", group);
                   }
                }
             }

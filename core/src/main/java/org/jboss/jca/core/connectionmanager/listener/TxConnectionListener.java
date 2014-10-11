@@ -193,8 +193,8 @@ public class TxConnectionListener extends AbstractConnectionListener
          }
          catch (XAException e)
          {
-            log.debug("XAException happend during return for: " + getPool() != null ? getPool().getName() : "Unknown",
-                      e);
+            log.debugf(e, "XAException happend during return for: %s",
+                       getPool() != null ? getPool().getName() : "Unknown");
          }
       }
    }
@@ -484,7 +484,7 @@ public class TxConnectionListener extends AbstractConnectionListener
                            }
                            else
                            {
-                              log.debug("delist-success failed: " + this);
+                              log.debugf("delist-success failed: %s", this);
                               success = false;
                            }
                         }
@@ -506,7 +506,7 @@ public class TxConnectionListener extends AbstractConnectionListener
                            }
                            else
                            {
-                              log.debug("delist-fail failed: " + this);
+                              log.debugf("delist-fail failed: %s", this);
 
                               success = false;
                            }
@@ -737,7 +737,7 @@ public class TxConnectionListener extends AbstractConnectionListener
          else
          {
             local.rollback();
-            log.debug("Unfinished local transaction was rolled back." + this);
+            log.debugf("Unfinished local transaction was rolled back.%s", this);
          }
       }
    }
