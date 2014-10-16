@@ -22,6 +22,7 @@
 package org.jboss.jca.common.metadata.ra;
 
 import org.jboss.jca.common.CommonBundle;
+import org.jboss.jca.common.CommonLogger;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ra.AdminObject;
 import org.jboss.jca.common.api.metadata.ra.AuthenticationMechanism;
@@ -82,6 +83,7 @@ import javax.xml.stream.XMLStreamReader;
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
+import org.jboss.logging.Logger;
 import org.jboss.logging.Messages;
 
 /**
@@ -93,8 +95,31 @@ import org.jboss.logging.Messages;
  */
 public class RaParser extends AbstractParser implements MetadataParser<Connector>
 {
+   /** The logger */
+   private static CommonLogger log = Logger.getMessageLogger(CommonLogger.class, RaParser.class.getName());
+
    /** The bundle */
    private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
+
+   /** Downgrade JCA 1.7 deployments */
+   private static boolean downgradeJCA17 = false;
+
+   static
+   {
+      String value = SecurityActions.getSystemProperty("ironjacamar.downgrade_jca17_deployments");
+
+      if (value != null && !value.trim().equals(""))
+      {
+         try
+         {
+            downgradeJCA17 = Boolean.valueOf(value);
+         }
+         catch (Throwable t)
+         {
+            downgradeJCA17 = false;
+         }
+      }
+   }
 
    @Override
    public Connector parse(InputStream xmlInputStream) throws Exception
@@ -132,7 +157,28 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                break;
             }
             case START_ELEMENT : {
-               if (Connector16.XML_VERSION.equals(reader.getAttributeValue(null, "version")))
+               if ("1.7".equals(reader.getAttributeValue(null, "version")))
+               {
+                  if (!downgradeJCA17)
+                  {
+                     throw new ParserException(bundle.jca17Deployment());
+                  }
+                  else
+                  {
+                     switch (Tag.forName(reader.getLocalName()))
+                     {
+                        case CONNECTOR : {
+                           log.jca17Deployment();
+                           connector = parseConnector16(reader);
+                           break;
+                        }
+                        default :
+                           throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
+                     }
+                  }
+
+               }
+               else if (Connector16.XML_VERSION.equals(reader.getAttributeValue(null, "version")))
                {
                   switch (Tag.forName(reader.getLocalName()))
                   {

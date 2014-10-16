@@ -249,4 +249,11 @@ public interface CommonBundle
     */
    @Message(id = 10077, value = "Wrong annotation type: %s")
    public String wrongAnnotationType(Object annotation);
+
+   /**
+    * JCA 1.7 deployment
+    * @return The value
+    */
+   @Message(id = 10078, value = "JCA 1.7 deployments are not supported")
+   public String jca17Deployment();
 }

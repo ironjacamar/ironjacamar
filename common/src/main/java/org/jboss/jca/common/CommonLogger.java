@@ -29,6 +29,7 @@ import org.jboss.logging.annotations.Message;
 import org.jboss.logging.annotations.MessageLogger;
 
 import static org.jboss.logging.Logger.Level.ERROR;
+import static org.jboss.logging.Logger.Level.WARN;
 
 /**
  * The common logger.
@@ -70,4 +71,11 @@ public interface CommonLogger extends BasicLogger
    @Message(id = 10004, value = "More than one @Connector was found but the correct one " +
             "wasn't defined in the ra.xml metadata")
    public void moreThanOneConnector();
+
+   /**
+    * JCA 1.7 deployment
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 10005, value = "Detected JCA 1.7 deployment. Downgrading to JCA 1.6")
+   public void jca17Deployment();
 }
