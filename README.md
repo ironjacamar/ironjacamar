@@ -13,7 +13,7 @@ Contributing
 
 * Write a blog about IronJacamar
 * Create a tutorial for IronJacamar
-* Help expand the [user guide](http://www.ironjacamar.org/doc/userguide/1.1/en-US/html/index.html)
+* Help expand the [user guide](http://www.ironjacamar.org/doc/userguide/1.2/en-US/html/index.html)
 * Answer questions and share ideas on the [IRC channel](http://webchat.freenode.net/?channels=ironjacamar)
 * Test [releases](http://www.ironjacamar.org/download.html)
 * Review [pull requests](http://github.com/ironjacamar/ironjacamar/pulls)
