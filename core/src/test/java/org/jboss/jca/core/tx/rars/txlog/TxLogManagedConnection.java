@@ -112,6 +112,9 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
    /** Transaction timeout */
    private int timeout;
 
+   /** Is in pool */
+   private boolean inPool;
+
    /**
     * Default constructor
     * @param mcf mcf
@@ -123,6 +126,7 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
       this.listeners = Collections.synchronizedList(new ArrayList<ConnectionEventListener>(1));
       this.connection = null;
       this.txState = new StringBuilder();
+      this.inPool = true;
    }
 
    /**
@@ -139,6 +143,7 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
       throws ResourceException
    {
       connection = new TxLogConnectionImpl(this, mcf);
+      inPool = false;
       return connection;
    }
 
@@ -168,6 +173,7 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
    public void cleanup() throws ResourceException
    {
       // We want to be able to use txState across checkouts
+      inPool = true;
    }
 
    /**
@@ -317,6 +323,15 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
    void clearState()
    {
       txState = new StringBuilder();
+   }
+
+   /**
+    * Is in pool
+    * @return The value
+    */
+   boolean isInPool()
+   {
+      return inPool;
    }
 
    // LocalTransaction

@@ -38,6 +38,12 @@ public interface TxLogConnection
    public void clearState();
 
    /**
+    * Is in pool
+    * @return The value
+    */
+   public boolean isInPool();
+
+   /**
     * Close
     */
    public void close();

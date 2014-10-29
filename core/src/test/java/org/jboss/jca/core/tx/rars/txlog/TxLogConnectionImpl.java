@@ -67,6 +67,14 @@ public class TxLogConnectionImpl implements TxLogConnection
    /**
     * {@inheritDoc}
     */
+   public boolean isInPool()
+   {
+      return mc.isInPool();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public void close()
    {
       mc.closeHandle(this);

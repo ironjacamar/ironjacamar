@@ -450,7 +450,12 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
          {
             cls.add(cl);
             if (shouldEnlist(cl.getManagedConnection()))
+            {
+               if (!isInterleaving())
+                  cl.setTrackByTx(true);
+
                cl.enlist();
+            }
 
             if (!isInterleaving())
             {
