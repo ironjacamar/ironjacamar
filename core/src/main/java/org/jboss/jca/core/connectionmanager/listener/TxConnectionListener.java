@@ -239,6 +239,12 @@ public class TxConnectionListener extends AbstractConnectionListener
       // Since they are all a part of the same transaction, this is probably
       // not a real issue.
 
+      // If we are already enlisted there is no reason to check again, as this method
+      // could be called multiple times during a transaction lifecycle.
+      // We know that we can only be inside this method if we are allowed to
+      if (isEnlisted())
+         return;
+
       // No transaction associated with the thread
       TransactionManager tm = getConnectionManager().getTransactionIntegration().getTransactionManager();
       int status = tm.getStatus();

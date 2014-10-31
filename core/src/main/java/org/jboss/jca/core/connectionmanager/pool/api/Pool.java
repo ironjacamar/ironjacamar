@@ -136,6 +136,15 @@ public interface Pool extends org.jboss.jca.core.api.connectionmanager.pool.Pool
       throws ResourceException;
 
    /**
+    * Has an existing connection
+    * 
+    * @param subject the subject for connection
+    * @param cri the connection request information
+    * @return <code>true</code> if there is an existing connection enlisted, otherwise <code>false</code>
+    */
+   public boolean hasConnection(Subject subject, ConnectionRequestInfo cri);
+
+   /**
     * Is shutdown
     * @return The value
     */

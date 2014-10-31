@@ -154,7 +154,7 @@ org.jboss.jca.core.connectionmanager.pool.mcp.LeakDumperManagedConnectionPool
         <title>Allow obtaining connections during MARKED_FOR_ROLLBACK</title>
 
         <para>
-          IronJacamar doesn't allow to obtain a connection once a transaction is in
+          IronJacamar doesn't allow to obtain a new connection once a transaction is in
           <code>MARKED_FOR_ROLLBACK</code> mode. This allows the container to fail
           eagerly, since any work after that point is wasted anyway.
         </para>
@@ -167,6 +167,12 @@ org.jboss.jca.core.connectionmanager.pool.mcp.LeakDumperManagedConnectionPool
         <para>
           IronJacamar has a system property called <code>ironjacamar.allow_marked_for_rollback</code>
           which can be set to <code>true</code> to enable this scenario.
+        </para>
+
+        <para>
+          Note, that an existing enlisted connection is allowed to be obtained. This can be disallowed
+          by setting the system property <code>ironjacamar.allow_marked_for_rollback_fast_fail</code>
+          to <code>true</code>.
         </para>
 
         <warning>

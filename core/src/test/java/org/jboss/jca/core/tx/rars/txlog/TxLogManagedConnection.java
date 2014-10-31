@@ -142,7 +142,9 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
                                ConnectionRequestInfo cxRequestInfo)
       throws ResourceException
    {
-      connection = new TxLogConnectionImpl(this, mcf);
+      if (connection == null)
+         connection = new TxLogConnectionImpl(this, mcf);
+
       inPool = false;
       return connection;
    }

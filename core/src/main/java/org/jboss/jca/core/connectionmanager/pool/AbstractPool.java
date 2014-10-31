@@ -768,6 +768,60 @@ public abstract class AbstractPool implements Pool
    }
 
    /**
+    * {@inheritDoc}
+    */
+   public boolean hasConnection(Subject subject, ConnectionRequestInfo cri)
+   {
+      TransactionSynchronizationRegistry tsr = getTransactionSynchronizationRegistry();
+      Lock lock = getLock();
+
+      if (lock == null)
+         return false;
+
+      try
+      {
+         lock.lockInterruptibly();
+      }
+      catch (InterruptedException ie)
+      {
+         Thread.interrupted();
+         return false;
+      }
+      try
+      {
+         boolean separateNoTx = false;
+
+         if (noTxSeparatePools)
+         {
+            separateNoTx = cm.isTransactional();
+         }
+
+         // Get specific managed connection pool key
+         Object key = getKey(subject, cri, separateNoTx);
+
+         // Get managed connection pool
+         ManagedConnectionPool mcp = getManagedConnectionPool(key, subject, cri);
+
+         // Already got one
+         ConnectionListener cl = (ConnectionListener)tsr.getResource(mcp);
+         if (cl != null)
+         {
+            return true;
+         }
+      }
+      catch (Throwable t)
+      {
+         log.debugf(t, "hasConnection error: %s", t.getMessage());
+      }
+      finally
+      {
+         lock.unlock();
+      }
+
+      return false;
+   }
+
+   /**
     * Get the connection manager
     * @return The value
     */

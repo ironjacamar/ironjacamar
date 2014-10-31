@@ -147,6 +147,9 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
    /** Allow marked for rollback */
    private static boolean allowMarkedForRollback = false;
    
+   /** Allow marked for rollback fast fail */
+   private static boolean allowMarkedForRollbackFastFail = false;
+   
    /** Transaction manager instance */
    private transient TransactionManager transactionManager;
 
@@ -181,21 +184,26 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
       {
          try
          {
-            int equal = value.indexOf("=");
-            if (equal != -1)
-            {
-               String setting = value.substring(equal + 1);
-               allowMarkedForRollback = Boolean.valueOf(setting);
-            }
-            else
-            {
-               // Assume enable
-               allowMarkedForRollback = true;
-            }
+            allowMarkedForRollback = Boolean.valueOf(value);
          }
          catch (Throwable t)
          {
-            throw new RuntimeException("Unable to parse ironjacamar.allow_marked_for_rollback: " + value);
+            // Assume enable
+            allowMarkedForRollback = true;
+         }
+      }
+
+      value = SecurityActions.getSystemProperty("ironjacamar.allow_marked_for_rollback_fast_fail");
+      if (value != null && !value.trim().equals(""))
+      {
+         try
+         {
+            allowMarkedForRollbackFastFail = Boolean.valueOf(value);
+         }
+         catch (Throwable t)
+         {
+            // Assume enable
+            allowMarkedForRollbackFastFail = true;
          }
       }
    }
@@ -412,7 +420,8 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
             if (!allowMarkedForRollback)
             {
                if (!TxUtils.isActive(tx))
-                  throw new ResourceException(bundle.transactionNotActive(tx));  
+                  if (!getPool().hasConnection(subject, cri) || allowMarkedForRollbackFastFail)
+                     throw new ResourceException(bundle.transactionNotActive(tx));  
             }
             else
             {
