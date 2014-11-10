@@ -31,6 +31,7 @@ import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.pool.api.Capacity;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
+import org.jboss.jca.core.connectionmanager.pool.api.Semaphore;
 import org.jboss.jca.core.connectionmanager.pool.capacity.DefaultCapacity;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactory;
@@ -39,6 +40,7 @@ import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.core.tracer.Tracer;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -72,6 +74,9 @@ import org.jboss.logging.Messages;
  */
 public abstract class AbstractPool implements Pool
 {
+   /** New line */
+   private static String newLine = SecurityActions.getSystemProperty("line.separator");
+
    /** The logger */
    protected final CoreLogger log;
 
@@ -104,7 +109,10 @@ public abstract class AbstractPool implements Pool
    private String poolName;
 
    /** Statistics */
-   private PoolStatistics statistics;
+   private PoolStatisticsImpl statistics;
+
+   /** The permits used to control who can checkout a connection */
+   private Semaphore permits;
 
    /** Are the connections sharable */
    private boolean sharable;
@@ -139,6 +147,7 @@ public abstract class AbstractPool implements Pool
       this.log = getLogger();
       this.trace = log.isTraceEnabled();
       this.statistics = new PoolStatisticsImpl(pc.getMaxSize(), mcpPools);
+      this.permits = new Semaphore(pc.getMaxSize(), true, statistics);
       this.capacity = null;
       this.interleaving = false;
    }
@@ -159,6 +168,14 @@ public abstract class AbstractPool implements Pool
    public String getName()
    {
       return poolName;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public Semaphore getLock()
+   {
+      return permits;
    }
 
    /**
@@ -217,6 +234,14 @@ public abstract class AbstractPool implements Pool
       }
 
       return true;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isFull()
+   {
+      return permits.availablePermits() == 0;
    }
 
    /**
@@ -353,10 +378,10 @@ public abstract class AbstractPool implements Pool
    }
 
    /**
-    * Get lock
+    * Get TSR lock
     * @return The lock; <code>null</code> if TX isn't active
     */
-   private Lock getLock()
+   private Lock getTSRLock()
    {
       Lock result = null;
       try
@@ -567,7 +592,7 @@ public abstract class AbstractPool implements Pool
       throws ResourceException
    {
       TransactionSynchronizationRegistry tsr = getTransactionSynchronizationRegistry();
-      Lock lock = getLock();
+      Lock lock = getTSRLock();
 
       if (lock == null)
          throw new ResourceException(bundle.unableObtainLock());
@@ -640,7 +665,7 @@ public abstract class AbstractPool implements Pool
       }
 
       TransactionSynchronizationRegistry tsr = getTransactionSynchronizationRegistry();
-      Lock lock = getLock();
+      Lock lock = getTSRLock();
 
       if (lock == null)
       {
@@ -773,7 +798,7 @@ public abstract class AbstractPool implements Pool
    public boolean hasConnection(Subject subject, ConnectionRequestInfo cri)
    {
       TransactionSynchronizationRegistry tsr = getTransactionSynchronizationRegistry();
-      Lock lock = getLock();
+      Lock lock = getTSRLock();
 
       if (lock == null)
          return false;
@@ -954,6 +979,9 @@ public abstract class AbstractPool implements Pool
       if (shutdown.get())
          return false;
 
+      if (isFull())
+         return false;
+
       try
       {
          boolean separateNoTx = false;
@@ -966,11 +994,8 @@ public abstract class AbstractPool implements Pool
          Object key = getKey(subject, cri, separateNoTx);
          ManagedConnectionPool mcp = getManagedConnectionPool(key, subject, cri);
 
-         if (!mcp.isFull())
-         {
-            cl = mcp.getConnection(subject, cri);
-            result = true;
-         }
+         cl = mcp.getConnection(subject, cri);
+         result = true;
       }
       catch (Throwable t)
       {
@@ -1001,20 +1026,49 @@ public abstract class AbstractPool implements Pool
    {
       List<String> result = new ArrayList<String>();
 
-      for (ManagedConnectionPool mcp : mcpPools.values())
+      if (permits.hasQueuedThreads())
       {
-         String[] mcpResult = mcp.dumpQueuedThreads();
-
-         if (mcpResult != null)
+         Collection<Thread> queuedThreads = new ArrayList<Thread>(permits.getQueuedThreads());
+         for (Thread t : queuedThreads)
          {
-            for (String s : mcpResult)
-            {
-               result.add(s);
-            }
+            result.add(dumpQueuedThread(t));
          }
       }
 
       return result.toArray(new String[result.size()]);
+   }
+
+   /**
+    * Dump a thread
+    * @param t The thread
+    * @return The stack trace
+    */
+   private String dumpQueuedThread(Thread t)
+   {
+      StringBuilder sb = new StringBuilder();
+
+      // Header
+      sb = sb.append("Queued thread: ");
+      sb = sb.append(t.getName());
+      sb = sb.append(newLine);
+
+      // Body
+      StackTraceElement[] stes = SecurityActions.getStackTrace(t);
+      if (stes != null)
+      {
+         for (StackTraceElement ste : stes)
+         {
+            sb = sb.append("  ");
+            sb = sb.append(ste.getClassName());
+            sb = sb.append(":");
+            sb = sb.append(ste.getMethodName());
+            sb = sb.append(":");
+            sb = sb.append(ste.getLineNumber());
+            sb = sb.append(newLine);
+         }
+      }
+
+      return sb.toString();
    }
 
    /**

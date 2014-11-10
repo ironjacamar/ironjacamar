@@ -94,25 +94,6 @@ class SecurityActions
    }
 
    /**
-    * Get stack trace
-    * @param t The thread
-    * @return The trace
-    */
-   static StackTraceElement[] getStackTrace(final Thread t)
-   {
-      if (System.getSecurityManager() == null)
-         return t.getStackTrace();
-
-      return AccessController.doPrivileged(new PrivilegedAction<StackTraceElement[]>() 
-      {
-         public StackTraceElement[] run()
-         {
-            return t.getStackTrace();
-         }
-      });
-   }
-
-   /**
     * Get the hash code for a Subject
     * @param subject The Subject
     * @return The hash code

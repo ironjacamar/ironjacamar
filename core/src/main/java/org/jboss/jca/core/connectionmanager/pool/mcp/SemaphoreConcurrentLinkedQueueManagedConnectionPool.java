@@ -38,10 +38,8 @@ import org.jboss.jca.core.connectionmanager.pool.validator.ConnectionValidator;
 import org.jboss.jca.core.tracer.Tracer;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -71,9 +69,6 @@ import org.jboss.logging.Messages;
  */
 public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements ManagedConnectionPool 
 {
-   /** New line */
-   private static String newLine = SecurityActions.getSystemProperty("line.separator");
-
    /** The log */
    private CoreLogger log;
 
@@ -122,9 +117,6 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
 
    /** Current checked out connections **/
    private AtomicInteger checkedOutSize = new AtomicInteger();
-
-   /** The permits used to control who can checkout a connection */
-   private Semaphore permits;
 
    /** Statistics */
    private ManagedConnectionPoolStatisticsImpl statistics;
@@ -177,7 +169,6 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
       this.cls = new ConcurrentHashMap<ConnectionListener, ConnectionListenerWrapper>();
       this.statistics = new ManagedConnectionPoolStatisticsImpl(maxSize);
       this.statistics.setEnabled(p.getStatistics().isEnabled());
-      this.permits = new Semaphore(maxSize, true, statistics);
       this.poolSize.set(0);
       this.checkedOutSize.set(0);
       this.supportsLazyAssociation = null;
@@ -231,14 +222,6 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
    public boolean isEmpty() 
    {
       return poolSize.get() == 0;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public boolean isFull() 
-   {
-      return checkedOutSize.get() == maxSize;
    }
 
    /**
@@ -312,7 +295,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
       subject = (subject == null) ? defaultSubject : subject;
       cri = (cri == null) ? defaultCri : cri;
 
-      if (isFull()) 
+      if (pool.isFull()) 
       {
          if (statistics.isEnabled())
             statistics.deltaWaitCount();
@@ -341,7 +324,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
       long startWait = statistics.isEnabled() ? System.currentTimeMillis() : 0L;
       try 
       {
-         if (permits.tryAcquire(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS)) 
+         if (pool.getLock().tryAcquire(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS)) 
          {
             if (statistics.isEnabled())
                statistics.deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
@@ -352,7 +335,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
             {
                if (!isRunning()) 
                {
-                  permits.release();
+                  pool.getLock().release();
 
                   throw new ResourceException(
                      bundle.thePoolHasBeenShutdown(pool.getName(),
@@ -521,7 +504,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                if (statistics.isEnabled())
                   statistics.setInUsedCount(checkedOutSize.get());
 
-               permits.release();
+               pool.getLock().release();
 
                throw new ResourceException(
                   bundle.unexpectedThrowableWhileTryingCreateConnection(
@@ -547,7 +530,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
       } 
       catch (Exception e) 
       {
-         permits.release();
+         pool.getLock().release();
 
          throw new ResourceException(e.getMessage());
       }
@@ -625,7 +608,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
          if (clw != null && clw.hasPermit()) 
          {
             clw.setHasPermit(false);
-            permits.release();
+            pool.getLock().release();
          }
 
          return;
@@ -685,7 +668,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
          if (clw.hasPermit())
          {
             clw.setHasPermit(false);
-            permits.release();
+            pool.getLock().release();
          }
          if (clw.isCheckedOut())
          {
@@ -743,7 +726,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                   if (entry.getValue().hasPermit())
                   {
                      entry.getValue().setHasPermit(false);
-                     permits.release();
+                     pool.getLock().release();
                   }
 
                   entry.getKey().setState(ConnectionState.DESTROY);
@@ -1068,7 +1051,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
          try 
          {
             long startWait = statistics.isEnabled() ? System.currentTimeMillis() : 0L;
-            if (permits.tryAcquire(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS)) 
+            if (pool.getLock().tryAcquire(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS)) 
             {
                if (statistics.isEnabled())
                   statistics.deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
@@ -1114,7 +1097,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                } 
                finally 
                {
-                  permits.release();
+                  pool.getLock().release();
                }
             }
          } 
@@ -1145,12 +1128,12 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
       int created = 1;
       boolean create = true;
 
-      while (create && !isFull()) 
+      while (create && !pool.isFull()) 
       {
          try 
          {
             long startWait = statistics.isEnabled() ? System.currentTimeMillis() : 0L;
-            if (permits.tryAcquire(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS)) 
+            if (pool.getLock().tryAcquire(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS)) 
             {
                if (statistics.isEnabled())
                   statistics.deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
@@ -1193,7 +1176,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                } 
                finally 
                {
-                  permits.release();
+                  pool.getLock().release();
                }
             }
          } 
@@ -1239,60 +1222,6 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
       }
 
       return null;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public String[] dumpQueuedThreads() 
-   {
-      List<String> result = new ArrayList<String>();
-
-      if (permits.hasQueuedThreads()) 
-      {
-         Collection<Thread> queuedThreads = new ArrayList<Thread>(permits.getQueuedThreads());
-         for (Thread t : queuedThreads) 
-         {
-            result.add(dumpQueuedThread(t));
-         }
-      }
-
-      return result.toArray(new String[result.size()]);
-   }
-
-   /**
-    * Dump a thread
-    * 
-    * @param t
-    *            The thread
-    * @return The stack trace
-    */
-   private String dumpQueuedThread(Thread t) 
-   {
-      StringBuilder sb = new StringBuilder();
-
-      // Header
-      sb = sb.append("Queued thread: ");
-      sb = sb.append(t.getName());
-      sb = sb.append(newLine);
-
-      // Body
-      StackTraceElement[] stes = SecurityActions.getStackTrace(t);
-      if (stes != null) 
-      {
-         for (StackTraceElement ste : stes) 
-         {
-            sb = sb.append("  ");
-            sb = sb.append(ste.getClassName());
-            sb = sb.append(":");
-            sb = sb.append(ste.getMethodName());
-            sb = sb.append(":");
-            sb = sb.append(ste.getLineNumber());
-            sb = sb.append(newLine);
-         }
-      }
-
-      return sb.toString();
    }
 
    /**
@@ -1405,7 +1334,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
       if (trace)
          log.trace("Attempting to  validate connections for pool " + this);
 
-      if (permits.tryAcquire(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS)) 
+      if (pool.getLock().tryAcquire(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS)) 
       {
          boolean anyDestroyed = false;
 
@@ -1486,7 +1415,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
          } 
          finally 
          {
-            permits.release();
+            pool.getLock().release();
 
             if (anyDestroyed)
                 prefill();

@@ -153,7 +153,6 @@ class ManagedConnectionPoolUtility
       sb.append("  MaxPoolTime: ").append(mcps.getMaxPoolTime()).append(newLine);
       sb.append("  MaxUsageTime: ").append(mcps.getMaxUsageTime()).append(newLine);
       sb.append("  MaxUsedCount: ").append(mcps.getMaxUsedCount()).append(newLine);
-      sb.append("  MaxWaitCount: ").append(mcps.getMaxWaitCount()).append(newLine);
       sb.append("  MaxWaitTime: ").append(mcps.getMaxWaitTime()).append(newLine);
       sb.append("  TimedOut: ").append(mcps.getTimedOut()).append(newLine);
       sb.append("  TotalBlockingTime: ").append(mcps.getTotalBlockingTime()).append(newLine);

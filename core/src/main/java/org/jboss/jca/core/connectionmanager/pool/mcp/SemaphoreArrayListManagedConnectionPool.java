@@ -38,10 +38,8 @@ import org.jboss.jca.core.connectionmanager.pool.validator.ConnectionValidator;
 import org.jboss.jca.core.tracer.Tracer;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -69,9 +67,6 @@ import org.jboss.logging.Messages;
  */
 public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectionPool
 {
-   /** New line */
-   private static String newLine = SecurityActions.getSystemProperty("line.separator");
-
    /** The log */
    private CoreLogger log;
 
@@ -111,9 +106,6 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
    /** The available connection event listeners */
    private ArrayList<ConnectionListener> cls;
-
-   /** The permits used to control who can checkout a connection */
-   private Semaphore permits;
 
    /** The map of connection listeners which has a permit */
    private final ConcurrentMap<ConnectionListener, ConnectionListener> clPermits =
@@ -172,7 +164,6 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       this.cls = new ArrayList<ConnectionListener>(this.maxSize);
       this.statistics = new ManagedConnectionPoolStatisticsImpl(maxSize);
       this.statistics.setEnabled(p.getStatistics().isEnabled());
-      this.permits = new Semaphore(maxSize, true, statistics);
       this.supportsLazyAssociation = null;
       this.lastIdleCheck = Long.MIN_VALUE;
       this.lastUsed = Long.MAX_VALUE;
@@ -224,17 +215,6 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       synchronized (cls)
       {
          return cls.size() == 0 && checkedOut.size() == 0;
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public boolean isFull()
-   {
-      synchronized (cls)
-      {
-         return checkedOut.size() == maxSize;
       }
    }
 
@@ -309,7 +289,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       subject = (subject == null) ? defaultSubject : subject;
       cri = (cri == null) ? defaultCri : cri;
 
-      if (isFull())
+      if (pool.isFull())
       {
          if (statistics.isEnabled())
             statistics.deltaWaitCount();
@@ -338,7 +318,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       long startWait = statistics.isEnabled() ? System.currentTimeMillis() : 0L;
       try
       {
-         if (permits.tryAcquire(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS))
+         if (pool.getLock().tryAcquire(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS))
          {
             if (statistics.isEnabled())
                statistics.deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
@@ -349,7 +329,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             {
                if (!isRunning())
                {
-                  permits.release();
+                  pool.getLock().release();
                   throw new ResourceException(
                      bundle.thePoolHasBeenShutdown(pool.getName(),
                                                    Integer.toHexString(System.identityHashCode(this))));
@@ -538,7 +518,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                if (statistics.isEnabled())
                   statistics.setInUsedCount(checkedOut.size());
 
-               permits.release();
+               pool.getLock().release();
 
                if (t instanceof ResourceException)
                {
@@ -668,7 +648,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          ConnectionListener present = clPermits.remove(cl);
          if (present != null)
          {
-            permits.release();
+            pool.getLock().release();
          }
 
          return;
@@ -713,7 +693,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
             if (clPermits.remove(cl) != null)
             {
-               permits.release();
+               pool.getLock().release();
             }
          }
       }
@@ -735,7 +715,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
             if (clPermits.remove(cl) != null)
             {
-               permits.release();
+               pool.getLock().release();
             }
          }
       }
@@ -786,7 +766,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                ConnectionListener present = clPermits.remove(cl);
                if (present != null)
                {
-                  permits.release();
+                  pool.getLock().release();
                }
             }
 
@@ -1064,7 +1044,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          try
          {
             long startWait = statistics.isEnabled() ? System.currentTimeMillis() : 0L;
-            if (permits.tryAcquire(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS))
+            if (pool.getLock().tryAcquire(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS))
             {
                if (statistics.isEnabled())
                   statistics.deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
@@ -1111,7 +1091,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                }
                finally
                {
-                  permits.release();
+                  pool.getLock().release();
                }
             }
          }
@@ -1143,12 +1123,12 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       int created = 1;
       boolean create = true;
 
-      while (create && !isFull())
+      while (create && !pool.isFull())
       {
          try
          {
             long startWait = statistics.isEnabled() ? System.currentTimeMillis() : 0L;
-            if (permits.tryAcquire(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS))
+            if (pool.getLock().tryAcquire(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS))
             {
                if (statistics.isEnabled())
                   statistics.deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
@@ -1195,7 +1175,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                }
                finally
                {
-                  permits.release();
+                  pool.getLock().release();
                }
             }
          }
@@ -1323,7 +1303,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                                                         statistics.getInUseCount(), maxSize));
       }
 
-      if (permits.tryAcquire(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS))
+      if (pool.getLock().tryAcquire(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS))
       {
          boolean anyDestroyed = false;
 
@@ -1400,7 +1380,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          }
          finally
          {
-            permits.release();
+            pool.getLock().release();
 
             if (anyDestroyed)
                prefill();
@@ -1551,59 +1531,6 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       }
 
       return false;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public String[] dumpQueuedThreads()
-   {
-      List<String> result = new ArrayList<String>();
-
-      if (permits.hasQueuedThreads())
-      {
-         Collection<Thread> queuedThreads = new ArrayList<Thread>(permits.getQueuedThreads());
-         for (Thread t : queuedThreads)
-         {
-            result.add(dumpQueuedThread(t));
-         }
-      }
-
-      return result.toArray(new String[result.size()]);
-   }
-
-
-   /**
-    * Dump a thread
-    * @param t The thread
-    * @return The stack trace
-    */
-   private String dumpQueuedThread(Thread t)
-   {
-      StringBuilder sb = new StringBuilder();
-
-      // Header
-      sb = sb.append("Queued thread: ");
-      sb = sb.append(t.getName());
-      sb = sb.append(newLine);
-
-      // Body
-      StackTraceElement[] stes = SecurityActions.getStackTrace(t);
-      if (stes != null)
-      {
-         for (StackTraceElement ste : stes)
-         {
-            sb = sb.append("  ");
-            sb = sb.append(ste.getClassName());
-            sb = sb.append(":");
-            sb = sb.append(ste.getMethodName());
-            sb = sb.append(":");
-            sb = sb.append(ste.getLineNumber());
-            sb = sb.append(newLine);
-         }
-      }
-
-      return sb.toString();
    }
 
    /**

@@ -99,12 +99,6 @@ public interface ManagedConnectionPool extends IdleConnectionRemovalSupport
    public boolean isEmpty();
    
    /**
-    * Is the pool full ?
-    * @return True if full, otherwise false
-    */
-   public boolean isFull();
-
-   /**
     * Is the pool idle ?
     * @return True if idle, otherwise false
     */
@@ -174,10 +168,4 @@ public interface ManagedConnectionPool extends IdleConnectionRemovalSupport
     * @return A connection listener; <code>null</code> if no connection listener was available
     */
    public ConnectionListener removeConnectionListener();
-
-   /**
-    * Dump the queued threads
-    * @return The strack traces of the queued thread, or empty if none
-    */
-   public String[] dumpQueuedThreads();
 }

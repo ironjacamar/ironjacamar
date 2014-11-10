@@ -40,6 +40,7 @@ import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -115,6 +116,8 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
    private transient AtomicBoolean enabled;
    private transient Map<Locale, ResourceBundle> rbs;
 
+   private transient AtomicInteger maxWaitCount;
+
    private transient AtomicLong commitCount;
    private transient AtomicLong commitTotalTime;
    private transient AtomicLong commitMaxTime;
@@ -156,6 +159,8 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
    {
       this.maxPoolSize = maxPoolSize;
       this.mcpPools = mcpPools;
+
+      this.maxWaitCount = new AtomicInteger(0);
 
       this.commitCount = new AtomicLong(0L);
       this.commitTotalTime = new AtomicLong(0L);
@@ -990,21 +995,20 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
     */
    public int getMaxWaitCount()
    {
-      if (isEnabled())
-      {
-         int result = Integer.MIN_VALUE;
+      if (!isEnabled())
+         return 0;
 
-         for (ManagedConnectionPool mcp : mcpPools.values())
-         {
-            int v = mcp.getStatistics().getMaxWaitCount();
-            if (v > result)
-               result = v;
-         }
+      return maxWaitCount.get() != Integer.MIN_VALUE ? maxWaitCount.get() : 0;
+   }
 
-         return result != Integer.MIN_VALUE ? result : 0;
-      }
-
-      return 0;
+   /**
+    * Set max wait count
+    * @param v The value
+    */
+   public void setMaxWaitCount(int v)
+   {
+      if (isEnabled() && v > maxWaitCount.get())
+         maxWaitCount.set(v);
    }
 
    /**

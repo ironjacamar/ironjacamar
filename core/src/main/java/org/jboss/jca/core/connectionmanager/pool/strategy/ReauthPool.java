@@ -79,7 +79,7 @@ public class ReauthPool extends AbstractPool
       {
          ManagedConnectionPool ownMcp = getManagedConnectionPool(key, subject, cri);
 
-         if (!ownMcp.isFull())
+         if (!isFull())
          {
             ManagedConnectionPool mcp = getTargetManagedConnectionPool(ownMcp);
 

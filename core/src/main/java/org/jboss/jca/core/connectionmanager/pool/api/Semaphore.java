@@ -20,7 +20,9 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.core.connectionmanager.pool.mcp;
+package org.jboss.jca.core.connectionmanager.pool.api;
+
+import org.jboss.jca.core.connectionmanager.pool.PoolStatisticsImpl;
 
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
@@ -33,10 +35,10 @@ import java.util.concurrent.TimeUnit;
 public class Semaphore extends java.util.concurrent.Semaphore
 {
    /** Serial version uid */
-   private static final long serialVersionUID = 2L;
+   private static final long serialVersionUID = 3L;
 
    /** Statistics */
-   private ManagedConnectionPoolStatisticsImpl statistics;
+   private PoolStatisticsImpl statistics;
 
    /**
     * Constructor
@@ -44,7 +46,7 @@ public class Semaphore extends java.util.concurrent.Semaphore
     * @param fairness The fairness
     * @param statistics The statistics module
     */
-   public Semaphore(int maxSize, boolean fairness, ManagedConnectionPoolStatisticsImpl statistics)
+   public Semaphore(int maxSize, boolean fairness, PoolStatisticsImpl statistics)
    {
       super(maxSize, fairness);
       this.statistics = statistics;
@@ -56,7 +58,9 @@ public class Semaphore extends java.util.concurrent.Semaphore
    @Override
    public boolean tryAcquire(long timeout, TimeUnit unit) throws InterruptedException
    {
-      statistics.setMaxWaitCount(getQueueLength());
+      if (statistics.isEnabled())
+         statistics.setMaxWaitCount(getQueueLength());
+
       return super.tryAcquire(timeout, unit);
    }
 

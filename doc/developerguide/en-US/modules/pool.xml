@@ -183,6 +183,16 @@
         based on the input given.
       </para>
 
+      <para>
+        <code>getLock()</code> returns the lock that guards the maximum number of active <code>ConnectionListener</code>'s in
+        the pool. This method is used by the <code>ManagedConnectionPool</code> instances when modifying their data structure
+        that holds the <code>ConnectionListener</code>'s.
+      </para>
+
+      <para>
+        <code>dumpQueuedThreads()</code> returns a stack trace of each of the queued threads waiting to obtain a <code>ConnectionListener</code> instance.
+      </para>
+
     </section>
 
     <section id="pool_implementation_prefill">
@@ -286,9 +296,9 @@
       
       <para>
         There are three different implementations of the <code>ManagedConnectionPool</code> interface. <code>SemaphoreArrayListManagedConnectionPool</code>
-        which uses a <code>Semaphore</code> to guard an <code>ArrayList</code> which holds the <code>ConnectionListener</code>s.
-        <code>SemaphoreConcurrentLinkedQueueManagedConnectionPool</code> which uses a <code>Semaphore</code> to guard an <code>ConcurrentLinkedQueue</code>
-        which holds the <code>ConnectionListener</code>s. <code>SemaphoreConcurrentLinkedQueueManagedConnectionPool</code> also uses a <code>ConcurrentHashMap</code>
+        which uses an <code>ArrayList</code> to hold the <code>ConnectionListener</code>s.
+        <code>SemaphoreConcurrentLinkedQueueManagedConnectionPool</code> which uses a <code>ConcurrentLinkedQueue</code>
+        to hold the <code>ConnectionListener</code>s. <code>SemaphoreConcurrentLinkedQueueManagedConnectionPool</code> also uses a <code>ConcurrentHashMap</code>
         to keep track of the internal status of each of the <code>ConnectionListener</code>s.
         Last, a <code>LeakDumperManagedConnectionPool</code> which extends <code>SemaphoreArrayListManagedConnectionPool</code>, but reports any leaks upon
         shutdown.
@@ -337,10 +347,6 @@
       <para>
         <code>detachConnectionListener</code> disassociates the connections attached to the <code>ManagedConnection</code> such that it can be reused in another request through
         <code>DissociatableManagedConnection</code>.
-      </para>
-
-      <para>
-        <code>dumpQueuedThreads()</code> returns a stack trace of each of the queued threads waiting to obtain a <code>ConnectionListener</code> instance.
       </para>
 
       <important>

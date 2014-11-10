@@ -69,6 +69,12 @@ public interface Pool extends org.jboss.jca.core.api.connectionmanager.pool.Pool
    public void setConnectionManager(ConnectionManager cm);
 
    /**
+    * Get the lock
+    * @return The value
+    */
+   public Semaphore getLock();
+
+   /**
     * Get the capacity policy
     * @return The value
     */
@@ -97,6 +103,12 @@ public interface Pool extends org.jboss.jca.core.api.connectionmanager.pool.Pool
     * @return True if idle, otherwise false
     */
    public boolean isIdle();
+
+   /**
+    * Is the pool full
+    * @return True if full, otherwise false
+    */
+   public boolean isFull();
 
    /**
     * Get a connection
