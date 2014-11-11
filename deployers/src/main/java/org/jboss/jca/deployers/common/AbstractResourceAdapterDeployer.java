@@ -1477,6 +1477,7 @@ public abstract class AbstractResourceAdapterDeployer
                                     if (security.isApplication())
                                     {
                                        strategy = PoolStrategy.POOL_BY_CRI;
+                                       pc.setMinSize(0);
                                     }
                                     else if (security.getSecurityDomain() != null &&
                                              security.getSecurityDomain().trim().length() != 0)
@@ -1489,6 +1490,7 @@ public abstract class AbstractResourceAdapterDeployer
                                     {
                                        strategy = PoolStrategy.POOL_BY_SUBJECT_AND_CRI;
                                        securityDomain = security.getSecurityDomainAndApplication();
+                                       pc.setMinSize(0);
                                     }
                                  }
 
