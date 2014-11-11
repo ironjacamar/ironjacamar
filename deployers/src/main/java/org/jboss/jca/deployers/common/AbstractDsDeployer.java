@@ -446,6 +446,7 @@ public abstract class AbstractDsDeployer
          {
             strategy = PoolStrategy.POOL_BY_CRI;
             allowMultipleUsers = true;
+            pc.setMinSize(0);
          }
       }
 
@@ -467,6 +468,7 @@ public abstract class AbstractDsDeployer
             else
             {
                strategy = PoolStrategy.POOL_BY_SUBJECT_AND_CRI;
+               pc.setMinSize(0);
             }
             securityDomain = ds.getSecurity().getSecurityDomain();
          }
@@ -684,6 +686,7 @@ public abstract class AbstractDsDeployer
          {
             strategy = PoolStrategy.POOL_BY_CRI;
             allowMultipleUsers = true;
+            pc.setMinSize(0);
          }
       }
 
@@ -705,6 +708,7 @@ public abstract class AbstractDsDeployer
             else
             {
                strategy = PoolStrategy.POOL_BY_SUBJECT_AND_CRI;
+               pc.setMinSize(0);
             }
             securityDomain = ds.getSecurity().getSecurityDomain();
          }
