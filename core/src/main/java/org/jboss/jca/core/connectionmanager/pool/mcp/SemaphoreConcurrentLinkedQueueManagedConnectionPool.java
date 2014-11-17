@@ -630,6 +630,21 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
          kill = true;
       }
 
+      boolean releasePermit = false;
+      if (clw != null)
+      {
+         if (clw.hasPermit())
+         {
+            clw.setHasPermit(false);
+            releasePermit = true;
+         }
+         if (clw.isCheckedOut())
+         {
+            clw.setCheckedOut(false);
+            checkedOutSize.decrementAndGet();
+         }
+      }
+
       // If we are destroying, check the connection is not in the pool
       if (kill) 
       {
@@ -655,27 +670,18 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
          }
       }
 
-      if (clw != null) 
-      {
-         if (clw.hasPermit())
-         {
-            clw.setHasPermit(false);
-            pool.getLock().release();
-         }
-         if (clw.isCheckedOut())
-         {
-            clw.setCheckedOut(false);
-            checkedOutSize.decrementAndGet();
-         }
-      }
-
-      if (kill) 
+      if (kill)
       {
          if (trace)
             log.trace("Destroying returned connection " + cl);
 
          doDestroy(clw);
          clw = null;
+      }
+
+      if (releasePermit)
+      {
+         pool.getLock().release();
       }
    }
 
@@ -1586,9 +1592,9 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
     */
    static class ConnectionListenerWrapper 
    {
-      private ConnectionListener cl;
-      private boolean checkedOut;
-      private boolean hasPermit;
+      private volatile ConnectionListener cl;
+      private volatile boolean checkedOut;
+      private volatile boolean hasPermit;
 
       /**
        * Constructor
