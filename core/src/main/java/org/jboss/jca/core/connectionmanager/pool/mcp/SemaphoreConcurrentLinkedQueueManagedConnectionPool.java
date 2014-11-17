@@ -505,7 +505,22 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
          kill = true;
       }
 
-      // If we are destroying, check the connection is not in the pool
+      boolean releasePermit = false;
+      if (clw != null)
+      {
+         if (clw.hasPermit())
+         {
+            clw.setHasPermit(false);
+            releasePermit = true;
+         }
+         if (clw.isCheckedOut())
+         {
+            clw.setCheckedOut(false);
+            checkedOutSize.decrementAndGet();
+         }
+      }
+
+       // If we are destroying, check the connection is not in the pool
       if (kill)
       {
          // Adrian Brock: A resource adapter can asynchronously notify us
@@ -530,20 +545,6 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
          }
       }
 
-      if (clw != null)
-      {
-         if (clw.hasPermit())
-         {
-            clw.setHasPermit(false);
-            permits.release();
-         }
-         if (clw.isCheckedOut())
-         {
-            clw.setCheckedOut(false);
-            checkedOutSize.decrementAndGet();
-         }
-      }
-
       if (statistics.isEnabled())
          statistics.setInUsedCount(checkedOutSize.get());
 
@@ -554,6 +555,10 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
 
          doDestroy(clw);
          clw = null;
+      }
+      if (releasePermit)
+      {
+         permits.release();
       }
    }
 
@@ -1164,9 +1169,9 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
    static class ConnectionListenerWrapper
    {
 
-      private ConnectionListener connectionListener;
-      private boolean checkedOut;
-      private boolean hasPermit;
+      private volatile ConnectionListener connectionListener;
+      private volatile boolean checkedOut;
+      private volatile boolean hasPermit;
 
       /**
        * Constructor
