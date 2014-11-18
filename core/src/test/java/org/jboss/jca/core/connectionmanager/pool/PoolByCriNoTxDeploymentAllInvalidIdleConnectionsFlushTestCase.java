@@ -24,7 +24,6 @@ package org.jboss.jca.core.connectionmanager.pool;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
 import org.jboss.jca.core.connectionmanager.rar.SimpleConnection;
-import org.jboss.jca.core.connectionmanager.rar.SimpleConnectionRequestInfoImpl;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
@@ -73,13 +72,7 @@ public class PoolByCriNoTxDeploymentAllInvalidIdleConnectionsFlushTestCase exten
       SimpleConnection c3 = cf.getConnection("B");
 
       assertEquals(pool.getManagedConnectionPools().size(), 2);
-      checkStatistics(ps, 5, 5, 5);
-
-      Object key1 = pool.getKey(null, new SimpleConnectionRequestInfoImpl("A"), false);
-      Object key2 = pool.getKey(null, new SimpleConnectionRequestInfoImpl("B"), false);
-
-      checkStatistics(pool.getManagedConnectionPools().get(key1).getStatistics(), 3, 2, 2);
-      checkStatistics(pool.getManagedConnectionPools().get(key2).getStatistics(), 2, 3, 3);
+      checkStatistics(ps, 0, 5, 5);
 
       c3.close();
       c0.close();
@@ -89,13 +82,12 @@ public class PoolByCriNoTxDeploymentAllInvalidIdleConnectionsFlushTestCase exten
       Thread.sleep(1000);
       //Pool "A" should be flushed and 1 of 2 idle connections in Pool "B" too
       assertEquals(pool.getManagedConnectionPools().size(), 1);
-      checkStatistics(ps, 4, 1, 2, 1);
-      checkStatistics(pool.getManagedConnectionPools().get(key2).getStatistics(), 4, 1, 2, 1);
+      checkStatistics(ps, 4, 1, 2, 3);
 
       assertFalse(c2.isDetached());
       c2.fail();
 
       assertEquals(pool.getManagedConnectionPools().size(), 1);
-      checkStatistics(ps, 5, 0, 1, 2);
+      checkStatistics(ps, 5, 0, 1, 4);
    }
 }

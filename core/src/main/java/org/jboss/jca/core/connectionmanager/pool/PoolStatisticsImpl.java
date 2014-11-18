@@ -23,7 +23,6 @@
 package org.jboss.jca.core.connectionmanager.pool;
 
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
-import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.spi.transaction.XAResourceStatistics;
 
 import java.io.IOException;
@@ -37,8 +36,6 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -51,7 +48,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
 {
    /** Serial version uid */
-   private static final long serialVersionUID = 8L;
+   private static final long serialVersionUID = 9L;
 
    private static final String ACTIVE_COUNT = "ActiveCount";
    private static final String AVAILABLE_COUNT = "AvailableCount";
@@ -110,13 +107,34 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
    private static final String XA_START_MAX_TIME = "XAStartMaxTime";
 
    private int maxPoolSize;
-   private transient ConcurrentMap<Object, ManagedConnectionPool> mcpPools;
    private transient SortedSet<String> names;
    private transient Map<String, Class> types;
-   private transient AtomicBoolean enabled;
    private transient Map<Locale, ResourceBundle> rbs;
 
+   private transient AtomicBoolean enabled;
+   private transient AtomicInteger createdCount;
+   private transient AtomicInteger destroyedCount;
+   private transient AtomicInteger maxUsedCount;
+   private transient AtomicLong maxCreationTime;
+   private transient AtomicLong maxGetTime;
+   private transient AtomicLong maxPoolTime;
+   private transient AtomicLong maxUsageTime;
    private transient AtomicInteger maxWaitCount;
+   private transient AtomicLong maxWaitTime;
+   private transient AtomicInteger timedOut;
+   private transient AtomicLong totalBlockingTime;
+   private transient AtomicLong totalBlockingTimeInvocations;
+   private transient AtomicLong totalCreationTime;
+   private transient AtomicLong totalGetTime;
+   private transient AtomicLong totalGetTimeInvocations;
+   private transient AtomicLong totalPoolTime;
+   private transient AtomicLong totalPoolTimeInvocations;
+   private transient AtomicLong totalUsageTime;
+   private transient AtomicLong totalUsageTimeInvocations;
+   private transient AtomicInteger inUseCount;
+   private transient AtomicInteger blockingFailureCount;
+   private transient AtomicInteger waitCount;
+
 
    private transient AtomicLong commitCount;
    private transient AtomicLong commitTotalTime;
@@ -143,24 +161,42 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
    /**
     * Constructor
     * @param maxPoolSize The maximum pool size
-    * @param mcpPools The pool map
     */
-   public PoolStatisticsImpl(int maxPoolSize, ConcurrentMap<Object, ManagedConnectionPool> mcpPools)
+   public PoolStatisticsImpl(int maxPoolSize)
    {
-      init(maxPoolSize, mcpPools);
+      init(maxPoolSize);
    }
 
    /**
     * Init
     * @param maxPoolSize The maximum pool size
-    * @param mcpPools The pool map
     */
-   private void init(int maxPoolSize, ConcurrentMap<Object, ManagedConnectionPool> mcpPools)
+   private void init(int maxPoolSize)
    {
       this.maxPoolSize = maxPoolSize;
-      this.mcpPools = mcpPools;
 
+      this.createdCount = new AtomicInteger(0);
+      this.destroyedCount = new AtomicInteger(0);
+      this.maxCreationTime = new AtomicLong(Long.MIN_VALUE);
+      this.maxGetTime = new AtomicLong(Long.MIN_VALUE);
+      this.maxPoolTime = new AtomicLong(Long.MIN_VALUE);
+      this.maxUsageTime = new AtomicLong(Long.MIN_VALUE);
+      this.maxUsedCount = new AtomicInteger(Integer.MIN_VALUE);
       this.maxWaitCount = new AtomicInteger(0);
+      this.maxWaitTime = new AtomicLong(Long.MIN_VALUE);
+      this.timedOut = new AtomicInteger(0);
+      this.totalBlockingTime = new AtomicLong(0);
+      this.totalBlockingTimeInvocations = new AtomicLong(0);
+      this.totalCreationTime = new AtomicLong(0);
+      this.totalGetTime = new AtomicLong(0);
+      this.totalGetTimeInvocations = new AtomicLong(0);
+      this.totalPoolTime = new AtomicLong(0);
+      this.totalPoolTimeInvocations = new AtomicLong(0);
+      this.totalUsageTime = new AtomicLong(0);
+      this.totalUsageTimeInvocations = new AtomicLong(0);
+      this.inUseCount = new AtomicInteger(0);
+      this.blockingFailureCount = new AtomicInteger(0);
+      this.waitCount = new AtomicInteger(0);
 
       this.commitCount = new AtomicLong(0L);
       this.commitTotalTime = new AtomicLong(0L);
@@ -629,16 +665,9 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
    /**
     * {@inheritDoc}
     */
-   @Override
    public void setEnabled(boolean v)
    {
       enabled.set(v);
-
-      for (ManagedConnectionPool mcp : mcpPools.values())
-      {
-         mcp.getStatistics().setEnabled(v);
-      }
-
       clear();
    }
 
@@ -647,19 +676,10 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
     */
    public int getActiveCount()
    {
-      if (isEnabled())
-      {
-         int result = 0;
+      if (!enabled.get())
+         return 0;
 
-         for (ManagedConnectionPool mcp : mcpPools.values())
-         {
-            result += mcp.getStatistics().getActiveCount();
-         }
-         
-         return result;
-      }
-
-      return 0;
+      return createdCount.get() - destroyedCount.get();
    }
 
    /**
@@ -667,21 +687,10 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
     */
    public int getAvailableCount()
    {
-      int result = -1;
+      if (!enabled.get())
+         return 0;
 
-      if (mcpPools.size() > 0)
-      {
-         result = 0;
-         for (ManagedConnectionPool mcp : mcpPools.values())
-         {
-            result += mcp.getStatistics().getAvailableCount();
-         }
-      }
-         
-      if (result != -1)
-         return result;
-
-      return maxPoolSize;
+      return maxPoolSize - inUseCount.get();
    }
 
    /**
@@ -689,19 +698,10 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
     */
    public long getAverageBlockingTime()
    {
-      if (isEnabled())
-      {
-         long invocations = 0;
+      if (!enabled.get())
+         return 0L;
 
-         for (ManagedConnectionPool mcp : mcpPools.values())
-         {
-            invocations += mcp.getStatistics().getTotalBlockingInvocations();
-         }
-
-         return invocations != 0 ? getTotalBlockingTime() / invocations : 0;
-      }
-
-      return 0;
+      return totalBlockingTimeInvocations.get() != 0 ? totalBlockingTime.get() / totalBlockingTimeInvocations.get() : 0;
    }
 
    /**
@@ -709,13 +709,10 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
     */
    public long getAverageCreationTime()
    {
-      if (isEnabled())
-      {
-         int createdCount = getCreatedCount();
-         return createdCount != 0 ? getTotalCreationTime() / createdCount : 0;
-      }
+      if (!enabled.get())
+         return 0L;
 
-      return 0;
+      return createdCount.get() != 0 ? totalCreationTime.get() / createdCount.get() : 0;
    }
 
    /**
@@ -723,19 +720,10 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
     */
    public long getAverageGetTime()
    {
-      if (isEnabled())
-      {
-         long invocations = 0;
+      if (!enabled.get())
+         return 0L;
 
-         for (ManagedConnectionPool mcp : mcpPools.values())
-         {
-            invocations += mcp.getStatistics().getTotalGetInvocations();
-         }
-
-         return invocations != 0 ? getTotalGetTime() / invocations : 0;
-      }
-
-      return 0;
+      return totalGetTimeInvocations.get() != 0 ? totalGetTime.get() / totalGetTimeInvocations.get() : 0;
    }
 
    /**
@@ -743,19 +731,10 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
     */
    public long getAverageUsageTime()
    {
-      if (isEnabled())
-      {
-         long invocations = 0;
+      if (!enabled.get())
+         return 0L;
 
-         for (ManagedConnectionPool mcp : mcpPools.values())
-         {
-            invocations += mcp.getStatistics().getTotalUsageInvocations();
-         }
-
-         return invocations != 0 ? getTotalUsageTime() / invocations : 0;
-      }
-
-      return 0;
+      return totalUsageTimeInvocations.get() != 0 ? totalUsageTime.get() / totalUsageTimeInvocations.get() : 0;
    }
 
    /**
@@ -763,19 +742,10 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
     */
    public long getAveragePoolTime()
    {
-      if (isEnabled())
-      {
-         long invocations = 0;
+      if (!enabled.get())
+         return 0L;
 
-         for (ManagedConnectionPool mcp : mcpPools.values())
-         {
-            invocations += mcp.getStatistics().getTotalPoolInvocations();
-         }
-
-         return invocations != 0 ? getTotalPoolTime() / invocations : 0;
-      }
-
-      return 0;
+      return totalPoolTimeInvocations.get() != 0 ? totalPoolTime.get() / totalPoolTimeInvocations.get() : 0;
    }
 
    /**
@@ -783,19 +753,19 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
     */
    public int getBlockingFailureCount()
    {
-      if (isEnabled())
-      {
-         int result = 0;
+      if (!enabled.get())
+         return 0;
 
-         for (ManagedConnectionPool mcp : mcpPools.values())
-         {
-            result += mcp.getStatistics().getBlockingFailureCount();
-         }
+      return blockingFailureCount.get();
+   }
 
-         return result;
-      }
-
-      return 0;
+   /**
+    * Delta the blocking failure count value
+    */
+   public void deltaBlockingFailureCount()
+   {
+      if (enabled.get())
+         blockingFailureCount.incrementAndGet();
    }
 
    /**
@@ -803,19 +773,19 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
     */
    public int getCreatedCount()
    {
-      if (isEnabled())
-      {
-         int result = 0;
+      if (!enabled.get())
+         return 0;
 
-         for (ManagedConnectionPool mcp : mcpPools.values())
-         {
-            result += mcp.getStatistics().getCreatedCount();
-         }
+      return createdCount.get();
+   }
 
-         return result;
-      }
-
-      return 0;
+   /**
+    * Delta the created count value
+    */
+   public void deltaCreatedCount()
+   {
+      if (enabled.get())
+         createdCount.incrementAndGet();
    }
 
    /**
@@ -823,19 +793,19 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
     */
    public int getDestroyedCount()
    {
-      if (isEnabled())
-      {
-         int result = 0;
+      if (!enabled.get())
+         return 0;
 
-         for (ManagedConnectionPool mcp : mcpPools.values())
-         {
-            result += mcp.getStatistics().getDestroyedCount();
-         }
+      return destroyedCount.get();
+   }
 
-         return result;
-      }
-
-      return 0;
+   /**
+    * Delta the destroyed count value
+    */
+   public void deltaDestroyedCount()
+   {
+      if (enabled.get())
+         destroyedCount.incrementAndGet();
    }
 
    /**
@@ -843,19 +813,10 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
     */
    public int getIdleCount()
    {
-      if (isEnabled())
-      {
-         int result = 0;
+      if (!enabled.get())
+         return 0;
 
-         for (ManagedConnectionPool mcp : mcpPools.values())
-         {
-            result += mcp.getStatistics().getIdleCount();
-         }
-
-         return result;
-      }
-
-      return 0;
+      return getActiveCount() - getInUseCount();
    }
 
    /**
@@ -863,107 +824,20 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
     */
    public int getInUseCount()
    {
-      if (isEnabled())
-      {
-         int result = 0;
+      if (!enabled.get())
+         return 0;
 
-         for (ManagedConnectionPool mcp : mcpPools.values())
-         {
-            result += mcp.getStatistics().getInUseCount();
-         }
-
-         return result;
-      }
-
-      return 0;
+      return inUseCount.get();
    }
 
    /**
-    * {@inheritDoc}
+    * Set in used count
+    * @param v The value
     */
-   public long getMaxCreationTime()
+   public void setInUsedCount(int v)
    {
-      if (isEnabled())
-      {
-         long result = Long.MIN_VALUE;
-
-         for (ManagedConnectionPool mcp : mcpPools.values())
-         {
-            long v = mcp.getStatistics().getMaxCreationTime();
-            if (v > result)
-               result = v;
-         }
-
-         return result != Long.MIN_VALUE ? result : 0;
-      }
-
-      return 0;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public long getMaxGetTime()
-   {
-      if (isEnabled())
-      {
-         long result = Long.MIN_VALUE;
-
-         for (ManagedConnectionPool mcp : mcpPools.values())
-         {
-            long v = mcp.getStatistics().getMaxGetTime();
-            if (v > result)
-               result = v;
-         }
-
-         return result != Long.MIN_VALUE ? result : 0;
-      }
-
-      return 0;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public long getMaxPoolTime()
-   {
-      if (isEnabled())
-      {
-         long result = Long.MIN_VALUE;
-
-         for (ManagedConnectionPool mcp : mcpPools.values())
-         {
-            long v = mcp.getStatistics().getMaxPoolTime();
-            if (v > result)
-               result = v;
-         }
-
-         return result != Long.MIN_VALUE ? result : 0;
-      }
-
-      return 0;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public long getMaxUsageTime()
-   {
-      if (isEnabled())
-      {
-         long result = Long.MIN_VALUE;
-
-         for (ManagedConnectionPool mcp : mcpPools.values())
-         {
-            long v = mcp.getStatistics().getMaxUsageTime();
-            if (v > result)
-               result = v;
-         }
-
-         return result != Long.MIN_VALUE ? result : 0;
-      }
-
-      return 0;
+      inUseCount.set(v);
+      setMaxUsedCount(v);
    }
 
    /**
@@ -972,21 +846,64 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
     */
    public int getMaxUsedCount()
    {
-      if (isEnabled())
-      {
-         int result = Integer.MIN_VALUE;
+      if (!enabled.get())
+         return 0;
 
-         for (ManagedConnectionPool mcp : mcpPools.values())
-         {
-            int v = mcp.getStatistics().getMaxUsedCount();
-            if (v > result)
-               result = v;
-         }
+      return maxUsedCount.get() != Integer.MIN_VALUE ? maxUsedCount.get() : 0;
+   }
 
-         return result != Integer.MIN_VALUE ? result : 0;
-      }
+   /**
+    * Set max used count
+    * @param v The value
+    */
+   private void setMaxUsedCount(int v)
+   {
+      if (v > maxUsedCount.get())
+         maxUsedCount.set(v);
+   }
 
-      return 0;
+   /**
+    * {@inheritDoc}
+    */
+   public long getMaxCreationTime()
+   {
+      if (!enabled.get())
+         return 0L;
+
+      return maxCreationTime.get() != Long.MIN_VALUE ? maxCreationTime.get() : 0;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getMaxGetTime()
+   {
+      if (!enabled.get())
+         return 0L;
+
+      return maxGetTime.get() != Long.MIN_VALUE ? maxGetTime.get() : 0;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getMaxPoolTime()
+   {
+      if (!enabled.get())
+         return 0L;
+
+      return maxPoolTime.get() != Long.MIN_VALUE ? maxPoolTime.get() : 0;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getMaxUsageTime()
+   {
+      if (!enabled.get())
+         return 0L;
+
+      return maxUsageTime.get() != Long.MIN_VALUE ? maxUsageTime.get() : 0;
    }
 
    /**
@@ -1007,7 +924,7 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
     */
    public void setMaxWaitCount(int v)
    {
-      if (isEnabled() && v > maxWaitCount.get())
+      if (v > maxWaitCount.get())
          maxWaitCount.set(v);
    }
 
@@ -1016,21 +933,10 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
     */
    public long getMaxWaitTime()
    {
-      if (isEnabled())
-      {
-         long result = Long.MIN_VALUE;
+      if (!enabled.get())
+         return 0L;
 
-         for (ManagedConnectionPool mcp : mcpPools.values())
-         {
-            long v = mcp.getStatistics().getMaxWaitTime();
-            if (v > result)
-               result = v;
-         }
-
-         return result != Long.MIN_VALUE ? result : 0;
-      }
-
-      return 0;
+      return maxWaitTime.get() != Long.MIN_VALUE ? maxWaitTime.get() : 0;
    }
 
    /**
@@ -1038,19 +944,19 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
     */
    public int getTimedOut()
    {
-      if (isEnabled())
-      {
-         int result = 0;
+      if (!enabled.get())
+         return 0;
 
-         for (ManagedConnectionPool mcp : mcpPools.values())
-         {
-            result += mcp.getStatistics().getTimedOut();
-         }
+      return timedOut.get();
+   }
 
-         return result;
-      }
-
-      return 0;
+   /**
+    * Delta the timed out value
+    */
+   public void deltaTimedOut()
+   {
+      if (enabled.get())
+         timedOut.incrementAndGet();
    }
 
    /**
@@ -1058,19 +964,26 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
     */
    public long getTotalBlockingTime()
    {
-      if (isEnabled())
+      if (!enabled.get())
+         return 0L;
+
+      return totalBlockingTime.get();
+   }
+
+   /**
+    * Add delta to total blocking timeout
+    * @param delta The value
+    */
+   public void deltaTotalBlockingTime(long delta)
+   {
+      if (enabled.get() && delta > 0)
       {
-         long result = 0;
+         totalBlockingTime.addAndGet(delta);
+         totalBlockingTimeInvocations.incrementAndGet();
 
-         for (ManagedConnectionPool mcp : mcpPools.values())
-         {
-            result += mcp.getStatistics().getTotalBlockingTime();
-         }
-
-         return result;
+         if (delta > maxWaitTime.get())
+            maxWaitTime.set(delta);
       }
-
-      return 0;
    }
 
    /**
@@ -1078,19 +991,25 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
     */
    public long getTotalCreationTime()
    {
-      if (isEnabled())
+      if (!enabled.get())
+         return 0L;
+
+      return totalCreationTime.get();
+   }
+
+   /**
+    * Add delta to total creation time
+    * @param delta The value
+    */
+   public void deltaTotalCreationTime(long delta)
+   {
+      if (enabled.get() && delta > 0)
       {
-         long result = 0;
+         totalCreationTime.addAndGet(delta);
 
-         for (ManagedConnectionPool mcp : mcpPools.values())
-         {
-            result += mcp.getStatistics().getTotalCreationTime();
-         }
-
-         return result;
+         if (delta > maxCreationTime.get())
+            maxCreationTime.set(delta);
       }
-
-      return 0;
    }
 
    /**
@@ -1098,19 +1017,26 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
     */
    public long getTotalGetTime()
    {
-      if (isEnabled())
+      if (!enabled.get())
+         return 0L;
+
+      return totalGetTime.get();
+   }
+
+   /**
+    * Add delta to total get time
+    * @param delta The value
+    */
+   public void deltaTotalGetTime(long delta)
+   {
+      if (enabled.get() && delta > 0)
       {
-         long result = 0;
+         totalGetTime.addAndGet(delta);
+         totalGetTimeInvocations.incrementAndGet();
 
-         for (ManagedConnectionPool mcp : mcpPools.values())
-         {
-            result += mcp.getStatistics().getTotalGetTime();
-         }
-
-         return result;
+         if (delta > maxGetTime.get())
+            maxGetTime.set(delta);
       }
-
-      return 0;
    }
 
    /**
@@ -1118,19 +1044,26 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
     */
    public long getTotalPoolTime()
    {
-      if (isEnabled())
+      if (!enabled.get())
+         return 0L;
+
+      return totalPoolTime.get();
+   }
+
+   /**
+    * Add delta to total pool time
+    * @param delta The value
+    */
+   public void deltaTotalPoolTime(long delta)
+   {
+      if (enabled.get() && delta > 0)
       {
-         long result = 0;
+         totalPoolTime.addAndGet(delta);
+         totalPoolTimeInvocations.incrementAndGet();
 
-         for (ManagedConnectionPool mcp : mcpPools.values())
-         {
-            result += mcp.getStatistics().getTotalPoolTime();
-         }
-
-         return result;
+         if (delta > maxPoolTime.get())
+            maxPoolTime.set(delta);
       }
-
-      return 0;
    }
 
    /**
@@ -1138,19 +1071,26 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
     */
    public long getTotalUsageTime()
    {
-      if (isEnabled())
+      if (!enabled.get())
+         return 0L;
+
+      return totalUsageTime.get();
+   }
+
+   /**
+    * Add delta to total usage time
+    * @param delta The value
+    */
+   public void deltaTotalUsageTime(long delta)
+   {
+      if (enabled.get() && delta > 0)
       {
-         long result = 0;
+         totalUsageTime.addAndGet(delta);
+         totalUsageTimeInvocations.incrementAndGet();
 
-         for (ManagedConnectionPool mcp : mcpPools.values())
-         {
-            result += mcp.getStatistics().getTotalUsageTime();
-         }
-
-         return result;
+         if (delta > maxUsageTime.get())
+            maxUsageTime.set(delta);
       }
-
-      return 0;
    }
 
    /**
@@ -1158,19 +1098,19 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
     */
    public int getWaitCount()
    {
-      if (isEnabled())
-      {
-         int result = 0;
+      if (!enabled.get())
+         return 0;
 
-         for (ManagedConnectionPool mcp : mcpPools.values())
-         {
-            result += mcp.getStatistics().getWaitCount();
-         }
+      return waitCount.get();
+   }
 
-         return result;
-      }
-
-      return 0;
+   /**
+    * Add delta wait count
+    */
+   public void deltaWaitCount()
+   {
+      if (enabled.get())
+         waitCount.incrementAndGet();
    }
 
    /**
@@ -1225,9 +1165,10 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
     */
    public void deltaCommit(long time)
    {
+      commitCount.incrementAndGet();
+
       if (time > 0)
       {
-         commitCount.incrementAndGet();
          commitTotalTime.addAndGet(time);
 
          if (time > commitMaxTime.get())
@@ -1287,9 +1228,10 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
     */
    public void deltaEnd(long time)
    {
+      endCount.incrementAndGet();
+
       if (time > 0)
       {
-         endCount.incrementAndGet();
          endTotalTime.addAndGet(time);
 
          if (time > endMaxTime.get())
@@ -1349,9 +1291,10 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
     */
    public void deltaForget(long time)
    {
+      forgetCount.incrementAndGet();
+
       if (time > 0)
       {
-         forgetCount.incrementAndGet();
          forgetTotalTime.addAndGet(time);
 
          if (time > forgetMaxTime.get())
@@ -1411,9 +1354,10 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
     */
    public void deltaPrepare(long time)
    {
+      prepareCount.incrementAndGet();
+
       if (time > 0)
       {
-         prepareCount.incrementAndGet();
          prepareTotalTime.addAndGet(time);
 
          if (time > prepareMaxTime.get())
@@ -1473,9 +1417,10 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
     */
    public void deltaRecover(long time)
    {
+      recoverCount.incrementAndGet();
+
       if (time > 0)
       {
-         recoverCount.incrementAndGet();
          recoverTotalTime.addAndGet(time);
 
          if (time > recoverMaxTime.get())
@@ -1535,9 +1480,10 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
     */
    public void deltaRollback(long time)
    {
+      rollbackCount.incrementAndGet();
+
       if (time > 0)
       {
-         rollbackCount.incrementAndGet();
          rollbackTotalTime.addAndGet(time);
 
          if (time > rollbackMaxTime.get())
@@ -1597,9 +1543,10 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
     */
    public void deltaStart(long time)
    {
+      startCount.incrementAndGet();
+
       if (time > 0)
       {
-         startCount.incrementAndGet();
          startTotalTime.addAndGet(time);
 
          if (time > startMaxTime.get())
@@ -1612,6 +1559,28 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
     */
    public void clear()
    {
+      this.createdCount.set(0);
+      this.destroyedCount.set(0);
+      this.maxCreationTime.set(Long.MIN_VALUE);
+      this.maxGetTime.set(Long.MIN_VALUE);
+      this.maxPoolTime.set(Long.MIN_VALUE);
+      this.maxUsageTime.set(Long.MIN_VALUE);
+      this.maxUsedCount.set(Integer.MIN_VALUE);
+      this.maxWaitTime.set(Long.MIN_VALUE);
+      this.timedOut.set(0);
+      this.totalBlockingTime.set(0L);
+      this.totalBlockingTimeInvocations.set(0L);
+      this.totalCreationTime.set(0L);
+      this.totalGetTime.set(0L);
+      this.totalGetTimeInvocations.set(0L);
+      this.totalPoolTime.set(0L);
+      this.totalPoolTimeInvocations.set(0L);
+      this.totalUsageTime.set(0L);
+      this.totalUsageTimeInvocations.set(0L);
+      this.inUseCount.set(0);
+      this.blockingFailureCount.set(0);
+      this.waitCount.set(0);
+
       this.commitCount = new AtomicLong(0L);
       this.commitTotalTime = new AtomicLong(0L);
       this.commitMaxTime = new AtomicLong(0L);
@@ -1633,11 +1602,6 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
       this.startCount = new AtomicLong(0L);
       this.startTotalTime = new AtomicLong(0L);
       this.startMaxTime = new AtomicLong(0L);
-
-      for (ManagedConnectionPool mcp : mcpPools.values())
-      {
-         mcp.getStatistics().clear();
-      }
    }
 
    private void writeObject(ObjectOutputStream out) throws IOException
@@ -1649,7 +1613,7 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException
    {
       in.defaultReadObject();
-      init(in.readInt(), new ConcurrentHashMap<Object, ManagedConnectionPool>());
+      init(in.readInt());
    }
 
    /**

@@ -30,8 +30,6 @@ import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
 import org.jboss.jca.core.connectionmanager.pool.api.PrefillPool;
-import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
-import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolStatistics;
 import org.jboss.jca.core.security.DefaultSubjectFactory;
 import org.jboss.jca.core.spi.security.SubjectFactory;
 
@@ -82,15 +80,7 @@ public class PrefillTestCase
 
       Thread.sleep(1000);
 
-      int size = 0;
-
-      for (ManagedConnectionPool mcp : app.getManagedConnectionPools().values())
-      {
-         ManagedConnectionPoolStatistics mcps = mcp.getStatistics();
-         size += mcps.getActiveCount();
-      }
-
-      assertEquals(10, size);      
+      assertEquals(10, pool.getStatistics().getActiveCount());
    }
 
    /**
@@ -126,15 +116,7 @@ public class PrefillTestCase
 
       Thread.sleep(1000);
 
-      int size = 0;
-
-      for (ManagedConnectionPool mcp : app.getManagedConnectionPools().values())
-      {
-         ManagedConnectionPoolStatistics mcps = mcp.getStatistics();
-         size += mcps.getActiveCount();
-      }
-
-      assertEquals(0, size);      
+      assertEquals(0, pool.getStatistics().getActiveCount());
    }
 
    /**
@@ -191,15 +173,7 @@ public class PrefillTestCase
 
       Thread.sleep(1000);
 
-      int size = 0;
-
-      for (ManagedConnectionPool mcp : app.getManagedConnectionPools().values())
-      {
-         ManagedConnectionPoolStatistics mcps = mcp.getStatistics();
-         size += mcps.getActiveCount();
-      }
-
-      assertEquals(10, size);      
+      assertEquals(10, pool.getStatistics().getActiveCount());
    }
 
    /**
@@ -238,15 +212,7 @@ public class PrefillTestCase
 
       Thread.sleep(1000);
 
-      int size = 0;
-
-      for (ManagedConnectionPool mcp : app.getManagedConnectionPools().values())
-      {
-         ManagedConnectionPoolStatistics mcps = mcp.getStatistics();
-         size += mcps.getActiveCount();
-      }
-
-      assertEquals(0, size);      
+      assertEquals(0, pool.getStatistics().getActiveCount());
    }
 
    /**

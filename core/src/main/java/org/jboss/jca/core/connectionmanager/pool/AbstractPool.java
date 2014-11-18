@@ -146,7 +146,7 @@ public abstract class AbstractPool implements Pool
       this.sharable = sharable;
       this.log = getLogger();
       this.trace = log.isTraceEnabled();
-      this.statistics = new PoolStatisticsImpl(pc.getMaxSize(), mcpPools);
+      this.statistics = new PoolStatisticsImpl(pc.getMaxSize());
       this.permits = new Semaphore(pc.getMaxSize(), true, statistics);
       this.capacity = null;
       this.interleaving = false;
@@ -947,6 +947,14 @@ public abstract class AbstractPool implements Pool
     * {@inheritDoc}
     */
    public PoolStatistics getStatistics()
+   {
+      return statistics;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public PoolStatisticsImpl getInternalStatistics()
    {
       return statistics;
    }

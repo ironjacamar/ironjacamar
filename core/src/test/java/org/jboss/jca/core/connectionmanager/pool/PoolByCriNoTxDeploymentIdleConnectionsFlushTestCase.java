@@ -24,7 +24,6 @@ package org.jboss.jca.core.connectionmanager.pool;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
 import org.jboss.jca.core.connectionmanager.rar.SimpleConnection;
-import org.jboss.jca.core.connectionmanager.rar.SimpleConnectionRequestInfoImpl;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
@@ -72,22 +71,14 @@ public class PoolByCriNoTxDeploymentIdleConnectionsFlushTestCase extends PoolByC
       SimpleConnection c3 = cf.getConnection("B");
 
       assertEquals(pool.getManagedConnectionPools().size(), 2);
-      checkStatistics(ps, 5, 5, 5);
-
-      Object key1 = pool.getKey(null, new SimpleConnectionRequestInfoImpl("A"), false);
-      Object key2 = pool.getKey(null, new SimpleConnectionRequestInfoImpl("B"), false);
-
-      checkStatistics(pool.getManagedConnectionPools().get(key1).getStatistics(), 3, 2, 2);
-      checkStatistics(pool.getManagedConnectionPools().get(key2).getStatistics(), 2, 3, 3);
+      checkStatistics(ps, 0, 5, 5);
 
       c1.close();
       c.fail();
       Thread.sleep(1000);
       assertEquals(pool.getManagedConnectionPools().size(), 2);
 
-      checkStatistics(ps, 7, 3, 4, 1);
-      checkStatistics(pool.getManagedConnectionPools().get(key1).getStatistics(), 4, 1, 1, 1);
-      checkStatistics(pool.getManagedConnectionPools().get(key2).getStatistics(), 3, 2, 3);
+      checkStatistics(ps, 2, 3, 4, 1);
 
       assertFalse(c0.isDetached());
       assertFalse(c3.isDetached());
@@ -103,11 +94,9 @@ public class PoolByCriNoTxDeploymentIdleConnectionsFlushTestCase extends PoolByC
       assertTrue(c1.isDetached());
 
       assertEquals(pool.getManagedConnectionPools().size(), 2);
-      checkStatistics(pool.getManagedConnectionPools().get(key1).getStatistics(), 4, 1, 1, 1);
-      checkStatistics(pool.getManagedConnectionPools().get(key2).getStatistics(), 4, 1, 1, 2);
+      checkStatistics(ps, 3, 2, 2, 3);
       c0.close();
       c3.close();
-      checkStatistics(pool.getManagedConnectionPools().get(key1).getStatistics(), 5, 0, 1, 1);
-      checkStatistics(pool.getManagedConnectionPools().get(key2).getStatistics(), 5, 0, 1, 2);
+      checkStatistics(ps, 5, 0, 2, 3);
    }
 }

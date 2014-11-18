@@ -35,7 +35,10 @@ import java.util.concurrent.TimeUnit;
 public class Semaphore extends java.util.concurrent.Semaphore
 {
    /** Serial version uid */
-   private static final long serialVersionUID = 3L;
+   private static final long serialVersionUID = 4L;
+
+   /** Max size */
+   private int maxSize;
 
    /** Statistics */
    private PoolStatisticsImpl statistics;
@@ -49,6 +52,7 @@ public class Semaphore extends java.util.concurrent.Semaphore
    public Semaphore(int maxSize, boolean fairness, PoolStatisticsImpl statistics)
    {
       super(maxSize, fairness);
+      this.maxSize = maxSize;
       this.statistics = statistics;
    }
 
@@ -61,7 +65,28 @@ public class Semaphore extends java.util.concurrent.Semaphore
       if (statistics.isEnabled())
          statistics.setMaxWaitCount(getQueueLength());
 
-      return super.tryAcquire(timeout, unit);
+      boolean result = super.tryAcquire(timeout, unit);
+
+      if (result && statistics.isEnabled())
+      {
+         statistics.setInUsedCount(maxSize - availablePermits());
+      }
+
+      return result;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void release()
+   {
+      super.release();
+
+      if (statistics.isEnabled())
+      {
+         statistics.setInUsedCount(maxSize - availablePermits());
+      }
    }
 
    /**

@@ -24,7 +24,6 @@ package org.jboss.jca.core.connectionmanager.pool;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
 import org.jboss.jca.core.connectionmanager.rar.SimpleConnection;
-import org.jboss.jca.core.connectionmanager.rar.SimpleConnectionRequestInfoImpl;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
@@ -70,28 +69,19 @@ public class PoolByCriNoTxDeploymentEntirePoolFlushTestCase extends PoolByCriNoT
       SimpleConnection c2 = cf.getConnection("B");
 
       assertEquals(pool.getManagedConnectionPools().size(), 2);
-      checkStatistics(ps, 7, 3, 3);
-
-      Object key1 = pool.getKey(null, new SimpleConnectionRequestInfoImpl("A"), false);
-      Object key2 = pool.getKey(null, new SimpleConnectionRequestInfoImpl("B"), false);
-
-      checkStatistics(pool.getManagedConnectionPools().get(key1).getStatistics(), 4, 1, 1);
-      checkStatistics(pool.getManagedConnectionPools().get(key2).getStatistics(), 3, 2, 2);
+      checkStatistics(ps, 2, 3, 3);
 
       c.close();
-      checkStatistics(ps, 8, 2, 3);
+      checkStatistics(ps, 3, 2, 3);
       c2.fail();
       Thread.sleep(1000);
-      checkStatistics(ps, 10, 0, 1, 2);
-
-      checkStatistics(pool.getManagedConnectionPools().get(key1).getStatistics(), 5, 0, 1);
-      checkStatistics(pool.getManagedConnectionPools().get(key2).getStatistics(), 5, 0, 0, 2);
+      checkStatistics(ps, 5, 0, 1, 2);
 
       assertTrue(c1.isDetached());
       c1.fail();
       //doesn't make an effect - connection is in detached state
 
       assertEquals(pool.getManagedConnectionPools().size(), 2);
-      checkStatistics(ps, 10, 0, 1, 2);
+      checkStatistics(ps, 5, 0, 1, 2);
    }
 }

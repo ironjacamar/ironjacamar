@@ -25,7 +25,6 @@ import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
 import org.jboss.jca.core.connectionmanager.NoTxConnectionManager;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
-import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolStatistics;
 import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
 import org.jboss.jca.core.connectionmanager.rar.SimpleConnection;
 import org.jboss.jca.core.connectionmanager.rar.SimpleManagedConnectionFactory;
@@ -210,11 +209,9 @@ public class OnePoolNoTxTestCase extends PoolTestCaseAbstract
       log.info("Pools:" + pool.getManagedConnectionPools() + "//CL.pool=" + cl.getManagedConnectionPool());
       ManagedConnectionPool mcp = cl.getManagedConnectionPool();
       assertTrue(pool.getManagedConnectionPools().containsValue(mcp));
-      ManagedConnectionPoolStatistics ms = mcp.getStatistics();
       PoolStatistics ps = pool.getStatistics();
       log.info(ps.toString());
       assertEquals(ps.getActiveCount(), 1);
-      assertEquals(ms.getActiveCount(), 1);
       ManagedConnection mc = cl.getManagedConnection();
       Object ob = mc.getConnection(null, null);
       cl.registerConnection(ob);
@@ -227,8 +224,7 @@ public class OnePoolNoTxTestCase extends PoolTestCaseAbstract
       assertEquals(cl.getNumberOfConnections(), 0);
       pool.returnConnection(cl, true);
       assertEquals(ps.getActiveCount(), 0);
-      assertEquals(ms.getActiveCount(), 0);
-      log.info(ms.toString());
+      log.info(ps.toString());
    }
 
    /**
@@ -255,34 +251,6 @@ public class OnePoolNoTxTestCase extends PoolTestCaseAbstract
       ps.clear();
       ps.setEnabled(true);
       assertTrue(ps.isEnabled());
-   }
-
-   /**
-    * 
-    * testMCPoolStatistics
-    * 
-    * @throws Exception in case of unexpected errors
-    */
-   @Test
-   public void testMCPoolStatistics() throws Exception
-   {
-      AbstractPool pool = getPool();
-      Object key = pool.getKey(null, null, false);
-      ManagedConnectionPool mcp = pool.getManagedConnectionPool(key, null, null);
-      ManagedConnectionPoolStatistics mcps = mcp.getStatistics();
-      mcps.setEnabled(false);
-      assertFalse(mcps.isEnabled());
-      for (String name : mcps.getNames())
-      {
-         assertNotNull(mcps.getDescription(name));
-         assertNotNull(mcps.getValue(name));
-         assertNotNull(mcps.getType(name));
-      }
-      assertNull(mcps.getValue(null));
-      assertEquals(mcps.getDescription("WaitCount", Locale.TRADITIONAL_CHINESE), mcps.getDescription("WaitCount"));
-      mcps.clear();
-      mcps.setEnabled(true);
-      assertTrue(mcps.isEnabled());
    }
    
    /**

@@ -22,7 +22,6 @@
 package org.jboss.jca.core.connectionmanager.pool;
 
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
-import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.rar.SimpleConnection;
 import org.jboss.jca.core.connectionmanager.rar.SimpleManagedConnectionFactory;
 
@@ -77,11 +76,6 @@ public class OnePoolNoTxDeploymentSimpleTestCase extends OnePoolNoTxTestCaseAbst
       SimpleConnection c1 = cf.getConnection();
       assertEquals(pool.getManagedConnectionPools().size(), 1);
       checkStatistics(ps, 18, 2, 2);
-
-      for (ManagedConnectionPool mcp : pool.getManagedConnectionPools().values())
-      {
-         checkStatistics(mcp.getStatistics(), 18, 2, 2);
-      }
 
       c.fail();
       c1.close();

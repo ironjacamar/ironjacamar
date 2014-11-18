@@ -23,7 +23,6 @@ package org.jboss.jca.core.connectionmanager.pool;
 
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
-import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.rar.SimpleConnection;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -50,7 +49,7 @@ import static org.junit.Assert.*;
       @BMRule(name = "first check", 
          targetClass = "OnePoolNoTxDeploymentPrefilledEntirePoolFlushBMTestCase", 
          targetMethod = "checkPool", 
-         targetLocation = "LINE 101",
+         targetLocation = "LINE 98",
          condition = "flagged(\"prefill start\")||$0.getPool().getStatistics().getActiveCount()<2",
          action = "traceln(\"///Prefill didn't finish, wait for it \");" +
             "\n waitFor(\"filled\")"),
@@ -62,7 +61,7 @@ import static org.junit.Assert.*;
       @BMRule(name = "wait prefill3", 
          targetClass = "OnePoolNoTxDeploymentPrefilledEntirePoolFlushBMTestCase", 
          targetMethod = "checkPool", 
-         targetLocation = "LINE 118",
+         targetLocation = "LINE 114",
          action = "waitFor(\"filled\")"),
       @BMRule(name = "prefill start", 
          targetClass = "SemaphoreArrayListManagedConnectionPool", 
@@ -109,10 +108,6 @@ public class OnePoolNoTxDeploymentPrefilledEntirePoolFlushBMTestCase extends One
       //prefill()
       assertEquals(pool.getManagedConnectionPools().size(), 1);
       checkStatistics(ps, 2, 3, 3);
-      for (ManagedConnectionPool mcp : pool.getManagedConnectionPools().values())
-      {
-         checkStatistics(mcp.getStatistics(), 2, 3, 3);
-      }
 
       c.fail();
      //prefill()

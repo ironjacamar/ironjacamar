@@ -22,7 +22,6 @@
 package org.jboss.jca.core.connectionmanager.pool;
 
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
-import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.rar.SimpleConnection;
 import org.jboss.jca.core.connectionmanager.rar.SimpleManagedConnectionFactory;
 import org.jboss.jca.embedded.dsl.ironjacamar11.api.ConnectionDefinitionType;
@@ -62,7 +61,7 @@ import static org.junit.Assert.*;
       @BMRule(name = "wait prefill4", 
          targetClass = "OnePoolNoTxDeploymentUseStrictMinAndIdleConnectionsFlushBMTestCase", 
          targetMethod = "checkPool", 
-         targetLocation = "LINE 134",
+         targetLocation = "LINE 129",
          action = "waitFor(\"filled\")"),
       @BMRule(name = "filled", 
          targetClass = "SemaphoreArrayListManagedConnectionPool", 
@@ -95,7 +94,7 @@ public class OnePoolNoTxDeploymentUseStrictMinAndIdleConnectionsFlushBMTestCase 
    {
       IronjacamarDescriptor ij = getBasicIJXml(SimpleManagedConnectionFactory.class.getName());
       ConnectionDefinitionType ijCdt = ij.getOrCreateConnectionDefinitions().getOrCreateConnectionDefinition();
-      ijCdt.removePool().getOrCreatePool().minPoolSize(3).maxPoolSize(5).useStrictMin(true)
+      ijCdt.removePool().getOrCreatePool().minPoolSize(3).maxPoolSize(5).useStrictMin(true).prefill(true)
          .flushStrategy("IdleConnections");
 
       return ij;
@@ -106,13 +105,13 @@ public class OnePoolNoTxDeploymentUseStrictMinAndIdleConnectionsFlushBMTestCase 
    {
       AbstractPool pool = getPool();
       
-      assertEquals(pool.getManagedConnectionPools().size(), 0);
+      assertEquals(pool.getManagedConnectionPools().size(), 1);
       PoolStatistics ps = pool.getStatistics();
 
       SimpleConnection c = cf.getConnection();
       //prefill() called during mcp initialization and we get connection from pool 
       assertEquals(pool.getManagedConnectionPools().size(), 1);
-      checkStatistics(ps, 4, 1, 3);
+      checkStatistics(ps, 4, 1, 3, 0);
 
       c.fail();
       //prefill() 
@@ -124,12 +123,7 @@ public class OnePoolNoTxDeploymentUseStrictMinAndIdleConnectionsFlushBMTestCase 
 
       SimpleConnection c1 = cf.getConnection();
       assertEquals(pool.getManagedConnectionPools().size(), 1);
-      checkStatistics(ps, 3, 2, 3);
-      for (ManagedConnectionPool mcp : pool.getManagedConnectionPools().values())
-      {
-         checkStatistics(mcp.getStatistics(), 3, 2, 3);
-      }
-
+      checkStatistics(ps, 3, 2, 3, 3);
       c1.fail();
       //prefill()
       assertEquals(pool.getManagedConnectionPools().size(), 1);

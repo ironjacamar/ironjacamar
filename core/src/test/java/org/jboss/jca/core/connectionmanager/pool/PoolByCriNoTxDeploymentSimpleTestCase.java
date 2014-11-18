@@ -22,7 +22,6 @@
 package org.jboss.jca.core.connectionmanager.pool;
 
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
-import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.rar.SimpleConnection;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -77,19 +76,11 @@ public class PoolByCriNoTxDeploymentSimpleTestCase extends PoolByCriNoTxTestCase
       c = cf.getConnection("0");
       SimpleConnection c1 = cf.getConnection("1");
       assertEquals(pool.getManagedConnectionPools().size(), 3);
-      checkStatistics(ps, 58, 2, 3);
-
-      for (ManagedConnectionPool mcp : pool.getManagedConnectionPools().values())
-      {
-         if (mcp.getStatistics().getAvailableCount() == 20)
-            checkStatistics(mcp.getStatistics(), 20, 0, 1);
-         else
-            checkStatistics(mcp.getStatistics(), 19, 1, 1);
-      }
+      checkStatistics(ps, 18, 2, 3);
 
       c.fail();
       c1.close();
       assertEquals(pool.getManagedConnectionPools().size(), 3);
-      checkStatistics(ps, 60, 0, 2, 1);
+      checkStatistics(ps, 20, 0, 2, 1);
    }
 }

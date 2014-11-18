@@ -118,9 +118,6 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
    /** Current checked out connections **/
    private AtomicInteger checkedOutSize = new AtomicInteger();
 
-   /** Statistics */
-   private ManagedConnectionPoolStatisticsImpl statistics;
-
    /** Supports lazy association */
    private Boolean supportsLazyAssociation;
 
@@ -167,8 +164,6 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
       this.trace = log.isTraceEnabled();
       this.clq = new ConcurrentLinkedQueue<ConnectionListenerWrapper>();
       this.cls = new ConcurrentHashMap<ConnectionListener, ConnectionListenerWrapper>();
-      this.statistics = new ManagedConnectionPoolStatisticsImpl(maxSize);
-      this.statistics.setEnabled(p.getStatistics().isEnabled());
       this.poolSize.set(0);
       this.checkedOutSize.set(0);
       this.supportsLazyAssociation = null;
@@ -283,13 +278,15 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                   available.add(entry.getKey());
             }
             log.trace(ManagedConnectionPoolUtility.fullDetails(System.identityHashCode(this), method, mcf, cm, pool,
-                                                               poolConfiguration, available, checkedOut, statistics));
+                                                               poolConfiguration, available, checkedOut,
+                                                               pool.getInternalStatistics()));
          }
       } 
       else if (debug) 
       {
          String method = "getConnection(" + subject + ", " + cri + ")";
-         log.debug(ManagedConnectionPoolUtility.details(method, pool.getName(), statistics.getInUseCount(), maxSize));
+         log.debug(ManagedConnectionPoolUtility.details(method, pool.getName(),
+                                                        pool.getInternalStatistics().getInUseCount(), maxSize));
       }
 
       subject = (subject == null) ? defaultSubject : subject;
@@ -297,8 +294,8 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
 
       if (pool.isFull()) 
       {
-         if (statistics.isEnabled())
-            statistics.deltaWaitCount();
+         if (pool.getInternalStatistics().isEnabled())
+            pool.getInternalStatistics().deltaWaitCount();
 
          if (pool.isSharable() && (supportsLazyAssociation == null || supportsLazyAssociation.booleanValue())) 
          {
@@ -321,13 +318,13 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
          }
       }
 
-      long startWait = statistics.isEnabled() ? System.currentTimeMillis() : 0L;
+      long startWait = pool.getInternalStatistics().isEnabled() ? System.currentTimeMillis() : 0L;
       try 
       {
          if (pool.getLock().tryAcquire(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS)) 
          {
-            if (statistics.isEnabled())
-               statistics.deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
+            if (pool.getInternalStatistics().isEnabled())
+               pool.getInternalStatistics().deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
 
             // We have a permit to get a connection. Is there one in the pool already?
             ConnectionListenerWrapper clw = null;
@@ -396,10 +393,11 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
 
                            lastUsed = System.currentTimeMillis();
 
-                           if (statistics.isEnabled())
+                           if (pool.getInternalStatistics().isEnabled())
                            {
-                              statistics.deltaTotalGetTime(lastUsed - startWait);
-                              statistics.deltaTotalPoolTime(lastUsed - clw.getConnectionListener().getLastUsedTime());
+                              pool.getInternalStatistics().deltaTotalGetTime(lastUsed - startWait);
+                              pool.getInternalStatistics().deltaTotalPoolTime(lastUsed -
+                                 clw.getConnectionListener().getLastUsedTime());
                            }
 
                            if (Tracer.isEnabled())
@@ -467,16 +465,13 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                cls.put(clw.getConnectionListener(), clw);
                poolSize.incrementAndGet();
 
-               if (statistics.isEnabled())
-                  statistics.setInUsedCount(checkedOutSize.get());
-
                if (trace)
                   log.trace("supplying new ManagedConnection: " + clw.getConnectionListener());
 
                lastUsed = System.currentTimeMillis();
 
-               if (statistics.isEnabled())
-                  statistics.deltaTotalGetTime(lastUsed - startWait);
+               if (pool.getInternalStatistics().isEnabled())
+                  pool.getInternalStatistics().deltaTotalGetTime(lastUsed - startWait);
 
                prefill();
 
@@ -501,9 +496,6 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                   doDestroy(clw);
                }
 
-               if (statistics.isEnabled())
-                  statistics.setInUsedCount(checkedOutSize.get());
-
                pool.getLock().release();
 
                throw new ResourceException(
@@ -524,8 +516,8 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
       {
          Thread.interrupted();
 
-         long end = statistics.isEnabled() ? (System.currentTimeMillis() - startWait) : 0L;
-         statistics.deltaTotalBlockingTime(end);
+         long end = pool.getInternalStatistics().isEnabled() ? (System.currentTimeMillis() - startWait) : 0L;
+         pool.getInternalStatistics().deltaTotalBlockingTime(end);
          throw new ResourceException(bundle.interruptedWhileRequestingPermit(end));
       } 
       catch (Exception e) 
@@ -570,8 +562,8 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
     */
    public void returnConnection(ConnectionListener cl, boolean kill, boolean cleanup) 
    {
-      if (statistics.isEnabled() && cl.getState() != ConnectionState.DESTROYED)
-         statistics.deltaTotalUsageTime(System.currentTimeMillis() - cl.getLastUsedTime());
+      if (pool.getInternalStatistics().isEnabled() && cl.getState() != ConnectionState.DESTROYED)
+         pool.getInternalStatistics().deltaTotalUsageTime(System.currentTimeMillis() - cl.getLastUsedTime());
 
       if (trace) 
       {
@@ -589,14 +581,14 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
             }
             log.trace(ManagedConnectionPoolUtility.fullDetails(
                   System.identityHashCode(this), method, mcf, cm, pool,
-                  poolConfiguration, available, checkedOut, statistics));
+                  poolConfiguration, available, checkedOut, pool.getInternalStatistics()));
          }
       } 
       else if (debug) 
       {
          String method = "returnConnection(" + Integer.toHexString(System.identityHashCode(cl)) + ", " + kill + ")";
          log.debug(ManagedConnectionPoolUtility.details(method,
-               pool.getName(), statistics.getInUseCount(), maxSize));
+               pool.getName(), pool.getInternalStatistics().getInUseCount(), maxSize));
       }
 
       ConnectionListenerWrapper clw = cls.get(cl);
@@ -677,9 +669,6 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
          }
       }
 
-      if (statistics.isEnabled())
-         statistics.setInUsedCount(checkedOutSize.get());
-
       if (kill) 
       {
          if (trace)
@@ -741,9 +730,6 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                   poolSize.decrementAndGet();
                }
             }
-
-            if (statistics.isEnabled())
-               statistics.setInUsedCount(checkedOutSize.get());
          } 
          else if (FlushMode.GRACEFULLY == mode) 
          {
@@ -876,13 +862,14 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
             }
             log.trace(ManagedConnectionPoolUtility.fullDetails(
                   System.identityHashCode(this), method, mcf, cm, pool,
-                  poolConfiguration, available, checkedOut, statistics));
+                  poolConfiguration, available, checkedOut, pool.getInternalStatistics()));
          }
       } 
       else if (debug) 
       {
          String method = "removeIdleConnections(" + timeout + ")";
-         log.debug(ManagedConnectionPoolUtility.details(method, pool.getName(), statistics.getInUseCount(), maxSize));
+         log.debug(ManagedConnectionPoolUtility.details(method, pool.getName(),
+                                                        pool.getInternalStatistics().getInUseCount(), maxSize));
       }
 
       Iterator<ConnectionListenerWrapper> clwIter = clq.iterator();
@@ -902,8 +889,8 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
          {
             if (shouldRemove()) 
             {
-               if (statistics.isEnabled())
-                  statistics.deltaTimedOut();
+               if (pool.getInternalStatistics().isEnabled())
+                  pool.getInternalStatistics().deltaTimedOut();
 
                if (trace)
                   log.trace("Idle connection cl=" + clw.getConnectionListener());
@@ -1034,13 +1021,14 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
             }
             log.trace(ManagedConnectionPoolUtility.fullDetails(
                   System.identityHashCode(this), method, mcf, cm, pool,
-                  poolConfiguration, available, checkedOut, statistics));
+                  poolConfiguration, available, checkedOut, pool.getInternalStatistics()));
          }
       } 
       else if (debug) 
       {
          String method = "fillTo(" + size + ")";
-         log.debug(ManagedConnectionPoolUtility.details(method, pool.getName(), statistics.getInUseCount(), maxSize));
+         log.debug(ManagedConnectionPoolUtility.details(method, pool.getName(),
+                                                        pool.getInternalStatistics().getInUseCount(), maxSize));
       }
 
       while (true) 
@@ -1050,25 +1038,21 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
          // checked out
          try 
          {
-            long startWait = statistics.isEnabled() ? System.currentTimeMillis() : 0L;
+            long startWait = pool.getInternalStatistics().isEnabled() ? System.currentTimeMillis() : 0L;
             if (pool.getLock().tryAcquire(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS)) 
             {
-               if (statistics.isEnabled())
-                  statistics.deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
+               if (pool.getInternalStatistics().isEnabled())
+                  pool.getInternalStatistics().deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
                try 
                {
                   if (!isRunning()) 
                   {
-                     if (statistics.isEnabled())
-                        statistics.setInUsedCount(checkedOutSize.get());
                      return;
                   }
 
                   // We already have enough connections
                   if (isSize(size)) 
                   {
-                     if (statistics.isEnabled())
-                        statistics.setInUsedCount(checkedOutSize.get());
                      return;
                   }
 
@@ -1083,14 +1067,9 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                      cls.put(cl, new ConnectionListenerWrapper(cl, false, false));
                      poolSize.incrementAndGet();
                      clq.add(cls.get(cl));
-
-                     if (statistics.isEnabled())
-                        statistics.setInUsedCount(checkedOutSize.get() + 1);
                   } 
                   catch (ResourceException re) 
                   {
-                     if (statistics.isEnabled())
-                        statistics.setInUsedCount(checkedOutSize.get());
                      log.unableFillPool(re);
                      return;
                   }
@@ -1111,16 +1090,6 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
       }
    }
 
-   /**
-    * Get statistics
-    * 
-    * @return The module
-    */
-   public ManagedConnectionPoolStatistics getStatistics() 
-   {
-      return statistics;
-   }
-
    @Override
    public void increaseCapacity(Subject subject, ConnectionRequestInfo cri) 
    {
@@ -1132,16 +1101,15 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
       {
          try 
          {
-            long startWait = statistics.isEnabled() ? System.currentTimeMillis() : 0L;
+            long startWait = pool.getInternalStatistics().isEnabled() ? System.currentTimeMillis() : 0L;
             if (pool.getLock().tryAcquire(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS)) 
             {
-               if (statistics.isEnabled())
-                  statistics.deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
+               if (pool.getInternalStatistics().isEnabled())
+                  pool.getInternalStatistics().deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
                try 
                {
                   if (!isRunning()) 
                   {
-                     statistics.setInUsedCount(checkedOutSize.get());
                      return;
                   }
 
@@ -1164,11 +1132,9 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                         clq.add(cls.get(cl));
 
                         created++;
-                        statistics.setInUsedCount(checkedOutSize.get() + 1);
                      } 
                      catch (ResourceException re) 
                      {
-                        statistics.setInUsedCount(checkedOutSize.get());
                         log.unableFillPool(re);
                         return;
                      }
@@ -1188,9 +1154,6 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                log.trace("Interrupted while requesting permit in increaseCapacity");
          }
       }
-
-      statistics.setInUsedCount(checkedOutSize.get());
-
    }
 
    /**
@@ -1202,8 +1165,8 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
       poolSize.incrementAndGet();
       clq.add(cls.get(cl));
 
-      if (statistics.isEnabled())
-         statistics.deltaCreatedCount();
+      if (pool.getInternalStatistics().isEnabled())
+         pool.getInternalStatistics().deltaCreatedCount();
    }
 
    /**
@@ -1213,8 +1176,8 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
    {
       if (cls.size() > 0) 
       {
-         if (statistics.isEnabled())
-            statistics.deltaDestroyedCount();
+         if (pool.getInternalStatistics().isEnabled())
+            pool.getInternalStatistics().deltaDestroyedCount();
          ConnectionListenerWrapper clw = clq.remove();
          if (cls.remove(clw.getConnectionListener()) != null)
             poolSize.decrementAndGet();
@@ -1238,14 +1201,14 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
    private ConnectionListener createConnectionEventListener(Subject subject, ConnectionRequestInfo cri) 
       throws ResourceException 
    {
-      long start = statistics.isEnabled() ? System.currentTimeMillis() : 0L;
+      long start = pool.getInternalStatistics().isEnabled() ? System.currentTimeMillis() : 0L;
 
       ManagedConnection mc = mcf.createManagedConnection(subject, cri);
 
-      if (statistics.isEnabled()) 
+      if (pool.getInternalStatistics().isEnabled()) 
       {
-         statistics.deltaTotalCreationTime(System.currentTimeMillis() - start);
-         statistics.deltaCreatedCount();
+         pool.getInternalStatistics().deltaTotalCreationTime(System.currentTimeMillis() - start);
+         pool.getInternalStatistics().deltaCreatedCount();
       }
       try 
       {
@@ -1253,8 +1216,8 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
       } 
       catch (ResourceException re) 
       {
-         if (statistics.isEnabled())
-            statistics.deltaDestroyedCount();
+         if (pool.getInternalStatistics().isEnabled())
+            pool.getInternalStatistics().deltaDestroyedCount();
          mc.destroy();
          throw re;
       }
@@ -1282,8 +1245,8 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                return;
             }
 
-            if (statistics.isEnabled())
-               statistics.deltaDestroyedCount();
+            if (pool.getInternalStatistics().isEnabled())
+               pool.getInternalStatistics().deltaDestroyedCount();
             clw.getConnectionListener().setState(ConnectionState.DESTROYED);
 
             ManagedConnection mc = clw.getConnectionListener().getManagedConnection();
@@ -1594,9 +1557,6 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
             clw.setCheckedOut(false);
             checkedOutSize.decrementAndGet();
          }
-
-         if (statistics.isEnabled())
-            statistics.setInUsedCount(checkedOutSize.get());
       }
    }
    

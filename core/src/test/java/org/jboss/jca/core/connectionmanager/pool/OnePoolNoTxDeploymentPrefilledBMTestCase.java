@@ -22,7 +22,6 @@
 package org.jboss.jca.core.connectionmanager.pool;
 
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
-import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.rar.SimpleConnection;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -61,12 +60,12 @@ import static org.junit.Assert.*;
       @BMRule(name = "wait prefill3", 
          targetClass = "OnePoolNoTxDeploymentPrefilledBMTestCase", 
          targetMethod = "checkPool", 
-         targetLocation = "LINE 120",
+         targetLocation = "LINE 116",
          action = "waitFor(\"filled\")"),
       @BMRule(name = "wait prefill4", 
          targetClass = "OnePoolNoTxDeploymentPrefilledBMTestCase", 
          targetMethod = "checkPool", 
-         targetLocation = "LINE 123",
+         targetLocation = "LINE 119",
          action = "waitFor(\"filled\")"),
          @BMRule(name = "filled", 
          targetClass = "SemaphoreArrayListManagedConnectionPool", 
@@ -112,10 +111,6 @@ public class OnePoolNoTxDeploymentPrefilledBMTestCase extends OnePoolNoTxTestCas
       assertEquals(pool.getManagedConnectionPools().size(), 1);
       //prefill()
       checkStatistics(ps, 2, 3, 3);
-      for (ManagedConnectionPool mcp : pool.getManagedConnectionPools().values())
-      {
-         checkStatistics(mcp.getStatistics(), 2, 3, 3);
-      }
       c.fail();
       //prefill()
       checkStatistics(ps, 3, 2, 2, 1);

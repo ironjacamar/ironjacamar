@@ -24,6 +24,7 @@ package org.jboss.jca.core.connectionmanager.pool.api;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
+import org.jboss.jca.core.connectionmanager.pool.PoolStatisticsImpl;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 
 import javax.resource.ResourceException;
@@ -109,6 +110,12 @@ public interface Pool extends org.jboss.jca.core.api.connectionmanager.pool.Pool
     * @return True if full, otherwise false
     */
    public boolean isFull();
+
+   /**
+    * Get internal statistics
+    * @return The value
+    */
+   public PoolStatisticsImpl getInternalStatistics();
 
    /**
     * Get a connection

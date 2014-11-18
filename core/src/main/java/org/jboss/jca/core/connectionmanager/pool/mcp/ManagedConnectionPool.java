@@ -145,12 +145,6 @@ public interface ManagedConnectionPool extends IdleConnectionRemovalSupport
    public void validateConnections() throws Exception;
 
    /**
-    * Get statistics
-    * @return The module
-    */
-   public ManagedConnectionPoolStatistics getStatistics();
-
-   /**
     * Increase capacity
     * @param subject The subject
     * @param cri The connection request information object

@@ -25,6 +25,7 @@ package org.jboss.jca.core.connectionmanager.pool.mcp;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
+import org.jboss.jca.core.connectionmanager.pool.PoolStatisticsImpl;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 
 import java.util.Collection;
@@ -73,13 +74,13 @@ class ManagedConnectionPoolUtility
     * @param pc The pool configuration
     * @param available The available connection listeners
     * @param inUse The in-use connection listeners
-    * @param mcps The statistics
+    * @param ps The statistics
     * @return The state
     */
    static String fullDetails(int identifier, String method, ManagedConnectionFactory mcf,
                              ConnectionManager cm, Pool pool, PoolConfiguration pc,
                              Collection<ConnectionListener> available, Collection<ConnectionListener> inUse,
-                             ManagedConnectionPoolStatistics mcps)
+                             PoolStatisticsImpl ps)
    {
       StringBuilder sb = new StringBuilder(1024);
       long now = System.currentTimeMillis();
@@ -95,6 +96,8 @@ class ManagedConnectionPoolUtility
       sb.append("  Object: ").append(Integer.toHexString(System.identityHashCode(cm))).append(newLine);
       sb.append("Pool:").append(newLine);
       sb.append("  Name: ").append(pool.getName()).append(newLine);
+      sb.append("  Class: ").append(pool.getClass().getName()).append(newLine);
+      sb.append("  Object: ").append(Integer.toHexString(System.identityHashCode(pool))).append(newLine);
       sb.append("PoolConfiguration:").append(newLine);
       sb.append("  MinSize: ").append(pc.getMinSize()).append(newLine);
       sb.append("  InitialSize: ").append(pc.getInitialSize()).append(newLine);
@@ -136,31 +139,61 @@ class ManagedConnectionPoolUtility
       }
 
       sb.append("Statistics:").append(newLine);
-      sb.append("  ActiveCount: ").append(mcps.getActiveCount()).append(newLine);
-      sb.append("  AvailableCount: ").append(mcps.getAvailableCount()).append(newLine);
-      sb.append("  AverageBlockingTime: ").append(mcps.getAverageBlockingTime()).append(newLine);
-      sb.append("  AverageCreationTime: ").append(mcps.getAverageCreationTime()).append(newLine);
-      sb.append("  AverageGetTime: ").append(mcps.getAverageGetTime()).append(newLine);
-      sb.append("  AveragePoolTime: ").append(mcps.getAveragePoolTime()).append(newLine);
-      sb.append("  AverageUsageTime: ").append(mcps.getAverageUsageTime()).append(newLine);
-      sb.append("  BlockingFailureCount: ").append(mcps.getBlockingFailureCount()).append(newLine);
-      sb.append("  CreatedCount: ").append(mcps.getCreatedCount()).append(newLine);
-      sb.append("  DestroyedCount: ").append(mcps.getDestroyedCount()).append(newLine);
-      sb.append("  IdleCount: ").append(mcps.getIdleCount()).append(newLine);
-      sb.append("  InUseCount: ").append(mcps.getInUseCount()).append(newLine);
-      sb.append("  MaxCreationTime: ").append(mcps.getMaxCreationTime()).append(newLine);
-      sb.append("  MaxGetTime: ").append(mcps.getMaxGetTime()).append(newLine);
-      sb.append("  MaxPoolTime: ").append(mcps.getMaxPoolTime()).append(newLine);
-      sb.append("  MaxUsageTime: ").append(mcps.getMaxUsageTime()).append(newLine);
-      sb.append("  MaxUsedCount: ").append(mcps.getMaxUsedCount()).append(newLine);
-      sb.append("  MaxWaitTime: ").append(mcps.getMaxWaitTime()).append(newLine);
-      sb.append("  TimedOut: ").append(mcps.getTimedOut()).append(newLine);
-      sb.append("  TotalBlockingTime: ").append(mcps.getTotalBlockingTime()).append(newLine);
-      sb.append("  TotalCreationTime: ").append(mcps.getTotalCreationTime()).append(newLine);
-      sb.append("  TotalGetTime: ").append(mcps.getTotalGetTime()).append(newLine);
-      sb.append("  TotalPoolTime: ").append(mcps.getTotalPoolTime()).append(newLine);
-      sb.append("  TotalUsageTime: ").append(mcps.getTotalUsageTime()).append(newLine);
-      sb.append("  WaitCount: ").append(mcps.getWaitCount());
+      sb.append("  ActiveCount: ").append(ps.getActiveCount()).append(newLine);
+      sb.append("  AvailableCount: ").append(ps.getAvailableCount()).append(newLine);
+      sb.append("  AverageBlockingTime: ").append(ps.getAverageBlockingTime()).append(newLine);
+      sb.append("  AverageCreationTime: ").append(ps.getAverageCreationTime()).append(newLine);
+      sb.append("  AverageGetTime: ").append(ps.getAverageGetTime()).append(newLine);
+      sb.append("  AveragePoolTime: ").append(ps.getAveragePoolTime()).append(newLine);
+      sb.append("  AverageUsageTime: ").append(ps.getAverageUsageTime()).append(newLine);
+      sb.append("  BlockingFailureCount: ").append(ps.getBlockingFailureCount()).append(newLine);
+      sb.append("  CreatedCount: ").append(ps.getCreatedCount()).append(newLine);
+      sb.append("  DestroyedCount: ").append(ps.getDestroyedCount()).append(newLine);
+      sb.append("  IdleCount: ").append(ps.getIdleCount()).append(newLine);
+      sb.append("  InUseCount: ").append(ps.getInUseCount()).append(newLine);
+      sb.append("  MaxCreationTime: ").append(ps.getMaxCreationTime()).append(newLine);
+      sb.append("  MaxGetTime: ").append(ps.getMaxGetTime()).append(newLine);
+      sb.append("  MaxPoolTime: ").append(ps.getMaxPoolTime()).append(newLine);
+      sb.append("  MaxUsageTime: ").append(ps.getMaxUsageTime()).append(newLine);
+      sb.append("  MaxUsedCount: ").append(ps.getMaxUsedCount()).append(newLine);
+      sb.append("  MaxWaitTime: ").append(ps.getMaxWaitTime()).append(newLine);
+      sb.append("  TimedOut: ").append(ps.getTimedOut()).append(newLine);
+      sb.append("  TotalBlockingTime: ").append(ps.getTotalBlockingTime()).append(newLine);
+      sb.append("  TotalCreationTime: ").append(ps.getTotalCreationTime()).append(newLine);
+      sb.append("  TotalGetTime: ").append(ps.getTotalGetTime()).append(newLine);
+      sb.append("  TotalPoolTime: ").append(ps.getTotalPoolTime()).append(newLine);
+      sb.append("  TotalUsageTime: ").append(ps.getTotalUsageTime()).append(newLine);
+      sb.append("  WaitCount: ").append(ps.getWaitCount()).append(newLine);
+
+      sb.append("XAResource:").append(newLine);
+      sb.append("  CommitCount: ").append(ps.getCommitCount()).append(newLine);
+      sb.append("  CommitTotalTime: ").append(ps.getCommitTotalTime()).append(newLine);
+      sb.append("  CommitAverageTime: ").append(ps.getCommitAverageTime()).append(newLine);
+      sb.append("  CommitMaxTime: ").append(ps.getCommitMaxTime()).append(newLine);
+      sb.append("  EndCount: ").append(ps.getEndCount()).append(newLine);
+      sb.append("  EndTotalTime: ").append(ps.getEndTotalTime()).append(newLine);
+      sb.append("  EndAverageTime: ").append(ps.getEndAverageTime()).append(newLine);
+      sb.append("  EndMaxTime: ").append(ps.getEndMaxTime()).append(newLine);
+      sb.append("  ForgetCount: ").append(ps.getForgetCount()).append(newLine);
+      sb.append("  ForgetTotalTime: ").append(ps.getForgetTotalTime()).append(newLine);
+      sb.append("  ForgetAverageTime: ").append(ps.getForgetAverageTime()).append(newLine);
+      sb.append("  ForgetMaxTime: ").append(ps.getForgetMaxTime()).append(newLine);
+      sb.append("  PrepareCount: ").append(ps.getPrepareCount()).append(newLine);
+      sb.append("  PrepareTotalTime: ").append(ps.getPrepareTotalTime()).append(newLine);
+      sb.append("  PrepareAverageTime: ").append(ps.getPrepareAverageTime()).append(newLine);
+      sb.append("  PrepareMaxTime: ").append(ps.getPrepareMaxTime()).append(newLine);
+      sb.append("  RecoverCount: ").append(ps.getRecoverCount()).append(newLine);
+      sb.append("  RecoverTotalTime: ").append(ps.getRecoverTotalTime()).append(newLine);
+      sb.append("  RecoverAverageTime: ").append(ps.getRecoverAverageTime()).append(newLine);
+      sb.append("  RecoverMaxTime: ").append(ps.getRecoverMaxTime()).append(newLine);
+      sb.append("  RollbackCount: ").append(ps.getRollbackCount()).append(newLine);
+      sb.append("  RollbackTotalTime: ").append(ps.getRollbackTotalTime()).append(newLine);
+      sb.append("  RollbackAverageTime: ").append(ps.getRollbackAverageTime()).append(newLine);
+      sb.append("  RollbackMaxTime: ").append(ps.getRollbackMaxTime()).append(newLine);
+      sb.append("  StartCount: ").append(ps.getStartCount()).append(newLine);
+      sb.append("  StartTotalTime: ").append(ps.getStartTotalTime()).append(newLine);
+      sb.append("  StartAverageTime: ").append(ps.getStartAverageTime()).append(newLine);
+      sb.append("  StartMaxTime: ").append(ps.getStartMaxTime());
 
       return sb.toString();
    }

@@ -114,9 +114,6 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    /** The checked out connections */
    private final ArrayList<ConnectionListener> checkedOut = new ArrayList<ConnectionListener>();
 
-   /** Statistics */
-   private ManagedConnectionPoolStatisticsImpl statistics;
-
    /** Supports lazy association */
    private Boolean supportsLazyAssociation;
 
@@ -162,8 +159,6 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       this.debug = log.isDebugEnabled();
       this.trace = log.isTraceEnabled();
       this.cls = new ArrayList<ConnectionListener>(this.maxSize);
-      this.statistics = new ManagedConnectionPoolStatisticsImpl(maxSize);
-      this.statistics.setEnabled(p.getStatistics().isEnabled());
       this.supportsLazyAssociation = null;
       this.lastIdleCheck = Long.MIN_VALUE;
       this.lastUsed = Long.MAX_VALUE;
@@ -277,13 +272,14 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             String method = "getConnection(" + subject + ", " + cri + ")";
             log.trace(ManagedConnectionPoolUtility.fullDetails(System.identityHashCode(this), method,
                                                                mcf, cm, pool, poolConfiguration,
-                                                               cls, checkedOut, statistics));
+                                                               cls, checkedOut, pool.getInternalStatistics()));
          }
       }
       else if (debug)
       {
          String method = "getConnection(" + subject + ", " + cri + ")";
-         log.debug(ManagedConnectionPoolUtility.details(method, pool.getName(), statistics.getInUseCount(), maxSize));
+         log.debug(ManagedConnectionPoolUtility.details(method, pool.getName(),
+                                                        pool.getInternalStatistics().getInUseCount(), maxSize));
       }
 
       subject = (subject == null) ? defaultSubject : subject;
@@ -291,8 +287,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
       if (pool.isFull())
       {
-         if (statistics.isEnabled())
-            statistics.deltaWaitCount();
+         if (pool.getInternalStatistics().isEnabled())
+            pool.getInternalStatistics().deltaWaitCount();
 
          if (pool.isSharable() && (supportsLazyAssociation == null || supportsLazyAssociation.booleanValue()))
          {
@@ -315,13 +311,13 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          }
       }
 
-      long startWait = statistics.isEnabled() ? System.currentTimeMillis() : 0L;
+      long startWait = pool.getInternalStatistics().isEnabled() ? System.currentTimeMillis() : 0L;
       try
       {
          if (pool.getLock().tryAcquire(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS))
          {
-            if (statistics.isEnabled())
-               statistics.deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
+            if (pool.getInternalStatistics().isEnabled())
+               pool.getInternalStatistics().deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
 
             //We have a permit to get a connection. Is there one in the pool already?
             ConnectionListener cl = null;
@@ -343,9 +339,6 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                      checkedOut.add(cl);
                   }
                }
-
-               if (statistics.isEnabled())
-                  statistics.setInUsedCount(checkedOut.size());
 
                if (cl != null)
                {
@@ -395,10 +388,10 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
                            lastUsed = System.currentTimeMillis();
 
-                           if (statistics.isEnabled())
+                           if (pool.getInternalStatistics().isEnabled())
                            {
-                              statistics.deltaTotalGetTime(lastUsed - startWait);
-                              statistics.deltaTotalPoolTime(lastUsed - cl.getLastUsedTime());
+                              pool.getInternalStatistics().deltaTotalGetTime(lastUsed - startWait);
+                              pool.getInternalStatistics().deltaTotalPoolTime(lastUsed - cl.getLastUsedTime());
                            }
 
                            if (Tracer.isEnabled())
@@ -427,9 +420,6 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                         checkedOut.remove(cl);
                      }
 
-                     if (statistics.isEnabled())
-                        statistics.setInUsedCount(checkedOut.size());
-
                      doDestroy(cl);
                      cl = null;
                   }
@@ -441,9 +431,6 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                      {
                         checkedOut.remove(cl);
                      }
-
-                     if (statistics.isEnabled())
-                        statistics.setInUsedCount(checkedOut.size());
 
                      doDestroy(cl);
                      cl = null;
@@ -474,9 +461,6 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                   checkedOut.add(cl);
                }
 
-               if (statistics.isEnabled())
-                  statistics.setInUsedCount(checkedOut.size());
-
                if (trace)
                   log.trace("supplying new ManagedConnection: " + cl);
 
@@ -484,8 +468,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
                lastUsed = System.currentTimeMillis();
 
-               if (statistics.isEnabled())
-                  statistics.deltaTotalGetTime(lastUsed - startWait);
+               if (pool.getInternalStatistics().isEnabled())
+                  pool.getInternalStatistics().deltaTotalGetTime(lastUsed - startWait);
 
                // Trigger prefill
                prefill();
@@ -515,9 +499,6 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                   doDestroy(cl);
                }
 
-               if (statistics.isEnabled())
-                  statistics.setInUsedCount(checkedOut.size());
-
                pool.getLock().release();
 
                if (t instanceof ResourceException)
@@ -532,8 +513,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          }
          else
          {
-            if (statistics.isEnabled())
-               statistics.deltaBlockingFailureCount();
+            if (pool.getInternalStatistics().isEnabled())
+               pool.getInternalStatistics().deltaBlockingFailureCount();
 
             // We timed out
             throw new ResourceException(bundle.noMManagedConnectionsAvailableWithinConfiguredBlockingTimeout(
@@ -545,8 +526,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       {
          Thread.interrupted();
 
-         long end = statistics.isEnabled() ? (System.currentTimeMillis() - startWait) : 0L;
-         statistics.deltaTotalBlockingTime(end);
+         long end = pool.getInternalStatistics().isEnabled() ? (System.currentTimeMillis() - startWait) : 0L;
+         pool.getInternalStatistics().deltaTotalBlockingTime(end);
          throw new ResourceException(bundle.interruptedWhileRequestingPermit(end));
       }
    }
@@ -586,8 +567,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          cls.add(cl);
       }
       
-      if (statistics.isEnabled())
-         statistics.deltaCreatedCount();
+      if (pool.getInternalStatistics().isEnabled())
+         pool.getInternalStatistics().deltaCreatedCount();
    }
 
    /**
@@ -599,8 +580,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       {
          if (cls.size() > 0)
          {
-            if (statistics.isEnabled())
-               statistics.deltaDestroyedCount();
+            if (pool.getInternalStatistics().isEnabled())
+               pool.getInternalStatistics().deltaDestroyedCount();
             return cls.remove(0);
          }
       }
@@ -621,8 +602,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
     */
    public void returnConnection(ConnectionListener cl, boolean kill, boolean cleanup)
    {
-      if (statistics.isEnabled() && cl.getState() != ConnectionState.DESTROYED)
-         statistics.deltaTotalUsageTime(System.currentTimeMillis() - cl.getLastUsedTime());
+      if (pool.getInternalStatistics().isEnabled() && cl.getState() != ConnectionState.DESTROYED)
+         pool.getInternalStatistics().deltaTotalUsageTime(System.currentTimeMillis() - cl.getLastUsedTime());
 
       if (trace)
       {
@@ -631,13 +612,14 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             String method = "returnConnection(" + Integer.toHexString(System.identityHashCode(cl)) + ", " + kill + ")";
             log.trace(ManagedConnectionPoolUtility.fullDetails(System.identityHashCode(this), method,
                                                                mcf, cm, pool, poolConfiguration,
-                                                               cls, checkedOut, statistics));
+                                                               cls, checkedOut, pool.getInternalStatistics()));
          }
       }
       else if (debug)
       {
          String method = "returnConnection(" + Integer.toHexString(System.identityHashCode(cl)) + ", " + kill + ")";
-         log.debug(ManagedConnectionPoolUtility.details(method, pool.getName(), statistics.getInUseCount(), maxSize));
+         log.debug(ManagedConnectionPoolUtility.details(method, pool.getName(),
+                                                        pool.getInternalStatistics().getInUseCount(), maxSize));
       }
 
       if (cl.getState() == ConnectionState.DESTROYED)
@@ -720,9 +702,6 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          }
       }
 
-      if (statistics.isEnabled())
-         statistics.setInUsedCount(checkedOut.size());
-
       if (kill)
       {
          if (trace)
@@ -769,9 +748,6 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                   pool.getLock().release();
                }
             }
-
-            if (statistics.isEnabled())
-               statistics.setInUsedCount(checkedOut.size());
          }
          else if (FlushMode.GRACEFULLY == mode)
          {
@@ -888,14 +864,14 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             String method = "removeIdleConnections(" + timeout + ")";
             log.trace(ManagedConnectionPoolUtility.fullDetails(System.identityHashCode(this), method,
                                                                mcf, cm, pool, poolConfiguration,
-                                                               cls, checkedOut, statistics));
+                                                               cls, checkedOut, pool.getInternalStatistics()));
          }
       }
       else if (debug)
       {
          String method = "removeIdleConnections(" + timeout + ")";
          log.debug(ManagedConnectionPoolUtility.details(method, pool.getName(),
-                                                        statistics.getInUseCount(), maxSize));
+                                                        pool.getInternalStatistics().getInUseCount(), maxSize));
       }
 
       while (destroy)
@@ -918,8 +894,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             {
                if (shouldRemove())
                {
-                  if (statistics.isEnabled())
-                     statistics.deltaTimedOut();
+                  if (pool.getInternalStatistics().isEnabled())
+                     pool.getInternalStatistics().deltaTimedOut();
 
                   if (trace)
                      log.trace("Idle connection cl=" + cl);
@@ -1027,14 +1003,14 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             String method = "fillTo(" + size + ")";
             log.trace(ManagedConnectionPoolUtility.fullDetails(System.identityHashCode(this), method,
                                                                mcf, cm, pool, poolConfiguration,
-                                                               cls, checkedOut, statistics));
+                                                               cls, checkedOut, pool.getInternalStatistics()));
          }
       }
       else if (debug)
       {
          String method = "fillTo(" + size + ")";
          log.debug(ManagedConnectionPoolUtility.details(method, pool.getName(),
-                                                        statistics.getInUseCount(), maxSize));
+                                                        pool.getInternalStatistics().getInUseCount(), maxSize));
       }
 
       while (true)
@@ -1043,25 +1019,21 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          // Also avoids unnessary fill checking when all connections are checked out
          try
          {
-            long startWait = statistics.isEnabled() ? System.currentTimeMillis() : 0L;
+            long startWait = pool.getInternalStatistics().isEnabled() ? System.currentTimeMillis() : 0L;
             if (pool.getLock().tryAcquire(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS))
             {
-               if (statistics.isEnabled())
-                  statistics.deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
+               if (pool.getInternalStatistics().isEnabled())
+                  pool.getInternalStatistics().deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
                try
                {
                   if (!isRunning())
                   {
-                     if (statistics.isEnabled())
-                        statistics.setInUsedCount(checkedOut.size());
                      return;
                   }
 
                   // We already have enough connections
                   if (isSize(size))
                   {
-                     if (statistics.isEnabled())
-                        statistics.setInUsedCount(checkedOut.size());
                      return;
                   }
 
@@ -1076,15 +1048,10 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                            log.trace("Filling pool cl=" + cl);
 
                         cls.add(cl);
-                        
-                        if (statistics.isEnabled())
-                           statistics.setInUsedCount(checkedOut.size() + 1);
                      }
                   }
                   catch (ResourceException re)
                   {
-                     if (statistics.isEnabled())
-                        statistics.setInUsedCount(checkedOut.size());
                      log.unableFillPool(re);
                      return;
                   }
@@ -1106,15 +1073,6 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    }
 
    /**
-    * Get statistics
-    * @return The module
-    */
-   public ManagedConnectionPoolStatistics getStatistics()
-   {
-      return statistics;
-   }
-
-   /**
     * {@inheritDoc}
     */
    public void increaseCapacity(Subject subject, ConnectionRequestInfo cri)
@@ -1127,16 +1085,15 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       {
          try
          {
-            long startWait = statistics.isEnabled() ? System.currentTimeMillis() : 0L;
+            long startWait = pool.getInternalStatistics().isEnabled() ? System.currentTimeMillis() : 0L;
             if (pool.getLock().tryAcquire(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS))
             {
-               if (statistics.isEnabled())
-                  statistics.deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
+               if (pool.getInternalStatistics().isEnabled())
+                  pool.getInternalStatistics().deltaTotalBlockingTime(System.currentTimeMillis() - startWait);
                try
                {
                   if (!isRunning())
                   {
-                     statistics.setInUsedCount(checkedOut.size());
                      return;
                   }
 
@@ -1162,12 +1119,10 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
                            cls.add(cl);
                            created++;
-                           statistics.setInUsedCount(checkedOut.size() + 1);
                         }
                      }
                      catch (ResourceException re)
                      {
-                        statistics.setInUsedCount(checkedOut.size());
                         log.unableFillPool(re);
                         return;
                      }
@@ -1187,8 +1142,6 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                log.trace("Interrupted while requesting permit in increaseCapacity");
          }
       }
-
-      statistics.setInUsedCount(checkedOut.size());
    }
 
    /**
@@ -1202,14 +1155,14 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    private ConnectionListener createConnectionEventListener(Subject subject, ConnectionRequestInfo cri)
       throws ResourceException
    {
-      long start = statistics.isEnabled() ? System.currentTimeMillis() : 0L;
+      long start = pool.getInternalStatistics().isEnabled() ? System.currentTimeMillis() : 0L;
 
       ManagedConnection mc = mcf.createManagedConnection(subject, cri);
 
-      if (statistics.isEnabled())
+      if (pool.getInternalStatistics().isEnabled())
       {
-         statistics.deltaTotalCreationTime(System.currentTimeMillis() - start);
-         statistics.deltaCreatedCount();
+         pool.getInternalStatistics().deltaTotalCreationTime(System.currentTimeMillis() - start);
+         pool.getInternalStatistics().deltaCreatedCount();
       }
       try
       {
@@ -1217,8 +1170,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       }
       catch (ResourceException re)
       {
-         if (statistics.isEnabled())
-            statistics.deltaDestroyedCount();
+         if (pool.getInternalStatistics().isEnabled())
+            pool.getInternalStatistics().deltaDestroyedCount();
          mc.destroy();
          throw re;
       }
@@ -1239,8 +1192,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          return;
       }
 
-      if (statistics.isEnabled())
-         statistics.deltaDestroyedCount();
+      if (pool.getInternalStatistics().isEnabled())
+         pool.getInternalStatistics().deltaDestroyedCount();
       cl.setState(ConnectionState.DESTROYED);
 
       ManagedConnection mc = cl.getManagedConnection();
@@ -1293,14 +1246,14 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             String method = "validateConnections()";
             log.trace(ManagedConnectionPoolUtility.fullDetails(System.identityHashCode(this), method,
                                                                mcf, cm, pool, poolConfiguration,
-                                                               cls, checkedOut, statistics));
+                                                               cls, checkedOut, pool.getInternalStatistics()));
          }
       }
       else if (debug)
       {
          String method = "validateConnections()";
          log.debug(ManagedConnectionPoolUtility.details(method, pool.getName(),
-                                                        statistics.getInUseCount(), maxSize));
+                                                        pool.getInternalStatistics().getInUseCount(), maxSize));
       }
 
       if (pool.getLock().tryAcquire(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS))
