@@ -318,7 +318,7 @@ public class Validation
                      ValidateClass vc = new ValidateClass(Key.MANAGED_CONNECTION_FACTORY, clazz, configProperties);
                      result.add(vc);
                   }
-                  catch (ClassNotFoundException e)
+                  catch (ClassNotFoundException | NoClassDefFoundError e)
                   {
                      Failure failure = new Failure(Severity.ERROR,
                                                    rb.getString("uncategorized"),

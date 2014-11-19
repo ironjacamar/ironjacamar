@@ -434,6 +434,9 @@ public class Main
                {
                   //ValidatingManagedConnectionFactory
                   hasValidatingMcfInterface(out, mcfClassName, cl);
+
+                  //ResourceAdapterAssociation
+                  hasResourceAdapterAssociation(out, mcfClassName, cl);
                   
                   //DissociatableManagedConnection
                   hasDissociatableMcInterface(out, mcfClassName, cl, mcf.getConfigProperties());
@@ -554,6 +557,10 @@ public class Main
                   }
                   line++;
                   out.println("Class: " + aoClassname);
+
+                  //ResourceAdapterAssociation
+                  hasResourceAdapterAssociation(out, aoClassname, cl);
+
                   out.println("  Interface: " + getValueString(ao.getAdminobjectInterface()));
                   needPrint = true;
                }
@@ -783,6 +790,37 @@ public class Main
       }
    }
    
+   /**
+    * hasResourceAdapterAssociation
+    *
+    * @param out output stream
+    * @param classname classname
+    * @param cl classloader
+    */
+   private static void hasResourceAdapterAssociation(PrintStream out, String classname, URLClassLoader cl)
+   {
+      try
+      {
+         out.print("  Association: ");
+         Class<?> clazz = Class.forName(classname, true, cl);
+
+         if (hasInterface(clazz, "javax.resource.spi.ResourceAdapterAssociation"))
+         {
+            out.println("Yes");
+         }
+         else
+         {
+            out.println("No");
+         }
+      }
+      catch (Throwable t)
+      {
+         // Nothing we can do
+         t.printStackTrace(System.err);
+         out.println("Unknown");
+      }
+   }
+
    private static void hasDissociatableMcInterface(PrintStream out, String classname, URLClassLoader cl, 
          List<? extends ConfigProperty> listConfProp)
    {
