@@ -799,7 +799,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
 
       lastIdleCheck = now;
 
-      ArrayList<ConnectionListener> destroyConnections = null;
+      ArrayList<ConnectionListener> destroyConnections = new ArrayList<ConnectionListener>();
       long timeout = now - timeoutSetting;
 
       CapacityDecrementer decrementer = pool.getCapacity().getDecrementer();
@@ -828,9 +828,6 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
                      statistics.deltaTimedOut();
 
                   // We need to destroy this one
-                  if (destroyConnections == null)
-                     destroyConnections = new ArrayList<ConnectionListener>(1);
-
                   cl = cls.poll();
 
                   if (cl != null)
@@ -861,7 +858,7 @@ public class ArrayBlockingQueueManagedConnectionPool implements ManagedConnectio
       }
 
       // We found some connections to destroy
-      if (destroyConnections != null)
+      if (destroyConnections.size() > 0 || isEmpty())
       {
          for (ConnectionListener cl : destroyConnections)
          {

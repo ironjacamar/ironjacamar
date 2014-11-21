@@ -833,7 +833,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
       lastIdleCheck = now;
 
-      ArrayList<ConnectionListener> destroyConnections = null;
+      ArrayList<ConnectionListener> destroyConnections = new ArrayList<ConnectionListener>();
       long timeout = now - timeoutSetting;
 
       CapacityDecrementer decrementer = pool.getCapacity().getDecrementer();
@@ -888,10 +888,6 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
                   // We need to destroy this one
                   cls.remove(0);
-
-                  if (destroyConnections == null)
-                     destroyConnections = new ArrayList<ConnectionListener>(1);
-
                   destroyConnections.add(cl);
                   destroyed++;
                }
@@ -904,7 +900,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       }
 
       // We found some connections to destroy
-      if (destroyConnections != null)
+      if (destroyConnections.size() > 0 || isEmpty())
       {
          for (ConnectionListener cl : destroyConnections)
          {
