@@ -842,7 +842,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
 
       lastIdleCheck = now;
 
-      ArrayList<ConnectionListenerWrapper> destroyConnections = null;
+      ArrayList<ConnectionListenerWrapper> destroyConnections = new ArrayList<ConnectionListenerWrapper>();
       long timeout = now - timeoutSetting;
 
       CapacityDecrementer decrementer = pool.getCapacity().getDecrementer();
@@ -916,9 +916,6 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                   log.trace("Available connection queue did not contain: " + clw.getConnectionListener());
                }
 
-               if (destroyConnections == null)
-                  destroyConnections = new ArrayList<ConnectionListenerWrapper>(1);
-
                destroyConnections.add(clw);
                destroyed++;
             } 
@@ -930,7 +927,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
       }
 
       // We found some connections to destroy
-      if (destroyConnections != null) 
+      if (destroyConnections.size() > 0 || isEmpty())
       {
          for (ConnectionListenerWrapper clw : destroyConnections) 
          {
