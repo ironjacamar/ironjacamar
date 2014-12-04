@@ -37,6 +37,7 @@ import java.security.PrivilegedExceptionAction;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -342,20 +343,41 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       }
       catch (Throwable e)
       {
-         if (con != null)
-         {
-            try
-            {
-               con.close();
-            }
-            catch (Throwable ignored)
-            {
-               // Ignore
-            }
+         try {
+             return retryDriverLoading(props, copy);
+         } catch (Exception e1) {
+             if (con != null) {
+                 try {
+                     con.close();
+                 } catch (Throwable ignored) {
+                     // Ignore
+                 }
+             }
+             throw new ResourceException("Could not create connection", e);
          }
-         throw new ResourceException("Could not create connection", e);
       }
    }
+   
+   private LocalManagedConnection retryDriverLoading(final Properties props, final Properties copy) throws ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException, ResourceException {
+        String url = getConnectionURL();
+        Class<?> clazz = Class.forName(driverClass, true, getClassLoaderPlugin().getClassLoader());
+        Driver d = (Driver) clazz.newInstance();
+
+        DriverManager.registerDriver(d);
+
+        String driverKey = url.substring(0, url.indexOf(":", 6));
+        driverCache.put(driverKey, d);
+
+        Connection con = null;
+        con = d.connect(url, copy);
+        con = d.connect(url, copy);
+        if (con == null) {
+            throw new ResourceException("Wrong driver class [" + d.getClass() + "] for this connection URL ["
+                    + url + "]");
+        }
+
+        return new LocalManagedConnection(this, con, props, transactionIsolation, preparedStatementCacheSize);
+    }
 
    private LocalManagedConnection getHALocalManagedConnection(final Properties props, final Properties copy)
       throws ResourceException
@@ -656,7 +678,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
 
       return driver;
    }
-
+   
    private boolean isDriverLoadedForURL(String url)
    {
       boolean trace = log.isTraceEnabled();
