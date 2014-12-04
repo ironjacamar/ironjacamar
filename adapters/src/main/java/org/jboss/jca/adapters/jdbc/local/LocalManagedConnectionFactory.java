@@ -642,8 +642,9 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
          // Load class to trigger static initialization of the driver
          Class<?> clazz = Class.forName(driverClass, true, getClassLoaderPlugin().getClassLoader());
 
-         if (isDriverLoadedForURL(url))
-            return driver;
+        if (!isIbm16()) // BZ1100839
+            if (isDriverLoadedForURL(url))
+                return driver;
 
          driver = (Driver)clazz.newInstance();
 
@@ -660,6 +661,21 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       return driver;
    }
 
+   // Added to bypass the IBM JDK 1.6 driverManager.getDriver() uncaught 
+   // exception (BZ1100839)
+   private boolean isIbm16()
+   {   
+       try{
+           String javaVersion = System.getProperty("java.version");
+           String javaHome = System.getenv("JAVA_HOME");
+           boolean isIbm16 = javaHome.contains("IBM") && javaVersion.contains("1.6");
+           
+           return isIbm16;
+       }catch(Exception e){
+           return false;
+       }
+   }
+   
    private boolean isDriverLoadedForURL(String url)
    {
       boolean trace = log.isTraceEnabled();
