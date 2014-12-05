@@ -136,7 +136,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.4</version>
+        <version>2.5</version>
         <configuration>
           <excludes>
             <exclude>**/META-INF/*</exclude>
@@ -147,15 +147,15 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-rar-plugin</artifactId>
-        <version>2.2</version>
+        <version>2.4</version>
         <executions>
           <execution>
-            <id>test</id>
+            <id>package</id>
             <goals>
               <goal>rar</goal>
             </goals>
             <configuration>
-              <raXmlFile>src/main/resources/META-INF/ra.xml</raXmlFile>
+              ${raxml.file}
             </configuration>
         </execution></executions>
       </plugin>

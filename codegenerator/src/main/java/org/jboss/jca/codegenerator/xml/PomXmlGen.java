@@ -59,6 +59,8 @@ public class PomXmlGen extends AbstractXmlGen
          moduleName = def.getRaPackage();
       }
       
+      String raxml = def.isUseAnnotation() ? "" : "<raXmlFile>src/main/resources/META-INF/ra.xml</raXmlFile>";
+
       StringBuilder strStartGoal = new StringBuilder();
       StringBuilder strStopGoal = new StringBuilder();
       if (def.isSupportEis())
@@ -106,6 +108,7 @@ public class PomXmlGen extends AbstractXmlGen
       Map<String, String> map = new HashMap<String, String>();
       map.put("pom.package.name", packageName);
       map.put("pom.module.name", moduleName);
+      map.put("raxml.file", raxml);
       map.put("start.goal", strStartGoal.toString());
       map.put("stop.goal", strStopGoal.toString());
       
