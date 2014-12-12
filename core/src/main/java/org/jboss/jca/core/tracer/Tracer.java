@@ -21,6 +21,9 @@
  */
 package org.jboss.jca.core.tracer;
 
+import java.io.CharArrayWriter;
+import java.io.PrintWriter;
+
 import org.jboss.logging.Logger;
 
 /**
@@ -181,35 +184,45 @@ public class Tracer
     * @param poolName The name of the pool
     * @param cl The connection listener
     * @param success Is successful
+    * @param rollbacked Is the transaction rollbacked
     * @param interleaving Interleaving flag
     */
-   public static void delistConnectionListener(String poolName, Object cl, boolean success, boolean interleaving)
+   public static void delistConnectionListener(String poolName, Object cl, boolean success, boolean rollbacked,
+                                               boolean interleaving)
    {
-      if (!interleaving)
+      if (!rollbacked)
       {
-         if (success)
+         if (!interleaving)
          {
-            log.tracef("%s", new TraceEvent(poolName, TraceEvent.DELIST_CONNECTION_LISTENER,
-                                            Integer.toHexString(System.identityHashCode(cl))));
+            if (success)
+            {
+               log.tracef("%s", new TraceEvent(poolName, TraceEvent.DELIST_CONNECTION_LISTENER,
+                                               Integer.toHexString(System.identityHashCode(cl))));
+            }
+            else
+            {
+               log.tracef("%s", new TraceEvent(poolName, TraceEvent.DELIST_CONNECTION_LISTENER_FAILED,
+                                               Integer.toHexString(System.identityHashCode(cl))));
+            }
          }
          else
          {
-            log.tracef("%s", new TraceEvent(poolName, TraceEvent.DELIST_CONNECTION_LISTENER_FAILED,
-                                            Integer.toHexString(System.identityHashCode(cl))));
+            if (success)
+            {
+               log.tracef("%s", new TraceEvent(poolName, TraceEvent.DELIST_INTERLEAVING_CONNECTION_LISTENER,
+                                               Integer.toHexString(System.identityHashCode(cl))));
+            }
+            else
+            {
+               log.tracef("%s", new TraceEvent(poolName, TraceEvent.DELIST_INTERLEAVING_CONNECTION_LISTENER_FAILED,
+                                               Integer.toHexString(System.identityHashCode(cl))));
+            }
          }
       }
       else
       {
-         if (success)
-         {
-            log.tracef("%s", new TraceEvent(poolName, TraceEvent.DELIST_INTERLEAVING_CONNECTION_LISTENER,
-                                            Integer.toHexString(System.identityHashCode(cl))));
-         }
-         else
-         {
-            log.tracef("%s", new TraceEvent(poolName, TraceEvent.DELIST_INTERLEAVING_CONNECTION_LISTENER_FAILED,
-                                            Integer.toHexString(System.identityHashCode(cl))));
-         }
+         log.tracef("%s", new TraceEvent(poolName, TraceEvent.DELIST_ROLLEDBACK_CONNECTION_LISTENER,
+                                         Integer.toHexString(System.identityHashCode(cl))));
       }
    }
 
@@ -250,5 +263,50 @@ public class Tracer
       log.tracef("%s", new TraceEvent(poolName, TraceEvent.CLEAR_CONNECTION,
                                       Integer.toHexString(System.identityHashCode(cl)),
                                       Integer.toHexString(System.identityHashCode(connection))));
+   }
+
+   /**
+    * Exception
+    * @param poolName The name of the pool
+    * @param cl The connection listener
+    * @param exception The exception
+    */
+   public static void exception(String poolName, Object cl, Throwable exception)
+   {
+      CharArrayWriter caw = new CharArrayWriter();
+      PrintWriter pw = new PrintWriter(caw, true);
+      exception.printStackTrace(pw);
+      pw.flush();
+
+      char[] data = caw.toCharArray();
+      StringBuilder sb = new StringBuilder();
+      for (int i = 0; i < data.length; i++)
+      {
+         char c = data[i];
+         if (c == '\n')
+         {
+            sb = sb.append('|');
+         }
+         else if (c == '\r')
+         {
+            sb = sb.append('/');
+         }
+         else if (c == '\t')
+         {
+            sb = sb.append('\\');
+         }
+         else if (c == ' ')
+         {
+            sb = sb.append('_');
+         }
+         else
+         {
+            sb = sb.append(c);
+         }
+      }
+
+      log.tracef("%s", new TraceEvent(poolName, TraceEvent.EXCEPTION,
+                                      Integer.toHexString(System.identityHashCode(cl)),
+                                      sb.toString()));
    }
 }

@@ -302,6 +302,21 @@ public class SDeditGenerator
                writeEOL(fw);
 
                break;
+            case TraceEvent.DELIST_ROLLEDBACK_CONNECTION_LISTENER:
+
+               writeString(fw, "[c afterCompletion]");
+               writeEOL(fw);
+
+               writeString(fw, "cl:>sync.<rollback>");
+               writeEOL(fw);
+
+               writeString(fw, "sync:tx." + TraceEvent.asText(te));
+               writeEOL(fw);
+
+               writeString(fw, "[/c]");
+               writeEOL(fw);
+
+               break;
             case TraceEvent.GET_CONNECTION:
                writeString(fw, "application:cl." + TraceEvent.asText(te));
                writeEOL(fw);
@@ -321,6 +336,8 @@ public class SDeditGenerator
 
                break;
             case TraceEvent.CLEAR_CONNECTION:
+               break;
+            case TraceEvent.EXCEPTION:
                break;
             default:
                System.err.println("SDeditGenerator: Unknown code: " + te);

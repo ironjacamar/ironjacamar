@@ -444,6 +444,10 @@ public class TxConnectionListener extends AbstractConnectionListener
 
                      boolean suspendResult = tx.delistResource(getXAResource(), XAResource.TMSUSPEND);
 
+                     if (Tracer.isEnabled())
+                        Tracer.delistConnectionListener(getPool() != null ? getPool().getName() : null, this,
+                                                        suspendResult, false, true);
+
                      if (!suspendResult)
                      {
                         throw new ResourceException(bundle.failureDelistResource(this));
@@ -481,7 +485,7 @@ public class TxConnectionListener extends AbstractConnectionListener
 
                            if (Tracer.isEnabled())
                               Tracer.delistConnectionListener(getPool() != null ? getPool().getName() : null, this,
-                                                              true, true);
+                                                              true, false, true);
 
                            if (successResult)
                            {
@@ -503,7 +507,7 @@ public class TxConnectionListener extends AbstractConnectionListener
                            
                            if (Tracer.isEnabled())
                               Tracer.delistConnectionListener(getPool() != null ? getPool().getName() : null, this,
-                                                              false, true);
+                                                              false, false, true);
 
                            if (failResult)
                            {
@@ -879,13 +883,26 @@ public class TxConnectionListener extends AbstractConnectionListener
             // could have been enlisted by a different thread
             if (!disableFailedtoEnlist && enlistError == failedToEnlist)
             {
-               throw new SystemException(bundle.systemExceptionWhenFailedToEnlistEqualsCurrentTx(
+               SystemException se =
+                  new SystemException(bundle.systemExceptionWhenFailedToEnlistEqualsCurrentTx(
                      failedToEnlist, this.currentTx));
+
+               if (Tracer.isEnabled())
+                  Tracer.exception(getPool() != null ? getPool().getName() : null, 
+                                   TxConnectionListener.this, se);
+
+               throw se;
+
             }
             else
             {
                SystemException e = new SystemException(error);
                e.initCause(enlistError);
+
+               if (Tracer.isEnabled())
+                  Tracer.exception(getPool() != null ? getPool().getName() : null, 
+                                   TxConnectionListener.this, e);
+
                throw e;
             }
          }
@@ -996,7 +1013,7 @@ public class TxConnectionListener extends AbstractConnectionListener
 
                         if (Tracer.isEnabled())
                            Tracer.delistConnectionListener(getPool() != null ? getPool().getName() : null,
-                                                           TxConnectionListener.this, true, false);
+                                                           TxConnectionListener.this, true, false, false);
                      }
                      else
                      {
@@ -1007,7 +1024,7 @@ public class TxConnectionListener extends AbstractConnectionListener
 
                         if (Tracer.isEnabled())
                            Tracer.delistConnectionListener(getPool() != null ? getPool().getName() : null,
-                                                           TxConnectionListener.this, false, false);
+                                                           TxConnectionListener.this, false, false, false);
                      }
                   }
                   else
@@ -1078,6 +1095,10 @@ public class TxConnectionListener extends AbstractConnectionListener
 
                if (wasFreed(null))
                {
+                  if (Tracer.isEnabled() && status == Status.STATUS_ROLLEDBACK)
+                     Tracer.delistConnectionListener(getPool() != null ? getPool().getName() : null,
+                                                     TxConnectionListener.this, true, true, false);
+
                   TxConnectionListener.this.setEnlisted(false);
                   getConnectionManager().returnManagedConnection(TxConnectionListener.this, false);
                }

@@ -79,6 +79,9 @@ public class TraceEvent
    /** Delist interleaving connection listener (Failed) */
    public static final int DELIST_INTERLEAVING_CONNECTION_LISTENER_FAILED = 33;
 
+   /** Delist rollbacked connection listener */
+   public static final int DELIST_ROLLEDBACK_CONNECTION_LISTENER = 34;
+
    /** Get connection */
    public static final int GET_CONNECTION = 40;
 
@@ -88,8 +91,14 @@ public class TraceEvent
    /** Clear connection */
    public static final int CLEAR_CONNECTION = 42;
 
+   /** Exception */
+   public static final int EXCEPTION = 50;
+
    /** The pool */
    private String pool;
+
+   /** The thread id */
+   private long threadId;
 
    /** The type */
    private int type;
@@ -100,8 +109,8 @@ public class TraceEvent
    /** The connection listener */
    private String cl;
 
-   /** The connection */
-   private String connection;
+   /** The payload */
+   private String payload;
 
    /**
     * Constructor
@@ -111,7 +120,7 @@ public class TraceEvent
     */
    TraceEvent(String pool, int type, String cl)
    {
-      this(pool, type, System.currentTimeMillis(), cl, "");
+      this(pool, Thread.currentThread().getId(), type, System.currentTimeMillis(), cl, "");
    }
 
    /**
@@ -119,28 +128,30 @@ public class TraceEvent
     * @param pool The pool
     * @param type The event type
     * @param cl The connection listener
-    * @param connection The connection
+    * @param payload The payload
     */
-   TraceEvent(String pool, int type, String cl, String connection)
+   TraceEvent(String pool, int type, String cl, String payload)
    {
-      this(pool, type, System.currentTimeMillis(), cl, connection);
+      this(pool, Thread.currentThread().getId(), type, System.currentTimeMillis(), cl, payload);
    }
 
    /**
     * Parse constructor
     * @param pool The pool
+    * @param threadId The thread id
     * @param type The event type
     * @param timestamp The timestamp
     * @param cl The connection listener
-    * @param connection The connection
+    * @param payload The payload
     */
-   private TraceEvent(String pool, int type, long timestamp, String cl, String connection)
+   private TraceEvent(String pool, long threadId, int type, long timestamp, String cl, String payload)
    {
       this.pool = pool != null ? pool.replace('-', '_') : "Empty"; 
+      this.threadId = threadId;
       this.type = type;
       this.timestamp = timestamp;
       this.cl = cl;
-      this.connection = connection;
+      this.payload = payload;
    }
 
    /**
@@ -150,6 +161,15 @@ public class TraceEvent
    public String getPool()
    {
       return pool;
+   }
+
+   /**
+    * Get the thread id
+    * @return The value
+    */
+   public long getThreadId()
+   {
+      return threadId;
    }
 
    /**
@@ -180,12 +200,12 @@ public class TraceEvent
    }
 
    /**
-    * Get the connection
+    * Get the payload
     * @return The value
     */
-   public String getConnection()
+   public String getPayload()
    {
-      return connection;
+      return payload;
    }
 
    /**
@@ -199,13 +219,15 @@ public class TraceEvent
       sb.append("-");
       sb.append(pool);
       sb.append("-");
+      sb.append(Long.toString(threadId));
+      sb.append("-");
       sb.append(Integer.toString(type));
       sb.append("-");
       sb.append(Long.toString(timestamp));
       sb.append("-");
       sb.append(cl);
       sb.append("-");
-      sb.append(connection);
+      sb.append(payload);
 
       return sb.toString();
    }
@@ -253,12 +275,16 @@ public class TraceEvent
             return "delistResource() (I)";
          case DELIST_INTERLEAVING_CONNECTION_LISTENER_FAILED:
             return "delistResource(false) (I)";
+         case DELIST_ROLLEDBACK_CONNECTION_LISTENER:
+            return "delistResource() (R)";
          case GET_CONNECTION:
-            return "getConnection(" + event.getConnection() + ")";
+            return "getConnection(" + event.getPayload() + ")";
          case RETURN_CONNECTION:
-            return "returnConnection(" + event.getConnection() + ")";
+            return "returnConnection(" + event.getPayload() + ")";
          case CLEAR_CONNECTION:
-            return "clearConnection(" + event.getConnection() + ")";
+            return "clearConnection(" + event.getPayload() + ")";
+         case EXCEPTION:
+            return "exception";
          default:
       }
 
@@ -276,14 +302,15 @@ public class TraceEvent
 
       String header = raw[0];
       String p = raw[1];
-      int t = Integer.parseInt(raw[2]);
-      long ts = Long.parseLong(raw[3]);
-      String c = raw[4];
-      String conn = "";
+      long tid = Long.parseLong(raw[2]);
+      int t = Integer.parseInt(raw[3]);
+      long ts = Long.parseLong(raw[4]);
+      String c = raw[5];
+      String pyl = "";
 
-      if (raw.length == 6)
-         conn = raw[5];
+      if (raw.length == 7)
+         pyl = raw[6];
 
-      return new TraceEvent(p, t, ts, c, conn);
+      return new TraceEvent(p, tid, t, ts, c, pyl);
    }
 }

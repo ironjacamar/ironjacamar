@@ -85,9 +85,10 @@ public class TraceEventHelper
    /**
     * Get status
     * @param input The input
+    * @param ignoreDelist Should DELIST be ignored
     * @return The overall result
     */
-   public static Map<String, TraceEventStatus> getStatus(Map<String, List<TraceEvent>> input)
+   public static Map<String, TraceEventStatus> getStatus(Map<String, List<TraceEvent>> input, boolean ignoreDelist)
    {
       Map<String, TraceEventStatus> result = new TreeMap<String, TraceEventStatus>();
 
@@ -96,7 +97,7 @@ public class TraceEventHelper
       {
          Map.Entry<String, List<TraceEvent>> entry = it.next();
 
-         result.put(entry.getKey(), getStatus(entry.getValue()));
+         result.put(entry.getKey(), getStatus(entry.getValue(), ignoreDelist));
       }
 
       return result;
@@ -105,9 +106,10 @@ public class TraceEventHelper
    /**
     * Get status
     * @param data The data
+    * @param ignoreDelist Should DELIST be ignored
     * @return The status
     */
-   public static TraceEventStatus getStatus(List<TraceEvent> data)
+   public static TraceEventStatus getStatus(List<TraceEvent> data, boolean ignoreDelist)
    {
       TraceEventStatus explicit = null;
       Set<String> knownConnections = new HashSet<String>();
@@ -144,37 +146,65 @@ public class TraceEventHelper
                break;
 
             case TraceEvent.ENLIST_CONNECTION_LISTENER:
-            case TraceEvent.ENLIST_CONNECTION_LISTENER_FAILED:
             case TraceEvent.ENLIST_INTERLEAVING_CONNECTION_LISTENER:
-            case TraceEvent.ENLIST_INTERLEAVING_CONNECTION_LISTENER_FAILED:
                if (inTx)
                   explicit = TraceEventStatus.RED;
 
                inTx = true;
                break;
 
+            case TraceEvent.ENLIST_CONNECTION_LISTENER_FAILED:
+            case TraceEvent.ENLIST_INTERLEAVING_CONNECTION_LISTENER_FAILED:
+               if (inTx)
+               {
+                  explicit = TraceEventStatus.RED;
+               }
+               else
+               {
+                  explicit = TraceEventStatus.YELLOW;
+               }
+
+               inTx = true;
+               break;
+
             case TraceEvent.DELIST_CONNECTION_LISTENER:
-            case TraceEvent.DELIST_CONNECTION_LISTENER_FAILED:
             case TraceEvent.DELIST_INTERLEAVING_CONNECTION_LISTENER:
-            case TraceEvent.DELIST_INTERLEAVING_CONNECTION_LISTENER_FAILED:
+            case TraceEvent.DELIST_ROLLEDBACK_CONNECTION_LISTENER:
                if (!inTx)
                   explicit = TraceEventStatus.RED;
 
                inTx = false;
                break;
 
+            case TraceEvent.DELIST_CONNECTION_LISTENER_FAILED:
+            case TraceEvent.DELIST_INTERLEAVING_CONNECTION_LISTENER_FAILED:
+               if (!inTx)
+               {
+                  explicit = TraceEventStatus.RED;
+               }
+               else
+               {
+                  explicit = TraceEventStatus.YELLOW;
+               }
+
+               inTx = false;
+               break;
+
             case TraceEvent.GET_CONNECTION:
-               knownConnections.add(te.getConnection());
+               knownConnections.add(te.getPayload());
 
                break;
             case TraceEvent.RETURN_CONNECTION:
-               knownConnections.remove(te.getConnection());
+               knownConnections.remove(te.getPayload());
 
                break;
 
             case TraceEvent.CLEAR_CONNECTION:
                gotClear = true;
 
+               break;
+
+            case TraceEvent.EXCEPTION:
                break;
 
             default:
@@ -188,7 +218,7 @@ public class TraceEventHelper
       if (gotCl)
          return TraceEventStatus.RED;
 
-      if (inTx)
+      if (inTx && !ignoreDelist)
          return TraceEventStatus.RED;
 
       if (knownConnections.size() > 0)
@@ -316,6 +346,90 @@ public class TraceEventHelper
       }
 
       return result;
+   }
+
+   /**
+    * Has an exception event
+    * @param events The events
+    * @return True if there is an exception
+    */
+   public static boolean hasException(List<TraceEvent> events)
+   {
+      for (TraceEvent te : events)
+      {
+         if (te.getType() == TraceEvent.EXCEPTION)
+            return true;
+      }
+
+      return false;
+   }
+
+   /**
+    * Get exception description
+    * @param te The event
+    * @return The string
+    */
+   public static String exceptionDescription(TraceEvent te)
+   {
+      if (te.getType() != TraceEvent.EXCEPTION)
+         return "";
+
+      char[] data = te.getPayload().toCharArray();
+      StringBuilder sb = new StringBuilder();
+
+      for (int i = 0; i < data.length; i++)
+      {
+         char c = data[i];
+         if (c == '|')
+         {
+            sb = sb.append('\n');
+         }
+         else if (c == '/')
+         {
+            sb = sb.append('\r');
+         }
+         else if (c == '\\')
+         {
+            sb = sb.append('\t');
+         }
+         else if (c == '_')
+         {
+            sb = sb.append(' ');
+         }
+         else
+         {
+            sb = sb.append(c);
+         }
+      }
+
+      return sb.toString();
+   }
+
+   /**
+    * Pretty print event
+    * @param te The event
+    * @return The string
+    */
+   public static String prettyPrint(TraceEvent te)
+   {
+      if (te.getType() != TraceEvent.EXCEPTION)
+         return te.toString();
+
+      StringBuilder sb = new StringBuilder();
+      sb.append("IJTRACER");
+      sb.append("-");
+      sb.append(te.getPool());
+      sb.append("-");
+      sb.append(te.getThreadId());
+      sb.append("-");
+      sb.append(te.getType());
+      sb.append("-");
+      sb.append(te.getTimestamp());
+      sb.append("-");
+      sb.append(te.getConnectionListener());
+      sb.append("-");
+      sb.append("DATA");
+      return sb.toString();
    }
 
    /**

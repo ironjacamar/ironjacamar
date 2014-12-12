@@ -76,7 +76,7 @@ public class HTMLReport
       writeString(fw, "<html>");
       writeEOL(fw);
 
-      writeString(fw, "<body>");
+      writeString(fw, "<body style=\"background: #D7D7D7;\">");
       writeEOL(fw);
 
       writeString(fw, "<h1>IronJacamar tracer report</h1>");
@@ -136,7 +136,7 @@ public class HTMLReport
       writeString(fw, "<html>");
       writeEOL(fw);
 
-      writeString(fw, "<body>");
+      writeString(fw, "<body style=\"background: #D7D7D7;\">");
       writeEOL(fw);
 
       writeString(fw, "<h1>Pool: " + poolName + "</h1>");
@@ -190,18 +190,20 @@ public class HTMLReport
     * Write ConnectionListener index.html
     * @param identifier The identifier
     * @param data The data
+    * @param ignoreDelist Should DELIST be ignored
     * @param root The root directory
     * @param fw The file writer
     * @exception Exception If an error occurs
     */
    private static void generateConnectionListenerIndexHTML(String identifier, List<TraceEvent> data,
+                                                           boolean ignoreDelist,
                                                            String root, FileWriter fw)
       throws Exception
    {
       writeString(fw, "<html>");
       writeEOL(fw);
 
-      writeString(fw, "<body>");
+      writeString(fw, "<body style=\"background: #D7D7D7;\">");
       writeEOL(fw);
 
       writeString(fw, "<h1>ConnectionListener: " + identifier + "</h1>");
@@ -224,7 +226,7 @@ public class HTMLReport
 
          writeString(fw, "<a href=\"" + entry.getKey() + "/index.html\"><div style=\"color: ");
 
-         TraceEventStatus status = TraceEventHelper.getStatus(entry.getValue());
+         TraceEventStatus status = TraceEventHelper.getStatus(entry.getValue(), ignoreDelist);
          writeString(fw, status.getColor());
 
          writeString(fw, ";\">");
@@ -244,7 +246,7 @@ public class HTMLReport
             f.mkdirs();
 
             cl = new FileWriter(f.getAbsolutePath() + "/" + "index.html");
-            generateConnectionListenerReportHTML(f.getCanonicalPath(), identifier, entry.getValue(), cl);
+            generateConnectionListenerReportHTML(f.getCanonicalPath(), identifier, entry.getValue(), ignoreDelist, cl);
          }
          finally
          {
@@ -262,7 +264,7 @@ public class HTMLReport
             }
          }
 
-         if (status == TraceEventStatus.GREEN || status == TraceEventStatus.YELLOW)
+         if (status == TraceEventStatus.GREEN)
          {
             FileWriter sdedit = null;
             try
@@ -313,17 +315,19 @@ public class HTMLReport
     * @param root The root directory
     * @param identifier The identifier
     * @param data The data
+    * @param ignoreDelist Should DELIST be ignored
     * @param fw The file writer
     * @exception Exception If an error occurs
     */
    private static void generateConnectionListenerReportHTML(String root, String identifier, List<TraceEvent> data,
+                                                            boolean ignoreDelist,
                                                             FileWriter fw)
       throws Exception
    {
       writeString(fw, "<html>");
       writeEOL(fw);
 
-      writeString(fw, "<body>");
+      writeString(fw, "<body style=\"background: #D7D7D7;\">");
       writeEOL(fw);
 
       writeString(fw, "<h1>ConnectionListener: " + identifier + "</h1>");
@@ -359,10 +363,22 @@ public class HTMLReport
       writeString(fw, "<tr>");
       writeEOL(fw);
 
+      writeString(fw, "<td><b>Thread:</b></td>");
+      writeEOL(fw);
+
+      writeString(fw, "<td><b>" + data.get(0).getThreadId() + "</b></td>");
+      writeEOL(fw);
+
+      writeString(fw, "</tr>");
+      writeEOL(fw);
+
+      writeString(fw, "<tr>");
+      writeEOL(fw);
+
       writeString(fw, "<td><b>Status:</b></td>");
       writeEOL(fw);
 
-      TraceEventStatus status = TraceEventHelper.getStatus(data);
+      TraceEventStatus status = TraceEventHelper.getStatus(data, ignoreDelist);
       writeString(fw, "<td><div style=\"color: " + status.getColor() + ";\">");
       writeString(fw, status.getDescription());
       writeString(fw, "</div></td>");
@@ -377,7 +393,7 @@ public class HTMLReport
       writeString(fw, "<h2>Sequence diagram</h2>");
       writeEOL(fw);
 
-      if (status == TraceEventStatus.GREEN || status == TraceEventStatus.YELLOW)
+      if (status == TraceEventStatus.GREEN)
       {
          writeString(fw, "<image src=\"");
          writeString(fw, identifier);
@@ -481,6 +497,30 @@ public class HTMLReport
       writeString(fw, "</table>");
       writeEOL(fw);
 
+      if (TraceEventHelper.hasException(data))
+      {
+         writeString(fw, "<h2>Exception</h2>");
+         writeEOL(fw);
+
+         for (TraceEvent te : data)
+         {
+            if (te.getType() == TraceEvent.EXCEPTION)
+            {
+               writeString(fw, "<pre>");
+               writeEOL(fw);
+
+               writeString(fw, TraceEventHelper.exceptionDescription(te));
+               writeEOL(fw);
+
+               writeString(fw, "</pre>");
+               writeEOL(fw);
+
+               writeString(fw, "<p/>");
+               writeEOL(fw);
+            }
+         }
+      }
+
       writeString(fw, "<h2>Data</h2>");
       writeEOL(fw);
 
@@ -489,7 +529,7 @@ public class HTMLReport
 
       for (TraceEvent te : data)
       {
-         writeString(fw, te.toString());
+         writeString(fw, TraceEventHelper.prettyPrint(te));
          writeEOL(fw);
       }
 
@@ -517,16 +557,25 @@ public class HTMLReport
    {
       if (args == null || args.length < 1)
       {
-         System.out.println("Usage: HTMLReport <file> [<output>]");
+         System.out.println("Usage: HTMLReport [-ignore-delist] <file> [<output>]");
          return;
       }
 
-      File logFile = new File(args[0]);
+      boolean ignoreDelist = false;
+      int argCount = 0;
+
+      if ("-ignore-delist".equals(args[0]))
+      {
+         ignoreDelist = true;
+         argCount++;
+      }
+
+      File logFile = new File(args[argCount]);
       FileReader logReader = null;
 
       String rootDirectory = "report";
-      if (args.length > 1)
-         rootDirectory = args[1];
+      if (args.length > argCount + 1)
+         rootDirectory = args[argCount + 1];
 
       File root = new File(rootDirectory);
 
@@ -550,7 +599,7 @@ public class HTMLReport
 
             for (List<TraceEvent> l : values)
             {
-               status.add(TraceEventHelper.getStatus(l));
+               status.add(TraceEventHelper.getStatus(l, ignoreDelist));
             }
 
             topLevelStatus.put(entry.getKey(), TraceEventHelper.mergeStatus(status));
@@ -597,7 +646,7 @@ public class HTMLReport
                {
                   Map.Entry<String, List<TraceEvent>> dataEntry = dataIt.next();
 
-                  status.put(dataEntry.getKey(), TraceEventHelper.getStatus(dataEntry.getValue()));
+                  status.put(dataEntry.getKey(), TraceEventHelper.getStatus(dataEntry.getValue(), ignoreDelist));
 
                   String identifier = dataEntry.getKey();
                   FileWriter cl = null;
@@ -608,7 +657,7 @@ public class HTMLReport
                      clF.mkdirs();
 
                      cl = new FileWriter(clF.getAbsolutePath() + "/" + "index.html");
-                     generateConnectionListenerIndexHTML(identifier, dataEntry.getValue(), clPath, cl);
+                     generateConnectionListenerIndexHTML(identifier, dataEntry.getValue(), ignoreDelist, clPath, cl);
                   }
                   finally
                   {
