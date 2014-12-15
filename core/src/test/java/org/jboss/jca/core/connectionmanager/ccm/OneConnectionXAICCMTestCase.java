@@ -29,9 +29,9 @@ import org.jboss.jca.core.tx.rars.txlog.TxLogConnectionFactory;
 import org.jboss.jca.core.tx.rars.txlog.TxLogConnectionFactoryImpl;
 import org.jboss.jca.core.tx.rars.txlog.TxLogConnectionImpl;
 import org.jboss.jca.core.tx.rars.txlog.TxLogManagedConnectionFactory;
-import org.jboss.jca.embedded.dsl.resourceadapters11.api.ConnectionDefinitionsType;
-import org.jboss.jca.embedded.dsl.resourceadapters11.api.ResourceAdapterType;
-import org.jboss.jca.embedded.dsl.resourceadapters11.api.ResourceAdaptersDescriptor;
+import org.jboss.jca.embedded.dsl.resourceadapters12.api.ConnectionDefinitionsType;
+import org.jboss.jca.embedded.dsl.resourceadapters12.api.ResourceAdapterType;
+import org.jboss.jca.embedded.dsl.resourceadapters12.api.ResourceAdaptersDescriptor;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -112,15 +112,15 @@ public class OneConnectionXAICCMTestCase
       dashRaXmlRt.transactionSupport("XATransaction");
 
       ConnectionDefinitionsType dashRaXmlCdst = dashRaXmlRt.getOrCreateConnectionDefinitions();
-      org.jboss.jca.embedded.dsl.resourceadapters11.api.ConnectionDefinitionType dashRaXmlCdt =
+      org.jboss.jca.embedded.dsl.resourceadapters12.api.ConnectionDefinitionType dashRaXmlCdt =
          dashRaXmlCdst.createConnectionDefinition()
             .className(TxLogManagedConnectionFactory.class.getName())
-            .jndiName("java:/eis/TxLogConnectionFactory").poolName("TxLog");
+         .jndiName("java:/eis/TxLogConnectionFactory").poolName("TxLog").tracking(Boolean.FALSE);
 
-      org.jboss.jca.embedded.dsl.resourceadapters11.api.XaPoolType dashRaXmlPt = dashRaXmlCdt.getOrCreateXaPool()
+      org.jboss.jca.embedded.dsl.resourceadapters12.api.XaPoolType dashRaXmlPt = dashRaXmlCdt.getOrCreateXaPool()
          .minPoolSize(0).initialPoolSize(0).maxPoolSize(10).interleaving();
 
-      org.jboss.jca.embedded.dsl.resourceadapters11.api.RecoverType dashRaXmlRyt = dashRaXmlCdt.getOrCreateRecovery()
+      org.jboss.jca.embedded.dsl.resourceadapters12.api.RecoverType dashRaXmlRyt = dashRaXmlCdt.getOrCreateRecovery()
          .noRecovery(Boolean.TRUE);
 
       return dashRaXml;
@@ -156,6 +156,7 @@ public class OneConnectionXAICCMTestCase
       ccm.pushMetaAwareObject(layer, unsharableResources);
 
       TxLogConnection c = cf.getConnection();
+      c.clearState();
 
       assertFalse(c.isInPool());
 
@@ -182,6 +183,74 @@ public class OneConnectionXAICCMTestCase
       assertEquals("3DB8", c.getState());
 
       assertTrue(c.isInPool());
+
+      ccm.popMetaAwareObject(unsharableResources);
+   }
+
+
+   /**
+    * Two transactions
+    * @exception Throwable Thrown if case of an error
+    */
+   @Test
+   public void testTwoTransactions() throws Throwable
+   {
+      assertNotNull(cf);
+      assertNotNull(ccm);
+      assertNotNull(ut);
+
+      Set unsharableResources = new HashSet();
+      Object layer = new Object();
+
+      ccm.pushMetaAwareObject(layer, unsharableResources);
+
+      TxLogConnection c = cf.getConnection();
+      c.clearState();
+
+      assertFalse(c.isInPool());
+
+      assertEquals("", c.getState());
+
+      log.infof("Before begin");
+
+      ut.begin();
+
+      log.infof("After begin");
+
+      assertEquals("3", c.getState());
+
+      assertFalse(c.isInPool());
+
+      log.infof("Before commit");
+
+      ut.commit();
+
+      log.infof("After commit");
+
+      assertEquals("3B8", c.getState());
+      assertFalse(c.isInPool());
+
+      log.infof("Before begin");
+
+      ut.begin();
+
+      log.infof("After begin");
+
+      assertEquals("3B83", c.getState());
+
+      assertFalse(c.isInPool());
+
+      log.infof("Before commit");
+
+      c.close();
+
+      assertTrue(c.isInPool());
+
+      ut.commit();
+
+      log.infof("After commit");
+
+      assertEquals("3B83DB8", c.getState());
 
       ccm.popMetaAwareObject(unsharableResources);
    }

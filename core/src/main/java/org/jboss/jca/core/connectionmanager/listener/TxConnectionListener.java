@@ -1071,6 +1071,7 @@ public class TxConnectionListener extends AbstractConnectionListener
                // If we are interleaving transactions we have nothing to do
                if (!wasTrackByTx)
                {
+                  TxConnectionListener.this.setEnlisted(false);
                   return;
                }
                else
@@ -1083,7 +1084,9 @@ public class TxConnectionListener extends AbstractConnectionListener
                }
             }
             // "Delist"
+            TxConnectionListener.this.setEnlisted(false);
             transactionSynchronization = null;
+
             // This is where we close when doing track by transaction
             if (wasTrackByTx)
             {
@@ -1099,7 +1102,6 @@ public class TxConnectionListener extends AbstractConnectionListener
                      Tracer.delistConnectionListener(getPool() != null ? getPool().getName() : null,
                                                      TxConnectionListener.this, true, true, false);
 
-                  TxConnectionListener.this.setEnlisted(false);
                   getConnectionManager().returnManagedConnection(TxConnectionListener.this, false);
                }
                else
@@ -1130,6 +1132,12 @@ public class TxConnectionListener extends AbstractConnectionListener
                      }
 
                      getConnectionManager().returnManagedConnection(TxConnectionListener.this, true);
+                  }
+                  else
+                  {
+                     if (trace)
+                        log.tracef(new Exception("Connection across boundary"), "ConnectionListener=%s",
+                                   TxConnectionListener.this);
                   }
                }
             }

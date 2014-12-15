@@ -70,6 +70,7 @@ public class SDeditGenerator
 
       boolean newCl = false;
       boolean hasTx = false;
+      boolean newSync = false;
 
       for (TraceEvent te : events)
       {
@@ -266,8 +267,17 @@ public class SDeditGenerator
                writeString(fw, "cl:tx." + TraceEvent.asText(te));
                writeEOL(fw);
 
-               writeString(fw, "cl:sync.new()");
-               writeEOL(fw);
+               if (!newSync)
+               {
+                  writeString(fw, "cl:sync.new()");
+                  writeEOL(fw);
+                  newSync = true;
+               }
+               else
+               {
+                  writeString(fw, "cl:sync.register()");
+                  writeEOL(fw);
+               }
 
                writeString(fw, "sync:tx.registerInterposed()");
                writeEOL(fw);

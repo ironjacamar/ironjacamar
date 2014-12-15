@@ -146,9 +146,15 @@ public class TraceEventHelper
                break;
 
             case TraceEvent.ENLIST_CONNECTION_LISTENER:
-            case TraceEvent.ENLIST_INTERLEAVING_CONNECTION_LISTENER:
                if (inTx)
                   explicit = TraceEventStatus.RED;
+
+               inTx = true;
+               break;
+
+            case TraceEvent.ENLIST_INTERLEAVING_CONNECTION_LISTENER:
+               if (inTx)
+                  explicit = TraceEventStatus.YELLOW;
 
                inTx = true;
                break;
@@ -174,6 +180,10 @@ public class TraceEventHelper
                   explicit = TraceEventStatus.RED;
 
                inTx = false;
+
+               if (knownConnections.size() > 0 && explicit != TraceEventStatus.RED)
+                  explicit = TraceEventStatus.YELLOW;
+
                break;
 
             case TraceEvent.DELIST_CONNECTION_LISTENER_FAILED:
@@ -188,6 +198,10 @@ public class TraceEventHelper
                }
 
                inTx = false;
+
+               if (knownConnections.size() > 0 && explicit != TraceEventStatus.RED)
+                  explicit = TraceEventStatus.YELLOW;
+
                break;
 
             case TraceEvent.GET_CONNECTION:
