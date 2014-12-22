@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2013, Red Hat Inc, and individual contributors
+ * Copyright 2014, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -31,6 +31,8 @@ import static org.jboss.logging.Logger.Level.ERROR;
 
 /**
  * The common logger.
+ *
+ * Message ids ranging from 210000 to 219999 inclusively.
  */
 @MessageLogger(projectCode = "IJ")
 public interface CommonLogger extends BasicLogger

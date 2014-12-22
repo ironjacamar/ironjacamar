@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2013, Red Hat Inc, and individual contributors
+ * Copyright 2014, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -20,7 +20,6 @@
  */
 
 /**
- * This package contains the API for the IronJacamar metadata
+ * IronJacamar: Top level API package for metadata
  */
 package org.ironjacamar.common.api.metadata;
-
