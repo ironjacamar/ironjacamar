@@ -20,10 +20,28 @@
  */
 
 dependencies {
-  testCompile project(':api').sourceSets.main.output
-  testCompile project(':common').sourceSets.main.output
+  testCompile parent.subprojects.sourceSets.main.output
 }
 
 compileTestJava {
   classpath += project.sourceSets.main.runtimeClasspath
+}
+
+test {
+  jacoco {
+    append = false
+  }
+  finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+  group = "Reporting"
+  description = "Generate Jacoco coverage reports after running tests."
+  sourceDirectories = files(parent.subprojects.sourceSets.main.allSource.srcDirs)
+  classDirectories  = files(parent.subprojects.sourceSets.main.output)
+  reports {
+    xml.enabled true
+    csv.enabled false
+    html.enabled true
+  }
 }
