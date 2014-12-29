@@ -717,7 +717,7 @@ public abstract class AbstractParser
    protected Recovery parseRecovery(XMLStreamReader reader) throws XMLStreamException, ParserException,
       ValidateException
    {
-      Boolean noRecovery = null;
+      Boolean noRecovery = Defaults.NO_RECOVERY;
       Credential security = null;
       Extension plugin = null;
 
