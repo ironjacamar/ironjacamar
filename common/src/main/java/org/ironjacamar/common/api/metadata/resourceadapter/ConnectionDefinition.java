@@ -24,7 +24,7 @@ import org.ironjacamar.common.api.metadata.JCAMetadata;
 import org.ironjacamar.common.api.metadata.common.Pool;
 import org.ironjacamar.common.api.metadata.common.Recovery;
 import org.ironjacamar.common.api.metadata.common.Security;
-import org.ironjacamar.common.api.metadata.common.TimeOut;
+import org.ironjacamar.common.api.metadata.common.Timeout;
 import org.ironjacamar.common.api.metadata.common.Validation;
 
 import java.util.Map;
@@ -38,105 +38,90 @@ public interface ConnectionDefinition extends JCAMetadata
 {
    /**
     * Get the configProperties.
-    *
     * @return the configProperties.
     */
    public Map<String, String> getConfigProperties();
 
    /**
     * Get the className.
-    *
     * @return the className.
     */
    public String getClassName();
 
    /**
     * Get the jndiName.
-    *
     * @return the jndiName.
     */
    public String getJndiName();
 
    /**
     * Get the poolName.
-    *
     * @return the poolName.
     */
    public String getPoolName();
 
    /**
     * Get the enabled.
-    *
     * @return the enabled.
     */
    public Boolean isEnabled();
 
    /**
     * Get the useJavaContext.
-    *
     * @return the useJavaContext.
     */
    public Boolean isUseJavaContext();
 
    /**
     * Get the useCcm.
-    *
     * @return the useCcm.
     */
    public Boolean isUseCcm();
 
    /**
     * Get the pool.
-    *
     * @return the pool.
     */
    public Pool getPool();
 
    /**
-    * Get the timeOut.
-    *
-    * @return the timeOut.
+    * Get the timeout.
+    * @return the timeout.
     */
-   public TimeOut getTimeOut();
+   public Timeout getTimeout();
 
    /**
     * Get the validation.
-    *
     * @return the validation.
     */
    public Validation getValidation();
 
    /**
     * Get the security.
-    *
     * @return the security.
     */
    public Security getSecurity();
 
    /**
     * Return true if this connectionDefnition have defined an XaPool
-    *
     * @return true if this connectionDefnition have defined an XaPool
     */
    public Boolean isXa();
 
    /**
     * Get the recovery settings.
-    *
     * @return the recovery settings.
     */
    public Recovery getRecovery();
 
    /**
     * Get the sharable
-    *
     * @return the value
     */
    public Boolean isSharable();
 
    /**
     * Get the enlistment
-    *
     * @return the value
     */
    public Boolean isEnlistment();

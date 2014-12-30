@@ -22,17 +22,15 @@ package org.ironjacamar.common.metadata;
 
 import org.ironjacamar.common.api.metadata.JCAMetadata;
 
-import java.io.InputStream;
-
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 
 /**
- *
  * A MetadataParser.
  *
  * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  * @param <T>
- *
  */
 public interface MetadataParser<T extends JCAMetadata>
 {
@@ -51,19 +49,18 @@ public interface MetadataParser<T extends JCAMetadata>
    /**
     * Parse the xml file and return the JCAMetaData for which the concrete parser is designed.
     * Note that is responsibility of the client to open and close the stream
-    * @param xmlInputStream an InputStrema opened on the xml file to parse
-    * @return The metadata
-    * @exception Exception Thrown if an error occurs
-    */
-   public T parse(InputStream xmlInputStream) throws Exception;
-
-   /**
-    * Parse the xml file and return the JCAMetaData for which the concrete parser is designed.
-    * Note that is responsibility of the client to open and close the stream
     * @param reader an XMLStreamReader opened on the xml file to parse
     * @return The metadata
     * @exception Exception Thrown if an error occurs
     */
    public T parse(XMLStreamReader reader) throws Exception;
 
+   /**
+    * Store the model to an xml file for which the concrete parser is designed.
+    * Note that is responsibility of the client to open and close the stream
+    * @param metadata the metadata
+    * @param writer an XMLStreamWriter opened on the xml file to write
+    * @exception Exception Thrown if an error occurs
+    */
+   public void store(T metadata, XMLStreamWriter writer) throws Exception;
 }

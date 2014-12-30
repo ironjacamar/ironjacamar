@@ -24,6 +24,9 @@ import org.ironjacamar.common.api.metadata.spec.Connector;
 
 import java.io.InputStream;
 
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
@@ -46,7 +49,12 @@ public class JCA10TestCase
       InputStream is = JCA10TestCase.class.getClassLoader().getResourceAsStream("../../resources/test/spec/ra-1.0.xml");
       assertNotNull(is);
 
-      Connector c = parser.parse(is);
+      XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+      inputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
+
+      XMLStreamReader xsr = inputFactory.createXMLStreamReader(is);
+
+      Connector c = parser.parse(xsr);
       assertNotNull(c);
 
       is.close();

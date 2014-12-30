@@ -25,8 +25,10 @@ import org.ironjacamar.common.api.metadata.Defaults;
 import org.ironjacamar.common.api.metadata.common.Pool;
 import org.ironjacamar.common.api.metadata.common.Recovery;
 import org.ironjacamar.common.api.metadata.common.Security;
-import org.ironjacamar.common.api.metadata.common.TimeOut;
+import org.ironjacamar.common.api.metadata.common.Timeout;
 import org.ironjacamar.common.api.metadata.common.Validation;
+import org.ironjacamar.common.api.metadata.common.XaPool;
+import org.ironjacamar.common.api.metadata.resourceadapter.Activation;
 import org.ironjacamar.common.api.metadata.resourceadapter.AdminObject;
 import org.ironjacamar.common.api.metadata.resourceadapter.ConnectionDefinition;
 import org.ironjacamar.common.api.metadata.resourceadapter.WorkManager;
@@ -40,11 +42,13 @@ import org.ironjacamar.common.metadata.resourceadapter.WorkManagerSecurityImpl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
@@ -367,7 +371,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
    {
       Map<String, String> configProperties = new HashMap<String, String>();
       Security security = null;
-      TimeOut timeOut = null;
+      Timeout timeout = null;
       Validation validation = null;
       Pool pool = null;
       Recovery recovery = null;
@@ -451,7 +455,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                   return new ConnectionDefinitionImpl(configProperties, className, jndiName, poolName, enabled,
                                                       useJavaContext, useCcm, sharable, enlistment,
                                                       connectable, tracking,
-                                                      pool, timeOut, validation,
+                                                      pool, timeout, validation,
                                                       security, recovery, isXA);
                }
                else
@@ -484,7 +488,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                      break;
                   }
                   case CommonXML.ELEMENT_TIMEOUT : {
-                     timeOut = parseTimeOut(reader, isXA);
+                     timeout = parseTimeout(reader, isXA);
                      break;
                   }
                   case CommonXML.ELEMENT_VALIDATION : {
@@ -516,5 +520,548 @@ public abstract class CommonIronJacamarParser extends AbstractParser
          }
       }
       throw new ParserException(bundle.unexpectedEndOfDocument());
+   }
+
+   /**
+    * Store common
+    * @param a The activation
+    * @param writer The writer
+    * @exception Exception Thrown if an error occurs
+    */
+   protected void storeCommon(Activation a, XMLStreamWriter writer) throws Exception
+   {
+      if (a.getBeanValidationGroups() != null && a.getBeanValidationGroups().size() > 0)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_BEAN_VALIDATION_GROUPS);
+         for (String bvg : a.getBeanValidationGroups())
+         {
+            writer.writeStartElement(CommonXML.ELEMENT_BEAN_VALIDATION_GROUP);
+            writer.writeCharacters(bvg);
+            writer.writeEndElement();
+         }
+         writer.writeEndElement();
+      }
+
+      if (a.getBootstrapContext() != null)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_BOOTSTRAP_CONTEXT);
+         writer.writeCharacters(a.getBootstrapContext());
+         writer.writeEndElement();
+      }
+
+      if (a.getConfigProperties() != null && a.getConfigProperties().size() > 0)
+      {
+         Iterator<Map.Entry<String, String>> it = a.getConfigProperties().entrySet().iterator();
+         while (it.hasNext())
+         {
+            Map.Entry<String, String> entry = it.next();
+
+            writer.writeStartElement(CommonXML.ELEMENT_CONFIG_PROPERTY);
+            writer.writeAttribute(CommonXML.ATTRIBUTE_NAME, entry.getKey());
+            writer.writeCharacters(entry.getValue());
+            writer.writeEndElement();
+         }
+      }
+      
+      if (a.getTransactionSupport() != null)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_TRANSACTION_SUPPORT);
+         writer.writeCharacters(a.getTransactionSupport().toString());
+         writer.writeEndElement();
+      }
+
+      if (a.getWorkManager() != null)
+         storeWorkManager(a.getWorkManager(), writer);
+
+      if (a.getConnectionDefinitions() != null && a.getConnectionDefinitions().size() > 0)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_CONNECTION_DEFINITIONS);
+         for (ConnectionDefinition cd : a.getConnectionDefinitions())
+         {
+            storeConnectionDefinition(cd, writer);
+         }
+         writer.writeEndElement();
+      }
+
+      if (a.getAdminObjects() != null && a.getAdminObjects().size() > 0)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_ADMIN_OBJECTS);
+         for (AdminObject ao : a.getAdminObjects())
+         {
+            storeAdminObject(ao, writer);
+         }
+         writer.writeEndElement();
+      }
+   }
+
+   /**
+    * Store work manager
+    * @param wm The work manager
+    * @param writer The writer
+    * @exception Exception Thrown if an error occurs
+    */
+   protected void storeWorkManager(WorkManager wm, XMLStreamWriter writer) throws Exception
+   {
+      WorkManagerSecurity s = wm.getSecurity();
+
+      writer.writeStartElement(CommonXML.ELEMENT_WORKMANAGER);
+      writer.writeStartElement(CommonXML.ELEMENT_WORKMANAGER_SECURITY);
+
+      writer.writeStartElement(CommonXML.ELEMENT_MAPPING_REQUIRED);
+      writer.writeCharacters(Boolean.toString(s.isMappingRequired()));
+      writer.writeEndElement();
+
+      writer.writeStartElement(CommonXML.ELEMENT_DOMAIN);
+      writer.writeCharacters(s.getDomain());
+      writer.writeEndElement();
+
+      if (s.getDefaultPrincipal() != null)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_DEFAULT_PRINCIPAL);
+         writer.writeCharacters(s.getDefaultPrincipal());
+         writer.writeEndElement();
+      }
+
+      if (s.getDefaultGroups() != null && s.getDefaultGroups().size() > 0)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_DEFAULT_GROUPS);
+         for (String group : s.getDefaultGroups())
+         {
+            writer.writeStartElement(CommonXML.ELEMENT_GROUP);
+            writer.writeCharacters(group);
+            writer.writeEndElement();
+         }
+         writer.writeEndElement();
+      }
+
+      if ((s.getUserMappings() != null && s.getUserMappings().size() > 0) ||
+          (s.getGroupMappings() != null && s.getGroupMappings().size() > 0))
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_MAPPINGS);
+
+         if (s.getUserMappings() != null && s.getUserMappings().size() > 0)
+         {
+            writer.writeStartElement(CommonXML.ELEMENT_USERS);
+            
+            for (Map.Entry<String, String> entry : s.getUserMappings().entrySet())
+            {
+               writer.writeStartElement(CommonXML.ELEMENT_MAP);
+               writer.writeAttribute(CommonXML.ATTRIBUTE_FROM, entry.getKey());
+               writer.writeAttribute(CommonXML.ATTRIBUTE_TO, entry.getValue());
+               writer.writeEndElement();
+            }
+
+            writer.writeEndElement();
+         }
+
+         if (s.getGroupMappings() != null && s.getGroupMappings().size() > 0)
+         {
+            writer.writeStartElement(CommonXML.ELEMENT_GROUPS);
+            
+            for (Map.Entry<String, String> entry : s.getGroupMappings().entrySet())
+            {
+               writer.writeStartElement(CommonXML.ELEMENT_MAP);
+               writer.writeAttribute(CommonXML.ATTRIBUTE_FROM, entry.getKey());
+               writer.writeAttribute(CommonXML.ATTRIBUTE_TO, entry.getValue());
+               writer.writeEndElement();
+            }
+
+            writer.writeEndElement();
+         }
+
+         writer.writeEndElement();
+      }
+
+      writer.writeEndElement();
+      writer.writeEndElement();
+   }
+
+   /**
+    * Store connection definition
+    * @param cd The connection definition
+    * @param writer The writer
+    * @exception Exception Thrown if an error occurs
+    */
+   protected void storeConnectionDefinition(ConnectionDefinition cd, XMLStreamWriter writer) throws Exception
+   {
+      writer.writeStartElement(CommonXML.ELEMENT_CONNECTION_DEFINITION);
+
+      if (cd.getClassName() != null)
+         writer.writeAttribute(CommonXML.ATTRIBUTE_CLASS_NAME, cd.getClassName());
+
+      if (cd.getJndiName() != null)
+         writer.writeAttribute(CommonXML.ATTRIBUTE_JNDI_NAME, cd.getJndiName());
+
+      if (cd.isEnabled() != null)
+         writer.writeAttribute(CommonXML.ATTRIBUTE_ENABLED, cd.isEnabled().toString());
+
+      if (cd.isUseJavaContext() != null)
+         writer.writeAttribute(CommonXML.ATTRIBUTE_USE_JAVA_CONTEXT, cd.isUseJavaContext().toString());
+
+      if (cd.getPoolName() != null)
+         writer.writeAttribute(CommonXML.ATTRIBUTE_POOL_NAME, cd.getPoolName());
+
+      if (cd.isUseCcm() != null)
+         writer.writeAttribute(CommonXML.ATTRIBUTE_USE_CCM, cd.isUseCcm().toString());
+
+      if (cd.isSharable() != null)
+         writer.writeAttribute(CommonXML.ATTRIBUTE_SHARABLE, cd.isSharable().toString());
+
+      if (cd.isEnlistment() != null)
+         writer.writeAttribute(CommonXML.ATTRIBUTE_ENLISTMENT, cd.isEnlistment().toString());
+
+      if (cd.isConnectable() != null)
+         writer.writeAttribute(CommonXML.ATTRIBUTE_CONNECTABLE, cd.isConnectable().toString());
+
+      if (cd.isTracking() != null)
+         writer.writeAttribute(CommonXML.ATTRIBUTE_TRACKING, cd.isTracking().toString());
+
+      if (cd.getConfigProperties() != null && cd.getConfigProperties().size() > 0)
+      {
+         Iterator<Map.Entry<String, String>> it = cd.getConfigProperties().entrySet().iterator();
+         while (it.hasNext())
+         {
+            Map.Entry<String, String> entry = it.next();
+
+            writer.writeStartElement(CommonXML.ELEMENT_CONFIG_PROPERTY);
+            writer.writeAttribute(CommonXML.ATTRIBUTE_NAME, entry.getKey());
+            writer.writeCharacters(entry.getValue());
+            writer.writeEndElement();
+         }
+      }
+
+      if (cd.getPool() != null)
+      {
+         if (cd.getPool() instanceof XaPool)
+         {
+            storeXaPool((XaPool)cd.getPool(), writer);
+         }
+         else
+         {
+            storePool(cd.getPool(), writer);
+         }
+      }
+
+      if (cd.getSecurity() != null)
+         storeSecurity(cd.getSecurity(), writer);
+
+      if (cd.getTimeout() != null)
+         storeTimeout(cd.getTimeout(), writer);
+
+      if (cd.getValidation() != null)
+         storeValidation(cd.getValidation(), writer);
+
+      if (cd.getRecovery() != null)
+         storeRecovery(cd.getRecovery(), writer);
+
+      writer.writeEndElement();
+   }
+
+   /**
+    * Store admin object
+    * @param ao The admin object
+    * @param writer The writer
+    * @exception Exception Thrown if an error occurs
+    */
+   protected void storeAdminObject(AdminObject ao, XMLStreamWriter writer) throws Exception
+   {
+      writer.writeStartElement(CommonXML.ELEMENT_ADMIN_OBJECT);
+
+      if (ao.getClassName() != null)
+         writer.writeAttribute(CommonXML.ATTRIBUTE_CLASS_NAME, ao.getClassName());
+
+      if (ao.getJndiName() != null)
+         writer.writeAttribute(CommonXML.ATTRIBUTE_JNDI_NAME, ao.getJndiName());
+
+      if (ao.isEnabled() != null)
+         writer.writeAttribute(CommonXML.ATTRIBUTE_ENABLED, ao.isEnabled().toString());
+
+      if (ao.isUseJavaContext() != null)
+         writer.writeAttribute(CommonXML.ATTRIBUTE_USE_JAVA_CONTEXT, ao.isUseJavaContext().toString());
+
+      if (ao.getPoolName() != null)
+         writer.writeAttribute(CommonXML.ATTRIBUTE_POOL_NAME, ao.getPoolName());
+
+      if (ao.getConfigProperties() != null && ao.getConfigProperties().size() > 0)
+      {
+         Iterator<Map.Entry<String, String>> it = ao.getConfigProperties().entrySet().iterator();
+         while (it.hasNext())
+         {
+            Map.Entry<String, String> entry = it.next();
+
+            writer.writeStartElement(CommonXML.ELEMENT_CONFIG_PROPERTY);
+            writer.writeAttribute(CommonXML.ATTRIBUTE_NAME, entry.getKey());
+            writer.writeCharacters(entry.getValue());
+            writer.writeEndElement();
+         }
+      }
+
+      writer.writeEndElement();
+   }
+
+   /**
+    * Store a pool
+    * @param pool The pool
+    * @param writer The writer
+    * @exception Exception Thrown if an error occurs
+    */
+   protected void storePool(Pool pool, XMLStreamWriter writer) throws Exception
+   {
+      writer.writeStartElement(CommonXML.ELEMENT_POOL);
+
+      if (pool.getMinPoolSize() != null)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_MIN_POOL_SIZE);
+         writer.writeCharacters(pool.getMinPoolSize().toString());
+         writer.writeEndElement();
+      }
+
+      if (pool.getInitialPoolSize() != null)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_INITIAL_POOL_SIZE);
+         writer.writeCharacters(pool.getInitialPoolSize().toString());
+         writer.writeEndElement();
+      }
+
+      if (pool.getMaxPoolSize() != null)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_MAX_POOL_SIZE);
+         writer.writeCharacters(pool.getMaxPoolSize().toString());
+         writer.writeEndElement();
+      }
+
+      if (pool.isPrefill() != null)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_PREFILL);
+         writer.writeCharacters(pool.isPrefill().toString());
+         writer.writeEndElement();
+      }
+
+      if (pool.isUseStrictMin() != null)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_USE_STRICT_MIN);
+         writer.writeCharacters(pool.isUseStrictMin().toString());
+         writer.writeEndElement();
+      }
+
+      if (pool.getFlushStrategy() != null)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_FLUSH_STRATEGY);
+         writer.writeCharacters(pool.getFlushStrategy().toString());
+         writer.writeEndElement();
+      }
+
+      if (pool.getCapacity() != null)
+         storeCapacity(pool.getCapacity(), writer);
+
+      writer.writeEndElement();
+   }
+
+   /**
+    * Store a XA pool
+    * @param pool The pool
+    * @param writer The writer
+    * @exception Exception Thrown if an error occurs
+    */
+   protected void storeXaPool(XaPool pool, XMLStreamWriter writer) throws Exception
+   {
+      writer.writeStartElement(CommonXML.ELEMENT_XA_POOL);
+
+      if (pool.getMinPoolSize() != null)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_MIN_POOL_SIZE);
+         writer.writeCharacters(pool.getMinPoolSize().toString());
+         writer.writeEndElement();
+      }
+
+      if (pool.getInitialPoolSize() != null)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_INITIAL_POOL_SIZE);
+         writer.writeCharacters(pool.getInitialPoolSize().toString());
+         writer.writeEndElement();
+      }
+
+      if (pool.getMaxPoolSize() != null)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_MAX_POOL_SIZE);
+         writer.writeCharacters(pool.getMaxPoolSize().toString());
+         writer.writeEndElement();
+      }
+
+      if (pool.isPrefill() != null)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_PREFILL);
+         writer.writeCharacters(pool.isPrefill().toString());
+         writer.writeEndElement();
+      }
+
+      if (pool.isUseStrictMin() != null)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_USE_STRICT_MIN);
+         writer.writeCharacters(pool.isUseStrictMin().toString());
+         writer.writeEndElement();
+      }
+
+      if (pool.getFlushStrategy() != null)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_FLUSH_STRATEGY);
+         writer.writeCharacters(pool.getFlushStrategy().toString());
+         writer.writeEndElement();
+      }
+
+      if (pool.getCapacity() != null)
+         storeCapacity(pool.getCapacity(), writer);
+
+      if (pool.isIsSameRmOverride() != null)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_IS_SAME_RM_OVERRIDE);
+         writer.writeCharacters(pool.isIsSameRmOverride().toString());
+         writer.writeEndElement();
+      }
+
+      if (pool.isInterleaving() != null && Boolean.TRUE.equals(pool.isInterleaving()))
+      {
+         writer.writeEmptyElement(CommonXML.ELEMENT_INTERLEAVING);
+      }
+
+      if (pool.isNoTxSeparatePool() != null && Boolean.TRUE.equals(pool.isNoTxSeparatePool()))
+      {
+         writer.writeEmptyElement(CommonXML.ELEMENT_NO_TX_SEPARATE_POOLS);
+      }
+
+      if (pool.isPadXid() != null)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_PAD_XID);
+         writer.writeCharacters(pool.isPadXid().toString());
+         writer.writeEndElement();
+      }
+
+      if (pool.isWrapXaResource() != null)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_WRAP_XA_RESOURCE);
+         writer.writeCharacters(pool.isWrapXaResource().toString());
+         writer.writeEndElement();
+      }
+
+      writer.writeEndElement();
+   }
+
+   /**
+    * Store security
+    * @param s The security
+    * @param writer The writer
+    * @exception Exception Thrown if an error occurs
+    */
+   protected void storeSecurity(Security s, XMLStreamWriter writer) throws Exception
+   {
+      writer.writeStartElement(CommonXML.ELEMENT_SECURITY);
+
+      if (s.isApplication())
+      {
+         writer.writeEmptyElement(CommonXML.ELEMENT_APPLICATION);
+      }
+      else if (s.getSecurityDomain() != null)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_SECURITY_DOMAIN);
+         writer.writeCharacters(s.getSecurityDomain());
+         writer.writeEndElement();
+      }
+      else if (s.getSecurityDomainAndApplication() != null)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_SECURITY_DOMAIN_AND_APPLICATION);
+         writer.writeCharacters(s.getSecurityDomainAndApplication());
+         writer.writeEndElement();
+      }
+
+      writer.writeEndElement();
+   }
+
+   /**
+    * Store validation
+    * @param v The validation
+    * @param writer The writer
+    * @exception Exception Thrown if an error occurs
+    */
+   protected void storeValidation(Validation v, XMLStreamWriter writer) throws Exception
+   {
+      writer.writeStartElement(CommonXML.ELEMENT_VALIDATION);
+
+      if (v.isValidateOnMatch() != null)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_VALIDATE_ON_MATCH);
+         writer.writeCharacters(v.isValidateOnMatch().toString());
+         writer.writeEndElement();
+      }
+
+      if (v.isBackgroundValidation() != null)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_BACKGROUND_VALIDATION);
+         writer.writeCharacters(v.isBackgroundValidation().toString());
+         writer.writeEndElement();
+      }
+
+      if (v.getBackgroundValidationMillis() != null)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_BACKGROUND_VALIDATION_MILLIS);
+         writer.writeCharacters(v.getBackgroundValidationMillis().toString());
+         writer.writeEndElement();
+      }
+
+      if (v.isUseFastFail() != null)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_USE_FAST_FAIL);
+         writer.writeCharacters(v.isUseFastFail().toString());
+         writer.writeEndElement();
+      }
+
+      writer.writeEndElement();
+   }
+
+   /**
+    * Store timeout
+    * @param t The timeout
+    * @param writer The writer
+    * @exception Exception Thrown if an error occurs
+    */
+   protected void storeTimeout(Timeout t, XMLStreamWriter writer) throws Exception
+   {
+      writer.writeStartElement(CommonXML.ELEMENT_TIMEOUT);
+
+      if (t.getBlockingTimeoutMillis() != null)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_BLOCKING_TIMEOUT_MILLIS);
+         writer.writeCharacters(t.getBlockingTimeoutMillis().toString());
+         writer.writeEndElement();
+      }
+
+      if (t.getIdleTimeoutMinutes() != null)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_IDLE_TIMEOUT_MINUTES);
+         writer.writeCharacters(t.getIdleTimeoutMinutes().toString());
+         writer.writeEndElement();
+      }
+
+      if (t.getAllocationRetry() != null)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_ALLOCATION_RETRY);
+         writer.writeCharacters(t.getAllocationRetry().toString());
+         writer.writeEndElement();
+      }
+
+      if (t.getAllocationRetryWaitMillis() != null)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_ALLOCATION_RETRY_WAIT_MILLIS);
+         writer.writeCharacters(t.getAllocationRetryWaitMillis().toString());
+         writer.writeEndElement();
+      }
+
+      if (t.getXaResourceTimeout() != null)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_XA_RESOURCE_TIMEOUT);
+         writer.writeCharacters(t.getXaResourceTimeout().toString());
+         writer.writeEndElement();
+      }
+
+      writer.writeEndElement();
    }
 }

@@ -31,14 +31,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+
 import org.jboss.logging.Logger;
 
 /**
- *
  * A MetadataFactory.
  *
  * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
- *
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class MetadataFactory
 {
@@ -71,7 +73,9 @@ public class MetadataFactory
             long start = System.currentTimeMillis();
             input = new FileInputStream(metadataFile);
 
-            result = (new RaParser()).parse(input);
+            XMLStreamReader xsr = XMLInputFactory.newInstance().createXMLStreamReader(input);
+
+            result = (new RaParser()).parse(xsr);
 
             log.debugf("Total parse for %s took %d ms", url, (System.currentTimeMillis() - start));
          }
@@ -116,7 +120,10 @@ public class MetadataFactory
             long start = System.currentTimeMillis();
 
             input = new FileInputStream(metadataFile);
-            result = (new IronJacamarParser()).parse(input);
+
+            XMLStreamReader xsr = XMLInputFactory.newInstance().createXMLStreamReader(input);
+
+            result = (new IronJacamarParser()).parse(xsr);
 
             log.debugf("Total parse for %s took %d ms", url, (System.currentTimeMillis() - start));
          }
@@ -134,7 +141,4 @@ public class MetadataFactory
 
       return result;
    }
-
-
-
 }

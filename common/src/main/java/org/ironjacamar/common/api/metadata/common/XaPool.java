@@ -32,7 +32,7 @@ public interface XaPool extends Pool
     *
     * @return the isSameRmOverride.
     */
-   public Boolean isSameRmOverride();
+   public Boolean isIsSameRmOverride();
 
    /**
     * Get the interleaving.

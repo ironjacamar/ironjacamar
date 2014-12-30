@@ -30,7 +30,7 @@ import org.ironjacamar.common.api.metadata.common.FlushStrategy;
 import org.ironjacamar.common.api.metadata.common.Pool;
 import org.ironjacamar.common.api.metadata.common.Recovery;
 import org.ironjacamar.common.api.metadata.common.Security;
-import org.ironjacamar.common.api.metadata.common.TimeOut;
+import org.ironjacamar.common.api.metadata.common.Timeout;
 import org.ironjacamar.common.api.metadata.common.Validation;
 import org.ironjacamar.common.api.metadata.common.XaPool;
 import org.ironjacamar.common.api.validator.ValidateException;
@@ -40,10 +40,12 @@ import java.io.File;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
@@ -741,7 +743,7 @@ public abstract class AbstractParser
             case END_ELEMENT : {
                if (CommonXML.ELEMENT_RECOVERY.equals(reader.getLocalName()))
                {
-                  return new Recovery(security, plugin, noRecovery);
+                  return new RecoveryImpl(security, plugin, noRecovery);
                }
                else
                {
@@ -876,7 +878,7 @@ public abstract class AbstractParser
             case END_ELEMENT : {
                if (CommonXML.ELEMENT_CAPACITY.equals(reader.getLocalName()))
                {
-                  return new Capacity(incrementer, decrementer);
+                  return new CapacityImpl(incrementer, decrementer);
                }
                else
                {
@@ -995,7 +997,7 @@ public abstract class AbstractParser
     * @exception ParserException ParserException
     * @exception ValidateException ValidateException
     */
-   protected TimeOut parseTimeOut(XMLStreamReader reader, Boolean isXa) throws XMLStreamException,
+   protected Timeout parseTimeout(XMLStreamReader reader, Boolean isXa) throws XMLStreamException,
       ParserException, ValidateException
    {
       Long blockingTimeoutMillis = null;
@@ -1011,7 +1013,7 @@ public abstract class AbstractParser
             case END_ELEMENT : {
                if (CommonXML.ELEMENT_TIMEOUT.equals(reader.getLocalName()))
                {
-                  return new TimeOutImpl(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry,
+                  return new TimeoutImpl(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry,
                                          allocationRetryWaitMillis, xaResourceTimeout);
                }
                else
@@ -1065,6 +1067,128 @@ public abstract class AbstractParser
       throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
+   /**
+    * Store capacity
+    * @param c The capacity
+    * @param writer The writer
+    * @exception Exception Thrown if an error occurs
+    */
+   protected void storeCapacity(Capacity c, XMLStreamWriter writer) throws Exception
+   {
+      writer.writeStartElement(CommonXML.ELEMENT_CAPACITY);
+
+      if (c.getIncrementer() != null)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_INCREMENTER);
+         writer.writeAttribute(CommonXML.ATTRIBUTE_CLASS_NAME, c.getIncrementer().getClassName());
+
+         if (c.getIncrementer().getConfigPropertiesMap().size() > 0)
+         {
+            Iterator<Map.Entry<String, String>> it =
+               c.getIncrementer().getConfigPropertiesMap().entrySet().iterator();
+            
+            while (it.hasNext())
+            {
+               Map.Entry<String, String> entry = it.next();
+
+               writer.writeStartElement(CommonXML.ELEMENT_CONFIG_PROPERTY);
+               writer.writeAttribute(CommonXML.ATTRIBUTE_NAME, entry.getKey());
+               writer.writeCharacters(entry.getValue());
+               writer.writeEndElement();
+            }
+         }
+
+         writer.writeEndElement();
+      }
+
+      if (c.getDecrementer() != null)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_DECREMENTER);
+         writer.writeAttribute(CommonXML.ATTRIBUTE_CLASS_NAME, c.getDecrementer().getClassName());
+
+         if (c.getDecrementer().getConfigPropertiesMap().size() > 0)
+         {
+            Iterator<Map.Entry<String, String>> it =
+               c.getDecrementer().getConfigPropertiesMap().entrySet().iterator();
+            
+            while (it.hasNext())
+            {
+               Map.Entry<String, String> entry = it.next();
+
+               writer.writeStartElement(CommonXML.ELEMENT_CONFIG_PROPERTY);
+               writer.writeAttribute(CommonXML.ATTRIBUTE_NAME, entry.getKey());
+               writer.writeCharacters(entry.getValue());
+               writer.writeEndElement();
+            }
+         }
+
+         writer.writeEndElement();
+      }
+
+      writer.writeEndElement();
+   }
+
+   /**
+    * Store recovery
+    * @param r The recovery
+    * @param writer The writer
+    * @exception Exception Thrown if an error occurs
+    */
+   protected void storeRecovery(Recovery r, XMLStreamWriter writer) throws Exception
+   {
+      writer.writeStartElement(CommonXML.ELEMENT_RECOVERY);
+
+      if (r.isNoRecovery() != null)
+         writer.writeAttribute(CommonXML.ATTRIBUTE_NO_RECOVERY, r.isNoRecovery().toString());
+
+      if (r.getCredential() != null)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_RECOVER_CREDENTIAL);
+         if (r.getCredential().getUserName() != null)
+         {
+            writer.writeStartElement(CommonXML.ELEMENT_USER_NAME);
+            writer.writeCharacters(r.getCredential().getUserName());
+            writer.writeEndElement();
+
+            writer.writeStartElement(CommonXML.ELEMENT_PASSWORD);
+            writer.writeCharacters(r.getCredential().getPassword());
+            writer.writeEndElement();
+         }
+         else
+         {
+            writer.writeStartElement(CommonXML.ELEMENT_SECURITY_DOMAIN);
+            writer.writeCharacters(r.getCredential().getSecurityDomain());
+            writer.writeEndElement();
+         }
+         writer.writeEndElement();
+      }
+
+      if (r.getRecoverPlugin() != null)
+      {
+         writer.writeStartElement(CommonXML.ELEMENT_RECOVER_PLUGIN);
+         writer.writeAttribute(CommonXML.ATTRIBUTE_CLASS_NAME, r.getRecoverPlugin().getClassName());
+
+         if (r.getRecoverPlugin().getConfigPropertiesMap().size() > 0)
+         {
+            Iterator<Map.Entry<String, String>> it =
+               r.getRecoverPlugin().getConfigPropertiesMap().entrySet().iterator();
+            
+            while (it.hasNext())
+            {
+               Map.Entry<String, String> entry = it.next();
+
+               writer.writeStartElement(CommonXML.ELEMENT_CONFIG_PROPERTY);
+               writer.writeAttribute(CommonXML.ATTRIBUTE_NAME, entry.getKey());
+               writer.writeCharacters(entry.getValue());
+               writer.writeEndElement();
+            }
+         }
+
+         writer.writeEndElement();
+      }
+
+      writer.writeEndElement();
+   }
 
    /**
     * 

@@ -24,7 +24,7 @@ import org.ironjacamar.common.CommonBundle;
 import org.ironjacamar.common.api.metadata.ds.CommonDataSource;
 import org.ironjacamar.common.api.metadata.ds.DsSecurity;
 import org.ironjacamar.common.api.metadata.ds.Statement;
-import org.ironjacamar.common.api.metadata.ds.TimeOut;
+import org.ironjacamar.common.api.metadata.ds.Timeout;
 import org.ironjacamar.common.api.metadata.ds.TransactionIsolation;
 import org.ironjacamar.common.api.metadata.ds.Validation;
 import org.ironjacamar.common.api.validator.ValidateException;
@@ -52,9 +52,9 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
    protected TransactionIsolation transactionIsolation;
 
    /**
-   * timeOut
+   * timeout
    */
-   protected TimeOut timeOut;
+   protected Timeout timeout;
 
    /**
    * security
@@ -128,7 +128,7 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
     * Create a new DataSourceAbstractImpl.
     *
     * @param transactionIsolation transactionIsolation
-    * @param timeOut timeOut
+    * @param timeout timeout
     * @param security security
     * @param statement statement
     * @param validation validation
@@ -146,7 +146,7 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
     * @param tracking tracking
     * @throws ValidateException ValidateException
     */
-   protected DataSourceAbstractImpl(TransactionIsolation transactionIsolation, TimeOut timeOut,
+   protected DataSourceAbstractImpl(TransactionIsolation transactionIsolation, Timeout timeout,
                                     DsSecurity security, Statement statement, Validation validation,
                                     String urlDelimiter, String urlSelectorStrategyClassName,
                                     Boolean useJavaContext, String poolName, Boolean enabled, String jndiName,
@@ -155,7 +155,7 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
       throws ValidateException
    {
       this.transactionIsolation = transactionIsolation;
-      this.timeOut = timeOut;
+      this.timeout = timeout;
       this.security = security;
       this.statement = statement;
       this.validation = validation;
@@ -185,9 +185,9 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
    /**
     * {@inheritDoc}
     */
-   public TimeOut getTimeOut()
+   public Timeout getTimeout()
    {
-      return timeOut;
+      return timeout;
    }
 
    /**
@@ -334,8 +334,8 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
          throw new ValidateException(bundle.requiredAttributeMissing(XML.ATTRIBUTE_POOL_NAME,
                                                                      this.getClass().getCanonicalName()));
 
-      if (this.timeOut != null)
-         this.timeOut.validate();
+      if (this.timeout != null)
+         this.timeout.validate();
       if (this.security != null)
          this.security.validate();
       if (this.statement != null)
@@ -356,7 +356,7 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
       result = prime * result + ((poolName == null) ? 0 : poolName.hashCode());
       result = prime * result + ((security == null) ? 0 : security.hashCode());
       result = prime * result + ((statement == null) ? 0 : statement.hashCode());
-      result = prime * result + ((timeOut == null) ? 0 : timeOut.hashCode());
+      result = prime * result + ((timeout == null) ? 0 : timeout.hashCode());
       result = prime * result + ((transactionIsolation == null) ? 0 : transactionIsolation.hashCode());
       result = prime * result + ((urlDelimiter == null) ? 0 : urlDelimiter.hashCode());
       result = prime * result +
@@ -417,12 +417,12 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
       }
       else if (!statement.equals(other.statement))
          return false;
-      if (timeOut == null)
+      if (timeout == null)
       {
-         if (other.timeOut != null)
+         if (other.timeout != null)
             return false;
       }
-      else if (!timeOut.equals(other.timeOut))
+      else if (!timeout.equals(other.timeout))
          return false;
       if (transactionIsolation != other.transactionIsolation)
          return false;

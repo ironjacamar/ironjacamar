@@ -87,7 +87,7 @@ public class XaPoolImpl extends PoolImpl implements XaPool
    /**
     * {@inheritDoc}
     */
-   public Boolean isSameRmOverride()
+   public Boolean isIsSameRmOverride()
    {
       return isSameRmOverride;
    }
@@ -241,11 +241,7 @@ public class XaPoolImpl extends PoolImpl implements XaPool
       }
 
       if (capacity != null)
-      {
-         sb.append("<").append(CommonXML.ELEMENT_CAPACITY).append(">");
          sb.append(capacity);
-         sb.append("</").append(CommonXML.ELEMENT_CAPACITY).append(">");
-      }
 
       if (isSameRmOverride != null)
       {

@@ -22,6 +22,7 @@ package org.ironjacamar.common.metadata.resourceadapter;
 
 import org.ironjacamar.common.CommonBundle;
 import org.ironjacamar.common.api.metadata.common.TransactionSupportEnum;
+import org.ironjacamar.common.api.metadata.resourceadapter.Activation;
 import org.ironjacamar.common.api.metadata.resourceadapter.Activations;
 import org.ironjacamar.common.api.metadata.resourceadapter.AdminObject;
 import org.ironjacamar.common.api.metadata.resourceadapter.ConnectionDefinition;
@@ -31,14 +32,13 @@ import org.ironjacamar.common.metadata.MetadataParser;
 import org.ironjacamar.common.metadata.ParserException;
 import org.ironjacamar.common.metadata.common.CommonIronJacamarParser;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
@@ -55,27 +55,9 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
    /** The bundle */
    private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
-   @Override
-   public Activations parse(InputStream xmlInputStream) throws Exception
-   {
-
-      XMLStreamReader reader = null;
-      Activations adapters = null;
-
-      XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-      reader = inputFactory.createXMLStreamReader(xmlInputStream);
-      try
-      {
-         return parse(reader);
-      }
-      finally
-      {
-         if (reader != null)
-            reader.close();
-      }
-   }
-
-   @Override
+   /**
+    * {@inheritDoc}
+    */
    public Activations parse(XMLStreamReader reader) throws Exception
    {
 
@@ -120,11 +102,40 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
 
    }
 
+   /**
+    * Store a -ra.xml file
+    * @param metadata The resource adapter definitions
+    * @param writer The writer
+    * @exception Exception Thrown if an error occurs
+    */
+   public void store(Activations metadata, XMLStreamWriter writer) throws Exception
+   {
+      if (metadata != null && writer != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_RESOURCE_ADAPTERS);
+         for (Activation a : metadata.getActivations())
+         {
+            writer.writeStartElement(XML.ELEMENT_RESOURCE_ADAPTER);
+
+            if (a.getId() != null)
+               writer.writeAttribute(XML.ATTRIBUTE_ID, a.getId());
+
+            writer.writeStartElement(XML.ELEMENT_ARCHIVE);
+            writer.writeCharacters(a.getArchive());
+            writer.writeEndElement();
+
+            storeCommon(a, writer);
+
+            writer.writeEndElement();
+         }
+         writer.writeEndElement();
+      }
+   }
+
    private Activations parseResourceAdapters(XMLStreamReader reader) throws XMLStreamException, ParserException,
       ValidateException
    {
-      ArrayList<org.ironjacamar.common.api.metadata.resourceadapter.Activation> resourceAdapters =
-         new ArrayList<org.ironjacamar.common.api.metadata.resourceadapter.Activation>();
+      ArrayList<Activation> resourceAdapters = new ArrayList<Activation>();
       while (reader.hasNext())
       {
          switch (reader.nextTag())
@@ -164,8 +175,7 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
       throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
-   private org.ironjacamar.common.api.metadata.resourceadapter.Activation
-   parseResourceAdapter(XMLStreamReader reader) throws XMLStreamException, ParserException,
+   private Activation parseResourceAdapter(XMLStreamReader reader) throws XMLStreamException, ParserException,
       ValidateException
    {
       List<ConnectionDefinition> connectionDefinitions = null;

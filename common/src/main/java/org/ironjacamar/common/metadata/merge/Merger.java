@@ -597,9 +597,9 @@ public class Merger
                }
 
                case TRANSACTIONQUERYTIMEOUT : {
-                  if (ds != null && ds.getTimeOut() != null)
+                  if (ds != null && ds.getTimeout() != null)
                   {
-                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getTimeOut()
+                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getTimeout()
                         .isSetTxQueryTimeout()));
                   }
 
@@ -607,9 +607,9 @@ public class Merger
                }
 
                case QUERYTIMEOUT : {
-                  if (ds != null && ds.getTimeOut() != null && ds.getTimeOut().getQueryTimeout() != null)
+                  if (ds != null && ds.getTimeout() != null && ds.getTimeout().getQueryTimeout() != null)
                   {
-                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getTimeOut()
+                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getTimeout()
                         .getQueryTimeout()));
                   }
 
@@ -617,9 +617,9 @@ public class Merger
                }
 
                case USETRYLOCK : {
-                  if (ds != null && ds.getTimeOut() != null && ds.getTimeOut().getUseTryLock() != null)
+                  if (ds != null && ds.getTimeout() != null && ds.getTimeout().getUseTryLock() != null)
                   {
-                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getTimeOut()
+                     configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, ds.getTimeout()
                         .getUseTryLock()));
                   }
 

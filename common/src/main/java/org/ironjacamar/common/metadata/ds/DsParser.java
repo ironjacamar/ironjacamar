@@ -25,6 +25,7 @@ import org.ironjacamar.common.api.metadata.common.Capacity;
 import org.ironjacamar.common.api.metadata.common.Extension;
 import org.ironjacamar.common.api.metadata.common.FlushStrategy;
 import org.ironjacamar.common.api.metadata.common.Recovery;
+import org.ironjacamar.common.api.metadata.ds.DataSource;
 import org.ironjacamar.common.api.metadata.ds.DataSources;
 import org.ironjacamar.common.api.metadata.ds.Driver;
 import org.ironjacamar.common.api.metadata.ds.DsPool;
@@ -32,24 +33,25 @@ import org.ironjacamar.common.api.metadata.ds.DsSecurity;
 import org.ironjacamar.common.api.metadata.ds.DsXaPool;
 import org.ironjacamar.common.api.metadata.ds.Statement;
 import org.ironjacamar.common.api.metadata.ds.Statement.TrackStatementsEnum;
-import org.ironjacamar.common.api.metadata.ds.TimeOut;
+import org.ironjacamar.common.api.metadata.ds.Timeout;
 import org.ironjacamar.common.api.metadata.ds.TransactionIsolation;
 import org.ironjacamar.common.api.metadata.ds.Validation;
+import org.ironjacamar.common.api.metadata.ds.XaDataSource;
 import org.ironjacamar.common.api.validator.ValidateException;
 import org.ironjacamar.common.metadata.MetadataParser;
 import org.ironjacamar.common.metadata.ParserException;
 import org.ironjacamar.common.metadata.common.AbstractParser;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
@@ -61,29 +63,6 @@ import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
  */
 public class DsParser extends AbstractParser implements MetadataParser<DataSources>
 {
-   /**
-    * Parse a -ds.xml file
-    * @param xmlInputStream the input stream
-    * @return The datasource definitions
-    * @exception Exception Thrown if an error occurs
-    */
-   public DataSources parse(InputStream xmlInputStream) throws Exception
-   {
-      XMLStreamReader reader = null;
-
-      XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-      reader = inputFactory.createXMLStreamReader(xmlInputStream);
-      try
-      {
-         return parse(reader);
-      }
-      finally
-      {
-         if (reader != null)
-            reader.close();
-      }
-   }
-
    /**
     * Parse a -ds.xml file
     * @param reader The reader
@@ -134,6 +113,46 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
    }
 
    /**
+    * Store a -ds.xml file
+    * @param metadata The datasource definitions
+    * @param writer The writer
+    * @exception Exception Thrown if an error occurs
+    */
+   public void store(DataSources metadata, XMLStreamWriter writer) throws Exception
+   {
+      if (metadata != null && writer != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_DATASOURCES);
+
+         if (metadata.getDataSource() != null && metadata.getDataSource().size() > 0)
+         {
+            for (DataSource ds : metadata.getDataSource())
+            {
+               storeDataSource(ds, writer);
+            }
+         }
+         if (metadata.getXaDataSource() != null && metadata.getXaDataSource().size() > 0)
+         {
+            for (XaDataSource xads : metadata.getXaDataSource())
+            {
+               storeXaDataSource(xads, writer);
+            }
+         }
+         if (metadata.getDrivers() != null && metadata.getDrivers().size() > 0)
+         {
+            writer.writeStartElement(XML.ELEMENT_DRIVERS);
+            for (Driver drv : metadata.getDrivers())
+            {
+               storeDriver(drv, writer);
+            }
+            writer.writeEndElement();
+         }
+
+         writer.writeEndElement();
+      }
+   }
+
+   /**
     * Parse datasource
     * @param reader The reader
     * @return The result
@@ -144,10 +163,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
    protected DataSources parseDataSources(XMLStreamReader reader) throws XMLStreamException, ParserException,
       ValidateException
    {
-      List<org.ironjacamar.common.api.metadata.ds.DataSource> datasource =
-         new ArrayList<org.ironjacamar.common.api.metadata.ds.DataSource>();
-      List<org.ironjacamar.common.api.metadata.ds.XaDataSource> xaDataSource =
-         new ArrayList<org.ironjacamar.common.api.metadata.ds.XaDataSource>();
+      List<DataSource> datasource = new ArrayList<DataSource>();
+      List<XaDataSource> xaDataSource = new ArrayList<XaDataSource>();
       Map<String, Driver> drivers = new HashMap<String, Driver>();
       boolean driversMatched = false;
 
@@ -477,7 +494,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
     * @exception ParserException ParserException
     * @exception ValidateException ValidateException
     */
-   protected TimeOut parseTimeOutSettings(XMLStreamReader reader) throws XMLStreamException, ParserException,
+   protected Timeout parseTimeoutSettings(XMLStreamReader reader) throws XMLStreamException, ParserException,
       ValidateException
    {
 
@@ -497,7 +514,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
             case END_ELEMENT : {
                if (XML.ELEMENT_TIMEOUT.equals(reader.getLocalName()))
                {
-                  return new TimeOutImpl(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry,
+                  return new TimeoutImpl(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry,
                                          allocationRetryWaitMillis, xaResourceTimeout, setTxQuertTimeout,
                                          queryTimeout, useTryLock);
                }
@@ -881,7 +898,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
    {
       TransactionIsolation transactionIsolation = null;
       Map<String, String> xaDataSourceProperty = new HashMap<String, String>();
-      TimeOut timeOutSettings = null;
+      Timeout timeoutSettings = null;
       DsSecurity securitySettings = null;
       Statement statementSettings = null;
       Validation validationSettings = null;
@@ -955,7 +972,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
             case END_ELEMENT : {
                if (XML.ELEMENT_XA_DATASOURCE.equals(reader.getLocalName()))
                {
-                  return new XADataSourceImpl(transactionIsolation, timeOutSettings, securitySettings,
+                  return new XADataSourceImpl(transactionIsolation, timeoutSettings, securitySettings,
                                               statementSettings, validationSettings, urlDelimiter, urlProperty,
                                               urlSelectorStrategyClassName, useJavaContext, poolName, enabled,
                                               jndiName, spy, useCcm, connectable, tracking, xaDataSourceProperty,
@@ -1039,7 +1056,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      break;
                   }
                   case XML.ELEMENT_TIMEOUT : {
-                     timeOutSettings = parseTimeOutSettings(reader);
+                     timeoutSettings = parseTimeoutSettings(reader);
                      break;
                   }
                   case XML.ELEMENT_VALIDATION : {
@@ -1068,8 +1085,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
     * @exception ParserException Thrown if a parser error occurs
     * @exception ValidateException Thrown if a validation error occurs
     */
-   protected org.ironjacamar.common.api.metadata.ds.DataSource
-   parseDataSource(XMLStreamReader reader) throws XMLStreamException, ParserException,
+   protected DataSource parseDataSource(XMLStreamReader reader) throws XMLStreamException, ParserException,
       ValidateException
    {
       String connectionUrl = null;
@@ -1078,7 +1094,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       String driver = null;
       TransactionIsolation transactionIsolation = null;
       Map<String, String> connectionProperties = new HashMap<String, String>();
-      TimeOut timeOutSettings = null;
+      Timeout timeoutSettings = null;
       DsSecurity securitySettings = null;
       Statement statementSettings = null;
       Validation validationSettings = null;
@@ -1152,7 +1168,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                if (XML.ELEMENT_DATASOURCE.equals(reader.getLocalName()))
                {
                   return new DataSourceImpl(connectionUrl, driverClass, dataSourceClass, driver, transactionIsolation,
-                                            connectionProperties, timeOutSettings, securitySettings,
+                                            connectionProperties, timeoutSettings, securitySettings,
                                             statementSettings, validationSettings, urlDelimiter,
                                             urlSelectorStrategyClassName, newConnectionSql, useJavaContext, poolName,
                                             enabled, jndiName, spy, useCcm, jta, connectable, tracking, pool);
@@ -1239,7 +1255,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      break;
                   }
                   case XML.ELEMENT_TIMEOUT : {
-                     timeOutSettings = parseTimeOutSettings(reader);
+                     timeoutSettings = parseTimeoutSettings(reader);
                      break;
                   }
                   case XML.ELEMENT_VALIDATION : {
@@ -1254,5 +1270,768 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
          }
       }
       throw new ParserException(bundle.unexpectedEndOfDocument());
+   }
+
+   /**
+    * Store a datasource
+    * @param ds The datasource
+    * @param writer The writer
+    * @exception Exception Thrown if an error occurs
+    */
+   protected void storeDataSource(DataSource ds, XMLStreamWriter writer) throws Exception
+   {
+      writer.writeStartElement(XML.ELEMENT_DATASOURCE);
+
+      if (ds.getJndiName() != null)
+         writer.writeAttribute(XML.ATTRIBUTE_JNDI_NAME, ds.getJndiName());
+
+      if (ds.getPoolName() != null)
+         writer.writeAttribute(XML.ATTRIBUTE_POOL_NAME, ds.getPoolName());
+
+      if (ds.isEnabled() != null)
+         writer.writeAttribute(XML.ATTRIBUTE_ENABLED, ds.isEnabled().toString());
+
+      if (ds.isUseJavaContext() != null)
+         writer.writeAttribute(XML.ATTRIBUTE_USE_JAVA_CONTEXT, ds.isUseJavaContext().toString());
+
+      if (ds.isSpy() != null)
+         writer.writeAttribute(XML.ATTRIBUTE_SPY, ds.isSpy().toString());
+
+      if (ds.isUseCcm() != null)
+         writer.writeAttribute(XML.ATTRIBUTE_USE_CCM, ds.isUseCcm().toString());
+
+      if (ds.isJTA() != null)
+         writer.writeAttribute(XML.ATTRIBUTE_JTA, ds.isJTA().toString());
+
+      if (ds.isConnectable() != null)
+         writer.writeAttribute(XML.ATTRIBUTE_CONNECTABLE, ds.isConnectable().toString());
+
+      if (ds.isTracking() != null)
+         writer.writeAttribute(XML.ATTRIBUTE_TRACKING, ds.isTracking().toString());
+
+      if (ds.getConnectionUrl() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_CONNECTION_URL);
+         writer.writeCharacters(ds.getConnectionUrl());
+         writer.writeEndElement();
+      }
+
+      if (ds.getDriverClass() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_DRIVER_CLASS);
+         writer.writeCharacters(ds.getDriverClass());
+         writer.writeEndElement();
+      }
+
+      if (ds.getDataSourceClass() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_DATASOURCE_CLASS);
+         writer.writeCharacters(ds.getDataSourceClass());
+         writer.writeEndElement();
+      }
+
+      if (ds.getDriver() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_DRIVER);
+         writer.writeCharacters(ds.getDriver());
+         writer.writeEndElement();
+      }
+
+      if (ds.getConnectionProperties() != null && ds.getConnectionProperties().size() > 0)
+      {
+         Iterator<Map.Entry<String, String>> it = ds.getConnectionProperties().entrySet().iterator();
+         while (it.hasNext())
+         {
+            Map.Entry<String, String> entry = it.next();
+            writer.writeStartElement(XML.ELEMENT_CONNECTION_PROPERTY);
+            writer.writeAttribute(XML.ATTRIBUTE_NAME, entry.getKey());
+            writer.writeCharacters(entry.getValue());
+            writer.writeEndElement();
+         }
+      }
+
+      if (ds.getNewConnectionSql() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_NEW_CONNECTION_SQL);
+         writer.writeCharacters(ds.getNewConnectionSql());
+         writer.writeEndElement();
+      }
+
+      if (ds.getTransactionIsolation() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_TRANSACTION_ISOLATION);
+         writer.writeCharacters(ds.getTransactionIsolation().toString());
+         writer.writeEndElement();
+      }
+
+      if (ds.getUrlDelimiter() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_URL_DELIMITER);
+         writer.writeCharacters(ds.getUrlDelimiter());
+         writer.writeEndElement();
+      }
+
+      if (ds.getUrlSelectorStrategyClassName() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_URL_SELECTOR_STRATEGY_CLASS_NAME);
+         writer.writeCharacters(ds.getUrlSelectorStrategyClassName());
+         writer.writeEndElement();
+      }
+
+      if (ds.getPool() != null)
+         storePool(ds.getPool(), writer);
+
+      if (ds.getSecurity() != null)
+         storeSecurity(ds.getSecurity(), writer);
+
+      if (ds.getValidation() != null)
+         storeValidation(ds.getValidation(), writer);
+
+      if (ds.getTimeout() != null)
+         storeTimeout(ds.getTimeout(), writer);
+
+      if (ds.getStatement() != null)
+         storeStatement(ds.getStatement(), writer);
+
+      writer.writeEndElement();
+   }
+
+   /**
+    * Store a XA datasource
+    * @param xads The XA datasource
+    * @param writer The writer
+    * @exception Exception Thrown if an error occurs
+    */
+   protected void storeXaDataSource(XaDataSource xads, XMLStreamWriter writer) throws Exception
+   {
+      writer.writeStartElement(XML.ELEMENT_XA_DATASOURCE);
+
+      if (xads.getJndiName() != null)
+         writer.writeAttribute(XML.ATTRIBUTE_JNDI_NAME, xads.getJndiName());
+
+      if (xads.getPoolName() != null)
+         writer.writeAttribute(XML.ATTRIBUTE_POOL_NAME, xads.getPoolName());
+
+      if (xads.isEnabled() != null)
+         writer.writeAttribute(XML.ATTRIBUTE_ENABLED, xads.isEnabled().toString());
+
+      if (xads.isUseJavaContext() != null)
+         writer.writeAttribute(XML.ATTRIBUTE_USE_JAVA_CONTEXT, xads.isUseJavaContext().toString());
+
+      if (xads.isSpy() != null)
+         writer.writeAttribute(XML.ATTRIBUTE_SPY, xads.isSpy().toString());
+
+      if (xads.isUseCcm() != null)
+         writer.writeAttribute(XML.ATTRIBUTE_USE_CCM, xads.isUseCcm().toString());
+
+      if (xads.isConnectable() != null)
+         writer.writeAttribute(XML.ATTRIBUTE_CONNECTABLE, xads.isConnectable().toString());
+
+      if (xads.isTracking() != null)
+         writer.writeAttribute(XML.ATTRIBUTE_TRACKING, xads.isTracking().toString());
+
+      if (xads.getXaDataSourceProperty() != null && xads.getXaDataSourceProperty().size() > 0)
+      {
+         Iterator<Map.Entry<String, String>> it =
+            xads.getXaDataSourceProperty().entrySet().iterator();
+
+         while (it.hasNext())
+         {
+            Map.Entry<String, String> entry = it.next();
+
+            writer.writeStartElement(XML.ELEMENT_XA_DATASOURCE_PROPERTY);
+            writer.writeAttribute(XML.ATTRIBUTE_NAME, entry.getKey());
+            writer.writeCharacters(entry.getValue());
+            writer.writeEndElement();
+         }
+      }
+
+      if (xads.getXaDataSourceClass() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_XA_DATASOURCE_CLASS);
+         writer.writeCharacters(xads.getXaDataSourceClass());
+         writer.writeEndElement();
+      }
+
+      if (xads.getDriver() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_DRIVER);
+         writer.writeCharacters(xads.getDriver());
+         writer.writeEndElement();
+      }
+
+      if (xads.getUrlDelimiter() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_URL_DELIMITER);
+         writer.writeCharacters(xads.getUrlDelimiter());
+         writer.writeEndElement();
+      }
+
+      if (xads.getUrlProperty() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_URL_PROPERTY);
+         writer.writeCharacters(xads.getUrlProperty());
+         writer.writeEndElement();
+      }
+
+      if (xads.getUrlSelectorStrategyClassName() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_URL_SELECTOR_STRATEGY_CLASS_NAME);
+         writer.writeCharacters(xads.getUrlSelectorStrategyClassName());
+         writer.writeEndElement();
+      }
+
+      if (xads.getNewConnectionSql() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_NEW_CONNECTION_SQL);
+         writer.writeCharacters(xads.getNewConnectionSql());
+         writer.writeEndElement();
+      }
+
+      if (xads.getTransactionIsolation() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_TRANSACTION_ISOLATION);
+         writer.writeCharacters(xads.getTransactionIsolation().toString());
+         writer.writeEndElement();
+      }
+
+      if (xads.getXaPool() != null)
+         storeXaPool(xads.getXaPool(), writer);
+
+      if (xads.getSecurity() != null)
+         storeSecurity(xads.getSecurity(), writer);
+
+      if (xads.getValidation() != null)
+         storeValidation(xads.getValidation(), writer);
+
+      if (xads.getTimeout() != null)
+         storeTimeout(xads.getTimeout(), writer);
+
+      if (xads.getStatement() != null)
+         storeStatement(xads.getStatement(), writer);
+
+      if (xads.getRecovery() != null)
+         storeRecovery(xads.getRecovery(), writer);
+
+      writer.writeEndElement();
+   }
+
+   /**
+    * Store a driver
+    * @param drv The driver
+    * @param writer The writer
+    * @exception Exception Thrown if an error occurs
+    */
+   protected void storeDriver(Driver drv, XMLStreamWriter writer) throws Exception
+   {
+      writer.writeStartElement(XML.ELEMENT_DRIVER);
+
+      if (drv.getName() != null)
+         writer.writeAttribute(XML.ATTRIBUTE_NAME, drv.getName());
+
+      if (drv.getModule() != null)
+         writer.writeAttribute(XML.ATTRIBUTE_MODULE, drv.getModule());
+
+      if (drv.getMajorVersion() != null)
+         writer.writeAttribute(XML.ATTRIBUTE_MAJOR_VERSION, drv.getMajorVersion().toString());
+
+      if (drv.getMinorVersion() != null)
+         writer.writeAttribute(XML.ATTRIBUTE_MINOR_VERSION, drv.getMinorVersion().toString());
+
+      if (drv.getDriverClass() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_DRIVER_CLASS);
+         writer.writeCharacters(drv.getDriverClass());
+         writer.writeEndElement();
+      }
+
+      if (drv.getDataSourceClass() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_DATASOURCE_CLASS);
+         writer.writeCharacters(drv.getDataSourceClass());
+         writer.writeEndElement();
+      }
+
+      if (drv.getXaDataSourceClass() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_XA_DATASOURCE_CLASS);
+         writer.writeCharacters(drv.getXaDataSourceClass());
+         writer.writeEndElement();
+      }
+
+      writer.writeEndElement();
+   }
+
+   /**
+    * Store a pool
+    * @param pool The pool
+    * @param writer The writer
+    * @exception Exception Thrown if an error occurs
+    */
+   protected void storePool(DsPool pool, XMLStreamWriter writer) throws Exception
+   {
+      writer.writeStartElement(XML.ELEMENT_POOL);
+
+      if (pool.getMinPoolSize() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_MIN_POOL_SIZE);
+         writer.writeCharacters(pool.getMinPoolSize().toString());
+         writer.writeEndElement();
+      }
+
+      if (pool.getInitialPoolSize() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_INITIAL_POOL_SIZE);
+         writer.writeCharacters(pool.getInitialPoolSize().toString());
+         writer.writeEndElement();
+      }
+
+      if (pool.getMaxPoolSize() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_MAX_POOL_SIZE);
+         writer.writeCharacters(pool.getMaxPoolSize().toString());
+         writer.writeEndElement();
+      }
+
+      if (pool.isPrefill() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_PREFILL);
+         writer.writeCharacters(pool.isPrefill().toString());
+         writer.writeEndElement();
+      }
+
+      if (pool.isUseStrictMin() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_USE_STRICT_MIN);
+         writer.writeCharacters(pool.isUseStrictMin().toString());
+         writer.writeEndElement();
+      }
+
+      if (pool.getFlushStrategy() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_FLUSH_STRATEGY);
+         writer.writeCharacters(pool.getFlushStrategy().toString());
+         writer.writeEndElement();
+      }
+
+      if (pool.isAllowMultipleUsers() != null && Boolean.TRUE.equals(pool.isAllowMultipleUsers()))
+         writer.writeEmptyElement(XML.ELEMENT_ALLOW_MULTIPLE_USERS);
+
+      if (pool.getCapacity() != null)
+         storeCapacity(pool.getCapacity(), writer);
+
+      if (pool.getConnectionListener() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_CONNECTION_LISTENER);
+         writer.writeAttribute(XML.ATTRIBUTE_CLASS_NAME, pool.getConnectionListener().getClassName());
+
+         if (pool.getConnectionListener().getConfigPropertiesMap().size() > 0)
+         {
+            Iterator<Map.Entry<String, String>> it =
+               pool.getConnectionListener().getConfigPropertiesMap().entrySet().iterator();
+            
+            while (it.hasNext())
+            {
+               Map.Entry<String, String> entry = it.next();
+
+               writer.writeStartElement(XML.ELEMENT_CONFIG_PROPERTY);
+               writer.writeAttribute(XML.ATTRIBUTE_NAME, entry.getKey());
+               writer.writeCharacters(entry.getValue());
+               writer.writeEndElement();
+            }
+         }
+
+         writer.writeEndElement();
+      }
+
+      writer.writeEndElement();
+   }
+
+   /**
+    * Store a XA pool
+    * @param pool The pool
+    * @param writer The writer
+    * @exception Exception Thrown if an error occurs
+    */
+   protected void storeXaPool(DsXaPool pool, XMLStreamWriter writer) throws Exception
+   {
+      writer.writeStartElement(XML.ELEMENT_XA_POOL);
+
+      if (pool.getMinPoolSize() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_MIN_POOL_SIZE);
+         writer.writeCharacters(pool.getMinPoolSize().toString());
+         writer.writeEndElement();
+      }
+
+      if (pool.getInitialPoolSize() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_INITIAL_POOL_SIZE);
+         writer.writeCharacters(pool.getInitialPoolSize().toString());
+         writer.writeEndElement();
+      }
+
+      if (pool.getMaxPoolSize() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_MAX_POOL_SIZE);
+         writer.writeCharacters(pool.getMaxPoolSize().toString());
+         writer.writeEndElement();
+      }
+
+      if (pool.isPrefill() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_PREFILL);
+         writer.writeCharacters(pool.isPrefill().toString());
+         writer.writeEndElement();
+      }
+
+      if (pool.isUseStrictMin() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_USE_STRICT_MIN);
+         writer.writeCharacters(pool.isUseStrictMin().toString());
+         writer.writeEndElement();
+      }
+
+      if (pool.getFlushStrategy() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_FLUSH_STRATEGY);
+         writer.writeCharacters(pool.getFlushStrategy().toString());
+         writer.writeEndElement();
+      }
+
+      if (pool.isAllowMultipleUsers() != null && Boolean.TRUE.equals(pool.isAllowMultipleUsers()))
+         writer.writeEmptyElement(XML.ELEMENT_ALLOW_MULTIPLE_USERS);
+
+      if (pool.getCapacity() != null)
+         storeCapacity(pool.getCapacity(), writer);
+
+      if (pool.getConnectionListener() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_CONNECTION_LISTENER);
+         writer.writeAttribute(XML.ATTRIBUTE_CLASS_NAME, pool.getConnectionListener().getClassName());
+
+         if (pool.getConnectionListener().getConfigPropertiesMap().size() > 0)
+         {
+            Iterator<Map.Entry<String, String>> it =
+               pool.getConnectionListener().getConfigPropertiesMap().entrySet().iterator();
+            
+            while (it.hasNext())
+            {
+               Map.Entry<String, String> entry = it.next();
+
+               writer.writeStartElement(XML.ELEMENT_CONFIG_PROPERTY);
+               writer.writeAttribute(XML.ATTRIBUTE_NAME, entry.getKey());
+               writer.writeCharacters(entry.getValue());
+               writer.writeEndElement();
+            }
+         }
+
+         writer.writeEndElement();
+      }
+
+      if (pool.isIsSameRmOverride() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_IS_SAME_RM_OVERRIDE);
+         writer.writeCharacters(pool.isIsSameRmOverride().toString());
+         writer.writeEndElement();
+      }
+
+      if (pool.isInterleaving() != null && Boolean.TRUE.equals(pool.isInterleaving()))
+      {
+         writer.writeEmptyElement(XML.ELEMENT_INTERLEAVING);
+      }
+
+      if (pool.isNoTxSeparatePool() != null && Boolean.TRUE.equals(pool.isNoTxSeparatePool()))
+      {
+         writer.writeEmptyElement(XML.ELEMENT_NO_TX_SEPARATE_POOLS);
+      }
+
+      if (pool.isPadXid() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_PAD_XID);
+         writer.writeCharacters(pool.isPadXid().toString());
+         writer.writeEndElement();
+      }
+
+      if (pool.isWrapXaResource() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_WRAP_XA_RESOURCE);
+         writer.writeCharacters(pool.isWrapXaResource().toString());
+         writer.writeEndElement();
+      }
+
+      writer.writeEndElement();
+   }
+
+   /**
+    * Store security
+    * @param s The security
+    * @param writer The writer
+    * @exception Exception Thrown if an error occurs
+    */
+   protected void storeSecurity(DsSecurity s, XMLStreamWriter writer) throws Exception
+   {
+      writer.writeStartElement(XML.ELEMENT_SECURITY);
+
+      if (s.getUserName() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_USER_NAME);
+         writer.writeCharacters(s.getUserName());
+         writer.writeEndElement();
+
+         writer.writeStartElement(XML.ELEMENT_PASSWORD);
+         writer.writeCharacters(s.getPassword());
+         writer.writeEndElement();
+      }
+      else if (s.getSecurityDomain() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_SECURITY_DOMAIN);
+         writer.writeCharacters(s.getSecurityDomain());
+         writer.writeEndElement();
+      }
+
+      if (s.getReauthPlugin() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_REAUTH_PLUGIN);
+         writer.writeAttribute(XML.ATTRIBUTE_CLASS_NAME, s.getReauthPlugin().getClassName());
+
+         if (s.getReauthPlugin().getConfigPropertiesMap().size() > 0)
+         {
+            Iterator<Map.Entry<String, String>> it = s.getReauthPlugin().getConfigPropertiesMap().entrySet().iterator();
+            
+            while (it.hasNext())
+            {
+               Map.Entry<String, String> entry = it.next();
+
+               writer.writeStartElement(XML.ELEMENT_CONFIG_PROPERTY);
+               writer.writeAttribute(XML.ATTRIBUTE_NAME, entry.getKey());
+               writer.writeCharacters(entry.getValue());
+               writer.writeEndElement();
+            }
+         }
+
+         writer.writeEndElement();
+      }
+
+      writer.writeEndElement();
+   }
+
+   /**
+    * Store validation
+    * @param v The validation
+    * @param writer The writer
+    * @exception Exception Thrown if an error occurs
+    */
+   protected void storeValidation(Validation v, XMLStreamWriter writer) throws Exception
+   {
+      writer.writeStartElement(XML.ELEMENT_VALIDATION);
+
+      if (v.getValidConnectionChecker() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_VALID_CONNECTION_CHECKER);
+         writer.writeAttribute(XML.ATTRIBUTE_CLASS_NAME, v.getValidConnectionChecker().getClassName());
+
+         if (v.getValidConnectionChecker().getConfigPropertiesMap().size() > 0)
+         {
+            Iterator<Map.Entry<String, String>> it =
+               v.getValidConnectionChecker().getConfigPropertiesMap().entrySet().iterator();
+            
+            while (it.hasNext())
+            {
+               Map.Entry<String, String> entry = it.next();
+
+               writer.writeStartElement(XML.ELEMENT_CONFIG_PROPERTY);
+               writer.writeAttribute(XML.ATTRIBUTE_NAME, entry.getKey());
+               writer.writeCharacters(entry.getValue());
+               writer.writeEndElement();
+            }
+         }
+
+         writer.writeEndElement();
+      }
+
+      if (v.getCheckValidConnectionSql() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_CHECK_VALID_CONNECTION_SQL);
+         writer.writeCharacters(v.getCheckValidConnectionSql());
+         writer.writeEndElement();
+      }
+
+      if (v.isValidateOnMatch() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_VALIDATE_ON_MATCH);
+         writer.writeCharacters(v.isValidateOnMatch().toString());
+         writer.writeEndElement();
+      }
+
+      if (v.isBackgroundValidation() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_BACKGROUND_VALIDATION);
+         writer.writeCharacters(v.isBackgroundValidation().toString());
+         writer.writeEndElement();
+      }
+
+      if (v.getBackgroundValidationMillis() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_BACKGROUND_VALIDATION_MILLIS);
+         writer.writeCharacters(v.getBackgroundValidationMillis().toString());
+         writer.writeEndElement();
+      }
+
+      if (v.isUseFastFail() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_USE_FAST_FAIL);
+         writer.writeCharacters(v.isUseFastFail().toString());
+         writer.writeEndElement();
+      }
+
+      if (v.getStaleConnectionChecker() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_STALE_CONNECTION_CHECKER);
+         writer.writeAttribute(XML.ATTRIBUTE_CLASS_NAME, v.getStaleConnectionChecker().getClassName());
+
+         if (v.getStaleConnectionChecker().getConfigPropertiesMap().size() > 0)
+         {
+            Iterator<Map.Entry<String, String>> it =
+               v.getStaleConnectionChecker().getConfigPropertiesMap().entrySet().iterator();
+            
+            while (it.hasNext())
+            {
+               Map.Entry<String, String> entry = it.next();
+
+               writer.writeStartElement(XML.ELEMENT_CONFIG_PROPERTY);
+               writer.writeAttribute(XML.ATTRIBUTE_NAME, entry.getKey());
+               writer.writeCharacters(entry.getValue());
+               writer.writeEndElement();
+            }
+         }
+
+         writer.writeEndElement();
+      }
+
+      if (v.getExceptionSorter() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_EXCEPTION_SORTER);
+         writer.writeAttribute(XML.ATTRIBUTE_CLASS_NAME, v.getExceptionSorter().getClassName());
+
+         if (v.getExceptionSorter().getConfigPropertiesMap().size() > 0)
+         {
+            Iterator<Map.Entry<String, String>> it =
+               v.getExceptionSorter().getConfigPropertiesMap().entrySet().iterator();
+            
+            while (it.hasNext())
+            {
+               Map.Entry<String, String> entry = it.next();
+
+               writer.writeStartElement(XML.ELEMENT_CONFIG_PROPERTY);
+               writer.writeAttribute(XML.ATTRIBUTE_NAME, entry.getKey());
+               writer.writeCharacters(entry.getValue());
+               writer.writeEndElement();
+            }
+         }
+
+         writer.writeEndElement();
+      }
+
+      writer.writeEndElement();
+   }
+
+   /**
+    * Store timeout
+    * @param t The timeout
+    * @param writer The writer
+    * @exception Exception Thrown if an error occurs
+    */
+   protected void storeTimeout(Timeout t, XMLStreamWriter writer) throws Exception
+   {
+      writer.writeStartElement(XML.ELEMENT_TIMEOUT);
+
+      if (t.getBlockingTimeoutMillis() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_BLOCKING_TIMEOUT_MILLIS);
+         writer.writeCharacters(t.getBlockingTimeoutMillis().toString());
+         writer.writeEndElement();
+      }
+
+      if (t.getIdleTimeoutMinutes() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_IDLE_TIMEOUT_MINUTES);
+         writer.writeCharacters(t.getIdleTimeoutMinutes().toString());
+         writer.writeEndElement();
+      }
+
+      if (t.isSetTxQueryTimeout() != null && Boolean.TRUE.equals(t.isSetTxQueryTimeout()))
+      {
+         writer.writeEmptyElement(XML.ELEMENT_SET_TX_QUERY_TIMEOUT);
+      }
+
+      if (t.getQueryTimeout() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_QUERY_TIMEOUT);
+         writer.writeCharacters(t.getQueryTimeout().toString());
+         writer.writeEndElement();
+      }
+
+      if (t.getUseTryLock() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_USE_TRY_LOCK);
+         writer.writeCharacters(t.getUseTryLock().toString());
+         writer.writeEndElement();
+      }
+
+      if (t.getAllocationRetry() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_ALLOCATION_RETRY);
+         writer.writeCharacters(t.getAllocationRetry().toString());
+         writer.writeEndElement();
+      }
+
+      if (t.getAllocationRetryWaitMillis() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_ALLOCATION_RETRY_WAIT_MILLIS);
+         writer.writeCharacters(t.getAllocationRetryWaitMillis().toString());
+         writer.writeEndElement();
+      }
+
+      if (t.getXaResourceTimeout() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_XA_RESOURCE_TIMEOUT);
+         writer.writeCharacters(t.getXaResourceTimeout().toString());
+         writer.writeEndElement();
+      }
+
+      writer.writeEndElement();
+   }
+
+   /**
+    * Store statement
+    * @param s The statement
+    * @param writer The writer
+    * @exception Exception Thrown if an error occurs
+    */
+   protected void storeStatement(Statement s, XMLStreamWriter writer) throws Exception
+   {
+      writer.writeStartElement(XML.ELEMENT_STATEMENT);
+
+      if (s.getTrackStatements() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_TRACK_STATEMENTS);
+         writer.writeCharacters(s.getTrackStatements().toString());
+         writer.writeEndElement();
+      }
+
+      if (s.getPreparedStatementsCacheSize() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_PREPARED_STATEMENT_CACHE_SIZE);
+         writer.writeCharacters(s.getPreparedStatementsCacheSize().toString());
+         writer.writeEndElement();
+      }
+
+      if (s.isSharePreparedStatements() != null && Boolean.TRUE.equals(s.isSharePreparedStatements()))
+      {
+         writer.writeEmptyElement(XML.ELEMENT_SHARE_PREPARED_STATEMENTS);
+      }
+
+      writer.writeEndElement();
    }
 }

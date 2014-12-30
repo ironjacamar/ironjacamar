@@ -342,6 +342,7 @@ public class ActivationImpl implements Activation
       }
       else
       {
+         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
          sb.append("<ironjacamar");
       }
 

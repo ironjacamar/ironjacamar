@@ -32,13 +32,12 @@ import org.ironjacamar.common.metadata.ParserException;
 import org.ironjacamar.common.metadata.common.CommonIronJacamarParser;
 import org.ironjacamar.common.metadata.resourceadapter.ActivationImpl;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
@@ -55,17 +54,9 @@ public class IronJacamarParser extends CommonIronJacamarParser implements Metada
    /** The bundle */
    private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
-   @Override
-   public Activation parse(InputStream xmlInputStream) throws Exception
-   {
-
-      XMLStreamReader reader = null;
-      XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-      reader = inputFactory.createXMLStreamReader(xmlInputStream);
-      return parse(reader);
-   }
-
-   @Override
+   /**
+    * {@inheritDoc}
+    */
    public Activation parse(XMLStreamReader reader) throws Exception
    {
       Activation ironJacamar = null;
@@ -114,6 +105,22 @@ public class IronJacamarParser extends CommonIronJacamarParser implements Metada
       }
       return ironJacamar;
 
+   }
+
+   /**
+    * Store an ironjacamar.xml file
+    * @param metadata The IronJacamar definition
+    * @param writer The writer
+    * @exception Exception Thrown if an error occurs
+    */
+   public void store(Activation metadata, XMLStreamWriter writer) throws Exception
+   {
+      if (metadata != null && writer != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_IRONJACAMAR);
+         storeCommon(metadata, writer);
+         writer.writeEndElement();
+      }
    }
 
    private Activation parseIronJacamar(XMLStreamReader reader) throws XMLStreamException, ParserException,

@@ -22,165 +22,24 @@ package org.ironjacamar.common.api.metadata.common;
 
 import org.ironjacamar.common.api.metadata.JCAMetadata;
 import org.ironjacamar.common.api.metadata.ValidatableMetadata;
-import org.ironjacamar.common.api.validator.ValidateException;
-
-import java.util.Iterator;
-import java.util.Map;
 
 /**
  * Capacity definition 
  *
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class Capacity implements JCAMetadata, ValidatableMetadata
+public interface Capacity extends JCAMetadata, ValidatableMetadata
 {
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 1L;
-
-   private Extension incrementer;
-   private Extension decrementer;
-
-   /**
-    * Constructor
-    *
-    * @param incrementer The incrementer plugin
-    * @param decrementer The decrementer plugin
-    * @throws ValidateException in case of not valid metadata creation
-    */
-   public Capacity(Extension incrementer, Extension decrementer) throws ValidateException
-   {
-      super();
-      this.incrementer = incrementer;
-      this.decrementer = decrementer;
-      this.validate();
-   }
-
    /**
     * Get the incrementer
     * @return The value
     */
-   public Extension getIncrementer()
-   {
-      return incrementer;
-   }
+   public Extension getIncrementer();
 
    /**
     * Get the decrementer
     * @return The value
     */
-   public Extension getDecrementer()
-   {
-      return decrementer;
-   }
-
-   @Override
-   public void validate() throws ValidateException
-   {
-      // all values are ok
-   }
-
-   @Override
-   public int hashCode()
-   {
-      int prime = 31;
-      int result = 7;
-      result = prime * result + ((incrementer == null) ? 7 : incrementer.hashCode());
-      result = prime * result + ((decrementer == null) ? 7 : decrementer.hashCode());
-      return result;
-   }
-
-   @Override
-   public boolean equals(Object obj)
-   {
-      if (this == obj)
-         return true;
-
-      if (obj == null)
-         return false;
-
-      if (!(obj instanceof Capacity))
-         return false;
-
-      Capacity other = (Capacity) obj;
-
-      if (incrementer == null)
-      {
-         if (other.incrementer != null)
-            return false;
-      }
-      else if (!incrementer.equals(other.incrementer))
-         return false;
-
-      if (decrementer == null)
-      {
-         if (other.decrementer != null)
-            return false;
-      }
-      else if (!decrementer.equals(other.decrementer))
-         return false;
-
-      return true;
-   }
-
-   @Override
-   public String toString()
-   {
-      StringBuilder sb = new StringBuilder(1024);
-
-      sb.append("<capacity>");
-
-      if (incrementer != null)
-      {
-         sb.append("<").append("incrementer");
-         sb.append(" ").append("class-name").append("=\"");
-         sb.append(incrementer.getClassName()).append("\"");
-         sb.append(">");
-
-         if (incrementer.getConfigPropertiesMap().size() > 0)
-         {
-            Iterator<Map.Entry<String, String>> it = incrementer.getConfigPropertiesMap().entrySet().iterator();
-            
-            while (it.hasNext())
-            {
-               Map.Entry<String, String> entry = it.next();
-
-               sb.append("<").append("config-property");
-               sb.append(" name=\"").append(entry.getKey()).append("\">");
-               sb.append(entry.getValue());
-               sb.append("</").append("config-property").append(">");
-            }
-         }
-
-         sb.append("</").append("incrementer").append(">");
-      }
-      if (decrementer != null)
-      {
-         sb.append("<").append("decrementer");
-         sb.append(" ").append("class-name").append("=\"");
-         sb.append(decrementer.getClassName()).append("\"");
-         sb.append(">");
-
-         if (decrementer.getConfigPropertiesMap().size() > 0)
-         {
-            Iterator<Map.Entry<String, String>> it = decrementer.getConfigPropertiesMap().entrySet().iterator();
-            
-            while (it.hasNext())
-            {
-               Map.Entry<String, String> entry = it.next();
-
-               sb.append("<").append("config-property");
-               sb.append(" name=\"").append(entry.getKey()).append("\">");
-               sb.append(entry.getValue());
-               sb.append("</").append("config-property").append(">");
-            }
-         }
-
-         sb.append("</").append("decrementer").append(">");
-      }
-
-      sb.append("</capacity>");
-      
-      return sb.toString();
-   }
+   public Extension getDecrementer();
 }
 

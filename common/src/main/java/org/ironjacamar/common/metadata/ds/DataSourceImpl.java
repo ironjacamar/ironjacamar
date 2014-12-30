@@ -24,7 +24,7 @@ import org.ironjacamar.common.api.metadata.ds.DataSource;
 import org.ironjacamar.common.api.metadata.ds.DsPool;
 import org.ironjacamar.common.api.metadata.ds.DsSecurity;
 import org.ironjacamar.common.api.metadata.ds.Statement;
-import org.ironjacamar.common.api.metadata.ds.TimeOut;
+import org.ironjacamar.common.api.metadata.ds.Timeout;
 import org.ironjacamar.common.api.metadata.ds.TransactionIsolation;
 import org.ironjacamar.common.api.metadata.ds.Validation;
 import org.ironjacamar.common.api.validator.ValidateException;
@@ -71,7 +71,7 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
     * @param driver driver
     * @param transactionIsolation transactionIsolation
     * @param connectionProperties connectionProperties
-    * @param timeOut timeOut
+    * @param timeout timeout
     * @param security security
     * @param statement statement
     * @param validation validation
@@ -92,13 +92,13 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
     */
    public DataSourceImpl(String connectionUrl, String driverClass, String dataSourceClass, String driver,
                          TransactionIsolation transactionIsolation, Map<String, String> connectionProperties, 
-                         TimeOut timeOut, DsSecurity security, Statement statement, Validation validation, 
+                         Timeout timeout, DsSecurity security, Statement statement, Validation validation, 
                          String urlDelimiter, String urlSelectorStrategyClassName, String newConnectionSql, 
                          Boolean useJavaContext, String poolName, Boolean enabled, String jndiName, 
                          Boolean spy, Boolean useccm, Boolean jta, Boolean connectable, Boolean tracking, DsPool pool)
       throws ValidateException
    {
-      super(transactionIsolation, timeOut, security, statement, validation, urlDelimiter, urlSelectorStrategyClassName,
+      super(transactionIsolation, timeout, security, statement, validation, urlDelimiter, urlSelectorStrategyClassName,
             useJavaContext, poolName, enabled, jndiName, spy, useccm, driver, newConnectionSql, connectable, tracking);
 
       this.jta = jta;
@@ -395,8 +395,8 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
       if (validation != null)
          sb.append(validation);
 
-      if (timeOut != null)
-         sb.append(timeOut);
+      if (timeout != null)
+         sb.append(timeout);
 
       if (statement != null)
          sb.append(statement);

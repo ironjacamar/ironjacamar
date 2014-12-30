@@ -21,19 +21,19 @@
 package org.ironjacamar.common.metadata.ds;
 
 import org.ironjacamar.common.CommonBundle;
-import org.ironjacamar.common.api.metadata.ds.TimeOut;
+import org.ironjacamar.common.api.metadata.ds.Timeout;
 import org.ironjacamar.common.api.validator.ValidateException;
 
 import org.jboss.logging.Messages;
 
 /**
  *
- * A TimeOutImpl.
+ * A TimeoutImpl.
  *
  * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
-public class TimeOutImpl extends org.ironjacamar.common.metadata.common.TimeOutImpl implements TimeOut
+public class TimeoutImpl extends org.ironjacamar.common.metadata.common.TimeoutImpl implements Timeout
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = 1L;
@@ -48,7 +48,7 @@ public class TimeOutImpl extends org.ironjacamar.common.metadata.common.TimeOutI
    private final Long useTryLock;
 
    /**
-    * Create a new TimeOutImpl.
+    * Create a new TimeoutImpl.
     *
     * @param blockingTimeoutMillis blockingTimeoutMillis
     * @param idleTimeoutMinutes idleTimeoutMinutes
@@ -60,7 +60,7 @@ public class TimeOutImpl extends org.ironjacamar.common.metadata.common.TimeOutI
     * @param useTryLock useTryLock
     * @throws ValidateException ValidateException
     */
-   public TimeOutImpl(Long blockingTimeoutMillis, Long idleTimeoutMinutes, Integer allocationRetry,
+   public TimeoutImpl(Long blockingTimeoutMillis, Long idleTimeoutMinutes, Integer allocationRetry,
       Long allocationRetryWaitMillis, Integer xaResourceTimeout, Boolean setTxQueryTimeout, Long queryTimeout,
       Long useTryLock) throws ValidateException
    {
@@ -123,9 +123,9 @@ public class TimeOutImpl extends org.ironjacamar.common.metadata.common.TimeOutI
          return true;
       if (!super.equals(obj))
          return false;
-      if (!(obj instanceof TimeOutImpl))
+      if (!(obj instanceof TimeoutImpl))
          return false;
-      TimeOutImpl other = (TimeOutImpl) obj;
+      TimeoutImpl other = (TimeoutImpl) obj;
       if (queryTimeout == null)
       {
          if (other.queryTimeout != null)

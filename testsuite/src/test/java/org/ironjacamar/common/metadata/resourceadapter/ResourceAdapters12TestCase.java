@@ -24,9 +24,12 @@ import org.ironjacamar.common.api.metadata.resourceadapter.Activations;
 
 import java.io.InputStream;
 import java.io.StringReader;
+import java.io.StringWriter;
 
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.junit.Test;
 
@@ -52,10 +55,39 @@ public class ResourceAdapters12TestCase
          getResourceAsStream("../../resources/test/resourceadapter/dashra-1.2.xml");
       assertNotNull(is);
 
-      Activations a = parser.parse(is);
+      XMLStreamReader xsr = XMLInputFactory.newInstance().createXMLStreamReader(is);
+
+      Activations a = parser.parse(xsr);
       assertNotNull(a);
 
       is.close();
+   }
+
+   /**
+    * ToString
+    * @throws Exception In case of an error
+    */
+   @Test
+   public void testToString() throws Exception
+   {
+      ResourceAdapterParser parser = new ResourceAdapterParser();
+
+      InputStream is = ResourceAdapters12TestCase.class.getClassLoader().
+         getResourceAsStream("../../resources/test/resourceadapter/dashra-1.2.xml");
+      assertNotNull(is);
+
+      XMLStreamReader xsr = XMLInputFactory.newInstance().createXMLStreamReader(is);
+
+      Activations a = parser.parse(xsr);
+      assertNotNull(a);
+
+      is.close();
+
+      StringReader sr = new StringReader(a.toString());
+      XMLStreamReader nxsr = XMLInputFactory.newInstance().createXMLStreamReader(sr);
+      Activations an = parser.parse(nxsr);
+
+      assertEquals(a, an);
    }
 
    /**
@@ -71,16 +103,25 @@ public class ResourceAdapters12TestCase
          getResourceAsStream("../../resources/test/resourceadapter/dashra-1.2.xml");
       assertNotNull(is);
 
-      Activations a = parser.parse(is);
+      XMLStreamReader xsr = XMLInputFactory.newInstance().createXMLStreamReader(is);
+
+      Activations a = parser.parse(xsr);
       assertNotNull(a);
 
       is.close();
 
-      StringReader sr = new StringReader(a.toString());
-      XMLStreamReader xsr = XMLInputFactory.newInstance().createXMLStreamReader(sr);
-      Activations an = parser.parse(xsr);
+      StringWriter sw = new StringWriter();
+      XMLStreamWriter xsw = XMLOutputFactory.newInstance().createXMLStreamWriter(sw);
+      xsw.setDefaultNamespace("");
 
-      assertEquals(a, an);
+      xsw.writeStartDocument("UTF-8", "1.0");
+      parser.store(a, xsw);
+      xsw.writeEndDocument();
+
+      xsw.flush();
+      xsw.close();
+
+      assertEquals(a.toString(), sw.toString());
    }
 
    /**
@@ -96,7 +137,9 @@ public class ResourceAdapters12TestCase
          getResourceAsStream("../../resources/test/resourceadapter/dashra-1.2.xml");
       assertNotNull(is1);
 
-      Activations a1 = parser.parse(is1);
+      XMLStreamReader xsr1 = XMLInputFactory.newInstance().createXMLStreamReader(is1);
+
+      Activations a1 = parser.parse(xsr1);
       assertNotNull(a1);
 
       is1.close();
@@ -105,7 +148,9 @@ public class ResourceAdapters12TestCase
          getResourceAsStream("../../resources/test/resourceadapter/dashra-1.2.xml");
       assertNotNull(is2);
 
-      Activations a2 = parser.parse(is2);
+      XMLStreamReader xsr2 = XMLInputFactory.newInstance().createXMLStreamReader(is2);
+
+      Activations a2 = parser.parse(xsr2);
       assertNotNull(a2);
 
       is2.close();

@@ -47,13 +47,12 @@ import org.ironjacamar.common.metadata.common.AbstractParser;
 
 import static org.ironjacamar.common.api.metadata.spec.XsdString.NULL_XSDSTRING;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
@@ -71,18 +70,9 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
    /** The bundle */
    private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
-   @Override
-   public Connector parse(InputStream xmlInputStream) throws Exception
-   {
-      XMLStreamReader reader = null;
-
-      XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-      inputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
-      reader = inputFactory.createXMLStreamReader(xmlInputStream);
-      return parse(reader);
-   }
-
-   @Override
+   /**
+    * {@inheritDoc}
+    */
    public Connector parse(XMLStreamReader reader) throws Exception
    {
       Connector connector = null;
@@ -170,6 +160,17 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
             reader.close();
       }
       return connector;
+   }
+
+   /**
+    * Store a ra.xml file
+    * @param metadata The specification definition
+    * @param writer The writer
+    * @exception Exception Thrown if an error occurs
+    */
+   public void store(Connector metadata, XMLStreamWriter writer) throws Exception
+   {
+      throw new Exception("Not Implemented");
    }
 
    private Connector parseConnector10(XMLStreamReader reader) throws XMLStreamException, ParserException

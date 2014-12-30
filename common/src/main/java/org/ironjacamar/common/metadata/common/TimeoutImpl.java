@@ -21,19 +21,19 @@
 package org.ironjacamar.common.metadata.common;
 
 import org.ironjacamar.common.CommonBundle;
-import org.ironjacamar.common.api.metadata.common.TimeOut;
+import org.ironjacamar.common.api.metadata.common.Timeout;
 import org.ironjacamar.common.api.validator.ValidateException;
 
 import org.jboss.logging.Messages;
 
 /**
  *
- * A TimeOutImpl.
+ * A TimeoutImpl.
  *
  * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
-public class TimeOutImpl implements TimeOut
+public class TimeoutImpl implements Timeout
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = 1L;
@@ -66,7 +66,7 @@ public class TimeOutImpl implements TimeOut
     * @param xaResourceTimeout xaResourceTimeout
     * @throws ValidateException ValidateException
     */
-   public TimeOutImpl(Long blockingTimeoutMillis, Long idleTimeoutMinutes, Integer allocationRetry,
+   public TimeoutImpl(Long blockingTimeoutMillis, Long idleTimeoutMinutes, Integer allocationRetry,
                       Long allocationRetryWaitMillis, Integer xaResourceTimeout) throws ValidateException
    {
       this.blockingTimeoutMillis = blockingTimeoutMillis;
@@ -159,9 +159,9 @@ public class TimeOutImpl implements TimeOut
          return true;
       if (obj == null)
          return false;
-      if (!(obj instanceof TimeOutImpl))
+      if (!(obj instanceof TimeoutImpl))
          return false;
-      TimeOutImpl other = (TimeOutImpl) obj;
+      TimeoutImpl other = (TimeoutImpl) obj;
       if (allocationRetry == null)
       {
          if (other.allocationRetry != null)

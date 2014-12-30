@@ -315,11 +315,7 @@ public class PoolImpl implements Pool
       }
 
       if (capacity != null)
-      {
-         sb.append("<").append(CommonXML.ELEMENT_CAPACITY).append(">");
          sb.append(capacity);
-         sb.append("</").append(CommonXML.ELEMENT_CAPACITY).append(">");
-      }
 
       sb.append("</pool>");
       

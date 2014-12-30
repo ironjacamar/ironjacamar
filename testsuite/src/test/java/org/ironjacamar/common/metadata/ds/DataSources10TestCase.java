@@ -32,18 +32,21 @@ import org.ironjacamar.common.api.metadata.ds.DsSecurity;
 import org.ironjacamar.common.api.metadata.ds.DsXaPool;
 import org.ironjacamar.common.api.metadata.ds.Statement;
 import org.ironjacamar.common.api.metadata.ds.Statement.TrackStatementsEnum;
-import org.ironjacamar.common.api.metadata.ds.TimeOut;
+import org.ironjacamar.common.api.metadata.ds.Timeout;
 import org.ironjacamar.common.api.metadata.ds.TransactionIsolation;
 import org.ironjacamar.common.api.metadata.ds.Validation;
 import org.ironjacamar.common.api.metadata.ds.XaDataSource;
 
 import java.io.InputStream;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
 
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 
 import org.junit.Test;
 
@@ -70,15 +73,44 @@ public class DataSources10TestCase
       InputStream is = DataSources10TestCase.class.getClassLoader().
          getResourceAsStream("../../resources/test/ds/dashds-1.0.xml");
       assertNotNull(is);
-      
-      DataSources ds = parser.parse(is);
+
+      XMLStreamReader xsr = XMLInputFactory.newInstance().createXMLStreamReader(is);
+
+      DataSources ds = parser.parse(xsr);
       assertNotNull(ds);
       checkDS(ds);
       is.close();
    }
 
+   /**
+    * toString
+    * @throws Exception In case of an error
+    */
+   @Test
+   public void testToString() throws Exception
+   {
+      DsParser parser = new DsParser();
 
-/**
+      InputStream is = DataSources10TestCase.class.getClassLoader().
+         getResourceAsStream("../../resources/test/ds/dashds-1.0.xml");
+      assertNotNull(is);
+
+      XMLStreamReader xsr = XMLInputFactory.newInstance().createXMLStreamReader(is);
+
+      DataSources ds = parser.parse(xsr);
+      assertNotNull(ds);
+
+      is.close();
+
+      StringReader sr = new StringReader(ds.toString());
+      XMLStreamReader nxsr = XMLInputFactory.newInstance().createXMLStreamReader(sr);
+      DataSources dsn = parser.parse(nxsr);
+
+      assertEquals(ds, dsn);
+      checkDS(dsn);
+   }
+
+   /**
     * Write
     * @throws Exception In case of an error
     */
@@ -91,17 +123,25 @@ public class DataSources10TestCase
          getResourceAsStream("../../resources/test/ds/dashds-1.0.xml");
       assertNotNull(is);
 
-      DataSources ds = parser.parse(is);
+      XMLStreamReader xsr = XMLInputFactory.newInstance().createXMLStreamReader(is);
+
+      DataSources ds = parser.parse(xsr);
       assertNotNull(ds);
 
       is.close();
 
-      StringReader sr = new StringReader(ds.toString());
-      XMLStreamReader xsr = XMLInputFactory.newInstance().createXMLStreamReader(sr);
-      DataSources dsn = parser.parse(xsr);
+      StringWriter sw = new StringWriter();
+      XMLStreamWriter xsw = XMLOutputFactory.newInstance().createXMLStreamWriter(sw);
+      xsw.setDefaultNamespace("");
 
-      assertEquals(ds, dsn);
-      checkDS(dsn);
+      xsw.writeStartDocument("UTF-8", "1.0");
+      parser.store(ds, xsw);
+      xsw.writeEndDocument();
+
+      xsw.flush();
+      xsw.close();
+
+      assertEquals(ds.toString(), sw.toString());
    }
 
    /**
@@ -117,7 +157,9 @@ public class DataSources10TestCase
          getResourceAsStream("../../resources/test/ds/dashds-1.0.xml");
       assertNotNull(is1);
 
-      DataSources ds1 = parser.parse(is1);
+      XMLStreamReader xsr1 = XMLInputFactory.newInstance().createXMLStreamReader(is1);
+
+      DataSources ds1 = parser.parse(xsr1);
       assertNotNull(ds1);
 
       is1.close();
@@ -126,7 +168,9 @@ public class DataSources10TestCase
          getResourceAsStream("../../resources/test/ds/dashds-1.0.xml");
       assertNotNull(is2);
 
-      DataSources ds2 = parser.parse(is2);
+      XMLStreamReader xsr2 = XMLInputFactory.newInstance().createXMLStreamReader(is2);
+
+      DataSources ds2 = parser.parse(xsr2);
       assertNotNull(ds2);
 
       is2.close();
@@ -210,7 +254,7 @@ public class DataSources10TestCase
       assertEquals("Property2", properties.get("name2"));
       assertEquals("someClass4", e.getClassName());
       
-      TimeOut t = d.getTimeOut();
+      Timeout t = d.getTimeout();
       assertNotNull(t);
       assertEquals(20000L, (long)t.getBlockingTimeoutMillis());
       assertEquals(4L, (long)t.getIdleTimeoutMinutes());
@@ -256,7 +300,7 @@ public class DataSources10TestCase
       assertTrue(xpool.isUseStrictMin());
       assertEquals(FlushStrategy.IDLE_CONNECTIONS, xpool.getFlushStrategy());
       assertTrue(xpool.isInterleaving());
-      assertTrue(xpool.isSameRmOverride());
+      assertTrue(xpool.isIsSameRmOverride());
       assertTrue(xpool.isNoTxSeparatePool());
       assertTrue(xpool.isPadXid());
       assertFalse(xpool.isWrapXaResource());
@@ -273,7 +317,7 @@ public class DataSources10TestCase
       
       Recovery r = xd.getRecovery();
       assertNotNull(r);
-      assertFalse(r.getNoRecovery());
+      assertFalse(r.isNoRecovery());
       Credential c = r.getCredential();
       assertNotNull(c);
       assertEquals("HsqlDbRealm", c.getSecurityDomain());
@@ -310,7 +354,7 @@ public class DataSources10TestCase
       assertEquals("Property2", properties.get("name2"));
       assertEquals("someClass4", e.getClassName());
       
-      t = xd.getTimeOut();
+      t = xd.getTimeout();
       assertNotNull(t);
       assertEquals(20000L, (long)t.getBlockingTimeoutMillis());
       assertEquals(4L, (long)t.getIdleTimeoutMinutes());

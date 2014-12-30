@@ -52,7 +52,9 @@ public class JCA17TestCase
          getResourceAsStream("../../resources/test/spec/ra-1.7.xml");
       assertNotNull(is);
 
-      Connector c = parser.parse(is);
+      XMLStreamReader xsr = XMLInputFactory.newInstance().createXMLStreamReader(is);
+
+      Connector c = parser.parse(xsr);
       assertNotNull(c);
 
       is.close();
@@ -71,14 +73,16 @@ public class JCA17TestCase
          getResourceAsStream("../../resources/test/spec/ra-1.7.xml");
       assertNotNull(is);
 
-      Connector c = parser.parse(is);
+      XMLStreamReader xsr = XMLInputFactory.newInstance().createXMLStreamReader(is);
+
+      Connector c = parser.parse(xsr);
       assertNotNull(c);
 
       is.close();
 
       StringReader sr = new StringReader(c.toString());
-      XMLStreamReader xsr = XMLInputFactory.newInstance().createXMLStreamReader(sr);
-      Connector cn = parser.parse(xsr);
+      XMLStreamReader nxsr = XMLInputFactory.newInstance().createXMLStreamReader(sr);
+      Connector cn = parser.parse(nxsr);
 
       assertEquals(c, cn);
    }
@@ -96,7 +100,9 @@ public class JCA17TestCase
          getResourceAsStream("../../resources/test/spec/ra-1.7.xml");
       assertNotNull(is1);
 
-      Connector c1 = parser.parse(is1);
+      XMLStreamReader xsr1 = XMLInputFactory.newInstance().createXMLStreamReader(is1);
+
+      Connector c1 = parser.parse(xsr1);
       assertNotNull(c1);
 
       is1.close();
@@ -105,7 +111,9 @@ public class JCA17TestCase
          getResourceAsStream("../../resources/test/spec/ra-1.7.xml");
       assertNotNull(is2);
 
-      Connector c2 = parser.parse(is2);
+      XMLStreamReader xsr2 = XMLInputFactory.newInstance().createXMLStreamReader(is2);
+
+      Connector c2 = parser.parse(xsr2);
       assertNotNull(c2);
 
       is2.close();

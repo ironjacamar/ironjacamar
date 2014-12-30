@@ -23,7 +23,7 @@ package org.ironjacamar.common.metadata.resourceadapter;
 import org.ironjacamar.common.api.metadata.common.Pool;
 import org.ironjacamar.common.api.metadata.common.Recovery;
 import org.ironjacamar.common.api.metadata.common.Security;
-import org.ironjacamar.common.api.metadata.common.TimeOut;
+import org.ironjacamar.common.api.metadata.common.Timeout;
 import org.ironjacamar.common.api.metadata.common.Validation;
 import org.ironjacamar.common.api.metadata.common.XaPool;
 import org.ironjacamar.common.api.metadata.resourceadapter.ConnectionDefinition;
@@ -68,7 +68,7 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
    protected Pool pool;
 
    /** timeout */
-   protected TimeOut timeOut;
+   protected Timeout timeout;
 
    /** validation */
    protected Validation validation;
@@ -107,7 +107,7 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
     * @param connectable connectable
     * @param tracking tracking
     * @param pool pool
-    * @param timeOut timeOut
+    * @param timeout timeout
     * @param validation validation
     * @param security security
     * @param recovery recovery
@@ -116,7 +116,7 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
    public ConnectionDefinitionImpl(Map<String, String> configProperties, String className, String jndiName,
                                    String poolName, Boolean enabled, Boolean useJavaContext, Boolean useCcm,
                                    Boolean sharable, Boolean enlistment, Boolean connectable, Boolean tracking,
-                                   Pool pool, TimeOut timeOut,
+                                   Pool pool, Timeout timeout,
                                    Validation validation, Security security, Recovery recovery, Boolean isXA)
    {
       if (configProperties != null)
@@ -135,7 +135,7 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
       this.useJavaContext = useJavaContext;
       this.useCcm = useCcm;
       this.pool = pool;
-      this.timeOut = timeOut;
+      this.timeout = timeout;
       this.validation = validation;
       this.security = security;
       this.recovery = recovery;
@@ -215,9 +215,9 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
    /**
     * {@inheritDoc}
     */
-   public TimeOut getTimeOut()
+   public Timeout getTimeout()
    {
-      return timeOut;
+      return timeout;
    }
 
    /**
@@ -299,7 +299,7 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
       result = prime * result + ((poolName == null) ? 0 : poolName.hashCode());
       result = prime * result + ((recovery == null) ? 0 : recovery.hashCode());
       result = prime * result + ((security == null) ? 0 : security.hashCode());
-      result = prime * result + ((timeOut == null) ? 0 : timeOut.hashCode());
+      result = prime * result + ((timeout == null) ? 0 : timeout.hashCode());
       result = prime * result + ((useJavaContext == null) ? 0 : useJavaContext.hashCode());
       result = prime * result + ((useCcm == null) ? 0 : useCcm.hashCode());
       result = prime * result + ((validation == null) ? 0 : validation.hashCode());
@@ -382,12 +382,12 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
       }
       else if (!security.equals(other.security))
          return false;
-      if (timeOut == null)
+      if (timeout == null)
       {
-         if (other.timeOut != null)
+         if (other.timeout != null)
             return false;
       }
-      else if (!timeOut.equals(other.timeOut))
+      else if (!timeout.equals(other.timeout))
          return false;
       if (useJavaContext == null)
       {
@@ -516,8 +516,8 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
       if (security != null)
          sb.append(security);
 
-      if (timeOut != null)
-         sb.append(timeOut);
+      if (timeout != null)
+         sb.append(timeout);
 
       if (validation != null)
          sb.append(validation);

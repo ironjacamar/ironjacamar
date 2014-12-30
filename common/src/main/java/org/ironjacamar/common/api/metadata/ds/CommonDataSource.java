@@ -32,85 +32,64 @@ import org.ironjacamar.common.api.metadata.ValidatableMetadata;
  */
 public interface CommonDataSource extends JCAMetadata, ValidatableMetadata
 {
-
    /**
     * Get the transactionIsolation.
-    *
     * @return the transactionIsolation.
     */
-
    public TransactionIsolation getTransactionIsolation();
 
    /**
-    * Get the timeOut
-    *
-    * @return the timeOut.
+    * Get the timeout
+    * @return the timeout.
     */
-
-   public TimeOut getTimeOut();
+   public Timeout getTimeout();
 
    /**
     * Get the security.
-    *
     * @return the security.
     */
-
    public DsSecurity getSecurity();
 
    /**
     * Get the validation.
-    *
     * @return the validation.
     */
-
    public Validation getValidation();
 
    /**
     * Get the useJavaContext.
-    *
     * @return the useJavaContext.
     */
-
    public Boolean isUseJavaContext();
 
    /**
     * Get the poolName.
-    *
     * @return the poolName.
     */
-
    public String getPoolName();
 
    /**
     * Get the enabled.
-    *
     * @return the enabled.
     */
-
    public Boolean isEnabled();
 
    /**
     * Get the jndiName.
-    *
     * @return the jndiName.
     */
-
    public String getJndiName();
 
    /**
     * Get the spy.
-    *
     * @return the spy.
     */
-
    public Boolean isSpy();
 
    /**
     * Get the use-ccm.
-    *
     * @return the use-ccm.
     */
-
    public Boolean isUseCcm();
 
    /**
@@ -121,7 +100,6 @@ public interface CommonDataSource extends JCAMetadata, ValidatableMetadata
 
    /**
     * Set the enabled.
-    *
     * @param enabled The enabled to set.
     */
    public void setEnabled(Boolean enabled);

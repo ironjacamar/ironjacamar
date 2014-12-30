@@ -18,35 +18,49 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.ironjacamar.common.api.metadata.ds;
+package org.ironjacamar.common.api.metadata.common;
 
-import org.ironjacamar.common.api.metadata.ValidatableMetadata;
+import org.ironjacamar.common.api.metadata.JCAMetadata;
 
 /**
- * A TimeOut.
+ * A timeout
  *
  * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  */
-public interface TimeOut extends org.ironjacamar.common.api.metadata.common.TimeOut, ValidatableMetadata
+public interface Timeout extends JCAMetadata
 {
    /**
-    * Get the setTxQuertTimeout.
+    * Get the blockingTimeoutMillis.
     *
-    * @return the setTxQuertTimeout.
+    * @return the blockingTimeoutMillis.
     */
-   public Boolean isSetTxQueryTimeout();
+   public Long getBlockingTimeoutMillis();
 
    /**
-    * Get the queryTimeout.
+    * Get the idleTimeoutMinutes.
     *
-    * @return the queryTimeout.
+    * @return the idleTimeoutMinutes.
     */
-   public Long getQueryTimeout();
+   public Long getIdleTimeoutMinutes();
 
    /**
-    * Get the useTryLock.
+    * Get the allocationRetryWaitMillis.
     *
-    * @return the useTryLock.
+    * @return the allocationRetryWaitMillis.
     */
-   public Long getUseTryLock();
+   public Integer getAllocationRetry();
+
+   /**
+    * Get the allocationRetryWaitMillis.
+    *
+    * @return the allocationRetryWaitMillis.
+    */
+   public Long getAllocationRetryWaitMillis();
+
+   /**
+    * Get the xaResourceTimeout.
+    *
+    * @return the xaResourceTimeout.
+    */
+   public Integer getXaResourceTimeout();
 }

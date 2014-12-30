@@ -24,7 +24,7 @@ import org.ironjacamar.common.api.metadata.common.Recovery;
 import org.ironjacamar.common.api.metadata.ds.DsSecurity;
 import org.ironjacamar.common.api.metadata.ds.DsXaPool;
 import org.ironjacamar.common.api.metadata.ds.Statement;
-import org.ironjacamar.common.api.metadata.ds.TimeOut;
+import org.ironjacamar.common.api.metadata.ds.Timeout;
 import org.ironjacamar.common.api.metadata.ds.TransactionIsolation;
 import org.ironjacamar.common.api.metadata.ds.Validation;
 import org.ironjacamar.common.api.metadata.ds.XaDataSource;
@@ -64,7 +64,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
     * Create a new XADataSourceImpl.
     *
     * @param transactionIsolation transactionIsolation
-    * @param timeOut timeOut
+    * @param timeout timeout
     * @param security security
     * @param statement statement
     * @param validation validation
@@ -87,7 +87,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
     * @param recovery recovery
     * @throws ValidateException ValidateException
     */
-   public XADataSourceImpl(TransactionIsolation transactionIsolation, TimeOut timeOut, DsSecurity security,
+   public XADataSourceImpl(TransactionIsolation transactionIsolation, Timeout timeout, DsSecurity security,
                            Statement statement, Validation validation, String urlDelimiter, String urlProperty,
                            String urlSelectorStrategyClassName, Boolean useJavaContext, String poolName,
                            Boolean enabled, String jndiName, Boolean spy, Boolean useCcm, Boolean connectable,
@@ -96,7 +96,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
                            String newConnectionSql,
                            DsXaPool xaPool, Recovery recovery) throws ValidateException
    {
-      super(transactionIsolation, timeOut, security, statement, validation, urlDelimiter, urlSelectorStrategyClassName,
+      super(transactionIsolation, timeout, security, statement, validation, urlDelimiter, urlSelectorStrategyClassName,
             useJavaContext, poolName, enabled, jndiName, spy, useCcm, driver, newConnectionSql, connectable, tracking);
 
       if (xaDataSourceProperty != null)
@@ -351,8 +351,8 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
       if (validation != null)
          sb.append(validation);
 
-      if (timeOut != null)
-         sb.append(timeOut);
+      if (timeout != null)
+         sb.append(timeout);
 
       if (statement != null)
          sb.append(statement);
