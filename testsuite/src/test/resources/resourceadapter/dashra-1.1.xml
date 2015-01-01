@@ -152,7 +152,7 @@
   <resource-adapter>
     <archive>some3.rar</archive>
     <admin-objects>
-      <admin-object jndi-name="java:jboss/name9" />
+      <admin-object jndi-name="java:jboss/name0" />
     </admin-objects>
   </resource-adapter>
   <resource-adapter>

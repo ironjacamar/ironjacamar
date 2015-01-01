@@ -13,7 +13,7 @@
     <config-property name="Property2">B</config-property>
     <connection-definitions>
       <connection-definition class-name="Class1"
-			     jndi-name="java:jboss/name1" pool-name="Pool1" use-ccm="true"
+			     jndi-name="java:jboss/name1" pool-name="Pool1" use-ccm="true" tracking="true"
 			     use-java-context="false" enabled="true" sharable="true" enlistment="true" connectable="true">
 	<config-property name="Property3">1</config-property>
 	<config-property name="Property4">2</config-property>
@@ -63,7 +63,7 @@
 	</recovery>
       </connection-definition>
       <connection-definition class-name="Class2"
-			     jndi-name="java:jboss/name2" use-ccm="false" use-java-context="true"
+			     jndi-name="java:jboss/name2" use-ccm="false" use-java-context="true" tracking="false"
 			     enabled="false" sharable="false" enlistment="false" connectable="false">
 	<xa-pool>
 	  <prefill>false</prefill>
@@ -152,7 +152,7 @@
   <resource-adapter>
     <archive>some3.rar</archive>
     <admin-objects>
-      <admin-object jndi-name="java:jboss/name9" />
+      <admin-object jndi-name="java:jboss/name0" />
     </admin-objects>
   </resource-adapter>
   <resource-adapter>
