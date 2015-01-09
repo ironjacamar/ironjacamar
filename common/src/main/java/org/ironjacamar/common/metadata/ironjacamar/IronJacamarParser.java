@@ -34,6 +34,8 @@ import org.ironjacamar.common.metadata.resourceadapter.ActivationImpl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -131,10 +133,11 @@ public class IronJacamarParser extends CommonIronJacamarParser implements Metada
       ArrayList<String> beanValidationGroups = null;
       String bootstrapContext = null;
       TransactionSupportEnum transactionSupport = null;
-      HashMap<String, String> configProperties = null;
+      Map<String, String> configProperties = null;
       WorkManager workManager = null;
       Boolean isXA = null;
-
+      HashMap<String, String> expressions = new HashMap<String, String>();
+      
       while (reader.hasNext())
       {
          switch (reader.nextTag())
@@ -144,7 +147,8 @@ public class IronJacamarParser extends CommonIronJacamarParser implements Metada
                {
                   return new 
                      ActivationImpl(null, null, transactionSupport, connectionDefinitions, adminObjects,
-                                    configProperties, beanValidationGroups, bootstrapContext, workManager);
+                                    configProperties, beanValidationGroups, bootstrapContext, workManager,
+                                    expressions.size() > 0 ? expressions : null);
                }
                else
                {
@@ -195,26 +199,36 @@ public class IronJacamarParser extends CommonIronJacamarParser implements Metada
                   case XML.ELEMENT_BEAN_VALIDATION_GROUP : {
                      if (beanValidationGroups == null)
                         beanValidationGroups = new ArrayList<String>();
-                     beanValidationGroups.add(elementAsString(reader));
+                     beanValidationGroups.add(
+                        elementAsString(reader,
+                                        getExpressionKey(XML.ELEMENT_BEAN_VALIDATION_GROUP,
+                                                         Integer.toString(beanValidationGroups.size())),
+                                        expressions));
                      break;
                   }
                   case XML.ELEMENT_BOOTSTRAP_CONTEXT : {
-                     bootstrapContext = elementAsString(reader);
+                     bootstrapContext = elementAsString(reader, XML.ELEMENT_BOOTSTRAP_CONTEXT, expressions);
                      break;
                   }
                   case XML.ELEMENT_CONFIG_PROPERTY : {
                      if (configProperties == null)
-                        configProperties = new HashMap<String, String>();
-                     String n = attributeAsString(reader, XML.ATTRIBUTE_NAME);
+                        configProperties = new TreeMap<String, String>();
+                     String n = attributeAsString(reader, XML.ATTRIBUTE_NAME, null);
                      if (n == null || n.trim().equals(""))
                         throw new ParserException(bundle.requiredAttributeMissing(XML.ATTRIBUTE_NAME,
                                                                                   reader.getLocalName()));
                      else
-                        configProperties.put(n, elementAsString(reader));
+                        configProperties.put(n, elementAsString(reader,
+                                                                getExpressionKey(XML.ELEMENT_CONFIG_PROPERTY,
+                                                                                 n),
+                                                                expressions));
                      break;
                   }
                   case XML.ELEMENT_TRANSACTION_SUPPORT : {
-                     transactionSupport = TransactionSupportEnum.valueOf(elementAsString(reader));
+                     transactionSupport =
+                        TransactionSupportEnum.valueOf(elementAsString(reader,
+                                                                       XML.ELEMENT_TRANSACTION_SUPPORT,
+                                                                       expressions));
 
                      if (transactionSupport == TransactionSupportEnum.XATransaction)
                         isXA = Boolean.TRUE;

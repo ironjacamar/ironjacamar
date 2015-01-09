@@ -26,6 +26,7 @@ import org.ironjacamar.common.api.metadata.spec.AuthenticationMechanism;
 import org.ironjacamar.common.api.metadata.spec.CredentialInterfaceEnum;
 import org.ironjacamar.common.api.metadata.spec.LocalizedXsdString;
 import org.ironjacamar.common.api.metadata.spec.XsdString;
+import org.ironjacamar.common.metadata.common.AbstractMetadata;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,7 +37,7 @@ import java.util.List;
  * @author <a href="mailto:stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class AuthenticationMechanismImpl implements AuthenticationMechanism
+public class AuthenticationMechanismImpl extends AbstractMetadata implements AuthenticationMechanism
 {
    private static final long serialVersionUID = 1L;
 
@@ -71,6 +72,7 @@ public class AuthenticationMechanismImpl implements AuthenticationMechanism
    public AuthenticationMechanismImpl(List<LocalizedXsdString> description, XsdString authenticationMechanismType,
                                       CredentialInterfaceEnum credentialInterface, String id, String cid)
    {
+      super(null);
       if (description != null)
       {
          this.description = new ArrayList<LocalizedXsdString>(description);

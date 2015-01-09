@@ -22,6 +22,7 @@ package org.ironjacamar.common.metadata.resourceadapter;
 
 import org.ironjacamar.common.api.metadata.resourceadapter.Activation;
 import org.ironjacamar.common.api.metadata.resourceadapter.Activations;
+import org.ironjacamar.common.metadata.common.AbstractMetadata;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,7 +33,7 @@ import java.util.List;
  *
  * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  */
-public class ActivationsImpl implements Activations
+public class ActivationsImpl extends AbstractMetadata implements Activations
 {
 
    /** The serialVersionUID */
@@ -45,7 +46,7 @@ public class ActivationsImpl implements Activations
     */
    public ActivationsImpl(List<Activation> activations)
    {
-      super();
+      super(null);
       if (activations != null)
       {
          this.activations = new ArrayList<Activation>(activations.size());

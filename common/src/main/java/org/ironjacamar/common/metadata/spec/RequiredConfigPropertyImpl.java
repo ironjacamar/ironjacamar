@@ -25,6 +25,7 @@ import org.ironjacamar.common.api.metadata.CopyableMetaData;
 import org.ironjacamar.common.api.metadata.spec.LocalizedXsdString;
 import org.ironjacamar.common.api.metadata.spec.RequiredConfigProperty;
 import org.ironjacamar.common.api.metadata.spec.XsdString;
+import org.ironjacamar.common.metadata.common.AbstractMetadata;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,7 +36,7 @@ import java.util.List;
  * @author <a href="mailto:stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class RequiredConfigPropertyImpl implements RequiredConfigProperty
+public class RequiredConfigPropertyImpl extends AbstractMetadata implements RequiredConfigProperty
 {
    private static final long serialVersionUID = 4299927051352998447L;
 
@@ -53,6 +54,7 @@ public class RequiredConfigPropertyImpl implements RequiredConfigProperty
     */
    public RequiredConfigPropertyImpl(List<LocalizedXsdString> description, XsdString configPropertyName, String id)
    {
+      super(null);
       if (description != null)
       {
          this.description = new ArrayList<LocalizedXsdString>(description);

@@ -25,6 +25,7 @@ import org.ironjacamar.common.api.metadata.ds.DataSources;
 import org.ironjacamar.common.api.metadata.ds.Driver;
 import org.ironjacamar.common.api.metadata.ds.XaDataSource;
 import org.ironjacamar.common.api.validator.ValidateException;
+import org.ironjacamar.common.metadata.common.AbstractMetadata;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,13 +34,11 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
  * A DatasourcesImpl.
  *
  * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
- *
  */
-public class DatasourcesImpl implements DataSources
+public class DatasourcesImpl extends AbstractMetadata implements DataSources
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = 6933310057105771370L;
@@ -63,7 +62,7 @@ public class DatasourcesImpl implements DataSources
                           Map<String, Driver> drivers)
       throws ValidateException
    {
-      super();
+      super(null);
       if (datasource != null)
       {
          this.datasource = new ArrayList<DataSource>(datasource.size());

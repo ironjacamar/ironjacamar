@@ -24,6 +24,8 @@ import org.ironjacamar.common.CommonBundle;
 import org.ironjacamar.common.api.metadata.common.Validation;
 import org.ironjacamar.common.api.validator.ValidateException;
 
+import java.util.Map;
+
 import org.jboss.logging.Messages;
 
 /**
@@ -33,7 +35,7 @@ import org.jboss.logging.Messages;
  * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
-public class ValidationImpl implements Validation
+public class ValidationImpl extends AbstractMetadata implements Validation
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = 1L;
@@ -60,13 +62,15 @@ public class ValidationImpl implements Validation
     * @param backgroundValidation backgroundValidation
     * @param backgroundValidationMillis backgroundValidationMillis
     * @param useFastFail useFastFail
+    * @param expressions expressions
     * @throws ValidateException in case of error
     */
    public ValidationImpl(Boolean validateOnMatch,
                          Boolean backgroundValidation, Long backgroundValidationMillis,
-                         Boolean useFastFail)
+                         Boolean useFastFail, Map<String, String> expressions)
       throws ValidateException
    {
+      super(expressions);
       this.validateOnMatch = validateOnMatch;
       this.backgroundValidation = backgroundValidation;
       this.backgroundValidationMillis = backgroundValidationMillis;

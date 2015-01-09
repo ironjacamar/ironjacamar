@@ -28,6 +28,9 @@ import org.ironjacamar.common.api.metadata.ds.Timeout;
 import org.ironjacamar.common.api.metadata.ds.TransactionIsolation;
 import org.ironjacamar.common.api.metadata.ds.Validation;
 import org.ironjacamar.common.api.validator.ValidateException;
+import org.ironjacamar.common.metadata.common.AbstractMetadata;
+
+import java.util.Map;
 
 import org.jboss.logging.Messages;
 
@@ -38,7 +41,7 @@ import org.jboss.logging.Messages;
  * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
-public abstract class DataSourceAbstractImpl implements CommonDataSource
+public abstract class DataSourceAbstractImpl extends AbstractMetadata implements CommonDataSource
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = -5612846950298960159L;
@@ -144,6 +147,7 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
     * @param newConnectionSql newConnectionSql
     * @param connectable connectable
     * @param tracking tracking
+    * @param expressions expressions
     * @throws ValidateException ValidateException
     */
    protected DataSourceAbstractImpl(TransactionIsolation transactionIsolation, Timeout timeout,
@@ -151,9 +155,10 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
                                     String urlDelimiter, String urlSelectorStrategyClassName,
                                     Boolean useJavaContext, String poolName, Boolean enabled, String jndiName,
                                     Boolean spy, Boolean useCcm, String driver, String newConnectionSql,
-                                    Boolean connectable, Boolean tracking)
+                                    Boolean connectable, Boolean tracking, Map<String, String> expressions)
       throws ValidateException
    {
+      super(expressions);
       this.transactionIsolation = transactionIsolation;
       this.timeout = timeout;
       this.security = security;

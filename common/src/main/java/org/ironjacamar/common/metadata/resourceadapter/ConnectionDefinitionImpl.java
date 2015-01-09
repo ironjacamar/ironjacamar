@@ -20,6 +20,7 @@
  */
 package org.ironjacamar.common.metadata.resourceadapter;
 
+import org.ironjacamar.common.api.metadata.Defaults;
 import org.ironjacamar.common.api.metadata.common.Pool;
 import org.ironjacamar.common.api.metadata.common.Recovery;
 import org.ironjacamar.common.api.metadata.common.Security;
@@ -27,18 +28,19 @@ import org.ironjacamar.common.api.metadata.common.Timeout;
 import org.ironjacamar.common.api.metadata.common.Validation;
 import org.ironjacamar.common.api.metadata.common.XaPool;
 import org.ironjacamar.common.api.metadata.resourceadapter.ConnectionDefinition;
+import org.ironjacamar.common.metadata.common.AbstractMetadata;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * A ConnectionDefinition.
  *
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class ConnectionDefinitionImpl implements ConnectionDefinition
+public class ConnectionDefinitionImpl extends AbstractMetadata implements ConnectionDefinition
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = 1L;
@@ -112,21 +114,24 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
     * @param security security
     * @param recovery recovery
     * @param isXA isXA
+    * @param expressions expressions
     */
    public ConnectionDefinitionImpl(Map<String, String> configProperties, String className, String jndiName,
                                    String poolName, Boolean enabled, Boolean useJavaContext, Boolean useCcm,
                                    Boolean sharable, Boolean enlistment, Boolean connectable, Boolean tracking,
                                    Pool pool, Timeout timeout,
-                                   Validation validation, Security security, Recovery recovery, Boolean isXA)
+                                   Validation validation, Security security, Recovery recovery, Boolean isXA,
+                                   Map<String, String> expressions)
    {
+      super(expressions);
       if (configProperties != null)
       {
-         this.configProperties = new HashMap<String, String>(configProperties.size());
+         this.configProperties = new TreeMap<String, String>();
          this.configProperties.putAll(configProperties);
       }
       else
       {
-         this.configProperties = new HashMap<String, String>(0);
+         this.configProperties = new TreeMap<String, String>();
       }
       this.className = className;
       this.jndiName = jndiName;
@@ -466,10 +471,10 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
       if (jndiName != null)
          sb.append(" ").append(XML.ATTRIBUTE_JNDI_NAME).append("=\"").append(jndiName).append("\"");
 
-      if (enabled != null)
+      if (enabled != null && !Defaults.ENABLED.equals(enabled))
          sb.append(" ").append(XML.ATTRIBUTE_ENABLED).append("=\"").append(enabled).append("\"");
 
-      if (useJavaContext != null)
+      if (useJavaContext != null && !Defaults.USE_JAVA_CONTEXT.equals(useJavaContext))
       {
          sb.append(" ").append(XML.ATTRIBUTE_USE_JAVA_CONTEXT);
          sb.append("=\"").append(useJavaContext).append("\"");
@@ -478,16 +483,16 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
       if (poolName != null)
          sb.append(" ").append(XML.ATTRIBUTE_POOL_NAME).append("=\"").append(poolName).append("\"");
 
-      if (useCcm != null)
+      if (useCcm != null && !Defaults.USE_CCM.equals(useCcm))
          sb.append(" ").append(XML.ATTRIBUTE_USE_CCM).append("=\"").append(useCcm).append("\"");
 
-      if (sharable != null)
+      if (sharable != null && !Defaults.SHARABLE.equals(sharable))
          sb.append(" ").append(XML.ATTRIBUTE_SHARABLE).append("=\"").append(sharable).append("\"");
 
-      if (enlistment != null)
+      if (enlistment != null && !Defaults.ENLISTMENT.equals(enlistment))
          sb.append(" ").append(XML.ATTRIBUTE_ENLISTMENT).append("=\"").append(enlistment).append("\"");
 
-      if (connectable != null)
+      if (connectable != null && !Defaults.CONNECTABLE.equals(connectable))
          sb.append(" ").append(XML.ATTRIBUTE_CONNECTABLE).append("=\"").
             append(connectable).append("\"");
 

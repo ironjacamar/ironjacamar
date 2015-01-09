@@ -22,13 +22,14 @@ package org.ironjacamar.common.metadata.resourceadapter;
 
 import org.ironjacamar.common.api.metadata.resourceadapter.WorkManager;
 import org.ironjacamar.common.api.metadata.resourceadapter.WorkManagerSecurity;
+import org.ironjacamar.common.metadata.common.AbstractMetadata;
 
 /**
  * WorkManager configuration
  *
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class WorkManagerImpl implements WorkManager
+public class WorkManagerImpl extends AbstractMetadata implements WorkManager
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = 1L;
@@ -42,6 +43,7 @@ public class WorkManagerImpl implements WorkManager
     */
    public WorkManagerImpl(WorkManagerSecurity security)
    {
+      super(null);
       this.security = security;
    }
 

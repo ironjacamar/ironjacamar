@@ -37,6 +37,7 @@ import org.ironjacamar.common.api.metadata.spec.ResourceAdapter;
 import org.ironjacamar.common.api.metadata.spec.SecurityPermission;
 import org.ironjacamar.common.api.metadata.spec.XsdString;
 import org.ironjacamar.common.api.validator.ValidateException;
+import org.ironjacamar.common.metadata.common.AbstractMetadata;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,7 +51,7 @@ import org.jboss.logging.Messages;
  * @author <a href="mailto:stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class ConnectorImpl implements Connector
+public class ConnectorImpl extends AbstractMetadata implements Connector
 {
    /** The serial version uid */
    private static final long serialVersionUID = 1L;
@@ -106,6 +107,7 @@ public class ConnectorImpl implements Connector
                         boolean metadataComplete, List<LocalizedXsdString> description,
                         List<LocalizedXsdString> displayNames, List<Icon> icons, String id)
    {
+      super(null);
       this.version = version;
       this.moduleName = moduleName;
       if (!XsdString.isNull(this.moduleName))

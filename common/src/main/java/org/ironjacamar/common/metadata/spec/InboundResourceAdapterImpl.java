@@ -26,13 +26,14 @@ import org.ironjacamar.common.api.metadata.spec.InboundResourceAdapter;
 import org.ironjacamar.common.api.metadata.spec.MergeableMetadata;
 import org.ironjacamar.common.api.metadata.spec.MessageListener;
 import org.ironjacamar.common.api.metadata.spec.Messageadapter;
+import org.ironjacamar.common.metadata.common.AbstractMetadata;
 
 /**
  * An InboundResourceAdapter implementation
  * @author <a href="mailto:stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class InboundResourceAdapterImpl implements InboundResourceAdapter
+public class InboundResourceAdapterImpl extends AbstractMetadata implements InboundResourceAdapter
 {
    private static final long serialVersionUID = 1L;
 
@@ -51,6 +52,7 @@ public class InboundResourceAdapterImpl implements InboundResourceAdapter
     */
    public InboundResourceAdapterImpl(Messageadapter messageadapter, String id)
    {
+      super(null);
       this.messageadapter = messageadapter;
       this.id = id;
    }

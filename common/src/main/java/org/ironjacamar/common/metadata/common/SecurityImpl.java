@@ -24,6 +24,8 @@ import org.ironjacamar.common.CommonBundle;
 import org.ironjacamar.common.api.metadata.common.Security;
 import org.ironjacamar.common.api.validator.ValidateException;
 
+import java.util.Map;
+
 import org.jboss.logging.Messages;
 
 /**
@@ -33,7 +35,7 @@ import org.jboss.logging.Messages;
  * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
-public class SecurityImpl implements Security
+public class SecurityImpl extends AbstractMetadata implements Security
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = 1L;
@@ -53,11 +55,14 @@ public class SecurityImpl implements Security
     * @param securityDomainManaged securityDomainManaged
     * @param securityDomainAndApplicationManaged securityDomainAndApplicationManaged
     * @param applicationManaged applicationManagedS
+    * @param expressions expressions
     * @throws ValidateException ValidateException
     */
    public SecurityImpl(String securityDomainManaged,
-                       String securityDomainAndApplicationManaged, boolean applicationManaged) throws ValidateException
+                       String securityDomainAndApplicationManaged, boolean applicationManaged,
+                       Map<String, String> expressions) throws ValidateException
    {
+      super(expressions);
       this.securityDomainManaged = securityDomainManaged;
       this.securityDomainAndApplicationManaged = securityDomainAndApplicationManaged;
       this.applicationManaged = applicationManaged;

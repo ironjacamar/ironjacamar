@@ -25,13 +25,14 @@ import org.ironjacamar.common.api.metadata.CopyableMetaData;
 import org.ironjacamar.common.api.metadata.spec.Activationspec;
 import org.ironjacamar.common.api.metadata.spec.MessageListener;
 import org.ironjacamar.common.api.metadata.spec.XsdString;
+import org.ironjacamar.common.metadata.common.AbstractMetadata;
 
 /**
  * A MessageListener implementation
  * @author <a href="mailto:stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class MessageListenerImpl implements MessageListener
+public class MessageListenerImpl extends AbstractMetadata implements MessageListener
 {
    private static final long serialVersionUID = 1L;
 
@@ -52,6 +53,7 @@ public class MessageListenerImpl implements MessageListener
     */
    public MessageListenerImpl(XsdString messagelistenerType, Activationspec activationspec, String id)
    {
+      super(null);
       this.messagelistenerType = messagelistenerType;
       if (!XsdString.isNull(this.messagelistenerType))
          this.messagelistenerType.setTag(XML.ELEMENT_MESSAGELISTENER_TYPE.toString());

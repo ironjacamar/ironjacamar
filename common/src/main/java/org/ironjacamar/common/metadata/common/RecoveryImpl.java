@@ -33,7 +33,7 @@ import java.util.Map;
  *
  * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  */
-public class RecoveryImpl implements Recovery
+public class RecoveryImpl extends AbstractMetadata implements Recovery
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = -7425365995463321893L;
@@ -50,11 +50,13 @@ public class RecoveryImpl implements Recovery
     * @param credential credential
     * @param recoverPlugin plugin
     * @param noRecovery niRecovery
+    * @param expressions expressions
     * @throws ValidateException in case of not valid metadata creation
     */
-   public RecoveryImpl(Credential credential, Extension recoverPlugin, Boolean noRecovery) throws ValidateException
+   public RecoveryImpl(Credential credential, Extension recoverPlugin, Boolean noRecovery,
+                       Map<String, String> expressions) throws ValidateException
    {
-      super();
+      super(expressions);
       this.credential = credential;
       this.recoverPlugin = recoverPlugin;
       this.noRecovery = noRecovery;

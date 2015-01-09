@@ -24,13 +24,14 @@ import org.ironjacamar.common.api.metadata.CopyUtil;
 import org.ironjacamar.common.api.metadata.CopyableMetaData;
 import org.ironjacamar.common.api.metadata.spec.Icon;
 import org.ironjacamar.common.api.metadata.spec.XsdString;
+import org.ironjacamar.common.metadata.common.AbstractMetadata;
 
 /**
  * An Icon implementation
  * @author <a href="mailto:stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class IconImpl implements Icon
+public class IconImpl extends AbstractMetadata implements Icon
 {
    private static final long serialVersionUID = 1L;
 
@@ -51,6 +52,7 @@ public class IconImpl implements Icon
     */
    public IconImpl(XsdString smallIcon, XsdString largeIcon, String lang, String id)
    {
+      super(null);
       this.smallIcon = smallIcon;
       if (!XsdString.isNull(this.smallIcon))
          this.smallIcon.setTag(XML.ELEMENT_SMALL_ICON);

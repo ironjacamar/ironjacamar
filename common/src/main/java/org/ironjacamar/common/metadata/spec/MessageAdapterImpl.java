@@ -27,6 +27,7 @@ import org.ironjacamar.common.api.metadata.MergeUtil;
 import org.ironjacamar.common.api.metadata.spec.MergeableMetadata;
 import org.ironjacamar.common.api.metadata.spec.MessageListener;
 import org.ironjacamar.common.api.metadata.spec.Messageadapter;
+import org.ironjacamar.common.metadata.common.AbstractMetadata;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,7 +38,7 @@ import java.util.List;
  * @author <a href="mailto:stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class MessageAdapterImpl implements Messageadapter
+public class MessageAdapterImpl extends AbstractMetadata implements Messageadapter
 {
    private static final long serialVersionUID = 1L;
 
@@ -56,6 +57,7 @@ public class MessageAdapterImpl implements Messageadapter
     */
    public MessageAdapterImpl(List<MessageListener> messagelisteners, String id)
    {
+      super(null);
       if (messagelisteners != null)
       {
          this.messagelisteners = new ArrayList<MessageListener>(messagelisteners);

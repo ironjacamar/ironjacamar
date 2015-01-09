@@ -20,6 +20,7 @@
  */
 package org.ironjacamar.common.metadata.ds;
 
+import org.ironjacamar.common.api.metadata.Defaults;
 import org.ironjacamar.common.api.metadata.common.Capacity;
 import org.ironjacamar.common.api.metadata.common.Extension;
 import org.ironjacamar.common.api.metadata.common.FlushStrategy;
@@ -61,15 +62,17 @@ public class DsPoolImpl extends org.ironjacamar.common.metadata.common.PoolImpl 
     * @param allowMultipleUsers allowMultipleUsers
     * @param capacity capacity
     * @param connectionListener connectionListener
+    * @param expressions expressions
     * @throws ValidateException ValidateException
     */
    public DsPoolImpl(Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize, 
                      Boolean prefill, Boolean useStrictMin,
                      FlushStrategy flushStrategy, Boolean allowMultipleUsers,
-                     Capacity capacity, Extension connectionListener)
+                     Capacity capacity, Extension connectionListener,
+                     Map<String, String> expressions)
       throws ValidateException
    {
-      super(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy, capacity);
+      super(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy, capacity, expressions);
       this.allowMultipleUsers = allowMultipleUsers;
       this.connectionListener = connectionListener;
    }
@@ -144,7 +147,7 @@ public class DsPoolImpl extends org.ironjacamar.common.metadata.common.PoolImpl 
 
       sb.append("<pool>");
 
-      if (minPoolSize != null)
+      if (minPoolSize != null && !Defaults.MIN_POOL_SIZE.equals(minPoolSize))
       {
          sb.append("<").append(XML.ELEMENT_MIN_POOL_SIZE).append(">");
          sb.append(minPoolSize);
@@ -158,28 +161,28 @@ public class DsPoolImpl extends org.ironjacamar.common.metadata.common.PoolImpl 
          sb.append("</").append(XML.ELEMENT_INITIAL_POOL_SIZE).append(">");
       }
 
-      if (maxPoolSize != null)
+      if (maxPoolSize != null && !Defaults.MAX_POOL_SIZE.equals(maxPoolSize))
       {
          sb.append("<").append(XML.ELEMENT_MAX_POOL_SIZE).append(">");
          sb.append(maxPoolSize);
          sb.append("</").append(XML.ELEMENT_MAX_POOL_SIZE).append(">");
       }
 
-      if (prefill != null)
+      if (prefill != null && !Defaults.PREFILL.equals(prefill))
       {
          sb.append("<").append(XML.ELEMENT_PREFILL).append(">");
          sb.append(prefill);
          sb.append("</").append(XML.ELEMENT_PREFILL).append(">");
       }
 
-      if (useStrictMin != null)
+      if (useStrictMin != null && !Defaults.USE_STRICT_MIN.equals(useStrictMin))
       {
          sb.append("<").append(XML.ELEMENT_USE_STRICT_MIN).append(">");
          sb.append(useStrictMin);
          sb.append("</").append(XML.ELEMENT_USE_STRICT_MIN).append(">");
       }
 
-      if (flushStrategy != null)
+      if (flushStrategy != null && !Defaults.FLUSH_STRATEGY.equals(flushStrategy))
       {
          sb.append("<").append(XML.ELEMENT_FLUSH_STRATEGY).append(">");
          sb.append(flushStrategy);

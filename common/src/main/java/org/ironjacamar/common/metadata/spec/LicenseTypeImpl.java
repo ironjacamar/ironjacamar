@@ -26,6 +26,7 @@ import org.ironjacamar.common.api.metadata.MergeUtil;
 import org.ironjacamar.common.api.metadata.spec.LicenseType;
 import org.ironjacamar.common.api.metadata.spec.LocalizedXsdString;
 import org.ironjacamar.common.api.metadata.spec.MergeableMetadata;
+import org.ironjacamar.common.metadata.common.AbstractMetadata;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,7 +37,7 @@ import java.util.List;
  * @author <a href="mailto:stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class LicenseTypeImpl implements LicenseType
+public class LicenseTypeImpl extends AbstractMetadata implements LicenseType
 {
    private static final long serialVersionUID = 1L;
 
@@ -57,6 +58,7 @@ public class LicenseTypeImpl implements LicenseType
     */
    public LicenseTypeImpl(List<LocalizedXsdString> description, boolean licenseRequired, String id, String lrid)
    {
+      super(null);
       if (description != null)
       {
          this.description = new ArrayList<LocalizedXsdString>(description);

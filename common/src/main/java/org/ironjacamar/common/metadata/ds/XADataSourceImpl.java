@@ -20,6 +20,7 @@
  */
 package org.ironjacamar.common.metadata.ds;
 
+import org.ironjacamar.common.api.metadata.Defaults;
 import org.ironjacamar.common.api.metadata.common.Recovery;
 import org.ironjacamar.common.api.metadata.ds.DsSecurity;
 import org.ironjacamar.common.api.metadata.ds.DsXaPool;
@@ -85,6 +86,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
     * @param newConnectionSql newConnectionSql
     * @param xaPool xaPool
     * @param recovery recovery
+    * @param expressions expressions
     * @throws ValidateException ValidateException
     */
    public XADataSourceImpl(TransactionIsolation transactionIsolation, Timeout timeout, DsSecurity security,
@@ -94,10 +96,11 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
                            Boolean tracking,
                            Map<String, String> xaDataSourceProperty, String xaDataSourceClass, String driver,
                            String newConnectionSql,
-                           DsXaPool xaPool, Recovery recovery) throws ValidateException
+                           DsXaPool xaPool, Recovery recovery, Map<String, String> expressions) throws ValidateException
    {
       super(transactionIsolation, timeout, security, statement, validation, urlDelimiter, urlSelectorStrategyClassName,
-            useJavaContext, poolName, enabled, jndiName, spy, useCcm, driver, newConnectionSql, connectable, tracking);
+            useJavaContext, poolName, enabled, jndiName, spy, useCcm, driver, newConnectionSql, connectable, tracking,
+            expressions);
 
       if (xaDataSourceProperty != null)
       {
@@ -257,22 +260,22 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
       if (poolName != null)
          sb.append(" ").append(XML.ATTRIBUTE_POOL_NAME).append("=\"").append(poolName).append("\"");
 
-      if (enabled != null)
+      if (enabled != null && !Defaults.ENABLED.equals(enabled))
          sb.append(" ").append(XML.ATTRIBUTE_ENABLED).append("=\"").append(enabled).append("\"");
 
-      if (useJavaContext != null)
+      if (useJavaContext != null && !Defaults.USE_JAVA_CONTEXT.equals(useJavaContext))
       {
          sb.append(" ").append(XML.ATTRIBUTE_USE_JAVA_CONTEXT);
          sb.append("=\"").append(useJavaContext).append("\"");
       }
 
-      if (spy != null)
+      if (spy != null && !Defaults.SPY.equals(spy))
          sb.append(" ").append(XML.ATTRIBUTE_SPY).append("=\"").append(spy).append("\"");
 
-      if (useCcm != null)
+      if (useCcm != null && !Defaults.USE_CCM.equals(useCcm))
          sb.append(" ").append(XML.ATTRIBUTE_USE_CCM).append("=\"").append(useCcm).append("\"");
 
-      if (connectable != null)
+      if (connectable != null && !Defaults.CONNECTABLE.equals(connectable))
          sb.append(" ").append(XML.ATTRIBUTE_CONNECTABLE).append("=\"").append(connectable).append("\"");
 
       if (tracking != null)

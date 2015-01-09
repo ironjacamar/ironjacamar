@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2014, Red Hat Inc, and individual contributors
+ * Copyright 2015, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -23,13 +23,34 @@ package org.ironjacamar.common.api.metadata;
 import java.io.Serializable;
 
 /**
- *
- * A generic JCAMetadata.
+ * Generic metadata representation
  *
  * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
- *
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public interface JCAMetadata extends Serializable
 {
+   /**
+    * Has expression
+    * @param key The key
+    * @return The value
+    */
+   public boolean hasExpression(String key);
 
+   /**
+    * Get a value
+    * @param key The key
+    * @param v The default value
+    * @return The value
+    */
+   public String getValue(String key, String v);
+
+   /**
+    * Get a value
+    * @param key The key
+    * @param subkey The subkey
+    * @param v The default value
+    * @return The value
+    */
+   public String getValue(String key, String subkey, String v);
 }

@@ -25,6 +25,7 @@ import org.ironjacamar.common.api.metadata.CopyableMetaData;
 import org.ironjacamar.common.api.metadata.spec.LocalizedXsdString;
 import org.ironjacamar.common.api.metadata.spec.SecurityPermission;
 import org.ironjacamar.common.api.metadata.spec.XsdString;
+import org.ironjacamar.common.metadata.common.AbstractMetadata;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,7 +36,7 @@ import java.util.List;
  * @author <a href="mailto:stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class SecurityPermissionImpl implements SecurityPermission
+public class SecurityPermissionImpl extends AbstractMetadata implements SecurityPermission
 {
    private static final long serialVersionUID = 1L;
 
@@ -53,6 +54,7 @@ public class SecurityPermissionImpl implements SecurityPermission
     */
    public SecurityPermissionImpl(List<LocalizedXsdString> description, XsdString securityPermissionSpec, String id)
    {
+      super(null);
       if (description != null)
       {
          this.description = new ArrayList<LocalizedXsdString>(description);

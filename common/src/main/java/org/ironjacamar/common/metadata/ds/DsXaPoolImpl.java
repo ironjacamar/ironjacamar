@@ -20,6 +20,7 @@
  */
 package org.ironjacamar.common.metadata.ds;
 
+import org.ironjacamar.common.api.metadata.Defaults;
 import org.ironjacamar.common.api.metadata.common.Capacity;
 import org.ironjacamar.common.api.metadata.common.Extension;
 import org.ironjacamar.common.api.metadata.common.FlushStrategy;
@@ -64,6 +65,7 @@ public class DsXaPoolImpl extends org.ironjacamar.common.metadata.common.XaPoolI
     * @param allowMultipleUsers allowMultipleUsers
     * @param capacity capacity
     * @param connectionListener connectionListener
+    * @param expressions expressions
     * @throws ValidateException ValidateException
     */
    public DsXaPoolImpl(Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize,
@@ -73,10 +75,11 @@ public class DsXaPoolImpl extends org.ironjacamar.common.metadata.common.XaPoolI
                        Boolean padXid, Boolean wrapXaResource,
                        Boolean noTxSeparatePool,
                        Boolean allowMultipleUsers,
-                       Capacity capacity, Extension connectionListener) throws ValidateException
+                       Capacity capacity, Extension connectionListener,
+                       Map<String, String> expressions) throws ValidateException
    {
       super(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy, capacity,
-            isSameRmOverride, interleaving, padXid, wrapXaResource, noTxSeparatePool);
+            isSameRmOverride, interleaving, padXid, wrapXaResource, noTxSeparatePool, expressions);
 
       this.allowMultipleUsers = allowMultipleUsers;
       this.connectionListener = connectionListener;
@@ -150,7 +153,7 @@ public class DsXaPoolImpl extends org.ironjacamar.common.metadata.common.XaPoolI
 
       sb.append("<xa-pool>");
 
-      if (minPoolSize != null)
+      if (minPoolSize != null && !Defaults.MIN_POOL_SIZE.equals(minPoolSize))
       {
          sb.append("<").append(XML.ELEMENT_MIN_POOL_SIZE).append(">");
          sb.append(minPoolSize);
@@ -164,28 +167,28 @@ public class DsXaPoolImpl extends org.ironjacamar.common.metadata.common.XaPoolI
          sb.append("</").append(XML.ELEMENT_INITIAL_POOL_SIZE).append(">");
       }
 
-      if (maxPoolSize != null)
+      if (maxPoolSize != null && !Defaults.MAX_POOL_SIZE.equals(maxPoolSize))
       {
          sb.append("<").append(XML.ELEMENT_MAX_POOL_SIZE).append(">");
          sb.append(maxPoolSize);
          sb.append("</").append(XML.ELEMENT_MAX_POOL_SIZE).append(">");
       }
 
-      if (prefill != null)
+      if (prefill != null && !Defaults.PREFILL.equals(prefill))
       {
          sb.append("<").append(XML.ELEMENT_PREFILL).append(">");
          sb.append(prefill);
          sb.append("</").append(XML.ELEMENT_PREFILL).append(">");
       }
 
-      if (useStrictMin != null)
+      if (useStrictMin != null && !Defaults.USE_STRICT_MIN.equals(useStrictMin))
       {
          sb.append("<").append(XML.ELEMENT_USE_STRICT_MIN).append(">");
          sb.append(useStrictMin);
          sb.append("</").append(XML.ELEMENT_USE_STRICT_MIN).append(">");
       }
 
-      if (flushStrategy != null)
+      if (flushStrategy != null && !Defaults.FLUSH_STRATEGY.equals(flushStrategy))
       {
          sb.append("<").append(XML.ELEMENT_FLUSH_STRATEGY).append(">");
          sb.append(flushStrategy);
@@ -242,14 +245,14 @@ public class DsXaPoolImpl extends org.ironjacamar.common.metadata.common.XaPoolI
          sb.append("<").append(XML.ELEMENT_NO_TX_SEPARATE_POOLS).append("/>");
       }
 
-      if (padXid != null)
+      if (padXid != null && !Defaults.PAD_XID.equals(padXid))
       {
          sb.append("<").append(XML.ELEMENT_PAD_XID).append(">");
          sb.append(padXid);
          sb.append("</").append(XML.ELEMENT_PAD_XID).append(">");
       }
 
-      if (wrapXaResource != null)
+      if (wrapXaResource != null && !Defaults.WRAP_XA_RESOURCE.equals(wrapXaResource))
       {
          sb.append("<").append(XML.ELEMENT_WRAP_XA_RESOURCE).append(">");
          sb.append(wrapXaResource);

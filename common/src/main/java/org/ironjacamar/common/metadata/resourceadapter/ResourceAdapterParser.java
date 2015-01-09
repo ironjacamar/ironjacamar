@@ -35,6 +35,8 @@ import org.ironjacamar.common.metadata.common.CommonIronJacamarParser;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -118,10 +120,10 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
             writer.writeStartElement(XML.ELEMENT_RESOURCE_ADAPTER);
 
             if (a.getId() != null)
-               writer.writeAttribute(XML.ATTRIBUTE_ID, a.getId());
+               writer.writeAttribute(XML.ATTRIBUTE_ID, a.getValue(XML.ATTRIBUTE_ID, a.getId()));
 
             writer.writeStartElement(XML.ELEMENT_ARCHIVE);
-            writer.writeCharacters(a.getArchive());
+            writer.writeCharacters(a.getValue(XML.ELEMENT_ARCHIVE, a.getArchive()));
             writer.writeEndElement();
 
             storeCommon(a, writer);
@@ -185,9 +187,11 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
       String id = null;
       String archive = null;
       TransactionSupportEnum transactionSupport = null;
-      HashMap<String, String> configProperties = null;
+      Map<String, String> configProperties = null;
       WorkManager workmanager = null;
       Boolean isXA = null;
+
+      HashMap<String, String> expressions = new HashMap<String, String>();
 
       int attributeSize = reader.getAttributeCount();
       for (int i = 0; i < attributeSize; i++)
@@ -195,7 +199,7 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
          switch (reader.getAttributeLocalName(i))
          {
             case XML.ATTRIBUTE_ID : {
-               id = attributeAsString(reader, XML.ATTRIBUTE_ID);
+               id = attributeAsString(reader, XML.ATTRIBUTE_ID, expressions);
                break;
             }
             default :
@@ -212,7 +216,8 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
                if (XML.ELEMENT_RESOURCE_ADAPTER.equals(reader.getLocalName()))
                {
                   return new ActivationImpl(id, archive, transactionSupport, connectionDefinitions, adminObjects,
-                                            configProperties, beanValidationGroups, bootstrapContext, workmanager);
+                                            configProperties, beanValidationGroups, bootstrapContext, workmanager,
+                                            expressions.size() > 0 ? expressions : null);
                }
                else
                {
@@ -260,21 +265,27 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
                   case XML.ELEMENT_BEAN_VALIDATION_GROUP : {
                      if (beanValidationGroups == null)
                         beanValidationGroups = new ArrayList<String>();
-                     beanValidationGroups.add(elementAsString(reader));
+                     beanValidationGroups.add(
+                        elementAsString(reader,
+                                        getExpressionKey(XML.ELEMENT_BEAN_VALIDATION_GROUP,
+                                                         Integer.toString(beanValidationGroups.size())),
+                                        expressions));
                      break;
                   }
                   case XML.ELEMENT_BOOTSTRAP_CONTEXT : {
-                     bootstrapContext = elementAsString(reader);
+                     bootstrapContext = elementAsString(reader, XML.ELEMENT_BOOTSTRAP_CONTEXT, expressions);
                      break;
                   }
                   case XML.ELEMENT_CONFIG_PROPERTY : {
                      if (configProperties == null)
-                        configProperties = new HashMap<String, String>();
-                     parseConfigProperty(configProperties, reader);
+                        configProperties = new TreeMap<String, String>();
+                     parseConfigProperty(configProperties, reader, XML.ELEMENT_CONFIG_PROPERTY, expressions);
                      break;
                   }
                   case XML.ELEMENT_TRANSACTION_SUPPORT : {
-                     transactionSupport = TransactionSupportEnum.valueOf(elementAsString(reader));
+                     transactionSupport =
+                        TransactionSupportEnum.valueOf(elementAsString(reader, XML.ELEMENT_TRANSACTION_SUPPORT,
+                                                                       expressions));
 
                      if (transactionSupport == TransactionSupportEnum.XATransaction)
                         isXA = Boolean.TRUE;
@@ -282,7 +293,7 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
                      break;
                   }
                   case XML.ELEMENT_ARCHIVE : {
-                     archive = elementAsString(reader);
+                     archive = elementAsString(reader, XML.ELEMENT_ARCHIVE, expressions);
                      break;
                   }
                   case XML.ELEMENT_WORKMANAGER : {

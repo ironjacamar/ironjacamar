@@ -64,13 +64,15 @@ public class ValidationImpl extends org.ironjacamar.common.metadata.common.Valid
     * @param validateOnMatch validateOnMatch
     * @param staleConnectionChecker staleConnectionChecker
     * @param exceptionSorter exceptionSorter
+    * @param expressions expressions
     * @throws ValidateException ValidateException
     */
    public ValidationImpl(Boolean backgroundValidation, Long backgroundValidationMillis, Boolean useFastFail,
-      Extension validConnectionChecker, String checkValidConnectionSql, Boolean validateOnMatch,
-      Extension staleConnectionChecker, Extension exceptionSorter) throws ValidateException
+                         Extension validConnectionChecker, String checkValidConnectionSql, Boolean validateOnMatch,
+                         Extension staleConnectionChecker, Extension exceptionSorter,
+                         Map<String, String> expressions) throws ValidateException
    {
-      super(validateOnMatch, backgroundValidation, backgroundValidationMillis, useFastFail);
+      super(validateOnMatch, backgroundValidation, backgroundValidationMillis, useFastFail, expressions);
       this.validConnectionChecker = validConnectionChecker;
       this.checkValidConnectionSql = checkValidConnectionSql;
       this.staleConnectionChecker = staleConnectionChecker;

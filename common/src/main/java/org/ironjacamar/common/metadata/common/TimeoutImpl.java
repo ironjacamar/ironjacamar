@@ -24,6 +24,8 @@ import org.ironjacamar.common.CommonBundle;
 import org.ironjacamar.common.api.metadata.common.Timeout;
 import org.ironjacamar.common.api.validator.ValidateException;
 
+import java.util.Map;
+
 import org.jboss.logging.Messages;
 
 /**
@@ -33,7 +35,7 @@ import org.jboss.logging.Messages;
  * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
-public class TimeoutImpl implements Timeout
+public class TimeoutImpl extends AbstractMetadata implements Timeout
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = 1L;
@@ -64,11 +66,14 @@ public class TimeoutImpl implements Timeout
     * @param allocationRetry allocationRetry
     * @param allocationRetryWaitMillis allocationRetryWaitMillis
     * @param xaResourceTimeout xaResourceTimeout
+    * @param expressions expressions
     * @throws ValidateException ValidateException
     */
    public TimeoutImpl(Long blockingTimeoutMillis, Long idleTimeoutMinutes, Integer allocationRetry,
-                      Long allocationRetryWaitMillis, Integer xaResourceTimeout) throws ValidateException
+                      Long allocationRetryWaitMillis, Integer xaResourceTimeout,
+                      Map<String, String> expressions) throws ValidateException
    {
+      super(expressions);
       this.blockingTimeoutMillis = blockingTimeoutMillis;
       this.idleTimeoutMinutes = idleTimeoutMinutes;
       this.allocationRetry = allocationRetry;

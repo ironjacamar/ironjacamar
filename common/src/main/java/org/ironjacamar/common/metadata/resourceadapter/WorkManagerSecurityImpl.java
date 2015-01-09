@@ -21,6 +21,7 @@
 package org.ironjacamar.common.metadata.resourceadapter;
 
 import org.ironjacamar.common.api.metadata.resourceadapter.WorkManagerSecurity;
+import org.ironjacamar.common.metadata.common.AbstractMetadata;
 
 import java.util.Collections;
 import java.util.List;
@@ -31,7 +32,7 @@ import java.util.Map;
  *
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class WorkManagerSecurityImpl implements WorkManagerSecurity
+public class WorkManagerSecurityImpl extends AbstractMetadata implements WorkManagerSecurity
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = 1L;
@@ -62,11 +63,14 @@ public class WorkManagerSecurityImpl implements WorkManagerSecurity
     * @param defaultGroups Default groups
     * @param userMappings User mappings
     * @param groupMappings Group mappings
+    * @param expressions expressions
     */
    public WorkManagerSecurityImpl(boolean mappingRequired, String domain,
                                   String defaultPrincipal, List<String> defaultGroups,
-                                  Map<String, String> userMappings, Map<String, String> groupMappings)
+                                  Map<String, String> userMappings, Map<String, String> groupMappings,
+                                  Map<String, String> expressions)
    {
+      super(expressions);
       this.mappingRequired = mappingRequired;
       this.domain = domain;
       this.defaultPrincipal = defaultPrincipal;

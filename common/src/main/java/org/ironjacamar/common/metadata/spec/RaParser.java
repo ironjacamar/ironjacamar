@@ -818,7 +818,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                   }
                   case XML.ELEMENT_REAUTHENTICATION_SUPPORT : {
                      rsId = reader.getAttributeValue(null, XML.ATTRIBUTE_ID);
-                     reauthenticationSupport = elementAsBoolean(reader);
+                     reauthenticationSupport = elementAsBoolean(reader, null, null);
                      break;
                   }
                   case XML.ELEMENT_SECURITY_PERMISSION : {
@@ -1162,7 +1162,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                   }
                   case XML.ELEMENT_REAUTHENTICATION_SUPPORT : {
                      rsId = reader.getAttributeValue(null, XML.ATTRIBUTE_ID);
-                     reauthenticationSupport = elementAsBoolean(reader);
+                     reauthenticationSupport = elementAsBoolean(reader, null, null);
                      break;
                   }
                   default :
@@ -1454,17 +1454,17 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                   }
                   case XML.ELEMENT_CONFIG_PROPERTY_IGNORE : {
                      ignoreId = reader.getAttributeValue(null, XML.ATTRIBUTE_ID);
-                     configPropertyIgnore = elementAsBoolean(reader);
+                     configPropertyIgnore = elementAsBoolean(reader, null, null);
                      break;
                   }
                   case XML.ELEMENT_CONFIG_PROPERTY_CONFIDENTIAL : {
                      confidId = reader.getAttributeValue(null, XML.ATTRIBUTE_ID);
-                     configPropertyConfidential = elementAsBoolean(reader);
+                     configPropertyConfidential = elementAsBoolean(reader, null, null);
                      break;
                   }
                   case XML.ELEMENT_CONFIG_PROPERTY_SUPPORT_DYNAMIC_UPDATE : {
                      updatesId = reader.getAttributeValue(null, XML.ATTRIBUTE_ID);
-                     configPropertySupportsDynamicUpdates = elementAsBoolean(reader);
+                     configPropertySupportsDynamicUpdates = elementAsBoolean(reader, null, null);
                      break;
                   }
                   default :
@@ -1568,7 +1568,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                {
                   case XML.ELEMENT_LICENSE_REQUIRED : {
                      lrid = reader.getAttributeValue(null, XML.ATTRIBUTE_ID);
-                     licenseRequired = elementAsBoolean(reader);
+                     licenseRequired = elementAsBoolean(reader, null, null);
                      break;
                   }
                   case XML.ELEMENT_DESCRIPTION : {

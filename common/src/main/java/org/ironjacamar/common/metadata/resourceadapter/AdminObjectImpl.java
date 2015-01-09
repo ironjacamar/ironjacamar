@@ -20,12 +20,14 @@
  */
 package org.ironjacamar.common.metadata.resourceadapter;
 
+import org.ironjacamar.common.api.metadata.Defaults;
 import org.ironjacamar.common.api.metadata.resourceadapter.AdminObject;
+import org.ironjacamar.common.metadata.common.AbstractMetadata;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  *
@@ -34,12 +36,12 @@ import java.util.Map;
  * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
-public class AdminObjectImpl implements AdminObject
+public class AdminObjectImpl extends AbstractMetadata implements AdminObject
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = 1L;
 
-   private HashMap<String, String> configProperties;
+   private Map<String, String> configProperties;
 
    private String className;
 
@@ -60,18 +62,21 @@ public class AdminObjectImpl implements AdminObject
     * @param poolName poolName
     * @param enabled enabled
     * @param useJavaContext useJavaContext
+    * @param expressions expressions
     */
    public AdminObjectImpl(Map<String, String> configProperties, String className, String jndiName,
-                          String poolName, Boolean enabled, Boolean useJavaContext)
+                          String poolName, Boolean enabled, Boolean useJavaContext,
+                          Map<String, String> expressions)
    {
+      super(expressions);
       if (configProperties != null)
       {
-         this.configProperties = new HashMap<String, String>(configProperties.size());
+         this.configProperties = new TreeMap<String, String>();
          this.configProperties.putAll(configProperties);
       }
       else
       {
-         this.configProperties = new HashMap<String, String>(0);
+         this.configProperties = new TreeMap<String, String>();
       }
       this.className = className;
       this.jndiName = jndiName;
@@ -216,10 +221,10 @@ public class AdminObjectImpl implements AdminObject
       if (jndiName != null)
          sb.append(" ").append(XML.ATTRIBUTE_JNDI_NAME).append("=\"").append(jndiName).append("\"");
 
-      if (enabled != null)
+      if (enabled != null && !Defaults.ENABLED.equals(enabled))
          sb.append(" ").append(XML.ATTRIBUTE_ENABLED).append("=\"").append(enabled).append("\"");
 
-      if (useJavaContext != null)
+      if (useJavaContext != null && !Defaults.USE_JAVA_CONTEXT.equals(useJavaContext))
       {
          sb.append(" ").append(XML.ATTRIBUTE_USE_JAVA_CONTEXT);
          sb.append("=\"").append(useJavaContext).append("\"");

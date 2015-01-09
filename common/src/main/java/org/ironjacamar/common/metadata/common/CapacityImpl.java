@@ -32,7 +32,7 @@ import java.util.Map;
  *
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class CapacityImpl implements Capacity
+public class CapacityImpl extends AbstractMetadata implements Capacity
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = 1L;
@@ -49,7 +49,7 @@ public class CapacityImpl implements Capacity
     */
    public CapacityImpl(Extension incrementer, Extension decrementer) throws ValidateException
    {
-      super();
+      super(null);
       this.incrementer = incrementer;
       this.decrementer = decrementer;
       this.validate();

@@ -27,6 +27,7 @@ import org.ironjacamar.common.api.metadata.spec.ConfigProperty;
 import org.ironjacamar.common.api.metadata.spec.ConnectionDefinition;
 import org.ironjacamar.common.api.metadata.spec.MergeableMetadata;
 import org.ironjacamar.common.api.metadata.spec.XsdString;
+import org.ironjacamar.common.metadata.common.AbstractMetadata;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,7 +37,7 @@ import java.util.List;
  * @author <a href="mailto:stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
-public class ConnectionDefinitionImpl implements ConnectionDefinition
+public class ConnectionDefinitionImpl extends AbstractMetadata implements ConnectionDefinition
 {
    private static final long serialVersionUID = 197264648585424765L;
 
@@ -69,6 +70,7 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
                                    XsdString connectionfactoryImplClass, XsdString connectionInterface,
                                    XsdString connectionImplClass, String id)
    {
+      super(null);
       if (configProperty != null)
       {
          this.configProperties = new ArrayList<ConfigProperty>(configProperty);

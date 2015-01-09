@@ -33,6 +33,7 @@ import org.ironjacamar.common.api.metadata.spec.ResourceAdapter;
 import org.ironjacamar.common.api.metadata.spec.SecurityPermission;
 import org.ironjacamar.common.api.metadata.spec.XsdString;
 import org.ironjacamar.common.api.validator.ValidateException;
+import org.ironjacamar.common.metadata.common.AbstractMetadata;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,7 +46,7 @@ import org.jboss.logging.Messages;
  * @author <a href="mailto:stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class ResourceAdapterImpl implements ResourceAdapter
+public class ResourceAdapterImpl extends AbstractMetadata implements ResourceAdapter
 {
    private static final long serialVersionUID = 1L;
 
@@ -82,6 +83,7 @@ public class ResourceAdapterImpl implements ResourceAdapter
                               List<AdminObject> adminobjects, List<SecurityPermission> securityPermissions,
                               String id)
    {
+      super(null);
       this.resourceadapterClass = resourceadapterClass;
       if (!XsdString.isNull(this.resourceadapterClass))
          this.resourceadapterClass.setTag(XML.ELEMENT_RESOURCEADAPTER_CLASS);

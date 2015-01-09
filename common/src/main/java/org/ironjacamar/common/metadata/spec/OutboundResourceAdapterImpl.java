@@ -28,6 +28,7 @@ import org.ironjacamar.common.api.metadata.spec.AuthenticationMechanism;
 import org.ironjacamar.common.api.metadata.spec.ConnectionDefinition;
 import org.ironjacamar.common.api.metadata.spec.MergeableMetadata;
 import org.ironjacamar.common.api.metadata.spec.OutboundResourceAdapter;
+import org.ironjacamar.common.metadata.common.AbstractMetadata;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,7 +39,7 @@ import java.util.List;
  * @author <a href="mailto:stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
+public class OutboundResourceAdapterImpl extends AbstractMetadata implements OutboundResourceAdapter
 {
    private static final long serialVersionUID = 1L;
 
@@ -72,6 +73,7 @@ public class OutboundResourceAdapterImpl implements OutboundResourceAdapter
                                       boolean reauthenticationSupport, String id, String transactionSupportId,
                                       String reauthenticationSupportId)
    {
+      super(null);
       if (connectionDefinition != null)
       {
          this.connectionDefinition = new ArrayList<ConnectionDefinition>(connectionDefinition);

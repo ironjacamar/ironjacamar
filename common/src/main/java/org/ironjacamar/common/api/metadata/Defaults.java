@@ -55,7 +55,7 @@ public interface Defaults
    /**
     * JTA
     */
-   public static final boolean JTA = Boolean.TRUE;
+   public static final Boolean JTA = Boolean.TRUE;
    
    /**
     * SHARABLE

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ironjacamar>
+  <bean-validation-groups>
+    <bean-validation-group>${bean-validation-group1:bean-validation-group1}</bean-validation-group>
+    <bean-validation-group>${bean-validation-group2:bean-validation-group2}</bean-validation-group>
+  </bean-validation-groups>
+  <bootstrap-context>${bootstrap-context:bootstrap-context}</bootstrap-context>
+  <config-property name="Property1">${Property1:Property1}</config-property>
+  <config-property name="Property2">${Property2:Property2}</config-property>
+  <transaction-support>${transaction-support:XATransaction}</transaction-support>
+  <connection-definitions>
+    <connection-definition class-name="${class-name:Class1}"
+			   jndi-name="${jndi-name:java:jboss/name1}"
+                           enabled="${enabled:true}"
+                           use-java-context="${use-java-context:false}"
+                           pool-name="${pool-name:Pool1}"
+			   use-ccm="${use-ccm:false}" sharable="${sharable:false}"
+                           enlistment="${enlistment:false}" connectable="${connectable:true}"
+                           tracking="${tracking:true}">
+      <config-property name="Property3">${Property3:Property3}</config-property>
+      <config-property name="Property4">${Property4:Property4}</config-property>
+      <xa-pool>
+	<min-pool-size>${min-pool-size:0}</min-pool-size>
+	<initial-pool-size>${initial-pool-size:2}</initial-pool-size>
+	<max-pool-size>${max-pool-size:5}</max-pool-size>
+	<prefill>${prefill:false}</prefill>
+	<use-strict-min>${use-strict-min:true}</use-strict-min>
+	<flush-strategy>${flush-strategy:IdleConnections}</flush-strategy>
+        <capacity>
+          <incrementer class-name="${incrementer:ic}">
+            <config-property name="P1">${P1:1}</config-property>
+            <config-property name="P2">${P2:2}</config-property>
+          </incrementer>
+          <decrementer class-name="${decrementer:dc}">
+            <config-property name="P1">${P1:3}</config-property>
+            <config-property name="P2">${P2:4}</config-property>
+          </decrementer>
+        </capacity>
+	<is-same-rm-override>${is-same-rm-override:true}</is-same-rm-override>
+	<interleaving/>
+	<no-tx-separate-pools/>
+	<pad-xid>${pad-xid:true}</pad-xid>
+	<wrap-xa-resource>${wrap-xa-resource:false}</wrap-xa-resource>
+      </xa-pool>
+      <security>
+	<security-domain>${security-domain:domain}</security-domain>
+      </security>
+      <timeout>
+	<blocking-timeout-millis>${blocking-timeout-millis:5000}</blocking-timeout-millis>
+	<idle-timeout-minutes>${idle-timeout-minutes:4}</idle-timeout-minutes>
+	<allocation-retry>${allocation-retry:2}</allocation-retry>
+	<allocation-retry-wait-millis>${allocation-retry-wait-millis:3000}</allocation-retry-wait-millis>
+	<xa-resource-timeout>${xa-resource-timeout:300}</xa-resource-timeout>
+      </timeout>
+      <validation>
+	<background-validation>${background-validation:true}</background-validation>
+	<background-validation-millis>${background-validation-millis:5000}</background-validation-millis>
+	<use-fast-fail>${use-fast-fail:true}</use-fast-fail>
+      </validation>
+      <recovery no-recovery="${no-recovery:false}">
+	<recover-credential>
+	  <user-name>${user-name:sa}</user-name>
+	  <password>${password:sa-pass}</password>
+	</recover-credential>
+	<recover-plugin class-name="${class-name:someClass2}">
+	  <config-property name="Property5">${Property5:Property5}</config-property>
+	  <config-property name="Property6">${Property6:Property6}</config-property>
+	</recover-plugin>
+      </recovery>
+    </connection-definition>
+  </connection-definitions>
+  <admin-objects>
+    <admin-object class-name="${class-name:Class4}" jndi-name="${jndi-name:java:jboss/name4}"
+                  enabled="${enabled:false}"
+		  use-java-context="${use-java-context:false}" pool-name="${pool-name:Pool4}">
+      <config-property name="Property7">${Property7:3.6}</config-property>
+      <config-property name="Property8">${Property8}</config-property>
+    </admin-object>
+  </admin-objects>
+</ironjacamar>

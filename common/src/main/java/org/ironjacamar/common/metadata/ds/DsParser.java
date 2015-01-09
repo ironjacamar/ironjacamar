@@ -244,24 +244,26 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Integer minorVersion = null;
       String module = null;
 
+      HashMap<String, String> expressions = new HashMap<String, String>();
+      
       for (int i = 0; i < reader.getAttributeCount(); i++)
       {
          switch (reader.getAttributeLocalName(i))
          {
             case XML.ATTRIBUTE_NAME : {
-               name = attributeAsString(reader, XML.ATTRIBUTE_NAME);
+               name = attributeAsString(reader, XML.ATTRIBUTE_NAME, expressions);
                break;
             }
             case XML.ATTRIBUTE_MAJOR_VERSION : {
-               majorVersion = attributeAsInt(reader, XML.ATTRIBUTE_MAJOR_VERSION);
+               majorVersion = attributeAsInt(reader, XML.ATTRIBUTE_MAJOR_VERSION, expressions);
                break;
             }
             case XML.ATTRIBUTE_MINOR_VERSION : {
-               minorVersion = attributeAsInt(reader, XML.ATTRIBUTE_MINOR_VERSION);
+               minorVersion = attributeAsInt(reader, XML.ATTRIBUTE_MINOR_VERSION, expressions);
                break;
             }
             case XML.ATTRIBUTE_MODULE : {
-               module = attributeAsString(reader, XML.ATTRIBUTE_MODULE);
+               module = attributeAsString(reader, XML.ATTRIBUTE_MODULE, expressions);
                break;
             }
             default :
@@ -278,7 +280,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                if (XML.ELEMENT_DRIVER.equals(reader.getLocalName()))
                {
                   return new DriverImpl(name, majorVersion, minorVersion, module,
-                                        driverClass, dataSourceClass, xaDataSourceClass);
+                                        driverClass, dataSourceClass, xaDataSourceClass,
+                                        expressions.size() > 0 ? expressions : null);
                }
                else
                {
@@ -298,15 +301,15 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                switch (reader.getLocalName())
                {
                   case XML.ELEMENT_DATASOURCE_CLASS : {
-                     dataSourceClass = elementAsString(reader);
+                     dataSourceClass = elementAsString(reader, XML.ELEMENT_DATASOURCE_CLASS, expressions);
                      break;
                   }
                   case XML.ELEMENT_XA_DATASOURCE_CLASS : {
-                     xaDataSourceClass = elementAsString(reader);
+                     xaDataSourceClass = elementAsString(reader, XML.ELEMENT_XA_DATASOURCE_CLASS, expressions);
                      break;
                   }
                   case XML.ELEMENT_DRIVER_CLASS : {
-                     driverClass = elementAsString(reader);
+                     driverClass = elementAsString(reader, XML.ELEMENT_DRIVER_CLASS, expressions);
                      break;
                   }
                   default :
@@ -337,6 +340,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       String securityDomain = null;
       Extension reauthPlugin = null;
 
+      HashMap<String, String> expressions = new HashMap<String, String>();
+
       while (reader.hasNext())
       {
          switch (reader.nextTag())
@@ -344,7 +349,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
             case END_ELEMENT : {
                if (XML.ELEMENT_SECURITY.equals(reader.getLocalName()))
                {
-                  return new DsSecurityImpl(userName, password, securityDomain, reauthPlugin);
+                  return new DsSecurityImpl(userName, password, securityDomain, reauthPlugin,
+                                            expressions.size() > 0 ? expressions : null);
                }
                else
                {
@@ -365,15 +371,15 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                switch (reader.getLocalName())
                {
                   case XML.ELEMENT_PASSWORD : {
-                     password = elementAsString(reader);
+                     password = elementAsString(reader, XML.ELEMENT_PASSWORD, expressions);
                      break;
                   }
                   case XML.ELEMENT_USER_NAME : {
-                     userName = elementAsString(reader);
+                     userName = elementAsString(reader, XML.ELEMENT_USER_NAME, expressions);
                      break;
                   }
                   case XML.ELEMENT_SECURITY_DOMAIN : {
-                     securityDomain = elementAsString(reader);
+                     securityDomain = elementAsString(reader, XML.ELEMENT_SECURITY_DOMAIN, expressions);
                      break;
                   }
                   case XML.ELEMENT_REAUTH_PLUGIN : {
@@ -411,6 +417,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Extension validConnectionChecker = null;
       Extension exceptionSorter = null;
 
+      HashMap<String, String> expressions = new HashMap<String, String>();
+      
       while (reader.hasNext())
       {
          switch (reader.nextTag())
@@ -420,7 +428,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                {
                   return new ValidationImpl(backgroundValidation, backgroundValidationMillis, useFastFail,
                                             validConnectionChecker, checkValidConnectionSql, validateOnMatch,
-                                            staleConnectionChecker, exceptionSorter);
+                                            staleConnectionChecker, exceptionSorter,
+                                            expressions.size() > 0 ? expressions : null);
                }
                else
                {
@@ -445,15 +454,17 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                switch (reader.getLocalName())
                {
                   case XML.ELEMENT_BACKGROUND_VALIDATION : {
-                     backgroundValidation = elementAsBoolean(reader);
+                     backgroundValidation = elementAsBoolean(reader, XML.ELEMENT_BACKGROUND_VALIDATION, expressions);
                      break;
                   }
                   case XML.ELEMENT_BACKGROUND_VALIDATION_MILLIS : {
-                     backgroundValidationMillis = elementAsLong(reader);
+                     backgroundValidationMillis = elementAsLong(reader, XML.ELEMENT_BACKGROUND_VALIDATION_MILLIS,
+                                                                expressions);
                      break;
                   }
                   case XML.ELEMENT_CHECK_VALID_CONNECTION_SQL : {
-                     checkValidConnectionSql = elementAsString(reader);
+                     checkValidConnectionSql = elementAsString(reader, XML.ELEMENT_CHECK_VALID_CONNECTION_SQL,
+                                                               expressions);
                      break;
                   }
                   case XML.ELEMENT_EXCEPTION_SORTER : {
@@ -465,11 +476,11 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      break;
                   }
                   case XML.ELEMENT_USE_FAST_FAIL : {
-                     useFastFail = elementAsBoolean(reader);
+                     useFastFail = elementAsBoolean(reader, XML.ELEMENT_USE_FAST_FAIL, expressions);
                      break;
                   }
                   case XML.ELEMENT_VALIDATE_ON_MATCH : {
-                     validateOnMatch = elementAsBoolean(reader);
+                     validateOnMatch = elementAsBoolean(reader, XML.ELEMENT_VALIDATE_ON_MATCH, expressions);
                      break;
                   }
                   case XML.ELEMENT_VALID_CONNECTION_CHECKER : {
@@ -507,6 +518,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Long useTryLock = null;
       Integer xaResourceTimeout = null;
 
+      HashMap<String, String> expressions = new HashMap<String, String>();
+
       while (reader.hasNext())
       {
          switch (reader.nextTag())
@@ -516,7 +529,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                {
                   return new TimeoutImpl(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry,
                                          allocationRetryWaitMillis, xaResourceTimeout, setTxQuertTimeout,
-                                         queryTimeout, useTryLock);
+                                         queryTimeout, useTryLock,
+                                         expressions.size() > 0 ? expressions : null);
                }
                else
                {
@@ -541,35 +555,36 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                switch (reader.getLocalName())
                {
                   case XML.ELEMENT_ALLOCATION_RETRY : {
-                     allocationRetry = elementAsInteger(reader);
+                     allocationRetry = elementAsInteger(reader, XML.ELEMENT_ALLOCATION_RETRY, expressions);
                      break;
                   }
                   case XML.ELEMENT_ALLOCATION_RETRY_WAIT_MILLIS : {
-                     allocationRetryWaitMillis = elementAsLong(reader);
+                     allocationRetryWaitMillis = elementAsLong(reader, XML.ELEMENT_ALLOCATION_RETRY_WAIT_MILLIS,
+                                                               expressions);
                      break;
                   }
                   case XML.ELEMENT_BLOCKING_TIMEOUT_MILLIS : {
-                     blockingTimeoutMillis = elementAsLong(reader);
+                     blockingTimeoutMillis = elementAsLong(reader, XML.ELEMENT_BLOCKING_TIMEOUT_MILLIS, expressions);
                      break;
                   }
                   case XML.ELEMENT_IDLE_TIMEOUT_MINUTES : {
-                     idleTimeoutMinutes = elementAsLong(reader);
+                     idleTimeoutMinutes = elementAsLong(reader, XML.ELEMENT_IDLE_TIMEOUT_MINUTES, expressions);
                      break;
                   }
                   case XML.ELEMENT_QUERY_TIMEOUT : {
-                     queryTimeout = elementAsLong(reader);
+                     queryTimeout = elementAsLong(reader, XML.ELEMENT_QUERY_TIMEOUT, expressions);
                      break;
                   }
                   case XML.ELEMENT_SET_TX_QUERY_TIMEOUT : {
-                     setTxQuertTimeout = elementAsBoolean(reader);
+                     setTxQuertTimeout = elementAsBoolean(reader, XML.ELEMENT_SET_TX_QUERY_TIMEOUT, expressions);
                      break;
                   }
                   case XML.ELEMENT_USE_TRY_LOCK : {
-                     useTryLock = elementAsLong(reader);
+                     useTryLock = elementAsLong(reader, XML.ELEMENT_USE_TRY_LOCK, expressions);
                      break;
                   }
                   case XML.ELEMENT_XA_RESOURCE_TIMEOUT : {
-                     xaResourceTimeout = elementAsInteger(reader);
+                     xaResourceTimeout = elementAsInteger(reader, XML.ELEMENT_XA_RESOURCE_TIMEOUT, expressions);
                      break;
                   }
                   default :
@@ -598,6 +613,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Boolean sharePreparedStatements = Defaults.SHARE_PREPARED_STATEMENTS;
       TrackStatementsEnum trackStatements = null;
 
+      HashMap<String, String> expressions = new HashMap<String, String>();
+
       while (reader.hasNext())
       {
          switch (reader.nextTag())
@@ -605,7 +622,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
             case END_ELEMENT : {
                if (XML.ELEMENT_STATEMENT.equals(reader.getLocalName()))
                {
-                  return new StatementImpl(sharePreparedStatements, preparedStatementsCacheSize, trackStatements);
+                  return new StatementImpl(sharePreparedStatements, preparedStatementsCacheSize, trackStatements,
+                                           expressions.size() > 0 ? expressions : null);
                }
                else
                {
@@ -625,17 +643,19 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                switch (reader.getLocalName())
                {
                   case XML.ELEMENT_PREPARED_STATEMENT_CACHE_SIZE : {
-                     preparedStatementsCacheSize = elementAsLong(reader);
+                     preparedStatementsCacheSize = elementAsLong(reader, XML.ELEMENT_PREPARED_STATEMENT_CACHE_SIZE,
+                                                                 expressions);
                      break;
                   }
                   case XML.ELEMENT_TRACK_STATEMENTS : {
-                     String elementString = elementAsString(reader);
+                     String elementString = elementAsString(reader, XML.ELEMENT_TRACK_STATEMENTS, expressions);
                      trackStatements = TrackStatementsEnum.valueOf(elementString == null ? "FALSE" : elementString
                         .toUpperCase(Locale.US));
                      break;
                   }
                   case XML.ELEMENT_SHARE_PREPARED_STATEMENTS : {
-                     sharePreparedStatements = elementAsBoolean(reader);
+                     sharePreparedStatements = elementAsBoolean(reader, XML.ELEMENT_SHARE_PREPARED_STATEMENTS,
+                                                                expressions);
                      break;
                   }
                   default :
@@ -671,6 +691,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Capacity capacity = null;
       Extension connectionListener = null;
 
+      HashMap<String, String> expressions = new HashMap<String, String>();
+
       while (reader.hasNext())
       {
          switch (reader.nextTag())
@@ -679,7 +701,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                if (XML.ELEMENT_POOL.equals(reader.getLocalName()))
                {
                   return new DsPoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy,
-                                        allowMultipleUsers, capacity, connectionListener);
+                                        allowMultipleUsers, capacity, connectionListener,
+                                        expressions.size() > 0 ? expressions : null);
                }
                else
                {
@@ -705,27 +728,27 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                switch (reader.getLocalName())
                {
                   case XML.ELEMENT_MAX_POOL_SIZE : {
-                     maxPoolSize = elementAsInteger(reader);
+                     maxPoolSize = elementAsInteger(reader, XML.ELEMENT_MAX_POOL_SIZE, expressions);
                      break;
                   }
                   case XML.ELEMENT_INITIAL_POOL_SIZE : {
-                     initialPoolSize = elementAsInteger(reader);
+                     initialPoolSize = elementAsInteger(reader, XML.ELEMENT_INITIAL_POOL_SIZE, expressions);
                      break;
                   }
                   case XML.ELEMENT_MIN_POOL_SIZE : {
-                     minPoolSize = elementAsInteger(reader);
+                     minPoolSize = elementAsInteger(reader, XML.ELEMENT_MIN_POOL_SIZE, expressions);
                      break;
                   }
                   case XML.ELEMENT_PREFILL : {
-                     prefill = elementAsBoolean(reader);
+                     prefill = elementAsBoolean(reader, XML.ELEMENT_PREFILL, expressions);
                      break;
                   }
                   case XML.ELEMENT_USE_STRICT_MIN : {
-                     useStrictMin = elementAsBoolean(reader);
+                     useStrictMin = elementAsBoolean(reader, XML.ELEMENT_USE_STRICT_MIN, expressions);
                      break;
                   }
                   case XML.ELEMENT_FLUSH_STRATEGY : {
-                     flushStrategy = elementAsFlushStrategy(reader);
+                     flushStrategy = elementAsFlushStrategy(reader, expressions);
                      break;
                   }
                   case XML.ELEMENT_ALLOW_MULTIPLE_USERS : {
@@ -778,6 +801,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Boolean wrapXaDataSource = Defaults.WRAP_XA_RESOURCE;
       Boolean useStrictMin = Defaults.USE_STRICT_MIN;
 
+      HashMap<String, String> expressions = new HashMap<String, String>();
+
       while (reader.hasNext())
       {
          switch (reader.nextTag())
@@ -788,7 +813,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   return new DsXaPoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin,
                                           flushStrategy, isSameRmOverride, interleaving, padXid,
                                           wrapXaDataSource, noTxSeparatePool, allowMultipleUsers, capacity,
-                                          connectionListener);
+                                          connectionListener,
+                                          expressions.size() > 0 ? expressions : null);
                }
                else
                {
@@ -819,47 +845,47 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                switch (reader.getLocalName())
                {
                   case XML.ELEMENT_MAX_POOL_SIZE : {
-                     maxPoolSize = elementAsInteger(reader);
+                     maxPoolSize = elementAsInteger(reader, XML.ELEMENT_MAX_POOL_SIZE, expressions);
                      break;
                   }
                   case XML.ELEMENT_INITIAL_POOL_SIZE : {
-                     initialPoolSize = elementAsInteger(reader);
+                     initialPoolSize = elementAsInteger(reader, XML.ELEMENT_INITIAL_POOL_SIZE, expressions);
                      break;
                   }
                   case XML.ELEMENT_MIN_POOL_SIZE : {
-                     minPoolSize = elementAsInteger(reader);
+                     minPoolSize = elementAsInteger(reader, XML.ELEMENT_MIN_POOL_SIZE, expressions);
                      break;
                   }
                   case XML.ELEMENT_INTERLEAVING : {
-                     interleaving = elementAsBoolean(reader);
+                     interleaving = elementAsBoolean(reader, XML.ELEMENT_INTERLEAVING, expressions);
                      break;
                   }
                   case XML.ELEMENT_IS_SAME_RM_OVERRIDE : {
-                     isSameRmOverride = elementAsBoolean(reader);
+                     isSameRmOverride = elementAsBoolean(reader, XML.ELEMENT_IS_SAME_RM_OVERRIDE, expressions);
                      break;
                   }
                   case XML.ELEMENT_NO_TX_SEPARATE_POOLS : {
-                     noTxSeparatePool = elementAsBoolean(reader);
+                     noTxSeparatePool = elementAsBoolean(reader, XML.ELEMENT_NO_TX_SEPARATE_POOLS, expressions);
                      break;
                   }
                   case XML.ELEMENT_PAD_XID : {
-                     padXid = elementAsBoolean(reader);
+                     padXid = elementAsBoolean(reader, XML.ELEMENT_PAD_XID, expressions);
                      break;
                   }
                   case XML.ELEMENT_WRAP_XA_RESOURCE : {
-                     wrapXaDataSource = elementAsBoolean(reader);
+                     wrapXaDataSource = elementAsBoolean(reader, XML.ELEMENT_WRAP_XA_RESOURCE, expressions);
                      break;
                   }
                   case XML.ELEMENT_PREFILL : {
-                     prefill = elementAsBoolean(reader);
+                     prefill = elementAsBoolean(reader, XML.ELEMENT_PREFILL, expressions);
                      break;
                   }
                   case XML.ELEMENT_USE_STRICT_MIN : {
-                     useStrictMin = elementAsBoolean(reader);
+                     useStrictMin = elementAsBoolean(reader, XML.ELEMENT_USE_STRICT_MIN, expressions);
                      break;
                   }
                   case XML.ELEMENT_FLUSH_STRATEGY : {
-                     flushStrategy = elementAsFlushStrategy(reader);
+                     flushStrategy = elementAsFlushStrategy(reader, expressions);
                      break;
                   }
                   case XML.ELEMENT_ALLOW_MULTIPLE_USERS : {
@@ -923,40 +949,43 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Boolean connectable = Defaults.CONNECTABLE;
       Boolean tracking = Defaults.TRACKING;
 
+      HashMap<String, String> expressions = new HashMap<String, String>();
+
       for (int i = 0; i < reader.getAttributeCount(); i++)
       {
          switch (reader.getAttributeLocalName(i))
          {
             case XML.ATTRIBUTE_ENABLED : {
-               enabled = attributeAsBoolean(reader, XML.ATTRIBUTE_ENABLED, Defaults.ENABLED);
+               enabled = attributeAsBoolean(reader, XML.ATTRIBUTE_ENABLED, Defaults.ENABLED, expressions);
                break;
             }
             case XML.ATTRIBUTE_JNDI_NAME : {
-               jndiName = attributeAsString(reader, XML.ATTRIBUTE_JNDI_NAME);
+               jndiName = attributeAsString(reader, XML.ATTRIBUTE_JNDI_NAME, expressions);
                break;
             }
             case XML.ATTRIBUTE_POOL_NAME : {
-               poolName = attributeAsString(reader, XML.ATTRIBUTE_POOL_NAME);
+               poolName = attributeAsString(reader, XML.ATTRIBUTE_POOL_NAME, expressions);
                break;
             }
             case XML.ATTRIBUTE_USE_JAVA_CONTEXT : {
-               useJavaContext = attributeAsBoolean(reader, XML.ATTRIBUTE_USE_JAVA_CONTEXT, Defaults.USE_JAVA_CONTEXT);
+               useJavaContext = attributeAsBoolean(reader, XML.ATTRIBUTE_USE_JAVA_CONTEXT, Defaults.USE_JAVA_CONTEXT,
+                                                   expressions);
                break;
             }
             case XML.ATTRIBUTE_SPY : {
-               spy = attributeAsBoolean(reader, XML.ATTRIBUTE_SPY, Defaults.SPY);
+               spy = attributeAsBoolean(reader, XML.ATTRIBUTE_SPY, Defaults.SPY, expressions);
                break;
             }
             case XML.ATTRIBUTE_USE_CCM : {
-               useCcm = attributeAsBoolean(reader, XML.ATTRIBUTE_USE_CCM, Defaults.USE_CCM);
+               useCcm = attributeAsBoolean(reader, XML.ATTRIBUTE_USE_CCM, Defaults.USE_CCM, expressions);
                break;
             }
             case XML.ATTRIBUTE_CONNECTABLE : {
-               connectable = attributeAsBoolean(reader, XML.ATTRIBUTE_CONNECTABLE, Defaults.CONNECTABLE);
+               connectable = attributeAsBoolean(reader, XML.ATTRIBUTE_CONNECTABLE, Defaults.CONNECTABLE, expressions);
                break;
             }
             case XML.ATTRIBUTE_TRACKING : {
-               tracking = attributeAsBoolean(reader, XML.ATTRIBUTE_TRACKING, Defaults.TRACKING);
+               tracking = attributeAsBoolean(reader, XML.ATTRIBUTE_TRACKING, Defaults.TRACKING, expressions);
                break;
             }
             default :
@@ -976,7 +1005,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                                               statementSettings, validationSettings, urlDelimiter, urlProperty,
                                               urlSelectorStrategyClassName, useJavaContext, poolName, enabled,
                                               jndiName, spy, useCcm, connectable, tracking, xaDataSourceProperty,
-                                              xaDataSourceClass, driver, newConnectionSql, xaPool, recovery);
+                                              xaDataSourceClass, driver, newConnectionSql, xaPool, recovery,
+                                              expressions.size() > 0 ? expressions : null);
                }
                else
                {
@@ -1007,15 +1037,15 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                switch (reader.getLocalName())
                {
                   case XML.ELEMENT_XA_DATASOURCE_PROPERTY : {
-                     parseConfigProperty(xaDataSourceProperty, reader);
+                     parseConfigProperty(xaDataSourceProperty, reader, XML.ELEMENT_XA_DATASOURCE_PROPERTY, expressions);
                      break;
                   }
                   case XML.ELEMENT_XA_DATASOURCE_CLASS : {
-                     xaDataSourceClass = elementAsString(reader);
+                     xaDataSourceClass = elementAsString(reader, XML.ELEMENT_XA_DATASOURCE_CLASS, expressions);
                      break;
                   }
                   case XML.ELEMENT_DRIVER : {
-                     driver = elementAsString(reader);
+                     driver = elementAsString(reader, XML.ELEMENT_DRIVER, expressions);
                      break;
                   }
                   case XML.ELEMENT_XA_POOL : {
@@ -1023,23 +1053,25 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      break;
                   }
                   case XML.ELEMENT_NEW_CONNECTION_SQL : {
-                     newConnectionSql = elementAsString(reader);
+                     newConnectionSql = elementAsString(reader, XML.ELEMENT_NEW_CONNECTION_SQL, expressions);
                      break;
                   }
                   case XML.ELEMENT_URL_DELIMITER : {
-                     urlDelimiter = elementAsString(reader);
+                     urlDelimiter = elementAsString(reader, XML.ELEMENT_URL_DELIMITER, expressions);
                      break;
                   }
                   case XML.ELEMENT_URL_PROPERTY : {
-                     urlProperty = elementAsString(reader);
+                     urlProperty = elementAsString(reader, XML.ELEMENT_URL_PROPERTY, expressions);
                      break;
                   }
                   case XML.ELEMENT_URL_SELECTOR_STRATEGY_CLASS_NAME : {
-                     urlSelectorStrategyClassName = elementAsString(reader);
+                     urlSelectorStrategyClassName = elementAsString(reader,
+                                                                    XML.ELEMENT_URL_SELECTOR_STRATEGY_CLASS_NAME,
+                                                                    expressions);
                      break;
                   }
                   case XML.ELEMENT_TRANSACTION_ISOLATION : {
-                     String str = elementAsString(reader);
+                     String str = elementAsString(reader, XML.ELEMENT_TRANSACTION_ISOLATION, expressions);
                      transactionIsolation = TransactionIsolation.forName(str);
                      if (transactionIsolation == null)
                      {
@@ -1114,44 +1146,47 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Boolean connectable = Defaults.CONNECTABLE;
       Boolean tracking = Defaults.TRACKING;
 
+      HashMap<String, String> expressions = new HashMap<String, String>();
+
       for (int i = 0; i < reader.getAttributeCount(); i++)
       {
          switch (reader.getAttributeLocalName(i))
          {
             case XML.ATTRIBUTE_ENABLED : {
-               enabled = attributeAsBoolean(reader, XML.ATTRIBUTE_ENABLED, Defaults.ENABLED);
+               enabled = attributeAsBoolean(reader, XML.ATTRIBUTE_ENABLED, Defaults.ENABLED, expressions);
                break;
             }
             case XML.ATTRIBUTE_JNDI_NAME : {
-               jndiName = attributeAsString(reader, XML.ATTRIBUTE_JNDI_NAME);
+               jndiName = attributeAsString(reader, XML.ATTRIBUTE_JNDI_NAME, expressions);
                break;
             }
             case XML.ATTRIBUTE_POOL_NAME : {
-               poolName = attributeAsString(reader, XML.ATTRIBUTE_POOL_NAME);
+               poolName = attributeAsString(reader, XML.ATTRIBUTE_POOL_NAME, expressions);
                break;
             }
             case XML.ATTRIBUTE_USE_JAVA_CONTEXT : {
-               useJavaContext = attributeAsBoolean(reader, XML.ATTRIBUTE_USE_JAVA_CONTEXT, Defaults.USE_JAVA_CONTEXT);
+               useJavaContext = attributeAsBoolean(reader, XML.ATTRIBUTE_USE_JAVA_CONTEXT, Defaults.USE_JAVA_CONTEXT,
+                                                   expressions);
                break;
             }
             case XML.ATTRIBUTE_SPY : {
-               spy = attributeAsBoolean(reader, XML.ATTRIBUTE_SPY, Defaults.SPY);
+               spy = attributeAsBoolean(reader, XML.ATTRIBUTE_SPY, Defaults.SPY, expressions);
                break;
             }
             case XML.ATTRIBUTE_USE_CCM : {
-               useCcm = attributeAsBoolean(reader, XML.ATTRIBUTE_USE_CCM, Defaults.USE_CCM);
+               useCcm = attributeAsBoolean(reader, XML.ATTRIBUTE_USE_CCM, Defaults.USE_CCM, expressions);
                break;
             }
             case XML.ATTRIBUTE_JTA : {
-               jta = attributeAsBoolean(reader, XML.ATTRIBUTE_JTA, Defaults.JTA);
+               jta = attributeAsBoolean(reader, XML.ATTRIBUTE_JTA, Defaults.JTA, expressions);
                break;
             }
             case XML.ATTRIBUTE_CONNECTABLE : {
-               connectable = attributeAsBoolean(reader, XML.ATTRIBUTE_CONNECTABLE, Defaults.CONNECTABLE);
+               connectable = attributeAsBoolean(reader, XML.ATTRIBUTE_CONNECTABLE, Defaults.CONNECTABLE, expressions);
                break;
             }
             case XML.ATTRIBUTE_TRACKING : {
-               tracking = attributeAsBoolean(reader, XML.ATTRIBUTE_TRACKING, Defaults.TRACKING);
+               tracking = attributeAsBoolean(reader, XML.ATTRIBUTE_TRACKING, Defaults.TRACKING, expressions);
                break;
             }
             default :
@@ -1171,7 +1206,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                                             connectionProperties, timeoutSettings, securitySettings,
                                             statementSettings, validationSettings, urlDelimiter,
                                             urlSelectorStrategyClassName, newConnectionSql, useJavaContext, poolName,
-                                            enabled, jndiName, spy, useCcm, jta, connectable, tracking, pool);
+                                            enabled, jndiName, spy, useCcm, jta, connectable, tracking, pool,
+                                            expressions.size() > 0 ? expressions : null);
                }
                else
                {
@@ -1202,23 +1238,23 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                switch (reader.getLocalName())
                {
                   case XML.ELEMENT_CONNECTION_PROPERTY : {
-                     parseConfigProperty(connectionProperties, reader);
+                     parseConfigProperty(connectionProperties, reader, XML.ELEMENT_CONNECTION_PROPERTY, expressions);
                      break;
                   }
                   case XML.ELEMENT_CONNECTION_URL : {
-                     connectionUrl = elementAsString(reader);
+                     connectionUrl = elementAsString(reader, XML.ELEMENT_CONNECTION_URL, expressions);
                      break;
                   }
                   case XML.ELEMENT_DRIVER_CLASS : {
-                     driverClass = elementAsString(reader);
+                     driverClass = elementAsString(reader, XML.ELEMENT_DRIVER_CLASS, expressions);
                      break;
                   }
                   case XML.ELEMENT_DATASOURCE_CLASS : {
-                     dataSourceClass = elementAsString(reader);
+                     dataSourceClass = elementAsString(reader, XML.ELEMENT_DATASOURCE_CLASS, expressions);
                      break;
                   }
                   case XML.ELEMENT_DRIVER : {
-                     driver = elementAsString(reader);
+                     driver = elementAsString(reader, XML.ELEMENT_DRIVER, expressions);
                      break;
                   }
                   case XML.ELEMENT_POOL : {
@@ -1226,19 +1262,21 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      break;
                   }
                   case XML.ELEMENT_NEW_CONNECTION_SQL : {
-                     newConnectionSql = elementAsString(reader);
+                     newConnectionSql = elementAsString(reader, XML.ELEMENT_NEW_CONNECTION_SQL, expressions);
                      break;
                   }
                   case XML.ELEMENT_URL_DELIMITER : {
-                     urlDelimiter = elementAsString(reader);
+                     urlDelimiter = elementAsString(reader, XML.ELEMENT_URL_DELIMITER, expressions);
                      break;
                   }
                   case XML.ELEMENT_URL_SELECTOR_STRATEGY_CLASS_NAME : {
-                     urlSelectorStrategyClassName = elementAsString(reader);
+                     urlSelectorStrategyClassName = elementAsString(reader,
+                                                                    XML.ELEMENT_URL_SELECTOR_STRATEGY_CLASS_NAME,
+                                                                    expressions);
                      break;
                   }
                   case XML.ELEMENT_TRANSACTION_ISOLATION : {
-                     String str = elementAsString(reader);
+                     String str = elementAsString(reader, XML.ELEMENT_TRANSACTION_ISOLATION, expressions);
                      transactionIsolation = TransactionIsolation.forName(str);
                      if (transactionIsolation == null)
                      {
@@ -1282,58 +1320,73 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
    {
       writer.writeStartElement(XML.ELEMENT_DATASOURCE);
 
+      if (ds.isJTA() != null && (ds.hasExpression(XML.ATTRIBUTE_JTA) ||
+                                 !Defaults.JTA.equals(ds.isJTA())))
+         writer.writeAttribute(XML.ATTRIBUTE_JTA,
+                               ds.getValue(XML.ATTRIBUTE_JTA, ds.isJTA().toString()));
+
       if (ds.getJndiName() != null)
-         writer.writeAttribute(XML.ATTRIBUTE_JNDI_NAME, ds.getJndiName());
+         writer.writeAttribute(XML.ATTRIBUTE_JNDI_NAME,
+                               ds.getValue(XML.ATTRIBUTE_JNDI_NAME, ds.getJndiName()));
 
       if (ds.getPoolName() != null)
-         writer.writeAttribute(XML.ATTRIBUTE_POOL_NAME, ds.getPoolName());
+         writer.writeAttribute(XML.ATTRIBUTE_POOL_NAME,
+                               ds.getValue(XML.ATTRIBUTE_POOL_NAME, ds.getPoolName()));
 
-      if (ds.isEnabled() != null)
-         writer.writeAttribute(XML.ATTRIBUTE_ENABLED, ds.isEnabled().toString());
+      if (ds.isEnabled() != null && (ds.hasExpression(XML.ATTRIBUTE_ENABLED) ||
+                                     !Defaults.ENABLED.equals(ds.isEnabled())))
+         writer.writeAttribute(XML.ATTRIBUTE_ENABLED,
+                               ds.getValue(XML.ATTRIBUTE_ENABLED, ds.isEnabled().toString()));
 
-      if (ds.isUseJavaContext() != null)
-         writer.writeAttribute(XML.ATTRIBUTE_USE_JAVA_CONTEXT, ds.isUseJavaContext().toString());
+      if (ds.isUseJavaContext() != null && (ds.hasExpression(XML.ATTRIBUTE_USE_JAVA_CONTEXT) ||
+                                            !Defaults.USE_JAVA_CONTEXT.equals(ds.isUseJavaContext())))
+         writer.writeAttribute(XML.ATTRIBUTE_USE_JAVA_CONTEXT,
+                               ds.getValue(XML.ATTRIBUTE_USE_JAVA_CONTEXT, ds.isUseJavaContext().toString()));
 
-      if (ds.isSpy() != null)
-         writer.writeAttribute(XML.ATTRIBUTE_SPY, ds.isSpy().toString());
+      if (ds.isSpy() != null && (ds.hasExpression(XML.ATTRIBUTE_SPY) ||
+                                 !Defaults.SPY.equals(ds.isSpy())))
+         writer.writeAttribute(XML.ATTRIBUTE_SPY,
+                               ds.getValue(XML.ATTRIBUTE_SPY, ds.isSpy().toString()));
 
-      if (ds.isUseCcm() != null)
-         writer.writeAttribute(XML.ATTRIBUTE_USE_CCM, ds.isUseCcm().toString());
+      if (ds.isUseCcm() != null && (ds.hasExpression(XML.ATTRIBUTE_USE_CCM) ||
+                                    !Defaults.USE_CCM.equals(ds.isUseCcm())))
+         writer.writeAttribute(XML.ATTRIBUTE_USE_CCM,
+                               ds.getValue(XML.ATTRIBUTE_USE_CCM, ds.isUseCcm().toString()));
 
-      if (ds.isJTA() != null)
-         writer.writeAttribute(XML.ATTRIBUTE_JTA, ds.isJTA().toString());
-
-      if (ds.isConnectable() != null)
-         writer.writeAttribute(XML.ATTRIBUTE_CONNECTABLE, ds.isConnectable().toString());
+      if (ds.isConnectable() != null && (ds.hasExpression(XML.ATTRIBUTE_CONNECTABLE) ||
+                                         !Defaults.CONNECTABLE.equals(ds.isConnectable())))
+         writer.writeAttribute(XML.ATTRIBUTE_CONNECTABLE,
+                               ds.getValue(XML.ATTRIBUTE_CONNECTABLE, ds.isConnectable().toString()));
 
       if (ds.isTracking() != null)
-         writer.writeAttribute(XML.ATTRIBUTE_TRACKING, ds.isTracking().toString());
+         writer.writeAttribute(XML.ATTRIBUTE_TRACKING,
+                               ds.getValue(XML.ATTRIBUTE_TRACKING, ds.isTracking().toString()));
 
       if (ds.getConnectionUrl() != null)
       {
          writer.writeStartElement(XML.ELEMENT_CONNECTION_URL);
-         writer.writeCharacters(ds.getConnectionUrl());
+         writer.writeCharacters(ds.getValue(XML.ELEMENT_CONNECTION_URL, ds.getConnectionUrl()));
          writer.writeEndElement();
       }
 
       if (ds.getDriverClass() != null)
       {
          writer.writeStartElement(XML.ELEMENT_DRIVER_CLASS);
-         writer.writeCharacters(ds.getDriverClass());
+         writer.writeCharacters(ds.getValue(XML.ELEMENT_DRIVER_CLASS, ds.getDriverClass()));
          writer.writeEndElement();
       }
 
       if (ds.getDataSourceClass() != null)
       {
          writer.writeStartElement(XML.ELEMENT_DATASOURCE_CLASS);
-         writer.writeCharacters(ds.getDataSourceClass());
+         writer.writeCharacters(ds.getValue(XML.ELEMENT_DATASOURCE_CLASS, ds.getDataSourceClass()));
          writer.writeEndElement();
       }
 
       if (ds.getDriver() != null)
       {
          writer.writeStartElement(XML.ELEMENT_DRIVER);
-         writer.writeCharacters(ds.getDriver());
+         writer.writeCharacters(ds.getValue(XML.ELEMENT_DRIVER, ds.getDriver()));
          writer.writeEndElement();
       }
 
@@ -1345,7 +1398,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
             Map.Entry<String, String> entry = it.next();
             writer.writeStartElement(XML.ELEMENT_CONNECTION_PROPERTY);
             writer.writeAttribute(XML.ATTRIBUTE_NAME, entry.getKey());
-            writer.writeCharacters(entry.getValue());
+            writer.writeCharacters(ds.getValue(XML.ELEMENT_CONNECTION_PROPERTY, entry.getKey(), entry.getValue()));
             writer.writeEndElement();
          }
       }
@@ -1353,28 +1406,30 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       if (ds.getNewConnectionSql() != null)
       {
          writer.writeStartElement(XML.ELEMENT_NEW_CONNECTION_SQL);
-         writer.writeCharacters(ds.getNewConnectionSql());
+         writer.writeCharacters(ds.getValue(XML.ELEMENT_NEW_CONNECTION_SQL, ds.getNewConnectionSql()));
          writer.writeEndElement();
       }
 
       if (ds.getTransactionIsolation() != null)
       {
          writer.writeStartElement(XML.ELEMENT_TRANSACTION_ISOLATION);
-         writer.writeCharacters(ds.getTransactionIsolation().toString());
+         writer.writeCharacters(ds.getValue(XML.ELEMENT_TRANSACTION_ISOLATION,
+                                            ds.getTransactionIsolation().toString()));
          writer.writeEndElement();
       }
 
       if (ds.getUrlDelimiter() != null)
       {
          writer.writeStartElement(XML.ELEMENT_URL_DELIMITER);
-         writer.writeCharacters(ds.getUrlDelimiter());
+         writer.writeCharacters(ds.getValue(XML.ELEMENT_URL_DELIMITER, ds.getUrlDelimiter()));
          writer.writeEndElement();
       }
 
       if (ds.getUrlSelectorStrategyClassName() != null)
       {
          writer.writeStartElement(XML.ELEMENT_URL_SELECTOR_STRATEGY_CLASS_NAME);
-         writer.writeCharacters(ds.getUrlSelectorStrategyClassName());
+         writer.writeCharacters(ds.getValue(XML.ELEMENT_URL_SELECTOR_STRATEGY_CLASS_NAME,
+                                            ds.getUrlSelectorStrategyClassName()));
          writer.writeEndElement();
       }
 
@@ -1407,28 +1462,41 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       writer.writeStartElement(XML.ELEMENT_XA_DATASOURCE);
 
       if (xads.getJndiName() != null)
-         writer.writeAttribute(XML.ATTRIBUTE_JNDI_NAME, xads.getJndiName());
+         writer.writeAttribute(XML.ATTRIBUTE_JNDI_NAME,
+                               xads.getValue(XML.ATTRIBUTE_JNDI_NAME, xads.getJndiName()));
 
       if (xads.getPoolName() != null)
-         writer.writeAttribute(XML.ATTRIBUTE_POOL_NAME, xads.getPoolName());
+         writer.writeAttribute(XML.ATTRIBUTE_POOL_NAME,
+                               xads.getValue(XML.ATTRIBUTE_POOL_NAME, xads.getPoolName()));
 
-      if (xads.isEnabled() != null)
-         writer.writeAttribute(XML.ATTRIBUTE_ENABLED, xads.isEnabled().toString());
+      if (xads.isEnabled() != null && (xads.hasExpression(XML.ATTRIBUTE_ENABLED) ||
+                                       !Defaults.ENABLED.equals(xads.isEnabled())))
+         writer.writeAttribute(XML.ATTRIBUTE_ENABLED,
+                               xads.getValue(XML.ATTRIBUTE_ENABLED, xads.isEnabled().toString()));
 
-      if (xads.isUseJavaContext() != null)
-         writer.writeAttribute(XML.ATTRIBUTE_USE_JAVA_CONTEXT, xads.isUseJavaContext().toString());
+      if (xads.isUseJavaContext() != null && (xads.hasExpression(XML.ATTRIBUTE_USE_JAVA_CONTEXT) ||
+                                              !Defaults.USE_JAVA_CONTEXT.equals(xads.isUseJavaContext())))
+         writer.writeAttribute(XML.ATTRIBUTE_USE_JAVA_CONTEXT,
+                               xads.getValue(XML.ATTRIBUTE_USE_JAVA_CONTEXT, xads.isUseJavaContext().toString()));
 
-      if (xads.isSpy() != null)
-         writer.writeAttribute(XML.ATTRIBUTE_SPY, xads.isSpy().toString());
+      if (xads.isSpy() != null && (xads.hasExpression(XML.ATTRIBUTE_SPY) ||
+                                   !Defaults.SPY.equals(xads.isSpy())))
+         writer.writeAttribute(XML.ATTRIBUTE_SPY,
+                               xads.getValue(XML.ATTRIBUTE_SPY, xads.isSpy().toString()));
 
-      if (xads.isUseCcm() != null)
-         writer.writeAttribute(XML.ATTRIBUTE_USE_CCM, xads.isUseCcm().toString());
+      if (xads.isUseCcm() != null && (xads.hasExpression(XML.ATTRIBUTE_USE_CCM) ||
+                                      !Defaults.USE_CCM.equals(xads.isUseCcm())))
+         writer.writeAttribute(XML.ATTRIBUTE_USE_CCM,
+                               xads.getValue(XML.ATTRIBUTE_USE_CCM, xads.isUseCcm().toString()));
 
-      if (xads.isConnectable() != null)
-         writer.writeAttribute(XML.ATTRIBUTE_CONNECTABLE, xads.isConnectable().toString());
+      if (xads.isConnectable() != null && (xads.hasExpression(XML.ATTRIBUTE_CONNECTABLE) ||
+                                           !Defaults.CONNECTABLE.equals(xads.isConnectable())))
+         writer.writeAttribute(XML.ATTRIBUTE_CONNECTABLE,
+                               xads.getValue(XML.ATTRIBUTE_CONNECTABLE, xads.isConnectable().toString()));
 
       if (xads.isTracking() != null)
-         writer.writeAttribute(XML.ATTRIBUTE_TRACKING, xads.isTracking().toString());
+         writer.writeAttribute(XML.ATTRIBUTE_TRACKING,
+                               xads.getValue(XML.ATTRIBUTE_TRACKING, xads.isTracking().toString()));
 
       if (xads.getXaDataSourceProperty() != null && xads.getXaDataSourceProperty().size() > 0)
       {
@@ -1441,7 +1509,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
 
             writer.writeStartElement(XML.ELEMENT_XA_DATASOURCE_PROPERTY);
             writer.writeAttribute(XML.ATTRIBUTE_NAME, entry.getKey());
-            writer.writeCharacters(entry.getValue());
+            writer.writeCharacters(xads.getValue(XML.ELEMENT_XA_DATASOURCE_PROPERTY, entry.getKey(), entry.getValue()));
             writer.writeEndElement();
          }
       }
@@ -1449,49 +1517,51 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       if (xads.getXaDataSourceClass() != null)
       {
          writer.writeStartElement(XML.ELEMENT_XA_DATASOURCE_CLASS);
-         writer.writeCharacters(xads.getXaDataSourceClass());
+         writer.writeCharacters(xads.getValue(XML.ELEMENT_XA_DATASOURCE_CLASS, xads.getXaDataSourceClass()));
          writer.writeEndElement();
       }
 
       if (xads.getDriver() != null)
       {
          writer.writeStartElement(XML.ELEMENT_DRIVER);
-         writer.writeCharacters(xads.getDriver());
+         writer.writeCharacters(xads.getValue(XML.ELEMENT_DRIVER, xads.getDriver()));
          writer.writeEndElement();
       }
 
       if (xads.getUrlDelimiter() != null)
       {
          writer.writeStartElement(XML.ELEMENT_URL_DELIMITER);
-         writer.writeCharacters(xads.getUrlDelimiter());
+         writer.writeCharacters(xads.getValue(XML.ELEMENT_URL_DELIMITER, xads.getUrlDelimiter()));
          writer.writeEndElement();
       }
 
       if (xads.getUrlProperty() != null)
       {
          writer.writeStartElement(XML.ELEMENT_URL_PROPERTY);
-         writer.writeCharacters(xads.getUrlProperty());
+         writer.writeCharacters(xads.getValue(XML.ELEMENT_URL_PROPERTY, xads.getUrlProperty()));
          writer.writeEndElement();
       }
 
       if (xads.getUrlSelectorStrategyClassName() != null)
       {
          writer.writeStartElement(XML.ELEMENT_URL_SELECTOR_STRATEGY_CLASS_NAME);
-         writer.writeCharacters(xads.getUrlSelectorStrategyClassName());
+         writer.writeCharacters(xads.getValue(XML.ELEMENT_URL_SELECTOR_STRATEGY_CLASS_NAME,
+                                              xads.getUrlSelectorStrategyClassName()));
          writer.writeEndElement();
       }
 
       if (xads.getNewConnectionSql() != null)
       {
          writer.writeStartElement(XML.ELEMENT_NEW_CONNECTION_SQL);
-         writer.writeCharacters(xads.getNewConnectionSql());
+         writer.writeCharacters(xads.getValue(XML.ELEMENT_NEW_CONNECTION_SQL, xads.getNewConnectionSql()));
          writer.writeEndElement();
       }
 
       if (xads.getTransactionIsolation() != null)
       {
          writer.writeStartElement(XML.ELEMENT_TRANSACTION_ISOLATION);
-         writer.writeCharacters(xads.getTransactionIsolation().toString());
+         writer.writeCharacters(xads.getValue(XML.ELEMENT_TRANSACTION_ISOLATION,
+                                              xads.getTransactionIsolation().toString()));
          writer.writeEndElement();
       }
 
@@ -1527,35 +1597,39 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       writer.writeStartElement(XML.ELEMENT_DRIVER);
 
       if (drv.getName() != null)
-         writer.writeAttribute(XML.ATTRIBUTE_NAME, drv.getName());
+         writer.writeAttribute(XML.ATTRIBUTE_NAME,
+                               drv.getValue(XML.ATTRIBUTE_NAME, drv.getName()));
 
       if (drv.getModule() != null)
-         writer.writeAttribute(XML.ATTRIBUTE_MODULE, drv.getModule());
+         writer.writeAttribute(XML.ATTRIBUTE_MODULE,
+                               drv.getValue(XML.ATTRIBUTE_MODULE, drv.getModule()));
 
       if (drv.getMajorVersion() != null)
-         writer.writeAttribute(XML.ATTRIBUTE_MAJOR_VERSION, drv.getMajorVersion().toString());
+         writer.writeAttribute(XML.ATTRIBUTE_MAJOR_VERSION,
+                               drv.getValue(XML.ATTRIBUTE_MAJOR_VERSION, drv.getMajorVersion().toString()));
 
       if (drv.getMinorVersion() != null)
-         writer.writeAttribute(XML.ATTRIBUTE_MINOR_VERSION, drv.getMinorVersion().toString());
+         writer.writeAttribute(XML.ATTRIBUTE_MINOR_VERSION,
+                               drv.getValue(XML.ATTRIBUTE_MINOR_VERSION, drv.getMinorVersion().toString()));
 
       if (drv.getDriverClass() != null)
       {
          writer.writeStartElement(XML.ELEMENT_DRIVER_CLASS);
-         writer.writeCharacters(drv.getDriverClass());
+         writer.writeCharacters(drv.getValue(XML.ELEMENT_DRIVER_CLASS, drv.getDriverClass()));
          writer.writeEndElement();
       }
 
       if (drv.getDataSourceClass() != null)
       {
          writer.writeStartElement(XML.ELEMENT_DATASOURCE_CLASS);
-         writer.writeCharacters(drv.getDataSourceClass());
+         writer.writeCharacters(drv.getValue(XML.ELEMENT_DATASOURCE_CLASS, drv.getDataSourceClass()));
          writer.writeEndElement();
       }
 
       if (drv.getXaDataSourceClass() != null)
       {
          writer.writeStartElement(XML.ELEMENT_XA_DATASOURCE_CLASS);
-         writer.writeCharacters(drv.getXaDataSourceClass());
+         writer.writeCharacters(drv.getValue(XML.ELEMENT_XA_DATASOURCE_CLASS, drv.getXaDataSourceClass()));
          writer.writeEndElement();
       }
 
@@ -1572,45 +1646,50 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
    {
       writer.writeStartElement(XML.ELEMENT_POOL);
 
-      if (pool.getMinPoolSize() != null)
+      if (pool.getMinPoolSize() != null && (pool.hasExpression(XML.ELEMENT_MIN_POOL_SIZE) ||
+                                            !Defaults.MIN_POOL_SIZE.equals(pool.getMinPoolSize())))
       {
          writer.writeStartElement(XML.ELEMENT_MIN_POOL_SIZE);
-         writer.writeCharacters(pool.getMinPoolSize().toString());
+         writer.writeCharacters(pool.getValue(XML.ELEMENT_MIN_POOL_SIZE, pool.getMinPoolSize().toString()));
          writer.writeEndElement();
       }
 
       if (pool.getInitialPoolSize() != null)
       {
          writer.writeStartElement(XML.ELEMENT_INITIAL_POOL_SIZE);
-         writer.writeCharacters(pool.getInitialPoolSize().toString());
+         writer.writeCharacters(pool.getValue(XML.ELEMENT_INITIAL_POOL_SIZE, pool.getInitialPoolSize().toString()));
          writer.writeEndElement();
       }
 
-      if (pool.getMaxPoolSize() != null)
+      if (pool.getMaxPoolSize() != null && (pool.hasExpression(XML.ELEMENT_MAX_POOL_SIZE) ||
+                                            !Defaults.MAX_POOL_SIZE.equals(pool.getMaxPoolSize())))
       {
          writer.writeStartElement(XML.ELEMENT_MAX_POOL_SIZE);
-         writer.writeCharacters(pool.getMaxPoolSize().toString());
+         writer.writeCharacters(pool.getValue(XML.ELEMENT_MAX_POOL_SIZE, pool.getMaxPoolSize().toString()));
          writer.writeEndElement();
       }
 
-      if (pool.isPrefill() != null)
+      if (pool.isPrefill() != null && (pool.hasExpression(XML.ELEMENT_PREFILL) ||
+                                       !Defaults.PREFILL.equals(pool.isPrefill())))
       {
          writer.writeStartElement(XML.ELEMENT_PREFILL);
-         writer.writeCharacters(pool.isPrefill().toString());
+         writer.writeCharacters(pool.getValue(XML.ELEMENT_PREFILL, pool.isPrefill().toString()));
          writer.writeEndElement();
       }
 
-      if (pool.isUseStrictMin() != null)
+      if (pool.isUseStrictMin() != null && (pool.hasExpression(XML.ELEMENT_USE_STRICT_MIN) ||
+                                            !Defaults.USE_STRICT_MIN.equals(pool.isUseStrictMin())))
       {
          writer.writeStartElement(XML.ELEMENT_USE_STRICT_MIN);
-         writer.writeCharacters(pool.isUseStrictMin().toString());
+         writer.writeCharacters(pool.getValue(XML.ELEMENT_USE_STRICT_MIN, pool.isUseStrictMin().toString()));
          writer.writeEndElement();
       }
 
-      if (pool.getFlushStrategy() != null)
+      if (pool.getFlushStrategy() != null && (pool.hasExpression(XML.ELEMENT_FLUSH_STRATEGY) ||
+                                              !Defaults.FLUSH_STRATEGY.equals(pool.getFlushStrategy())))
       {
          writer.writeStartElement(XML.ELEMENT_FLUSH_STRATEGY);
-         writer.writeCharacters(pool.getFlushStrategy().toString());
+         writer.writeCharacters(pool.getValue(XML.ELEMENT_FLUSH_STRATEGY, pool.getFlushStrategy().toString()));
          writer.writeEndElement();
       }
 
@@ -1623,7 +1702,9 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       if (pool.getConnectionListener() != null)
       {
          writer.writeStartElement(XML.ELEMENT_CONNECTION_LISTENER);
-         writer.writeAttribute(XML.ATTRIBUTE_CLASS_NAME, pool.getConnectionListener().getClassName());
+         writer.writeAttribute(XML.ATTRIBUTE_CLASS_NAME,
+                               pool.getConnectionListener().getValue(XML.ATTRIBUTE_CLASS_NAME,
+                                                                     pool.getConnectionListener().getClassName()));
 
          if (pool.getConnectionListener().getConfigPropertiesMap().size() > 0)
          {
@@ -1636,7 +1717,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
 
                writer.writeStartElement(XML.ELEMENT_CONFIG_PROPERTY);
                writer.writeAttribute(XML.ATTRIBUTE_NAME, entry.getKey());
-               writer.writeCharacters(entry.getValue());
+               writer.writeCharacters(pool.getConnectionListener().getValue(XML.ELEMENT_CONFIG_PROPERTY,
+                                                                            entry.getKey(), entry.getValue()));
                writer.writeEndElement();
             }
          }
@@ -1657,45 +1739,50 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
    {
       writer.writeStartElement(XML.ELEMENT_XA_POOL);
 
-      if (pool.getMinPoolSize() != null)
+      if (pool.getMinPoolSize() != null && (pool.hasExpression(XML.ELEMENT_MIN_POOL_SIZE) ||
+                                            !Defaults.MIN_POOL_SIZE.equals(pool.getMinPoolSize())))
       {
          writer.writeStartElement(XML.ELEMENT_MIN_POOL_SIZE);
-         writer.writeCharacters(pool.getMinPoolSize().toString());
+         writer.writeCharacters(pool.getValue(XML.ELEMENT_MIN_POOL_SIZE, pool.getMinPoolSize().toString()));
          writer.writeEndElement();
       }
 
       if (pool.getInitialPoolSize() != null)
       {
          writer.writeStartElement(XML.ELEMENT_INITIAL_POOL_SIZE);
-         writer.writeCharacters(pool.getInitialPoolSize().toString());
+         writer.writeCharacters(pool.getValue(XML.ELEMENT_INITIAL_POOL_SIZE, pool.getInitialPoolSize().toString()));
          writer.writeEndElement();
       }
 
-      if (pool.getMaxPoolSize() != null)
+      if (pool.getMaxPoolSize() != null && (pool.hasExpression(XML.ELEMENT_MAX_POOL_SIZE) ||
+                                            !Defaults.MAX_POOL_SIZE.equals(pool.getMaxPoolSize())))
       {
          writer.writeStartElement(XML.ELEMENT_MAX_POOL_SIZE);
-         writer.writeCharacters(pool.getMaxPoolSize().toString());
+         writer.writeCharacters(pool.getValue(XML.ELEMENT_MAX_POOL_SIZE, pool.getMaxPoolSize().toString()));
          writer.writeEndElement();
       }
 
-      if (pool.isPrefill() != null)
+      if (pool.isPrefill() != null && (pool.hasExpression(XML.ELEMENT_PREFILL) ||
+                                       !Defaults.PREFILL.equals(pool.isPrefill())))
       {
          writer.writeStartElement(XML.ELEMENT_PREFILL);
-         writer.writeCharacters(pool.isPrefill().toString());
+         writer.writeCharacters(pool.getValue(XML.ELEMENT_PREFILL, pool.isPrefill().toString()));
          writer.writeEndElement();
       }
 
-      if (pool.isUseStrictMin() != null)
+      if (pool.isUseStrictMin() != null && (pool.hasExpression(XML.ELEMENT_USE_STRICT_MIN) ||
+                                            !Defaults.USE_STRICT_MIN.equals(pool.isUseStrictMin())))
       {
          writer.writeStartElement(XML.ELEMENT_USE_STRICT_MIN);
-         writer.writeCharacters(pool.isUseStrictMin().toString());
+         writer.writeCharacters(pool.getValue(XML.ELEMENT_USE_STRICT_MIN, pool.isUseStrictMin().toString()));
          writer.writeEndElement();
       }
 
-      if (pool.getFlushStrategy() != null)
+      if (pool.getFlushStrategy() != null && (pool.hasExpression(XML.ELEMENT_FLUSH_STRATEGY) ||
+                                              !Defaults.FLUSH_STRATEGY.equals(pool.getFlushStrategy())))
       {
          writer.writeStartElement(XML.ELEMENT_FLUSH_STRATEGY);
-         writer.writeCharacters(pool.getFlushStrategy().toString());
+         writer.writeCharacters(pool.getValue(XML.ELEMENT_FLUSH_STRATEGY, pool.getFlushStrategy().toString()));
          writer.writeEndElement();
       }
 
@@ -1708,7 +1795,9 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       if (pool.getConnectionListener() != null)
       {
          writer.writeStartElement(XML.ELEMENT_CONNECTION_LISTENER);
-         writer.writeAttribute(XML.ATTRIBUTE_CLASS_NAME, pool.getConnectionListener().getClassName());
+         writer.writeAttribute(XML.ATTRIBUTE_CLASS_NAME,
+                               pool.getConnectionListener().getValue(XML.ATTRIBUTE_CLASS_NAME,
+                                                                     pool.getConnectionListener().getClassName()));
 
          if (pool.getConnectionListener().getConfigPropertiesMap().size() > 0)
          {
@@ -1721,7 +1810,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
 
                writer.writeStartElement(XML.ELEMENT_CONFIG_PROPERTY);
                writer.writeAttribute(XML.ATTRIBUTE_NAME, entry.getKey());
-               writer.writeCharacters(entry.getValue());
+               writer.writeCharacters(pool.getConnectionListener().getValue(XML.ELEMENT_CONFIG_PROPERTY,
+                                                                            entry.getKey(), entry.getValue()));
                writer.writeEndElement();
             }
          }
@@ -1732,7 +1822,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       if (pool.isIsSameRmOverride() != null)
       {
          writer.writeStartElement(XML.ELEMENT_IS_SAME_RM_OVERRIDE);
-         writer.writeCharacters(pool.isIsSameRmOverride().toString());
+         writer.writeCharacters(pool.getValue(XML.ELEMENT_IS_SAME_RM_OVERRIDE, pool.isIsSameRmOverride().toString()));
          writer.writeEndElement();
       }
 
@@ -1746,17 +1836,19 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
          writer.writeEmptyElement(XML.ELEMENT_NO_TX_SEPARATE_POOLS);
       }
 
-      if (pool.isPadXid() != null)
+      if (pool.isPadXid() != null && (pool.hasExpression(XML.ELEMENT_PAD_XID) ||
+                                      !Defaults.PAD_XID.equals(pool.isPadXid())))
       {
          writer.writeStartElement(XML.ELEMENT_PAD_XID);
-         writer.writeCharacters(pool.isPadXid().toString());
+         writer.writeCharacters(pool.getValue(XML.ELEMENT_PAD_XID, pool.isPadXid().toString()));
          writer.writeEndElement();
       }
 
-      if (pool.isWrapXaResource() != null)
+      if (pool.isWrapXaResource() != null && (pool.hasExpression(XML.ELEMENT_WRAP_XA_RESOURCE) ||
+                                              !Defaults.WRAP_XA_RESOURCE.equals(pool.isWrapXaResource())))
       {
          writer.writeStartElement(XML.ELEMENT_WRAP_XA_RESOURCE);
-         writer.writeCharacters(pool.isWrapXaResource().toString());
+         writer.writeCharacters(pool.getValue(XML.ELEMENT_WRAP_XA_RESOURCE, pool.isWrapXaResource().toString()));
          writer.writeEndElement();
       }
 
@@ -1776,24 +1868,26 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       if (s.getUserName() != null)
       {
          writer.writeStartElement(XML.ELEMENT_USER_NAME);
-         writer.writeCharacters(s.getUserName());
+         writer.writeCharacters(s.getValue(XML.ELEMENT_USER_NAME, s.getUserName()));
          writer.writeEndElement();
 
          writer.writeStartElement(XML.ELEMENT_PASSWORD);
-         writer.writeCharacters(s.getPassword());
+         writer.writeCharacters(s.getValue(XML.ELEMENT_PASSWORD, s.getPassword()));
          writer.writeEndElement();
       }
       else if (s.getSecurityDomain() != null)
       {
          writer.writeStartElement(XML.ELEMENT_SECURITY_DOMAIN);
-         writer.writeCharacters(s.getSecurityDomain());
+         writer.writeCharacters(s.getValue(XML.ELEMENT_SECURITY_DOMAIN, s.getSecurityDomain()));
          writer.writeEndElement();
       }
 
       if (s.getReauthPlugin() != null)
       {
          writer.writeStartElement(XML.ELEMENT_REAUTH_PLUGIN);
-         writer.writeAttribute(XML.ATTRIBUTE_CLASS_NAME, s.getReauthPlugin().getClassName());
+         writer.writeAttribute(XML.ATTRIBUTE_CLASS_NAME,
+                               s.getReauthPlugin().getValue(XML.ATTRIBUTE_CLASS_NAME,
+                                                            s.getReauthPlugin().getClassName()));
 
          if (s.getReauthPlugin().getConfigPropertiesMap().size() > 0)
          {
@@ -1805,7 +1899,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
 
                writer.writeStartElement(XML.ELEMENT_CONFIG_PROPERTY);
                writer.writeAttribute(XML.ATTRIBUTE_NAME, entry.getKey());
-               writer.writeCharacters(entry.getValue());
+               writer.writeCharacters(s.getReauthPlugin().getValue(XML.ELEMENT_CONFIG_PROPERTY,
+                                                                   entry.getKey(), entry.getValue()));
                writer.writeEndElement();
             }
          }
@@ -1829,7 +1924,9 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       if (v.getValidConnectionChecker() != null)
       {
          writer.writeStartElement(XML.ELEMENT_VALID_CONNECTION_CHECKER);
-         writer.writeAttribute(XML.ATTRIBUTE_CLASS_NAME, v.getValidConnectionChecker().getClassName());
+         writer.writeAttribute(XML.ATTRIBUTE_CLASS_NAME,
+                               v.getValidConnectionChecker().getValue(XML.ATTRIBUTE_CLASS_NAME,
+                                                                      v.getValidConnectionChecker().getClassName()));
 
          if (v.getValidConnectionChecker().getConfigPropertiesMap().size() > 0)
          {
@@ -1842,7 +1939,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
 
                writer.writeStartElement(XML.ELEMENT_CONFIG_PROPERTY);
                writer.writeAttribute(XML.ATTRIBUTE_NAME, entry.getKey());
-               writer.writeCharacters(entry.getValue());
+               writer.writeCharacters(v.getValidConnectionChecker().getValue(XML.ELEMENT_CONFIG_PROPERTY,
+                                                                             entry.getKey(), entry.getValue()));
                writer.writeEndElement();
             }
          }
@@ -1853,42 +1951,45 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       if (v.getCheckValidConnectionSql() != null)
       {
          writer.writeStartElement(XML.ELEMENT_CHECK_VALID_CONNECTION_SQL);
-         writer.writeCharacters(v.getCheckValidConnectionSql());
+         writer.writeCharacters(v.getValue(XML.ELEMENT_CHECK_VALID_CONNECTION_SQL, v.getCheckValidConnectionSql()));
          writer.writeEndElement();
       }
 
       if (v.isValidateOnMatch() != null)
       {
          writer.writeStartElement(XML.ELEMENT_VALIDATE_ON_MATCH);
-         writer.writeCharacters(v.isValidateOnMatch().toString());
+         writer.writeCharacters(v.getValue(XML.ELEMENT_VALIDATE_ON_MATCH, v.isValidateOnMatch().toString()));
          writer.writeEndElement();
       }
 
       if (v.isBackgroundValidation() != null)
       {
          writer.writeStartElement(XML.ELEMENT_BACKGROUND_VALIDATION);
-         writer.writeCharacters(v.isBackgroundValidation().toString());
+         writer.writeCharacters(v.getValue(XML.ELEMENT_BACKGROUND_VALIDATION, v.isBackgroundValidation().toString()));
          writer.writeEndElement();
       }
 
       if (v.getBackgroundValidationMillis() != null)
       {
          writer.writeStartElement(XML.ELEMENT_BACKGROUND_VALIDATION_MILLIS);
-         writer.writeCharacters(v.getBackgroundValidationMillis().toString());
+         writer.writeCharacters(v.getValue(XML.ELEMENT_BACKGROUND_VALIDATION_MILLIS,
+                                           v.getBackgroundValidationMillis().toString()));
          writer.writeEndElement();
       }
 
       if (v.isUseFastFail() != null)
       {
          writer.writeStartElement(XML.ELEMENT_USE_FAST_FAIL);
-         writer.writeCharacters(v.isUseFastFail().toString());
+         writer.writeCharacters(v.getValue(XML.ELEMENT_USE_FAST_FAIL, v.isUseFastFail().toString()));
          writer.writeEndElement();
       }
 
       if (v.getStaleConnectionChecker() != null)
       {
          writer.writeStartElement(XML.ELEMENT_STALE_CONNECTION_CHECKER);
-         writer.writeAttribute(XML.ATTRIBUTE_CLASS_NAME, v.getStaleConnectionChecker().getClassName());
+         writer.writeAttribute(XML.ATTRIBUTE_CLASS_NAME,
+                               v.getStaleConnectionChecker().getValue(XML.ATTRIBUTE_CLASS_NAME,
+                                                                      v.getStaleConnectionChecker().getClassName()));
 
          if (v.getStaleConnectionChecker().getConfigPropertiesMap().size() > 0)
          {
@@ -1901,7 +2002,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
 
                writer.writeStartElement(XML.ELEMENT_CONFIG_PROPERTY);
                writer.writeAttribute(XML.ATTRIBUTE_NAME, entry.getKey());
-               writer.writeCharacters(entry.getValue());
+               writer.writeCharacters(v.getStaleConnectionChecker().getValue(XML.ELEMENT_CONFIG_PROPERTY,
+                                                                             entry.getKey(), entry.getValue()));
                writer.writeEndElement();
             }
          }
@@ -1912,7 +2014,9 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       if (v.getExceptionSorter() != null)
       {
          writer.writeStartElement(XML.ELEMENT_EXCEPTION_SORTER);
-         writer.writeAttribute(XML.ATTRIBUTE_CLASS_NAME, v.getExceptionSorter().getClassName());
+         writer.writeAttribute(XML.ATTRIBUTE_CLASS_NAME,
+                               v.getExceptionSorter().getValue(XML.ATTRIBUTE_CLASS_NAME,
+                                                               v.getExceptionSorter().getClassName()));
 
          if (v.getExceptionSorter().getConfigPropertiesMap().size() > 0)
          {
@@ -1925,7 +2029,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
 
                writer.writeStartElement(XML.ELEMENT_CONFIG_PROPERTY);
                writer.writeAttribute(XML.ATTRIBUTE_NAME, entry.getKey());
-               writer.writeCharacters(entry.getValue());
+               writer.writeCharacters(v.getExceptionSorter().getValue(XML.ELEMENT_CONFIG_PROPERTY,
+                                                                      entry.getKey(), entry.getValue()));
                writer.writeEndElement();
             }
          }
@@ -1949,14 +2054,15 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       if (t.getBlockingTimeoutMillis() != null)
       {
          writer.writeStartElement(XML.ELEMENT_BLOCKING_TIMEOUT_MILLIS);
-         writer.writeCharacters(t.getBlockingTimeoutMillis().toString());
+         writer.writeCharacters(t.getValue(XML.ELEMENT_BLOCKING_TIMEOUT_MILLIS,
+                                           t.getBlockingTimeoutMillis().toString()));
          writer.writeEndElement();
       }
 
       if (t.getIdleTimeoutMinutes() != null)
       {
          writer.writeStartElement(XML.ELEMENT_IDLE_TIMEOUT_MINUTES);
-         writer.writeCharacters(t.getIdleTimeoutMinutes().toString());
+         writer.writeCharacters(t.getValue(XML.ELEMENT_IDLE_TIMEOUT_MINUTES, t.getIdleTimeoutMinutes().toString()));
          writer.writeEndElement();
       }
 
@@ -1968,35 +2074,36 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       if (t.getQueryTimeout() != null)
       {
          writer.writeStartElement(XML.ELEMENT_QUERY_TIMEOUT);
-         writer.writeCharacters(t.getQueryTimeout().toString());
+         writer.writeCharacters(t.getValue(XML.ELEMENT_QUERY_TIMEOUT, t.getQueryTimeout().toString()));
          writer.writeEndElement();
       }
 
       if (t.getUseTryLock() != null)
       {
          writer.writeStartElement(XML.ELEMENT_USE_TRY_LOCK);
-         writer.writeCharacters(t.getUseTryLock().toString());
+         writer.writeCharacters(t.getValue(XML.ELEMENT_USE_TRY_LOCK, t.getUseTryLock().toString()));
          writer.writeEndElement();
       }
 
       if (t.getAllocationRetry() != null)
       {
          writer.writeStartElement(XML.ELEMENT_ALLOCATION_RETRY);
-         writer.writeCharacters(t.getAllocationRetry().toString());
+         writer.writeCharacters(t.getValue(XML.ELEMENT_ALLOCATION_RETRY, t.getAllocationRetry().toString()));
          writer.writeEndElement();
       }
 
       if (t.getAllocationRetryWaitMillis() != null)
       {
          writer.writeStartElement(XML.ELEMENT_ALLOCATION_RETRY_WAIT_MILLIS);
-         writer.writeCharacters(t.getAllocationRetryWaitMillis().toString());
+         writer.writeCharacters(t.getValue(XML.ELEMENT_ALLOCATION_RETRY_WAIT_MILLIS,
+                                           t.getAllocationRetryWaitMillis().toString()));
          writer.writeEndElement();
       }
 
       if (t.getXaResourceTimeout() != null)
       {
          writer.writeStartElement(XML.ELEMENT_XA_RESOURCE_TIMEOUT);
-         writer.writeCharacters(t.getXaResourceTimeout().toString());
+         writer.writeCharacters(t.getValue(XML.ELEMENT_XA_RESOURCE_TIMEOUT, t.getXaResourceTimeout().toString()));
          writer.writeEndElement();
       }
 
@@ -2016,14 +2123,15 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       if (s.getTrackStatements() != null)
       {
          writer.writeStartElement(XML.ELEMENT_TRACK_STATEMENTS);
-         writer.writeCharacters(s.getTrackStatements().toString());
+         writer.writeCharacters(s.getValue(XML.ELEMENT_TRACK_STATEMENTS, s.getTrackStatements().toString()));
          writer.writeEndElement();
       }
 
       if (s.getPreparedStatementsCacheSize() != null)
       {
          writer.writeStartElement(XML.ELEMENT_PREPARED_STATEMENT_CACHE_SIZE);
-         writer.writeCharacters(s.getPreparedStatementsCacheSize().toString());
+         writer.writeCharacters(s.getValue(XML.ELEMENT_PREPARED_STATEMENT_CACHE_SIZE,
+                                           s.getPreparedStatementsCacheSize().toString()));
          writer.writeEndElement();
       }
 

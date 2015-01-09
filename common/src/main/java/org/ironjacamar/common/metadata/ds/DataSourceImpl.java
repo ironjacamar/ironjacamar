@@ -20,6 +20,7 @@
  */
 package org.ironjacamar.common.metadata.ds;
 
+import org.ironjacamar.common.api.metadata.Defaults;
 import org.ironjacamar.common.api.metadata.ds.DataSource;
 import org.ironjacamar.common.api.metadata.ds.DsPool;
 import org.ironjacamar.common.api.metadata.ds.DsSecurity;
@@ -88,6 +89,7 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
     * @param connectable connectable
     * @param tracking tracking
     * @param pool pool
+    * @param expressions expressions
     * @throws ValidateException ValidateException
     */
    public DataSourceImpl(String connectionUrl, String driverClass, String dataSourceClass, String driver,
@@ -95,11 +97,13 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
                          Timeout timeout, DsSecurity security, Statement statement, Validation validation, 
                          String urlDelimiter, String urlSelectorStrategyClassName, String newConnectionSql, 
                          Boolean useJavaContext, String poolName, Boolean enabled, String jndiName, 
-                         Boolean spy, Boolean useccm, Boolean jta, Boolean connectable, Boolean tracking, DsPool pool)
+                         Boolean spy, Boolean useccm, Boolean jta, Boolean connectable, Boolean tracking, DsPool pool,
+                         Map<String, String> expressions)
       throws ValidateException
    {
       super(transactionIsolation, timeout, security, statement, validation, urlDelimiter, urlSelectorStrategyClassName,
-            useJavaContext, poolName, enabled, jndiName, spy, useccm, driver, newConnectionSql, connectable, tracking);
+            useJavaContext, poolName, enabled, jndiName, spy, useccm, driver, newConnectionSql, connectable, tracking,
+            expressions);
 
       this.jta = jta;
       this.connectionUrl = connectionUrl;
@@ -285,31 +289,31 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
 
       sb.append("<datasource");
 
+      if (jta != null && !Defaults.JTA.equals(jta))
+         sb.append(" ").append(XML.ATTRIBUTE_JTA).append("=\"").append(jta).append("\"");
+
       if (jndiName != null)
          sb.append(" ").append(XML.ATTRIBUTE_JNDI_NAME).append("=\"").append(jndiName).append("\"");
 
       if (poolName != null)
          sb.append(" ").append(XML.ATTRIBUTE_POOL_NAME).append("=\"").append(poolName).append("\"");
 
-      if (enabled != null)
+      if (enabled != null && !Defaults.ENABLED.equals(enabled))
          sb.append(" ").append(XML.ATTRIBUTE_ENABLED).append("=\"").append(enabled).append("\"");
 
-      if (useJavaContext != null)
+      if (useJavaContext != null && !Defaults.USE_JAVA_CONTEXT.equals(useJavaContext))
       {
          sb.append(" ").append(XML.ATTRIBUTE_USE_JAVA_CONTEXT);
          sb.append("=\"").append(useJavaContext).append("\"");
       }
 
-      if (spy != null)
+      if (spy != null && !Defaults.SPY.equals(spy))
          sb.append(" ").append(XML.ATTRIBUTE_SPY).append("=\"").append(spy).append("\"");
 
-      if (useCcm != null)
+      if (useCcm != null && !Defaults.USE_CCM.equals(useCcm))
          sb.append(" ").append(XML.ATTRIBUTE_USE_CCM).append("=\"").append(useCcm).append("\"");
 
-      if (jta != null)
-         sb.append(" ").append(XML.ATTRIBUTE_JTA).append("=\"").append(jta).append("\"");
-
-      if (connectable != null)
+      if (connectable != null && !Defaults.CONNECTABLE.equals(connectable))
          sb.append(" ").append(XML.ATTRIBUTE_CONNECTABLE).append("=\"").append(connectable).append("\"");
 
       if (tracking != null)

@@ -23,6 +23,9 @@ package org.ironjacamar.common.metadata.ds;
 import org.ironjacamar.common.CommonBundle;
 import org.ironjacamar.common.api.metadata.ds.Statement;
 import org.ironjacamar.common.api.validator.ValidateException;
+import org.ironjacamar.common.metadata.common.AbstractMetadata;
+
+import java.util.Map;
 
 import org.jboss.logging.Messages;
 
@@ -33,7 +36,7 @@ import org.jboss.logging.Messages;
  * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
-public class StatementImpl implements Statement
+public class StatementImpl extends AbstractMetadata implements Statement
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = 3361665706947342366L;
@@ -53,12 +56,14 @@ public class StatementImpl implements Statement
     * @param sharePreparedStatements sharePreparedStatements
     * @param preparedStatementsCacheSize preparedStatementsCacheSize
     * @param trackStatements trackStatements
+    * @param expressions expressions
     * @throws ValidateException ValidateException
     */
    public StatementImpl(Boolean sharePreparedStatements, Long preparedStatementsCacheSize,
-      TrackStatementsEnum trackStatements) throws ValidateException
+                        TrackStatementsEnum trackStatements,
+                        Map<String, String> expressions) throws ValidateException
    {
-      super();
+      super(expressions);
       this.sharePreparedStatements = sharePreparedStatements;
       this.preparedStatementsCacheSize = preparedStatementsCacheSize;
       this.trackStatements = trackStatements;

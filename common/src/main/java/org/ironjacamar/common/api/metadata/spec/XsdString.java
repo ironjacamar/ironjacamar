@@ -124,6 +124,30 @@ public class XsdString implements IdDecoratedMetadata, CopyableMetaData
    /**
     * {@inheritDoc}
     */
+   public boolean hasExpression(String key)
+   {
+      return false;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String getValue(String key, String v)
+   {
+      return value;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String getValue(String key, String subkey, String v)
+   {
+      return value;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public int hashCode()
    {
       final int prime = 31;

@@ -23,6 +23,9 @@ package org.ironjacamar.common.metadata.ds;
 import org.ironjacamar.common.CommonBundle;
 import org.ironjacamar.common.api.metadata.ds.Driver;
 import org.ironjacamar.common.api.validator.ValidateException;
+import org.ironjacamar.common.metadata.common.AbstractMetadata;
+
+import java.util.Map;
 
 import org.jboss.logging.Messages;
 
@@ -33,7 +36,7 @@ import org.jboss.logging.Messages;
  * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
-public class DriverImpl implements Driver
+public class DriverImpl extends AbstractMetadata implements Driver
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = 6228505574424288182L;
@@ -66,13 +69,14 @@ public class DriverImpl implements Driver
     * @param driverClass driverClass
     * @param dataSourceClass xaDataSourceClass
     * @param xaDataSourceClass xaDataSourceClass
+    * @param expressions expressions
     * @throws ValidateException in case name is not specified
     */
    public DriverImpl(String name, Integer majorVersion, Integer minorVersion, String module, String driverClass,
-                     String dataSourceClass, String xaDataSourceClass)
+                     String dataSourceClass, String xaDataSourceClass, Map<String, String> expressions)
       throws ValidateException
    {
-      super();
+      super(expressions);
       this.name = name;
       this.majorVersion = majorVersion;
       this.minorVersion = minorVersion;

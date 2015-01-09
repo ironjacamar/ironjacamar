@@ -45,6 +45,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -77,7 +78,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
    protected AdminObject parseAdminObjects(XMLStreamReader reader) throws XMLStreamException,
       ParserException
    {
-      Map<String, String> configProperties = new HashMap<String, String>();
+      Map<String, String> configProperties = new TreeMap<String, String>();
 
       //attributes reading
       Boolean useJavaContext = Defaults.USE_JAVA_CONTEXT;
@@ -86,6 +87,8 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       String jndiName = null;
       String poolName = null;
 
+      HashMap<String, String> expressions = new HashMap<String, String>();
+
       int attributeSize = reader.getAttributeCount();
 
       for (int i = 0; i < attributeSize; i++)
@@ -93,23 +96,23 @@ public abstract class CommonIronJacamarParser extends AbstractParser
          switch (reader.getAttributeLocalName(i))
          {
             case CommonXML.ATTRIBUTE_ENABLED : {
-               enabled = attributeAsBoolean(reader, CommonXML.ATTRIBUTE_ENABLED, true);
+               enabled = attributeAsBoolean(reader, CommonXML.ATTRIBUTE_ENABLED, true, expressions);
                break;
             }
             case CommonXML.ATTRIBUTE_JNDI_NAME : {
-               jndiName = attributeAsString(reader, CommonXML.ATTRIBUTE_JNDI_NAME);
+               jndiName = attributeAsString(reader, CommonXML.ATTRIBUTE_JNDI_NAME, expressions);
                break;
             }
             case CommonXML.ATTRIBUTE_CLASS_NAME : {
-               className = attributeAsString(reader, CommonXML.ATTRIBUTE_CLASS_NAME);
+               className = attributeAsString(reader, CommonXML.ATTRIBUTE_CLASS_NAME, expressions);
                break;
             }
             case CommonXML.ATTRIBUTE_USE_JAVA_CONTEXT : {
-               useJavaContext = attributeAsBoolean(reader, CommonXML.ATTRIBUTE_USE_JAVA_CONTEXT, true);
+               useJavaContext = attributeAsBoolean(reader, CommonXML.ATTRIBUTE_USE_JAVA_CONTEXT, true, expressions);
                break;
             }
             case CommonXML.ATTRIBUTE_POOL_NAME : {
-               poolName = attributeAsString(reader, CommonXML.ATTRIBUTE_POOL_NAME);
+               poolName = attributeAsString(reader, CommonXML.ATTRIBUTE_POOL_NAME, expressions);
                break;
             }
             default :
@@ -128,7 +131,8 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                if (CommonXML.ELEMENT_ADMIN_OBJECT.equals(reader.getLocalName()))
                {
                   return new AdminObjectImpl(configProperties, className, jndiName, poolName, enabled,
-                                             useJavaContext);
+                                             useJavaContext,
+                                             expressions.size() > 0 ? expressions : null);
                }
                else
                {
@@ -146,7 +150,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                switch (reader.getLocalName())
                {
                   case CommonXML.ELEMENT_CONFIG_PROPERTY : {
-                     parseConfigProperty(configProperties, reader);
+                     parseConfigProperty(configProperties, reader, CommonXML.ELEMENT_CONFIG_PROPERTY, expressions);
                      break;
                   }
                   default :
@@ -231,6 +235,8 @@ public abstract class CommonIronJacamarParser extends AbstractParser
 
       boolean userMappingEnabled = false;
 
+      HashMap<String, String> expressions = new HashMap<String, String>();
+
       while (reader.hasNext())
       {
          switch (reader.nextTag())
@@ -240,7 +246,8 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                {
                   return new WorkManagerSecurityImpl(mappingRequired, domain,
                                                      defaultPrincipal, defaultGroups,
-                                                     userMappings, groupMappings);
+                                                     userMappings, groupMappings,
+                                                     expressions.size() > 0 ? expressions : null);
                }
                else
                {
@@ -271,22 +278,25 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                      break;
                   }
                   case CommonXML.ELEMENT_MAPPING_REQUIRED : {
-                     mappingRequired = elementAsBoolean(reader);
+                     mappingRequired = elementAsBoolean(reader, CommonXML.ELEMENT_MAPPING_REQUIRED, expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_DOMAIN : {
-                     domain = elementAsString(reader);
+                     domain = elementAsString(reader, CommonXML.ELEMENT_DOMAIN, expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_DEFAULT_PRINCIPAL : {
-                     defaultPrincipal = elementAsString(reader);
+                     defaultPrincipal = elementAsString(reader, CommonXML.ELEMENT_DEFAULT_PRINCIPAL, expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_GROUP : {
                      if (defaultGroups == null)
                         defaultGroups = new ArrayList<String>(1);
 
-                     defaultGroups.add(elementAsString(reader));
+                     defaultGroups.add(elementAsString(reader,
+                                                       getExpressionKey(CommonXML.ELEMENT_GROUP,
+                                                                        Integer.toString(defaultGroups.size())),
+                                                       expressions));
                      break;
                   }
                   case CommonXML.ELEMENT_USERS : {
@@ -303,14 +313,14 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                         if (userMappings == null)
                            userMappings = new HashMap<String, String>();
 
-                        String from = attributeAsString(reader, CommonXML.ATTRIBUTE_FROM);
+                        String from = attributeAsString(reader, CommonXML.ATTRIBUTE_FROM, expressions);
 
                         if (from == null || from.trim().equals(""))
                            throw new ParserException(
                               bundle.requiredAttributeMissing(CommonXML.ATTRIBUTE_FROM,
                                                               reader.getLocalName()));
 
-                        String to = attributeAsString(reader, CommonXML.ATTRIBUTE_TO);
+                        String to = attributeAsString(reader, CommonXML.ATTRIBUTE_TO, expressions);
 
                         if (to == null || to.trim().equals(""))
                            throw new ParserException(
@@ -324,14 +334,14 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                         if (groupMappings == null)
                            groupMappings = new HashMap<String, String>();
 
-                        String from = attributeAsString(reader, CommonXML.ATTRIBUTE_FROM);
+                        String from = attributeAsString(reader, CommonXML.ATTRIBUTE_FROM, expressions);
 
                         if (from == null || from.trim().equals(""))
                            throw new ParserException(
                               bundle.requiredAttributeMissing(CommonXML.ATTRIBUTE_FROM,
                                                               reader.getLocalName()));
 
-                        String to = attributeAsString(reader, CommonXML.ATTRIBUTE_TO);
+                        String to = attributeAsString(reader, CommonXML.ATTRIBUTE_TO, expressions);
 
                         if (to == null || to.trim().equals(""))
                            throw new ParserException(
@@ -369,7 +379,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
    protected ConnectionDefinition parseConnectionDefinitions(XMLStreamReader reader, Boolean isXA)
       throws XMLStreamException, ParserException, ValidateException
    {
-      Map<String, String> configProperties = new HashMap<String, String>();
+      Map<String, String> configProperties = new TreeMap<String, String>();
       Security security = null;
       Timeout timeout = null;
       Validation validation = null;
@@ -389,6 +399,8 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       Boolean tracking = Defaults.TRACKING;
       int attributeSize = reader.getAttributeCount();
 
+      HashMap<String, String> expressions = new HashMap<String, String>();
+
       if (isXA == null)
          isXA = Boolean.FALSE;
 
@@ -397,44 +409,46 @@ public abstract class CommonIronJacamarParser extends AbstractParser
          switch (reader.getAttributeLocalName(i))
          {
             case CommonXML.ATTRIBUTE_ENABLED : {
-               enabled = attributeAsBoolean(reader, CommonXML.ATTRIBUTE_ENABLED, Defaults.ENABLED);
+               enabled = attributeAsBoolean(reader, CommonXML.ATTRIBUTE_ENABLED, Defaults.ENABLED, expressions);
                break;
             }
             case CommonXML.ATTRIBUTE_JNDI_NAME : {
-               jndiName = attributeAsString(reader, CommonXML.ATTRIBUTE_JNDI_NAME);
+               jndiName = attributeAsString(reader, CommonXML.ATTRIBUTE_JNDI_NAME, expressions);
                break;
             }
             case CommonXML.ATTRIBUTE_CLASS_NAME : {
-               className = attributeAsString(reader, CommonXML.ATTRIBUTE_CLASS_NAME);
+               className = attributeAsString(reader, CommonXML.ATTRIBUTE_CLASS_NAME, expressions);
                break;
             }
             case CommonXML.ATTRIBUTE_POOL_NAME : {
-               poolName = attributeAsString(reader, CommonXML.ATTRIBUTE_POOL_NAME);
+               poolName = attributeAsString(reader, CommonXML.ATTRIBUTE_POOL_NAME, expressions);
                break;
             }
             case CommonXML.ATTRIBUTE_USE_JAVA_CONTEXT : {
                useJavaContext = attributeAsBoolean(reader, CommonXML.ATTRIBUTE_USE_JAVA_CONTEXT,
-                                                   Defaults.USE_JAVA_CONTEXT);
+                                                   Defaults.USE_JAVA_CONTEXT, expressions);
                break;
             }
             case CommonXML.ATTRIBUTE_USE_CCM : {
-               useCcm = attributeAsBoolean(reader, CommonXML.ATTRIBUTE_USE_CCM, Defaults.USE_CCM);
+               useCcm = attributeAsBoolean(reader, CommonXML.ATTRIBUTE_USE_CCM, Defaults.USE_CCM, expressions);
                break;
             }
             case CommonXML.ATTRIBUTE_SHARABLE : {
-               sharable = attributeAsBoolean(reader, CommonXML.ATTRIBUTE_SHARABLE, Defaults.SHARABLE);
+               sharable = attributeAsBoolean(reader, CommonXML.ATTRIBUTE_SHARABLE, Defaults.SHARABLE, expressions);
                break;
             }
             case CommonXML.ATTRIBUTE_ENLISTMENT : {
-               enlistment = attributeAsBoolean(reader, CommonXML.ATTRIBUTE_ENLISTMENT, Defaults.ENLISTMENT);
+               enlistment = attributeAsBoolean(reader, CommonXML.ATTRIBUTE_ENLISTMENT, Defaults.ENLISTMENT,
+                                               expressions);
                break;
             }
             case CommonXML.ATTRIBUTE_CONNECTABLE : {
-               connectable = attributeAsBoolean(reader, CommonXML.ATTRIBUTE_CONNECTABLE, Defaults.CONNECTABLE);
+               connectable = attributeAsBoolean(reader, CommonXML.ATTRIBUTE_CONNECTABLE, Defaults.CONNECTABLE,
+                                                expressions);
                break;
             }
             case CommonXML.ATTRIBUTE_TRACKING : {
-               tracking = attributeAsBoolean(reader, CommonXML.ATTRIBUTE_TRACKING, Defaults.TRACKING);
+               tracking = attributeAsBoolean(reader, CommonXML.ATTRIBUTE_TRACKING, Defaults.TRACKING, expressions);
                break;
             }
             default :
@@ -456,7 +470,8 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                                                       useJavaContext, useCcm, sharable, enlistment,
                                                       connectable, tracking,
                                                       pool, timeout, validation,
-                                                      security, recovery, isXA);
+                                                      security, recovery, isXA,
+                                                      expressions.size() > 0 ? expressions : null);
                }
                else
                {
@@ -480,7 +495,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                switch (reader.getLocalName())
                {
                   case CommonXML.ELEMENT_CONFIG_PROPERTY : {
-                     parseConfigProperty(configProperties, reader);
+                     parseConfigProperty(configProperties, reader, CommonXML.ELEMENT_CONFIG_PROPERTY, expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_SECURITY : {
@@ -533,10 +548,11 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       if (a.getBeanValidationGroups() != null && a.getBeanValidationGroups().size() > 0)
       {
          writer.writeStartElement(CommonXML.ELEMENT_BEAN_VALIDATION_GROUPS);
-         for (String bvg : a.getBeanValidationGroups())
+         for (int i = 0; i < a.getBeanValidationGroups().size(); i++)
          {
             writer.writeStartElement(CommonXML.ELEMENT_BEAN_VALIDATION_GROUP);
-            writer.writeCharacters(bvg);
+            writer.writeCharacters(a.getValue(CommonXML.ELEMENT_BEAN_VALIDATION_GROUP, Integer.toString(i),
+                                              a.getBeanValidationGroups().get(i)));
             writer.writeEndElement();
          }
          writer.writeEndElement();
@@ -545,7 +561,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       if (a.getBootstrapContext() != null)
       {
          writer.writeStartElement(CommonXML.ELEMENT_BOOTSTRAP_CONTEXT);
-         writer.writeCharacters(a.getBootstrapContext());
+         writer.writeCharacters(a.getValue(CommonXML.ELEMENT_BOOTSTRAP_CONTEXT, a.getBootstrapContext()));
          writer.writeEndElement();
       }
 
@@ -558,7 +574,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
 
             writer.writeStartElement(CommonXML.ELEMENT_CONFIG_PROPERTY);
             writer.writeAttribute(CommonXML.ATTRIBUTE_NAME, entry.getKey());
-            writer.writeCharacters(entry.getValue());
+            writer.writeCharacters(a.getValue(CommonXML.ELEMENT_CONFIG_PROPERTY, entry.getKey(), entry.getValue()));
             writer.writeEndElement();
          }
       }
@@ -566,7 +582,8 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       if (a.getTransactionSupport() != null)
       {
          writer.writeStartElement(CommonXML.ELEMENT_TRANSACTION_SUPPORT);
-         writer.writeCharacters(a.getTransactionSupport().toString());
+         writer.writeCharacters(a.getValue(CommonXML.ELEMENT_TRANSACTION_SUPPORT,
+                                           a.getTransactionSupport().toString()));
          writer.writeEndElement();
       }
 
@@ -608,27 +625,28 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       writer.writeStartElement(CommonXML.ELEMENT_WORKMANAGER_SECURITY);
 
       writer.writeStartElement(CommonXML.ELEMENT_MAPPING_REQUIRED);
-      writer.writeCharacters(Boolean.toString(s.isMappingRequired()));
+      writer.writeCharacters(s.getValue(CommonXML.ELEMENT_MAPPING_REQUIRED, Boolean.toString(s.isMappingRequired())));
       writer.writeEndElement();
 
       writer.writeStartElement(CommonXML.ELEMENT_DOMAIN);
-      writer.writeCharacters(s.getDomain());
+      writer.writeCharacters(s.getValue(CommonXML.ELEMENT_DOMAIN, s.getDomain()));
       writer.writeEndElement();
 
       if (s.getDefaultPrincipal() != null)
       {
          writer.writeStartElement(CommonXML.ELEMENT_DEFAULT_PRINCIPAL);
-         writer.writeCharacters(s.getDefaultPrincipal());
+         writer.writeCharacters(s.getValue(CommonXML.ELEMENT_DEFAULT_PRINCIPAL, s.getDefaultPrincipal()));
          writer.writeEndElement();
       }
 
       if (s.getDefaultGroups() != null && s.getDefaultGroups().size() > 0)
       {
          writer.writeStartElement(CommonXML.ELEMENT_DEFAULT_GROUPS);
-         for (String group : s.getDefaultGroups())
+         for (int i = 0; i < s.getDefaultGroups().size(); i++)
          {
             writer.writeStartElement(CommonXML.ELEMENT_GROUP);
-            writer.writeCharacters(group);
+            writer.writeCharacters(s.getValue(CommonXML.ELEMENT_DEFAULT_GROUPS, Integer.toString(i),
+                                              s.getDefaultGroups().get(i)));
             writer.writeEndElement();
          }
          writer.writeEndElement();
@@ -646,8 +664,10 @@ public abstract class CommonIronJacamarParser extends AbstractParser
             for (Map.Entry<String, String> entry : s.getUserMappings().entrySet())
             {
                writer.writeStartElement(CommonXML.ELEMENT_MAP);
-               writer.writeAttribute(CommonXML.ATTRIBUTE_FROM, entry.getKey());
-               writer.writeAttribute(CommonXML.ATTRIBUTE_TO, entry.getValue());
+               writer.writeAttribute(CommonXML.ATTRIBUTE_FROM,
+                                     s.getValue(CommonXML.ELEMENT_USERS, entry.getKey(), entry.getKey()));
+               writer.writeAttribute(CommonXML.ATTRIBUTE_TO,
+                                     s.getValue(CommonXML.ELEMENT_USERS, entry.getValue(), entry.getValue()));
                writer.writeEndElement();
             }
 
@@ -661,8 +681,10 @@ public abstract class CommonIronJacamarParser extends AbstractParser
             for (Map.Entry<String, String> entry : s.getGroupMappings().entrySet())
             {
                writer.writeStartElement(CommonXML.ELEMENT_MAP);
-               writer.writeAttribute(CommonXML.ATTRIBUTE_FROM, entry.getKey());
-               writer.writeAttribute(CommonXML.ATTRIBUTE_TO, entry.getValue());
+               writer.writeAttribute(CommonXML.ATTRIBUTE_FROM,
+                                     s.getValue(CommonXML.ELEMENT_GROUPS, entry.getKey(), entry.getKey()));
+               writer.writeAttribute(CommonXML.ATTRIBUTE_TO,
+                                     s.getValue(CommonXML.ELEMENT_GROUPS, entry.getValue(), entry.getValue()));
                writer.writeEndElement();
             }
 
@@ -687,34 +709,50 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       writer.writeStartElement(CommonXML.ELEMENT_CONNECTION_DEFINITION);
 
       if (cd.getClassName() != null)
-         writer.writeAttribute(CommonXML.ATTRIBUTE_CLASS_NAME, cd.getClassName());
+         writer.writeAttribute(CommonXML.ATTRIBUTE_CLASS_NAME,
+                               cd.getValue(CommonXML.ATTRIBUTE_CLASS_NAME, cd.getClassName()));
 
       if (cd.getJndiName() != null)
-         writer.writeAttribute(CommonXML.ATTRIBUTE_JNDI_NAME, cd.getJndiName());
+         writer.writeAttribute(CommonXML.ATTRIBUTE_JNDI_NAME,
+                               cd.getValue(CommonXML.ATTRIBUTE_JNDI_NAME, cd.getJndiName()));
 
-      if (cd.isEnabled() != null)
-         writer.writeAttribute(CommonXML.ATTRIBUTE_ENABLED, cd.isEnabled().toString());
+      if (cd.isEnabled() != null && (cd.hasExpression(CommonXML.ATTRIBUTE_ENABLED) ||
+                                     !Defaults.ENABLED.equals(cd.isEnabled())))
+         writer.writeAttribute(CommonXML.ATTRIBUTE_ENABLED,
+                               cd.getValue(CommonXML.ATTRIBUTE_ENABLED, cd.isEnabled().toString()));
 
-      if (cd.isUseJavaContext() != null)
-         writer.writeAttribute(CommonXML.ATTRIBUTE_USE_JAVA_CONTEXT, cd.isUseJavaContext().toString());
+      if (cd.isUseJavaContext() != null && (cd.hasExpression(CommonXML.ATTRIBUTE_USE_JAVA_CONTEXT) ||
+                                            !Defaults.USE_JAVA_CONTEXT.equals(cd.isUseJavaContext())))
+         writer.writeAttribute(CommonXML.ATTRIBUTE_USE_JAVA_CONTEXT,
+                               cd.getValue(CommonXML.ATTRIBUTE_USE_JAVA_CONTEXT, cd.isUseJavaContext().toString()));
 
       if (cd.getPoolName() != null)
-         writer.writeAttribute(CommonXML.ATTRIBUTE_POOL_NAME, cd.getPoolName());
+         writer.writeAttribute(CommonXML.ATTRIBUTE_POOL_NAME,
+                               cd.getValue(CommonXML.ATTRIBUTE_POOL_NAME, cd.getPoolName()));
 
-      if (cd.isUseCcm() != null)
-         writer.writeAttribute(CommonXML.ATTRIBUTE_USE_CCM, cd.isUseCcm().toString());
+      if (cd.isUseCcm() != null && (cd.hasExpression(CommonXML.ATTRIBUTE_USE_CCM) ||
+                                    !Defaults.USE_CCM.equals(cd.isUseCcm())))
+         writer.writeAttribute(CommonXML.ATTRIBUTE_USE_CCM,
+                               cd.getValue(CommonXML.ATTRIBUTE_USE_CCM, cd.isUseCcm().toString()));
 
-      if (cd.isSharable() != null)
-         writer.writeAttribute(CommonXML.ATTRIBUTE_SHARABLE, cd.isSharable().toString());
+      if (cd.isSharable() != null && (cd.hasExpression(CommonXML.ATTRIBUTE_SHARABLE) ||
+                                      !Defaults.SHARABLE.equals(cd.isSharable())))
+         writer.writeAttribute(CommonXML.ATTRIBUTE_SHARABLE,
+                               cd.getValue(CommonXML.ATTRIBUTE_SHARABLE, cd.isSharable().toString()));
 
-      if (cd.isEnlistment() != null)
-         writer.writeAttribute(CommonXML.ATTRIBUTE_ENLISTMENT, cd.isEnlistment().toString());
+      if (cd.isEnlistment() != null && (cd.hasExpression(CommonXML.ATTRIBUTE_ENLISTMENT) ||
+                                        !Defaults.ENLISTMENT.equals(cd.isEnlistment())))
+         writer.writeAttribute(CommonXML.ATTRIBUTE_ENLISTMENT,
+                               cd.getValue(CommonXML.ATTRIBUTE_ENLISTMENT, cd.isEnlistment().toString()));
 
-      if (cd.isConnectable() != null)
-         writer.writeAttribute(CommonXML.ATTRIBUTE_CONNECTABLE, cd.isConnectable().toString());
+      if (cd.isConnectable() != null && (cd.hasExpression(CommonXML.ATTRIBUTE_CONNECTABLE) ||
+                                         !Defaults.CONNECTABLE.equals(cd.isConnectable())))
+         writer.writeAttribute(CommonXML.ATTRIBUTE_CONNECTABLE,
+                               cd.getValue(CommonXML.ATTRIBUTE_CONNECTABLE, cd.isConnectable().toString()));
 
       if (cd.isTracking() != null)
-         writer.writeAttribute(CommonXML.ATTRIBUTE_TRACKING, cd.isTracking().toString());
+         writer.writeAttribute(CommonXML.ATTRIBUTE_TRACKING,
+                               cd.getValue(CommonXML.ATTRIBUTE_TRACKING, cd.isTracking().toString()));
 
       if (cd.getConfigProperties() != null && cd.getConfigProperties().size() > 0)
       {
@@ -725,7 +763,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
 
             writer.writeStartElement(CommonXML.ELEMENT_CONFIG_PROPERTY);
             writer.writeAttribute(CommonXML.ATTRIBUTE_NAME, entry.getKey());
-            writer.writeCharacters(entry.getValue());
+            writer.writeCharacters(cd.getValue(CommonXML.ELEMENT_CONFIG_PROPERTY, entry.getKey(), entry.getValue()));
             writer.writeEndElement();
          }
       }
@@ -768,19 +806,26 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       writer.writeStartElement(CommonXML.ELEMENT_ADMIN_OBJECT);
 
       if (ao.getClassName() != null)
-         writer.writeAttribute(CommonXML.ATTRIBUTE_CLASS_NAME, ao.getClassName());
+         writer.writeAttribute(CommonXML.ATTRIBUTE_CLASS_NAME,
+                               ao.getValue(CommonXML.ATTRIBUTE_CLASS_NAME, ao.getClassName()));
 
       if (ao.getJndiName() != null)
-         writer.writeAttribute(CommonXML.ATTRIBUTE_JNDI_NAME, ao.getJndiName());
+         writer.writeAttribute(CommonXML.ATTRIBUTE_JNDI_NAME,
+                               ao.getValue(CommonXML.ATTRIBUTE_JNDI_NAME, ao.getJndiName()));
 
-      if (ao.isEnabled() != null)
-         writer.writeAttribute(CommonXML.ATTRIBUTE_ENABLED, ao.isEnabled().toString());
+      if (ao.isEnabled() != null && (ao.hasExpression(CommonXML.ATTRIBUTE_ENABLED) ||
+                                     !Defaults.ENABLED.equals(ao.isEnabled())))
+         writer.writeAttribute(CommonXML.ATTRIBUTE_ENABLED,
+                               ao.getValue(CommonXML.ATTRIBUTE_ENABLED, ao.isEnabled().toString()));
 
-      if (ao.isUseJavaContext() != null)
-         writer.writeAttribute(CommonXML.ATTRIBUTE_USE_JAVA_CONTEXT, ao.isUseJavaContext().toString());
+      if (ao.isUseJavaContext() != null && (ao.hasExpression(CommonXML.ATTRIBUTE_USE_JAVA_CONTEXT) ||
+                                            !Defaults.USE_JAVA_CONTEXT.equals(ao.isUseJavaContext())))
+         writer.writeAttribute(CommonXML.ATTRIBUTE_USE_JAVA_CONTEXT,
+                               ao.getValue(CommonXML.ATTRIBUTE_USE_JAVA_CONTEXT, ao.isUseJavaContext().toString()));
 
       if (ao.getPoolName() != null)
-         writer.writeAttribute(CommonXML.ATTRIBUTE_POOL_NAME, ao.getPoolName());
+         writer.writeAttribute(CommonXML.ATTRIBUTE_POOL_NAME,
+                               ao.getValue(CommonXML.ATTRIBUTE_POOL_NAME, ao.getPoolName()));
 
       if (ao.getConfigProperties() != null && ao.getConfigProperties().size() > 0)
       {
@@ -791,7 +836,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
 
             writer.writeStartElement(CommonXML.ELEMENT_CONFIG_PROPERTY);
             writer.writeAttribute(CommonXML.ATTRIBUTE_NAME, entry.getKey());
-            writer.writeCharacters(entry.getValue());
+            writer.writeCharacters(ao.getValue(CommonXML.ELEMENT_CONFIG_PROPERTY, entry.getKey(), entry.getValue()));
             writer.writeEndElement();
          }
       }
@@ -809,45 +854,51 @@ public abstract class CommonIronJacamarParser extends AbstractParser
    {
       writer.writeStartElement(CommonXML.ELEMENT_POOL);
 
-      if (pool.getMinPoolSize() != null)
+      if (pool.getMinPoolSize() != null && (pool.hasExpression(CommonXML.ELEMENT_MIN_POOL_SIZE) ||
+                                            !Defaults.MIN_POOL_SIZE.equals(pool.getMinPoolSize())))
       {
          writer.writeStartElement(CommonXML.ELEMENT_MIN_POOL_SIZE);
-         writer.writeCharacters(pool.getMinPoolSize().toString());
+         writer.writeCharacters(pool.getValue(CommonXML.ELEMENT_MIN_POOL_SIZE, pool.getMinPoolSize().toString()));
          writer.writeEndElement();
       }
 
       if (pool.getInitialPoolSize() != null)
       {
          writer.writeStartElement(CommonXML.ELEMENT_INITIAL_POOL_SIZE);
-         writer.writeCharacters(pool.getInitialPoolSize().toString());
+         writer.writeCharacters(pool.getValue(CommonXML.ELEMENT_INITIAL_POOL_SIZE,
+                                              pool.getInitialPoolSize().toString()));
          writer.writeEndElement();
       }
 
-      if (pool.getMaxPoolSize() != null)
+      if (pool.getMaxPoolSize() != null && (pool.hasExpression(CommonXML.ELEMENT_MAX_POOL_SIZE) ||
+                                            !Defaults.MAX_POOL_SIZE.equals(pool.getMaxPoolSize())))
       {
          writer.writeStartElement(CommonXML.ELEMENT_MAX_POOL_SIZE);
-         writer.writeCharacters(pool.getMaxPoolSize().toString());
+         writer.writeCharacters(pool.getValue(CommonXML.ELEMENT_MAX_POOL_SIZE, pool.getMaxPoolSize().toString()));
          writer.writeEndElement();
       }
 
-      if (pool.isPrefill() != null)
+      if (pool.isPrefill() != null && (pool.hasExpression(CommonXML.ELEMENT_PREFILL) ||
+                                       !Defaults.PREFILL.equals(pool.isPrefill())))
       {
          writer.writeStartElement(CommonXML.ELEMENT_PREFILL);
-         writer.writeCharacters(pool.isPrefill().toString());
+         writer.writeCharacters(pool.getValue(CommonXML.ELEMENT_PREFILL, pool.isPrefill().toString()));
          writer.writeEndElement();
       }
 
-      if (pool.isUseStrictMin() != null)
+      if (pool.isUseStrictMin() != null && (pool.hasExpression(CommonXML.ELEMENT_USE_STRICT_MIN) ||
+                                            !Defaults.USE_STRICT_MIN.equals(pool.isUseStrictMin())))
       {
          writer.writeStartElement(CommonXML.ELEMENT_USE_STRICT_MIN);
-         writer.writeCharacters(pool.isUseStrictMin().toString());
+         writer.writeCharacters(pool.getValue(CommonXML.ELEMENT_USE_STRICT_MIN, pool.isUseStrictMin().toString()));
          writer.writeEndElement();
       }
 
-      if (pool.getFlushStrategy() != null)
+      if (pool.getFlushStrategy() != null && (pool.hasExpression(CommonXML.ELEMENT_FLUSH_STRATEGY) ||
+                                              !Defaults.FLUSH_STRATEGY.equals(pool.getFlushStrategy())))
       {
          writer.writeStartElement(CommonXML.ELEMENT_FLUSH_STRATEGY);
-         writer.writeCharacters(pool.getFlushStrategy().toString());
+         writer.writeCharacters(pool.getValue(CommonXML.ELEMENT_FLUSH_STRATEGY, pool.getFlushStrategy().toString()));
          writer.writeEndElement();
       }
 
@@ -867,45 +918,51 @@ public abstract class CommonIronJacamarParser extends AbstractParser
    {
       writer.writeStartElement(CommonXML.ELEMENT_XA_POOL);
 
-      if (pool.getMinPoolSize() != null)
+      if (pool.getMinPoolSize() != null && (pool.hasExpression(CommonXML.ELEMENT_MIN_POOL_SIZE) ||
+                                            !Defaults.MIN_POOL_SIZE.equals(pool.getMinPoolSize())))
       {
          writer.writeStartElement(CommonXML.ELEMENT_MIN_POOL_SIZE);
-         writer.writeCharacters(pool.getMinPoolSize().toString());
+         writer.writeCharacters(pool.getValue(CommonXML.ELEMENT_MIN_POOL_SIZE, pool.getMinPoolSize().toString()));
          writer.writeEndElement();
       }
 
       if (pool.getInitialPoolSize() != null)
       {
          writer.writeStartElement(CommonXML.ELEMENT_INITIAL_POOL_SIZE);
-         writer.writeCharacters(pool.getInitialPoolSize().toString());
+         writer.writeCharacters(pool.getValue(CommonXML.ELEMENT_INITIAL_POOL_SIZE,
+                                              pool.getInitialPoolSize().toString()));
          writer.writeEndElement();
       }
 
-      if (pool.getMaxPoolSize() != null)
+      if (pool.getMaxPoolSize() != null && (pool.hasExpression(CommonXML.ELEMENT_MAX_POOL_SIZE) ||
+                                            !Defaults.MAX_POOL_SIZE.equals(pool.getMaxPoolSize())))
       {
          writer.writeStartElement(CommonXML.ELEMENT_MAX_POOL_SIZE);
-         writer.writeCharacters(pool.getMaxPoolSize().toString());
+         writer.writeCharacters(pool.getValue(CommonXML.ELEMENT_MAX_POOL_SIZE, pool.getMaxPoolSize().toString()));
          writer.writeEndElement();
       }
 
-      if (pool.isPrefill() != null)
+      if (pool.isPrefill() != null && (pool.hasExpression(CommonXML.ELEMENT_PREFILL) ||
+                                       !Defaults.PREFILL.equals(pool.isPrefill())))
       {
          writer.writeStartElement(CommonXML.ELEMENT_PREFILL);
-         writer.writeCharacters(pool.isPrefill().toString());
+         writer.writeCharacters(pool.getValue(CommonXML.ELEMENT_PREFILL, pool.isPrefill().toString()));
          writer.writeEndElement();
       }
 
-      if (pool.isUseStrictMin() != null)
+      if (pool.isUseStrictMin() != null && (pool.hasExpression(CommonXML.ELEMENT_USE_STRICT_MIN) ||
+                                            !Defaults.USE_STRICT_MIN.equals(pool.isUseStrictMin())))
       {
          writer.writeStartElement(CommonXML.ELEMENT_USE_STRICT_MIN);
-         writer.writeCharacters(pool.isUseStrictMin().toString());
+         writer.writeCharacters(pool.getValue(CommonXML.ELEMENT_USE_STRICT_MIN, pool.isUseStrictMin().toString()));
          writer.writeEndElement();
       }
 
-      if (pool.getFlushStrategy() != null)
+      if (pool.getFlushStrategy() != null && (pool.hasExpression(CommonXML.ELEMENT_FLUSH_STRATEGY) ||
+                                              !Defaults.FLUSH_STRATEGY.equals(pool.getFlushStrategy())))
       {
          writer.writeStartElement(CommonXML.ELEMENT_FLUSH_STRATEGY);
-         writer.writeCharacters(pool.getFlushStrategy().toString());
+         writer.writeCharacters(pool.getValue(CommonXML.ELEMENT_FLUSH_STRATEGY, pool.getFlushStrategy().toString()));
          writer.writeEndElement();
       }
 
@@ -915,7 +972,8 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       if (pool.isIsSameRmOverride() != null)
       {
          writer.writeStartElement(CommonXML.ELEMENT_IS_SAME_RM_OVERRIDE);
-         writer.writeCharacters(pool.isIsSameRmOverride().toString());
+         writer.writeCharacters(pool.getValue(CommonXML.ELEMENT_IS_SAME_RM_OVERRIDE,
+                                              pool.isIsSameRmOverride().toString()));
          writer.writeEndElement();
       }
 
@@ -929,17 +987,19 @@ public abstract class CommonIronJacamarParser extends AbstractParser
          writer.writeEmptyElement(CommonXML.ELEMENT_NO_TX_SEPARATE_POOLS);
       }
 
-      if (pool.isPadXid() != null)
+      if (pool.isPadXid() != null && (pool.hasExpression(CommonXML.ELEMENT_PAD_XID) ||
+                                      !Defaults.PAD_XID.equals(pool.isPadXid())))
       {
          writer.writeStartElement(CommonXML.ELEMENT_PAD_XID);
-         writer.writeCharacters(pool.isPadXid().toString());
+         writer.writeCharacters(pool.getValue(CommonXML.ELEMENT_PAD_XID, pool.isPadXid().toString()));
          writer.writeEndElement();
       }
 
-      if (pool.isWrapXaResource() != null)
+      if (pool.isWrapXaResource() != null && (pool.hasExpression(CommonXML.ELEMENT_WRAP_XA_RESOURCE) ||
+                                              !Defaults.WRAP_XA_RESOURCE.equals(pool.isWrapXaResource())))
       {
          writer.writeStartElement(CommonXML.ELEMENT_WRAP_XA_RESOURCE);
-         writer.writeCharacters(pool.isWrapXaResource().toString());
+         writer.writeCharacters(pool.getValue(CommonXML.ELEMENT_WRAP_XA_RESOURCE, pool.isWrapXaResource().toString()));
          writer.writeEndElement();
       }
 
@@ -963,13 +1023,14 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       else if (s.getSecurityDomain() != null)
       {
          writer.writeStartElement(CommonXML.ELEMENT_SECURITY_DOMAIN);
-         writer.writeCharacters(s.getSecurityDomain());
+         writer.writeCharacters(s.getValue(CommonXML.ELEMENT_SECURITY_DOMAIN, s.getSecurityDomain()));
          writer.writeEndElement();
       }
       else if (s.getSecurityDomainAndApplication() != null)
       {
          writer.writeStartElement(CommonXML.ELEMENT_SECURITY_DOMAIN_AND_APPLICATION);
-         writer.writeCharacters(s.getSecurityDomainAndApplication());
+         writer.writeCharacters(s.getValue(CommonXML.ELEMENT_SECURITY_DOMAIN_AND_APPLICATION,
+                                           s.getSecurityDomainAndApplication()));
          writer.writeEndElement();
       }
 
@@ -989,28 +1050,30 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       if (v.isValidateOnMatch() != null)
       {
          writer.writeStartElement(CommonXML.ELEMENT_VALIDATE_ON_MATCH);
-         writer.writeCharacters(v.isValidateOnMatch().toString());
+         writer.writeCharacters(v.getValue(CommonXML.ELEMENT_VALIDATE_ON_MATCH, v.isValidateOnMatch().toString()));
          writer.writeEndElement();
       }
 
       if (v.isBackgroundValidation() != null)
       {
          writer.writeStartElement(CommonXML.ELEMENT_BACKGROUND_VALIDATION);
-         writer.writeCharacters(v.isBackgroundValidation().toString());
+         writer.writeCharacters(v.getValue(CommonXML.ELEMENT_BACKGROUND_VALIDATION,
+                                           v.isBackgroundValidation().toString()));
          writer.writeEndElement();
       }
 
       if (v.getBackgroundValidationMillis() != null)
       {
          writer.writeStartElement(CommonXML.ELEMENT_BACKGROUND_VALIDATION_MILLIS);
-         writer.writeCharacters(v.getBackgroundValidationMillis().toString());
+         writer.writeCharacters(v.getValue(CommonXML.ELEMENT_BACKGROUND_VALIDATION_MILLIS,
+                                           v.getBackgroundValidationMillis().toString()));
          writer.writeEndElement();
       }
 
       if (v.isUseFastFail() != null)
       {
          writer.writeStartElement(CommonXML.ELEMENT_USE_FAST_FAIL);
-         writer.writeCharacters(v.isUseFastFail().toString());
+         writer.writeCharacters(v.getValue(CommonXML.ELEMENT_USE_FAST_FAIL, v.isUseFastFail().toString()));
          writer.writeEndElement();
       }
 
@@ -1030,35 +1093,40 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       if (t.getBlockingTimeoutMillis() != null)
       {
          writer.writeStartElement(CommonXML.ELEMENT_BLOCKING_TIMEOUT_MILLIS);
-         writer.writeCharacters(t.getBlockingTimeoutMillis().toString());
+         writer.writeCharacters(t.getValue(CommonXML.ELEMENT_BLOCKING_TIMEOUT_MILLIS,
+                                           t.getBlockingTimeoutMillis().toString()));
          writer.writeEndElement();
       }
 
       if (t.getIdleTimeoutMinutes() != null)
       {
          writer.writeStartElement(CommonXML.ELEMENT_IDLE_TIMEOUT_MINUTES);
-         writer.writeCharacters(t.getIdleTimeoutMinutes().toString());
+         writer.writeCharacters(t.getValue(CommonXML.ELEMENT_IDLE_TIMEOUT_MINUTES,
+                                           t.getIdleTimeoutMinutes().toString()));
          writer.writeEndElement();
       }
 
       if (t.getAllocationRetry() != null)
       {
          writer.writeStartElement(CommonXML.ELEMENT_ALLOCATION_RETRY);
-         writer.writeCharacters(t.getAllocationRetry().toString());
+         writer.writeCharacters(t.getValue(CommonXML.ELEMENT_ALLOCATION_RETRY,
+                                           t.getAllocationRetry().toString()));
          writer.writeEndElement();
       }
 
       if (t.getAllocationRetryWaitMillis() != null)
       {
          writer.writeStartElement(CommonXML.ELEMENT_ALLOCATION_RETRY_WAIT_MILLIS);
-         writer.writeCharacters(t.getAllocationRetryWaitMillis().toString());
+         writer.writeCharacters(t.getValue(CommonXML.ELEMENT_ALLOCATION_RETRY_WAIT_MILLIS,
+                                           t.getAllocationRetryWaitMillis().toString()));
          writer.writeEndElement();
       }
 
       if (t.getXaResourceTimeout() != null)
       {
          writer.writeStartElement(CommonXML.ELEMENT_XA_RESOURCE_TIMEOUT);
-         writer.writeCharacters(t.getXaResourceTimeout().toString());
+         writer.writeCharacters(t.getValue(CommonXML.ELEMENT_XA_RESOURCE_TIMEOUT,
+                                           t.getXaResourceTimeout().toString()));
          writer.writeEndElement();
       }
 

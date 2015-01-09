@@ -91,13 +91,20 @@ public abstract class AbstractParser
     * convert an xml element in boolean value. Empty elements results with true (tag presence is sufficient condition)
     *
     * @param reader the StAX reader
+    * @param key The key
+    * @param expressions The expressions
     * @return the boolean representing element
     * @throws XMLStreamException StAX exception
     * @throws ParserException in case of non valid boolean for given element value
     */
-   protected Boolean elementAsBoolean(XMLStreamReader reader) throws XMLStreamException, ParserException
+   protected Boolean elementAsBoolean(XMLStreamReader reader, String key, Map<String, String> expressions)
+      throws XMLStreamException, ParserException
    {
       String elementtext = rawElementText(reader);
+
+      if (key != null && expressions != null && elementtext != null && elementtext.indexOf("${") != -1)
+         expressions.put(key, elementtext);
+      
       String stringValue = getSubstitutionValue(elementtext);
       if (stringValue == null || stringValue.length() == 0 || stringValue.trim().equalsIgnoreCase("true") ||
           stringValue.trim().equalsIgnoreCase("false"))
@@ -111,27 +118,31 @@ public abstract class AbstractParser
    }
 
    /**
-    * convert an xml attribute in boolean value. Empty elements results with false
+    * convert an xml attribute in boolean value. Empty elements results in default value
     *
     * @param reader the StAX reader
     * @param attributeName the name of the attribute
     * @param defaultValue  defaultValue
+    * @param expressions The expressions
     * @return the boolean representing element
     * @throws XMLStreamException StAX exception
     * @throws ParserException in case of not valid boolena for given attribute
     */
-   protected Boolean attributeAsBoolean(XMLStreamReader reader, String attributeName, Boolean defaultValue)
+   protected Boolean attributeAsBoolean(XMLStreamReader reader, String attributeName, Boolean defaultValue,
+                                        Map<String, String> expressions)
       throws XMLStreamException, ParserException
    {
       String attributeString = rawAttributeText(reader, attributeName);
+
+      if (attributeName != null && expressions != null && attributeString != null &&
+          attributeString.indexOf("${") != -1)
+         expressions.put(attributeName, attributeString);
+      
       String stringValue = getSubstitutionValue(attributeString);
       if (stringValue == null || stringValue.length() == 0 || stringValue.trim().equalsIgnoreCase("true") ||
           stringValue.trim().equalsIgnoreCase("false"))
       {
-
-         return attributeString == null
-            ? defaultValue :
-            Boolean.valueOf(reader.getAttributeValue("", attributeName).trim());
+         return stringValue == null || stringValue.length() == 0 ? defaultValue : Boolean.valueOf(stringValue.trim());
       }
       else
       {
@@ -143,17 +154,24 @@ public abstract class AbstractParser
     * convert an xml element in String value
     *
     * @param reader the StAX reader
+    * @param key The key
+    * @param expressions The expressions
     * @return the string representing element
     * @throws XMLStreamException StAX exception
     */
-   protected String elementAsString(XMLStreamReader reader) throws XMLStreamException
+   protected String elementAsString(XMLStreamReader reader, String key, Map<String, String> expressions)
+      throws XMLStreamException
    {
       String elementtext = rawElementText(reader);
+
+      if (key != null && expressions != null && elementtext != null && elementtext.indexOf("${") != -1)
+         expressions.put(key, elementtext);
+      
       return getSubstitutionValue(elementtext);
    }
 
    /**
-    * FIXME Comment this
+    * Read the raw element
     *
     * @param reader
     * @return the string representing the raw eleemnt text
@@ -162,8 +180,11 @@ public abstract class AbstractParser
    private String rawElementText(XMLStreamReader reader) throws XMLStreamException
    {
       String elementtext = reader.getElementText();
-      elementtext = elementtext == null ? null : elementtext.trim();
-      return elementtext;
+
+      if (elementtext == null)
+         return null;
+
+      return elementtext.trim();
    }
 
    /**
@@ -171,12 +192,19 @@ public abstract class AbstractParser
     *
     * @param reader the StAX reader
     * @param attributeName the name of the attribute
+    * @param expressions The expressions
     * @return the string representing element
     * @throws XMLStreamException StAX exception
     */
-   protected String attributeAsString(XMLStreamReader reader, String attributeName) throws XMLStreamException
+   protected String attributeAsString(XMLStreamReader reader, String attributeName, Map<String, String> expressions)
+      throws XMLStreamException
    {
       String attributeString = rawAttributeText(reader, attributeName);
+
+      if (attributeName != null && expressions != null && attributeString != null &&
+          attributeString.indexOf("${") != -1)
+         expressions.put(attributeName, attributeString);
+
       return getSubstitutionValue(attributeString);
    }
 
@@ -185,17 +213,24 @@ public abstract class AbstractParser
     *
     * @param reader the StAX reader
     * @param attributeName the name of the attribute
+    * @param expressions The expressions
     * @return the string representing element
     * @throws XMLStreamException StAX exception
     */
-   protected Integer attributeAsInt(XMLStreamReader reader, String attributeName) throws XMLStreamException
+   protected Integer attributeAsInt(XMLStreamReader reader, String attributeName, Map<String, String> expressions)
+      throws XMLStreamException
    {
-      String attributeString = getSubstitutionValue(rawAttributeText(reader, attributeName));
+      String attributeString = rawAttributeText(reader, attributeName);
+
+      if (attributeName != null && expressions != null && attributeString != null &&
+          attributeString.indexOf("${") != -1)
+         expressions.put(attributeName, attributeString);
+
       return attributeString != null ? Integer.valueOf(getSubstitutionValue(attributeString)) : null;
    }
 
    /**
-    * FIXME Comment this
+    * Read the raw attribute
     *
     * @param reader
     * @param attributeName
@@ -203,25 +238,33 @@ public abstract class AbstractParser
     */
    private String rawAttributeText(XMLStreamReader reader, String attributeName)
    {
-      String attributeString = reader.getAttributeValue("", attributeName) == null ? null : reader.getAttributeValue(
-         "", attributeName)
-            .trim();
-      return attributeString;
+      String attributeString = reader.getAttributeValue("", attributeName);
+
+      if (attributeString == null)
+         return null;
+
+      return attributeString.trim();
    }
 
    /**
     * convert an xml element in Integer value
     *
     * @param reader the StAX reader
+    * @param key The key
+    * @param expressions The expressions
     * @return the integer representing element
     * @throws XMLStreamException StAX exception
     * @throws ParserException in case it isn't a number
     */
-   protected Integer elementAsInteger(XMLStreamReader reader) throws XMLStreamException, ParserException
+   protected Integer elementAsInteger(XMLStreamReader reader, String key, Map<String, String> expressions)
+      throws XMLStreamException, ParserException
    {
-      Integer integerValue;
-      integerValue = null;
+      Integer integerValue = null;
       String elementtext = rawElementText(reader);
+
+      if (key != null && expressions != null && elementtext != null && elementtext.indexOf("${") != -1)
+         expressions.put(key, elementtext);
+      
       try
       {
          integerValue = Integer.valueOf(getSubstitutionValue(elementtext));
@@ -237,16 +280,21 @@ public abstract class AbstractParser
     * convert an xml element in Long value
     *
     * @param reader the StAX reader
+    * @param key The key
+    * @param expressions The expressions
     * @return the long representing element
     * @throws XMLStreamException StAX exception
     * @throws ParserException in case it isn't a number
     */
-   protected Long elementAsLong(XMLStreamReader reader) throws XMLStreamException, ParserException
+   protected Long elementAsLong(XMLStreamReader reader, String key, Map<String, String> expressions)
+      throws XMLStreamException, ParserException
    {
-      Long longValue;
-      longValue = null;
+      Long longValue = null;
       String elementtext = rawElementText(reader);
 
+      if (key != null && expressions != null && elementtext != null && elementtext.indexOf("${") != -1)
+         expressions.put(key, elementtext);
+      
       try
       {
          longValue = Long.valueOf(getSubstitutionValue(elementtext));
@@ -263,13 +311,19 @@ public abstract class AbstractParser
     * convert an xml element in FlushStrategy value
     *
     * @param reader the StAX reader
+    * @param expressions expressions
     * @return the flush strategy represention
     * @throws XMLStreamException StAX exception
     * @throws ParserException in case it isn't a number
     */
-   protected FlushStrategy elementAsFlushStrategy(XMLStreamReader reader) throws XMLStreamException, ParserException
+   protected FlushStrategy elementAsFlushStrategy(XMLStreamReader reader, Map<String, String> expressions)
+      throws XMLStreamException, ParserException
    {
       String elementtext = rawElementText(reader);
+
+      if (expressions != null && elementtext != null && elementtext.indexOf("${") != -1)
+         expressions.put(CommonXML.ELEMENT_FLUSH_STRATEGY, elementtext);
+      
       FlushStrategy result = FlushStrategy.forName(getSubstitutionValue(elementtext));
 
       if (result != FlushStrategy.UNKNOWN)
@@ -299,6 +353,8 @@ public abstract class AbstractParser
       FlushStrategy flushStrategy = Defaults.FLUSH_STRATEGY;
       Capacity capacity = null;
 
+      HashMap<String, String> expressions = new HashMap<String, String>();
+
       while (reader.hasNext())
       {
          switch (reader.nextTag())
@@ -307,7 +363,8 @@ public abstract class AbstractParser
                if (CommonXML.ELEMENT_POOL.equals(reader.getLocalName()))
                {
                   return new PoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin,
-                                      flushStrategy, capacity);
+                                      flushStrategy, capacity,
+                                      expressions.size() > 0 ? expressions : null);
                }
                else
                {
@@ -331,27 +388,27 @@ public abstract class AbstractParser
                switch (reader.getLocalName())
                {
                   case CommonXML.ELEMENT_MAX_POOL_SIZE : {
-                     maxPoolSize = elementAsInteger(reader);
+                     maxPoolSize = elementAsInteger(reader, CommonXML.ELEMENT_MAX_POOL_SIZE, expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_MIN_POOL_SIZE : {
-                     minPoolSize = elementAsInteger(reader);
+                     minPoolSize = elementAsInteger(reader, CommonXML.ELEMENT_MIN_POOL_SIZE, expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_INITIAL_POOL_SIZE : {
-                     initialPoolSize = elementAsInteger(reader);
+                     initialPoolSize = elementAsInteger(reader, CommonXML.ELEMENT_INITIAL_POOL_SIZE, expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_PREFILL : {
-                     prefill = elementAsBoolean(reader);
+                     prefill = elementAsBoolean(reader, CommonXML.ELEMENT_PREFILL, expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_USE_STRICT_MIN : {
-                     useStrictMin = elementAsBoolean(reader);
+                     useStrictMin = elementAsBoolean(reader, CommonXML.ELEMENT_USE_STRICT_MIN, expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_FLUSH_STRATEGY : {
-                     flushStrategy = elementAsFlushStrategy(reader);
+                     flushStrategy = elementAsFlushStrategy(reader, expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_CAPACITY : {
@@ -394,6 +451,8 @@ public abstract class AbstractParser
       Boolean wrapXaDataSource = Defaults.WRAP_XA_RESOURCE;
       Boolean useStrictMin = Defaults.USE_STRICT_MIN;
 
+      HashMap<String, String> expressions = new HashMap<String, String>();
+
       while (reader.hasNext())
       {
          switch (reader.nextTag())
@@ -405,7 +464,8 @@ public abstract class AbstractParser
                   return new XaPoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin,
                                         flushStrategy, capacity,
                                         isSameRmOverride, interleaving, padXid,
-                                        wrapXaDataSource, noTxSeparatePool);
+                                        wrapXaDataSource, noTxSeparatePool,
+                                        expressions.size() > 0 ? expressions : null);
                }
                else
                {
@@ -434,47 +494,47 @@ public abstract class AbstractParser
                switch (reader.getLocalName())
                {
                   case CommonXML.ELEMENT_MAX_POOL_SIZE : {
-                     maxPoolSize = elementAsInteger(reader);
+                     maxPoolSize = elementAsInteger(reader, CommonXML.ELEMENT_MAX_POOL_SIZE, expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_INITIAL_POOL_SIZE : {
-                     initialPoolSize = elementAsInteger(reader);
+                     initialPoolSize = elementAsInteger(reader, CommonXML.ELEMENT_INITIAL_POOL_SIZE, expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_MIN_POOL_SIZE : {
-                     minPoolSize = elementAsInteger(reader);
+                     minPoolSize = elementAsInteger(reader, CommonXML.ELEMENT_MIN_POOL_SIZE, expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_INTERLEAVING : {
-                     interleaving = elementAsBoolean(reader);
+                     interleaving = elementAsBoolean(reader, CommonXML.ELEMENT_INTERLEAVING, expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_IS_SAME_RM_OVERRIDE : {
-                     isSameRmOverride = elementAsBoolean(reader);
+                     isSameRmOverride = elementAsBoolean(reader, CommonXML.ELEMENT_IS_SAME_RM_OVERRIDE, expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_NO_TX_SEPARATE_POOLS : {
-                     noTxSeparatePool = elementAsBoolean(reader);
+                     noTxSeparatePool = elementAsBoolean(reader, CommonXML.ELEMENT_NO_TX_SEPARATE_POOLS, expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_PAD_XID : {
-                     padXid = elementAsBoolean(reader);
+                     padXid = elementAsBoolean(reader, CommonXML.ELEMENT_PAD_XID, expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_WRAP_XA_RESOURCE : {
-                     wrapXaDataSource = elementAsBoolean(reader);
+                     wrapXaDataSource = elementAsBoolean(reader, CommonXML.ELEMENT_WRAP_XA_RESOURCE, expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_PREFILL : {
-                     prefill = elementAsBoolean(reader);
+                     prefill = elementAsBoolean(reader, CommonXML.ELEMENT_PREFILL, expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_USE_STRICT_MIN : {
-                     useStrictMin = elementAsBoolean(reader);
+                     useStrictMin = elementAsBoolean(reader, CommonXML.ELEMENT_USE_STRICT_MIN, expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_FLUSH_STRATEGY : {
-                     flushStrategy = elementAsFlushStrategy(reader);
+                     flushStrategy = elementAsFlushStrategy(reader, expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_CAPACITY : {
@@ -509,6 +569,8 @@ public abstract class AbstractParser
       String securityDomainAndApplication = null;
       boolean application = Defaults.APPLICATION_MANAGED_SECURITY;
 
+      HashMap<String, String> expressions = new HashMap<String, String>();
+
       while (reader.hasNext())
       {
          switch (reader.nextTag())
@@ -517,7 +579,8 @@ public abstract class AbstractParser
                if (CommonXML.ELEMENT_SECURITY.equals(reader.getLocalName()))
                {
                   return new SecurityImpl(securityDomain, securityDomainAndApplication,
-                                          application);
+                                          application,
+                                          expressions.size() > 0 ? expressions : null);
                }
                else
                {
@@ -538,15 +601,17 @@ public abstract class AbstractParser
                {
 
                   case CommonXML.ELEMENT_SECURITY_DOMAIN : {
-                     securityDomain = elementAsString(reader);
+                     securityDomain = elementAsString(reader, CommonXML.ELEMENT_SECURITY_DOMAIN, expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_SECURITY_DOMAIN_AND_APPLICATION : {
-                     securityDomainAndApplication = elementAsString(reader);
+                     securityDomainAndApplication = elementAsString(reader,
+                                                                    CommonXML.ELEMENT_SECURITY_DOMAIN_AND_APPLICATION,
+                                                                    expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_APPLICATION : {
-                     application = elementAsBoolean(reader);
+                     application = elementAsBoolean(reader, CommonXML.ELEMENT_APPLICATION, expressions);
                      break;
                   }
                   default :
@@ -656,6 +721,8 @@ public abstract class AbstractParser
       String password = null;
       String securityDomain = null;
 
+      HashMap<String, String> expressions = new HashMap<String, String>();
+
       while (reader.hasNext())
       {
          switch (reader.nextTag())
@@ -664,7 +731,8 @@ public abstract class AbstractParser
                if (CommonXML.ELEMENT_SECURITY.equals(reader.getLocalName()) ||
                    CommonXML.ELEMENT_RECOVER_CREDENTIAL.equals(reader.getLocalName()))
                {
-                  return new CredentialImpl(userName, password, securityDomain);
+                  return new CredentialImpl(userName, password, securityDomain,
+                                            expressions.size() > 0 ? expressions : null);
                }
                else
                {
@@ -684,15 +752,15 @@ public abstract class AbstractParser
                switch (reader.getLocalName())
                {
                   case CommonXML.ELEMENT_PASSWORD : {
-                     password = elementAsString(reader);
+                     password = elementAsString(reader, CommonXML.ELEMENT_PASSWORD, expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_USER_NAME : {
-                     userName = elementAsString(reader);
+                     userName = elementAsString(reader, CommonXML.ELEMENT_USER_NAME, expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_SECURITY_DOMAIN : {
-                     securityDomain = elementAsString(reader);
+                     securityDomain = elementAsString(reader, CommonXML.ELEMENT_SECURITY_DOMAIN, expressions);
                      break;
                   }
                   default :
@@ -723,12 +791,14 @@ public abstract class AbstractParser
       Credential security = null;
       Extension plugin = null;
 
+      HashMap<String, String> expressions = new HashMap<String, String>();
+
       for (int i = 0; i < reader.getAttributeCount(); i++)
       {
          switch (reader.getAttributeLocalName(i))
          {
             case CommonXML.ATTRIBUTE_NO_RECOVERY : {
-               noRecovery = attributeAsBoolean(reader, CommonXML.ATTRIBUTE_NO_RECOVERY, Boolean.FALSE);
+               noRecovery = attributeAsBoolean(reader, CommonXML.ATTRIBUTE_NO_RECOVERY, Boolean.FALSE, expressions);
                break;
             }
             default :
@@ -743,7 +813,8 @@ public abstract class AbstractParser
             case END_ELEMENT : {
                if (CommonXML.ELEMENT_RECOVERY.equals(reader.getLocalName()))
                {
-                  return new RecoveryImpl(security, plugin, noRecovery);
+                  return new RecoveryImpl(security, plugin, noRecovery,
+                                          expressions.size() > 0 ? expressions : null);
                }
                else
                {
@@ -797,13 +868,14 @@ public abstract class AbstractParser
 
       String className = null;
       Map<String, String> properties = null;
+      HashMap<String, String> expressions = new HashMap<String, String>();
 
       for (int i = 0; i < reader.getAttributeCount(); i++)
       {
          switch (reader.getAttributeLocalName(i))
          {
             case CommonXML.ATTRIBUTE_CLASS_NAME : {
-               className = attributeAsString(reader, CommonXML.ATTRIBUTE_CLASS_NAME);
+               className = attributeAsString(reader, CommonXML.ATTRIBUTE_CLASS_NAME, expressions);
                break;
             }
             default :
@@ -823,7 +895,7 @@ public abstract class AbstractParser
                      throw new ParserException(bundle.missingClassName(enclosingTag));
                   }
 
-                  return new Extension(className, properties);
+                  return new ExtensionImpl(className, properties, expressions.size() > 0 ? expressions : null);
                }
                else
                {
@@ -843,7 +915,7 @@ public abstract class AbstractParser
                   case CommonXML.ELEMENT_CONFIG_PROPERTY : {
                      if (properties == null)
                         properties = new HashMap<String, String>();
-                     parseConfigProperty(properties, reader);
+                     parseConfigProperty(properties, reader, CommonXML.ELEMENT_CONFIG_PROPERTY, expressions);
                      break;
                   }
                   default :
@@ -934,6 +1006,8 @@ public abstract class AbstractParser
       Boolean backgroundValidation = Defaults.BACKGROUND_VALIDATION;
       Long backgroundValidationMillis = null;
 
+      HashMap<String, String> expressions = new HashMap<String, String>();
+
       while (reader.hasNext())
       {
          switch (reader.nextTag())
@@ -942,7 +1016,8 @@ public abstract class AbstractParser
                if (CommonXML.ELEMENT_VALIDATION.equals(reader.getLocalName()))
                {
                   return new ValidationImpl(validateOnMatch, backgroundValidation, backgroundValidationMillis,
-                                            useFastFail);
+                                            useFastFail,
+                                            expressions.size() > 0 ? expressions : null);
                }
                else
                {
@@ -963,19 +1038,21 @@ public abstract class AbstractParser
                switch (reader.getLocalName())
                {
                   case CommonXML.ELEMENT_VALIDATE_ON_MATCH : {
-                     validateOnMatch = elementAsBoolean(reader);
+                     validateOnMatch = elementAsBoolean(reader, CommonXML.ELEMENT_VALIDATE_ON_MATCH, expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_BACKGROUND_VALIDATION_MILLIS : {
-                     backgroundValidationMillis = elementAsLong(reader);
+                     backgroundValidationMillis = elementAsLong(reader, CommonXML.ELEMENT_BACKGROUND_VALIDATION_MILLIS,
+                                                                expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_BACKGROUND_VALIDATION : {
-                     backgroundValidation = elementAsBoolean(reader);
+                     backgroundValidation = elementAsBoolean(reader, CommonXML.ELEMENT_BACKGROUND_VALIDATION,
+                                                             expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_USE_FAST_FAIL : {
-                     useFastFail = elementAsBoolean(reader);
+                     useFastFail = elementAsBoolean(reader, CommonXML.ELEMENT_USE_FAST_FAIL, expressions);
                      break;
                   }
                   default :
@@ -1006,6 +1083,8 @@ public abstract class AbstractParser
       Integer allocationRetry = null;
       Integer xaResourceTimeout = null;
 
+      HashMap<String, String> expressions = new HashMap<String, String>();
+
       while (reader.hasNext())
       {
          switch (reader.nextTag())
@@ -1014,7 +1093,8 @@ public abstract class AbstractParser
                if (CommonXML.ELEMENT_TIMEOUT.equals(reader.getLocalName()))
                {
                   return new TimeoutImpl(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry,
-                                         allocationRetryWaitMillis, xaResourceTimeout);
+                                         allocationRetryWaitMillis, xaResourceTimeout,
+                                         expressions.size() > 0 ? expressions : null);
                }
                else
                {
@@ -1036,25 +1116,27 @@ public abstract class AbstractParser
                switch (reader.getLocalName())
                {
                   case CommonXML.ELEMENT_ALLOCATION_RETRY_WAIT_MILLIS : {
-                     allocationRetryWaitMillis = elementAsLong(reader);
+                     allocationRetryWaitMillis = elementAsLong(reader, CommonXML.ELEMENT_ALLOCATION_RETRY_WAIT_MILLIS,
+                                                               expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_ALLOCATION_RETRY : {
-                     allocationRetry = elementAsInteger(reader);
+                     allocationRetry = elementAsInteger(reader, CommonXML.ELEMENT_ALLOCATION_RETRY, expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_BLOCKING_TIMEOUT_MILLIS : {
-                     blockingTimeoutMillis = elementAsLong(reader);
+                     blockingTimeoutMillis = elementAsLong(reader, CommonXML.ELEMENT_BLOCKING_TIMEOUT_MILLIS,
+                                                           expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_IDLE_TIMEOUT_MINUTES : {
-                     idleTimeoutMinutes = elementAsLong(reader);
+                     idleTimeoutMinutes = elementAsLong(reader, CommonXML.ELEMENT_IDLE_TIMEOUT_MINUTES, expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_XA_RESOURCE_TIMEOUT : {
                      if (isXa != null && Boolean.FALSE.equals(isXa))
                         throw new ParserException(bundle.unsupportedElement(reader.getLocalName()));
-                     xaResourceTimeout = elementAsInteger(reader);
+                     xaResourceTimeout = elementAsInteger(reader, CommonXML.ELEMENT_XA_RESOURCE_TIMEOUT, expressions);
                      break;
                   }
                   default :
@@ -1080,7 +1162,9 @@ public abstract class AbstractParser
       if (c.getIncrementer() != null)
       {
          writer.writeStartElement(CommonXML.ELEMENT_INCREMENTER);
-         writer.writeAttribute(CommonXML.ATTRIBUTE_CLASS_NAME, c.getIncrementer().getClassName());
+         writer.writeAttribute(CommonXML.ATTRIBUTE_CLASS_NAME,
+                               c.getIncrementer().getValue(CommonXML.ATTRIBUTE_CLASS_NAME,
+                                                           c.getIncrementer().getClassName()));
 
          if (c.getIncrementer().getConfigPropertiesMap().size() > 0)
          {
@@ -1093,7 +1177,8 @@ public abstract class AbstractParser
 
                writer.writeStartElement(CommonXML.ELEMENT_CONFIG_PROPERTY);
                writer.writeAttribute(CommonXML.ATTRIBUTE_NAME, entry.getKey());
-               writer.writeCharacters(entry.getValue());
+               writer.writeCharacters(c.getIncrementer().getValue(CommonXML.ELEMENT_CONFIG_PROPERTY,
+                                                                  entry.getKey(), entry.getValue()));
                writer.writeEndElement();
             }
          }
@@ -1104,7 +1189,9 @@ public abstract class AbstractParser
       if (c.getDecrementer() != null)
       {
          writer.writeStartElement(CommonXML.ELEMENT_DECREMENTER);
-         writer.writeAttribute(CommonXML.ATTRIBUTE_CLASS_NAME, c.getDecrementer().getClassName());
+         writer.writeAttribute(CommonXML.ATTRIBUTE_CLASS_NAME,
+                               c.getDecrementer().getValue(CommonXML.ATTRIBUTE_CLASS_NAME,
+                                                           c.getDecrementer().getClassName()));
 
          if (c.getDecrementer().getConfigPropertiesMap().size() > 0)
          {
@@ -1117,7 +1204,8 @@ public abstract class AbstractParser
 
                writer.writeStartElement(CommonXML.ELEMENT_CONFIG_PROPERTY);
                writer.writeAttribute(CommonXML.ATTRIBUTE_NAME, entry.getKey());
-               writer.writeCharacters(entry.getValue());
+               writer.writeCharacters(c.getDecrementer().getValue(CommonXML.ELEMENT_CONFIG_PROPERTY,
+                                                                  entry.getKey(), entry.getValue()));
                writer.writeEndElement();
             }
          }
@@ -1139,7 +1227,8 @@ public abstract class AbstractParser
       writer.writeStartElement(CommonXML.ELEMENT_RECOVERY);
 
       if (r.isNoRecovery() != null)
-         writer.writeAttribute(CommonXML.ATTRIBUTE_NO_RECOVERY, r.isNoRecovery().toString());
+         writer.writeAttribute(CommonXML.ATTRIBUTE_NO_RECOVERY,
+                               r.getValue(CommonXML.ATTRIBUTE_NO_RECOVERY, r.isNoRecovery().toString()));
 
       if (r.getCredential() != null)
       {
@@ -1147,17 +1236,20 @@ public abstract class AbstractParser
          if (r.getCredential().getUserName() != null)
          {
             writer.writeStartElement(CommonXML.ELEMENT_USER_NAME);
-            writer.writeCharacters(r.getCredential().getUserName());
+            writer.writeCharacters(r.getCredential().getValue(CommonXML.ELEMENT_USER_NAME,
+                                                              r.getCredential().getUserName()));
             writer.writeEndElement();
 
             writer.writeStartElement(CommonXML.ELEMENT_PASSWORD);
-            writer.writeCharacters(r.getCredential().getPassword());
+            writer.writeCharacters(r.getCredential().getValue(CommonXML.ELEMENT_PASSWORD,
+                                                              r.getCredential().getPassword()));
             writer.writeEndElement();
          }
          else
          {
             writer.writeStartElement(CommonXML.ELEMENT_SECURITY_DOMAIN);
-            writer.writeCharacters(r.getCredential().getSecurityDomain());
+            writer.writeCharacters(r.getCredential().getValue(CommonXML.ELEMENT_SECURITY_DOMAIN,
+                                                              r.getCredential().getSecurityDomain()));
             writer.writeEndElement();
          }
          writer.writeEndElement();
@@ -1166,7 +1258,9 @@ public abstract class AbstractParser
       if (r.getRecoverPlugin() != null)
       {
          writer.writeStartElement(CommonXML.ELEMENT_RECOVER_PLUGIN);
-         writer.writeAttribute(CommonXML.ATTRIBUTE_CLASS_NAME, r.getRecoverPlugin().getClassName());
+         writer.writeAttribute(CommonXML.ATTRIBUTE_CLASS_NAME,
+                               r.getRecoverPlugin().getValue(CommonXML.ATTRIBUTE_CLASS_NAME,
+                                                             r.getRecoverPlugin().getClassName()));
 
          if (r.getRecoverPlugin().getConfigPropertiesMap().size() > 0)
          {
@@ -1179,7 +1273,8 @@ public abstract class AbstractParser
 
                writer.writeStartElement(CommonXML.ELEMENT_CONFIG_PROPERTY);
                writer.writeAttribute(CommonXML.ATTRIBUTE_NAME, entry.getKey());
-               writer.writeCharacters(entry.getValue());
+               writer.writeCharacters(r.getRecoverPlugin().getValue(CommonXML.ELEMENT_CONFIG_PROPERTY,
+                                                                    entry.getKey(), entry.getValue()));
                writer.writeEndElement();
             }
          }
@@ -1196,18 +1291,41 @@ public abstract class AbstractParser
     * 
     * @param configProperties map
     * @param reader XMLStream reader
+    * @param key The key
+    * @param expressions expressions
     * @throws XMLStreamException in case of error
     * @throws ParserException in case of error
     */
-   protected void parseConfigProperty(Map<String, String> configProperties, XMLStreamReader reader)
-      throws XMLStreamException,
-      ParserException
+   protected void parseConfigProperty(Map<String, String> configProperties, XMLStreamReader reader,
+                                      String key, Map<String, String> expressions)
+      throws XMLStreamException, ParserException
    {
-      String n = attributeAsString(reader, "name");
+      String n = attributeAsString(reader, "name", null);
       if (n == null || n.trim().equals(""))
          throw new ParserException(bundle.requiredAttributeMissing("name", reader.getLocalName()));
       else
-         configProperties.put(n, elementAsString(reader));
+         configProperties.put(n, elementAsString(reader, getExpressionKey(key, n), expressions));
+   }
+
+   /**
+    * Get expression key
+    * @param k The key
+    * @return The value
+    */
+   protected String getExpressionKey(String k)
+   {
+      return k;
+   }
+
+   /**
+    * Get expression key
+    * @param k The key
+    * @param s The subkey
+    * @return The value
+    */
+   protected String getExpressionKey(String k, String s)
+   {
+      return k + "|" + s;
    }
    
    private static class SecurityActions

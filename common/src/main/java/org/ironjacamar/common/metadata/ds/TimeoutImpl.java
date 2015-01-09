@@ -24,6 +24,8 @@ import org.ironjacamar.common.CommonBundle;
 import org.ironjacamar.common.api.metadata.ds.Timeout;
 import org.ironjacamar.common.api.validator.ValidateException;
 
+import java.util.Map;
+
 import org.jboss.logging.Messages;
 
 /**
@@ -58,14 +60,16 @@ public class TimeoutImpl extends org.ironjacamar.common.metadata.common.TimeoutI
     * @param setTxQueryTimeout setTxQueryTimeout
     * @param queryTimeout queryTimeout
     * @param useTryLock useTryLock
+    * @param expressions expressions
     * @throws ValidateException ValidateException
     */
    public TimeoutImpl(Long blockingTimeoutMillis, Long idleTimeoutMinutes, Integer allocationRetry,
-      Long allocationRetryWaitMillis, Integer xaResourceTimeout, Boolean setTxQueryTimeout, Long queryTimeout,
-      Long useTryLock) throws ValidateException
+                      Long allocationRetryWaitMillis, Integer xaResourceTimeout,
+                      Boolean setTxQueryTimeout, Long queryTimeout,
+                      Long useTryLock, Map<String, String> expressions) throws ValidateException
    {
       super(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry, allocationRetryWaitMillis,
-            xaResourceTimeout);
+            xaResourceTimeout, expressions);
       this.setTxQueryTimeout = setTxQueryTimeout;
       this.queryTimeout = queryTimeout;
       this.useTryLock = useTryLock;

@@ -25,20 +25,21 @@ import org.ironjacamar.common.api.metadata.resourceadapter.Activation;
 import org.ironjacamar.common.api.metadata.resourceadapter.AdminObject;
 import org.ironjacamar.common.api.metadata.resourceadapter.ConnectionDefinition;
 import org.ironjacamar.common.api.metadata.resourceadapter.WorkManager;
+import org.ironjacamar.common.metadata.common.AbstractMetadata;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * A resource adapter activation
  *
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class ActivationImpl implements Activation
+public class ActivationImpl extends AbstractMetadata implements Activation
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = 1L;
@@ -90,12 +91,15 @@ public class ActivationImpl implements Activation
     * @param beanValidationGroups beanValidationGroups
     * @param bootstrapContext bootstrapContext
     * @param workmanager workmanager
+    * @param expressions expressions
     */
    public ActivationImpl(String id, String archive, TransactionSupportEnum transactionSupport,
                          List<ConnectionDefinition> connectionDefinitions, List<AdminObject> adminObjects,
                          Map<String, String> configProperties, List<String> beanValidationGroups,
-                         String bootstrapContext, WorkManager workmanager)
+                         String bootstrapContext, WorkManager workmanager,
+                         Map<String, String> expressions)
    {
+      super(expressions);
       this.id = id;
       this.archive = archive;
       this.transactionSupport = transactionSupport;
@@ -122,7 +126,7 @@ public class ActivationImpl implements Activation
 
       if (configProperties != null)
       {
-         this.configProperties = new HashMap<String, String>(configProperties.size());
+         this.configProperties = new TreeMap<String, String>();
          this.configProperties.putAll(configProperties);
       }
       else

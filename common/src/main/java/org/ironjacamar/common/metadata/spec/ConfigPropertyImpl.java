@@ -25,6 +25,7 @@ import org.ironjacamar.common.api.metadata.CopyableMetaData;
 import org.ironjacamar.common.api.metadata.spec.ConfigProperty;
 import org.ironjacamar.common.api.metadata.spec.LocalizedXsdString;
 import org.ironjacamar.common.api.metadata.spec.XsdString;
+import org.ironjacamar.common.metadata.common.AbstractMetadata;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,7 +37,7 @@ import java.util.List;
  * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class ConfigPropertyImpl implements ConfigProperty
+public class ConfigPropertyImpl extends AbstractMetadata implements ConfigProperty
 {
    private static final long serialVersionUID = 1L;
 
@@ -106,6 +107,7 @@ public class ConfigPropertyImpl implements ConfigProperty
                              String configPropertySupportsDynamicUpdatesId,
                              String configPropertyConfidentialId)
    {
+      super(null);
       if (description != null)
       {
          this.description = new ArrayList<LocalizedXsdString>(description);

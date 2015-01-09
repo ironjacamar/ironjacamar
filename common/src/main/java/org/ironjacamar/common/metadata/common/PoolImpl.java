@@ -21,10 +21,13 @@
 package org.ironjacamar.common.metadata.common;
 
 import org.ironjacamar.common.CommonBundle;
+import org.ironjacamar.common.api.metadata.Defaults;
 import org.ironjacamar.common.api.metadata.common.Capacity;
 import org.ironjacamar.common.api.metadata.common.FlushStrategy;
 import org.ironjacamar.common.api.metadata.common.Pool;
 import org.ironjacamar.common.api.validator.ValidateException;
+
+import java.util.Map;
 
 import org.jboss.logging.Messages;
 
@@ -35,7 +38,7 @@ import org.jboss.logging.Messages;
  * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
-public class PoolImpl implements Pool
+public class PoolImpl extends AbstractMetadata implements Pool
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = 1L;
@@ -88,13 +91,16 @@ public class PoolImpl implements Pool
     * @param useStrictMin useStrictMin
     * @param flushStrategy flushStrategy
     * @param capacity capacity
+    * @param expressions expressions
     * @throws ValidateException ValidateException
     */
    public PoolImpl(Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize, 
                    Boolean prefill, Boolean useStrictMin,
-                   FlushStrategy flushStrategy, Capacity capacity)
+                   FlushStrategy flushStrategy, Capacity capacity,
+                   Map<String, String> expressions)
       throws ValidateException
    {
+      super(expressions);
       this.minPoolSize = minPoolSize;
       this.initialPoolSize = initialPoolSize;
       this.maxPoolSize = maxPoolSize;
@@ -272,7 +278,7 @@ public class PoolImpl implements Pool
 
       sb.append("<pool>");
 
-      if (minPoolSize != null)
+      if (minPoolSize != null && !Defaults.MIN_POOL_SIZE.equals(minPoolSize))
       {
          sb.append("<").append(CommonXML.ELEMENT_MIN_POOL_SIZE).append(">");
          sb.append(minPoolSize);
@@ -286,28 +292,28 @@ public class PoolImpl implements Pool
          sb.append("</").append(CommonXML.ELEMENT_INITIAL_POOL_SIZE).append(">");
       }
 
-      if (maxPoolSize != null)
+      if (maxPoolSize != null && !Defaults.MAX_POOL_SIZE.equals(maxPoolSize))
       {
          sb.append("<").append(CommonXML.ELEMENT_MAX_POOL_SIZE).append(">");
          sb.append(maxPoolSize);
          sb.append("</").append(CommonXML.ELEMENT_MAX_POOL_SIZE).append(">");
       }
 
-      if (prefill != null)
+      if (prefill != null && !Defaults.PREFILL.equals(prefill))
       {
          sb.append("<").append(CommonXML.ELEMENT_PREFILL).append(">");
          sb.append(prefill);
          sb.append("</").append(CommonXML.ELEMENT_PREFILL).append(">");
       }
 
-      if (useStrictMin != null)
+      if (useStrictMin != null && !Defaults.USE_STRICT_MIN.equals(useStrictMin))
       {
          sb.append("<").append(CommonXML.ELEMENT_USE_STRICT_MIN).append(">");
          sb.append(useStrictMin);
          sb.append("</").append(CommonXML.ELEMENT_USE_STRICT_MIN).append(">");
       }
 
-      if (flushStrategy != null)
+      if (flushStrategy != null && !Defaults.FLUSH_STRATEGY.equals(flushStrategy))
       {
          sb.append("<").append(CommonXML.ELEMENT_FLUSH_STRATEGY).append(">");
          sb.append(flushStrategy);

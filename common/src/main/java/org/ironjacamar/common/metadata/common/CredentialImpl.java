@@ -24,6 +24,8 @@ import org.ironjacamar.common.CommonBundle;
 import org.ironjacamar.common.api.metadata.common.Credential;
 import org.ironjacamar.common.api.validator.ValidateException;
 
+import java.util.Map;
+
 import org.jboss.logging.Messages;
 
 /**
@@ -32,7 +34,7 @@ import org.jboss.logging.Messages;
  * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class CredentialImpl implements Credential
+public class CredentialImpl extends AbstractMetadata implements Credential
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = -5842402120520191086L;
@@ -52,11 +54,13 @@ public class CredentialImpl implements Credential
     * @param userName userName
     * @param password password
     * @param securityDomain securityDomain
+    * @param expressions expressions
     * @throws ValidateException ValidateException
     */
-   public CredentialImpl(String userName, String password, String securityDomain) throws ValidateException
+   public CredentialImpl(String userName, String password, String securityDomain,
+                         Map<String, String> expressions) throws ValidateException
    {
-      super();
+      super(expressions);
       this.userName = userName;
       this.password = password;
       this.securityDomain = securityDomain;

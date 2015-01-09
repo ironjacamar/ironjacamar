@@ -49,12 +49,14 @@ public class DsSecurityImpl extends CredentialImpl implements DsSecurity
     * @param password password
     * @param securityDomain securityDomain
     * @param reauthPlugin reauthPlugin
+    * @param expressions expressions
     * @throws ValidateException in case of validation error
     */
-   public DsSecurityImpl(String userName, String password, String securityDomain, Extension reauthPlugin)
+   public DsSecurityImpl(String userName, String password, String securityDomain, Extension reauthPlugin,
+                         Map<String, String> expressions)
       throws ValidateException
    {
-      super(userName, password, securityDomain);
+      super(userName, password, securityDomain, expressions);
       this.reauthPlugin = reauthPlugin;
    }
 

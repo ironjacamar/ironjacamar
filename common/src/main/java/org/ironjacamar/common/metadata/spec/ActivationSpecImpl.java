@@ -26,6 +26,7 @@ import org.ironjacamar.common.api.metadata.spec.Activationspec;
 import org.ironjacamar.common.api.metadata.spec.ConfigProperty;
 import org.ironjacamar.common.api.metadata.spec.RequiredConfigProperty;
 import org.ironjacamar.common.api.metadata.spec.XsdString;
+import org.ironjacamar.common.metadata.common.AbstractMetadata;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,7 +36,7 @@ import java.util.List;
  * @author <a href="mailto:stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class ActivationSpecImpl implements Activationspec
+public class ActivationSpecImpl extends AbstractMetadata implements Activationspec
 {
    private static final long serialVersionUID = 1L;
 
@@ -54,6 +55,7 @@ public class ActivationSpecImpl implements Activationspec
    public ActivationSpecImpl(XsdString activationspecClass, List<RequiredConfigProperty> requiredConfigProperty,
                              List<ConfigProperty> configProperties, String id)
    {
+      super(null);
       this.activationspecClass = activationspecClass;
       if (!XsdString.isNull(this.activationspecClass))
          this.activationspecClass.setTag(XML.ELEMENT_ACTIVATIONSPEC_CLASS);

@@ -20,14 +20,14 @@
  */
 package org.ironjacamar.common.api.metadata.resourceadapter;
 
-import java.io.Serializable;
+import org.ironjacamar.common.api.metadata.JCAMetadata;
 
 /**
  * WorkManager
  *
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface WorkManager extends Serializable
+public interface WorkManager extends JCAMetadata
 {
    /**
     * Get the security settings

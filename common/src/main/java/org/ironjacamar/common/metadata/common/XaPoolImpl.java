@@ -20,10 +20,13 @@
  */
 package org.ironjacamar.common.metadata.common;
 
+import org.ironjacamar.common.api.metadata.Defaults;
 import org.ironjacamar.common.api.metadata.common.Capacity;
 import org.ironjacamar.common.api.metadata.common.FlushStrategy;
 import org.ironjacamar.common.api.metadata.common.XaPool;
 import org.ironjacamar.common.api.validator.ValidateException;
+
+import java.util.Map;
 
 /**
  *
@@ -67,6 +70,7 @@ public class XaPoolImpl extends PoolImpl implements XaPool
     * @param padXid padXid
     * @param wrapXaResource wrapXaResource
     * @param noTxSeparatePool noTxSeparatePool
+    * @param expressions expressions
     * @throws ValidateException ValidateException
     */
    public XaPoolImpl(Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize,
@@ -74,9 +78,10 @@ public class XaPoolImpl extends PoolImpl implements XaPool
                      FlushStrategy flushStrategy, Capacity capacity,
                      Boolean isSameRmOverride, Boolean interleaving, 
                      Boolean padXid, Boolean wrapXaResource,
-                     Boolean noTxSeparatePool) throws ValidateException
+                     Boolean noTxSeparatePool,
+                     Map<String, String> expressions) throws ValidateException
    {
-      super(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy, capacity);
+      super(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy, capacity, expressions);
       this.isSameRmOverride = isSameRmOverride;
       this.interleaving = interleaving;
       this.padXid = padXid;
@@ -198,7 +203,7 @@ public class XaPoolImpl extends PoolImpl implements XaPool
 
       sb.append("<xa-pool>");
 
-      if (minPoolSize != null)
+      if (minPoolSize != null && !Defaults.MIN_POOL_SIZE.equals(minPoolSize))
       {
          sb.append("<").append(CommonXML.ELEMENT_MIN_POOL_SIZE).append(">");
          sb.append(minPoolSize);
@@ -212,28 +217,28 @@ public class XaPoolImpl extends PoolImpl implements XaPool
          sb.append("</").append(CommonXML.ELEMENT_INITIAL_POOL_SIZE).append(">");
       }
 
-      if (maxPoolSize != null)
+      if (maxPoolSize != null && !Defaults.MAX_POOL_SIZE.equals(maxPoolSize))
       {
          sb.append("<").append(CommonXML.ELEMENT_MAX_POOL_SIZE).append(">");
          sb.append(maxPoolSize);
          sb.append("</").append(CommonXML.ELEMENT_MAX_POOL_SIZE).append(">");
       }
 
-      if (prefill != null)
+      if (prefill != null && !Defaults.PREFILL.equals(prefill))
       {
          sb.append("<").append(CommonXML.ELEMENT_PREFILL).append(">");
          sb.append(prefill);
          sb.append("</").append(CommonXML.ELEMENT_PREFILL).append(">");
       }
 
-      if (useStrictMin != null)
+      if (useStrictMin != null && !Defaults.USE_STRICT_MIN.equals(useStrictMin))
       {
          sb.append("<").append(CommonXML.ELEMENT_USE_STRICT_MIN).append(">");
          sb.append(useStrictMin);
          sb.append("</").append(CommonXML.ELEMENT_USE_STRICT_MIN).append(">");
       }
 
-      if (flushStrategy != null)
+      if (flushStrategy != null && !Defaults.FLUSH_STRATEGY.equals(flushStrategy))
       {
          sb.append("<").append(CommonXML.ELEMENT_FLUSH_STRATEGY).append(">");
          sb.append(flushStrategy);
@@ -260,14 +265,14 @@ public class XaPoolImpl extends PoolImpl implements XaPool
          sb.append("<").append(CommonXML.ELEMENT_NO_TX_SEPARATE_POOLS).append("/>");
       }
 
-      if (padXid != null)
+      if (padXid != null && !Defaults.PAD_XID.equals(padXid))
       {
          sb.append("<").append(CommonXML.ELEMENT_PAD_XID).append(">");
          sb.append(padXid);
          sb.append("</").append(CommonXML.ELEMENT_PAD_XID).append(">");
       }
 
-      if (wrapXaResource != null)
+      if (wrapXaResource != null && !Defaults.WRAP_XA_RESOURCE.equals(wrapXaResource))
       {
          sb.append("<").append(CommonXML.ELEMENT_WRAP_XA_RESOURCE).append(">");
          sb.append(wrapXaResource);

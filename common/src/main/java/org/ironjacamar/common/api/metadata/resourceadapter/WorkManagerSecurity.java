@@ -20,7 +20,8 @@
  */
 package org.ironjacamar.common.api.metadata.resourceadapter;
 
-import java.io.Serializable;
+import org.ironjacamar.common.api.metadata.JCAMetadata;
+
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +30,7 @@ import java.util.Map;
  *
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface WorkManagerSecurity extends Serializable
+public interface WorkManagerSecurity extends JCAMetadata
 {
    /**
     * Is mapping required

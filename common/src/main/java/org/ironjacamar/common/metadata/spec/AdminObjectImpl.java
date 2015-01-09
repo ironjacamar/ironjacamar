@@ -25,6 +25,7 @@ import org.ironjacamar.common.api.metadata.CopyableMetaData;
 import org.ironjacamar.common.api.metadata.spec.AdminObject;
 import org.ironjacamar.common.api.metadata.spec.ConfigProperty;
 import org.ironjacamar.common.api.metadata.spec.XsdString;
+import org.ironjacamar.common.metadata.common.AbstractMetadata;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,7 +36,7 @@ import java.util.List;
  * @author <a href="mailto:stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class AdminObjectImpl implements AdminObject
+public class AdminObjectImpl extends AbstractMetadata implements AdminObject
 {
    private static final long serialVersionUID = 1L;
 
@@ -56,6 +57,7 @@ public class AdminObjectImpl implements AdminObject
    public AdminObjectImpl(XsdString adminobjectInterface, XsdString adminobjectClass,
                           List<ConfigProperty> configProperty, String id)
    {
+      super(null);
       this.adminobjectInterface = adminobjectInterface;
       if (!XsdString.isNull(this.adminobjectInterface))
          this.adminobjectInterface.setTag(XML.ELEMENT_ADMINOBJECT_INTERFACE);
