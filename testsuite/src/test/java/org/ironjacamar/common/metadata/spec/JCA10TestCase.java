@@ -136,58 +136,68 @@ public class JCA10TestCase
       assertEquals(2, cpl.size());
       for (ConfigProperty cp : cpl)
       {
-         if (cp.getId().equals("ID020"))
+         switch(cp.getId())
          {
-            lxs = cp.getDescriptions();
-            assertEquals(1, lxs.size());
-            assertTrue(lxs.toString(), containsDescription(lxs, "something", null, "ID021"));
-            assertEquals(new XsdString("aaa", "ID022", "config-property-name"), cp.getConfigPropertyName());
-            assertEquals(new XsdString("java.lang.String", "ID023", "config-property-type"),
-               cp.getConfigPropertyType());
-            assertEquals(new XsdString("aaa", "ID024", "config-property-value"), cp.getConfigPropertyValue());
-         }
-         else if (cp.getId().equals("ID025"))
-         {
-            lxs = cp.getDescriptions();
-            assertEquals(1, lxs.size());
-            assertTrue(lxs.toString(), containsDescription(lxs, "something", null, "ID026"));
-            assertEquals(new XsdString("bbb", "ID027", "config-property-name"), cp.getConfigPropertyName());
-            assertEquals(new XsdString("java.lang.Boolean", "ID028", "config-property-type"),
-               cp.getConfigPropertyType());
-            assertEquals(new XsdString("false", "ID029", "config-property-value"), cp.getConfigPropertyValue());
-         }
-         else
-         {
-            fail("Unexpected ID:" + cp.getId());
+            case "ID020" :
+            {
+               lxs = cp.getDescriptions();
+               assertEquals(1, lxs.size());
+               assertTrue(lxs.toString(), containsDescription(lxs, "something", null, "ID021"));
+               assertEquals(new XsdString("aaa", "ID022", "config-property-name"), cp.getConfigPropertyName());
+               assertEquals(new XsdString("java.lang.String", "ID023", "config-property-type"),
+                     cp.getConfigPropertyType());
+               assertEquals(new XsdString("aaa", "ID024", "config-property-value"), cp.getConfigPropertyValue());
+               break;
+            }
+            case"ID025" :
+            {
+               lxs = cp.getDescriptions();
+               assertEquals(1, lxs.size());
+               assertTrue(lxs.toString(), containsDescription(lxs, "something", null, "ID026"));
+               assertEquals(new XsdString("bbb", "ID027", "config-property-name"), cp.getConfigPropertyName());
+               assertEquals(new XsdString("java.lang.Boolean", "ID028", "config-property-type"),
+                  cp.getConfigPropertyType());
+               assertEquals(new XsdString("false", "ID029", "config-property-value"), cp.getConfigPropertyValue());
+               break;
+            }
+            default :
+            {
+               fail("Unexpected ID:" + cp.getId());
+            }
          }
       }
       List<AuthenticationMechanism> ams = ora.getAuthenticationMechanisms();
       assertEquals(2, ams.size());
       for (AuthenticationMechanism am : ams)
       {
-         if (am.getId().equals("ID030"))
+         switch(am.getId())
          {
-            lxs = am.getDescriptions();
-            assertEquals(1, lxs.size());
-            assertTrue(lxs.toString(), containsDescription(lxs, "something", null, "ID031"));
-            assertEquals(new XsdString("BasicPassword", "ID032", "authentication-mechanism-type"),
-               am.getAuthenticationMechanismType());
-            assertEquals("ID033", am.getCredentialInterfaceId());
-            assertEquals(CredentialInterfaceEnum.PasswordCredential, am.getCredentialInterface());
-         }
-         else if (am.getId().equals("ID034"))
-         {
-            lxs = am.getDescriptions();
-            assertEquals(1, lxs.size());
-            assertTrue(lxs.toString(), containsDescription(lxs, "something", null, "ID035"));
-            assertEquals(new XsdString("Kerbv5", "ID036", "authentication-mechanism-type"),
-               am.getAuthenticationMechanismType());
-            assertEquals("ID037", am.getCredentialInterfaceId());
-            assertEquals(CredentialInterfaceEnum.GenericCredential, am.getCredentialInterface());
-         }
-         else
-         {
-            fail("Unexpected ID:" + am.getId());
+            case "ID030" :
+            {
+               lxs = am.getDescriptions();
+               assertEquals(1, lxs.size());
+               assertTrue(lxs.toString(), containsDescription(lxs, "something", null, "ID031"));
+               assertEquals(new XsdString("BasicPassword", "ID032", "authentication-mechanism-type"),
+                  am.getAuthenticationMechanismType());
+               assertEquals("ID033", am.getCredentialInterfaceId());
+               assertEquals(CredentialInterfaceEnum.PasswordCredential, am.getCredentialInterface());
+               break;
+            }
+            case "ID034" :
+            {
+               lxs = am.getDescriptions();
+               assertEquals(1, lxs.size());
+               assertTrue(lxs.toString(), containsDescription(lxs, "something", null, "ID035"));
+               assertEquals(new XsdString("Kerbv5", "ID036", "authentication-mechanism-type"),
+                  am.getAuthenticationMechanismType());
+               assertEquals("ID037", am.getCredentialInterfaceId());
+               assertEquals(CredentialInterfaceEnum.GenericCredential, am.getCredentialInterface());
+               break;
+            }
+            default :
+            {
+               fail("Unexpected ID:" + am.getId());
+            }
          }
       }
       assertEquals("ID038", ora.getReauthenticationSupportId());
@@ -197,25 +207,30 @@ public class JCA10TestCase
       assertEquals(2, ls.size());
       for (SecurityPermission s : ls)
       {
-         if (s.getId().equals("ID039"))
+         switch(s.getId())
          {
-            lxs = s.getDescriptions();
-            assertEquals(1, lxs.size());
-            assertTrue(lxs.toString(), containsDescription(lxs, "something", null, "ID040"));
-            assertEquals(new XsdString("something", "ID041", "security-permission-spec"),
-               s.getSecurityPermissionSpec());
-         }
-         else if (s.getId().equals("ID042"))
-         {
-            lxs = s.getDescriptions();
-            assertEquals(1, lxs.size());
-            assertTrue(lxs.toString(), containsDescription(lxs, "something", null, "ID043"));
-            assertEquals(new XsdString("something_else", "ID044", "security-permission-spec"),
-               s.getSecurityPermissionSpec());
-         }
-         else
-         {
-            fail("Unexpected ID:" + s.getId());
+            case "ID039" :
+            {
+               lxs = s.getDescriptions();
+               assertEquals(1, lxs.size());
+               assertTrue(lxs.toString(), containsDescription(lxs, "something", null, "ID040"));
+               assertEquals(new XsdString("something", "ID041", "security-permission-spec"),
+                  s.getSecurityPermissionSpec());
+               break;
+            }
+            case "ID042" :
+            {
+               lxs = s.getDescriptions();
+               assertEquals(1, lxs.size());
+               assertTrue(lxs.toString(), containsDescription(lxs, "something", null, "ID043"));
+               assertEquals(new XsdString("something_else", "ID044", "security-permission-spec"),
+                  s.getSecurityPermissionSpec());
+               break;
+            }
+            default:
+            {
+               fail("Unexpected ID:" + s.getId());
+            }
          }
       }
    }
