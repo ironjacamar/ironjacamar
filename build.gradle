@@ -105,6 +105,21 @@ subprojects { subProject ->
   targetCompatibility = rootProject.javaLanguageLevel
   sourceCompatibility = rootProject.javaLanguageLevel
 
+  eclipse {
+    jdt {
+      sourceCompatibility = rootProject.javaLanguageLevel
+      targetCompatibility = rootProject.javaLanguageLevel
+    }
+    classpath {
+      downloadSources = true
+      downloadJavadoc = true
+    }
+  }
+
+  tasks.withType(JavaCompile) {
+    options.fork = true
+  }
+
   task compile
   compile.dependsOn compileJava, processResources, compileTestJava, processTestResources
 
