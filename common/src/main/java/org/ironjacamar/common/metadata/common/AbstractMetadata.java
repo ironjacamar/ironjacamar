@@ -89,19 +89,12 @@ public abstract class AbstractMetadata implements JCAMetadata
 
       if (value != null)
       {
-         if (value.startsWith("${") && v != null)
+         if (value.startsWith("${") && v != null && value.indexOf(":") != -1)
          {
-            if (value.indexOf(":") != -1)
-            {
-               value = value.substring(2, value.length() - 1);
-               value = value.substring(0, value.indexOf(":"));
-               return "${" + value + ":" + v + "}";
-            }
+            return value.substring(0, value.indexOf(":") + 1)  + v + "}";
          }
-
          return value;
       }
-
       return v;
    }
 }

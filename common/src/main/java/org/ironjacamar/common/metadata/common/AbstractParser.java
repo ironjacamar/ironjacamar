@@ -106,10 +106,10 @@ public abstract class AbstractParser
          expressions.put(key, elementtext);
       
       String stringValue = getSubstitutionValue(elementtext);
-      if (stringValue == null || stringValue.length() == 0 || stringValue.trim().equalsIgnoreCase("true") ||
+      if (isEmpty(stringValue) || stringValue.trim().equalsIgnoreCase("true") ||
           stringValue.trim().equalsIgnoreCase("false"))
       {
-         return stringValue == null || stringValue.length() == 0 ? Boolean.TRUE : Boolean.valueOf(stringValue.trim());
+         return isEmpty(stringValue) ? Boolean.TRUE : Boolean.valueOf(stringValue.trim());
       }
       else
       {
@@ -126,7 +126,7 @@ public abstract class AbstractParser
     * @param expressions The expressions
     * @return the boolean representing element
     * @throws XMLStreamException StAX exception
-    * @throws ParserException in case of not valid boolena for given attribute
+    * @throws ParserException in case of not valid boolean for given attribute
     */
    protected Boolean attributeAsBoolean(XMLStreamReader reader, String attributeName, Boolean defaultValue,
                                         Map<String, String> expressions)
@@ -139,10 +139,10 @@ public abstract class AbstractParser
          expressions.put(attributeName, attributeString);
       
       String stringValue = getSubstitutionValue(attributeString);
-      if (stringValue == null || stringValue.length() == 0 || stringValue.trim().equalsIgnoreCase("true") ||
+      if (isEmpty(stringValue) || stringValue.trim().equalsIgnoreCase("true") ||
           stringValue.trim().equalsIgnoreCase("false"))
       {
-         return stringValue == null || stringValue.length() == 0 ? defaultValue : Boolean.valueOf(stringValue.trim());
+         return isEmpty(stringValue) ? defaultValue : Boolean.valueOf(stringValue.trim());
       }
       else
       {
@@ -360,29 +360,23 @@ public abstract class AbstractParser
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (CommonXML.ELEMENT_POOL.equals(reader.getLocalName()))
+               switch (reader.getLocalName())
                {
-                  return new PoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin,
-                                      flushStrategy, capacity,
-                                      expressions.size() > 0 ? expressions : null);
+                  case CommonXML.ELEMENT_POOL :
+                     return new PoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin,
+                           flushStrategy, capacity,
+                           expressions.size() > 0 ? expressions : null);
+                  case CommonXML.ELEMENT_MAX_POOL_SIZE :
+                  case CommonXML.ELEMENT_MIN_POOL_SIZE :
+                  case CommonXML.ELEMENT_INITIAL_POOL_SIZE :
+                  case CommonXML.ELEMENT_PREFILL :
+                  case CommonXML.ELEMENT_USE_STRICT_MIN :
+                  case CommonXML.ELEMENT_FLUSH_STRATEGY :
+                  case CommonXML.ELEMENT_CAPACITY :
+                     break;
+                  default :
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                }
-               else
-               {
-                  switch (reader.getLocalName())
-                  {
-                     case CommonXML.ELEMENT_MAX_POOL_SIZE :
-                     case CommonXML.ELEMENT_MIN_POOL_SIZE :
-                     case CommonXML.ELEMENT_INITIAL_POOL_SIZE :
-                     case CommonXML.ELEMENT_PREFILL :
-                     case CommonXML.ELEMENT_USE_STRICT_MIN :
-                     case CommonXML.ELEMENT_FLUSH_STRATEGY :
-                     case CommonXML.ELEMENT_CAPACITY :
-                        break;
-                     default :
-                        throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
-                  }
-               }
-               break;
             }
             case START_ELEMENT : {
                switch (reader.getLocalName())
@@ -458,37 +452,30 @@ public abstract class AbstractParser
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (CommonXML.ELEMENT_XA_POOL.equals(reader.getLocalName()))
+               switch (reader.getLocalName())
                {
-
-                  return new XaPoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin,
-                                        flushStrategy, capacity,
-                                        isSameRmOverride, interleaving, padXid,
-                                        wrapXaDataSource, noTxSeparatePool,
-                                        expressions.size() > 0 ? expressions : null);
+                  case CommonXML.ELEMENT_XA_POOL :
+                     return new XaPoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin,
+                           flushStrategy, capacity,
+                           isSameRmOverride, interleaving, padXid,
+                           wrapXaDataSource, noTxSeparatePool,
+                           expressions.size() > 0 ? expressions : null);
+                  case CommonXML.ELEMENT_MAX_POOL_SIZE :
+                  case CommonXML.ELEMENT_INITIAL_POOL_SIZE :
+                  case CommonXML.ELEMENT_MIN_POOL_SIZE :
+                  case CommonXML.ELEMENT_INTERLEAVING :
+                  case CommonXML.ELEMENT_IS_SAME_RM_OVERRIDE :
+                  case CommonXML.ELEMENT_NO_TX_SEPARATE_POOLS :
+                  case CommonXML.ELEMENT_PAD_XID :
+                  case CommonXML.ELEMENT_WRAP_XA_RESOURCE :
+                  case CommonXML.ELEMENT_PREFILL :
+                  case CommonXML.ELEMENT_USE_STRICT_MIN :
+                  case CommonXML.ELEMENT_FLUSH_STRATEGY :
+                  case CommonXML.ELEMENT_CAPACITY :
+                     break;
+                  default :
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                }
-               else
-               {
-                  switch (reader.getLocalName())
-                  {
-                     case CommonXML.ELEMENT_MAX_POOL_SIZE :
-                     case CommonXML.ELEMENT_INITIAL_POOL_SIZE :
-                     case CommonXML.ELEMENT_MIN_POOL_SIZE :
-                     case CommonXML.ELEMENT_INTERLEAVING :
-                     case CommonXML.ELEMENT_IS_SAME_RM_OVERRIDE :
-                     case CommonXML.ELEMENT_NO_TX_SEPARATE_POOLS :
-                     case CommonXML.ELEMENT_PAD_XID :
-                     case CommonXML.ELEMENT_WRAP_XA_RESOURCE :
-                     case CommonXML.ELEMENT_PREFILL :
-                     case CommonXML.ELEMENT_USE_STRICT_MIN :
-                     case CommonXML.ELEMENT_FLUSH_STRATEGY :
-                     case CommonXML.ELEMENT_CAPACITY :
-                        break;
-                     default :
-                        throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
-                  }
-               }
-               break;
             }
             case START_ELEMENT : {
                switch (reader.getLocalName())
@@ -576,25 +563,19 @@ public abstract class AbstractParser
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (CommonXML.ELEMENT_SECURITY.equals(reader.getLocalName()))
+               switch (reader.getLocalName())
                {
-                  return new SecurityImpl(securityDomain, securityDomainAndApplication,
-                                          application,
-                                          expressions.size() > 0 ? expressions : null);
+                  case CommonXML.ELEMENT_SECURITY :
+                     return new SecurityImpl(securityDomain, securityDomainAndApplication,
+                           application,
+                           expressions.size() > 0 ? expressions : null);
+                  case CommonXML.ELEMENT_SECURITY_DOMAIN :
+                  case CommonXML.ELEMENT_SECURITY_DOMAIN_AND_APPLICATION :
+                  case CommonXML.ELEMENT_APPLICATION :
+                     break;
+                  default :
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                }
-               else
-               {
-                  switch (reader.getLocalName())
-                  {
-                     case CommonXML.ELEMENT_SECURITY_DOMAIN :
-                     case CommonXML.ELEMENT_SECURITY_DOMAIN_AND_APPLICATION :
-                     case CommonXML.ELEMENT_APPLICATION :
-                        break;
-                     default :
-                        throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
-                  }
-               }
-               break;
             }
             case START_ELEMENT : {
                switch (reader.getLocalName())
@@ -629,45 +610,79 @@ public abstract class AbstractParser
     * @param input The input string
     * @return The output
     */
-   private String getSubstitutionValue(String input) throws XMLStreamException
+   private String getSubstitutionValue(String input)
    {
-      if (input == null || input.trim().equals(""))
-         return input;
-
       if (!resolveSystemProperties)
          return input;
+      return transformExpression(input);
+   }
 
-      while ((input.indexOf("${")) != -1)
+   /**
+    * Returns true if the string is null or have no symbols after being trimmed
+    * @param input string
+    * @return boolean
+    */
+   public static final boolean isEmptyTrimmed(String input)
+   {
+      return input == null || input.trim().equals("");
+   }
+
+   /**
+    * Returns true if the string is null or have no symbols
+    * @param input string
+    * @return boolean
+    */
+   private boolean isEmpty(String input)
+   {
+      return input == null || input.length() == 0;
+   }
+
+   /**
+    * System property substitution utility method
+    * @param toTransform The input string
+    * @return The output
+    */
+   public static final String transformExpression(String toTransform)
+   {
+      if (isEmptyTrimmed(toTransform))
+          return toTransform;
+
+      String input = toTransform;
+
+      while (input.indexOf("${") != -1)
       {
-         int from = input.indexOf("${");
-         int to = input.indexOf("}");
-         int dv = input.indexOf(":", from + 2);
-
-         if (dv != -1)
+         int from = input.lastIndexOf("${");
+         int to = input.indexOf("}", from + 2);
+         if (to == -1)
          {
-            if (dv > to)
-               dv = -1;
+            log.debugf("Probably an incorrect expression in the string: '%s'. No closing brace found.",
+               toTransform);
+            return toTransform;
          }
 
+         int dv = input.indexOf(":", from + 2);
+         if (dv != -1 && dv > to)
+         {
+            dv = -1;
+         }
          String systemProperty = "";
          String defaultValue = "";
          String s = input.substring(from + 2, to);
-         if (dv == -1)
+         if ("/".equals(s))
          {
-            if ("/".equals(s))
-            {
-               systemProperty = File.separator;
-            }
-            else if (":".equals(s))
-            {
-               systemProperty = File.pathSeparator;
-            }
-            else
-            {
-               systemProperty = SecurityActions.getSystemProperty(s);
-            }
+            systemProperty = File.separator;
+         }
+         else if (":".equals(s))
+         {
+            systemProperty = File.pathSeparator;
+            dv = -1;
          }
          else
+         {
+            systemProperty = SecurityActions.getSystemProperty(s);
+         }
+
+         if (dv != -1)
          {
             s = input.substring(from + 2, dv);
             systemProperty = SecurityActions.getSystemProperty(s);
@@ -675,22 +690,19 @@ public abstract class AbstractParser
          }
          String prefix = "";
          String postfix = "";
-
          if (from != 0)
          {
             prefix = input.substring(0, from);
          }
-
-         if (to + 1 < input.length() - 1)
+         if (to + 1 < input.length())
          {
             postfix = input.substring(to + 1);
          }
-
-         if (systemProperty != null && !systemProperty.trim().equals(""))
+         if (!isEmptyTrimmed(systemProperty))
          {
             input = prefix + systemProperty + postfix;
          }
-         else if (defaultValue != null && !defaultValue.trim().equals(""))
+         else if (!isEmptyTrimmed(defaultValue))
          {
             input = prefix + defaultValue + postfix;
          }
@@ -728,25 +740,19 @@ public abstract class AbstractParser
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (CommonXML.ELEMENT_SECURITY.equals(reader.getLocalName()) ||
-                   CommonXML.ELEMENT_RECOVER_CREDENTIAL.equals(reader.getLocalName()))
+               switch (reader.getLocalName())
                {
-                  return new CredentialImpl(userName, password, securityDomain,
-                                            expressions.size() > 0 ? expressions : null);
+                  case CommonXML.ELEMENT_SECURITY :
+                  case CommonXML.ELEMENT_RECOVER_CREDENTIAL :
+                     return new CredentialImpl(userName, password, securityDomain,
+                        expressions.size() > 0 ? expressions : null);
+                  case CommonXML.ELEMENT_PASSWORD :
+                  case CommonXML.ELEMENT_USER_NAME :
+                  case CommonXML.ELEMENT_SECURITY_DOMAIN :
+                     break;
+                  default :
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                }
-               else
-               {
-                  switch (reader.getLocalName())
-                  {
-                     case CommonXML.ELEMENT_PASSWORD :
-                     case CommonXML.ELEMENT_USER_NAME :
-                     case CommonXML.ELEMENT_SECURITY_DOMAIN :
-                        break;
-                     default :
-                        throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
-                  }
-               }
-               break;
             }
             case START_ELEMENT : {
                switch (reader.getLocalName())
@@ -811,23 +817,17 @@ public abstract class AbstractParser
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (CommonXML.ELEMENT_RECOVERY.equals(reader.getLocalName()))
+               switch (reader.getLocalName())
                {
-                  return new RecoveryImpl(security, plugin, noRecovery,
-                                          expressions.size() > 0 ? expressions : null);
+                  case CommonXML.ELEMENT_RECOVERY :
+                     return new RecoveryImpl(security, plugin, noRecovery,
+                        expressions.size() > 0 ? expressions : null);
+                  case CommonXML.ELEMENT_RECOVER_CREDENTIAL :
+                  case CommonXML.ELEMENT_RECOVER_PLUGIN :
+                     break;
+                  default :
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                }
-               else
-               {
-                  switch (reader.getLocalName())
-                  {
-                     case CommonXML.ELEMENT_RECOVER_CREDENTIAL :
-                     case CommonXML.ELEMENT_RECOVER_PLUGIN :
-                        break;
-                     default :
-                        throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
-                  }
-               }
-               break;
             }
             case START_ELEMENT : {
                switch (reader.getLocalName())
@@ -948,22 +948,13 @@ public abstract class AbstractParser
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (CommonXML.ELEMENT_CAPACITY.equals(reader.getLocalName()))
+               switch (reader.getLocalName())
                {
-                  return new CapacityImpl(incrementer, decrementer);
+                  case CommonXML.ELEMENT_CAPACITY :
+                     return new CapacityImpl(incrementer, decrementer);
+                  default :
+                     break;
                }
-               else
-               {
-                  switch (reader.getLocalName())
-                  {
-                     case CommonXML.ELEMENT_INCREMENTER :
-                     case CommonXML.ELEMENT_DECREMENTER :
-                        break;
-                     default :
-                        // Nothing
-                  }
-               }
-               break;
             }
             case START_ELEMENT : {
                switch (reader.getLocalName())
@@ -1013,26 +1004,20 @@ public abstract class AbstractParser
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (CommonXML.ELEMENT_VALIDATION.equals(reader.getLocalName()))
+               switch (reader.getLocalName())
                {
-                  return new ValidationImpl(validateOnMatch, backgroundValidation, backgroundValidationMillis,
-                                            useFastFail,
-                                            expressions.size() > 0 ? expressions : null);
+                  case CommonXML.ELEMENT_VALIDATION :
+                     return new ValidationImpl(validateOnMatch, backgroundValidation, backgroundValidationMillis,
+                        useFastFail,
+                        expressions.size() > 0 ? expressions : null);
+                  case CommonXML.ELEMENT_VALIDATE_ON_MATCH :
+                  case CommonXML.ELEMENT_BACKGROUND_VALIDATION_MILLIS :
+                  case CommonXML.ELEMENT_BACKGROUND_VALIDATION :
+                  case CommonXML.ELEMENT_USE_FAST_FAIL :
+                     break;
+                  default :
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                }
-               else
-               {
-                  switch (reader.getLocalName())
-                  {
-                     case CommonXML.ELEMENT_VALIDATE_ON_MATCH :
-                     case CommonXML.ELEMENT_BACKGROUND_VALIDATION_MILLIS :
-                     case CommonXML.ELEMENT_BACKGROUND_VALIDATION :
-                     case CommonXML.ELEMENT_USE_FAST_FAIL :
-                        break;
-                     default :
-                        throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
-                  }
-               }
-               break;
             }
             case START_ELEMENT : {
                switch (reader.getLocalName())
@@ -1090,27 +1075,21 @@ public abstract class AbstractParser
          switch (reader.nextTag())
          {
             case END_ELEMENT : {
-               if (CommonXML.ELEMENT_TIMEOUT.equals(reader.getLocalName()))
+               switch (reader.getLocalName())
                {
-                  return new TimeoutImpl(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry,
-                                         allocationRetryWaitMillis, xaResourceTimeout,
-                                         expressions.size() > 0 ? expressions : null);
+                  case CommonXML.ELEMENT_TIMEOUT :
+                     return new TimeoutImpl(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry,
+                           allocationRetryWaitMillis, xaResourceTimeout,
+                           expressions.size() > 0 ? expressions : null);
+                  case CommonXML.ELEMENT_ALLOCATION_RETRY_WAIT_MILLIS :
+                  case CommonXML.ELEMENT_ALLOCATION_RETRY :
+                  case CommonXML.ELEMENT_BLOCKING_TIMEOUT_MILLIS :
+                  case CommonXML.ELEMENT_IDLE_TIMEOUT_MINUTES :
+                  case CommonXML.ELEMENT_XA_RESOURCE_TIMEOUT :
+                     break;
+                  default :
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
                }
-               else
-               {
-                  switch (reader.getLocalName())
-                  {
-                     case CommonXML.ELEMENT_ALLOCATION_RETRY_WAIT_MILLIS :
-                     case CommonXML.ELEMENT_ALLOCATION_RETRY :
-                     case CommonXML.ELEMENT_BLOCKING_TIMEOUT_MILLIS :
-                     case CommonXML.ELEMENT_IDLE_TIMEOUT_MINUTES :
-                     case CommonXML.ELEMENT_XA_RESOURCE_TIMEOUT :
-                        break;
-                     default :
-                        throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
-                  }
-               }
-               break;
             }
             case START_ELEMENT : {
                switch (reader.getLocalName())
@@ -1301,20 +1280,10 @@ public abstract class AbstractParser
       throws XMLStreamException, ParserException
    {
       String n = attributeAsString(reader, "name", null);
-      if (n == null || n.trim().equals(""))
+      if (isEmptyTrimmed(n))
          throw new ParserException(bundle.requiredAttributeMissing("name", reader.getLocalName()));
       else
          configProperties.put(n, elementAsString(reader, getExpressionKey(key, n), expressions));
-   }
-
-   /**
-    * Get expression key
-    * @param k The key
-    * @return The value
-    */
-   protected String getExpressionKey(String k)
-   {
-      return k;
    }
 
    /**
