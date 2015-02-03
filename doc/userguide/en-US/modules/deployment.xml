@@ -1953,6 +1953,9 @@ copy postgres-xa-ds.xml ironjacamar-1.2.0.Final\deploy
 
           <itemizedlist spacing="compact">
             <listitem>
+              <code>org.jboss.jca.adapters.jdbc.extensions.mssql.MSSQLExceptionSorter</code>
+            </listitem>
+            <listitem>
               <code>org.jboss.jca.adapters.jdbc.extensions.mssql.MSSQLValidConnectionChecker</code>
             </listitem>
           </itemizedlist>

@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2010, Red Hat Inc, and individual contributors
+ * Copyright 2015, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -20,7 +20,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.adapters.jdbc.extensions.postgres;
+package org.jboss.jca.adapters.jdbc.extensions.mssql;
 
 import org.jboss.jca.adapters.jdbc.spi.ExceptionSorter;
 
@@ -28,20 +28,19 @@ import java.io.Serializable;
 import java.sql.SQLException;
 
 /**
- * A PostgreSQLExceptionSorter.
+ * A MSSQLExceptionSorter.
  * 
- * @author <a href="wprice@redhat.com">Weston Price</a>
- * @version $Revision: 71554 $
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class PostgreSQLExceptionSorter implements ExceptionSorter, Serializable
+public class MSSQLExceptionSorter implements ExceptionSorter, Serializable
 {
    /** The serialVersionUID */
-   private static final long serialVersionUID = 8961250260772836448L;
+   private static final long serialVersionUID = 1L;
    
    /**
     * Constructor
     */
-   public PostgreSQLExceptionSorter()
+   public MSSQLExceptionSorter()
    {
    }
 
@@ -52,7 +51,7 @@ public class PostgreSQLExceptionSorter implements ExceptionSorter, Serializable
    {
       final String sqlState = e.getSQLState();
 
-      if ("08006".equals(sqlState))
+      if ("08S01".equals(sqlState))
       {
          return true;
       }

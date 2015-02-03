@@ -25,6 +25,7 @@ import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.api.connectionmanager.listener.ConnectionListener;
+import org.jboss.jca.core.spi.transaction.local.LocalResourceException;
 import org.jboss.jca.core.spi.transaction.local.LocalXAException;
 import org.jboss.jca.core.spi.transaction.local.LocalXAResource;
 
@@ -174,6 +175,11 @@ public class LocalXAResourceImpl implements LocalXAResource,
       {
          cl.getManagedConnection().getLocalTransaction().commit();
       }
+      catch (LocalResourceException lre)
+      {
+         connectionManager.returnManagedConnection(cl, true);
+         throw new LocalXAException(bundle.couldNotCommitLocalTx(), XAException.XAER_RMFAIL, lre);
+      }
       catch (ResourceException re)
       {
          connectionManager.returnManagedConnection(cl, true);
@@ -240,6 +246,11 @@ public class LocalXAResourceImpl implements LocalXAResource,
       try
       {
          cl.getManagedConnection().getLocalTransaction().rollback();
+      }
+      catch (LocalResourceException lre)
+      {
+         connectionManager.returnManagedConnection(cl, true);
+         throw new LocalXAException(bundle.couldNotRollbackLocalTx(), XAException.XAER_RMFAIL, lre);
       }
       catch (ResourceException re)
       {

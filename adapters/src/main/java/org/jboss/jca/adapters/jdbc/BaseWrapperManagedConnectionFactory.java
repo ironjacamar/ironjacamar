@@ -1202,7 +1202,7 @@ public abstract class BaseWrapperManagedConnectionFactory
     * @param e The exception
     * @return True if fatal; otherwise false
     */
-   boolean isExceptionFatal(SQLException e)
+   public boolean isExceptionFatal(SQLException e)
    {
       try
       {

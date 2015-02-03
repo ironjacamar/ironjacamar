@@ -82,6 +82,13 @@ public class OracleExceptionSorter implements ExceptionSorter, Serializable
          return true;
       }
 
+      final String sqlState = e.getSQLState();
+
+      if ("08000".equals(sqlState))
+      {
+         return true;
+      }
+      
       final String errorText = (e.getMessage()).toUpperCase();
 
       // Exclude oracle user defined error codes (20000 through 20999) from consideration when looking for

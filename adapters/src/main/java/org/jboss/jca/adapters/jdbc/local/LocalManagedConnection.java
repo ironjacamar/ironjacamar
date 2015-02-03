@@ -23,6 +23,7 @@
 package org.jboss.jca.adapters.jdbc.local;
 
 import org.jboss.jca.adapters.jdbc.BaseWrapperManagedConnection;
+import org.jboss.jca.core.spi.transaction.local.LocalResourceException;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -96,7 +97,15 @@ public class LocalManagedConnection extends BaseWrapperManagedConnection impleme
          }
          catch (SQLException e)
          {
-            checkException(e);
+            if (mcf.isExceptionFatal(e))
+            {
+               broadcastConnectionError(e);
+               throw new LocalResourceException(e.getMessage(), e);
+            }
+            else
+            {
+               checkException(e);
+            }
          }
       }
       finally
@@ -124,13 +133,21 @@ public class LocalManagedConnection extends BaseWrapperManagedConnection impleme
          }
          catch (SQLException e)
          {
-            try
+            if (mcf.isExceptionFatal(e))
             {
-               checkException(e);
+               broadcastConnectionError(e);
+               throw new LocalResourceException(e.getMessage(), e);
             }
-            catch (Exception e2)
+            else
             {
-               // We are ignoring since we just need the notification
+               try
+               {
+                  checkException(e);
+               }
+               catch (Exception e2)
+               {
+                  // We are ignoring since we just need the notification
+               }
             }
          }
       }

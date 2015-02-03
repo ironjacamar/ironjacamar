@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2010, Red Hat Inc, and individual contributors
+ * Copyright 2015, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,44 +19,40 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.jboss.jca.core.spi.transaction.local;
 
-package org.jboss.jca.adapters.jdbc.extensions.postgres;
-
-import org.jboss.jca.adapters.jdbc.spi.ExceptionSorter;
-
-import java.io.Serializable;
-import java.sql.SQLException;
+import javax.resource.ResourceException;
 
 /**
- * A PostgreSQLExceptionSorter.
- * 
- * @author <a href="wprice@redhat.com">Weston Price</a>
- * @version $Revision: 71554 $
+ * LocalResourceException.
+ * <p/>
+ * Throwing this exception from your <code>LocalTransaction.commit()</code> or
+ * <code>LocalTransaction.rollback()</code> methods will result in a
+ * <code>XAException.XAER_RMFAIL</code> error code being sent to the transaction manager
+ *
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class PostgreSQLExceptionSorter implements ExceptionSorter, Serializable
+public class LocalResourceException extends ResourceException
 {
-   /** The serialVersionUID */
-   private static final long serialVersionUID = 8961250260772836448L;
+   /** Serial version UID */
+   private static final long serialVersionUID = 1L;
    
    /**
-    * Constructor
-    */
-   public PostgreSQLExceptionSorter()
+    * Creates a new instance.
+    * @param message message
+    */   
+   public LocalResourceException(String message)
    {
+      this(message, null);
    }
 
    /**
-    * {@inheritDoc}
-    */
-   public boolean isExceptionFatal(SQLException e)
+    * Creates a new instance.
+    * @param message message
+    * @param t cause
+    */   
+   public LocalResourceException(String message, Throwable t)
    {
-      final String sqlState = e.getSQLState();
-
-      if ("08006".equals(sqlState))
-      {
-         return true;
-      }
-
-      return false;
+      super(message, t);
    }
 }
