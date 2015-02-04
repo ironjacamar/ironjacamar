@@ -54,13 +54,13 @@ public class LocalXAResourceImpl implements LocalXAResource,
    private static boolean trace = log.isTraceEnabled();
    
    /** The bundle */
-   private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
+   protected static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
    
    /** Connection listener */
-   private ConnectionListener cl;
+   protected ConnectionListener cl;
 
    /**Connection manager*/
-   private ConnectionManager connectionManager = null;
+   protected ConnectionManager connectionManager = null;
 
    /**
     * <code>warned</code> is set after one warning about a local participant in
@@ -69,7 +69,7 @@ public class LocalXAResourceImpl implements LocalXAResource,
    private boolean warned = false;
 
    /** Current transction branch id */
-   private Xid currentXid;
+   protected Xid currentXid;
 
    /** Product name */
    private String productName;

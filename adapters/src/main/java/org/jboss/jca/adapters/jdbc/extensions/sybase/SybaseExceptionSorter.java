@@ -57,7 +57,8 @@ public class SybaseExceptionSorter implements ExceptionSorter, Serializable
       String errorText = (e.getMessage()).toUpperCase();
 
       if ((errorText.indexOf("JZ0C0") > -1) || // ERR_CONNECTION_DEAD
-          (errorText.indexOf("JZ0C1") > -1)) // ERR_IOE_KILLED_CONNECTION
+          (errorText.indexOf("JZ0C1") > -1) || // ERR_IOE_KILLED_CONNECTION
+          (errorText.indexOf("JZ006") > -1))   // CONNECTION CLOSED
       {
          result = true;
       }

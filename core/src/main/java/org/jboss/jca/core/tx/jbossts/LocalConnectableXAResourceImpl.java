@@ -23,6 +23,13 @@ package org.jboss.jca.core.tx.jbossts;
 
 import org.jboss.jca.core.spi.transaction.ConnectableResource;
 import org.jboss.jca.core.spi.transaction.ConnectableResourceListener;
+import org.jboss.jca.core.spi.transaction.local.LocalResourceException;
+import org.jboss.jca.core.spi.transaction.local.LocalXAException;
+
+import javax.resource.ResourceException;
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
 
 /**
  * Local connectable XA resource implementation.
@@ -51,6 +58,63 @@ public class LocalConnectableXAResourceImpl extends LocalXAResourceImpl
       super(productName, productVersion, jndiName);
       this.cr = cr;
       this.crl = null;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void commit(Xid xid, boolean onePhase) throws XAException
+   {
+      if (!xid.equals(currentXid))
+      {
+         throw new LocalXAException(bundle.wrongXidInCommit(currentXid, xid), XAException.XAER_PROTO);
+         
+      }
+      
+      currentXid = null;
+
+      try
+      {
+         cl.getManagedConnection().getLocalTransaction().commit();
+      }
+      catch (LocalResourceException lre)
+      {
+         connectionManager.returnManagedConnection(cl, true);
+         throw new LocalXAException(bundle.couldNotCommitLocalTx(), XAException.XAER_RMFAIL, lre);
+      }
+      catch (ResourceException re)
+      {
+         connectionManager.returnManagedConnection(cl, true);
+         throw new LocalXAException(bundle.couldNotCommitLocalTx(), XAException.XA_RBROLLBACK, re);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void rollback(Xid xid) throws XAException
+   {
+      if (!xid.equals(currentXid))
+      {
+         throw new LocalXAException(bundle.wrongXidInRollback(currentXid, xid), XAException.XAER_PROTO);  
+      }
+      currentXid = null;
+      try
+      {
+         cl.getManagedConnection().getLocalTransaction().rollback();
+      }
+      catch (LocalResourceException lre)
+      {
+         connectionManager.returnManagedConnection(cl, true);
+         throw new LocalXAException(bundle.couldNotRollbackLocalTx(), XAException.XAER_RMFAIL, lre);
+      }
+      catch (ResourceException re)
+      {
+         connectionManager.returnManagedConnection(cl, true);
+         throw new LocalXAException(bundle.couldNotRollbackLocalTx(), XAException.XAER_RMERR, re);
+      }
    }
 
    /**
