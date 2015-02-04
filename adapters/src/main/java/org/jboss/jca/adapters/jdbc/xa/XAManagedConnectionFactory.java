@@ -165,8 +165,6 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
             throw new ResourceException(bundle.unableToLoadConnectionProperties(), ioe);
          }
       }
-
-      initSelector();
    }
 
    /**
