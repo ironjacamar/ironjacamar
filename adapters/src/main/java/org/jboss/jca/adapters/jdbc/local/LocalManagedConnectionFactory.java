@@ -144,12 +144,9 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
     *
     * @param connectionURL  Value to assign to ConnectionURL.
     */
-   public void setConnectionURL(final String connectionURL) //throws ResourceException
+   public void setConnectionURL(final String connectionURL)
    {
       this.connectionURL = connectionURL;
-
-      if (urlDelimiter != null)
-         initUrlSelector();
    }
 
    /**
