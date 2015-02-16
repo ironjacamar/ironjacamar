@@ -32,7 +32,6 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -55,8 +54,8 @@ public class JdbcStatisticsPlugin implements StatisticsPlugin
    private AtomicLong preparedStatementCacheAccessCount;
    private AtomicLong preparedStatementCacheAddCount;
    private AtomicLong preparedStatementCacheDeleteCount;
-   private AtomicInteger preparedStatementCacheHitCount;
-   private AtomicInteger preparedStatementCacheMissCount;
+   private AtomicLong preparedStatementCacheHitCount;
+   private AtomicLong preparedStatementCacheMissCount;
 
    private Set<String> names;
    private Map<String, Class> types;
@@ -86,10 +85,10 @@ public class JdbcStatisticsPlugin implements StatisticsPlugin
       t.put(PREPARED_STATEMENT_CACHE_DELETE_COUNT, long.class);
 
       n.add(PREPARED_STATEMENT_CACHE_HIT_COUNT);
-      t.put(PREPARED_STATEMENT_CACHE_HIT_COUNT, int.class);
+      t.put(PREPARED_STATEMENT_CACHE_HIT_COUNT, long.class);
 
       n.add(PREPARED_STATEMENT_CACHE_MISS_COUNT);
-      t.put(PREPARED_STATEMENT_CACHE_MISS_COUNT, int.class);
+      t.put(PREPARED_STATEMENT_CACHE_MISS_COUNT, long.class);
 
       this.names = Collections.unmodifiableSet(n);
       this.types = Collections.unmodifiableMap(t);
@@ -103,8 +102,8 @@ public class JdbcStatisticsPlugin implements StatisticsPlugin
       this.preparedStatementCacheAccessCount = new AtomicLong(0);
       this.preparedStatementCacheAddCount = new AtomicLong(0);
       this.preparedStatementCacheDeleteCount = new AtomicLong(0);
-      this.preparedStatementCacheHitCount = new AtomicInteger(0);
-      this.preparedStatementCacheMissCount = new AtomicInteger(0);
+      this.preparedStatementCacheHitCount = new AtomicLong(0);
+      this.preparedStatementCacheMissCount = new AtomicLong(0);
 
       this.psCaches = Collections.synchronizedSet(new HashSet<PreparedStatementCache>());
 
@@ -317,7 +316,7 @@ public class JdbcStatisticsPlugin implements StatisticsPlugin
     * Get the hit count for the prepated statement cache
     * @return The value
     */
-   public int getPreparedStatementCacheHitCount()
+   public long getPreparedStatementCacheHitCount()
    {
       if (isEnabled())
          return preparedStatementCacheHitCount.get();
@@ -338,7 +337,7 @@ public class JdbcStatisticsPlugin implements StatisticsPlugin
     * Get the miss count for the prepated statement cache
     * @return The value
     */
-   public int getPreparedStatementCacheMissCount()
+   public long getPreparedStatementCacheMissCount()
    {
       if (isEnabled())
          return preparedStatementCacheMissCount.get();
