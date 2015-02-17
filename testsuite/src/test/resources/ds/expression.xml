@@ -5,8 +5,8 @@
               use-java-context="${use-java-context:false}" spy="${spy:true}"
               use-ccm="${use-ccm:false}" connectable="${connectable:true}"
               tracking="${tracking:false}">
-    <connection-url>${connection-url:jdbc:h2:mem:test;DB_CLOSE_DELAY=-1}</connection-url>
-    <driver-class>${driver-class:org.hsqldb.jdbcDriver}</driver-class>
+    <connection-url>${connection-type:jdbc}:h2:mem:test;DB_CLOSE_DELAY=${DBCloseDelay:-1}</connection-url>
+    <driver-class>${driver-class1:org}.${driver-class2:hsqldb}.${driver-class2:jdbcDriver}</driver-class>
     <datasource-class>${datasource-class:org.pg.JdbcDataSource}</datasource-class>
     <driver>${driver:h2}</driver>
     <connection-property name="name1">${Property1:Property1}</connection-property>
@@ -21,7 +21,7 @@
       <max-pool-size>${max-pool-size:5}</max-pool-size>
       <prefill>${prefill:true}</prefill>
       <use-strict-min>${use-strict-min:true}</use-strict-min>
-      <flush-strategy>${flush-strategy:AllConnections}</flush-strategy>
+      <flush-strategy>${flush-strategy:All}Connections</flush-strategy>
       <allow-multiple-users/>
       <capacity>
         <incrementer class-name="${incrementer:ic}">
@@ -35,11 +35,11 @@
       </capacity>
     </pool>
     <security>
-      <user-name>${user-name:sa}</user-name>
-      <password>${password:sa}</password>
-      <reauth-plugin class-name="${reauth-plugin:someClass1}">
-        <config-property name="name1">${Property1:Property1}</config-property>
-        <config-property name="name2">${Property2:Property2}</config-property>
+      <user-name>${user-name:${user-name2:sa}}</user-name>
+      <password>${password:${password2:sa}}</password>
+      <reauth-plugin class-name="${reauth-plugin:${reauth-plugin2:someClass1}}">
+        <config-property name="name1">ConfigProp123</config-property>
+        <config-property name="name2">${reauth-plugin-prop2a:${reauth-plugin-prop2b:Property2}}</config-property>
       </reauth-plugin>
     </security>
     <validation>
@@ -83,8 +83,8 @@
     <xa-datasource-property name="name2">${Property2:Property2}</xa-datasource-property>
     <xa-datasource-class>${xa-datasource-class:org.pg.JdbcXADataSource}</xa-datasource-class>
     <driver>${driver:pg}</driver>
-    <url-delimiter>${url-delimiter::}</url-delimiter>
-    <url-property>${url-property:name1}</url-property>
+    <url-delimiter>${url-delimiter}</url-delimiter>
+    <url-property>${url-property:}</url-property>
     <url-selector-strategy-class-name>${url-selector-strategy-class-name:someClass}</url-selector-strategy-class-name>
     <new-connection-sql>${new-connection-sql:select 1}</new-connection-sql>
     <transaction-isolation>${transaction-isolation:TRANSACTION_READ_COMMITTED}</transaction-isolation>
@@ -113,7 +113,7 @@
       <wrap-xa-resource>${wrap-xa-resource:false}</wrap-xa-resource>
     </xa-pool>
     <security>
-      <security-domain>${security-domain:HsqlDbRealm}</security-domain>
+      <security-domain>${security-domain:HsqlDbRealm</security-domain>
       <reauth-plugin class-name="${reauth-plugin:someClass1}">
         <config-property name="name1">${Property1:Property1}</config-property>
 	<config-property name="name2">${Property2:Property2}</config-property>

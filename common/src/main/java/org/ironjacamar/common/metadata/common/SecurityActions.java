@@ -20,57 +20,43 @@
  */
 package org.ironjacamar.common.metadata.common;
 
-import org.ironjacamar.common.api.metadata.JCAMetadata;
-
-import java.util.Map;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 /**
- * An abstract metadata node
  *
- * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ * security actions
+ *
  */
-public abstract class AbstractMetadata implements JCAMetadata
+class SecurityActions
 {
-   /** serial version  */
-   private static final long serialVersionUID = 7676001197081795547L;
-   /** The key -> value map */
-   private Map<String, String> m;
-
    /**
     * Constructor
-    * @param m The map
     */
-   public AbstractMetadata(Map<String, String> m)
+   private SecurityActions()
    {
-      this.m = m;
    }
 
    /**
-    * {@inheritDoc}
+    * Get a system property
+    * @param name The property name
+    * @return The property value
     */
-   public boolean hasExpression(String key)
+   static String getSystemProperty(final String name)
    {
-      if (m == null)
-         return false;
-      
-      return m.containsKey(key);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public String getValue(String key, String v)
-   {
-      return getValue(key, null, v);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public String getValue(String key, String subkey, String v)
-   {
-      if (m == null)
-         return v;
-      return StringUtils.restoreExpression(m, key, subkey, v);
+      if (System.getSecurityManager() == null)
+      {
+         return System.getProperty(name);
+      }
+      else
+      {
+         return (String) AccessController.doPrivileged(new PrivilegedAction<Object>()
+         {
+            public Object run()
+            {
+               return System.getProperty(name);
+            }
+         });
+      }
    }
 }

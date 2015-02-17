@@ -32,7 +32,7 @@ import static org.junit.Assert.assertEquals;
  *
  * @author <a href="vrastseluev@gmail.com">Vladimir Rastseluev</a>
  */
-public class AbstractParserTestCase
+public class ExpressionTransformerTestCase
 {
    /**
     * The main test for all expressions. Asserts that expression should be transformed
@@ -43,7 +43,7 @@ public class AbstractParserTestCase
     */
    private void expressionTransformTest(String expression, String expected)
    {
-      assertEquals(expected, AbstractParser.transformExpression(expression));
+      assertEquals(expected, StringUtils.transformExpression(expression));
    }
 
    /**

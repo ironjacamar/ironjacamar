@@ -36,9 +36,6 @@ import org.ironjacamar.common.api.metadata.common.XaPool;
 import org.ironjacamar.common.api.validator.ValidateException;
 import org.ironjacamar.common.metadata.ParserException;
 
-import java.io.File;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -106,10 +103,10 @@ public abstract class AbstractParser
          expressions.put(key, elementtext);
       
       String stringValue = getSubstitutionValue(elementtext);
-      if (isEmpty(stringValue) || stringValue.trim().equalsIgnoreCase("true") ||
+      if (StringUtils.isEmpty(stringValue) || stringValue.trim().equalsIgnoreCase("true") ||
           stringValue.trim().equalsIgnoreCase("false"))
       {
-         return isEmpty(stringValue) ? Boolean.TRUE : Boolean.valueOf(stringValue.trim());
+         return StringUtils.isEmpty(stringValue) ? Boolean.TRUE : Boolean.valueOf(stringValue.trim());
       }
       else
       {
@@ -139,10 +136,10 @@ public abstract class AbstractParser
          expressions.put(attributeName, attributeString);
       
       String stringValue = getSubstitutionValue(attributeString);
-      if (isEmpty(stringValue) || stringValue.trim().equalsIgnoreCase("true") ||
+      if (StringUtils.isEmpty(stringValue) || stringValue.trim().equalsIgnoreCase("true") ||
           stringValue.trim().equalsIgnoreCase("false"))
       {
-         return isEmpty(stringValue) ? defaultValue : Boolean.valueOf(stringValue.trim());
+         return StringUtils.isEmpty(stringValue) ? defaultValue : Boolean.valueOf(stringValue.trim());
       }
       else
       {
@@ -614,105 +611,7 @@ public abstract class AbstractParser
    {
       if (!resolveSystemProperties)
          return input;
-      return transformExpression(input);
-   }
-
-   /**
-    * Returns true if the string is null or have no symbols after being trimmed
-    * @param input string
-    * @return boolean
-    */
-   public static final boolean isEmptyTrimmed(String input)
-   {
-      return input == null || input.trim().equals("");
-   }
-
-   /**
-    * Returns true if the string is null or have no symbols
-    * @param input string
-    * @return boolean
-    */
-   private boolean isEmpty(String input)
-   {
-      return input == null || input.length() == 0;
-   }
-
-   /**
-    * System property substitution utility method
-    * @param toTransform The input string
-    * @return The output
-    */
-   public static final String transformExpression(String toTransform)
-   {
-      if (isEmptyTrimmed(toTransform))
-          return toTransform;
-
-      String input = toTransform;
-
-      while (input.indexOf("${") != -1)
-      {
-         int from = input.lastIndexOf("${");
-         int to = input.indexOf("}", from + 2);
-         if (to == -1)
-         {
-            log.debugf("Probably an incorrect expression in the string: '%s'. No closing brace found.",
-               toTransform);
-            return toTransform;
-         }
-
-         int dv = input.indexOf(":", from + 2);
-         if (dv != -1 && dv > to)
-         {
-            dv = -1;
-         }
-         String systemProperty = "";
-         String defaultValue = "";
-         String s = input.substring(from + 2, to);
-         if ("/".equals(s))
-         {
-            systemProperty = File.separator;
-         }
-         else if (":".equals(s))
-         {
-            systemProperty = File.pathSeparator;
-            dv = -1;
-         }
-         else
-         {
-            systemProperty = SecurityActions.getSystemProperty(s);
-         }
-
-         if (dv != -1)
-         {
-            s = input.substring(from + 2, dv);
-            systemProperty = SecurityActions.getSystemProperty(s);
-            defaultValue = input.substring(dv + 1, to);
-         }
-         String prefix = "";
-         String postfix = "";
-         if (from != 0)
-         {
-            prefix = input.substring(0, from);
-         }
-         if (to + 1 < input.length())
-         {
-            postfix = input.substring(to + 1);
-         }
-         if (!isEmptyTrimmed(systemProperty))
-         {
-            input = prefix + systemProperty + postfix;
-         }
-         else if (!isEmptyTrimmed(defaultValue))
-         {
-            input = prefix + defaultValue + postfix;
-         }
-         else
-         {
-            input = prefix + postfix;
-            log.debugf("System property %s not set", s);
-         }
-      }
-      return input;
+      return StringUtils.transformExpression(input);
    }
 
    /**
@@ -1280,7 +1179,7 @@ public abstract class AbstractParser
       throws XMLStreamException, ParserException
    {
       String n = attributeAsString(reader, "name", null);
-      if (isEmptyTrimmed(n))
+      if (StringUtils.isEmptyTrimmed(n))
          throw new ParserException(bundle.requiredAttributeMissing("name", reader.getLocalName()));
       else
          configProperties.put(n, elementAsString(reader, getExpressionKey(key, n), expressions));
@@ -1295,38 +1194,5 @@ public abstract class AbstractParser
    protected String getExpressionKey(String k, String s)
    {
       return k + "|" + s;
-   }
-   
-   private static class SecurityActions
-   {
-      /**
-       * Constructor
-       */
-      private SecurityActions()
-      {
-      }
-
-      /**
-       * Get a system property
-       * @param name The property name
-       * @return The property value
-       */
-      static String getSystemProperty(final String name)
-      {
-         if (System.getSecurityManager() == null)
-         {
-            return System.getProperty(name);
-         }
-         else
-         {
-            return (String) AccessController.doPrivileged(new PrivilegedAction<Object>()
-            {
-               public Object run()
-               {
-                  return System.getProperty(name);
-               }
-            });
-         }
-      }
    }
 }
