@@ -118,6 +118,7 @@ subprojects { subProject ->
 
   tasks.withType(JavaCompile) {
     options.fork = true
+    options.encoding = "UTF-8"
   }
 
   task compile
@@ -180,5 +181,5 @@ subprojects { subProject ->
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '2.2.1'
+  gradleVersion = '2.3'
 }
