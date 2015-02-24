@@ -19,7 +19,33 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-include "api"
-include "common"
-include "core"
-include "testsuite"
+package org.ironjacamar.core.api.metadatarepository;
+
+import org.ironjacamar.common.api.metadata.spec.Connector;
+
+import java.io.File;
+
+/**
+ * The metadata
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ */
+public interface Metadata
+{
+   /**
+    * Get the file name or module name
+    * @return The value
+    */
+   public String getName();
+
+   /**
+    * Get the specification metadata
+    * @return The value
+    */
+   public Connector getMetadata();
+
+   /**
+    * Get either a file, a directory (module) or null (in-mem)
+    * @return The value
+    */
+   public File getArchive();
+}

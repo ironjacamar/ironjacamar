@@ -19,7 +19,12 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-include "api"
-include "common"
-include "core"
-include "testsuite"
+package org.ironjacamar.core.api.deploymentrepository;
+
+/**
+ * Recovery module
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ */
+public interface Recovery
+{
+}

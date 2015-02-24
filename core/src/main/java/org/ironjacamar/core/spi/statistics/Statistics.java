@@ -18,8 +18,21 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.ironjacamar.core.spi.statistics;
 
-include "api"
-include "common"
-include "core"
-include "testsuite"
+/**
+ * Defines the contract for a statistics enabled resource adapter.
+ *
+ * This interface can be applied to ManagedConnectionFactory, ResourceAdapter
+ * and AdminObject instances.
+ *
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ */
+public interface Statistics
+{
+   /**
+    * Get the statistics plugin
+    * @return The value
+    */
+   public StatisticsPlugin getStatistics();
+}

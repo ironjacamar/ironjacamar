@@ -19,7 +19,39 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-include "api"
-include "common"
-include "core"
-include "testsuite"
+package org.ironjacamar.core.api.deploymentrepository;
+
+import org.ironjacamar.core.spi.statistics.StatisticsPlugin;
+
+import java.util.Collection;
+
+/**
+ * An admin object
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ */
+public interface AdminObject
+{
+   /**
+    * Get the JNDI name
+    * @return The value
+    */
+   public String getJndiName();
+   
+   /**
+    * Get the config properties
+    * @return The value
+    */
+   public Collection<ConfigProperty> getConfigProperties();
+
+   /**
+    * Get the activation
+    * @return The value
+    */
+   public org.ironjacamar.common.api.metadata.resourceadapter.AdminObject getActivation();
+
+   /**
+    * Get the statistics
+    * @return The value
+    */
+   public StatisticsPlugin getStatistics();
+}

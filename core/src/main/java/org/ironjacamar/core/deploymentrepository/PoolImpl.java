@@ -19,7 +19,34 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-include "api"
-include "common"
-include "core"
-include "testsuite"
+package org.ironjacamar.core.deploymentrepository;
+
+import org.ironjacamar.core.api.deploymentrepository.Pool;
+import org.ironjacamar.core.spi.statistics.StatisticsPlugin;
+
+/**
+ * A pool implementation
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ */
+public class PoolImpl implements Pool
+{
+   /** The statistics */
+   private StatisticsPlugin statistics;
+
+   /**
+    * Constructor
+    * @param statistics The statistics
+    */
+   public PoolImpl(StatisticsPlugin statistics)
+   {
+      this.statistics = statistics;
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   public StatisticsPlugin getStatistics()
+   {
+      return statistics;
+   }
+}

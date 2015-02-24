@@ -19,7 +19,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-include "api"
-include "common"
-include "core"
-include "testsuite"
+/**
+ * The statistics SPI
+ */
+package org.ironjacamar.core.spi.statistics;
