@@ -21,6 +21,7 @@
 
 defaultTasks 'build'
 
+version = "2.0.0.SNAPSHOT"
 // Dependencies
 
 ext {
@@ -39,13 +40,13 @@ ext {
 // Java version
 ext.javaLanguageLevel = "1.7"
 
-
 allprojects {
+  apply plugin: 'distribution'
   apply plugin: 'jacoco'
+
   repositories {
     mavenCentral()
     mavenLocal()
-
     mavenCentral name: "jboss-nexus", artifactUrls: ["http://repository.jboss.org/nexus/content/groups/public/"]
     mavenCentral name: "jboss-snapshots", artifactUrls: ["http://snapshots.jboss.org/maven2/"]
     mavenCentral name: "fungal", artifactUrls: ["http://jesperpedersen.github.io/fungal/maven2/"]
@@ -175,9 +176,53 @@ subprojects { subProject ->
     showViolations = true
     ignoreFailures = false
   }
-
   checkstyleMain.exclude '**/*_$bundle*'
   checkstyleMain.exclude '**/*_$logger*'
+
+  distZip.enabled = false
+  distTar.enabled = false
+  assembleMainDist.enabled = false
+  
+  tasks.withType(Jar){
+    doFirst{
+      manifest {
+        attributes(
+          "Manifest-Version" : "1.0",
+          "Implementation-Version" : rootProject.version,
+          "Implementation-Vendor" : "The IronJacamar project (http://www.ironjacamar.org)",
+          "Implementation-Id" : "org.ironjacamar",
+          "Created-By" : System.getProperty('java.version') + ' (' + System.getProperty('java.vendor') + ')',
+          "Built-With": "gradle-${rootProject.getGradle().getGradleVersion()}"
+        )
+      }
+    }
+  }
+}
+
+//copy dependencies .jar to be collected by the distribution task
+task copyDependencies(type: Copy) {
+  from project(':api').configurations.compile
+  into rootProject.libsDir
+  include '**/jboss-logging*', '**/jandex*', '**/*valid*', '**/*transaction*'
+  exclude '**/jboss-logging-processor*'
+  rename (/(.+)(-[0-9]+.*)\.jar/, '$1.jar')
+}
+
+distributions {
+  main {
+    contents {
+      from {allprojects.libsDir}
+      into 'lib'
+    }
+  }
+}
+
+distZip.dependsOn subprojects.jar, copyDependencies
+distTar.dependsOn subprojects.jar, copyDependencies
+
+tasks.withType(Tar) {
+  compression = Compression.GZIP
+  extension = "tar.gz"
 }
 
 task wrapper(type: Wrapper) {

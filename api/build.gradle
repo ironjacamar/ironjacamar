@@ -20,7 +20,10 @@
  */
 
 jar {
-  baseName = "ironjacamar-spec"
+  manifest {
+    attributes("Implementation-Title" : "The Java EE Connector Architecture 1.7 API")
+  }
+  baseName = "ironjacamar-spec-api"
   dependsOn classes
   from sourceSets.main.output
 }

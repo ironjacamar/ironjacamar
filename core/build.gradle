@@ -27,22 +27,29 @@ dependencies {
   compile project(path: ':common', configuration: 'spi')
 }
 
-jar {
-  baseName = "ironjacamar-core-impl"
-  dependsOn classes
-  from sourceSets.main.output
-  exclude('org/ironjacamar/core/*', 'org/ironjacamar/core/api/**', 'org/ironjacamar/core/spi/**')
-}
 
 task apiJar(type: Jar) {
+  manifest {
+    attributes("Implementation-Title" : "IronJacamar Core API")
+  }
   baseName = "ironjacamar-core-api"
   dependsOn classes
   from sourceSets.main.output
-  include('org/ironjacamar/core/*', 'org/ironjacamar/core/api/**', 'org/ironjacamar/core/spi/**')
+  include('org/ironjacamar/core/*.class', 'org/ironjacamar/core/api/**', 'org/ironjacamar/core/spi/**')
+}
+
+jar {
+  manifest {
+    attributes("Implementation-Title" : "IronJacamar Core Implementation")
+  }
+  baseName = "ironjacamar-core-impl"
+  dependsOn classes, apiJar
+  from sourceSets.main.output
+  exclude('org/ironjacamar/core/*.class', 'org/ironjacamar/core/api/**', 'org/ironjacamar/core/spi/**')
 }
 
 artifacts {
-  archives apiJar
+  archives apiJar, jar
 }
 
 javadoc {

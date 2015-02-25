@@ -28,25 +28,35 @@ dependencies {
   compile(project(':api'))
 }
 
-jar {
-  baseName = "ironjacamar-common-impl"
-  dependsOn classes
-  from sourceSets.main.output
-  exclude('org/ironjacamar/common/*', 'org/ironjacamar/common/api/**', 'org/ironjacamar/common/spi/**')
-}
-
 task apiJar(type: Jar) {
+  manifest {
+    attributes("Implementation-Title" : "IronJacamar Common API")
+  }
   baseName = "ironjacamar-common-api"
   dependsOn classes
   from sourceSets.main.output
-  include('org/ironjacamar/common/*', 'org/ironjacamar/common/api/**')
+  include('dtd/*', 'schema/*', 'org/ironjacamar/common/*.class', 'org/ironjacamar/common/api/**')
 }
 
 task spiJar(type: Jar) {
+  manifest {
+    attributes("Implementation-Title" : "IronJacamar Common SPI")
+  }
   baseName = "ironjacamar-common-spi"
   dependsOn classes
   from sourceSets.main.output
   include('org/ironjacamar/common/spi/**')
+}
+
+jar {
+  manifest {
+    attributes("Implementation-Title" : "IronJacamar Common Implementation")
+  }
+  baseName = "ironjacamar-common-impl"
+  dependsOn classes, apiJar, spiJar
+  from sourceSets.main.output
+  include('org/ironjacamar/common/**')
+  exclude('org/ironjacamar/common/*.class', 'org/ironjacamar/common/api/**', 'org/ironjacamar/common/spi/**')
 }
 
 artifacts {

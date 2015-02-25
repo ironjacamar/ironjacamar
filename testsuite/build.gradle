@@ -34,6 +34,8 @@ test {
   finalizedBy jacocoTestReport
 }
 
+jar.enabled = false
+
 jacocoTestReport {
   group = "Reporting"
   description = "Generate Jacoco coverage reports after running tests."
