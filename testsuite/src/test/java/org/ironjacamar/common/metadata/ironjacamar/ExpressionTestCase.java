@@ -21,11 +21,13 @@
 package org.ironjacamar.common.metadata.ironjacamar;
 
 import org.ironjacamar.common.api.metadata.resourceadapter.Activation;
+import org.ironjacamar.common.api.metadata.resourceadapter.ConnectionDefinition;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.util.Map;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
@@ -36,6 +38,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 /**
  * Expression tests
@@ -93,5 +96,123 @@ public class ExpressionTestCase
       xsw.close();
 
       assertEquals(sb.toString(), sw.toString());
+   }
+   
+   /**
+    * Tests if correct expression values set in some cases
+    */
+   @Test
+   public void testExpressionParsing()
+   {
+      System.setProperty("Property1", "Value1");
+      System.setProperty("bean-validation-group1", "BeanX");
+      System.setProperty("bean-validation-group2", "ValidationX");
+      System.setProperty("bean-validation-group3", "GroupX");
+      System.setProperty("bean-validation-group1-4", "bean-validation-group4");
+      System.setProperty("pool-name", "Pool");
+      System.setProperty("pool-number", "1");
+      System.setProperty("bean-validation-group1-5", "Bean5");
+      System.setProperty("bean-validation-group2-5", "Validation5");
+      System.setProperty("bean-validation-group3-5", "Group5");
+      System.setProperty("Property6", "Value6");
+      System.setProperty("Property7X", "Value7");
+      System.setProperty("background-validation-millis", "6000");
+      System.setProperty("sharable", "true");
+      System.setProperty("Property5nested", "NestedValue5");
+      System.setProperty("Property6nested", "NestedValue6");
+      System.setProperty("Property7", "Value7");
+      System.setProperty("Property8", "Value8");
+      
+      try (InputStream is = ExpressionTestCase.class.getClassLoader().
+            getResourceAsStream("../../resources/test/ironjacamar/expression.xml"))
+      {
+         assertNotNull(is);
+         XMLStreamReader xsr = XMLInputFactory.newInstance().createXMLStreamReader(is);
+
+         IronJacamarParser parser = new IronJacamarParser();
+         
+         Activation a = parser.parse(xsr);
+         assertNotNull(a);
+
+         // simple expression    
+         Map<String, String> configProp = a.getConfigProperties();
+         assertEquals("Value1", configProp.get("Property1"));
+         
+         // A complex expression with set properties
+         assertEquals("BeanX-ValidationX-GroupX", a.getBeanValidationGroups().get(0));
+
+         // A complex expression without properties
+         assertEquals("bean-validation-group2", a.getBeanValidationGroups().get(1));
+         
+         // An expression without a default value
+         assertEquals("Bean5Validation5Group5", a.getBeanValidationGroups().get(4));
+         
+         // An expression without a default value. Property is set
+         assertEquals("bean-validation-group4", a.getBeanValidationGroups().get(3));
+         
+         ConnectionDefinition conndef = a.getConnectionDefinitions().get(0);
+         
+         // Test a complex expression without a default value
+         assertEquals("Pool1-X", conndef.getPoolName());
+         
+         // Test with empty default value
+         assertEquals("", a.getBeanValidationGroups().get(2));
+         
+         // Test an incorrect expression
+         assertEquals("${security-domain:domain", conndef.getSecurity().getSecurityDomain());
+
+         // Test nested expressions without set properties
+         assertEquals("Property5", conndef.getRecovery().getRecoverPlugin().getConfigPropertiesMap().get("Property5"));
+
+         // Test nested expressions with some properties set
+         assertEquals("Value6", conndef.getRecovery().getRecoverPlugin().getConfigPropertiesMap().get("Property6"));
+ 
+         // Test nested expressions with some properties set
+         assertEquals("Value7", conndef.getRecovery().getRecoverPlugin().getConfigPropertiesMap().get("Property7"));
+
+         // integer property with property set
+         assertEquals(6000L,  conndef.getValidation().getBackgroundValidationMillis().longValue());
+
+         // boolean property with property set
+         assertEquals(true,  conndef.isSharable());
+
+         // a simple expression with prefix, property is set
+         assertEquals("SomePrefix-Value8", conndef.getConfigProperties().get("Property8"));
+
+         // a simple expression with postfix, property is set
+         assertEquals("Value7-SomePostfix", conndef.getConfigProperties().get("Property7"));
+         
+         // a nested expression with prefix, the second property is set
+         assertEquals("SomePrefix-NestedValue5", conndef.getConfigProperties().get("Property5"));
+
+         // a nested expression with postfix, the second property is set
+         assertEquals("NestedValue6-SomePostfix", conndef.getConfigProperties().get("Property6"));
+         
+      }
+      catch (Exception e)
+      {
+         fail("Exception thrown: " + e.getMessage());
+      }
+      finally
+      {
+         System.clearProperty("Property1");
+         System.clearProperty("bean-validation-group1");
+         System.clearProperty("bean-validation-group2");
+         System.clearProperty("bean-validation-group3");
+         System.clearProperty("bean-validation-group1-4");
+         System.clearProperty("pool-name");
+         System.clearProperty("pool-number");
+         System.clearProperty("bean-validation-group1-5");
+         System.clearProperty("bean-validation-group2-5");
+         System.clearProperty("bean-validation-group3-5");
+         System.clearProperty("Property6");
+         System.clearProperty("Property7X");
+         System.clearProperty("background-validation-millis");
+         System.clearProperty("sharable");
+         System.clearProperty("Property5nested");
+         System.clearProperty("Property6nested");
+         System.clearProperty("Property7");
+         System.clearProperty("Property8");
+      }
    }
 }

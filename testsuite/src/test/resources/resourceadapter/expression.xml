@@ -4,8 +4,11 @@
   <resource-adapter id="${id:id}">
     <archive>${archive:archive}</archive>
     <bean-validation-groups>
-      <bean-validation-group>${bean-validation-group1:bean-validation-group1}</bean-validation-group>
-      <bean-validation-group>${bean-validation-group2:bean-validation-group2}</bean-validation-group>
+      <bean-validation-group>${bean-validation-group1:bean}-${bean-validation-group2:validation}-${bean-validation-group3:group1}</bean-validation-group>
+      <bean-validation-group>${bean-validation-group1-2:bean}-${bean-validation-group2-2:validation}-${bean-validation-group3-2:group2}</bean-validation-group>
+      <bean-validation-group>${bean-validation-group1-3:}${bean-validation-group2-3:}${bean-validation-group3-3:}</bean-validation-group>
+      <bean-validation-group>${bean-validation-group1-4:}</bean-validation-group>
+      <bean-validation-group>${bean-validation-group1-5}${bean-validation-group2-5}${bean-validation-group3-5}</bean-validation-group>
     </bean-validation-groups>
     <bootstrap-context>${bootstrap-context:bootstrap-context}</bootstrap-context>
     <config-property name="Property1">${Property1:Property1}</config-property>
@@ -16,12 +19,16 @@
 			     jndi-name="${jndi-name:java:jboss/name1}"
                              enabled="${enabled:true}"
                              use-java-context="${use-java-context:false}"
-                             pool-name="${pool-name:Pool1}"
+                             pool-name="${pool-name}${pool-number}-X"
 			     use-ccm="${use-ccm:false}" sharable="${sharable:false}"
                              enlistment="${enlistment:false}" connectable="${connectable:true}"
                              tracking="${tracking:true}">
         <config-property name="Property3">${Property3:Property3}</config-property>
         <config-property name="Property4">${Property4:Property4}</config-property>
+        <config-property name="Property5">SomePrefix-${PropertyPrefix:PropertyPrefix}</config-property>
+        <config-property name="Property6">${PropertyPostfix:PropertyPostfix}-SomePostfix</config-property>
+        <config-property name="Property7">SomePrefix-${Property7-1:${Property7-2:Property7}}</config-property>
+        <config-property name="Property8">${Property8-1:${Property8-2:Property8}}-SomePostfix</config-property>
         <xa-pool>
 	  <min-pool-size>${min-pool-size:0}</min-pool-size>
 	  <initial-pool-size>${initial-pool-size:2}</initial-pool-size>
@@ -46,7 +53,7 @@
 	  <wrap-xa-resource>${wrap-xa-resource:false}</wrap-xa-resource>
         </xa-pool>
         <security>
-	  <security-domain>${security-domain:domain}</security-domain>
+	  <security-domain>${security-domain:domain</security-domain>
         </security>
         <timeout>
 	  <blocking-timeout-millis>${blocking-timeout-millis:5000}</blocking-timeout-millis>
@@ -66,8 +73,9 @@
 	    <password>${password:sa-pass}</password>
 	  </recover-credential>
 	  <recover-plugin class-name="${class-name:someClass2}">
-	    <config-property name="Property5">${Property5:Property5}</config-property>
-	    <config-property name="Property6">${Property6:Property6}</config-property>
+	    <config-property name="Property5">${Property5:${Property5X:Property5}}</config-property>
+	    <config-property name="Property6">${Property6:${Property6X:Property6}}</config-property>
+	    <config-property name="Property7">${Property7:${Property7X:Property7}}</config-property>
 	  </recover-plugin>
         </recovery>
       </connection-definition>

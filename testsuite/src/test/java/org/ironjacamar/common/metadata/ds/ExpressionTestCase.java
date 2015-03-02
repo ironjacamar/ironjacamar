@@ -117,8 +117,13 @@ public class ExpressionTestCase
       System.setProperty("password2", "sa2");
       System.setProperty("min-pool-size", "3");
       System.setProperty("background-validation", "false");
-
-      try (InputStream is = DataSources10TestCase.class.getClassLoader().
+      System.setProperty("Property3", "Value3");
+      System.setProperty("Property4", "Value4");
+      System.setProperty("Property6", "Value6");
+      System.setProperty("reauth-plugin-prop3b", "Nested-Postfix-Value3");
+      
+      
+      try (InputStream is = ExpressionTestCase.class.getClassLoader().
             getResourceAsStream("../../resources/test/ds/expression.xml"))
       {
          assertNotNull(is);
@@ -179,7 +184,26 @@ public class ExpressionTestCase
 
          // boolean property with property set
          assertSame(false,  d.getValidation().isBackgroundValidation());
+         
+         Map<String, String> props = d.getValidation().getExceptionSorter().getConfigPropertiesMap();
 
+         // a simple expression with prefix, property is set
+         assertEquals("TestProperty-Value3", props.get("name3"));
+
+         Map<String, String> checkerprops = d.getValidation().getStaleConnectionChecker().getConfigPropertiesMap();
+         
+         // a simple expression with postfix, property is set
+         assertEquals("Value4-TestProperty", checkerprops.get("name3"));
+
+         Map<String, String> vcheckerprops = d.getValidation().getValidConnectionChecker().getConfigPropertiesMap();
+
+         // a nested expression with prefix, the second property is set
+         assertEquals("SomePrefix-Nested-Prefix-Value6", vcheckerprops.get("name3"));
+
+         // a nested expression with postfix, the second property is set
+         Map<String, String> plugprop = d.getSecurity().getReauthPlugin().getConfigPropertiesMap();
+         assertEquals("Nested-Postfix-Value3-PostFix", plugprop.get("name3"));
+         
       }
       catch (Exception e)
       {
@@ -195,6 +219,10 @@ public class ExpressionTestCase
          System.clearProperty("password2");
          System.clearProperty("min-pool-size");
          System.clearProperty("background-validation");
+         System.clearProperty("Property3");
+         System.clearProperty("Property4");
+         System.clearProperty("Property6");
+         System.clearProperty("reauth-plugin-prop3b");
       }
    }
 }
