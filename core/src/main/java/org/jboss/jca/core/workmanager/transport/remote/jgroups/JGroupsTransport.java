@@ -49,7 +49,7 @@ import javax.resource.spi.work.WorkException;
 import org.jboss.logging.Logger;
 import org.jboss.logging.Messages;
 
-import org.jgroups.JChannel;
+import org.jgroups.Channel;
 import org.jgroups.MembershipListener;
 import org.jgroups.View;
 import org.jgroups.blocks.MethodCall;
@@ -77,8 +77,8 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
 
-   /** The JChannel used by this transport **/
-   private JChannel channel;
+   /** The Channel used by this transport **/
+   private Channel channel;
 
    /** Timeout */
    private long timeout;
@@ -532,12 +532,12 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
       Serializable returnValue = null;
 
       if (trace)
-         log.tracef("%s: sending message=%s to %s", channel.getAddressAsString(), request, destAddress);
+         log.tracef("%s: sending message=%s to %s", channel.getAddress(), request, destAddress);
 
       if (channel == null || !channel.isOpen() || !channel.isConnected())
       {
          if (trace)
-            log.tracef("%s: channel not connected", channel != null ? channel.getAddressAsString() : "<empty>");
+            log.tracef("%s: channel not connected", channel != null ? channel.getAddress() : "<empty>");
 
          return null;
       }
@@ -856,7 +856,7 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
     *
     * @return the channel.
     */
-   public JChannel getChannel()
+   public Channel getChannel()
    {
       return channel;
    }
@@ -866,7 +866,7 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
     *
     * @param channel The channel to set.
     */
-   public void setChannel(JChannel channel)
+   public void setChannel(Channel channel)
    {
       this.channel = channel;
    }
