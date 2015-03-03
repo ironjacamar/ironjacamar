@@ -90,9 +90,9 @@ public interface ConnectionListener extends org.jboss.jca.core.api.connectionman
    public boolean isTimedOut(long timeout);
 
    /**
-    * Mark the connection as used
+    * Mark the connection as in pool
     */
-   public void used();
+   public void toPool();
 
    /**
     * Register a new connection
@@ -170,11 +170,25 @@ public interface ConnectionListener extends org.jboss.jca.core.api.connectionman
    public void setLastValidatedTime(long lastValidated);
 
    /**
-    * Retrieve the last time this connection was used.
+    * Retrieve the last time this connection was returned to the pool
     * 
-    * @return the last time the connection was used
+    * @return the last time the connection was returned to the pool
     */
-   public long getLastUsedTime();
+   public long getLastReturnedTime();
+
+   /**
+    * Retrieve the last time this connection was obtained from the pool
+    * 
+    * @return the last time the connection was obtained from the pool
+    */
+   public long getLastCheckoutedTime();
+
+   /**
+    * Set the last time this connection was obtained from the pool
+    *
+    * @param v The value
+    */
+   public void setLastCheckoutedTime(long v);
 
    /**
     * Controls the managed connection / connection pair

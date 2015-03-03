@@ -88,11 +88,14 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
    /** Track by transaction or not */
    private final AtomicBoolean trackByTx = new AtomicBoolean(false);
    
-   /** Connection last use */
-   private long lastUse;
+   /** Connection last returned */
+   private long lastReturned;
    
    /** Connection last validated time */
    private long lastValidated;
+
+   /** Connection check out time */
+   private long lastCheckouted;
 
    /** Enlisted */
    private boolean enlisted;
@@ -124,8 +127,9 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
       this.enlisted = false;
 
       long createdTime = System.currentTimeMillis();
-      this.lastUse = createdTime;
+      this.lastReturned = createdTime;
       this.lastValidated = createdTime;
+      this.lastCheckouted = createdTime;
 
       this.tracking = tracking;
 
@@ -207,7 +211,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
 
    /**
     * {@inheritDoc}
-    */   
+    */
    public long getLastValidatedTime()
    {      
       return lastValidated;
@@ -215,10 +219,26 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
 
    /**
     * {@inheritDoc}
-    */   
-   public long getLastUsedTime()
-   {      
-      return lastUse;
+    */
+   public long getLastReturnedTime()
+   {
+      return lastReturned;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getLastCheckoutedTime()
+   {
+      return lastCheckouted;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setLastCheckoutedTime(long v)
+   {
+      lastCheckouted = v;
    }
 
    /**
@@ -261,7 +281,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
     */   
    public boolean isTimedOut(long timeout)
    {      
-      return lastUse < timeout;
+      return lastReturned < timeout;
    }
 
    /**
@@ -390,9 +410,9 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
    /**
     * {@inheritDoc}
     */   
-   public void used()
+   public void toPool()
    {
-      lastUse = System.currentTimeMillis();      
+      lastReturned = System.currentTimeMillis();
    }
 
    /**
@@ -562,7 +582,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
    /**
     * Compare
     * @param o The other object
-    * @return 0 if equal; -1 if less than based on lastUse; otherwise 1
+    * @return 0 if equal; -1 if less than based on lastReturned; otherwise 1
     */
    public int compareTo(Object o)
    {
@@ -574,7 +594,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
 
       final AbstractConnectionListener acl = (AbstractConnectionListener)o;
 
-      if (lastUse < acl.lastUse)
+      if (lastReturned < acl.lastReturned)
          return -1;
 
       return 1;
@@ -619,7 +639,9 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
       }
       buffer.append(" managed connection=").append(managedConnection);
       buffer.append(" connection handles=").append(connectionHandles.size());
-      buffer.append(" lastUse=").append(lastUse);
+      buffer.append(" lastReturned=").append(lastReturned);
+      buffer.append(" lastValidated=").append(lastValidated);
+      buffer.append(" lastCheckouted=").append(lastCheckouted);
       buffer.append(" trackByTx=").append(trackByTx.get());
       buffer.append(" pool=").append(pool);
       buffer.append(" mcp=").append(managedConnectionPool);

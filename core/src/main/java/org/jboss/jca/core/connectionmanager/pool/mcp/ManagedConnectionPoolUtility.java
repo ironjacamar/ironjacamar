@@ -118,9 +118,9 @@ class ManagedConnectionPoolUtility
          {
             sb.append("  ").append(Integer.toHexString(System.identityHashCode(cl)));
             sb.append(" (").append(cl.getState()).append(")");
-            sb.append(" (Used: ").append(cl.getLastUsedTime()).append(")");
+            sb.append(" (Returned: ").append(cl.getLastReturnedTime()).append(")");
             sb.append(" (Validated: ").append(cl.getLastValidatedTime()).append(")");
-            sb.append(" (Pool: ").append(now - cl.getLastUsedTime()).append(")").append(newLine);
+            sb.append(" (Pool: ").append(now - cl.getLastReturnedTime()).append(")").append(newLine);
          }
       }
 
@@ -132,9 +132,9 @@ class ManagedConnectionPoolUtility
          {
             sb.append("  ").append(Integer.toHexString(System.identityHashCode(cl)));
             sb.append(" (").append(cl.getState()).append(")");
-            sb.append(" (Used: ").append(cl.getLastUsedTime()).append(")");
+            sb.append(" (Checkouted: ").append(cl.getLastCheckoutedTime()).append(")");
             sb.append(" (Validated: ").append(cl.getLastValidatedTime()).append(")");
-            sb.append(" (Usage: ").append(now - cl.getLastUsedTime()).append(")").append(newLine);
+            sb.append(" (Usage: ").append(now - cl.getLastCheckoutedTime()).append(")").append(newLine);
          }
       }
 

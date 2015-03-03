@@ -180,9 +180,9 @@ public class TxConnectionListener extends AbstractConnectionListener
     * {@inheritDoc}
     */
    @Override
-   public void used()
+   public void toPool()
    {
-      super.used();
+      super.toPool();
 
       // Do a reset of the underlying XAResource timeout
       if (!(xaResource instanceof LocalXAResource) && xaResourceTimeout > 0)

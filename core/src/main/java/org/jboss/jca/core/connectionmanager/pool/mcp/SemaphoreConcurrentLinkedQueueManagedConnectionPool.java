@@ -392,12 +392,13 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                               log.trace("supplying ManagedConnection from pool: " + clw.getConnectionListener());
 
                            lastUsed = System.currentTimeMillis();
+                           clw.getConnectionListener().setLastCheckoutedTime(lastUsed);
 
                            if (pool.getInternalStatistics().isEnabled())
                            {
                               pool.getInternalStatistics().deltaTotalGetTime(lastUsed - startWait);
                               pool.getInternalStatistics().deltaTotalPoolTime(lastUsed -
-                                 clw.getConnectionListener().getLastUsedTime());
+                                 clw.getConnectionListener().getLastReturnedTime());
                            }
 
                            if (Tracer.isEnabled())
@@ -424,6 +425,13 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                      {
                         log.destroyingConnectionNotValidated(clw.getConnectionListener());
                      }
+
+                     if (pool.getInternalStatistics().isEnabled())
+                     {
+                        pool.getInternalStatistics().deltaTotalPoolTime(lastUsed -
+                           clw.getConnectionListener().getLastReturnedTime());
+                     }
+
                      doDestroy(clw);
                      clw = null;
                   } 
@@ -431,6 +439,12 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                   {
                      log.throwableWhileTryingMatchManagedConnectionThenDestroyingConnection(
                         clw.getConnectionListener(), t);
+
+                     if (pool.getInternalStatistics().isEnabled())
+                     {
+                        pool.getInternalStatistics().deltaTotalPoolTime(lastUsed -
+                           clw.getConnectionListener().getLastReturnedTime());
+                     }
 
                      doDestroy(clw);
                      clw = null;
@@ -563,7 +577,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
    public void returnConnection(ConnectionListener cl, boolean kill, boolean cleanup) 
    {
       if (pool.getInternalStatistics().isEnabled() && cl.getState() != ConnectionState.DESTROYED)
-         pool.getInternalStatistics().deltaTotalUsageTime(System.currentTimeMillis() - cl.getLastUsedTime());
+         pool.getInternalStatistics().deltaTotalUsageTime(System.currentTimeMillis() - cl.getLastCheckoutedTime());
 
       if (trace) 
       {
@@ -659,7 +673,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
       // return to the pool
       else 
       {
-         cl.used();
+         cl.toPool();
          if (!clq.contains(clw)) 
          {
             clq.add(clw);
@@ -717,6 +731,10 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
 
                   entry.getValue().setCheckedOut(false);
                   checkedOutSize.decrementAndGet();
+
+                  if (pool.getInternalStatistics().isEnabled())
+                     pool.getInternalStatistics().deltaTotalUsageTime(System.currentTimeMillis() -
+                                                                      entry.getKey().getLastCheckoutedTime());
 
                   if (entry.getValue().hasPermit())
                   {
@@ -794,6 +812,10 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
 
             if (kill) 
             {
+               if (pool.getInternalStatistics().isEnabled())
+                  pool.getInternalStatistics().deltaTotalPoolTime(System.currentTimeMillis() -
+                                                                  clw.getConnectionListener().getLastReturnedTime());
+
                clq.remove(clw);
                cls.remove(clw.getConnectionListener());
                poolSize.decrementAndGet();
@@ -933,6 +955,10 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
          {
             if (trace)
                log.trace("Destroying connection " + clw.getConnectionListener());
+
+            if (pool.getInternalStatistics().isEnabled())
+               pool.getInternalStatistics().deltaTotalPoolTime(System.currentTimeMillis() -
+                                                               clw.getConnectionListener().getLastReturnedTime());
 
             doDestroy(clw);
             clw = null;
@@ -1341,6 +1367,10 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                         {
                            ConnectionListenerWrapper clw = cls.remove(cl);
 
+                           if (pool.getInternalStatistics().isEnabled())
+                              pool.getInternalStatistics().deltaTotalPoolTime(System.currentTimeMillis() -
+                                 clw.getConnectionListener().getLastReturnedTime());
+
                            doDestroy(clw);
                            clw = null;
                            destroyed = true;
@@ -1358,6 +1388,10 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                   if (cl != null) 
                   {
                      ConnectionListenerWrapper clw = cls.remove(cl);
+
+                     if (pool.getInternalStatistics().isEnabled())
+                        pool.getInternalStatistics().deltaTotalPoolTime(System.currentTimeMillis() -
+                           clw.getConnectionListener().getLastReturnedTime());
 
                      doDestroy(clw);
                      clw = null;
