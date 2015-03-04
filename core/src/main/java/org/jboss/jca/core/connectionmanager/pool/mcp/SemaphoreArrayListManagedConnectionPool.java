@@ -387,7 +387,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                            clPermits.put(cl, cl);
 
                            lastUsed = System.currentTimeMillis();
-                           cl.setLastCheckoutedTime(lastUsed);
+                           cl.setLastCheckedOutTime(lastUsed);
 
                            if (pool.getInternalStatistics().isEnabled())
                            {
@@ -612,7 +612,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    public void returnConnection(ConnectionListener cl, boolean kill, boolean cleanup)
    {
       if (pool.getInternalStatistics().isEnabled() && cl.getState() != ConnectionState.DESTROYED)
-         pool.getInternalStatistics().deltaTotalUsageTime(System.currentTimeMillis() - cl.getLastCheckoutedTime());
+         pool.getInternalStatistics().deltaTotalUsageTime(System.currentTimeMillis() - cl.getLastCheckedOutTime());
 
       if (trace)
       {
@@ -748,7 +748,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
                if (pool.getInternalStatistics().isEnabled())
                   pool.getInternalStatistics().deltaTotalUsageTime(System.currentTimeMillis() -
-                                                                   cl.getLastCheckoutedTime());
+                                                                   cl.getLastCheckedOutTime());
 
                if (destroy == null)
                   destroy = new ArrayList<ConnectionListener>(1);

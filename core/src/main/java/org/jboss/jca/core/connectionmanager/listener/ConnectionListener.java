@@ -181,14 +181,14 @@ public interface ConnectionListener extends org.jboss.jca.core.api.connectionman
     * 
     * @return the last time the connection was obtained from the pool
     */
-   public long getLastCheckoutedTime();
+   public long getLastCheckedOutTime();
 
    /**
     * Set the last time this connection was obtained from the pool
     *
     * @param v The value
     */
-   public void setLastCheckoutedTime(long v);
+   public void setLastCheckedOutTime(long v);
 
    /**
     * Controls the managed connection / connection pair

@@ -95,7 +95,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
    private long lastValidated;
 
    /** Connection check out time */
-   private long lastCheckouted;
+   private long lastCheckedOut;
 
    /** Enlisted */
    private boolean enlisted;
@@ -129,7 +129,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
       long createdTime = System.currentTimeMillis();
       this.lastReturned = createdTime;
       this.lastValidated = createdTime;
-      this.lastCheckouted = createdTime;
+      this.lastCheckedOut = createdTime;
 
       this.tracking = tracking;
 
@@ -228,17 +228,17 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
    /**
     * {@inheritDoc}
     */
-   public long getLastCheckoutedTime()
+   public long getLastCheckedOutTime()
    {
-      return lastCheckouted;
+      return lastCheckedOut;
    }
 
    /**
     * {@inheritDoc}
     */
-   public void setLastCheckoutedTime(long v)
+   public void setLastCheckedOutTime(long v)
    {
-      lastCheckouted = v;
+      lastCheckedOut = v;
    }
 
    /**
@@ -641,7 +641,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
       buffer.append(" connection handles=").append(connectionHandles.size());
       buffer.append(" lastReturned=").append(lastReturned);
       buffer.append(" lastValidated=").append(lastValidated);
-      buffer.append(" lastCheckouted=").append(lastCheckouted);
+      buffer.append(" lastCheckedOut=").append(lastCheckedOut);
       buffer.append(" trackByTx=").append(trackByTx.get());
       buffer.append(" pool=").append(pool);
       buffer.append(" mcp=").append(managedConnectionPool);

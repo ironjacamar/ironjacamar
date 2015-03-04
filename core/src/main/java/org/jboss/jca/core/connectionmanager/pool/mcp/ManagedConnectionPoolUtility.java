@@ -132,9 +132,9 @@ class ManagedConnectionPoolUtility
          {
             sb.append("  ").append(Integer.toHexString(System.identityHashCode(cl)));
             sb.append(" (").append(cl.getState()).append(")");
-            sb.append(" (Checkouted: ").append(cl.getLastCheckoutedTime()).append(")");
+            sb.append(" (CheckedOut: ").append(cl.getLastCheckedOutTime()).append(")");
             sb.append(" (Validated: ").append(cl.getLastValidatedTime()).append(")");
-            sb.append(" (Usage: ").append(now - cl.getLastCheckoutedTime()).append(")").append(newLine);
+            sb.append(" (Usage: ").append(now - cl.getLastCheckedOutTime()).append(")").append(newLine);
          }
       }
 
