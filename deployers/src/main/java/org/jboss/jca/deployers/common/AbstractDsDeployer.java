@@ -472,6 +472,7 @@ public abstract class AbstractDsDeployer
 
       PoolFactory pf = new PoolFactory();
       PoolStrategy strategy = PoolStrategy.ONE_POOL;
+      boolean isCRI = false;
 
       boolean allowMultipleUsers = false;
       if (ds.getPool() != null)
@@ -481,6 +482,7 @@ public abstract class AbstractDsDeployer
             strategy = PoolStrategy.POOL_BY_CRI;
             allowMultipleUsers = true;
             pc.setMinSize(0);
+            isCRI = true;
          }
       }
 
@@ -492,6 +494,7 @@ public abstract class AbstractDsDeployer
          {
             strategy = PoolStrategy.REAUTH;
             securityDomain = ds.getSecurity().getSecurityDomain();
+            isCRI = false;
          }
          else if (ds.getSecurity().getSecurityDomain() != null)
          {
@@ -503,6 +506,7 @@ public abstract class AbstractDsDeployer
             {
                strategy = PoolStrategy.POOL_BY_SUBJECT_AND_CRI;
                pc.setMinSize(0);
+               isCRI = true;
             }
             securityDomain = ds.getSecurity().getSecurityDomain();
          }
@@ -514,7 +518,7 @@ public abstract class AbstractDsDeployer
       if (ds.getPool() != null)
       {
          if (ds.getPool().getCapacity() != null)
-            pool.setCapacity(CapacityFactory.create(ds.getPool().getCapacity()));
+            pool.setCapacity(CapacityFactory.create(ds.getPool().getCapacity(), isCRI));
       }
 
       // Connection manager properties
@@ -722,6 +726,7 @@ public abstract class AbstractDsDeployer
 
       PoolFactory pf = new PoolFactory();
       PoolStrategy strategy = PoolStrategy.ONE_POOL;
+      boolean isCRI = false;
 
       boolean allowMultipleUsers = false;
       if (ds.getXaPool() != null)
@@ -733,6 +738,7 @@ public abstract class AbstractDsDeployer
             strategy = PoolStrategy.POOL_BY_CRI;
             allowMultipleUsers = true;
             pc.setMinSize(0);
+            isCRI = true;
          }
       }
 
@@ -744,6 +750,7 @@ public abstract class AbstractDsDeployer
          {
             strategy = PoolStrategy.REAUTH;
             securityDomain = ds.getSecurity().getSecurityDomain();
+            isCRI = false;
          }
          else if (ds.getSecurity().getSecurityDomain() != null)
          {
@@ -755,6 +762,7 @@ public abstract class AbstractDsDeployer
             {
                strategy = PoolStrategy.POOL_BY_SUBJECT_AND_CRI;
                pc.setMinSize(0);
+               isCRI = true;
             }
             securityDomain = ds.getSecurity().getSecurityDomain();
          }
@@ -768,7 +776,7 @@ public abstract class AbstractDsDeployer
          DsXaPool dsXaPool = ds.getXaPool();
 
          if (dsXaPool.getCapacity() != null)
-            pool.setCapacity(CapacityFactory.create(dsXaPool.getCapacity()));
+            pool.setCapacity(CapacityFactory.create(dsXaPool.getCapacity(), isCRI));
       }
 
       // Connection manager properties

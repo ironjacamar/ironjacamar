@@ -50,10 +50,12 @@ public class CapacityFactory
    /**
     * Create a capacity instance based on the metadata
     * @param metadata The metadata
+    * @param isCRI Is the pool CRI based
     * @return The instance
     */
    public static org.jboss.jca.core.connectionmanager.pool.api.Capacity
-   create(org.jboss.jca.common.api.metadata.common.Capacity metadata)
+   create(org.jboss.jca.common.api.metadata.common.Capacity metadata,
+          boolean isCRI)
    {
       if (metadata == null)
          return DefaultCapacity.INSTANCE;
@@ -97,7 +99,7 @@ public class CapacityFactory
          incrementer = DefaultCapacity.DEFAULT_INCREMENTER;
 
       // Decrementer
-      if (metadata.getDecrementer() != null && metadata.getDecrementer().getClassName() != null)
+      if (!isCRI && metadata.getDecrementer() != null && metadata.getDecrementer().getClassName() != null)
       {
          decrementer = loadDecrementer(metadata.getDecrementer().getClassName());
 

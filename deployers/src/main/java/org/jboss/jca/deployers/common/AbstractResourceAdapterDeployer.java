@@ -1471,6 +1471,7 @@ public abstract class AbstractResourceAdapterDeployer
 
                                  PoolStrategy strategy = PoolStrategy.ONE_POOL;
                                  String securityDomain = null;
+                                 boolean isCRI = false;
 
                                  if (security != null)
                                  {
@@ -1478,6 +1479,7 @@ public abstract class AbstractResourceAdapterDeployer
                                     {
                                        strategy = PoolStrategy.POOL_BY_CRI;
                                        pc.setMinSize(0);
+                                       isCRI = true;
                                     }
                                     else if (security.getSecurityDomain() != null &&
                                              security.getSecurityDomain().trim().length() != 0)
@@ -1491,6 +1493,7 @@ public abstract class AbstractResourceAdapterDeployer
                                        strategy = PoolStrategy.POOL_BY_SUBJECT_AND_CRI;
                                        securityDomain = security.getSecurityDomainAndApplication();
                                        pc.setMinSize(0);
+                                       isCRI = true;
                                     }
                                  }
 
@@ -1498,6 +1501,7 @@ public abstract class AbstractResourceAdapterDeployer
                                      ra.getOutboundResourceadapter().getReauthenticationSupport())
                                  {
                                     strategy = PoolStrategy.REAUTH;
+                                    isCRI = false;
                                  }
 
                                  Boolean sharable = Defaults.SHARABLE;
@@ -1518,7 +1522,7 @@ public abstract class AbstractResourceAdapterDeployer
                                               sharable.booleanValue());
 
                                  // Capacity
-                                 applyCapacity(connectionDefinition, pool);
+                                 applyCapacity(connectionDefinition, pool, isCRI);
                                     
                                  // Add a connection manager
                                  ConnectionManagerFactory cmf = new ConnectionManagerFactory();
@@ -2177,9 +2181,11 @@ public abstract class AbstractResourceAdapterDeployer
     * Apply capacity
     * @param connectionDefinition The connection definition
     * @param pool The pool
+    * @param isCRI Is the pool going to be CRI based
     */
    protected void applyCapacity(ConnectionDefinition connectionDefinition,
-                                org.jboss.jca.core.connectionmanager.pool.api.Pool pool)
+                                org.jboss.jca.core.connectionmanager.pool.api.Pool pool,
+                                boolean isCRI)
    {
       if (connectionDefinition != null)
       {
@@ -2188,7 +2194,7 @@ public abstract class AbstractResourceAdapterDeployer
             org.jboss.jca.common.api.metadata.common.Pool cdp = connectionDefinition.getPool();
                                  
             if (cdp.getCapacity() != null)
-               pool.setCapacity(CapacityFactory.create(cdp.getCapacity()));
+               pool.setCapacity(CapacityFactory.create(cdp.getCapacity(), isCRI));
          }
       }
    }
