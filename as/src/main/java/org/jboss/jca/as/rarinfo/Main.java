@@ -65,6 +65,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -332,6 +333,12 @@ public class Main
          else
             out.println("No");
          
+         if (cps != null)
+         {
+            out.print("Extra Classpath: ");
+            out.println(Arrays.toString(cps).replaceAll("\\[|\\]", ""));
+         }
+
          Collections.sort(names);
          
          out.println();
