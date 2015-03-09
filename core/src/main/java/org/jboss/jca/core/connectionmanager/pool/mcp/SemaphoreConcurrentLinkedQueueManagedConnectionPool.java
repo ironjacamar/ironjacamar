@@ -915,7 +915,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
 
          if (destroy) 
          {
-            if (shouldRemove()) 
+            if (shouldRemove() || !isRunning())
             {
                if (pool.getInternalStatistics().isEnabled())
                   pool.getInternalStatistics().deltaTimedOut();
@@ -1361,7 +1361,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                      ValidatingManagedConnectionFactory vcf = (ValidatingManagedConnectionFactory) mcf;
                      candidateSet = vcf.getInvalidConnections(candidateSet);
 
-                     if (candidateSet != null && candidateSet.size() > 0) 
+                     if ((candidateSet != null && candidateSet.size() > 0) || !isRunning())
                      {
                         if (cl.getState() != ConnectionState.DESTROY) 
                         {

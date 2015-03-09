@@ -51,7 +51,7 @@ public abstract class AbstractPrefillPool extends AbstractPool implements Prefil
                                  final boolean noTxSeparatePools, final boolean sharable)
    {
       super(mcf, pc, noTxSeparatePools, sharable);
-      this.shouldPrefill = pc.isPrefill();
+      this.shouldPrefill = pc.isPrefill() || pc.isStrictMin();
    }
 
    /**
