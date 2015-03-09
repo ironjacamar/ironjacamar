@@ -172,20 +172,34 @@ public abstract class AbstractPool implements Pool
          ManagedConnectionPool mcp = mcpPools.get(key);
          if (mcp == null)
          {
-            ManagedConnectionPoolFactory mcpf = new ManagedConnectionPoolFactory();
-            ManagedConnectionPool newMcp = mcpf.create(mcf, clf, subject, cri, poolConfiguration, this);
-
-            mcp = mcpPools.putIfAbsent(key, newMcp);
-            if (mcp == null)
+            // Let sync, since it is expensive to create connections
+            synchronized (this)
             {
-               mcp = newMcp;
-               try
+               mcp = mcpPools.get(key);
+
+               if (mcp == null)
                {
-                  initLock();
-               }
-               catch (Throwable lockThrowable)
-               {
-                  // Init later then
+                  ManagedConnectionPoolFactory mcpf = new ManagedConnectionPoolFactory();
+                  ManagedConnectionPool newMcp = mcpf.create(mcf, clf, subject, cri, poolConfiguration, this);
+
+                  mcp = mcpPools.putIfAbsent(key, newMcp);
+                  if (mcp == null)
+                  {
+                     mcp = newMcp;
+                     try
+                     {
+                        initLock();
+                     }
+                     catch (Throwable lockThrowable)
+                     {
+                        // Init later then
+                     }
+                  }
+                  else
+                  {
+                     // and shut them down again
+                     newMcp.shutdown();
+                  }
                }
             }
          }

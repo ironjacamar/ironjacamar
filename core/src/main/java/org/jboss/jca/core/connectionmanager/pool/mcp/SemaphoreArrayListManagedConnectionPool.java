@@ -644,7 +644,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
             // Check the first in the list
             ConnectionListener cl = cls.get(0);
-            if (cl.isTimedOut(timeout) && shouldRemove())
+            if (cl.isTimedOut(timeout) && (shouldRemove() || !isRunning()))
             {
                if (statistics.isEnabled())
                   statistics.deltaTimedOut();
@@ -947,7 +947,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                      ValidatingManagedConnectionFactory vcf = (ValidatingManagedConnectionFactory) mcf;
                      candidateSet = vcf.getInvalidConnections(candidateSet);
 
-                     if (candidateSet != null && candidateSet.size() > 0)
+                     if ((candidateSet != null && candidateSet.size() > 0) || !isRunning())
                      {
                         if (cl.getState() != ConnectionState.DESTROY)
                         {

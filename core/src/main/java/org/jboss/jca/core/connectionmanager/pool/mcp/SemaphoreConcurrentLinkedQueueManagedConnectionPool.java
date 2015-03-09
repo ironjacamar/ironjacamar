@@ -689,7 +689,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
 
          ConnectionListenerWrapper clw = clwIter.next();
 
-         if (clw.getConnectionListener().isTimedOut(timeout) && shouldRemove())
+         if (clw.getConnectionListener().isTimedOut(timeout) && (shouldRemove() || !isRunning()))
          {
             if (statistics.isEnabled())
                statistics.deltaTimedOut();
@@ -1005,7 +1005,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                      ValidatingManagedConnectionFactory vcf = (ValidatingManagedConnectionFactory) mcf;
                      candidateSet = vcf.getInvalidConnections(candidateSet);
 
-                     if (candidateSet != null && candidateSet.size() > 0)
+                     if ((candidateSet != null && candidateSet.size() > 0) || !isRunning())
                      {
                         if (cl.getState() != ConnectionState.DESTROY)
                         {
