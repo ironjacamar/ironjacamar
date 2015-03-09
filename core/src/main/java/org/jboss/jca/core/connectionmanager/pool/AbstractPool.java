@@ -212,14 +212,35 @@ public abstract class AbstractPool implements Pool
          ManagedConnectionPool mcp = mcpPools.get(key);
          if (mcp == null)
          {
-            ManagedConnectionPoolFactory mcpf = new ManagedConnectionPoolFactory();
-            ManagedConnectionPool newMcp = mcpf.create(mcf, cm, subject, cri, poolConfiguration, this);
-
-            mcp = mcpPools.putIfAbsent(key, newMcp);
-            if (mcp == null)
+            // Let sync, since it is expensive to create connections
+            synchronized (this)
             {
-               mcp = newMcp;
-               initLock();
+               mcp = mcpPools.get(key);
+
+               if (mcp == null)
+               {
+                  ManagedConnectionPoolFactory mcpf = new ManagedConnectionPoolFactory();
+                  ManagedConnectionPool newMcp = mcpf.create(mcf, cm, subject, cri, poolConfiguration, this);
+
+                  mcp = mcpPools.putIfAbsent(key, newMcp);
+                  if (mcp == null)
+                  {
+                     mcp = newMcp;
+                     try
+                     {
+                        initLock();
+                     }
+                     catch (Throwable lockThrowable)
+                     {
+                        // Init later then
+                     }
+                  }
+                  else
+                  {
+                     // and shut them down again
+                     newMcp.shutdown();
+                  }
+               }
             }
          }
 
@@ -273,20 +294,34 @@ public abstract class AbstractPool implements Pool
     * Init lock
     * @return The lock
     */
-   private synchronized Lock initLock()
+   private Lock initLock()
    {
       TransactionSynchronizationRegistry tsr = getTransactionSynchronizationRegistry();
-      if (tsr != null && tsr.getTransactionKey() != null)
+      if (tsr != null)
+         return initLock(tsr);
+
+      return null;
+   }
+   
+   /**
+    * Init lock
+    * @param tsr The TSR
+    * @return The lock
+    */
+   private Lock initLock(TransactionSynchronizationRegistry tsr)
+   {
+      if (tsr.getTransactionKey() != null)
       {
-         if (tsr.getResource(LockKey.INSTANCE) == null)
+         Lock lock = (Lock)tsr.getResource(LockKey.INSTANCE);
+         if (lock == null)
          {
-            Lock lock = new ReentrantLock(true);
+            lock = new ReentrantLock(true);
             tsr.putResource(LockKey.INSTANCE, lock);
             return lock;
          }
          else
          {
-            return (Lock)tsr.getResource(LockKey.INSTANCE);
+            return lock;
          }
       }
 
@@ -309,7 +344,7 @@ public abstract class AbstractPool implements Pool
             result = (Lock)tsr.getResource(LockKey.INSTANCE);
             if (result == null)
             {
-               result = initLock();
+               result = initLock(tsr);
             }
          }
       }

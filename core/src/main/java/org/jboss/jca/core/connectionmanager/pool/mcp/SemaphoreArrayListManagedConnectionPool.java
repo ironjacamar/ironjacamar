@@ -878,7 +878,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
             if (destroy)
             {
-               if (shouldRemove())
+               if (shouldRemove() || !isRunning())
                {
                   if (statistics.isEnabled())
                      statistics.deltaTimedOut();
@@ -1293,7 +1293,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                      ValidatingManagedConnectionFactory vcf = (ValidatingManagedConnectionFactory) mcf;
                      candidateSet = vcf.getInvalidConnections(candidateSet);
 
-                     if (candidateSet != null && candidateSet.size() > 0)
+                     if ((candidateSet != null && candidateSet.size() > 0) || !isRunning())
                      {
                         if (cl.getState() != ConnectionState.DESTROY)
                         {
