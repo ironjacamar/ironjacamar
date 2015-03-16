@@ -344,7 +344,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       catch (Throwable e)
       {
          try {
-             return retryDriverLoading(props, copy);
+             return getLocalManagedConnectionWithDriverLoading(props, copy);
          } catch (Exception e1) {
              if (con != null) {
                  try {
@@ -358,7 +358,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       }
    }
    
-   private LocalManagedConnection retryDriverLoading(final Properties props, final Properties copy) throws ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException, ResourceException {
+   private LocalManagedConnection getLocalManagedConnectionWithDriverLoading(final Properties props, final Properties copy) throws ClassNotFoundException, InstantiationException, IllegalAccessException, SQLException, ResourceException {
         String url = getConnectionURL();
         Class<?> clazz = Class.forName(driverClass, true, getClassLoaderPlugin().getClassLoader());
         Driver d = (Driver) clazz.newInstance();
@@ -369,7 +369,6 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
         driverCache.put(driverKey, d);
 
         Connection con = null;
-        con = d.connect(url, copy);
         con = d.connect(url, copy);
         if (con == null) {
             throw new ResourceException("Wrong driver class [" + d.getClass() + "] for this connection URL ["
