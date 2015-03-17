@@ -302,7 +302,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
          connectionHandles.add(handle);
 
          if (Tracer.isEnabled())
-            Tracer.getConnection(pool != null ? pool.getName() : null, this, handle);
+            Tracer.getConnection(pool != null ? pool.getName() : null, managedConnectionPool, this, handle);
 
          if (trace)
             log.tracef("[%s] registerConnection: %s [size=%s] (%s)", getIdentifier(), handle,
@@ -361,7 +361,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
          }
 
          if (Tracer.isEnabled())
-            Tracer.returnConnection(pool != null ? pool.getName() : null, this, handle);
+            Tracer.returnConnection(pool != null ? pool.getName() : null, managedConnectionPool, this, handle);
 
          if (tracking != null && tracking.booleanValue())
             connectionTraces.remove(handle);
@@ -396,7 +396,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
       {
          for (Object handle : connectionHandles)
          {
-            Tracer.returnConnection(pool != null ? pool.getName() : null, this, handle);
+            Tracer.returnConnection(pool != null ? pool.getName() : null, managedConnectionPool, this, handle);
          }
       }
 

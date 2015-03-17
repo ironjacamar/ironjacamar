@@ -116,6 +116,30 @@ public class HTMLReport
       writeString(fw, "</ul>");
       writeEOL(fw);
 
+      writeString(fw, "<h2>Lifecycle</h2>");
+      writeEOL(fw);
+
+      writeString(fw, "<ul>");
+      writeEOL(fw);
+
+      for (String directory : statuses.keySet())
+      {
+         writeString(fw, "<li>");
+
+         writeString(fw, "<a href=\"" + directory + "/lifecycle.html\">");
+
+         writeString(fw, directory);
+
+         writeString(fw, "</a>");
+         writeEOL(fw);
+
+         writeString(fw, "</li>");
+         writeEOL(fw);
+      }
+
+      writeString(fw, "</ul>");
+      writeEOL(fw);
+
       writeString(fw, "</body>");
       writeEOL(fw);
 
@@ -171,6 +195,15 @@ public class HTMLReport
       }
 
       writeString(fw, "</ul>");
+      writeEOL(fw);
+
+      writeString(fw, "<p/>");
+      writeEOL(fw);
+
+      writeString(fw, "<h2>Lifecycle</h2>");
+      writeEOL(fw);
+
+      writeString(fw, "<a href=\"lifecycle.html\">Report</a>");
       writeEOL(fw);
 
       writeString(fw, "<p/>");
@@ -334,6 +367,18 @@ public class HTMLReport
       writeEOL(fw);
 
       writeString(fw, "<table>");
+      writeEOL(fw);
+
+      writeString(fw, "<tr>");
+      writeEOL(fw);
+
+      writeString(fw, "<td><b>ManagedConnectionPool:</b></td>");
+      writeEOL(fw);
+
+      writeString(fw, "<td><b>" + data.get(0).getManagedConnectionPool() + "</b></td>");
+      writeEOL(fw);
+
+      writeString(fw, "</tr>");
       writeEOL(fw);
 
       writeString(fw, "<tr>");
@@ -550,6 +595,97 @@ public class HTMLReport
    }
 
    /**
+    * Write lifecycle.html
+    * @param poolName The name of the pool
+    * @param events The events
+    * @param fw The file writer
+    * @exception Exception If an error occurs
+    */
+   private static void generateLifecycleHTML(String poolName, List<TraceEvent> events, FileWriter fw)
+      throws Exception
+   {
+      writeString(fw, "<html>");
+      writeEOL(fw);
+
+      writeString(fw, "<body style=\"background: #D7D7D7;\">");
+      writeEOL(fw);
+
+      writeString(fw, "<h1>Lifecycle: " + poolName + "</h1>");
+      writeEOL(fw);
+
+      writeString(fw, "<table>");
+      writeEOL(fw);
+
+      writeString(fw, "<tr>");
+      writeEOL(fw);
+
+      writeString(fw, "<td><b>Timestamp</b></td>");
+      writeEOL(fw);
+
+      writeString(fw, "<td><b>ManagedConnectionPool</b></td>");
+      writeEOL(fw);
+
+      writeString(fw, "<td><b>Event</b></td>");
+      writeEOL(fw);
+
+      writeString(fw, "<td><b>ConnectionListener</b></td>");
+      writeEOL(fw);
+
+      writeString(fw, "</tr>");
+      writeEOL(fw);
+
+      for (TraceEvent te : events)
+      {
+         writeString(fw, "<tr>");
+         writeEOL(fw);
+
+         writeString(fw, "<td>" + te.getTimestamp() + "</td>");
+         writeEOL(fw);
+      
+         writeString(fw, "<td>" + te.getManagedConnectionPool() + "</td>");
+         writeEOL(fw);
+      
+         writeString(fw, "<td>" + TraceEvent.asText(te) + "</td>");
+         writeEOL(fw);
+      
+         if (!"NONE".equals(te.getConnectionListener()))
+         {
+            writeString(fw, "<td><a href=\"" + te.getConnectionListener() + "/index.html\">" +
+                        te.getConnectionListener() + "</a></td>");
+         }
+         else
+         {
+            writeString(fw, "<td></td>");
+         }
+         writeEOL(fw);
+      
+         writeString(fw, "</tr>");
+         writeEOL(fw);
+      }
+
+      writeString(fw, "</table>");
+      writeEOL(fw);
+
+      writeString(fw, "<h2>Pool</h2>");
+      writeEOL(fw);
+
+      writeString(fw, "<a href=\"index.html\">Report</a>");
+      writeEOL(fw);
+
+      writeString(fw, "<p/>");
+      writeEOL(fw);
+
+      writeString(fw, "<a href=\"../index.html\">Back</a>");
+      writeEOL(fw);
+
+      writeString(fw, "</body>");
+      writeEOL(fw);
+
+      writeString(fw, "</html>");
+      writeEOL(fw);
+   }
+
+   /**
     * Main
     * @param args The arguments
     */
@@ -585,11 +721,12 @@ public class HTMLReport
          root.mkdirs();
 
          List<TraceEvent> events = TraceEventHelper.getEvents(logReader);
-         Map<String, Map<String, List<TraceEvent>>> filtered = TraceEventHelper.filterEvents(events);
+         Map<String, Map<String, List<TraceEvent>>> filteredPool = TraceEventHelper.filterPoolEvents(events);
+         Map<String, List<TraceEvent>> filteredLifecycle = TraceEventHelper.filterLifecycleEvents(events);
 
          Map<String, TraceEventStatus> topLevelStatus = new TreeMap<String, TraceEventStatus>();
 
-         Iterator<Map.Entry<String, Map<String, List<TraceEvent>>>> it = filtered.entrySet().iterator();
+         Iterator<Map.Entry<String, Map<String, List<TraceEvent>>>> it = filteredPool.entrySet().iterator();
          while (it.hasNext())
          {
             Map.Entry<String, Map<String, List<TraceEvent>>> entry = it.next();
@@ -628,7 +765,7 @@ public class HTMLReport
          }
 
 
-         it = filtered.entrySet().iterator();
+         it = filteredPool.entrySet().iterator();
          while (it.hasNext())
          {
             Map.Entry<String, Map<String, List<TraceEvent>>> entry = it.next();
@@ -687,6 +824,38 @@ public class HTMLReport
                   {
                      pool.flush();
                      pool.close();
+                  }
+                  catch (Exception e)
+                  {
+                     // Ignore
+                  }
+               }
+            }
+         }
+
+         Iterator<Map.Entry<String, List<TraceEvent>>> lifeIt = filteredLifecycle.entrySet().iterator();
+         while (lifeIt.hasNext())
+         {
+            Map.Entry<String, List<TraceEvent>> entry = lifeIt.next();
+
+            FileWriter lifecycle = null;
+            try
+            {
+               String path = root.getAbsolutePath() + "/" + entry.getKey();
+               File f = new File(path);
+               f.mkdirs();
+
+               lifecycle = new FileWriter(path + "/" + "lifecycle.html");
+               generateLifecycleHTML(entry.getKey(), entry.getValue(), lifecycle);
+            }
+            finally
+            {
+               if (lifecycle != null)
+               {
+                  try
+                  {
+                     lifecycle.flush();
+                     lifecycle.close();
                   }
                   catch (Exception e)
                   {

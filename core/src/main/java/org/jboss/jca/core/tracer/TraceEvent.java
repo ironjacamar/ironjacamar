@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2014, Red Hat Inc, and individual contributors
+ * Copyright 2015, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -94,8 +94,41 @@ public class TraceEvent
    /** Exception */
    public static final int EXCEPTION = 50;
 
+   /** Create connection listner (GET) */
+   public static final int CREATE_CONNECTION_LISTENER_GET = 60;
+
+   /** Create connection listner (PREFILL) */
+   public static final int CREATE_CONNECTION_LISTENER_PREFILL = 61;
+
+   /** Create connection listner (INCREMENTER) */
+   public static final int CREATE_CONNECTION_LISTENER_INCREMENTER = 62;
+
+   /** Destroy connection listner (RETURN) */
+   public static final int DESTROY_CONNECTION_LISTENER_RETURN = 70;
+
+   /** Destroy connection listner (IDLE) */
+   public static final int DESTROY_CONNECTION_LISTENER_IDLE = 71;
+
+   /** Destroy connection listner (INVALID) */
+   public static final int DESTROY_CONNECTION_LISTENER_INVALID = 72;
+
+   /** Destroy connection listner (FLUSH) */
+   public static final int DESTROY_CONNECTION_LISTENER_FLUSH = 73;
+
+   /** Destroy connection listner (ERROR) */
+   public static final int DESTROY_CONNECTION_LISTENER_ERROR = 74;
+
+   /** Managed connection pool create */
+   public static final int MANAGED_CONNECTION_POOL_CREATE = 80;
+
+   /** Managed connection pool destroy */
+   public static final int MANAGED_CONNECTION_POOL_DESTROY = 81;
+
    /** The pool */
    private String pool;
+
+   /** The managed connection pool */
+   private String mcp;
 
    /** The thread id */
    private long threadId;
@@ -115,38 +148,42 @@ public class TraceEvent
    /**
     * Constructor
     * @param pool The pool
+    * @param mcp The MCP
     * @param type The event type
     * @param cl The connection listener
     */
-   TraceEvent(String pool, int type, String cl)
+   TraceEvent(String pool, String mcp, int type, String cl)
    {
-      this(pool, Thread.currentThread().getId(), type, System.currentTimeMillis(), cl, "");
+      this(pool, mcp, Thread.currentThread().getId(), type, System.currentTimeMillis(), cl, "");
    }
 
    /**
     * Constructor
     * @param pool The pool
+    * @param mcp The MCP
     * @param type The event type
     * @param cl The connection listener
     * @param payload The payload
     */
-   TraceEvent(String pool, int type, String cl, String payload)
+   TraceEvent(String pool, String mcp, int type, String cl, String payload)
    {
-      this(pool, Thread.currentThread().getId(), type, System.currentTimeMillis(), cl, payload);
+      this(pool, mcp, Thread.currentThread().getId(), type, System.currentTimeMillis(), cl, payload);
    }
 
    /**
     * Parse constructor
     * @param pool The pool
+    * @param mcp The MCP
     * @param threadId The thread id
     * @param type The event type
     * @param timestamp The timestamp
     * @param cl The connection listener
     * @param payload The payload
     */
-   private TraceEvent(String pool, long threadId, int type, long timestamp, String cl, String payload)
+   private TraceEvent(String pool, String mcp, long threadId, int type, long timestamp, String cl, String payload)
    {
       this.pool = pool != null ? pool.replace('-', '_') : "Empty"; 
+      this.mcp = mcp;
       this.threadId = threadId;
       this.type = type;
       this.timestamp = timestamp;
@@ -161,6 +198,15 @@ public class TraceEvent
    public String getPool()
    {
       return pool;
+   }
+
+   /**
+    * Get the managed connection pool
+    * @return The value
+    */
+   public String getManagedConnectionPool()
+   {
+      return mcp;
    }
 
    /**
@@ -218,6 +264,8 @@ public class TraceEvent
       sb.append("IJTRACER");
       sb.append("-");
       sb.append(pool);
+      sb.append("-");
+      sb.append(mcp);
       sb.append("-");
       sb.append(Long.toString(threadId));
       sb.append("-");
@@ -285,6 +333,26 @@ public class TraceEvent
             return "clearConnection(" + event.getPayload() + ")";
          case EXCEPTION:
             return "exception";
+         case CREATE_CONNECTION_LISTENER_GET:
+            return "createConnectionListener(GET)";
+         case CREATE_CONNECTION_LISTENER_PREFILL:
+            return "createConnectionListener(PREFILL)";
+         case CREATE_CONNECTION_LISTENER_INCREMENTER:
+            return "createConnectionListener(INCREMENTER)";
+         case DESTROY_CONNECTION_LISTENER_RETURN:
+            return "destroyConnectionListener(RETURN)";
+         case DESTROY_CONNECTION_LISTENER_IDLE:
+            return "destroyConnectionListener(IDLE)";
+         case DESTROY_CONNECTION_LISTENER_INVALID:
+            return "destroyConnectionListener(INVALID)";
+         case DESTROY_CONNECTION_LISTENER_FLUSH:
+            return "destroyConnectionListener(FLUSH)";
+         case DESTROY_CONNECTION_LISTENER_ERROR:
+            return "destroyConnectionListener(ERROR)";
+         case MANAGED_CONNECTION_POOL_CREATE:
+            return "createManagedConnectionPool()";
+         case MANAGED_CONNECTION_POOL_DESTROY:
+            return "destroyManagedConnectionPool()";
          default:
       }
 
@@ -302,15 +370,16 @@ public class TraceEvent
 
       String header = raw[0];
       String p = raw[1];
-      long tid = Long.parseLong(raw[2]);
-      int t = Integer.parseInt(raw[3]);
-      long ts = Long.parseLong(raw[4]);
-      String c = raw[5];
+      String m = raw[2];
+      long tid = Long.parseLong(raw[3]);
+      int t = Integer.parseInt(raw[4]);
+      long ts = Long.parseLong(raw[5]);
+      String c = raw[6];
       String pyl = "";
 
-      if (raw.length == 7)
-         pyl = raw[6];
+      if (raw.length == 8)
+         pyl = raw[7];
 
-      return new TraceEvent(p, tid, t, ts, c, pyl);
+      return new TraceEvent(p, m, tid, t, ts, c, pyl);
    }
 }

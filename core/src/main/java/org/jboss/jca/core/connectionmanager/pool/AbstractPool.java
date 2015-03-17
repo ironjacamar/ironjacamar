@@ -288,6 +288,10 @@ public abstract class AbstractPool implements Pool
                   if (mcp == null)
                   {
                      mcp = newMcp;
+
+                     if (Tracer.isEnabled())
+                        Tracer.createManagedConnectionPool(getName(), mcp);
+                     
                      try
                      {
                         initLock();
@@ -302,6 +306,9 @@ public abstract class AbstractPool implements Pool
                      // and shut them down again
                      newMcp.shutdown();
                   }
+
+                  if (trace)
+                     log.tracef("%s: mcpPools=%s", getName(), mcpPools);
                }
             }
          }
@@ -448,6 +455,12 @@ public abstract class AbstractPool implements Pool
                      log.trace("MCP.shutdown: " + e.getMessage(), e);
                   }
 
+                  if (Tracer.isEnabled())
+                     Tracer.destroyManagedConnectionPool(getName(), pool);
+                     
+                  if (trace)
+                     log.tracef("%s: mcpPools=%s", getName(), mcpPools);
+
                   it.remove();
                   break;
                }
@@ -522,9 +535,16 @@ public abstract class AbstractPool implements Pool
                   // Should not happen
                   log.trace("MCP.shutdown: " + e.getMessage(), e);
                }
+
+               if (Tracer.isEnabled())
+                  Tracer.destroyManagedConnectionPool(getName(), mcp);
+                     
                mcpPools.values().remove(mcp);
             }
          }
+
+         if (trace)
+            log.tracef("%s: mcpPools=%s", getName(), mcpPools);
       }
    }
 
@@ -797,7 +817,7 @@ public abstract class AbstractPool implements Pool
       ManagedConnectionPool mcp = cl.getManagedConnectionPool();
 
       if (Tracer.isEnabled())
-         Tracer.returnConnectionListener(poolName, cl, kill, interleaving);
+         Tracer.returnConnectionListener(poolName, cl.getManagedConnectionPool(), cl, kill, interleaving);
 
       //Return connection to the pool
       mcp.returnConnection(cl, kill);
@@ -906,6 +926,9 @@ public abstract class AbstractPool implements Pool
             // Should not happen
             log.tracef(e, "MCP.shutdown: %s", e.getMessage());
          }
+
+         if (Tracer.isEnabled())
+            Tracer.destroyManagedConnectionPool(getName(), mcp);
       }
 
       mcpPools.clear();

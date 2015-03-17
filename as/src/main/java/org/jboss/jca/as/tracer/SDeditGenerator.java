@@ -349,6 +349,26 @@ public class SDeditGenerator
                break;
             case TraceEvent.EXCEPTION:
                break;
+            case TraceEvent.CREATE_CONNECTION_LISTENER_GET:
+               break;
+            case TraceEvent.CREATE_CONNECTION_LISTENER_PREFILL:
+               break;
+            case TraceEvent.CREATE_CONNECTION_LISTENER_INCREMENTER:
+               break;
+            case TraceEvent.DESTROY_CONNECTION_LISTENER_RETURN:
+               break;
+            case TraceEvent.DESTROY_CONNECTION_LISTENER_IDLE:
+               break;
+            case TraceEvent.DESTROY_CONNECTION_LISTENER_INVALID:
+               break;
+            case TraceEvent.DESTROY_CONNECTION_LISTENER_FLUSH:
+               break;
+            case TraceEvent.DESTROY_CONNECTION_LISTENER_ERROR:
+               break;
+            case TraceEvent.MANAGED_CONNECTION_POOL_CREATE:
+               break;
+            case TraceEvent.MANAGED_CONNECTION_POOL_DESTROY:
+               break;
             default:
                System.err.println("SDeditGenerator: Unknown code: " + te);
          }

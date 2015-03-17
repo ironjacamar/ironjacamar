@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2014, Red Hat Inc, and individual contributors
+ * Copyright 2015, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -60,22 +60,27 @@ public class Tracer
    /**
     * Get connection listener
     * @param poolName The name of the pool
+    * @param mcp The managed connection pool
     * @param cl The connection listener
     * @param pooled Is the connection pooled
     * @param interleaving Interleaving flag
     */
-   public static void getConnectionListener(String poolName, Object cl, boolean pooled, boolean interleaving)
+   public static void getConnectionListener(String poolName, Object mcp, Object cl,
+                                            boolean pooled, boolean interleaving)
    {
       if (!interleaving)
       {
          if (pooled)
          {
-            log.tracef("%s", new TraceEvent(poolName, TraceEvent.GET_CONNECTION_LISTENER,
+            log.tracef("%s", new TraceEvent(poolName, Integer.toHexString(System.identityHashCode(mcp)),
+                                            TraceEvent.GET_CONNECTION_LISTENER,
                                             Integer.toHexString(System.identityHashCode(cl))));
          }
          else
          {
-            log.tracef("%s", new TraceEvent(poolName, TraceEvent.GET_CONNECTION_LISTENER_NEW,
+            log.tracef("%s", new TraceEvent(poolName,
+                                            Integer.toHexString(System.identityHashCode(mcp)),
+                                            TraceEvent.GET_CONNECTION_LISTENER_NEW,
                                             Integer.toHexString(System.identityHashCode(cl))));
          }
       }
@@ -83,12 +88,16 @@ public class Tracer
       {
          if (pooled)
          {
-            log.tracef("%s", new TraceEvent(poolName, TraceEvent.GET_INTERLEAVING_CONNECTION_LISTENER,
+            log.tracef("%s", new TraceEvent(poolName,
+                                            Integer.toHexString(System.identityHashCode(mcp)),
+                                            TraceEvent.GET_INTERLEAVING_CONNECTION_LISTENER,
                                             Integer.toHexString(System.identityHashCode(cl))));
          }
          else
          {
-            log.tracef("%s", new TraceEvent(poolName, TraceEvent.GET_INTERLEAVING_CONNECTION_LISTENER_NEW,
+            log.tracef("%s", new TraceEvent(poolName,
+                                            Integer.toHexString(System.identityHashCode(mcp)),
+                                            TraceEvent.GET_INTERLEAVING_CONNECTION_LISTENER_NEW,
                                             Integer.toHexString(System.identityHashCode(cl))));
          }
       }
@@ -97,22 +106,28 @@ public class Tracer
    /**
     * Return connection listener
     * @param poolName The name of the pool
+    * @param mcp The managed connection pool
     * @param cl The connection listener
     * @param kill Kill the listener
     * @param interleaving Interleaving flag
     */
-   public static void returnConnectionListener(String poolName, Object cl, boolean kill, boolean interleaving)
+   public static void returnConnectionListener(String poolName, Object mcp,
+                                               Object cl, boolean kill, boolean interleaving)
    {
       if (!interleaving)
       {
          if (!kill)
          {
-            log.tracef("%s", new TraceEvent(poolName, TraceEvent.RETURN_CONNECTION_LISTENER,
+            log.tracef("%s", new TraceEvent(poolName,
+                                            Integer.toHexString(System.identityHashCode(mcp)),
+                                            TraceEvent.RETURN_CONNECTION_LISTENER,
                                             Integer.toHexString(System.identityHashCode(cl))));
          }
          else
          {
-            log.tracef("%s", new TraceEvent(poolName, TraceEvent.RETURN_CONNECTION_LISTENER_WITH_KILL,
+            log.tracef("%s", new TraceEvent(poolName,
+                                            Integer.toHexString(System.identityHashCode(mcp)),
+                                            TraceEvent.RETURN_CONNECTION_LISTENER_WITH_KILL,
                                             Integer.toHexString(System.identityHashCode(cl))));
          }
       }
@@ -120,12 +135,16 @@ public class Tracer
       {
          if (!kill)
          {
-            log.tracef("%s", new TraceEvent(poolName, TraceEvent.RETURN_INTERLEAVING_CONNECTION_LISTENER,
+            log.tracef("%s", new TraceEvent(poolName,
+                                            Integer.toHexString(System.identityHashCode(mcp)),
+                                            TraceEvent.RETURN_INTERLEAVING_CONNECTION_LISTENER,
                                             Integer.toHexString(System.identityHashCode(cl))));
          }
          else
          {
-            log.tracef("%s", new TraceEvent(poolName, TraceEvent.RETURN_INTERLEAVING_CONNECTION_LISTENER_WITH_KILL,
+            log.tracef("%s", new TraceEvent(poolName,
+                                            Integer.toHexString(System.identityHashCode(mcp)),
+                                            TraceEvent.RETURN_INTERLEAVING_CONNECTION_LISTENER_WITH_KILL,
                                             Integer.toHexString(System.identityHashCode(cl))));
          }
       }
@@ -134,33 +153,42 @@ public class Tracer
    /**
     * Clear connection listener
     * @param poolName The name of the pool
+    * @param mcp The managed connection pool
     * @param cl The connection listener
     */
-   public static void clearConnectionListener(String poolName, Object cl)
+   public static void clearConnectionListener(String poolName, Object mcp, Object cl)
    {
-      log.tracef("%s", new TraceEvent(poolName, TraceEvent.CLEAR_CONNECTION_LISTENER,
+      log.tracef("%s", new TraceEvent(poolName,
+                                      Integer.toHexString(System.identityHashCode(mcp)),
+                                      TraceEvent.CLEAR_CONNECTION_LISTENER,
                                       Integer.toHexString(System.identityHashCode(cl))));
    }
 
    /**
     * Enlist connection listener
     * @param poolName The name of the pool
+    * @param mcp The managed connection pool
     * @param cl The connection listener
     * @param success Outcome
     * @param interleaving Interleaving flag
     */
-   public static void enlistConnectionListener(String poolName, Object cl, boolean success, boolean interleaving)
+   public static void enlistConnectionListener(String poolName, Object mcp, Object cl,
+                                               boolean success, boolean interleaving)
    {
       if (!interleaving)
       {
          if (success)
          {
-            log.tracef("%s", new TraceEvent(poolName, TraceEvent.ENLIST_CONNECTION_LISTENER,
+            log.tracef("%s", new TraceEvent(poolName,
+                                            Integer.toHexString(System.identityHashCode(mcp)),
+                                            TraceEvent.ENLIST_CONNECTION_LISTENER,
                                             Integer.toHexString(System.identityHashCode(cl))));
          }
          else
          {
-            log.tracef("%s", new TraceEvent(poolName, TraceEvent.ENLIST_CONNECTION_LISTENER_FAILED,
+            log.tracef("%s", new TraceEvent(poolName,
+                                            Integer.toHexString(System.identityHashCode(mcp)),
+                                            TraceEvent.ENLIST_CONNECTION_LISTENER_FAILED,
                                             Integer.toHexString(System.identityHashCode(cl))));
          }
       }
@@ -168,12 +196,16 @@ public class Tracer
       {
          if (success)
          {
-            log.tracef("%s", new TraceEvent(poolName, TraceEvent.ENLIST_INTERLEAVING_CONNECTION_LISTENER,
+            log.tracef("%s", new TraceEvent(poolName,
+                                            Integer.toHexString(System.identityHashCode(mcp)),
+                                            TraceEvent.ENLIST_INTERLEAVING_CONNECTION_LISTENER,
                                             Integer.toHexString(System.identityHashCode(cl))));
          }
          else
          {
-            log.tracef("%s", new TraceEvent(poolName, TraceEvent.ENLIST_INTERLEAVING_CONNECTION_LISTENER_FAILED,
+            log.tracef("%s", new TraceEvent(poolName,
+                                            Integer.toHexString(System.identityHashCode(mcp)),
+                                            TraceEvent.ENLIST_INTERLEAVING_CONNECTION_LISTENER_FAILED,
                                             Integer.toHexString(System.identityHashCode(cl))));
          }
       }
@@ -182,13 +214,14 @@ public class Tracer
    /**
     * Delist connection listener
     * @param poolName The name of the pool
+    * @param mcp The managed connection pool
     * @param cl The connection listener
     * @param success Is successful
     * @param rollbacked Is the transaction rollbacked
     * @param interleaving Interleaving flag
     */
-   public static void delistConnectionListener(String poolName, Object cl, boolean success, boolean rollbacked,
-                                               boolean interleaving)
+   public static void delistConnectionListener(String poolName, Object mcp, Object cl,
+                                               boolean success, boolean rollbacked, boolean interleaving)
    {
       if (!rollbacked)
       {
@@ -196,12 +229,16 @@ public class Tracer
          {
             if (success)
             {
-               log.tracef("%s", new TraceEvent(poolName, TraceEvent.DELIST_CONNECTION_LISTENER,
+               log.tracef("%s", new TraceEvent(poolName,
+                                               Integer.toHexString(System.identityHashCode(mcp)),
+                                               TraceEvent.DELIST_CONNECTION_LISTENER,
                                                Integer.toHexString(System.identityHashCode(cl))));
             }
             else
             {
-               log.tracef("%s", new TraceEvent(poolName, TraceEvent.DELIST_CONNECTION_LISTENER_FAILED,
+               log.tracef("%s", new TraceEvent(poolName,
+                                               Integer.toHexString(System.identityHashCode(mcp)),
+                                               TraceEvent.DELIST_CONNECTION_LISTENER_FAILED,
                                                Integer.toHexString(System.identityHashCode(cl))));
             }
          }
@@ -209,19 +246,25 @@ public class Tracer
          {
             if (success)
             {
-               log.tracef("%s", new TraceEvent(poolName, TraceEvent.DELIST_INTERLEAVING_CONNECTION_LISTENER,
+               log.tracef("%s", new TraceEvent(poolName,
+                                               Integer.toHexString(System.identityHashCode(mcp)),
+                                               TraceEvent.DELIST_INTERLEAVING_CONNECTION_LISTENER,
                                                Integer.toHexString(System.identityHashCode(cl))));
             }
             else
             {
-               log.tracef("%s", new TraceEvent(poolName, TraceEvent.DELIST_INTERLEAVING_CONNECTION_LISTENER_FAILED,
+               log.tracef("%s", new TraceEvent(poolName,
+                                               Integer.toHexString(System.identityHashCode(mcp)),
+                                               TraceEvent.DELIST_INTERLEAVING_CONNECTION_LISTENER_FAILED,
                                                Integer.toHexString(System.identityHashCode(cl))));
             }
          }
       }
       else
       {
-         log.tracef("%s", new TraceEvent(poolName, TraceEvent.DELIST_ROLLEDBACK_CONNECTION_LISTENER,
+         log.tracef("%s", new TraceEvent(poolName,
+                                         Integer.toHexString(System.identityHashCode(mcp)),
+                                         TraceEvent.DELIST_ROLLEDBACK_CONNECTION_LISTENER,
                                          Integer.toHexString(System.identityHashCode(cl))));
       }
    }
@@ -229,12 +272,15 @@ public class Tracer
    /**
     * Get connection
     * @param poolName The name of the pool
+    * @param mcp The managed connection pool
     * @param cl The connection listener
     * @param connection The connection
     */
-   public static void getConnection(String poolName, Object cl, Object connection)
+   public static void getConnection(String poolName, Object mcp, Object cl, Object connection)
    {
-      log.tracef("%s", new TraceEvent(poolName, TraceEvent.GET_CONNECTION,
+      log.tracef("%s", new TraceEvent(poolName,
+                                      Integer.toHexString(System.identityHashCode(mcp)),
+                                      TraceEvent.GET_CONNECTION,
                                       Integer.toHexString(System.identityHashCode(cl)),
                                       Integer.toHexString(System.identityHashCode(connection))));
    }
@@ -242,12 +288,15 @@ public class Tracer
    /**
     * Return connection
     * @param poolName The name of the pool
+    * @param mcp The managed connection pool
     * @param cl The connection listener
     * @param connection The connection
     */
-   public static void returnConnection(String poolName, Object cl, Object connection)
+   public static void returnConnection(String poolName, Object mcp, Object cl, Object connection)
    {
-      log.tracef("%s", new TraceEvent(poolName, TraceEvent.RETURN_CONNECTION,
+      log.tracef("%s", new TraceEvent(poolName,
+                                      Integer.toHexString(System.identityHashCode(mcp)),
+                                      TraceEvent.RETURN_CONNECTION,
                                       Integer.toHexString(System.identityHashCode(cl)),
                                       Integer.toHexString(System.identityHashCode(connection))));
    }
@@ -255,12 +304,15 @@ public class Tracer
    /**
     * Clear connection
     * @param poolName The name of the pool
+    * @param mcp The managed connection pool
     * @param cl The connection listener
     * @param connection The connection
     */
-   public static void clearConnection(String poolName, Object cl, Object connection)
+   public static void clearConnection(String poolName, Object mcp, Object cl, Object connection)
    {
-      log.tracef("%s", new TraceEvent(poolName, TraceEvent.CLEAR_CONNECTION,
+      log.tracef("%s", new TraceEvent(poolName,
+                                      Integer.toHexString(System.identityHashCode(mcp)),
+                                      TraceEvent.CLEAR_CONNECTION,
                                       Integer.toHexString(System.identityHashCode(cl)),
                                       Integer.toHexString(System.identityHashCode(connection))));
    }
@@ -268,10 +320,11 @@ public class Tracer
    /**
     * Exception
     * @param poolName The name of the pool
+    * @param mcp The managed connection pool
     * @param cl The connection listener
     * @param exception The exception
     */
-   public static void exception(String poolName, Object cl, Throwable exception)
+   public static void exception(String poolName, Object mcp, Object cl, Throwable exception)
    {
       CharArrayWriter caw = new CharArrayWriter();
       PrintWriter pw = new PrintWriter(caw, true);
@@ -305,8 +358,123 @@ public class Tracer
          }
       }
 
-      log.tracef("%s", new TraceEvent(poolName, TraceEvent.EXCEPTION,
+      log.tracef("%s", new TraceEvent(poolName,
+                                      Integer.toHexString(System.identityHashCode(mcp)),
+                                      TraceEvent.EXCEPTION,
                                       Integer.toHexString(System.identityHashCode(cl)),
                                       sb.toString()));
+   }
+
+   /**
+    * Create connection listener
+    * @param poolName The name of the pool
+    * @param mcp The managed connection pool
+    * @param cl The connection listener
+    * @param get A GET operation
+    * @param prefill A PREFILL operation
+    * @param incrementer An INCREMENTER operation
+    */
+   public static void createConnectionListener(String poolName, Object mcp, Object cl,
+                                               boolean get, boolean prefill, boolean incrementer)
+   {
+      if (get)
+      {
+         log.tracef("%s", new TraceEvent(poolName,
+                                         Integer.toHexString(System.identityHashCode(mcp)),
+                                         TraceEvent.CREATE_CONNECTION_LISTENER_GET,
+                                         Integer.toHexString(System.identityHashCode(cl))));
+      }
+      else if (prefill)
+      {
+         log.tracef("%s", new TraceEvent(poolName,
+                                         Integer.toHexString(System.identityHashCode(mcp)),
+                                         TraceEvent.CREATE_CONNECTION_LISTENER_PREFILL,
+                                         Integer.toHexString(System.identityHashCode(cl))));
+      }
+      else if (incrementer)
+      {
+         log.tracef("%s", new TraceEvent(poolName,
+                                         Integer.toHexString(System.identityHashCode(mcp)),
+                                         TraceEvent.CREATE_CONNECTION_LISTENER_INCREMENTER,
+                                         Integer.toHexString(System.identityHashCode(cl))));
+      }
+   }
+
+   /**
+    * Destroy connection listener
+    * @param poolName The name of the pool
+    * @param mcp The managed connection pool
+    * @param cl The connection listener
+    * @param ret A RETURN operation
+    * @param idle An IDLE operation
+    * @param invalid An INVALID operation
+    * @param flush A FLUSH operation
+    * @param error An ERROR operation
+    */
+   public static void destroyConnectionListener(String poolName, Object mcp, Object cl,
+                                                boolean ret, boolean idle, boolean invalid,
+                                                boolean flush, boolean error)
+   {
+      if (ret)
+      {
+         log.tracef("%s", new TraceEvent(poolName,
+                                         Integer.toHexString(System.identityHashCode(mcp)),
+                                         TraceEvent.DESTROY_CONNECTION_LISTENER_RETURN,
+                                         Integer.toHexString(System.identityHashCode(cl))));
+      }
+      else if (idle)
+      {
+         log.tracef("%s", new TraceEvent(poolName,
+                                         Integer.toHexString(System.identityHashCode(mcp)),
+                                         TraceEvent.DESTROY_CONNECTION_LISTENER_IDLE,
+                                         Integer.toHexString(System.identityHashCode(cl))));
+      }
+      else if (invalid)
+      {
+         log.tracef("%s", new TraceEvent(poolName,
+                                         Integer.toHexString(System.identityHashCode(mcp)),
+                                         TraceEvent.DESTROY_CONNECTION_LISTENER_INVALID,
+                                         Integer.toHexString(System.identityHashCode(cl))));
+      }
+      else if (flush)
+      {
+         log.tracef("%s", new TraceEvent(poolName,
+                                         Integer.toHexString(System.identityHashCode(mcp)),
+                                         TraceEvent.DESTROY_CONNECTION_LISTENER_FLUSH,
+                                         Integer.toHexString(System.identityHashCode(cl))));
+      }
+      else if (error)
+      {
+         log.tracef("%s", new TraceEvent(poolName,
+                                         Integer.toHexString(System.identityHashCode(mcp)),
+                                         TraceEvent.DESTROY_CONNECTION_LISTENER_ERROR,
+                                         Integer.toHexString(System.identityHashCode(cl))));
+      }
+   }
+
+   /**
+    * Create managed connection pool
+    * @param poolName The name of the pool
+    * @param mcp The managed connection pool
+    */
+   public static void createManagedConnectionPool(String poolName, Object mcp)
+   {
+      log.tracef("%s", new TraceEvent(poolName,
+                                      Integer.toHexString(System.identityHashCode(mcp)),
+                                      TraceEvent.MANAGED_CONNECTION_POOL_CREATE,
+                                      "NONE"));
+   }
+
+   /**
+    * Destroy managed connection pool
+    * @param poolName The name of the pool
+    * @param mcp The managed connection pool
+    */
+   public static void destroyManagedConnectionPool(String poolName, Object mcp)
+   {
+      log.tracef("%s", new TraceEvent(poolName,
+                                      Integer.toHexString(System.identityHashCode(mcp)),
+                                      TraceEvent.MANAGED_CONNECTION_POOL_DESTROY,
+                                      "NONE"));
    }
 }

@@ -396,7 +396,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                            }
 
                            if (Tracer.isEnabled())
-                              Tracer.getConnectionListener(pool.getName(), cl, true, pool.isInterleaving());
+                              Tracer.getConnectionListener(pool.getName(), this, cl, true, pool.isInterleaving());
 
                            return cl;
                         }
@@ -425,6 +425,9 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                         pool.getInternalStatistics().deltaTotalPoolTime(System.currentTimeMillis() -
                                                                         cl.getLastReturnedTime());
 
+                     if (Tracer.isEnabled())
+                        Tracer.destroyConnectionListener(pool.getName(), this, cl, false, false, true, false, false);
+                     
                      doDestroy(cl);
                      cl = null;
                   }
@@ -441,6 +444,9 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                         pool.getInternalStatistics().deltaTotalPoolTime(System.currentTimeMillis() -
                                                                         cl.getLastReturnedTime());
 
+                     if (Tracer.isEnabled())
+                        Tracer.destroyConnectionListener(pool.getName(), this, cl, false, false, false, false, true);
+                     
                      doDestroy(cl);
                      cl = null;
                   }
@@ -465,6 +471,9 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                // No, the pool was empty, so we have to make a new one.
                cl = createConnectionEventListener(subject, cri);
 
+               if (Tracer.isEnabled())
+                  Tracer.createConnectionListener(pool.getName(), this, cl, true, false, false);
+
                synchronized (cls)
                {
                   checkedOut.add(cl);
@@ -488,7 +497,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                   CapacityFiller.schedule(new CapacityRequest(this, subject, cri));
                
                if (Tracer.isEnabled())
-                  Tracer.getConnectionListener(pool.getName(), cl, false, pool.isInterleaving());
+                  Tracer.getConnectionListener(pool.getName(), this, cl, false, pool.isInterleaving());
 
                return cl;
             }
@@ -505,6 +514,9 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                      checkedOut.remove(cl);
                   }
 
+                  if (Tracer.isEnabled())
+                     Tracer.destroyConnectionListener(pool.getName(), this, cl, false, false, false, false, true);
+                     
                   doDestroy(cl);
                }
 
@@ -716,6 +728,9 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          if (trace)
             log.trace("Destroying returned connection " + cl);
 
+         if (Tracer.isEnabled())
+            Tracer.destroyConnectionListener(pool.getName(), this, cl, true, false, false, false, false);
+                     
          doDestroy(cl);
          cl = null;
       }
@@ -838,6 +853,9 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             if (trace)
                log.trace("Destroying flushed connection " + cl);
 
+            if (Tracer.isEnabled())
+               Tracer.destroyConnectionListener(pool.getName(), this, cl, false, false, false, true, false);
+                     
             doDestroy(cl);
             cl = null;
          }
@@ -942,6 +960,9 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                pool.getInternalStatistics().deltaTotalPoolTime(System.currentTimeMillis() -
                                                                cl.getLastReturnedTime());
 
+            if (Tracer.isEnabled())
+               Tracer.destroyConnectionListener(pool.getName(), this, cl, false, true, false, false, false);
+                     
             doDestroy(cl);
             cl = null;
          }
@@ -992,7 +1013,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             log.destroyingActiveConnection(pool.getName(), cl.getManagedConnection());
 
             if (Tracer.isEnabled())
-               Tracer.clearConnectionListener(pool.getName(), cl);
+               Tracer.clearConnectionListener(pool.getName(), this, cl);
          }
       }
 
@@ -1058,6 +1079,9 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                   try
                   {
                      ConnectionListener cl = createConnectionEventListener(defaultSubject, defaultCri);
+
+                     if (Tracer.isEnabled())
+                        Tracer.createConnectionListener(pool.getName(), this, cl, false, true, false);
 
                      synchronized (cls)
                      {
@@ -1128,6 +1152,9 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                      try
                      {
                         ConnectionListener cl = createConnectionEventListener(subject, cri);
+
+                        if (Tracer.isEnabled())
+                           Tracer.createConnectionListener(pool.getName(), this, cl, false, false, true);
 
                         synchronized (cls)
                         {
@@ -1316,6 +1343,10 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                               pool.getInternalStatistics().deltaTotalPoolTime(System.currentTimeMillis() -
                                                                               cl.getLastReturnedTime());
 
+                           if (Tracer.isEnabled())
+                              Tracer.destroyConnectionListener(pool.getName(), this, cl, false, false, true,
+                                                               false, false);
+                     
                            doDestroy(cl);
                            cl = null;
                            destroyed = true;
@@ -1336,6 +1367,10 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                         pool.getInternalStatistics().deltaTotalPoolTime(System.currentTimeMillis() -
                                                                         cl.getLastReturnedTime());
 
+                     if (Tracer.isEnabled())
+                        Tracer.destroyConnectionListener(pool.getName(), this, cl, false, false, false,
+                                                         false, true);
+                     
                      doDestroy(cl);
                      cl = null;
                      destroyed = true;
@@ -1482,7 +1517,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                   cl.unregisterConnections();
 
                   if (Tracer.isEnabled())
-                     Tracer.returnConnectionListener(pool.getName(), cl, false, pool.isInterleaving());
+                     Tracer.returnConnectionListener(pool.getName(), this, cl, false, pool.isInterleaving());
 
                   returnConnection(cl, false, false);
 
@@ -1501,7 +1536,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             if (cl != null)
             {
                if (Tracer.isEnabled())
-                  Tracer.returnConnectionListener(pool.getName(), cl, true, pool.isInterleaving());
+                  Tracer.returnConnectionListener(pool.getName(), this, cl, true, pool.isInterleaving());
 
                returnConnection(cl, true, true);
             }

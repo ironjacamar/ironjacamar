@@ -40,17 +40,29 @@ import java.util.TreeMap;
 public class TraceEventHelper
 {
    /**
-    * Filter the events
+    * Filter the pool events
     * @param data The data
     * @return The filtered events
     * @exception Exception If an error occurs
     */
-   public static Map<String, Map<String, List<TraceEvent>>> filterEvents(List<TraceEvent> data) throws Exception
+   public static Map<String, Map<String, List<TraceEvent>>> filterPoolEvents(List<TraceEvent> data) throws Exception
    {
       Map<String, Map<String, List<TraceEvent>>> result = new TreeMap<String, Map<String, List<TraceEvent>>>();
 
       for (TraceEvent te : data)
       {
+         if (te.getType() == TraceEvent.CREATE_CONNECTION_LISTENER_GET ||
+             te.getType() == TraceEvent.CREATE_CONNECTION_LISTENER_PREFILL ||
+             te.getType() == TraceEvent.CREATE_CONNECTION_LISTENER_INCREMENTER ||
+             te.getType() == TraceEvent.DESTROY_CONNECTION_LISTENER_RETURN ||
+             te.getType() == TraceEvent.DESTROY_CONNECTION_LISTENER_IDLE ||
+             te.getType() == TraceEvent.DESTROY_CONNECTION_LISTENER_INVALID ||
+             te.getType() == TraceEvent.DESTROY_CONNECTION_LISTENER_FLUSH ||
+             te.getType() == TraceEvent.DESTROY_CONNECTION_LISTENER_ERROR ||
+             te.getType() == TraceEvent.MANAGED_CONNECTION_POOL_CREATE ||
+             te.getType() == TraceEvent.MANAGED_CONNECTION_POOL_DESTROY)
+            continue;
+         
          Map<String, List<TraceEvent>> m = result.get(te.getPool());
 
          if (m == null)
@@ -66,6 +78,43 @@ public class TraceEventHelper
          m.put(te.getConnectionListener(), l);
 
          result.put(te.getPool(), m);
+      }
+
+      return result;
+   }
+
+   /**
+    * Filter the lifecycle events
+    * @param data The data
+    * @return The filtered events
+    * @exception Exception If an error occurs
+    */
+   public static Map<String, List<TraceEvent>> filterLifecycleEvents(List<TraceEvent> data) throws Exception
+   {
+      Map<String, List<TraceEvent>> result = new TreeMap<String, List<TraceEvent>>();
+
+      for (TraceEvent te : data)
+      {
+         if (te.getType() == TraceEvent.CREATE_CONNECTION_LISTENER_GET ||
+             te.getType() == TraceEvent.CREATE_CONNECTION_LISTENER_PREFILL ||
+             te.getType() == TraceEvent.CREATE_CONNECTION_LISTENER_INCREMENTER ||
+             te.getType() == TraceEvent.DESTROY_CONNECTION_LISTENER_RETURN ||
+             te.getType() == TraceEvent.DESTROY_CONNECTION_LISTENER_IDLE ||
+             te.getType() == TraceEvent.DESTROY_CONNECTION_LISTENER_INVALID ||
+             te.getType() == TraceEvent.DESTROY_CONNECTION_LISTENER_FLUSH ||
+             te.getType() == TraceEvent.DESTROY_CONNECTION_LISTENER_ERROR ||
+             te.getType() == TraceEvent.MANAGED_CONNECTION_POOL_CREATE ||
+             te.getType() == TraceEvent.MANAGED_CONNECTION_POOL_DESTROY)
+         {
+            List<TraceEvent> l = result.get(te.getPool());
+
+            if (l == null)
+               l = new ArrayList<TraceEvent>();
+
+            l.add(te);
+
+            result.put(te.getPool(), l);
+         }
       }
 
       return result;
@@ -219,6 +268,27 @@ public class TraceEventHelper
                break;
 
             case TraceEvent.EXCEPTION:
+               break;
+
+            case TraceEvent.CREATE_CONNECTION_LISTENER_GET:
+               break;
+            case TraceEvent.CREATE_CONNECTION_LISTENER_PREFILL:
+               break;
+            case TraceEvent.CREATE_CONNECTION_LISTENER_INCREMENTER:
+               break;
+            case TraceEvent.DESTROY_CONNECTION_LISTENER_RETURN:
+               break;
+            case TraceEvent.DESTROY_CONNECTION_LISTENER_IDLE:
+               break;
+            case TraceEvent.DESTROY_CONNECTION_LISTENER_INVALID:
+               break;
+            case TraceEvent.DESTROY_CONNECTION_LISTENER_FLUSH:
+               break;
+            case TraceEvent.DESTROY_CONNECTION_LISTENER_ERROR:
+               break;
+            case TraceEvent.MANAGED_CONNECTION_POOL_CREATE:
+               break;
+            case TraceEvent.MANAGED_CONNECTION_POOL_DESTROY:
                break;
 
             default:
