@@ -30,9 +30,11 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -46,7 +48,7 @@ public class HTMLReport
     * @param s The string
     * @exception Exception If an error occurs
     */
-   private static void writeString(FileWriter fw, String s) throws Exception
+   static void writeString(FileWriter fw, String s) throws Exception
    {
       for (int i = 0; i < s.length(); i++)
       {
@@ -59,18 +61,21 @@ public class HTMLReport
     * @param fw The file writer
     * @exception Exception If an error occurs
     */
-   private static void writeEOL(FileWriter fw) throws Exception
+   static void writeEOL(FileWriter fw) throws Exception
    {
       fw.write((int)'\n');
    }
 
    /**
     * Write top-level index.html
+    * @param poolNames The pool names
     * @param statuses The overall status of each pool
     * @param fw The file writer
     * @exception Exception If an error occurs
     */
-   private static void generateTopLevelIndexHTML(Map<String, TraceEventStatus> statuses, FileWriter fw)
+   private static void generateTopLevelIndexHTML(Set<String> poolNames,
+                                                 Map<String, TraceEventStatus> statuses,
+                                                 FileWriter fw)
       throws Exception
    {
       writeString(fw, "<html>");
@@ -91,20 +96,24 @@ public class HTMLReport
       writeString(fw, "<ul>");
       writeEOL(fw);
 
-      Iterator<Map.Entry<String, TraceEventStatus>> it = statuses.entrySet().iterator();
-      while (it.hasNext())
+      for (String name : poolNames)
       {
-         Map.Entry<String, TraceEventStatus> entry = it.next();
-
-         String directory = entry.getKey();
+         TraceEventStatus status = statuses.get(name);
 
          writeString(fw, "<li>");
 
-         writeString(fw, "<a href=\"" + directory + "/index.html\"><div style=\"color: ");
-         writeString(fw, entry.getValue().getColor());
+         writeString(fw, "<a href=\"" + name + "/index.html\"><div style=\"color: ");
+         if (status != null)
+         {
+            writeString(fw, status.getColor());
+         }
+         else
+         {
+            writeString(fw, TraceEventStatus.GREEN.getColor());
+         }
          writeString(fw, ";\">");
 
-         writeString(fw, directory);
+         writeString(fw, name);
 
          writeString(fw, "</div></a>");
          writeEOL(fw);
@@ -122,13 +131,13 @@ public class HTMLReport
       writeString(fw, "<ul>");
       writeEOL(fw);
 
-      for (String directory : statuses.keySet())
+      for (String name : poolNames)
       {
          writeString(fw, "<li>");
 
-         writeString(fw, "<a href=\"" + directory + "/lifecycle.html\">");
+         writeString(fw, "<a href=\"" + name + "/lifecycle.html\">");
 
-         writeString(fw, directory);
+         writeString(fw, name);
 
          writeString(fw, "</a>");
          writeEOL(fw);
@@ -598,10 +607,12 @@ public class HTMLReport
     * Write lifecycle.html
     * @param poolName The name of the pool
     * @param events The events
+    * @param activeCLs The active connection listeners
     * @param fw The file writer
     * @exception Exception If an error occurs
     */
-   private static void generateLifecycleHTML(String poolName, List<TraceEvent> events, FileWriter fw)
+   private static void generateLifecycleHTML(String poolName, List<TraceEvent> events,
+                                             Set<String> activeCLs, FileWriter fw)
       throws Exception
    {
       writeString(fw, "<html>");
@@ -650,8 +661,15 @@ public class HTMLReport
       
          if (!"NONE".equals(te.getConnectionListener()))
          {
-            writeString(fw, "<td><a href=\"" + te.getConnectionListener() + "/index.html\">" +
-                        te.getConnectionListener() + "</a></td>");
+            if (activeCLs.contains(te.getConnectionListener()))
+            {
+               writeString(fw, "<td><a href=\"" + te.getConnectionListener() + "/index.html\">" +
+                           te.getConnectionListener() + "</a></td>");
+            }
+            else
+            {
+               writeString(fw, "<td>" + te.getConnectionListener() + "</td>");
+            }
          }
          else
          {
@@ -720,7 +738,7 @@ public class HTMLReport
          logReader = new FileReader(logFile);
          root.mkdirs();
 
-         List<TraceEvent> events = TraceEventHelper.getEvents(logReader);
+         List<TraceEvent> events = TraceEventHelper.getEvents(logReader, root);
          Map<String, Map<String, List<TraceEvent>>> filteredPool = TraceEventHelper.filterPoolEvents(events);
          Map<String, List<TraceEvent>> filteredLifecycle = TraceEventHelper.filterLifecycleEvents(events);
 
@@ -746,7 +764,7 @@ public class HTMLReport
          try
          {
             topLevel = new FileWriter(root.getAbsolutePath() + "/" + "index.html");
-            generateTopLevelIndexHTML(topLevelStatus, topLevel);
+            generateTopLevelIndexHTML(filteredLifecycle.keySet(), topLevelStatus, topLevel);
          }
          finally
          {
@@ -765,56 +783,58 @@ public class HTMLReport
          }
 
 
-         it = filteredPool.entrySet().iterator();
-         while (it.hasNext())
+         for (String poolName : filteredLifecycle.keySet())
          {
-            Map.Entry<String, Map<String, List<TraceEvent>>> entry = it.next();
+            Map<String, List<TraceEvent>> data = filteredPool.get(poolName);
 
             FileWriter pool = null;
             try
             {
-               String path = root.getAbsolutePath() + "/" + entry.getKey();
+               String path = root.getAbsolutePath() + "/" + poolName;
                File f = new File(path);
                f.mkdirs();
 
                Map<String, TraceEventStatus> status = new TreeMap<String, TraceEventStatus>();
-               Iterator<Map.Entry<String, List<TraceEvent>>> dataIt = entry.getValue().entrySet().iterator();
-               while (dataIt.hasNext())
+               if (data != null)
                {
-                  Map.Entry<String, List<TraceEvent>> dataEntry = dataIt.next();
-
-                  status.put(dataEntry.getKey(), TraceEventHelper.getStatus(dataEntry.getValue(), ignoreDelist));
-
-                  String identifier = dataEntry.getKey();
-                  FileWriter cl = null;
-                  try
+                  Iterator<Map.Entry<String, List<TraceEvent>>> dataIt = data.entrySet().iterator();
+                  while (dataIt.hasNext())
                   {
-                     String clPath = path + "/" + identifier;
-                     File clF = new File(clPath);
-                     clF.mkdirs();
+                     Map.Entry<String, List<TraceEvent>> dataEntry = dataIt.next();
 
-                     cl = new FileWriter(clF.getAbsolutePath() + "/" + "index.html");
-                     generateConnectionListenerIndexHTML(identifier, dataEntry.getValue(), ignoreDelist, clPath, cl);
-                  }
-                  finally
-                  {
-                     if (cl != null)
+                     status.put(dataEntry.getKey(), TraceEventHelper.getStatus(dataEntry.getValue(), ignoreDelist));
+
+                     String identifier = dataEntry.getKey();
+                     FileWriter cl = null;
+                     try
                      {
-                        try
+                        String clPath = path + "/" + identifier;
+                        File clF = new File(clPath);
+                        clF.mkdirs();
+
+                        cl = new FileWriter(clF.getAbsolutePath() + "/" + "index.html");
+                        generateConnectionListenerIndexHTML(identifier, dataEntry.getValue(), ignoreDelist, clPath, cl);
+                     }
+                     finally
+                     {
+                        if (cl != null)
                         {
-                           cl.flush();
-                           cl.close();
-                        }
-                        catch (Exception e)
-                        {
-                           // Ignore
+                           try
+                           {
+                              cl.flush();
+                              cl.close();
+                           }
+                           catch (Exception e)
+                           {
+                              // Ignore
+                           }
                         }
                      }
                   }
                }
 
                pool = new FileWriter(f.getAbsolutePath() + "/" + "index.html");
-               generatePoolIndexHTML(entry.getKey(), status, pool);
+               generatePoolIndexHTML(poolName, status, pool);
             }
             finally
             {
@@ -833,6 +853,12 @@ public class HTMLReport
             }
          }
 
+         Set<String> activeCLs = new HashSet<String>();
+         for (Map<String, List<TraceEvent>> m : filteredPool.values())
+         {
+            activeCLs.addAll(m.keySet());
+         }
+
          Iterator<Map.Entry<String, List<TraceEvent>>> lifeIt = filteredLifecycle.entrySet().iterator();
          while (lifeIt.hasNext())
          {
@@ -846,7 +872,7 @@ public class HTMLReport
                f.mkdirs();
 
                lifecycle = new FileWriter(path + "/" + "lifecycle.html");
-               generateLifecycleHTML(entry.getKey(), entry.getValue(), lifecycle);
+               generateLifecycleHTML(entry.getKey(), entry.getValue(), activeCLs, lifecycle);
             }
             finally
             {

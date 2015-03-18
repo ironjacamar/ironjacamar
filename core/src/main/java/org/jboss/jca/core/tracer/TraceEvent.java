@@ -154,7 +154,7 @@ public class TraceEvent
     */
    TraceEvent(String pool, String mcp, int type, String cl)
    {
-      this(pool, mcp, Thread.currentThread().getId(), type, System.currentTimeMillis(), cl, "");
+      this(pool, mcp, Thread.currentThread().getId(), type, System.nanoTime(), cl, "");
    }
 
    /**
@@ -167,7 +167,7 @@ public class TraceEvent
     */
    TraceEvent(String pool, String mcp, int type, String cl, String payload)
    {
-      this(pool, mcp, Thread.currentThread().getId(), type, System.currentTimeMillis(), cl, payload);
+      this(pool, mcp, Thread.currentThread().getId(), type, System.nanoTime(), cl, payload);
    }
 
    /**

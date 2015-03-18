@@ -24,7 +24,10 @@ package org.jboss.jca.as.tracer;
 
 import org.jboss.jca.core.tracer.TraceEvent;
 
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -123,12 +126,13 @@ public class TraceEventHelper
    /**
     * Get the events
     * @param fr The file reader
+    * @param directory The directory
     * @return The events
     * @exception Exception If an error occurs
     */
-   public static List<TraceEvent> getEvents(FileReader fr) throws Exception
+   public static List<TraceEvent> getEvents(FileReader fr, File directory) throws Exception
    {
-      return getEvents(getData(fr));
+      return getEvents(getData(fr, directory));
    }
 
    /**
@@ -145,7 +149,6 @@ public class TraceEventHelper
       while (it.hasNext())
       {
          Map.Entry<String, List<TraceEvent>> entry = it.next();
-
          result.put(entry.getKey(), getStatus(entry.getValue(), ignoreDelist));
       }
 
@@ -165,7 +168,7 @@ public class TraceEventHelper
       boolean gotCl = false;
       boolean inTx = false;
       boolean gotClear = false;
-
+      
       for (TraceEvent te : data)
       {
          switch (te.getType())
@@ -254,11 +257,13 @@ public class TraceEventHelper
                break;
 
             case TraceEvent.GET_CONNECTION:
-               knownConnections.add(te.getPayload());
+               if (!knownConnections.add(te.getPayload()))
+                  explicit = TraceEventStatus.RED;
 
                break;
             case TraceEvent.RETURN_CONNECTION:
-               knownConnections.remove(te.getPayload());
+               if (!knownConnections.remove(te.getPayload()))
+                  explicit = TraceEventStatus.RED;
 
                break;
 
@@ -541,10 +546,11 @@ public class TraceEventHelper
    /**
     * Get data
     * @param fr The file reader
+    * @param directory The directory
     * @return The data
     * @exception Exception If an error occurs
     */
-   private static List<String> getData(FileReader fr) throws Exception
+   private static List<String> getData(FileReader fr, File directory) throws Exception
    {
       List<String> result = new ArrayList<String>();
 
@@ -560,6 +566,33 @@ public class TraceEventHelper
          s = r.readLine();
       }
 
+      FileWriter fw = null;
+      try
+      {
+         fw = new FileWriter(directory.getAbsolutePath() + "/" + "raw.txt");
+         for (String data : result)
+         {
+            HTMLReport.writeString(fw, data);
+            HTMLReport.writeEOL(fw);
+         }
+      }
+      finally
+      {
+         if (fw != null)
+         {
+            try
+            {
+               fw.flush();
+               fw.close();
+            }
+            catch (IOException ignore)
+            {
+               // Ignore
+            }
+         }
+      }
+
+      
       return result;
    }
 
