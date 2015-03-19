@@ -99,34 +99,50 @@ public class CapacityFactory
          incrementer = DefaultCapacity.DEFAULT_INCREMENTER;
 
       // Decrementer
-      if (!isCRI && metadata.getDecrementer() != null && metadata.getDecrementer().getClassName() != null)
+      if (metadata.getDecrementer() != null && metadata.getDecrementer().getClassName() != null)
       {
-         decrementer = loadDecrementer(metadata.getDecrementer().getClassName());
-
-         if (decrementer != null)
+         if (!isCRI)
          {
-            if (metadata.getDecrementer().getConfigPropertiesMap().size() > 0)
-            {
-               Injection injector = new Injection();
+            decrementer = loadDecrementer(metadata.getDecrementer().getClassName());
 
-               Map<String, String> properties = metadata.getDecrementer().getConfigPropertiesMap();
-               for (Map.Entry<String, String> property : properties.entrySet())
+            if (decrementer != null)
+            {
+               if (metadata.getDecrementer().getConfigPropertiesMap().size() > 0)
                {
-                  try
+                  Injection injector = new Injection();
+
+                  Map<String, String> properties = metadata.getDecrementer().getConfigPropertiesMap();
+                  for (Map.Entry<String, String> property : properties.entrySet())
                   {
-                     injector.inject(decrementer, property.getKey(), property.getValue());
-                  }
-                  catch (Throwable t)
-                  {
-                     log.invalidCapacityOption(property.getKey(),
-                                               property.getValue(), decrementer.getClass().getName());
+                     try
+                     {
+                        injector.inject(decrementer, property.getKey(), property.getValue());
+                     }
+                     catch (Throwable t)
+                     {
+                        log.invalidCapacityOption(property.getKey(),
+                                                  property.getValue(), decrementer.getClass().getName());
+                     }
                   }
                }
+            }
+            else
+            {
+               log.invalidCapacityDecrementer(metadata.getDecrementer().getClassName());
             }
          }
          else
          {
-            log.invalidCapacityDecrementer(metadata.getDecrementer().getClassName());
+            // Explicit allow TimedOutDecrementer and MinPoolSizeDecrementer for CRI based pools
+            if (TimedOutDecrementer.class.getName().equals(metadata.getDecrementer().getClassName()) ||
+                MinPoolSizeDecrementer.class.getName().equals(metadata.getDecrementer().getClassName()))
+            {
+               decrementer = loadDecrementer(metadata.getDecrementer().getClassName());
+            }
+            else
+            {
+               log.invalidCapacityDecrementer(metadata.getDecrementer().getClassName());
+            }
          }
       }
 
