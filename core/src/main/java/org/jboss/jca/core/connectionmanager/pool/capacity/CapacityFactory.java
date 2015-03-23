@@ -133,9 +133,10 @@ public class CapacityFactory
          }
          else
          {
-            // Explicit allow TimedOutDecrementer and MinPoolSizeDecrementer for CRI based pools
+            // Explicit allow TimedOutDecrementer, MinPoolSizeDecrementer and SizeDecrementer for CRI based pools
             if (TimedOutDecrementer.class.getName().equals(metadata.getDecrementer().getClassName()) ||
-                MinPoolSizeDecrementer.class.getName().equals(metadata.getDecrementer().getClassName()))
+                MinPoolSizeDecrementer.class.getName().equals(metadata.getDecrementer().getClassName()) ||
+                SizeDecrementer.class.getName().equals(metadata.getDecrementer().getClassName()))
             {
                decrementer = loadDecrementer(metadata.getDecrementer().getClassName());
             }

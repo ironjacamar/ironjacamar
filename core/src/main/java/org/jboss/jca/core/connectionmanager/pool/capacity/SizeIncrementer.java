@@ -48,7 +48,8 @@ public class SizeIncrementer implements CapacityIncrementer
     */
    public void setSize(int v)
    {
-      size = v;
+      if (v > 0)
+         size = v;
    }
 
    /**
