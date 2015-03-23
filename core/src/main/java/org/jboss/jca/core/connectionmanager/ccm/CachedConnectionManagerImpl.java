@@ -395,7 +395,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
       else
       {
          if (trace)
-            log.tracef("old stack for key: %s", rawKey);
+            log.tracef("old stack for key: %s", stack.getLast());
       }
 
       KeyConnectionAssociation key = new KeyConnectionAssociation(rawKey);
