@@ -160,7 +160,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       this.trace = log.isTraceEnabled();
       this.cls = new ArrayList<ConnectionListener>(this.maxSize);
       this.supportsLazyAssociation = null;
-      this.lastIdleCheck = Long.MIN_VALUE;
+      this.lastIdleCheck = System.currentTimeMillis();
       this.lastUsed = Long.MAX_VALUE;
 
       // Schedule managed connection pool for prefill

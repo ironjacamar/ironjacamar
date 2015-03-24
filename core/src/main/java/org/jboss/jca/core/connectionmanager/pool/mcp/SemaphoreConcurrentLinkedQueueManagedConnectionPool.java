@@ -167,7 +167,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
       this.poolSize.set(0);
       this.checkedOutSize.set(0);
       this.supportsLazyAssociation = null;
-      this.lastIdleCheck = Long.MIN_VALUE;
+      this.lastIdleCheck = System.currentTimeMillis();
       this.lastUsed = Long.MAX_VALUE;
 
       // Schedule managed connection pool for prefill
