@@ -175,7 +175,6 @@
     <dependency org="org.jboss.byteman" name="byteman-submit" rev="${version.byteman}" conf="byteman,ironjacamar-depchain,ironjacamar-arquillian-embedded-byteman"/>
     <dependency org="org.jboss.narayana.jta" name="narayana-jta" rev="${version.jboss.ts}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.jboss.narayana.jts" name="narayana-jts-integration" rev="${version.jboss.ts}" conf="common,ironjacamar-depchain"/>
-    <dependency org="org.jboss.narayana.txframework" name="txframework" rev="${version.jboss.ts}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.jboss.naming" name="jnpserver" rev="${version.jboss.naming}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.jboss.netty" name="netty" rev="${version.jboss.netty}" conf="hornetq"/>
     <dependency org="org.jboss.shrinkwrap" name="shrinkwrap-api" rev="${version.jboss.shrinkwrap}" conf="embedded,ironjacamar-depchain,ironjacamar-embedded,ironjacamar-arquillian-embedded"/>
