@@ -33,6 +33,7 @@ import org.jboss.jca.core.connectionmanager.pool.api.CapacityDecrementer;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PrefillPool;
 import org.jboss.jca.core.connectionmanager.pool.capacity.DefaultCapacity;
+import org.jboss.jca.core.connectionmanager.pool.capacity.TimedOutDecrementer;
 import org.jboss.jca.core.connectionmanager.pool.idle.IdleRemover;
 import org.jboss.jca.core.connectionmanager.pool.validator.ConnectionValidator;
 import org.jboss.jca.core.tracer.Tracer;
@@ -873,24 +874,31 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       long now = System.currentTimeMillis();
       long timeoutSetting = poolConfiguration.getIdleTimeoutMinutes() * 1000L * 60;
 
-      if (now < (lastIdleCheck + timeoutSetting))
-         return;
+      CapacityDecrementer decrementer = pool.getCapacity().getDecrementer();
 
-      if (trace)
-         log.tracef("Idle check - Pool: %s MCP: %s", pool.getName(),
-                    Integer.toHexString(System.identityHashCode(this)));
+      if (decrementer == null)
+         decrementer = DefaultCapacity.DEFAULT_DECREMENTER;
+
+      if (TimedOutDecrementer.class.getName().equals(decrementer.getClass().getName()))
+      {
+         // Allow TimedOutDecrementer through each minute
+         if (now < (lastIdleCheck + 60000L))
+            return;
+      }
+      else
+      {
+         // Otherwise, strict check
+         if (now < (lastIdleCheck + timeoutSetting))
+            return;
+      }
 
       lastIdleCheck = now;
 
       ArrayList<ConnectionListener> destroyConnections = new ArrayList<ConnectionListener>();
       long timeout = now - timeoutSetting;
 
-      CapacityDecrementer decrementer = pool.getCapacity().getDecrementer();
       boolean destroy = true;
       int destroyed = 0;
-
-      if (decrementer == null)
-         decrementer = DefaultCapacity.DEFAULT_DECREMENTER;
 
       if (trace)
       {
