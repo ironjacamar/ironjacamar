@@ -32,9 +32,6 @@ import org.jboss.jca.embedded.dsl.resourceadapters12.api.ConnectionDefinitionsTy
 import org.jboss.jca.embedded.dsl.resourceadapters12.api.ResourceAdapterType;
 import org.jboss.jca.embedded.dsl.resourceadapters12.api.ResourceAdaptersDescriptor;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.annotation.Resource;
 import javax.transaction.UserTransaction;
 

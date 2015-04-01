@@ -115,7 +115,7 @@ public class OneConnectionXACCMTestCase
       org.jboss.jca.embedded.dsl.resourceadapters12.api.ConnectionDefinitionType dashRaXmlCdt =
          dashRaXmlCdst.createConnectionDefinition()
             .className(TxLogManagedConnectionFactory.class.getName())
-         .jndiName("java:/eis/TxLogConnectionFactory").poolName("TxLog").tracking(Boolean.FALSE);
+            .jndiName("java:/eis/TxLogConnectionFactory").poolName("TxLog").tracking(Boolean.FALSE);
 
       org.jboss.jca.embedded.dsl.resourceadapters12.api.XaPoolType dashRaXmlPt = dashRaXmlCdt.getOrCreateXaPool()
          .minPoolSize(0).initialPoolSize(0).maxPoolSize(10);
