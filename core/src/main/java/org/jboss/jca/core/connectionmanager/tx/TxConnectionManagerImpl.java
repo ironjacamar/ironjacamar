@@ -112,22 +112,6 @@ import org.jboss.logging.Messages;
  * Collection). The collection is of ConnectionRecord objects.
  * written.
  *
- * 5. When an "entering object" notification is received from the
- * CachedConnectionInterceptor, all the connections for the current
- * object must be associated with a ManagedConnection.  if there is a
- * Transaction, the XAResource must be enlisted with it.
- *  Entry point: ConnectionCacheListener.reconnect(Collection conns) The Collection
- * is of ConnectionRecord objects.
- * written.
- *
- * 6. When a "leaving object" notification is received from the
- * CachedConnectionInterceptor, all the managedConnections for the
- * current object must have their XAResources delisted from the
- * current Transaction, if any, and cleanup called on each
- * ManagedConnection.
- * Entry point: ConnectionCacheListener.disconnect(Collection conns).
- * written.
- *
  * @author <a href="mailto:d_jencks@users.sourceforge.net">David Jencks</a>
  * @author <a href="mailto:abrock@redhat.com">Adrian Brock</a>
  * @author <a href="wprice@redhat.com">Weston Price</a>

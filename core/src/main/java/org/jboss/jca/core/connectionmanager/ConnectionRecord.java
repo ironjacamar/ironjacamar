@@ -23,8 +23,6 @@ package org.jboss.jca.core.connectionmanager;
 
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 
-import javax.resource.spi.ConnectionRequestInfo;
-
 /**
  * Information about a connection.
  *
@@ -37,21 +35,17 @@ public class ConnectionRecord
 {
    private ConnectionListener connectionListener;
    private final Object connection;
-   private final ConnectionRequestInfo cri;
    
    /**
     * Creates a new connection record.
     * @param cl connection listener
     * @param connection connection handle
-    * @param cri connection request info
     */
    public ConnectionRecord (final org.jboss.jca.core.api.connectionmanager.listener.ConnectionListener cl, 
-                            final Object connection, 
-                            final ConnectionRequestInfo cri)
+                            final Object connection)
    {
       this.connectionListener = (ConnectionListener)cl;
       this.connection = connection;
-      this.cri = cri;
    }
 
    /**
@@ -79,14 +73,5 @@ public class ConnectionRecord
    public Object getConnection()
    {
       return connection;
-   }
-
-   /**
-    * Get the connection request info information
-    * @return The information
-    */
-   public ConnectionRequestInfo getCri()
-   {
-      return cri;
    }
 }

@@ -34,10 +34,6 @@ import org.jboss.jca.core.spi.security.SubjectFactory;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -769,7 +765,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
 
       if (cachedConnectionManager != null)
       {
-         cachedConnectionManager.registerConnection(this, cl, connection, cri);
+         cachedConnectionManager.registerConnection(this, cl, connection);
       }
 
       return connection;
@@ -820,7 +816,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
 
       if (cachedConnectionManager != null)
       {
-         cachedConnectionManager.registerConnection(this, cl, connection, cri);
+         cachedConnectionManager.registerConnection(this, cl, connection);
       }
 
       return cl.getManagedConnection();
@@ -846,7 +842,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
          {
             try
             {
-               getCachedConnectionManager().unregisterConnection(this, connection);
+               getCachedConnectionManager().unregisterConnection(this, cl, connection);
             }
             catch (Throwable t)
             {
@@ -890,81 +886,6 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    public void inactiveConnectionClosed(Object connection, ManagedConnectionFactory mcf)
    {
       // We don't track inactive connections
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void disconnect(Collection<ConnectionRecord> conRecords, Set<String> unsharableResources)
-      throws ResourceException
-   {
-      // if we have an unshareable connection do not remove the association
-      // nothing to do
-      if (unsharableResources.contains(jndiName))
-      {
-         if (trace)
-            log.trace("disconnect for unshareable connection: nothing to do");
-         return;
-      }
-
-      Set<ConnectionListener> cls = new HashSet<ConnectionListener>(conRecords.size());
-      for (Iterator<ConnectionRecord> i = conRecords.iterator(); i.hasNext();)
-      {
-         ConnectionRecord cr = i.next();
-         ConnectionListener cl = cr.getConnectionListener();
-         cr.setConnectionListener(null);
-         unregisterAssociation(cl, cr.getConnection());
-         if (!cls.contains(cl))
-         {
-            cls.add(cl);
-         }
-      }
-      for (Iterator<ConnectionListener> i = cls.iterator(); i.hasNext();)
-      {
-         disconnectManagedConnection(i.next());
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void reconnect(Collection<ConnectionRecord> conns, Set<String> unsharableResources) throws ResourceException
-   {
-      // if we have an unshareable connection the association was not removed
-      // nothing to do
-      if (unsharableResources.contains(jndiName))
-      {
-         if (trace)
-            log.trace("reconnect for unshareable connection: nothing to do");
-         return;
-      }
-
-      Map<ConnectionRequestInfo, ConnectionListener> criToCLMap =
-         new HashMap<ConnectionRequestInfo, ConnectionListener>(conns.size());
-
-      for (Iterator<ConnectionRecord> i = conns.iterator(); i.hasNext();)
-      {
-         ConnectionRecord cr = i.next();
-         if (cr.getConnectionListener() != null)
-         {
-            //This might well be an error.
-            log.reconnectingConnectionHandleHasManagedConnection(
-               cr.getConnectionListener().getManagedConnection(),
-               cr.getConnection());
-         }
-         ConnectionListener cl = criToCLMap.get(cr.getCri());
-         if (cl == null)
-         {
-            cl = getManagedConnection(getSubject(), cr.getCri());
-            criToCLMap.put(cr.getCri(), cl);
-            //only call once per managed connection, when we get it.
-            reconnectManagedConnection(cl);
-         }
-
-         cl.getManagedConnection().associateConnection(cr.getConnection());
-         registerAssociation(cl, cr.getConnection());
-         cr.setConnectionListener(cl);
-      }
    }
 
    /**

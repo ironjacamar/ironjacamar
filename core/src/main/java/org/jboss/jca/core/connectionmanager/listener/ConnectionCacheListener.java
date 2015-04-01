@@ -24,9 +24,7 @@ package org.jboss.jca.core.connectionmanager.listener;
 import org.jboss.jca.core.connectionmanager.ConnectionRecord;
 
 import java.util.Collection;
-import java.util.Set;
 
-import javax.resource.ResourceException;
 import javax.transaction.SystemException;
 
 
@@ -36,7 +34,7 @@ import javax.transaction.SystemException;
  * @author <a href="mailto:d_jencks@users.sourceforge.net">David Jencks</a>
  * @author <a href="mailto:E.Guib@ceyoniq.com">Erwin Guib</a>
  * @author <a href="mailto:abrock@redhat.com">Adrian Brock</a>
- * @version $Revision: 71554 $
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public interface ConnectionCacheListener
    extends org.jboss.jca.core.api.connectionmanager.listener.ConnectionCacheListener
@@ -48,22 +46,4 @@ public interface ConnectionCacheListener
     * @throws SystemException for any error
     */
    void transactionStarted(Collection<ConnectionRecord> conns) throws SystemException;
-
-   /**
-    * Notification to reconnect connections
-    * 
-    * @param conns the connections
-    * @param unsharableResources unshareable resources
-    * @throws ResourceException for any error
-    */
-   void reconnect(Collection<ConnectionRecord> conns, Set<String> unsharableResources) throws ResourceException;
-   
-   /**
-    * Notification to disconnect connections
-    * 
-    * @param conns the connections
-    * @param unsharableResources the unshareable resources
-    * @throws ResourceException for any error
-    */
-   void disconnect(Collection<ConnectionRecord> conns, Set<String> unsharableResources) throws ResourceException;
 }

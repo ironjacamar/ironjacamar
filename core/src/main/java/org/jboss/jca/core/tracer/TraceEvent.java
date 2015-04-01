@@ -124,6 +124,30 @@ public class TraceEvent
    /** Managed connection pool destroy */
    public static final int MANAGED_CONNECTION_POOL_DESTROY = 81;
 
+   /** Push CCM context */
+   public static final int PUSH_CCM_CONTEXT = 90;
+
+   /** Pop CCM context */
+   public static final int POP_CCM_CONTEXT = 91;
+
+   /** Register CCM connection */
+   public static final int REGISTER_CCM_CONNECTION = 92;
+
+   /** Unregister CCM connection */
+   public static final int UNREGISTER_CCM_CONNECTION = 93;
+
+   /** CCM user transaction */
+   public static final int CCM_USER_TRANSACTION = 94;
+
+   /** Unknown CCM connection */
+   public static final int UNKNOWN_CCM_CONNECTION = 95;
+
+   /** Close CCM connection */
+   public static final int CLOSE_CCM_CONNECTION = 96;
+
+   /** Version */
+   public static final int VERSION = 100;
+
    /** The pool */
    private String pool;
 
@@ -142,8 +166,11 @@ public class TraceEvent
    /** The connection listener */
    private String cl;
 
-   /** The payload */
-   private String payload;
+   /** The first payload */
+   private String payload1;
+
+   /** The second payload */
+   private String payload2;
 
    /**
     * Constructor
@@ -154,7 +181,7 @@ public class TraceEvent
     */
    TraceEvent(String pool, String mcp, int type, String cl)
    {
-      this(pool, mcp, Thread.currentThread().getId(), type, System.nanoTime(), cl, "");
+      this(pool, mcp, Thread.currentThread().getId(), type, System.nanoTime(), cl, "", "");
    }
 
    /**
@@ -163,11 +190,25 @@ public class TraceEvent
     * @param mcp The MCP
     * @param type The event type
     * @param cl The connection listener
-    * @param payload The payload
+    * @param payload1 The first payload
     */
-   TraceEvent(String pool, String mcp, int type, String cl, String payload)
+   TraceEvent(String pool, String mcp, int type, String cl, String payload1)
    {
-      this(pool, mcp, Thread.currentThread().getId(), type, System.nanoTime(), cl, payload);
+      this(pool, mcp, Thread.currentThread().getId(), type, System.nanoTime(), cl, payload1, "");
+   }
+
+   /**
+    * Constructor
+    * @param pool The pool
+    * @param mcp The MCP
+    * @param type The event type
+    * @param cl The connection listener
+    * @param payload1 The first payload
+    * @param payload2 The second payload
+    */
+   TraceEvent(String pool, String mcp, int type, String cl, String payload1, String payload2)
+   {
+      this(pool, mcp, Thread.currentThread().getId(), type, System.nanoTime(), cl, payload1, payload2);
    }
 
    /**
@@ -178,9 +219,11 @@ public class TraceEvent
     * @param type The event type
     * @param timestamp The timestamp
     * @param cl The connection listener
-    * @param payload The payload
+    * @param payload1 The first payload
+    * @param payload2 The second payload
     */
-   private TraceEvent(String pool, String mcp, long threadId, int type, long timestamp, String cl, String payload)
+   private TraceEvent(String pool, String mcp, long threadId, int type, long timestamp, String cl,
+                      String payload1, String payload2)
    {
       this.pool = pool != null ? pool.replace('-', '_') : "Empty"; 
       this.mcp = mcp;
@@ -188,7 +231,8 @@ public class TraceEvent
       this.type = type;
       this.timestamp = timestamp;
       this.cl = cl;
-      this.payload = payload;
+      this.payload1 = payload1;
+      this.payload2 = payload2;
    }
 
    /**
@@ -246,12 +290,21 @@ public class TraceEvent
    }
 
    /**
-    * Get the payload
+    * Get the first payload
     * @return The value
     */
-   public String getPayload()
+   public String getPayload1()
    {
-      return payload;
+      return payload1;
+   }
+
+   /**
+    * Get the second payload
+    * @return The value
+    */
+   public String getPayload2()
+   {
+      return payload2;
    }
 
    /**
@@ -275,7 +328,9 @@ public class TraceEvent
       sb.append("-");
       sb.append(cl);
       sb.append("-");
-      sb.append(payload);
+      sb.append(payload1);
+      sb.append("-");
+      sb.append(payload2);
 
       return sb.toString();
    }
@@ -326,11 +381,11 @@ public class TraceEvent
          case DELIST_ROLLEDBACK_CONNECTION_LISTENER:
             return "delistResource() (R)";
          case GET_CONNECTION:
-            return "getConnection(" + event.getPayload() + ")";
+            return "getConnection(" + event.getPayload1() + ")";
          case RETURN_CONNECTION:
-            return "returnConnection(" + event.getPayload() + ")";
+            return "returnConnection(" + event.getPayload1() + ")";
          case CLEAR_CONNECTION:
-            return "clearConnection(" + event.getPayload() + ")";
+            return "clearConnection(" + event.getPayload1() + ")";
          case EXCEPTION:
             return "exception";
          case CREATE_CONNECTION_LISTENER_GET:
@@ -353,6 +408,22 @@ public class TraceEvent
             return "createManagedConnectionPool()";
          case MANAGED_CONNECTION_POOL_DESTROY:
             return "destroyManagedConnectionPool()";
+         case PUSH_CCM_CONTEXT:
+            return "pushContext()";
+         case POP_CCM_CONTEXT:
+            return "popContext()";
+         case REGISTER_CCM_CONNECTION:
+            return "registerConnection()";
+         case UNREGISTER_CCM_CONNECTION:
+            return "unregisterConnection()";
+         case CCM_USER_TRANSACTION:
+            return "userTransaction()";
+         case UNKNOWN_CCM_CONNECTION:
+            return "unknownConnection()";
+         case CLOSE_CCM_CONNECTION:
+            return "closeConnection()";
+         case VERSION:
+            return "version()";
          default:
       }
 
@@ -376,10 +447,13 @@ public class TraceEvent
       long ts = Long.parseLong(raw[5]);
       String c = raw[6];
       String pyl = "";
+      String py2 = "";
 
-      if (raw.length == 8)
+      if (raw.length >= 8)
          pyl = raw[7];
+      if (raw.length >= 9)
+         py2 = raw[8];
 
-      return new TraceEvent(p, m, tid, t, ts, c, pyl);
+      return new TraceEvent(p, m, tid, t, ts, c, pyl, py2);
    }
 }

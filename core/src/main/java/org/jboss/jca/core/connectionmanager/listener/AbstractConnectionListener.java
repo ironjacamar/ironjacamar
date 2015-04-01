@@ -388,7 +388,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
       {
          for (Object handle : connectionHandles)
          {
-            getCachedConnectionManager().unregisterConnection(getConnectionManager(), handle);
+            getCachedConnectionManager().unregisterConnection(getConnectionManager(), this, handle);
          }
       }
 
@@ -568,7 +568,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
 
       if (getCachedConnectionManager() != null)
       {
-         getCachedConnectionManager().registerConnection(getConnectionManager(), this, h, null);
+         getCachedConnectionManager().registerConnection(getConnectionManager(), this, h);
       }
    }
 

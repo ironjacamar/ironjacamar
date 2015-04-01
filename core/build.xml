@@ -44,20 +44,6 @@
     <mkdir dir="${build.core.dir}" />
     <mkdir dir="${build.core.dir}/impl" />
 
-    <javac srcdir="src/main"
-           destdir="${build.core.dir}/impl"
-           classpathref="main.lib.path.id"
-           debug="${javac.debug}"
-           deprecation="${javac.deprecation}"
-           optimize="${javac.optimize}"
-           encoding="${javac.encoding}"
-           nowarn="true"
-           includeAntRuntime="false">
-      <compilerarg value="-Xlint"/>
-      <compilerarg value="-AgeneratedTranslationFilesPath=${build.core.dir}/impl"/>
-      <compilerarg value="-AtranslationFilesPath=${build.core.dir}/impl"/>
-    </javac> 
-
     <copy file="src/main/java/org/jboss/jca/Version.java.in"
           tofile="${build.core.dir}/impl/org/jboss/jca/Version.java">
       <filterset>
@@ -76,6 +62,19 @@
       <compilerarg value="-Xlint"/>
     </javac> 
 
+    <javac srcdir="src/main"
+           destdir="${build.core.dir}/impl"
+           classpathref="main.lib.path.id"
+           debug="${javac.debug}"
+           deprecation="${javac.deprecation}"
+           optimize="${javac.optimize}"
+           encoding="${javac.encoding}"
+           nowarn="true"
+           includeAntRuntime="false">
+      <compilerarg value="-Xlint"/>
+      <compilerarg value="-AgeneratedTranslationFilesPath=${build.core.dir}/impl"/>
+      <compilerarg value="-AtranslationFilesPath=${build.core.dir}/impl"/>
+    </javac> 
   </target>
 
   <!-- ================================= 

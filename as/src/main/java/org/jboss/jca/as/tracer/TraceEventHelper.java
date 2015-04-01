@@ -63,7 +63,15 @@ public class TraceEventHelper
              te.getType() == TraceEvent.DESTROY_CONNECTION_LISTENER_FLUSH ||
              te.getType() == TraceEvent.DESTROY_CONNECTION_LISTENER_ERROR ||
              te.getType() == TraceEvent.MANAGED_CONNECTION_POOL_CREATE ||
-             te.getType() == TraceEvent.MANAGED_CONNECTION_POOL_DESTROY)
+             te.getType() == TraceEvent.MANAGED_CONNECTION_POOL_DESTROY ||
+             te.getType() == TraceEvent.PUSH_CCM_CONTEXT ||
+             te.getType() == TraceEvent.POP_CCM_CONTEXT ||
+             te.getType() == TraceEvent.REGISTER_CCM_CONNECTION ||
+             te.getType() == TraceEvent.UNREGISTER_CCM_CONNECTION ||
+             te.getType() == TraceEvent.CCM_USER_TRANSACTION ||
+             te.getType() == TraceEvent.UNKNOWN_CCM_CONNECTION ||
+             te.getType() == TraceEvent.CLOSE_CCM_CONNECTION ||
+             te.getType() == TraceEvent.VERSION)
             continue;
          
          Map<String, List<TraceEvent>> m = result.get(te.getPool());
@@ -124,6 +132,40 @@ public class TraceEventHelper
    }
 
    /**
+    * Filter the ccm events
+    * @param data The data
+    * @return The filtered events
+    * @exception Exception If an error occurs
+    */
+   public static Map<String, List<TraceEvent>> filterCCMEvents(List<TraceEvent> data) throws Exception
+   {
+      Map<String, List<TraceEvent>> result = new TreeMap<String, List<TraceEvent>>();
+
+      for (TraceEvent te : data)
+      {
+         if (te.getType() == TraceEvent.PUSH_CCM_CONTEXT ||
+             te.getType() == TraceEvent.POP_CCM_CONTEXT ||
+             te.getType() == TraceEvent.REGISTER_CCM_CONNECTION ||
+             te.getType() == TraceEvent.UNREGISTER_CCM_CONNECTION ||
+             te.getType() == TraceEvent.CCM_USER_TRANSACTION ||
+             te.getType() == TraceEvent.UNKNOWN_CCM_CONNECTION ||
+             te.getType() == TraceEvent.CLOSE_CCM_CONNECTION)
+         {
+            List<TraceEvent> l = result.get(te.getPool());
+
+            if (l == null)
+               l = new ArrayList<TraceEvent>();
+
+            l.add(te);
+
+            result.put(te.getPool(), l);
+         }
+      }
+
+      return result;
+   }
+
+   /**
     * Get the events
     * @param fr The file reader
     * @param directory The directory
@@ -139,9 +181,11 @@ public class TraceEventHelper
     * Get status
     * @param input The input
     * @param ignoreDelist Should DELIST be ignored
+    * @param ignoreTracking Should TRACKING be ignored
     * @return The overall result
     */
-   public static Map<String, TraceEventStatus> getStatus(Map<String, List<TraceEvent>> input, boolean ignoreDelist)
+   public static Map<String, TraceEventStatus> getStatus(Map<String, List<TraceEvent>> input,
+                                                         boolean ignoreDelist, boolean ignoreTracking)
    {
       Map<String, TraceEventStatus> result = new TreeMap<String, TraceEventStatus>();
 
@@ -149,7 +193,7 @@ public class TraceEventHelper
       while (it.hasNext())
       {
          Map.Entry<String, List<TraceEvent>> entry = it.next();
-         result.put(entry.getKey(), getStatus(entry.getValue(), ignoreDelist));
+         result.put(entry.getKey(), getStatus(entry.getValue(), ignoreDelist, ignoreTracking));
       }
 
       return result;
@@ -159,9 +203,10 @@ public class TraceEventHelper
     * Get status
     * @param data The data
     * @param ignoreDelist Should DELIST be ignored
+    * @param ignoreTracking Should TRACKING be ignored
     * @return The status
     */
-   public static TraceEventStatus getStatus(List<TraceEvent> data, boolean ignoreDelist)
+   public static TraceEventStatus getStatus(List<TraceEvent> data, boolean ignoreDelist, boolean ignoreTracking)
    {
       TraceEventStatus explicit = null;
       Set<String> knownConnections = new HashSet<String>();
@@ -233,7 +278,7 @@ public class TraceEventHelper
 
                inTx = false;
 
-               if (knownConnections.size() > 0 && explicit != TraceEventStatus.RED)
+               if (!ignoreTracking && knownConnections.size() > 0 && explicit != TraceEventStatus.RED)
                   explicit = TraceEventStatus.YELLOW;
 
                break;
@@ -251,18 +296,18 @@ public class TraceEventHelper
 
                inTx = false;
 
-               if (knownConnections.size() > 0 && explicit != TraceEventStatus.RED)
+               if (!ignoreTracking && knownConnections.size() > 0 && explicit != TraceEventStatus.RED)
                   explicit = TraceEventStatus.YELLOW;
 
                break;
 
             case TraceEvent.GET_CONNECTION:
-               if (!knownConnections.add(te.getPayload()))
+               if (!knownConnections.add(te.getPayload1()))
                   explicit = TraceEventStatus.RED;
 
                break;
             case TraceEvent.RETURN_CONNECTION:
-               if (!knownConnections.remove(te.getPayload()))
+               if (!knownConnections.remove(te.getPayload1()))
                   explicit = TraceEventStatus.RED;
 
                break;
@@ -294,6 +339,10 @@ public class TraceEventHelper
             case TraceEvent.MANAGED_CONNECTION_POOL_CREATE:
                break;
             case TraceEvent.MANAGED_CONNECTION_POOL_DESTROY:
+               break;
+            case TraceEvent.REGISTER_CCM_CONNECTION:
+               break;
+            case TraceEvent.UNREGISTER_CCM_CONNECTION:
                break;
 
             default:
@@ -463,7 +512,7 @@ public class TraceEventHelper
       if (te.getType() != TraceEvent.EXCEPTION)
          return "";
 
-      char[] data = te.getPayload().toCharArray();
+      char[] data = te.getPayload1().toCharArray();
       StringBuilder sb = new StringBuilder();
 
       for (int i = 0; i < data.length; i++)
@@ -519,6 +568,22 @@ public class TraceEventHelper
       sb.append("-");
       sb.append("DATA");
       return sb.toString();
+   }
+
+   /**
+    * Get the version
+    * @param events The events
+    * @return The version information
+    */
+   public static TraceEvent getVersion(List<TraceEvent> events)
+   {
+      for (TraceEvent te : events)
+      {
+         if (te.getType() == TraceEvent.VERSION)
+            return te;
+      }
+
+      return null;
    }
 
    /**

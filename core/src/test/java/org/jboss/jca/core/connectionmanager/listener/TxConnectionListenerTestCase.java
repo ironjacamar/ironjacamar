@@ -27,6 +27,7 @@ import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
 import org.jboss.jca.core.connectionmanager.TxConnectionManager;
 import org.jboss.jca.core.connectionmanager.ccm.CachedConnectionManagerImpl;
 import org.jboss.jca.core.connectionmanager.common.MockManagedConnectionFactory;
+import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.TxConnectionListener.TransactionSynchronization;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
@@ -573,7 +574,8 @@ public class TxConnectionListenerTestCase
       //when
       listener.connectionClosed(ce);
       //then
-      verify(ccm, times(1)).unregisterConnection((ConnectionCacheListener) anyObject(), anyObject());
+      verify(ccm, times(1)).unregisterConnection((ConnectionCacheListener) anyObject(),
+                                                 (ConnectionListener)anyObject(), anyObject());
       verify(cm, never()).returnManagedConnection(eq(listener), anyBoolean());
    }
 
@@ -598,7 +600,8 @@ public class TxConnectionListenerTestCase
       //when
       listener.connectionClosed(ce);
       //then
-      verify(ccm, times(1)).unregisterConnection((ConnectionCacheListener) anyObject(), anyObject());
+      verify(ccm, times(1)).unregisterConnection((ConnectionCacheListener) anyObject(),
+                                                 (ConnectionListener)anyObject(), anyObject());
       verify(cm, times(1)).returnManagedConnection(eq(listener), eq(false));
    }
 
@@ -626,7 +629,8 @@ public class TxConnectionListenerTestCase
       //when
       listener.connectionClosed(ce);
       //then
-      verify(ccm, never()).unregisterConnection((ConnectionCacheListener) anyObject(), anyObject());
+      verify(ccm, never()).unregisterConnection((ConnectionCacheListener) anyObject(),
+                                                (ConnectionListener)anyObject(), anyObject());
       verify(cm, times(1)).returnManagedConnection(eq(listener), eq(true));
    }
 

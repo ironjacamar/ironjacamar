@@ -28,7 +28,6 @@ import org.jboss.jca.core.spi.transaction.usertx.UserTransactionListener;
 
 import java.util.Map;
 
-import javax.resource.spi.ConnectionRequestInfo;
 import javax.transaction.TransactionManager;
 
 /**
@@ -85,17 +84,18 @@ public interface CachedConnectionManager extends UserTransactionListener, Compon
     * @param cm connection manager
     * @param cl connection listener
     * @param connection connection handle
-    * @param cri connection request info.
     */
    public void registerConnection(ConnectionCacheListener cm, ConnectionListener cl,
-                                  Object connection, ConnectionRequestInfo cri);
+                                  Object connection);
 
    /**
     * Unregister connection.
     * @param cm connection manager
+    * @param cl connection listener
     * @param connection connection handle
     */
-   public void unregisterConnection(ConnectionCacheListener cm, Object connection);
+   public void unregisterConnection(ConnectionCacheListener cm, ConnectionListener cl,
+                                    Object connection);
 
    /**
     * Get the number of connections currently in use - if debug is enabled

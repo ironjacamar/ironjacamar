@@ -78,7 +78,7 @@ public class NoTxConnectionListener extends AbstractConnectionListener
       {
          try
          {
-            getCachedConnectionManager().unregisterConnection(getConnectionManager(), ce.getConnectionHandle());
+            getCachedConnectionManager().unregisterConnection(getConnectionManager(), this, ce.getConnectionHandle());
          }
          catch (Throwable t)
          {

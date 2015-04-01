@@ -661,7 +661,7 @@ public class TxConnectionListener extends AbstractConnectionListener
       {
          try
          {
-            this.getCachedConnectionManager().unregisterConnection(this.getConnectionManager(),
+            this.getCachedConnectionManager().unregisterConnection(this.getConnectionManager(), this,
                                                                    ce.getConnectionHandle());
          }
          catch (Throwable t)

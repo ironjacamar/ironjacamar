@@ -23,7 +23,6 @@ package org.jboss.jca.core.connectionmanager.unit;
 
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.core.connectionmanager.ConnectionRecord;
-import org.jboss.jca.core.connectionmanager.common.MockConnectionRequestInfo;
 import org.jboss.jca.core.connectionmanager.listener.NoTxConnectionListener;
 
 import org.junit.BeforeClass;
@@ -41,7 +40,6 @@ public class ConnectionRecordTestCase
 {
    private static ConnectionRecord cr = null;    
    private static Object connection = new Object();
-   private static MockConnectionRequestInfo cri = new MockConnectionRequestInfo();
    
    /**
     * init.
@@ -49,7 +47,7 @@ public class ConnectionRecordTestCase
    @BeforeClass
    public static void init()
    {
-      cr = new ConnectionRecord(null, connection, cri);
+      cr = new ConnectionRecord(null, connection);
    }
    
    /**
@@ -70,7 +68,7 @@ public class ConnectionRecordTestCase
       ConnectionRecord other = 
          new ConnectionRecord(new NoTxConnectionListener(null, null, null, null,
                                                          FlushStrategy.FAILING_CONNECTION_ONLY, null),
-                              connection, cri);
+                              connection);
       assertNotNull(other.getConnectionListener());
    }
    
@@ -81,14 +79,5 @@ public class ConnectionRecordTestCase
    public void testConnectionIsNotNull()
    {
       assertNotNull(cr.getConnection());
-   }
-   
-   /**
-    * testCriIsNotNull.
-    */
-   @Test
-   public void testCriIsNotNull()
-   {
-      assertNotNull(cr.getCri());
    }
 }

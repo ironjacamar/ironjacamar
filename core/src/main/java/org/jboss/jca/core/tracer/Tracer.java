@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.core.tracer;
 
+import org.jboss.jca.Version;
+
 import java.io.CharArrayWriter;
 import java.io.PrintWriter;
 
@@ -39,6 +41,11 @@ public class Tracer
    /** Is the tracer enabled */
    private static boolean enabled = log.isTraceEnabled();
 
+   static
+   {
+      log.tracef("%s", new TraceEvent(Version.VERSION, "NONE", TraceEvent.VERSION, "NONE"));
+   }
+   
    /**
     * Is enabled
     * @return The value
@@ -476,5 +483,120 @@ public class Tracer
                                       Integer.toHexString(System.identityHashCode(mcp)),
                                       TraceEvent.MANAGED_CONNECTION_POOL_DESTROY,
                                       "NONE"));
+   }
+
+   /**
+    * Push CCM context
+    * @param key The frame key
+    */
+   public static synchronized void pushCCMContext(String key)
+   {
+      log.tracef("%s", new TraceEvent("CachedConnectionManager", "NONE", TraceEvent.PUSH_CCM_CONTEXT,
+                                      "NONE", "NONE", key));
+   }
+
+   /**
+    * Pop CCM context
+    * @param key The frame key
+    */
+   public static synchronized void popCCMContext(String key)
+   {
+      log.tracef("%s", new TraceEvent("CachedConnectionManager", "NONE", TraceEvent.POP_CCM_CONTEXT,
+                                      "NONE", "NONE", key));
+   }
+
+   /**
+    * Register CCM connection
+    * @param poolName The name of the pool
+    * @param mcp The managed connection pool
+    * @param cl The connection listener
+    * @param connection The connection
+    * @param key The frame key
+    */
+   public static synchronized void registerCCMConnection(String poolName, Object mcp, Object cl,
+                                                         Object connection, String key)
+   {
+      log.tracef("%s", new TraceEvent(poolName,
+                                      Integer.toHexString(System.identityHashCode(mcp)),
+                                      TraceEvent.REGISTER_CCM_CONNECTION,
+                                      Integer.toHexString(System.identityHashCode(cl)),
+                                      Integer.toHexString(System.identityHashCode(connection)),
+                                      key));
+   }
+
+   /**
+    * Unregister CCM connection
+    * @param poolName The name of the pool
+    * @param mcp The managed connection pool
+    * @param cl The connection listener
+    * @param connection The connection
+    * @param key The frame key
+    */
+   public static synchronized void unregisterCCMConnection(String poolName, Object mcp, Object cl,
+                                                           Object connection, String key)
+   {
+      log.tracef("%s", new TraceEvent(poolName,
+                                      Integer.toHexString(System.identityHashCode(mcp)),
+                                      TraceEvent.UNREGISTER_CCM_CONNECTION,
+                                      Integer.toHexString(System.identityHashCode(cl)),
+                                      Integer.toHexString(System.identityHashCode(connection)),
+                                      key));
+   }
+
+   /**
+    * Unknown CCM connection
+    * @param poolName The name of the pool
+    * @param mcp The managed connection pool
+    * @param cl The connection listener
+    * @param connection The connection
+    * @param key The frame key
+    */
+   public static synchronized void unknownCCMConnection(String poolName, Object mcp, Object cl,
+                                                        Object connection, String key)
+   {
+      log.tracef("%s", new TraceEvent(poolName,
+                                      Integer.toHexString(System.identityHashCode(mcp)),
+                                      TraceEvent.UNKNOWN_CCM_CONNECTION,
+                                      Integer.toHexString(System.identityHashCode(cl)),
+                                      Integer.toHexString(System.identityHashCode(connection)),
+                                      key));
+   }
+
+   /**
+    * Close CCM connection
+    * @param poolName The name of the pool
+    * @param mcp The managed connection pool
+    * @param cl The connection listener
+    * @param connection The connection
+    * @param key The frame key
+    */
+   public static synchronized void closeCCMConnection(String poolName, Object mcp, Object cl,
+                                                      Object connection, String key)
+   {
+      log.tracef("%s", new TraceEvent(poolName,
+                                      Integer.toHexString(System.identityHashCode(mcp)),
+                                      TraceEvent.CLOSE_CCM_CONNECTION,
+                                      Integer.toHexString(System.identityHashCode(cl)),
+                                      Integer.toHexString(System.identityHashCode(connection)),
+                                      key));
+   }
+
+   /**
+    * CCM user transaction
+    * @param poolName The name of the pool
+    * @param mcp The managed connection pool
+    * @param cl The connection listener
+    * @param connection The connection
+    * @param key The frame key
+    */
+   public static synchronized void ccmUserTransaction(String poolName, Object mcp, Object cl,
+                                                      Object connection, String key)
+   {
+      log.tracef("%s", new TraceEvent(poolName,
+                                      Integer.toHexString(System.identityHashCode(mcp)),
+                                      TraceEvent.CCM_USER_TRANSACTION,
+                                      Integer.toHexString(System.identityHashCode(cl)),
+                                      Integer.toHexString(System.identityHashCode(connection)),
+                                      key));
    }
 }

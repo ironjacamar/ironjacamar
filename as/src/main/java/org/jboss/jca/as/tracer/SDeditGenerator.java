@@ -369,6 +369,22 @@ public class SDeditGenerator
                break;
             case TraceEvent.MANAGED_CONNECTION_POOL_DESTROY:
                break;
+            case TraceEvent.PUSH_CCM_CONTEXT:
+               break;
+            case TraceEvent.POP_CCM_CONTEXT:
+               break;
+            case TraceEvent.REGISTER_CCM_CONNECTION:
+               break;
+            case TraceEvent.UNREGISTER_CCM_CONNECTION:
+               break;
+            case TraceEvent.CCM_USER_TRANSACTION:
+               break;
+            case TraceEvent.UNKNOWN_CCM_CONNECTION:
+               break;
+            case TraceEvent.CLOSE_CCM_CONNECTION:
+               break;
+            case TraceEvent.VERSION:
+               break;
             default:
                System.err.println("SDeditGenerator: Unknown code: " + te);
          }

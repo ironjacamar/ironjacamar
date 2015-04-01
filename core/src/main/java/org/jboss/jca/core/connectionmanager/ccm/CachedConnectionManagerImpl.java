@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2013, Red Hat Inc, and individual contributors
+ * Copyright 2015, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -26,9 +26,11 @@ import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionRecord;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionCacheListener;
+import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.transaction.TransactionSynchronizer;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.core.spi.transaction.TxUtils;
+import org.jboss.jca.core.tracer.Tracer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -49,7 +51,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionRequestInfo;
 import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
@@ -94,7 +95,8 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
     * behavior of it getting hooked up to an appropriate
     * ManagedConnection on each method invocation.
     */
-   private final ThreadLocal<LinkedList<Object>> currentObjects = new ThreadLocal<LinkedList<Object>>();
+   private final ThreadLocal<LinkedList<KeyConnectionAssociation>> currentObjects =
+      new ThreadLocal<LinkedList<KeyConnectionAssociation>>();
 
    /**
     * The variable <code>objectToConnectionManagerMap</code> holds the
@@ -237,6 +239,16 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
             ConnectionCacheListener cm = entry.getKey();
             CopyOnWriteArrayList<ConnectionRecord> conns = entry.getValue();
 
+            if (Tracer.isEnabled())
+            {
+               for (ConnectionRecord cr : conns)
+               {
+                  ConnectionListener cl = (ConnectionListener)cr.getConnectionListener();
+                  Tracer.ccmUserTransaction(cl.getPool().getName(), cl.getManagedConnectionPool(),
+                                            cl, cr.getConnection(), key.toString());
+               }
+            }
+
             cm.transactionStarted(conns);
          }
       }
@@ -248,11 +260,11 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
     */
    private KeyConnectionAssociation peekMetaAwareObject()
    {
-      LinkedList<Object> stack = currentObjects.get();
+      LinkedList<KeyConnectionAssociation> stack = currentObjects.get();
 
       if (stack != null && !stack.isEmpty())
       {
-         return (KeyConnectionAssociation)stack.getLast();
+         return stack.getLast();
       }
 
       return null;
@@ -265,15 +277,18 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
    @SuppressWarnings("unchecked")
    public void popMetaAwareObject(Set unsharableResources) throws ResourceException
    {
-      LinkedList<Object> stack = currentObjects.get();
-      KeyConnectionAssociation oldKey = (KeyConnectionAssociation) stack.removeLast();
+      LinkedList<KeyConnectionAssociation> stack = currentObjects.get();
+      KeyConnectionAssociation oldKey = stack.removeLast();
 
       if (trace)
          log.tracef("popped object: %s", oldKey);
 
+      if (Tracer.isEnabled())
+         Tracer.popCCMContext(oldKey.toString());
+
       if (debug)
       {
-         if (closeAll(oldKey.getCMToConnectionsMap()) && error)
+         if (closeAll(oldKey) && error)
          {
             throw new ResourceException(bundle.someConnectionsWereNotClosed());
          }
@@ -285,11 +300,10 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
     * @param cm connection manager
     * @param cl connection listener
     * @param connection connection handle
-    * @param cri connection request info.
     */
    public void registerConnection(org.jboss.jca.core.api.connectionmanager.listener.ConnectionCacheListener cm,
                                   org.jboss.jca.core.api.connectionmanager.listener.ConnectionListener cl,
-                                  Object connection, ConnectionRequestInfo cri)
+                                  Object connection)
    {
       if (debug)
       {
@@ -307,7 +321,14 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
 
       if (key != null)
       {
-         ConnectionRecord cr = new ConnectionRecord(cl, connection, cri);
+         if (Tracer.isEnabled())
+         {
+            ConnectionListener l = (ConnectionListener)cl;
+            Tracer.registerCCMConnection(l.getPool().getName(), l.getManagedConnectionPool(),
+                                         l, connection, key.toString());
+         }
+
+         ConnectionRecord cr = new ConnectionRecord(cl, connection);
          ConcurrentMap<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>> cmToConnectionsMap =
             key.getCMToConnectionsMap();
 
@@ -325,9 +346,11 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
    /**
     * Unregister connection.
     * @param cm connection manager
+    * @param cl connection listener
     * @param connection connection handle
     */
    public void unregisterConnection(org.jboss.jca.core.api.connectionmanager.listener.ConnectionCacheListener cm,
+                                    org.jboss.jca.core.api.connectionmanager.listener.ConnectionListener cl,
                                     Object connection)
    {
       if (debug)
@@ -368,9 +391,23 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
       {
          if (connectionRecord.getConnection() == connection)
          {
+            if (Tracer.isEnabled())
+            {
+               ConnectionListener l = (ConnectionListener)cl;
+               Tracer.unregisterCCMConnection(l.getPool().getName(), l.getManagedConnectionPool(),
+                                              l, connection, key.toString());
+            }
+
             conns.remove(connectionRecord);
             return;
          }
+      }
+
+      if (Tracer.isEnabled())
+      {
+         ConnectionListener l = (ConnectionListener)cl;
+         Tracer.unknownCCMConnection(l.getPool().getName(), l.getManagedConnectionPool(),
+                                     l, connection, key.toString());
       }
 
       if (!ignoreConnections)
@@ -383,22 +420,34 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
    @SuppressWarnings("unchecked")
    public void pushMetaAwareObject(final Object rawKey, Set unsharableResources) throws ResourceException
    {
-      LinkedList<Object> stack = currentObjects.get();
+      LinkedList<KeyConnectionAssociation> stack = currentObjects.get();
+      KeyConnectionAssociation key = new KeyConnectionAssociation(rawKey);
+
       if (stack == null)
       {
          if (trace)
-            log.tracef("new stack for key: %s", rawKey);
+            log.tracef("new stack for key: %s", key);
 
-         stack = new LinkedList<Object>();
+         stack = new LinkedList<KeyConnectionAssociation>();
          currentObjects.set(stack);
+      }
+      else if (stack.isEmpty())
+      {
+         if (trace)
+            log.tracef("new stack for key: %s", key);
       }
       else
       {
          if (trace)
+         {
             log.tracef("old stack for key: %s", stack.getLast());
+            log.tracef("new stack for key: %s", key);
+         }
       }
 
-      KeyConnectionAssociation key = new KeyConnectionAssociation(rawKey);
+      if (Tracer.isEnabled())
+         Tracer.pushCCMContext(key.toString());
+
       stack.addLast(key);
    }
 
@@ -472,12 +521,13 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
 
    /**
     * Close all connections.
-    * @param cmToConnectionsMap connection manager to connections
+    * @param key The key
     * @return true if close
     */
-   private boolean closeAll(ConcurrentMap<ConnectionCacheListener,
-                            CopyOnWriteArrayList<ConnectionRecord>> cmToConnectionsMap)
+   private boolean closeAll(KeyConnectionAssociation key)
    {
+      ConcurrentMap<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>> cmToConnectionsMap =
+         key.getCMToConnectionsMap();
       boolean unclosed = false;
 
       Collection<CopyOnWriteArrayList<ConnectionRecord>> connections = cmToConnectionsMap.values();
@@ -486,13 +536,21 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
          for (Iterator<CopyOnWriteArrayList<ConnectionRecord>> i = connections.iterator(); i.hasNext();)
          {
             CopyOnWriteArrayList<ConnectionRecord> conns = i.next();
-            for (Iterator<ConnectionRecord> j = conns.iterator(); j.hasNext();)
+            for (ConnectionRecord cr : conns)
             {
-               Object c = (j.next()).getConnection();
+               Object c = cr.getConnection();
                CloseConnectionSynchronization cas = getCloseConnectionSynchronization(true);
                if (cas == null)
                {
                   unclosed = true;
+
+                  if (Tracer.isEnabled())
+                  {
+                     ConnectionListener cl = (ConnectionListener)cr.getConnectionListener();
+                     Tracer.closeCCMConnection(cl.getPool().getName(), cl.getManagedConnectionPool(),
+                                               cl, c, key.toString());
+                  }
+
                   closeConnection(c);
                }
                else
@@ -666,7 +724,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
     *
     * @return the currentObjects.
     */
-   final ThreadLocal<LinkedList<Object>> getCurrentObjects()
+   final ThreadLocal<LinkedList<KeyConnectionAssociation>> getCurrentObjects()
    {
       return currentObjects;
    }
