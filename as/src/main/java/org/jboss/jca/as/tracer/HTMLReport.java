@@ -71,12 +71,16 @@ public class HTMLReport
     * Write top-level index.html
     * @param poolNames The pool names
     * @param statuses The overall status of each pool
+    * @param ccmStatus The status of the CCM
+    * @param ccmPoolStatuses The CCM status of the pools
     * @param version The version information
     * @param fw The file writer
     * @exception Exception If an error occurs
     */
    private static void generateTopLevelIndexHTML(Set<String> poolNames,
                                                  Map<String, TraceEventStatus> statuses,
+                                                 TraceEventStatus ccmStatus,
+                                                 Map<String, TraceEventStatus> ccmPoolStatuses,
                                                  TraceEvent version,
                                                  FileWriter fw)
       throws Exception
@@ -197,7 +201,10 @@ public class HTMLReport
       writeString(fw, "<ul>");
       writeEOL(fw);
 
-      writeString(fw, "<li><a href=\"CachedConnectionManager/ccm.html\">Main report</a></li>");
+      writeString(fw, "<li><a href=\"CachedConnectionManager/ccm.html\"><div style=\"color: ");
+      writeString(fw, ccmStatus.getColor());
+      writeString(fw, ";\">Main report</div></a></li>");
+
       writeEOL(fw);
 
       writeString(fw, "</ul>");
@@ -213,11 +220,21 @@ public class HTMLReport
       {
          writeString(fw, "<li>");
 
-         writeString(fw, "<a href=\"" + name + "/ccm.html\">");
+         writeString(fw, "<a href=\"" + name + "/ccm.html\"><div style=\"color: ");
+         TraceEventStatus ps = ccmPoolStatuses.get(name);
+         if (ps != null)
+         {
+            writeString(fw, ps.getColor());
+         }
+         else
+         {
+            writeString(fw, TraceEventStatus.GREEN.getColor());
+         }
+         writeString(fw, ";\">");
 
          writeString(fw, name);
 
-         writeString(fw, "</a>");
+         writeString(fw, "</div></a>");
          writeEOL(fw);
 
          writeString(fw, "</li>");
@@ -653,7 +670,7 @@ public class HTMLReport
                writeString(fw, "<pre>");
                writeEOL(fw);
 
-               writeString(fw, TraceEventHelper.exceptionDescription(te));
+               writeString(fw, TraceEventHelper.exceptionDescription(te.getPayload1()));
                writeEOL(fw);
 
                writeString(fw, "</pre>");
@@ -821,14 +838,14 @@ public class HTMLReport
    }
 
    /**
-    * Write ccm.html
-    * @param poolName The name of the pool
+    * Write ccm.html for the CCM
     * @param events The events
-    * @param mainReport The main report
+    * @param status The status
+    * @param path The root path
     * @param fw The file writer
     * @exception Exception If an error occurs
     */
-   private static void generateCCMHTML(String poolName, List<TraceEvent> events, boolean mainReport, FileWriter fw)
+   private static void generateCCMHTML(List<TraceEvent> events, TraceEventStatus status, String path, FileWriter fw)
       throws Exception
    {
       writeString(fw, "<html>");
@@ -837,14 +854,169 @@ public class HTMLReport
       writeString(fw, "<body style=\"background: #D7D7D7;\">");
       writeEOL(fw);
 
-      if (mainReport)
+      writeString(fw, "<h1>CachedConnectionManager</h1>");
+      writeEOL(fw);
+
+      writeString(fw, "<table>");
+      writeEOL(fw);
+
+      writeString(fw, "<tr>");
+      writeEOL(fw);
+
+      writeString(fw, "<td><b>Status:</b></td><td><div style=\"color: ");
+      writeString(fw, status.getColor());
+      writeString(fw, ";\">");
+
+      writeString(fw, status.getDescription());
+
+      writeString(fw, "</div></td>");
+      writeEOL(fw);
+      
+      writeString(fw, "</tr>");
+      writeEOL(fw);
+
+      writeString(fw, "</table>");
+      writeEOL(fw);
+
+      writeString(fw, "<p/>");
+      writeEOL(fw);
+
+      writeString(fw, "<table>");
+      writeEOL(fw);
+
+      writeString(fw, "<tr>");
+      writeEOL(fw);
+
+      writeString(fw, "<td><b>Timestamp</b></td>");
+      writeEOL(fw);
+
+      writeString(fw, "<td><b>Event</b></td>");
+      writeEOL(fw);
+
+      writeString(fw, "<td><b>Key</b></td>");
+      writeEOL(fw);
+
+      writeString(fw, "<td><b>Call stack</b></td>");
+      writeEOL(fw);
+
+      writeString(fw, "</tr>");
+      writeEOL(fw);
+
+      for (TraceEvent te : events)
       {
-         writeString(fw, "<h1>CachedConnectionManager</h1>");
+         writeString(fw, "<tr>");
+         writeEOL(fw);
+
+         writeString(fw, "<td>" + te.getTimestamp() + "</td>");
+         writeEOL(fw);
+      
+         writeString(fw, "<td>" + TraceEvent.asText(te) + "</td>");
+         writeEOL(fw);
+      
+         writeString(fw, "<td>" + te.getPayload1() + "</td>");
+         writeEOL(fw);
+
+         String callstack = te.getPayload1();
+         if (te.getType() == TraceEvent.PUSH_CCM_CONTEXT)
+         {
+            callstack += "-push";
+         }
+         else
+         {
+            callstack += "-pop";
+         }
+         callstack += ".txt";
+         
+         writeString(fw, "<td><a href=\"" + callstack + "\">Link</a></td>");
+         writeEOL(fw);
+
+         FileWriter report = null;
+         try
+         {
+            report = new FileWriter(path + "/" + callstack);
+            writeString(report, TraceEventHelper.exceptionDescription(te.getPayload2()));
+            writeEOL(report);
+         }
+         finally
+         {
+            if (report != null)
+            {
+               try
+               {
+                  report.flush();
+                  report.close();
+               }
+               catch (Exception e)
+               {
+                  // Ignore
+               }
+            }
+         }
+         
+         writeString(fw, "</tr>");
+         writeEOL(fw);
       }
-      else
-      {
-         writeString(fw, "<h1>CCM: " + poolName + "</h1>");
-      }
+
+      writeString(fw, "</table>");
+      writeEOL(fw);
+
+      writeString(fw, "<p/>");
+      writeEOL(fw);
+
+      writeString(fw, "<a href=\"../index.html\">Back</a>");
+      writeEOL(fw);
+
+      writeString(fw, "</body>");
+      writeEOL(fw);
+
+      writeString(fw, "</html>");
+      writeEOL(fw);
+   }
+
+   /**
+    * Write ccm.html for pools
+    * @param poolName The name of the pool
+    * @param events The events
+    * @param status The status
+    * @param fw The file writer
+    * @exception Exception If an error occurs
+    */
+   private static void generateCCMPoolHTML(String poolName, List<TraceEvent> events,
+                                           TraceEventStatus status, FileWriter fw)
+      throws Exception
+   {
+      writeString(fw, "<html>");
+      writeEOL(fw);
+
+      writeString(fw, "<body style=\"background: #D7D7D7;\">");
+      writeEOL(fw);
+
+      writeString(fw, "<h1>CCM: " + poolName + "</h1>");
+      writeEOL(fw);
+
+      writeString(fw, "<table>");
+      writeEOL(fw);
+
+      writeString(fw, "<tr>");
+      writeEOL(fw);
+
+      writeString(fw, "<td><b>Status:</b></td><td><div style=\"color: ");
+
+      writeString(fw, status.getColor());
+      writeString(fw, ";\">");
+
+      writeString(fw, status.getDescription());
+      
+      writeString(fw, "</div></td>");
+      writeEOL(fw);
+
+      writeString(fw, "</tr>");
+      writeEOL(fw);
+
+      writeString(fw, "</table>");
+      writeEOL(fw);
+
+      writeString(fw, "<p/>");
       writeEOL(fw);
 
       writeString(fw, "<table>");
@@ -926,20 +1098,17 @@ public class HTMLReport
       writeString(fw, "</table>");
       writeEOL(fw);
 
-      if (!mainReport)
-      {
-         writeString(fw, "<h2>Pool</h2>");
-         writeEOL(fw);
+      writeString(fw, "<h2>Pool</h2>");
+      writeEOL(fw);
 
-         writeString(fw, "<a href=\"index.html\">Report</a>");
-         writeEOL(fw);
+      writeString(fw, "<a href=\"index.html\">Report</a>");
+      writeEOL(fw);
 
-         writeString(fw, "<h2>Lifecycle</h2>");
-         writeEOL(fw);
+      writeString(fw, "<h2>Lifecycle</h2>");
+      writeEOL(fw);
 
-         writeString(fw, "<a href=\"lifecycle.html\">Report</a>");
-         writeEOL(fw);
-      }
+      writeString(fw, "<a href=\"lifecycle.html\">Report</a>");
+      writeEOL(fw);
 
       writeString(fw, "<p/>");
       writeEOL(fw);
@@ -1016,8 +1185,17 @@ public class HTMLReport
          List<TraceEvent> events = TraceEventHelper.getEvents(logReader, root);
          Map<String, Map<String, List<TraceEvent>>> filteredPool = TraceEventHelper.filterPoolEvents(events);
          Map<String, List<TraceEvent>> filteredLifecycle = TraceEventHelper.filterLifecycleEvents(events);
-         Map<String, List<TraceEvent>> filteredCCM = TraceEventHelper.filterCCMEvents(events);
+         List<TraceEvent> filteredCCM = TraceEventHelper.filterCCMEvents(events);
+         Map<String, List<TraceEvent>> filteredCCMPool = TraceEventHelper.filterCCMPoolEvents(events);
 
+         // Status calculation
+         TraceEventStatus ccmStatus = TraceEventHelper.getCCMStatus(filteredCCM);
+         Map<String, TraceEventStatus> ccmPoolStatus = new TreeMap<String, TraceEventStatus>();
+         for (Map.Entry<String, List<TraceEvent>> entry : filteredCCMPool.entrySet())
+         {
+            ccmPoolStatus.put(entry.getKey(), TraceEventHelper.getCCMPoolStatus(entry.getValue()));
+         }
+         
          Map<String, TraceEventStatus> topLevelStatus = new TreeMap<String, TraceEventStatus>();
 
          Iterator<Map.Entry<String, Map<String, List<TraceEvent>>>> it = filteredPool.entrySet().iterator();
@@ -1041,6 +1219,7 @@ public class HTMLReport
          {
             topLevel = new FileWriter(root.getAbsolutePath() + "/" + "index.html");
             generateTopLevelIndexHTML(filteredLifecycle.keySet(), topLevelStatus,
+                                      ccmStatus, ccmPoolStatus,
                                       TraceEventHelper.getVersion(events), topLevel);
          }
          finally
@@ -1170,7 +1349,36 @@ public class HTMLReport
             }
          }
 
-         Iterator<Map.Entry<String, List<TraceEvent>>> ccmIt = filteredCCM.entrySet().iterator();
+         if (filteredCCM.size() > 0)
+         {
+            FileWriter ccm = null;
+            try
+            {
+               String path = root.getAbsolutePath() + "/" + filteredCCM.get(0).getPool();
+               File f = new File(path);
+               f.mkdirs();
+
+               ccm = new FileWriter(path + "/" + "ccm.html");
+               generateCCMHTML(filteredCCM, ccmStatus, path, ccm);
+            }
+            finally
+            {
+               if (ccm != null)
+               {
+                  try
+                  {
+                     ccm.flush();
+                     ccm.close();
+                  }
+                  catch (Exception e)
+                  {
+                     // Ignore
+                  }
+               }
+            }
+         }
+
+         Iterator<Map.Entry<String, List<TraceEvent>>> ccmIt = filteredCCMPool.entrySet().iterator();
          while (ccmIt.hasNext())
          {
             Map.Entry<String, List<TraceEvent>> entry = ccmIt.next();
@@ -1178,16 +1386,12 @@ public class HTMLReport
             FileWriter ccm = null;
             try
             {
-               boolean mainReport = false;
-               if ("CachedConnectionManager".equals(entry.getKey()))
-                  mainReport = true;
-               
                String path = root.getAbsolutePath() + "/" + entry.getKey();
                File f = new File(path);
                f.mkdirs();
 
                ccm = new FileWriter(path + "/" + "ccm.html");
-               generateCCMHTML(entry.getKey(), entry.getValue(), mainReport, ccm);
+               generateCCMPoolHTML(entry.getKey(), entry.getValue(), ccmPoolStatus.get(entry.getKey()), ccm);
             }
             finally
             {

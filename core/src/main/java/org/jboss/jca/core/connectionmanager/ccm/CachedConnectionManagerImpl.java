@@ -284,7 +284,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
          log.tracef("popped object: %s", oldKey);
 
       if (Tracer.isEnabled())
-         Tracer.popCCMContext(oldKey.toString());
+         Tracer.popCCMContext(oldKey.toString(), new Throwable("CALLSTACK"));
 
       if (debug)
       {
@@ -446,7 +446,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
       }
 
       if (Tracer.isEnabled())
-         Tracer.pushCCMContext(key.toString());
+         Tracer.pushCCMContext(key.toString(), new Throwable("CALLSTACK"));
 
       stack.addLast(key);
    }

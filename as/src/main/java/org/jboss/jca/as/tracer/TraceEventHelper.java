@@ -29,7 +29,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.LineNumberReader;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -132,20 +135,40 @@ public class TraceEventHelper
    }
 
    /**
-    * Filter the ccm events
+    * Filter the CCM events
     * @param data The data
     * @return The filtered events
     * @exception Exception If an error occurs
     */
-   public static Map<String, List<TraceEvent>> filterCCMEvents(List<TraceEvent> data) throws Exception
+   public static List<TraceEvent> filterCCMEvents(List<TraceEvent> data) throws Exception
+   {
+      List<TraceEvent> result = new ArrayList<TraceEvent>();
+
+      for (TraceEvent te : data)
+      {
+         if (te.getType() == TraceEvent.PUSH_CCM_CONTEXT ||
+             te.getType() == TraceEvent.POP_CCM_CONTEXT)
+         {
+            result.add(te);
+         }
+      }
+
+      return result;
+   }
+
+   /**
+    * Filter the CCM pool events
+    * @param data The data
+    * @return The filtered events
+    * @exception Exception If an error occurs
+    */
+   public static Map<String, List<TraceEvent>> filterCCMPoolEvents(List<TraceEvent> data) throws Exception
    {
       Map<String, List<TraceEvent>> result = new TreeMap<String, List<TraceEvent>>();
 
       for (TraceEvent te : data)
       {
-         if (te.getType() == TraceEvent.PUSH_CCM_CONTEXT ||
-             te.getType() == TraceEvent.POP_CCM_CONTEXT ||
-             te.getType() == TraceEvent.REGISTER_CCM_CONNECTION ||
+         if (te.getType() == TraceEvent.REGISTER_CCM_CONNECTION ||
              te.getType() == TraceEvent.UNREGISTER_CCM_CONNECTION ||
              te.getType() == TraceEvent.CCM_USER_TRANSACTION ||
              te.getType() == TraceEvent.UNKNOWN_CCM_CONNECTION ||
@@ -504,15 +527,12 @@ public class TraceEventHelper
 
    /**
     * Get exception description
-    * @param te The event
+    * @param encoded The encoded string
     * @return The string
     */
-   public static String exceptionDescription(TraceEvent te)
+   public static String exceptionDescription(String encoded)
    {
-      if (te.getType() != TraceEvent.EXCEPTION)
-         return "";
-
-      char[] data = te.getPayload1().toCharArray();
+      char[] data = encoded.toCharArray();
       StringBuilder sb = new StringBuilder();
 
       for (int i = 0; i < data.length; i++)
@@ -550,7 +570,9 @@ public class TraceEventHelper
     */
    public static String prettyPrint(TraceEvent te)
    {
-      if (te.getType() != TraceEvent.EXCEPTION)
+      if (te.getType() != TraceEvent.EXCEPTION &&
+          te.getType() != TraceEvent.PUSH_CCM_CONTEXT &&
+          te.getType() != TraceEvent.POP_CCM_CONTEXT)
          return te.toString();
 
       StringBuilder sb = new StringBuilder();
@@ -584,6 +606,94 @@ public class TraceEventHelper
       }
 
       return null;
+   }
+
+   /**
+    * Get CCM pool status
+    * @param data The data
+    * @return The status
+    */
+   public static TraceEventStatus getCCMStatus(List<TraceEvent> data)
+   {
+      Deque<TraceEvent> stack = new ArrayDeque<TraceEvent>();
+
+      for (TraceEvent te : data)
+      {
+         if (te.getType() == TraceEvent.PUSH_CCM_CONTEXT)
+         {
+            stack.push(te);
+         }
+         else
+         {
+            TraceEvent top = stack.peek();
+            if (top.getPayload1().equals(te.getPayload1()))
+            {
+               stack.pop();
+            }
+            else
+            {
+               return TraceEventStatus.RED;
+            }
+         }
+      }
+
+      if (!stack.isEmpty())
+         return TraceEventStatus.YELLOW;
+      
+      return TraceEventStatus.GREEN;
+   }
+
+   /**
+    * Get CCM pool status
+    * @param data The data
+    * @return The status
+    */
+   public static TraceEventStatus getCCMPoolStatus(List<TraceEvent> data)
+   {
+      Map<String, Set<String>> m = new HashMap<String, Set<String>>();
+      TraceEventStatus status = TraceEventStatus.GREEN;
+      
+      for (TraceEvent te : data)
+      {
+         if (te.getType() == TraceEvent.REGISTER_CCM_CONNECTION)
+         {
+            Set<String> s = m.get(te.getConnectionListener());
+            if (s == null)
+            {
+               s = new HashSet<String>();
+               m.put(te.getConnectionListener(), s);
+            }
+            if (!s.add(te.getPayload1()))
+               status = TraceEventStatus.YELLOW;
+         }
+         else if (te.getType() == TraceEvent.UNREGISTER_CCM_CONNECTION)
+         {
+            Set<String> s = m.get(te.getConnectionListener());
+            if (s == null)
+            {
+               s = new HashSet<String>();
+               m.put(te.getConnectionListener(), s);
+            }
+            if (!s.remove(te.getPayload1()))
+               status = TraceEventStatus.YELLOW;
+         }
+         else if (te.getType() == TraceEvent.UNKNOWN_CCM_CONNECTION)
+         {
+            return TraceEventStatus.RED;
+         }
+         else if (te.getType() == TraceEvent.CLOSE_CCM_CONNECTION)
+         {
+            status = TraceEventStatus.YELLOW;
+         }
+      }
+
+      for (Map.Entry<String, Set<String>> entry : m.entrySet())
+      {
+         if (entry.getValue().size() > 0)
+            return TraceEventStatus.RED;
+      }
+
+      return status;
    }
 
    /**

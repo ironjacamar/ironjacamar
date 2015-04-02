@@ -25,7 +25,9 @@ package org.jboss.jca.as.tracer;
 import org.jboss.jca.core.tracer.TraceEvent;
 
 import java.io.FileWriter;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Generator for a SDedit file
@@ -71,7 +73,9 @@ public class SDeditGenerator
       boolean newCl = false;
       boolean hasTx = false;
       boolean newSync = false;
-
+      boolean delist = false;
+      Set<String> connections = new HashSet<String>();
+      
       for (TraceEvent te : events)
       {
          if (te.getType() == TraceEvent.GET_CONNECTION_LISTENER_NEW ||
@@ -200,14 +204,22 @@ public class SDeditGenerator
 
                if (hasTx)
                {
-                  writeString(fw, "[c afterCompletion]");
-                  writeEOL(fw);
+                  if (delist)
+                  {
+                     writeString(fw, "[c afterCompletion]");
+                     writeEOL(fw);
 
-                  writeString(fw, "sync:mcp." + TraceEvent.asText(te));
-                  writeEOL(fw);
+                     writeString(fw, "sync:mcp." + TraceEvent.asText(te));
+                     writeEOL(fw);
 
-                  writeString(fw, "[/c]");
-                  writeEOL(fw);
+                     writeString(fw, "[/c]");
+                     writeEOL(fw);
+                  }
+                  else
+                  {
+                     writeString(fw, "cl:mcp." + TraceEvent.asText(te));
+                     writeEOL(fw);
+                  }
                }
                else
                {
@@ -220,17 +232,28 @@ public class SDeditGenerator
 
                if (hasTx)
                {
-                  writeString(fw, "[c afterCompletion]");
-                  writeEOL(fw);
+                  if (delist)
+                  {
+                     writeString(fw, "[c afterCompletion]");
+                     writeEOL(fw);
 
-                  writeString(fw, "sync:>mcp." + TraceEvent.asText(te));
-                  writeEOL(fw);
+                     writeString(fw, "sync:>mcp." + TraceEvent.asText(te));
+                     writeEOL(fw);
 
-                  writeString(fw, "mcp:cl.doDestroy()");
-                  writeEOL(fw);
+                     writeString(fw, "mcp:cl.doDestroy()");
+                     writeEOL(fw);
 
-                  writeString(fw, "[/c]");
-                  writeEOL(fw);
+                     writeString(fw, "[/c]");
+                     writeEOL(fw);
+                  }
+                  else
+                  {
+                     writeString(fw, "cl:>mcp." + TraceEvent.asText(te));
+                     writeEOL(fw);
+
+                     writeString(fw, "mcp:cl.doDestroy()");
+                     writeEOL(fw);
+                  }
                }
                else
                {
@@ -291,7 +314,9 @@ public class SDeditGenerator
                break;
             case TraceEvent.DELIST_CONNECTION_LISTENER:
             case TraceEvent.DELIST_CONNECTION_LISTENER_FAILED:
-
+               if (connections.size() == 0)
+                  delist = true;
+               
                writeString(fw, "[c beforeCompletion]");
                writeEOL(fw);
 
@@ -304,10 +329,24 @@ public class SDeditGenerator
                writeString(fw, "[/c]");
                writeEOL(fw);
 
+               if (!delist)
+               {
+                  writeString(fw, "[c afterCompletion]");
+                  writeEOL(fw);
+
+                  writeString(fw, "sync:>cl.<noReturn>");
+                  writeEOL(fw);
+
+                  writeString(fw, "[/c]");
+                  writeEOL(fw);
+               }
+
                break;
             case TraceEvent.DELIST_INTERLEAVING_CONNECTION_LISTENER:
             case TraceEvent.DELIST_INTERLEAVING_CONNECTION_LISTENER_FAILED:
-
+               if (connections.size() == 0)
+                  delist = true;
+               
                writeString(fw, "cl:tx." + TraceEvent.asText(te));
                writeEOL(fw);
 
@@ -328,11 +367,15 @@ public class SDeditGenerator
 
                break;
             case TraceEvent.GET_CONNECTION:
+               connections.add(te.getPayload1());
+               
                writeString(fw, "application:cl." + TraceEvent.asText(te));
                writeEOL(fw);
 
                break;
             case TraceEvent.RETURN_CONNECTION:
+               connections.remove(te.getPayload1());
+
                if (TraceEventHelper.hasMoreApplicationEvents(events, i + 1))
                {
                   writeString(fw, "application:cl." + TraceEvent.asText(te));

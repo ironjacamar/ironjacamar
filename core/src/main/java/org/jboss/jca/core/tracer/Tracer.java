@@ -333,43 +333,11 @@ public class Tracer
     */
    public static synchronized void exception(String poolName, Object mcp, Object cl, Throwable exception)
    {
-      CharArrayWriter caw = new CharArrayWriter();
-      PrintWriter pw = new PrintWriter(caw, true);
-      exception.printStackTrace(pw);
-      pw.flush();
-
-      char[] data = caw.toCharArray();
-      StringBuilder sb = new StringBuilder();
-      for (int i = 0; i < data.length; i++)
-      {
-         char c = data[i];
-         if (c == '\n')
-         {
-            sb = sb.append('|');
-         }
-         else if (c == '\r')
-         {
-            sb = sb.append('/');
-         }
-         else if (c == '\t')
-         {
-            sb = sb.append('\\');
-         }
-         else if (c == ' ')
-         {
-            sb = sb.append('_');
-         }
-         else
-         {
-            sb = sb.append(c);
-         }
-      }
-
       log.tracef("%s", new TraceEvent(poolName,
                                       Integer.toHexString(System.identityHashCode(mcp)),
                                       TraceEvent.EXCEPTION,
                                       Integer.toHexString(System.identityHashCode(cl)),
-                                      sb.toString()));
+                                      toString(exception)));
    }
 
    /**
@@ -488,21 +456,23 @@ public class Tracer
    /**
     * Push CCM context
     * @param key The frame key
+    * @param callstack The call stack
     */
-   public static synchronized void pushCCMContext(String key)
+   public static synchronized void pushCCMContext(String key, Throwable callstack)
    {
       log.tracef("%s", new TraceEvent("CachedConnectionManager", "NONE", TraceEvent.PUSH_CCM_CONTEXT,
-                                      "NONE", "NONE", key));
+                                      "NONE", key, toString(callstack)));
    }
 
    /**
     * Pop CCM context
     * @param key The frame key
+    * @param callstack The call stack
     */
-   public static synchronized void popCCMContext(String key)
+   public static synchronized void popCCMContext(String key, Throwable callstack)
    {
       log.tracef("%s", new TraceEvent("CachedConnectionManager", "NONE", TraceEvent.POP_CCM_CONTEXT,
-                                      "NONE", "NONE", key));
+                                      "NONE", key, toString(callstack)));
    }
 
    /**
@@ -598,5 +568,47 @@ public class Tracer
                                       Integer.toHexString(System.identityHashCode(cl)),
                                       Integer.toHexString(System.identityHashCode(connection)),
                                       key));
+   }
+
+   /**
+    * Throwable to string
+    * @param exception The exception
+    * @return The string representation
+    */
+   private static synchronized String toString(Throwable exception)
+   {
+      CharArrayWriter caw = new CharArrayWriter();
+      PrintWriter pw = new PrintWriter(caw, true);
+      exception.printStackTrace(pw);
+      pw.flush();
+
+      char[] data = caw.toCharArray();
+      StringBuilder sb = new StringBuilder();
+      for (int i = 0; i < data.length; i++)
+      {
+         char c = data[i];
+         if (c == '\n')
+         {
+            sb = sb.append('|');
+         }
+         else if (c == '\r')
+         {
+            sb = sb.append('/');
+         }
+         else if (c == '\t')
+         {
+            sb = sb.append('\\');
+         }
+         else if (c == ' ')
+         {
+            sb = sb.append('_');
+         }
+         else
+         {
+            sb = sb.append(c);
+         }
+      }
+
+      return sb.toString();
    }
 }
