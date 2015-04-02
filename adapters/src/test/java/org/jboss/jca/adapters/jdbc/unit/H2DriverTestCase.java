@@ -26,6 +26,7 @@ import org.jboss.jca.adapters.ArquillianJCATestUtils;
 import org.jboss.jca.embedded.dsl.InputStreamDescriptor;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
@@ -100,5 +101,19 @@ public class H2DriverTestCase
       assertNotNull(ds);
       Connection c = ds.getConnection();
       assertNotNull(c);
+      c.close();
+   }
+
+   /**
+    * Tests that it is possible the call DriverManager.getConnection() returns a connection
+    *
+    * @exception Throwable Thrown if case of an error
+    */
+   @Test
+   public void testDriverManagerGetConnection() throws Throwable
+   {
+      Connection conn = DriverManager.getConnection("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", "sa", "sa");
+      assertNotNull(conn);
+      conn.close();
    }
 }

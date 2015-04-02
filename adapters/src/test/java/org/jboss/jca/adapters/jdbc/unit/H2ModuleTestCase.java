@@ -99,5 +99,6 @@ public class H2ModuleTestCase
       assertNotNull(ds);
       Connection c = ds.getConnection();
       assertNotNull(c);
+      c.close();
    }
 }
