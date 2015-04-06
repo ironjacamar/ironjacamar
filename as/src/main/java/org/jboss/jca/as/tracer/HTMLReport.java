@@ -88,6 +88,15 @@ public class HTMLReport
       writeString(fw, "<html>");
       writeEOL(fw);
 
+      writeString(fw, "<head>");
+      writeEOL(fw);
+
+      writeString(fw, "<title>IronJacamar tracer report</title>");
+      writeEOL(fw);
+
+      writeString(fw, "</head>");
+      writeEOL(fw);
+
       writeString(fw, "<body style=\"background: #D7D7D7;\">");
       writeEOL(fw);
 
@@ -244,6 +253,24 @@ public class HTMLReport
       writeString(fw, "</ul>");
       writeEOL(fw);
 
+      writeString(fw, "<h2>Reference</h2>");
+      writeEOL(fw);
+
+      writeString(fw, "<ul>");
+      writeEOL(fw);
+
+      writeString(fw, "<li><a href=\"toc-c.html\">Connection</div></a></li>");
+      writeEOL(fw);
+      
+      writeString(fw, "<li><a href=\"toc-cl.html\">ConnectionListener</div></a></li>");
+      writeEOL(fw);
+      
+      writeString(fw, "<li><a href=\"toc-mcp.html\">Managed Connection Pool</div></a></li>");
+      writeEOL(fw);
+      
+      writeString(fw, "</ul>");
+      writeEOL(fw);
+
       writeString(fw, "</body>");
       writeEOL(fw);
 
@@ -254,14 +281,26 @@ public class HTMLReport
    /**
     * Write pool index.html
     * @param poolName The name of the pool
-    * @param statuses The overall status of each pool
+    * @param overallStatus The overall status of the pool
+    * @param mcps The managed connection pools
+    * @param statuses The overall status of each connection listener
     * @param fw The file writer
     * @exception Exception If an error occurs
     */
-   private static void generatePoolIndexHTML(String poolName, Map<String, TraceEventStatus> statuses, FileWriter fw)
+   private static void generatePoolIndexHTML(String poolName, TraceEventStatus overallStatus, Set<String> mcps,
+                                             Map<String, TraceEventStatus> statuses, FileWriter fw)
       throws Exception
    {
       writeString(fw, "<html>");
+      writeEOL(fw);
+
+      writeString(fw, "<head>");
+      writeEOL(fw);
+
+      writeString(fw, "<title>Pool: " + poolName + "</title>");
+      writeEOL(fw);
+
+      writeString(fw, "</head>");
       writeEOL(fw);
 
       writeString(fw, "<body style=\"background: #D7D7D7;\">");
@@ -270,6 +309,47 @@ public class HTMLReport
       writeString(fw, "<h1>Pool: " + poolName + "</h1>");
       writeEOL(fw);
 
+      writeString(fw, "<table>");
+      writeEOL(fw);
+
+      writeString(fw, "<tr>");
+      writeEOL(fw);
+
+      writeString(fw, "<td><b>Status:</b></td>");
+      writeEOL(fw);
+
+      writeString(fw, "<td><div style=\"color: " + overallStatus.getColor() + ";\">");
+      writeString(fw, overallStatus.getDescription());
+      writeString(fw, "</div></td>");
+      writeEOL(fw);
+
+      writeString(fw, "</tr>");
+      writeEOL(fw);
+
+      writeString(fw, "<tr>");
+      writeEOL(fw);
+
+      writeString(fw, "<td><b>ManagedConnectionPool:</b></td>");
+      writeEOL(fw);
+
+      writeString(fw, "<td>");
+      Iterator<String> mcpIt = mcps.iterator();
+      while (mcpIt.hasNext())
+      {
+         String mcp = mcpIt.next();
+         writeString(fw, mcp);
+         if (mcpIt.hasNext())
+            writeString(fw, "<br/>");
+      }
+      writeString(fw, "</td>");
+      writeEOL(fw);
+
+      writeString(fw, "</tr>");
+      writeEOL(fw);
+
+      writeString(fw, "</table>");
+      writeEOL(fw);
+      
       writeString(fw, "<h2>ConnectionListeners</h2>");
       writeEOL(fw);
 
@@ -350,10 +430,64 @@ public class HTMLReport
       writeString(fw, "<html>");
       writeEOL(fw);
 
+      writeString(fw, "<head>");
+      writeEOL(fw);
+
+      writeString(fw, "<title>ConnectionListener: " + identifier + "</title>");
+      writeEOL(fw);
+
+      writeString(fw, "</head>");
+      writeEOL(fw);
+
       writeString(fw, "<body style=\"background: #D7D7D7;\">");
       writeEOL(fw);
 
       writeString(fw, "<h1>ConnectionListener: " + identifier + "</h1>");
+      writeEOL(fw);
+
+      writeString(fw, "<table>");
+      writeEOL(fw);
+
+      writeString(fw, "<tr>");
+      writeEOL(fw);
+
+      writeString(fw, "<td><b>Pool:</b></td>");
+      writeEOL(fw);
+
+      writeString(fw, "<td>" + data.get(0).getPool() + "</td>");
+      writeEOL(fw);
+
+      writeString(fw, "</tr>");
+      writeEOL(fw);
+
+      writeString(fw, "<tr>");
+      writeEOL(fw);
+
+      writeString(fw, "<td><b>ManagedConnectionPool:</b></td>");
+      writeEOL(fw);
+
+      writeString(fw, "<td>" + data.get(0).getManagedConnectionPool() + "</td>");
+      writeEOL(fw);
+
+      writeString(fw, "</tr>");
+      writeEOL(fw);
+
+      writeString(fw, "<tr>");
+      writeEOL(fw);
+
+      writeString(fw, "<td><b>Status:</b></td>");
+      writeEOL(fw);
+
+      TraceEventStatus status = TraceEventHelper.getStatus(data, ignoreDelist, ignoreTracking);
+      writeString(fw, "<td><div style=\"color: " + status.getColor() + ";\">");
+      writeString(fw, status.getDescription());
+      writeString(fw, "</div></td>");
+      writeEOL(fw);
+
+      writeString(fw, "</tr>");
+      writeEOL(fw);
+
+      writeString(fw, "</table>");
       writeEOL(fw);
 
       writeString(fw, "<h2>Reports</h2>");
@@ -373,7 +507,7 @@ public class HTMLReport
 
          writeString(fw, "<a href=\"" + entry.getKey() + "/index.html\"><div style=\"color: ");
 
-         TraceEventStatus status = TraceEventHelper.getStatus(entry.getValue(), ignoreDelist, ignoreTracking);
+         status = TraceEventHelper.getStatus(entry.getValue(), ignoreDelist, ignoreTracking);
          writeString(fw, status.getColor());
 
          writeString(fw, ";\">");
@@ -473,7 +607,19 @@ public class HTMLReport
                                                             FileWriter fw)
       throws Exception
    {
+      long startTime = data.get(0).getTimestamp();
+      long endTime = data.get(data.size() - 1).getTimestamp();
+
       writeString(fw, "<html>");
+      writeEOL(fw);
+
+      writeString(fw, "<head>");
+      writeEOL(fw);
+
+      writeString(fw, "<title>ConnectionListener: " + identifier + " (" + startTime + "-" + endTime + ")</title>");
+      writeEOL(fw);
+
+      writeString(fw, "</head>");
       writeEOL(fw);
 
       writeString(fw, "<body style=\"background: #D7D7D7;\">");
@@ -488,10 +634,22 @@ public class HTMLReport
       writeString(fw, "<tr>");
       writeEOL(fw);
 
+      writeString(fw, "<td><b>Pool:</b></td>");
+      writeEOL(fw);
+
+      writeString(fw, "<td>" + data.get(0).getPool() + "</td>");
+      writeEOL(fw);
+
+      writeString(fw, "</tr>");
+      writeEOL(fw);
+
+      writeString(fw, "<tr>");
+      writeEOL(fw);
+
       writeString(fw, "<td><b>ManagedConnectionPool:</b></td>");
       writeEOL(fw);
 
-      writeString(fw, "<td><b>" + data.get(0).getManagedConnectionPool() + "</b></td>");
+      writeString(fw, "<td>" + data.get(0).getManagedConnectionPool() + "</td>");
       writeEOL(fw);
 
       writeString(fw, "</tr>");
@@ -503,7 +661,7 @@ public class HTMLReport
       writeString(fw, "<td><b>From:</b></td>");
       writeEOL(fw);
 
-      writeString(fw, "<td><b>" + data.get(0).getTimestamp() + "</b></td>");
+      writeString(fw, "<td>" + startTime + "</td>");
       writeEOL(fw);
 
       writeString(fw, "</tr>");
@@ -515,7 +673,7 @@ public class HTMLReport
       writeString(fw, "<td><b>To:</b></td>");
       writeEOL(fw);
 
-      writeString(fw, "<td><b>" + data.get(data.size() - 1).getTimestamp() + "</b></td>");
+      writeString(fw, "<td>" + endTime + "</td>");
       writeEOL(fw);
 
       writeString(fw, "</tr>");
@@ -527,7 +685,7 @@ public class HTMLReport
       writeString(fw, "<td><b>Thread:</b></td>");
       writeEOL(fw);
 
-      writeString(fw, "<td><b>" + data.get(0).getThreadId() + "</b></td>");
+      writeString(fw, "<td>" + data.get(0).getThreadId() + "</td>");
       writeEOL(fw);
 
       writeString(fw, "</tr>");
@@ -725,6 +883,15 @@ public class HTMLReport
       writeString(fw, "<html>");
       writeEOL(fw);
 
+      writeString(fw, "<head>");
+      writeEOL(fw);
+
+      writeString(fw, "<title>Lifecycle: " + poolName + "</title>");
+      writeEOL(fw);
+
+      writeString(fw, "</head>");
+      writeEOL(fw);
+
       writeString(fw, "<body style=\"background: #D7D7D7;\">");
       writeEOL(fw);
 
@@ -849,6 +1016,15 @@ public class HTMLReport
       throws Exception
    {
       writeString(fw, "<html>");
+      writeEOL(fw);
+
+      writeString(fw, "<head>");
+      writeEOL(fw);
+
+      writeString(fw, "<title>CachedConnectionManager</title>");
+      writeEOL(fw);
+
+      writeString(fw, "</head>");
       writeEOL(fw);
 
       writeString(fw, "<body style=\"background: #D7D7D7;\">");
@@ -986,6 +1162,15 @@ public class HTMLReport
       throws Exception
    {
       writeString(fw, "<html>");
+      writeEOL(fw);
+
+      writeString(fw, "<head>");
+      writeEOL(fw);
+
+      writeString(fw, "<title>CCM: " + poolName + "</title>");
+      writeEOL(fw);
+
+      writeString(fw, "</head>");
       writeEOL(fw);
 
       writeString(fw, "<body style=\"background: #D7D7D7;\">");
@@ -1142,6 +1327,270 @@ public class HTMLReport
    }
 
    /**
+    * Write toc-c.html for connections
+    * @param events The events
+    * @param fw The file writer
+    * @exception Exception If an error occurs
+    */
+   private static void generateToCConnection(Map<String, List<TraceEvent>> events, FileWriter fw)
+      throws Exception
+   {
+      writeString(fw, "<html>");
+      writeEOL(fw);
+
+      writeString(fw, "<head>");
+      writeEOL(fw);
+
+      writeString(fw, "<title>Reference: Connection</title>");
+      writeEOL(fw);
+
+      writeString(fw, "</head>");
+      writeEOL(fw);
+
+      writeString(fw, "<body style=\"background: #D7D7D7;\">");
+      writeEOL(fw);
+
+      writeString(fw, "<h1>Reference: Connection</h1>");
+      writeEOL(fw);
+
+      writeString(fw, "<ul>");
+      writeEOL(fw);
+
+      for (String id : events.keySet())
+      {
+         writeString(fw, "<li><a href=\"#" + id + "\">" + id + "</a></li>");
+         writeEOL(fw);
+      }
+
+      writeString(fw, "</ul>");
+      writeEOL(fw);
+
+      for (Map.Entry<String, List<TraceEvent>> entry : events.entrySet())
+      {
+         writeString(fw, "<a name=\"" + entry.getKey() + "\"><h2>" + entry.getKey() + "</h2></a>");
+         writeEOL(fw);
+
+         writeString(fw, "<table>");
+         writeEOL(fw);
+      
+         writeString(fw, "<tr>");
+         writeEOL(fw);
+
+         writeString(fw, "<td><b>Timestamp</b></td>");
+         writeEOL(fw);
+
+         writeString(fw, "<td><b>ConnectionListener</b></td>");
+         writeEOL(fw);
+
+         writeString(fw, "<td><b>ManagedConnectionPool</b></td>");
+         writeEOL(fw);
+
+         writeString(fw, "<td><b>Pool</b></td>");
+         writeEOL(fw);
+
+         writeString(fw, "</tr>");
+         writeEOL(fw);
+
+         for (TraceEvent te : entry.getValue())
+         {
+            writeString(fw, "<tr>");
+            writeEOL(fw);
+
+            writeString(fw, "<td>" + te.getTimestamp() + "</td>");
+            writeEOL(fw);
+      
+            writeString(fw, "<td><a href=\"" + te.getPool() + "/" + te.getConnectionListener() + "/index.html\">" +
+                        te.getConnectionListener() + "</a></td>");
+            writeEOL(fw);
+         
+            writeString(fw, "<td>" + te.getManagedConnectionPool() + "</td>");
+            writeEOL(fw);
+      
+            writeString(fw, "<td><a href=\"" + te.getPool() + "/index.html\">" + te.getPool() + "</a></td>");
+            writeEOL(fw);
+      
+            writeString(fw, "</tr>");
+            writeEOL(fw);
+         }
+         
+         writeString(fw, "</table>");
+         writeEOL(fw);
+
+         writeString(fw, "<p/>");
+         writeEOL(fw);
+      }
+
+      writeString(fw, "<p/>");
+      writeEOL(fw);
+
+      writeString(fw, "<a href=\"index.html\">Back</a>");
+      writeEOL(fw);
+
+      writeString(fw, "</body>");
+      writeEOL(fw);
+
+      writeString(fw, "</html>");
+      writeEOL(fw);
+   }
+
+   /**
+    * Write toc-cl.html for connection listeners
+    * @param events The events
+    * @param fw The file writer
+    * @exception Exception If an error occurs
+    */
+   private static void generateToCConnectionListener(Map<String, List<TraceEvent>> events, FileWriter fw)
+      throws Exception
+   {
+      writeString(fw, "<html>");
+      writeEOL(fw);
+
+      writeString(fw, "<head>");
+      writeEOL(fw);
+
+      writeString(fw, "<title>Reference: ConnectionListener</title>");
+      writeEOL(fw);
+
+      writeString(fw, "</head>");
+      writeEOL(fw);
+
+      writeString(fw, "<body style=\"background: #D7D7D7;\">");
+      writeEOL(fw);
+
+      writeString(fw, "<h1>Reference: ConnectionListener</h1>");
+      writeEOL(fw);
+
+      writeString(fw, "<table>");
+      writeEOL(fw);
+      
+      writeString(fw, "<tr>");
+      writeEOL(fw);
+
+      writeString(fw, "<td><b>ConnectionListener</b></td>");
+      writeEOL(fw);
+
+      writeString(fw, "<td><b>ManagedConnectionPool</b></td>");
+      writeEOL(fw);
+
+      writeString(fw, "<td><b>Pool</b></td>");
+      writeEOL(fw);
+
+      writeString(fw, "</tr>");
+      writeEOL(fw);
+
+      for (Map.Entry<String, List<TraceEvent>> entry : events.entrySet())
+      {
+         TraceEvent te = entry.getValue().get(0);
+
+         writeString(fw, "<tr>");
+         writeEOL(fw);
+
+         writeString(fw, "<td><a href=\"" + te.getPool() + "/" + te.getConnectionListener() + "/index.html\">" +
+                     te.getConnectionListener() + "</a></td>");
+         writeEOL(fw);
+         
+         writeString(fw, "<td>" + te.getManagedConnectionPool() + "</td>");
+         writeEOL(fw);
+      
+         writeString(fw, "<td><a href=\"" + te.getPool() + "/index.html\">" + te.getPool() + "</a></td>");
+         writeEOL(fw);
+      
+         writeString(fw, "</tr>");
+         writeEOL(fw);
+      }
+
+      writeString(fw, "</table>");
+      writeEOL(fw);
+
+      writeString(fw, "<p/>");
+      writeEOL(fw);
+
+      writeString(fw, "<a href=\"index.html\">Back</a>");
+      writeEOL(fw);
+
+      writeString(fw, "</body>");
+      writeEOL(fw);
+
+      writeString(fw, "</html>");
+      writeEOL(fw);
+   }
+
+   /**
+    * Write toc-mcp.html for managed connection pool
+    * @param events The events
+    * @param fw The file writer
+    * @exception Exception If an error occurs
+    */
+   private static void generateToCManagedConnectionPool(Map<String, List<TraceEvent>> events, FileWriter fw)
+      throws Exception
+   {
+      writeString(fw, "<html>");
+      writeEOL(fw);
+
+      writeString(fw, "<head>");
+      writeEOL(fw);
+
+      writeString(fw, "<title>Reference: Managed Connection Pool</title>");
+      writeEOL(fw);
+
+      writeString(fw, "</head>");
+      writeEOL(fw);
+
+      writeString(fw, "<body style=\"background: #D7D7D7;\">");
+      writeEOL(fw);
+
+      writeString(fw, "<h1>Reference: Managed Connection Pool</h1>");
+      writeEOL(fw);
+
+      writeString(fw, "<table>");
+      writeEOL(fw);
+      
+      writeString(fw, "<tr>");
+      writeEOL(fw);
+
+      writeString(fw, "<td><b>ManagedConnectionPool</b></td>");
+      writeEOL(fw);
+
+      writeString(fw, "<td><b>Pool</b></td>");
+      writeEOL(fw);
+
+      writeString(fw, "</tr>");
+      writeEOL(fw);
+
+      for (Map.Entry<String, List<TraceEvent>> entry : events.entrySet())
+      {
+         TraceEvent te = entry.getValue().get(0);
+
+         writeString(fw, "<tr>");
+         writeEOL(fw);
+
+         writeString(fw, "<td>" + te.getManagedConnectionPool() + "</td>");
+         writeEOL(fw);
+      
+         writeString(fw, "<td><a href=\"" + te.getPool() + "/index.html\">" + te.getPool() + "</a></td>");
+         writeEOL(fw);
+      
+         writeString(fw, "</tr>");
+         writeEOL(fw);
+      }
+
+      writeString(fw, "</table>");
+      writeEOL(fw);
+
+      writeString(fw, "<p/>");
+      writeEOL(fw);
+
+      writeString(fw, "<a href=\"index.html\">Back</a>");
+      writeEOL(fw);
+
+      writeString(fw, "</body>");
+      writeEOL(fw);
+
+      writeString(fw, "</html>");
+      writeEOL(fw);
+   }
+   
+   /**
     * Main
     * @param args The arguments
     */
@@ -1187,6 +1636,10 @@ public class HTMLReport
          Map<String, List<TraceEvent>> filteredLifecycle = TraceEventHelper.filterLifecycleEvents(events);
          List<TraceEvent> filteredCCM = TraceEventHelper.filterCCMEvents(events);
          Map<String, List<TraceEvent>> filteredCCMPool = TraceEventHelper.filterCCMPoolEvents(events);
+         Map<String, Set<String>> poolMCPs = TraceEventHelper.poolManagedConnectionPools(events);
+         Map<String, List<TraceEvent>> tocConnections = TraceEventHelper.tocConnections(events);
+         Map<String, List<TraceEvent>> tocConnectionListeners = TraceEventHelper.tocConnectionListeners(events);
+         Map<String, List<TraceEvent>> tocMCPs = TraceEventHelper.tocManagedConnectionPools(events);
 
          // Status calculation
          TraceEventStatus ccmStatus = TraceEventHelper.getCCMStatus(filteredCCM);
@@ -1292,7 +1745,7 @@ public class HTMLReport
                }
 
                pool = new FileWriter(f.getAbsolutePath() + "/" + "index.html");
-               generatePoolIndexHTML(poolName, status, pool);
+               generatePoolIndexHTML(poolName, topLevelStatus.get(poolName), poolMCPs.get(poolName), status, pool);
             }
             finally
             {
@@ -1406,6 +1859,77 @@ public class HTMLReport
                   {
                      // Ignore
                   }
+               }
+            }
+         }
+
+         // Reference
+         FileWriter tocC = null;
+         try
+         {
+            String path = root.getAbsolutePath();
+
+            tocC = new FileWriter(path + "/" + "toc-c.html");
+            generateToCConnection(tocConnections, tocC);
+         }
+         finally
+         {
+            if (tocC != null)
+            {
+               try
+               {
+                  tocC.flush();
+                  tocC.close();
+               }
+               catch (Exception e)
+               {
+                  // Ignore
+               }
+            }
+         }
+         FileWriter tocCL = null;
+         try
+         {
+            String path = root.getAbsolutePath();
+
+            tocCL = new FileWriter(path + "/" + "toc-cl.html");
+            generateToCConnectionListener(tocConnectionListeners, tocCL);
+         }
+         finally
+         {
+            if (tocCL != null)
+            {
+               try
+               {
+                  tocCL.flush();
+                  tocCL.close();
+               }
+               catch (Exception e)
+               {
+                  // Ignore
+               }
+            }
+         }
+         FileWriter tocMCP = null;
+         try
+         {
+            String path = root.getAbsolutePath();
+
+            tocMCP = new FileWriter(path + "/" + "toc-mcp.html");
+            generateToCManagedConnectionPool(tocMCPs, tocMCP);
+         }
+         finally
+         {
+            if (tocMCP != null)
+            {
+               try
+               {
+                  tocMCP.flush();
+                  tocMCP.close();
+               }
+               catch (Exception e)
+               {
+                  // Ignore
                }
             }
          }

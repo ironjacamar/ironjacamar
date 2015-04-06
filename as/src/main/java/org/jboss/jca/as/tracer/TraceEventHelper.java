@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * Helper class for TraceEvent
@@ -182,6 +183,127 @@ public class TraceEventHelper
             l.add(te);
 
             result.put(te.getPool(), l);
+         }
+      }
+
+      return result;
+   }
+
+   /**
+    * Pool to Managed Connection Pools mapping
+    * @param data The data
+    * @return The mapping
+    * @exception Exception If an error occurs
+    */
+   public static Map<String, Set<String>> poolManagedConnectionPools(List<TraceEvent> data) throws Exception
+   {
+      Map<String, Set<String>> result = new TreeMap<String, Set<String>>();
+
+      for (TraceEvent te : data)
+      {
+         if (te.getType() == TraceEvent.GET_CONNECTION_LISTENER ||
+             te.getType() == TraceEvent.GET_CONNECTION_LISTENER_NEW ||
+             te.getType() == TraceEvent.GET_INTERLEAVING_CONNECTION_LISTENER_NEW ||
+             te.getType() == TraceEvent.GET_INTERLEAVING_CONNECTION_LISTENER_NEW)
+         {
+            Set<String> s = result.get(te.getPool());
+
+            if (s == null)
+               s = new TreeSet<String>();
+
+            s.add(te.getManagedConnectionPool());
+
+            result.put(te.getPool(), s);
+         }
+      }
+
+      return result;
+   }
+
+   /**
+    * ToC: Connections
+    * @param data The data
+    * @return The events
+    * @exception Exception If an error occurs
+    */
+   public static Map<String, List<TraceEvent>> tocConnections(List<TraceEvent> data) throws Exception
+   {
+      Map<String, List<TraceEvent>> result = new TreeMap<String, List<TraceEvent>>();
+
+      for (TraceEvent te : data)
+      {
+         if (te.getType() == TraceEvent.GET_CONNECTION)
+         {
+            List<TraceEvent> l = result.get(te.getPayload1());
+
+            if (l == null)
+               l = new ArrayList<TraceEvent>();
+
+            l.add(te);
+
+            result.put(te.getPayload1(), l);
+         }
+      }
+
+      return result;
+   }
+
+   /**
+    * ToC: Connection listeners
+    * @param data The data
+    * @return The events
+    * @exception Exception If an error occurs
+    */
+   public static Map<String, List<TraceEvent>> tocConnectionListeners(List<TraceEvent> data) throws Exception
+   {
+      Map<String, List<TraceEvent>> result = new TreeMap<String, List<TraceEvent>>();
+
+      for (TraceEvent te : data)
+      {
+         if (te.getType() == TraceEvent.GET_CONNECTION_LISTENER ||
+             te.getType() == TraceEvent.GET_CONNECTION_LISTENER_NEW ||
+             te.getType() == TraceEvent.GET_INTERLEAVING_CONNECTION_LISTENER_NEW ||
+             te.getType() == TraceEvent.GET_INTERLEAVING_CONNECTION_LISTENER_NEW)
+         {
+            List<TraceEvent> l = result.get(te.getConnectionListener());
+
+            if (l == null)
+               l = new ArrayList<TraceEvent>();
+
+            l.add(te);
+
+            result.put(te.getConnectionListener(), l);
+         }
+      }
+
+      return result;
+   }
+
+   /**
+    * ToC: Managed Connection Pools
+    * @param data The data
+    * @return The events
+    * @exception Exception If an error occurs
+    */
+   public static Map<String, List<TraceEvent>> tocManagedConnectionPools(List<TraceEvent> data) throws Exception
+   {
+      Map<String, List<TraceEvent>> result = new TreeMap<String, List<TraceEvent>>();
+
+      for (TraceEvent te : data)
+      {
+         if (te.getType() == TraceEvent.GET_CONNECTION_LISTENER ||
+             te.getType() == TraceEvent.GET_CONNECTION_LISTENER_NEW ||
+             te.getType() == TraceEvent.GET_INTERLEAVING_CONNECTION_LISTENER_NEW ||
+             te.getType() == TraceEvent.GET_INTERLEAVING_CONNECTION_LISTENER_NEW)
+         {
+            List<TraceEvent> l = result.get(te.getManagedConnectionPool());
+
+            if (l == null)
+               l = new ArrayList<TraceEvent>();
+
+            l.add(te);
+
+            result.put(te.getManagedConnectionPool(), l);
          }
       }
 
