@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
@@ -66,6 +67,9 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
    /** Whether debug is enabled */
    private boolean debug;
+
+   /** revert from LIFO to FILO pool behavior */
+   private boolean filoPoolBehavior;
 
    /** Whether trace is enabled */
    private boolean trace;
@@ -153,6 +157,34 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       this.statistics = new ManagedConnectionPoolStatisticsImpl(maxSize);
       this.statistics.setEnabled(p.getStatistics().isEnabled());
       this.permits = new Semaphore(maxSize, true, statistics);
+      this.filoPoolBehavior = false;
+
+      String value = SecurityActions.getSystemProperty("ironjacamar.filo_pool_behavior");
+
+      if (value != null && !value.trim().equals(""))
+      {
+         try
+         {
+            filoPoolBehavior = Boolean.valueOf(value);
+         }
+         catch (Throwable t)
+         {
+            StringTokenizer st = new StringTokenizer(value,",");
+
+            while (st.hasMoreTokens())
+            {
+               if (st.nextToken().equals(pool.getName()))
+               {
+                  filoPoolBehavior = true;
+               }
+            }
+         }
+      }
+
+      if (!filoPoolBehavior)
+         log.debugf("%s running as FIFO", pool.getName());
+      else
+         log.debugf("%s running as FILO", pool.getName());
 
       // Schedule managed connection pool for prefill
       if ((pc.isPrefill() || pc.isStrictMin()) && p instanceof PrefillPool && pc.getMinSize() > 0)
@@ -298,7 +330,14 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                {
                   if (cls.size() > 0)
                   {
-                     cl = cls.remove(0);
+                     if (filoPoolBehavior)
+                     {
+                        cl = cls.remove((cls.size()) - 1);
+                     }
+                     else
+                     {
+                        cl = cls.remove(0);
+                     }
                      checkedOut.add(cl);
                   }
                }
@@ -780,7 +819,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                            log.trace("Filling pool cl=" + cl);
 
                         cls.add(cl);
-                        
+
                         if (statistics.isEnabled())
                            statistics.setInUsedCount(checkedOut.size() + 1);
                      }
