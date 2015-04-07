@@ -176,10 +176,12 @@ public class Tracer
     * @param poolName The name of the pool
     * @param mcp The managed connection pool
     * @param cl The connection listener
+    * @param tx The transaction
     * @param success Outcome
     * @param interleaving Interleaving flag
     */
    public static synchronized void enlistConnectionListener(String poolName, Object mcp, Object cl,
+                                                            String tx,
                                                             boolean success, boolean interleaving)
    {
       if (!interleaving)
@@ -189,14 +191,16 @@ public class Tracer
             log.tracef("%s", new TraceEvent(poolName,
                                             Integer.toHexString(System.identityHashCode(mcp)),
                                             TraceEvent.ENLIST_CONNECTION_LISTENER,
-                                            Integer.toHexString(System.identityHashCode(cl))));
+                                            Integer.toHexString(System.identityHashCode(cl)),
+                                            tx.replace('-', '_')));
          }
          else
          {
             log.tracef("%s", new TraceEvent(poolName,
                                             Integer.toHexString(System.identityHashCode(mcp)),
                                             TraceEvent.ENLIST_CONNECTION_LISTENER_FAILED,
-                                            Integer.toHexString(System.identityHashCode(cl))));
+                                            Integer.toHexString(System.identityHashCode(cl)),
+                                            tx.replace('-', '_')));
          }
       }
       else
@@ -206,14 +210,16 @@ public class Tracer
             log.tracef("%s", new TraceEvent(poolName,
                                             Integer.toHexString(System.identityHashCode(mcp)),
                                             TraceEvent.ENLIST_INTERLEAVING_CONNECTION_LISTENER,
-                                            Integer.toHexString(System.identityHashCode(cl))));
+                                            Integer.toHexString(System.identityHashCode(cl)),
+                                            tx.replace('-', '_')));
          }
          else
          {
             log.tracef("%s", new TraceEvent(poolName,
                                             Integer.toHexString(System.identityHashCode(mcp)),
                                             TraceEvent.ENLIST_INTERLEAVING_CONNECTION_LISTENER_FAILED,
-                                            Integer.toHexString(System.identityHashCode(cl))));
+                                            Integer.toHexString(System.identityHashCode(cl)),
+                                            tx.replace('-', '_')));
          }
       }
    }
@@ -223,11 +229,12 @@ public class Tracer
     * @param poolName The name of the pool
     * @param mcp The managed connection pool
     * @param cl The connection listener
+    * @param tx The transaction
     * @param success Is successful
     * @param rollbacked Is the transaction rollbacked
     * @param interleaving Interleaving flag
     */
-   public static synchronized void delistConnectionListener(String poolName, Object mcp, Object cl,
+   public static synchronized void delistConnectionListener(String poolName, Object mcp, Object cl, String tx,
                                                             boolean success, boolean rollbacked, boolean interleaving)
    {
       if (!rollbacked)
@@ -239,14 +246,16 @@ public class Tracer
                log.tracef("%s", new TraceEvent(poolName,
                                                Integer.toHexString(System.identityHashCode(mcp)),
                                                TraceEvent.DELIST_CONNECTION_LISTENER,
-                                               Integer.toHexString(System.identityHashCode(cl))));
+                                               Integer.toHexString(System.identityHashCode(cl)),
+                                               tx.replace('-', '_')));
             }
             else
             {
                log.tracef("%s", new TraceEvent(poolName,
                                                Integer.toHexString(System.identityHashCode(mcp)),
                                                TraceEvent.DELIST_CONNECTION_LISTENER_FAILED,
-                                               Integer.toHexString(System.identityHashCode(cl))));
+                                               Integer.toHexString(System.identityHashCode(cl)),
+                                               tx.replace('-', '_')));
             }
          }
          else
@@ -256,14 +265,16 @@ public class Tracer
                log.tracef("%s", new TraceEvent(poolName,
                                                Integer.toHexString(System.identityHashCode(mcp)),
                                                TraceEvent.DELIST_INTERLEAVING_CONNECTION_LISTENER,
-                                               Integer.toHexString(System.identityHashCode(cl))));
+                                               Integer.toHexString(System.identityHashCode(cl)),
+                                               tx.replace('-', '_')));
             }
             else
             {
                log.tracef("%s", new TraceEvent(poolName,
                                                Integer.toHexString(System.identityHashCode(mcp)),
                                                TraceEvent.DELIST_INTERLEAVING_CONNECTION_LISTENER_FAILED,
-                                               Integer.toHexString(System.identityHashCode(cl))));
+                                               Integer.toHexString(System.identityHashCode(cl)),
+                                               tx.replace('-', '_')));
             }
          }
       }
@@ -272,7 +283,8 @@ public class Tracer
          log.tracef("%s", new TraceEvent(poolName,
                                          Integer.toHexString(System.identityHashCode(mcp)),
                                          TraceEvent.DELIST_ROLLEDBACK_CONNECTION_LISTENER,
-                                         Integer.toHexString(System.identityHashCode(cl))));
+                                         Integer.toHexString(System.identityHashCode(cl)),
+                                         tx.replace('-', '_')));
       }
    }
 
