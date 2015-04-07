@@ -99,21 +99,12 @@ public class TxConnectionListener extends AbstractConnectionListener
       {
          try
          {
-            int equal = value.indexOf("=");
-            if (equal != -1)
-            {
-               String setting = value.substring(equal + 1);
-               disableFailedtoEnlist = Boolean.valueOf(setting);
-            }
-            else
-            {
-               // Assume enable
-               disableFailedtoEnlist = true;
-            }
+            disableFailedtoEnlist = Boolean.valueOf(value);
          }
          catch (Throwable t)
          {
-            throw new RuntimeException("Unable to parse ironjacamar.disable_enlistment_trace: " + value);
+            // Assume enable
+            disableFailedtoEnlist = true;
          }
       }
    }
