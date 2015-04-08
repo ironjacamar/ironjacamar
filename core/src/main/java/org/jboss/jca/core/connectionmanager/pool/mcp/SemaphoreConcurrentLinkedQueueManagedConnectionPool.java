@@ -395,7 +395,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
             }
             catch (Throwable t)
             {
-               log.throwableWhileAttemptingGetNewGonnection(clw.getConnectionListener(), t);
+               log.throwableWhileAttemptingGetNewGonnection(clw != null ? clw.getConnectionListener() : null, t);
 
                // Return permit and rethrow
                if (clw != null)
