@@ -32,6 +32,7 @@ import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.pool.api.Capacity;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.capacity.DefaultCapacity;
+import org.jboss.jca.core.connectionmanager.pool.capacity.TimedOutDecrementer;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactory;
 import org.jboss.jca.core.connectionmanager.transaction.LockKey;
@@ -180,6 +181,18 @@ public abstract class AbstractPool implements Pool
    public void setCapacity(Capacity c)
    {
       capacity = c;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isFIFO()
+   {
+      if (capacity == null || capacity.getDecrementer() == null ||
+          TimedOutDecrementer.class.getName().equals(capacity.getDecrementer().getClass().getName()))
+         return false;
+      
+      return true;
    }
 
    /**

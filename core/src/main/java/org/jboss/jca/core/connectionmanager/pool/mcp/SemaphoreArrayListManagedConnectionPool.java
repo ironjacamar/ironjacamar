@@ -96,6 +96,9 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    /** The pool */
    private Pool pool;
 
+   /** FIFO / FILO */
+   private boolean fifo;
+   
    /**
     * Copy of the maximum size from the pooling parameters.
     * Dynamic changes to this value are not compatible with
@@ -160,6 +163,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       this.poolConfiguration = pc;
       this.maxSize = pc.getMaxSize();
       this.pool = p;
+      this.fifo = p.isFIFO();
       this.log = pool.getLogger();
       this.debug = log.isDebugEnabled();
       this.trace = log.isTraceEnabled();
@@ -360,7 +364,14 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                {
                   if (cls.size() > 0)
                   {
-                     cl = cls.remove(0);
+                     if (fifo)
+                     {
+                        cl = cls.remove(0);
+                     }
+                     else
+                     {
+                        cl = cls.remove(cls.size() - 1);
+                     }
                      checkedOut.add(cl);
                   }
                }
