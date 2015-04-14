@@ -2395,6 +2395,12 @@ copy postgres-xa-ds.xml ironjacamar-1.2.0.Final\deploy
           out when the idle timeout is scheduled.
         </para>
 
+        <note>
+          IronJacamar will by default make use of First In First Out (FIFO) and First In Last Out (FILO) pooling
+          policies based on the decrementer policy selected. Note, that not all pool implementations will support
+          these pooling policies.
+        </note>
+        
         <section id="deploying_capacity_increment">
           <title>Increment policies</title>
 
@@ -2513,6 +2519,10 @@ copy postgres-xa-ds.xml ironjacamar-1.2.0.Final\deploy
             <para>
               This policy is useful when you want to limit the number of connections after each idle timeout request.
             </para>
+
+            <para>
+              The pool will operate in a First In First Out (FIFO) manner.
+            </para>
           </section>
 
           <section id="deploying_capacity_decrement_size">
@@ -2538,7 +2548,7 @@ copy postgres-xa-ds.xml ironjacamar-1.2.0.Final\deploy
                   <row>
                     <entry><code>Size</code></entry>
                     <entry>
-                      The number of connections that should be created
+                      The number of connections that should be destroyed
                     </entry>
                   </row>
                 </tbody>
@@ -2548,6 +2558,10 @@ copy postgres-xa-ds.xml ironjacamar-1.2.0.Final\deploy
             <para>
               This policy is useful when you want to decrement an additional number of connections per
               idle timeout request in anticipation that the pool usage will lower over time.
+            </para>
+
+            <para>
+              The pool will operate in a First In First Out (FIFO) manner.
             </para>
           </section>
 
@@ -2561,6 +2575,23 @@ copy postgres-xa-ds.xml ironjacamar-1.2.0.Final\deploy
 
             <para>
               This policy is the default decrement policy.
+            </para>
+
+            <para>
+              The pool will operate in a First In Last Out (FILO) manner.
+            </para>
+          </section>
+
+          <section id="deploying_capacity_decrement_timedout_fifo">
+            <title>TimedOut/FIFO policy</title>
+            
+            <para>
+              The <code>org.jboss.jca.core.connectionmanager.pool.capacity.TimedOutFIFODecrementer</code> policy
+              will removed all connections that have timed out from the pool for each idle timeout request.
+            </para>
+
+            <para>
+              The pool will operate in a First In First Out (FIFO) manner.
             </para>
           </section>
 
@@ -2597,6 +2628,10 @@ copy postgres-xa-ds.xml ironjacamar-1.2.0.Final\deploy
             <para>
               This policy is useful when you want to keep a specified number of connections in the pool
               at all time.
+            </para>
+
+            <para>
+              The pool will operate in a First In First Out (FIFO) manner.
             </para>
           </section>
 

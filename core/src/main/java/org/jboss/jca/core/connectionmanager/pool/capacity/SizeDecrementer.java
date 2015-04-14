@@ -60,4 +60,12 @@ public class SizeDecrementer implements CapacityDecrementer
    {
       return size > destroyed;
    }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String toString()
+   {
+      return getClass().getName() + "(" + size + ")";
+   }
 }

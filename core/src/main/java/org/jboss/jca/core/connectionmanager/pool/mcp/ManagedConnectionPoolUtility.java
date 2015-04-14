@@ -66,7 +66,7 @@ class ManagedConnectionPoolUtility
 
    /**
     * Get the full details of a managed connection pool state
-    * @param identifier The managed connection pool identifier
+    * @param mcp The managed connection pool
     * @param method The method identifier
     * @param mcf The managed connection factory
     * @param cm The connection manager
@@ -77,7 +77,7 @@ class ManagedConnectionPoolUtility
     * @param ps The statistics
     * @return The state
     */
-   static String fullDetails(int identifier, String method, ManagedConnectionFactory mcf,
+   static String fullDetails(ManagedConnectionPool mcp, String method, ManagedConnectionFactory mcf,
                              ConnectionManager cm, Pool pool, PoolConfiguration pc,
                              Collection<ConnectionListener> available, Collection<ConnectionListener> inUse,
                              PoolStatisticsImpl ps)
@@ -86,8 +86,10 @@ class ManagedConnectionPoolUtility
       long now = System.currentTimeMillis();
 
       sb.append(method).append(newLine);
-      sb.append("ManagedConnectionPool: ").append(Integer.toHexString(identifier)).append(newLine);
       sb.append("Method: ").append(method).append(newLine);
+      sb.append("ManagedConnectionPool:").append(newLine);
+      sb.append("  Class: ").append(mcp.getClass().getName()).append(newLine);
+      sb.append("  Object: ").append(Integer.toHexString(System.identityHashCode(mcp))).append(newLine);
       sb.append("ManagedConnectionFactory:").append(newLine);
       sb.append("  Class: ").append(mcf.getClass().getName()).append(newLine);
       sb.append("  Object: ").append(Integer.toHexString(System.identityHashCode(mcf))).append(newLine);
@@ -98,6 +100,7 @@ class ManagedConnectionPoolUtility
       sb.append("  Name: ").append(pool.getName()).append(newLine);
       sb.append("  Class: ").append(pool.getClass().getName()).append(newLine);
       sb.append("  Object: ").append(Integer.toHexString(System.identityHashCode(pool))).append(newLine);
+      sb.append("  FIFO: ").append(pool.isFIFO()).append(newLine);
       sb.append("PoolConfiguration:").append(newLine);
       sb.append("  MinSize: ").append(pc.getMinSize()).append(newLine);
       sb.append("  InitialSize: ").append(pc.getInitialSize()).append(newLine);
@@ -109,7 +112,15 @@ class ManagedConnectionPoolUtility
       sb.append("  BackgroundValidationMillis: ").append(pc.getBackgroundValidationMillis()).append(newLine);
       sb.append("  StrictMin: ").append(pc.isStrictMin()).append(newLine);
       sb.append("  UseFastFail: ").append(pc.isUseFastFail()).append(newLine);
+      if (pool.getCapacity() != null)
+      {
+         if (pool.getCapacity().getIncrementer() != null)
+            sb.append("  Incrementer: ").append(pool.getCapacity().getIncrementer()).append(newLine);
 
+         if (pool.getCapacity().getDecrementer() != null)
+            sb.append("  Decrementer: ").append(pool.getCapacity().getDecrementer()).append(newLine);
+      }
+      
       int availableSize = (available != null ? available.size() : 0);
       sb.append("Available (").append(availableSize).append("):").append(newLine);
       if (available != null)

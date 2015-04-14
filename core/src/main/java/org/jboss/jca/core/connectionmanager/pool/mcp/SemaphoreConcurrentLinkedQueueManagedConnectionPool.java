@@ -34,6 +34,7 @@ import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PrefillPool;
 import org.jboss.jca.core.connectionmanager.pool.capacity.DefaultCapacity;
 import org.jboss.jca.core.connectionmanager.pool.capacity.TimedOutDecrementer;
+import org.jboss.jca.core.connectionmanager.pool.capacity.TimedOutFIFODecrementer;
 import org.jboss.jca.core.connectionmanager.pool.idle.IdleRemover;
 import org.jboss.jca.core.connectionmanager.pool.validator.ConnectionValidator;
 import org.jboss.jca.core.tracer.Tracer;
@@ -278,7 +279,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                else
                   available.add(entry.getKey());
             }
-            log.trace(ManagedConnectionPoolUtility.fullDetails(System.identityHashCode(this), method, mcf, cm, pool,
+            log.trace(ManagedConnectionPoolUtility.fullDetails(this, method, mcf, cm, pool,
                                                                poolConfiguration, available, checkedOut,
                                                                pool.getInternalStatistics()));
          }
@@ -611,7 +612,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                   available.add(entry.getKey());
             }
             log.trace(ManagedConnectionPoolUtility.fullDetails(
-                  System.identityHashCode(this), method, mcf, cm, pool,
+                  this, method, mcf, cm, pool,
                   poolConfiguration, available, checkedOut, pool.getInternalStatistics()));
          }
       } 
@@ -885,9 +886,10 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
       if (decrementer == null)
          decrementer = DefaultCapacity.DEFAULT_DECREMENTER;
 
-      if (TimedOutDecrementer.class.getName().equals(decrementer.getClass().getName()))
+      if (TimedOutDecrementer.class.getName().equals(decrementer.getClass().getName()) ||
+          TimedOutFIFODecrementer.class.getName().equals(decrementer.getClass().getName()))
       {
-         // Allow TimedOutDecrementer through each minute
+         // Allow through each minute
          if (now < (lastIdleCheck + 60000L))
             return;
       }
@@ -921,7 +923,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                   available.add(entry.getKey());
             }
             log.trace(ManagedConnectionPoolUtility.fullDetails(
-                  System.identityHashCode(this), method, mcf, cm, pool,
+                  this, method, mcf, cm, pool,
                   poolConfiguration, available, checkedOut, pool.getInternalStatistics()));
          }
       } 
@@ -1085,7 +1087,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                   available.add(entry.getKey());
             }
             log.trace(ManagedConnectionPoolUtility.fullDetails(
-                  System.identityHashCode(this), method, mcf, cm, pool,
+                  this, method, mcf, cm, pool,
                   poolConfiguration, available, checkedOut, pool.getInternalStatistics()));
          }
       } 

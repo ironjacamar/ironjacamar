@@ -34,6 +34,7 @@ import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PrefillPool;
 import org.jboss.jca.core.connectionmanager.pool.capacity.DefaultCapacity;
 import org.jboss.jca.core.connectionmanager.pool.capacity.TimedOutDecrementer;
+import org.jboss.jca.core.connectionmanager.pool.capacity.TimedOutFIFODecrementer;
 import org.jboss.jca.core.connectionmanager.pool.idle.IdleRemover;
 import org.jboss.jca.core.connectionmanager.pool.validator.ConnectionValidator;
 import org.jboss.jca.core.tracer.Tracer;
@@ -64,7 +65,6 @@ import org.jboss.logging.Messages;
  * @author <a href="mailto:abrock@redhat.com">Adrian Brock</a>
  * @author <a href="mailto:wprice@redhat.com">Weston Price</a>
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
- * @version $Revision: 107890 $
  */
 public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectionPool
 {
@@ -98,6 +98,9 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    /** The pool */
    private Pool pool;
 
+   /** FIFO / FILO */
+   private boolean fifo;
+   
    /**
     * Copy of the maximum size from the pooling parameters.
     * Dynamic changes to this value are not compatible with
@@ -156,6 +159,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       this.poolConfiguration = pc;
       this.maxSize = pc.getMaxSize();
       this.pool = p;
+      this.fifo = p.isFIFO();
       this.log = pool.getLogger();
       this.debug = log.isDebugEnabled();
       this.trace = log.isTraceEnabled();
@@ -271,7 +275,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          synchronized (cls)
          {
             String method = "getConnection(" + subject + ", " + cri + ")";
-            log.trace(ManagedConnectionPoolUtility.fullDetails(System.identityHashCode(this), method,
+            log.trace(ManagedConnectionPoolUtility.fullDetails(this, method,
                                                                mcf, cm, pool, poolConfiguration,
                                                                cls, checkedOut, pool.getInternalStatistics()));
          }
@@ -336,7 +340,14 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                {
                   if (cls.size() > 0)
                   {
-                     cl = cls.remove(0);
+                     if (fifo)
+                     {
+                        cl = cls.remove(0);
+                     }
+                     else
+                     {
+                        cl = cls.remove(cls.size() - 1);
+                     }
                      checkedOut.add(cl);
                   }
                }
@@ -632,7 +643,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          synchronized (cls)
          {
             String method = "returnConnection(" + Integer.toHexString(System.identityHashCode(cl)) + ", " + kill + ")";
-            log.trace(ManagedConnectionPoolUtility.fullDetails(System.identityHashCode(this), method,
+            log.trace(ManagedConnectionPoolUtility.fullDetails(this, method,
                                                                mcf, cm, pool, poolConfiguration,
                                                                cls, checkedOut, pool.getInternalStatistics()));
          }
@@ -879,9 +890,10 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       if (decrementer == null)
          decrementer = DefaultCapacity.DEFAULT_DECREMENTER;
 
-      if (TimedOutDecrementer.class.getName().equals(decrementer.getClass().getName()))
+      if (TimedOutDecrementer.class.getName().equals(decrementer.getClass().getName()) ||
+          TimedOutFIFODecrementer.class.getName().equals(decrementer.getClass().getName()))
       {
-         // Allow TimedOutDecrementer through each minute
+         // Allow through each minute
          if (now < (lastIdleCheck + 60000L))
             return;
       }
@@ -905,7 +917,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          synchronized (cls)
          {
             String method = "removeIdleConnections(" + timeout + ")";
-            log.trace(ManagedConnectionPoolUtility.fullDetails(System.identityHashCode(this), method,
+            log.trace(ManagedConnectionPoolUtility.fullDetails(this, method,
                                                                mcf, cm, pool, poolConfiguration,
                                                                cls, checkedOut, pool.getInternalStatistics()));
          }
@@ -921,11 +933,11 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       {
          synchronized (cls)
          {
-            // Nothing left to destroy
+            // No free connection listeners
             if (cls.size() == 0)
                break;
 
-            // Check the first in the list
+            // We always check the first connection listener, since it is the oldest
             ConnectionListener cl = cls.get(0);
 
             destroy = decrementer.shouldDestroy(cl, timeout,
@@ -1047,7 +1059,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          synchronized (cls)
          {
             String method = "fillTo(" + size + ")";
-            log.trace(ManagedConnectionPoolUtility.fullDetails(System.identityHashCode(this), method,
+            log.trace(ManagedConnectionPoolUtility.fullDetails(this, method,
                                                                mcf, cm, pool, poolConfiguration,
                                                                cls, checkedOut, pool.getInternalStatistics()));
          }
@@ -1296,7 +1308,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          synchronized (cls)
          {
             String method = "validateConnections()";
-            log.trace(ManagedConnectionPoolUtility.fullDetails(System.identityHashCode(this), method,
+            log.trace(ManagedConnectionPoolUtility.fullDetails(this, method,
                                                                mcf, cm, pool, poolConfiguration,
                                                                cls, checkedOut, pool.getInternalStatistics()));
          }

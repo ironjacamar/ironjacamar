@@ -61,4 +61,12 @@ public class WatermarkIncrementer implements CapacityIncrementer
 
       return watermark > currentSize;
    }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String toString()
+   {
+      return getClass().getName() + "(" + watermark + ")";
+   }
 }

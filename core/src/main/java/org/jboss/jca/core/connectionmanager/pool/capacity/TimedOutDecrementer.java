@@ -45,4 +45,12 @@ public class TimedOutDecrementer implements CapacityDecrementer
    {
       return cl.isTimedOut(timeout);
    }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String toString()
+   {
+      return getClass().getName();
+   }
 }

@@ -62,4 +62,12 @@ public class WatermarkDecrementer implements CapacityDecrementer
 
       return watermark < currentSize;
    }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String toString()
+   {
+      return getClass().getName() + "(" + watermark + ")";
+   }
 }

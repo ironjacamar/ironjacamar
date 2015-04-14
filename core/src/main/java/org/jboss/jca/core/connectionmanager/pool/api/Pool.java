@@ -82,6 +82,12 @@ public interface Pool extends org.jboss.jca.core.api.connectionmanager.pool.Pool
    public Capacity getCapacity();
 
    /**
+    * Is the pool a FIFO or FILO pool
+    * @return True if FIFO
+    */
+   public boolean isFIFO();
+
+   /**
     * Set the capacity policy
     * @param c The value
     */

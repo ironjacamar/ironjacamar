@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2013, Red Hat Inc, and individual contributors
+ * Copyright 2015, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -21,50 +21,17 @@
  */
 package org.jboss.jca.core.connectionmanager.pool.capacity;
 
-import org.jboss.jca.core.connectionmanager.pool.api.CapacityIncrementer;
-
 /**
- * Increment until the defined number of connection has been created.
+ * Decrement all timed out connection listeners (FIFO marker)
  *
- * Default value is 1
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class SizeIncrementer implements CapacityIncrementer
+public class TimedOutFIFODecrementer extends TimedOutDecrementer
 {
-   /** Size */
-   private int size;
-
    /**
     * Constructor
     */
-   public SizeIncrementer()
+   public TimedOutFIFODecrementer()
    {
-      this.size = 1;
-   }
-
-   /**
-    * Set the size
-    * @param v The value
-    */
-   public void setSize(int v)
-   {
-      if (v > 0)
-         size = v;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public boolean shouldCreate(int currentSize, int maxSize, int created)
-   {
-      return size > created;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public String toString()
-   {
-      return getClass().getName() + "(" + size + ")";
    }
 }

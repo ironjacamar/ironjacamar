@@ -44,4 +44,12 @@ public class MaxPoolSizeIncrementer implements CapacityIncrementer
    {
       return currentSize < maxSize;
    }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String toString()
+   {
+      return getClass().getName();
+   }
 }

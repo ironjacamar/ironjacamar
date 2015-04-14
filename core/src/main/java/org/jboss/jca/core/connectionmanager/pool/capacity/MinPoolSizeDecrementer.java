@@ -45,4 +45,12 @@ public class MinPoolSizeDecrementer implements CapacityDecrementer
    {
       return currentSize > minPoolSize;
    }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String toString()
+   {
+      return getClass().getName();
+   }
 }

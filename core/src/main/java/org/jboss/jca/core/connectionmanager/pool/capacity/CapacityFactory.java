@@ -135,10 +135,30 @@ public class CapacityFactory
          {
             // Explicit allow TimedOutDecrementer, MinPoolSizeDecrementer and SizeDecrementer for CRI based pools
             if (TimedOutDecrementer.class.getName().equals(metadata.getDecrementer().getClassName()) ||
+                TimedOutFIFODecrementer.class.getName().equals(metadata.getDecrementer().getClassName()) ||
                 MinPoolSizeDecrementer.class.getName().equals(metadata.getDecrementer().getClassName()) ||
                 SizeDecrementer.class.getName().equals(metadata.getDecrementer().getClassName()))
             {
                decrementer = loadDecrementer(metadata.getDecrementer().getClassName());
+
+               if (metadata.getDecrementer().getConfigPropertiesMap().size() > 0)
+               {
+                  Injection injector = new Injection();
+
+                  Map<String, String> properties = metadata.getDecrementer().getConfigPropertiesMap();
+                  for (Map.Entry<String, String> property : properties.entrySet())
+                  {
+                     try
+                     {
+                        injector.inject(decrementer, property.getKey(), property.getValue());
+                     }
+                     catch (Throwable t)
+                     {
+                        log.invalidCapacityOption(property.getKey(),
+                                                  property.getValue(), decrementer.getClass().getName());
+                     }
+                  }
+               }
             }
             else
             {
