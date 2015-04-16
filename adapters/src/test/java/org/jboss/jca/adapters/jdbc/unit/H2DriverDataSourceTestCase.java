@@ -100,5 +100,6 @@ public class H2DriverDataSourceTestCase
       assertNotNull(ds);
       Connection c = ds.getConnection();
       assertNotNull(c);
+      c.close();
    }
 }

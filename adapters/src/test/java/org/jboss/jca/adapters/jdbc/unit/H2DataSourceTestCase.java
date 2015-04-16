@@ -100,5 +100,6 @@ public class H2DataSourceTestCase
       assertNotNull(ds);
       Connection c = ds.getConnection();
       assertNotNull(c);
+      c.close();
    }
 }
