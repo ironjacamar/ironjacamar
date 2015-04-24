@@ -6,7 +6,7 @@
               use-ccm="${use-ccm:false}" connectable="${connectable:true}"
               tracking="${tracking:false}">
     <connection-url>${connection-type:jdbc}:h2:mem:test;DB_CLOSE_DELAY=${DBCloseDelay:-1}</connection-url>
-    <driver-class>${driver-class1:org}.${driver-class2:hsqldb}.${driver-class2:jdbcDriver}</driver-class>
+    <driver-class>${driver-class1:org}.${driver-class2:hsqldb}.${driver-class3:jdbcDriver}</driver-class>
     <datasource-class>${datasource-class:org.pg.JdbcDataSource}</datasource-class>
     <driver>${driver:h2}</driver>
     <connection-property name="name1">${Property1:Property1}</connection-property>
