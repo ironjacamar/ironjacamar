@@ -19,20 +19,37 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.api.connectionmanager;
+package org.ironjacamar.embedded;
 
-import org.ironjacamar.core.api.connectionmanager.listener.ConnectionListener;
+import com.github.fungal.api.Kernel;
+import com.github.fungal.api.events.Event;
+import com.github.fungal.api.events.EventListener;
 
 /**
- * A connection manager
- * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ * An event listener for the PRE_CLASSLOADER event
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface ConnectionManager extends javax.resource.spi.ConnectionManager
+class PreClassLoaderEventListener implements EventListener
 {
    /**
-    * Kill given connection listener wrapped connection instance.
-    * @param cl connection listener that wraps connection
-    * @param kill kill connection or not
+    * Default constructor
     */
-   public void returnManagedConnection(ConnectionListener cl, boolean kill);
+   PreClassLoaderEventListener()
+   {
+   }
+
+   /**
+    * Event
+    * @param kernel The kernel
+    * @param event The event
+    */
+   public void event(Kernel kernel, Event event)
+   {
+      if (event == Event.PRE_CLASSLOADER)
+      {
+         SecurityActions.setSystemProperty("xb.builder.useUnorderedSequence", "true");
+         SecurityActions.setSystemProperty("java.util.logging.manager", "org.jboss.logmanager.LogManager");
+         SecurityActions.setSystemProperty("log4j.defaultInitOverride", "true");
+      }
+   }
 }

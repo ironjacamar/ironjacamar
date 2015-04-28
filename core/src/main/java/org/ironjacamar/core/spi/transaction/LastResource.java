@@ -19,20 +19,17 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.api.connectionmanager;
-
-import org.ironjacamar.core.api.connectionmanager.listener.ConnectionListener;
+package org.ironjacamar.core.spi.transaction;
 
 /**
- * A connection manager
- * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ * A tagging interface to identify an XAResource that does
+ * not support prepare and should be used in the last resource
+ * gambit. i.e. It is committed after the resources are
+ * prepared. If it fails to commit, roll everybody back.
+ * 
+ * @author <a href="mailto:abrock@redhat.com">Adrian Brock</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface ConnectionManager extends javax.resource.spi.ConnectionManager
+public interface LastResource
 {
-   /**
-    * Kill given connection listener wrapped connection instance.
-    * @param cl connection listener that wraps connection
-    * @param kill kill connection or not
-    */
-   public void returnManagedConnection(ConnectionListener cl, boolean kill);
 }

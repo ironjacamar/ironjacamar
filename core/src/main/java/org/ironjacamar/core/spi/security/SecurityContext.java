@@ -19,20 +19,32 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.api.connectionmanager;
+package org.ironjacamar.core.spi.security;
 
-import org.ironjacamar.core.api.connectionmanager.listener.ConnectionListener;
+import javax.security.auth.Subject;
 
 /**
- * A connection manager
- * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ * SecurityContext
+ * 
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface ConnectionManager extends javax.resource.spi.ConnectionManager
+public interface SecurityContext
 {
    /**
-    * Kill given connection listener wrapped connection instance.
-    * @param cl connection listener that wraps connection
-    * @param kill kill connection or not
+    * Get the authenticated subject
+    * @return The Subject, or <code>null</code> if unauthenticated
     */
-   public void returnManagedConnection(ConnectionListener cl, boolean kill);
+   public Subject getAuthenticatedSubject();
+
+   /**
+    * Set the authenticated subject
+    * @param subject The Subject
+    */
+   public void setAuthenticatedSubject(Subject subject);
+
+   /**
+    * Get the associated role names
+    * @return The role names, or <code>null</code> if none
+    */
+   public String[] getRoles();
 }

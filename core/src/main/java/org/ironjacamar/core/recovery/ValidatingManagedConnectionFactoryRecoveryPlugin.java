@@ -19,20 +19,41 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.api.connectionmanager;
+package org.ironjacamar.core.recovery;
 
-import org.ironjacamar.core.api.connectionmanager.listener.ConnectionListener;
+import org.ironjacamar.core.spi.recovery.RecoveryPlugin;
+
+import javax.resource.ResourceException;
 
 /**
- * A connection manager
+ * Marker recovery plugin to let the recovery subsystem know that the ValidatingManagedConnectionFactory
+ * interface should be used for verifying the managed connection
+ *
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface ConnectionManager extends javax.resource.spi.ConnectionManager
+public class ValidatingManagedConnectionFactoryRecoveryPlugin implements RecoveryPlugin
 {
    /**
-    * Kill given connection listener wrapped connection instance.
-    * @param cl connection listener that wraps connection
-    * @param kill kill connection or not
+    * Constructor
     */
-   public void returnManagedConnection(ConnectionListener cl, boolean kill);
+   public ValidatingManagedConnectionFactoryRecoveryPlugin()
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public boolean isValid(Object c) throws ResourceException
+   {
+      return false;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void close(Object c) throws ResourceException
+   {
+   }
 }

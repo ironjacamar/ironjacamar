@@ -18,21 +18,41 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.ironjacamar.embedded.junit4;
 
-package org.ironjacamar.core.api.connectionmanager;
-
-import org.ironjacamar.core.api.connectionmanager.listener.ConnectionListener;
+import java.lang.reflect.AccessibleObject;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 /**
- * A connection manager
- * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ * Privileged Blocks
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface ConnectionManager extends javax.resource.spi.ConnectionManager
+class SecurityActions
 {
    /**
-    * Kill given connection listener wrapped connection instance.
-    * @param cl connection listener that wraps connection
-    * @param kill kill connection or not
+    * Constructor
     */
-   public void returnManagedConnection(ConnectionListener cl, boolean kill);
+   private SecurityActions()
+   {
+   }
+
+   /**
+    * Set accessible
+    * @param ao The object
+    */
+   static void setAccessible(final AccessibleObject ao)
+   {
+      if (System.getSecurityManager() == null)
+         ao.setAccessible(true);
+
+      AccessController.doPrivileged(new PrivilegedAction<Object>()
+      {
+         public Object run()
+         {
+            ao.setAccessible(true);
+            return null;
+         }
+      });
+   }
 }

@@ -1,0 +1,11 @@
+<deployment>
+
+  <bean name="MetadataRepository"
+        interface="org.ironjacamar.core.api.metadatarepository.MetadataRepository"
+        class="org.ironjacamar.core.metadatarepository.MetadataRepositoryImpl"/>
+
+  <bean name="DeploymentRepository"
+        interface="org.ironjacamar.core.api.deploymentrepository.DeploymentRepository"
+        class="org.ironjacamar.core.deploymentrepository.DeploymentRepositoryImpl"/>
+
+</deployment>

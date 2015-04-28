@@ -19,20 +19,40 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.api.connectionmanager;
+package org.ironjacamar.core.spi.transaction.local;
 
-import org.ironjacamar.core.api.connectionmanager.listener.ConnectionListener;
+import javax.transaction.xa.XAException;
 
 /**
- * A connection manager
- * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ * LocalXAException
+ *
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface ConnectionManager extends javax.resource.spi.ConnectionManager
+public class LocalXAException extends XAException
 {
+   /** Serial version UID */
+   private static final long serialVersionUID = 1299192262106064112L;
+   
    /**
-    * Kill given connection listener wrapped connection instance.
-    * @param cl connection listener that wraps connection
-    * @param kill kill connection or not
-    */
-   public void returnManagedConnection(ConnectionListener cl, boolean kill);
+    * Creates a new instance.
+    * @param message message
+    * @param errorcode error code
+    */   
+   public LocalXAException(String message, int errorcode)
+   {
+      this(message, errorcode, null);
+   }
+
+   /**
+    * Creates a new instance.
+    * @param message message
+    * @param t cause
+    * @param errorcode error code
+    */   
+   public LocalXAException(String message, int errorcode, Throwable t)
+   {
+      super(message);
+      this.errorCode = errorcode;
+      initCause(t);
+   }
 }

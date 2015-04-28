@@ -19,20 +19,25 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.api.connectionmanager;
+package org.ironjacamar.embedded;
 
-import org.ironjacamar.core.api.connectionmanager.listener.ConnectionListener;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
+
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * A connection manager
- * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ * The <code>Deployment</code> annotation identifies a
+ * method as a deployment
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface ConnectionManager extends javax.resource.spi.ConnectionManager
+@Documented
+@Retention(RUNTIME)
+@Target(ElementType.METHOD)
+public @interface Deployment
 {
-   /**
-    * Kill given connection listener wrapped connection instance.
-    * @param cl connection listener that wraps connection
-    * @param kill kill connection or not
-    */
-   public void returnManagedConnection(ConnectionListener cl, boolean kill);
+  /** The order of the deployment, must be greater than zero */
+   public int order();
 }

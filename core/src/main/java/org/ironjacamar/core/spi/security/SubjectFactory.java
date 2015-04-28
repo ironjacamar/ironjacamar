@@ -19,20 +19,27 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.api.connectionmanager;
+package org.ironjacamar.core.spi.security;
 
-import org.ironjacamar.core.api.connectionmanager.listener.ConnectionListener;
+import javax.security.auth.Subject;
 
 /**
- * A connection manager
- * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ * Subject factory
+ * 
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface ConnectionManager extends javax.resource.spi.ConnectionManager
+public interface SubjectFactory
 {
    /**
-    * Kill given connection listener wrapped connection instance.
-    * @param cl connection listener that wraps connection
-    * @param kill kill connection or not
+    * Create a Subject instance based on the default policy of the implementation
+    * @return The Subject
     */
-   public void returnManagedConnection(ConnectionListener cl, boolean kill);
+   public Subject createSubject();
+
+   /**
+    * Create a Subject instance
+    * @param sd The security domain
+    * @return The Subject
+    */
+   public Subject createSubject(String sd);
 }

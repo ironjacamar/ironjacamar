@@ -19,20 +19,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.api.connectionmanager;
-
-import org.ironjacamar.core.api.connectionmanager.listener.ConnectionListener;
-
 /**
- * A connection manager
- * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ * This package contains the transaction SPI that defines extensions to JTA 1.1
  */
-public interface ConnectionManager extends javax.resource.spi.ConnectionManager
-{
-   /**
-    * Kill given connection listener wrapped connection instance.
-    * @param cl connection listener that wraps connection
-    * @param kill kill connection or not
-    */
-   public void returnManagedConnection(ConnectionListener cl, boolean kill);
-}
+package org.ironjacamar.core.spi.transaction;

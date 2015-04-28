@@ -1,0 +1,64 @@
+<deployment>
+
+  <!-- Transaction registry -->
+  <bean name="TxRegistry"
+        class="org.ironjacamar.core.tx.noopts.TxRegistry">
+  </bean>
+
+  <!-- XATerminator -->
+  <bean name="XATerminator"
+        interface="org.ironjacamar.core.spi.transaction.xa.XATerminator" 
+        class="org.ironjacamar.core.tx.noopts.XATerminatorImpl">
+  </bean>
+
+  <!-- Transaction manager -->
+  <bean name="TransactionManager"
+        interface="javax.transaction.TransactionManager" 
+        class="org.ironjacamar.core.tx.noopts.TransactionManagerImpl">
+    <property name="Registry"><inject bean="TxRegistry"/></property>
+    <depends>NamingServer</depends>
+  </bean>
+
+  <!-- TransactionSynchronizationRegistry -->
+  <bean name="TransactionSynchronizationRegistry"
+        interface="javax.transaction.TransactionSynchronizationRegistry" 
+        class="org.ironjacamar.core.tx.noopts.TransactionSynchronizationRegistryImpl">
+    <property name="Registry"><inject bean="TxRegistry"/></property>
+    <depends>NamingServer</depends>
+  </bean>
+
+  <!-- UserTransaction -->
+  <bean name="UserTransaction"
+        interface="javax.transaction.UserTransaction" 
+        class="org.ironjacamar.core.tx.noopts.UserTransactionImpl">
+    <property name="Registry"><inject bean="TxRegistry"/></property>
+    <depends>NamingServer</depends>
+  </bean>
+
+  <!-- UserTransactionRegistry -->
+  <bean name="UserTransactionRegistry"
+        interface="org.ironjacamar.core.spi.transaction.usertx.UserTransactionRegistry" 
+        class="org.ironjacamar.core.tx.noopts.UserTransactionRegistryImpl">
+    <!-- Register providers -->
+    <incallback method="addProvider"/>
+    <uncallback method="removeProvider"/>
+
+    <!-- Register listeners -->
+    <incallback method="addListener"/>
+    <uncallback method="removeListener"/>
+  </bean>
+
+  <!-- Transaction integration -->
+  <bean name="TransactionIntegration"
+        interface="org.ironjacamar.core.spi.transaction.TransactionIntegration"
+        class="org.ironjacamar.core.tx.noopts.TransactionIntegrationImpl">
+    <constructor>
+      <parameter><inject bean="TransactionManager"/></parameter>
+      <parameter><inject bean="TransactionSynchronizationRegistry"/></parameter>
+      <parameter><inject bean="UserTransactionRegistry"/></parameter>
+      <parameter><inject bean="XATerminator"/></parameter>
+      <parameter><null/></parameter>
+    </constructor>
+  </bean>
+
+</deployment>

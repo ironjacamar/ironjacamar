@@ -19,20 +19,44 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.api.connectionmanager;
+package org.ironjacamar.core.tx.noopts;
 
-import org.ironjacamar.core.api.connectionmanager.listener.ConnectionListener;
+import javax.transaction.xa.Xid;
 
 /**
- * A connection manager
- * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ * A Xid implementation
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface ConnectionManager extends javax.resource.spi.ConnectionManager
+public class XidImpl implements Xid
 {
    /**
-    * Kill given connection listener wrapped connection instance.
-    * @param cl connection listener that wraps connection
-    * @param kill kill connection or not
+    * Constructor
     */
-   public void returnManagedConnection(ConnectionListener cl, boolean kill);
+   public XidImpl()
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public byte[] getBranchQualifier()
+   {
+      return new byte[] {0};
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public int getFormatId()
+   {
+      return 0;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public byte[] getGlobalTransactionId()
+   {
+      return new byte[] {0};
+   }
 }

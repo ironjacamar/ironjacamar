@@ -19,20 +19,38 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.api.connectionmanager;
+package org.ironjacamar.core.spi.transaction.xa;
 
-import org.ironjacamar.core.api.connectionmanager.listener.ConnectionListener;
+import javax.transaction.xa.XAResource;
 
 /**
- * A connection manager
+ * An XAResource wrapper.
+ * 
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface ConnectionManager extends javax.resource.spi.ConnectionManager
+public interface XAResourceWrapper extends XAResource
 {
    /**
-    * Kill given connection listener wrapped connection instance.
-    * @param cl connection listener that wraps connection
-    * @param kill kill connection or not
+    * Get the XAResource that is being wrapped
+    * @return The XAResource
     */
-   public void returnManagedConnection(ConnectionListener cl, boolean kill);
+   public XAResource getResource();
+
+   /**
+    * Get product name
+    * @return Product name of the instance that created the wrapper if defined; otherwise <code>null</code>
+    */
+   public String getProductName();
+
+   /**
+    * Get product version
+    * @return Product version of the instance that created the warpper if defined; otherwise <code>null</code>
+    */
+   public String getProductVersion();
+
+   /**
+    * Get the JNDI name
+    * @return The value
+    */
+   public String getJndiName();
 }

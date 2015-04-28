@@ -22,4 +22,5 @@
 include "api"
 include "common"
 include "core"
+include "embedded"
 include "testsuite"

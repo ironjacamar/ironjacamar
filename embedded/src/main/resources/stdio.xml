@@ -1,0 +1,46 @@
+<deployment>
+
+  <bean name="JBossStdioSystemOutStream" class="org.jboss.stdio.LoggingOutputStream">
+    <constructor>
+      <parameter>STDOUT</parameter>
+      <parameter>INFO</parameter>
+    </constructor>
+  </bean>
+
+  <bean name="JBossStdioSystemErrStream" class="org.jboss.stdio.LoggingOutputStream">
+    <constructor>
+      <parameter>STDERR</parameter>
+      <parameter>INFO</parameter>
+    </constructor>
+  </bean>
+
+  <bean name="JBossStdioSystemInStream" class="org.jboss.stdio.NullInputStream">
+    <constructor factoryMethod="getInstance"/>
+  </bean>
+
+  <bean name="JBossStdioContext" class="org.jboss.stdio.StdioContext">
+    <constructor factoryMethod="create">
+      <parameter>
+        <inject bean="JBossStdioSystemInStream"/>
+      </parameter>
+      <parameter class="java.io.OutputStream">
+        <inject bean="JBossStdioSystemOutStream"/>
+      </parameter>
+      <parameter>
+        <inject bean="JBossStdioSystemErrStream"/>
+      </parameter>
+    </constructor>
+  </bean>
+
+  <bean name="JBossStdioService" class="org.jboss.stdio.StdioService">
+    <depends>JBossStdioContext</depends>
+  </bean>
+
+  <bean name="JBossStdioContextSelector" class="org.jboss.stdio.SimpleStdioContextSelector">
+    <constructor>
+      <parameter><inject bean="JBossStdioContext"/></parameter>
+    </constructor>
+    <install method="install"/>
+  </bean>
+
+</deployment>

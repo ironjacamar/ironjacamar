@@ -19,20 +19,21 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.api.connectionmanager;
+package org.ironjacamar.core.spi.transaction.xa;
 
-import org.ironjacamar.core.api.connectionmanager.listener.ConnectionListener;
+import javax.transaction.xa.Xid;
 
 /**
- * A connection manager
+ * A XidWrapper.
+ * 
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ * @version $Revision: 85945 $
  */
-public interface ConnectionManager extends javax.resource.spi.ConnectionManager
+public interface XidWrapper extends Xid
 {
    /**
-    * Kill given connection listener wrapped connection instance.
-    * @param cl connection listener that wraps connection
-    * @param kill kill connection or not
+    * Get the JNDI name
+    * @return The value
     */
-   public void returnManagedConnection(ConnectionListener cl, boolean kill);
+   public String getJndiName();
 }

@@ -32,9 +32,9 @@ import static org.jboss.logging.Logger.Level.ERROR;
 /**
  * The common logger.
  *
- * Message ids ranging from 210000 to 219999 inclusively.
+ * Message ids ranging from 010000 to 019999 inclusively.
  */
-@MessageLogger(projectCode = "IJ")
+@MessageLogger(projectCode = "IJ2")
 public interface CommonLogger extends BasicLogger
 {
    /**
@@ -43,7 +43,7 @@ public interface CommonLogger extends BasicLogger
     * @param t The exception
     */
    @LogMessage(level = ERROR)
-   @Message(id = 210000, value = "Parsing error of ra.xml file: %s")
+   @Message(id = 10000, value = "Parsing error of ra.xml file: %s")
    public void parsingErrorRaXml(String url, @Cause Throwable t);
 
    /**
@@ -52,21 +52,21 @@ public interface CommonLogger extends BasicLogger
     * @param t The exception
     */
    @LogMessage(level = ERROR)
-   @Message(id = 210001, value = "Parsing error of ironjacamar.xml file: %s")
+   @Message(id = 10001, value = "Parsing error of ironjacamar.xml file: %s")
    public void parsingErrorIronJacamarXml(String url, @Cause Throwable t);
 
    /**
     * No connector
     */
    @LogMessage(level = ERROR)
-   @Message(id = 210002, value = "No @Connector was found and no definition in the ra.xml metadata either")
+   @Message(id = 10002, value = "No @Connector was found and no definition in the ra.xml metadata either")
    public void noConnector();
 
    /**
     * More than one connector
     */
    @LogMessage(level = ERROR)
-   @Message(id = 210003, value = "More than one @Connector was found but the correct one " +
+   @Message(id = 10003, value = "More than one @Connector was found but the correct one " +
             "wasn't defined in the ra.xml metadata")
    public void moreThanOneConnector();
 }

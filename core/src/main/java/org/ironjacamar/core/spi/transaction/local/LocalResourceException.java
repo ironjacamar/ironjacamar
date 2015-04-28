@@ -19,20 +19,40 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.api.connectionmanager;
+package org.ironjacamar.core.spi.transaction.local;
 
-import org.ironjacamar.core.api.connectionmanager.listener.ConnectionListener;
+import javax.resource.ResourceException;
 
 /**
- * A connection manager
- * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ * LocalResourceException.
+ * <p/>
+ * Throwing this exception from your <code>LocalTransaction.commit()</code> or
+ * <code>LocalTransaction.rollback()</code> methods will result in a
+ * <code>XAException.XAER_RMFAIL</code> error code being sent to the transaction manager
+ *
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface ConnectionManager extends javax.resource.spi.ConnectionManager
+public class LocalResourceException extends ResourceException
 {
+   /** Serial version UID */
+   private static final long serialVersionUID = 1L;
+   
    /**
-    * Kill given connection listener wrapped connection instance.
-    * @param cl connection listener that wraps connection
-    * @param kill kill connection or not
-    */
-   public void returnManagedConnection(ConnectionListener cl, boolean kill);
+    * Creates a new instance.
+    * @param message message
+    */   
+   public LocalResourceException(String message)
+   {
+      this(message, null);
+   }
+
+   /**
+    * Creates a new instance.
+    * @param message message
+    * @param t cause
+    */   
+   public LocalResourceException(String message, Throwable t)
+   {
+      super(message, t);
+   }
 }

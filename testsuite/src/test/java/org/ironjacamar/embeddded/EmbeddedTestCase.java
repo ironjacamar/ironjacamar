@@ -18,21 +18,25 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.ironjacamar.embedded;
 
-package org.ironjacamar.core.api.connectionmanager;
-
-import org.ironjacamar.core.api.connectionmanager.listener.ConnectionListener;
+import org.junit.Test;
 
 /**
- * A connection manager
- * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ * Embedded tests
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface ConnectionManager extends javax.resource.spi.ConnectionManager
+public class EmbeddedTestCase
 {
    /**
-    * Kill given connection listener wrapped connection instance.
-    * @param cl connection listener that wraps connection
-    * @param kill kill connection or not
+    * Basic
+    * @throws Throwable In case of an error
     */
-   public void returnManagedConnection(ConnectionListener cl, boolean kill);
+   @Test
+   public void testBasic() throws Throwable
+   {
+     Embedded embedded = EmbeddedFactory.create();
+     embedded.startup();
+     embedded.shutdown();
+   }
 }

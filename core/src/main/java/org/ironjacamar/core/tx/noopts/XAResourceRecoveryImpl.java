@@ -19,20 +19,56 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.api.connectionmanager;
+package org.ironjacamar.core.tx.noopts;
 
-import org.ironjacamar.core.api.connectionmanager.listener.ConnectionListener;
+import org.ironjacamar.core.spi.transaction.recovery.XAResourceRecovery;
+
+import javax.transaction.xa.XAResource;
 
 /**
- * A connection manager
+ * An XAResourceRecovery implementation.
+ *
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface ConnectionManager extends javax.resource.spi.ConnectionManager
+public class XAResourceRecoveryImpl implements XAResourceRecovery
 {
    /**
-    * Kill given connection listener wrapped connection instance.
-    * @param cl connection listener that wraps connection
-    * @param kill kill connection or not
+    * Constructor
     */
-   public void returnManagedConnection(ConnectionListener cl, boolean kill);
+   public XAResourceRecoveryImpl()
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void initialize() throws Exception
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void shutdown() throws Exception
+   {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public XAResource[] getXAResources()
+   {
+      return new XAResource[0];
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void setJndiName(String jndiName)
+   {
+   }
 }

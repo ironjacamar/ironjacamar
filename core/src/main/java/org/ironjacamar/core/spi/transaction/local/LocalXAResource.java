@@ -19,20 +19,30 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.api.connectionmanager;
+package org.ironjacamar.core.spi.transaction.local;
 
+import org.ironjacamar.core.api.connectionmanager.ConnectionManager;
 import org.ironjacamar.core.api.connectionmanager.listener.ConnectionListener;
+import org.ironjacamar.core.spi.transaction.LastResource;
+
+import javax.transaction.xa.XAResource;
 
 /**
- * A connection manager
- * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ * Local XA resource.
+ * 
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface ConnectionManager extends javax.resource.spi.ConnectionManager
+public interface LocalXAResource extends XAResource, LastResource
 {
    /**
-    * Kill given connection listener wrapped connection instance.
-    * @param cl connection listener that wraps connection
-    * @param kill kill connection or not
+    * Set the connection manager.
+    * @param cm The value
     */
-   public void returnManagedConnection(ConnectionListener cl, boolean kill);
+   public void setConnectionManager(ConnectionManager cm);
+
+   /**
+    * Set the connection listener.
+    * @param cl The value
+    */
+   public void setConnectionListener(ConnectionListener cl);
 }

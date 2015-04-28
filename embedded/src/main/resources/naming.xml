@@ -1,0 +1,49 @@
+<deployment>
+
+  <!-- Naming -->
+  <bean name="LookupPool">
+    <constructor factoryMethod="newFixedThreadPool"
+                 factoryClass="java.util.concurrent.Executors">
+      <parameter>2</parameter>
+    </constructor>
+  </bean>
+
+  <bean name="NamingBeanImpl" class="org.jnp.server.NamingBeanImpl">
+    <!-- Install this bean as the global JVM NamingServer -->
+    <property name="installGlobalService">true</property>
+    
+    <property name="useGlobalService">false</property>
+  </bean>
+
+  <bean name="NamingServer" class="org.jnp.server.Main">
+    <property name="namingInfo"><inject bean="NamingBeanImpl"/></property>
+
+    <!-- The call by value mode. true if all lookups are unmarshalled using
+         the caller's TCL, false if in VM lookups return the value by reference.
+      -->
+    <property name="callByValue">false</property>
+    
+    <!-- The listening port for the bootstrap JNP service. Set this to -1
+         to run the NamingService without the JNP invoker listening port.
+      -->
+    <property name="port">1099</property>
+    
+    <!-- The bootstrap JNP server bind address. This also sets the default
+         RMI service bind address. Empty == all addresses
+      -->
+    <property name="bindAddress">${iron.jacamar.bindaddress:localhost}</property>
+
+    <!-- The port of the RMI naming service, 0 == anonymous -->
+    <property name="rmiPort">0</property>
+
+    <!-- The RMI service bind address. Empty == all addresses -->
+    <property name="rmiBindAddress">${iron.jacamar.bindaddress:localhost}</property>
+
+    <!-- Set the java.rmi.server.hostname system property to rmiBindAddress -->
+    <property name="enableRmiServerHostname">true</property>
+
+    <!-- The thread pool service used to control the bootstrap lookups -->
+    <property name="lookupExector"><inject bean="LookupPool"/></property>
+  </bean>
+
+</deployment>

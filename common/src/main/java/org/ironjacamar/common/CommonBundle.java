@@ -27,37 +27,37 @@ import org.jboss.logging.annotations.MessageBundle;
 /**
  * The common bundle.
  *
- * Message ids ranging from 210000 to 219999 inclusively.
+ * Message ids ranging from 010000 to 019999 inclusively.
  */
-@MessageBundle(projectCode = "IJ")
+@MessageBundle(projectCode = "IJ2")
 public interface CommonBundle
 {
    /**
     * Annotation repository is null
     * @return The value
     */
-   @Message(id = 210051, value = "AnnotationRepository reference is null")
+   @Message(id = 10051, value = "AnnotationRepository reference is null")
    public String annotationRepositoryNull();
 
    /**
     * No @Connector defined
     * @return The value
     */
-   @Message(id = 210052, value = "No @Connector defined")
+   @Message(id = 10052, value = "No @Connector defined")
    public String noConnectorDefined();
 
    /**
     * More than @Connector defined
     * @return The value
     */
-   @Message(id = 210053, value = "More than @Connector defined")
+   @Message(id = 10053, value = "More than @Connector defined")
    public String moreThanOneConnectorDefined();
 
    /**
     * More than one @ConnectionDefinitions defined
     * @return The value
     */
-   @Message(id = 210054, value = "More than one @ConnectionDefinitions defined")
+   @Message(id = 10054, value = "More than one @ConnectionDefinitions defined")
    public String moreThanOneConnectionDefinitionsDefined();
 
    /**
@@ -65,7 +65,7 @@ public interface CommonBundle
     * @param annotation The annotation
     * @return The value
     */
-   @Message(id = 210055, value = "Unknown annotation: %s")
+   @Message(id = 10055, value = "Unknown annotation: %s")
    public String unknownAnnotation(Object annotation);
 
    /**
@@ -74,7 +74,7 @@ public interface CommonBundle
     * @param element The element
     * @return The value
     */
-   @Message(id = 210056, value = "%s isn't a valid boolean for element %s. "
+   @Message(id = 10056, value = "%s isn't a valid boolean for element %s. "
          + "We accept only \"true\" or \"false\" as boolean value")
    public String elementAsBoolean(String value, String element);
 
@@ -84,7 +84,7 @@ public interface CommonBundle
     * @param element The element
     * @return The value
     */
-   @Message(id = 210057, value = "%s isn't a valid boolean for attribute %s. "
+   @Message(id = 10057, value = "%s isn't a valid boolean for attribute %s. "
          + "We accept only \"true\" or \"false\" as boolean value")
    public String attributeAsBoolean(String value, String element);
 
@@ -94,7 +94,7 @@ public interface CommonBundle
     * @param element The element
     * @return The value
     */
-   @Message(id = 210058, value = "%s isn't a valid number for element %s")
+   @Message(id = 10058, value = "%s isn't a valid number for element %s")
    public String notValidNumber(String value, String element);
 
    /**
@@ -102,7 +102,7 @@ public interface CommonBundle
     * @param value The value
     * @return The value
     */
-   @Message(id = 210059, value = "%s isn't a valid flush strategy")
+   @Message(id = 10059, value = "%s isn't a valid flush strategy")
    public String notValidFlushStrategy(String value);
 
    /**
@@ -110,7 +110,7 @@ public interface CommonBundle
     * @param value The value
     * @return The value
     */
-   @Message(id = 210060, value = "Unexpected end tag: %s")
+   @Message(id = 10060, value = "Unexpected end tag: %s")
    public String unexpectedEndTag(String value);
 
    /**
@@ -118,14 +118,14 @@ public interface CommonBundle
     * @param value The value
     * @return The value
     */
-   @Message(id = 210061, value = "Unexpected element: %s")
+   @Message(id = 10061, value = "Unexpected element: %s")
    public String unexpectedElement(String value);
 
    /**
     * Unexpected end of document
     * @return The value
     */
-   @Message(id = 210062, value = "Reached end of xml document unexpectedly")
+   @Message(id = 10062, value = "Reached end of xml document unexpectedly")
    public String unexpectedEndOfDocument();
 
    /**
@@ -133,7 +133,7 @@ public interface CommonBundle
     * @param value The value
     * @return The value
     */
-   @Message(id = 210063, value = "Mandatory class-name attribute missing in: %s")
+   @Message(id = 10063, value = "Mandatory class-name attribute missing in: %s")
    public String missingClassName(String value);
 
    /**
@@ -142,7 +142,7 @@ public interface CommonBundle
     * @param location The location
     * @return The value
     */
-   @Message(id = 210064, value = "Unexpected attribute %s at %s")
+   @Message(id = 10064, value = "Unexpected attribute %s at %s")
    public String unexpectedAttribute(String value, String location);
 
    /**
@@ -150,14 +150,14 @@ public interface CommonBundle
     * @param value The value
     * @return The value
     */
-   @Message(id = 210065, value = "Missing mandatory jndi-name attribute: %s")
+   @Message(id = 10065, value = "Missing mandatory jndi-name attribute: %s")
    public String missingJndiName(String value);
 
    /**
     * Multiple pools
     * @return The value
     */
-   @Message(id = 210066, value = "You cannot define more than one pool or xa-pool in same connection-definition")
+   @Message(id = 10066, value = "You cannot define more than one pool or xa-pool in same connection-definition")
    public String multiplePools();
 
    /**
@@ -165,7 +165,7 @@ public interface CommonBundle
     * @param value The value
     * @return The value
     */
-   @Message(id = 210067, value = "Element %s cannot be set without an xa-pool")
+   @Message(id = 10067, value = "Element %s cannot be set without an xa-pool")
    public String unsupportedElement(String value);
 
    /**
@@ -174,7 +174,7 @@ public interface CommonBundle
     * @param tag The tag
     * @return The value
     */
-   @Message(id = 210068, value = "Missing required attribute %s in %s")
+   @Message(id = 10068, value = "Missing required attribute %s in %s")
    public String requiredAttributeMissing(String attr, String tag);
 
    /**
@@ -183,7 +183,7 @@ public interface CommonBundle
     * @param tag The tag
     * @return The value
     */
-   @Message(id = 210069, value = "Missing required element %s in %s")
+   @Message(id = 10069, value = "Missing required element %s in %s")
    public String requiredElementMissing(String element, String tag);
 
    /**
@@ -191,7 +191,7 @@ public interface CommonBundle
     * @param tag The tag
     * @return The value
     */
-   @Message(id = 210070, value = "Invalid negative value for %s")
+   @Message(id = 10070, value = "Invalid negative value for %s")
    public String invalidNegative(String tag);
 
    /**
@@ -199,7 +199,7 @@ public interface CommonBundle
     * @param tag The tag
     * @return The value
     */
-   @Message(id = 210071, value = "%s is not valid. See exception for more details")
+   @Message(id = 10071, value = "%s is not valid. See exception for more details")
    public String invalidTag(String tag);
 
    /**
@@ -207,28 +207,28 @@ public interface CommonBundle
     * @param tag The tag
     * @return The value
     */
-   @Message(id = 210072, value = "%s cannot be undefined")
+   @Message(id = 10072, value = "%s cannot be undefined")
    public String nullValue(String tag);
 
    /**
     * Invalid security configuration
     * @return The value
     */
-   @Message(id = 210073, value = "Invalid <security> configuration")
+   @Message(id = 10073, value = "Invalid <security> configuration")
    public String invalidSecurityConfiguration();
 
    /**
     * Resource adapter not defined
     * @return The value
     */
-   @Message(id = 210074, value = "The resource adapter metadata must be defined")
+   @Message(id = 10074, value = "The resource adapter metadata must be defined")
    public String noMetadataForResourceAdapter();
 
    /**
     * Invalid metadata for resource adapter 
     * @return The value
     */
-   @Message(id = 210075, value = "The resource adapter metadata must contain " +
+   @Message(id = 10075, value = "The resource adapter metadata must contain " +
          "either an outbound or inbound configuration")
    public String invalidMetadataForResourceAdapter();
 
@@ -237,7 +237,7 @@ public interface CommonBundle
     * @param tag The tag
     * @return The value
     */
-   @Message(id = 210076, value = "%s must be defined")
+   @Message(id = 10076, value = "%s must be defined")
    public String missingValue(String tag);
 
    /**
@@ -245,6 +245,6 @@ public interface CommonBundle
     * @param annotation The annotation
     * @return The value
     */
-   @Message(id = 210077, value = "Wrong annotation type: %s")
+   @Message(id = 10077, value = "Wrong annotation type: %s")
    public String wrongAnnotationType(Object annotation);
 }

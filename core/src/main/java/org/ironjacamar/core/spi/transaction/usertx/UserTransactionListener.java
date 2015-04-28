@@ -19,20 +19,22 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.api.connectionmanager;
+package org.ironjacamar.core.spi.transaction.usertx;
 
-import org.ironjacamar.core.api.connectionmanager.listener.ConnectionListener;
+import java.util.EventListener;
+
+import javax.transaction.SystemException;
 
 /**
- * A connection manager
- * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ * UserTransactionListener.
+ * 
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface ConnectionManager extends javax.resource.spi.ConnectionManager
+public interface UserTransactionListener extends EventListener
 {
    /**
-    * Kill given connection listener wrapped connection instance.
-    * @param cl connection listener that wraps connection
-    * @param kill kill connection or not
+    * An user transaction has started
+    * @exception SystemException Thrown in case of an error
     */
-   public void returnManagedConnection(ConnectionListener cl, boolean kill);
+   public void userTransactionStarted() throws SystemException;
 }

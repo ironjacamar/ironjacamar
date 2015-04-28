@@ -19,20 +19,26 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.api.connectionmanager;
-
-import org.ironjacamar.core.api.connectionmanager.listener.ConnectionListener;
+package org.ironjacamar.core.spi.transaction;
 
 /**
- * A connection manager
- * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ * Defines a resource as connectable, which allows the transaction manager
+ * to get access to the connection used by the transaction
+ * 
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface ConnectionManager extends javax.resource.spi.ConnectionManager
+public interface ConnectableResource
 {
    /**
-    * Kill given connection listener wrapped connection instance.
-    * @param cl connection listener that wraps connection
-    * @param kill kill connection or not
+    * Get a connection from the resource
+    * @return The connection
+    * @exception Exception If an error occurs
     */
-   public void returnManagedConnection(ConnectionListener cl, boolean kill);
+   public Object getConnection() throws Exception;
+
+   /**
+    * Set connectable resource listener
+    * @param crl The connectable resource listener
+    */
+   public void setConnectableResourceListener(ConnectableResourceListener crl);
 }
