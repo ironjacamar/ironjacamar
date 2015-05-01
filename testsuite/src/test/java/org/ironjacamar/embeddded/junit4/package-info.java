@@ -19,25 +19,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.embedded;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
-
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-
 /**
- * The <code>Deployment</code> annotation identifies a
- * method as a deployment
- * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ * Test cases for JUnit 4 integration
  */
-@Documented
-@Retention(RUNTIME)
-@Target(ElementType.METHOD)
-public @interface Deployment
-{
-   /** The order of the deployment, must be greater than zero */
-   public int order() default 0;
-}
+package org.ironjacamar.embedded.junit4;

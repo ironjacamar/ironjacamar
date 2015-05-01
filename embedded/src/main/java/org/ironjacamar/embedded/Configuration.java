@@ -38,6 +38,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(ElementType.TYPE)
 public @interface Configuration
 {
-  /** Full profile, or a bare profile */
-   public boolean full();
+   /** Full profile, or a bare profile */
+   public boolean full() default true;
 }

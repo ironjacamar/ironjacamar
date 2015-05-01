@@ -164,7 +164,7 @@ class EmbeddedJCA implements Embedded
     */
    public boolean isRunning()
    {
-     return started;
+      return started;
    }
   
    /**

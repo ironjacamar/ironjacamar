@@ -35,8 +35,8 @@ public class EmbeddedTestCase
    @Test
    public void testBasic() throws Throwable
    {
-     Embedded embedded = EmbeddedFactory.create();
-     embedded.startup();
-     embedded.shutdown();
+      Embedded embedded = EmbeddedFactory.create();
+      embedded.startup();
+      embedded.shutdown();
    }
 }

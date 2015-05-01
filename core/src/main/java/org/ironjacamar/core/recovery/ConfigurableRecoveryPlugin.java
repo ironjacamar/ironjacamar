@@ -40,7 +40,8 @@ import org.jboss.logging.Messages;
 public class ConfigurableRecoveryPlugin implements RecoveryPlugin
 {
    /** Log instance */
-   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, ConfigurableRecoveryPlugin.class.getName());
+   private static CoreLogger log =
+      Logger.getMessageLogger(CoreLogger.class, ConfigurableRecoveryPlugin.class.getName());
 
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);

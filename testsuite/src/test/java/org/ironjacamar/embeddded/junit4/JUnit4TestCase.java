@@ -26,17 +26,17 @@ import org.ironjacamar.embedded.Embedded;
 
 import java.net.URL;
 
+import javax.annotation.Resource;
+import javax.inject.Inject;
+import javax.transaction.TransactionManager;
+import javax.transaction.UserTransaction;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.annotation.Resource;
-import javax.inject.Inject;
-import javax.transaction.TransactionManager;
-import javax.transaction.UserTransaction;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
