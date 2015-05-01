@@ -32,6 +32,7 @@ ext {
     hibernate_validator: "org.hibernate:hibernate-validator:5.1.3.Final",
     jandex: "org.jboss:jandex:2.0.0.Beta1",
     javax_inject: "javax.inject:javax.inject:1",
+    jboss_common: "org.jboss:jboss-common-core:2.5.0.Final",
     jboss_logging: "org.jboss.logging:jboss-logging:3.2.1.Final",
     jboss_logging_manager: "org.jboss.logmanager:jboss-logmanager:2.0.0.Final",
     jboss_logging_manager_log4j: "org.jboss.logmanager:log4j-jboss-logmanager:1.1.2.Final",
@@ -104,6 +105,7 @@ subprojects { subProject ->
     compile(libraries.hibernate_validator)
     compile(libraries.jandex)
     compile(libraries.javax_inject)
+    compile(libraries.jboss_common)
     compile(libraries.jboss_logging)
     compile(libraries.jboss_logging_manager)
     compile(libraries.jboss_logging_manager_log4j)
