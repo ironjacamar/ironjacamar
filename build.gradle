@@ -242,7 +242,8 @@ task copyDependencies(type: Copy) {
   into rootProject.libsDir
   include '**/*'
   exclude '**/jboss-logging-processor*'
-  rename (/(.+)(-[0-9]+.*)\.jar/, '$1.jar')
+  rename (/(.+)(-[\d]+.+)\.jar/, '$1.jar')
+  rename (/(.+)(-[\d]+).jar/, '$1.jar')
 }
 
 distributions {
