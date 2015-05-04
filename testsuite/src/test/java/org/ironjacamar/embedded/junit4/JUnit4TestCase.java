@@ -20,6 +20,7 @@
  */
 package org.ironjacamar.embedded.junit4;
 
+import org.ironjacamar.core.api.deploymentrepository.DeploymentRepository;
 import org.ironjacamar.embedded.Configuration;
 import org.ironjacamar.embedded.Deployment;
 import org.ironjacamar.embedded.Embedded;
@@ -56,6 +57,10 @@ public class JUnit4TestCase
    /** The transaction manager */
    @Inject
    private static TransactionManager tm;
+
+   /** The deployment repository */
+   @Inject
+   private static DeploymentRepository dr;
 
    /** The user transaction */
    @Resource(mappedName = "java:/UserTransaction")
@@ -123,6 +128,7 @@ public class JUnit4TestCase
       assertTrue(embedded.isRunning());
       assertNotNull(tm);
       assertNotNull(ut);
+      assertNotNull(dr);
    }
 
    /**
@@ -137,5 +143,6 @@ public class JUnit4TestCase
       assertTrue(embedded.isRunning());
       assertNotNull(tm);
       assertNotNull(ut);
+      assertNotNull(dr);
    }
 }
