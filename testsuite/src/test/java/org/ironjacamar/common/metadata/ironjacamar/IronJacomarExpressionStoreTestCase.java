@@ -63,7 +63,6 @@ public class IronJacomarExpressionStoreTestCase
       System.setProperty("bean-validation-group2", "validation2");
       System.setProperty("bean-validation-group3", "group2");
       System.setProperty("Property6nested", "nestedvalue6");
-      System.setProperty("use-java-context", "true");
       System.setProperty("initial-pool-size", "3");
 
       try (InputStream is = IronJacomarExpressionStoreTestCase.class.getClassLoader().
@@ -123,10 +122,6 @@ public class IronJacomarExpressionStoreTestCase
          test(document, xPath, "/ironjacamar/connection-definitions/connection-definition/@enabled",
                "${enabled:true}");
 
-         //Test simple expression with boolean default value, value is changed
-         test(document, xPath, "/ironjacamar/connection-definitions/connection-definition/@use-java-context",
-               "${use-java-context:true}");
-         
          //Test simple expression with integer default value, value is not changed
          test(document, xPath, "/ironjacamar/connection-definitions/connection-definition/xa-pool/min-pool-size",
                "${min-pool-size:0}");
@@ -146,7 +141,6 @@ public class IronJacomarExpressionStoreTestCase
          System.clearProperty("bean-validation-group2");
          System.clearProperty("bean-validation-group3");
          System.clearProperty("Property6nested");
-         System.clearProperty("use-java-context");
          System.clearProperty("initial-pool-size");
       }      
    }

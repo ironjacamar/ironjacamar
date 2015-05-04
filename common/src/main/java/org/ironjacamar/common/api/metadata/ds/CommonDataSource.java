@@ -57,12 +57,6 @@ public interface CommonDataSource extends JCAMetadata, ValidatableMetadata
    public Validation getValidation();
 
    /**
-    * Get the useJavaContext.
-    * @return the useJavaContext.
-    */
-   public Boolean isUseJavaContext();
-
-   /**
     * Get the poolName.
     * @return the poolName.
     */

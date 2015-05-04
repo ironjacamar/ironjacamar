@@ -85,11 +85,6 @@ public abstract class DataSourceAbstractImpl extends AbstractMetadata implements
    protected String urlSelectorStrategyClassName;
 
    /**
-   * useJavaContext
-   */
-   protected Boolean useJavaContext;
-
-   /**
    * poolName
    */
    protected String poolName;
@@ -137,7 +132,6 @@ public abstract class DataSourceAbstractImpl extends AbstractMetadata implements
     * @param validation validation
     * @param urlDelimiter urlDelimiter
     * @param urlSelectorStrategyClassName urlSelectorStrategyClassName
-    * @param useJavaContext useJavaContext
     * @param poolName poolName
     * @param enabled enabled
     * @param jndiName jndiName
@@ -153,7 +147,7 @@ public abstract class DataSourceAbstractImpl extends AbstractMetadata implements
    protected DataSourceAbstractImpl(TransactionIsolation transactionIsolation, Timeout timeout,
                                     DsSecurity security, Statement statement, Validation validation,
                                     String urlDelimiter, String urlSelectorStrategyClassName,
-                                    Boolean useJavaContext, String poolName, Boolean enabled, String jndiName,
+                                    String poolName, Boolean enabled, String jndiName,
                                     Boolean spy, Boolean useCcm, String driver, String newConnectionSql,
                                     Boolean connectable, Boolean tracking, Map<String, String> expressions)
       throws ValidateException
@@ -166,7 +160,6 @@ public abstract class DataSourceAbstractImpl extends AbstractMetadata implements
       this.validation = validation;
       this.urlDelimiter = urlDelimiter;
       this.urlSelectorStrategyClassName = urlSelectorStrategyClassName;
-      this.useJavaContext = useJavaContext;
       this.poolName = poolName;
       this.enabled = enabled;
       this.jndiName = jndiName;
@@ -233,14 +226,6 @@ public abstract class DataSourceAbstractImpl extends AbstractMetadata implements
    public String getUrlSelectorStrategyClassName()
    {
       return urlSelectorStrategyClassName;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public Boolean isUseJavaContext()
-   {
-      return useJavaContext;
    }
 
    /**
@@ -366,7 +351,6 @@ public abstract class DataSourceAbstractImpl extends AbstractMetadata implements
       result = prime * result + ((urlDelimiter == null) ? 0 : urlDelimiter.hashCode());
       result = prime * result +
                ((urlSelectorStrategyClassName == null) ? 0 : urlSelectorStrategyClassName.hashCode());
-      result = prime * result + ((useJavaContext == null) ? 0 : useJavaContext.hashCode());
       result = prime * result + ((validation == null) ? 0 : validation.hashCode());
       result = prime * result + ((driver == null) ? 0 : driver.hashCode());
       result = prime * result + ((newConnectionSql == null) ? 0 : newConnectionSql.hashCode());
@@ -444,13 +428,6 @@ public abstract class DataSourceAbstractImpl extends AbstractMetadata implements
             return false;
       }
       else if (!urlSelectorStrategyClassName.equals(other.urlSelectorStrategyClassName))
-         return false;
-      if (useJavaContext == null)
-      {
-         if (other.useJavaContext != null)
-            return false;
-      }
-      else if (!useJavaContext.equals(other.useJavaContext))
          return false;
       if (validation == null)
       {

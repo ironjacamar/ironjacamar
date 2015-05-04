@@ -217,7 +217,6 @@ public class IronJacamar11TestCase
             assertEquals("java:jboss/name1", cd.getJndiName());
             assertEquals("Pool1", cd.getPoolName());
             assertTrue(cd.isUseCcm());
-            assertFalse(cd.isUseJavaContext());
             assertTrue(cd.isEnabled());
             assertTrue(cd.isXa());
             assertTrue(cd.isSharable());
@@ -288,7 +287,6 @@ public class IronJacamar11TestCase
             assertEquals("java:jboss/name2", cd.getJndiName());
             assertNull(cd.getPoolName());
             assertFalse(cd.isUseCcm());
-            assertTrue(cd.isUseJavaContext());
             assertFalse(cd.isEnabled());
             assertTrue(cd.isXa());
             assertFalse(cd.isSharable());
@@ -335,7 +333,6 @@ public class IronJacamar11TestCase
             assertEquals("java:jboss/name3", cd.getJndiName());
             assertNull(cd.getPoolName());
             assertTrue(cd.isUseCcm());
-            assertTrue(cd.isUseJavaContext());
             assertTrue(cd.isEnabled());
             assertTrue(cd.isXa());
             assertTrue(cd.isSharable());
@@ -390,7 +387,6 @@ public class IronJacamar11TestCase
       assertEquals("Class4", ao1.getClassName());
       assertEquals("java:jboss/name4", ao1.getJndiName());
       assertEquals("Pool4", ao1.getPoolName());
-      assertFalse(ao1.isUseJavaContext());
       assertTrue(ao1.isEnabled());
 
       map = ao1.getConfigProperties();
@@ -401,7 +397,6 @@ public class IronJacamar11TestCase
       assertEquals("Class5", ao2.getClassName());
       assertEquals("java:jboss/name5", ao2.getJndiName());
       assertNull(ao2.getPoolName());
-      assertTrue(ao2.isUseJavaContext());
       assertTrue(ao2.isEnabled());
 
       map = ao2.getConfigProperties();

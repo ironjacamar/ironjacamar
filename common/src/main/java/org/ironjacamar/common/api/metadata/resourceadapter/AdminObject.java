@@ -65,11 +65,4 @@ public interface AdminObject extends JCAMetadata
     * @return the enabled.
     */
    public Boolean isEnabled();
-
-   /**
-    * Get the useJavaContext.
-    *
-    * @return the useJavaContext.
-    */
-   public Boolean isUseJavaContext();
 }

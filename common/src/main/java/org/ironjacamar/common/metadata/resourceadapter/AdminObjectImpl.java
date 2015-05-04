@@ -51,8 +51,6 @@ public class AdminObjectImpl extends AbstractMetadata implements AdminObject
 
    private Boolean enabled;
 
-   private Boolean useJavaContext;
-
    /**
     * Constructor
     *
@@ -61,11 +59,10 @@ public class AdminObjectImpl extends AbstractMetadata implements AdminObject
     * @param jndiName jndiName
     * @param poolName poolName
     * @param enabled enabled
-    * @param useJavaContext useJavaContext
     * @param expressions expressions
     */
    public AdminObjectImpl(Map<String, String> configProperties, String className, String jndiName,
-                          String poolName, Boolean enabled, Boolean useJavaContext,
+                          String poolName, Boolean enabled,
                           Map<String, String> expressions)
    {
       super(expressions);
@@ -82,7 +79,6 @@ public class AdminObjectImpl extends AbstractMetadata implements AdminObject
       this.jndiName = jndiName;
       this.poolName = poolName;
       this.enabled = enabled;
-      this.useJavaContext = useJavaContext;
    }
 
    /**
@@ -120,14 +116,6 @@ public class AdminObjectImpl extends AbstractMetadata implements AdminObject
    /**
     * {@inheritDoc}
     */
-   public Boolean isUseJavaContext()
-   {
-      return useJavaContext;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
    public String getPoolName()
    {
       return poolName;
@@ -145,7 +133,6 @@ public class AdminObjectImpl extends AbstractMetadata implements AdminObject
       result = prime * result + ((enabled == null) ? 0 : enabled.hashCode());
       result = prime * result + ((jndiName == null) ? 0 : jndiName.hashCode());
       result = prime * result + ((poolName == null) ? 0 : poolName.hashCode());
-      result = prime * result + ((useJavaContext == null) ? 0 : useJavaContext.hashCode());
       return result;
    }
 
@@ -196,13 +183,6 @@ public class AdminObjectImpl extends AbstractMetadata implements AdminObject
       }
       else if (!poolName.equals(other.poolName))
          return false;
-      if (useJavaContext == null)
-      {
-         if (other.useJavaContext != null)
-            return false;
-      }
-      else if (!useJavaContext.equals(other.useJavaContext))
-         return false;
       return true;
    }
 
@@ -223,12 +203,6 @@ public class AdminObjectImpl extends AbstractMetadata implements AdminObject
 
       if (enabled != null && !Defaults.ENABLED.equals(enabled))
          sb.append(" ").append(XML.ATTRIBUTE_ENABLED).append("=\"").append(enabled).append("\"");
-
-      if (useJavaContext != null && !Defaults.USE_JAVA_CONTEXT.equals(useJavaContext))
-      {
-         sb.append(" ").append(XML.ATTRIBUTE_USE_JAVA_CONTEXT);
-         sb.append("=\"").append(useJavaContext).append("\"");
-      }
 
       if (poolName != null)
          sb.append(" ").append(XML.ATTRIBUTE_POOL_NAME).append("=\"").append(poolName).append("\"");

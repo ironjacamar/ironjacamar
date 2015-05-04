@@ -72,7 +72,6 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
     * @param urlDelimiter urlDelimiter
     * @param urlProperty urlProperty
     * @param urlSelectorStrategyClassName urlSelectorStrategyClassName
-    * @param useJavaContext useJavaContext
     * @param poolName poolName
     * @param enabled enabled
     * @param jndiName jndiName
@@ -91,7 +90,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
     */
    public XADataSourceImpl(TransactionIsolation transactionIsolation, Timeout timeout, DsSecurity security,
                            Statement statement, Validation validation, String urlDelimiter, String urlProperty,
-                           String urlSelectorStrategyClassName, Boolean useJavaContext, String poolName,
+                           String urlSelectorStrategyClassName, String poolName,
                            Boolean enabled, String jndiName, Boolean spy, Boolean useCcm, Boolean connectable,
                            Boolean tracking,
                            Map<String, String> xaDataSourceProperty, String xaDataSourceClass, String driver,
@@ -99,7 +98,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
                            DsXaPool xaPool, Recovery recovery, Map<String, String> expressions) throws ValidateException
    {
       super(transactionIsolation, timeout, security, statement, validation, urlDelimiter, urlSelectorStrategyClassName,
-            useJavaContext, poolName, enabled, jndiName, spy, useCcm, driver, newConnectionSql, connectable, tracking,
+            poolName, enabled, jndiName, spy, useCcm, driver, newConnectionSql, connectable, tracking,
             expressions);
 
       if (xaDataSourceProperty != null)
@@ -262,12 +261,6 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
 
       if (enabled != null && !Defaults.ENABLED.equals(enabled))
          sb.append(" ").append(XML.ATTRIBUTE_ENABLED).append("=\"").append(enabled).append("\"");
-
-      if (useJavaContext != null && !Defaults.USE_JAVA_CONTEXT.equals(useJavaContext))
-      {
-         sb.append(" ").append(XML.ATTRIBUTE_USE_JAVA_CONTEXT);
-         sb.append("=\"").append(useJavaContext).append("\"");
-      }
 
       if (spy != null && !Defaults.SPY.equals(spy))
          sb.append(" ").append(XML.ATTRIBUTE_SPY).append("=\"").append(spy).append("\"");

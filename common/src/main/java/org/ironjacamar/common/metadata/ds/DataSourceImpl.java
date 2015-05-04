@@ -79,7 +79,6 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
     * @param urlDelimiter urlDelimiter
     * @param urlSelectorStrategyClassName urlSelectorStrategyClassName
     * @param newConnectionSql newConnectionSql
-    * @param useJavaContext useJavaContext
     * @param poolName poolName
     * @param enabled enabled
     * @param jndiName jndiName
@@ -96,13 +95,13 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
                          TransactionIsolation transactionIsolation, Map<String, String> connectionProperties, 
                          Timeout timeout, DsSecurity security, Statement statement, Validation validation, 
                          String urlDelimiter, String urlSelectorStrategyClassName, String newConnectionSql, 
-                         Boolean useJavaContext, String poolName, Boolean enabled, String jndiName, 
+                         String poolName, Boolean enabled, String jndiName, 
                          Boolean spy, Boolean useccm, Boolean jta, Boolean connectable, Boolean tracking, DsPool pool,
                          Map<String, String> expressions)
       throws ValidateException
    {
       super(transactionIsolation, timeout, security, statement, validation, urlDelimiter, urlSelectorStrategyClassName,
-            useJavaContext, poolName, enabled, jndiName, spy, useccm, driver, newConnectionSql, connectable, tracking,
+            poolName, enabled, jndiName, spy, useccm, driver, newConnectionSql, connectable, tracking,
             expressions);
 
       this.jta = jta;
@@ -300,12 +299,6 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
 
       if (enabled != null && !Defaults.ENABLED.equals(enabled))
          sb.append(" ").append(XML.ATTRIBUTE_ENABLED).append("=\"").append(enabled).append("\"");
-
-      if (useJavaContext != null && !Defaults.USE_JAVA_CONTEXT.equals(useJavaContext))
-      {
-         sb.append(" ").append(XML.ATTRIBUTE_USE_JAVA_CONTEXT);
-         sb.append("=\"").append(useJavaContext).append("\"");
-      }
 
       if (spy != null && !Defaults.SPY.equals(spy))
          sb.append(" ").append(XML.ATTRIBUTE_SPY).append("=\"").append(spy).append("\"");

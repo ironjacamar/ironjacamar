@@ -67,12 +67,6 @@ public interface ConnectionDefinition extends JCAMetadata
    public Boolean isEnabled();
 
    /**
-    * Get the useJavaContext.
-    * @return the useJavaContext.
-    */
-   public Boolean isUseJavaContext();
-
-   /**
     * Get the useCcm.
     * @return the useCcm.
     */

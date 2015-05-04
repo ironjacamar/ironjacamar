@@ -33,12 +33,7 @@ public interface Defaults
    //DATASOURCE
 
    /**
-    * Use Java context
-    */
-   public static final Boolean USE_JAVA_CONTEXT = Boolean.TRUE;
-   
-   /**
-    * Use Java context
+    * ENABLED
     */
    public static final Boolean ENABLED = Boolean.TRUE;
 

@@ -940,7 +940,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
 
       //attributes reading
 
-      Boolean useJavaContext = Defaults.USE_JAVA_CONTEXT;
       String poolName = null;
       Boolean enabled = Defaults.ENABLED;
       String jndiName = null;
@@ -967,9 +966,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                poolName = attributeAsString(reader, XML.ATTRIBUTE_POOL_NAME, expressions);
                break;
             }
-            case XML.ATTRIBUTE_USE_JAVA_CONTEXT : {
-               useJavaContext = attributeAsBoolean(reader, XML.ATTRIBUTE_USE_JAVA_CONTEXT, Defaults.USE_JAVA_CONTEXT,
-                                                   expressions);
+            case "use-java-context" : {
+               // Deprecated
                break;
             }
             case XML.ATTRIBUTE_SPY : {
@@ -1003,7 +1001,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                {
                   return new XADataSourceImpl(transactionIsolation, timeoutSettings, securitySettings,
                                               statementSettings, validationSettings, urlDelimiter, urlProperty,
-                                              urlSelectorStrategyClassName, useJavaContext, poolName, enabled,
+                                              urlSelectorStrategyClassName, poolName, enabled,
                                               jndiName, spy, useCcm, connectable, tracking, xaDataSourceProperty,
                                               xaDataSourceClass, driver, newConnectionSql, xaPool, recovery,
                                               expressions.size() > 0 ? expressions : null);
@@ -1136,7 +1134,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       DsPool pool = null;
 
       //attributes reading
-      Boolean useJavaContext = Defaults.USE_JAVA_CONTEXT;
       String poolName = null;
       Boolean enabled = Defaults.ENABLED;
       String jndiName = null;
@@ -1164,9 +1161,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                poolName = attributeAsString(reader, XML.ATTRIBUTE_POOL_NAME, expressions);
                break;
             }
-            case XML.ATTRIBUTE_USE_JAVA_CONTEXT : {
-               useJavaContext = attributeAsBoolean(reader, XML.ATTRIBUTE_USE_JAVA_CONTEXT, Defaults.USE_JAVA_CONTEXT,
-                                                   expressions);
+            case "use-java-context" : {
+               // Deprecated
                break;
             }
             case XML.ATTRIBUTE_SPY : {
@@ -1205,7 +1201,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   return new DataSourceImpl(connectionUrl, driverClass, dataSourceClass, driver, transactionIsolation,
                                             connectionProperties, timeoutSettings, securitySettings,
                                             statementSettings, validationSettings, urlDelimiter,
-                                            urlSelectorStrategyClassName, newConnectionSql, useJavaContext, poolName,
+                                            urlSelectorStrategyClassName, newConnectionSql, poolName,
                                             enabled, jndiName, spy, useCcm, jta, connectable, tracking, pool,
                                             expressions.size() > 0 ? expressions : null);
                }
@@ -1338,11 +1334,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
          writer.writeAttribute(XML.ATTRIBUTE_ENABLED,
                                ds.getValue(XML.ATTRIBUTE_ENABLED, ds.isEnabled().toString()));
 
-      if (ds.isUseJavaContext() != null && (ds.hasExpression(XML.ATTRIBUTE_USE_JAVA_CONTEXT) ||
-                                            !Defaults.USE_JAVA_CONTEXT.equals(ds.isUseJavaContext())))
-         writer.writeAttribute(XML.ATTRIBUTE_USE_JAVA_CONTEXT,
-                               ds.getValue(XML.ATTRIBUTE_USE_JAVA_CONTEXT, ds.isUseJavaContext().toString()));
-
       if (ds.isSpy() != null && (ds.hasExpression(XML.ATTRIBUTE_SPY) ||
                                  !Defaults.SPY.equals(ds.isSpy())))
          writer.writeAttribute(XML.ATTRIBUTE_SPY,
@@ -1473,11 +1464,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                                        !Defaults.ENABLED.equals(xads.isEnabled())))
          writer.writeAttribute(XML.ATTRIBUTE_ENABLED,
                                xads.getValue(XML.ATTRIBUTE_ENABLED, xads.isEnabled().toString()));
-
-      if (xads.isUseJavaContext() != null && (xads.hasExpression(XML.ATTRIBUTE_USE_JAVA_CONTEXT) ||
-                                              !Defaults.USE_JAVA_CONTEXT.equals(xads.isUseJavaContext())))
-         writer.writeAttribute(XML.ATTRIBUTE_USE_JAVA_CONTEXT,
-                               xads.getValue(XML.ATTRIBUTE_USE_JAVA_CONTEXT, xads.isUseJavaContext().toString()));
 
       if (xads.isSpy() != null && (xads.hasExpression(XML.ATTRIBUTE_SPY) ||
                                    !Defaults.SPY.equals(xads.isSpy())))

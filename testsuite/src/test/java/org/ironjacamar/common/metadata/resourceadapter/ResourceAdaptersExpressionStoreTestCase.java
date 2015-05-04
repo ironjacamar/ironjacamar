@@ -62,7 +62,6 @@ public class ResourceAdaptersExpressionStoreTestCase
       System.setProperty("bean-validation-group2", "validation2");
       System.setProperty("bean-validation-group3", "group2");
       System.setProperty("Property5X", "nestedvalue5X");
-      System.setProperty("use-java-context", "true");
       System.setProperty("initial-pool-size", "3");
       
       try (InputStream is = ResourceAdaptersExpressionStoreTestCase.class.getClassLoader().
@@ -123,10 +122,6 @@ public class ResourceAdaptersExpressionStoreTestCase
          test(document, xPath, xpcon + "@enabled",
                "${enabled:true}");
 
-         //Test simple expression with boolean default value, value is changed
-         test(document, xPath, xpcon + "@use-java-context",
-               "${use-java-context:true}");
-         
          //Test simple expression with integer default value, value is not changed
          test(document, xPath, xpcon + "xa-pool/min-pool-size",
                "${min-pool-size:0}");
@@ -146,7 +141,6 @@ public class ResourceAdaptersExpressionStoreTestCase
          System.clearProperty("bean-validation-group2");
          System.clearProperty("bean-validation-group3");
          System.clearProperty("Property5X");
-         System.clearProperty("use-java-context");
          System.clearProperty("initial-pool-size");
       }      
    }

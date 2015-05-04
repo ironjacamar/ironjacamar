@@ -2,7 +2,7 @@
 <datasources> 
   <datasource jta="${jta:true}" jndi-name="${jndi-name:java:jboss/datasources/complexDs}"
               pool-name="${pool-name:complexDs_Pool}" enabled="${enabled:false}"
-              use-java-context="${use-java-context:false}" spy="${spy:true}"
+              spy="${spy:true}"
               use-ccm="${use-ccm:false}" connectable="${connectable:true}"
               tracking="${tracking:false}">
     <connection-url>${connection-type:jdbc}:h2:mem:test;DB_CLOSE_DELAY=${DBCloseDelay:-1}</connection-url>
@@ -81,7 +81,7 @@
     </statement>
   </datasource>
   <xa-datasource jndi-name="${jndi-name:java:jboss/xa-datasources/complexXaDs}" pool-name="${pool-name:complexXaDs_Pool}"
-                 enabled="${enabled:true}" use-java-context="${use-java-context:true}"
+                 enabled="${enabled:true}"
                  spy="${spy:false}" use-ccm="${use-ccm:true}" connectable="${connectable:false}" tracking="true">
     <xa-datasource-property name="name1">${Property1:Property1}</xa-datasource-property>
     <xa-datasource-property name="name2">${Property2:Property2}</xa-datasource-property>

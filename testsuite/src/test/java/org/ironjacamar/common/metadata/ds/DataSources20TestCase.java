@@ -57,10 +57,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
- * DataSources 1.2 tests
+ * DataSources 2.0 tests
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class DataSources12TestCase
+public class DataSources20TestCase
 {
    /**
     * Read
@@ -71,8 +71,8 @@ public class DataSources12TestCase
    {
       DsParser parser = new DsParser();
 
-      InputStream is = DataSources12TestCase.class.getClassLoader().
-         getResourceAsStream("../../resources/test/ds/dashds-1.2.xml");
+      InputStream is = DataSources20TestCase.class.getClassLoader().
+         getResourceAsStream("../../resources/test/ds/dashds-2.0.xml");
       assertNotNull(is);
 
       XMLStreamReader xsr = XMLInputFactory.newInstance().createXMLStreamReader(is);
@@ -93,8 +93,8 @@ public class DataSources12TestCase
    {
       DsParser parser = new DsParser();
 
-      InputStream is = DataSources12TestCase.class.getClassLoader().
-         getResourceAsStream("../../resources/test/ds/dashds-1.2.xml");
+      InputStream is = DataSources20TestCase.class.getClassLoader().
+         getResourceAsStream("../../resources/test/ds/dashds-2.0.xml");
       assertNotNull(is);
 
       XMLStreamReader xsr = XMLInputFactory.newInstance().createXMLStreamReader(is);
@@ -121,7 +121,7 @@ public class DataSources12TestCase
       DsParser parser = new DsParser();
 
       InputStream is = DataSources10TestCase.class.getClassLoader().
-         getResourceAsStream("../../resources/test/ds/dashds-1.2.xml");
+         getResourceAsStream("../../resources/test/ds/dashds-2.0.xml");
       assertNotNull(is);
 
       XMLStreamReader xsr = XMLInputFactory.newInstance().createXMLStreamReader(is);
@@ -154,8 +154,8 @@ public class DataSources12TestCase
    {
       DsParser parser = new DsParser();
 
-      InputStream is1 = DataSources12TestCase.class.getClassLoader().
-         getResourceAsStream("../../resources/test/ds/dashds-1.2.xml");
+      InputStream is1 = DataSources20TestCase.class.getClassLoader().
+         getResourceAsStream("../../resources/test/ds/dashds-2.0.xml");
       assertNotNull(is1);
 
       XMLStreamReader xsr1 = XMLInputFactory.newInstance().createXMLStreamReader(is1);
@@ -165,8 +165,8 @@ public class DataSources12TestCase
 
       is1.close();
 
-      InputStream is2 = DataSources12TestCase.class.getClassLoader().
-         getResourceAsStream("../../resources/test/ds/dashds-1.2.xml");
+      InputStream is2 = DataSources20TestCase.class.getClassLoader().
+         getResourceAsStream("../../resources/test/ds/dashds-2.0.xml");
       assertNotNull(is2);
 
       XMLStreamReader xsr2 = XMLInputFactory.newInstance().createXMLStreamReader(is2);
@@ -193,6 +193,8 @@ public class DataSources12TestCase
       assertTrue(d.isSpy());
       assertFalse(d.isEnabled());
       assertFalse(d.isUseCcm());
+      assertTrue(d.isConnectable());
+      assertFalse(d.isTracking());
       assertEquals("java:jboss/datasources/complexDs", d.getJndiName());
       assertEquals("complexDs_Pool", d.getPoolName());
       
@@ -293,6 +295,8 @@ public class DataSources12TestCase
       assertFalse(xd.isSpy());
       assertTrue(xd.isEnabled());
       assertTrue(xd.isUseCcm());
+      assertFalse(xd.isConnectable());
+      assertTrue(xd.isTracking());
       assertEquals("java:jboss/xa-datasources/complexXaDs", xd.getJndiName());
       assertEquals("complexXaDs_Pool", xd.getPoolName());
       

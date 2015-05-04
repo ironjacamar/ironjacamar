@@ -192,7 +192,6 @@ public class DataSources10TestCase
       assertTrue(d.isSpy());
       assertFalse(d.isEnabled());
       assertFalse(d.isUseCcm());
-      assertFalse(d.isUseJavaContext());
       assertEquals("java:jboss/datasources/complexDs", d.getJndiName());
       assertEquals("complexDs_Pool", d.getPoolName());
       
@@ -277,7 +276,6 @@ public class DataSources10TestCase
       assertFalse(xd.isSpy());
       assertTrue(xd.isEnabled());
       assertTrue(xd.isUseCcm());
-      assertTrue(xd.isUseJavaContext());
       assertEquals("java:jboss/xa-datasources/complexXaDs", xd.getJndiName());
       assertEquals("complexXaDs_Pool", xd.getPoolName());
       

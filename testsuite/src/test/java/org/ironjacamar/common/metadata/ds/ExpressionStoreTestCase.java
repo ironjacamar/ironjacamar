@@ -123,10 +123,6 @@ public class ExpressionStoreTestCase
          test(document, xPath, "/datasources/datasource[1]/security/reauth-plugin/config-property[@name='name2']",
                "${reauth-plugin-prop2a:${reauth-plugin-prop2b:Value2}}");
 
-         //Test simple expression with boolean default value, value is not changed
-         test(document, xPath, "/datasources/xa-datasource[1]/@use-java-context",
-               "${use-java-context:true}");
-
          //Test simple expression with boolean default value, value is changed
          test(document, xPath, "/datasources/xa-datasource[1]/@enabled",
                "${enabled:false}");

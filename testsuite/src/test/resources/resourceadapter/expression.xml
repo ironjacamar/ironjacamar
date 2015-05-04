@@ -18,7 +18,6 @@
       <connection-definition class-name="${class-name:Class1}"
 			     jndi-name="${jndi-name:java:jboss/name1}"
                              enabled="${enabled:true}"
-                             use-java-context="${use-java-context:false}"
                              pool-name="${pool-name}${pool-number}-X"
 			     use-ccm="${use-ccm:false}" sharable="${sharable:false}"
                              enlistment="${enlistment:false}" connectable="${connectable:true}"
@@ -83,7 +82,7 @@
     <admin-objects>
       <admin-object class-name="${class-name:Class4}" jndi-name="${jndi-name:java:jboss/name4}"
                     enabled="${enabled:false}"
-		    use-java-context="${use-java-context:false}" pool-name="${pool-name:Pool4}">
+		    pool-name="${pool-name:Pool4}">
         <config-property name="Property7">${Property7:3.6}</config-property>
         <config-property name="Property8">${Property8}</config-property>
       </admin-object>

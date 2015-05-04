@@ -20,6 +20,7 @@
  */
 package org.ironjacamar.common.metadata.ironjacamar;
 
+import org.ironjacamar.common.api.metadata.common.Capacity;
 import org.ironjacamar.common.api.metadata.common.Credential;
 import org.ironjacamar.common.api.metadata.common.Extension;
 import org.ironjacamar.common.api.metadata.common.FlushStrategy;
@@ -55,10 +56,10 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**
- * IronJacamar 1.0 tests
+ * IronJacamar 2.0 tests
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class IronJacamar10TestCase
+public class IronJacamar20TestCase
 {
    /**
     * Read
@@ -69,8 +70,8 @@ public class IronJacamar10TestCase
    {
       IronJacamarParser parser = new IronJacamarParser();
 
-      InputStream is = IronJacamar10TestCase.class.getClassLoader().
-         getResourceAsStream("../../resources/test/ironjacamar/ironjacamar-1.0.xml");
+      InputStream is = IronJacamar20TestCase.class.getClassLoader().
+         getResourceAsStream("../../resources/test/ironjacamar/ironjacamar-2.0.xml");
       assertNotNull(is);
 
       XMLStreamReader xsr = XMLInputFactory.newInstance().createXMLStreamReader(is);
@@ -91,8 +92,8 @@ public class IronJacamar10TestCase
    {
       IronJacamarParser parser = new IronJacamarParser();
 
-      InputStream is = IronJacamar10TestCase.class.getClassLoader().
-         getResourceAsStream("../../resources/test/ironjacamar/ironjacamar-1.0.xml");
+      InputStream is = IronJacamar20TestCase.class.getClassLoader().
+         getResourceAsStream("../../resources/test/ironjacamar/ironjacamar-2.0.xml");
       assertNotNull(is);
 
       XMLStreamReader xsr = XMLInputFactory.newInstance().createXMLStreamReader(is);
@@ -118,8 +119,8 @@ public class IronJacamar10TestCase
    {
       IronJacamarParser parser = new IronJacamarParser();
 
-      InputStream is = IronJacamar10TestCase.class.getClassLoader().
-         getResourceAsStream("../../resources/test/ironjacamar/ironjacamar-1.0.xml");
+      InputStream is = IronJacamar20TestCase.class.getClassLoader().
+         getResourceAsStream("../../resources/test/ironjacamar/ironjacamar-2.0.xml");
       assertNotNull(is);
 
       XMLStreamReader xsr = XMLInputFactory.newInstance().createXMLStreamReader(is);
@@ -152,8 +153,8 @@ public class IronJacamar10TestCase
    {
       IronJacamarParser parser = new IronJacamarParser();
 
-      InputStream is1 = IronJacamar10TestCase.class.getClassLoader().
-         getResourceAsStream("../../resources/test/ironjacamar/ironjacamar-1.0.xml");
+      InputStream is1 = IronJacamar20TestCase.class.getClassLoader().
+         getResourceAsStream("../../resources/test/ironjacamar/ironjacamar-2.0.xml");
       assertNotNull(is1);
 
       XMLStreamReader xsr1 = XMLInputFactory.newInstance().createXMLStreamReader(is1);
@@ -163,8 +164,8 @@ public class IronJacamar10TestCase
 
       is1.close();
 
-      InputStream is2 = IronJacamar10TestCase.class.getClassLoader().
-         getResourceAsStream("../../resources/test/ironjacamar/ironjacamar-1.0.xml");
+      InputStream is2 = IronJacamar20TestCase.class.getClassLoader().
+         getResourceAsStream("../../resources/test/ironjacamar/ironjacamar-2.0.xml");
       assertNotNull(is2);
 
       XMLStreamReader xsr2 = XMLInputFactory.newInstance().createXMLStreamReader(is2);
@@ -218,6 +219,10 @@ public class IronJacamar10TestCase
             assertTrue(cd.isUseCcm());
             assertTrue(cd.isEnabled());
             assertTrue(cd.isXa());
+            assertTrue(cd.isSharable());
+            assertTrue(cd.isEnlistment());
+            assertFalse(cd.isConnectable());
+            assertNull(cd.isTracking());
 
             map = cd.getConfigProperties();
             assertEquals(2, map.size());
@@ -228,6 +233,7 @@ public class IronJacamar10TestCase
             xpool = (XaPool) pool;
             assertEquals(1, (int)xpool.getMinPoolSize());
             assertEquals(5, (int)xpool.getMaxPoolSize());
+            assertEquals(2, (int)xpool.getInitialPoolSize());
             assertEquals(FlushStrategy.IDLE_CONNECTIONS, xpool.getFlushStrategy());
             assertTrue(xpool.isPrefill());
             assertTrue(xpool.isUseStrictMin());
@@ -236,6 +242,20 @@ public class IronJacamar10TestCase
             assertTrue(xpool.isNoTxSeparatePool());
             assertTrue(xpool.isPadXid());
             assertFalse(xpool.isWrapXaResource());
+            Capacity cp = xpool.getCapacity();
+            assertNotNull(cp);
+            Extension e = cp.getIncrementer();
+            map = e.getConfigPropertiesMap();
+            assertEquals(2, map.size());
+            assertEquals("1", map.get("P1"));
+            assertEquals("2", map.get("P2"));
+            assertEquals("ic", e.getClassName());
+            e = cp.getDecrementer();
+            map = e.getConfigPropertiesMap();
+            assertEquals(2, map.size());
+            assertEquals("1", map.get("P1"));
+            assertEquals("2", map.get("P2"));
+            assertEquals("dc", e.getClassName());
 
             assertTrue(s.isApplication());
             assertNull(s.getSecurityDomain());
@@ -249,6 +269,7 @@ public class IronJacamar10TestCase
 
             assertEquals(5000L, (long)v.getBackgroundValidationMillis());
             assertTrue(v.isBackgroundValidation());
+            assertNull(v.isValidateOnMatch());
             assertTrue(v.isUseFastFail());
 
             assertFalse(r.isNoRecovery());
@@ -257,7 +278,7 @@ public class IronJacamar10TestCase
             assertEquals("sa", c.getUserName());
             assertEquals("sa-pass", c.getPassword());
             assertNull(c.getSecurityDomain());
-            Extension e = r.getRecoverPlugin();
+            e = r.getRecoverPlugin();
             assertEquals("someClass2", e.getClassName());
             map = e.getConfigPropertiesMap();
             assertEquals(2, map.size());
@@ -271,6 +292,10 @@ public class IronJacamar10TestCase
             assertFalse(cd.isUseCcm());
             assertFalse(cd.isEnabled());
             assertTrue(cd.isXa());
+            assertFalse(cd.isSharable());
+            assertFalse(cd.isEnlistment());
+            assertTrue(cd.isConnectable());
+            assertTrue(cd.isTracking());
 
             map = cd.getConfigProperties();
             assertEquals(0, map.size());
@@ -295,7 +320,8 @@ public class IronJacamar10TestCase
             assertNull(t);
 
             assertNull(v.getBackgroundValidationMillis());
-            assertFalse(v.isBackgroundValidation());
+            assertTrue(v.isValidateOnMatch());
+            assertNull(v.isBackgroundValidation());
             assertFalse(v.isUseFastFail());
 
             assertTrue(r.isNoRecovery());
@@ -314,6 +340,10 @@ public class IronJacamar10TestCase
             assertTrue(cd.isUseCcm());
             assertTrue(cd.isEnabled());
             assertTrue(cd.isXa());
+            assertTrue(cd.isSharable());
+            assertTrue(cd.isEnlistment());
+            assertFalse(cd.isConnectable());
+            assertNull(cd.isTracking());
 
             map = cd.getConfigProperties();
             assertEquals(0, map.size());
@@ -322,6 +352,7 @@ public class IronJacamar10TestCase
             xpool = (XaPool) pool;
             assertEquals(0, (int)xpool.getMinPoolSize());
             assertEquals(20, (int)xpool.getMaxPoolSize());
+            assertNull(xpool.getInitialPoolSize());
             assertEquals(FlushStrategy.FAILING_CONNECTION_ONLY, xpool.getFlushStrategy());
             assertFalse(xpool.isPrefill());
             assertFalse(xpool.isUseStrictMin());

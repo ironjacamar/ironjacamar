@@ -81,7 +81,6 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       Map<String, String> configProperties = new TreeMap<String, String>();
 
       //attributes reading
-      Boolean useJavaContext = Defaults.USE_JAVA_CONTEXT;
       String className = null;
       Boolean enabled = Defaults.ENABLED;
       String jndiName = null;
@@ -107,8 +106,8 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                className = attributeAsString(reader, CommonXML.ATTRIBUTE_CLASS_NAME, expressions);
                break;
             }
-            case CommonXML.ATTRIBUTE_USE_JAVA_CONTEXT : {
-               useJavaContext = attributeAsBoolean(reader, CommonXML.ATTRIBUTE_USE_JAVA_CONTEXT, true, expressions);
+            case "use-java-context" : {
+               // Deprecated
                break;
             }
             case CommonXML.ATTRIBUTE_POOL_NAME : {
@@ -131,7 +130,6 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                if (CommonXML.ELEMENT_ADMIN_OBJECT.equals(reader.getLocalName()))
                {
                   return new AdminObjectImpl(configProperties, className, jndiName, poolName, enabled,
-                                             useJavaContext,
                                              expressions.size() > 0 ? expressions : null);
                }
                else
@@ -387,7 +385,6 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       Recovery recovery = null;
 
       //attributes reading
-      Boolean useJavaContext = Defaults.USE_JAVA_CONTEXT;
       String className = null;
       Boolean enabled = Defaults.ENABLED;
       String jndiName = null;
@@ -424,9 +421,8 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                poolName = attributeAsString(reader, CommonXML.ATTRIBUTE_POOL_NAME, expressions);
                break;
             }
-            case CommonXML.ATTRIBUTE_USE_JAVA_CONTEXT : {
-               useJavaContext = attributeAsBoolean(reader, CommonXML.ATTRIBUTE_USE_JAVA_CONTEXT,
-                                                   Defaults.USE_JAVA_CONTEXT, expressions);
+            case "use-java-context" : {
+               // Deprecated
                break;
             }
             case CommonXML.ATTRIBUTE_USE_CCM : {
@@ -467,7 +463,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                if (CommonXML.ELEMENT_CONNECTION_DEFINITION.equals(reader.getLocalName()))
                {
                   return new ConnectionDefinitionImpl(configProperties, className, jndiName, poolName, enabled,
-                                                      useJavaContext, useCcm, sharable, enlistment,
+                                                      useCcm, sharable, enlistment,
                                                       connectable, tracking,
                                                       pool, timeout, validation,
                                                       security, recovery, isXA,
@@ -721,11 +717,6 @@ public abstract class CommonIronJacamarParser extends AbstractParser
          writer.writeAttribute(CommonXML.ATTRIBUTE_ENABLED,
                                cd.getValue(CommonXML.ATTRIBUTE_ENABLED, cd.isEnabled().toString()));
 
-      if (cd.isUseJavaContext() != null && (cd.hasExpression(CommonXML.ATTRIBUTE_USE_JAVA_CONTEXT) ||
-                                            !Defaults.USE_JAVA_CONTEXT.equals(cd.isUseJavaContext())))
-         writer.writeAttribute(CommonXML.ATTRIBUTE_USE_JAVA_CONTEXT,
-                               cd.getValue(CommonXML.ATTRIBUTE_USE_JAVA_CONTEXT, cd.isUseJavaContext().toString()));
-
       if (cd.getPoolName() != null)
          writer.writeAttribute(CommonXML.ATTRIBUTE_POOL_NAME,
                                cd.getValue(CommonXML.ATTRIBUTE_POOL_NAME, cd.getPoolName()));
@@ -817,11 +808,6 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                                      !Defaults.ENABLED.equals(ao.isEnabled())))
          writer.writeAttribute(CommonXML.ATTRIBUTE_ENABLED,
                                ao.getValue(CommonXML.ATTRIBUTE_ENABLED, ao.isEnabled().toString()));
-
-      if (ao.isUseJavaContext() != null && (ao.hasExpression(CommonXML.ATTRIBUTE_USE_JAVA_CONTEXT) ||
-                                            !Defaults.USE_JAVA_CONTEXT.equals(ao.isUseJavaContext())))
-         writer.writeAttribute(CommonXML.ATTRIBUTE_USE_JAVA_CONTEXT,
-                               ao.getValue(CommonXML.ATTRIBUTE_USE_JAVA_CONTEXT, ao.isUseJavaContext().toString()));
 
       if (ao.getPoolName() != null)
          writer.writeAttribute(CommonXML.ATTRIBUTE_POOL_NAME,

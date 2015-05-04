@@ -19,6 +19,8 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 package org.ironjacamar.common.metadata.resourceadapter;
+
+import org.ironjacamar.common.api.metadata.common.Capacity;
 import org.ironjacamar.common.api.metadata.common.Credential;
 import org.ironjacamar.common.api.metadata.common.Extension;
 import org.ironjacamar.common.api.metadata.common.FlushStrategy;
@@ -56,10 +58,10 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**
- * ResourceAdapters 1.0 tests
+ * ResourceAdapters 2.0 tests
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class ResourceAdapters10TestCase
+public class ResourceAdapters20TestCase
 {
    /**
     * Read
@@ -70,8 +72,8 @@ public class ResourceAdapters10TestCase
    {
       ResourceAdapterParser parser = new ResourceAdapterParser();
 
-      InputStream is = ResourceAdapters10TestCase.class.getClassLoader().
-         getResourceAsStream("../../resources/test/resourceadapter/dashra-1.0.xml");
+      InputStream is = ResourceAdapters20TestCase.class.getClassLoader().
+         getResourceAsStream("../../resources/test/resourceadapter/dashra-2.0.xml");
       assertNotNull(is);
 
       XMLStreamReader xsr = XMLInputFactory.newInstance().createXMLStreamReader(is);
@@ -92,8 +94,8 @@ public class ResourceAdapters10TestCase
    {
       ResourceAdapterParser parser = new ResourceAdapterParser();
 
-      InputStream is = ResourceAdapters10TestCase.class.getClassLoader().
-         getResourceAsStream("../../resources/test/resourceadapter/dashra-1.0.xml");
+      InputStream is = ResourceAdapters20TestCase.class.getClassLoader().
+         getResourceAsStream("../../resources/test/resourceadapter/dashra-2.0.xml");
       assertNotNull(is);
 
       XMLStreamReader xsr = XMLInputFactory.newInstance().createXMLStreamReader(is);
@@ -119,8 +121,8 @@ public class ResourceAdapters10TestCase
    {
       ResourceAdapterParser parser = new ResourceAdapterParser();
 
-      InputStream is = ResourceAdapters10TestCase.class.getClassLoader().
-         getResourceAsStream("../../resources/test/resourceadapter/dashra-1.0.xml");
+      InputStream is = ResourceAdapters20TestCase.class.getClassLoader().
+         getResourceAsStream("../../resources/test/resourceadapter/dashra-2.0.xml");
       assertNotNull(is);
 
       XMLStreamReader xsr = XMLInputFactory.newInstance().createXMLStreamReader(is);
@@ -153,8 +155,8 @@ public class ResourceAdapters10TestCase
    {
       ResourceAdapterParser parser = new ResourceAdapterParser();
 
-      InputStream is1 = ResourceAdapters10TestCase.class.getClassLoader().
-         getResourceAsStream("../../resources/test/resourceadapter/dashra-1.0.xml");
+      InputStream is1 = ResourceAdapters20TestCase.class.getClassLoader().
+         getResourceAsStream("../../resources/test/resourceadapter/dashra-2.0.xml");
       assertNotNull(is1);
 
       XMLStreamReader xsr1 = XMLInputFactory.newInstance().createXMLStreamReader(is1);
@@ -164,8 +166,8 @@ public class ResourceAdapters10TestCase
 
       is1.close();
 
-      InputStream is2 = ResourceAdapters10TestCase.class.getClassLoader().
-         getResourceAsStream("../../resources/test/resourceadapter/dashra-1.0.xml");
+      InputStream is2 = ResourceAdapters20TestCase.class.getClassLoader().
+         getResourceAsStream("../../resources/test/resourceadapter/dashra-2.0.xml");
       assertNotNull(is2);
 
       XMLStreamReader xsr2 = XMLInputFactory.newInstance().createXMLStreamReader(is2);
@@ -188,7 +190,9 @@ public class ResourceAdapters10TestCase
       assertEquals(5, al.size());
       for (Activation a : al)
       {
+         String id = a.getId();
          String archive = a.getArchive();
+         assertNull(a.getWorkManager());
          List<String> ls =  a.getBeanValidationGroups();
          Map<String, String> mp = a.getConfigProperties();
          List<ConnectionDefinition> cds = a.getConnectionDefinitions();
@@ -196,6 +200,7 @@ public class ResourceAdapters10TestCase
          if (archive.equals("some.rar"))
          {
             assertEquals("someContext", a.getBootstrapContext());
+            assertEquals("ID1", id);
             assertEquals(2, ls.size());
             assertTrue(ls.contains("Class0"));
             assertTrue(ls.contains("Class00"));
@@ -207,6 +212,7 @@ public class ResourceAdapters10TestCase
             for (ConnectionDefinition cd : cds)
             {
                XaPool pool = (XaPool)cd.getPool();
+               Capacity cp = pool.getCapacity();
                Security s = cd.getSecurity();
                Timeout t = cd.getTimeout();
                Validation v = cd.getValidation();
@@ -219,6 +225,10 @@ public class ResourceAdapters10TestCase
                   assertEquals("Pool1", cd.getPoolName());
                   assertTrue(cd.isUseCcm());
                   assertTrue(cd.isEnabled());
+                  assertTrue(cd.isSharable());
+                  assertTrue(cd.isEnlistment());
+                  assertTrue(cd.isConnectable());
+                  assertTrue(cd.isTracking());
                   mp = cd.getConfigProperties();
                   assertEquals(2, mp.size());
                   assertEquals("1", mp.get("Property3"));
@@ -227,6 +237,7 @@ public class ResourceAdapters10TestCase
                   
                   assertEquals(1, (int)pool.getMinPoolSize());
                   assertEquals(5, (int)pool.getMaxPoolSize());
+                  assertEquals(5, (int)pool.getInitialPoolSize());
                   assertEquals(FlushStrategy.IDLE_CONNECTIONS, pool.getFlushStrategy());
                   assertTrue(pool.isPrefill());
                   assertTrue(pool.isUseStrictMin());
@@ -235,6 +246,9 @@ public class ResourceAdapters10TestCase
                   assertTrue(pool.isNoTxSeparatePool());
                   assertTrue(pool.isPadXid());
                   assertFalse(pool.isWrapXaResource());
+                  assertNotNull(cp);
+                  assertEquals("ic", cp.getIncrementer().getClassName());
+                  assertEquals("dc", cp.getDecrementer().getClassName());
                   
                   assertTrue(s.isApplication());
                   assertNull(s.getSecurityDomain());
@@ -269,12 +283,17 @@ public class ResourceAdapters10TestCase
                   assertNull(cd.getPoolName());
                   assertFalse(cd.isUseCcm());
                   assertFalse(cd.isEnabled());
+                  assertFalse(cd.isSharable());
+                  assertFalse(cd.isEnlistment());
+                  assertFalse(cd.isConnectable());
+                  assertFalse(cd.isTracking());
                   mp = cd.getConfigProperties();
                   assertEquals(0, mp.size());
                   assertTrue(cd.isXa());
                   
                   assertEquals(0, (int)pool.getMinPoolSize());
                   assertEquals(20, (int)pool.getMaxPoolSize());
+                  assertNull(pool.getInitialPoolSize());
                   assertEquals(FlushStrategy.ENTIRE_POOL, pool.getFlushStrategy());
                   assertFalse(pool.isPrefill());
                   assertFalse(pool.isUseStrictMin());
@@ -283,6 +302,7 @@ public class ResourceAdapters10TestCase
                   assertFalse(pool.isNoTxSeparatePool());
                   assertFalse(pool.isPadXid());
                   assertTrue(pool.isWrapXaResource());
+                  assertNull(pool.getCapacity());
                   
                   assertFalse(s.isApplication());
                   assertEquals("domain", s.getSecurityDomain());
@@ -291,7 +311,8 @@ public class ResourceAdapters10TestCase
                   assertNull(t);
                   
                   assertNull(v.getBackgroundValidationMillis());
-                  assertFalse(v.isBackgroundValidation());
+                  assertTrue(v.isValidateOnMatch());
+                  assertNull(v.isBackgroundValidation());
                   assertFalse(v.isUseFastFail());
                   
                   assertTrue(r.isNoRecovery());
@@ -307,12 +328,17 @@ public class ResourceAdapters10TestCase
                   assertNull(cd.getPoolName());
                   assertTrue(cd.isUseCcm());
                   assertTrue(cd.isEnabled());
+                  assertTrue(cd.isSharable());
+                  assertTrue(cd.isEnlistment());
+                  assertFalse(cd.isConnectable());
+                  assertNull(cd.isTracking());
                   mp = cd.getConfigProperties();
                   assertEquals(0, mp.size());
                   assertTrue(cd.isXa());
                   
                   assertEquals(0, (int)pool.getMinPoolSize());
                   assertEquals(20, (int)pool.getMaxPoolSize());
+                  assertNull(pool.getInitialPoolSize());
                   assertEquals(FlushStrategy.FAILING_CONNECTION_ONLY, pool.getFlushStrategy());
                   assertFalse(pool.isPrefill());
                   assertFalse(pool.isUseStrictMin());
@@ -321,6 +347,7 @@ public class ResourceAdapters10TestCase
                   assertFalse(pool.isNoTxSeparatePool());
                   assertFalse(pool.isPadXid());
                   assertTrue(pool.isWrapXaResource());
+                  assertNull(pool.getCapacity());
                   
                   assertFalse(s.isApplication());
                   assertEquals("domain", s.getSecurityDomainAndApplication());
@@ -368,6 +395,7 @@ public class ResourceAdapters10TestCase
          {
             assertNull(a.getBootstrapContext());
             assertNull(ls);
+            assertNull(id);
             assertEquals(TransactionSupportEnum.LocalTransaction, a.getTransactionSupport());
             assertNull(mp);
             assertEquals(1, cds.size());
@@ -377,6 +405,10 @@ public class ResourceAdapters10TestCase
             assertNull(cd.getPoolName());
             assertTrue(cd.isUseCcm());
             assertTrue(cd.isEnabled());
+            assertTrue(cd.isSharable());
+            assertTrue(cd.isEnlistment());
+            assertNull(cd.isTracking());
+            assertFalse(cd.isConnectable());
             mp = cd.getConfigProperties();
             assertEquals(0, mp.size());
             assertFalse(cd.isXa());
@@ -384,10 +416,11 @@ public class ResourceAdapters10TestCase
             Pool pool = cd.getPool();
             assertEquals(0, (int)pool.getMinPoolSize());
             assertEquals(20, (int)pool.getMaxPoolSize());
+            assertNull(pool.getInitialPoolSize());
             assertEquals(FlushStrategy.FAILING_CONNECTION_ONLY, pool.getFlushStrategy());
             assertFalse(pool.isPrefill());
             assertFalse(pool.isUseStrictMin());
-            
+            assertNull(pool.getCapacity());
             assertNull(cd.getSecurity());
             assertNull(cd.getTimeout());
             assertNull(cd.getValidation());
@@ -398,6 +431,7 @@ public class ResourceAdapters10TestCase
          else if (archive.equals("some2.rar"))
          {
             assertNull(a.getBootstrapContext());
+            assertEquals("ID2", id);
             assertNull(ls);
             assertEquals(TransactionSupportEnum.NoTransaction, a.getTransactionSupport());
             assertNull(mp);
@@ -408,6 +442,10 @@ public class ResourceAdapters10TestCase
             assertNull(cd.getPoolName());
             assertTrue(cd.isUseCcm());
             assertTrue(cd.isEnabled());
+            assertTrue(cd.isSharable());
+            assertTrue(cd.isEnlistment());
+            assertFalse(cd.isConnectable());
+            assertNull(cd.isTracking());
             mp = cd.getConfigProperties();
             assertEquals(0, mp.size());
             assertFalse(cd.isXa());
@@ -415,9 +453,13 @@ public class ResourceAdapters10TestCase
             Pool pool = cd.getPool();
             assertEquals(1, (int)pool.getMinPoolSize());
             assertEquals(5, (int)pool.getMaxPoolSize());
+            assertEquals(5, (int)pool.getInitialPoolSize());
             assertEquals(FlushStrategy.IDLE_CONNECTIONS, pool.getFlushStrategy());
             assertTrue(pool.isPrefill());
             assertTrue(pool.isUseStrictMin());
+            assertNotNull(pool.getCapacity());
+            assertEquals("ic", pool.getCapacity().getIncrementer().getClassName());
+            assertEquals("dc", pool.getCapacity().getDecrementer().getClassName());
             
             assertNull(cd.getSecurity());
             assertNull(cd.getTimeout());
@@ -454,6 +496,7 @@ public class ResourceAdapters10TestCase
          {
             assertNull(a.getBootstrapContext());
             assertNull(ls);
+            assertNull(id);
             assertNull(a.getTransactionSupport());
             assertNull(mp);
             assertNull(cds);
@@ -471,6 +514,7 @@ public class ResourceAdapters10TestCase
          {
             assertNull(a.getBootstrapContext());
             assertNull(ls);
+            assertNull(id);
             assertNull(a.getTransactionSupport());
             assertNull(mp);
             assertNull(cds);

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<resource-adapters>
+  <resource-adapter id="ID1">
+    <archive>some.rar</archive>
+    <bootstrap-context>someContext</bootstrap-context>
+    <bean-validation-groups>
+      <bean-validation-group>Class0</bean-validation-group>
+      <bean-validation-group>Class00</bean-validation-group>
+    </bean-validation-groups>
+    <transaction-support>XATransaction</transaction-support>
+    <config-property name="Property1">A</config-property>
+    <config-property name="Property2">B</config-property>
+    <connection-definitions>
+      <connection-definition class-name="Class1"
+			     jndi-name="java:jboss/name1" pool-name="Pool1" use-ccm="true" tracking="true"
+			     enabled="true" sharable="true" enlistment="true" connectable="true">
+	<config-property name="Property3">1</config-property>
+	<config-property name="Property4">2</config-property>
+	<xa-pool>
+	  <min-pool-size>1</min-pool-size>
+	  <initial-pool-size>5</initial-pool-size>
+	  <max-pool-size>5</max-pool-size>
+	  <prefill>true</prefill>
+	  <use-strict-min>true</use-strict-min>
+	  <flush-strategy>IdleConnections</flush-strategy>
+          <capacity>
+            <incrementer class-name="ic">
+            </incrementer>
+            <decrementer class-name="dc">
+            </decrementer>
+          </capacity>
+	  <is-same-rm-override>true</is-same-rm-override>
+	  <interleaving />
+	  <no-tx-separate-pools />
+	  <pad-xid>true</pad-xid>
+	  <wrap-xa-resource>false</wrap-xa-resource>
+	</xa-pool>
+	<security>
+	  <application />
+	</security>
+	<timeout>
+	  <blocking-timeout-millis>5000</blocking-timeout-millis>
+	  <idle-timeout-minutes>4</idle-timeout-minutes>
+	  <allocation-retry>2</allocation-retry>
+	  <allocation-retry-wait-millis>3000</allocation-retry-wait-millis>
+	  <xa-resource-timeout>300</xa-resource-timeout>
+	</timeout>
+	<validation>
+	  <background-validation>true</background-validation>
+	  <background-validation-millis>5000</background-validation-millis>
+	  <use-fast-fail>true</use-fast-fail>
+	</validation>
+	<recovery no-recovery="false">
+	  <recover-credential>
+	    <user-name>sa</user-name>
+	    <password>sa-pass</password>
+	  </recover-credential>
+	  <recover-plugin class-name="someClass2">
+	    <config-property name="Property5">some</config-property>
+	    <config-property name="Property6">true</config-property>
+	  </recover-plugin>
+	</recovery>
+      </connection-definition>
+      <connection-definition class-name="Class2"
+			     jndi-name="java:jboss/name2" use-ccm="false" tracking="false"
+			     enabled="false" sharable="false" enlistment="false" connectable="false">
+	<xa-pool>
+	  <prefill>false</prefill>
+	  <use-strict-min>false</use-strict-min>
+	  <flush-strategy>EntirePool</flush-strategy>
+	  <is-same-rm-override>false</is-same-rm-override>
+	  <pad-xid>false</pad-xid>
+	  <wrap-xa-resource>true</wrap-xa-resource>
+	</xa-pool>
+	<security>
+	  <security-domain>domain</security-domain>
+	</security>
+	<validation>
+	  <validate-on-match>true</validate-on-match>
+	  <use-fast-fail>false</use-fast-fail>
+	</validation>
+	<recovery no-recovery="true">
+	  <recover-credential>
+	    <security-domain>HsqlDbRealm</security-domain>
+	  </recover-credential>
+	</recovery>
+      </connection-definition>
+      <connection-definition class-name="Class3"
+			     jndi-name="java:jboss/name3">
+	<xa-pool>
+	  <flush-strategy>FailingConnectionOnly</flush-strategy>
+	</xa-pool>
+	<security>
+	  <security-domain-and-application>domain
+	  </security-domain-and-application>
+	</security>
+	<recovery />
+      </connection-definition>
+    </connection-definitions>
+    <admin-objects>
+      <admin-object class-name="Class4" jndi-name="java:jboss/name4"
+		    pool-name="Pool4" enabled="true">
+	<config-property name="Property7">3.6</config-property>
+	<config-property name="Property8" />
+      </admin-object>
+      <admin-object class-name="Class5" jndi-name="java:jboss/name5" />
+    </admin-objects>
+  </resource-adapter>
+  <resource-adapter id="ID2">
+    <archive>some2.rar</archive>
+    <transaction-support>NoTransaction</transaction-support>
+    <connection-definitions>
+      <connection-definition jndi-name="java:jboss/name8">
+	<pool>
+	  <min-pool-size>1</min-pool-size>
+	  <initial-pool-size>5</initial-pool-size>
+	  <max-pool-size>5</max-pool-size>
+	  <prefill>true</prefill>
+	  <use-strict-min>true</use-strict-min>
+	  <flush-strategy>IdleConnections</flush-strategy>
+          <capacity>
+            <incrementer class-name="ic">
+            </incrementer>
+            <decrementer class-name="dc">
+            </decrementer>
+          </capacity>
+	</pool>
+      </connection-definition>
+    </connection-definitions>
+    <admin-objects>
+      <admin-object class-name="Class6" jndi-name="java:jboss/name6"
+		    pool-name="Pool6" enabled="false">
+	<config-property name="Property9">.</config-property>
+	<config-property name="Property0" />
+      </admin-object>
+      <admin-object jndi-name="java:jboss/name7" />
+    </admin-objects>
+  </resource-adapter>
+  <resource-adapter>
+    <archive>some1.rar</archive>
+    <transaction-support>LocalTransaction</transaction-support>
+    <connection-definitions>
+      <connection-definition jndi-name="java:jboss/name9">
+        <pool>
+	  <prefill>false</prefill>
+	  <use-strict-min>false</use-strict-min>
+	</pool>
+      </connection-definition>
+    </connection-definitions>
+  </resource-adapter>
+  <resource-adapter>
+    <archive>some3.rar</archive>
+    <admin-objects>
+      <admin-object jndi-name="java:jboss/name0" />
+    </admin-objects>
+  </resource-adapter>
+  <resource-adapter>
+    <archive>some4.rar</archive>
+  </resource-adapter>
+</resource-adapters>

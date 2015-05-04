@@ -97,11 +97,6 @@ public interface CommonXML
    public static final String ATTRIBUTE_USE_CCM = "use-ccm";
 
    /**
-    * use-java-context
-    */
-   public static final String ATTRIBUTE_USE_JAVA_CONTEXT = "use-java-context";
-
-   /**
     * admin-object
     */
    public static final String ELEMENT_ADMIN_OBJECT = "admin-object";

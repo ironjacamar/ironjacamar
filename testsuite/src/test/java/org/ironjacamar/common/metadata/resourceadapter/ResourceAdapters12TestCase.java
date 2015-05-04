@@ -225,7 +225,6 @@ public class ResourceAdapters12TestCase
                   assertEquals("Pool1", cd.getPoolName());
                   assertTrue(cd.isUseCcm());
                   assertTrue(cd.isEnabled());
-                  assertFalse(cd.isUseJavaContext());
                   assertTrue(cd.isSharable());
                   assertTrue(cd.isEnlistment());
                   assertTrue(cd.isConnectable());
@@ -284,7 +283,6 @@ public class ResourceAdapters12TestCase
                   assertNull(cd.getPoolName());
                   assertFalse(cd.isUseCcm());
                   assertFalse(cd.isEnabled());
-                  assertTrue(cd.isUseJavaContext());
                   assertFalse(cd.isSharable());
                   assertFalse(cd.isEnlistment());
                   assertFalse(cd.isConnectable());
@@ -330,7 +328,6 @@ public class ResourceAdapters12TestCase
                   assertNull(cd.getPoolName());
                   assertTrue(cd.isUseCcm());
                   assertTrue(cd.isEnabled());
-                  assertTrue(cd.isUseJavaContext());
                   assertTrue(cd.isSharable());
                   assertTrue(cd.isEnlistment());
                   assertFalse(cd.isConnectable());
@@ -375,7 +372,6 @@ public class ResourceAdapters12TestCase
                   {
                      assertEquals("java:jboss/name4", ao.getJndiName());
                      assertEquals("Pool4", ao.getPoolName());
-                     assertFalse(ao.isUseJavaContext());
                      assertTrue(ao.isEnabled());
                      assertEquals(2, mp.size());
                      assertEquals("3.6", mp.get("Property7"));
@@ -385,7 +381,6 @@ public class ResourceAdapters12TestCase
                   {
                      assertEquals("java:jboss/name5", ao.getJndiName());
                      assertNull(ao.getPoolName());
-                     assertTrue(ao.isUseJavaContext());
                      assertTrue(ao.isEnabled());
                      assertEquals(0, mp.size());
                   }
@@ -410,7 +405,6 @@ public class ResourceAdapters12TestCase
             assertNull(cd.getPoolName());
             assertTrue(cd.isUseCcm());
             assertTrue(cd.isEnabled());
-            assertTrue(cd.isUseJavaContext());
             assertTrue(cd.isSharable());
             assertTrue(cd.isEnlistment());
             assertNull(cd.isTracking());
@@ -448,7 +442,6 @@ public class ResourceAdapters12TestCase
             assertNull(cd.getPoolName());
             assertTrue(cd.isUseCcm());
             assertTrue(cd.isEnabled());
-            assertTrue(cd.isUseJavaContext());
             assertTrue(cd.isSharable());
             assertTrue(cd.isEnlistment());
             assertFalse(cd.isConnectable());
@@ -481,7 +474,6 @@ public class ResourceAdapters12TestCase
                {
                   assertEquals("java:jboss/name6", ao.getJndiName());
                   assertEquals("Pool6", ao.getPoolName());
-                  assertTrue(ao.isUseJavaContext());
                   assertFalse(ao.isEnabled());
                   assertEquals(2, mp.size());
                   assertEquals(".", mp.get("Property9"));
@@ -491,7 +483,6 @@ public class ResourceAdapters12TestCase
                {
                   assertEquals("java:jboss/name7", ao.getJndiName());
                   assertNull(ao.getPoolName());
-                  assertTrue(ao.isUseJavaContext());
                   assertTrue(ao.isEnabled());
                   assertEquals(0, mp.size());
                }
@@ -515,7 +506,6 @@ public class ResourceAdapters12TestCase
             assertEquals("java:jboss/name0", ao.getJndiName());
             assertNull(ao.getClassName());
             assertNull(ao.getPoolName());
-            assertTrue(ao.isUseJavaContext());
             assertTrue(ao.isEnabled());
             mp = ao.getConfigProperties();
             assertEquals(0, mp.size());
