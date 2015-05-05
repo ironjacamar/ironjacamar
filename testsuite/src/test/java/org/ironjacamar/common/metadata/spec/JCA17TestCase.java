@@ -270,7 +270,7 @@ public class JCA17TestCase
       assertEquals(2, cdl.size());
       for (ConnectionDefinition cd : cdl)
       {
-         switch(cd.getId())
+         switch (cd.getId())
          {
             case "ID081" :
             {
@@ -288,7 +288,7 @@ public class JCA17TestCase
                assertEquals(2, cpl.size());
                for (ConfigProperty cp : cpl)
                {
-                  switch(cp.getId())
+                  switch (cp.getId())
                   {
                      case "ID085" :
                      {
@@ -352,7 +352,7 @@ public class JCA17TestCase
                assertEquals(2, cpl.size());
                for (ConfigProperty cp : cpl)
                {
-                  switch(cp.getId())
+                  switch (cp.getId())
                   {
                      case "ID133" :
                      {
@@ -415,7 +415,7 @@ public class JCA17TestCase
       assertEquals(2, ams.size());
       for (AuthenticationMechanism am : ams)
       {
-         switch(am.getId())
+         switch (am.getId())
          {
             case "ID179" :
             {
@@ -458,7 +458,7 @@ public class JCA17TestCase
       assertEquals(2, mll.size());
       for (MessageListener ml : mll)
       {
-         switch(ml.getId())
+         switch (ml.getId())
          {
             case "ID205" :
             {
@@ -472,7 +472,7 @@ public class JCA17TestCase
                assertEquals(2, cpl.size());
                for (ConfigProperty cp : cpl)
                {
-                  switch(cp.getId())
+                  switch (cp.getId())
                   {
                      case "ID1331" :
                      {
@@ -570,7 +570,7 @@ public class JCA17TestCase
       List<AdminObject> lao = ra.getAdminObjects();
       for (AdminObject ao : lao)
       {
-         switch(ao.getId())
+         switch (ao.getId())
          {
             case "ID221" :
             {
@@ -582,7 +582,7 @@ public class JCA17TestCase
                assertEquals(2, cpl.size());
                for (ConfigProperty cp : cpl)
                {
-                  switch(cp.getId())
+                  switch (cp.getId())
                   {
                      case "ID227" :
                      {
@@ -642,7 +642,7 @@ public class JCA17TestCase
                assertEquals(2, cpl.size());
                for (ConfigProperty cp : cpl)
                {
-                  switch(cp.getId())
+                  switch (cp.getId())
                   {
                      case "ID269" :
                      {
@@ -702,7 +702,7 @@ public class JCA17TestCase
       assertEquals(2, ls.size());
       for (SecurityPermission s : ls)
       {
-         switch(s.getId())
+         switch (s.getId())
          {
             case "ID305" :
             {

@@ -919,8 +919,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
     * @exception ValidateException Thrown if a validation error occurs
     */
    protected org.ironjacamar.common.api.metadata.ds.XaDataSource
-   parseXADataSource(XMLStreamReader reader) throws XMLStreamException, ParserException,
-      ValidateException
+      parseXADataSource(XMLStreamReader reader) throws XMLStreamException, ParserException,
+                                                       ValidateException
    {
       TransactionIsolation transactionIsolation = null;
       Map<String, String> xaDataSourceProperty = new HashMap<String, String>();

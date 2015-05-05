@@ -136,7 +136,7 @@ public class JCA10TestCase
       assertEquals(2, cpl.size());
       for (ConfigProperty cp : cpl)
       {
-         switch(cp.getId())
+         switch (cp.getId())
          {
             case "ID020" :
             {
@@ -170,7 +170,7 @@ public class JCA10TestCase
       assertEquals(2, ams.size());
       for (AuthenticationMechanism am : ams)
       {
-         switch(am.getId())
+         switch (am.getId())
          {
             case "ID030" :
             {
@@ -207,7 +207,7 @@ public class JCA10TestCase
       assertEquals(2, ls.size());
       for (SecurityPermission s : ls)
       {
-         switch(s.getId())
+         switch (s.getId())
          {
             case "ID039" :
             {
