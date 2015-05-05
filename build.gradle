@@ -71,7 +71,7 @@ allprojects {
   }
 
   jacoco {
-    toolVersion = '0.7.2.201409121644'
+    toolVersion = '0.7.4.201502262128'
   }
 }
 
@@ -212,6 +212,7 @@ subprojects { subProject ->
     configFile = rootProject.file('tools/checkstyle/checkstyle.xml')
     showViolations = true
     ignoreFailures = false
+    toolVersion = '6.6'
   }
   checkstyleMain.exclude '**/*_$bundle*'
   checkstyleMain.exclude '**/*_$logger*'
@@ -264,5 +265,5 @@ tasks.withType(Tar) {
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '2.3'
+  gradleVersion = '2.4'
 }

@@ -139,6 +139,8 @@
       <property name="basicOffset" value="3"/>
       <property name="caseIndent" value="3"/>
       <property name="throwsIndent" value="3"/>
+      <property name="arrayInitIndent" value="3"/>
+      <property name="lineWrappingIndentation" value="3"/>
     </module>
 
     <!-- StringLiteralEquality -->
