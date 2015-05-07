@@ -35,7 +35,7 @@ public interface ConnectionDefinition
       extends
          IdDecoratedMetadata,
          MergeableMetadata<ConnectionDefinition>,
-         CopyableMetaData
+         CopyableMetaData<ConnectionDefinition>
 {
    /**
     * @return managedconnectionfactoryClass

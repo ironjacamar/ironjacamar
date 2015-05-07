@@ -21,7 +21,6 @@
 package org.ironjacamar.common.metadata.spec;
 
 import org.ironjacamar.common.api.metadata.CopyUtil;
-import org.ironjacamar.common.api.metadata.CopyableMetaData;
 import org.ironjacamar.common.api.metadata.spec.Icon;
 import org.ironjacamar.common.api.metadata.spec.XsdString;
 import org.ironjacamar.common.metadata.common.AbstractMetadata;
@@ -107,7 +106,7 @@ public class IconImpl extends AbstractMetadata implements Icon
    /**
     * {@inheritDoc}
     */
-   public CopyableMetaData copy()
+   public Icon copy()
    {
       return new IconImpl(CopyUtil.clone(smallIcon), CopyUtil.clone(largeIcon), 
                           CopyUtil.cloneString(lang), CopyUtil.cloneString(id));

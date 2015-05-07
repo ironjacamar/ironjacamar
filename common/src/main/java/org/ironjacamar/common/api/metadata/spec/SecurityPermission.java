@@ -32,7 +32,7 @@ import java.util.List;
  * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
-public interface SecurityPermission extends IdDecoratedMetadata, CopyableMetaData
+public interface SecurityPermission extends IdDecoratedMetadata, CopyableMetaData<SecurityPermission>
 {
    /**
     * @return description

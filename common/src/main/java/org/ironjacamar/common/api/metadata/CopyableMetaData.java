@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2014, Red Hat Inc, and individual contributors
+ * Copyright 2015, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -21,26 +21,18 @@
 package org.ironjacamar.common.api.metadata;
 
 /**
+ * This interface provides a {@link #copy()} method that will provide
+ * a deep copy of the implementing object
  *
- * A CopyableMetaData.
- * This interface force implementors to override {@link #copy()} method.
- * On the presence of this method are based some assumption to use generics during clone deep into the metadatas
- * members.
- *
+ * @param <T> The type of the metadata
  * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
- *
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface CopyableMetaData extends Cloneable
+public interface CopyableMetaData<T>
 {
-
    /**
-    * Creates and returns a copy of this object.  Ther copy is done in deep of all elements.
-    * It isn't formally a clone of the instance since it does not respect the assumption for which returned
-    * clone of cloneMethod are instance of Object
-    *
-    * @return     a copy of this instance.
+    * Creates and returns a deep-copy of this object
+    * @return The new instance
     */
-
-   public CopyableMetaData copy();
-
+   public T copy();
 }

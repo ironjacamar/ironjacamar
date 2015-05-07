@@ -22,7 +22,6 @@ package org.ironjacamar.common.metadata.spec;
 
 import org.ironjacamar.common.CommonBundle;
 import org.ironjacamar.common.api.metadata.CopyUtil;
-import org.ironjacamar.common.api.metadata.CopyableMetaData;
 import org.ironjacamar.common.api.metadata.MergeUtil;
 import org.ironjacamar.common.api.metadata.spec.AuthenticationMechanism;
 import org.ironjacamar.common.api.metadata.spec.ConfigProperty;
@@ -320,7 +319,7 @@ public class ConnectorImpl extends AbstractMetadata implements Connector
    /**
     * {@inheritDoc}
     */
-   public CopyableMetaData copy()
+   public Connector copy()
    {
       XsdString newResourceadapterVersion = CopyUtil.clone(this.resourceadapterVersion);
       XsdString newEisType = XsdString.isNull(this.eisType) ? null : (XsdString) this.eisType.copy();

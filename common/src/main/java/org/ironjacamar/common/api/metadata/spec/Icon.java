@@ -26,7 +26,7 @@ import org.ironjacamar.common.api.metadata.CopyableMetaData;
  * Icon
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface Icon extends IdDecoratedMetadata, LocalizedMetadata, CopyableMetaData
+public interface Icon extends IdDecoratedMetadata, LocalizedMetadata, CopyableMetaData<Icon>
 {
    /**
     * @return smallIcon

@@ -21,7 +21,6 @@
 package org.ironjacamar.common.metadata.spec;
 
 import org.ironjacamar.common.api.metadata.CopyUtil;
-import org.ironjacamar.common.api.metadata.CopyableMetaData;
 import org.ironjacamar.common.api.metadata.spec.Activationspec;
 import org.ironjacamar.common.api.metadata.spec.ConfigProperty;
 import org.ironjacamar.common.api.metadata.spec.RequiredConfigProperty;
@@ -113,7 +112,7 @@ public class ActivationSpecImpl extends AbstractMetadata implements Activationsp
    /**
     * {@inheritDoc}
     */
-   public CopyableMetaData copy()
+   public Activationspec copy()
    {
       return new ActivationSpecImpl(CopyUtil.clone(activationspecClass),
                                     CopyUtil.cloneList(requiredConfigProperty),

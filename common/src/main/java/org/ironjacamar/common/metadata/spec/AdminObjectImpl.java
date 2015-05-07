@@ -21,7 +21,6 @@
 package org.ironjacamar.common.metadata.spec;
 
 import org.ironjacamar.common.api.metadata.CopyUtil;
-import org.ironjacamar.common.api.metadata.CopyableMetaData;
 import org.ironjacamar.common.api.metadata.spec.AdminObject;
 import org.ironjacamar.common.api.metadata.spec.ConfigProperty;
 import org.ironjacamar.common.api.metadata.spec.XsdString;
@@ -129,7 +128,7 @@ public class AdminObjectImpl extends AbstractMetadata implements AdminObject
    /**
     * {@inheritDoc}
     */
-   public CopyableMetaData copy()
+   public AdminObject copy()
    {
       return new AdminObjectImpl(CopyUtil.clone(adminobjectInterface), CopyUtil.clone(adminobjectClass),
                                  CopyUtil.cloneList(configProperties), CopyUtil.cloneString(id));

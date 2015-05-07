@@ -21,7 +21,6 @@
 package org.ironjacamar.common.metadata.spec;
 
 import org.ironjacamar.common.api.metadata.CopyUtil;
-import org.ironjacamar.common.api.metadata.CopyableMetaData;
 import org.ironjacamar.common.api.metadata.spec.InboundResourceAdapter;
 import org.ironjacamar.common.api.metadata.spec.MergeableMetadata;
 import org.ironjacamar.common.api.metadata.spec.MessageListener;
@@ -113,7 +112,7 @@ public class InboundResourceAdapterImpl extends AbstractMetadata implements Inbo
    /**
     * {@inheritDoc}
     */
-   public CopyableMetaData copy()
+   public InboundResourceAdapter copy()
    {
       return new InboundResourceAdapterImpl(CopyUtil.clone(messageadapter), CopyUtil.cloneString(id));
    }

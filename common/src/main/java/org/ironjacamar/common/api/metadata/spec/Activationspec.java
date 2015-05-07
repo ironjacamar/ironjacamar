@@ -31,7 +31,7 @@ import java.util.List;
  * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
-public interface Activationspec extends IdDecoratedMetadata, CopyableMetaData
+public interface Activationspec extends IdDecoratedMetadata, CopyableMetaData<Activationspec>
 {
    /**
     * @return activationspecClass

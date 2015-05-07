@@ -39,7 +39,7 @@ public interface Connector
          IdDecoratedMetadata,
          ValidatableMetadata,
          MergeableMetadata<Connector>,
-         CopyableMetaData
+         CopyableMetaData<Connector>
 {
 
    /**

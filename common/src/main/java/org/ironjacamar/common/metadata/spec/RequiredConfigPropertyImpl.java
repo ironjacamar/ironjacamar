@@ -21,7 +21,6 @@
 package org.ironjacamar.common.metadata.spec;
 
 import org.ironjacamar.common.api.metadata.CopyUtil;
-import org.ironjacamar.common.api.metadata.CopyableMetaData;
 import org.ironjacamar.common.api.metadata.spec.LocalizedXsdString;
 import org.ironjacamar.common.api.metadata.spec.RequiredConfigProperty;
 import org.ironjacamar.common.api.metadata.spec.XsdString;
@@ -98,7 +97,7 @@ public class RequiredConfigPropertyImpl extends AbstractMetadata implements Requ
    /**
     * {@inheritDoc}
     */
-   public CopyableMetaData copy()
+   public RequiredConfigProperty copy()
    {
       return new RequiredConfigPropertyImpl(CopyUtil.cloneList(description), CopyUtil.clone(configPropertyName),
                                             CopyUtil.cloneString(id));

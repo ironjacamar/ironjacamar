@@ -34,7 +34,7 @@ import java.util.List;
  *
  */
 public interface ResourceAdapter extends IdDecoratedMetadata, ValidatableMetadata,
-                                         CopyableMetaData, MergeableMetadata<ResourceAdapter>
+                                         CopyableMetaData<ResourceAdapter>, MergeableMetadata<ResourceAdapter>
 {
    /**
     * @return resourceadapterClass

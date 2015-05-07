@@ -31,7 +31,7 @@ import java.util.List;
  * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
-public interface AuthenticationMechanism extends IdDecoratedMetadata, CopyableMetaData
+public interface AuthenticationMechanism extends IdDecoratedMetadata, CopyableMetaData<AuthenticationMechanism>
 {
    /**
     * @return description

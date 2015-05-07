@@ -22,7 +22,6 @@ package org.ironjacamar.common.metadata.spec;
 
 
 import org.ironjacamar.common.api.metadata.CopyUtil;
-import org.ironjacamar.common.api.metadata.CopyableMetaData;
 import org.ironjacamar.common.api.metadata.MergeUtil;
 import org.ironjacamar.common.api.metadata.spec.MergeableMetadata;
 import org.ironjacamar.common.api.metadata.spec.MessageListener;
@@ -109,7 +108,7 @@ public class MessageAdapterImpl extends AbstractMetadata implements Messageadapt
    /**
     * {@inheritDoc}
     */
-   public CopyableMetaData copy()
+   public Messageadapter copy()
    {
       return new MessageAdapterImpl(CopyUtil.cloneList(messagelisteners), CopyUtil.cloneString(id));
    }

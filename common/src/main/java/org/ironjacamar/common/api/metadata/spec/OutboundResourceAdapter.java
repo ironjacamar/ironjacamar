@@ -37,7 +37,7 @@ public interface OutboundResourceAdapter
       extends
          IdDecoratedMetadata,
          MergeableMetadata<OutboundResourceAdapter>,
-         CopyableMetaData
+         CopyableMetaData<OutboundResourceAdapter>
 {
    /**
     * @return connectionDefinition

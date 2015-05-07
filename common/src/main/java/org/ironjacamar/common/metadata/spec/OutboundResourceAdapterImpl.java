@@ -21,7 +21,6 @@
 package org.ironjacamar.common.metadata.spec;
 
 import org.ironjacamar.common.api.metadata.CopyUtil;
-import org.ironjacamar.common.api.metadata.CopyableMetaData;
 import org.ironjacamar.common.api.metadata.MergeUtil;
 import org.ironjacamar.common.api.metadata.common.TransactionSupportEnum;
 import org.ironjacamar.common.api.metadata.spec.AuthenticationMechanism;
@@ -259,7 +258,7 @@ public class OutboundResourceAdapterImpl extends AbstractMetadata implements Out
    /**
     * {@inheritDoc}
     */
-   public CopyableMetaData copy()
+   public OutboundResourceAdapter copy()
    {
       return new OutboundResourceAdapterImpl(CopyUtil.cloneList(connectionDefinition), transactionSupport,
                                              CopyUtil.cloneList(authenticationMechanism), reauthenticationSupport,

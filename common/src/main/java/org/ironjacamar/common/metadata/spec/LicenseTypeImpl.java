@@ -21,7 +21,6 @@
 package org.ironjacamar.common.metadata.spec;
 
 import org.ironjacamar.common.api.metadata.CopyUtil;
-import org.ironjacamar.common.api.metadata.CopyableMetaData;
 import org.ironjacamar.common.api.metadata.MergeUtil;
 import org.ironjacamar.common.api.metadata.spec.LicenseType;
 import org.ironjacamar.common.api.metadata.spec.LocalizedXsdString;
@@ -130,7 +129,7 @@ public class LicenseTypeImpl extends AbstractMetadata implements LicenseType
    /**
     * {@inheritDoc}
     */
-   public CopyableMetaData copy()
+   public LicenseType copy()
    {
       return new LicenseTypeImpl(CopyUtil.cloneList(description), licenseRequired, CopyUtil.cloneString(id),
                                  CopyUtil.cloneString(licReqId));

@@ -28,7 +28,7 @@ import java.util.List;
  * LicenseType
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface LicenseType extends IdDecoratedMetadata, MergeableMetadata<LicenseType>, CopyableMetaData
+public interface LicenseType extends IdDecoratedMetadata, MergeableMetadata<LicenseType>, CopyableMetaData<LicenseType>
 {
    /**
     * @return description

@@ -21,7 +21,6 @@
 package org.ironjacamar.common.metadata.spec;
 
 import org.ironjacamar.common.api.metadata.CopyUtil;
-import org.ironjacamar.common.api.metadata.CopyableMetaData;
 import org.ironjacamar.common.api.metadata.MergeUtil;
 import org.ironjacamar.common.api.metadata.spec.ConfigProperty;
 import org.ironjacamar.common.api.metadata.spec.ConnectionDefinition;
@@ -212,7 +211,7 @@ public class ConnectionDefinitionImpl extends AbstractMetadata implements Connec
    /**
     * {@inheritDoc}
     */
-   public CopyableMetaData copy()
+   public ConnectionDefinition copy()
    {
       return new ConnectionDefinitionImpl(CopyUtil.clone(managedconnectionfactoryClass),
                                           CopyUtil.cloneList(configProperties),

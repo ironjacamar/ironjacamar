@@ -29,7 +29,7 @@ import org.ironjacamar.common.api.metadata.CopyableMetaData;
  * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
-public interface MessageListener extends IdDecoratedMetadata, CopyableMetaData
+public interface MessageListener extends IdDecoratedMetadata, CopyableMetaData<MessageListener>
 {
    /**
     * @return messagelistenerType

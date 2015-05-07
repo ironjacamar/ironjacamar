@@ -21,7 +21,6 @@
 package org.ironjacamar.common.metadata.spec;
 
 import org.ironjacamar.common.api.metadata.CopyUtil;
-import org.ironjacamar.common.api.metadata.CopyableMetaData;
 import org.ironjacamar.common.api.metadata.spec.ConfigProperty;
 import org.ironjacamar.common.api.metadata.spec.LocalizedXsdString;
 import org.ironjacamar.common.api.metadata.spec.XsdString;
@@ -264,7 +263,7 @@ public class ConfigPropertyImpl extends AbstractMetadata implements ConfigProper
    /**
     * {@inheritDoc}
     */
-   public CopyableMetaData copy()
+   public ConfigProperty copy()
    {
       return new ConfigPropertyImpl(CopyUtil.cloneList(description), CopyUtil.clone(configPropertyName),
                                     CopyUtil.clone(configPropertyType), CopyUtil.clone(configPropertyValue),

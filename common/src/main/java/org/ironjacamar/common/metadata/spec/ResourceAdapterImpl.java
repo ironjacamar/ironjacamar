@@ -22,7 +22,6 @@ package org.ironjacamar.common.metadata.spec;
 
 import org.ironjacamar.common.CommonBundle;
 import org.ironjacamar.common.api.metadata.CopyUtil;
-import org.ironjacamar.common.api.metadata.CopyableMetaData;
 import org.ironjacamar.common.api.metadata.MergeUtil;
 import org.ironjacamar.common.api.metadata.spec.AdminObject;
 import org.ironjacamar.common.api.metadata.spec.ConfigProperty;
@@ -266,7 +265,7 @@ public class ResourceAdapterImpl extends AbstractMetadata implements ResourceAda
    /**
     * {@inheritDoc}
     */
-   public CopyableMetaData copy()
+   public ResourceAdapter copy()
    {
       return new ResourceAdapterImpl(CopyUtil.clone(resourceadapterClass), CopyUtil.cloneList(configProperties),
             CopyUtil.clone(outboundResourceadapter), CopyUtil.clone(inboundResourceadapter),

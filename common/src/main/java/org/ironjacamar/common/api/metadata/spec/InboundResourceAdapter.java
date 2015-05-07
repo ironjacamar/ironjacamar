@@ -33,7 +33,7 @@ public interface InboundResourceAdapter
       extends
          IdDecoratedMetadata,
          MergeableMetadata<InboundResourceAdapter>,
-         CopyableMetaData
+         CopyableMetaData<InboundResourceAdapter>
 {
    /**
     * @return messageadapter

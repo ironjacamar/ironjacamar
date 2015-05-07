@@ -28,7 +28,7 @@ import java.util.List;
  * RequiredConfigProperty
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface RequiredConfigProperty extends IdDecoratedMetadata, CopyableMetaData
+public interface RequiredConfigProperty extends IdDecoratedMetadata, CopyableMetaData<RequiredConfigProperty>
 {
    /**
     * @return description

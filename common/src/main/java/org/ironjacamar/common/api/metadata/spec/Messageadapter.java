@@ -31,7 +31,8 @@ import java.util.List;
  * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
-public interface Messageadapter extends IdDecoratedMetadata, MergeableMetadata<Messageadapter>, CopyableMetaData
+public interface Messageadapter extends IdDecoratedMetadata, MergeableMetadata<Messageadapter>,
+                                        CopyableMetaData<Messageadapter>
 {
    /**
     * @return messagelistener

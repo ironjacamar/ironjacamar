@@ -28,7 +28,7 @@ import org.ironjacamar.common.api.metadata.CopyableMetaData;
  * @author <a href="mailto:stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class XsdString implements IdDecoratedMetadata, CopyableMetaData
+public class XsdString implements IdDecoratedMetadata, CopyableMetaData<XsdString>
 {
    /**
     * A NULL immutable instance
@@ -116,7 +116,7 @@ public class XsdString implements IdDecoratedMetadata, CopyableMetaData
    /**
     * {@inheritDoc}
     */
-   public CopyableMetaData copy()
+   public XsdString copy()
    {
       return new XsdString(CopyUtil.cloneString(value), CopyUtil.cloneString(id), CopyUtil.cloneString(tag));
    }

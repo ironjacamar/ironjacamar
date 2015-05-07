@@ -21,7 +21,6 @@
 package org.ironjacamar.common.metadata.spec;
 
 import org.ironjacamar.common.api.metadata.CopyUtil;
-import org.ironjacamar.common.api.metadata.CopyableMetaData;
 import org.ironjacamar.common.api.metadata.spec.AuthenticationMechanism;
 import org.ironjacamar.common.api.metadata.spec.CredentialInterfaceEnum;
 import org.ironjacamar.common.api.metadata.spec.LocalizedXsdString;
@@ -135,7 +134,7 @@ public class AuthenticationMechanismImpl extends AbstractMetadata implements Aut
    /**
     * {@inheritDoc}
     */
-   public CopyableMetaData copy()
+   public AuthenticationMechanism copy()
    {
       return new AuthenticationMechanismImpl(CopyUtil.cloneList(description),
             CopyUtil.clone(authenticationMechanismType), credentialInterface, CopyUtil.cloneString(id),

@@ -21,7 +21,6 @@
 package org.ironjacamar.common.api.metadata.spec;
 
 import org.ironjacamar.common.api.metadata.CopyUtil;
-import org.ironjacamar.common.api.metadata.CopyableMetaData;
 
 /**
  * A localized string
@@ -91,7 +90,7 @@ public class LocalizedXsdString extends XsdString implements LocalizedMetadata
    /**
     * {@inheritDoc}
     */
-   public CopyableMetaData copy()
+   public LocalizedXsdString copy()
    {
       return new LocalizedXsdString(CopyUtil.cloneString(value), CopyUtil.cloneString(id),
                                     CopyUtil.cloneString(lang), CopyUtil.cloneString(tag));

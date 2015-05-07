@@ -21,7 +21,6 @@
 package org.ironjacamar.common.metadata.spec;
 
 import org.ironjacamar.common.api.metadata.CopyUtil;
-import org.ironjacamar.common.api.metadata.CopyableMetaData;
 import org.ironjacamar.common.api.metadata.spec.LocalizedXsdString;
 import org.ironjacamar.common.api.metadata.spec.SecurityPermission;
 import org.ironjacamar.common.api.metadata.spec.XsdString;
@@ -101,7 +100,7 @@ public class SecurityPermissionImpl extends AbstractMetadata implements Security
    /**
     * {@inheritDoc}
     */
-   public CopyableMetaData copy()
+   public SecurityPermission copy()
    {
       return new SecurityPermissionImpl(CopyUtil.cloneList(description), CopyUtil.clone(securityPermissionSpec),
                                         CopyUtil.cloneString(id));

@@ -32,7 +32,7 @@ import java.util.List;
  * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
-public interface AdminObject extends IdDecoratedMetadata, CopyableMetaData
+public interface AdminObject extends IdDecoratedMetadata, CopyableMetaData<AdminObject>
 {
    /**
     * @return adminobjectInterface
