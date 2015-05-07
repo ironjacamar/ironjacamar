@@ -21,69 +21,37 @@
 
 package org.ironjacamar.core.api.deploymentrepository;
 
-import org.ironjacamar.common.api.metadata.resourceadapter.Activation;
-import org.ironjacamar.common.api.metadata.spec.Connector;
+import org.ironjacamar.core.spi.statistics.StatisticsPlugin;
 
-import java.io.File;
 import java.util.Collection;
 
 /**
- * The deployment
+ * A resource adapter
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface Deployment
+public interface ResourceAdapter
 {
-   /**
-    * Get the identifier
-    * @return The value
-    */
-   public String getIdentifier();
-
-   /**
-    * Get the file name or module name
-    * @return The value
-    */
-   public String getName();
-
-   /**
-    * Get either a file, a directory (module) or null (in-mem)
-    * @return The value
-    */
-   public File getArchive();
-
-   /**
-    * Get the classloader
-    * @return The value
-    */
-   public ClassLoader getClassLoader();
-
-   /**
-    * Get the specification metadata
-    * @return The value
-    */
-   public Connector getMetadata();
-
-   /**
-    * Get the activation
-    * @return The value
-    */
-   public Activation getActivation();
-
    /**
     * Get the resource adapter
     * @return The value
     */
-   public ResourceAdapter getResourceAdapter();
+   public javax.resource.spi.ResourceAdapter getResourceAdapter();
 
    /**
-    * Get the connection factories
+    * Get the config properties
     * @return The value
     */
-   public Collection<ConnectionFactory> getConnectionFactories();
+   public Collection<ConfigProperty> getConfigProperties();
 
    /**
-    * Get the admin objects
+    * Get the statistics
     * @return The value
     */
-   public Collection<AdminObject> getAdminObjects();
+   public StatisticsPlugin getStatistics();
+
+   /**
+    * Get the recovery
+    * @return The value
+    */
+   public Recovery getRecovery();
 }

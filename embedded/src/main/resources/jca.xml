@@ -1,5 +1,15 @@
 <deployment>
 
+  <bean name="BootstrapContext"
+        interface="javax.resource.spi.BootstrapContext"
+        class="org.ironjacamar.core.bootstrapcontext.BootstrapContextImpl">
+    <constructor>
+      <parameter><null/></parameter>
+      <parameter><inject bean="TransactionSynchronizationRegistry"/></parameter>
+      <parameter><inject bean="XATerminator"/></parameter>
+    </constructor>
+  </bean>
+
   <bean name="MetadataRepository"
         interface="org.ironjacamar.core.api.metadatarepository.MetadataRepository"
         class="org.ironjacamar.core.metadatarepository.MetadataRepositoryImpl"/>
@@ -7,5 +17,42 @@
   <bean name="DeploymentRepository"
         interface="org.ironjacamar.core.api.deploymentrepository.DeploymentRepository"
         class="org.ironjacamar.core.deploymentrepository.DeploymentRepositoryImpl"/>
+
+  <!-- Deployment chain -->
+  <bean name="RarFileExtractorDeployer"
+        class="org.ironjacamar.deployers.fungal.RarFileExtractorDeployer"/>
+
+  <bean name="ClassLoaderDeployer"
+        class="org.ironjacamar.deployers.fungal.ClassLoaderDeployer">
+    <property name="ParentFirst">false</property>
+  </bean>
+
+  <bean name="RaXmlMetadataDeployer"
+        class="org.ironjacamar.deployers.fungal.RaXmlMetadataDeployer"/>
+
+  <bean name="AnnotationsDeployer"
+        class="org.ironjacamar.deployers.fungal.AnnotationsDeployer"/>
+
+  <bean name="ValidateMetadataDeployer"
+        class="org.ironjacamar.deployers.fungal.ValidateMetadataDeployer"/>
+
+  <bean name="MetadataDeployer"
+        class="org.ironjacamar.deployers.fungal.MetadataDeployer">
+    <depends>MetadataRepository</depends>
+  </bean>
+
+  <bean name="IronJacamarXmlDeployer"
+        class="org.ironjacamar.deployers.fungal.IronJacamarXmlDeployer">
+    <depends>MetadataRepository</depends>
+    <depends>DeploymentRepository</depends>
+  </bean>
+
+  <bean name="DashRaXmlDeployer"
+        class="org.ironjacamar.deployers.fungal.DashRaXmlDeployer">
+    <depends>ClassLoaderDeployer</depends>
+    <depends>MetadataRepository</depends>
+    <depends>DeploymentRepository</depends>
+    <depends>BootstrapContext</depends>
+  </bean>
 
 </deployment>

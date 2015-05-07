@@ -124,5 +124,19 @@ public class DeploymentRepositoryImpl implements DeploymentRepository
 
       return deployments.remove(deployment);
    }
-}
 
+   /**
+    *{@inheritDoc}
+    */
+   public String toString()
+   {
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("DeploymentRepository@").append(Integer.toHexString(System.identityHashCode(this)));
+      sb.append("[");
+      sb.append("deployments=").append(deployments);
+      sb.append("]");
+      
+      return sb.toString();
+   }
+}

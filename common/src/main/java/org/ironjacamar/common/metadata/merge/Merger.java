@@ -62,15 +62,15 @@ import java.util.Map.Entry;
 public class Merger
 {
    /**
-   *
-   * Merge ironJacamar's properties with connector's one returning a List of COnnector's properties
-   *
-   * @param ijProperties ironjacamar's extension style properties
-   * @param original standard connector's properties
-   * @return merged standard connector's properties (ironjacamar's setting overwrite the standard's one.
-   *   No new property is added)
-   */
-   public List<ConfigProperty> mergeConfigProperties(Map<String, String> ijProperties,
+    *
+    * Merge ironJacamar's properties with connector's one returning a List of COnnector's properties
+    *
+    * @param ijProperties ironjacamar's extension style properties
+    * @param original standard connector's properties
+    * @return merged standard connector's properties (ironjacamar's setting overwrite the standard's one.
+    *   No new property is added)
+    */
+   private List<ConfigProperty> mergeConfigProperties(Map<String, String> ijProperties,
       List<ConfigProperty> original)
    {
       List<ConfigProperty> mergedProperties = new ArrayList<ConfigProperty>(original.size());
@@ -101,15 +101,12 @@ public class Merger
    }
 
    /**
-    *
-    * Merge a {@link Connector} and a {@link Activation} passing also Matcher to identify {@link AdminObject}
-    * and {@link ConnectionDefinition} to merge inside the passed objects
-    *
-    * @param ij the {@link Activation} object
+    * Merge a {@link Connector} and a {@link Activation} to form the resulting spec metadata
     * @param conn {@link Connector} object
+    * @param ij The {@link Activation} object
     * @return The merged {@link Connector}
     */
-   public Connector mergeConnectorWithCommonIronJacamar(Activation ij, Connector conn)
+   public Connector merge(Connector conn, Activation ij)
    {
       if (ij == null)
          return conn;
@@ -174,18 +171,18 @@ public class Merger
    }
 
    /**
-   *
-   * Merge a connector with a DataSource metadata
-   *
-   * @param cds the datasource it is one of interface extending {@link CommonDataSource}.
-   *   IOW it can be both {@link DataSource} or {@link XaDataSource}
-   * @param connector the connector to merge
-   * @return the connector with mapped properties taken forn ds
-   * @throws IllegalArgumentException if version is't 1.0, 1.5 or 1.6
-   * @throws Exception in case of error
-   */
-   public Connector mergeConnectorAndDs(CommonDataSource cds, Connector connector) throws IllegalArgumentException,
-      Exception
+    *
+    * Merge a connector with a DataSource metadata
+    *
+    * @param connector the connector to merge
+    * @param cds the datasource it is one of interface extending {@link CommonDataSource}.
+    *   IOW it can be both {@link DataSource} or {@link XaDataSource}
+    * @return the connector with mapped properties taken forn ds
+    * @throws IllegalArgumentException if version is't 1.0, 1.5 or 1.6
+    * @throws Exception in case of error
+    */
+   public Connector merge(Connector connector, CommonDataSource cds) throws IllegalArgumentException,
+                                                                            Exception
    {
       if (cds == null)
       {

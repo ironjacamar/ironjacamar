@@ -24,10 +24,9 @@ package org.ironjacamar.core.deploymentrepository;
 import org.ironjacamar.common.api.metadata.resourceadapter.Activation;
 import org.ironjacamar.common.api.metadata.spec.Connector;
 import org.ironjacamar.core.api.deploymentrepository.AdminObject;
-import org.ironjacamar.core.api.deploymentrepository.ConfigProperty;
 import org.ironjacamar.core.api.deploymentrepository.ConnectionFactory;
 import org.ironjacamar.core.api.deploymentrepository.Deployment;
-import org.ironjacamar.core.spi.statistics.StatisticsPlugin;
+import org.ironjacamar.core.api.deploymentrepository.ResourceAdapter;
 
 import java.io.File;
 import java.util.Collection;
@@ -50,17 +49,14 @@ public class DeploymentImpl implements Deployment
    /** The class loader */
    private ClassLoader classLoader;
    
-   /** The config properties */
-   private Collection<ConfigProperty> configProperties;
-   
-   /** The statistics */
-   private StatisticsPlugin statistics;
-   
    /** The metadata */
    private Connector metadata;
    
    /** The activation */
    private Activation activation;
+   
+   /** The resource adapter */
+   private ResourceAdapter resourceAdapter;
    
    /** The connection factories */
    private Collection<ConnectionFactory> connectionFactories;
@@ -74,10 +70,9 @@ public class DeploymentImpl implements Deployment
     * @param name The name
     * @param archive The archive
     * @param classLoader The class loader
-    * @param configProperties The configuration properties
-    * @param statistics The statistics
     * @param metadata The metadata
     * @param activation The activation
+    * @param resourceAdapter The resource adapter
     * @param connectionFactories The connection factories
     * @param adminObjects The admin objects
     */
@@ -85,10 +80,9 @@ public class DeploymentImpl implements Deployment
                          String name,
                          File archive,
                          ClassLoader classLoader,
-                         Collection<ConfigProperty> configProperties,
-                         StatisticsPlugin statistics,
                          Connector metadata,
                          Activation activation,
+                         ResourceAdapter resourceAdapter,
                          Collection<ConnectionFactory> connectionFactories,
                          Collection<AdminObject> adminObjects)
    {
@@ -96,10 +90,9 @@ public class DeploymentImpl implements Deployment
       this.name = name;
       this.archive = archive;
       this.classLoader = classLoader;
-      this.configProperties = configProperties;
-      this.statistics = statistics;
       this.metadata = metadata;
       this.activation = activation;
+      this.resourceAdapter = resourceAdapter;
       this.connectionFactories = connectionFactories;
       this.adminObjects = adminObjects;
    }
@@ -139,22 +132,6 @@ public class DeploymentImpl implements Deployment
    /**
     *{@inheritDoc}
     */
-   public Collection<ConfigProperty> getConfigProperties()
-   {
-      return configProperties;
-   }
-
-   /**
-    *{@inheritDoc}
-    */
-   public StatisticsPlugin getStatistics()
-   {
-      return statistics;
-   }
-
-   /**
-    *{@inheritDoc}
-    */
    public Connector getMetadata()
    {
       return metadata;
@@ -171,6 +148,14 @@ public class DeploymentImpl implements Deployment
    /**
     *{@inheritDoc}
     */
+   public ResourceAdapter getResourceAdapter()
+   {
+      return resourceAdapter;
+   }
+
+   /**
+    *{@inheritDoc}
+    */
    public Collection<ConnectionFactory> getConnectionFactories()
    {
       return connectionFactories;
@@ -182,5 +167,51 @@ public class DeploymentImpl implements Deployment
    public Collection<AdminObject> getAdminObjects()
    {
       return adminObjects;
+   }
+
+   /**
+    *{@inheritDoc}
+    */
+   @Override
+   public int hashCode()
+   {
+      return super.hashCode();
+   }
+
+   /**
+    *{@inheritDoc}
+    */
+   @Override
+   public boolean equals(Object o)
+   {
+      if (o == this)
+         return true;
+
+      if (o == null || !(o instanceof DeploymentImpl))
+         return false;
+
+      return super.equals(o);
+   }
+
+   /**
+    *{@inheritDoc}
+    */
+   public String toString()
+   {
+      StringBuilder sb = new StringBuilder();
+
+      sb.append("Deployment@").append(Integer.toHexString(System.identityHashCode(this)));
+      sb.append("[");
+      sb.append("identifier=").append(identifier).append(" ");
+      sb.append("name=").append(name).append(" ");
+      sb.append("classLoader=").append(classLoader).append(" ");
+      sb.append("metadata=").append(metadata).append(" ");
+      sb.append("activation=").append(activation).append(" ");
+      sb.append("resourceAdapter=").append(resourceAdapter).append(" ");
+      sb.append("connectionFactories=").append(connectionFactories).append(" ");
+      sb.append("adminObjects=").append(adminObjects);
+      sb.append("]");
+      
+      return sb.toString();
    }
 }
