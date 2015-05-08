@@ -12,4 +12,10 @@ doc/build
 .settings
 .metadata
 
+# Idea specific files/directories
+*.iml
+.idea
+/lib
+/target
+
 /build/
