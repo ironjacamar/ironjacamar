@@ -19,9 +19,24 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-include "api"
-include "common"
-include "core"
-include "embedded"
-include "validator"
-include "testsuite"
+
+package org.ironjacamar.validator;
+
+/**
+ * Severity
+ */
+public class Severity
+{
+   /** WARNING */
+   public static final int WARNING = 0;
+
+   /** ERROR */
+   public static final int ERROR = 1;
+
+   /**
+    * Constructor
+    */
+   private Severity()
+   {
+   }
+}

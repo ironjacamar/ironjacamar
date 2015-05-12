@@ -2,15 +2,14 @@
 .gradle
 
 # Build output directories
-api/build
-common/build
-doc/build
+**/build
 
 # Eclipse specific files/directories
 .classpath
 .project
 .settings
 .metadata
+eclipse-target
 
 # Idea specific files/directories
 *.iml

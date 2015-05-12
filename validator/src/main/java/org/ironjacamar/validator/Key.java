@@ -19,9 +19,24 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-include "api"
-include "common"
-include "core"
-include "embedded"
-include "validator"
-include "testsuite"
+
+package org.ironjacamar.validator;
+
+/**
+ * Key
+ */
+public enum Key
+{
+    /** Resource adapter */
+    RESOURCE_ADAPTER,
+    /** Managed connection factory */
+    MANAGED_CONNECTION_FACTORY,
+    /** Activation spec */
+    ACTIVATION_SPEC,
+    /** Admin object */
+    ADMIN_OBJECT,
+    /** Managed connection */
+    MANAGED_CONNECTION,
+    /** Connection factory */
+    CONNECTION_FACTORY;
+}

@@ -19,9 +19,22 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-include "api"
-include "common"
-include "core"
-include "embedded"
-include "validator"
-include "testsuite"
+
+package org.ironjacamar.validator;
+
+import java.util.List;
+import java.util.ResourceBundle;
+
+/**
+ * Rule
+ */
+public interface Rule
+{
+   /**
+    * Validate
+    * @param v The object
+    * @param rb The resource bundle
+    * @return The list of failures found; <code>null</code> if none
+    */
+   public List<Failure> validate(Validate v, ResourceBundle rb);
+}

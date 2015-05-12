@@ -19,9 +19,4 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-include "api"
-include "common"
-include "core"
-include "embedded"
-include "validator"
-include "testsuite"
+package org.ironjacamar.validator.rules.ao;
