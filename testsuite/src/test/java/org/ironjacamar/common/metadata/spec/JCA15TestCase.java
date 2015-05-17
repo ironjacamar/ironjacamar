@@ -95,7 +95,7 @@ public class JCA15TestCase
    {
       RaParser parser = new RaParser();
 
-      InputStream is = JCA16TestCase.class.getClassLoader().
+      InputStream is = JCA15TestCase.class.getClassLoader().
          getResourceAsStream("../../resources/test/spec/ra-1.5.xml");
       assertNotNull(is);
 
@@ -146,7 +146,36 @@ public class JCA15TestCase
 
       assertEquals(c1, c2);
    }
+   
+   /**
+    * Copy
+    * @throws Exception In case of an error
+    */
+   @Test
+   public void testCopy() throws Exception
+   {
+      RaParser parser = new RaParser();
 
+      InputStream is1 = JCA15TestCase.class.getClassLoader().
+         getResourceAsStream("../../resources/test/spec/ra-1.5.xml");
+      assertNotNull(is1);
+
+      XMLStreamReader xsr1 = XMLInputFactory.newInstance().createXMLStreamReader(is1);
+
+      Connector c1 = parser.parse(xsr1);
+      assertNotNull(c1);
+
+      is1.close();
+
+      Connector c2 = c1.copy();
+      
+      assertEquals(c1, c2);
+      
+      assertFalse(c1 == c2);
+      
+      assertEquals(c1.toString(), c2.toString());
+   }
+   
    /**
     * Checks connector
     * @param connector

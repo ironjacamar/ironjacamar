@@ -35,6 +35,7 @@ import org.ironjacamar.common.api.metadata.spec.SecurityPermission;
 import org.ironjacamar.common.api.metadata.spec.XsdString;
 
 import java.io.InputStream;
+import java.io.StringReader;
 import java.util.List;
 
 import javax.xml.stream.XMLInputFactory;
@@ -43,6 +44,7 @@ import javax.xml.stream.XMLStreamReader;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -79,6 +81,108 @@ public class JCA10TestCase
       checkConnector(c);
    }
 
+   /**
+    * Write
+    * @throws Exception In case of an error
+    */
+   @Test
+   public void testWrite() throws Exception
+   {
+      RaParser parser = new RaParser();
+
+      InputStream is = JCA10TestCase.class.getClassLoader().
+         getResourceAsStream("../../resources/test/spec/ra-1.0.xml");
+      assertNotNull(is);
+
+      XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+      inputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
+
+      XMLStreamReader xsr = inputFactory.createXMLStreamReader(is);
+      
+      Connector c = parser.parse(xsr);
+      assertNotNull(c);
+
+      is.close();
+
+      StringReader sr = new StringReader(c.toString());
+      XMLStreamReader nxsr = XMLInputFactory.newInstance().createXMLStreamReader(sr);
+      Connector cn = parser.parse(nxsr);
+      checkConnector(cn);
+      assertEquals(c, cn);
+   }
+
+   /**
+    * Equal
+    * @throws Exception In case of an error
+    */
+   @Test
+   public void testEqual() throws Exception
+   {
+      RaParser parser = new RaParser();
+
+      InputStream is1 = JCA10TestCase.class.getClassLoader().
+         getResourceAsStream("../../resources/test/spec/ra-1.0.xml");
+      assertNotNull(is1);
+
+      XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+      inputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
+
+      XMLStreamReader xsr1 = inputFactory.createXMLStreamReader(is1);
+      
+      Connector c1 = parser.parse(xsr1);
+      assertNotNull(c1);
+
+      is1.close();
+
+      InputStream is2 = JCA10TestCase.class.getClassLoader().
+         getResourceAsStream("../../resources/test/spec/ra-1.0.xml");
+      assertNotNull(is2);
+
+      XMLInputFactory inputFactory2 = XMLInputFactory.newInstance();
+      inputFactory2.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
+
+      XMLStreamReader xsr2 = inputFactory2.createXMLStreamReader(is2);
+      
+      Connector c2 = parser.parse(xsr2);
+      assertNotNull(c2);
+
+      is2.close();
+
+      assertEquals(c1, c2);
+   }
+
+   /**
+    * Copy
+    * @throws Exception In case of an error
+    */
+   @Test
+   public void testCopy() throws Exception
+   {
+      RaParser parser = new RaParser();
+
+      InputStream is1 = JCA10TestCase.class.getClassLoader().
+         getResourceAsStream("../../resources/test/spec/ra-1.0.xml");
+      assertNotNull(is1);
+
+      XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+      inputFactory.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
+
+      XMLStreamReader xsr1 = inputFactory.createXMLStreamReader(is1);
+      
+      Connector c1 = parser.parse(xsr1);
+      assertNotNull(c1);
+
+      is1.close();
+
+      Connector c2 = c1.copy();
+      
+      assertEquals(c1, c2);
+      
+      assertFalse(c1 == c2);
+      
+      assertEquals(c1.toString(), c2.toString());
+   }
+   
    /**
     * Checks connector
     * @param connector
