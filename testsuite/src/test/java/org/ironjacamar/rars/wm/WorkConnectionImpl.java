@@ -1,0 +1,118 @@
+/*
+ * IronJacamar, a Java EE Connector Architecture implementation
+ * Copyright 2015, Red Hat Inc, and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the Eclipse Public License 1.0 as
+ * published by the Free Software Foundation.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the Eclipse
+ * Public License for more details.
+ *
+ * You should have received a copy of the Eclipse Public License 
+ * along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
+package org.ironjacamar.rars.wm;
+
+import javax.resource.spi.work.ExecutionContext;
+import javax.resource.spi.work.Work;
+import javax.resource.spi.work.WorkException;
+import javax.resource.spi.work.WorkListener;
+import javax.resource.spi.work.WorkManager;
+
+/**
+ * WorkConnectionImpl
+ */
+public class WorkConnectionImpl implements WorkConnection
+{
+   /** ManagedConnection */
+   private WorkManagedConnection mc;
+
+   /** ManagedConnectionFactory */
+   private WorkManagedConnectionFactory mcf;
+
+   /**
+    * Default constructor
+    * @param mc WorkManagedConnection
+    * @param mcf WorkManagedConnectionFactory
+    */
+   public WorkConnectionImpl(WorkManagedConnection mc, WorkManagedConnectionFactory mcf)
+   {
+      this.mc = mc;
+      this.mcf = mcf;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public WorkManager getWorkManager()
+   {
+      return mc.getWorkManager();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void doWork(Work work) throws WorkException
+   {
+      mc.doWork(work);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void doWork(Work work, long startTimeout, ExecutionContext execContext, WorkListener workListener)
+      throws WorkException
+   {
+      mc.doWork(work, startTimeout, execContext, workListener);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void scheduleWork(Work work) throws WorkException
+   {
+      mc.scheduleWork(work);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void scheduleWork(Work work, long startTimeout, ExecutionContext execContext, WorkListener workListener)
+      throws WorkException
+   {
+      mc.scheduleWork(work, startTimeout, execContext, workListener);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long startWork(Work work) throws WorkException
+   {
+      return mc.startWork(work);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long startWork(Work work, long startTimeout, ExecutionContext execContext, WorkListener workListener)
+      throws WorkException
+   {
+      return mc.startWork(work, startTimeout, execContext, workListener);
+   }
+
+   /**
+    * Close
+    */
+   public void close()
+   {
+      mc.closeHandle(this);
+   }
+}
