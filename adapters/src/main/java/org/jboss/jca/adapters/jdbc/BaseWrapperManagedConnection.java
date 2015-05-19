@@ -36,12 +36,12 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Savepoint;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -97,7 +97,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
 
    private ReentrantLock lock = new ReentrantLock(true);
 
-   private final Collection<ConnectionEventListener> cels = new ArrayList<ConnectionEventListener>();
+   private final Collection<ConnectionEventListener> cels = new CopyOnWriteArrayList<ConnectionEventListener>();
 
    private final Set<WrappedConnection> handles = new HashSet<WrappedConnection>();
 
@@ -233,10 +233,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
     */
    public void addConnectionEventListener(ConnectionEventListener cel)
    {
-      synchronized (cels)
-      {
-         cels.add(cel);
-      }
+      cels.add(cel);
    }
 
    /**
@@ -245,10 +242,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
     */
    public void removeConnectionEventListener(ConnectionEventListener cel)
    {
-      synchronized (cels)
-      {
-         cels.remove(cel);
-      }
+      cels.remove(cel);
    }
 
    /**
@@ -599,41 +593,30 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
          }
       }
 
-      Collection<ConnectionEventListener> copy = null;
-      synchronized (cels)
+      ConnectionEvent ce = null;
+
+      if (!error)
       {
-         if (cels.size() > 0)
-            copy = new ArrayList<ConnectionEventListener>(cels);
+         ce = new ConnectionEvent(this, ConnectionEvent.CONNECTION_CLOSED);
+      }
+      else
+      {
+         ce = new ConnectionEvent(this, ConnectionEvent.CONNECTION_ERROR_OCCURRED,
+                                  new SQLException(bundle.invalidConnection()));
       }
 
-      if (copy != null)
+      ce.setConnectionHandle(handle);
+
+      for (ConnectionEventListener cel : cels)
       {
-         ConnectionEvent ce = null;
 
          if (!error)
          {
-            ce = new ConnectionEvent(this, ConnectionEvent.CONNECTION_CLOSED);
+            cel.connectionClosed(ce);
          }
          else
          {
-            ce = new ConnectionEvent(this, ConnectionEvent.CONNECTION_ERROR_OCCURRED,
-                                     new SQLException(bundle.invalidConnection()));
-         }
-
-         ce.setConnectionHandle(handle);
-
-         for (Iterator<ConnectionEventListener> i = copy.iterator(); i.hasNext();)
-         {
-            ConnectionEventListener cel = i.next();
-
-            if (!error)
-            {
-               cel.connectionClosed(ce);
-            }
-            else
-            {
-               cel.connectionErrorOccurred(ce);
-            }
+            cel.connectionErrorOccurred(ce);
          }
       }
    }
@@ -701,15 +684,8 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
 
       ConnectionEvent ce = new ConnectionEvent(this, ConnectionEvent.CONNECTION_ERROR_OCCURRED, ex);
 
-      Collection<ConnectionEventListener> copy = null;
-      synchronized (cels)
+      for (ConnectionEventListener cel : cels)
       {
-         copy = new ArrayList<ConnectionEventListener>(cels);
-      }
-
-      for (Iterator<ConnectionEventListener> i = copy.iterator(); i.hasNext();)
-      {
-         ConnectionEventListener cel = i.next();
          try
          {
             cel.connectionErrorOccurred(ce);
@@ -954,17 +930,10 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
       {
          if (!jdbcAutoCommit && !inLocalTransaction.getAndSet(true))
          {
-            Collection<ConnectionEventListener> copy = null;
-            synchronized (cels)
-            {
-               copy = new ArrayList<ConnectionEventListener>(cels);
-            }
-
             ConnectionEvent ce = new ConnectionEvent(this, ConnectionEvent.LOCAL_TRANSACTION_STARTED);
 
-            for (Iterator<ConnectionEventListener> i = copy.iterator(); i.hasNext();)
+            for (ConnectionEventListener cel : cels)
             {
-               ConnectionEventListener cel = i.next();
                try
                {
                   cel.localTransactionStarted(ce);
@@ -1035,17 +1004,10 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
       {
          if (jdbcAutoCommit && inLocalTransaction.getAndSet(false))
          {
-            Collection<ConnectionEventListener> copy = null;
-            synchronized (cels)
-            {
-               copy = new ArrayList<ConnectionEventListener>(cels);
-            }
-
             ConnectionEvent ce = new ConnectionEvent(this, ConnectionEvent.LOCAL_TRANSACTION_COMMITTED);
 
-            for (Iterator<ConnectionEventListener> i = copy.iterator(); i.hasNext();)
+            for (ConnectionEventListener cel : cels)
             {
-               ConnectionEventListener cel = i.next();
                try
                {
                   cel.localTransactionCommitted(ce);
@@ -1128,17 +1090,10 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
       {
          if (inLocalTransaction.getAndSet(false))
          {
-            Collection<ConnectionEventListener> copy = null;
-            synchronized (cels)
-            {
-               copy = new ArrayList<ConnectionEventListener>(cels);
-            }
-
             ConnectionEvent ce = new ConnectionEvent(this, ConnectionEvent.LOCAL_TRANSACTION_COMMITTED);
 
-            for (Iterator<ConnectionEventListener> i = copy.iterator(); i.hasNext();)
+            for (ConnectionEventListener cel : cels)
             {
-               ConnectionEventListener cel = i.next();
                try
                {
                   cel.localTransactionCommitted(ce);
@@ -1172,17 +1127,10 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
       {
          if (inLocalTransaction.getAndSet(false))
          {
-            Collection<ConnectionEventListener> copy = null;
-            synchronized (cels)
-            {
-               copy = new ArrayList<ConnectionEventListener>(cels);
-            }
-
             ConnectionEvent ce = new ConnectionEvent(this, ConnectionEvent.LOCAL_TRANSACTION_ROLLEDBACK);
 
-            for (Iterator<ConnectionEventListener> i = copy.iterator(); i.hasNext();)
+            for (ConnectionEventListener cel : cels)
             {
-               ConnectionEventListener cel = i.next();
                try
                {
                   cel.localTransactionRolledback(ce);
