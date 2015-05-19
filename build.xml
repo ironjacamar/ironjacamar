@@ -391,7 +391,7 @@
              windowtitle="IronJacamar API And SPI"
              doctitle="IronJacamar API And SPI"
              use="true"
-             additionalparam="-author -version"
+             additionalparam="-author -version -sourceclasspath ${build.dir}"
              classpathref="main.lib.path.id"
              bottom="Copyright &amp;#169; 2014 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
 
@@ -447,20 +447,20 @@
              windowtitle="IronJacamar Javadocs"
              doctitle="IronJacamar Javadocs"
              use="true"
-             additionalparam="-author -version"
+             additionalparam="-author -version -sourceclasspath ${build.dir}"
              classpathref="main.lib.path.id"
              bottom="Copyright &amp;#169; 2014 IronJacamar (&lt;a href='http://www.ironjacamar.org'&gt;http://www.ironjacamar.org&lt;/a&gt;)">
 
       <packageset dir="${basedir}/api/src/main/java" />
       <packageset dir="${basedir}/adapters/src/main/java" />
       <packageset dir="${basedir}/arquillian/src/main/java">
-        <exclude name="**/*.*" if="as"/>
+        <exclude name="**/**" if="as"/>
       </packageset>
       <packageset dir="${basedir}/as/src/main/java">
-        <exclude name="**/*.*" if="as"/>
+        <exclude name="**/**" if="as"/>
       </packageset>
       <packageset dir="${basedir}/codegenerator/src/main/java">
-        <exclude name="**/*.*" if="as"/>
+        <exclude name="**/**" if="as"/>
       </packageset>
       <packageset dir="${basedir}/common/src/main/java" />
       <packageset dir="${basedir}/core/src/main/java" />
@@ -468,20 +468,24 @@
         <exclude name="**/fungal/**" if="as"/>
       </packageset>
       <packageset dir="${basedir}/eclipse/src/main/java">
-        <exclude name="**/*.*" if="as"/>
+        <exclude name="**/**" if="as"/>
       </packageset>
       <packageset dir="${basedir}/eis/src/main/java">
-        <exclude name="**/*.*" if="as"/>
+        <exclude name="**/**" if="as"/>
       </packageset>
       <packageset dir="${basedir}/embedded/src/main/java">
-        <exclude name="**/*.*" if="as"/>
+        <exclude name="**/**" if="as"/>
       </packageset>
       <packageset dir="${basedir}/sjc/src/main/java">
-        <exclude name="**/*.*" if="as"/>
+        <exclude name="**/**" if="as"/>
       </packageset>
-      <packageset dir="${basedir}/validator/src/main/java" />
+      <packageset dir="${basedir}/validator/src/main/java">
+        <exclude name="**/ant/**" if="as"/>
+        <exclude name="**/maven/**" if="as"/>
+        <exclude name="**/cli/**" if="as"/>
+      </packageset>
       <packageset dir="${basedir}/web/src/main/java">
-        <exclude name="**/*.*" if="as"/>
+        <exclude name="**/**" if="as"/>
       </packageset>
       
       <link offline="true" href="http://docs.oracle.com/javase/6/docs/api/" packagelistLoc="${java.home}/../docs/api"/>
