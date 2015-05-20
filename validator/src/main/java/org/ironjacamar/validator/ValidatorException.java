@@ -22,48 +22,71 @@
 package org.ironjacamar.validator;
 
 import java.util.Collection;
+import java.util.ResourceBundle;
 
 /**
  * Represents a failure in the validator chain
- * @author <a href="mailto:stefano.maestri@javalinux.it">Stefano Maestri</a>
+ * @author <a href="mailto:stefano.maestri@ironjacamar.org">Stefano Maestri</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class ValidatorException extends Exception
 {
    /** SerialVersionUID */
-   private static final long serialVersionUID = 6426899185131726483L;
+   private static final long serialVersionUID = 1L;
 
    /** The collection of failures */
-   private final Collection<Failure> failures;
+   private Collection<Failure> failures;
 
+   /** The resource bundle */
+   private ResourceBundle rb;
+   
    /**
     * Constructs a new exception with the specified detail message.
     * @param message The message
     * @param failures collection of failures
+    * @param rb The resource bundle
     */
-   public ValidatorException(String message, Collection<Failure> failures)
+   public ValidatorException(String message, Collection<Failure> failures, ResourceBundle rb)
    {
       super(message);
       this.failures = failures;
+      this.rb = rb;
    }
 
    /**
     * Constructs a new exception with the specified detail message.
     * @param message The message
     * @param failures collection of failures
+    * @param rb The resource bundle
     * @param cause the cause to be chained
     */
-   public ValidatorException(String message, Collection<Failure> failures, Throwable cause)
+   public ValidatorException(String message, Collection<Failure> failures, ResourceBundle rb, Throwable cause)
    {
       super(message, cause);
       this.failures = failures;
+      this.rb = rb;
    }
 
    /**
     * Get the collection of failures
-    * @return failures
+    * @return The failures
     */
-   public synchronized Collection<Failure> getFailures()
+   public Collection<Failure> getFailures()
    {
       return failures;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String toString()
+   {
+      StringBuilder sb = new StringBuilder(8192);
+      FailureHelper fh = new FailureHelper(failures);
+
+      sb = sb.append(super.toString());
+      sb = sb.append(fh.asText(rb));
+
+      return sb.toString();
    }
 }

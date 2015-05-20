@@ -56,10 +56,10 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 /**
- * A Validation.
+ * Validation of resource adapters
  *
- * @author Jeff Zhang</a>
- * @version $Revision: $
+ * @author Jeff Zhang
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class Validation
 {
@@ -146,81 +146,30 @@ public class Validation
          AnnotationRepository repository = scanner.scan(cl.getURLs(), cl);
          cmd = annotator.merge(cmd, repository, cl);
 
-         List<Validate> validateClasses = new ArrayList<Validate>();
-         List<Failure> failures = new ArrayList<Failure>();
+         File reportDirectory = new File(output);
 
-         Validator validator = new Validator();
-         validateClasses.addAll(createResourceAdapter(cmd, failures, validator.getResourceBundle(), cl));
-         validateClasses.addAll(createManagedConnectionFactory(cmd, failures, validator.getResourceBundle(), cl));
-         validateClasses.addAll(createActivationSpec(cmd, failures, validator.getResourceBundle(), cl));
-         validateClasses.addAll(createAdminObject(cmd, failures, validator.getResourceBundle(), cl));
-
-         if (validateClassesInPackage(root))
+         if (!reportDirectory.exists() && !reportDirectory.mkdirs())
          {
-            Failure failure = new Failure(Severity.WARNING, "20.2",
-                  validator.getResourceBundle().getString("pak.cip"));
-            failures.add(failure);
+            throw new IOException("The output directory '" + output + "' can't be created");
          }
 
-         List<Failure> classFailures = validator.validate(validateClasses);
-         if (classFailures != null && classFailures.size() > 0)
-            failures.addAll(classFailures);
+         String reportName = url.getFile();
 
-         if (failures.size() > 0)
-         {
-            FailureHelper fh = new FailureHelper(failures);
-            File reportDirectory = new File(output);
+         int lastSlashIndex = reportName.lastIndexOf("/");
+         int lastSepaIndex = reportName.lastIndexOf(File.separator);
 
-            if (!reportDirectory.exists() && !reportDirectory.mkdirs())
-            {
-               throw new IOException("The output directory '" + output + "' can't be created");
-            }
+         int lastIndex = lastSlashIndex > lastSepaIndex ? lastSlashIndex : lastSepaIndex;
+         if (lastIndex != -1)
+            reportName = reportName.substring(lastIndex + 1);
+         reportName += ".log";
 
-            String reportName = url.getFile();
+         File report = new File(reportDirectory, reportName);
 
-            int lastSlashIndex = reportName.lastIndexOf("/");
-            int lastSepaIndex = reportName.lastIndexOf(File.separator);
-
-            int lastIndex = lastSlashIndex > lastSepaIndex ? lastSlashIndex : lastSepaIndex;
-            if (lastIndex != -1)
-               reportName = reportName.substring(lastIndex + 1);
-            reportName += ".log";
-
-            File report = new File(reportDirectory, reportName);
-            FileWriter fw = null;
-            BufferedWriter bw = null;
-            try
-            {
-               fw = new FileWriter(report);
-               bw = new BufferedWriter(fw, 8192);
-               bw.write(fh.asText(validator.getResourceBundle()));
-               bw.flush();
-            }
-            catch (IOException ioe)
-            {
-               ioe.printStackTrace();
-            }
-            finally
-            {
-               try
-               {
-                  if (bw != null)
-                     bw.close();
-                  if (fw != null)
-                     fw.close();
-               }
-               catch (IOException ignore)
-               {
-                  // Ignore
-               }
-            }
-
-            exitCode = FAIL;
-         }
-         else
-         {
-            exitCode = SUCCESS;
-         }
+         exitCode = validate(cmd, root, report, cl);
+      }
+      catch (ValidatorException ve)
+      {
+         exitCode = FAIL;
       }
       catch (Exception e)
       {
@@ -242,6 +191,96 @@ public class Validation
          {
             // Ignore
          }
+      }
+
+      return exitCode;
+   }
+
+   /**
+    * validate
+    * @param c The spec metadata
+    * @param root The root directory of the expanded resource adapter archive
+    * @param report The destination of the report; <code>null</code> if an exception should be thrown instead
+    * @param cl The class loader
+    * @return The system exit code
+    * @exception ValidatorException Thrown if a validation error occurs
+    * @exception IOException If an I/O error occurs
+    */
+   public static int validate(Connector c, File root, File report, ClassLoader cl)
+      throws ValidatorException, IOException
+   {
+      int exitCode = SUCCESS;
+
+      ClassLoader oldTCCL = SecurityActions.getThreadContextClassLoader();
+      try
+      {
+         SecurityActions.setThreadContextClassLoader(cl);
+
+         List<Validate> validateClasses = new ArrayList<Validate>();
+         List<Failure> failures = new ArrayList<Failure>();
+
+         Validator validator = new Validator();
+         validateClasses.addAll(createResourceAdapter(c, failures, validator.getResourceBundle(), cl));
+         validateClasses.addAll(createManagedConnectionFactory(c, failures, validator.getResourceBundle(), cl));
+         validateClasses.addAll(createActivationSpec(c, failures, validator.getResourceBundle(), cl));
+         validateClasses.addAll(createAdminObject(c, failures, validator.getResourceBundle(), cl));
+
+         if (validateClassesInPackage(root))
+         {
+            Failure failure = new Failure(Severity.WARNING, "20.2",
+                                          validator.getResourceBundle().getString("pak.cip"));
+            failures.add(failure);
+         }
+
+         List<Failure> classFailures = validator.validate(validateClasses);
+         if (classFailures != null && classFailures.size() > 0)
+            failures.addAll(classFailures);
+
+         if (failures.size() > 0)
+         {
+            if (report != null)
+            {
+               FailureHelper fh = new FailureHelper(failures);
+
+               FileWriter fw = null;
+               BufferedWriter bw = null;
+               try
+               {
+                  fw = new FileWriter(report);
+                  bw = new BufferedWriter(fw, 8192);
+                  bw.write(fh.asText(validator.getResourceBundle()));
+                  bw.flush();
+               }
+               finally
+               {
+                  try
+                  {
+                     if (bw != null)
+                        bw.close();
+                     if (fw != null)
+                        fw.close();
+                  }
+                  catch (IOException ignore)
+                  {
+                     // Ignore
+                  }
+               }
+            }
+            else
+            {
+               throw new ValidatorException(c.getEisType().getValue(), failures, validator.getResourceBundle());
+            }
+
+            exitCode = FAIL;
+         }
+         else
+         {
+            exitCode = SUCCESS;
+         }
+      }
+      finally
+      {
+         SecurityActions.setThreadContextClassLoader(oldTCCL);
       }
 
       return exitCode;
