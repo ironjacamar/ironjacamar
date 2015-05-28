@@ -41,9 +41,43 @@ public class Tracer
    /** Is the tracer enabled */
    private static boolean enabled = log.isTraceEnabled();
 
+   /** Are callstacks recorded */
+   private static boolean recordCallstacks = false;
+
+   /** Is the tracer confidential */
+   private static boolean confidential = false;
+
    static
    {
       log.tracef("%s", new TraceEvent(Version.VERSION, "NONE", TraceEvent.VERSION, "NONE"));
+
+      String value = SecurityActions.getSystemProperty("ironjacamar.tracer.callstacks");
+      if (value != null && !value.trim().equals(""))
+      {
+         try
+         {
+            recordCallstacks = Boolean.valueOf(value);
+         }
+         catch (Throwable t)
+         {
+            // Assume record callstacks
+            recordCallstacks = true;
+         }
+      }
+
+      value = SecurityActions.getSystemProperty("ironjacamar.tracer.confidential");
+      if (value != null && !value.trim().equals(""))
+      {
+         try
+         {
+            confidential = Boolean.valueOf(value);
+         }
+         catch (Throwable t)
+         {
+            // Assume confidential
+            confidential = true;
+         }
+      }
    }
    
    /**
@@ -65,15 +99,35 @@ public class Tracer
    }
 
    /**
+    * Should callstacks be recorded
+    * @return The value
+    */
+   public static boolean isRecordCallstacks()
+   {
+      return recordCallstacks && !confidential;
+   }
+
+   /**
+    * Is confidential
+    * @return The value
+    */
+   public static boolean isConfidential()
+   {
+      return confidential;
+   }
+
+   /**
     * Get connection listener
     * @param poolName The name of the pool
     * @param mcp The managed connection pool
     * @param cl The connection listener
     * @param pooled Is the connection pooled
     * @param interleaving Interleaving flag
+    * @param callstack The call stack
     */
    public static synchronized void getConnectionListener(String poolName, Object mcp, Object cl,
-                                                         boolean pooled, boolean interleaving)
+                                                         boolean pooled, boolean interleaving,
+                                                         Throwable callstack)
    {
       if (!interleaving)
       {
@@ -81,14 +135,16 @@ public class Tracer
          {
             log.tracef("%s", new TraceEvent(poolName, Integer.toHexString(System.identityHashCode(mcp)),
                                             TraceEvent.GET_CONNECTION_LISTENER,
-                                            Integer.toHexString(System.identityHashCode(cl))));
+                                            Integer.toHexString(System.identityHashCode(cl)),
+                                            !confidential && callstack != null ? toString(callstack) : ""));
          }
          else
          {
             log.tracef("%s", new TraceEvent(poolName,
                                             Integer.toHexString(System.identityHashCode(mcp)),
                                             TraceEvent.GET_CONNECTION_LISTENER_NEW,
-                                            Integer.toHexString(System.identityHashCode(cl))));
+                                            Integer.toHexString(System.identityHashCode(cl)),
+                                            !confidential && callstack != null ? toString(callstack) : ""));
          }
       }
       else
@@ -98,14 +154,16 @@ public class Tracer
             log.tracef("%s", new TraceEvent(poolName,
                                             Integer.toHexString(System.identityHashCode(mcp)),
                                             TraceEvent.GET_INTERLEAVING_CONNECTION_LISTENER,
-                                            Integer.toHexString(System.identityHashCode(cl))));
+                                            Integer.toHexString(System.identityHashCode(cl)),
+                                            !confidential && callstack != null ? toString(callstack) : ""));
          }
          else
          {
             log.tracef("%s", new TraceEvent(poolName,
                                             Integer.toHexString(System.identityHashCode(mcp)),
                                             TraceEvent.GET_INTERLEAVING_CONNECTION_LISTENER_NEW,
-                                            Integer.toHexString(System.identityHashCode(cl))));
+                                            Integer.toHexString(System.identityHashCode(cl)),
+                                            !confidential && callstack != null ? toString(callstack) : ""));
          }
       }
    }
@@ -117,9 +175,11 @@ public class Tracer
     * @param cl The connection listener
     * @param kill Kill the listener
     * @param interleaving Interleaving flag
+    * @param callstack The call stack
     */
    public static synchronized void returnConnectionListener(String poolName, Object mcp,
-                                                            Object cl, boolean kill, boolean interleaving)
+                                                            Object cl, boolean kill, boolean interleaving,
+                                                            Throwable callstack)
    {
       if (!interleaving)
       {
@@ -128,14 +188,16 @@ public class Tracer
             log.tracef("%s", new TraceEvent(poolName,
                                             Integer.toHexString(System.identityHashCode(mcp)),
                                             TraceEvent.RETURN_CONNECTION_LISTENER,
-                                            Integer.toHexString(System.identityHashCode(cl))));
+                                            Integer.toHexString(System.identityHashCode(cl)),
+                                            !confidential && callstack != null ? toString(callstack) : ""));
          }
          else
          {
             log.tracef("%s", new TraceEvent(poolName,
                                             Integer.toHexString(System.identityHashCode(mcp)),
                                             TraceEvent.RETURN_CONNECTION_LISTENER_WITH_KILL,
-                                            Integer.toHexString(System.identityHashCode(cl))));
+                                            Integer.toHexString(System.identityHashCode(cl)),
+                                            !confidential && callstack != null ? toString(callstack) : ""));
          }
       }
       else
@@ -145,14 +207,16 @@ public class Tracer
             log.tracef("%s", new TraceEvent(poolName,
                                             Integer.toHexString(System.identityHashCode(mcp)),
                                             TraceEvent.RETURN_INTERLEAVING_CONNECTION_LISTENER,
-                                            Integer.toHexString(System.identityHashCode(cl))));
+                                            Integer.toHexString(System.identityHashCode(cl)),
+                                            !confidential && callstack != null ? toString(callstack) : ""));
          }
          else
          {
             log.tracef("%s", new TraceEvent(poolName,
                                             Integer.toHexString(System.identityHashCode(mcp)),
                                             TraceEvent.RETURN_INTERLEAVING_CONNECTION_LISTENER_WITH_KILL,
-                                            Integer.toHexString(System.identityHashCode(cl))));
+                                            Integer.toHexString(System.identityHashCode(cl)),
+                                            !confidential && callstack != null ? toString(callstack) : ""));
          }
       }
    }
@@ -345,11 +409,12 @@ public class Tracer
     */
    public static synchronized void exception(String poolName, Object mcp, Object cl, Throwable exception)
    {
-      log.tracef("%s", new TraceEvent(poolName,
-                                      Integer.toHexString(System.identityHashCode(mcp)),
-                                      TraceEvent.EXCEPTION,
-                                      Integer.toHexString(System.identityHashCode(cl)),
-                                      toString(exception)));
+      if (!confidential)
+         log.tracef("%s", new TraceEvent(poolName,
+                                         Integer.toHexString(System.identityHashCode(mcp)),
+                                         TraceEvent.EXCEPTION,
+                                         Integer.toHexString(System.identityHashCode(cl)),
+                                         toString(exception)));
    }
 
    /**
@@ -357,33 +422,40 @@ public class Tracer
     * @param poolName The name of the pool
     * @param mcp The managed connection pool
     * @param cl The connection listener
+    * @param mc The managed connection
     * @param get A GET operation
     * @param prefill A PREFILL operation
     * @param incrementer An INCREMENTER operation
+    * @param callstack The call stack
     */
-   public static synchronized void createConnectionListener(String poolName, Object mcp, Object cl,
-                                                            boolean get, boolean prefill, boolean incrementer)
+   public static synchronized void createConnectionListener(String poolName, Object mcp, Object cl, Object mc,
+                                                            boolean get, boolean prefill, boolean incrementer,
+                                                            Throwable callstack)
    {
       if (get)
       {
          log.tracef("%s", new TraceEvent(poolName,
                                          Integer.toHexString(System.identityHashCode(mcp)),
                                          TraceEvent.CREATE_CONNECTION_LISTENER_GET,
-                                         Integer.toHexString(System.identityHashCode(cl))));
+                                         Integer.toHexString(System.identityHashCode(cl)),
+                                         Integer.toHexString(System.identityHashCode(mc)),
+                                         !confidential && callstack != null ? toString(callstack) : ""));
       }
       else if (prefill)
       {
          log.tracef("%s", new TraceEvent(poolName,
                                          Integer.toHexString(System.identityHashCode(mcp)),
                                          TraceEvent.CREATE_CONNECTION_LISTENER_PREFILL,
-                                         Integer.toHexString(System.identityHashCode(cl))));
+                                         Integer.toHexString(System.identityHashCode(cl)),
+                                         !confidential && callstack != null ? toString(callstack) : ""));
       }
       else if (incrementer)
       {
          log.tracef("%s", new TraceEvent(poolName,
                                          Integer.toHexString(System.identityHashCode(mcp)),
                                          TraceEvent.CREATE_CONNECTION_LISTENER_INCREMENTER,
-                                         Integer.toHexString(System.identityHashCode(cl))));
+                                         Integer.toHexString(System.identityHashCode(cl)),
+                                         !confidential && callstack != null ? toString(callstack) : ""));
       }
    }
 
@@ -397,45 +469,52 @@ public class Tracer
     * @param invalid An INVALID operation
     * @param flush A FLUSH operation
     * @param error An ERROR operation
+    * @param callstack The call stack
     */
    public static synchronized void destroyConnectionListener(String poolName, Object mcp, Object cl,
                                                              boolean ret, boolean idle, boolean invalid,
-                                                             boolean flush, boolean error)
+                                                             boolean flush, boolean error,
+                                                             Throwable callstack)
    {
       if (ret)
       {
          log.tracef("%s", new TraceEvent(poolName,
                                          Integer.toHexString(System.identityHashCode(mcp)),
                                          TraceEvent.DESTROY_CONNECTION_LISTENER_RETURN,
-                                         Integer.toHexString(System.identityHashCode(cl))));
+                                         Integer.toHexString(System.identityHashCode(cl)),
+                                         !confidential && callstack != null ? toString(callstack) : ""));
       }
       else if (idle)
       {
          log.tracef("%s", new TraceEvent(poolName,
                                          Integer.toHexString(System.identityHashCode(mcp)),
                                          TraceEvent.DESTROY_CONNECTION_LISTENER_IDLE,
-                                         Integer.toHexString(System.identityHashCode(cl))));
+                                         Integer.toHexString(System.identityHashCode(cl)),
+                                         !confidential && callstack != null ? toString(callstack) : ""));
       }
       else if (invalid)
       {
          log.tracef("%s", new TraceEvent(poolName,
                                          Integer.toHexString(System.identityHashCode(mcp)),
                                          TraceEvent.DESTROY_CONNECTION_LISTENER_INVALID,
-                                         Integer.toHexString(System.identityHashCode(cl))));
+                                         Integer.toHexString(System.identityHashCode(cl)),
+                                         !confidential && callstack != null ? toString(callstack) : ""));
       }
       else if (flush)
       {
          log.tracef("%s", new TraceEvent(poolName,
                                          Integer.toHexString(System.identityHashCode(mcp)),
                                          TraceEvent.DESTROY_CONNECTION_LISTENER_FLUSH,
-                                         Integer.toHexString(System.identityHashCode(cl))));
+                                         Integer.toHexString(System.identityHashCode(cl)),
+                                         !confidential && callstack != null ? toString(callstack) : ""));
       }
       else if (error)
       {
          log.tracef("%s", new TraceEvent(poolName,
                                          Integer.toHexString(System.identityHashCode(mcp)),
                                          TraceEvent.DESTROY_CONNECTION_LISTENER_ERROR,
-                                         Integer.toHexString(System.identityHashCode(cl))));
+                                         Integer.toHexString(System.identityHashCode(cl)),
+                                         !confidential && callstack != null ? toString(callstack) : ""));
       }
    }
 
@@ -473,7 +552,7 @@ public class Tracer
    public static synchronized void pushCCMContext(String key, Throwable callstack)
    {
       log.tracef("%s", new TraceEvent("CachedConnectionManager", "NONE", TraceEvent.PUSH_CCM_CONTEXT,
-                                      "NONE", key, toString(callstack)));
+                                      "NONE", key, callstack != null ? toString(callstack) : ""));
    }
 
    /**
@@ -484,7 +563,7 @@ public class Tracer
    public static synchronized void popCCMContext(String key, Throwable callstack)
    {
       log.tracef("%s", new TraceEvent("CachedConnectionManager", "NONE", TraceEvent.POP_CCM_CONTEXT,
-                                      "NONE", key, toString(callstack)));
+                                      "NONE", key, callstack != null ? toString(callstack) : ""));
    }
 
    /**

@@ -28,8 +28,6 @@ import org.jboss.jca.core.tracer.TraceEvent;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -43,6 +41,8 @@ import java.util.TreeMap;
  */
 public class HTMLReport
 {
+   private static final String NEW_LINE = System.getProperty("line.separator", "\n");
+
    /**
     * Write string
     * @param fw The file writer
@@ -64,7 +64,7 @@ public class HTMLReport
     */
    static void writeEOL(FileWriter fw) throws Exception
    {
-      fw.write((int)'\n');
+      writeString(fw, NEW_LINE);
    }
 
    /**
@@ -85,10 +85,18 @@ public class HTMLReport
                                                  FileWriter fw)
       throws Exception
    {
+      writeString(fw, "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\"");
+      writeEOL(fw);
+      writeString(fw, "                      \"http://www.w3.org/TR/html4/loose.dtd\">");
+      writeEOL(fw);
+
       writeString(fw, "<html>");
       writeEOL(fw);
 
       writeString(fw, "<head>");
+      writeEOL(fw);
+
+      writeString(fw, "<meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\">");
       writeEOL(fw);
 
       writeString(fw, "<title>IronJacamar tracer report</title>");
@@ -219,7 +227,7 @@ public class HTMLReport
       writeString(fw, "</ul>");
       writeEOL(fw);
 
-      writeString(fw, "<p/>");
+      writeString(fw, "<p>");
       writeEOL(fw);
 
       writeString(fw, "<ul>");
@@ -259,13 +267,16 @@ public class HTMLReport
       writeString(fw, "<ul>");
       writeEOL(fw);
 
-      writeString(fw, "<li><a href=\"toc-c.html\">Connection</div></a></li>");
+      writeString(fw, "<li><a href=\"toc-c.html\">Connection</a></li>");
       writeEOL(fw);
       
-      writeString(fw, "<li><a href=\"toc-cl.html\">ConnectionListener</div></a></li>");
+      writeString(fw, "<li><a href=\"toc-mc.html\">ManagedConnection</a></li>");
       writeEOL(fw);
       
-      writeString(fw, "<li><a href=\"toc-mcp.html\">Managed Connection Pool</div></a></li>");
+      writeString(fw, "<li><a href=\"toc-cl.html\">ConnectionListener</a></li>");
+      writeEOL(fw);
+      
+      writeString(fw, "<li><a href=\"toc-mcp.html\">ManagedConnectionPool</a></li>");
       writeEOL(fw);
       
       writeString(fw, "</ul>");
@@ -291,10 +302,27 @@ public class HTMLReport
                                              Map<String, TraceEventStatus> statuses, FileWriter fw)
       throws Exception
    {
+      if (overallStatus == null)
+         overallStatus = TraceEventStatus.GREEN;
+
+      if (mcps == null)
+         mcps = new HashSet<String>();
+      
+      if (statuses == null)
+         statuses = new TreeMap<String, TraceEventStatus>();
+      
+      writeString(fw, "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\"");
+      writeEOL(fw);
+      writeString(fw, "                      \"http://www.w3.org/TR/html4/loose.dtd\">");
+      writeEOL(fw);
+
       writeString(fw, "<html>");
       writeEOL(fw);
 
       writeString(fw, "<head>");
+      writeEOL(fw);
+
+      writeString(fw, "<meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\">");
       writeEOL(fw);
 
       writeString(fw, "<title>Pool: " + poolName + "</title>");
@@ -381,7 +409,7 @@ public class HTMLReport
       writeString(fw, "</ul>");
       writeEOL(fw);
 
-      writeString(fw, "<p/>");
+      writeString(fw, "<p>");
       writeEOL(fw);
 
       writeString(fw, "<h2>Lifecycle</h2>");
@@ -390,7 +418,7 @@ public class HTMLReport
       writeString(fw, "<a href=\"lifecycle.html\">Report</a>");
       writeEOL(fw);
 
-      writeString(fw, "<p/>");
+      writeString(fw, "<p>");
       writeEOL(fw);
 
       writeString(fw, "<h2>Cached connection manager</h2>");
@@ -399,7 +427,7 @@ public class HTMLReport
       writeString(fw, "<a href=\"ccm.html\">Report</a>");
       writeEOL(fw);
 
-      writeString(fw, "<p/>");
+      writeString(fw, "<p>");
       writeEOL(fw);
 
       writeString(fw, "<a href=\"../index.html\">Back</a>");
@@ -416,21 +444,34 @@ public class HTMLReport
     * Write ConnectionListener index.html
     * @param identifier The identifier
     * @param data The data
-    * @param ignoreDelist Should DELIST be ignored
-    * @param ignoreTracking Should TRACKING be ignored
+    * @param createCallStack The CREATE callstack
+    * @param destroyCallStack The DESTROY callstack
+    * @param durationStatus The status for each duration
+    * @param noSDedit Should SDedit functionality be disabled
     * @param root The root directory
     * @param fw The file writer
     * @exception Exception If an error occurs
     */
-   private static void generateConnectionListenerIndexHTML(String identifier, List<TraceEvent> data,
-                                                           boolean ignoreDelist, boolean ignoreTracking,
+   private static void generateConnectionListenerIndexHTML(String identifier,
+                                                           Map<String, List<TraceEvent>> data,
+                                                           TraceEvent createCallStack, TraceEvent destroyCallStack,
+                                                           Map<String, TraceEventStatus> durationStatus,
+                                                           boolean noSDedit,
                                                            String root, FileWriter fw)
       throws Exception
    {
+      writeString(fw, "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\"");
+      writeEOL(fw);
+      writeString(fw, "                      \"http://www.w3.org/TR/html4/loose.dtd\">");
+      writeEOL(fw);
+
       writeString(fw, "<html>");
       writeEOL(fw);
 
       writeString(fw, "<head>");
+      writeEOL(fw);
+
+      writeString(fw, "<meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\">");
       writeEOL(fw);
 
       writeString(fw, "<title>ConnectionListener: " + identifier + "</title>");
@@ -454,7 +495,7 @@ public class HTMLReport
       writeString(fw, "<td><b>Pool:</b></td>");
       writeEOL(fw);
 
-      writeString(fw, "<td>" + data.get(0).getPool() + "</td>");
+      writeString(fw, "<td>" + createCallStack.getPool() + "</td>");
       writeEOL(fw);
 
       writeString(fw, "</tr>");
@@ -466,7 +507,7 @@ public class HTMLReport
       writeString(fw, "<td><b>ManagedConnectionPool:</b></td>");
       writeEOL(fw);
 
-      writeString(fw, "<td>" + data.get(0).getManagedConnectionPool() + "</td>");
+      writeString(fw, "<td>" + createCallStack.getManagedConnectionPool() + "</td>");
       writeEOL(fw);
 
       writeString(fw, "</tr>");
@@ -475,10 +516,52 @@ public class HTMLReport
       writeString(fw, "<tr>");
       writeEOL(fw);
 
+      writeString(fw, "<td><b>ManagedConnection:</b></td>");
+      writeEOL(fw);
+
+      writeString(fw, "<td>" + createCallStack.getPayload1() + "</td>");
+      writeEOL(fw);
+
+      writeString(fw, "</tr>");
+      writeEOL(fw);
+
+      if (createCallStack != null)
+      {
+         writeString(fw, "<tr>");
+         writeEOL(fw);
+
+         writeString(fw, "<td><b>Created:</b></td>");
+         writeEOL(fw);
+      
+         writeString(fw, "<td>" + createCallStack.getTimestamp() + "</td>");
+         writeEOL(fw);
+      
+         writeString(fw, "</tr>");
+         writeEOL(fw);
+      }
+
+      if (destroyCallStack != null)
+      {
+         writeString(fw, "<tr>");
+         writeEOL(fw);
+
+         writeString(fw, "<td><b>Destroyed:</b></td>");
+         writeEOL(fw);
+
+         writeString(fw, "<td>" + destroyCallStack.getTimestamp() + "</td>");
+         writeEOL(fw);
+      
+         writeString(fw, "</tr>");
+         writeEOL(fw);
+      }
+      
+      writeString(fw, "<tr>");
+      writeEOL(fw);
+
       writeString(fw, "<td><b>Status:</b></td>");
       writeEOL(fw);
 
-      TraceEventStatus status = TraceEventHelper.getStatus(data, ignoreDelist, ignoreTracking);
+      TraceEventStatus status = TraceEventHelper.mergeStatus(durationStatus.values());
       writeString(fw, "<td><div style=\"color: " + status.getColor() + ";\">");
       writeString(fw, status.getDescription());
       writeString(fw, "</div></td>");
@@ -496,9 +579,7 @@ public class HTMLReport
       writeString(fw, "<ul>");
       writeEOL(fw);
 
-      Map<String, List<TraceEvent>> m = TraceEventHelper.split(data);
-
-      Iterator<Map.Entry<String, List<TraceEvent>>> it = m.entrySet().iterator();
+      Iterator<Map.Entry<String, List<TraceEvent>>> it = data.entrySet().iterator();
       while (it.hasNext())
       {
          Map.Entry<String, List<TraceEvent>> entry = it.next();
@@ -507,8 +588,7 @@ public class HTMLReport
 
          writeString(fw, "<a href=\"" + entry.getKey() + "/index.html\"><div style=\"color: ");
 
-         status = TraceEventHelper.getStatus(entry.getValue(), ignoreDelist, ignoreTracking);
-         writeString(fw, status.getColor());
+         writeString(fw, durationStatus.get(entry.getKey()).getColor());
 
          writeString(fw, ";\">");
 
@@ -527,8 +607,9 @@ public class HTMLReport
             f.mkdirs();
 
             cl = new FileWriter(f.getAbsolutePath() + "/" + "index.html");
-            generateConnectionListenerReportHTML(f.getCanonicalPath(), identifier, entry.getValue(),
-                                                 ignoreDelist, ignoreTracking, cl);
+            generateConnectionListenerReportHTML(f.getCanonicalPath(), identifier,
+                                                 createCallStack.getPayload1(),
+                                                 entry.getValue(), durationStatus.get(entry.getKey()), noSDedit, cl);
          }
          finally
          {
@@ -546,7 +627,7 @@ public class HTMLReport
             }
          }
 
-         if (status == TraceEventStatus.GREEN)
+         if (status == TraceEventStatus.GREEN && !noSDedit)
          {
             FileWriter sdedit = null;
             try
@@ -579,9 +660,39 @@ public class HTMLReport
       writeString(fw, "</ul>");
       writeEOL(fw);
 
-      writeString(fw, "<p/>");
+      writeString(fw, "<p>");
       writeEOL(fw);
 
+      if (createCallStack != null && !createCallStack.getPayload2().equals(""))
+      {
+         writeString(fw, "<h2>CREATE callstack</h2>");
+         writeEOL(fw);
+
+         writeString(fw, "<pre>");
+         writeEOL(fw);
+
+         writeString(fw, TraceEventHelper.exceptionDescription(createCallStack.getPayload2()));
+         writeEOL(fw);
+
+         writeString(fw, "</pre>");
+         writeEOL(fw);
+      }
+      
+      if (destroyCallStack != null && !destroyCallStack.getPayload1().equals(""))
+      {
+         writeString(fw, "<h2>DESTROY callstack</h2>");
+         writeEOL(fw);
+
+         writeString(fw, "<pre>");
+         writeEOL(fw);
+
+         writeString(fw, TraceEventHelper.exceptionDescription(destroyCallStack.getPayload1()));
+         writeEOL(fw);
+
+         writeString(fw, "</pre>");
+         writeEOL(fw);
+      }
+      
       writeString(fw, "<a href=\"../index.html\">Back</a>");
       writeEOL(fw);
 
@@ -596,24 +707,35 @@ public class HTMLReport
     * Write ConnectionListener report
     * @param root The root directory
     * @param identifier The identifier
+    * @param mc The managed connection
     * @param data The data
-    * @param ignoreDelist Should DELIST be ignored
-    * @param ignoreTracking Should TRACKING be ignored
+    * @param status The status
+    * @param noSDedit Should SDedit functionality be disabled
     * @param fw The file writer
     * @exception Exception If an error occurs
     */
-   private static void generateConnectionListenerReportHTML(String root, String identifier, List<TraceEvent> data,
-                                                            boolean ignoreDelist, boolean ignoreTracking,
+   private static void generateConnectionListenerReportHTML(String root, String identifier, String mc,
+                                                            List<TraceEvent> data,
+                                                            TraceEventStatus status,
+                                                            boolean noSDedit,
                                                             FileWriter fw)
       throws Exception
    {
       long startTime = data.get(0).getTimestamp();
       long endTime = data.get(data.size() - 1).getTimestamp();
 
+      writeString(fw, "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\"");
+      writeEOL(fw);
+      writeString(fw, "                      \"http://www.w3.org/TR/html4/loose.dtd\">");
+      writeEOL(fw);
+
       writeString(fw, "<html>");
       writeEOL(fw);
 
       writeString(fw, "<head>");
+      writeEOL(fw);
+
+      writeString(fw, "<meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\">");
       writeEOL(fw);
 
       writeString(fw, "<title>ConnectionListener: " + identifier + " (" + startTime + "-" + endTime + ")</title>");
@@ -650,6 +772,18 @@ public class HTMLReport
       writeEOL(fw);
 
       writeString(fw, "<td>" + data.get(0).getManagedConnectionPool() + "</td>");
+      writeEOL(fw);
+
+      writeString(fw, "</tr>");
+      writeEOL(fw);
+
+      writeString(fw, "<tr>");
+      writeEOL(fw);
+
+      writeString(fw, "<td><b>ManagedConnection:</b></td>");
+      writeEOL(fw);
+
+      writeString(fw, "<td>" + mc + "</td>");
       writeEOL(fw);
 
       writeString(fw, "</tr>");
@@ -697,7 +831,6 @@ public class HTMLReport
       writeString(fw, "<td><b>Status:</b></td>");
       writeEOL(fw);
 
-      TraceEventStatus status = TraceEventHelper.getStatus(data, ignoreDelist, ignoreTracking);
       writeString(fw, "<td><div style=\"color: " + status.getColor() + ";\">");
       writeString(fw, status.getDescription());
       writeString(fw, "</div></td>");
@@ -709,37 +842,119 @@ public class HTMLReport
       writeString(fw, "</table>");
       writeEOL(fw);
 
-      writeString(fw, "<h2>Sequence diagram</h2>");
-      writeEOL(fw);
-
-      if (status == TraceEventStatus.GREEN)
+      if (!noSDedit)
       {
-         writeString(fw, "<image src=\"");
-         writeString(fw, identifier);
-         writeString(fw, ".png\" alt=\"SDedit image\"/>");
+         writeString(fw, "<h2>Sequence diagram</h2>");
          writeEOL(fw);
 
-         writeString(fw, "<p/>");
+         if (status == TraceEventStatus.GREEN)
+         {
+            writeString(fw, "<image src=\"");
+            writeString(fw, identifier);
+            writeString(fw, ".png\" alt=\"SDedit image\"/>");
+            writeEOL(fw);
+
+            writeString(fw, "<p>");
+            writeEOL(fw);
+
+            writeString(fw, "Generate the image by: <i>sdedit -t png -o ");
+            writeString(fw, root);
+            writeString(fw, "/");
+            writeString(fw, identifier);
+            writeString(fw, ".png ");
+            writeString(fw, root);
+            writeString(fw, "/");
+            writeString(fw, identifier);
+            writeString(fw, ".sdx ");
+            writeString(fw, "</i>");
+            writeEOL(fw);
+         }
+         else
+         {
+            writeString(fw, "See Description or Data for recorded data");
+            writeEOL(fw);
+         }
+      }
+
+      TraceEvent createCallStack =
+         TraceEventHelper.getType(data,
+                                  TraceEvent.CREATE_CONNECTION_LISTENER_GET);
+      if (createCallStack != null && createCallStack.getPayload2() != null && !createCallStack.getPayload2().equals(""))
+      {
+         writeString(fw, "<h2>CREATE callstack</h2>");
          writeEOL(fw);
 
-         writeString(fw, "Generate the image by: <i>sdedit -t png -o ");
-         writeString(fw, root);
-         writeString(fw, "/");
-         writeString(fw, identifier);
-         writeString(fw, ".png ");
-         writeString(fw, root);
-         writeString(fw, "/");
-         writeString(fw, identifier);
-         writeString(fw, ".sdx ");
-         writeString(fw, "</i>");
+         writeString(fw, "<pre>");
+         writeEOL(fw);
+
+         writeString(fw, TraceEventHelper.exceptionDescription(createCallStack.getPayload2()));
+         writeEOL(fw);
+
+         writeString(fw, "</pre>");
          writeEOL(fw);
       }
-      else
+      
+      TraceEvent getCallStack =
+         TraceEventHelper.getType(data,
+                                  TraceEvent.GET_CONNECTION_LISTENER,
+                                  TraceEvent.GET_CONNECTION_LISTENER_NEW,
+                                  TraceEvent.GET_INTERLEAVING_CONNECTION_LISTENER,
+                                  TraceEvent.GET_INTERLEAVING_CONNECTION_LISTENER_NEW);
+      if (getCallStack != null && getCallStack.getPayload1() != null && !getCallStack.getPayload1().equals(""))
       {
-         writeString(fw, "See Description or Data for recorded data");
+         writeString(fw, "<h2>GET callstack</h2>");
+         writeEOL(fw);
+
+         writeString(fw, "<pre>");
+         writeEOL(fw);
+
+         writeString(fw, TraceEventHelper.exceptionDescription(getCallStack.getPayload1()));
+         writeEOL(fw);
+
+         writeString(fw, "</pre>");
          writeEOL(fw);
       }
+      
+      TraceEvent returnCallStack =
+         TraceEventHelper.getType(data,
+                                  TraceEvent.RETURN_CONNECTION_LISTENER,
+                                  TraceEvent.RETURN_CONNECTION_LISTENER_WITH_KILL,
+                                  TraceEvent.RETURN_INTERLEAVING_CONNECTION_LISTENER,
+                                  TraceEvent.RETURN_INTERLEAVING_CONNECTION_LISTENER_WITH_KILL);
+      if (returnCallStack != null && returnCallStack.getPayload1() != null && !returnCallStack.getPayload1().equals(""))
+      {
+         writeString(fw, "<h2>RETURN callstack</h2>");
+         writeEOL(fw);
 
+         writeString(fw, "<pre>");
+         writeEOL(fw);
+
+         writeString(fw, TraceEventHelper.exceptionDescription(returnCallStack.getPayload1()));
+         writeEOL(fw);
+
+         writeString(fw, "</pre>");
+         writeEOL(fw);
+      }
+      
+      TraceEvent destroyCallStack =
+         TraceEventHelper.getType(data,
+                                  TraceEvent.DESTROY_CONNECTION_LISTENER_RETURN);
+      if (destroyCallStack != null && destroyCallStack.getPayload1() != null &&
+          !destroyCallStack.getPayload1().equals(""))
+      {
+         writeString(fw, "<h2>DESTROY callstack</h2>");
+         writeEOL(fw);
+
+         writeString(fw, "<pre>");
+         writeEOL(fw);
+
+         writeString(fw, TraceEventHelper.exceptionDescription(destroyCallStack.getPayload1()));
+         writeEOL(fw);
+
+         writeString(fw, "</pre>");
+         writeEOL(fw);
+      }
+      
       writeString(fw, "<h2>Description</h2>");
       writeEOL(fw);
 
@@ -834,7 +1049,7 @@ public class HTMLReport
                writeString(fw, "</pre>");
                writeEOL(fw);
 
-               writeString(fw, "<p/>");
+               writeString(fw, "<p>");
                writeEOL(fw);
             }
          }
@@ -855,7 +1070,7 @@ public class HTMLReport
       writeString(fw, "</pre>");
       writeEOL(fw);
 
-      writeString(fw, "<p/>");
+      writeString(fw, "<p>");
       writeEOL(fw);
 
       writeString(fw, "<a href=\"../index.html\">Back</a>");
@@ -880,10 +1095,18 @@ public class HTMLReport
                                              Set<String> activeCLs, FileWriter fw)
       throws Exception
    {
+      writeString(fw, "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\"");
+      writeEOL(fw);
+      writeString(fw, "                      \"http://www.w3.org/TR/html4/loose.dtd\">");
+      writeEOL(fw);
+
       writeString(fw, "<html>");
       writeEOL(fw);
 
       writeString(fw, "<head>");
+      writeEOL(fw);
+
+      writeString(fw, "<meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\">");
       writeEOL(fw);
 
       writeString(fw, "<title>Lifecycle: " + poolName + "</title>");
@@ -964,7 +1187,7 @@ public class HTMLReport
       writeString(fw, "<a href=\"index.html\">Report</a>");
       writeEOL(fw);
 
-      writeString(fw, "<p/>");
+      writeString(fw, "<p>");
       writeEOL(fw);
 
       writeString(fw, "<h2>Cached connection manager</h2>");
@@ -973,7 +1196,7 @@ public class HTMLReport
       writeString(fw, "<a href=\"ccm.html\">Report</a>");
       writeEOL(fw);
 
-      writeString(fw, "<p/>");
+      writeString(fw, "<p>");
       writeEOL(fw);
 
       writeString(fw, "<h2>Data</h2>");
@@ -991,7 +1214,7 @@ public class HTMLReport
       writeString(fw, "</pre>");
       writeEOL(fw);
 
-      writeString(fw, "<p/>");
+      writeString(fw, "<p>");
       writeEOL(fw);
 
       writeString(fw, "<a href=\"../index.html\">Back</a>");
@@ -1015,10 +1238,18 @@ public class HTMLReport
    private static void generateCCMHTML(List<TraceEvent> events, TraceEventStatus status, String path, FileWriter fw)
       throws Exception
    {
+      writeString(fw, "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\"");
+      writeEOL(fw);
+      writeString(fw, "                      \"http://www.w3.org/TR/html4/loose.dtd\">");
+      writeEOL(fw);
+
       writeString(fw, "<html>");
       writeEOL(fw);
 
       writeString(fw, "<head>");
+      writeEOL(fw);
+
+      writeString(fw, "<meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\">");
       writeEOL(fw);
 
       writeString(fw, "<title>CachedConnectionManager</title>");
@@ -1054,7 +1285,7 @@ public class HTMLReport
       writeString(fw, "</table>");
       writeEOL(fw);
 
-      writeString(fw, "<p/>");
+      writeString(fw, "<p>");
       writeEOL(fw);
 
       writeString(fw, "<table>");
@@ -1064,6 +1295,9 @@ public class HTMLReport
       writeEOL(fw);
 
       writeString(fw, "<td><b>Timestamp</b></td>");
+      writeEOL(fw);
+
+      writeString(fw, "<td><b>Thread</b></td>");
       writeEOL(fw);
 
       writeString(fw, "<td><b>Event</b></td>");
@@ -1084,6 +1318,9 @@ public class HTMLReport
          writeEOL(fw);
 
          writeString(fw, "<td>" + te.getTimestamp() + "</td>");
+         writeEOL(fw);
+      
+         writeString(fw, "<td>" + te.getThreadId() + "</td>");
          writeEOL(fw);
       
          writeString(fw, "<td>" + TraceEvent.asText(te) + "</td>");
@@ -1136,7 +1373,7 @@ public class HTMLReport
       writeString(fw, "</table>");
       writeEOL(fw);
 
-      writeString(fw, "<p/>");
+      writeString(fw, "<p>");
       writeEOL(fw);
 
       writeString(fw, "<a href=\"../index.html\">Back</a>");
@@ -1161,10 +1398,18 @@ public class HTMLReport
                                            TraceEventStatus status, FileWriter fw)
       throws Exception
    {
+      writeString(fw, "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\"");
+      writeEOL(fw);
+      writeString(fw, "                      \"http://www.w3.org/TR/html4/loose.dtd\">");
+      writeEOL(fw);
+
       writeString(fw, "<html>");
       writeEOL(fw);
 
       writeString(fw, "<head>");
+      writeEOL(fw);
+
+      writeString(fw, "<meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\">");
       writeEOL(fw);
 
       writeString(fw, "<title>CCM: " + poolName + "</title>");
@@ -1201,7 +1446,7 @@ public class HTMLReport
       writeString(fw, "</table>");
       writeEOL(fw);
 
-      writeString(fw, "<p/>");
+      writeString(fw, "<p>");
       writeEOL(fw);
 
       writeString(fw, "<table>");
@@ -1211,6 +1456,9 @@ public class HTMLReport
       writeEOL(fw);
 
       writeString(fw, "<td><b>Timestamp</b></td>");
+      writeEOL(fw);
+
+      writeString(fw, "<td><b>Thread</b></td>");
       writeEOL(fw);
 
       writeString(fw, "<td><b>ManagedConnectionPool</b></td>");
@@ -1237,6 +1485,9 @@ public class HTMLReport
          writeEOL(fw);
 
          writeString(fw, "<td>" + te.getTimestamp() + "</td>");
+         writeEOL(fw);
+      
+         writeString(fw, "<td>" + te.getThreadId() + "</td>");
          writeEOL(fw);
       
          if (!"NONE".equals(te.getManagedConnectionPool()))
@@ -1295,7 +1546,7 @@ public class HTMLReport
       writeString(fw, "<a href=\"lifecycle.html\">Report</a>");
       writeEOL(fw);
 
-      writeString(fw, "<p/>");
+      writeString(fw, "<p>");
       writeEOL(fw);
 
       writeString(fw, "<h2>Data</h2>");
@@ -1313,7 +1564,7 @@ public class HTMLReport
       writeString(fw, "</pre>");
       writeEOL(fw);
 
-      writeString(fw, "<p/>");
+      writeString(fw, "<p>");
       writeEOL(fw);
 
       writeString(fw, "<a href=\"../index.html\">Back</a>");
@@ -1335,10 +1586,18 @@ public class HTMLReport
    private static void generateToCConnection(Map<String, List<TraceEvent>> events, FileWriter fw)
       throws Exception
    {
+      writeString(fw, "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\"");
+      writeEOL(fw);
+      writeString(fw, "                      \"http://www.w3.org/TR/html4/loose.dtd\">");
+      writeEOL(fw);
+
       writeString(fw, "<html>");
       writeEOL(fw);
 
       writeString(fw, "<head>");
+      writeEOL(fw);
+
+      writeString(fw, "<meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\">");
       writeEOL(fw);
 
       writeString(fw, "<title>Reference: Connection</title>");
@@ -1416,11 +1675,108 @@ public class HTMLReport
          writeString(fw, "</table>");
          writeEOL(fw);
 
-         writeString(fw, "<p/>");
+         writeString(fw, "<p>");
          writeEOL(fw);
       }
 
-      writeString(fw, "<p/>");
+      writeString(fw, "<p>");
+      writeEOL(fw);
+
+      writeString(fw, "<a href=\"index.html\">Back</a>");
+      writeEOL(fw);
+
+      writeString(fw, "</body>");
+      writeEOL(fw);
+
+      writeString(fw, "</html>");
+      writeEOL(fw);
+   }
+
+   /**
+    * Write toc-mc.html for managed connections
+    * @param events The events
+    * @param fw The file writer
+    * @exception Exception If an error occurs
+    */
+   private static void generateToCManagedConnection(Map<String, TraceEvent> events, FileWriter fw)
+      throws Exception
+   {
+      writeString(fw, "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\"");
+      writeEOL(fw);
+      writeString(fw, "                      \"http://www.w3.org/TR/html4/loose.dtd\">");
+      writeEOL(fw);
+
+      writeString(fw, "<html>");
+      writeEOL(fw);
+
+      writeString(fw, "<head>");
+      writeEOL(fw);
+
+      writeString(fw, "<meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\">");
+      writeEOL(fw);
+
+      writeString(fw, "<title>Reference: ManagedConnection</title>");
+      writeEOL(fw);
+
+      writeString(fw, "</head>");
+      writeEOL(fw);
+
+      writeString(fw, "<body style=\"background: #D7D7D7;\">");
+      writeEOL(fw);
+
+      writeString(fw, "<h1>Reference: ManagedConnection</h1>");
+      writeEOL(fw);
+
+      writeString(fw, "<table>");
+      writeEOL(fw);
+      
+      writeString(fw, "<tr>");
+      writeEOL(fw);
+
+      writeString(fw, "<td><b>ManagedConnection</b></td>");
+      writeEOL(fw);
+
+      writeString(fw, "<td><b>ConnectionListener</b></td>");
+      writeEOL(fw);
+
+      writeString(fw, "<td><b>ManagedConnectionPool</b></td>");
+      writeEOL(fw);
+
+      writeString(fw, "<td><b>Pool</b></td>");
+      writeEOL(fw);
+
+      writeString(fw, "</tr>");
+      writeEOL(fw);
+
+      for (Map.Entry<String, TraceEvent> entry : events.entrySet())
+      {
+         TraceEvent te = entry.getValue();
+
+         writeString(fw, "<tr>");
+         writeEOL(fw);
+
+         writeString(fw, "<td><a href=\"" + te.getPool() + "/" + te.getConnectionListener() + "/index.html\">" +
+                     te.getPayload1() + "</a></td>");
+         writeEOL(fw);
+         
+         writeString(fw, "<td><a href=\"" + te.getPool() + "/" + te.getConnectionListener() + "/index.html\">" +
+                     te.getConnectionListener() + "</a></td>");
+         writeEOL(fw);
+         
+         writeString(fw, "<td>" + te.getManagedConnectionPool() + "</td>");
+         writeEOL(fw);
+      
+         writeString(fw, "<td><a href=\"" + te.getPool() + "/index.html\">" + te.getPool() + "</a></td>");
+         writeEOL(fw);
+      
+         writeString(fw, "</tr>");
+         writeEOL(fw);
+      }
+
+      writeString(fw, "</table>");
+      writeEOL(fw);
+
+      writeString(fw, "<p>");
       writeEOL(fw);
 
       writeString(fw, "<a href=\"index.html\">Back</a>");
@@ -1442,10 +1798,18 @@ public class HTMLReport
    private static void generateToCConnectionListener(Map<String, List<TraceEvent>> events, FileWriter fw)
       throws Exception
    {
+      writeString(fw, "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\"");
+      writeEOL(fw);
+      writeString(fw, "                      \"http://www.w3.org/TR/html4/loose.dtd\">");
+      writeEOL(fw);
+
       writeString(fw, "<html>");
       writeEOL(fw);
 
       writeString(fw, "<head>");
+      writeEOL(fw);
+
+      writeString(fw, "<meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\">");
       writeEOL(fw);
 
       writeString(fw, "<title>Reference: ConnectionListener</title>");
@@ -1502,7 +1866,7 @@ public class HTMLReport
       writeString(fw, "</table>");
       writeEOL(fw);
 
-      writeString(fw, "<p/>");
+      writeString(fw, "<p>");
       writeEOL(fw);
 
       writeString(fw, "<a href=\"index.html\">Back</a>");
@@ -1524,10 +1888,18 @@ public class HTMLReport
    private static void generateToCManagedConnectionPool(Map<String, List<TraceEvent>> events, FileWriter fw)
       throws Exception
    {
+      writeString(fw, "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\"");
+      writeEOL(fw);
+      writeString(fw, "                      \"http://www.w3.org/TR/html4/loose.dtd\">");
+      writeEOL(fw);
+
       writeString(fw, "<html>");
       writeEOL(fw);
 
       writeString(fw, "<head>");
+      writeEOL(fw);
+
+      writeString(fw, "<meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\">");
       writeEOL(fw);
 
       writeString(fw, "<title>Reference: Managed Connection Pool</title>");
@@ -1577,7 +1949,7 @@ public class HTMLReport
       writeString(fw, "</table>");
       writeEOL(fw);
 
-      writeString(fw, "<p/>");
+      writeString(fw, "<p>");
       writeEOL(fw);
 
       writeString(fw, "<a href=\"index.html\">Back</a>");
@@ -1598,22 +1970,35 @@ public class HTMLReport
    {
       if (args == null || args.length < 1)
       {
-         System.out.println("Usage: HTMLReport [-ignore-delist] [-ignore-tracking] <file> [<output>]");
+         System.out.println("Usage: HTMLReport [-ignore-delist] [-ignore-tracking] " +
+                            "[-ignore-incomplete] [-no-sdedit] <file> [<output>]");
          return;
       }
 
       boolean ignoreDelist = false;
       boolean ignoreTracking = false;
+      boolean ignoreIncomplete = false;
+      boolean noSDedit = false;
       int argCount = 0;
 
-      if ("-ignore-delist".equals(args[argCount]))
+      if ("-ignore-delist".equalsIgnoreCase(args[argCount]))
       {
          ignoreDelist = true;
          argCount++;
       }
-      if ("-ignore-tracking".equals(args[argCount]))
+      if ("-ignore-tracking".equalsIgnoreCase(args[argCount]))
       {
          ignoreTracking = true;
+         argCount++;
+      }
+      if ("-ignore-incomplete".equalsIgnoreCase(args[argCount]))
+      {
+         ignoreIncomplete = true;
+         argCount++;
+      }
+      if ("-no-sdedit".equalsIgnoreCase(args[argCount]))
+      {
+         noSDedit = true;
          argCount++;
       }
 
@@ -1638,40 +2023,92 @@ public class HTMLReport
          Map<String, List<TraceEvent>> filteredCCMPool = TraceEventHelper.filterCCMPoolEvents(events);
          Map<String, Set<String>> poolMCPs = TraceEventHelper.poolManagedConnectionPools(events);
          Map<String, List<TraceEvent>> tocConnections = TraceEventHelper.tocConnections(events);
+         Map<String, TraceEvent> tocManagedConnections = TraceEventHelper.tocManagedConnections(events);
          Map<String, List<TraceEvent>> tocConnectionListeners = TraceEventHelper.tocConnectionListeners(events);
          Map<String, List<TraceEvent>> tocMCPs = TraceEventHelper.tocManagedConnectionPools(events);
 
-         // Status calculation
-         TraceEventStatus ccmStatus = TraceEventHelper.getCCMStatus(filteredCCM);
+         // CCM status calculation
+         TraceEventStatus ccmStatus = TraceEventHelper.getCCMStatus(filteredCCM, ignoreIncomplete);
          Map<String, TraceEventStatus> ccmPoolStatus = new TreeMap<String, TraceEventStatus>();
          for (Map.Entry<String, List<TraceEvent>> entry : filteredCCMPool.entrySet())
          {
-            ccmPoolStatus.put(entry.getKey(), TraceEventHelper.getCCMPoolStatus(entry.getValue()));
+            ccmPoolStatus.put(entry.getKey(), TraceEventHelper.getCCMPoolStatus(entry.getValue(), ignoreIncomplete));
          }
+
+         // Filtered data (Pool -> ConnectionListener -> Duration -> List<TraceEvent>)
+         Map<String, Map<String, Map<String, List<TraceEvent>>>> allData =
+            new TreeMap<String, Map<String, Map<String, List<TraceEvent>>>>();
+
+         // Pool status calculation (Pool -> ConnectionListener -> Duration -> Status)
+         Map<String, Map<String, Map<String, TraceEventStatus>>> allStatus =
+            new TreeMap<String, Map<String, Map<String, TraceEventStatus>>>();
+
+         Map<String, TraceEventStatus> overallPoolStatus = new TreeMap<String, TraceEventStatus>();
          
-         Map<String, TraceEventStatus> topLevelStatus = new TreeMap<String, TraceEventStatus>();
-
-         Iterator<Map.Entry<String, Map<String, List<TraceEvent>>>> it = filteredPool.entrySet().iterator();
-         while (it.hasNext())
+         for (String poolName : filteredLifecycle.keySet())
          {
-            Map.Entry<String, Map<String, List<TraceEvent>>> entry = it.next();
-            Collection<List<TraceEvent>> values = entry.getValue().values();
+            Map<String, List<TraceEvent>> poolData = filteredPool.get(poolName);
 
-            List<TraceEventStatus> status = new ArrayList<TraceEventStatus>();
+            overallPoolStatus.put(poolName, TraceEventStatus.GREEN);
 
-            for (List<TraceEvent> l : values)
+            if (poolData != null)
             {
-               status.add(TraceEventHelper.getStatus(l, ignoreDelist, ignoreTracking));
-            }
+               Map<String, Map<String, List<TraceEvent>>> connectionListenerData =
+                  new TreeMap<String, Map<String, List<TraceEvent>>>();
+               
+               Map<String, Map<String, TraceEventStatus>> connectionListenerStatus =
+                  new TreeMap<String, Map<String, TraceEventStatus>>();
+               
+               Iterator<Map.Entry<String, List<TraceEvent>>> connectionListenerIt = poolData.entrySet().iterator();
+               while (connectionListenerIt.hasNext())
+               {
+                  Map.Entry<String, List<TraceEvent>> connectionListenerEntry = connectionListenerIt.next();
+                  String connectionListenerId = connectionListenerEntry.getKey();
 
-            topLevelStatus.put(entry.getKey(), TraceEventHelper.mergeStatus(status));
+                  Map<String, List<TraceEvent>> durationMap =
+                     TraceEventHelper.split(connectionListenerEntry.getValue(), ignoreIncomplete);
+
+                  Map<String, TraceEventStatus> durationStatus = new TreeMap<String, TraceEventStatus>();
+
+                  Iterator<Map.Entry<String, List<TraceEvent>>> durationData = durationMap.entrySet().iterator();
+                  while (durationData.hasNext())
+                  {
+                     Map.Entry<String, List<TraceEvent>> durationEntry = durationData.next();
+                     TraceEventStatus tes = TraceEventHelper.getStatus(durationEntry.getValue(),
+                                                                       ignoreDelist,
+                                                                       ignoreTracking,
+                                                                       false);
+                     if (tes != TraceEventStatus.GREEN)
+                     {
+                        if (tes == TraceEventStatus.RED)
+                        {
+                           overallPoolStatus.put(poolName, TraceEventStatus.RED);
+                        }
+                        else
+                        {
+                           TraceEventStatus currentPoolStatus = overallPoolStatus.get(poolName);
+                           if (currentPoolStatus != TraceEventStatus.RED)
+                              overallPoolStatus.put(poolName, TraceEventStatus.YELLOW);
+                        }
+                     }
+                     
+                     durationStatus.put(durationEntry.getKey(), tes);
+                  }
+
+                  connectionListenerData.put(connectionListenerId, durationMap);
+                  connectionListenerStatus.put(connectionListenerId, durationStatus);
+               }
+
+               allData.put(poolName, connectionListenerData);
+               allStatus.put(poolName, connectionListenerStatus);
+            }
          }
 
          FileWriter topLevel = null;
          try
          {
             topLevel = new FileWriter(root.getAbsolutePath() + "/" + "index.html");
-            generateTopLevelIndexHTML(filteredLifecycle.keySet(), topLevelStatus,
+            generateTopLevelIndexHTML(filteredLifecycle.keySet(), overallPoolStatus,
                                       ccmStatus, ccmPoolStatus,
                                       TraceEventHelper.getVersion(events), topLevel);
          }
@@ -1703,18 +2140,19 @@ public class HTMLReport
                File f = new File(path);
                f.mkdirs();
 
-               Map<String, TraceEventStatus> status = new TreeMap<String, TraceEventStatus>();
+               Map<String, TraceEventStatus> clStatus = new TreeMap<String, TraceEventStatus>();
                if (data != null)
                {
                   Iterator<Map.Entry<String, List<TraceEvent>>> dataIt = data.entrySet().iterator();
                   while (dataIt.hasNext())
                   {
                      Map.Entry<String, List<TraceEvent>> dataEntry = dataIt.next();
-
-                     status.put(dataEntry.getKey(), TraceEventHelper.getStatus(dataEntry.getValue(),
-                                                                               ignoreDelist, ignoreTracking));
-
                      String identifier = dataEntry.getKey();
+
+                     // Calculate connection listener status
+                     Map<String, TraceEventStatus> durationStatus = allStatus.get(poolName).get(identifier);
+                     clStatus.put(identifier, TraceEventHelper.mergeStatus(durationStatus.values()));
+
                      FileWriter cl = null;
                      try
                      {
@@ -1723,8 +2161,24 @@ public class HTMLReport
                         clF.mkdirs();
 
                         cl = new FileWriter(clF.getAbsolutePath() + "/" + "index.html");
-                        generateConnectionListenerIndexHTML(identifier, dataEntry.getValue(),
-                                                            ignoreDelist, ignoreTracking, clPath, cl);
+
+                        TraceEvent createCallStack =
+                           TraceEventHelper.getType(events, identifier,
+                                                    TraceEvent.CREATE_CONNECTION_LISTENER_GET,
+                                                    TraceEvent.CREATE_CONNECTION_LISTENER_PREFILL,
+                                                    TraceEvent.CREATE_CONNECTION_LISTENER_INCREMENTER);
+                        
+                        TraceEvent destroyCallStack =
+                           TraceEventHelper.getType(events, identifier,
+                                                    TraceEvent.DESTROY_CONNECTION_LISTENER_RETURN,
+                                                    TraceEvent.DESTROY_CONNECTION_LISTENER_IDLE,
+                                                    TraceEvent.DESTROY_CONNECTION_LISTENER_INVALID,
+                                                    TraceEvent.DESTROY_CONNECTION_LISTENER_FLUSH,
+                                                    TraceEvent.DESTROY_CONNECTION_LISTENER_ERROR);
+                        
+                        generateConnectionListenerIndexHTML(identifier, allData.get(poolName).get(identifier),
+                                                            createCallStack, destroyCallStack,
+                                                            durationStatus, noSDedit, clPath, cl);
                      }
                      finally
                      {
@@ -1745,7 +2199,7 @@ public class HTMLReport
                }
 
                pool = new FileWriter(f.getAbsolutePath() + "/" + "index.html");
-               generatePoolIndexHTML(poolName, topLevelStatus.get(poolName), poolMCPs.get(poolName), status, pool);
+               generatePoolIndexHTML(poolName, overallPoolStatus.get(poolName), poolMCPs.get(poolName), clStatus, pool);
             }
             finally
             {
@@ -1880,6 +2334,29 @@ public class HTMLReport
                {
                   tocC.flush();
                   tocC.close();
+               }
+               catch (Exception e)
+               {
+                  // Ignore
+               }
+            }
+         }
+         FileWriter tocMC = null;
+         try
+         {
+            String path = root.getAbsolutePath();
+
+            tocMC = new FileWriter(path + "/" + "toc-mc.html");
+            generateToCManagedConnection(tocManagedConnections, tocMC);
+         }
+         finally
+         {
+            if (tocMC != null)
+            {
+               try
+               {
+                  tocMC.flush();
+                  tocMC.close();
                }
                catch (Exception e)
                {

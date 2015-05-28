@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -203,7 +204,7 @@ public class TraceEventHelper
       {
          if (te.getType() == TraceEvent.GET_CONNECTION_LISTENER ||
              te.getType() == TraceEvent.GET_CONNECTION_LISTENER_NEW ||
-             te.getType() == TraceEvent.GET_INTERLEAVING_CONNECTION_LISTENER_NEW ||
+             te.getType() == TraceEvent.GET_INTERLEAVING_CONNECTION_LISTENER ||
              te.getType() == TraceEvent.GET_INTERLEAVING_CONNECTION_LISTENER_NEW)
          {
             Set<String> s = result.get(te.getPool());
@@ -249,6 +250,29 @@ public class TraceEventHelper
    }
 
    /**
+    * ToC: Managed connections
+    * @param data The data
+    * @return The events
+    * @exception Exception If an error occurs
+    */
+   public static Map<String, TraceEvent> tocManagedConnections(List<TraceEvent> data) throws Exception
+   {
+      Map<String, TraceEvent> result = new TreeMap<String, TraceEvent>();
+
+      for (TraceEvent te : data)
+      {
+         if (te.getType() == TraceEvent.CREATE_CONNECTION_LISTENER_GET ||
+             te.getType() == TraceEvent.CREATE_CONNECTION_LISTENER_PREFILL ||
+             te.getType() == TraceEvent.CREATE_CONNECTION_LISTENER_INCREMENTER)
+         {
+            result.put(te.getPayload1(), te);
+         }
+      }
+
+      return result;
+   }
+
+   /**
     * ToC: Connection listeners
     * @param data The data
     * @return The events
@@ -262,7 +286,7 @@ public class TraceEventHelper
       {
          if (te.getType() == TraceEvent.GET_CONNECTION_LISTENER ||
              te.getType() == TraceEvent.GET_CONNECTION_LISTENER_NEW ||
-             te.getType() == TraceEvent.GET_INTERLEAVING_CONNECTION_LISTENER_NEW ||
+             te.getType() == TraceEvent.GET_INTERLEAVING_CONNECTION_LISTENER ||
              te.getType() == TraceEvent.GET_INTERLEAVING_CONNECTION_LISTENER_NEW)
          {
             List<TraceEvent> l = result.get(te.getConnectionListener());
@@ -293,7 +317,7 @@ public class TraceEventHelper
       {
          if (te.getType() == TraceEvent.GET_CONNECTION_LISTENER ||
              te.getType() == TraceEvent.GET_CONNECTION_LISTENER_NEW ||
-             te.getType() == TraceEvent.GET_INTERLEAVING_CONNECTION_LISTENER_NEW ||
+             te.getType() == TraceEvent.GET_INTERLEAVING_CONNECTION_LISTENER ||
              te.getType() == TraceEvent.GET_INTERLEAVING_CONNECTION_LISTENER_NEW)
          {
             List<TraceEvent> l = result.get(te.getManagedConnectionPool());
@@ -327,10 +351,12 @@ public class TraceEventHelper
     * @param input The input
     * @param ignoreDelist Should DELIST be ignored
     * @param ignoreTracking Should TRACKING be ignored
+    * @param ignoreIncomplete Ignore incomplete traces
     * @return The overall result
     */
    public static Map<String, TraceEventStatus> getStatus(Map<String, List<TraceEvent>> input,
-                                                         boolean ignoreDelist, boolean ignoreTracking)
+                                                         boolean ignoreDelist, boolean ignoreTracking,
+                                                         boolean ignoreIncomplete)
    {
       Map<String, TraceEventStatus> result = new TreeMap<String, TraceEventStatus>();
 
@@ -338,7 +364,7 @@ public class TraceEventHelper
       while (it.hasNext())
       {
          Map.Entry<String, List<TraceEvent>> entry = it.next();
-         result.put(entry.getKey(), getStatus(entry.getValue(), ignoreDelist, ignoreTracking));
+         result.put(entry.getKey(), getStatus(entry.getValue(), ignoreDelist, ignoreTracking, ignoreIncomplete));
       }
 
       return result;
@@ -349,9 +375,11 @@ public class TraceEventHelper
     * @param data The data
     * @param ignoreDelist Should DELIST be ignored
     * @param ignoreTracking Should TRACKING be ignored
+    * @param ignoreIncomplete Ignore incomplete traces
     * @return The status
     */
-   public static TraceEventStatus getStatus(List<TraceEvent> data, boolean ignoreDelist, boolean ignoreTracking)
+   public static TraceEventStatus getStatus(List<TraceEvent> data, boolean ignoreDelist, boolean ignoreTracking,
+                                            boolean ignoreIncomplete)
    {
       TraceEventStatus explicit = null;
       Set<String> knownConnections = new HashSet<String>();
@@ -498,6 +526,9 @@ public class TraceEventHelper
       if (explicit != null)
          return explicit;
 
+      //if (ignoreIncomplete)
+      //   return TraceEventStatus.GREEN;
+      
       if (gotCl)
          return TraceEventStatus.RED;
 
@@ -518,7 +549,7 @@ public class TraceEventHelper
     * @param data The data
     * @return The status
     */
-   public static TraceEventStatus mergeStatus(List<TraceEventStatus> data)
+   public static TraceEventStatus mergeStatus(Collection<TraceEventStatus> data)
    {
       TraceEventStatus result = TraceEventStatus.GREEN;
 
@@ -598,9 +629,10 @@ public class TraceEventHelper
    /**
     * Split a connection listener events into their lifecycle
     * @param data The data
+    * @param ignoreIncomplete Ignore incomplete traces
     * @return The result
     */
-   public static Map<String, List<TraceEvent>> split(List<TraceEvent> data)
+   public static Map<String, List<TraceEvent>> split(List<TraceEvent> data, boolean ignoreIncomplete)
    {
       Map<String, List<TraceEvent>> result = new TreeMap<String, List<TraceEvent>>();
       long start = 0L;
@@ -623,7 +655,7 @@ public class TraceEventHelper
          }
       }
 
-      if (l.size() > 0)
+      if (!ignoreIncomplete && l.size() > 0)
       {
          result.put(Long.toString(start) + "-" + Long.toString(l.get(l.size() - 1).getTimestamp()), l);
       }
@@ -692,7 +724,23 @@ public class TraceEventHelper
     */
    public static String prettyPrint(TraceEvent te)
    {
-      if (te.getType() != TraceEvent.EXCEPTION &&
+      if (te.getType() != TraceEvent.GET_CONNECTION_LISTENER &&
+          te.getType() != TraceEvent.GET_CONNECTION_LISTENER_NEW &&
+          te.getType() != TraceEvent.GET_INTERLEAVING_CONNECTION_LISTENER &&
+          te.getType() != TraceEvent.GET_INTERLEAVING_CONNECTION_LISTENER_NEW &&
+          te.getType() != TraceEvent.RETURN_CONNECTION_LISTENER &&
+          te.getType() != TraceEvent.RETURN_CONNECTION_LISTENER_WITH_KILL &&
+          te.getType() != TraceEvent.RETURN_INTERLEAVING_CONNECTION_LISTENER &&
+          te.getType() != TraceEvent.RETURN_INTERLEAVING_CONNECTION_LISTENER_WITH_KILL &&
+          te.getType() != TraceEvent.CREATE_CONNECTION_LISTENER_GET &&
+          te.getType() != TraceEvent.CREATE_CONNECTION_LISTENER_PREFILL &&
+          te.getType() != TraceEvent.CREATE_CONNECTION_LISTENER_INCREMENTER &&
+          te.getType() != TraceEvent.DESTROY_CONNECTION_LISTENER_RETURN &&
+          te.getType() != TraceEvent.DESTROY_CONNECTION_LISTENER_IDLE &&
+          te.getType() != TraceEvent.DESTROY_CONNECTION_LISTENER_INVALID &&
+          te.getType() != TraceEvent.DESTROY_CONNECTION_LISTENER_FLUSH &&
+          te.getType() != TraceEvent.DESTROY_CONNECTION_LISTENER_ERROR &&
+          te.getType() != TraceEvent.EXCEPTION &&
           te.getType() != TraceEvent.PUSH_CCM_CONTEXT &&
           te.getType() != TraceEvent.POP_CCM_CONTEXT)
          return te.toString();
@@ -701,6 +749,8 @@ public class TraceEventHelper
       sb.append("IJTRACER");
       sb.append("-");
       sb.append(te.getPool());
+      sb.append("-");
+      sb.append(te.getManagedConnectionPool());
       sb.append("-");
       sb.append(te.getThreadId());
       sb.append("-");
@@ -733,14 +783,22 @@ public class TraceEventHelper
    /**
     * Get CCM pool status
     * @param data The data
+    * @param ignoreIncomplete Ignore incomplete stacks
     * @return The status
     */
-   public static TraceEventStatus getCCMStatus(List<TraceEvent> data)
+   public static TraceEventStatus getCCMStatus(List<TraceEvent> data, boolean ignoreIncomplete)
    {
-      Deque<TraceEvent> stack = new ArrayDeque<TraceEvent>();
+      Map<Long, Deque<TraceEvent>> stacks = new TreeMap<Long, Deque<TraceEvent>>();
 
       for (TraceEvent te : data)
       {
+         Long id = Long.valueOf(te.getThreadId());
+
+         Deque<TraceEvent> stack = stacks.get(id);
+
+         if (stack == null)
+            stack = new ArrayDeque<TraceEvent>();
+         
          if (te.getType() == TraceEvent.PUSH_CCM_CONTEXT)
          {
             stack.push(te);
@@ -757,10 +815,15 @@ public class TraceEventHelper
                return TraceEventStatus.RED;
             }
          }
+
+         stacks.put(id, stack);
       }
 
-      if (!stack.isEmpty())
-         return TraceEventStatus.YELLOW;
+      for (Deque<TraceEvent> entry : stacks.values())
+      {
+         if (!ignoreIncomplete && !entry.isEmpty())
+            return TraceEventStatus.YELLOW;
+      }
       
       return TraceEventStatus.GREEN;
    }
@@ -768,15 +831,24 @@ public class TraceEventHelper
    /**
     * Get CCM pool status
     * @param data The data
+    * @param ignoreIncomplete Ignore incomplete stacks
     * @return The status
     */
-   public static TraceEventStatus getCCMPoolStatus(List<TraceEvent> data)
+   public static TraceEventStatus getCCMPoolStatus(List<TraceEvent> data, boolean ignoreIncomplete)
    {
-      Map<String, Set<String>> m = new HashMap<String, Set<String>>();
+      // Thread -> Connection Listener -> Set<Connection>
+      Map<Long, Map<String, Set<String>>> threads = new HashMap<Long, Map<String, Set<String>>>();
       TraceEventStatus status = TraceEventStatus.GREEN;
       
       for (TraceEvent te : data)
       {
+         Long id = Long.valueOf(te.getThreadId());
+
+         Map<String, Set<String>> m = threads.get(id);
+
+         if (m == null)
+            m = new HashMap<String, Set<String>>();
+
          if (te.getType() == TraceEvent.REGISTER_CCM_CONNECTION)
          {
             Set<String> s = m.get(te.getConnectionListener());
@@ -807,15 +879,52 @@ public class TraceEventHelper
          {
             status = TraceEventStatus.YELLOW;
          }
+
+         threads.put(id, m);
       }
 
-      for (Map.Entry<String, Set<String>> entry : m.entrySet())
+      for (Map.Entry<Long, Map<String, Set<String>>> t : threads.entrySet())
       {
-         if (entry.getValue().size() > 0)
-            return TraceEventStatus.RED;
+         for (Map.Entry<String, Set<String>> m : t.getValue().entrySet())
+         {
+            if (!ignoreIncomplete && m.getValue().size() > 0)
+               return TraceEventStatus.RED;
+         }
       }
 
       return status;
+   }
+
+   /**
+    * Get a specific event type
+    * @param events The events
+    * @param types The types
+    * @return The first event type found; otherwise <code>null</code> if none
+    */
+   public static TraceEvent getType(List<TraceEvent> events, int... types)
+   {
+      return getType(events, null, types);
+   }
+
+   /**
+    * Get a specific event type
+    * @param events The events
+    * @param identifier The connection listener
+    * @param types The types
+    * @return The first event type found; otherwise <code>null</code> if none
+    */
+   public static TraceEvent getType(List<TraceEvent> events, String identifier, int... types)
+   {
+      for (TraceEvent te : events)
+      {
+         for (int type : types)
+         {
+            if (te.getType() == type && (identifier == null || te.getConnectionListener().equals(identifier)))
+               return te;
+         }
+      }
+
+      return null;
    }
 
    /**
