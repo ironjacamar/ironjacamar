@@ -18,6 +18,9 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+configurations {
+	metadata
+}
 
 dependencies {
   compile project(':api')
@@ -26,8 +29,182 @@ dependencies {
 
   compile project(path: ':common', configuration: 'api')
   compile project(path: ':common', configuration: 'spi')
+
+  metadata rootProject.libraries.saxon
+  metadata rootProject.libraries.saxon_dom
+
+  metadata rootProject.libraries.shrinkwrap_descriptors_ant
+  metadata rootProject.libraries.shrinkwrap_descriptors_metadata_parser
+
+  compile files(sourceSets.main.output.classesDir)
 }
 
+ext.metadataLibs = project.file("tmp").toString()
+ext.metadataSrcDir = project.file("src/main").toString()
+
+void delDir(String dir) {
+  if (file(dir).exists()) file(dir).deleteDir()
+}
+
+task generateJCAMetadata() {
+  delDir(metadataLibs)
+  delDir("${metadataSrcDir}/resources/META-INF/services")
+  delDir("${metadataSrcDir}/java/org/ironjacamar/embedded/dsl/datasources20)")
+  delDir("${metadataSrcDir}/java/org/ironjacamar/embedded/dsl/ironjacamar20)")
+  delDir("${metadataSrcDir}/java/org/ironjacamar/embedded/dsl/resourceadapters20)")
+  delDir("${metadataSrcDir}/java/org/jboss)");
+
+  copy {
+    from configurations.metadata.files
+    into metadataLibs
+  }
+
+  ant.path(id: 'metadata') {
+    fileset(dir: metadataLibs)
+  }
+
+  ant.taskdef(name: 'metadataParser',
+    classname: 'org.jboss.shrinkwrap.descriptor.extension.ant.task.MetadataParserTask',
+    classpathRef: 'metadata')
+
+  ant.metadataParser(verbose:"false", classpathRef: 'metadata') {
+    path(pathToApi: "${metadataSrcDir}/java",
+         pathToImpl: "${metadataSrcDir}/java",
+         pathToServices: "${metadataSrcDir}/resources/META-INF/services")
+    descriptors() {
+      descriptor(pathToXsd: project(':common').file("src/main/resources/dtd/connector_1_0.dtd"),
+                 nameSpace: "j2ee",
+                 packageApi: "org.jboss.shrinkwrap.descriptor.api.connector10",
+                 packageImpl:"org.jboss.shrinkwrap.descriptor.impl.connector10",
+                 descriptorName:"ConnectorDescriptor",
+                 elementName:"connector",
+                 elementType:"j2ee:connector")
+    }
+  }
+
+  ant.metadataParser(verbose:"false", classpathRef: 'metadata') {
+    path(pathToApi: "${metadataSrcDir}/java",
+         pathToImpl: "${metadataSrcDir}/java",
+         pathToServices: "${metadataSrcDir}/resources/META-INF/services")
+    descriptors() {
+      descriptor(pathToXsd: project(':common').file("src/main/resources/schema/j2ee_1_4.xsd"),
+                 nameSpace: "j2ee",
+                 packageApi: "org.jboss.shrinkwrap.descriptor.api.j2ee14",
+                 packageImpl:"org.jboss.shrinkwrap.descriptor.impl.j2ee14",
+                 generateClasses:"true")
+      descriptor(pathToXsd: project(':common').file("src/main/resources/schema/connector_1_5.xsd"),
+                 nameSpace: "j2ee",
+                 packageApi: "org.jboss.shrinkwrap.descriptor.api.connector15",
+                 packageImpl:"org.jboss.shrinkwrap.descriptor.impl.connector15",
+                 descriptorName:"ConnectorDescriptor",
+                 elementName:"connector",
+                 elementType:"j2ee:connectorType") {
+        namespaces() {
+          property(name: "xmlns", value: "http://java.sun.com/xml/ns/j2ee")
+          property(name: "xmlns:xsi", value: "http://www.w3.org/2001/XMLSchema-instance")
+          property(name: "xsi:schemaLocation", value: "http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/connector_1_5.xsd")
+        }
+      }
+    }
+  }
+
+  ant.metadataParser(verbose:"false", classpathRef: 'metadata') {
+    path(pathToApi: "${metadataSrcDir}/java",
+         pathToImpl: "${metadataSrcDir}/java",
+         pathToServices: "${metadataSrcDir}/resources/META-INF/services")
+    descriptors() {
+      descriptor(pathToXsd: project(':common').file("src/main/resources/schema/javaee_6.xsd"),
+                 nameSpace: "javaee",
+                 packageApi: "org.jboss.shrinkwrap.descriptor.api.javaee6",
+                 packageImpl:"org.jboss.shrinkwrap.descriptor.impl.javaee6",
+                 generateClasses:"true")
+      descriptor(pathToXsd: project(':common').file("src/main/resources/schema/connector_1_6.xsd"),
+                 nameSpace: "javaee",
+                 packageApi: "org.jboss.shrinkwrap.descriptor.api.connector16",
+                 packageImpl:"org.jboss.shrinkwrap.descriptor.impl.connector16",
+                 descriptorName:"ConnectorDescriptor",
+                 elementName:"connector",
+                 elementType:"javaee:connectorType") {
+        namespaces() {
+          property(name: "xmlns", value: "http://java.sun.com/xml/ns/javaee")
+          property(name: "xmlns:xsi", value: "http://www.w3.org/2001/XMLSchema-instance")
+          property(name: "xsi:schemaLocation", value: "http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/connector_1_6.xsd")
+        }
+      }
+    }
+  }
+
+  ant.metadataParser(verbose:"false", classpathRef: 'metadata') {
+    path(pathToApi: "${metadataSrcDir}/java",
+         pathToImpl: "${metadataSrcDir}/java",
+         pathToServices: "${metadataSrcDir}/resources/META-INF/services")
+    descriptors() {
+      descriptor(pathToXsd: project(':common').file("src/main/resources/schema/javaee_7.xsd"),
+                 nameSpace: "javaee",
+                 packageApi: "org.jboss.shrinkwrap.descriptor.api.javaee7",
+                 packageImpl:"org.jboss.shrinkwrap.descriptor.impl.javaee7",
+                 generateClasses:"true")
+      descriptor(pathToXsd: project(':common').file("src/main/resources/schema/connector_1_7.xsd"),
+                 nameSpace: "javaee",
+                 packageApi: "org.jboss.shrinkwrap.descriptor.api.connector17",
+                 packageImpl:"org.jboss.shrinkwrap.descriptor.impl.connector17",
+                 descriptorName:"ConnectorDescriptor",
+                 elementName:"connector",
+                 elementType:"javaee:connectorType") {
+        namespaces() {
+          property(name: "xmlns", value: "http://xmlns.jcp.org/xml/ns/javaee")
+          property(name: "xmlns:xsi", value: "http://www.w3.org/2001/XMLSchema-instance")
+          property(name: "xsi:schemaLocation", value: "http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/connector_1_7.xsd")
+        }
+      }
+    }
+  }
+
+  ant.metadataParser(verbose:"false", classpathRef: 'metadata') {
+    path(pathToApi: "${metadataSrcDir}/java",
+         pathToImpl: "${metadataSrcDir}/java",
+         pathToServices: "${metadataSrcDir}/resources/META-INF/services")
+    descriptors() {
+      descriptor(pathToXsd: project(':common').file("src/main/resources/schema/datasources_2_0.xsd"),
+                 nameSpace: "datasources",
+                 packageApi: "org.ironjacamar.embedded.dsl.datasources20.api",
+                 packageImpl:"org.ironjacamar.embedded.dsl.datasources20.impl",
+                 descriptorName:"DatasourcesDescriptor",
+                 elementName:"datasources",
+                 elementType:"datasources:datasourcesType")
+    }
+  }
+
+  ant.metadataParser(verbose:"false", classpathRef: 'metadata') {
+    path(pathToApi: "${metadataSrcDir}/java",
+         pathToImpl: "${metadataSrcDir}/java",
+         pathToServices: "${metadataSrcDir}/resources/META-INF/services")
+    descriptors() {
+      descriptor(pathToXsd: project(':common').file("src/main/resources/schema/resource-adapters_2_0.xsd"),
+                 nameSpace: "resource-adapters",
+                 packageApi: "org.ironjacamar.embedded.dsl.resourceadapters20.api",
+                 packageImpl:"org.ironjacamar.embedded.dsl.resourceadapters20.impl",
+                 descriptorName:"ResourceAdaptersDescriptor",
+                 elementName:"resource-adapters",
+                 elementType:"resource-adapters:resource-adaptersType")
+    }
+  }
+
+  ant.metadataParser(verbose:"false", classpathRef: 'metadata') {
+    path(pathToApi: "${metadataSrcDir}/java",
+         pathToImpl: "${metadataSrcDir}/java",
+         pathToServices: "${metadataSrcDir}/resources/META-INF/services")
+    descriptors() {
+      descriptor(pathToXsd: project(':common').file("src/main/resources/schema/ironjacamar_2_0.xsd"),
+                 nameSpace: "ironjacamar",
+                 packageApi: "org.ironjacamar.embedded.dsl.ironjacamar20.api",
+                 packageImpl:"org.ironjacamar.embedded.dsl.ironjacamar20.impl",
+                 descriptorName:"IronjacamarDescriptor",
+                 elementName:"ironjacamar",
+                 elementType:"ironjacamar:ironjacamarType")
+    }
+  }
+}
 
 jar {
   manifest {
@@ -36,8 +213,12 @@ jar {
   baseName = "ironjacamar-embedded"
   dependsOn classes
   from sourceSets.main.output
-  include('org/ironjacamar/embedded/**')
+  include('org/ironjacamar/embedded/**','org/jboss/shrinkwrap/**','*.xml','META-INF/services/**')
 }
+
+checkstyleMain.exclude '**/org/jboss/*'
+checkstyleMain.exclude '**/org/ironjacamar/embedded/dsl/*'
+checkstyleMain.include '**/org/ironjacamar/embedded/dsl/InputStream*'
 
 artifacts {
   archives jar

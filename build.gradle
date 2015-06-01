@@ -44,12 +44,16 @@ ext {
     narayana_jta: "org.jboss.narayana.jta:narayana-jta:5.1.0.Final",
     narayana_integration: "org.jboss.narayana.jts:narayana-jts-integration:5.1.0.Final",
     narayana_spi: "org.jboss:jboss-transaction-spi:7.1.1.Final",
+    saxon: "net.sf.saxon:saxon:8.7",
+    saxon_dom: "net.sf.saxon:saxon-dom:8.7",
     shrinkwrap_api: "org.jboss.shrinkwrap:shrinkwrap-api:1.2.0",
     shrinkwrap_impl: "org.jboss.shrinkwrap:shrinkwrap-impl-base:1.2.0",
     shrinkwrap_spi: "org.jboss.shrinkwrap:shrinkwrap-spi:1.2.0",
     shrinkwrap_descriptors_api: "org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-api-base:2.0.0-alpha-5",
     shrinkwrap_descriptors_impl: "org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-impl-base:2.0.0-alpha-5",
     shrinkwrap_descriptors_spi: "org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-spi:2.0.0-alpha-5",
+    shrinkwrap_descriptors_ant: "org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-ant:2.0.0-alpha-5",
+    shrinkwrap_descriptors_metadata_parser: "org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-metadata-parser:2.0.0-alpha-5",
     transaction_spec: "org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:1.0.0.Final",
     validation_spec: "javax.validation:validation-api:1.1.0.Final"
   ]
@@ -214,6 +218,7 @@ subprojects { subProject ->
     ignoreFailures = false
     toolVersion = '6.6'
   }
+
   checkstyleMain.exclude '**/*_$bundle*'
   checkstyleMain.exclude '**/*_$logger*'
 
