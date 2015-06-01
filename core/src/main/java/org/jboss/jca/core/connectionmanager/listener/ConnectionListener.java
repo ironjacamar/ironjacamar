@@ -191,6 +191,12 @@ public interface ConnectionListener extends org.jboss.jca.core.api.connectionman
    public void setLastCheckedOutTime(long v);
 
    /**
+    * Get exception
+    * @return The exception that occured, or <code>null</code>
+    */
+   public Exception getException();
+
+   /**
     * Controls the managed connection / connection pair
     * @param mc The managed connection
     * @param connection The connection; optional

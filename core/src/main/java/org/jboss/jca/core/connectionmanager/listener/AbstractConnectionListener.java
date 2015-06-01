@@ -102,6 +102,9 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
 
    /** Tracking */
    protected Boolean tracking;
+
+   /** The reported exception */
+   private Exception reportedException;
    
    /**
     * Creates a new instance of the listener that is responsible for
@@ -135,6 +138,8 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
 
       if (tracking != null && tracking.booleanValue())
          this.connectionTraces = new HashMap<Object, Exception>();
+
+      this.reportedException = null;
    }
 
    /**
@@ -431,17 +436,21 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
       {
          if (event != null)
          {
-            Throwable cause = event.getException();
+            Exception cause = event.getException();
             if (cause == null)
             {
                cause = new Exception("No exception was reported");  
+            }
+            else
+            {
+               reportedException = cause;
             }
             
             log.connectionErrorOccured(this, cause);
          }
          else
          {
-            Throwable cause = new Exception("No exception was reported");
+            Exception cause = new Exception("No exception was reported");
             log.unknownConnectionErrorOccured(this, cause);
          }
       }
@@ -500,6 +509,14 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
       }
    }
    
+   /**
+    * {@inheritDoc}
+    */
+   public Exception getException()
+   {
+      return reportedException;
+   }
+
    /**
     * {@inheritDoc}
     */

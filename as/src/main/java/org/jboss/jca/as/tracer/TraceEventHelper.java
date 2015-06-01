@@ -53,9 +53,9 @@ public class TraceEventHelper
     * @return The filtered events
     * @exception Exception If an error occurs
     */
-   public static Map<String, Map<String, List<TraceEvent>>> filterPoolEvents(List<TraceEvent> data) throws Exception
+   public static List<TraceEvent> filterPoolEvents(List<TraceEvent> data) throws Exception
    {
-      Map<String, Map<String, List<TraceEvent>>> result = new TreeMap<String, Map<String, List<TraceEvent>>>();
+      List<TraceEvent> result = new ArrayList<TraceEvent>();
 
       for (TraceEvent te : data)
       {
@@ -79,21 +79,7 @@ public class TraceEventHelper
              te.getType() == TraceEvent.VERSION)
             continue;
          
-         Map<String, List<TraceEvent>> m = result.get(te.getPool());
-
-         if (m == null)
-            m = new TreeMap<String, List<TraceEvent>>();
-
-         List<TraceEvent> l = m.get(te.getConnectionListener());
-
-         if (l == null)
-            l = new ArrayList<TraceEvent>();
-
-         l.add(te);
-
-         m.put(te.getConnectionListener(), l);
-
-         result.put(te.getPool(), m);
+         result.add(te);
       }
 
       return result;
@@ -627,37 +613,141 @@ public class TraceEventHelper
    }
 
    /**
-    * Split a connection listener events into their lifecycle
+    * Get the structured pool data
     * @param data The data
+    * @param ignoreDelist Should DELIST be ignored
+    * @param ignoreTracking Should TRACKING be ignored
     * @param ignoreIncomplete Ignore incomplete traces
     * @return The result
     */
-   public static Map<String, List<TraceEvent>> split(List<TraceEvent> data, boolean ignoreIncomplete)
+   public static Map<String, List<Interaction>> getPoolData(List<TraceEvent> data,
+                                                            boolean ignoreDelist, boolean ignoreTracking,
+                                                            boolean ignoreIncomplete)
    {
-      Map<String, List<TraceEvent>> result = new TreeMap<String, List<TraceEvent>>();
-      long start = 0L;
-      List<TraceEvent> l = new ArrayList<TraceEvent>(); 
+      // Pool -> Interactions
+      Map<String, List<Interaction>> result = new TreeMap<String, List<Interaction>>();
+      
+      // Pool -> ConnectionListener -> Events
+      Map<String, Map<String, List<TraceEvent>>> temp = new TreeMap<String, Map<String, List<TraceEvent>>>();
 
       for (int i = 0; i < data.size(); i++)
       {
          TraceEvent te = data.get(i);
-         l.add(te);
 
-         if (start == 0L)
-            start = te.getTimestamp();
+         Map<String, List<TraceEvent>> m = temp.get(te.getPool());
+
+         if (m == null)
+            m = new TreeMap<String, List<TraceEvent>>();
+
+         List<TraceEvent> l = m.get(te.getConnectionListener());
+
+         if (l == null)
+            l = new ArrayList<TraceEvent>();
+
+         l.add(te);
 
          if (isEndState(te))
          {
-            result.put(Long.toString(start) + "-" + Long.toString(te.getTimestamp()), l);
+            Interaction interaction = new Interaction(te.getThreadId(),
+                                                      l.get(0).getTimestamp(),
+                                                      l.get(l.size() - 1).getTimestamp(),
+                                                      l,
+                                                      getStatus(l, ignoreDelist, ignoreTracking, ignoreIncomplete));
+            List<Interaction> pool = result.get(te.getPool());
 
-            start = 0L;
-            l = new ArrayList<TraceEvent>();
+            if (pool == null)
+               pool = new ArrayList<Interaction>();
+
+            pool.add(interaction);
+            result.put(te.getPool(), pool);
+            l = null;
          }
+         
+         m.put(te.getConnectionListener(), l);
+         temp.put(te.getPool(), m);
       }
 
-      if (!ignoreIncomplete && l.size() > 0)
+      if (!ignoreIncomplete)
       {
-         result.put(Long.toString(start) + "-" + Long.toString(l.get(l.size() - 1).getTimestamp()), l);
+         for (Map.Entry<String, Map<String, List<TraceEvent>>> poolEntry : temp.entrySet())
+         {
+            for (Map.Entry<String, List<TraceEvent>> clEntry : poolEntry.getValue().entrySet())
+            {
+               List<TraceEvent> l = clEntry.getValue();
+
+               if (l != null)
+               {
+                  Interaction interaction = new Interaction(l.get(0).getThreadId(),
+                                                            l.get(0).getTimestamp(),
+                                                            l.get(l.size() - 1).getTimestamp(),
+                                                            l,
+                                                            getStatus(l, ignoreDelist, ignoreTracking,
+                                                                      ignoreIncomplete));
+                  List<Interaction> pool = result.get(poolEntry.getKey());
+               
+                  if (pool == null)
+                     pool = new ArrayList<Interaction>();
+
+                  pool.add(interaction);
+                  result.put(poolEntry.getKey(), pool);
+               }
+            }
+         }
+      }
+      
+      return result;
+   }
+
+  /**
+    * Get a connection listener map
+    * @param data The data
+    * @return The result
+    */
+   public static Map<String, List<Interaction>> getConnectionListenerData(List<Interaction> data)
+   {
+      Map<String, List<Interaction>> result = new TreeMap<String, List<Interaction>>();
+
+      for (int i = 0; i < data.size(); i++)
+      {
+         Interaction interaction = data.get(i);
+
+         List<Interaction> l = result.get(interaction.getConnectionListener());
+
+         if (l == null)
+            l = new ArrayList<Interaction>();
+
+         l.add(interaction);
+
+         result.put(interaction.getConnectionListener(), l);
+      }
+
+      return result;
+   }
+
+  /**
+    * Get a transaction map
+    * @param data The data
+    * @return The result
+    */
+   public static Map<String, List<Interaction>> getTransactionData(List<Interaction> data)
+   {
+      Map<String, List<Interaction>> result = new TreeMap<String, List<Interaction>>();
+
+      for (int i = 0; i < data.size(); i++)
+      {
+         Interaction interaction = data.get(i);
+
+         if (interaction.getTransaction() != null)
+         {
+            List<Interaction> l = result.get(interaction.getTransaction());
+
+            if (l == null)
+               l = new ArrayList<Interaction>();
+
+            l.add(interaction);
+
+            result.put(interaction.getTransaction(), l);
+         }
       }
 
       return result;

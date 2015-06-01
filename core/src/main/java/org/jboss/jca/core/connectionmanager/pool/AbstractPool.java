@@ -831,8 +831,13 @@ public abstract class AbstractPool implements Pool
       ManagedConnectionPool mcp = cl.getManagedConnectionPool();
 
       if (Tracer.isEnabled())
+      {
+         if (kill && cl.getException() != null)
+            Tracer.exception(poolName, cl.getManagedConnectionPool(), cl, cl.getException());
+
          Tracer.returnConnectionListener(poolName, cl.getManagedConnectionPool(), cl, kill, interleaving,
                                          Tracer.isRecordCallstacks() ? new Throwable("CALLSTACK") : null);
+      }
 
       //Return connection to the pool
       mcp.returnConnection(cl, kill);
