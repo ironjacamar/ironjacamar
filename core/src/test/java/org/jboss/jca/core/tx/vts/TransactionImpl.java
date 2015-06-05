@@ -57,7 +57,7 @@ public class TransactionImpl implements Transaction, Serializable
    private transient int status;
    private transient Set<Synchronization> syncs;
    private transient Map<XAResource, Integer> enlisted;
-   private transient Set<XAResource> delisted;
+   private transient Map<XAResource, Integer> delisted;
    private transient Map<Object, Object> resources;
    private transient boolean fail;
 
@@ -89,12 +89,9 @@ public class TransactionImpl implements Transaction, Serializable
       if (status == Status.STATUS_UNKNOWN)
          throw new IllegalStateException("Status unknown");
 
-      if (status == Status.STATUS_MARKED_ROLLBACK)
-         throw new IllegalStateException("Status marked rollback");
-
       log.tracef("commit(): %s", this);
 
-      if (!fail)
+      if (!fail && status != Status.STATUS_MARKED_ROLLBACK)
       {
          finish(true);
       }
@@ -137,11 +134,11 @@ public class TransactionImpl implements Transaction, Serializable
          if (flag != XAResource.TMSUSPEND)
          {
             enlisted.remove(xaRes);
-            
-            if (delisted == null)
-               delisted = new HashSet<XAResource>();
 
-            delisted.add(xaRes);
+            if (delisted == null)
+               delisted = new HashMap<XAResource, Integer>();
+
+            delisted.put(xaRes, Integer.valueOf(flag));
          }
          else
          {
@@ -247,7 +244,14 @@ public class TransactionImpl implements Transaction, Serializable
 
       log.tracef("rollback(): %s", this);
 
-      finish(false);
+      try
+      {
+         finish(false);
+      }
+      catch (RollbackException re)
+      {
+         // Ignore, as it can't happen
+      }
    }
 
    /**
@@ -308,17 +312,25 @@ public class TransactionImpl implements Transaction, Serializable
    /**
     * Finish transaction
     * @param commit Commit (true), or rollback (false)
+    * @exception RollbackException Thrown if commit, and rollback occurred
     */
-   private void finish(boolean commit)
+   private void finish(boolean commit) throws RollbackException
    {
       log.tracef("finish(%s): %s", commit, this);
 
+      boolean doCommit = commit;
+      
       if (enlisted != null && !enlisted.isEmpty())
-         commit = verifyEnlisted(commit);
+         doCommit = verifyEnlisted(doCommit);
 
-      log.tracef("verifyEnlisted(%s): %s", commit, this);
+      log.tracef("verifyEnlisted(%s): %s", doCommit, this);
 
-      if (syncs != null)
+      if (delisted != null && !delisted.isEmpty())
+         doCommit = verifyDelisted(doCommit);
+
+      log.tracef("verifyDelisted(%s): %s", doCommit, this);
+
+      if (doCommit && syncs != null)
       {
          for (Synchronization s : syncs)
          {
@@ -331,11 +343,11 @@ public class TransactionImpl implements Transaction, Serializable
 
       if (delisted != null && !delisted.isEmpty())
       {
-         if (commit && delisted.size() > 1)
+         if (doCommit && delisted.size() > 1)
          {
-            Iterator<XAResource> it = delisted.iterator();
+            Iterator<XAResource> it = delisted.keySet().iterator();
             status = Status.STATUS_PREPARING;
-            while (commit && it.hasNext())
+            while (doCommit && it.hasNext())
             {
                XAResource xar = it.next();
                try
@@ -345,17 +357,17 @@ public class TransactionImpl implements Transaction, Serializable
                }
                catch (Throwable t)
                {
-                  commit = false;
+                  doCommit = false;
                }
             }
             status = Status.STATUS_PREPARED;
          }
 
-         for (XAResource xar : delisted)
+         for (XAResource xar : delisted.keySet())
          {
             try
             {
-               if (commit)
+               if (doCommit)
                {
                   status = Status.STATUS_COMMITTING;
                   xar.commit(XID_IMPL, true);
@@ -385,7 +397,7 @@ public class TransactionImpl implements Transaction, Serializable
       }
       else
       {
-         if (commit)
+         if (doCommit)
          {
             status = Status.STATUS_COMMITTED;
          }
@@ -413,6 +425,9 @@ public class TransactionImpl implements Transaction, Serializable
 
       if (delisted != null)
          delisted = null;
+
+      if (commit && commit != doCommit)
+         throw new RollbackException("Commit not possible for " + this);
    }
 
    /**
@@ -459,9 +474,9 @@ public class TransactionImpl implements Transaction, Serializable
             xaRes.end(XID_IMPL, flag);
 
             if (delisted == null)
-               delisted = new HashSet<XAResource>();
+               delisted = new HashMap<XAResource, Integer>();
 
-            delisted.add(xaRes);
+            delisted.put(xaRes, Integer.valueOf(flag));
          }
          catch (XAException xe)
          {
@@ -470,5 +485,27 @@ public class TransactionImpl implements Transaction, Serializable
       }
 
       enlisted.clear();
+   }
+
+   /**
+    * Check delisted XAResources
+    * @param status The transaction status
+    */
+   private boolean verifyDelisted(boolean commit)
+   {
+      // No work for rollback
+      if (!commit)
+         return false;
+
+      log.tracef("Delisted: %s: %s", delisted, this);
+
+      // All delisted resources must not be in failed mode
+      for (Integer state : delisted.values())
+      {
+         if (state.intValue() == XAResource.TMFAIL)
+            return false;
+      }
+
+      return true;
    }
 }

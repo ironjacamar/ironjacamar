@@ -25,6 +25,9 @@ import java.io.Serializable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 
 /**
@@ -66,9 +69,19 @@ public class TxRegistry implements Serializable
 
    /**
     * Commit a transaction
+    * @exception RollbackException Thrown if an error occurs
+    * @exception HeuristicMixedException Thrown if an error occurs
+    * @exception HeuristicRollbackException Thrown if an error occurs
+    * @exception SecurityException Thrown if an error occurs
+    * @exception IllegalStateException Thrown if an error occurs
     * @exception SystemException Thrown if an error occurs
     */
-   public void commitTransaction() throws SystemException
+   public void commitTransaction() throws RollbackException,
+                                          HeuristicMixedException,
+                                          HeuristicRollbackException,
+                                          SecurityException,
+                                          IllegalStateException,
+                                          SystemException
    {
       Long key = Long.valueOf(Thread.currentThread().getId());
       TransactionImpl tx = txs.get(key);
@@ -77,6 +90,30 @@ public class TxRegistry implements Serializable
          try
          {
             tx.commit();
+         }
+         catch (RollbackException re)
+         {
+            throw re;
+         }
+         catch (HeuristicMixedException hme)
+         {
+            throw hme;
+         }
+         catch (HeuristicRollbackException hre)
+         {
+            throw hre;
+         }
+         catch (SecurityException sce)
+         {
+            throw sce;
+         }
+         catch (IllegalStateException ise)
+         {
+            throw ise;
+         }
+         catch (SystemException se)
+         {
+            throw se;
          }
          catch (Throwable t)
          {

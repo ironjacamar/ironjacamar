@@ -108,8 +108,7 @@ public class UserTransactionImpl implements UserTransactionProvider, UserTransac
          throw new SystemException();
 
       if (tx.getStatus() == Status.STATUS_ROLLING_BACK ||
-          tx.getStatus() == Status.STATUS_ROLLEDBACK ||
-          tx.getStatus() == Status.STATUS_MARKED_ROLLBACK)
+          tx.getStatus() == Status.STATUS_ROLLEDBACK)
          throw new RollbackException();
 
       registry.commitTransaction();
