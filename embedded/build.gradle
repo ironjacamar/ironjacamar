@@ -232,6 +232,7 @@ javadoc {
   source sourceSets.main.allJava
   exclude '**/*_$bundle*'
   exclude '**/*_$logger*'
+  exclude '**/impl/*'
   title = "IronJacamar / Embedded"
   options.doclet = "org.jboss.apiviz.APIviz"
   options.docletpath file(configurations.apiVizTool.asPath)
