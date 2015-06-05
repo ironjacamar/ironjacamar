@@ -36,26 +36,18 @@ dependencies {
   metadata rootProject.libraries.shrinkwrap_descriptors_ant
   metadata rootProject.libraries.shrinkwrap_descriptors_metadata_parser
 
-  compile files(sourceSets.main.output.classesDir)
 }
 
-ext.metadataLibs = project.file("tmp").toString()
-ext.metadataSrcDir = project.file("src/main").toString()
+ext.metadataLibs = "${buildDir}/tmp/libs"
+ext.metadataDir = "${buildDir}/tmp/src"
+ext.metadataSrcDir = "${metadataDir}/java"
+ext.metadataResDir = "${metadataDir}/resources"
+ext.metadataServices = "${metadataResDir}/META-INF/services"
 
-void delDir(String dir) {
-  if (file(dir).exists()) file(dir).deleteDir()
-}
-
-task generateJCAMetadata() {
-  delDir(metadataLibs)
-  delDir("${metadataSrcDir}/resources/META-INF/services")
-  delDir("${metadataSrcDir}/java/org/ironjacamar/embedded/dsl/datasources20)")
-  delDir("${metadataSrcDir}/java/org/ironjacamar/embedded/dsl/ironjacamar20)")
-  delDir("${metadataSrcDir}/java/org/ironjacamar/embedded/dsl/resourceadapters20)")
-  delDir("${metadataSrcDir}/java/org/jboss)");
+task generateJCAMetadata << {
 
   copy {
-    from configurations.metadata.files
+    from configurations.metadata
     into metadataLibs
   }
 
@@ -68,9 +60,9 @@ task generateJCAMetadata() {
     classpathRef: 'metadata')
 
   ant.metadataParser(verbose:"false", classpathRef: 'metadata') {
-    path(pathToApi: "${metadataSrcDir}/java",
-         pathToImpl: "${metadataSrcDir}/java",
-         pathToServices: "${metadataSrcDir}/resources/META-INF/services")
+    path(pathToApi: metadataSrcDir,
+         pathToImpl: metadataSrcDir,
+         pathToServices: metadataServices)
     descriptors() {
       descriptor(pathToXsd: project(':common').file("src/main/resources/dtd/connector_1_0.dtd"),
                  nameSpace: "j2ee",
@@ -83,9 +75,9 @@ task generateJCAMetadata() {
   }
 
   ant.metadataParser(verbose:"false", classpathRef: 'metadata') {
-    path(pathToApi: "${metadataSrcDir}/java",
-         pathToImpl: "${metadataSrcDir}/java",
-         pathToServices: "${metadataSrcDir}/resources/META-INF/services")
+    path(pathToApi: metadataSrcDir,
+         pathToImpl: metadataSrcDir,
+         pathToServices: metadataServices)
     descriptors() {
       descriptor(pathToXsd: project(':common').file("src/main/resources/schema/j2ee_1_4.xsd"),
                  nameSpace: "j2ee",
@@ -109,9 +101,9 @@ task generateJCAMetadata() {
   }
 
   ant.metadataParser(verbose:"false", classpathRef: 'metadata') {
-    path(pathToApi: "${metadataSrcDir}/java",
-         pathToImpl: "${metadataSrcDir}/java",
-         pathToServices: "${metadataSrcDir}/resources/META-INF/services")
+    path(pathToApi: metadataSrcDir,
+         pathToImpl: metadataSrcDir,
+         pathToServices: metadataServices)
     descriptors() {
       descriptor(pathToXsd: project(':common').file("src/main/resources/schema/javaee_6.xsd"),
                  nameSpace: "javaee",
@@ -135,9 +127,9 @@ task generateJCAMetadata() {
   }
 
   ant.metadataParser(verbose:"false", classpathRef: 'metadata') {
-    path(pathToApi: "${metadataSrcDir}/java",
-         pathToImpl: "${metadataSrcDir}/java",
-         pathToServices: "${metadataSrcDir}/resources/META-INF/services")
+    path(pathToApi: metadataSrcDir,
+         pathToImpl: metadataSrcDir,
+         pathToServices: metadataServices)
     descriptors() {
       descriptor(pathToXsd: project(':common').file("src/main/resources/schema/javaee_7.xsd"),
                  nameSpace: "javaee",
@@ -161,9 +153,9 @@ task generateJCAMetadata() {
   }
 
   ant.metadataParser(verbose:"false", classpathRef: 'metadata') {
-    path(pathToApi: "${metadataSrcDir}/java",
-         pathToImpl: "${metadataSrcDir}/java",
-         pathToServices: "${metadataSrcDir}/resources/META-INF/services")
+    path(pathToApi: metadataSrcDir,
+         pathToImpl: metadataSrcDir,
+         pathToServices: metadataServices)
     descriptors() {
       descriptor(pathToXsd: project(':common').file("src/main/resources/schema/datasources_2_0.xsd"),
                  nameSpace: "datasources",
@@ -176,9 +168,9 @@ task generateJCAMetadata() {
   }
 
   ant.metadataParser(verbose:"false", classpathRef: 'metadata') {
-    path(pathToApi: "${metadataSrcDir}/java",
-         pathToImpl: "${metadataSrcDir}/java",
-         pathToServices: "${metadataSrcDir}/resources/META-INF/services")
+    path(pathToApi: metadataSrcDir,
+         pathToImpl: metadataSrcDir,
+         pathToServices: metadataServices)
     descriptors() {
       descriptor(pathToXsd: project(':common').file("src/main/resources/schema/resource-adapters_2_0.xsd"),
                  nameSpace: "resource-adapters",
@@ -191,9 +183,9 @@ task generateJCAMetadata() {
   }
 
   ant.metadataParser(verbose:"false", classpathRef: 'metadata') {
-    path(pathToApi: "${metadataSrcDir}/java",
-         pathToImpl: "${metadataSrcDir}/java",
-         pathToServices: "${metadataSrcDir}/resources/META-INF/services")
+    path(pathToApi: metadataSrcDir,
+         pathToImpl: metadataSrcDir,
+         pathToServices: metadataServices)
     descriptors() {
       descriptor(pathToXsd: project(':common').file("src/main/resources/schema/ironjacamar_2_0.xsd"),
                  nameSpace: "ironjacamar",
@@ -205,6 +197,18 @@ task generateJCAMetadata() {
     }
   }
 }
+
+generateJCAMetadata {
+  outputs.dir metadataDir
+  inputs.dir project(':common').file("src/main/resources/")
+}
+
+sourceSets.main {
+  java.srcDir metadataSrcDir
+  resources.srcDir  metadataResDir
+}
+
+compileJava.dependsOn generateJCAMetadata
 
 jar {
   manifest {

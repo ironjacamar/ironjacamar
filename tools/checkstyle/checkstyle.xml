@@ -4,7 +4,6 @@
   "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
 
 <module name="Checker">
-  <property name="basedir" value="${basedir}"/>
 
   <module name="TreeWalker">
 
@@ -157,7 +156,7 @@
 
   <!-- Enforce License Header -->
   <module name="RegexpHeader">
-    <property name="headerFile" value="${basedir}/tools/checkstyle/HEADER"/>
+    <property name="headerFile" value="${samedir}/HEADER"/>
   </module>
 
   <!-- Enforce file length -->

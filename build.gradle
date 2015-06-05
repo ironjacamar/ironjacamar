@@ -213,6 +213,7 @@ subprojects { subProject ->
 
   checkstyle {
     sourceSets = [ subProject.sourceSets.main, subProject.sourceSets.test ]
+    configProperties = [samedir: rootProject.file('tools/checkstyle').absolutePath]
     configFile = rootProject.file('tools/checkstyle/checkstyle.xml')
     showViolations = true
     ignoreFailures = false
