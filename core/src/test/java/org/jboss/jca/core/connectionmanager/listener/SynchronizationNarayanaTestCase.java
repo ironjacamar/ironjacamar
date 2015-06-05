@@ -124,7 +124,7 @@ public class SynchronizationNarayanaTestCase
       if ("XATransaction".equals(tx))
       {
          org.jboss.jca.embedded.dsl.resourceadapters11.api.XaPoolType dashRaXmlPt = dashRaXmlCdt.getOrCreateXaPool()
-            .minPoolSize(1).initialPoolSize(1).maxPoolSize(1);
+            .minPoolSize(0).initialPoolSize(0).maxPoolSize(1);
 
          if (interleaving)
             dashRaXmlPt.interleaving();
@@ -132,7 +132,7 @@ public class SynchronizationNarayanaTestCase
       else
       {
          org.jboss.jca.embedded.dsl.resourceadapters11.api.PoolType dashRaXmlPt = dashRaXmlCdt.getOrCreatePool()
-            .minPoolSize(1).initialPoolSize(1).maxPoolSize(1);
+            .minPoolSize(0).initialPoolSize(0).maxPoolSize(1);
       }
 
       return dashRaXml;
@@ -175,6 +175,7 @@ public class SynchronizationNarayanaTestCase
     */
    public void testSuccess(ResourceAdaptersDescriptor dashRaXml, String expect) throws Throwable
    {
+      System.setProperty("ironjacamar.tracer.callstacks", "true");
       Context context = null;
 
       ResourceAdapterArchive raa = createRar();
@@ -220,6 +221,8 @@ public class SynchronizationNarayanaTestCase
          embedded.undeploy(dashRaXml);
          embedded.undeploy(raa);
 
+         System.setProperty("ironjacamar.tracer.callstacks", "false");
+
          if (context != null)
          {
             try
@@ -239,10 +242,12 @@ public class SynchronizationNarayanaTestCase
     *
     * @param dashRaXml The deployment metadata
     * @param expect The expected string
+    * @param interleaving Interleaving test case
     * @throws Throwable Thrown in case of an error
     */
-   public void testFailure(ResourceAdaptersDescriptor dashRaXml, String expect) throws Throwable
+   public void testFailure(ResourceAdaptersDescriptor dashRaXml, String expect, boolean interleaving) throws Throwable
    {
+      System.setProperty("ironjacamar.tracer.callstacks", "true");
       Context context = null;
 
       ResourceAdapterArchive raa = createRar();
@@ -267,11 +272,14 @@ public class SynchronizationNarayanaTestCase
          TxLogConnection c = cf.getConnection();
          c.fail();
 
-         // Lets just continue
-         c = cf.getConnection();
-         c.close();
+         if (!interleaving)
+         {
+            // Lets just continue
+            c = cf.getConnection();
+            c.close();
+         }
 
-         ut.commit();
+         ut.rollback();
 
          // Verify
          c = cf.getConnection();
@@ -291,6 +299,8 @@ public class SynchronizationNarayanaTestCase
       {
          embedded.undeploy(dashRaXml);
          embedded.undeploy(raa);
+
+         System.setProperty("ironjacamar.tracer.callstacks", "false");
 
          if (context != null)
          {
@@ -397,7 +407,7 @@ public class SynchronizationNarayanaTestCase
    @Test
    public void testFailureLocal() throws Throwable
    {
-      testFailure(createLocalTxDeployment(), "");
+      testFailure(createLocalTxDeployment(), "", false);
    }
 
    /**
@@ -408,7 +418,7 @@ public class SynchronizationNarayanaTestCase
    @Test
    public void testFailureXA() throws Throwable
    {
-      testFailure(createXATxDeployment(), "");
+      testFailure(createXATxDeployment(), "", false);
    }
 
    /**
@@ -419,7 +429,7 @@ public class SynchronizationNarayanaTestCase
    @Test
    public void testFailureXAInterleaving() throws Throwable
    {
-      testFailure(createXATxDeployment(true), "3D5DB78");
+      testFailure(createXATxDeployment(true), "", true);
    }
 
    /**

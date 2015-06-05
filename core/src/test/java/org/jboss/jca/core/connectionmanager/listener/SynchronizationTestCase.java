@@ -126,7 +126,7 @@ public class SynchronizationTestCase
       if ("XATransaction".equals(tx))
       {
          org.jboss.jca.embedded.dsl.resourceadapters11.api.XaPoolType dashRaXmlPt = dashRaXmlCdt.getOrCreateXaPool()
-            .minPoolSize(1).initialPoolSize(1).maxPoolSize(1);
+            .minPoolSize(0).initialPoolSize(0).maxPoolSize(1);
 
          if (interleaving)
             dashRaXmlPt.interleaving();
@@ -177,6 +177,7 @@ public class SynchronizationTestCase
     */
    public void testSuccess(ResourceAdaptersDescriptor dashRaXml, String expect) throws Throwable
    {
+      System.setProperty("ironjacamar.tracer.callstacks", "true");
       Context context = null;
 
       ResourceAdapterArchive raa = createRar();
@@ -221,6 +222,8 @@ public class SynchronizationTestCase
       {
          embedded.undeploy(dashRaXml);
          embedded.undeploy(raa);
+
+         System.setProperty("ironjacamar.tracer.callstacks", "false");
 
          if (context != null)
          {
@@ -245,6 +248,7 @@ public class SynchronizationTestCase
     */
    public void testFailure(ResourceAdaptersDescriptor dashRaXml, String expect) throws Throwable
    {
+      System.setProperty("ironjacamar.tracer.callstacks", "true");
       Context context = null;
 
       ResourceAdapterArchive raa = createRar();
@@ -269,7 +273,7 @@ public class SynchronizationTestCase
          TxLogConnection c = cf.getConnection();
          c.fail();
 
-         ut.commit();
+         ut.rollback();
 
          // Verify
          c = cf.getConnection();
@@ -289,6 +293,8 @@ public class SynchronizationTestCase
       {
          embedded.undeploy(dashRaXml);
          embedded.undeploy(raa);
+
+         System.setProperty("ironjacamar.tracer.callstacks", "false");
 
          if (context != null)
          {
@@ -417,7 +423,7 @@ public class SynchronizationTestCase
    @Test
    public void testFailureXAInterleaving() throws Throwable
    {
-      testFailure(createXATxDeployment(true), "3DB78");
+      testFailure(createXATxDeployment(true), "");
    }
 
    /**

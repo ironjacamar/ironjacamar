@@ -352,6 +352,7 @@ public class SDeditGenerator
 
                break;
             case TraceEvent.DELIST_ROLLEDBACK_CONNECTION_LISTENER:
+            case TraceEvent.DELIST_ROLLEDBACK_CONNECTION_LISTENER_FAILED:
 
                writeString(fw, "[c afterCompletion]");
                writeEOL(fw);

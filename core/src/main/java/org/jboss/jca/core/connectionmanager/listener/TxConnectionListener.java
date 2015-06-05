@@ -91,6 +91,9 @@ public class TxConnectionListener extends AbstractConnectionListener
    /** Delist resource */
    private boolean doDelistResource;
 
+   /** Set rollback */
+   private boolean doSetRollbackOnly;
+
    static
    {
       String value = SecurityActions.getSystemProperty("ironjacamar.disable_enlistment_trace");
@@ -132,6 +135,7 @@ public class TxConnectionListener extends AbstractConnectionListener
       this.xaResource = xaResource;
       this.xaResourceTimeout = xaResourceTimeout;
       this.doDelistResource = true;
+      this.doSetRollbackOnly = true;
 
       if (xaResource instanceof LocalXAResource)
       {
@@ -156,6 +160,24 @@ public class TxConnectionListener extends AbstractConnectionListener
       if (value != null && !value.trim().equals(""))
       {
          doDelistResource = false;
+      }
+
+      value = SecurityActions.getSystemProperty("ironjacamar.rollback_on_fatal_error");
+      if (value != null && !value.trim().equals(""))
+      {
+         if ("true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value))
+         {
+            doSetRollbackOnly = Boolean.parseBoolean(value);
+         }
+         else
+         {
+            StringTokenizer st = new StringTokenizer(value, ",");
+            while (doDelistResource && st.hasMoreTokens())
+            {
+               if (getPool().getName().equals(st.nextToken()))
+                  doSetRollbackOnly = false;
+            }
+         }
       }
    }
 
@@ -233,7 +255,7 @@ public class TxConnectionListener extends AbstractConnectionListener
       // If we are already enlisted there is no reason to check again, as this method
       // could be called multiple times during a transaction lifecycle.
       // We know that we can only be inside this method if we are allowed to
-      if (isEnlisted())
+      if (isEnlisted() || getState().equals(ConnectionState.DESTROY) || getState().equals(ConnectionState.DESTROYED))
          return;
 
       // No transaction associated with the thread
@@ -753,10 +775,75 @@ public class TxConnectionListener extends AbstractConnectionListener
     * {@inheritDoc}
     */
    @Override
-   public void connectionErrorOccurred(ConnectionEvent ce)
+   void haltCatchFire()
    {
+      if (isEnlisted())
+      {
+         if (transactionSynchronization != null)
+            transactionSynchronization.cancel();
+
+         String txId = "";
+
+         if (getConnectionManager().getTransactionIntegration() != null &&
+             getConnectionManager().getTransactionIntegration().getTransactionManager() != null)
+         {
+            Transaction tx = null;
+            try
+            {
+               tx = getConnectionManager().getTransactionIntegration().getTransactionManager().getTransaction();
+
+               if (Tracer.isEnabled() && tx != null)
+                  txId = tx.toString();
+               
+               if (TxUtils.isUncommitted(tx) && doDelistResource)
+               {
+                  if (trace)
+                     log.tracef("connectionErrorOccurred: delistResource(%s, TMFAIL)", getXAResource());
+
+                  boolean failResult = tx.delistResource(getXAResource(), XAResource.TMFAIL);
+                  
+                  if (failResult)
+                  {
+                     if (trace)
+                        log.trace("connectionErrorOccurred: delist-fail: " + this);
+                  }
+                  else
+                  {
+                     log.debugf("connectionErrorOccurred: delist-fail failed: %s", this);
+                  }
+               }
+            }
+            catch (Exception e)
+            {
+               log.debugf(e, "connectionErrorOccurred: Exception during delistResource=%s", e.getMessage());
+            }
+            finally
+            {
+               if (TxUtils.isUncommitted(tx) && doSetRollbackOnly)
+               {
+                  try
+                  {
+                     tx.setRollbackOnly();
+                  }
+                  catch (Exception e)
+                  {
+                     // Just a hint
+                  }
+               }
+            }
+         }
+         
+         if (Tracer.isEnabled())
+         {
+            Tracer.delistConnectionListener(getPool() != null ? getPool().getName() : null,
+                                            getManagedConnectionPool(),
+                                            this, txId, false, true, false);
+         }
+      }
+
+      // Prepare to explode
+      setEnlisted(false);
       transactionSynchronization = null;
-      super.connectionErrorOccurred(ce);
    }
 
    /**

@@ -239,6 +239,30 @@ org.jboss.jca.core.connectionmanager.pool.mcp.LeakDumperManagedConnectionPool
         </warning>
       </section>
 
+      <section id="configuration_ironjacamar_rollback_on_fatal_error">
+        <title>Disable <code>setRollbackOnly</code> calls</title>
+
+        <para>
+          IronJacamar calls <code>transaction.setRollbackOnly()</code> when the <code>ManagedConnection</code>
+          has a fatal error occur on it after calling the <code>transaction.delistResource(xaResource, XAResource.TMFAIL)</code>
+          method.
+        </para>
+
+        <para>
+          IronJacamar has a system property called <code>ironjacamar.rollback_on_fatal_error</code>
+          which is either a value of <code>true</code>, <code>false</code> or a <code>','</code> separated list of
+          pool names where <code>setRollbackOnly</code>
+          shouldn't be called.
+        </para>
+
+        <warning>
+          By disabling the <code>setRollbackOnly</code> call it is up to the transaction
+          manager to make sure that the outcome of transaction is correctly handled, since the associated
+          <code>XAResource</code> instance no longer can access the Enterprise Information System, and hence
+          implementation specific behavior.
+        </warning>
+      </section>
+
    </section>
 
    <section id="logging">

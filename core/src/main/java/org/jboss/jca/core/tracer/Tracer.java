@@ -344,11 +344,22 @@ public class Tracer
       }
       else
       {
-         log.tracef("%s", new TraceEvent(poolName,
-                                         Integer.toHexString(System.identityHashCode(mcp)),
-                                         TraceEvent.DELIST_ROLLEDBACK_CONNECTION_LISTENER,
-                                         Integer.toHexString(System.identityHashCode(cl)),
-                                         tx.replace('-', '_')));
+         if (success)
+         {
+            log.tracef("%s", new TraceEvent(poolName,
+                                            Integer.toHexString(System.identityHashCode(mcp)),
+                                            TraceEvent.DELIST_ROLLEDBACK_CONNECTION_LISTENER,
+                                            Integer.toHexString(System.identityHashCode(cl)),
+                                            tx.replace('-', '_')));
+         }
+         else
+         {
+            log.tracef("%s", new TraceEvent(poolName,
+                                            Integer.toHexString(System.identityHashCode(mcp)),
+                                            TraceEvent.DELIST_ROLLEDBACK_CONNECTION_LISTENER_FAILED,
+                                            Integer.toHexString(System.identityHashCode(cl)),
+                                            tx.replace('-', '_')));
+         }
       }
    }
 
@@ -447,6 +458,7 @@ public class Tracer
                                          Integer.toHexString(System.identityHashCode(mcp)),
                                          TraceEvent.CREATE_CONNECTION_LISTENER_PREFILL,
                                          Integer.toHexString(System.identityHashCode(cl)),
+                                         Integer.toHexString(System.identityHashCode(mc)),
                                          !confidential && callstack != null ? toString(callstack) : ""));
       }
       else if (incrementer)
@@ -455,6 +467,7 @@ public class Tracer
                                          Integer.toHexString(System.identityHashCode(mcp)),
                                          TraceEvent.CREATE_CONNECTION_LISTENER_INCREMENTER,
                                          Integer.toHexString(System.identityHashCode(cl)),
+                                         Integer.toHexString(System.identityHashCode(mc)),
                                          !confidential && callstack != null ? toString(callstack) : ""));
       }
    }

@@ -300,7 +300,6 @@ public class TestManagedConnection  implements ManagedConnection, XAResource, Lo
          {
             XAException xaex = new XAException(xaCode + " for " + this);
             xaex.errorCode = xaCode;
-            broadcastConnectionError(xaex);
             throw xaex;
          }
 
@@ -351,7 +350,6 @@ public class TestManagedConnection  implements ManagedConnection, XAResource, Lo
       {
          XAException xaex = new XAException(xaCode + " for " + this);
          xaex.errorCode = xaCode;
-         broadcastConnectionError(xaex);
          throw xaex;
       }
 

@@ -82,6 +82,9 @@ public class TraceEvent
    /** Delist rollbacked connection listener */
    public static final int DELIST_ROLLEDBACK_CONNECTION_LISTENER = 34;
 
+   /** Delist rollbacked connection listener (Failed) */
+   public static final int DELIST_ROLLEDBACK_CONNECTION_LISTENER_FAILED = 35;
+
    /** Get connection */
    public static final int GET_CONNECTION = 40;
 
@@ -380,6 +383,8 @@ public class TraceEvent
             return "delistResource(false) (I)";
          case DELIST_ROLLEDBACK_CONNECTION_LISTENER:
             return "delistResource() (R)";
+         case DELIST_ROLLEDBACK_CONNECTION_LISTENER_FAILED:
+            return "delistResource(false) (R)";
          case GET_CONNECTION:
             return "getConnection(" + event.getPayload1() + ")";
          case RETURN_CONNECTION:

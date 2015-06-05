@@ -468,6 +468,8 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
       {
          log.notifiedErrorDifferentManagedConnection();
       }
+
+      haltCatchFire();
       
       getConnectionManager().returnManagedConnection(this, true);      
 
@@ -596,6 +598,14 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
    {
    }
 
+   /**
+    * Halt and Catch Fire
+    */
+   void haltCatchFire()
+   {
+      // Do nothing by default
+   }
+   
    /**
     * Compare
     * @param o The other object

@@ -431,7 +431,6 @@ public class TraceEventHelper
 
             case TraceEvent.DELIST_CONNECTION_LISTENER:
             case TraceEvent.DELIST_INTERLEAVING_CONNECTION_LISTENER:
-            case TraceEvent.DELIST_ROLLEDBACK_CONNECTION_LISTENER:
                if (!inTx)
                   explicit = TraceEventStatus.RED;
 
@@ -439,6 +438,28 @@ public class TraceEventHelper
 
                if (!ignoreTracking && knownConnections.size() > 0 && explicit != TraceEventStatus.RED)
                   explicit = TraceEventStatus.YELLOW;
+
+               break;
+
+            case TraceEvent.DELIST_ROLLEDBACK_CONNECTION_LISTENER:
+               if (!inTx)
+                  explicit = TraceEventStatus.RED;
+
+               inTx = false;
+
+               if (!ignoreTracking && explicit != TraceEventStatus.RED)
+                  explicit = TraceEventStatus.YELLOW;
+
+               break;
+
+            case TraceEvent.DELIST_ROLLEDBACK_CONNECTION_LISTENER_FAILED:
+               if (!inTx)
+                  explicit = TraceEventStatus.RED;
+
+               inTx = false;
+
+               if (!ignoreTracking)
+                  explicit = TraceEventStatus.RED;
 
                break;
 

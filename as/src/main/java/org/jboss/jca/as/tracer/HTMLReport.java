@@ -213,7 +213,7 @@ public class HTMLReport
       writeString(fw, "</ul>");
       writeEOL(fw);
 
-      writeString(fw, "<h2>Cached connection manager</h2>");
+      writeString(fw, "<h2>CachedConnectionManager</h2>");
       writeEOL(fw);
 
       writeString(fw, "<ul>");
@@ -434,7 +434,7 @@ public class HTMLReport
       writeString(fw, "<p>");
       writeEOL(fw);
 
-      writeString(fw, "<h2>Cached connection manager</h2>");
+      writeString(fw, "<h2>CachedConnectionManager</h2>");
       writeEOL(fw);
 
       writeString(fw, "<a href=\"ccm.html\">Report</a>");
@@ -883,6 +883,82 @@ public class HTMLReport
          }
       }
 
+      writeString(fw, "<h2>Description</h2>");
+      writeEOL(fw);
+
+      writeString(fw, "<table>");
+      writeEOL(fw);
+
+      writeString(fw, "<thead align=\"left\">");
+      writeEOL(fw);
+
+      writeString(fw, "<th>Timestamp</th>");
+      writeEOL(fw);
+
+      writeString(fw, "<th>Description</th>");
+      writeEOL(fw);
+
+      writeString(fw, "</thead>");
+      writeEOL(fw);
+
+      writeString(fw, "<tbody>");
+      writeEOL(fw);
+
+      for (TraceEvent te : interaction.getEvents())
+      {
+         writeString(fw, "<tr>");
+         writeEOL(fw);
+
+         // Timestamp
+         writeString(fw, "<td>");
+
+         if (TraceEventHelper.isRed(te))
+         {
+            writeString(fw, "<div style=\"color: red;\">");
+         }
+         else if (TraceEventHelper.isYellow(te))
+         {
+            writeString(fw, "<div style=\"color: yellow;\">");
+         }
+
+         writeString(fw, Long.toString(te.getTimestamp()));
+
+         if (TraceEventHelper.isRed(te) || TraceEventHelper.isYellow(te))
+            writeString(fw, "</div>");
+
+         writeString(fw, "</td>");
+         writeEOL(fw);
+
+         // Text
+         writeString(fw, "<td>");
+
+         if (TraceEventHelper.isRed(te))
+         {
+            writeString(fw, "<div style=\"color: red;\">");
+         }
+         else if (TraceEventHelper.isYellow(te))
+         {
+            writeString(fw, "<div style=\"color: yellow;\">");
+         }
+
+         writeString(fw, TraceEvent.asText(te));
+
+         if (TraceEventHelper.isRed(te) || TraceEventHelper.isYellow(te))
+            writeString(fw, "</div>");
+
+         writeString(fw, "</td>");
+         writeEOL(fw);
+
+         writeString(fw, "</tr>");
+         writeEOL(fw);
+      }
+
+      writeString(fw, "</tbody>");
+      writeEOL(fw);
+
+      writeString(fw, "</table>");
+      writeEOL(fw);
+
       TraceEvent createCallStack =
          TraceEventHelper.getType(interaction.getEvents(),
                                   TraceEvent.CREATE_CONNECTION_LISTENER_GET);
@@ -962,82 +1038,6 @@ public class HTMLReport
          writeEOL(fw);
       }
       
-      writeString(fw, "<h2>Description</h2>");
-      writeEOL(fw);
-
-      writeString(fw, "<table>");
-      writeEOL(fw);
-
-      writeString(fw, "<thead align=\"left\">");
-      writeEOL(fw);
-
-      writeString(fw, "<th>Timestamp</th>");
-      writeEOL(fw);
-
-      writeString(fw, "<th>Description</th>");
-      writeEOL(fw);
-
-      writeString(fw, "</thead>");
-      writeEOL(fw);
-
-      writeString(fw, "<tbody>");
-      writeEOL(fw);
-
-      for (TraceEvent te : interaction.getEvents())
-      {
-         writeString(fw, "<tr>");
-         writeEOL(fw);
-
-         // Timestamp
-         writeString(fw, "<td>");
-
-         if (TraceEventHelper.isRed(te))
-         {
-            writeString(fw, "<div style=\"color: red;\">");
-         }
-         else if (TraceEventHelper.isYellow(te))
-         {
-            writeString(fw, "<div style=\"color: yellow;\">");
-         }
-
-         writeString(fw, Long.toString(te.getTimestamp()));
-
-         if (TraceEventHelper.isRed(te) || TraceEventHelper.isYellow(te))
-            writeString(fw, "</div>");
-
-         writeString(fw, "</td>");
-         writeEOL(fw);
-
-         // Text
-         writeString(fw, "<td>");
-
-         if (TraceEventHelper.isRed(te))
-         {
-            writeString(fw, "<div style=\"color: red;\">");
-         }
-         else if (TraceEventHelper.isYellow(te))
-         {
-            writeString(fw, "<div style=\"color: yellow;\">");
-         }
-
-         writeString(fw, TraceEvent.asText(te));
-
-         if (TraceEventHelper.isRed(te) || TraceEventHelper.isYellow(te))
-            writeString(fw, "</div>");
-
-         writeString(fw, "</td>");
-         writeEOL(fw);
-
-         writeString(fw, "</tr>");
-         writeEOL(fw);
-      }
-
-      writeString(fw, "</tbody>");
-      writeEOL(fw);
-
-      writeString(fw, "</table>");
-      writeEOL(fw);
-
       if (TraceEventHelper.hasException(interaction.getEvents()))
       {
          writeString(fw, "<h2>Exception</h2>");
@@ -1197,7 +1197,7 @@ public class HTMLReport
       writeString(fw, "<p>");
       writeEOL(fw);
 
-      writeString(fw, "<h2>Cached connection manager</h2>");
+      writeString(fw, "<h2>CachedConnectionManager</h2>");
       writeEOL(fw);
 
       writeString(fw, "<a href=\"ccm.html\">Report</a>");
@@ -1909,7 +1909,7 @@ public class HTMLReport
       writeString(fw, "<meta http-equiv=\"Content-Type\" content=\"text/html;charset=utf-8\">");
       writeEOL(fw);
 
-      writeString(fw, "<title>Reference: Managed Connection Pool</title>");
+      writeString(fw, "<title>Reference: ManagedConnectionPool</title>");
       writeEOL(fw);
 
       writeString(fw, "</head>");
@@ -1918,7 +1918,7 @@ public class HTMLReport
       writeString(fw, "<body style=\"background: #D7D7D7;\">");
       writeEOL(fw);
 
-      writeString(fw, "<h1>Reference: Managed Connection Pool</h1>");
+      writeString(fw, "<h1>Reference: ManagedConnectionPool</h1>");
       writeEOL(fw);
 
       writeString(fw, "<table>");
@@ -2370,49 +2370,60 @@ public class HTMLReport
             }
          }
 
-         if (filteredCCM.size() > 0)
+         FileWriter ccm = null;
+         try
          {
-            FileWriter ccm = null;
-            try
-            {
-               String path = root.getAbsolutePath() + "/" + filteredCCM.get(0).getPool();
-               File f = new File(path);
-               f.mkdirs();
+            String path = root.getAbsolutePath() + "/CachedConnectionManager";
+            File f = new File(path);
+            f.mkdirs();
 
-               ccm = new FileWriter(path + "/" + "ccm.html");
-               generateCCMHTML(filteredCCM, ccmStatus, path, ccm);
-            }
-            finally
+            if (filteredCCM == null)
+               filteredCCM = new ArrayList<TraceEvent>();
+            
+            if (ccmStatus == null)
+               ccmStatus = TraceEventStatus.GREEN;
+            
+            ccm = new FileWriter(path + "/" + "ccm.html");
+            generateCCMHTML(filteredCCM, ccmStatus, path, ccm);
+         }
+         finally
+         {
+            if (ccm != null)
             {
-               if (ccm != null)
+               try
                {
-                  try
-                  {
-                     ccm.flush();
-                     ccm.close();
-                  }
-                  catch (Exception e)
-                  {
-                     // Ignore
-                  }
+                  ccm.flush();
+                  ccm.close();
+               }
+               catch (Exception e)
+               {
+                  // Ignore
                }
             }
          }
 
-         Iterator<Map.Entry<String, List<TraceEvent>>> ccmIt = filteredCCMPool.entrySet().iterator();
+         Iterator<String> ccmIt = filteredLifecycle.keySet().iterator();
          while (ccmIt.hasNext())
          {
-            Map.Entry<String, List<TraceEvent>> entry = ccmIt.next();
+            String ccmPoolKey = ccmIt.next();
+            List<TraceEvent> ccmPoolEvents = filteredCCMPool.get(ccmPoolKey);
+            TraceEventStatus ccmPStatus = ccmPoolStatus.get(ccmPoolKey);
 
-            FileWriter ccm = null;
+            ccm = null;
             try
             {
-               String path = root.getAbsolutePath() + "/" + entry.getKey();
+               String path = root.getAbsolutePath() + "/" + ccmPoolKey;
                File f = new File(path);
                f.mkdirs();
 
+               if (ccmPoolEvents == null)
+                  ccmPoolEvents = new ArrayList<TraceEvent>();
+            
+               if (ccmPStatus == null)
+                  ccmPStatus = TraceEventStatus.GREEN;
+            
                ccm = new FileWriter(path + "/" + "ccm.html");
-               generateCCMPoolHTML(entry.getKey(), entry.getValue(), ccmPoolStatus.get(entry.getKey()), ccm);
+               generateCCMPoolHTML(ccmPoolKey, ccmPoolEvents, ccmPStatus, ccm);
             }
             finally
             {
