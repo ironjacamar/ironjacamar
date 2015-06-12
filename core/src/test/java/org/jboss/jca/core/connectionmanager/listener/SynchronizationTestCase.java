@@ -271,6 +271,7 @@ public class SynchronizationTestCase
          tsr.registerInterposedSynchronization(new ConnectionSynchronization(cf));
 
          TxLogConnection c = cf.getConnection();
+         String cId = c.getId();
          c.fail();
 
          ut.rollback();
@@ -278,10 +279,10 @@ public class SynchronizationTestCase
          // Verify
          c = cf.getConnection();
 
-         log.infof("Connection=%s", c);
-         assertEquals(expect, c.getState());
+         assertEquals(expect, c.getState(cId));
 
          c.clearState();
+         c.clearState(cId);
          c.close();
       }
       catch (Throwable t)
@@ -401,7 +402,7 @@ public class SynchronizationTestCase
    @Test
    public void testFailureLocal() throws Throwable
    {
-      testFailure(createLocalTxDeployment(), "");
+      testFailure(createLocalTxDeployment(), "02");
    }
 
    /**
@@ -412,7 +413,7 @@ public class SynchronizationTestCase
    @Test
    public void testFailureXA() throws Throwable
    {
-      testFailure(createXATxDeployment(), "");
+      testFailure(createXATxDeployment(), "3C9");
    }
 
    /**
@@ -423,7 +424,7 @@ public class SynchronizationTestCase
    @Test
    public void testFailureXAInterleaving() throws Throwable
    {
-      testFailure(createXATxDeployment(true), "");
+      testFailure(createXATxDeployment(true), "3C9");
    }
 
    /**

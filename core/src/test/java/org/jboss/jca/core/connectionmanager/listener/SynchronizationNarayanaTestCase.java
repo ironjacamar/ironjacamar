@@ -270,6 +270,7 @@ public class SynchronizationNarayanaTestCase
          tsr.registerInterposedSynchronization(new ConnectionSynchronization(cf));
 
          TxLogConnection c = cf.getConnection();
+         String cId = c.getId();
          c.fail();
 
          if (!interleaving)
@@ -284,10 +285,10 @@ public class SynchronizationNarayanaTestCase
          // Verify
          c = cf.getConnection();
 
-         log.infof("Connection=%s", c);
-         assertEquals(expect, c.getState());
+         assertEquals(expect, c.getState(cId));
 
          c.clearState();
+         c.clearState(cId);
          c.close();
       }
       catch (Throwable t)
@@ -407,7 +408,7 @@ public class SynchronizationNarayanaTestCase
    @Test
    public void testFailureLocal() throws Throwable
    {
-      testFailure(createLocalTxDeployment(), "", false);
+      testFailure(createLocalTxDeployment(), "02", false);
    }
 
    /**
@@ -418,7 +419,7 @@ public class SynchronizationNarayanaTestCase
    @Test
    public void testFailureXA() throws Throwable
    {
-      testFailure(createXATxDeployment(), "", false);
+      testFailure(createXATxDeployment(), "3C9", false);
    }
 
    /**
@@ -429,7 +430,7 @@ public class SynchronizationNarayanaTestCase
    @Test
    public void testFailureXAInterleaving() throws Throwable
    {
-      testFailure(createXATxDeployment(true), "", true);
+      testFailure(createXATxDeployment(true), "3C9", true);
    }
 
    /**

@@ -51,6 +51,14 @@ public class TxLogConnectionImpl implements TxLogConnection
    /**
     * {@inheritDoc}
     */
+   public String getId()
+   {
+      return mc.getId();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public String getState()
    {
       return mc.getState();
@@ -59,9 +67,25 @@ public class TxLogConnectionImpl implements TxLogConnection
    /**
     * {@inheritDoc}
     */
+   public String getState(String id)
+   {
+      return mc.getState(id);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public void clearState()
    {
       mc.clearState();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void clearState(String id)
+   {
+      mc.clearState(id);
    }
 
    /**

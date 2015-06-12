@@ -24,7 +24,9 @@ package org.jboss.jca.core.tx.rars.txlog;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionEvent;
@@ -94,6 +96,12 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
    /** The logger */
    private static Logger log = Logger.getLogger(TxLogManagedConnection.class.getName());
 
+   /** Transaction states */
+   private static Map<String, String> txStates = new HashMap<String, String>();
+   
+   /** The id */
+   private String id;
+
    /** The logwriter */
    private PrintWriter logwriter;
 
@@ -105,9 +113,6 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
 
    /** Connection */
    private TxLogConnectionImpl connection;
-
-   /** Tx state */
-   private StringBuilder txState;
 
    /** Transaction timeout */
    private int timeout;
@@ -122,10 +127,10 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
    public TxLogManagedConnection(TxLogManagedConnectionFactory mcf)
    {
       this.mcf = mcf;
+      this.id = Integer.toHexString(System.identityHashCode(this));
       this.logwriter = null;
       this.listeners = Collections.synchronizedList(new ArrayList<ConnectionEventListener>(1));
       this.connection = null;
-      this.txState = new StringBuilder();
       this.inPool = true;
    }
 
@@ -185,7 +190,6 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
     */
    public void destroy() throws ResourceException
    {
-      txState = new StringBuilder();
    }
 
    /**
@@ -311,12 +315,35 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
    }
 
    /**
+    * Get id
+    * @return The id
+    */
+   String getId()
+   {
+      return id;
+   }
+
+   /**
     * Get state
     * @return The state string
     */
    String getState()
    {
-      return txState.toString();
+      return getState(id);
+   }
+
+   /**
+    * Get state
+    * @param identifier The identifier
+    * @return The state string
+    */
+   String getState(String identifier)
+   {
+      String txState = txStates.get(identifier);
+      if (txState == null)
+         txState = "";
+
+      return txState;
    }
 
    /**
@@ -324,7 +351,16 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
     */
    void clearState()
    {
-      txState = new StringBuilder();
+      clearState(id);
+   }
+
+   /**
+    * Clear state
+    * @param identifier The identifier
+    */
+   void clearState(String identifier)
+   {
+      txStates.put(identifier, "");
    }
 
    /**
@@ -345,7 +381,7 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
    {
       log.trace("begin()");
 
-      txState.append(TX_LOCAL_BEGIN);
+      addTxState(TX_LOCAL_BEGIN);
 
       ConnectionEvent ce = new ConnectionEvent(this, ConnectionEvent.LOCAL_TRANSACTION_STARTED);
       
@@ -362,7 +398,7 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
    {
       log.trace("commit()");
 
-      txState.append(TX_LOCAL_COMMIT);
+      addTxState(TX_LOCAL_COMMIT);
 
       ConnectionEvent ce = new ConnectionEvent(this, ConnectionEvent.LOCAL_TRANSACTION_COMMITTED);
       
@@ -379,7 +415,7 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
    {
       log.trace("rollback()");
 
-      txState.append(TX_LOCAL_ROLLBACK);
+      addTxState(TX_LOCAL_ROLLBACK);
 
       ConnectionEvent ce = new ConnectionEvent(this, ConnectionEvent.LOCAL_TRANSACTION_ROLLEDBACK);
       
@@ -400,19 +436,19 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
 
       if (flags == XAResource.TMNOFLAGS)
       {
-         txState.append(TX_XA_START_TMNOFLAGS);
+         addTxState(TX_XA_START_TMNOFLAGS);
       }
       else if (flags == XAResource.TMJOIN)
       {
-         txState.append(TX_XA_START_TMJOIN);
+         addTxState(TX_XA_START_TMJOIN);
       }
       else if (flags == XAResource.TMRESUME)
       {
-         txState.append(TX_XA_START_TMRESUME);
+         addTxState(TX_XA_START_TMRESUME);
       }
       else
       {
-         txState.append(TX_XA_START_UNKNOWN);
+         addTxState(TX_XA_START_UNKNOWN);
       }
    }
 
@@ -423,7 +459,7 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
    {
       log.tracef("commit(%s, %s)", xid, onePhase);
 
-      txState.append(TX_XA_COMMIT);
+      addTxState(TX_XA_COMMIT);
    }
 
    /**
@@ -433,7 +469,7 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
    {
       log.tracef("rollback(%s)", xid);
 
-      txState.append(TX_XA_ROLLBACK);
+      addTxState(TX_XA_ROLLBACK);
    }
 
    /**
@@ -445,19 +481,19 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
 
       if (flags == XAResource.TMSUCCESS)
       {
-         txState.append(TX_XA_END_TMSUCCESS);
+         addTxState(TX_XA_END_TMSUCCESS);
       }
       else if (flags == XAResource.TMFAIL)
       {
-         txState.append(TX_XA_END_TMFAIL);
+         addTxState(TX_XA_END_TMFAIL);
       }
       else if (flags == XAResource.TMSUSPEND)
       {
-         txState.append(TX_XA_END_TMSUSPEND);
+         addTxState(TX_XA_END_TMSUSPEND);
       }
       else
       {
-         txState.append(TX_XA_END_UNKNOWN);
+         addTxState(TX_XA_END_UNKNOWN);
       }
    }
 
@@ -468,7 +504,7 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
    {
       log.tracef("forget(%s)", xid);
 
-      txState.append(TX_XA_FORGET);
+      addTxState(TX_XA_FORGET);
    }
 
    /**
@@ -491,7 +527,7 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
    {
       log.tracef("prepare(%s)", xid);
 
-      txState.append(TX_XA_PREPARE);
+      addTxState(TX_XA_PREPARE);
 
       return XAResource.XA_OK;
    }
@@ -522,6 +558,21 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
    }
 
    /**
+    * Add a transaction state
+    * @param state The state
+    */
+   private void addTxState(String state)
+   {
+      String txState = txStates.get(id);
+      if (txState == null)
+         txState = "";
+
+      txState += state;
+
+      txStates.put(id, txState);
+   }
+   
+   /**
     * {@inheritDoc}
     */
    @Override
@@ -530,7 +581,7 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
       StringBuilder sb = new StringBuilder();
 
       sb.append("TxLogManagedConnection@").append(Integer.toHexString(System.identityHashCode(this)));
-      sb.append("[txState=").append(txState.toString());
+      sb.append("[txState=").append(txStates.get(id));
       sb.append("]");
 
       return sb.toString();

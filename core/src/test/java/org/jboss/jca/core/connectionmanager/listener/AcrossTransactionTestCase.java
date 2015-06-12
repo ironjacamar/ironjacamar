@@ -209,13 +209,13 @@ public class AcrossTransactionTestCase
 
          log.infof("Close connection");
 
-         // Underlying connection was killed
          ut.begin();
 
-         assertEquals(expect, c.getState());
          c.close();
 
          ut.commit();
+
+         assertEquals(expect, c.getState());
       }
       catch (Throwable t)
       {
@@ -262,7 +262,7 @@ public class AcrossTransactionTestCase
    public void testLocal() throws Throwable
    {
       log.infof("testLocal()");
-      testBase(createLocalTxDeployment(), "");
+      testBase(createLocalTxDeployment(), "01");
    }
 
    /**
@@ -274,7 +274,7 @@ public class AcrossTransactionTestCase
    public void testXA() throws Throwable
    {
       log.infof("testXA()");
-      testBase(createXATxDeployment(), "");
+      testBase(createXATxDeployment(), "3B8");
    }
 
    /**
