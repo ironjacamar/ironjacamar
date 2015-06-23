@@ -121,6 +121,12 @@ public class TraceEvent
    /** Destroy connection listner (ERROR) */
    public static final int DESTROY_CONNECTION_LISTENER_ERROR = 74;
 
+   /** Destroy connection listner (PREFILL) */
+   public static final int DESTROY_CONNECTION_LISTENER_PREFILL = 75;
+
+   /** Destroy connection listner (INCREMENTER) */
+   public static final int DESTROY_CONNECTION_LISTENER_INCREMENTER = 76;
+
    /** Managed connection pool create */
    public static final int MANAGED_CONNECTION_POOL_CREATE = 80;
 
@@ -409,6 +415,10 @@ public class TraceEvent
             return "destroyConnectionListener(FLUSH)";
          case DESTROY_CONNECTION_LISTENER_ERROR:
             return "destroyConnectionListener(ERROR)";
+         case DESTROY_CONNECTION_LISTENER_PREFILL:
+            return "destroyConnectionListener(PREFILL)";
+         case DESTROY_CONNECTION_LISTENER_INCREMENTER:
+            return "destroyConnectionListener(INCREMENTER)";
          case MANAGED_CONNECTION_POOL_CREATE:
             return "createManagedConnectionPool()";
          case MANAGED_CONNECTION_POOL_DESTROY:

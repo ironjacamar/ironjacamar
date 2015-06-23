@@ -441,6 +441,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
                      if (Tracer.isEnabled())
                         Tracer.destroyConnectionListener(pool.getName(), this, cl, false, false, true, false, false,
+                                                         false, false,
                                                          Tracer.isRecordCallstacks() ?
                                                          new Throwable("CALLSTACK") : null);
                      
@@ -462,6 +463,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
                      if (Tracer.isEnabled())
                         Tracer.destroyConnectionListener(pool.getName(), this, cl, false, false, false, false, true,
+                                                         false, false,
                                                          Tracer.isRecordCallstacks() ?
                                                          new Throwable("CALLSTACK") : null);
                      
@@ -539,6 +541,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
                   if (Tracer.isEnabled())
                      Tracer.destroyConnectionListener(pool.getName(), this, cl, false, false, false, false, true,
+                                                      false, false,
                                                       Tracer.isRecordCallstacks() ?
                                                       new Throwable("CALLSTACK") : null);
                      
@@ -755,6 +758,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
          if (Tracer.isEnabled())
             Tracer.destroyConnectionListener(pool.getName(), this, cl, true, false, false, false, false,
+                                             false, false,
                                              Tracer.isRecordCallstacks() ?
                                              new Throwable("CALLSTACK") : null);
                      
@@ -882,6 +886,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
             if (Tracer.isEnabled())
                Tracer.destroyConnectionListener(pool.getName(), this, cl, false, false, false, true, false,
+                                                false, false,
                                                 Tracer.isRecordCallstacks() ?
                                                 new Throwable("CALLSTACK") : null);
                      
@@ -999,6 +1004,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
             if (Tracer.isEnabled())
                Tracer.destroyConnectionListener(pool.getName(), this, cl, false, true, false, false, false,
+                                                false, false,
                                                 Tracer.isRecordCallstacks() ?
                                                 new Throwable("CALLSTACK") : null);
                      
@@ -1090,7 +1096,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                                                         pool.getInternalStatistics().getInUseCount(), maxSize));
       }
 
-      while (true)
+      while (!pool.isFull())
       {
          // Get a permit - avoids a race when the pool is nearly full
          // Also avoids unnessary fill checking when all connections are checked out
@@ -1125,12 +1131,29 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                                                         Tracer.isRecordCallstacks() ?
                                                         new Throwable("CALLSTACK") : null);
 
+                     boolean added = false;
                      synchronized (cls)
                      {
-                        if (trace)
-                           log.trace("Filling pool cl=" + cl);
+                        if (!isSize(size))
+                        {
+                           if (trace)
+                              log.trace("Filling pool cl=" + cl);
 
-                        cls.add(cl);
+                           cls.add(cl);
+                           added = true;
+                        }
+                     }
+
+                     if (!added)
+                     {
+                        if (Tracer.isEnabled())
+                           Tracer.destroyConnectionListener(pool.getName(), this, cl, false, false, false, false,
+                                                            false, true, false,
+                                                            Tracer.isRecordCallstacks() ?
+                                                            new Throwable("CALLSTACK") : null);
+                     
+                        doDestroy(cl);
+                        return;
                      }
                   }
                   catch (ResourceException re)
@@ -1201,13 +1224,30 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                                                            Tracer.isRecordCallstacks() ?
                                                            new Throwable("CALLSTACK") : null);
 
+                        boolean added = false;
                         synchronized (cls)
                         {
-                           if (trace)
-                              log.trace("Capacity fill: cl=" + cl);
+                           if (!isSize(poolConfiguration.getMaxSize()))
+                           {
+                              if (trace)
+                                 log.trace("Capacity fill: cl=" + cl);
 
-                           cls.add(cl);
-                           created++;
+                              cls.add(cl);
+                              created++;
+                              added = true;
+                           }
+                        }
+
+                        if (!added)
+                        {
+                           if (Tracer.isEnabled())
+                              Tracer.destroyConnectionListener(pool.getName(), this, cl, false, false, true, false,
+                                                               false, false, true,
+                                                               Tracer.isRecordCallstacks() ?
+                                                               new Throwable("CALLSTACK") : null);
+                     
+                           doDestroy(cl);
+                           return;
                         }
                      }
                      catch (ResourceException re)
@@ -1390,7 +1430,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
                            if (Tracer.isEnabled())
                               Tracer.destroyConnectionListener(pool.getName(), this, cl, false, false, true,
-                                                               false, false,
+                                                               false, false, false, false,
                                                                Tracer.isRecordCallstacks() ?
                                                                new Throwable("CALLSTACK") : null);
                      
@@ -1416,7 +1456,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
                      if (Tracer.isEnabled())
                         Tracer.destroyConnectionListener(pool.getName(), this, cl, false, false, false,
-                                                         false, true,
+                                                         false, true, false, false,
                                                          Tracer.isRecordCallstacks() ?
                                                          new Throwable("CALLSTACK") : null);
                      

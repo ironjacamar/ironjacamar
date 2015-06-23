@@ -50,6 +50,7 @@ import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.resource.ResourceException;
@@ -71,6 +72,9 @@ import org.jboss.logging.Messages;
  */
 public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements ManagedConnectionPool 
 {
+   /** WARN logged */
+   private static AtomicBoolean warnLogged = new AtomicBoolean(false);
+
    /** The log */
    private CoreLogger log;
 
@@ -195,6 +199,10 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
          ConnectionValidator.getInstance().registerPool(this,
                poolConfiguration.getBackgroundValidationMillis());
       }
+
+      // No FILO support
+      if (warnLogged.compareAndSet(false, true))
+         log.unsupportedPoolImplementation(getClass().getName());
    }
 
    /**
@@ -438,7 +446,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
 
                      if (Tracer.isEnabled())
                         Tracer.destroyConnectionListener(pool.getName(), this, clw.getConnectionListener(),
-                                                         false, false, true, false, false,
+                                                         false, false, true, false, false, false, false,
                                                          Tracer.isRecordCallstacks() ?
                                                          new Throwable("CALLSTACK") : null);
                      
@@ -458,7 +466,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
 
                      if (Tracer.isEnabled())
                         Tracer.destroyConnectionListener(pool.getName(), this, clw.getConnectionListener(),
-                                                         false, false, false, false, true,
+                                                         false, false, false, false, true, false, false,
                                                          Tracer.isRecordCallstacks() ?
                                                          new Throwable("CALLSTACK") : null);
                      
@@ -534,7 +542,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                {
                   if (Tracer.isEnabled())
                      Tracer.destroyConnectionListener(pool.getName(), this, clw.getConnectionListener(),
-                                                      false, false, false, false, true,
+                                                      false, false, false, false, true, false, false,
                                                       Tracer.isRecordCallstacks() ?
                                                       new Throwable("CALLSTACK") : null);
                      
@@ -722,7 +730,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
 
          if (Tracer.isEnabled())
             Tracer.destroyConnectionListener(pool.getName(), this, clw.getConnectionListener(),
-                                             true, false, false, false, false,
+                                             true, false, false, false, false, false, false,
                                              Tracer.isRecordCallstacks() ?
                                              new Throwable("CALLSTACK") : null);
                      
@@ -877,7 +885,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
 
             if (Tracer.isEnabled())
                Tracer.destroyConnectionListener(pool.getName(), this, clw.getConnectionListener(),
-                                                false, false, false, true, false,
+                                                false, false, false, true, false, false, false,
                                                 Tracer.isRecordCallstacks() ?
                                                 new Throwable("CALLSTACK") : null);
                      
@@ -1013,7 +1021,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
 
             if (Tracer.isEnabled())
                Tracer.destroyConnectionListener(pool.getName(), this, clw.getConnectionListener(),
-                                                false, true, false, false, false,
+                                                false, true, false, false, false, false, false,
                                                 Tracer.isRecordCallstacks() ?
                                                 new Throwable("CALLSTACK") : null);
                      
@@ -1117,7 +1125,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                                                         pool.getInternalStatistics().getInUseCount(), maxSize));
       }
 
-      while (true) 
+      while (!pool.isFull())
       {
          // Get a permit - avoids a race when the pool is nearly full
          // Also avoids unnessary fill checking when all connections are
@@ -1153,13 +1161,30 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                                                         Tracer.isRecordCallstacks() ?
                                                         new Throwable("CALLSTACK") : null);
 
-                     if (trace)
-                        log.trace("Filling pool cl=" + cl);
+                     boolean added = false;
+                     if (!isSize(size))
+                     {
+                        if (trace)
+                           log.trace("Filling pool cl=" + cl);
 
-                     cls.put(cl, new ConnectionListenerWrapper(cl, false, false));
-                     poolSize.incrementAndGet();
-                     clq.add(cls.get(cl));
-                  } 
+                        cls.put(cl, new ConnectionListenerWrapper(cl, false, false));
+                        poolSize.incrementAndGet();
+                        clq.add(cls.get(cl));
+                        added = true;
+                     }
+
+                     if (!added)
+                     {
+                        if (Tracer.isEnabled())
+                           Tracer.destroyConnectionListener(pool.getName(), this, cl, false, false, false, false,
+                                                            false, true, false,
+                                                            Tracer.isRecordCallstacks() ?
+                                                            new Throwable("CALLSTACK") : null);
+                     
+                        doDestroy(new ConnectionListenerWrapper(cl, false, false));
+                        return;
+                     }
+                  }
                   catch (ResourceException re) 
                   {
                      log.unableFillPool(re);
@@ -1222,14 +1247,31 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                                                            Tracer.isRecordCallstacks() ?
                                                            new Throwable("CALLSTACK") : null);
 
-                        if (trace)
-                           log.trace("Capacity fill: cl=" + cl);
+                        boolean added = false;
+                        if (!isSize(poolConfiguration.getMaxSize()))
+                        {
+                           if (trace)
+                              log.trace("Capacity fill: cl=" + cl);
 
-                        cls.put(cl, new ConnectionListenerWrapper(cl, false, false));
-                        poolSize.incrementAndGet();
-                        clq.add(cls.get(cl));
+                           cls.put(cl, new ConnectionListenerWrapper(cl, false, false));
+                           poolSize.incrementAndGet();
+                           clq.add(cls.get(cl));
 
-                        created++;
+                           created++;
+                           added = true;
+                        }
+
+                        if (!added)
+                        {
+                           if (Tracer.isEnabled())
+                              Tracer.destroyConnectionListener(pool.getName(), this, cl, false, false, true, false,
+                                                               false, false, true,
+                                                               Tracer.isRecordCallstacks() ?
+                                                               new Throwable("CALLSTACK") : null);
+                     
+                           doDestroy(new ConnectionListenerWrapper(cl, false, false));
+                           return;
+                        }
                      } 
                      catch (ResourceException re) 
                      {
@@ -1442,7 +1484,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
 
                            if (Tracer.isEnabled())
                               Tracer.destroyConnectionListener(pool.getName(), this, clw.getConnectionListener(),
-                                                               false, false, true, false, false,
+                                                               false, false, true, false, false, false, false,
                                                                Tracer.isRecordCallstacks() ?
                                                                new Throwable("CALLSTACK") : null);
                      
@@ -1470,7 +1512,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
 
                      if (Tracer.isEnabled())
                         Tracer.destroyConnectionListener(pool.getName(), this, clw.getConnectionListener(),
-                                                         false, false, false, false, true,
+                                                         false, false, false, false, true, false, false,
                                                          Tracer.isRecordCallstacks() ?
                                                          new Throwable("CALLSTACK") : null);
                      

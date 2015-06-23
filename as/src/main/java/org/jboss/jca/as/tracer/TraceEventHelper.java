@@ -67,6 +67,8 @@ public class TraceEventHelper
              te.getType() == TraceEvent.DESTROY_CONNECTION_LISTENER_INVALID ||
              te.getType() == TraceEvent.DESTROY_CONNECTION_LISTENER_FLUSH ||
              te.getType() == TraceEvent.DESTROY_CONNECTION_LISTENER_ERROR ||
+             te.getType() == TraceEvent.DESTROY_CONNECTION_LISTENER_PREFILL ||
+             te.getType() == TraceEvent.DESTROY_CONNECTION_LISTENER_INCREMENTER ||
              te.getType() == TraceEvent.MANAGED_CONNECTION_POOL_CREATE ||
              te.getType() == TraceEvent.MANAGED_CONNECTION_POOL_DESTROY ||
              te.getType() == TraceEvent.PUSH_CCM_CONTEXT ||
@@ -105,6 +107,8 @@ public class TraceEventHelper
              te.getType() == TraceEvent.DESTROY_CONNECTION_LISTENER_INVALID ||
              te.getType() == TraceEvent.DESTROY_CONNECTION_LISTENER_FLUSH ||
              te.getType() == TraceEvent.DESTROY_CONNECTION_LISTENER_ERROR ||
+             te.getType() == TraceEvent.DESTROY_CONNECTION_LISTENER_PREFILL ||
+             te.getType() == TraceEvent.DESTROY_CONNECTION_LISTENER_INCREMENTER ||
              te.getType() == TraceEvent.MANAGED_CONNECTION_POOL_CREATE ||
              te.getType() == TraceEvent.MANAGED_CONNECTION_POOL_DESTROY)
          {
@@ -516,6 +520,10 @@ public class TraceEventHelper
                break;
             case TraceEvent.DESTROY_CONNECTION_LISTENER_ERROR:
                break;
+            case TraceEvent.DESTROY_CONNECTION_LISTENER_PREFILL:
+               break;
+            case TraceEvent.DESTROY_CONNECTION_LISTENER_INCREMENTER:
+               break;
             case TraceEvent.MANAGED_CONNECTION_POOL_CREATE:
                break;
             case TraceEvent.MANAGED_CONNECTION_POOL_DESTROY:
@@ -851,6 +859,8 @@ public class TraceEventHelper
           te.getType() != TraceEvent.DESTROY_CONNECTION_LISTENER_INVALID &&
           te.getType() != TraceEvent.DESTROY_CONNECTION_LISTENER_FLUSH &&
           te.getType() != TraceEvent.DESTROY_CONNECTION_LISTENER_ERROR &&
+          te.getType() != TraceEvent.DESTROY_CONNECTION_LISTENER_PREFILL &&
+          te.getType() != TraceEvent.DESTROY_CONNECTION_LISTENER_INCREMENTER &&
           te.getType() != TraceEvent.EXCEPTION &&
           te.getType() != TraceEvent.PUSH_CCM_CONTEXT &&
           te.getType() != TraceEvent.POP_CCM_CONTEXT)

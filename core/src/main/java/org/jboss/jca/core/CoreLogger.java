@@ -497,6 +497,14 @@ public interface CoreLogger extends BasicLogger
    @Message(id = 621, value = "Destroying connection that could not be validated: %s")
    public void destroyingConnectionNotValidated(Object cl);
 
+   /**
+    * Unsupported pool implementation
+    * @param clz The pool
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 622, value = "Unsupported pool implementation: %s")
+   public void unsupportedPoolImplementation(String clz);
+
    // NAMING (700)
 
    /**

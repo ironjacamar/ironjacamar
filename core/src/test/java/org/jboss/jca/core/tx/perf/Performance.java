@@ -178,10 +178,14 @@ public class Performance
       dashRaXmlCdt.createConfigProperty().name("TxBeginDuration").text(Long.toString(TX_BEGIN_DURATION));
       dashRaXmlCdt.createConfigProperty().name("TxCommitDuration").text(Long.toString(TX_COMMIT_DURATION));
 
+      org.jboss.jca.embedded.dsl.resourceadapters12.api.TimeoutType dashRaXmlTt = dashRaXmlCdt.getOrCreateTimeout()
+         .idleTimeoutMinutes(Integer.valueOf(0));
+
       if ("XATransaction".equals(tx))
       {
          org.jboss.jca.embedded.dsl.resourceadapters12.api.XaPoolType dashRaXmlPt = dashRaXmlCdt.getOrCreateXaPool()
-            .minPoolSize(poolSize).initialPoolSize(poolSize).maxPoolSize(poolSize).prefill(Boolean.TRUE);
+            .minPoolSize(poolSize).initialPoolSize(poolSize).maxPoolSize(poolSize).prefill(Boolean.TRUE)
+            .wrapXaResource(Boolean.FALSE);
 
          dashRaXmlCdt.getOrCreateRecovery().noRecovery(Boolean.TRUE);
       }

@@ -409,6 +409,10 @@ public class SDeditGenerator
                break;
             case TraceEvent.DESTROY_CONNECTION_LISTENER_ERROR:
                break;
+            case TraceEvent.DESTROY_CONNECTION_LISTENER_PREFILL:
+               break;
+            case TraceEvent.DESTROY_CONNECTION_LISTENER_INCREMENTER:
+               break;
             case TraceEvent.MANAGED_CONNECTION_POOL_CREATE:
                break;
             case TraceEvent.MANAGED_CONNECTION_POOL_DESTROY:

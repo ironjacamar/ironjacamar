@@ -482,11 +482,14 @@ public class Tracer
     * @param invalid An INVALID operation
     * @param flush A FLUSH operation
     * @param error An ERROR operation
+    * @param prefill A PREFILL operation
+    * @param incrementer An INCREMENTER operation
     * @param callstack The call stack
     */
    public static synchronized void destroyConnectionListener(String poolName, Object mcp, Object cl,
                                                              boolean ret, boolean idle, boolean invalid,
                                                              boolean flush, boolean error,
+                                                             boolean prefill, boolean incrementer,
                                                              Throwable callstack)
    {
       if (ret)
@@ -526,6 +529,22 @@ public class Tracer
          log.tracef("%s", new TraceEvent(poolName,
                                          Integer.toHexString(System.identityHashCode(mcp)),
                                          TraceEvent.DESTROY_CONNECTION_LISTENER_ERROR,
+                                         Integer.toHexString(System.identityHashCode(cl)),
+                                         !confidential && callstack != null ? toString(callstack) : ""));
+      }
+      else if (prefill)
+      {
+         log.tracef("%s", new TraceEvent(poolName,
+                                         Integer.toHexString(System.identityHashCode(mcp)),
+                                         TraceEvent.DESTROY_CONNECTION_LISTENER_PREFILL,
+                                         Integer.toHexString(System.identityHashCode(cl)),
+                                         !confidential && callstack != null ? toString(callstack) : ""));
+      }
+      else if (incrementer)
+      {
+         log.tracef("%s", new TraceEvent(poolName,
+                                         Integer.toHexString(System.identityHashCode(mcp)),
+                                         TraceEvent.DESTROY_CONNECTION_LISTENER_INCREMENTER,
                                          Integer.toHexString(System.identityHashCode(cl)),
                                          !confidential && callstack != null ? toString(callstack) : ""));
       }

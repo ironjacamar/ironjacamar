@@ -2286,7 +2286,9 @@ public class HTMLReport
                                                     TraceEvent.DESTROY_CONNECTION_LISTENER_IDLE,
                                                     TraceEvent.DESTROY_CONNECTION_LISTENER_INVALID,
                                                     TraceEvent.DESTROY_CONNECTION_LISTENER_FLUSH,
-                                                    TraceEvent.DESTROY_CONNECTION_LISTENER_ERROR);
+                                                    TraceEvent.DESTROY_CONNECTION_LISTENER_ERROR,
+                                                    TraceEvent.DESTROY_CONNECTION_LISTENER_PREFILL,
+                                                    TraceEvent.DESTROY_CONNECTION_LISTENER_INCREMENTER);
                         
                         generateConnectionListenerIndexHTML(identifier, dataEntry.getValue(),
                                                             currentCLStatus,
