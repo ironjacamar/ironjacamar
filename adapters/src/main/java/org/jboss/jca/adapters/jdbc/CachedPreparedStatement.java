@@ -22,18 +22,23 @@
 
 package org.jboss.jca.adapters.jdbc;
 
+import java.io.InputStream;
+import java.io.Reader;
 import java.math.BigDecimal;
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.Connection;
+import java.sql.NClob;
 import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
 import java.sql.Ref;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.RowId;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
+import java.sql.SQLXML;
 import java.util.Calendar;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -790,6 +795,190 @@ public abstract class CachedPreparedStatement extends JBossWrapper implements Pr
    public int getResultSetHoldability() throws SQLException
    {
       return ps.getResultSetHoldability();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setAsciiStream(int parameterIndex, InputStream x, long length) throws SQLException
+   {
+      ps.setAsciiStream(parameterIndex, x, length);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setAsciiStream(int parameterIndex, InputStream x) throws SQLException
+   {
+      ps.setAsciiStream(parameterIndex, x);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setBinaryStream(int parameterIndex, InputStream x, long length) throws SQLException
+   {
+      ps.setBinaryStream(parameterIndex, x, length);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setBinaryStream(int parameterIndex, InputStream x) throws SQLException
+   {
+      ps.setBinaryStream(parameterIndex, x);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setBlob(int parameterIndex, InputStream inputStream, long length) throws SQLException
+   {
+      ps.setBlob(parameterIndex, inputStream, length);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setBlob(int parameterIndex, InputStream inputStream) throws SQLException
+   {
+      ps.setBlob(parameterIndex, inputStream);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setCharacterStream(int parameterIndex, Reader reader, long length) throws SQLException
+   {
+      ps.setCharacterStream(parameterIndex, reader, length);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setCharacterStream(int parameterIndex, Reader reader) throws SQLException
+   {
+      ps.setCharacterStream(parameterIndex, reader);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setClob(int parameterIndex, Reader reader, long length) throws SQLException
+   {
+      ps.setClob(parameterIndex, reader, length);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setClob(int parameterIndex, Reader reader) throws SQLException
+   {
+      ps.setClob(parameterIndex, reader);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setNCharacterStream(int parameterIndex, Reader value, long length) throws SQLException
+   {
+      ps.setNCharacterStream(parameterIndex, value, length);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setNCharacterStream(int parameterIndex, Reader value) throws SQLException
+   {
+      ps.setNCharacterStream(parameterIndex, value);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setNClob(int parameterIndex, NClob value) throws SQLException
+   {
+      ps.setNClob(parameterIndex, value);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setNClob(int parameterIndex, Reader reader, long length) throws SQLException
+   {
+      ps.setNClob(parameterIndex, reader, length);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setNClob(int parameterIndex, Reader reader) throws SQLException
+   {
+      ps.setNClob(parameterIndex, reader);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setNString(int parameterIndex, String value) throws SQLException
+   {
+      ps.setNString(parameterIndex, value);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setRowId(int parameterIndex, RowId x) throws SQLException
+   {
+      ps.setRowId(parameterIndex, x);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setSQLXML(int parameterIndex, SQLXML xmlObject) throws SQLException
+   {
+      ps.setSQLXML(parameterIndex, xmlObject);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isClosed() throws SQLException
+   {
+      return ps.isClosed();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isPoolable() throws SQLException
+   {
+      return ps.isPoolable();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setPoolable(boolean poolable) throws SQLException
+   {
+      ps.setPoolable(poolable);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void closeOnCompletion() throws SQLException
+   {
+      ps.closeOnCompletion();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isCloseOnCompletion() throws SQLException
+   {
+      return ps.isCloseOnCompletion();
    }
 
    /**

@@ -22,13 +22,11 @@
 
 package org.jboss.jca.adapters.jdbc.jdk7;
 
-import org.jboss.jca.adapters.jdbc.Constants;
 import org.jboss.jca.adapters.jdbc.WrappedPreparedStatement;
 import org.jboss.jca.adapters.jdbc.WrappedResultSet;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
  * WrappedPreparedStatementJDK7.
@@ -61,61 +59,5 @@ public class WrappedPreparedStatementJDK7 extends WrappedPreparedStatement
    protected WrappedResultSet wrapResultSet(ResultSet resultSet, boolean spy, String jndiName)
    {
       return new WrappedResultSetJDK7(this, resultSet, spy, jndiName);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void closeOnCompletion() throws SQLException
-   {
-      lock();
-      try
-      {
-         PreparedStatement statement = getUnderlyingStatement();
-         try
-         {
-            if (spy)
-               spyLogger.debugf("%s [%s] closeOnCompletion()",
-                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT);
-
-            statement.closeOnCompletion();
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
-      }
-      finally
-      {
-         unlock();
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public boolean isCloseOnCompletion() throws SQLException
-   {
-      lock();
-      try
-      {
-         PreparedStatement statement = getUnderlyingStatement();
-         try
-         {
-            if (spy)
-               spyLogger.debugf("%s [%s] isCloseOnCompletion()",
-                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT);
-
-            return statement.isCloseOnCompletion();
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
-      }
-      finally
-      {
-         unlock();
-      }
    }
 }

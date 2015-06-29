@@ -23,18 +23,14 @@
 package org.jboss.jca.adapters.jdbc.jdk8;
 
 import org.jboss.jca.adapters.jdbc.BaseWrapperManagedConnection;
-import org.jboss.jca.adapters.jdbc.Constants;
 import org.jboss.jca.adapters.jdbc.WrappedCallableStatement;
 import org.jboss.jca.adapters.jdbc.WrappedConnection;
 import org.jboss.jca.adapters.jdbc.WrappedPreparedStatement;
 import org.jboss.jca.adapters.jdbc.WrappedStatement;
 
 import java.sql.CallableStatement;
-import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.concurrent.Executor;
 
 /**
  * WrappedConnectionJDK8.
@@ -92,148 +88,5 @@ public class WrappedConnectionJDK8 extends WrappedConnection
    protected WrappedCallableStatement wrapCallableStatement(CallableStatement statement, boolean spy, String jndiName)
    {
       return new WrappedCallableStatementJDK8(this, statement, spy, jndiName);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setSchema(String schema) throws SQLException
-   {
-      lock();
-      try
-      {
-         Connection c = getUnderlyingConnection();
-         try
-         {
-            if (spy)
-               spyLogger.debugf("%s [%s] setSchema(%s)",
-                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
-                                schema);
-
-            c.setSchema(schema);
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
-      }
-      finally
-      {
-         unlock();
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public String getSchema() throws SQLException
-   {
-      lock();
-      try
-      {
-         Connection c = getUnderlyingConnection();
-         try
-         {
-            if (spy)
-               spyLogger.debugf("%s [%s] getSchema()",
-                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
-
-            return c.getSchema();
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
-      }
-      finally
-      {
-         unlock();
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void abort(Executor executor) throws SQLException
-   {
-      lock();
-      try
-      {
-         Connection c = getUnderlyingConnection();
-         try
-         {
-            if (spy)
-               spyLogger.debugf("%s [%s] abort(%s)",
-                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
-                                executor);
-
-            c.abort(executor);
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
-      }
-      finally
-      {
-         unlock();
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException
-   {
-      lock();
-      try
-      {
-         Connection c = getUnderlyingConnection();
-         try
-         {
-            if (spy)
-               spyLogger.debugf("%s [%s] setNetworkTimeout(%s, %s)",
-                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
-                                executor, milliseconds);
-
-            c.setNetworkTimeout(executor, milliseconds);
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
-      }
-      finally
-      {
-         unlock();
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public int getNetworkTimeout() throws SQLException
-   {
-      lock();
-      try
-      {
-         Connection c = getUnderlyingConnection();
-         try
-         {
-            if (spy)
-               spyLogger.debugf("%s [%s] getNetworkTimeout()",
-                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
-
-            return c.getNetworkTimeout();
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
-      }
-      finally
-      {
-         unlock();
-      }
    }
 }

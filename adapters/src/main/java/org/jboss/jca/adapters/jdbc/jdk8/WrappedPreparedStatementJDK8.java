@@ -67,62 +67,6 @@ public class WrappedPreparedStatementJDK8 extends WrappedPreparedStatement
    /**
     * {@inheritDoc}
     */
-   public void closeOnCompletion() throws SQLException
-   {
-      lock();
-      try
-      {
-         PreparedStatement statement = getUnderlyingStatement();
-         try
-         {
-            if (spy)
-               spyLogger.debugf("%s [%s] closeOnCompletion()",
-                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT);
-
-            statement.closeOnCompletion();
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
-      }
-      finally
-      {
-         unlock();
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public boolean isCloseOnCompletion() throws SQLException
-   {
-      lock();
-      try
-      {
-         PreparedStatement statement = getUnderlyingStatement();
-         try
-         {
-            if (spy)
-               spyLogger.debugf("%s [%s] isCloseOnCompletion()",
-                                jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT);
-
-            return statement.isCloseOnCompletion();
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
-      }
-      finally
-      {
-         unlock();
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
    public void setObject(int parameterIndex,
                          Object x,
                          SQLType targetSqlType,

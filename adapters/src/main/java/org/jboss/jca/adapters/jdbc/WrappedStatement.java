@@ -1228,6 +1228,63 @@ public abstract class WrappedStatement extends JBossWrapper implements Statement
       }
    }
 
+
+   /**
+    * {@inheritDoc}
+    */
+   public void closeOnCompletion() throws SQLException
+   {
+      lock();
+      try
+      {
+         Statement statement = getUnderlyingStatement();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] closeOnCompletion()",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_STATEMENT);
+
+            statement.closeOnCompletion();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
+      }
+      finally
+      {
+         unlock();
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isCloseOnCompletion() throws SQLException
+   {
+      lock();
+      try
+      {
+         Statement statement = getUnderlyingStatement();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] isCloseOnCompletion()",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_STATEMENT);
+
+            return statement.isCloseOnCompletion();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
+      }
+      finally
+      {
+         unlock();
+      }
+   }
+
    /**
     * {@inheritDoc}
     */

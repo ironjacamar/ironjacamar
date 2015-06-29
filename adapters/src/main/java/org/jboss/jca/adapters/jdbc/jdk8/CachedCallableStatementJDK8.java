@@ -24,15 +24,9 @@ package org.jboss.jca.adapters.jdbc.jdk8;
 
 import org.jboss.jca.adapters.jdbc.CachedCallableStatement;
 
-import java.io.InputStream;
-import java.io.Reader;
-import java.sql.Blob;
 import java.sql.CallableStatement;
-import java.sql.Clob;
-import java.sql.NClob;
-import java.sql.RowId;
 import java.sql.SQLException;
-import java.sql.SQLXML;
+import java.sql.SQLType;
 
 /**
  * CachedCallableStatementJDK7.
@@ -57,456 +51,64 @@ public class CachedCallableStatementJDK8 extends CachedCallableStatement
    /**
     * {@inheritDoc}
     */
-   public void setAsciiStream(int parameterIndex, InputStream x, long length) throws SQLException
+   public void setObject(String parameterName, Object x, SQLType targetSqlType, int scaleOrLength) throws SQLException
    {
-      getWrappedObject().setAsciiStream(parameterIndex, x, length);
+      getWrappedObject().setObject(parameterName, x, targetSqlType, scaleOrLength);
    }
 
    /**
     * {@inheritDoc}
     */
-   public void setAsciiStream(int parameterIndex, InputStream x) throws SQLException
+   public void setObject(String parameterName, Object x, SQLType targetSqlType) throws SQLException
    {
-      getWrappedObject().setAsciiStream(parameterIndex, x);
+      getWrappedObject().setObject(parameterName, x, targetSqlType);
    }
 
    /**
     * {@inheritDoc}
     */
-   public void setBinaryStream(int parameterIndex, InputStream x, long length) throws SQLException
+   public void registerOutParameter(int parameterIndex, SQLType sqlType) throws SQLException
    {
-      getWrappedObject().setBinaryStream(parameterIndex, x, length);
+      getWrappedObject().registerOutParameter(parameterIndex, sqlType);
    }
 
    /**
     * {@inheritDoc}
     */
-   public void setBinaryStream(int parameterIndex, InputStream x) throws SQLException
+   public void registerOutParameter(int parameterIndex, SQLType sqlType, int scale) throws SQLException
    {
-      getWrappedObject().setBinaryStream(parameterIndex, x);
+      getWrappedObject().registerOutParameter(parameterIndex, sqlType, scale);
    }
 
    /**
     * {@inheritDoc}
     */
-   public void setBlob(int parameterIndex, InputStream inputStream, long length) throws SQLException
+   public void registerOutParameter(int parameterIndex, SQLType sqlType, String typeName) throws SQLException
    {
-      getWrappedObject().setBlob(parameterIndex, inputStream, length);
+      getWrappedObject().registerOutParameter(parameterIndex, sqlType, typeName);
    }
 
    /**
     * {@inheritDoc}
     */
-   public void setBlob(int parameterIndex, InputStream inputStream) throws SQLException
+   public void registerOutParameter(String parameterName, SQLType sqlType) throws SQLException
    {
-      getWrappedObject().setBlob(parameterIndex, inputStream);
+      getWrappedObject().registerOutParameter(parameterName, sqlType);
    }
 
    /**
     * {@inheritDoc}
     */
-   public void setCharacterStream(int parameterIndex, Reader reader, long length) throws SQLException
+   public void registerOutParameter(String parameterName, SQLType sqlType, int scale) throws SQLException
    {
-      getWrappedObject().setCharacterStream(parameterIndex, reader, length);
+      getWrappedObject().registerOutParameter(parameterName, sqlType, scale);
    }
 
    /**
     * {@inheritDoc}
     */
-   public void setCharacterStream(int parameterIndex, Reader reader) throws SQLException
+   public void registerOutParameter(String parameterName, SQLType sqlType, String typeName) throws SQLException
    {
-      getWrappedObject().setCharacterStream(parameterIndex, reader);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setClob(int parameterIndex, Reader reader, long length) throws SQLException
-   {
-      getWrappedObject().setClob(parameterIndex, reader, length);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setClob(int parameterIndex, Reader reader) throws SQLException
-   {
-      getWrappedObject().setClob(parameterIndex, reader);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setNCharacterStream(int parameterIndex, Reader value, long length) throws SQLException
-   {
-      getWrappedObject().setNCharacterStream(parameterIndex, value, length);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setNCharacterStream(int parameterIndex, Reader value) throws SQLException
-   {
-      getWrappedObject().setNCharacterStream(parameterIndex, value);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setNClob(int parameterIndex, NClob value) throws SQLException
-   {
-      getWrappedObject().setNClob(parameterIndex, value);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setNClob(int parameterIndex, Reader reader, long length) throws SQLException
-   {
-      getWrappedObject().setNClob(parameterIndex, reader, length);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setNClob(int parameterIndex, Reader reader) throws SQLException
-   {
-      getWrappedObject().setNClob(parameterIndex, reader);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setNString(int parameterIndex, String value) throws SQLException
-   {
-      getWrappedObject().setNString(parameterIndex, value);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setRowId(int parameterIndex, RowId x) throws SQLException
-   {
-      getWrappedObject().setRowId(parameterIndex, x);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setSQLXML(int parameterIndex, SQLXML xmlObject) throws SQLException
-   {
-      getWrappedObject().setSQLXML(parameterIndex, xmlObject);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public boolean isClosed() throws SQLException
-   {
-      return getWrappedObject().isClosed();
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public boolean isPoolable() throws SQLException
-   {
-      return getWrappedObject().isPoolable();
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setPoolable(boolean poolable) throws SQLException
-   {
-      getWrappedObject().setPoolable(poolable);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public Reader getCharacterStream(int parameterIndex) throws SQLException
-   {
-      return getWrappedObject().getCharacterStream(parameterIndex);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public Reader getCharacterStream(String parameterName) throws SQLException
-   {
-      return getWrappedObject().getCharacterStream(parameterName);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public Reader getNCharacterStream(int parameterIndex) throws SQLException
-   {
-      return getWrappedObject().getNCharacterStream(parameterIndex);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public Reader getNCharacterStream(String parameterName) throws SQLException
-   {
-      return getWrappedObject().getNCharacterStream(parameterName);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public NClob getNClob(int parameterIndex) throws SQLException
-   {
-      return getWrappedObject().getNClob(parameterIndex);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public NClob getNClob(String parameterName) throws SQLException
-   {
-      return getWrappedObject().getNClob(parameterName);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public String getNString(int parameterIndex) throws SQLException
-   {
-      return getWrappedObject().getNString(parameterIndex);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public String getNString(String parameterName) throws SQLException
-   {
-      return getWrappedObject().getNString(parameterName);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public RowId getRowId(int parameterIndex) throws SQLException
-   {
-      return getWrappedObject().getRowId(parameterIndex);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public RowId getRowId(String parameterName) throws SQLException
-   {
-      return getWrappedObject().getRowId(parameterName);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public SQLXML getSQLXML(int parameterIndex) throws SQLException
-   {
-      return getWrappedObject().getSQLXML(parameterIndex);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public SQLXML getSQLXML(String parameterName) throws SQLException
-   {
-      return getWrappedObject().getSQLXML(parameterName);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setAsciiStream(String parameterName, InputStream x, long length) throws SQLException
-   {
-      getWrappedObject().setAsciiStream(parameterName, x, length);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setAsciiStream(String parameterName, InputStream x) throws SQLException
-   {
-      getWrappedObject().setAsciiStream(parameterName, x);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setBinaryStream(String parameterName, InputStream x, long length) throws SQLException
-   {
-      getWrappedObject().setBinaryStream(parameterName, x, length);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setBinaryStream(String parameterName, InputStream x) throws SQLException
-   {
-      getWrappedObject().setBinaryStream(parameterName, x);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setBlob(String parameterName, Blob x) throws SQLException
-   {
-      getWrappedObject().setBlob(parameterName, x);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setBlob(String parameterName, InputStream inputStream, long length) throws SQLException
-   {
-      getWrappedObject().setBlob(parameterName, inputStream, length);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setBlob(String parameterName, InputStream inputStream) throws SQLException
-   {
-      getWrappedObject().setBlob(parameterName, inputStream);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setCharacterStream(String parameterName, Reader reader, long length) throws SQLException
-   {
-      getWrappedObject().setCharacterStream(parameterName, reader, length);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setCharacterStream(String parameterName, Reader reader) throws SQLException
-   {
-      getWrappedObject().setCharacterStream(parameterName, reader);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setClob(String parameterName, Clob x) throws SQLException
-   {
-      getWrappedObject().setClob(parameterName, x);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setClob(String parameterName, Reader reader, long length) throws SQLException
-   {
-      getWrappedObject().setClob(parameterName, reader, length);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setClob(String parameterName, Reader reader) throws SQLException
-   {
-      getWrappedObject().setClob(parameterName, reader);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setNCharacterStream(String parameterName, Reader value, long length) throws SQLException
-   {
-      getWrappedObject().setNCharacterStream(parameterName, value, length);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setNCharacterStream(String parameterName, Reader value) throws SQLException
-   {
-      getWrappedObject().setNCharacterStream(parameterName, value);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setNClob(String parameterName, NClob value) throws SQLException
-   {
-      getWrappedObject().setNClob(parameterName, value);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setNClob(String parameterName, Reader reader, long length) throws SQLException
-   {
-      getWrappedObject().setNClob(parameterName, reader, length);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setNClob(String parameterName, Reader reader) throws SQLException
-   {
-      getWrappedObject().setNClob(parameterName, reader);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setNString(String parameterName, String value) throws SQLException
-   {
-      getWrappedObject().setNString(parameterName, value);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setRowId(String parameterName, RowId x) throws SQLException
-   {
-      getWrappedObject().setRowId(parameterName, x);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void setSQLXML(String parameterName, SQLXML xmlObject) throws SQLException
-   {
-      getWrappedObject().setSQLXML(parameterName, xmlObject);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void closeOnCompletion() throws SQLException
-   {
-      getWrappedObject().closeOnCompletion();
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public boolean isCloseOnCompletion() throws SQLException
-   {
-      return getWrappedObject().isCloseOnCompletion();
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public <T> T getObject(int parameterIndex, Class<T> type) throws SQLException
-   {
-      return getWrappedObject().getObject(parameterIndex, type);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public <T> T getObject(String parameterName, Class<T> type) throws SQLException
-   {
-      return getWrappedObject().getObject(parameterName, type);
+      getWrappedObject().registerOutParameter(parameterName, sqlType, typeName);
    }
 }

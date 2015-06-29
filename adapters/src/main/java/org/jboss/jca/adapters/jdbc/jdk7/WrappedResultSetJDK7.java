@@ -22,12 +22,10 @@
 
 package org.jboss.jca.adapters.jdbc.jdk7;
 
-import org.jboss.jca.adapters.jdbc.Constants;
 import org.jboss.jca.adapters.jdbc.WrappedResultSet;
 import org.jboss.jca.adapters.jdbc.WrappedStatement;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
  * WrappedResultSetJDK7.
@@ -49,47 +47,5 @@ public class WrappedResultSetJDK7 extends WrappedResultSet
                                boolean spy, String jndiName)
    {
       super(statement, resultSet, spy, jndiName);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public <T> T getObject(int parameterIndex, Class<T> type) throws SQLException
-   {
-      ResultSet resultSet = getUnderlyingResultSet();
-      try
-      {
-         if (spy)
-            spyLogger.debugf("%s [%s] getObject(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             parameterIndex, type);
-
-         return resultSet.getObject(parameterIndex, type);
-      }
-      catch (Throwable t)
-      {
-         throw checkException(t);
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public <T> T getObject(String parameterName, Class<T> type) throws SQLException
-   {
-      ResultSet resultSet = getUnderlyingResultSet();
-      try
-      {
-         if (spy)
-            spyLogger.debugf("%s [%s] getObject(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             parameterName, type);
-
-         return resultSet.getObject(parameterName, type);
-      }
-      catch (Throwable t)
-      {
-         throw checkException(t);
-      }
    }
 }

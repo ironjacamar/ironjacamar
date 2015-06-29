@@ -55,48 +55,6 @@ public class WrappedResultSetJDK8 extends WrappedResultSet
    /**
     * {@inheritDoc}
     */
-   public <T> T getObject(int parameterIndex, Class<T> type) throws SQLException
-   {
-      ResultSet resultSet = getUnderlyingResultSet();
-      try
-      {
-         if (spy)
-            spyLogger.debugf("%s [%s] getObject(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             parameterIndex, type);
-
-         return resultSet.getObject(parameterIndex, type);
-      }
-      catch (Throwable t)
-      {
-         throw checkException(t);
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public <T> T getObject(String parameterName, Class<T> type) throws SQLException
-   {
-      ResultSet resultSet = getUnderlyingResultSet();
-      try
-      {
-         if (spy)
-            spyLogger.debugf("%s [%s] getObject(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             parameterName, type);
-
-         return resultSet.getObject(parameterName, type);
-      }
-      catch (Throwable t)
-      {
-         throw checkException(t);
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
    public void updateObject(int columnIndex,
                             Object x,
                             SQLType targetSqlType,

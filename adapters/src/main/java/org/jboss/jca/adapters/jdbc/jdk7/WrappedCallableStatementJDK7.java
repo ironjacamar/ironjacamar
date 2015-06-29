@@ -22,13 +22,11 @@
 
 package org.jboss.jca.adapters.jdbc.jdk7;
 
-import org.jboss.jca.adapters.jdbc.Constants;
 import org.jboss.jca.adapters.jdbc.WrappedCallableStatement;
 import org.jboss.jca.adapters.jdbc.WrappedResultSet;
 
 import java.sql.CallableStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 
 /**
  * WrappedCallableStatementJDK7.
@@ -62,87 +60,5 @@ public class WrappedCallableStatementJDK7 extends WrappedCallableStatement
    protected WrappedResultSet wrapResultSet(ResultSet resultSet, boolean spy, String jndiName)
    {
       return new WrappedResultSetJDK7(this, resultSet, spy, jndiName);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void closeOnCompletion() throws SQLException
-   {
-      CallableStatement statement = getUnderlyingStatement();
-      try
-      {
-         if (spy)
-            spyLogger.debugf("%s [%s] closeOnCompletion()",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_CALLABLE_STATEMENT);
-
-         statement.closeOnCompletion();
-      }
-      catch (Throwable t)
-      {
-         throw checkException(t);
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public boolean isCloseOnCompletion() throws SQLException
-   {
-      CallableStatement statement = getUnderlyingStatement();
-      try
-      {
-         if (spy)
-            spyLogger.debugf("%s [%s] isCloseOnCompletion()",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_CALLABLE_STATEMENT);
-
-         return statement.isCloseOnCompletion();
-      }
-      catch (Throwable t)
-      {
-         throw checkException(t);
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public <T> T getObject(int parameterIndex, Class<T> type) throws SQLException
-   {
-      CallableStatement statement = getUnderlyingStatement();
-      try
-      {
-         if (spy)
-            spyLogger.debugf("%s [%s] getObject(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_CALLABLE_STATEMENT,
-                             parameterIndex, type);
-
-         return statement.getObject(parameterIndex, type);
-      }
-      catch (Throwable t)
-      {
-         throw checkException(t);
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public <T> T getObject(String parameterName, Class<T> type) throws SQLException
-   {
-      CallableStatement statement = getUnderlyingStatement();
-      try
-      {
-         if (spy)
-            spyLogger.debugf("%s [%s] getObject(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_CALLABLE_STATEMENT,
-                             parameterName, type);
-
-         return statement.getObject(parameterName, type);
-      }
-      catch (Throwable t)
-      {
-         throw checkException(t);
-      }
    }
 }

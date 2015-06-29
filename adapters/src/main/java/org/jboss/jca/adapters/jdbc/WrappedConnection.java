@@ -46,6 +46,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Executor;
 
 import javax.resource.ResourceException;
 import javax.transaction.xa.XAResource;
@@ -1558,6 +1559,150 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          SQLClientInfoException t = new SQLClientInfoException();
          t.initCause(e);
          throw t;
+      }
+      finally
+      {
+         unlock();
+      }
+   }
+
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setSchema(String schema) throws SQLException
+   {
+      lock();
+      try
+      {
+         Connection c = getUnderlyingConnection();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] setSchema(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
+                                schema);
+
+            c.setSchema(schema);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
+      }
+      finally
+      {
+         unlock();
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String getSchema() throws SQLException
+   {
+      lock();
+      try
+      {
+         Connection c = getUnderlyingConnection();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getSchema()",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
+
+            return c.getSchema();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
+      }
+      finally
+      {
+         unlock();
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void abort(Executor executor) throws SQLException
+   {
+      lock();
+      try
+      {
+         Connection c = getUnderlyingConnection();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] abort(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
+                                executor);
+
+            c.abort(executor);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
+      }
+      finally
+      {
+         unlock();
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException
+   {
+      lock();
+      try
+      {
+         Connection c = getUnderlyingConnection();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] setNetworkTimeout(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
+                                executor, milliseconds);
+
+            c.setNetworkTimeout(executor, milliseconds);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
+      }
+      finally
+      {
+         unlock();
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public int getNetworkTimeout() throws SQLException
+   {
+      lock();
+      try
+      {
+         Connection c = getUnderlyingConnection();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getNetworkTimeout()",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
+
+            return c.getNetworkTimeout();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
       finally
       {
