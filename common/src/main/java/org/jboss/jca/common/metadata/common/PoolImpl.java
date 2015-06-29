@@ -167,10 +167,13 @@ public class PoolImpl implements Pool
     */
    public void validate() throws ValidateException
    {
-      if (this.maxPoolSize != null && this.maxPoolSize < 0)
+      if (this.maxPoolSize != null && this.maxPoolSize.intValue() < 0)
          throw new ValidateException(bundle.invalidNegative(Tag.MAX_POOL_SIZE.getLocalName()));
 
-      if (this.minPoolSize != null && this.minPoolSize < 0)
+      if (this.maxPoolSize != null && this.maxPoolSize.intValue() == 0)
+         throw new ValidateException(bundle.invalidZero(Tag.MAX_POOL_SIZE.getLocalName()));
+
+      if (this.minPoolSize != null && this.minPoolSize.intValue() < 0)
          throw new ValidateException(bundle.invalidNegative(Tag.MIN_POOL_SIZE.getLocalName()));
 
       if (this.minPoolSize != null && this.maxPoolSize != null)

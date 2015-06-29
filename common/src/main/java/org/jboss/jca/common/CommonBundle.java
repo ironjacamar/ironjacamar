@@ -248,4 +248,12 @@ public interface CommonBundle
     */
    @Message(id = 10077, value = "Wrong annotation type: %s")
    public String wrongAnnotationType(Object annotation);
+
+   /**
+    * Invalid zero
+    * @param tag The tag
+    * @return The value
+    */
+   @Message(id = 10078, value = "Invalid zero value for %s")
+   public String invalidZero(String tag);
 }

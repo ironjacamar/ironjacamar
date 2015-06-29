@@ -892,6 +892,11 @@
             <entry><code>EXCEPTION</code></entry>
             <entry>Wrong annotation type</entry>
           </row>
+          <row>
+            <entry>10078</entry>
+            <entry><code>EXCEPTION</code></entry>
+            <entry>Invalid zero value</entry>
+          </row>
         </tbody>
       </tgroup>
     </table>
