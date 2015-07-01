@@ -1222,7 +1222,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       lock();
       try
       {
-         Connection c = getUnderlyingConnection();
+         checkTransaction();
          try
          {
             if (spy)
@@ -1230,7 +1230,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
                                 jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                 typeName, Arrays.toString(elements));
 
-            return c.createArrayOf(typeName, elements);
+            return mc.getRealConnection().createArrayOf(typeName, elements);
          }
          catch (Throwable t)
          {
@@ -1251,14 +1251,14 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       lock();
       try
       {
-         Connection c = getUnderlyingConnection();
+         checkTransaction();
          try
          {
             if (spy)
                spyLogger.debugf("%s [%s] createBlob()",
                                 jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
 
-            return c.createBlob();
+            return mc.getRealConnection().createBlob();
          }
          catch (Throwable t)
          {
@@ -1279,14 +1279,14 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       lock();
       try
       {
-         Connection c = getUnderlyingConnection();
+         checkTransaction();
          try
          {
             if (spy)
                spyLogger.debugf("%s [%s] createClob()",
                                 jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
 
-            return c.createClob();
+            return mc.getRealConnection().createClob();
          }
          catch (Throwable t)
          {
@@ -1307,14 +1307,14 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       lock();
       try
       {
-         Connection c = getUnderlyingConnection();
+         checkTransaction();
          try
          {
             if (spy)
                spyLogger.debugf("%s [%s] createNClob()",
                                 jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
 
-            return c.createNClob();
+            return mc.getRealConnection().createNClob();
          }
          catch (Throwable t)
          {
@@ -1335,14 +1335,14 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       lock();
       try
       {
-         Connection c = getUnderlyingConnection();
+         checkTransaction();
          try
          {
             if (spy)
                spyLogger.debugf("%s [%s] createSQLXML()",
                                 jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
 
-            return c.createSQLXML();
+            return mc.getRealConnection().createSQLXML();
          }
          catch (Throwable t)
          {
@@ -1363,7 +1363,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       lock();
       try
       {
-         Connection c = getUnderlyingConnection();
+         checkTransaction();
          try
          {
             if (spy)
@@ -1371,7 +1371,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
                                 jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                 typeName, Arrays.toString(attributes));
 
-            return c.createStruct(typeName, attributes);
+            return mc.getRealConnection().createStruct(typeName, attributes);
          }
          catch (Throwable t)
          {
@@ -1392,14 +1392,14 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       lock();
       try
       {
-         Connection c = getUnderlyingConnection();
+         checkTransaction();
          try
          {
             if (spy)
                spyLogger.debugf("%s [%s] getClientInfo()",
                                 jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
 
-            return c.getClientInfo();
+            return mc.getRealConnection().getClientInfo();
          }
          catch (Throwable t)
          {
@@ -1420,7 +1420,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       lock();
       try
       {
-         Connection c = getUnderlyingConnection();
+         checkTransaction();
          try
          {
             if (spy)
@@ -1428,7 +1428,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
                                 jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                 name);
 
-            return c.getClientInfo(name);
+            return mc.getRealConnection().getClientInfo(name);
          }
          catch (Throwable t)
          {
@@ -1449,7 +1449,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       lock();
       try
       {
-         Connection c = getUnderlyingConnection();
+         checkStatus();
          try
          {
             if (spy)
@@ -1457,7 +1457,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
                                 jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                 timeout);
 
-            return c.isValid(timeout);
+            return mc.getRealConnection().isValid(timeout);
          }
          catch (Throwable t)
          {
@@ -1480,7 +1480,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          lock();
          try
          {
-            Connection c = getUnderlyingConnection();
+            checkTransaction();
             try
             {
                if (spy)
@@ -1488,33 +1488,37 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
                                    jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                    properties);
 
-               c.setClientInfo(properties);
+               mc.getRealConnection().setClientInfo(properties);
+            }
+            catch (SQLClientInfoException e)
+            {
+               throw e;
+            }
+            catch (SQLException e)
+            {
+               SQLClientInfoException t = new SQLClientInfoException();
+               t.initCause(e);
+               throw t;
             }
             catch (Throwable t)
             {
                throw checkException(t);
             }
          }
-         catch (SQLClientInfoException e)
+         finally
          {
-            throw e;
+            unlock();
          }
-         catch (SQLException e)
-         {
-            SQLClientInfoException t = new SQLClientInfoException();
-            t.initCause(e);
-            throw t;
-         }
+      }
+      catch (SQLClientInfoException e)
+      {
+         throw e;
       }
       catch (SQLException e)
       {
          SQLClientInfoException t = new SQLClientInfoException();
          t.initCause(e);
          throw t;
-      }
-      finally
-      {
-         unlock();
       }
    }
 
@@ -1528,7 +1532,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          lock();
          try
          {
-            Connection c = getUnderlyingConnection();
+            checkTransaction();
             try
             {
                if (spy)
@@ -1536,33 +1540,37 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
                                    jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                    name, value);
 
-               c.setClientInfo(name, value);
+               mc.getRealConnection().setClientInfo(name, value);
+            }
+            catch (SQLClientInfoException e)
+            {
+               throw e;
+            }
+            catch (SQLException e)
+            {
+               SQLClientInfoException t = new SQLClientInfoException();
+               t.initCause(e);
+               throw t;
             }
             catch (Throwable t)
             {
                throw checkException(t);
             }
          }
-         catch (SQLClientInfoException e)
+         finally
          {
-            throw e;
+            unlock();
          }
-         catch (SQLException e)
-         {
-            SQLClientInfoException t = new SQLClientInfoException();
-            t.initCause(e);
-            throw t;
-         }
+      }
+      catch (SQLClientInfoException e)
+      {
+         throw e;
       }
       catch (SQLException e)
       {
          SQLClientInfoException t = new SQLClientInfoException();
          t.initCause(e);
          throw t;
-      }
-      finally
-      {
-         unlock();
       }
    }
 
@@ -1575,7 +1583,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       lock();
       try
       {
-         Connection c = getUnderlyingConnection();
+         checkTransaction();
          try
          {
             if (spy)
@@ -1583,7 +1591,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
                                 jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                 schema);
 
-            c.setSchema(schema);
+            mc.getRealConnection().setSchema(schema);
          }
          catch (Throwable t)
          {
@@ -1604,14 +1612,14 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       lock();
       try
       {
-         Connection c = getUnderlyingConnection();
+         checkTransaction();
          try
          {
             if (spy)
                spyLogger.debugf("%s [%s] getSchema()",
                                 jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
 
-            return c.getSchema();
+            return mc.getRealConnection().getSchema();
          }
          catch (Throwable t)
          {
@@ -1632,7 +1640,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       lock();
       try
       {
-         Connection c = getUnderlyingConnection();
+         checkTransaction();
          try
          {
             if (spy)
@@ -1640,7 +1648,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
                                 jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                 executor);
 
-            c.abort(executor);
+            mc.getRealConnection().abort(executor);
          }
          catch (Throwable t)
          {
@@ -1661,7 +1669,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       lock();
       try
       {
-         Connection c = getUnderlyingConnection();
+         checkTransaction();
          try
          {
             if (spy)
@@ -1669,7 +1677,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
                                 jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                 executor, milliseconds);
 
-            c.setNetworkTimeout(executor, milliseconds);
+            mc.getRealConnection().setNetworkTimeout(executor, milliseconds);
          }
          catch (Throwable t)
          {
@@ -1690,14 +1698,14 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       lock();
       try
       {
-         Connection c = getUnderlyingConnection();
+         checkTransaction();
          try
          {
             if (spy)
                spyLogger.debugf("%s [%s] getNetworkTimeout()",
                                 jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
 
-            return c.getNetworkTimeout();
+            return mc.getRealConnection().getNetworkTimeout();
          }
          catch (Throwable t)
          {
@@ -1756,7 +1764,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    @Override
    protected Connection getWrappedObject() throws SQLException
    {
-      return getUnderlyingConnection();
+      return mc.getRealConnection();
    }
 
    /**

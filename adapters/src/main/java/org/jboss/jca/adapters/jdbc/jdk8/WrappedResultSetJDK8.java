@@ -61,19 +61,27 @@ public class WrappedResultSetJDK8 extends WrappedResultSet
                             int scaleOrLength)
       throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateObject(%d, %s, %s, %d)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, x, targetSqlType, scaleOrLength);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateObject(%d, %s, %s, %d)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, x, targetSqlType, scaleOrLength);
 
-         resultSet.updateObject(columnIndex, x, targetSqlType, scaleOrLength);
+            getWrappedObject().updateObject(columnIndex, x, targetSqlType, scaleOrLength);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -86,19 +94,27 @@ public class WrappedResultSetJDK8 extends WrappedResultSet
                             int scaleOrLength)
       throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateObject(%s, %s, %s, %d)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnLabel, x, targetSqlType, scaleOrLength);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateObject(%s, %s, %s, %d)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnLabel, x, targetSqlType, scaleOrLength);
 
-         resultSet.updateObject(columnLabel, x, targetSqlType, scaleOrLength);
+            getWrappedObject().updateObject(columnLabel, x, targetSqlType, scaleOrLength);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -110,19 +126,27 @@ public class WrappedResultSetJDK8 extends WrappedResultSet
                             SQLType targetSqlType)
       throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateObject(%d, %s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, x, targetSqlType);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateObject(%d, %s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, x, targetSqlType);
 
-         resultSet.updateObject(columnIndex, x, targetSqlType);
+            getWrappedObject().updateObject(columnIndex, x, targetSqlType);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -134,19 +158,27 @@ public class WrappedResultSetJDK8 extends WrappedResultSet
                             SQLType targetSqlType)
       throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateObject(%s, %s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnLabel, x, targetSqlType);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateObject(%s, %s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnLabel, x, targetSqlType);
 
-         resultSet.updateObject(columnLabel, x, targetSqlType);
+            getWrappedObject().updateObject(columnLabel, x, targetSqlType);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 }

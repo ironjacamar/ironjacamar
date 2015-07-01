@@ -68,6 +68,14 @@ public abstract class CachedCallableStatement extends CachedPreparedStatement
    /**
     * {@inheritDoc}
     */
+   public CallableStatement getUnderlyingCallableStatement()
+   {
+      return cs;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public boolean wasNull() throws SQLException
    {
       return cs.wasNull();

@@ -53,7 +53,6 @@ import org.jboss.logging.Logger;
  * 
  * @author <a href="mailto:abrock@redhat.com">Adrian Brock</a>
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
- * @version $Revision: 74335 $
  */
 public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
 {
@@ -125,7 +124,7 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public ResultSet getUnderlyingResultSet() throws SQLException
    {
-      statement.lock();
+      lock();
       try
       {
          checkTransaction();
@@ -133,7 +132,7 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         statement.unlock();
+         unlock();
       }
    }
 
@@ -142,19 +141,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean absolute(int row) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] absolute(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             row);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] absolute(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                row);
 
-         return resultSet.absolute(row);
+            return resultSet.absolute(row);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -163,18 +170,26 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void afterLast() throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] afterLast()",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] afterLast()",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
-         resultSet.afterLast();
+            resultSet.afterLast();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -183,18 +198,26 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void beforeFirst() throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] beforeFirst()",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] beforeFirst()",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
-         resultSet.beforeFirst();
+            resultSet.beforeFirst();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -203,18 +226,26 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void cancelRowUpdates() throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] cancelRowUpdates()",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
-
-         resultSet.cancelRowUpdates();
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] cancelRowUpdates()",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
+            
+            resultSet.cancelRowUpdates();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -223,18 +254,26 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void clearWarnings() throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] clearWarnings()",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] clearWarnings()",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
-         resultSet.clearWarnings();
+            resultSet.clearWarnings();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -243,16 +282,24 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void close() throws SQLException
    {
-      if (closed.get())
-         return;
+      lock();
+      try
+      {
+         if (closed.get())
+            return;
  
-      if (spy)
-         spyLogger.debugf("%s [%s] close()",
-                          jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
+         if (spy)
+            spyLogger.debugf("%s [%s] close()",
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
-      closed.set(true);
-      statement.unregisterResultSet(this);
-      internalClose();
+         closed.set(true);
+         statement.unregisterResultSet(this);
+         internalClose();
+      }
+      finally
+      {
+         unlock();
+      }
    }
 
    /**
@@ -260,7 +307,7 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void deleteRow() throws SQLException
    {
-      statement.lock();
+      lock();
       try
       {
          checkTransaction();
@@ -279,7 +326,7 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         statement.unlock();
+         unlock();
       }
    }
 
@@ -288,19 +335,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public int findColumn(String columnName) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] findColumn(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] findColumn(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName);
 
-         return resultSet.findColumn(columnName);
+            return resultSet.findColumn(columnName);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -309,18 +364,26 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean first() throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] first()",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] first()",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
-         return resultSet.first();
+            return resultSet.first();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -329,19 +392,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Array getArray(int i) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getArray(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             i);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getArray(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                i);
 
-         return resultSet.getArray(i);
+            return resultSet.getArray(i);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -350,19 +421,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Array getArray(String colName) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getArray(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             colName);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getArray(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                colName);
 
-         return resultSet.getArray(colName);
+            return resultSet.getArray(colName);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -371,19 +450,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public InputStream getAsciiStream(int columnIndex) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getAsciiStream(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getAsciiStream(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex);
 
-         return resultSet.getAsciiStream(columnIndex);
+            return resultSet.getAsciiStream(columnIndex);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -392,19 +479,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public InputStream getAsciiStream(String columnName) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getAsciiStream(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getAsciiStream(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName);
 
-         return resultSet.getAsciiStream(columnName);
+            return resultSet.getAsciiStream(columnName);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -413,19 +508,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public BigDecimal getBigDecimal(int columnIndex) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getBigDecimal(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getBigDecimal(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex);
 
-         return resultSet.getBigDecimal(columnIndex);
+            return resultSet.getBigDecimal(columnIndex);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -435,19 +538,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
    @Deprecated
    public BigDecimal getBigDecimal(int columnIndex, int scale) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getBigDecimal(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, scale);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getBigDecimal(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, scale);
 
-         return resultSet.getBigDecimal(columnIndex, scale);
+            return resultSet.getBigDecimal(columnIndex, scale);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -456,19 +567,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public BigDecimal getBigDecimal(String columnName) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getBigDecimal(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getBigDecimal(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName);
 
-         return resultSet.getBigDecimal(columnName);
+            return resultSet.getBigDecimal(columnName);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -478,19 +597,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
    @Deprecated
    public BigDecimal getBigDecimal(String columnName, int scale) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getBigDecimal(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName, scale);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getBigDecimal(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName, scale);
 
-         return resultSet.getBigDecimal(columnName, scale);
+            return resultSet.getBigDecimal(columnName, scale);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -499,19 +626,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public InputStream getBinaryStream(int columnIndex) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getBinaryStream(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getBinaryStream(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex);
 
-         return resultSet.getBinaryStream(columnIndex);
+            return resultSet.getBinaryStream(columnIndex);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -520,19 +655,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public InputStream getBinaryStream(String columnName) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getBinaryStream(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getBinaryStream(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName);
 
-         return resultSet.getBinaryStream(columnName);
+            return resultSet.getBinaryStream(columnName);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -541,19 +684,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Blob getBlob(int i) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getBlob(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             i);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getBlob(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                i);
 
-         return resultSet.getBlob(i);
+            return resultSet.getBlob(i);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -562,19 +713,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Blob getBlob(String colName) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getBlob(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             colName);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getBlob(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                colName);
 
-         return resultSet.getBlob(colName);
+            return resultSet.getBlob(colName);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -583,19 +742,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean getBoolean(int columnIndex) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getBoolean(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getBoolean(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex);
 
-         return resultSet.getBoolean(columnIndex);
+            return resultSet.getBoolean(columnIndex);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -604,19 +771,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean getBoolean(String columnName) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getBoolean(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getBoolean(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName);
 
-         return resultSet.getBoolean(columnName);
+            return resultSet.getBoolean(columnName);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -625,19 +800,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public byte getByte(int columnIndex) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getByte(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getByte(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex);
 
-         return resultSet.getByte(columnIndex);
+            return resultSet.getByte(columnIndex);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -646,19 +829,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public byte getByte(String columnName) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getByte(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getByte(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName);
 
-         return resultSet.getByte(columnName);
+            return resultSet.getByte(columnName);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -667,19 +858,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public byte[] getBytes(int columnIndex) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getBytes(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getBytes(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex);
 
-         return resultSet.getBytes(columnIndex);
+            return resultSet.getBytes(columnIndex);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -688,19 +887,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public byte[] getBytes(String columnName) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getBytes(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getBytes(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName);
 
-         return resultSet.getBytes(columnName);
+            return resultSet.getBytes(columnName);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -709,19 +916,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Reader getCharacterStream(int columnIndex) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getCharacterStream(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getCharacterStream(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex);
 
-         return resultSet.getCharacterStream(columnIndex);
+            return resultSet.getCharacterStream(columnIndex);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -730,19 +945,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Reader getCharacterStream(String columnName) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getCharacterStream(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getCharacterStream(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName);
 
-         return resultSet.getCharacterStream(columnName);
+            return resultSet.getCharacterStream(columnName);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -751,19 +974,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Clob getClob(int i) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getClob(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             i);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getClob(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                i);
 
-         return resultSet.getClob(i);
+            return resultSet.getClob(i);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -772,19 +1003,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Clob getClob(String colName) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getClob(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             colName);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getClob(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                colName);
 
-         return resultSet.getClob(colName);
+            return resultSet.getClob(colName);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -793,18 +1032,26 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public int getConcurrency() throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getConcurrency()",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getConcurrency()",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
-         return resultSet.getConcurrency();
+            return resultSet.getConcurrency();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -813,18 +1060,26 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public String getCursorName() throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getCursorName()",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getCursorName()",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
-         return resultSet.getCursorName();
+            return resultSet.getCursorName();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -833,19 +1088,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Date getDate(int columnIndex) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getDate(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getDate(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex);
 
-         return resultSet.getDate(columnIndex);
+            return resultSet.getDate(columnIndex);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -854,19 +1117,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Date getDate(int columnIndex, Calendar cal) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getDate(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, cal);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getDate(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, cal);
 
-         return resultSet.getDate(columnIndex, cal);
+            return resultSet.getDate(columnIndex, cal);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -875,19 +1146,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Date getDate(String columnName) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getDate(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getDate(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName);
 
-         return resultSet.getDate(columnName);
+            return resultSet.getDate(columnName);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -896,19 +1175,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Date getDate(String columnName, Calendar cal) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getDate(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName, cal);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getDate(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName, cal);
 
-         return resultSet.getDate(columnName, cal);
+            return resultSet.getDate(columnName, cal);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -917,19 +1204,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public double getDouble(int columnIndex) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getDouble(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getDouble(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex);
 
-         return resultSet.getDouble(columnIndex);
+            return resultSet.getDouble(columnIndex);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -938,19 +1233,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public double getDouble(String columnName) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getDouble(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getDouble(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName);
 
-         return resultSet.getDouble(columnName);
+            return resultSet.getDouble(columnName);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -959,18 +1262,26 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public int getFetchDirection() throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getFetchDirection()",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getFetchDirection()",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
-         return resultSet.getFetchDirection();
+            return resultSet.getFetchDirection();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -979,18 +1290,26 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public int getFetchSize() throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getFetchSize()",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getFetchSize()",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
-         return resultSet.getFetchSize();
+            return resultSet.getFetchSize();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -999,19 +1318,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public float getFloat(int columnIndex) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getFloat(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getFloat(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex);
 
-         return resultSet.getFloat(columnIndex);
+            return resultSet.getFloat(columnIndex);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1020,19 +1347,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public float getFloat(String columnName) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getFloat(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getFloat(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName);
 
-         return resultSet.getFloat(columnName);
+            return resultSet.getFloat(columnName);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1041,19 +1376,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public int getInt(int columnIndex) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getInt(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getInt(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex);
 
-         return resultSet.getInt(columnIndex);
+            return resultSet.getInt(columnIndex);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1062,19 +1405,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public int getInt(String columnName) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getInt(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getInt(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName);
 
-         return resultSet.getInt(columnName);
+            return resultSet.getInt(columnName);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1083,19 +1434,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public long getLong(int columnIndex) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getLong(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getLong(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex);
 
-         return resultSet.getLong(columnIndex);
+            return resultSet.getLong(columnIndex);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1104,19 +1463,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public long getLong(String columnName) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getLong(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getLong(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName);
 
-         return resultSet.getLong(columnName);
+            return resultSet.getLong(columnName);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1125,18 +1492,26 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public ResultSetMetaData getMetaData() throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getMetaData()",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getMetaData()",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
-         return resultSet.getMetaData();
+            return resultSet.getMetaData();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1145,19 +1520,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Object getObject(int columnIndex) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getObject(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getObject(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex);
 
-         return resultSet.getObject(columnIndex);
+            return resultSet.getObject(columnIndex);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1167,19 +1550,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
    @SuppressWarnings("unchecked")
    public Object getObject(int i, Map<String, Class<?>> map) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getObject(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             i, map);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getObject(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                i, map);
 
-         return resultSet.getObject(i, map);
+            return resultSet.getObject(i, map);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1188,19 +1579,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Object getObject(String columnName) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getObject(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getObject(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName);
 
-         return resultSet.getObject(columnName);
+            return resultSet.getObject(columnName);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1210,19 +1609,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
    @SuppressWarnings("unchecked")
    public Object getObject(String colName, Map<String, Class<?>> map) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getObject(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             colName, map);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getObject(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                colName, map);
 
-         return resultSet.getObject(colName, map);
+            return resultSet.getObject(colName, map);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1231,19 +1638,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Ref getRef(int i) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getRef(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             i);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getRef(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                i);
 
-         return resultSet.getRef(i);
+            return resultSet.getRef(i);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1252,19 +1667,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Ref getRef(String colName) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getRef(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             colName);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getRef(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                colName);
 
-         return resultSet.getRef(colName);
+            return resultSet.getRef(colName);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1273,18 +1696,26 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public int getRow() throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getRow()",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getRow()",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
-         return resultSet.getRow();
+            return resultSet.getRow();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1293,19 +1724,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public short getShort(int columnIndex) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getShort(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getShort(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex);
 
-         return resultSet.getShort(columnIndex);
+            return resultSet.getShort(columnIndex);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1314,19 +1753,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public short getShort(String columnName) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getShort(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getShort(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName);
 
-         return resultSet.getShort(columnName);
+            return resultSet.getShort(columnName);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1335,13 +1782,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Statement getStatement() throws SQLException
    {
-      checkState();
+      lock();
+      try
+      {
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getStatement()",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
-      if (spy)
-         spyLogger.debugf("%s [%s] getStatement()",
-                          jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
-
-      return statement;
+            return statement;
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
+      }
+      finally
+      {
+         unlock();
+      }
    }
 
    /**
@@ -1349,19 +1810,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public String getString(int columnIndex) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getString(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getString(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex);
 
-         return resultSet.getString(columnIndex);
+            return resultSet.getString(columnIndex);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1370,19 +1839,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public String getString(String columnName) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getString(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getString(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName);
 
-         return resultSet.getString(columnName);
+            return resultSet.getString(columnName);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1391,19 +1868,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Time getTime(int columnIndex) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getTime(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getTime(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex);
 
-         return resultSet.getTime(columnIndex);
+            return resultSet.getTime(columnIndex);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1412,19 +1897,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Time getTime(int columnIndex, Calendar cal) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getTime(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, cal);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getTime(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, cal);
 
-         return resultSet.getTime(columnIndex, cal);
+            return resultSet.getTime(columnIndex, cal);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1433,19 +1926,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Time getTime(String columnName) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getTime(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getTime(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName);
 
-         return resultSet.getTime(columnName);
+            return resultSet.getTime(columnName);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1454,19 +1955,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Time getTime(String columnName, Calendar cal) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getTime(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName, cal);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getTime(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName, cal);
 
-         return resultSet.getTime(columnName, cal);
+            return resultSet.getTime(columnName, cal);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1475,19 +1984,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Timestamp getTimestamp(int columnIndex) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getTimestamp(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getTimestamp(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex);
 
-         return resultSet.getTimestamp(columnIndex);
+            return resultSet.getTimestamp(columnIndex);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1496,19 +2013,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Timestamp getTimestamp(int columnIndex, Calendar cal) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getTimestamp(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, cal);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getTimestamp(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, cal);
 
-         return resultSet.getTimestamp(columnIndex, cal);
+            return resultSet.getTimestamp(columnIndex, cal);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1517,19 +2042,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Timestamp getTimestamp(String columnName) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getTimestamp(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getTimestamp(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName);
 
-         return resultSet.getTimestamp(columnName);
+            return resultSet.getTimestamp(columnName);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1538,19 +2071,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Timestamp getTimestamp(String columnName, Calendar cal) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getTimestamp(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName, cal);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getTimestamp(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName, cal);
 
-         return resultSet.getTimestamp(columnName, cal);
+            return resultSet.getTimestamp(columnName, cal);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1559,18 +2100,26 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public int getType() throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getType()",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getType()",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
-         return resultSet.getType();
+            return resultSet.getType();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1580,19 +2129,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
    @Deprecated
    public InputStream getUnicodeStream(int columnIndex) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getUnicodeStream(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex);
-
-         return resultSet.getUnicodeStream(columnIndex);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getUnicodeStream(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex);
+            
+            return resultSet.getUnicodeStream(columnIndex);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1602,18 +2159,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
    @Deprecated
    public InputStream getUnicodeStream(String columnName) throws SQLException
    {
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getUnicodeStream(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getUnicodeStream(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName);
 
-         return resultSet.getUnicodeStream(columnName);
+            return resultSet.getUnicodeStream(columnName);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1622,19 +2188,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public URL getURL(int columnIndex) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getURL(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getURL(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex);
 
-         return resultSet.getURL(columnIndex);
+            return resultSet.getURL(columnIndex);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1643,19 +2217,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public URL getURL(String columnName) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getURL(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getURL(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName);
 
-         return resultSet.getURL(columnName);
+            return resultSet.getURL(columnName);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1664,18 +2246,26 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public SQLWarning getWarnings() throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getWarnings()",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getWarnings()",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
-         return resultSet.getWarnings();
+            return resultSet.getWarnings();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1684,7 +2274,7 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void insertRow() throws SQLException
    {
-      statement.lock();
+      lock();
       try
       {
          checkTransaction();
@@ -1703,7 +2293,7 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         statement.unlock();
+         unlock();
       }
    }
 
@@ -1712,18 +2302,26 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean isAfterLast() throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] isAfterLast()",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] isAfterLast()",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
-         return resultSet.isAfterLast();
+            return resultSet.isAfterLast();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1732,18 +2330,26 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean isBeforeFirst() throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] isBeforeFirst()",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] isBeforeFirst()",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
-         return resultSet.isBeforeFirst();
+            return resultSet.isBeforeFirst();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1752,18 +2358,26 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean isFirst() throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] isFirst()",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] isFirst()",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
-         return resultSet.isFirst();
+            return resultSet.isFirst();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1772,18 +2386,26 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean isLast() throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] isLast()",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] isLast()",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
-         return resultSet.isLast();
+            return resultSet.isLast();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1792,18 +2414,26 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean last() throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] last()",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] last()",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
-         return resultSet.last();
+            return resultSet.last();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1812,18 +2442,26 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void moveToCurrentRow() throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] moveToCurrentRow()",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] moveToCurrentRow()",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
-         resultSet.moveToCurrentRow();
+            resultSet.moveToCurrentRow();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1832,18 +2470,26 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void moveToInsertRow() throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] moveToInsertRow()",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] moveToInsertRow()",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
-         resultSet.moveToInsertRow();
+            resultSet.moveToInsertRow();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1852,18 +2498,26 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean next() throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] next()",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] next()",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
-         return resultSet.next();
+            return resultSet.next();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1872,18 +2526,26 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean previous() throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] previous()",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] previous()",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
-         return resultSet.previous();
+            return resultSet.previous();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1892,18 +2554,26 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void refreshRow() throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] refreshRow()",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] refreshRow()",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
-         resultSet.refreshRow();
+            resultSet.refreshRow();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1912,19 +2582,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean relative(int rows) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] relative(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             rows);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] relative(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                rows);
 
-         return resultSet.relative(rows);
+            return resultSet.relative(rows);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1933,18 +2611,26 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean rowDeleted() throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] rowDeleted()",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] rowDeleted()",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
-         return resultSet.rowDeleted();
+            return resultSet.rowDeleted();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1953,18 +2639,26 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean rowInserted() throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] rowInserted()",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] rowInserted()",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
-         return resultSet.rowInserted();
+            return resultSet.rowInserted();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1973,18 +2667,26 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean rowUpdated() throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] rowUpdated()",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] rowUpdated()",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
-         return resultSet.rowUpdated();
+            return resultSet.rowUpdated();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -1993,19 +2695,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void setFetchDirection(int direction) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] setFetchDirection(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             direction);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] setFetchDirection(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                direction);
 
-         resultSet.setFetchDirection(direction);
+            resultSet.setFetchDirection(direction);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2014,19 +2724,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void setFetchSize(int rows) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] setFetchSize(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             rows);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] setFetchSize(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                rows);
 
-         resultSet.setFetchSize(rows);
+            resultSet.setFetchSize(rows);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2035,19 +2753,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateArray(int columnIndex, Array x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateArray(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateArray(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, x);
 
-         resultSet.updateArray(columnIndex, x);
+            resultSet.updateArray(columnIndex, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2056,19 +2782,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateArray(String columnName, Array x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateArray(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateArray(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName, x);
 
-         resultSet.updateArray(columnName, x);
+            resultSet.updateArray(columnName, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2077,19 +2811,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateAsciiStream(int columnIndex, InputStream x, int length) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateAsciiStream(%s, %s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, x, length);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateAsciiStream(%s, %s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, x, length);
 
-         resultSet.updateAsciiStream(columnIndex, x, length);
+            resultSet.updateAsciiStream(columnIndex, x, length);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2098,19 +2840,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateAsciiStream(String columnName, InputStream x, int length) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateAsciiStream(%s, %s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName, x, length);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateAsciiStream(%s, %s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName, x, length);
 
-         resultSet.updateAsciiStream(columnName, x, length);
+            resultSet.updateAsciiStream(columnName, x, length);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2119,19 +2869,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBigDecimal(int columnIndex, BigDecimal x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateBigDecimal(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateBigDecimal(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, x);
 
-         resultSet.updateBigDecimal(columnIndex, x);
+            resultSet.updateBigDecimal(columnIndex, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2140,19 +2898,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBigDecimal(String columnName, BigDecimal x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateBigDecimal(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateBigDecimal(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName, x);
 
-         resultSet.updateBigDecimal(columnName, x);
+            resultSet.updateBigDecimal(columnName, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2161,19 +2927,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBinaryStream(int columnIndex, InputStream x, int length) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateBinaryStream(%s, %s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, x, length);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateBinaryStream(%s, %s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, x, length);
 
-         resultSet.updateBinaryStream(columnIndex, x, length);
+            resultSet.updateBinaryStream(columnIndex, x, length);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2182,19 +2956,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBinaryStream(String columnName, InputStream x, int length) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateBinaryStream(%s, %s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName, x, length);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateBinaryStream(%s, %s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName, x, length);
 
-         resultSet.updateBinaryStream(columnName, x, length);
+            resultSet.updateBinaryStream(columnName, x, length);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2203,19 +2985,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBlob(int columnIndex, Blob x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateBlob(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateBlob(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, x);
 
-         resultSet.updateBlob(columnIndex, x);
+            resultSet.updateBlob(columnIndex, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2224,19 +3014,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBlob(String columnName, Blob x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateBlob(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateBlob(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName, x);
 
-         resultSet.updateBlob(columnName, x);
+            resultSet.updateBlob(columnName, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2245,19 +3043,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBoolean(int columnIndex, boolean x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateBoolean(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateBoolean(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, x);
 
-         resultSet.updateBoolean(columnIndex, x);
+            resultSet.updateBoolean(columnIndex, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2266,19 +3072,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBoolean(String columnName, boolean x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateBoolean(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateBoolean(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName, x);
 
-         resultSet.updateBoolean(columnName, x);
+            resultSet.updateBoolean(columnName, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2287,19 +3101,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateByte(int columnIndex, byte x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateByte(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateByte(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, x);
 
-         resultSet.updateByte(columnIndex, x);
+            resultSet.updateByte(columnIndex, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2308,19 +3130,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateByte(String columnName, byte x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateByte(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateByte(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName, x);
 
-         resultSet.updateByte(columnName, x);
+            resultSet.updateByte(columnName, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2329,19 +3159,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBytes(int columnIndex, byte[] x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateBytes(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, Arrays.toString(x));
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateBytes(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, Arrays.toString(x));
 
-         resultSet.updateBytes(columnIndex, x);
+            resultSet.updateBytes(columnIndex, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2350,19 +3188,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBytes(String columnName, byte[] x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateBytes(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName, Arrays.toString(x));
-
-         resultSet.updateBytes(columnName, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateBytes(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName, Arrays.toString(x));
+            
+            resultSet.updateBytes(columnName, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2371,19 +3217,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateCharacterStream(int columnIndex, Reader x, int length) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateCharacterStream(%s, %s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, x, length);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateCharacterStream(%s, %s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, x, length);
 
-         resultSet.updateCharacterStream(columnIndex, x, length);
+            resultSet.updateCharacterStream(columnIndex, x, length);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2392,19 +3246,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateCharacterStream(String columnName, Reader reader, int length) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateCharacterStream(%s, %s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName, reader, length);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateCharacterStream(%s, %s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName, reader, length);
 
-         resultSet.updateCharacterStream(columnName, reader, length);
+            resultSet.updateCharacterStream(columnName, reader, length);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2413,19 +3275,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateClob(int columnIndex, Clob x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateClob(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateClob(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, x);
 
-         resultSet.updateClob(columnIndex, x);
+            resultSet.updateClob(columnIndex, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2434,19 +3304,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateClob(String columnName, Clob x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateClob(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName, x);
-
-         resultSet.updateClob(columnName, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateClob(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName, x);
+            
+            resultSet.updateClob(columnName, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2455,19 +3333,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateDate(int columnIndex, Date x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateDate(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateDate(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, x);
 
-         resultSet.updateDate(columnIndex, x);
+            resultSet.updateDate(columnIndex, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2476,19 +3362,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateDate(String columnName, Date x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateDate(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateDate(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName, x);
 
-         resultSet.updateDate(columnName, x);
+            resultSet.updateDate(columnName, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2497,19 +3391,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateDouble(int columnIndex, double x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateDouble(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateDouble(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, x);
 
-         resultSet.updateDouble(columnIndex, x);
+            resultSet.updateDouble(columnIndex, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2518,19 +3420,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateDouble(String columnName, double x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateDouble(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateDouble(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName, x);
 
-         resultSet.updateDouble(columnName, x);
+            resultSet.updateDouble(columnName, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2539,19 +3449,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateFloat(int columnIndex, float x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateFloat(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateFloat(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, x);
 
-         resultSet.updateFloat(columnIndex, x);
+            resultSet.updateFloat(columnIndex, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2560,19 +3478,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateFloat(String columnName, float x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateFloat(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateFloat(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName, x);
 
-         resultSet.updateFloat(columnName, x);
+            resultSet.updateFloat(columnName, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2581,19 +3507,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateInt(int columnIndex, int x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateInt(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateInt(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, x);
 
-         resultSet.updateInt(columnIndex, x);
+            resultSet.updateInt(columnIndex, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2602,19 +3536,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateInt(String columnName, int x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateInt(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateInt(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName, x);
 
-         resultSet.updateInt(columnName, x);
+            resultSet.updateInt(columnName, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2623,19 +3565,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateLong(int columnIndex, long x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateLong(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateLong(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, x);
 
-         resultSet.updateLong(columnIndex, x);
+            resultSet.updateLong(columnIndex, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2644,19 +3594,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateLong(String columnName, long x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateLong(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateLong(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName, x);
 
-         resultSet.updateLong(columnName, x);
+            resultSet.updateLong(columnName, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2665,19 +3623,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateNull(int columnIndex) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateNull(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateNull(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex);
 
-         resultSet.updateNull(columnIndex);
+            resultSet.updateNull(columnIndex);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2686,19 +3652,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateNull(String columnName) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateNull(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateNull(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName);
 
-         resultSet.updateNull(columnName);
+            resultSet.updateNull(columnName);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2707,19 +3681,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateObject(int columnIndex, Object x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateObject(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateObject(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, x);
 
-         resultSet.updateObject(columnIndex, x);
+            resultSet.updateObject(columnIndex, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2728,19 +3710,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateObject(int columnIndex, Object x, int scale) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateObject(%s, %s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, x, scale);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateObject(%s, %s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, x, scale);
 
-         resultSet.updateObject(columnIndex, x, scale);
+            resultSet.updateObject(columnIndex, x, scale);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2749,19 +3739,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateObject(String columnName, Object x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateObject(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateObject(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName, x);
 
-         resultSet.updateObject(columnName, x);
+            resultSet.updateObject(columnName, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2770,19 +3768,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateObject(String columnName, Object x, int scale) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateObject(%s, %s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName, x, scale);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateObject(%s, %s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName, x, scale);
 
-         resultSet.updateObject(columnName, x, scale);
+            resultSet.updateObject(columnName, x, scale);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2791,19 +3797,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateRef(int columnIndex, Ref x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateRef(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateRef(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, x);
 
-         resultSet.updateRef(columnIndex, x);
+            resultSet.updateRef(columnIndex, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2812,19 +3826,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateRef(String columnName, Ref x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateRef(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateRef(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName, x);
 
-         resultSet.updateRef(columnName, x);
+            resultSet.updateRef(columnName, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2833,7 +3855,7 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateRow() throws SQLException
    {
-      statement.lock();
+      lock();
       try
       {
          checkTransaction();
@@ -2852,7 +3874,7 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         statement.unlock();
+         unlock();
       }
    }
 
@@ -2861,14 +3883,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateShort(int columnIndex, short x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         resultSet.updateShort(columnIndex, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateShort(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, x);
+
+            resultSet.updateShort(columnIndex, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2877,19 +3912,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateShort(String columnName, short x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateShort(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateShort(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName, x);
 
-         resultSet.updateShort(columnName, x);
+            resultSet.updateShort(columnName, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2898,19 +3941,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateString(int columnIndex, String x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateString(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateString(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, x);
 
-         resultSet.updateString(columnIndex, x);
+            resultSet.updateString(columnIndex, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2919,19 +3970,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateString(String columnName, String x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateString(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateString(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName, x);
 
-         resultSet.updateString(columnName, x);
+            resultSet.updateString(columnName, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2940,19 +3999,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateTime(int columnIndex, Time x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateTime(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateTime(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, x);
 
-         resultSet.updateTime(columnIndex, x);
+            resultSet.updateTime(columnIndex, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2961,19 +4028,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateTime(String columnName, Time x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateTime(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateTime(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName, x);
 
-         resultSet.updateTime(columnName, x);
+            resultSet.updateTime(columnName, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -2982,19 +4057,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateTimestamp(int columnIndex, Timestamp x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateTimestamp(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateTimestamp(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, x);
 
-         resultSet.updateTimestamp(columnIndex, x);
+            resultSet.updateTimestamp(columnIndex, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3003,19 +4086,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateTimestamp(String columnName, Timestamp x) throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateTimestamp(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnName, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateTimestamp(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnName, x);
 
-         resultSet.updateTimestamp(columnName, x);
+            resultSet.updateTimestamp(columnName, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3024,18 +4115,26 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean wasNull() throws SQLException
    {
-      checkState();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] wasNull()",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] wasNull()",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
-         return resultSet.wasNull();
+            return resultSet.wasNull();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3044,18 +4143,26 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public int getHoldability() throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getHoldability()",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
-
-         return resultSet.getHoldability();
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getHoldability()",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
+            
+            return resultSet.getHoldability();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3064,19 +4171,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Reader getNCharacterStream(int columnIndex) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getNCharacterStream(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getNCharacterStream(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex);
 
-         return resultSet.getNCharacterStream(columnIndex);
+            return resultSet.getNCharacterStream(columnIndex);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3085,19 +4200,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Reader getNCharacterStream(String columnLabel) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getNCharacterStream(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnLabel);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getNCharacterStream(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnLabel);
 
-         return resultSet.getNCharacterStream(columnLabel);
+            return resultSet.getNCharacterStream(columnLabel);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3106,19 +4229,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public NClob getNClob(int columnIndex) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getNClob(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getNClob(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex);
 
-         return resultSet.getNClob(columnIndex);
+            return resultSet.getNClob(columnIndex);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3127,19 +4258,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public NClob getNClob(String columnLabel) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getNClob(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnLabel);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getNClob(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnLabel);
 
-         return resultSet.getNClob(columnLabel);
+            return resultSet.getNClob(columnLabel);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3148,19 +4287,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public String getNString(int columnIndex) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getNString(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getNString(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex);
 
-         return resultSet.getNString(columnIndex);
+            return resultSet.getNString(columnIndex);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3169,19 +4316,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public String getNString(String columnLabel) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getNString(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnLabel);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getNString(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnLabel);
 
-         return resultSet.getNString(columnLabel);
+            return resultSet.getNString(columnLabel);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3190,19 +4345,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public RowId getRowId(int columnIndex) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getRowId(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getRowId(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex);
 
-         return resultSet.getRowId(columnIndex);
+            return resultSet.getRowId(columnIndex);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3211,19 +4374,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public RowId getRowId(String columnLabel) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getRowId(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnLabel);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getRowId(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnLabel);
 
-         return resultSet.getRowId(columnLabel);
+            return resultSet.getRowId(columnLabel);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3232,19 +4403,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public SQLXML getSQLXML(int columnIndex) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getSQLXML(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getSQLXML(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex);
 
-         return resultSet.getSQLXML(columnIndex);
+            return resultSet.getSQLXML(columnIndex);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3253,19 +4432,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public SQLXML getSQLXML(String columnLabel) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getSQLXML(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnLabel);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getSQLXML(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnLabel);
 
-         return resultSet.getSQLXML(columnLabel);
+            return resultSet.getSQLXML(columnLabel);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3274,20 +4461,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean isClosed() throws SQLException
    {
-      if (spy)
-         spyLogger.debugf("%s [%s] isClosed()",
-                          jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
-      
-      ResultSet resultSet = getWrappedObject();
-      if (resultSet == null)
-         return true;
+      lock();
       try
       {
-         return resultSet.isClosed();
+         if (spy)
+            spyLogger.debugf("%s [%s] isClosed()",
+                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
+      
+         if (resultSet == null)
+            return true;
+         try
+         {
+            return resultSet.isClosed();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3296,19 +4490,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateAsciiStream(int columnIndex, InputStream x, long length) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateAsciiStream(%s, %s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, x, length);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateAsciiStream(%s, %s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, x, length);
 
-         resultSet.updateAsciiStream(columnIndex, x, length);
+            resultSet.updateAsciiStream(columnIndex, x, length);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3317,19 +4519,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateAsciiStream(int columnIndex, InputStream x) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateAsciiStream(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, x);
-
-         resultSet.updateAsciiStream(columnIndex, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateAsciiStream(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, x);
+            
+            resultSet.updateAsciiStream(columnIndex, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3338,19 +4548,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateAsciiStream(String columnLabel, InputStream x, long length) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateAsciiStream(%s, %s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnLabel, x, length);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateAsciiStream(%s, %s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnLabel, x, length);
 
-         resultSet.updateAsciiStream(columnLabel, x, length);
+            resultSet.updateAsciiStream(columnLabel, x, length);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3359,19 +4577,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateAsciiStream(String columnLabel, InputStream x) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateAsciiStream(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnLabel, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateAsciiStream(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnLabel, x);
 
-         resultSet.updateAsciiStream(columnLabel, x);
+            resultSet.updateAsciiStream(columnLabel, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3380,19 +4606,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBinaryStream(int columnIndex, InputStream x, long length) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateBinaryStream(%s, %s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, x, length);
-
-         resultSet.updateBinaryStream(columnIndex, x, length);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateBinaryStream(%s, %s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, x, length);
+            
+            resultSet.updateBinaryStream(columnIndex, x, length);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3401,19 +4635,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBinaryStream(int columnIndex, InputStream x) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateBinaryStream(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateBinaryStream(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, x);
 
-         resultSet.updateBinaryStream(columnIndex, x);
+            resultSet.updateBinaryStream(columnIndex, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3422,19 +4664,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBinaryStream(String columnLabel, InputStream x, long length) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateBinaryStream(%s, %s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnLabel, x, length);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateBinaryStream(%s, %s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnLabel, x, length);
 
-         resultSet.updateBinaryStream(columnLabel, x, length);
+            resultSet.updateBinaryStream(columnLabel, x, length);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3443,19 +4693,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBinaryStream(String columnLabel, InputStream x) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateBinaryStream(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnLabel, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateBinaryStream(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnLabel, x);
 
-         resultSet.updateBinaryStream(columnLabel, x);
+            resultSet.updateBinaryStream(columnLabel, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3464,19 +4722,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBlob(int columnIndex, InputStream inputStream, long length) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateBlob(%s, %s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, inputStream, length);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateBlob(%s, %s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, inputStream, length);
 
-         resultSet.updateBlob(columnIndex, inputStream, length);
+            resultSet.updateBlob(columnIndex, inputStream, length);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3485,19 +4751,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBlob(int columnIndex, InputStream inputStream) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateBlob(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, inputStream);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateBlob(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, inputStream);
 
-         resultSet.updateBlob(columnIndex, inputStream);
+            resultSet.updateBlob(columnIndex, inputStream);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3506,19 +4780,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBlob(String columnLabel, InputStream inputStream, long length) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateBlob(%s, %s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnLabel, inputStream, length);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateBlob(%s, %s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnLabel, inputStream, length);
 
-         resultSet.updateBlob(columnLabel, inputStream, length);
+            resultSet.updateBlob(columnLabel, inputStream, length);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3527,19 +4809,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBlob(String columnLabel, InputStream inputStream) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateBlob(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnLabel, inputStream);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateBlob(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnLabel, inputStream);
 
-         resultSet.updateBlob(columnLabel, inputStream);
+            resultSet.updateBlob(columnLabel, inputStream);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3548,19 +4838,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateCharacterStream(int columnIndex, Reader x, long length) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateCharacterStream(%s, %s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, x, length);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateCharacterStream(%s, %s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, x, length);
 
-         resultSet.updateCharacterStream(columnIndex, x, length);
+            resultSet.updateCharacterStream(columnIndex, x, length);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3569,19 +4867,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateCharacterStream(int columnIndex, Reader x) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateCharacterStream(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateCharacterStream(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, x);
 
-         resultSet.updateCharacterStream(columnIndex, x);
+            resultSet.updateCharacterStream(columnIndex, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3590,19 +4896,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateCharacterStream(String columnLabel, Reader reader, long length) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateCharacterStream(%s, %s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnLabel, reader, length);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateCharacterStream(%s, %s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnLabel, reader, length);
 
-         resultSet.updateCharacterStream(columnLabel, reader, length);
+            resultSet.updateCharacterStream(columnLabel, reader, length);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3611,19 +4925,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateCharacterStream(String columnLabel, Reader reader) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateCharacterStream(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnLabel, reader);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateCharacterStream(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnLabel, reader);
 
-         resultSet.updateCharacterStream(columnLabel, reader);
+            resultSet.updateCharacterStream(columnLabel, reader);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3632,19 +4954,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateClob(int columnIndex, Reader reader, long length) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateClob(%s, %s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, reader, length);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateClob(%s, %s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, reader, length);
 
-         resultSet.updateClob(columnIndex, reader, length);
+            resultSet.updateClob(columnIndex, reader, length);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3653,19 +4983,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateClob(int columnIndex, Reader reader) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateClob(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, reader);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateClob(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, reader);
 
-         resultSet.updateClob(columnIndex, reader);
+            resultSet.updateClob(columnIndex, reader);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3674,19 +5012,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateClob(String columnLabel, Reader reader, long length) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateClob(%s, %s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnLabel, reader, length);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateClob(%s, %s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnLabel, reader, length);
 
-         resultSet.updateClob(columnLabel, reader, length);
+            resultSet.updateClob(columnLabel, reader, length);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3695,19 +5041,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateClob(String columnLabel, Reader reader) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateClob(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnLabel, reader);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateClob(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnLabel, reader);
 
-         resultSet.updateClob(columnLabel, reader);
+            resultSet.updateClob(columnLabel, reader);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3716,19 +5070,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateNCharacterStream(int columnIndex, Reader x, long length) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateNCharacterStream(%s, %s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, x, length);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateNCharacterStream(%s, %s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, x, length);
 
-         resultSet.updateNCharacterStream(columnIndex, x, length);
+            resultSet.updateNCharacterStream(columnIndex, x, length);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3737,19 +5099,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateNCharacterStream(int columnIndex, Reader x) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateNCharacterStream(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateNCharacterStream(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, x);
 
-         resultSet.updateNCharacterStream(columnIndex, x);
+            resultSet.updateNCharacterStream(columnIndex, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3758,19 +5128,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateNCharacterStream(String columnLabel, Reader reader, long length) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateNCharacterStream(%s, %s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnLabel, reader, length);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateNCharacterStream(%s, %s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnLabel, reader, length);
 
-         resultSet.updateNCharacterStream(columnLabel, reader, length);
+            resultSet.updateNCharacterStream(columnLabel, reader, length);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3779,19 +5157,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateNCharacterStream(String columnLabel, Reader reader) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateNCharacterStream(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnLabel, reader);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateNCharacterStream(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnLabel, reader);
 
-         resultSet.updateNCharacterStream(columnLabel, reader);
+            resultSet.updateNCharacterStream(columnLabel, reader);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3800,19 +5186,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateNClob(int columnIndex, NClob clob) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateNClob(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, clob);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateNClob(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, clob);
 
-         resultSet.updateNClob(columnIndex, clob);
+            resultSet.updateNClob(columnIndex, clob);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3821,19 +5215,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateNClob(int columnIndex, Reader reader, long length) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateNClob(%s, %s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, reader, length);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateNClob(%s, %s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, reader, length);
 
-         resultSet.updateNClob(columnIndex, reader, length);
+            resultSet.updateNClob(columnIndex, reader, length);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3842,19 +5244,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateNClob(int columnIndex, Reader reader) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateNClob(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, reader);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateNClob(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, reader);
 
-         resultSet.updateNClob(columnIndex, reader);
+            resultSet.updateNClob(columnIndex, reader);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3863,19 +5273,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateNClob(String columnLabel, NClob clob) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateNClob(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnLabel, clob);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateNClob(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnLabel, clob);
 
-         resultSet.updateNClob(columnLabel, clob);
+            resultSet.updateNClob(columnLabel, clob);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3884,19 +5302,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateNClob(String columnLabel, Reader reader, long length) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateNClob(%s, %s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnLabel, reader, length);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateNClob(%s, %s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnLabel, reader, length);
 
-         resultSet.updateNClob(columnLabel, reader, length);
+            resultSet.updateNClob(columnLabel, reader, length);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3905,19 +5331,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateNClob(String columnLabel, Reader reader) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateNClob(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnLabel, reader);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateNClob(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnLabel, reader);
 
-         resultSet.updateNClob(columnLabel, reader);
+            resultSet.updateNClob(columnLabel, reader);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3926,19 +5360,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateNString(int columnIndex, String string) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateNString(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, string);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateNString(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, string);
 
-         resultSet.updateNString(columnIndex, string);
+            resultSet.updateNString(columnIndex, string);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3947,19 +5389,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateNString(String columnLabel, String string) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateNString(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnLabel, string);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateNString(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnLabel, string);
 
-         resultSet.updateNString(columnLabel, string);
+            resultSet.updateNString(columnLabel, string);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3968,19 +5418,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateRowId(int columnIndex, RowId x) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateRowId(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateRowId(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, x);
 
-         resultSet.updateRowId(columnIndex, x);
+            resultSet.updateRowId(columnIndex, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -3989,19 +5447,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateRowId(String columnLabel, RowId x) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateRowId(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnLabel, x);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateRowId(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnLabel, x);
 
-         resultSet.updateRowId(columnLabel, x);
+            resultSet.updateRowId(columnLabel, x);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -4010,19 +5476,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateSQLXML(int columnIndex, SQLXML xmlObject) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateSQLXML(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnIndex, xmlObject);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateSQLXML(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnIndex, xmlObject);
 
-         resultSet.updateSQLXML(columnIndex, xmlObject);
+            resultSet.updateSQLXML(columnIndex, xmlObject);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -4031,19 +5505,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateSQLXML(String columnLabel, SQLXML xmlObject) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] updateSQLXML(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             columnLabel, xmlObject);
+         checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] updateSQLXML(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                columnLabel, xmlObject);
 
-         resultSet.updateSQLXML(columnLabel, xmlObject);
+            resultSet.updateSQLXML(columnLabel, xmlObject);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -4053,19 +5535,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public <T> T getObject(int parameterIndex, Class<T> type) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getObject(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             parameterIndex, type);
-
-         return resultSet.getObject(parameterIndex, type);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getObject(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                parameterIndex, type);
+            
+            return resultSet.getObject(parameterIndex, type);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -4074,19 +5564,27 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public <T> T getObject(String parameterName, Class<T> type) throws SQLException
    {
-      ResultSet resultSet = getUnderlyingResultSet();
+      lock();
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] getObject(%s, %s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
-                             parameterName, type);
+         checkState();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] getObject(%s, %s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET,
+                                parameterName, type);
 
-         return resultSet.getObject(parameterName, type);
+            return resultSet.getObject(parameterName, type);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
-      catch (Throwable t)
+      finally
       {
-         throw checkException(t);
+         unlock();
       }
    }
 
@@ -4095,7 +5593,7 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    protected ResultSet getWrappedObject() throws SQLException
    {
-      return getUnderlyingResultSet();
+      return resultSet;
    }
 
    /**
@@ -4118,7 +5616,7 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
    /**
     * {@inheritDoc}
     */
-   void checkState() throws SQLException
+   protected void checkState() throws SQLException
    {
       if (closed.get())
          throw new SQLException(bundle.resultSetClosed());
@@ -4131,6 +5629,23 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
    {
       checkState();
       statement.checkTransactionActive();
+   }
+
+   /**
+    * Lock
+    * @exception SQLException Thrown if an error occurs
+    */
+   protected void lock() throws SQLException
+   {
+      statement.lock();
+   }
+
+   /**
+    * Unlock
+    */
+   protected void unlock()
+   {
+      statement.unlock();
    }
 
    /**
