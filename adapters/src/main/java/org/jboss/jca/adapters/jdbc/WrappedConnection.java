@@ -86,17 +86,23 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    /** The jndi name */
    protected String jndiName = null;
 
+   /** Do locking */
+   protected final boolean doLocking;
+   
    /**
     * Constructor
     * @param mc The managed connection
     * @param spy The spy value
     * @param jndiName The jndi name
+    * @param doLocking Do locking
     */
-   public WrappedConnection(final BaseWrapperManagedConnection mc, boolean spy, String jndiName)
+   public WrappedConnection(final BaseWrapperManagedConnection mc, boolean spy, String jndiName,
+                            final boolean doLocking)
    {
       setManagedConnection(mc);
       setSpy(spy);
       setJndiName(jndiName);
+      this.doLocking = doLocking;
    }
 
    /**
@@ -195,7 +201,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public void setReadOnly(boolean readOnly) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkStatus();
@@ -208,7 +215,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -314,16 +322,19 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     * @param statement The statement
     * @param spy The spy value
     * @param jndiName The jndi name
+    * @param doLocking Do locking
     * @return The wrapped statement
     */
-   protected abstract WrappedStatement wrapStatement(Statement statement, boolean spy, String jndiName);
+   protected abstract WrappedStatement wrapStatement(Statement statement, boolean spy, String jndiName,
+                                                     boolean doLocking);
 
    /**
     * {@inheritDoc}
     */
    public Statement createStatement() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -332,7 +343,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
             if (spy)
                spyLogger.debugf("%s [%s] createStatement()", jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
 
-            return wrapStatement(mc.getRealConnection().createStatement(), spy, jndiName);
+            return wrapStatement(mc.getRealConnection().createStatement(), spy, jndiName, doLocking);
          }
          catch (Throwable t)
          {
@@ -341,7 +352,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -350,7 +362,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public Statement createStatement(int resultSetType, int resultSetConcurrency) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -362,7 +375,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
                                 resultSetType, resultSetConcurrency);
 
             return wrapStatement(mc.getRealConnection().createStatement(resultSetType, resultSetConcurrency),
-                                 spy, jndiName);
+                                 spy, jndiName, doLocking);
          }
          catch (Throwable t)
          {
@@ -371,7 +384,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -381,7 +395,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability)
       throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -394,7 +409,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
 
             return wrapStatement(mc.getRealConnection()
                                  .createStatement(resultSetType, resultSetConcurrency, resultSetHoldability),
-                                 spy, jndiName);
+                                 spy, jndiName, doLocking);
          }
          catch (Throwable t)
          {
@@ -403,7 +418,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -412,17 +428,20 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     * @param statement The statement
     * @param spy The spy value
     * @param jndiName The jndi name
+    * @param doLocking Do locking
     * @return The wrapped prepared statement
     */
    protected abstract WrappedPreparedStatement wrapPreparedStatement(PreparedStatement statement,
-                                                                     boolean spy, String jndiName);
+                                                                     boolean spy, String jndiName,
+                                                                     boolean doLocking);
 
    /**
     * {@inheritDoc}
     */
    public PreparedStatement prepareStatement(String sql) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -434,7 +453,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
 
             return wrapPreparedStatement(mc.prepareStatement(sql, ResultSet.TYPE_FORWARD_ONLY,
                                                              ResultSet.CONCUR_READ_ONLY),
-                                         spy, jndiName);
+                                         spy, jndiName, doLocking);
          }
          catch (Throwable t)
          {
@@ -443,7 +462,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -453,7 +473,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency)
       throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -465,7 +486,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
                                 sql, resultSetType, resultSetConcurrency);
 
             return wrapPreparedStatement(mc.prepareStatement(sql, resultSetType, resultSetConcurrency),
-                                         spy, jndiName);
+                                         spy, jndiName, doLocking);
          }
          catch (Throwable t)
          {
@@ -474,7 +495,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -484,7 +506,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency,
          int resultSetHoldability) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -498,7 +521,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
             return wrapPreparedStatement(mc.getRealConnection()
                                          .prepareStatement(sql, resultSetType,
                                                            resultSetConcurrency, resultSetHoldability),
-                                         spy, jndiName);
+                                         spy, jndiName, doLocking);
          }
          catch (Throwable t)
          {
@@ -507,7 +530,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -516,7 +540,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -528,7 +553,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
                                 sql, autoGeneratedKeys);
 
             return wrapPreparedStatement(mc.getRealConnection().prepareStatement(sql, autoGeneratedKeys),
-                                         spy, jndiName);
+                                         spy, jndiName, doLocking);
          }
          catch (Throwable t)
          {
@@ -537,7 +562,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -546,7 +572,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public PreparedStatement prepareStatement(String sql, int[] columnIndexes) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -558,7 +585,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
                                 sql, Arrays.toString(columnIndexes));
 
             return wrapPreparedStatement(mc.getRealConnection().prepareStatement(sql, columnIndexes),
-                                         spy, jndiName);
+                                         spy, jndiName, doLocking);
          }
          catch (Throwable t)
          {
@@ -567,7 +594,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -576,7 +604,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public PreparedStatement prepareStatement(String sql, String[] columnNames) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -588,7 +617,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
                                 sql, Arrays.toString(columnNames));
 
             return wrapPreparedStatement(mc.getRealConnection().prepareStatement(sql, columnNames),
-                                         spy, jndiName);
+                                         spy, jndiName, doLocking);
          }
          catch (Throwable t)
          {
@@ -597,7 +626,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -606,17 +636,20 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     * @param statement The statement
     * @param spy The spy value
     * @param jndiName The jndi name
+    * @param doLocking Do locking
     * @return The wrapped callable statement
     */
    protected abstract WrappedCallableStatement wrapCallableStatement(CallableStatement statement,
-                                                                     boolean spy, String jndiName);
+                                                                     boolean spy, String jndiName,
+                                                                     boolean doLocking);
 
    /**
     * {@inheritDoc}
     */
    public CallableStatement prepareCall(String sql) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -626,7 +659,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
                spyLogger.debugf("%s [%s] prepareCall(%s)", jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION, sql);
 
             return wrapCallableStatement(mc.prepareCall(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY),
-                                         spy, jndiName);
+                                         spy, jndiName, doLocking);
          }
          catch (Throwable t)
          {
@@ -635,7 +668,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -644,7 +678,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -656,7 +691,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
                                 sql, resultSetType, resultSetConcurrency);
 
             return wrapCallableStatement(mc.prepareCall(sql, resultSetType, resultSetConcurrency),
-                                         spy, jndiName);
+                                         spy, jndiName, doLocking);
          }
          catch (Throwable t)
          {
@@ -665,7 +700,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -675,7 +711,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency,
                                         int resultSetHoldability) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -688,7 +725,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
 
             return wrapCallableStatement(mc.getRealConnection()
                                          .prepareCall(sql, resultSetType, resultSetConcurrency, resultSetHoldability),
-                                         spy, jndiName);
+                                         spy, jndiName, doLocking);
          }
          catch (Throwable t)
          {
@@ -697,7 +734,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -706,7 +744,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public String nativeSQL(String sql) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -725,7 +764,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -734,7 +774,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public void setAutoCommit(boolean autocommit) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkStatus();
@@ -747,7 +788,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -756,7 +798,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public boolean getAutoCommit() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkStatus();
@@ -768,7 +811,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -777,7 +821,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public void commit() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -789,7 +834,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -798,7 +844,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public void rollback() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -810,7 +857,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -819,7 +867,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public void rollback(Savepoint savepoint) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -832,7 +881,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -841,7 +891,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public DatabaseMetaData getMetaData() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -859,7 +910,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -868,7 +920,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public void setCatalog(String catalog) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -887,7 +940,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -896,7 +950,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public String getCatalog() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -915,7 +970,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -924,7 +980,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public void setTransactionIsolation(int isolationLevel) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkStatus();
@@ -937,7 +994,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -946,7 +1004,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public int getTransactionIsolation() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkStatus();
@@ -959,7 +1018,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -968,7 +1028,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public SQLWarning getWarnings() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -987,7 +1048,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -996,7 +1058,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public void clearWarnings() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -1014,7 +1077,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1024,7 +1088,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    @SuppressWarnings("unchecked")
    public Map<String, Class<?>> getTypeMap() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -1042,7 +1107,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1052,7 +1118,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    @SuppressWarnings("unchecked")
    public void setTypeMap(Map<String, Class<?>> typeMap) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -1071,7 +1138,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1080,7 +1148,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public void setHoldability(int holdability) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -1099,7 +1168,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1108,7 +1178,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public int getHoldability() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -1126,7 +1197,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1135,7 +1207,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public Savepoint setSavepoint() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -1153,7 +1226,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1162,7 +1236,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public Savepoint setSavepoint(String name) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -1181,7 +1256,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1190,7 +1266,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public void releaseSavepoint(Savepoint savepoint) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -1209,7 +1286,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1219,7 +1297,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public Array createArrayOf(String typeName, Object[] elements) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -1239,7 +1318,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1248,7 +1328,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public Blob createBlob() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -1267,7 +1348,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1276,7 +1358,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public Clob createClob() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -1295,7 +1378,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1304,7 +1388,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public NClob createNClob() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -1323,7 +1408,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1332,7 +1418,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public SQLXML createSQLXML() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -1351,7 +1438,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1360,7 +1448,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public Struct createStruct(String typeName, Object[] attributes) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -1380,7 +1469,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1389,7 +1479,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public Properties getClientInfo() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -1408,7 +1499,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1417,7 +1509,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public String getClientInfo(String name) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -1437,7 +1530,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1446,7 +1540,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public boolean isValid(int timeout) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkStatus();
@@ -1466,7 +1561,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1477,7 +1573,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    {
       try
       {
-         lock();
+         if (doLocking)
+            lock();
          try
          {
             checkTransaction();
@@ -1507,7 +1604,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          }
          finally
          {
-            unlock();
+            if (doLocking)
+               unlock();
          }
       }
       catch (SQLClientInfoException e)
@@ -1529,7 +1627,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    {
       try
       {
-         lock();
+         if (doLocking)
+            lock();
          try
          {
             checkTransaction();
@@ -1559,7 +1658,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          }
          finally
          {
-            unlock();
+            if (doLocking)
+               unlock();
          }
       }
       catch (SQLClientInfoException e)
@@ -1580,7 +1680,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public void setSchema(String schema) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -1600,7 +1701,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1609,7 +1711,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public String getSchema() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -1628,7 +1731,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1637,7 +1741,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public void abort(Executor executor) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -1657,7 +1762,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1666,7 +1772,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -1686,7 +1793,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1695,7 +1803,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public int getNetworkTimeout() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -1714,7 +1823,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1723,7 +1833,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public Connection getUnderlyingConnection() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -1735,7 +1846,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 

@@ -77,6 +77,9 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
    /** Default fetch size */
    protected static Integer defaultFetchSize = null;
 
+   /** Do locking */
+   protected final boolean doLocking;
+   
    static
    {
       String dfs = SecurityActions.getSystemProperty("ironjacamar.jdbc.defaultfetchsize");
@@ -91,9 +94,10 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     * @param resultSet the real result set
     * @param spy The spy value
     * @param jndiName The jndi name
+    * @param doLocking Do locking
     */
    public WrappedResultSet(WrappedStatement statement, ResultSet resultSet,
-                           final boolean spy, final String jndiName)
+                           final boolean spy, final String jndiName, final boolean doLocking)
    {
       if (statement == null)
          throw new IllegalArgumentException("Null statement!");
@@ -105,6 +109,7 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       this.resultSet = resultSet;
       this.spy = spy;
       this.jndiName = jndiName;
+      this.doLocking = doLocking;
 
       if (defaultFetchSize != null)
       {
@@ -124,7 +129,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public ResultSet getUnderlyingResultSet() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -132,7 +138,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -141,7 +148,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean absolute(int row) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -161,7 +169,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -170,7 +179,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void afterLast() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -189,7 +199,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -198,7 +209,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void beforeFirst() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -217,7 +229,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -226,7 +239,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void cancelRowUpdates() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -245,7 +259,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -254,7 +269,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void clearWarnings() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -273,7 +289,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -282,7 +299,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void close() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          if (closed.get())
@@ -298,7 +316,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -307,7 +326,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void deleteRow() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -326,7 +346,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -335,7 +356,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public int findColumn(String columnName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -355,7 +377,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -364,7 +387,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean first() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -383,7 +407,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -392,7 +417,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Array getArray(int i) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -412,7 +438,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -421,7 +448,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Array getArray(String colName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -441,7 +469,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -450,7 +479,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public InputStream getAsciiStream(int columnIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -470,7 +500,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -479,7 +510,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public InputStream getAsciiStream(String columnName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -499,7 +531,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -508,7 +541,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public BigDecimal getBigDecimal(int columnIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -528,7 +562,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -538,7 +573,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
    @Deprecated
    public BigDecimal getBigDecimal(int columnIndex, int scale) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -558,7 +594,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -567,7 +604,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public BigDecimal getBigDecimal(String columnName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -587,7 +625,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -597,7 +636,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
    @Deprecated
    public BigDecimal getBigDecimal(String columnName, int scale) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -617,7 +657,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -626,7 +667,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public InputStream getBinaryStream(int columnIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -646,7 +688,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -655,7 +698,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public InputStream getBinaryStream(String columnName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -675,7 +719,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -684,7 +729,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Blob getBlob(int i) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -704,7 +750,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -713,7 +760,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Blob getBlob(String colName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -733,7 +781,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -742,7 +791,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean getBoolean(int columnIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -762,7 +812,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -771,7 +822,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean getBoolean(String columnName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -791,7 +843,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -800,7 +853,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public byte getByte(int columnIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -820,7 +874,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -829,7 +884,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public byte getByte(String columnName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -849,7 +905,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -858,7 +915,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public byte[] getBytes(int columnIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -878,7 +936,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -887,7 +946,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public byte[] getBytes(String columnName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -907,7 +967,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -916,7 +977,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Reader getCharacterStream(int columnIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -936,7 +998,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -945,7 +1008,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Reader getCharacterStream(String columnName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -965,7 +1029,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -974,7 +1039,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Clob getClob(int i) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -994,7 +1060,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1003,7 +1070,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Clob getClob(String colName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1023,7 +1091,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1032,7 +1101,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public int getConcurrency() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1051,7 +1121,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1060,7 +1131,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public String getCursorName() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1079,7 +1151,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1088,7 +1161,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Date getDate(int columnIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1108,7 +1182,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1117,7 +1192,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Date getDate(int columnIndex, Calendar cal) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1137,7 +1213,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1146,7 +1223,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Date getDate(String columnName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1166,7 +1244,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1175,7 +1254,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Date getDate(String columnName, Calendar cal) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1195,7 +1275,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1204,7 +1285,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public double getDouble(int columnIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1224,7 +1306,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1233,7 +1316,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public double getDouble(String columnName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1253,7 +1337,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1262,7 +1347,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public int getFetchDirection() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1281,7 +1367,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1290,7 +1377,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public int getFetchSize() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1309,7 +1397,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1318,7 +1407,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public float getFloat(int columnIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1338,7 +1428,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1347,7 +1438,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public float getFloat(String columnName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1367,7 +1459,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1376,7 +1469,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public int getInt(int columnIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1396,7 +1490,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1405,7 +1500,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public int getInt(String columnName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1425,7 +1521,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1434,7 +1531,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public long getLong(int columnIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1454,7 +1552,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1463,7 +1562,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public long getLong(String columnName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1483,7 +1583,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1492,7 +1593,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public ResultSetMetaData getMetaData() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1511,7 +1613,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1520,7 +1623,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Object getObject(int columnIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1540,7 +1644,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1550,7 +1655,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
    @SuppressWarnings("unchecked")
    public Object getObject(int i, Map<String, Class<?>> map) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1570,7 +1676,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1579,7 +1686,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Object getObject(String columnName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1599,7 +1707,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1609,7 +1718,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
    @SuppressWarnings("unchecked")
    public Object getObject(String colName, Map<String, Class<?>> map) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1629,7 +1739,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1638,7 +1749,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Ref getRef(int i) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1658,7 +1770,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1667,7 +1780,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Ref getRef(String colName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1687,7 +1801,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1696,7 +1811,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public int getRow() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1715,7 +1831,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1724,7 +1841,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public short getShort(int columnIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1744,7 +1862,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1753,7 +1872,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public short getShort(String columnName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1773,7 +1893,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1782,7 +1903,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Statement getStatement() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1801,7 +1923,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1810,7 +1933,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public String getString(int columnIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1830,7 +1954,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1839,7 +1964,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public String getString(String columnName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1859,7 +1985,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1868,7 +1995,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Time getTime(int columnIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1888,7 +2016,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1897,7 +2026,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Time getTime(int columnIndex, Calendar cal) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1917,7 +2047,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1926,7 +2057,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Time getTime(String columnName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1946,7 +2078,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1955,7 +2088,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Time getTime(String columnName, Calendar cal) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1975,7 +2109,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1984,7 +2119,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Timestamp getTimestamp(int columnIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2004,7 +2140,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2013,7 +2150,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Timestamp getTimestamp(int columnIndex, Calendar cal) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2033,7 +2171,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2042,7 +2181,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Timestamp getTimestamp(String columnName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2062,7 +2202,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2071,7 +2212,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Timestamp getTimestamp(String columnName, Calendar cal) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2091,7 +2233,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2100,7 +2243,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public int getType() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2119,7 +2263,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2129,7 +2274,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
    @Deprecated
    public InputStream getUnicodeStream(int columnIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2149,7 +2295,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2159,7 +2306,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
    @Deprecated
    public InputStream getUnicodeStream(String columnName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2179,7 +2327,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2188,7 +2337,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public URL getURL(int columnIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2208,7 +2358,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2217,7 +2368,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public URL getURL(String columnName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2237,7 +2389,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2246,7 +2399,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public SQLWarning getWarnings() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2265,7 +2419,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2274,7 +2429,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void insertRow() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -2293,7 +2449,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2302,7 +2459,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean isAfterLast() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2321,7 +2479,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2330,7 +2489,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean isBeforeFirst() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2349,7 +2509,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2358,7 +2519,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean isFirst() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2377,7 +2539,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2386,7 +2549,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean isLast() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2405,7 +2569,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2414,7 +2579,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean last() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2433,7 +2599,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2442,7 +2609,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void moveToCurrentRow() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2461,7 +2629,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2470,7 +2639,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void moveToInsertRow() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2489,7 +2659,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2498,7 +2669,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean next() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2517,7 +2689,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2526,7 +2699,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean previous() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2545,7 +2719,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2554,7 +2729,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void refreshRow() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2573,7 +2749,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2582,7 +2759,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean relative(int rows) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2602,7 +2780,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2611,7 +2790,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean rowDeleted() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2630,7 +2810,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2639,7 +2820,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean rowInserted() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2658,7 +2840,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2667,7 +2850,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean rowUpdated() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2686,7 +2870,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2695,7 +2880,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void setFetchDirection(int direction) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2715,7 +2901,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2724,7 +2911,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void setFetchSize(int rows) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2744,7 +2932,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2753,7 +2942,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateArray(int columnIndex, Array x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -2773,7 +2963,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2782,7 +2973,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateArray(String columnName, Array x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -2802,7 +2994,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2811,7 +3004,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateAsciiStream(int columnIndex, InputStream x, int length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -2831,7 +3025,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2840,7 +3035,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateAsciiStream(String columnName, InputStream x, int length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -2860,7 +3056,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2869,7 +3066,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBigDecimal(int columnIndex, BigDecimal x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -2889,7 +3087,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2898,7 +3097,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBigDecimal(String columnName, BigDecimal x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -2918,7 +3118,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2927,7 +3128,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBinaryStream(int columnIndex, InputStream x, int length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -2947,7 +3149,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2956,7 +3159,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBinaryStream(String columnName, InputStream x, int length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -2976,7 +3180,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2985,7 +3190,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBlob(int columnIndex, Blob x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3005,7 +3211,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3014,7 +3221,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBlob(String columnName, Blob x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3034,7 +3242,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3043,7 +3252,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBoolean(int columnIndex, boolean x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3063,7 +3273,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3072,7 +3283,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBoolean(String columnName, boolean x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3092,7 +3304,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3101,7 +3314,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateByte(int columnIndex, byte x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3121,7 +3335,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3130,7 +3345,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateByte(String columnName, byte x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3150,7 +3366,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3159,7 +3376,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBytes(int columnIndex, byte[] x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3179,7 +3397,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3188,7 +3407,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBytes(String columnName, byte[] x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3208,7 +3428,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3217,7 +3438,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateCharacterStream(int columnIndex, Reader x, int length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3237,7 +3459,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3246,7 +3469,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateCharacterStream(String columnName, Reader reader, int length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3266,7 +3490,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3275,7 +3500,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateClob(int columnIndex, Clob x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3295,7 +3521,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3304,7 +3531,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateClob(String columnName, Clob x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3324,7 +3552,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3333,7 +3562,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateDate(int columnIndex, Date x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3353,7 +3583,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3362,7 +3593,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateDate(String columnName, Date x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3382,7 +3614,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3391,7 +3624,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateDouble(int columnIndex, double x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3411,7 +3645,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3420,7 +3655,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateDouble(String columnName, double x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3440,7 +3676,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3449,7 +3686,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateFloat(int columnIndex, float x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3469,7 +3707,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3478,7 +3717,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateFloat(String columnName, float x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3498,7 +3738,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3507,7 +3748,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateInt(int columnIndex, int x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3527,7 +3769,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3536,7 +3779,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateInt(String columnName, int x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3556,7 +3800,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3565,7 +3810,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateLong(int columnIndex, long x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3585,7 +3831,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3594,7 +3841,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateLong(String columnName, long x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3614,7 +3862,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3623,7 +3872,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateNull(int columnIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3643,7 +3893,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3652,7 +3903,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateNull(String columnName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3672,7 +3924,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3681,7 +3934,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateObject(int columnIndex, Object x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3701,7 +3955,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3710,7 +3965,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateObject(int columnIndex, Object x, int scale) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3730,7 +3986,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3739,7 +3996,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateObject(String columnName, Object x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3759,7 +4017,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3768,7 +4027,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateObject(String columnName, Object x, int scale) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3788,7 +4048,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3797,7 +4058,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateRef(int columnIndex, Ref x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3817,7 +4079,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3826,7 +4089,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateRef(String columnName, Ref x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3846,7 +4110,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3855,7 +4120,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateRow() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3874,7 +4140,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3883,7 +4150,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateShort(int columnIndex, short x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3903,7 +4171,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3912,7 +4181,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateShort(String columnName, short x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3932,7 +4202,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3941,7 +4212,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateString(int columnIndex, String x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3961,7 +4233,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3970,7 +4243,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateString(String columnName, String x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -3990,7 +4264,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3999,7 +4274,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateTime(int columnIndex, Time x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -4019,7 +4295,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -4028,7 +4305,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateTime(String columnName, Time x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -4048,7 +4326,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -4057,7 +4336,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateTimestamp(int columnIndex, Timestamp x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -4077,7 +4357,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -4086,7 +4367,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateTimestamp(String columnName, Timestamp x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -4106,7 +4388,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -4115,7 +4398,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean wasNull() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -4134,7 +4418,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -4143,7 +4428,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public int getHoldability() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -4162,7 +4448,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -4171,7 +4458,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Reader getNCharacterStream(int columnIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -4191,7 +4479,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -4200,7 +4489,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public Reader getNCharacterStream(String columnLabel) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -4220,7 +4510,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -4229,7 +4520,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public NClob getNClob(int columnIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -4249,7 +4541,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -4258,7 +4551,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public NClob getNClob(String columnLabel) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -4278,7 +4572,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -4287,7 +4582,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public String getNString(int columnIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -4307,7 +4603,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -4316,7 +4613,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public String getNString(String columnLabel) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -4336,7 +4634,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -4345,7 +4644,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public RowId getRowId(int columnIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -4365,7 +4665,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -4374,7 +4675,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public RowId getRowId(String columnLabel) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -4394,7 +4696,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -4403,7 +4706,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public SQLXML getSQLXML(int columnIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -4423,7 +4727,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -4432,7 +4737,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public SQLXML getSQLXML(String columnLabel) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -4452,7 +4758,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -4461,7 +4768,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean isClosed() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          if (spy)
@@ -4481,7 +4789,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -4490,7 +4799,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateAsciiStream(int columnIndex, InputStream x, long length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -4510,7 +4820,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -4519,7 +4830,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateAsciiStream(int columnIndex, InputStream x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -4539,7 +4851,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -4548,7 +4861,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateAsciiStream(String columnLabel, InputStream x, long length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -4568,7 +4882,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -4577,7 +4892,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateAsciiStream(String columnLabel, InputStream x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -4597,7 +4913,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -4606,7 +4923,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBinaryStream(int columnIndex, InputStream x, long length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -4626,7 +4944,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -4635,7 +4954,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBinaryStream(int columnIndex, InputStream x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -4655,7 +4975,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -4664,7 +4985,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBinaryStream(String columnLabel, InputStream x, long length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -4684,7 +5006,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -4693,7 +5016,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBinaryStream(String columnLabel, InputStream x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -4713,7 +5037,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -4722,7 +5047,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBlob(int columnIndex, InputStream inputStream, long length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -4742,7 +5068,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -4751,7 +5078,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBlob(int columnIndex, InputStream inputStream) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -4771,7 +5099,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -4780,7 +5109,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBlob(String columnLabel, InputStream inputStream, long length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -4800,7 +5130,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -4809,7 +5140,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateBlob(String columnLabel, InputStream inputStream) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -4829,7 +5161,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -4838,7 +5171,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateCharacterStream(int columnIndex, Reader x, long length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -4858,7 +5192,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -4867,7 +5202,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateCharacterStream(int columnIndex, Reader x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -4887,7 +5223,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -4896,7 +5233,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateCharacterStream(String columnLabel, Reader reader, long length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -4916,7 +5254,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -4925,7 +5264,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateCharacterStream(String columnLabel, Reader reader) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -4945,7 +5285,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -4954,7 +5295,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateClob(int columnIndex, Reader reader, long length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -4974,7 +5316,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -4983,7 +5326,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateClob(int columnIndex, Reader reader) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -5003,7 +5347,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -5012,7 +5357,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateClob(String columnLabel, Reader reader, long length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -5032,7 +5378,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -5041,7 +5388,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateClob(String columnLabel, Reader reader) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -5061,7 +5409,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -5070,7 +5419,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateNCharacterStream(int columnIndex, Reader x, long length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -5090,7 +5440,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -5099,7 +5450,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateNCharacterStream(int columnIndex, Reader x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -5119,7 +5471,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -5128,7 +5481,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateNCharacterStream(String columnLabel, Reader reader, long length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -5148,7 +5502,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -5157,7 +5512,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateNCharacterStream(String columnLabel, Reader reader) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -5177,7 +5533,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -5186,7 +5543,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateNClob(int columnIndex, NClob clob) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -5206,7 +5564,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -5215,7 +5574,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateNClob(int columnIndex, Reader reader, long length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -5235,7 +5595,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -5244,7 +5605,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateNClob(int columnIndex, Reader reader) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -5264,7 +5626,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -5273,7 +5636,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateNClob(String columnLabel, NClob clob) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -5293,7 +5657,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -5302,7 +5667,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateNClob(String columnLabel, Reader reader, long length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -5322,7 +5688,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -5331,7 +5698,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateNClob(String columnLabel, Reader reader) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -5351,7 +5719,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -5360,7 +5729,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateNString(int columnIndex, String string) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -5380,7 +5750,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -5389,7 +5760,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateNString(String columnLabel, String string) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -5409,7 +5781,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -5418,7 +5791,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateRowId(int columnIndex, RowId x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -5438,7 +5812,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -5447,7 +5822,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateRowId(String columnLabel, RowId x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -5467,7 +5843,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -5476,7 +5853,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateSQLXML(int columnIndex, SQLXML xmlObject) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -5496,7 +5874,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -5505,7 +5884,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void updateSQLXML(String columnLabel, SQLXML xmlObject) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -5525,7 +5905,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -5535,7 +5916,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public <T> T getObject(int parameterIndex, Class<T> type) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -5555,7 +5937,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -5564,7 +5947,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public <T> T getObject(String parameterName, Class<T> type) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -5584,7 +5968,8 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 

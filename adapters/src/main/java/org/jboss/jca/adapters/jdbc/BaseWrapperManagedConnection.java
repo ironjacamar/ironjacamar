@@ -63,9 +63,7 @@ import org.jboss.logging.Messages;
  * @author <a href="mailto:abrock@redhat.com">Adrian Brock</a>
  * @author <a href="mailto:wprice@redhat.com">Weston Price</a>
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
- * @version $Revision: 105425 $
  */
-
 public abstract class BaseWrapperManagedConnection implements ManagedConnection, ConnectableResource
 {
    private static final WrappedConnectionFactory WRAPPED_CONNECTION_FACTORY;
@@ -97,6 +95,8 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
 
    private ReentrantLock lock = new ReentrantLock(true);
 
+   private int tryLock;
+   
    private final Collection<ConnectionEventListener> cels = new CopyOnWriteArrayList<ConnectionEventListener>();
 
    private final Set<WrappedConnection> handles = new HashSet<WrappedConnection>();
@@ -189,6 +189,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
       this.con = con;
       this.props = props;
       this.trace = mcf.log.isTraceEnabled();
+      this.tryLock = mcf.getUseTryLock().intValue();
 
       if (psCacheSize > 0)
       {
@@ -383,11 +384,13 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
     */
    protected void tryLock() throws SQLException
    {
+      if (tryLock < 0)
+         return;
+
       if (trace)
          dumpLockInformation(true);
 
-      int tryLock = mcf.getUseTryLock().intValue();
-      if (tryLock <= 0)
+      if (tryLock == 0)
       {
          lock();
          return;
@@ -409,6 +412,9 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
     */
    protected void unlock()
    {
+      if (tryLock < 0)
+         return;
+
       if (trace)
          dumpLockInformation(false);
 
@@ -1211,7 +1217,8 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
    {
       WrappedConnection lc = WRAPPED_CONNECTION_FACTORY.createWrappedConnection(this,
                                                                                 mcf.getSpy().booleanValue(),
-                                                                                mcf.getJndiName());
+                                                                                mcf.getJndiName(),
+                                                                                mcf.isDoLocking());
       synchronized (handles)
       {
          handles.add(lc);

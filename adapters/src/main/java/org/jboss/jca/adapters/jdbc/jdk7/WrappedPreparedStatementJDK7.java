@@ -43,10 +43,12 @@ public class WrappedPreparedStatementJDK7 extends WrappedPreparedStatement
     * @param s The prepared statement
     * @param spy The spy value
     * @param jndiName The jndi name
+    * @param doLocking Do locking
     */
-   public WrappedPreparedStatementJDK7(WrappedConnectionJDK7 lc, PreparedStatement s, boolean spy, String jndiName)
+   public WrappedPreparedStatementJDK7(WrappedConnectionJDK7 lc, PreparedStatement s, boolean spy, String jndiName,
+                                       boolean doLocking)
    {
-      super(lc, s, spy, jndiName);
+      super(lc, s, spy, jndiName, doLocking);
    }
    
    /**
@@ -54,10 +56,11 @@ public class WrappedPreparedStatementJDK7 extends WrappedPreparedStatement
     * @param resultSet The result set
     * @param spy The spy value
     * @param jndiName The jndi name
+    * @param doLocking Do locking
     * @return The result
     */
-   protected WrappedResultSet wrapResultSet(ResultSet resultSet, boolean spy, String jndiName)
+   protected WrappedResultSet wrapResultSet(ResultSet resultSet, boolean spy, String jndiName, boolean doLocking)
    {
-      return new WrappedResultSetJDK7(this, resultSet, spy, jndiName);
+      return new WrappedResultSetJDK7(this, resultSet, spy, jndiName, doLocking);
    }
 }

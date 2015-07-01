@@ -45,11 +45,12 @@ public class WrappedResultSetJDK8 extends WrappedResultSet
     * @param resultSet The result set
     * @param spy The spy value
     * @param jndiName The jndi name
+    * @param doLocking Do locking
     */
    public WrappedResultSetJDK8(WrappedStatement statement, ResultSet resultSet,
-                               boolean spy, String jndiName)
+                               boolean spy, String jndiName, boolean doLocking)
    {
-      super(statement, resultSet, spy, jndiName);
+      super(statement, resultSet, spy, jndiName, doLocking);
    }
 
    /**
@@ -61,7 +62,8 @@ public class WrappedResultSetJDK8 extends WrappedResultSet
                             int scaleOrLength)
       throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -81,7 +83,8 @@ public class WrappedResultSetJDK8 extends WrappedResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -94,7 +97,8 @@ public class WrappedResultSetJDK8 extends WrappedResultSet
                             int scaleOrLength)
       throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -114,7 +118,8 @@ public class WrappedResultSetJDK8 extends WrappedResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -126,7 +131,8 @@ public class WrappedResultSetJDK8 extends WrappedResultSet
                             SQLType targetSqlType)
       throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -146,7 +152,8 @@ public class WrappedResultSetJDK8 extends WrappedResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -158,7 +165,8 @@ public class WrappedResultSetJDK8 extends WrappedResultSet
                             SQLType targetSqlType)
       throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -178,7 +186,8 @@ public class WrappedResultSetJDK8 extends WrappedResultSet
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 }

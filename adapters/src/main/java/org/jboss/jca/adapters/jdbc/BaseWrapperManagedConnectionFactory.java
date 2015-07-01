@@ -637,6 +637,15 @@ public abstract class BaseWrapperManagedConnectionFactory
    }
 
    /**
+    * Are we doing locking
+    * @return <code>true</code> if locking, otherwise <code>false</code>
+    */
+   public boolean isDoLocking()
+   {
+      return useTryLock.intValue() >= 0;
+   }
+   
+   /**
     * Set the spy value
     * @param v The value
     */

@@ -48,10 +48,11 @@ public class WrappedConnectionJDK8 extends WrappedConnection
     * @param mc the managed connection
     * @param spy The spy value
     * @param jndiName The jndi name
+    * @param doLocking Do locking
     */
-   public WrappedConnectionJDK8(BaseWrapperManagedConnection mc, boolean spy, String jndiName)
+   public WrappedConnectionJDK8(BaseWrapperManagedConnection mc, boolean spy, String jndiName, boolean doLocking)
    {
-      super(mc, spy, jndiName);
+      super(mc, spy, jndiName, doLocking);
    }
 
    /**
@@ -59,11 +60,12 @@ public class WrappedConnectionJDK8 extends WrappedConnection
     * @param statement The statement
     * @param spy The spy value
     * @param jndiName The jndi name
+    * @param doLocking Do locking
     * @return The result
     */
-   protected WrappedStatement wrapStatement(Statement statement, boolean spy, String jndiName)
+   protected WrappedStatement wrapStatement(Statement statement, boolean spy, String jndiName, boolean doLocking)
    {
-      return new WrappedStatementJDK8(this, statement, spy, jndiName);
+      return new WrappedStatementJDK8(this, statement, spy, jndiName, doLocking);
    }
 
    /**
@@ -71,11 +73,13 @@ public class WrappedConnectionJDK8 extends WrappedConnection
     * @param statement The statement
     * @param spy The spy value
     * @param jndiName The jndi name
+    * @param doLocking Do locking
     * @return The result
     */
-   protected WrappedPreparedStatement wrapPreparedStatement(PreparedStatement statement, boolean spy, String jndiName)
+   protected WrappedPreparedStatement wrapPreparedStatement(PreparedStatement statement, boolean spy, String jndiName,
+                                                            boolean doLocking)
    {
-      return new WrappedPreparedStatementJDK8(this, statement, spy, jndiName);
+      return new WrappedPreparedStatementJDK8(this, statement, spy, jndiName, doLocking);
    }
 
    /**
@@ -83,10 +87,12 @@ public class WrappedConnectionJDK8 extends WrappedConnection
     * @param statement The statement
     * @param spy The spy value
     * @param jndiName The jndi name
+    * @param doLocking Do locking
     * @return The result
     */
-   protected WrappedCallableStatement wrapCallableStatement(CallableStatement statement, boolean spy, String jndiName)
+   protected WrappedCallableStatement wrapCallableStatement(CallableStatement statement, boolean spy, String jndiName,
+                                                            boolean doLocking)
    {
-      return new WrappedCallableStatementJDK8(this, statement, spy, jndiName);
+      return new WrappedCallableStatementJDK8(this, statement, spy, jndiName, doLocking);
    }
 }

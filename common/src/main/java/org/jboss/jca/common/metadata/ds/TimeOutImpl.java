@@ -222,8 +222,5 @@ public class TimeOutImpl extends org.jboss.jca.common.metadata.common.TimeOutImp
    {
       if (this.queryTimeout != null && this.queryTimeout < 0)
          throw new ValidateException(bundle.invalidNegative(TimeOut.Tag.QUERY_TIMEOUT.getLocalName()));
-
-      if (this.useTryLock != null && this.useTryLock < 0)
-         throw new ValidateException(bundle.invalidNegative(TimeOut.Tag.USE_TRY_LOCK.getLocalName()));
    }
 }

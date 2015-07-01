@@ -59,11 +59,12 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     * @param cs The callable statement
     * @param spy The spy value
     * @param jndiName The jndi name
+    * @param doLocking Do locking
     */
    public WrappedCallableStatement(final WrappedConnection lc, final CallableStatement cs,
-                                   boolean spy, String jndiName)
+                                   boolean spy, String jndiName, boolean doLocking)
    {
-      super(lc, cs, spy, jndiName, Constants.SPY_LOGGER_PREFIX_CALLABLE_STATEMENT);
+      super(lc, cs, spy, jndiName, doLocking, Constants.SPY_LOGGER_PREFIX_CALLABLE_STATEMENT);
       this.cs = cs;
    }
 
@@ -72,7 +73,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public CallableStatement getUnderlyingStatement() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -87,7 +89,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -96,7 +99,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public Object getObject(int parameterIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -116,7 +120,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -125,7 +130,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public Object getObject(int parameterIndex, Map<String, Class<?>> typeMap) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -145,7 +151,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -154,7 +161,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public Object getObject(String parameterName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -174,7 +182,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -183,7 +192,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public Object getObject(String parameterName, Map<String, Class<?>> typeMap) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -203,7 +213,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -212,7 +223,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public boolean getBoolean(int parameterIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -232,7 +244,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -241,7 +254,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public boolean getBoolean(String parameterName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -261,7 +275,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -270,7 +285,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public byte getByte(int parameterIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -290,7 +306,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -299,7 +316,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public byte getByte(String parameterName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -319,7 +337,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -328,7 +347,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public short getShort(int parameterIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -348,7 +368,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -357,7 +378,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public short getShort(String parameterName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -377,7 +399,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -386,7 +409,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public int getInt(int parameterIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -406,7 +430,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -415,7 +440,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public int getInt(String parameterName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -435,7 +461,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -444,7 +471,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public long getLong(int parameterIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -464,7 +492,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -473,7 +502,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public long getLong(String parameterName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -493,7 +523,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -502,7 +533,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public float getFloat(int parameterIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -522,7 +554,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -531,7 +564,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public float getFloat(String parameterName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -551,7 +585,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -560,7 +595,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public double getDouble(int parameterIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -580,7 +616,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -589,7 +626,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public double getDouble(String parameterName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -609,7 +647,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -618,7 +657,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public byte[] getBytes(int parameterIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -638,7 +678,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -647,7 +688,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public byte[] getBytes(String parameterName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -667,7 +709,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -676,7 +719,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public URL getURL(int parameterIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -696,7 +740,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -705,7 +750,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public URL getURL(String parameterName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -725,7 +771,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -734,7 +781,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public String getString(int parameterIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -754,7 +802,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -763,7 +812,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public String getString(String parameterName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -783,7 +833,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -792,7 +843,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public Ref getRef(int parameterIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -812,7 +864,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -821,7 +874,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public Ref getRef(String parameterName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -841,7 +895,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -850,7 +905,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public Time getTime(int parameterIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -870,7 +926,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -879,7 +936,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public Time getTime(int parameterIndex, Calendar calendar) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -899,7 +957,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -908,7 +967,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public Time getTime(String parameterName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -928,7 +988,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -937,7 +998,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public Time getTime(String parameterName, Calendar calendar) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -957,7 +1019,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -966,7 +1029,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public Date getDate(int parameterIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -986,7 +1050,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -995,7 +1060,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public Date getDate(int parameterIndex, Calendar calendar) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1015,7 +1081,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1024,7 +1091,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public Date getDate(String parameterName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1044,7 +1112,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1053,7 +1122,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public Date getDate(String parameterName, Calendar calendar) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1073,7 +1143,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1082,7 +1153,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void registerOutParameter(int parameterIndex, int sqlType) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1102,7 +1174,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1111,7 +1184,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void registerOutParameter(int parameterIndex, int sqlType, int scale) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1131,7 +1205,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1140,7 +1215,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void registerOutParameter(int parameterIndex, int sqlType, String typeName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1160,7 +1236,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1169,7 +1246,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void registerOutParameter(String parameterName, int sqlType) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1189,7 +1267,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1198,7 +1277,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void registerOutParameter(String parameterName, int sqlType, int scale) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1218,7 +1298,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1227,7 +1308,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void registerOutParameter(String parameterName, int sqlType, String typeName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1247,7 +1329,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1256,7 +1339,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public boolean wasNull() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1275,7 +1359,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1285,7 +1370,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
    @Deprecated
    public BigDecimal getBigDecimal(int parameterIndex, int scale) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1305,7 +1391,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1314,7 +1401,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public BigDecimal getBigDecimal(int parameterIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1334,7 +1422,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1343,7 +1432,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public BigDecimal getBigDecimal(String parameterName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1363,7 +1453,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1372,7 +1463,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public Timestamp getTimestamp(int parameterIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1392,7 +1484,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1401,7 +1494,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public Timestamp getTimestamp(int parameterIndex, Calendar calendar) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1421,7 +1515,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1430,7 +1525,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public Timestamp getTimestamp(String parameterName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1450,7 +1546,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1459,7 +1556,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public Timestamp getTimestamp(String parameterName, Calendar calendar) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1479,7 +1577,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1488,7 +1587,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public Blob getBlob(int parameterIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1508,7 +1608,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1517,7 +1618,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public Blob getBlob(String parameterName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1537,7 +1639,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1546,7 +1649,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public Clob getClob(int parameterIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1566,7 +1670,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1575,7 +1680,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public Clob getClob(String parameterName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1595,7 +1701,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1604,7 +1711,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public Array getArray(int parameterIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1624,7 +1732,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1633,7 +1742,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public Array getArray(String parameterName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1653,7 +1763,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1662,7 +1773,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public boolean isClosed() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          try
@@ -1683,7 +1795,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1692,7 +1805,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setBoolean(String parameterName, boolean value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1712,7 +1826,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1721,7 +1836,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setByte(String parameterName, byte value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1741,7 +1857,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1750,7 +1867,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setShort(String parameterName, short value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1770,7 +1888,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1779,7 +1898,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setInt(String parameterName, int value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1799,7 +1919,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1808,7 +1929,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setLong(String parameterName, long value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1828,7 +1950,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1837,7 +1960,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setFloat(String parameterName, float value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1857,7 +1981,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1866,7 +1991,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setDouble(String parameterName, double value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1886,7 +2012,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1895,7 +2022,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setURL(String parameterName, URL value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1915,7 +2043,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1924,7 +2053,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setTime(String parameterName, Time value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1944,7 +2074,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1953,7 +2084,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setTime(String parameterName, Time value, Calendar calendar) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1973,7 +2105,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1982,7 +2115,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setNull(String parameterName, int value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2002,7 +2136,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2011,7 +2146,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setNull(String parameterName, int sqlType, String typeName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2031,7 +2167,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2040,7 +2177,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setBigDecimal(String parameterName, BigDecimal value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2060,7 +2198,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2069,7 +2208,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setString(String parameterName, String value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2089,7 +2229,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2098,7 +2239,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setBytes(String parameterName, byte[] value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2118,7 +2260,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2127,7 +2270,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setDate(String parameterName, Date value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2147,7 +2291,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2156,7 +2301,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setDate(String parameterName, Date value, Calendar calendar) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2176,7 +2322,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2185,7 +2332,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setTimestamp(String parameterName, Timestamp value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2205,7 +2353,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2214,7 +2363,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setTimestamp(String parameterName, Timestamp value, Calendar calendar) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2234,7 +2384,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2243,7 +2394,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setAsciiStream(String parameterName, InputStream stream, int length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2263,7 +2415,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2272,7 +2425,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setBinaryStream(String parameterName, InputStream stream, int length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2292,7 +2446,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2301,7 +2456,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setObject(String parameterName, Object value, int sqlType, int scale) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2321,7 +2477,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2330,7 +2487,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setObject(String parameterName, Object value, int sqlType) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2350,7 +2508,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2359,7 +2518,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setObject(String parameterName, Object value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2379,7 +2539,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2388,7 +2549,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setCharacterStream(String parameterName, Reader reader, int length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2408,7 +2570,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2417,7 +2580,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public Reader getCharacterStream(int parameterIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2437,7 +2601,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2446,7 +2611,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public Reader getCharacterStream(String parameterName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2466,7 +2632,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2475,7 +2642,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public Reader getNCharacterStream(int parameterIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2495,7 +2663,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2504,7 +2673,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public Reader getNCharacterStream(String parameterName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2524,7 +2694,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2533,7 +2704,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public NClob getNClob(int parameterIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2553,7 +2725,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2562,7 +2735,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public NClob getNClob(String parameterName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2582,7 +2756,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2591,7 +2766,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public String getNString(int parameterIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2611,7 +2787,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2620,7 +2797,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public String getNString(String parameterName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2640,7 +2818,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2649,7 +2828,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public RowId getRowId(int parameterIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2669,7 +2849,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2678,7 +2859,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public RowId getRowId(String parameterName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2698,7 +2880,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2707,7 +2890,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public SQLXML getSQLXML(int parameterIndex) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2727,7 +2911,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2736,7 +2921,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public SQLXML getSQLXML(String parameterName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2756,7 +2942,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2765,7 +2952,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setAsciiStream(String parameterName, InputStream x, long length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2785,7 +2973,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2794,7 +2983,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setAsciiStream(String parameterName, InputStream x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2814,7 +3004,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2823,7 +3014,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setBinaryStream(String parameterName, InputStream x, long length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2843,7 +3035,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2852,7 +3045,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setBinaryStream(String parameterName, InputStream x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2872,7 +3066,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2881,7 +3076,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setBlob(String parameterName, Blob x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2901,7 +3097,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2910,7 +3107,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setBlob(String parameterName, InputStream inputStream, long length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2930,7 +3128,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2939,7 +3138,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setBlob(String parameterName, InputStream inputStream) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2959,7 +3159,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2968,7 +3169,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setCharacterStream(String parameterName, Reader reader, long length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -2988,7 +3190,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -2997,7 +3200,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setCharacterStream(String parameterName, Reader reader) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -3017,7 +3221,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3026,7 +3231,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setClob(String parameterName, Clob x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -3046,7 +3252,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3055,7 +3262,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setClob(String parameterName, Reader reader, long length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -3075,7 +3283,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3084,7 +3293,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setClob(String parameterName, Reader reader) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -3104,7 +3314,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3113,7 +3324,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setNCharacterStream(String parameterName, Reader value, long length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -3133,7 +3345,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3142,7 +3355,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setNCharacterStream(String parameterName, Reader value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -3162,7 +3376,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3171,7 +3386,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setNClob(String parameterName, NClob value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -3191,7 +3407,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3200,7 +3417,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setNClob(String parameterName, Reader reader, long length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -3220,7 +3438,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3229,7 +3448,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setNClob(String parameterName, Reader reader) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -3249,7 +3469,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3258,7 +3479,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setNString(String parameterName, String value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -3278,7 +3500,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3287,7 +3510,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setRowId(String parameterName, RowId x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -3307,7 +3531,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3316,7 +3541,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void setSQLXML(String parameterName, SQLXML xmlObject) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -3336,7 +3562,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3346,7 +3573,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public void closeOnCompletion() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -3365,7 +3593,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3374,7 +3603,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public boolean isCloseOnCompletion() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -3393,7 +3623,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3402,7 +3633,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public <T> T getObject(int parameterIndex, Class<T> type) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -3422,7 +3654,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -3431,7 +3664,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
     */
    public <T> T getObject(String parameterName, Class<T> type) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -3451,7 +3685,8 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 

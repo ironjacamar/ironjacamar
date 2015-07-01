@@ -50,7 +50,6 @@ import java.util.Calendar;
  * @author <a href="mailto:d_jencks@users.sourceforge.net">David Jencks</a>
  * @author <a href="mailto:abrock@redhat.com">Adrian Brock</a>
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
- * @version $Revision: 71788 $
  */
 public abstract class WrappedPreparedStatement extends WrappedStatement implements PreparedStatement 
 {
@@ -62,11 +61,12 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     * @param ps The prepared statement
     * @param spy The spy value
     * @param jndiName The jndi name
+    * @param doLocking Do locking
     */
    public WrappedPreparedStatement(final WrappedConnection lc, final PreparedStatement ps,
-                                   boolean spy, String jndiName) 
+                                   boolean spy, String jndiName, boolean doLocking) 
    {
-      this(lc, ps, spy, jndiName, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT);
+      this(lc, ps, spy, jndiName, doLocking, Constants.SPY_LOGGER_PREFIX_PREPARED_STATEMENT);
    }
 
    /**
@@ -75,12 +75,13 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     * @param ps The prepared statement
     * @param spy The spy value
     * @param jndiName The jndi name
+    * @param doLocking Do locking
     * @param spyLoggingCategory The spy logging category
     */
    protected WrappedPreparedStatement(final WrappedConnection lc, final PreparedStatement ps,
-                                      boolean spy, String jndiName, String spyLoggingCategory) 
+                                      boolean spy, String jndiName, boolean doLocking, String spyLoggingCategory) 
    {
-      super(lc, ps, spy, jndiName, spyLoggingCategory);
+      super(lc, ps, spy, jndiName, doLocking, spyLoggingCategory);
       this.ps = ps;
    }
 
@@ -89,7 +90,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public PreparedStatement getUnderlyingStatement() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -104,7 +106,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -113,7 +116,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setBoolean(int parameterIndex, boolean value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -133,7 +137,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -142,7 +147,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setByte(int parameterIndex, byte value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -162,7 +168,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -171,7 +178,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setShort(int parameterIndex, short value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -191,7 +199,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -200,7 +209,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setInt(int parameterIndex, int value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -220,7 +230,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -229,7 +240,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setLong(int parameterIndex, long value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -249,7 +261,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -258,7 +271,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setFloat(int parameterIndex, float value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -278,7 +292,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -287,7 +302,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setDouble(int parameterIndex, double value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -307,7 +323,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -316,7 +333,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setURL(int parameterIndex, URL value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -336,7 +354,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -345,7 +364,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setTime(int parameterIndex, Time value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -365,7 +385,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -374,7 +395,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setTime(int parameterIndex, Time value, Calendar calendar) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -394,7 +416,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -403,7 +426,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public boolean execute() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -424,7 +448,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -433,7 +458,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public ResultSetMetaData getMetaData() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -452,7 +478,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -461,7 +488,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public ResultSet executeQuery() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -483,7 +511,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -492,7 +521,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public int executeUpdate() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkTransaction();
@@ -513,7 +543,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -522,7 +553,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void addBatch() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -541,7 +573,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -550,7 +583,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setNull(int parameterIndex, int sqlType) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -570,7 +604,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -579,7 +614,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setNull(int parameterIndex, int sqlType, String typeName) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -599,7 +635,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -608,7 +645,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setBigDecimal(int parameterIndex, BigDecimal value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -628,7 +666,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -637,7 +676,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setString(int parameterIndex, String value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -657,7 +697,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -666,7 +707,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setBytes(int parameterIndex, byte[] value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -686,7 +728,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -695,7 +738,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setDate(int parameterIndex, Date value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -715,7 +759,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -724,7 +769,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setDate(int parameterIndex, Date value, Calendar calendar) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -744,7 +790,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -753,7 +800,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setTimestamp(int parameterIndex, Timestamp value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -773,7 +821,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -782,7 +831,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setTimestamp(int parameterIndex, Timestamp value, Calendar calendar) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -802,7 +852,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -812,7 +863,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
    @Deprecated
    public void setAsciiStream(int parameterIndex, InputStream stream, int length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -832,7 +884,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -842,7 +895,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
    @Deprecated
    public void setUnicodeStream(int parameterIndex, InputStream stream, int length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -862,7 +916,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -871,7 +926,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setBinaryStream(int parameterIndex, InputStream stream, int length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -891,7 +947,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -900,7 +957,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void clearParameters() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -919,7 +977,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -928,7 +987,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setObject(int parameterIndex, Object value, int sqlType, int scale) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -948,7 +1008,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -957,7 +1018,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setObject(int parameterIndex, Object value, int sqlType) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -977,7 +1039,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -986,7 +1049,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setObject(int parameterIndex, Object value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1006,7 +1070,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1015,7 +1080,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setCharacterStream(int parameterIndex, Reader reader, int length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1035,7 +1101,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1044,7 +1111,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setRef(int parameterIndex, Ref value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1064,7 +1132,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1073,7 +1142,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setBlob(int parameterIndex, Blob value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1093,7 +1163,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1102,7 +1173,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setClob(int parameterIndex, Clob value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1122,7 +1194,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1131,7 +1204,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setArray(int parameterIndex, Array value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1151,7 +1225,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1160,7 +1235,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public ParameterMetaData getParameterMetaData() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1179,7 +1255,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1189,7 +1266,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public boolean isClosed() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          if (spy)
@@ -1207,7 +1285,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1216,7 +1295,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public boolean isPoolable() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1235,7 +1315,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1244,7 +1325,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setPoolable(boolean poolable) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1264,7 +1346,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1273,7 +1356,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setAsciiStream(int parameterIndex, InputStream x, long length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1293,7 +1377,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1302,7 +1387,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setAsciiStream(int parameterIndex, InputStream x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1322,7 +1408,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1331,7 +1418,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setBinaryStream(int parameterIndex, InputStream x, long length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1351,7 +1439,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1360,7 +1449,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setBinaryStream(int parameterIndex, InputStream x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1380,7 +1470,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1389,7 +1480,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setBlob(int parameterIndex, InputStream inputStream, long length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1409,7 +1501,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1418,7 +1511,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setBlob(int parameterIndex, InputStream inputStream) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1438,7 +1532,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1447,7 +1542,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setCharacterStream(int parameterIndex, Reader reader, long length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1467,7 +1563,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1476,7 +1573,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setCharacterStream(int parameterIndex, Reader reader) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1496,7 +1594,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1505,7 +1604,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setClob(int parameterIndex, Reader reader, long length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1525,7 +1625,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1534,7 +1635,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setClob(int parameterIndex, Reader reader) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1554,7 +1656,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1563,7 +1666,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setNCharacterStream(int parameterIndex, Reader value, long length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1583,7 +1687,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1592,7 +1697,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setNCharacterStream(int parameterIndex, Reader value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1612,7 +1718,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1621,7 +1728,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setNClob(int parameterIndex, NClob value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1641,7 +1749,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1650,7 +1759,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setNClob(int parameterIndex, Reader reader, long length) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1670,7 +1780,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1679,7 +1790,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setNClob(int parameterIndex, Reader reader) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1699,7 +1811,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1708,7 +1821,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setNString(int parameterIndex, String value) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1728,7 +1842,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1737,7 +1852,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setRowId(int parameterIndex, RowId x) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1757,7 +1873,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1766,7 +1883,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void setSQLXML(int parameterIndex, SQLXML xmlObject) throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1786,7 +1904,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1796,7 +1915,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public void closeOnCompletion() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1815,7 +1935,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 
@@ -1824,7 +1945,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
     */
    public boolean isCloseOnCompletion() throws SQLException
    {
-      lock();
+      if (doLocking)
+         lock();
       try
       {
          checkState();
@@ -1843,7 +1965,8 @@ public abstract class WrappedPreparedStatement extends WrappedStatement implemen
       }
       finally
       {
-         unlock();
+         if (doLocking)
+            unlock();
       }
    }
 

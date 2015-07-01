@@ -51,11 +51,13 @@ public class WrappedConnectionFactoryJDK7 implements WrappedConnectionFactory
     * @param mc The managed connection
     * @param spy The spy value
     * @param jndiName The jndi name
+    * @param doLocking Do locking
     * @return The result
     */
-   public WrappedConnection createWrappedConnection(BaseWrapperManagedConnection mc, boolean spy, String jndiName)
+   public WrappedConnection createWrappedConnection(BaseWrapperManagedConnection mc, boolean spy, String jndiName,
+                                                    boolean doLocking)
    {
-      return new WrappedConnectionJDK7(mc, spy, jndiName);
+      return new WrappedConnectionJDK7(mc, spy, jndiName, doLocking);
    }
 
    /**
