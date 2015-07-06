@@ -1771,38 +1771,6 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
    /**
     * {@inheritDoc}
     */
-   public boolean isClosed() throws SQLException
-   {
-      if (doLocking)
-         lock();
-      try
-      {
-         try
-         {
-            if (spy)
-               spyLogger.debugf("%s [%s] isClosed()",
-                                jndiName, spyLoggingCategory);
-
-            CallableStatement wrapped = getWrappedObject();
-            if (wrapped == null)
-               return true;
-            return wrapped.isClosed();
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
-      }
-      finally
-      {
-         if (doLocking)
-            unlock();
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
    public void setBoolean(String parameterName, boolean value) throws SQLException
    {
       if (doLocking)
@@ -3554,67 +3522,6 @@ public abstract class WrappedCallableStatement extends WrappedPreparedStatement 
                                 parameterName, xmlObject);
 
             cs.setSQLXML(parameterName, xmlObject);
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
-      }
-      finally
-      {
-         if (doLocking)
-            unlock();
-      }
-   }
-
-
-   /**
-    * {@inheritDoc}
-    */
-   public void closeOnCompletion() throws SQLException
-   {
-      if (doLocking)
-         lock();
-      try
-      {
-         checkState();
-         try
-         {
-            if (spy)
-               spyLogger.debugf("%s [%s] closeOnCompletion()",
-                                jndiName, spyLoggingCategory);
-
-            cs.closeOnCompletion();
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
-      }
-      finally
-      {
-         if (doLocking)
-            unlock();
-      }
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public boolean isCloseOnCompletion() throws SQLException
-   {
-      if (doLocking)
-         lock();
-      try
-      {
-         checkState();
-         try
-         {
-            if (spy)
-               spyLogger.debugf("%s [%s] isCloseOnCompletion()",
-                                jndiName, spyLoggingCategory);
-            
-            return cs.isCloseOnCompletion();
          }
          catch (Throwable t)
          {

@@ -1258,10 +1258,10 @@ public abstract class WrappedStatement extends JBossWrapper implements Statement
             spyLogger.debugf("%s [%s] isClosed()",
                              jndiName, spyLoggingCategory);
 
-         Statement wrapped = getWrappedObject();
-         if (wrapped == null)
+         if (s == null)
             return true;
-         return wrapped.isClosed();
+
+         return s.isClosed();
       }
       catch (Throwable t)
       {
