@@ -28,6 +28,7 @@ import org.jboss.jca.core.api.connectionmanager.pool.FlushMode;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
+import org.jboss.jca.core.connectionmanager.TxConnectionManager;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.pool.api.Capacity;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
@@ -124,6 +125,9 @@ public abstract class AbstractPool implements Pool
    /** Interleaving */
    private boolean interleaving;
 
+   /** No lazy enlistment available */
+   private AtomicBoolean noLazyEnlistmentAvailable;
+   
    /**
     * Create a new base pool.
     *
@@ -151,6 +155,7 @@ public abstract class AbstractPool implements Pool
       this.permits = new Semaphore(pc.getMaxSize(), true, statistics);
       this.capacity = null;
       this.interleaving = false;
+      this.noLazyEnlistmentAvailable = new AtomicBoolean(false);
    }
 
    /**
@@ -624,6 +629,10 @@ public abstract class AbstractPool implements Pool
       if (trace)
          log.tracef("Got connection from pool: %s", cl);
 
+      if (cm instanceof TxConnectionManager && cm.getCachedConnectionManager() == null &&
+          noLazyEnlistmentAvailable.compareAndSet(false, true))
+         log.noLazyEnlistmentAvailable(poolName);
+      
       return cl;
    }
 

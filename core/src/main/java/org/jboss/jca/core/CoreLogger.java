@@ -273,6 +273,14 @@ public interface CoreLogger extends BasicLogger
    @Message(id = 406, value = "Throwable in returning connection: %s")
    public void throwableReturningConnection(Object mc, @Cause Throwable t);
 
+   /**
+    * No lazy enlistment available
+    * @param pool The pool name
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 407, value = "No lazy enlistment available for %s")
+   public void noLazyEnlistmentAvailable(String pool);
+
    // TRANSACTION SYNCHRONIZER (500)
 
    /**

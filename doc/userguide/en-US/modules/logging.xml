@@ -270,6 +270,11 @@
             <entry>Throwable in returning connection</entry>
           </row>
           <row>
+            <entry>407</entry>
+            <entry><code>WARN</code></entry>
+            <entry>No lazy enlistment available</entry>
+          </row>
+          <row>
             <entry>451</entry>
             <entry><code>EXCEPTION</code></entry>
             <entry>The connection manager is shutdown</entry>
