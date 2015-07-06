@@ -1553,7 +1553,15 @@ public abstract class AbstractResourceAdapterDeployer
 
                                  // Section 7.13 -- Read from metadata -> overwrite with specified value if present
                                  if (mcf instanceof TransactionSupport)
+                                 {
+                                    TransactionSupportLevel oldTSL = tsl;
                                     tsl = ((TransactionSupport) mcf).getTransactionSupport();
+
+                                    if (tsl != oldTSL)
+                                       log.changedTransactionSupport(connectionDefinition != null ?
+                                                                     connectionDefinition.getJndiName() :
+                                                                     mcf.getClass().getName());
+                                 }
 
                                  // XAResource recovery
                                  XAResourceRecovery recoveryImpl = null;

@@ -186,4 +186,12 @@ public interface DeployersLogger extends BasicLogger
    @LogMessage(level = INFO)
    @Message(id = 20018, value = "Enabling <validate-on-match> for %s")
    public void enablingValidateOnMatch(String jndiName);
+
+   /**
+    * Changed TransactionSupport
+    * @param jndiName The JNDI name
+    */
+   @LogMessage(level = INFO)
+   @Message(id = 20019, value = "Changed TransactionSupport for %s")
+   public void changedTransactionSupport(String jndiName);
 }

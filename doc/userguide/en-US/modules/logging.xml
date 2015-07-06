@@ -1010,6 +1010,11 @@
             <entry>Enabling &lt;validate-on-match&gt;</entry>
           </row>
           <row>
+            <entry>20019</entry>
+            <entry><code>INFO</code></entry>
+            <entry>Changed TransactionSupport</entry>
+          </row>
+          <row>
             <entry>20051</entry>
             <entry><code>EXCEPTION</code></entry>
             <entry>Unable to start</entry>
