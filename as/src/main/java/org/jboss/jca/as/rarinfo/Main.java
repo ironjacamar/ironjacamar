@@ -457,8 +457,7 @@ public class Main
                   {
                      out.print("  CCI: ");
                      Class<?> clazz = Class.forName(cfi, true, cl);
-
-                     if (hasInterface(clazz, "javax.resource.cci.ConnectionFactory"))
+                     if (isCCI(cfi, clazz, mcfClassName, cl))
                      {
                         out.println("Yes");
                      }
@@ -957,6 +956,31 @@ public class Main
             // Ignore
          }
       }
+   }
+   
+   private static boolean isCCI(String cfi, Class<?> clazz, String mcfClassName, URLClassLoader cl) throws Exception
+   { 
+      if (cfi.equals("javax.resource.cci.ConnectionFactory"))
+         return true;
+      
+      if (hasInterface(clazz, "javax.resource.cci.ConnectionFactory"))
+         return true;
+      
+      Class mcfClazz = Class.forName(mcfClassName, true, cl);
+                     
+      Method m = mcfClazz.getMethod("createConnectionFactory", (Class[]) null);
+                     
+      Class rt = m.getReturnType();
+         
+      if (rt.isAssignableFrom(javax.resource.cci.ConnectionFactory.class))
+         return true;
+ 
+      Object mcfInstance = mcfClazz.newInstance();
+      Object result = m.invoke(mcfInstance, (Object[])null);
+      if (result instanceof javax.resource.cci.ConnectionFactory)
+         return true;
+      
+      return false;
    }
 
    /**
