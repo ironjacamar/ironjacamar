@@ -22,6 +22,7 @@
 
 package org.jboss.jca.core.connectionmanager.pool.mcp;
 
+import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
@@ -30,6 +31,8 @@ import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.security.auth.Subject;
 
+import org.jboss.logging.Logger;
+
 /**
  * Factory to create a managed connection pool
  *
@@ -37,10 +40,24 @@ import javax.security.auth.Subject;
  */
 public class ManagedConnectionPoolFactory
 {   
+   /** The logger */
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class,
+                                                           ManagedConnectionPoolFactory.class.getName());
+
    /** Default implementation */
    private static final String DEFAULT_IMPLEMENTATION = 
       "org.jboss.jca.core.connectionmanager.pool.mcp.SemaphoreArrayListManagedConnectionPool";
 
+   /** Experimental implementation */
+   private static final String EXPERIMENTAL_IMPLEMENTATION = 
+      "org.jboss.jca.core.connectionmanager.pool.mcp.SemaphoreConcurrentLinkedDequeManagedConnectionPool";
+
+   /** Deprecated implementations */
+   private static final String[] DEPRECATED_IMPLEMENTATIONS = new String[] {
+      "org.jboss.jca.core.connectionmanager.pool.mcp.ArrayBlockingQueueManagedConnectionPool",
+      "org.jboss.jca.core.connectionmanager.pool.mcp.SemaphoreConcurrentLinkedQueueManagedConnectionPool"
+   };
+   
    /** Default class definition */
    private static Class<?> defaultImplementation;
 
@@ -51,6 +68,14 @@ public class ManagedConnectionPoolFactory
       if (clz != null && !clz.trim().equals(""))
       {
          clz = clz.trim();
+         for (String impl : DEPRECATED_IMPLEMENTATIONS)
+         {
+            if (clz.equals(impl))
+            {
+               log.deprecatedPool(clz, EXPERIMENTAL_IMPLEMENTATION);
+               clz = EXPERIMENTAL_IMPLEMENTATION;
+            }
+         }
       }
       else
       {

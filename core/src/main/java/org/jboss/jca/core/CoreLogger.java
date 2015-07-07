@@ -281,6 +281,15 @@ public interface CoreLogger extends BasicLogger
    @Message(id = 407, value = "No lazy enlistment available for %s")
    public void noLazyEnlistmentAvailable(String pool);
 
+   /**
+    * Deprecated pool
+    * @param oldPool The old pool name
+    * @param newPool The new pool name
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 408, value = "Deprecated pool: %s, using %s instead")
+   public void deprecatedPool(String oldPool, String newPool);
+
    // TRANSACTION SYNCHRONIZER (500)
 
    /**

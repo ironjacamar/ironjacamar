@@ -275,6 +275,11 @@
             <entry>No lazy enlistment available</entry>
           </row>
           <row>
+            <entry>408</entry>
+            <entry><code>WARN</code></entry>
+            <entry>Deprecated pool</entry>
+          </row>
+          <row>
             <entry>451</entry>
             <entry><code>EXCEPTION</code></entry>
             <entry>The connection manager is shutdown</entry>

@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2010, Red Hat Inc, and individual contributors
+ * Copyright 2015, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -48,9 +48,8 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.resource.ResourceException;
@@ -65,16 +64,13 @@ import javax.security.auth.Subject;
 import org.jboss.logging.Messages;
 
 /**
- * ManagedConnectionPool implementation based on a semaphore and ConcurrentLinkedQueue
+ * ManagedConnectionPool implementation based on a semaphore and ConcurrentLinkedDeque
  * 
  * @author <a href="mailto:johara@redhat.com">John O'Hara</a>
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements ManagedConnectionPool 
+public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements ManagedConnectionPool 
 {
-   /** WARN logged */
-   private static AtomicBoolean warnLogged = new AtomicBoolean(false);
-
    /** The log */
    private CoreLogger log;
 
@@ -105,6 +101,9 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
    /** The pool */
    private Pool pool;
 
+   /** FIFO / FILO */
+   private boolean fifo;
+   
    /**
     * Copy of the maximum size from the pooling parameters. Dynamic changes to
     * this value are not compatible with the semaphore which cannot change be
@@ -113,7 +112,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
    private int maxSize;
 
    /** The available connection event listeners */
-   private ConcurrentLinkedQueue<ConnectionListenerWrapper> clq;
+   private ConcurrentLinkedDeque<ConnectionListenerWrapper> clq;
 
    /** all connection event listeners */
    private Map<ConnectionListener, ConnectionListenerWrapper> cls;
@@ -136,7 +135,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
    /**
     * Constructor
     */
-   public SemaphoreConcurrentLinkedQueueManagedConnectionPool() 
+   public SemaphoreConcurrentLinkedDequeManagedConnectionPool() 
    {
    }
 
@@ -144,7 +143,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
     * {@inheritDoc}
     */
    public void initialize(ManagedConnectionFactory mcf, ConnectionManager cm, Subject subject,
-           ConnectionRequestInfo cri, PoolConfiguration pc, Pool p)
+                          ConnectionRequestInfo cri, PoolConfiguration pc, Pool p)
    {
       if (mcf == null)
          throw new IllegalArgumentException("ManagedConnectionFactory is null");
@@ -165,10 +164,11 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
       this.poolConfiguration = pc;
       this.maxSize = pc.getMaxSize();
       this.pool = p;
+      this.fifo = p.isFIFO();
       this.log = pool.getLogger();
       this.debug = log.isDebugEnabled();
       this.trace = log.isTraceEnabled();
-      this.clq = new ConcurrentLinkedQueue<ConnectionListenerWrapper>();
+      this.clq = new ConcurrentLinkedDeque<ConnectionListenerWrapper>();
       this.cls = new ConcurrentHashMap<ConnectionListener, ConnectionListenerWrapper>();
       this.poolSize.set(0);
       this.checkedOutSize.set(0);
@@ -186,23 +186,19 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
       {
          // Register removal support
          IdleRemover.getInstance().registerPool(this,
-               poolConfiguration.getIdleTimeoutMinutes() * 1000L * 60);
+                                                poolConfiguration.getIdleTimeoutMinutes() * 1000L * 60);
       }
 
       if (poolConfiguration.isBackgroundValidation() && poolConfiguration.getBackgroundValidationMillis() > 0) 
       {
          if (debug)
-            log.debug("Registering for background validation at interval "
-                  + poolConfiguration.getBackgroundValidationMillis());
+            log.debug("Registering for background validation at interval " +
+                      poolConfiguration.getBackgroundValidationMillis());
 
          // Register validation
          ConnectionValidator.getInstance().registerPool(this,
-               poolConfiguration.getBackgroundValidationMillis());
+                                                        poolConfiguration.getBackgroundValidationMillis());
       }
-
-      // No FILO support
-      if (warnLogged.compareAndSet(false, true))
-         log.unsupportedPoolImplementation(getClass().getName());
    }
 
    /**
@@ -349,7 +345,14 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                                                    Integer.toHexString(System.identityHashCode(this))));
                }
 
-               clw = clq.poll();
+               if (fifo)
+               {
+                  clw = clq.pollFirst();
+               }
+               else
+               {
+                  clw = clq.pollLast();
+               }
 
                if (clw != null) 
                {
@@ -715,7 +718,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
          cl.toPool();
          if (!clq.contains(clw)) 
          {
-            clq.add(clw);
+            clq.addLast(clw);
          } 
          else 
          {
@@ -1169,7 +1172,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
 
                         cls.put(cl, new ConnectionListenerWrapper(cl, false, false));
                         poolSize.incrementAndGet();
-                        clq.add(cls.get(cl));
+                        clq.addLast(cls.get(cl));
                         added = true;
                      }
 
@@ -1255,7 +1258,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
 
                            cls.put(cl, new ConnectionListenerWrapper(cl, false, false));
                            poolSize.incrementAndGet();
-                           clq.add(cls.get(cl));
+                           clq.addLast(cls.get(cl));
 
                            created++;
                            added = true;
@@ -1303,7 +1306,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
    {
       cls.put(cl, new ConnectionListenerWrapper(cl, false, false));
       poolSize.incrementAndGet();
-      clq.add(cls.get(cl));
+      clq.addLast(cls.get(cl));
 
       if (pool.getInternalStatistics().isEnabled())
          pool.getInternalStatistics().deltaCreatedCount();
@@ -1318,7 +1321,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
       {
          if (pool.getInternalStatistics().isEnabled())
             pool.getInternalStatistics().deltaDestroyedCount();
-         ConnectionListenerWrapper clw = clq.remove();
+         ConnectionListenerWrapper clw = clq.removeFirst();
          if (cls.remove(clw.getConnectionListener()) != null)
             poolSize.decrementAndGet();
          return clw.getConnectionListener();
@@ -1604,7 +1607,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
       log.debug("Returning for connection within frequency");
 
       cl.setLastValidatedTime(System.currentTimeMillis());
-      clq.add(cls.get(cl));
+      clq.addLast(cls.get(cl));
    }
 
    /**
