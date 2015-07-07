@@ -54,6 +54,22 @@ class SecurityActions
          }
       });
    }
+   
+   /**
+    * Load
+    * @param lib The library
+    */
+   static void load(final String lib)
+   {
+      AccessController.doPrivileged(new PrivilegedAction<Object>() 
+      {
+         public Object run()
+         {
+            System.load(lib);
+            return null;
+         }
+      });
+   }   
 
    /**
     * Set the thread context class loader

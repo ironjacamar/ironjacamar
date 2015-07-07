@@ -151,6 +151,53 @@ public class Main
       validTypes.add(String.class);
    }
    
+   private static void loadNativeLibraries(File root)
+   {
+      if (root != null && root.exists())
+      {
+         List<String> libs = null;
+
+         if (root.isDirectory())
+         {
+            if (root.listFiles() != null)
+            {
+               for (File f : root.listFiles())
+               {
+                  String fileName = f.getName().toLowerCase(Locale.US);
+                  if (fileName.endsWith(".a") || fileName.endsWith(".so") || fileName.endsWith(".dll"))
+                  {
+                     if (libs == null)
+                        libs = new ArrayList<String>();
+
+                     libs.add(f.getAbsolutePath());
+                  }
+               }
+            }
+            else
+            {
+               System.out.println("Root is a directory, but there were an I/O error: " + root.getAbsolutePath());
+            }
+         }
+
+         if (libs != null)
+         {
+            for (String lib : libs)
+            {
+               try
+               {
+                  SecurityActions.load(lib);
+                  System.out.println("Loaded library: " + lib);
+               }
+               catch (Throwable t)
+               {
+                  t.printStackTrace(System.err);
+                  System.out.println("Unable to load library: " + lib);
+               }
+            }
+         }
+      }
+   }
+
    /**
     * Main
     * @param args args 
@@ -230,6 +277,7 @@ public class Main
          }
 
          root = getRoot(rarFile);
+         loadNativeLibraries(root);
          cl = loadClass(cps);
 
          // Annotation scanning
