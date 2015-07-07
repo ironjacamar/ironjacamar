@@ -562,9 +562,18 @@ ant jprofiler
       </para>
 
       <para>
-        The Bash scripts <code>perf-jprofiler.sh</code> and <code>perf-flightrecorder.sh</code>,
-        both located in <code>core/src/test/resource</code> can be used as a template for
-        command line based runs.
+        The Bash scripts <code>perf-jprofiler.sh</code>, <code>perf-flightrecorder.sh</code>
+        and <code>perf-perf.sh</code> are located in <code>core/src/test/resource</code> and
+        can be used as a template for command line based runs, like
+      </para>
+      <programlisting>
+ant prepare-test        
+cp core/src/test/resource/perf-logging.properties build/core/test/logging.properties
+cp core/src/test/resource/perf-perf.sh .
+./perf-perf.sh
+      </programlisting>
+      <para>
+        as an example for running the Linux perf script.
       </para>
 
     </section>
