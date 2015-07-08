@@ -1,0 +1,54 @@
+${ivy.pom.license}
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.jboss.ironjacamar.jdk8</groupId>
+  <artifactId>${ivy.pom.artifactId}</artifactId>
+  <packaging>${ivy.pom.packaging}</packaging>
+  <version>${ivy.pom.version}</version>
+  <name>IronJacamar</name>
+  <url>http://www.ironjacamar.org</url>
+  <description>
+    IronJacamar is an implementation of the Java EE Connector Architecture 1.7 specification
+  </description>
+  <licenses>
+    <license>
+      <name>lgpl</name>
+      <url>http://repository.jboss.org/licenses/lgpl.txt</url>
+    </license>
+  </licenses>
+  <organization>
+    <name>IronJacamar</name>
+    <url>http://www.ironjacamar.org</url>
+  </organization>
+  <scm>
+    <url>http://github.com/ironjacamar/ironjacamar</url>
+    <connection>http://github.com/ironjacamar/ironjacamar</connection>
+    <developerConnection>http://github.com/ironjacamar/ironjacamar</developerConnection>
+  </scm>
+  <developers>
+    <developer>
+      <id>jesper.pedersen</id>
+      <name>Jesper Pedersen</name>
+      <organization>IronJacamar</organization>
+    </developer>
+    <developer>
+      <id>jeff.zhang</id>
+      <name>Jeff Zhang</name>
+      <organization>IronJacamar</organization>
+    </developer>
+    <developer>
+      <id>maeste</id>
+      <name>Stefano Maestri</name>
+      <organization>IronJacamar</organization>
+    </developer>
+    <developer>
+      <id>vrastseluev</id>
+      <name>Vladimir Rastseluev</name>
+      <organization>IronJacamar</organization>
+    </developer>
+  </developers>
+  <dependencies>
+  </dependencies>
+</project>
