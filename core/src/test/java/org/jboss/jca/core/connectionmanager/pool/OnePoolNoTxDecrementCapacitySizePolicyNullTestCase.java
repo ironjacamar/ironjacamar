@@ -30,24 +30,21 @@ import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 import static org.junit.Assert.assertEquals;
 
 /**
- * 
  * A OnePoolNoTxDecrementCapacitySizePolicyNullBMTestCase
- * 
+ * <p/>
  * NOTE that this class is in org.jboss.jca.core.connectionmanager.pool and not in
- * org.jboss.jca.core.connectionmanager.pool.strategy because it needs to access to 
+ * org.jboss.jca.core.connectionmanager.pool.strategy because it needs to access to
  * AbstractPool's package protected methods.
  * Please don't move it, and keep this class packaging consistent with AbstractPool's
- * 
+ *
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
- * 
  */
-public class OnePoolNoTxDecrementCapacitySizePolicyNullTestCase extends 
+public class OnePoolNoTxDecrementCapacitySizePolicyNullTestCase extends
       OnePoolNoTxDecrementCapacityPolicyTestCaseAbstract
 {
    /**
-    * 
     * deployment
-    * 
+    *
     * @return archive
     */
    @Deployment
@@ -61,7 +58,10 @@ public class OnePoolNoTxDecrementCapacitySizePolicyNullTestCase extends
    {
       AbstractPool pool = getPool();
       assertEquals(pool.getManagedConnectionPools().size(), 0);
-      fillPoolToSize(5);
+
+      // save string identificators of ManagedConnection
+      String[] mcsIds = fillPoolToSize(5);
+
       assertEquals(pool.getManagedConnectionPools().size(), 1);
       PoolStatistics ps = pool.getStatistics();
       checkStatistics(ps, 5, 0, 5);
@@ -71,6 +71,17 @@ public class OnePoolNoTxDecrementCapacitySizePolicyNullTestCase extends
       callRemoveIdleConnections(mcp);
       checkStatistics(ps, 5, 0, 3, 2);
 
+      String[] mcsIdsAfterIdleConnectionCleanup = fillPoolToSize(5);
+
+      // check FIFO, decrementer ran twice, so three connection must remain in pool
+      // SimpleManagedConnection #2
+      assertEquals(mcsIds[2], mcsIdsAfterIdleConnectionCleanup[0]);
+      // SimpleManagedConnection #3
+      assertEquals(mcsIds[3], mcsIdsAfterIdleConnectionCleanup[1]);
+      // SimpleManagedConnection #4
+      assertEquals(mcsIds[4], mcsIdsAfterIdleConnectionCleanup[2]);
+      assertEquals("SimpleManagedConnection #5", mcsIdsAfterIdleConnectionCleanup[3]);
+      assertEquals("SimpleManagedConnection #6", mcsIdsAfterIdleConnectionCleanup[4]);
    }
 
 }

@@ -74,4 +74,10 @@ public class SimpleConnectionImpl implements SimpleConnection
    {
       return mc.isDestroyed();
    }
+
+   @Override
+   public String getManagedConnectionId()
+   {
+      return mc.getUniqueId();
+   }
 }

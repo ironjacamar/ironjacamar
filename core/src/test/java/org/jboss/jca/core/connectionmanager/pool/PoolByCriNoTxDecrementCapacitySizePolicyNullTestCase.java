@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2013, Red Hat Inc, and individual contributors
+ * Copyright 2015, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -23,6 +23,9 @@ package org.jboss.jca.core.connectionmanager.pool;
 
 import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
+import org.jboss.jca.core.connectionmanager.rar.SimpleConnectionRequestInfoImpl;
+
+import javax.resource.spi.ConnectionRequestInfo;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
@@ -30,17 +33,20 @@ import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 import static org.junit.Assert.assertEquals;
 
 /**
- * A OnePoolNoTxDecrementCapacityMinPoolSizePolicyBMTestCase
- * <p/>
+ * A PoolByCriNoTxDecrementCapacitySizePolicyNullTestCase
+ * <p>
+ * PoolByCri doesn't support prefill from a user PoV - connections
+ * are explicit created using the specified credential or default which is <code>null</code>
+ * in this test.
+ * <p>
  * NOTE that this class is in org.jboss.jca.core.connectionmanager.pool and not in
  * org.jboss.jca.core.connectionmanager.pool.strategy because it needs to access to
  * AbstractPool's package protected methods.
  * Please don't move it, and keep this class packaging consistent with AbstractPool's
  *
- * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
+ * @author <a href="mailto:msimka@redhat.com">Martin Simka</a>
  */
-public class OnePoolNoTxDecrementCapacityMinPoolSizePolicyTestCase extends
-      OnePoolNoTxDecrementCapacityPolicyTestCaseAbstract
+public class PoolByCriNoTxDecrementCapacitySizePolicyNullTestCase extends PoolByCriNoTxTestCaseAbstract
 {
 
    /**
@@ -51,38 +57,37 @@ public class OnePoolNoTxDecrementCapacityMinPoolSizePolicyTestCase extends
    @Deployment
    public static ResourceAdapterArchive deployment()
    {
-      return createNoTxDeployment(getIJWithDecrementer("MinPoolSizeDecrementer"));
+      return createNoTxDeployment(getCriIJWithDecrementer("SizeDecrementer"));
    }
 
    @Override
    public void checkPool() throws Exception
    {
       AbstractPool pool = getPool();
-      assertEquals(pool.getManagedConnectionPools().size(), 0);
-
-      // save string identificators of ManagedConnection
-      String[] mcsIds = fillPoolToSize(5);;
-
-      assertEquals(pool.getManagedConnectionPools().size(), 1);
+      assertEquals(0, pool.getManagedConnectionPools().size());
+      fillPoolToSize(5);
+      assertEquals(1, pool.getManagedConnectionPools().size());
       PoolStatistics ps = pool.getStatistics();
+
       checkStatistics(ps, 5, 0, 5);
-      ManagedConnectionPool mcp = pool.getManagedConnectionPools().values().iterator().next();
+
+      ManagedConnectionPool mcp = pool.getManagedConnectionPools().get(pool.getKey(null, null, false));
       callRemoveIdleConnections(mcp);
-      checkStatistics(ps, 5, 0, 2, 3);
+      checkStatistics(ps, 5, 0, 4, 1);
+
       callRemoveIdleConnections(mcp);
-      checkStatistics(ps, 5, 0, 2, 3);
+      checkStatistics(ps, 5, 0, 3, 2);
 
-      String[] mcsIdsAfterIdleConnectionCleanup = fillPoolToSize(5);;
+      fillPoolToSize(5, "0");
+      assertEquals(2, pool.getManagedConnectionPools().size());
+      checkStatistics(ps, 5, 0, 8, 2);
 
-      // check FIFO, min-pool-size=2 so last two connections in pool must remain
-      // SimpleManagedConnection #3
-      assertEquals(mcsIds[3], mcsIdsAfterIdleConnectionCleanup[0]);
-      // SimpleManagedConnection #4
-      assertEquals(mcsIds[4], mcsIdsAfterIdleConnectionCleanup[1]);
-      assertEquals("SimpleManagedConnection #5", mcsIdsAfterIdleConnectionCleanup[2]);
-      assertEquals("SimpleManagedConnection #6", mcsIdsAfterIdleConnectionCleanup[3]);
-      assertEquals("SimpleManagedConnection #7", mcsIdsAfterIdleConnectionCleanup[4]);
+      ConnectionRequestInfo cri = new SimpleConnectionRequestInfoImpl("0");
+      mcp = pool.getManagedConnectionPools().get(pool.getKey(null, cri, false));
+      callRemoveIdleConnections(mcp);
+      checkStatistics(ps, 5, 0, 7, 3);
 
-
+      callRemoveIdleConnections(mcp);
+      checkStatistics(ps, 5, 0, 6, 4);
    }
 }

@@ -223,7 +223,7 @@ public abstract class PoolTestCaseAbstract
          cmClass.isAssignableFrom(ConnectionManagerUtil.extract(cf).getClass()));
       AbstractPool pool = getPool();
       assertTrue("There should be a " + poolClass + " implementation of Pool, but got " + pool.getClass(),
-         poolClass.isAssignableFrom(pool.getClass()));
+              poolClass.isAssignableFrom(pool.getClass()));
       assertEquals("Pool's MCF should be " + cf.getMCF() + " but got " + pool.getManagedConnectionFactory(),
          pool.getManagedConnectionFactory(), cf.getMCF());
    }
@@ -233,15 +233,44 @@ public abstract class PoolTestCaseAbstract
     * filling pool by idle connections to the defined size 
     * 
     * @param size count of idle connections
+    * @param userId userId
+    * @return array of idle connections
     * @throws Exception in case of error
     */
-   public void fillPoolToSize(int size) throws Exception
+   public String[] fillPoolToSize(int size, String userId) throws Exception
    {
-      SimpleConnection[] c = new SimpleConnection[size];
+      SimpleConnection[] connections = new SimpleConnection[size];
+      String[] ids = new String[size];
       for (int i = 0; i < size; i++)
-         c[i] = cf.getConnection();
+      {
+         SimpleConnection c = null;
+         if (userId != null)
+         {
+            c = cf.getConnection(userId);
+         }
+         else
+         {
+            c = cf.getConnection();
+         }
+         ids[i] = c.getManagedConnectionId();
+         connections[i] = c;
+      }
       for (int i = 0; i < size; i++)
-         c[i].close();
+         connections[i].close();
+      return ids;
+   }
+
+   /**
+    *
+    * filling pool by idle connections to the defined size
+    *
+    * @param size count of idle connections
+    * @return array of idle connections
+    * @throws Exception in case of error
+    */
+   public String[] fillPoolToSize(int size) throws Exception
+   {
+      return fillPoolToSize(size, null);
    }
 
    /**

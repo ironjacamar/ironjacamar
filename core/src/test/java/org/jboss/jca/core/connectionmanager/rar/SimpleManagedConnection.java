@@ -51,6 +51,12 @@ public class SimpleManagedConnection implements ManagedConnection
    /** The logger */
    private static Logger log = Logger.getLogger("SimpleManagedConnection");
 
+   /** managed connections counter */
+   private static int counter = 0;
+
+   /** instance number */
+   private int instanceNumber = 0;
+
    /** The logwriter */
    private PrintWriter logwriter;
 
@@ -77,6 +83,8 @@ public class SimpleManagedConnection implements ManagedConnection
       this.listeners = Collections.synchronizedList(new ArrayList<ConnectionEventListener>(1));
       this.connection = null;
       destroyed = false;
+      instanceNumber = counter;
+      counter++;
    }
 
    /**
@@ -285,4 +293,13 @@ public class SimpleManagedConnection implements ManagedConnection
       return destroyed;
    }
 
+   /**
+    * get unique id
+    *
+    * @return unique id of this instance
+    */
+   public String getUniqueId()
+   {
+      return "SimpleManagedConnection #" + instanceNumber;
+   }
 }
