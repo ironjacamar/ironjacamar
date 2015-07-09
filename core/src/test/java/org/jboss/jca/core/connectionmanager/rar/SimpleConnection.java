@@ -21,7 +21,6 @@
  */
 package org.jboss.jca.core.connectionmanager.rar;
 
-
 /**
  * SimpleConnection
  *
@@ -48,4 +47,12 @@ public interface SimpleConnection
     * @return true if connection is in detached state
     */
    public boolean isDetached();
+
+   /**
+    *
+    * getManagedConnection - exposed for FIFO behavior check in capacity decrementer tests
+    *
+    * @return associated ManagedConnection
+    */
+   public String getManagedConnectionId();
 }

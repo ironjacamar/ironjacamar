@@ -98,4 +98,9 @@ public class SimpleConnectionImpl1 implements SimpleConnection
       return cri;
    }
 
+   @Override
+   public String getManagedConnectionId()
+   {
+      return "false";
+   }
 }
