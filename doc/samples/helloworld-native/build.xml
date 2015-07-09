@@ -53,6 +53,13 @@
     </fileset>
   </path>
     
+  <path id="native.path.id">
+    <fileset dir="${lib.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+    <pathelement path="${build.dir}"/>
+  </path>
+    
   <path id="test.lib.path.id">
     <fileset dir="${lib.dir}">
       <include name="**/*.jar"/>
@@ -92,7 +99,7 @@
     <javah class="org.jboss.jca.samples.helloworld.HelloWorldManagedConnection"
            outputFile="${build.dir}/c/HelloWorld.h"
            force="true"
-           classpath="${build.dir}">
+           classpathref="native.path.id">
     </javah>
   </target>
 

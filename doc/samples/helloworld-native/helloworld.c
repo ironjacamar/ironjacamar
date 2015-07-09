@@ -1,5 +1,6 @@
 #include <jni.h>
 #include <string.h>
+#include <stdlib.h>
 #include "build/c/HelloWorld.h"
 
 /*
