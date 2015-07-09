@@ -29,6 +29,7 @@ import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
+import org.jboss.jca.core.connectionmanager.pool.api.PrefillPool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactory;
 import org.jboss.jca.core.connectionmanager.transaction.LockKey;
@@ -370,6 +371,7 @@ public abstract class AbstractPool implements Pool
       log.debug(poolName + ": flush(" + kill + ")");
 
       Set<ManagedConnectionPool> clearMcpPools = new HashSet<ManagedConnectionPool>();
+      int size = mcpPools.size();
 
       Iterator<ManagedConnectionPool> it = mcpPools.values().iterator();
       while (it.hasNext())
@@ -385,7 +387,8 @@ public abstract class AbstractPool implements Pool
             log.trace("MCP.flush: " + e.getMessage(), e);
          }
 
-         if (mcp.isEmpty())
+         boolean isPrefill = (this instanceof PrefillPool) && (poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) && poolConfiguration.getMinSize() > 0;
+         if (mcp.isEmpty() && !isPrefill && size > 1)
             clearMcpPools.add(mcp);
       }
 
