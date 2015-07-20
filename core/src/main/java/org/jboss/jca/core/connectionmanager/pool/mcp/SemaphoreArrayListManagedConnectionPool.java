@@ -1003,7 +1003,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                                                         statistics.getInUseCount(), maxSize));
       }
 
-      while (true)
+      while (!isFull())
       {
          // Get a permit - avoids a race when the pool is nearly full
          // Also avoids unnessary fill checking when all connections are checked out
@@ -1036,15 +1036,26 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                   {
                      ConnectionListener cl = createConnectionEventListener(defaultSubject, defaultCri);
 
+                     boolean added = false;
                      synchronized (cls)
                      {
-                        if (trace)
-                           log.trace("Filling pool cl=" + cl);
+                        if (!isSize(size))
+                        {
+                           if (trace)
+                              log.trace("Filling pool cl=" + cl);
 
-                        cls.add(cl);
-                        
-                        if (statistics.isEnabled())
-                           statistics.setInUsedCount(checkedOut.size() + 1);
+                           cls.add(cl);
+                           added = true;
+
+                           if (statistics.isEnabled())
+                              statistics.setInUsedCount(checkedOut.size() + 1);
+                        }
+                     }
+
+                     if (!added)
+                     {
+                        doDestroy(cl);
+                        return;
                      }
                   }
                   catch (ResourceException re)
@@ -1121,14 +1132,25 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                      {
                         ConnectionListener cl = createConnectionEventListener(subject, cri);
 
+                        boolean added = false;
                         synchronized (cls)
                         {
-                           if (trace)
-                              log.trace("Capacity fill: cl=" + cl);
+                           if (!isSize(poolConfiguration.getMaxSize()))
+                           {
+                              if (trace)
+                                 log.trace("Capacity fill: cl=" + cl);
 
-                           cls.add(cl);
-                           created++;
-                           statistics.setInUsedCount(checkedOut.size() + 1);
+                              cls.add(cl);
+                              created++;
+                              statistics.setInUsedCount(checkedOut.size() + 1);
+                              added = true;
+                           }
+                        }
+
+                        if (!added)
+                        {
+                           doDestroy(cl);
+                           return;
                         }
                      }
                      catch (ResourceException re)
