@@ -34,6 +34,7 @@
   <property name="javac.debug" value="on" />
   <property name="javac.deprecation" value="on" />
   <property name="javac.optimize" value="off" />
+  <property name="javac.encoding" value="utf-8" />
 
   <property name="junit.printsummary" value="yes" />
   <property name="junit.haltonerror" value="no" />
@@ -51,7 +52,14 @@
       <include name="**/*.jar"/>
     </fileset>
   </path>
-    
+
+  <path id="native.path.id">
+    <fileset dir="${lib.dir}">
+      <include name="**/*.jar"/>
+    </fileset>
+    <pathelement path="${build.dir}"/>
+  </path>
+  
   <path id="test.lib.path.id">
     <fileset dir="${lib.dir}">
       <include name="**/*.jar"/>
@@ -91,7 +99,7 @@
     <javah class="org.jboss.jca.samples.helloworld.HelloWorldManagedConnection"
            outputFile="${build.dir}/c/HelloWorld.h"
            force="true"
-           classpath="${build.dir}">
+           classpathref="native.path.id">
     </javah>
   </target>
 
