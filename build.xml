@@ -37,6 +37,11 @@
   <property name="patch" value="6"/>
   <property name="type" value="Final"/>
 
+  <condition property="organisation" value="org.jboss.ironjacamar.jdk8">
+    <isset property="jdk8"/>
+  </condition>
+  <property name="organisation" value="org.jboss.ironjacamar"/>
+
   <condition property="version" value="${major}.${minor}.${patch}-SNAPSHOT">
     <isset property="snapshot"/>
   </condition>
@@ -1821,6 +1826,8 @@ mvn install:install-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depc
        ================================= -->
   <target name="nexus8-base">
     <fail message="Nexus8 requires JDK8" unless="HAVE_JDK_1.8"/>
+    <fail message="Nexus8 requires the jdk8 property" unless="jdk8"/>
+    
     <delete file="${target.dir}/deploy.sh"/>
     <delete file="${target.dir}/install.sh"/>
 

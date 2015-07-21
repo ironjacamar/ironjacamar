@@ -23,13 +23,13 @@
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
 
-  <info organisation="org.jboss.ironjacamar" 
+  <info organisation="${organisation}" 
         module="ironjacamar"
         revision="${version}">
     <license name="lgpl" url="http://repository.jboss.org/licenses/lgpl.txt"/>
     <repository name="jboss" url="http://repository.jboss.org"/>
     <description homepage="http://www.ironjacamar.org">
-      The IronJacamar project implements the Java EE Connector Architecture 1.6 specification
+      The IronJacamar project implements the Java EE Connector Architecture 1.7 specification
     </description>
   </info>
 
