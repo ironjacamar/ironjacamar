@@ -360,6 +360,14 @@ public class Main
          out.println("JCA version:\t" + version);
          out.println("Type:\t\t" + type);
          
+         if (type.equals("Bidirectional") || type.equals("OutBound"))
+         {
+            if (ra.getOutboundResourceadapter() != null)
+            {
+               out.println("Transaction:\t" + ra.getOutboundResourceadapter().getTransactionSupport());
+            }
+         }
+         
          out.print("Reauth:\t\t");
          if (reauth)
             out.println("Yes");
