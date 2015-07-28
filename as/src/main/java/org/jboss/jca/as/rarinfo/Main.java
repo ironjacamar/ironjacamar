@@ -501,6 +501,9 @@ public class Main
                   //ResourceAdapterAssociation
                   hasResourceAdapterAssociation(out, mcfClassName, cl);
                   
+                  //ManagedConnectionFactory implements javax.resource.spi.TransactionSupport
+                  hasMcfTransactionSupport(out, mcfClassName, cl);
+                  
                   //DissociatableManagedConnection
                   hasDissociatableMcInterface(out, mcfClassName, cl, mcf.getConfigProperties());
                      
@@ -870,6 +873,39 @@ public class Main
          {
             out.println("Yes");
          }
+         else
+         {
+            out.println("No");
+         }
+      }
+      catch (Throwable t)
+      {
+         // Nothing we can do
+         t.printStackTrace(System.err);
+         out.println("Unknown");
+      }
+   }
+   
+   /**
+    * hasMcfTransactionSupport
+    *
+    * @param out output stream
+    * @param classname classname
+    * @param cl classloader
+    */
+   private static void hasMcfTransactionSupport(PrintStream out, String classname, URLClassLoader cl)
+   {
+      try
+      {
+         out.print("  TransactionSupport: ");
+         
+         Class<?> mcfClz = Class.forName(classname, true, cl);
+         ManagedConnectionFactory mcf = (ManagedConnectionFactory)mcfClz.newInstance();
+
+         if (hasInterface(mcf.getClass(),  "javax.resource.spi.TransactionSupport"))
+         {
+            out.println("Yes");
+         } 
          else
          {
             out.println("No");
