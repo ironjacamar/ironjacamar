@@ -269,7 +269,8 @@ public class DsXmlDeployment implements Deployment
          ra.stop();
          ra = null;
 
-         BootstrapContextCoordinator.getInstance().removeBootstrapContext(bootstrapContextId);
+         if (bootstrapContextId != null)
+            BootstrapContextCoordinator.getInstance().removeBootstrapContext(bootstrapContextId);
       }
    }
 

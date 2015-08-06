@@ -230,10 +230,14 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
 
       try
       {
-         int status = mcf.getTransactionSynchronizationRegistry().getTransactionStatus();
+         int status = Status.STATUS_NO_TRANSACTION;
+
+         if (mcf.getTransactionSynchronizationRegistry() != null)
+            status = mcf.getTransactionSynchronizationRegistry().getTransactionStatus();
 
          if (status == Status.STATUS_NO_TRANSACTION)
             return;
+
          // Only allow states that will actually succeed
          if (status != Status.STATUS_ACTIVE && status != Status.STATUS_PREPARING &&
              status != Status.STATUS_PREPARED && status != Status.STATUS_COMMITTING)

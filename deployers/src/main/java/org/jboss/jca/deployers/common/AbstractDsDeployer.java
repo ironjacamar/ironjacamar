@@ -218,6 +218,12 @@ public abstract class AbstractDsDeployer
    {
       try
       {
+         if (numberOfDataSources(dataSources) > 1)
+         {
+            if (!verifyTypes(dataSources))
+               throw new DeployException(bundle.deploymentFailed(url.toExternalForm()));
+         }
+
          List<Object> cfs = new ArrayList<Object>(1);
          List<String> jndis = new ArrayList<String>(1);
          List<ConnectionManager> cms = new ArrayList<ConnectionManager>(1);
@@ -229,15 +235,18 @@ public abstract class AbstractDsDeployer
          Map<String, String> props = new HashMap<String, String>();
          ResourceAdapter resourceAdapter = createRa(uniqueId, parentClassLoader);
          String resourceAdapterKey = null;
-         String bootstrapContextIdentifier =
-            BootstrapContextCoordinator.getInstance().createIdentifier(resourceAdapter.getClass().getName(),
-                                                                       props,
-                                                                       null);
+         String bootstrapContextIdentifier = null;
 
+         if (needsBootstrapContext(dataSources))
+            bootstrapContextIdentifier = BootstrapContextCoordinator.getInstance().
+               createIdentifier(resourceAdapter.getClass().getName(),
+                                props,
+                                null);
+         
          if (uniqueJdbcLocalId != null)
          {
             List<DataSource> ds = dataSources.getDataSource();
-            if (ds != null)
+            if (ds != null && ds.size() > 0)
             {
                ClassLoader jdbcLocalDeploymentCl = getDeploymentClassLoader(uniqueJdbcLocalId);
 
@@ -324,7 +333,7 @@ public abstract class AbstractDsDeployer
          if (uniqueJdbcXAId != null)
          {
             List<XaDataSource> xads = dataSources.getXaDataSource();
-            if (xads != null)
+            if (xads != null && xads.size() > 0)
             {
                ClassLoader jdbcXADeploymentCl = getDeploymentClassLoader(uniqueJdbcXAId);
 
@@ -382,7 +391,8 @@ public abstract class AbstractDsDeployer
          }
 
          resourceAdapterKey = registerResourceAdapterToResourceAdapterRepository(resourceAdapter);
-         startContext(resourceAdapter, bootstrapContextIdentifier);
+         if (bootstrapContextIdentifier != null)
+            startContext(resourceAdapter, bootstrapContextIdentifier);
 
          return new CommonDeployment(url, deploymentName, true,
                                      resourceAdapter, resourceAdapterKey, 
@@ -395,6 +405,10 @@ public abstract class AbstractDsDeployer
                                      null,
                                      mgts.toArray(new org.jboss.jca.core.api.management.DataSource[mgts.size()]),
                                      parentClassLoader, log);
+      }
+      catch (DeployException de)
+      {
+         throw de;
       }
       catch (Throwable t)
       {
@@ -434,6 +448,66 @@ public abstract class AbstractDsDeployer
    protected String getDriver(String driverName, String moduleId)
    {
       return null;
+   }
+
+   /**
+    * Get the number of datasource deployments
+    * @param datasources The datasources
+    * @return The number
+    */
+   protected int numberOfDataSources(DataSources datasources)
+   {
+      return datasources.getDataSource().size() + datasources.getXaDataSource().size();
+   }
+
+   /**
+    * Verify the types of the datasources
+    * @param datasources The datasources
+    * @return True if all datasources fall into the same caterogy, otherwise false
+    */
+   protected boolean verifyTypes(DataSources datasources)
+   {
+      boolean hasNonJTA = false;
+      boolean hasJTA = datasources.getXaDataSource().size() > 0;
+
+      for (DataSource ds : datasources.getDataSource())
+      {
+         if (ds.isJTA())
+         {
+            hasJTA = true;
+         }
+         else
+         {
+            hasNonJTA = true;
+         }
+      }
+
+      if (hasJTA && !hasNonJTA)
+         return true;
+
+      if (hasNonJTA && !hasJTA)
+         return true;
+
+      return false;
+   }
+
+   /**
+    * Needs a BootstrapContext instance
+    * @param datasources The datasources
+    * @return True if needs a context
+    */
+   protected boolean needsBootstrapContext(DataSources datasources)
+   {
+      if (datasources.getXaDataSource().size() > 0)
+         return true;
+
+      for (DataSource ds : datasources.getDataSource())
+      {
+         if (ds.isJTA())
+            return true;
+      }
+
+      return false;
    }
 
    /**

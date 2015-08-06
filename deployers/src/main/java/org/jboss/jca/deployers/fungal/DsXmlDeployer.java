@@ -24,11 +24,13 @@ package org.jboss.jca.deployers.fungal;
 
 import org.jboss.jca.common.api.metadata.ds.DataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSources;
+import org.jboss.jca.common.api.metadata.ds.Driver;
 import org.jboss.jca.common.api.metadata.ds.XaDataSource;
 import org.jboss.jca.common.api.metadata.spec.ConfigProperty;
 import org.jboss.jca.common.api.metadata.spec.ConnectionDefinition;
 import org.jboss.jca.common.api.metadata.spec.Connector;
 import org.jboss.jca.common.api.metadata.spec.ResourceAdapter;
+import org.jboss.jca.common.metadata.ds.DatasourcesImpl;
 import org.jboss.jca.common.metadata.ds.DsParser;
 import org.jboss.jca.common.metadata.merge.Merger;
 import org.jboss.jca.core.naming.ExplicitJndiStrategy;
@@ -47,8 +49,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.management.DynamicMBean;
@@ -224,23 +229,81 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
 
          kernel = context.getKernel();
 
-         CommonDeployment c = createObjectsAndInjectValue(url, deploymentName,
-                                                          uniqueJdbcLocalId, uniqueJdbcXAId,
-                                                          dataSources, parent);
+         if (numberOfDataSources(dataSources) == 1 || verifyTypes(dataSources))
+         {
+            CommonDeployment c = createObjectsAndInjectValue(url, deploymentName,
+                                                             uniqueJdbcLocalId, uniqueJdbcXAId,
+                                                             dataSources, parent);
 
-         List<ObjectName> onames = registerManagementView(c.getDataSources(),
-                                                          kernel.getMBeanServer(),
-                                                          kernel.getName());
+            List<ObjectName> onames = registerManagementView(c.getDataSources(),
+                                                             kernel.getMBeanServer(),
+                                                             kernel.getName());
 
-         return new DsXmlDeployment(c.getURL(), c.getDeploymentName(),
-                                    c.getResourceAdapter(), c.getResourceAdapterKey(),
-                                    c.getBootstrapContextIdentifier(),
-                                    resourceAdapterRepository,
-                                    c.getCfs(), c.getCfJndiNames(), c.getConnectionManagers(),
-                                    c.getRecovery(), getXAResourceRecoveryRegistry(),
-                                    c.getDataSources(), getManagementRepository(),
-                                    onames, kernel.getMBeanServer(),
-                                    c.getCl());
+            return new DsXmlDeployment(c.getURL(), c.getDeploymentName(),
+                                       c.getResourceAdapter(), c.getResourceAdapterKey(),
+                                       c.getBootstrapContextIdentifier(),
+                                       resourceAdapterRepository,
+                                       c.getCfs(), c.getCfJndiNames(), c.getConnectionManagers(),
+                                       c.getRecovery(), getXAResourceRecoveryRegistry(),
+                                       c.getDataSources(), getManagementRepository(),
+                                       onames, kernel.getMBeanServer(),
+                                       c.getCl());
+         }
+         else
+         {
+            List<DsXmlDeployment> deployments = new ArrayList<DsXmlDeployment>();
+            Map<String, Driver> driversMap = new HashMap<String, Driver>();
+            for (Driver driver : dataSources.getDrivers())
+            {
+               driversMap.put(driver.getName(), driver);
+            }
+
+            for (DataSource ds : dataSources.getDataSource())
+            {
+               DataSources dsD = new DatasourcesImpl(Arrays.asList(ds), null, driversMap);
+               CommonDeployment c = createObjectsAndInjectValue(url, deploymentName,
+                                                                uniqueJdbcLocalId, null,
+                                                                dsD, parent);
+
+               List<ObjectName> onames = registerManagementView(c.getDataSources(),
+                                                                kernel.getMBeanServer(),
+                                                                kernel.getName());
+
+               deployments.add(new DsXmlDeployment(c.getURL(), c.getDeploymentName(),
+                                                   c.getResourceAdapter(), c.getResourceAdapterKey(),
+                                                   c.getBootstrapContextIdentifier(),
+                                                   resourceAdapterRepository,
+                                                   c.getCfs(), c.getCfJndiNames(), c.getConnectionManagers(),
+                                                   c.getRecovery(), getXAResourceRecoveryRegistry(),
+                                                   c.getDataSources(), getManagementRepository(),
+                                                   onames, kernel.getMBeanServer(),
+                                                   c.getCl()));
+            }
+
+            for (XaDataSource xads : dataSources.getXaDataSource())
+            {
+               DataSources dsD = new DatasourcesImpl(null, Arrays.asList(xads), driversMap);
+               CommonDeployment c = createObjectsAndInjectValue(url, deploymentName,
+                                                                null, uniqueJdbcXAId,
+                                                                dsD, parent);
+
+               List<ObjectName> onames = registerManagementView(c.getDataSources(),
+                                                                kernel.getMBeanServer(),
+                                                                kernel.getName());
+
+               deployments.add(new DsXmlDeployment(c.getURL(), c.getDeploymentName(),
+                                                   c.getResourceAdapter(), c.getResourceAdapterKey(),
+                                                   c.getBootstrapContextIdentifier(),
+                                                   resourceAdapterRepository,
+                                                   c.getCfs(), c.getCfJndiNames(), c.getConnectionManagers(),
+                                                   c.getRecovery(), getXAResourceRecoveryRegistry(),
+                                                   c.getDataSources(), getManagementRepository(),
+                                                   onames, kernel.getMBeanServer(),
+                                                   c.getCl()));
+            }
+
+            return new DsXmlDeployments(url, deployments, deployments.get(0).getClassLoader());
+         }
       }
       catch (DeployException de)
       {
@@ -507,7 +570,6 @@ public final class DsXmlDeployer extends AbstractDsDeployer implements Deployer
 
       return ons;
    }
-
 
    @Override
    protected javax.resource.spi.ResourceAdapter createRa(String uniqueId, ClassLoader cl)

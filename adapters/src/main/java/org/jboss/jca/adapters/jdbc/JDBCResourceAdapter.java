@@ -51,6 +51,7 @@ public class JDBCResourceAdapter implements ResourceAdapter
     */
    public JDBCResourceAdapter()
    {
+      this.bc = null;
    }
 
    /**
@@ -100,7 +101,13 @@ public class JDBCResourceAdapter implements ResourceAdapter
     */
    TransactionSynchronizationRegistry getTransactionSynchronizationRegistry()
    {
-      return bc.getTransactionSynchronizationRegistry();
+      // Non-JTA datasources doesn't need a BootstrapContext instance
+      if (bc != null)
+      {
+         return bc.getTransactionSynchronizationRegistry();
+      }
+
+      return null;
    }
 
    /** 
@@ -126,8 +133,7 @@ public class JDBCResourceAdapter implements ResourceAdapter
          return false;
 
       JDBCResourceAdapter obj = (JDBCResourceAdapter)other;
-      boolean result = true; 
-
+      boolean result = bc == obj.bc;
       return result;
    }
 }
