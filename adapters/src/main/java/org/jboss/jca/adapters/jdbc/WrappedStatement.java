@@ -151,12 +151,28 @@ public abstract class WrappedStatement extends JBossWrapper implements Statement
     */
    public void close() throws SQLException
    {
+      if (spy)
+         spyLogger.debugf("%s [%s] close()", jndiName, spyLoggingCategory);
+
       if (closed.get())
          return;
 
       if (spy)
-         spyLogger.debugf("%s [%s] close()", jndiName, spyLoggingCategory);
-         
+      {
+         try
+         {
+            if (lc.isClosed())
+            {
+               spyLogger.tracef(new Exception(), "%s [%s] Connection already closed",
+                                jndiName, spyLoggingCategory);
+            }
+         }
+         catch (SQLException se)
+         {
+            // Ignore
+         }
+      }
+      
       closed.set(true);
       lc.unregisterStatement(this);
       internalClose();
@@ -1250,27 +1266,20 @@ public abstract class WrappedStatement extends JBossWrapper implements Statement
     */
    public boolean isClosed() throws SQLException
    {
-      if (doLocking)
-         lock();
+      if (spy)
+         spyLogger.debugf("%s [%s] isClosed()",
+                          jndiName, spyLoggingCategory);
+
+      if (s == null)
+         return true;
+
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] isClosed()",
-                             jndiName, spyLoggingCategory);
-
-         if (s == null)
-            return true;
-
          return s.isClosed();
       }
       catch (Throwable t)
       {
          throw checkException(t);
-      }
-      finally
-      {
-         if (doLocking)
-            unlock();
       }
    }
 

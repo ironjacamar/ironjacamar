@@ -299,26 +299,32 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public void close() throws SQLException
    {
-      if (doLocking)
-         lock();
-      try
-      {
-         if (closed.get())
-            return;
- 
-         if (spy)
-            spyLogger.debugf("%s [%s] close()",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
+      if (spy)
+         spyLogger.debugf("%s [%s] close()",
+                          jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
 
-         closed.set(true);
-         statement.unregisterResultSet(this);
-         internalClose();
-      }
-      finally
+      if (closed.get())
+         return;
+
+      if (spy)
       {
-         if (doLocking)
-            unlock();
+         try
+         {
+            if (statement.isClosed())
+            {
+               spyLogger.tracef(new Exception(), "%s [%s] Statement already closed",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
+            }
+         }
+         catch (SQLException se)
+         {
+            // Ignore
+         }
       }
+      
+      closed.set(true);
+      statement.unregisterResultSet(this);
+      internalClose();
    }
 
    /**
@@ -4768,29 +4774,20 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
     */
    public boolean isClosed() throws SQLException
    {
-      if (doLocking)
-         lock();
+      if (spy)
+         spyLogger.debugf("%s [%s] isClosed()",
+                          jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
+      
+      if (resultSet == null)
+         return true;
+
       try
       {
-         if (spy)
-            spyLogger.debugf("%s [%s] isClosed()",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
-      
-         if (resultSet == null)
-            return true;
-         try
-         {
-            return resultSet.isClosed();
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
+         return resultSet.isClosed();
       }
-      finally
+      catch (Throwable t)
       {
-         if (doLocking)
-            unlock();
+         throw checkException(t);
       }
    }
 
