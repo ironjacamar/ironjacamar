@@ -292,6 +292,14 @@ public class IronJacamar extends BlockJUnit4ClassRunner
             
             embedded = EmbeddedFactory.create(fullProfile);
             embedded.startup();
+
+            PreCondition preCondition = tc.getAnnotation(PreCondition.class);
+            if (preCondition != null && preCondition.condition() != null)
+            {
+               Class<? extends Condition> pCClz = preCondition.condition();
+               Condition pC = pCClz.newInstance();
+               pC.verify(new EmbeddedJCAResolver(embedded));
+            }
             
             // Static @Deployment
             List<FrameworkMethod> fms = tc.getAnnotatedMethods(Deployment.class);
@@ -468,7 +476,15 @@ public class IronJacamar extends BlockJUnit4ClassRunner
                }
             }
             staticDeployments.clear();
-        
+
+            PostCondition postCondition = tc.getAnnotation(PostCondition.class);
+            if (postCondition != null && postCondition.condition() != null)
+            {
+               Class<? extends Condition> pCClz = postCondition.condition();
+               Condition pC = pCClz.newInstance();
+               pC.verify(new EmbeddedJCAResolver(embedded));
+            }
+            
             embedded.shutdown();
             embedded = null;
          }

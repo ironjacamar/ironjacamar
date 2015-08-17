@@ -48,6 +48,8 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(IronJacamar.class)
 @Configuration(full = true)
+@PreCondition(condition = AllChecks.class)
+@PostCondition(condition = AllChecks.class)
 public class JUnit4TestCase
 {
    /** The embedded instance */
