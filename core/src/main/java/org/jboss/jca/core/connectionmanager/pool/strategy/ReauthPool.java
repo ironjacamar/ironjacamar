@@ -24,14 +24,12 @@ package org.jboss.jca.core.connectionmanager.pool.strategy;
 
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
-import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.pool.AbstractPool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.RetryableUnavailableException;
 import javax.security.auth.Subject;
 
 import org.jboss.logging.Logger;
@@ -46,9 +44,6 @@ public class ReauthPool extends AbstractPool
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, ReauthPool.class.getName());
 
-   /** Max pool size */
-   private int maxPoolSize;
-
    /**
     * Creates a new instance.
     * @param mcf managed connection factory
@@ -62,7 +57,6 @@ public class ReauthPool extends AbstractPool
                      final boolean sharable)
    {
       super(mcf, pc, noTxSeparatePools, sharable);
-      this.maxPoolSize = pc.getMaxSize();
    }
 
    /**
@@ -72,33 +66,7 @@ public class ReauthPool extends AbstractPool
    protected synchronized Object getKey(Subject subject, ConnectionRequestInfo cri, boolean separateNoTx)
       throws ResourceException
    {
-      ReauthKey key = new ReauthKey(subject, cri, separateNoTx);
-      int activeCount = getActiveCount();
-
-      if (activeCount >= maxPoolSize)
-      {
-         ManagedConnectionPool ownMcp = getManagedConnectionPool(key, subject, cri);
-
-         if (!isFull())
-         {
-            ManagedConnectionPool mcp = getTargetManagedConnectionPool(ownMcp);
-
-            if (mcp == null)
-               throw new RetryableUnavailableException();
-
-            ConnectionListener cl = mcp.removeConnectionListener();
-
-            if (cl == null)
-               throw new RetryableUnavailableException();
-
-            ownMcp.addConnectionListener(cl);
-
-            if (mcp.isEmpty())
-               super.emptyManagedConnectionPool(mcp);
-         }
-      }
-
-      return key;
+      return new ReauthKey(subject, cri, separateNoTx);
    }
 
    /**
@@ -136,46 +104,5 @@ public class ReauthPool extends AbstractPool
    public CoreLogger getLogger()
    {
       return log;
-   }
-
-   /**
-    * Get the active count - use pools directly as statistics could be disabled at pool level
-    * @return The number of active connections
-    */
-   private int getActiveCount()
-   {
-      int result = 0;
-
-      for (ManagedConnectionPool mcp : getManagedConnectionPools().values())
-      {
-         result += mcp.getActive();
-      }
-         
-      return result;
-   }
-
-   /**
-    * Find the oldest managed connection pool with idle connections
-    * @param exclude The managed connection pool that should be excluded
-    * @return The managed connection pool; <code>null</code> if none
-    */
-   private ManagedConnectionPool getTargetManagedConnectionPool(ManagedConnectionPool exclude)
-   {
-      ManagedConnectionPool mcp = null;
-      long lastUsed = Long.MAX_VALUE;
-      
-      for (ManagedConnectionPool m : getManagedConnectionPools().values())
-      {
-         if (lastUsed > m.getLastUsed() && m.getActive() > 0)
-         {
-            if (exclude == null || m != exclude)
-            {
-               mcp = m;
-               lastUsed = m.getLastUsed();
-            }
-         }
-      }
-
-      return mcp;
    }
 }
