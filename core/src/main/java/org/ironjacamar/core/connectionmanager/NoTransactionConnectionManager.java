@@ -19,7 +19,22 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
+package org.ironjacamar.core.connectionmanager;
+
+import org.ironjacamar.core.connectionmanager.pool.Pool;
+
 /**
- * The connection manager API
+ * The NoTransaction connection manager
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-package org.ironjacamar.core.api.connectionmanager;
+public class NoTransactionConnectionManager extends AbstractConnectionManager
+{
+   /**
+    * Constructor
+    * @param pool The pool
+    */
+   public NoTransactionConnectionManager(Pool pool)
+   {
+      super(pool);
+   }
+}

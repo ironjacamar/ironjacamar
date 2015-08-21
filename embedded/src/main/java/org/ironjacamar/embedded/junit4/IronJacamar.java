@@ -101,21 +101,21 @@ public class IronJacamar extends BlockJUnit4ClassRunner
                   SecurityActions.setAccessible(fm.getMethod());
 
                   Class<?> returnType = fm.getReturnType();
-                  if (returnType.isAssignableFrom(URL.class))
+                  if (URL.class.isAssignableFrom(returnType))
                   {
                      Object[] parameters = getParameters(fm);
                      URL result = (URL)fm.invokeExplosively(target, parameters);
                      embedded.deploy(result);
                      deployments.add(result);
                   }
-                  else if (returnType.isAssignableFrom(ResourceAdapterArchive.class))
+                  else if (ResourceAdapterArchive.class.isAssignableFrom(returnType))
                   {
                      Object[] parameters = getParameters(fm);
                      ResourceAdapterArchive result = (ResourceAdapterArchive)fm.invokeExplosively(target, parameters);
                      embedded.deploy(result);
                      deployments.add(result);
                   }
-                  else if (returnType.isAssignableFrom(Descriptor.class))
+                  else if (Descriptor.class.isAssignableFrom(returnType))
                   {
                      Object[] parameters = getParameters(fm);
                      Descriptor result = (Descriptor)fm.invokeExplosively(target, parameters);
@@ -145,7 +145,7 @@ public class IronJacamar extends BlockJUnit4ClassRunner
                      else
                      {
                         javax.inject.Named name = f.getAnnotation(javax.inject.Named.class);
-                        if (name != null)
+                        if (name != null && name.value() != null)
                         {
                            Object value = embedded.lookup(name.value(), f.getType());
                            f.getField().set(target, value);
@@ -296,9 +296,16 @@ public class IronJacamar extends BlockJUnit4ClassRunner
             PreCondition preCondition = tc.getAnnotation(PreCondition.class);
             if (preCondition != null && preCondition.condition() != null)
             {
-               Class<? extends Condition> pCClz = preCondition.condition();
-               Condition pC = pCClz.newInstance();
-               pC.verify(new EmbeddedJCAResolver(embedded));
+               try
+               {
+                  Class<? extends Condition> pCClz = preCondition.condition();
+                  Condition pC = pCClz.newInstance();
+                  pC.verify(new EmbeddedJCAResolver(embedded));
+               }
+               catch (Exception e)
+               {
+                  throw new ConditionException("PreCondition error from: " + preCondition.condition(), e);
+               }
             }
             
             // Static @Deployment
@@ -311,21 +318,21 @@ public class IronJacamar extends BlockJUnit4ClassRunner
                   SecurityActions.setAccessible(fm.getMethod());
 
                   Class<?> returnType = fm.getReturnType();
-                  if (returnType.isAssignableFrom(URL.class))
+                  if (URL.class.isAssignableFrom(returnType))
                   {
                      Object[] parameters = getParameters(fm);
                      URL result = (URL)fm.invokeExplosively(null, parameters);
                      embedded.deploy(result);
                      staticDeployments.add(result);
                   }
-                  else if (returnType.isAssignableFrom(ResourceAdapterArchive.class))
+                  else if (ResourceAdapterArchive.class.isAssignableFrom(returnType))
                   {
                      Object[] parameters = getParameters(fm);
                      ResourceAdapterArchive result = (ResourceAdapterArchive)fm.invokeExplosively(null, parameters);
                      embedded.deploy(result);
                      staticDeployments.add(result);
                   }
-                  else if (returnType.isAssignableFrom(Descriptor.class))
+                  else if (Descriptor.class.isAssignableFrom(returnType))
                   {
                      Object[] parameters = getParameters(fm);
                      Descriptor result = (Descriptor)fm.invokeExplosively(null, parameters);
@@ -355,7 +362,7 @@ public class IronJacamar extends BlockJUnit4ClassRunner
                      else
                      {
                         javax.inject.Named name = f.getAnnotation(javax.inject.Named.class);
-                        if (name != null)
+                        if (name != null && name.value() != null)
                         {
                            Object value = embedded.lookup(name.value(), f.getType());
                            f.getField().set(null, value);
@@ -480,9 +487,16 @@ public class IronJacamar extends BlockJUnit4ClassRunner
             PostCondition postCondition = tc.getAnnotation(PostCondition.class);
             if (postCondition != null && postCondition.condition() != null)
             {
-               Class<? extends Condition> pCClz = postCondition.condition();
-               Condition pC = pCClz.newInstance();
-               pC.verify(new EmbeddedJCAResolver(embedded));
+               try
+               {
+                  Class<? extends Condition> pCClz = postCondition.condition();
+                  Condition pC = pCClz.newInstance();
+                  pC.verify(new EmbeddedJCAResolver(embedded));
+               }
+               catch (Exception e)
+               {
+                  throw new ConditionException("PostCondition error from: " + postCondition.condition(), e);
+               }
             }
             
             embedded.shutdown();

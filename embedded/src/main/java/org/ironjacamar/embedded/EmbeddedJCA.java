@@ -218,9 +218,9 @@ class EmbeddedJCA implements Embedded
       if (descriptor.getDescriptorName() == null)
          throw new IllegalArgumentException("Descriptor name is null");
 
-      if (!(descriptor instanceof InputStreamDescriptor) ||
-              descriptor instanceof org.ironjacamar.embedded.dsl.datasources20.api.DatasourcesDescriptor ||
-              descriptor instanceof org.ironjacamar.embedded.dsl.resourceadapters20.api.ResourceAdaptersDescriptor)
+      if (!(descriptor instanceof InputStreamDescriptor ||
+            descriptor instanceof org.ironjacamar.embedded.dsl.datasources20.api.DatasourcesDescriptor ||
+            descriptor instanceof org.ironjacamar.embedded.dsl.resourceadapters20.api.ResourceAdaptersDescriptor))
          throw new IllegalArgumentException("Unsupported descriptor: " + descriptor.getClass().getName());
 
       if (!started)
@@ -346,10 +346,10 @@ class EmbeddedJCA implements Embedded
       if (descriptor.getDescriptorName() == null)
          throw new IllegalArgumentException("Descriptor name is null");
 
-      if (!(descriptor instanceof InputStreamDescriptor) ||
-              descriptor instanceof org.ironjacamar.embedded.dsl.datasources20.api.DatasourcesDescriptor ||
-              descriptor instanceof org.ironjacamar.embedded.dsl.resourceadapters20.api.ResourceAdaptersDescriptor)
-         throw new IllegalArgumentException("Unsupported descriptor: " + descriptor.getClass().getName());
+      if (!(descriptor instanceof InputStreamDescriptor ||
+            descriptor instanceof org.ironjacamar.embedded.dsl.datasources20.api.DatasourcesDescriptor ||
+            descriptor instanceof org.ironjacamar.embedded.dsl.resourceadapters20.api.ResourceAdaptersDescriptor))
+          throw new IllegalArgumentException("Unsupported descriptor: " + descriptor.getClass().getName());
 
       if (!started)
          throw new IllegalStateException("Container not started");

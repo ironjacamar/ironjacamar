@@ -20,6 +20,6 @@
  */
 
 /**
- * The connection manager API
+ * The JNDI integration SPI
  */
-package org.ironjacamar.core.api.connectionmanager;
+package org.ironjacamar.core.spi.naming;

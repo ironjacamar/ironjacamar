@@ -20,6 +20,6 @@
  */
 
 /**
- * The connection manager API
+ * Test cases for WorkManager
  */
-package org.ironjacamar.core.api.connectionmanager;
+package org.ironjacamar.core.workmanager;

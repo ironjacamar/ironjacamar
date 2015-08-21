@@ -40,7 +40,7 @@ ext {
     jboss_logging_processor: "org.jboss.logging:jboss-logging-processor:2.0.0.Final",
     jboss_naming: "org.jboss.naming:jnpserver:5.0.3.GA",
     jboss_stdio: "org.jboss.stdio:jboss-stdio:1.0.2.GA",
-    jboss_threads: "org.wildfly.core:wildfly-threads:2.0.0.Alpha13",
+    jboss_threads: "org.jboss.threads:jboss-threads:2.2.1.Final",
     jgroups: "org.jgroups:jgroups:3.2.7.Final",
     junit: "junit:junit:4.12",
     log4j: "log4j:log4j:1.2.16",

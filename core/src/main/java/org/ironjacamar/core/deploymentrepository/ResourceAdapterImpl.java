@@ -28,6 +28,8 @@ import org.ironjacamar.core.spi.statistics.StatisticsPlugin;
 
 import java.util.Collection;
 
+import javax.resource.spi.BootstrapContext;
+
 /**
  * A resource adapter implementation
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
@@ -36,6 +38,9 @@ public class ResourceAdapterImpl implements ResourceAdapter
 {
    /** The resource adapter */
    private javax.resource.spi.ResourceAdapter resourceAdapter;
+
+   /** The BootstrapContext */
+   private BootstrapContext bc;
    
    /** The config properties */
    private Collection<ConfigProperty> configProperties;
@@ -49,16 +54,19 @@ public class ResourceAdapterImpl implements ResourceAdapter
    /**
     * Constructor
     * @param resourceAdapter The resource adapter
+    * @param bc The BootstrapContext
     * @param configProperties The configuration properties
     * @param statistics The statistics
     * @param recovery The recovery module
     */
    public ResourceAdapterImpl(javax.resource.spi.ResourceAdapter resourceAdapter,
+                              BootstrapContext bc,
                               Collection<ConfigProperty> configProperties,
                               StatisticsPlugin statistics,
                               Recovery recovery)
    {
       this.resourceAdapter = resourceAdapter;
+      this.bc = bc;
       this.configProperties = configProperties;
       this.statistics = statistics;
       this.recovery = recovery;
@@ -70,6 +78,14 @@ public class ResourceAdapterImpl implements ResourceAdapter
    public javax.resource.spi.ResourceAdapter getResourceAdapter()
    {
       return resourceAdapter;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public BootstrapContext getBootstrapContext()
+   {
+      return bc;
    }
 
    /**
@@ -94,5 +110,21 @@ public class ResourceAdapterImpl implements ResourceAdapter
    public Recovery getRecovery()
    {
       return recovery;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void activate() throws Exception
+   {
+      resourceAdapter.start(bc);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void deactivate() throws Exception
+   {
+      resourceAdapter.stop();
    }
 }

@@ -20,6 +20,6 @@
  */
 
 /**
- * The connection manager API
+ * The pool implementations
  */
-package org.ironjacamar.core.api.connectionmanager;
+package org.ironjacamar.core.connectionmanager.pool;

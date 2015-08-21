@@ -86,4 +86,16 @@ public interface Deployment
     * @return The value
     */
    public Collection<AdminObject> getAdminObjects();
+
+   /**
+    * Activate the deployment
+    * @exception Exception Thrown in case of an error
+    */
+   public void activate() throws Exception;
+
+   /**
+    * Deactivate the deployment
+    * @exception Exception Thrown in case of an error
+    */
+   public void deactivate() throws Exception;
 }

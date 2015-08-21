@@ -49,15 +49,6 @@ public class ClassLoaderDeployer extends AbstractFungalRADeployer implements Clo
    }
 
    /**
-    * Copy constructor
-    * @param pf Parent first class loading
-    */
-   ClassLoaderDeployer(boolean pf)
-   {
-      this.parentFirst = pf;
-   }
-
-   /**
     * Set parent first class loader type
     * @param v The value
     */
@@ -120,6 +111,8 @@ public class ClassLoaderDeployer extends AbstractFungalRADeployer implements Clo
     */
    public Deployer clone() throws CloneNotSupportedException
    {
-      return new ClassLoaderDeployer(parentFirst);
+      ClassLoaderDeployer c = new ClassLoaderDeployer();
+      c.setParentFirst(parentFirst);
+      return c;
    }
 }

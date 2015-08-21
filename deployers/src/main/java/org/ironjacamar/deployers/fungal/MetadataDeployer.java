@@ -22,7 +22,6 @@ package org.ironjacamar.deployers.fungal;
 
 import org.ironjacamar.common.api.metadata.spec.Connector;
 import org.ironjacamar.core.api.metadatarepository.Metadata;
-import org.ironjacamar.core.api.metadatarepository.MetadataRepository;
 
 import java.io.File;
 import java.net.URL;
@@ -77,13 +76,9 @@ public class MetadataDeployer extends AbstractFungalRADeployer implements Clonea
       try
       {
          File archive = new File(url.toURI());
-         
-         MetadataRepository mr = context.getKernel().getBean("MetadataRepository", MetadataRepository.class);
-         setMetadataRepository(mr);
-
          Metadata m = registerMetadata(archive.getName(), c.copy(), archive);
         
-         return new MetadataDeployment(url, m, mr);
+         return new MetadataDeployment(url, m, metadataRepository);
       }
       catch (Throwable t)
       {
@@ -96,6 +91,8 @@ public class MetadataDeployer extends AbstractFungalRADeployer implements Clonea
     */
    public Deployer clone() throws CloneNotSupportedException
    {
-      return new MetadataDeployer();
+      MetadataDeployer m = new MetadataDeployer();
+      m.setMetadataRepository(metadataRepository);
+      return m;
    }
 }

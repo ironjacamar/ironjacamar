@@ -170,6 +170,44 @@ public class DeploymentImpl implements Deployment
    }
 
    /**
+    * {@inheritDoc}
+    */
+   public void activate() throws Exception
+   {
+      if (connectionFactories != null)
+      {
+         for (ConnectionFactory cf : connectionFactories)
+         {
+            cf.activate();
+         }
+      }
+
+      if (resourceAdapter != null)
+      {
+         resourceAdapter.activate();
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void deactivate() throws Exception
+   {
+      if (connectionFactories != null)
+      {
+         for (ConnectionFactory cf : connectionFactories)
+         {
+            cf.deactivate();
+         }
+      }
+
+      if (resourceAdapter != null)
+      {
+         resourceAdapter.deactivate();
+      }
+   }
+
+   /**
     *{@inheritDoc}
     */
    @Override

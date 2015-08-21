@@ -133,6 +133,11 @@ public class IronJacamarXmlDeployer extends AbstractFungalRADeployer implements 
     */
    public Deployer clone() throws CloneNotSupportedException
    {
-      return new IronJacamarXmlDeployer();
+      IronJacamarXmlDeployer i = new IronJacamarXmlDeployer();
+      i.setDeploymentRepository(deploymentRepository);
+      i.setMetadataRepository(metadataRepository);
+      i.setBootstrapContext(bootstrapContext);
+      i.setJndiStrategy(jndiStrategy);
+      return i;
    }
 }

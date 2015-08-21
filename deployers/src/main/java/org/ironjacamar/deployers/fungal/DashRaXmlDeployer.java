@@ -25,9 +25,7 @@ import org.ironjacamar.common.api.metadata.resourceadapter.Activations;
 import org.ironjacamar.common.api.metadata.spec.Connector;
 import org.ironjacamar.common.metadata.merge.Merger;
 import org.ironjacamar.common.metadata.resourceadapter.ResourceAdapterParser;
-import org.ironjacamar.core.api.deploymentrepository.DeploymentRepository;
 import org.ironjacamar.core.api.metadatarepository.Metadata;
-import org.ironjacamar.core.api.metadatarepository.MetadataRepository;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,7 +34,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.resource.spi.BootstrapContext;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
@@ -98,15 +95,6 @@ public class DashRaXmlDeployer extends AbstractFungalRADeployer implements Clone
          Activations activations = parser.parse(xsr);
          Merger merger = new Merger();
 
-         DeploymentRepository dr = context.getKernel().getBean("DeploymentRepository", DeploymentRepository.class);
-         setDeploymentRepository(dr);
-
-         MetadataRepository mr = context.getKernel().getBean("MetadataRepository", MetadataRepository.class);
-         setMetadataRepository(mr);
-
-         BootstrapContext bc = context.getKernel().getBean("BootstrapContext", BootstrapContext.class);
-         setBootstrapContext(bc);
-
          ClassLoaderDeployer classLoaderDeployer =
             context.getKernel().getBean("ClassLoaderDeployer", ClassLoaderDeployer.class);
 
@@ -115,7 +103,7 @@ public class DashRaXmlDeployer extends AbstractFungalRADeployer implements Clone
          
          for (Activation activation : activations.getActivations())
          {
-            Metadata metadata = mr.findByName(activation.getArchive());
+            Metadata metadata = metadataRepository.findByName(activation.getArchive());
 
             if (metadata == null)
                throw new DeployException("Deployment " + activation.getArchive() + " not found");
@@ -133,7 +121,7 @@ public class DashRaXmlDeployer extends AbstractFungalRADeployer implements Clone
             deployments.add(activate(actC, activation, cl));
          }
 
-         return new ActivationDeployment(url, deployments, dr, deployments.get(0).getClassLoader());
+         return new ActivationDeployment(url, deployments, deploymentRepository, deployments.get(0).getClassLoader());
       }
       catch (DeployException de)
       {
@@ -164,6 +152,11 @@ public class DashRaXmlDeployer extends AbstractFungalRADeployer implements Clone
     */
    public Deployer clone() throws CloneNotSupportedException
    {
-      return new DashRaXmlDeployer();
+      DashRaXmlDeployer d = new DashRaXmlDeployer();
+      d.setDeploymentRepository(deploymentRepository);
+      d.setMetadataRepository(metadataRepository);
+      d.setBootstrapContext(bootstrapContext);
+      d.setJndiStrategy(jndiStrategy);
+      return d;
    }
 }

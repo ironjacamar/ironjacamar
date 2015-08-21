@@ -27,6 +27,7 @@ import org.ironjacamar.core.api.deploymentrepository.ConfigProperty;
 import org.ironjacamar.core.api.deploymentrepository.ConnectionFactory;
 import org.ironjacamar.core.api.deploymentrepository.Pool;
 import org.ironjacamar.core.api.deploymentrepository.Recovery;
+import org.ironjacamar.core.spi.naming.JndiStrategy;
 import org.ironjacamar.core.spi.statistics.StatisticsPlugin;
 
 import java.util.Collection;
@@ -40,6 +41,9 @@ public class ConnectionFactoryImpl implements ConnectionFactory
    /** The JNDI name */
    private String jndiName;
 
+   /** The connection factory */
+   private Object cf;
+   
    /** The config properties */
    private Collection<ConfigProperty> configProperties;
 
@@ -58,31 +62,40 @@ public class ConnectionFactoryImpl implements ConnectionFactory
    /** The recovery */
    private Recovery recovery;
    
+   /** The JNDI strategy */
+   private JndiStrategy jndiStrategy;
+   
    /**
     * Constructor
     * @param jndiName The JNDI name
+    * @param cf The connection factory
     * @param configProperties The configuration properties
     * @param activation The activation
     * @param connectionManager The connection manager
     * @param pool The pool
     * @param statistics The statistics
     * @param recovery The recovery module
+    * @param jndiStrategy The JNDI strategy
     */
    public ConnectionFactoryImpl(String jndiName,
+                                Object cf,
                                 Collection<ConfigProperty> configProperties,
                                 ConnectionDefinition activation,
                                 ConnectionManager connectionManager,
                                 Pool pool,
                                 StatisticsPlugin statistics,
-                                Recovery recovery)
+                                Recovery recovery,
+                                JndiStrategy jndiStrategy)
    {
       this.jndiName = jndiName;
+      this.cf = cf;
       this.configProperties = configProperties;
       this.activation = activation;
       this.connectionManager = connectionManager;
       this.pool = pool;
       this.statistics = statistics;
       this.recovery = recovery;
+      this.jndiStrategy = jndiStrategy;
    }
    
    /**
@@ -91,6 +104,14 @@ public class ConnectionFactoryImpl implements ConnectionFactory
    public String getJndiName()
    {
       return jndiName;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public Object getConnectionFactory()
+   {
+      return cf;
    }
 
    /**
@@ -139,5 +160,21 @@ public class ConnectionFactoryImpl implements ConnectionFactory
    public Recovery getRecovery()
    {
       return recovery;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void activate() throws Exception
+   {
+      jndiStrategy.bind(jndiName, cf);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void deactivate() throws Exception
+   {
+      jndiStrategy.unbind(jndiName, cf);
    }
 }

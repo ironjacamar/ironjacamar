@@ -40,6 +40,12 @@ public interface ConnectionFactory
    public String getJndiName();
 
    /**
+    * Get the connection factory
+    * @return The value
+    */
+   public Object getConnectionFactory();
+
+   /**
     * Get the config properties
     * @return The value
     */
@@ -67,11 +73,23 @@ public interface ConnectionFactory
     * Get the statistics
     * @return The value
     */
-   public StatisticsPlugin getStatistics();  // ManagedConnectionFactory level
+   public StatisticsPlugin getStatistics();
 
    /**
     * Get the recovery
     * @return The value
     */
    public Recovery getRecovery();
+
+   /**
+    * Activate the connection factory
+    * @exception Exception Thrown in case of an error
+    */
+   public void activate() throws Exception;
+
+   /**
+    * Deactivate the connection factory
+    * @exception Exception Thrown in case of an error
+    */
+   public void deactivate() throws Exception;
 }

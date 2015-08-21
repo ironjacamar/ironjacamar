@@ -23,15 +23,22 @@ package org.ironjacamar.deployers.common;
 
 import org.ironjacamar.common.api.metadata.common.TransactionSupportEnum;
 import org.ironjacamar.common.api.metadata.resourceadapter.Activation;
+import org.ironjacamar.common.api.metadata.resourceadapter.ConnectionDefinition;
 import org.ironjacamar.common.api.metadata.spec.Connector;
+import org.ironjacamar.core.api.connectionmanager.ConnectionManager;
 import org.ironjacamar.core.api.deploymentrepository.Deployment;
 import org.ironjacamar.core.api.deploymentrepository.DeploymentRepository;
 import org.ironjacamar.core.api.metadatarepository.Metadata;
 import org.ironjacamar.core.api.metadatarepository.MetadataRepository;
+import org.ironjacamar.core.connectionmanager.NoTransactionConnectionManager;
+import org.ironjacamar.core.connectionmanager.pool.DefaultPool;
 import org.ironjacamar.core.deploymentrepository.ConfigPropertyImpl;
+import org.ironjacamar.core.deploymentrepository.ConnectionFactoryImpl;
 import org.ironjacamar.core.deploymentrepository.DeploymentBuilder;
+import org.ironjacamar.core.deploymentrepository.PoolImpl;
 import org.ironjacamar.core.deploymentrepository.ResourceAdapterImpl;
 import org.ironjacamar.core.metadatarepository.MetadataImpl;
+import org.ironjacamar.core.spi.naming.JndiStrategy;
 import org.ironjacamar.core.util.Injection;
 
 import java.io.File;
@@ -48,13 +55,16 @@ import javax.resource.spi.ResourceAdapterAssociation;
 public abstract class AbstractResourceAdapterDeployer
 {
    /** The DeploymentRepository */
-   private DeploymentRepository deploymentRepository;
+   protected DeploymentRepository deploymentRepository;
 
    /** The MetadataRepository */
-   private MetadataRepository metadataRepository;
+   protected MetadataRepository metadataRepository;
 
    /** The BootstrapContext */
-   private BootstrapContext bootstrapContext;
+   protected BootstrapContext bootstrapContext;
+
+   /** The JndiStrategy */
+   protected JndiStrategy jndiStrategy;
 
    /**
     * Constructor
@@ -64,6 +74,7 @@ public abstract class AbstractResourceAdapterDeployer
       this.deploymentRepository = null;
       this.metadataRepository = null;
       this.bootstrapContext = null;
+      this.jndiStrategy = null;
    }
 
    /**
@@ -94,6 +105,15 @@ public abstract class AbstractResourceAdapterDeployer
    }
    
    /**
+    * Set the JNDI strategy
+    * @param v The value
+    */
+   public void setJndiStrategy(JndiStrategy v)
+   {
+      this.jndiStrategy = v;
+   }
+   
+   /**
     * Register a metadata instance with the repository
     * @param name The name
     * @param c The connector metadata
@@ -118,35 +138,48 @@ public abstract class AbstractResourceAdapterDeployer
    public Deployment activate(Connector connector, Activation activation, ClassLoader cl)
       throws DeployException
    {
-      DeploymentBuilder builder = new DeploymentBuilder();
-      boolean isXA = isXA(connector, activation);
+      try
+      {
+         DeploymentBuilder builder = new DeploymentBuilder();
+         TransactionSupportEnum transactionSupport = getTransactionSupport(connector, activation);
 
-      Metadata md = metadataRepository.findByName(activation.getArchive());
+         Metadata md = metadataRepository.findByName(activation.getArchive());
 
-      builder.identifier(activation.getId());
-      builder.name(md.getName());
+         builder.identifier(activation.getId());
+         builder.name(md.getName());
 
-      builder.metadata(connector);
-      builder.activation(activation);
+         builder.metadata(connector);
+         builder.activation(activation);
 
-      builder.archive(md.getArchive());
-      builder.classLoader(cl);
+         builder.archive(md.getArchive());
+         builder.classLoader(cl);
 
-      if (connector.getResourceadapter().getResourceadapterClass() != null)
-         createResourceAdapter(builder, connector.getResourceadapter().getResourceadapterClass(),
-                               connector.getResourceadapter().getConfigProperties(), isXA);
+         if (connector.getResourceadapter().getResourceadapterClass() != null)
+            createResourceAdapter(builder, connector.getResourceadapter().getResourceadapterClass(),
+                                  connector.getResourceadapter().getConfigProperties(), transactionSupport);
       
-      Deployment deployment = builder.build();
+         for (ConnectionDefinition cd : activation.getConnectionDefinitions())
+         {
+            createConnectionDefinition(builder, connector, cd, transactionSupport);
+         }
 
-      // deployment.activate();
+         Deployment deployment = builder.build();
 
-      if (deployment.getResourceAdapter() != null)
-         startContext(deployment.getResourceAdapter().getResourceAdapter());
+         deployment.activate();
       
-      if (!deploymentRepository.registerDeployment(deployment))
-         throw new DeployException("Not registered");
+         if (!deploymentRepository.registerDeployment(deployment))
+            throw new DeployException("Not registered");
       
-      return deployment;
+         return deployment;
+      }
+      catch (DeployException de)
+      {
+         throw de;
+      }
+      catch (Exception e)
+      {
+         throw new DeployException(e.getMessage(), e);
+      }
    }
 
    /**
@@ -154,14 +187,14 @@ public abstract class AbstractResourceAdapterDeployer
     * @param builder The deployment builder
     * @param raClz The resource adapter class
     * @param configProperties The config properties
-    * @param isXA Is XA ?
+    * @param transactionSupport The transaction support level
     * @throws DeployException Thrown if the resource adapter cant be created
     */
    protected void
       createResourceAdapter(DeploymentBuilder builder,
                             String raClz,
                             Collection<org.ironjacamar.common.api.metadata.spec.ConfigProperty> configProperties,
-                            boolean isXA)
+                            TransactionSupportEnum transactionSupport)
       throws DeployException
    {
       try
@@ -170,72 +203,186 @@ public abstract class AbstractResourceAdapterDeployer
          javax.resource.spi.ResourceAdapter resourceAdapter =
             (javax.resource.spi.ResourceAdapter)clz.newInstance();
 
-         Collection<org.ironjacamar.core.api.deploymentrepository.ConfigProperty> dcps = null;
-         if (configProperties != null && configProperties.size() > 0)
-         {
-            Injection injector = new Injection();
-
-            dcps = new ArrayList<org.ironjacamar.core.api.deploymentrepository.ConfigProperty>(configProperties.size());
-            for (org.ironjacamar.common.api.metadata.spec.ConfigProperty cp : configProperties)
-            {
-               String name = cp.getConfigPropertyName().getValue();
-               Class<?> type = Class.forName(cp.getConfigPropertyType().getValue(), true, builder.getClassLoader());
-               Object value = cp.isValueSet() ? cp.getConfigPropertyValue().getValue() : null;
-               boolean readOnly = cp.getConfigPropertySupportsDynamicUpdates() != null ?
-                  cp.getConfigPropertySupportsDynamicUpdates().booleanValue() : true;
-               boolean confidential = cp.getConfigPropertyConfidential() != null ?
-                  cp.getConfigPropertyConfidential().booleanValue() : false;
-               boolean declared = true;
-
-               if (cp.isValueSet())
-               {
-                  try
-                  {
-                     injector.inject(resourceAdapter,
-                                     cp.getConfigPropertyName().getValue(),
-                                     cp.getConfigPropertyValue().getValue(),
-                                     cp.getConfigPropertyType().getValue());
-                  }
-                  catch (Throwable t)
-                  {
-                     type = convertType(type);
-                     
-                     if (type != null)
-                     {
-                        injector.inject(resourceAdapter,
-                                        cp.getConfigPropertyName().getValue(),
-                                        cp.getConfigPropertyValue().getValue(),
-                                        type.getName());
-                     }
-                     else
-                     {
-                        throw t;
-                     }
-                  }
-               }
-
-               dcps.add(new ConfigPropertyImpl(resourceAdapter, name, type,
-                                               value, readOnly, confidential,
-                                               declared));
-            }
-         }
+         Collection<org.ironjacamar.core.api.deploymentrepository.ConfigProperty> dcps =
+            injectConfigProperties(resourceAdapter, configProperties, builder.getClassLoader());
 
          org.ironjacamar.core.spi.statistics.StatisticsPlugin statisticsPlugin = null;
          if (resourceAdapter instanceof org.ironjacamar.core.spi.statistics.Statistics)
             statisticsPlugin = ((org.ironjacamar.core.spi.statistics.Statistics)resourceAdapter).getStatistics();
          
          org.ironjacamar.core.api.deploymentrepository.Recovery recovery = null;
-         if (isXA)
+         if (isXA(transactionSupport))
          {
             // Do recovery
          }
 
-         builder.resourceAdapter(new ResourceAdapterImpl(resourceAdapter, dcps, statisticsPlugin, recovery));
+         builder.resourceAdapter(new ResourceAdapterImpl(resourceAdapter, bootstrapContext, dcps,
+                                                         statisticsPlugin, recovery));
       }
       catch (Throwable t)
       {
          throw new DeployException("createResourceAdapter", t);
       }
+   }
+
+   /**
+    * Create connection definition instance
+    * @param builder The deployment builder
+    * @param connector The metadata
+    * @param cd The connection definition
+    * @param transactionSupport The transaction support level
+    * @throws DeployException Thrown if the resource adapter cant be created
+    */
+   protected void
+      createConnectionDefinition(DeploymentBuilder builder,
+                                 Connector connector,
+                                 ConnectionDefinition cd,
+                                 TransactionSupportEnum transactionSupport)
+      throws DeployException
+   {
+      try
+      {
+         String mcfClass = findManagedConnectionFactory(cd.getClassName(), connector);
+         Class<?> clz = Class.forName(mcfClass, true, builder.getClassLoader());
+         javax.resource.spi.ManagedConnectionFactory mcf =
+            (javax.resource.spi.ManagedConnectionFactory)clz.newInstance();
+
+         Collection<org.ironjacamar.core.api.deploymentrepository.ConfigProperty> dcps =
+            injectConfigProperties(mcf, findConfigProperties(mcfClass, connector),
+                                   builder.getClassLoader());
+
+         org.ironjacamar.core.connectionmanager.pool.Pool pool = new DefaultPool();
+         ConnectionManager cm = new NoTransactionConnectionManager(pool);
+         
+         org.ironjacamar.core.api.deploymentrepository.Pool dpool = new PoolImpl(pool, null);
+
+         org.ironjacamar.core.spi.statistics.StatisticsPlugin statisticsPlugin = null;
+         if (mcf instanceof org.ironjacamar.core.spi.statistics.Statistics)
+            statisticsPlugin = ((org.ironjacamar.core.spi.statistics.Statistics)mcf).getStatistics();
+         
+         org.ironjacamar.core.api.deploymentrepository.Recovery recovery = null;
+         if (isXA(transactionSupport))
+         {
+            // Do recovery
+         }
+
+         if (builder.getResourceAdapter() != null)
+            associateResourceAdapter(builder.getResourceAdapter().getResourceAdapter(), mcf);
+
+         // Create ConnectionFactory
+         Object cf = mcf.createConnectionFactory(cm);
+         
+         builder.connectionFactory(new ConnectionFactoryImpl(cd.getJndiName(), cf, dcps, cd, cm, dpool,
+                                                             statisticsPlugin, recovery, jndiStrategy));
+      }
+      catch (Throwable t)
+      {
+         throw new DeployException("createConnectionDefinition", t);
+      }
+   }
+
+
+   /**
+    * Find the ManagedConnectionFactory class
+    * @param className The initial class name
+    * @param connector The metadata
+    * @return The ManagedConnectionFactory
+    */
+   private String findManagedConnectionFactory(String className, Connector connector)
+   {
+      for (org.ironjacamar.common.api.metadata.spec.ConnectionDefinition cd :
+              connector.getResourceadapter().getOutboundResourceadapter().getConnectionDefinitions())
+      {
+         if (className.equals(cd.getManagedConnectionFactoryClass().getValue()) ||
+             className.equals(cd.getConnectionFactoryInterface().getValue()))
+            return cd.getManagedConnectionFactoryClass().getValue();
+      }
+      return className;
+   }
+
+   /**
+    * Find the config properties for the class
+    * @param className The class name
+    * @param connector The metadata
+    * @return The config properties
+    */
+   private Collection<org.ironjacamar.common.api.metadata.spec.ConfigProperty>
+      findConfigProperties(String className, Connector connector)
+   {
+      for (org.ironjacamar.common.api.metadata.spec.ConnectionDefinition cd :
+              connector.getResourceadapter().getOutboundResourceadapter().getConnectionDefinitions())
+      {
+         if (className.equals(cd.getManagedConnectionFactoryClass().getValue()) ||
+             className.equals(cd.getConnectionFactoryInterface().getValue()))
+            return cd.getConfigProperties();
+      }
+      return null;
+   }
+
+   /**
+    * Inject the config properties into the object
+    * @param o The object
+    * @param configProperties The config properties
+    * @param classLoader The class loader
+    * @return The deployment data
+    * @exception Throwable Thrown if an error occurs
+    */
+   private Collection<org.ironjacamar.core.api.deploymentrepository.ConfigProperty>
+      injectConfigProperties(Object o,
+                             Collection<org.ironjacamar.common.api.metadata.spec.ConfigProperty> configProperties,
+                             ClassLoader classLoader)
+      throws Throwable
+   {
+      Collection<org.ironjacamar.core.api.deploymentrepository.ConfigProperty> dcps = null;
+      if (configProperties != null && configProperties.size() > 0)
+      {
+         Injection injector = new Injection();
+
+         dcps = new ArrayList<org.ironjacamar.core.api.deploymentrepository.ConfigProperty>(configProperties.size());
+         for (org.ironjacamar.common.api.metadata.spec.ConfigProperty cp : configProperties)
+         {
+            String name = cp.getConfigPropertyName().getValue();
+            Class<?> type = Class.forName(cp.getConfigPropertyType().getValue(), true, classLoader);
+            Object value = cp.isValueSet() ? cp.getConfigPropertyValue().getValue() : null;
+            boolean readOnly = cp.getConfigPropertySupportsDynamicUpdates() != null ?
+               cp.getConfigPropertySupportsDynamicUpdates().booleanValue() : true;
+            boolean confidential = cp.getConfigPropertyConfidential() != null ?
+               cp.getConfigPropertyConfidential().booleanValue() : false;
+            boolean declared = true;
+
+            if (cp.isValueSet())
+            {
+               try
+               {
+                  injector.inject(o,
+                                  cp.getConfigPropertyName().getValue(),
+                                  cp.getConfigPropertyValue().getValue(),
+                                  cp.getConfigPropertyType().getValue());
+               }
+               catch (Throwable t)
+               {
+                  type = convertType(type);
+                     
+                  if (type != null)
+                  {
+                     injector.inject(o,
+                                     cp.getConfigPropertyName().getValue(),
+                                     cp.getConfigPropertyValue().getValue(),
+                                     type.getName());
+                  }
+                  else
+                  {
+                     throw t;
+                  }
+               }
+            }
+
+            dcps.add(new ConfigPropertyImpl(o, name, type,
+                                            value, readOnly, confidential,
+                                            declared));
+         }
+      }
+      return dcps;
    }
 
    /**
@@ -314,26 +461,6 @@ public abstract class AbstractResourceAdapterDeployer
    }
    
    /**
-    * Start the resource adapter
-    * @param resourceAdapter The resource adapter
-    * @throws DeployException Thrown if the resource adapter cant be started
-    */
-   @SuppressWarnings("unchecked")
-   protected void startContext(javax.resource.spi.ResourceAdapter resourceAdapter)
-      throws DeployException
-   {
-      // This needs to be part of the deployment activation
-      try
-      {
-         resourceAdapter.start(bootstrapContext);
-      }
-      catch (Throwable t)
-      {
-         throw new DeployException("startContext", t);
-      }
-   }
-
-   /**
     * Associate resource adapter with the object if it implements ResourceAdapterAssociation
     * @param resourceAdapter The resource adapter
     * @param object The possible association object
@@ -361,21 +488,30 @@ public abstract class AbstractResourceAdapterDeployer
    }
    
    /**
-    * Is XA deployment
+    * Get the transaction support level
     * @param connector The spec metadata
     * @param activation The activation
     * @return True if XA, otherwise false
     */
-   private boolean isXA(Connector connector, Activation activation)
+   private TransactionSupportEnum getTransactionSupport(Connector connector, Activation activation)
    {
       if (activation.getTransactionSupport() != null)
-         return TransactionSupportEnum.XATransaction == activation.getTransactionSupport();
+         return activation.getTransactionSupport();
 
       if (connector.getResourceadapter().getOutboundResourceadapter() != null)
-         return TransactionSupportEnum.XATransaction ==
-            connector.getResourceadapter().getOutboundResourceadapter().getTransactionSupport();
+         return connector.getResourceadapter().getOutboundResourceadapter().getTransactionSupport();
 
       // We have to assume XA for pure inbound, overrides is done with activation
-      return true;
+      return TransactionSupportEnum.XATransaction;
+   }
+
+   /**
+    * Is XA deployment
+    * @param tse The transaction support level
+    * @return True if XA, otherwise false
+    */
+   private boolean isXA(TransactionSupportEnum tse)
+   {
+      return TransactionSupportEnum.XATransaction == tse;
    }
 }

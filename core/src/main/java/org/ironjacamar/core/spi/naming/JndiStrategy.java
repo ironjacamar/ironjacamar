@@ -19,7 +19,31 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
+package org.ironjacamar.core.spi.naming;
+
+import javax.naming.NamingException;
+import javax.naming.spi.ObjectFactory;
+
 /**
- * The connection manager API
+ * The SPI for a JNDI strategy
+ * 
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-package org.ironjacamar.core.api.connectionmanager;
+public interface JndiStrategy extends ObjectFactory
+{
+   /**
+    * Bind
+    * @param jndiName The JNDI name
+    * @param o The object
+    * @exception NamingException Thrown if the object can't be bound
+    */
+   public void bind(String jndiName, Object o) throws NamingException;
+
+   /**
+    * Unbind
+    * @param jndiName The JNDI name
+    * @param o The object
+    * @exception NamingException Thrown if the object can't be unbound
+    */
+   public void unbind(String jndiName, Object o) throws NamingException;
+}

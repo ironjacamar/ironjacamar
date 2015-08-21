@@ -25,6 +25,8 @@ import org.ironjacamar.core.spi.statistics.StatisticsPlugin;
 
 import java.util.Collection;
 
+import javax.resource.spi.BootstrapContext;
+
 /**
  * A resource adapter
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
@@ -36,6 +38,12 @@ public interface ResourceAdapter
     * @return The value
     */
    public javax.resource.spi.ResourceAdapter getResourceAdapter();
+
+   /**
+    * Get the bootstrap context
+    * @return The value
+    */
+   public BootstrapContext getBootstrapContext();
 
    /**
     * Get the config properties
@@ -54,4 +62,16 @@ public interface ResourceAdapter
     * @return The value
     */
    public Recovery getRecovery();
+
+   /**
+    * Activate the resource adapter
+    * @exception Exception Thrown in case of an error
+    */
+   public void activate() throws Exception;
+
+   /**
+    * Deactivate the resource adapter
+    * @exception Exception Thrown in case of an error
+    */
+   public void deactivate() throws Exception;
 }

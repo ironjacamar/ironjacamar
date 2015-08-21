@@ -19,7 +19,18 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
+package org.ironjacamar.core.connectionmanager.pool;
+
 /**
- * The connection manager API
+ * The base class for all pool implementations
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-package org.ironjacamar.core.api.connectionmanager;
+public abstract class AbstractPool implements Pool
+{
+   /**
+    * Constructor
+    */
+   public AbstractPool()
+   {
+   }
+}

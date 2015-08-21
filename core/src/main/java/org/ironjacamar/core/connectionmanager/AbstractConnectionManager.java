@@ -19,40 +19,46 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.deploymentrepository;
+package org.ironjacamar.core.connectionmanager;
 
-import org.ironjacamar.core.api.deploymentrepository.Pool;
-import org.ironjacamar.core.spi.statistics.StatisticsPlugin;
+import org.ironjacamar.core.api.connectionmanager.ConnectionManager;
+import org.ironjacamar.core.api.connectionmanager.listener.ConnectionListener;
+import org.ironjacamar.core.connectionmanager.pool.Pool;
+
+import javax.resource.ResourceException;
+import javax.resource.spi.ConnectionRequestInfo;
+import javax.resource.spi.ManagedConnectionFactory;
 
 /**
- * A pool implementation
+ * The base class for all connection manager implementations
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class PoolImpl implements Pool
+public abstract class AbstractConnectionManager implements ConnectionManager
 {
    /** The pool */
-   private org.ironjacamar.core.connectionmanager.pool.Pool pool;
-
-   /** The statistics */
-   private StatisticsPlugin statistics;
+   protected Pool pool;
 
    /**
     * Constructor
     * @param pool The pool
-    * @param statistics The statistics
     */
-   public PoolImpl(org.ironjacamar.core.connectionmanager.pool.Pool pool,
-                   StatisticsPlugin statistics)
+   public AbstractConnectionManager(Pool pool)
    {
       this.pool = pool;
-      this.statistics = statistics;
    }
    
    /**
     * {@inheritDoc}
     */
-   public StatisticsPlugin getStatistics()
+   public Object allocateConnection(ManagedConnectionFactory mcf, ConnectionRequestInfo cri) throws ResourceException
    {
-      return statistics;
+      return null;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void returnManagedConnection(ConnectionListener cl, boolean kill)
+   {
    }
 }

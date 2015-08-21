@@ -46,4 +46,6 @@
     <property name="lookupExector"><inject bean="LookupPool"/></property>
   </bean>
 
+  <bean name="JndiStrategy" class="org.ironjacamar.core.naming.JNPStrategy"/>
+
 </deployment>
