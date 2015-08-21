@@ -285,7 +285,7 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
             }
             log.trace(ManagedConnectionPoolUtility.fullDetails(this, method, mcf, cm, pool,
                                                                poolConfiguration, available, checkedOut,
-                                                               pool.getInternalStatistics()));
+                                                               pool.getInternalStatistics(), subject, cri));
          }
       } 
       else if (debug) 
@@ -637,7 +637,7 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
             }
             log.trace(ManagedConnectionPoolUtility.fullDetails(
                   this, method, mcf, cm, pool,
-                  poolConfiguration, available, checkedOut, pool.getInternalStatistics()));
+                  poolConfiguration, available, checkedOut, pool.getInternalStatistics(), defaultSubject, defaultCri));
          }
       } 
       else if (debug) 
@@ -952,7 +952,7 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
             }
             log.trace(ManagedConnectionPoolUtility.fullDetails(
                   this, method, mcf, cm, pool,
-                  poolConfiguration, available, checkedOut, pool.getInternalStatistics()));
+                  poolConfiguration, available, checkedOut, pool.getInternalStatistics(), defaultSubject, defaultCri));
          }
       } 
       else if (debug) 
@@ -1118,7 +1118,7 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
             }
             log.trace(ManagedConnectionPoolUtility.fullDetails(
                   this, method, mcf, cm, pool,
-                  poolConfiguration, available, checkedOut, pool.getInternalStatistics()));
+                  poolConfiguration, available, checkedOut, pool.getInternalStatistics(), defaultSubject, defaultCri));
          }
       } 
       else if (debug) 

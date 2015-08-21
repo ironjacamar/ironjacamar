@@ -138,9 +138,6 @@ public class PoolBySubject extends AbstractPrefillPool
                   }
                }
 
-               if (log.isDebugEnabled())
-                  log.debug("Subject=" + subject);
-                     
                return subject;
             }
             catch (Throwable t)

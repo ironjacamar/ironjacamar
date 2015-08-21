@@ -277,7 +277,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             String method = "getConnection(" + subject + ", " + cri + ")";
             log.trace(ManagedConnectionPoolUtility.fullDetails(this, method,
                                                                mcf, cm, pool, poolConfiguration,
-                                                               cls, checkedOut, pool.getInternalStatistics()));
+                                                               cls, checkedOut, pool.getInternalStatistics(), subject, cri));
          }
       }
       else if (debug)
@@ -661,7 +661,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             String method = "returnConnection(" + Integer.toHexString(System.identityHashCode(cl)) + ", " + kill + ")";
             log.trace(ManagedConnectionPoolUtility.fullDetails(this, method,
                                                                mcf, cm, pool, poolConfiguration,
-                                                               cls, checkedOut, pool.getInternalStatistics()));
+                                                               cls, checkedOut, pool.getInternalStatistics(), defaultSubject, defaultCri));
          }
       }
       else if (debug)
@@ -941,7 +941,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             String method = "removeIdleConnections(" + timeout + ")";
             log.trace(ManagedConnectionPoolUtility.fullDetails(this, method,
                                                                mcf, cm, pool, poolConfiguration,
-                                                               cls, checkedOut, pool.getInternalStatistics()));
+                                                               cls, checkedOut, pool.getInternalStatistics(), defaultSubject, defaultCri));
          }
       }
       else if (debug)
@@ -1086,7 +1086,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             String method = "fillTo(" + size + ")";
             log.trace(ManagedConnectionPoolUtility.fullDetails(this, method,
                                                                mcf, cm, pool, poolConfiguration,
-                                                               cls, checkedOut, pool.getInternalStatistics()));
+                                                               cls, checkedOut, pool.getInternalStatistics(), defaultSubject, defaultCri));
          }
       }
       else if (debug)
@@ -1375,7 +1375,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
             String method = "validateConnections()";
             log.trace(ManagedConnectionPoolUtility.fullDetails(this, method,
                                                                mcf, cm, pool, poolConfiguration,
-                                                               cls, checkedOut, pool.getInternalStatistics()));
+                                                               cls, checkedOut, pool.getInternalStatistics(), defaultSubject, defaultCri));
          }
       }
       else if (debug)
