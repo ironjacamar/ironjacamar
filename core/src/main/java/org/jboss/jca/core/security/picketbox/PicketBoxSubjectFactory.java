@@ -22,6 +22,9 @@
 
 package org.jboss.jca.core.security.picketbox;
 
+import org.jboss.jca.core.CoreLogger;
+import org.jboss.logging.Logger;
+
 import javax.security.auth.Subject;
 
 /**
@@ -33,6 +36,12 @@ public class PicketBoxSubjectFactory implements org.jboss.jca.core.spi.security.
 {
    /** Delegator */
    private org.jboss.security.SubjectFactory delegator;
+
+   /** The logger */
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, PicketBoxSubjectFactory.class.getName());
+
+   private static boolean trace = log.isTraceEnabled();
+
 
    /**
     * Constructor
@@ -56,7 +65,14 @@ public class PicketBoxSubjectFactory implements org.jboss.jca.core.spi.security.
     */
    public Subject createSubject(String sd)
    {
-      return delegator.createSubject(sd);
+      Subject subject = delegator.createSubject(sd);
+
+      if (trace)
+      {
+         log.trace("Subject=" + subject);
+         log.trace("Subject identity=" + Integer.toHexString(System.identityHashCode(subject)));
+      }
+      return subject;
    }
 
    /**
