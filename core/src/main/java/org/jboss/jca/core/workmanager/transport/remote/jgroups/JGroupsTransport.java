@@ -446,9 +446,23 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
     */
    public void startup() throws Throwable
    {
-      disp = new RpcDispatcher(channel, null, this, this);
+      disp = createRpcDispatcher();
 
-      disp.setMethodLookup(new MethodLookup()
+      if (clusterName == null)
+         clusterName = "jca";
+
+      channel.connect(clusterName);
+   }
+
+   /**
+    * Creates an rpc dispatcher used by this transport
+    * @return an rpc dispatcher
+    */
+   protected RpcDispatcher createRpcDispatcher()
+   {
+      RpcDispatcher dispatcher = new RpcDispatcher(channel, null, this, this);
+
+      dispatcher.setMethodLookup(new MethodLookup()
       {
          @Override
          public Method findMethod(short key)
@@ -456,11 +470,7 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
             return methods.get(key);
          }
       });
-
-      if (clusterName == null)
-         clusterName = "jca";
-
-      channel.connect(clusterName);
+      return dispatcher;
    }
 
    /**
