@@ -77,6 +77,8 @@ class ManagedConnectionPoolUtility
     * @param available The available connection listeners
     * @param inUse The in-use connection listeners
     * @param ps The statistics
+    * @param subject The subject
+    * @param cri The ConnectionRequestInfo
     * @return The state
     */
    static String fullDetails(ManagedConnectionPool mcp, String method, ManagedConnectionFactory mcf,
@@ -89,8 +91,10 @@ class ManagedConnectionPoolUtility
 
       sb.append(method).append(newLine);
       sb.append("Method: ").append(method).append(newLine);
-      sb.append("  Subject: ").append(subject == null ? "null" : Integer.toHexString(System.identityHashCode(subject))).append(newLine);
-      sb.append("  CRI: ").append(cri == null ? "null" : Integer.toHexString(System.identityHashCode(cri))).append(newLine);
+      sb.append("  Subject: ").append(subject == null ? "null" :
+                                      Integer.toHexString(System.identityHashCode(subject))).append(newLine);
+      sb.append("  CRI: ").append(cri == null ? "null" :
+                                  Integer.toHexString(System.identityHashCode(cri))).append(newLine);
       sb.append("ManagedConnectionPool:").append(newLine);
       sb.append("  Class: ").append(mcp.getClass().getName()).append(newLine);
       sb.append("  Object: ").append(Integer.toHexString(System.identityHashCode(mcp))).append(newLine);

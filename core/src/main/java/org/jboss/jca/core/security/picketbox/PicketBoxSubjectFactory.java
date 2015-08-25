@@ -23,9 +23,10 @@
 package org.jboss.jca.core.security.picketbox;
 
 import org.jboss.jca.core.CoreLogger;
-import org.jboss.logging.Logger;
 
 import javax.security.auth.Subject;
+
+import org.jboss.logging.Logger;
 
 /**
  * A SubjectFactory implementation backed by PicketBox

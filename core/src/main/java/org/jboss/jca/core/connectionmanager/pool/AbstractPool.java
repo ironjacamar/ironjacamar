@@ -1043,7 +1043,8 @@ public abstract class AbstractPool implements Pool
     */
    protected boolean internalTestConnection(ConnectionRequestInfo cri, Subject subject)
    {
-      log.debugf("%s: testConnection(%s, %s)(%s)", poolName, cri, subject, Integer.toHexString(System.identityHashCode(subject)));
+      log.debugf("%s: testConnection(%s, %s) (%s)", poolName, cri, subject,
+                 Integer.toHexString(System.identityHashCode(subject)));
 
       log.debugf("%s:   Statistics=%s", poolName, statistics);
 
