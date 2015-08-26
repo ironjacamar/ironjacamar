@@ -33,12 +33,15 @@ ext {
     jandex: "org.jboss:jandex:2.0.0.Beta1",
     javax_inject: "javax.inject:javax.inject:1",
     jboss_common: "org.jboss:jboss-common-core:2.5.0.Final",
+    jboss_jaspi: "org.jboss.spec.javax.security.auth.message:jboss-jaspi-api_1.1_spec:1.0.0.Final",
     jboss_logging: "org.jboss.logging:jboss-logging:3.2.1.Final",
     jboss_logging_manager: "org.jboss.logmanager:jboss-logmanager:2.0.0.Final",
     jboss_logging_manager_log4j: "org.jboss.logmanager:log4j-jboss-logmanager:1.1.2.Final",
     jboss_logging_processor: "org.jboss.logging:jboss-logging-processor:2.0.0.Final",
     jboss_naming: "org.jboss.naming:jnpserver:5.0.3.GA",
     jboss_stdio: "org.jboss.stdio:jboss-stdio:1.0.2.GA",
+    jboss_threads: "org.wildfly.core:wildfly-threads:2.0.0.Alpha13",
+    jgroups: "org.jgroups:jgroups:3.2.7.Final",
     junit: "junit:junit:4.12",
     log4j: "log4j:log4j:1.2.16",
     narayana_jta: "org.jboss.narayana.jta:narayana-jta:5.1.0.Final",
@@ -110,12 +113,15 @@ subprojects { subProject ->
     compile(libraries.jandex)
     compile(libraries.javax_inject)
     compile(libraries.jboss_common)
+    compile(libraries.jboss_jaspi)
     compile(libraries.jboss_logging)
     compile(libraries.jboss_logging_manager)
     compile(libraries.jboss_logging_manager_log4j)
     compile(libraries.jboss_logging_processor)
     compile(libraries.jboss_naming)
     compile(libraries.jboss_stdio)
+    compile(libraries.jboss_threads)
+    compile(libraries.jgroups)
     compile(libraries.junit)
     compile(libraries.log4j)
     compile(libraries.narayana_jta)

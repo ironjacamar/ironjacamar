@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2015, Red Hat Inc, and individual contributors
+ * Copyright 2014, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -38,6 +38,25 @@ import static org.jboss.logging.Logger.Level.WARN;
 @MessageLogger(projectCode = "IJ2")
 public interface CoreLogger extends BasicLogger
 {
+
+   // WORK MANAGER (200)
+
+   /**
+    * SecurityContext setup failed
+    * @param description throwable description
+    * @param t The exception
+    */
+   @LogMessage(level = ERROR)
+   @Message(id = 201, value = "SecurityContext setup failed: %s")
+   public void securityContextSetupFailed(String description, @Cause Throwable t);
+
+   /**
+    * SecurityContext setup failed since CallbackSecurity was null
+    */
+   @LogMessage(level = ERROR)
+   @Message(id = 202, value = "SecurityContext setup failed since CallbackSecurity was null")
+   public void securityContextSetupFailedCallbackSecurityNull();
+
    // NAMING (700)
 
    /**
