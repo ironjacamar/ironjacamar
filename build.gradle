@@ -47,6 +47,7 @@ ext {
     narayana_jta: "org.jboss.narayana.jta:narayana-jta:5.1.0.Final",
     narayana_integration: "org.jboss.narayana.jts:narayana-jts-integration:5.1.0.Final",
     narayana_spi: "org.jboss:jboss-transaction-spi:7.1.1.Final",
+    picketbox: "org.picketbox:picketbox:4.9.3.Final",
     saxon: "net.sf.saxon:saxon:8.7",
     saxon_dom: "net.sf.saxon:saxon-dom:8.7",
     shrinkwrap_api: "org.jboss.shrinkwrap:shrinkwrap-api:1.2.2",
@@ -127,6 +128,7 @@ subprojects { subProject ->
     compile(libraries.narayana_jta)
     compile(libraries.narayana_integration)
     compile(libraries.narayana_spi)
+    compile(libraries.picketbox)
     compile(libraries.shrinkwrap_api)
     compile(libraries.shrinkwrap_impl)
     compile(libraries.shrinkwrap_spi)

@@ -123,6 +123,54 @@ public interface CoreLogger extends BasicLogger
    @Message(id = 906, value = "Error during crash recovery: %s (%s)")
    public void exceptionDuringCrashRecovery(String jndiName, String reason, @Cause Throwable t);
 
+   // SECURITY (1000)
+
+   /**
+    * No users.properties were found
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 1001, value = "No users.properties were found")
+   public void noUsersPropertiesFound();
+
+   /**
+    * Error while loading users.properties
+    * @param t The exception
+    */
+   @LogMessage(level = ERROR)
+   @Message(id = 1002, value = "Error while loading users.properties")
+   public void errorWhileLoadingUsersProperties(@Cause Throwable t);
+
+   /**
+    * No roles.properties were found
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 1003, value = "No roles.properties were found")
+   public void noRolesPropertiesFound();
+
+   /**
+    * Error while loading roles.properties
+    * @param t The exception
+    */
+   @LogMessage(level = ERROR)
+   @Message(id = 1004, value = "Error while loading roles.properties")
+   public void errorWhileLoadingRolesProperties(@Cause Throwable t);
+
+   /**
+    * No callback.properties were found
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 1005, value = "No callback.properties were found")
+   public void noCallbackPropertiesFound();
+
+   /**
+    * Error while loading callback.properties
+    * @param t The exception
+    */
+   @LogMessage(level = ERROR)
+   @Message(id = 1006, value = "Error while loading callback.properties")
+   public void errorWhileLoadingCallbackProperties(@Cause Throwable t);
+
+
    // TRANSCATION (1100)
 
    /**

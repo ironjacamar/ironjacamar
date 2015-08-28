@@ -19,21 +19,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.spi.security;
-
-import javax.security.auth.Subject;
-
 /**
- * Subject factory
- * 
- * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ * The security integration
  */
-public interface SubjectFactory
-{
-   /**
-    * Create a Subject instance
-    * @param sd The security domain
-    * @return The Subject
-    */
-   public Subject createSubject(String sd);
-}
+package org.ironjacamar.core.security.picketbox;
