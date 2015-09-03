@@ -132,7 +132,8 @@ public class LegacyTxDataSourceImpl implements LocalTxDataSource
                                   connectionProperties, timeOut, security,
                                   statement, validation, urlDelimiter,
                                   urlSelectorStrategyClassName, newConnectionSql, useJavaContext, poolName,
-                                  enabled, jndiName, spy, useCcm, jta, Defaults.CONNECTABLE, Defaults.TRACKING, pool);
+                                  enabled, jndiName, spy, useCcm, jta, Defaults.CONNECTABLE, Defaults.TRACKING,
+                                  Defaults.MCP, pool);
    }
    
    @Override

@@ -125,6 +125,8 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
    /** Tracking */
    protected Boolean tracking;
 
+   /** MCP */
+   protected String mcp;
 
    /**
     * Create a new DataSourceAbstractImpl.
@@ -146,6 +148,7 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
     * @param newConnectionSql newConnectionSql
     * @param connectable connectable
     * @param tracking tracking
+    * @param mcp mcp
     * @throws ValidateException ValidateException
     */
    protected DataSourceAbstractImpl(TransactionIsolation transactionIsolation, TimeOut timeOut,
@@ -153,7 +156,7 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
                                     String urlDelimiter, String urlSelectorStrategyClassName,
                                     Boolean useJavaContext, String poolName, Boolean enabled, String jndiName,
                                     Boolean spy, Boolean useCcm, String driver, String newConnectionSql,
-                                    Boolean connectable, Boolean tracking)
+                                    Boolean connectable, Boolean tracking, String mcp)
       throws ValidateException
    {
       this.transactionIsolation = transactionIsolation;
@@ -173,6 +176,7 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
       this.newConnectionSql = newConnectionSql;
       this.connectable = connectable;
       this.tracking = tracking;
+      this.mcp = mcp;
       partialCommonValidation();
    }
 
@@ -316,6 +320,14 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
    /**
     * {@inheritDoc}
     */
+   public String getMcp()
+   {
+      return mcp;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public void setEnabled(Boolean enabled)
    {
       this.enabled = enabled;
@@ -369,6 +381,7 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
       result = prime * result + ((newConnectionSql == null) ? 0 : newConnectionSql.hashCode());
       result = prime * result + ((connectable == null) ? 0 : connectable.hashCode());
       result = prime * result + ((tracking == null) ? 0 : tracking.hashCode());
+      result = prime * result + ((mcp == null) ? 0 : mcp.hashCode());
       return result;
    }
 
@@ -484,6 +497,13 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
             return false;
       }
       else if (!tracking.equals(other.tracking))
+         return false;
+      if (mcp == null)
+      {
+         if (other.mcp != null)
+            return false;
+      }
+      else if (!mcp.equals(other.mcp))
          return false;
 
       return true;

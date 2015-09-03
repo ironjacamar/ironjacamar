@@ -854,6 +854,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Boolean useCcm = Defaults.USE_CCM;
       Boolean connectable = Defaults.CONNECTABLE;
       Boolean tracking = Defaults.TRACKING;
+      String mcp = Defaults.MCP;
 
       for (org.jboss.jca.common.api.metadata.ds.XaDataSource.Attribute attribute :
               org.jboss.jca.common.api.metadata.ds.XaDataSource.Attribute.values())
@@ -892,6 +893,10 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                tracking = attributeAsBoolean(reader, attribute.getLocalName(), Defaults.TRACKING);
                break;
             }
+            case MCP : {
+               mcp = attributeAsString(reader, attribute.getLocalName());
+               break;
+            }
             default :
                break;
          }
@@ -909,7 +914,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   return new XADataSourceImpl(transactionIsolation, timeOutSettings, securitySettings,
                                               statementSettings, validationSettings, urlDelimiter, urlProperty,
                                               urlSelectorStrategyClassName, useJavaContext, poolName, enabled,
-                                              jndiName, spy, useCcm, connectable, tracking, xaDataSourceProperty,
+                                              jndiName, spy, useCcm, connectable, tracking, mcp, xaDataSourceProperty,
                                               xaDataSourceClass, driver, newConnectionSql, xaPool, recovery);
                }
                else
@@ -1033,6 +1038,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Boolean jta = Defaults.JTA;
       Boolean connectable = Defaults.CONNECTABLE;
       Boolean tracking = Defaults.TRACKING;
+      String mcp = Defaults.MCP;
 
       for (org.jboss.jca.common.api.metadata.ds.DataSource.Attribute attribute :
               org.jboss.jca.common.api.metadata.ds.DataSource.Attribute.values())
@@ -1075,6 +1081,10 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                tracking = attributeAsBoolean(reader, attribute.getLocalName(), Defaults.TRACKING);
                break;
             }
+            case MCP : {
+               mcp = attributeAsString(reader, attribute.getLocalName());
+               break;
+            }
             default :
                break;
          }
@@ -1092,7 +1102,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                                             connectionProperties, timeOutSettings, securitySettings,
                                             statementSettings, validationSettings, urlDelimiter,
                                             urlSelectorStrategyClassName, newConnectionSql, useJavaContext, poolName,
-                                            enabled, jndiName, spy, useCcm, jta, connectable, tracking, pool);
+                                            enabled, jndiName, spy, useCcm, jta, connectable, tracking, mcp, pool);
                }
                else
                {

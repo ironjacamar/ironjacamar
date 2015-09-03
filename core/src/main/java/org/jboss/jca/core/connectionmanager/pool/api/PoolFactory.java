@@ -51,13 +51,15 @@ public class PoolFactory
     * @param pc The pool configuration
     * @param noTxSeparatePools no-tx separate pool
     * @param sharable Are the connections sharable
+    * @param mcp ManagedConnectionPool
     * @return The pool instance
     */
    public Pool create(final PoolStrategy strategy,
                       final ManagedConnectionFactory mcf,
                       final PoolConfiguration pc,
                       final boolean noTxSeparatePools,
-                      final boolean sharable)
+                      final boolean sharable,
+                      final String mcp)
    {
       if (strategy == null)
          throw new IllegalArgumentException("Strategy is null");
@@ -71,19 +73,19 @@ public class PoolFactory
       switch (strategy)
       {
          case POOL_BY_CRI:
-            return new PoolByCri(mcf, pc, noTxSeparatePools, sharable);
+            return new PoolByCri(mcf, pc, noTxSeparatePools, sharable, mcp);
 
          case POOL_BY_SUBJECT:
-            return new PoolBySubject(mcf, pc, noTxSeparatePools, sharable);
+            return new PoolBySubject(mcf, pc, noTxSeparatePools, sharable, mcp);
 
          case POOL_BY_SUBJECT_AND_CRI:
-            return new PoolBySubjectAndCri(mcf, pc, noTxSeparatePools, sharable);
+            return new PoolBySubjectAndCri(mcf, pc, noTxSeparatePools, sharable, mcp);
 
          case ONE_POOL:
-            return new OnePool(mcf, pc, noTxSeparatePools, sharable);
+            return new OnePool(mcf, pc, noTxSeparatePools, sharable, mcp);
 
          case REAUTH:
-            return new ReauthPool(mcf, pc, noTxSeparatePools, sharable);
+            return new ReauthPool(mcf, pc, noTxSeparatePools, sharable, mcp);
       }
 
       throw new IllegalArgumentException("Unknown strategy " + strategy);

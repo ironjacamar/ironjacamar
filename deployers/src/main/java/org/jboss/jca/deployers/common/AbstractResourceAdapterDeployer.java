@@ -50,6 +50,7 @@ import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
 import org.jboss.jca.core.connectionmanager.pool.api.PrefillPool;
 import org.jboss.jca.core.connectionmanager.pool.capacity.CapacityFactory;
+import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactory;
 import org.jboss.jca.core.recovery.DefaultRecoveryPlugin;
 import org.jboss.jca.core.security.CallbackImpl;
 import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
@@ -1517,9 +1518,16 @@ public abstract class AbstractResourceAdapterDeployer
                                     tracking = connectionDefinition.isTracking();
                                  }
 
+                                 String mcpClass = null;
+                                 ManagedConnectionPoolFactory mcpf = new ManagedConnectionPoolFactory();
+                                 if (mcpf.isOverride())
+                                    mcpClass = mcpf.getDefaultImplementation();
+                                 if (mcpClass == null)
+                                    mcpClass = ManagedConnectionPoolFactory.DEFAULT_IMPLEMENTATION;
+
                                  org.jboss.jca.core.connectionmanager.pool.api.Pool pool =
                                     pf.create(strategy, mcf, pc, noTxSeparatePool.booleanValue(),
-                                              sharable.booleanValue());
+                                              sharable.booleanValue(), mcpClass);
 
                                  // Capacity
                                  applyCapacity(connectionDefinition, pool, isCRI);

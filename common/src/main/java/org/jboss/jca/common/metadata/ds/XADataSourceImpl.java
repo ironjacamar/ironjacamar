@@ -80,6 +80,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
     * @param useCcm useCcm
     * @param connectable connectable
     * @param tracking tracking
+    * @param mcp mcp
     * @param xaDataSourceProperty xaDataSourceProperty
     * @param xaDataSourceClass xaDataSourceClass
     * @param driver driver
@@ -92,13 +93,14 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
                            Statement statement, Validation validation, String urlDelimiter, String urlProperty,
                            String urlSelectorStrategyClassName, Boolean useJavaContext, String poolName,
                            Boolean enabled, String jndiName, Boolean spy, Boolean useCcm, Boolean connectable,
-                           Boolean tracking,
+                           Boolean tracking, String mcp,
                            Map<String, String> xaDataSourceProperty, String xaDataSourceClass, String driver,
                            String newConnectionSql,
                            DsXaPool xaPool, Recovery recovery) throws ValidateException
    {
       super(transactionIsolation, timeOut, security, statement, validation, urlDelimiter, urlSelectorStrategyClassName,
-            useJavaContext, poolName, enabled, jndiName, spy, useCcm, driver, newConnectionSql, connectable, tracking);
+            useJavaContext, poolName, enabled, jndiName, spy, useCcm, driver, newConnectionSql, connectable, tracking,
+            mcp);
 
       if (xaDataSourceProperty != null)
       {
@@ -278,6 +280,9 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
 
       if (tracking != null)
          sb.append(" ").append(XaDataSource.Attribute.TRACKING).append("=\"").append(tracking).append("\"");
+
+      if (mcp != null)
+         sb.append(" ").append(XaDataSource.Attribute.MCP).append("=\"").append(mcp).append("\"");
 
       sb.append(">");
 

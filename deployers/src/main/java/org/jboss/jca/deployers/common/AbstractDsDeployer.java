@@ -50,6 +50,7 @@ import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
 import org.jboss.jca.core.connectionmanager.pool.api.PrefillPool;
 import org.jboss.jca.core.connectionmanager.pool.capacity.CapacityFactory;
+import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactory;
 import org.jboss.jca.core.recovery.DefaultRecoveryPlugin;
 import org.jboss.jca.core.spi.mdr.NotFoundException;
 import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
@@ -586,7 +587,17 @@ public abstract class AbstractDsDeployer
          }
       }
 
-      Pool pool = pf.create(strategy, mcf, pc, false, true);
+      String mcpClass = ds.getMcp();
+      if (mcpClass == null)
+      {
+         ManagedConnectionPoolFactory mcpf = new ManagedConnectionPoolFactory();
+         if (mcpf.isOverride())
+            mcpClass = mcpf.getDefaultImplementation();
+      }
+      if (mcpClass == null)
+         mcpClass = ManagedConnectionPoolFactory.EXPERIMENTAL_IMPLEMENTATION;
+      
+      Pool pool = pf.create(strategy, mcf, pc, false, true, mcpClass);
 
       // Capacity
       if (ds.getPool() != null)
@@ -842,7 +853,17 @@ public abstract class AbstractDsDeployer
          }
       }
 
-      Pool pool = pf.create(strategy, mcf, pc, noTxSeparatePool.booleanValue(), true);
+      String mcpClass = ds.getMcp();
+      if (mcpClass == null)
+      {
+         ManagedConnectionPoolFactory mcpf = new ManagedConnectionPoolFactory();
+         if (mcpf.isOverride())
+            mcpClass = mcpf.getDefaultImplementation();
+      }
+      if (mcpClass == null)
+         mcpClass = ManagedConnectionPoolFactory.EXPERIMENTAL_IMPLEMENTATION;
+
+      Pool pool = pf.create(strategy, mcf, pc, noTxSeparatePool.booleanValue(), true, mcpClass);
 
       // Capacity
       if (ds.getXaPool() != null)

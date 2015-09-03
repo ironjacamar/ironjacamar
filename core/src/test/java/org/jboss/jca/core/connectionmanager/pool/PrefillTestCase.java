@@ -62,7 +62,9 @@ public class PrefillTestCase
       config.setPrefill(true);
 
       PoolFactory pf = new PoolFactory();
-      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, config, false, true);
+      Pool pool =
+         pf.create(PoolStrategy.ONE_POOL, mcf, config, false, true,
+                   org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactory.DEFAULT_IMPLEMENTATION);
 
       assertTrue(pool instanceof PrefillPool);
 
@@ -98,7 +100,9 @@ public class PrefillTestCase
       config.setPrefill(false);
 
       PoolFactory pf = new PoolFactory();
-      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, config, false, true);
+      Pool pool =
+         pf.create(PoolStrategy.ONE_POOL, mcf, config, false, true,
+                   org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactory.DEFAULT_IMPLEMENTATION);
 
       assertTrue(pool instanceof PrefillPool);
 
@@ -132,7 +136,9 @@ public class PrefillTestCase
       PoolConfiguration config = new PoolConfiguration();
 
       PoolFactory pf = new PoolFactory();
-      Pool pool = pf.create(PoolStrategy.POOL_BY_CRI, mcf, config, false, true);
+      Pool pool =
+         pf.create(PoolStrategy.POOL_BY_CRI, mcf, config, false, true,
+                   org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactory.DEFAULT_IMPLEMENTATION);
 
       assertFalse(pool instanceof PrefillPool);
    }
@@ -155,7 +161,9 @@ public class PrefillTestCase
       config.setPrefill(true);
 
       PoolFactory pf = new PoolFactory();
-      Pool pool = pf.create(PoolStrategy.POOL_BY_SUBJECT, mcf, config, false, true);
+      Pool pool =
+         pf.create(PoolStrategy.POOL_BY_SUBJECT, mcf, config, false, true,
+                   org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactory.DEFAULT_IMPLEMENTATION);
 
       assertTrue(pool instanceof PrefillPool);
 
@@ -194,7 +202,9 @@ public class PrefillTestCase
       config.setPrefill(false);
 
       PoolFactory pf = new PoolFactory();
-      Pool pool = pf.create(PoolStrategy.POOL_BY_SUBJECT, mcf, config, false, true);
+      Pool pool =
+         pf.create(PoolStrategy.POOL_BY_SUBJECT, mcf, config, false, true,
+                   org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactory.DEFAULT_IMPLEMENTATION);
 
       assertTrue(pool instanceof PrefillPool);
 
@@ -228,7 +238,9 @@ public class PrefillTestCase
       PoolConfiguration config = new PoolConfiguration();
 
       PoolFactory pf = new PoolFactory();
-      Pool pool = pf.create(PoolStrategy.POOL_BY_SUBJECT_AND_CRI, mcf, config, false, true);
+      Pool pool =
+         pf.create(PoolStrategy.POOL_BY_SUBJECT_AND_CRI, mcf, config, false, true,
+                   org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactory.DEFAULT_IMPLEMENTATION);
 
       assertFalse(pool instanceof PrefillPool);
    }
@@ -246,7 +258,9 @@ public class PrefillTestCase
       PoolConfiguration config = new PoolConfiguration();
 
       PoolFactory pf = new PoolFactory();
-      Pool pool = pf.create(PoolStrategy.REAUTH, mcf, config, false, true);
+      Pool pool =
+         pf.create(PoolStrategy.REAUTH, mcf, config, false, true,
+                   org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactory.DEFAULT_IMPLEMENTATION);
 
       assertFalse(pool instanceof PrefillPool);
    }

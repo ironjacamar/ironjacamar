@@ -51,11 +51,13 @@ public class PoolBySubjectAndCri extends AbstractPool
     * @param pc pool configuration
     * @param noTxSeparatePools notx seperate pool
     * @param sharable Are the connections sharable
+    * @param mcp mcp
     */
    public PoolBySubjectAndCri(final ManagedConnectionFactory mcf, final PoolConfiguration pc,
-                              final boolean noTxSeparatePools, final boolean sharable)
+                              final boolean noTxSeparatePools, final boolean sharable,
+                              final String mcp)
    {
-      super(mcf, pc, noTxSeparatePools, sharable);
+      super(mcf, pc, noTxSeparatePools, sharable, mcp);
    }
 
    /**

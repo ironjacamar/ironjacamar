@@ -316,7 +316,12 @@ public interface DataSource extends CommonDataSource
       /**
        * tracking attribute
        */
-      TRACKING("tracking");
+      TRACKING("tracking"),
+
+      /**
+       * mcp attribute
+       */
+      MCP("mcp");
 
       private String name;
 

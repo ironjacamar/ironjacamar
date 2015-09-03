@@ -119,6 +119,9 @@ public abstract class AbstractPool implements Pool
    /** Are the connections sharable */
    private boolean sharable;
 
+   /** MCP class */
+   private String mcpClass;
+
    /** The capacity */
    private Capacity capacity;
 
@@ -135,9 +138,11 @@ public abstract class AbstractPool implements Pool
     * @param pc the pool configuration
     * @param noTxSeparatePools noTxSeparatePool
     * @param sharable Are the connections sharable
+    * @param mcp mcp
     */
    protected AbstractPool(final ManagedConnectionFactory mcf, final PoolConfiguration pc,
-                          final boolean noTxSeparatePools, final boolean sharable)
+                          final boolean noTxSeparatePools, final boolean sharable,
+                          final String mcp)
    {
       if (mcf == null)
          throw new IllegalArgumentException("MCF is null");
@@ -149,6 +154,7 @@ public abstract class AbstractPool implements Pool
       this.poolConfiguration = pc;
       this.noTxSeparatePools = noTxSeparatePools;
       this.sharable = sharable;
+      this.mcpClass = mcp;
       this.log = getLogger();
       this.trace = log.isTraceEnabled();
       this.statistics = new PoolStatisticsImpl(pc.getMaxSize());
@@ -301,7 +307,7 @@ public abstract class AbstractPool implements Pool
                if (mcp == null)
                {
                   ManagedConnectionPoolFactory mcpf = new ManagedConnectionPoolFactory();
-                  ManagedConnectionPool newMcp = mcpf.create(mcf, cm, subject, cri, poolConfiguration, this);
+                  ManagedConnectionPool newMcp = mcpf.create(mcpClass, mcf, cm, subject, cri, poolConfiguration, this);
 
                   mcp = mcpPools.putIfAbsent(key, newMcp);
                   if (mcp == null)

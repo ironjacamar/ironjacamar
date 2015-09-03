@@ -142,7 +142,7 @@ public class LegacyXaDataSourceImp implements XaDataSource
       dsImpl = new XADataSourceImpl(transactionIsolation, timeOut, security,
                                     statement, validation, urlDelimiter, "|", urlSelectorStrategyClassName, 
                                     useJavaContext, poolName, enabled, jndiName, spy, useCcm,
-                                    Defaults.CONNECTABLE, Defaults.TRACKING,
+                                    Defaults.CONNECTABLE, Defaults.TRACKING, Defaults.MCP,
                                     xaDataSourceProperty, xaDataSourceClass, driver, newConnectionSql, 
                                     xaPool, recovery);
    }

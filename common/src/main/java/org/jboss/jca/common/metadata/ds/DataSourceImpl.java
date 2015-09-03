@@ -88,6 +88,7 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
     * @param jta jta
     * @param connectable connectable
     * @param tracking tracking
+    * @param mcp mcp
     * @param pool pool
     * @throws ValidateException ValidateException
     */
@@ -96,11 +97,13 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
                          TimeOut timeOut, DsSecurity security, Statement statement, Validation validation, 
                          String urlDelimiter, String urlSelectorStrategyClassName, String newConnectionSql, 
                          Boolean useJavaContext, String poolName, Boolean enabled, String jndiName, 
-                         Boolean spy, Boolean useccm, Boolean jta, Boolean connectable, Boolean tracking, DsPool pool)
+                         Boolean spy, Boolean useccm, Boolean jta, Boolean connectable, Boolean tracking, String mcp,
+                         DsPool pool)
       throws ValidateException
    {
       super(transactionIsolation, timeOut, security, statement, validation, urlDelimiter, urlSelectorStrategyClassName,
-            useJavaContext, poolName, enabled, jndiName, spy, useccm, driver, newConnectionSql, connectable, tracking);
+            useJavaContext, poolName, enabled, jndiName, spy, useccm, driver, newConnectionSql, connectable, tracking,
+            mcp);
 
       this.jta = jta;
       this.connectionUrl = connectionUrl;
@@ -315,6 +318,9 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
 
       if (tracking != null)
          sb.append(" ").append(DataSource.Attribute.TRACKING).append("=\"").append(tracking).append("\"");
+
+      if (mcp != null)
+         sb.append(" ").append(DataSource.Attribute.MCP).append("=\"").append(mcp).append("\"");
 
       sb.append(">");
 

@@ -145,7 +145,8 @@ public class OnePoolNoTxTestCase extends PoolTestCaseAbstract
    @Test(expected = IllegalArgumentException.class)
    public void constructorShouldThrowIllegalArgumentExceptionForNullManagedConnectionFactory() throws Exception
    {
-      new OnePool(null, null, false, true);
+      new OnePool(null, null, false, true,
+                  org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactory.DEFAULT_IMPLEMENTATION);
    }
 
    /**
@@ -157,7 +158,8 @@ public class OnePoolNoTxTestCase extends PoolTestCaseAbstract
    @Test(expected = IllegalArgumentException.class)
    public void constructorShouldThrowIllegalArgumentExceptionForNullPoolConfiguration() throws Exception
    {
-      new OnePool(cf.getMCF(), null, false, true);
+      new OnePool(cf.getMCF(), null, false, true,
+                  org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactory.DEFAULT_IMPLEMENTATION);
    }
 
    /**

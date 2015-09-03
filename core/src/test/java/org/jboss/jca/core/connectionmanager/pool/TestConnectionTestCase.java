@@ -58,7 +58,9 @@ public class TestConnectionTestCase
       PoolConfiguration config = new PoolConfiguration();
 
       PoolFactory pf = new PoolFactory();
-      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, config, false, true);
+      Pool pool =
+         pf.create(PoolStrategy.ONE_POOL, mcf, config, false, true,
+                   org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactory.DEFAULT_IMPLEMENTATION);
 
       NoTxConnectionManager noTxConnectionManager = 
          cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, 
@@ -82,7 +84,9 @@ public class TestConnectionTestCase
       PoolConfiguration config = new PoolConfiguration();
 
       PoolFactory pf = new PoolFactory();
-      Pool pool = pf.create(PoolStrategy.POOL_BY_CRI, mcf, config, false, true);
+      Pool pool =
+         pf.create(PoolStrategy.POOL_BY_CRI, mcf, config, false, true,
+                   org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactory.DEFAULT_IMPLEMENTATION);
 
       assertFalse(pool.testConnection());
    }
@@ -102,7 +106,9 @@ public class TestConnectionTestCase
       PoolConfiguration config = new PoolConfiguration();
 
       PoolFactory pf = new PoolFactory();
-      Pool pool = pf.create(PoolStrategy.POOL_BY_SUBJECT, mcf, config, false, true);
+      Pool pool =
+         pf.create(PoolStrategy.POOL_BY_SUBJECT, mcf, config, false, true,
+                   org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactory.DEFAULT_IMPLEMENTATION);
 
       NoTxConnectionManager noTxConnectionManager = 
          cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool,
@@ -126,7 +132,9 @@ public class TestConnectionTestCase
       PoolConfiguration config = new PoolConfiguration();
 
       PoolFactory pf = new PoolFactory();
-      Pool pool = pf.create(PoolStrategy.POOL_BY_SUBJECT_AND_CRI, mcf, config, false, true);
+      Pool pool =
+         pf.create(PoolStrategy.POOL_BY_SUBJECT_AND_CRI, mcf, config, false, true,
+                   org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactory.DEFAULT_IMPLEMENTATION);
 
       assertFalse(pool.testConnection());
    }
@@ -144,7 +152,9 @@ public class TestConnectionTestCase
       PoolConfiguration config = new PoolConfiguration();
 
       PoolFactory pf = new PoolFactory();
-      Pool pool = pf.create(PoolStrategy.REAUTH, mcf, config, false, true);
+      Pool pool =
+         pf.create(PoolStrategy.REAUTH, mcf, config, false, true,
+                   org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactory.DEFAULT_IMPLEMENTATION);
 
       assertFalse(pool.testConnection());
    }

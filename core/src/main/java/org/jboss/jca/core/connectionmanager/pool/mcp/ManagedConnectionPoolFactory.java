@@ -45,11 +45,11 @@ public class ManagedConnectionPoolFactory
                                                            ManagedConnectionPoolFactory.class.getName());
 
    /** Default implementation */
-   private static final String DEFAULT_IMPLEMENTATION = 
+   public static final String DEFAULT_IMPLEMENTATION = 
       "org.jboss.jca.core.connectionmanager.pool.mcp.SemaphoreArrayListManagedConnectionPool";
 
    /** Experimental implementation */
-   private static final String EXPERIMENTAL_IMPLEMENTATION = 
+   public static final String EXPERIMENTAL_IMPLEMENTATION = 
       "org.jboss.jca.core.connectionmanager.pool.mcp.SemaphoreConcurrentLinkedDequeManagedConnectionPool";
 
    /** Deprecated implementations */
@@ -61,6 +61,9 @@ public class ManagedConnectionPoolFactory
    /** Default class definition */
    private static Class<?> defaultImplementation;
 
+   /** Override */
+   private static boolean override;
+   
    static
    {
       String clz = SecurityActions.getSystemProperty("ironjacamar.mcp");
@@ -76,10 +79,13 @@ public class ManagedConnectionPoolFactory
                clz = EXPERIMENTAL_IMPLEMENTATION;
             }
          }
+
+         override = true;
       }
       else
       {
          clz = DEFAULT_IMPLEMENTATION;
+         override = false;
       }
 
       try
@@ -99,6 +105,24 @@ public class ManagedConnectionPoolFactory
     */
    public ManagedConnectionPoolFactory()
    {
+   }
+
+   /**
+    * Get the default implementation
+    * @return The value
+    */
+   public String getDefaultImplementation()
+   {
+      return defaultImplementation.getName();
+   }
+
+   /**
+    * Is override
+    * @return The value
+    */
+   public boolean isOverride()
+   {
+      return override;
    }
 
    /**

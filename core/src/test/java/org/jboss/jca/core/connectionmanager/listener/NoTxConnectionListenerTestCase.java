@@ -222,7 +222,9 @@ public class NoTxConnectionListenerTestCase
       PoolConfiguration pc = new PoolConfiguration();
       PoolFactory pf = new PoolFactory();
 
-      pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true, true);
+      pool =
+         pf.create(PoolStrategy.ONE_POOL, mcf, pc, true, true,
+                   org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactory.DEFAULT_IMPLEMENTATION);
 
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       ConnectionManager connectionManager = 

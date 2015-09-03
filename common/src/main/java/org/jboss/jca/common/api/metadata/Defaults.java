@@ -79,6 +79,11 @@ public interface Defaults
     */
    public static final Boolean TRACKING = null;
    
+   /**
+    * MCP
+    */
+   public static final String MCP = null;
+   
    // POOL
 
    /**

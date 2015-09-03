@@ -420,7 +420,9 @@ public class InterleavingTestCase
 
       PoolFactory pf = new PoolFactory();
     
-      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, true, true);
+      Pool pool =
+         pf.create(PoolStrategy.ONE_POOL, mcf, pc, true, true,
+                   org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactory.DEFAULT_IMPLEMENTATION);
       
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       TxConnectionManagerImpl tcm =

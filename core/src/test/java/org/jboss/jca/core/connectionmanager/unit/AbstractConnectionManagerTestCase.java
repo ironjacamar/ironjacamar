@@ -62,7 +62,9 @@ public class AbstractConnectionManagerTestCase
       PoolConfiguration pc = new PoolConfiguration();
       PoolFactory pf = new PoolFactory();
 
-      Pool pool = pf.create(PoolStrategy.ONE_POOL, new MockManagedConnectionFactory(), pc, false, true);
+      Pool pool =
+         pf.create(PoolStrategy.ONE_POOL, new MockManagedConnectionFactory(), pc, false, true,
+                   org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactory.DEFAULT_IMPLEMENTATION);
       pool.setConnectionManager(connectionManager);
       connectionManager.setPool(pool);
 
@@ -148,7 +150,9 @@ public class AbstractConnectionManagerTestCase
       PoolConfiguration pc = new PoolConfiguration();
       PoolFactory pf = new PoolFactory();
 
-      Pool pool = pf.create(PoolStrategy.ONE_POOL, mcf, pc, false, true);
+      Pool pool =
+         pf.create(PoolStrategy.ONE_POOL, mcf, pc, false, true,
+                   org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactory.DEFAULT_IMPLEMENTATION);
       pool.setConnectionManager(connectionManager);
       connectionManager.setPool(pool);
 
@@ -238,7 +242,9 @@ public class AbstractConnectionManagerTestCase
       PoolConfiguration pc = new PoolConfiguration();
       PoolFactory pf = new PoolFactory();
 
-      Pool pool = pf.create(PoolStrategy.ONE_POOL, new MockManagedConnectionFactory(), pc, false, true);
+      Pool pool =
+         pf.create(PoolStrategy.ONE_POOL, new MockManagedConnectionFactory(), pc, false, true,
+                   org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactory.DEFAULT_IMPLEMENTATION);
       pool.setConnectionManager(connectionManager);
 
       connectionManager.setPool(pool);

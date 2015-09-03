@@ -305,7 +305,12 @@ public interface XaDataSource extends CommonDataSource
       /** tracking attribute
       *
       */
-      TRACKING("tracking");
+      TRACKING("tracking"),
+
+      /**
+       * mcp attribute
+       */
+      MCP("mcp");
 
       private String name;
 

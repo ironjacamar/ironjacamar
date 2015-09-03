@@ -115,6 +115,14 @@ public interface CommonDataSource extends JCAMetadata, ValidatableMetadata
    public Boolean isUseCcm();
 
    /**
+    * Get the mcp
+    *
+    * @return the mcp
+    */
+
+   public String getMcp();
+
+   /**
     * Get the driver
     * @return The value
     */
