@@ -29,7 +29,7 @@ package org.jboss.jca;
 public class Version
 {
    /** The project */
-   public static final String PROJECT = "IronJacamar"; 
+   public static final String PROJECT = "WildFly/IronJacamar"; 
    
    /** The version */
    public static final String VERSION = "@VERSION@";
