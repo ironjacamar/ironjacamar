@@ -123,6 +123,14 @@ public interface CommonDataSource extends JCAMetadata, ValidatableMetadata
    public String getMcp();
 
    /**
+    * Get the enlistment trace
+    *
+    * @return the enlistment trace
+    */
+
+   public Boolean isEnlistmentTrace();
+
+   /**
     * Get the driver
     * @return The value
     */

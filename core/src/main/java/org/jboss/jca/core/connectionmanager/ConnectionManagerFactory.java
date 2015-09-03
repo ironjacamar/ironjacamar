@@ -111,6 +111,7 @@ public class ConnectionManagerFactory
                     enlistment,
                     connectable,
                     tracking,
+                    null,
                     flushStrategy,
                     allocationRetry, allocationRetryWaitMillis, 
                     null);
@@ -131,6 +132,7 @@ public class ConnectionManagerFactory
     * @param enlistment Enable enlistment connections
     * @param connectable Enable connectable connections
     * @param tracking The tracking status
+    * @param enlistmentTrace The enlistment trace
     * @param flushStrategy The flush strategy
     * @param allocationRetry The allocation retry value
     * @param allocationRetryWaitMillis The allocation retry millis value
@@ -152,6 +154,7 @@ public class ConnectionManagerFactory
                                                   final boolean enlistment,
                                                   final boolean connectable,
                                                   final Boolean tracking,
+                                                  final Boolean enlistmentTrace,
                                                   final FlushStrategy flushStrategy,
                                                   final Integer allocationRetry,
                                                   final Long allocationRetryWaitMillis,
@@ -200,6 +203,7 @@ public class ConnectionManagerFactory
                     enlistment,
                     connectable,
                     tracking,
+                    enlistmentTrace,
                     flushStrategy,
                     allocationRetry, allocationRetryWaitMillis,
                     txIntegration.getTransactionManager());
@@ -220,6 +224,7 @@ public class ConnectionManagerFactory
     * @param enlistment Enable enlistment connections
     * @param connectable Enable connectable connections
     * @param tracking The tracking status
+    * @param enlistmentTrace The enlistment trace
     * @param flushStrategy The flush strategy
     * @param allocationRetry The allocation retry value
     * @param allocationRetryWaitMillis The allocation retry millis value
@@ -235,6 +240,7 @@ public class ConnectionManagerFactory
                               boolean enlistment,
                               boolean connectable,
                               Boolean tracking,
+                              Boolean enlistmentTrace,
                               FlushStrategy flushStrategy,
                               Integer allocationRetry,
                               Long allocationRetryWaitMillis,
@@ -261,6 +267,7 @@ public class ConnectionManagerFactory
       cm.setEnlistment(enlistment);
       cm.setConnectable(connectable);
       cm.setTracking(tracking);
+      cm.setEnlistmentTrace(enlistmentTrace);
    }
 
    /**

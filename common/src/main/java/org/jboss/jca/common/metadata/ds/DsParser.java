@@ -855,6 +855,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Boolean connectable = Defaults.CONNECTABLE;
       Boolean tracking = Defaults.TRACKING;
       String mcp = Defaults.MCP;
+      Boolean enlistmentTrace = Defaults.ENLISTMENT_TRACE;
 
       for (org.jboss.jca.common.api.metadata.ds.XaDataSource.Attribute attribute :
               org.jboss.jca.common.api.metadata.ds.XaDataSource.Attribute.values())
@@ -897,6 +898,10 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                mcp = attributeAsString(reader, attribute.getLocalName());
                break;
             }
+            case ENLISTMENT_TRACE : {
+               enlistmentTrace = attributeAsBoolean(reader, attribute.getLocalName(), Defaults.ENLISTMENT_TRACE);
+               break;
+            }
             default :
                break;
          }
@@ -914,7 +919,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   return new XADataSourceImpl(transactionIsolation, timeOutSettings, securitySettings,
                                               statementSettings, validationSettings, urlDelimiter, urlProperty,
                                               urlSelectorStrategyClassName, useJavaContext, poolName, enabled,
-                                              jndiName, spy, useCcm, connectable, tracking, mcp, xaDataSourceProperty,
+                                              jndiName, spy, useCcm, connectable, tracking, mcp, enlistmentTrace,
+                                              xaDataSourceProperty,
                                               xaDataSourceClass, driver, newConnectionSql, xaPool, recovery);
                }
                else
@@ -1039,6 +1045,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Boolean connectable = Defaults.CONNECTABLE;
       Boolean tracking = Defaults.TRACKING;
       String mcp = Defaults.MCP;
+      Boolean enlistmentTrace = Defaults.ENLISTMENT_TRACE;
 
       for (org.jboss.jca.common.api.metadata.ds.DataSource.Attribute attribute :
               org.jboss.jca.common.api.metadata.ds.DataSource.Attribute.values())
@@ -1085,6 +1092,10 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                mcp = attributeAsString(reader, attribute.getLocalName());
                break;
             }
+            case ENLISTMENT_TRACE : {
+               enlistmentTrace = attributeAsBoolean(reader, attribute.getLocalName(), Defaults.ENLISTMENT_TRACE);
+               break;
+            }
             default :
                break;
          }
@@ -1102,7 +1113,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                                             connectionProperties, timeOutSettings, securitySettings,
                                             statementSettings, validationSettings, urlDelimiter,
                                             urlSelectorStrategyClassName, newConnectionSql, useJavaContext, poolName,
-                                            enabled, jndiName, spy, useCcm, jta, connectable, tracking, mcp, pool);
+                                            enabled, jndiName, spy, useCcm, jta, connectable, tracking, mcp,
+                                            enlistmentTrace, pool);
                }
                else
                {

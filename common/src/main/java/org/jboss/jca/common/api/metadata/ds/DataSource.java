@@ -321,7 +321,12 @@ public interface DataSource extends CommonDataSource
       /**
        * mcp attribute
        */
-      MCP("mcp");
+      MCP("mcp"),
+
+      /**
+       * enlistment trace attribute
+       */
+      ENLISTMENT_TRACE("enlistment-trace");
 
       private String name;
 

@@ -634,6 +634,7 @@ public abstract class AbstractDsDeployer
 
       boolean connectable = ds.isConnectable() == null ? false : ds.isConnectable().booleanValue();
       Boolean tracking = ds.isTracking();
+      Boolean enlistmentTrace = ds.isEnlistmentTrace();
 
       // Select the correct connection manager
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
@@ -644,7 +645,7 @@ public abstract class AbstractDsDeployer
          cm = cmf.createTransactional(TransactionSupportLevel.LocalTransaction, pool, 
                                       getSubjectFactory(securityDomain), securityDomain,
                                       ds.isUseCcm(), getCachedConnectionManager(),
-                                      true, true, connectable, tracking,
+                                      true, true, connectable, tracking, enlistmentTrace,
                                       flushStrategy,
                                       allocationRetry, allocationRetryWaitMillis,
                                       getTransactionIntegration(),
@@ -918,6 +919,7 @@ public abstract class AbstractDsDeployer
 
       boolean connectable = ds.isConnectable() == null ? false : ds.isConnectable().booleanValue();
       Boolean tracking = ds.isTracking();
+      Boolean enlistmentTrace = ds.isEnlistmentTrace();
 
       // Select the correct connection manager
       TransactionSupportLevel tsl = TransactionSupportLevel.XATransaction;
@@ -925,7 +927,7 @@ public abstract class AbstractDsDeployer
       ConnectionManager cm =
          cmf.createTransactional(tsl, pool, getSubjectFactory(securityDomain), securityDomain,
                                  ds.isUseCcm(), getCachedConnectionManager(),
-                                 true, true, connectable, tracking,
+                                 true, true, connectable, tracking, enlistmentTrace,
                                  flushStrategy,
                                  allocationRetry, allocationRetryWaitMillis,
                                  getTransactionIntegration(), interleaving,

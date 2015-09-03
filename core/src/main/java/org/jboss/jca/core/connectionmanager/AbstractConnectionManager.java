@@ -118,6 +118,9 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    /** Tracking */
    protected Boolean tracking;
 
+   /** Enlistment trace */
+   protected Boolean enlistmentTrace;
+
    /**
     * Creates a new instance of connection manager.
     */
@@ -424,6 +427,27 @@ public abstract class AbstractConnectionManager implements ConnectionManager
 
       if (trace)
          log.tracef("tracking=%s", tracking);
+   }
+
+   /**
+    * Get enlistment trace
+    * @return The value
+    */
+   public Boolean getEnlistmentTrace()
+   {
+      return enlistmentTrace;
+   }
+
+   /**
+    * Set the enlistment trace flag
+    * @param v The value
+    */
+   public void setEnlistmentTrace(Boolean v)
+   {
+      this.enlistmentTrace = v;
+
+      if (trace)
+         log.tracef("enlistment_trace=%s", enlistmentTrace);
    }
 
    /**

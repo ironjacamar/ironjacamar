@@ -89,6 +89,7 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
     * @param connectable connectable
     * @param tracking tracking
     * @param mcp mcp
+    * @param enlistmentTrace enlistmentTrace
     * @param pool pool
     * @throws ValidateException ValidateException
     */
@@ -98,12 +99,13 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
                          String urlDelimiter, String urlSelectorStrategyClassName, String newConnectionSql, 
                          Boolean useJavaContext, String poolName, Boolean enabled, String jndiName, 
                          Boolean spy, Boolean useccm, Boolean jta, Boolean connectable, Boolean tracking, String mcp,
+                         Boolean enlistmentTrace,
                          DsPool pool)
       throws ValidateException
    {
       super(transactionIsolation, timeOut, security, statement, validation, urlDelimiter, urlSelectorStrategyClassName,
             useJavaContext, poolName, enabled, jndiName, spy, useccm, driver, newConnectionSql, connectable, tracking,
-            mcp);
+            mcp, enlistmentTrace);
 
       this.jta = jta;
       this.connectionUrl = connectionUrl;
@@ -321,6 +323,9 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
 
       if (mcp != null)
          sb.append(" ").append(DataSource.Attribute.MCP).append("=\"").append(mcp).append("\"");
+
+      if (enlistmentTrace != null)
+         sb.append(" ").append(DataSource.Attribute.ENLISTMENT_TRACE).append("=\"").append(enlistmentTrace).append("\"");
 
       sb.append(">");
 

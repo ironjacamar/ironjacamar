@@ -94,6 +94,9 @@ public class TxConnectionListener extends AbstractConnectionListener
    /** Set rollback */
    private boolean doSetRollbackOnly;
 
+   /** Enlistment trace */
+   private Boolean enlistmentTrace;
+
    static
    {
       String value = SecurityActions.getSystemProperty("ironjacamar.disable_enlistment_trace");
@@ -120,13 +123,14 @@ public class TxConnectionListener extends AbstractConnectionListener
     * @param mcp mcp
     * @param flushStrategy flushStrategy
     * @param tracking tracking
+    * @param enlistmentTrace enlistmentTrace
     * @param xaResource xaresource instance
     * @param xaResourceTimeout timeout for the XAResource
     * @throws ResourceException if aexception while creating
     */
    public TxConnectionListener(final ConnectionManager cm, final ManagedConnection mc,
                                final Pool pool, final ManagedConnectionPool mcp, final FlushStrategy flushStrategy,
-                               final Boolean tracking,
+                               final Boolean tracking, final Boolean enlistmentTrace,
                                final XAResource xaResource, final int xaResourceTimeout)
       throws ResourceException
    {
@@ -136,7 +140,8 @@ public class TxConnectionListener extends AbstractConnectionListener
       this.xaResourceTimeout = xaResourceTimeout;
       this.doDelistResource = true;
       this.doSetRollbackOnly = true;
-
+      this.enlistmentTrace = enlistmentTrace;
+      
       if (xaResource instanceof LocalXAResource)
       {
          ((LocalXAResource) xaResource).setConnectionListener(this);
@@ -898,6 +903,9 @@ public class TxConnectionListener extends AbstractConnectionListener
       /**Error message*/
       private final Throwable failedToEnlist;
 
+      /** Record enlist */
+      private final boolean recordEnlist;
+
       /** Transaction */
       protected final Transaction currentTx;
 
@@ -927,7 +935,16 @@ public class TxConnectionListener extends AbstractConnectionListener
          this.enlistError = null;
          this.cancel = false;
 
-         if (!disableFailedtoEnlist)
+         if (TxConnectionListener.this.enlistmentTrace != null)
+         {
+            this.recordEnlist = TxConnectionListener.this.enlistmentTrace.booleanValue();
+         }
+         else
+         {
+            this.recordEnlist = !disableFailedtoEnlist;
+         }
+         
+         if (this.recordEnlist)
          {
             this.failedToEnlist = new Throwable("Unabled to enlist resource, see the previous warnings.");
          }
@@ -965,7 +982,7 @@ public class TxConnectionListener extends AbstractConnectionListener
 
             // Wrap the error to give a reasonable stacktrace since the resource
             // could have been enlisted by a different thread
-            if (!disableFailedtoEnlist && enlistError == failedToEnlist)
+            if (recordEnlist && enlistError == failedToEnlist)
             {
                SystemException se =
                   new SystemException(bundle.systemExceptionWhenFailedToEnlistEqualsCurrentTx(

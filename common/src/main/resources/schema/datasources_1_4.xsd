@@ -414,6 +414,15 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+    <xs:attribute name="enlistment-trace" type="xs:boolean" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          <![CDATA[[
+            Defines if WildFly/IronJacamar should record enlistment traces
+           ]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
   </xs:attributeGroup>
   <xs:simpleType name="transaction-isolationType">
     <xs:annotation>

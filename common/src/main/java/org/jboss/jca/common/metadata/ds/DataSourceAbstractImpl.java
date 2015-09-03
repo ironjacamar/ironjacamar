@@ -128,6 +128,9 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
    /** MCP */
    protected String mcp;
 
+   /** Enlistment trace */
+   protected Boolean enlistmentTrace;
+
    /**
     * Create a new DataSourceAbstractImpl.
     *
@@ -149,6 +152,7 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
     * @param connectable connectable
     * @param tracking tracking
     * @param mcp mcp
+    * @param enlistmentTrace enlistmentTrace
     * @throws ValidateException ValidateException
     */
    protected DataSourceAbstractImpl(TransactionIsolation transactionIsolation, TimeOut timeOut,
@@ -156,7 +160,7 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
                                     String urlDelimiter, String urlSelectorStrategyClassName,
                                     Boolean useJavaContext, String poolName, Boolean enabled, String jndiName,
                                     Boolean spy, Boolean useCcm, String driver, String newConnectionSql,
-                                    Boolean connectable, Boolean tracking, String mcp)
+                                    Boolean connectable, Boolean tracking, String mcp, Boolean enlistmentTrace)
       throws ValidateException
    {
       this.transactionIsolation = transactionIsolation;
@@ -177,6 +181,7 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
       this.connectable = connectable;
       this.tracking = tracking;
       this.mcp = mcp;
+      this.enlistmentTrace = enlistmentTrace;
       partialCommonValidation();
    }
 
@@ -328,6 +333,14 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
    /**
     * {@inheritDoc}
     */
+   public Boolean isEnlistmentTrace()
+   {
+      return enlistmentTrace;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public void setEnabled(Boolean enabled)
    {
       this.enabled = enabled;
@@ -382,6 +395,7 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
       result = prime * result + ((connectable == null) ? 0 : connectable.hashCode());
       result = prime * result + ((tracking == null) ? 0 : tracking.hashCode());
       result = prime * result + ((mcp == null) ? 0 : mcp.hashCode());
+      result = prime * result + ((enlistmentTrace == null) ? 0 : enlistmentTrace.hashCode());
       return result;
    }
 
@@ -504,6 +518,13 @@ public abstract class DataSourceAbstractImpl implements CommonDataSource
             return false;
       }
       else if (!mcp.equals(other.mcp))
+         return false;
+      if (enlistmentTrace == null)
+      {
+         if (other.enlistmentTrace != null)
+            return false;
+      }
+      else if (!enlistmentTrace.equals(other.enlistmentTrace))
          return false;
 
       return true;

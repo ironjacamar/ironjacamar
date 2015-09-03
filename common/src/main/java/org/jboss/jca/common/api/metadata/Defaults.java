@@ -84,6 +84,11 @@ public interface Defaults
     */
    public static final String MCP = null;
    
+   /**
+    * ENLISTMENT_TRACE
+    */
+   public static final Boolean ENLISTMENT_TRACE = null;
+   
    // POOL
 
    /**

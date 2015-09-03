@@ -1641,6 +1641,7 @@ public abstract class AbstractResourceAdapterDeployer
                                                                  enlistment,
                                                                  connectable,
                                                                  tracking,
+                                                                 null,
                                                                  flushStrategy,
                                                                  allocationRetry, allocationRetryWaitMillis,
                                                                  getTransactionIntegration(),
