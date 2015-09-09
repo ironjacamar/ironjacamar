@@ -8,24 +8,11 @@ IronJacamar is licensed under [GNU LESSER GENERAL PUBLIC LICENSE 2.1 (LGPL 2.1)]
 
 [http://www.ironjacamar.org/](http://www.ironjacamar.org/ "IronJacamar homepage")
 
-Contributing
-------------
+WildFly
+-------
 
-* Write a blog about IronJacamar
-* Create a tutorial for IronJacamar
-* Help expand the [user guide](http://www.ironjacamar.org/doc/userguide/1.1/en-US/html/index.html)
-* Answer questions and share ideas on the [IRC channel](http://webchat.freenode.net/?channels=ironjacamar)
-* Test [releases](http://www.ironjacamar.org/download.html)
-* Review [pull requests](http://github.com/ironjacamar/ironjacamar/pulls)
-* Start [hacking on IronJacamar](http://www.ironjacamar.org/doc/developerguide/1.1/en-US/html/ch02.html)
+This is a special branch only meant for the WildFly project,
 
-Building
---------
+[http://www.wildfly.org/](http://www.wildfly.org/ "WildFly homepage")
 
-### Bundle
-
-            ant clean sjc
-
-### Release
-
-            ant -Declipse.home=/opt/eclipse clean release
+Not for general use.
