@@ -61,8 +61,6 @@ public class WorkManagerTestCase
    @Deployment(order = 1)
    private ResourceAdapterArchive createResourceAdapter() throws Throwable
    {
-      System.err.println("" + ResourceAdaptersDescriptor.class.getClassLoader());
-
       return ResourceAdapterFactory.createWorkRar();
    }
    
@@ -73,8 +71,6 @@ public class WorkManagerTestCase
    @Deployment(order = 2)
    private ResourceAdaptersDescriptor createActivation() throws Throwable
    {
-      System.err.println("" + ResourceAdaptersDescriptor.class.getClassLoader());
-
       return ResourceAdapterFactory.createWorkDeployment(null);
    }
    
@@ -85,10 +81,11 @@ public class WorkManagerTestCase
    @Test
    public void testDeployment() throws Throwable
    {
-      System.out.println("" + ResourceAdaptersDescriptor.class.getClassLoader());
-
       assertNotNull(wcf);
 
       WorkConnection wc = wcf.getConnection();
+      assertNotNull(wc);
+
+      wc.close();
    }
 }

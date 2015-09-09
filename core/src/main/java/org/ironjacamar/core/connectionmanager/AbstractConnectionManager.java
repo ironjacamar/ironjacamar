@@ -23,6 +23,7 @@ package org.ironjacamar.core.connectionmanager;
 
 import org.ironjacamar.core.api.connectionmanager.ConnectionManager;
 import org.ironjacamar.core.api.connectionmanager.listener.ConnectionListener;
+import org.ironjacamar.core.connectionmanager.listener.NoTransactionConnectionListener;
 import org.ironjacamar.core.connectionmanager.pool.Pool;
 
 import javax.resource.ResourceException;
@@ -52,7 +53,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
     */
    public Object allocateConnection(ManagedConnectionFactory mcf, ConnectionRequestInfo cri) throws ResourceException
    {
-      return null;
+      return new NoTransactionConnectionListener(this, mcf.createManagedConnection(null, cri)).getConnection(null, cri);
    }
 
    /**
@@ -60,5 +61,13 @@ public abstract class AbstractConnectionManager implements ConnectionManager
     */
    public void returnManagedConnection(ConnectionListener cl, boolean kill)
    {
+      try
+      {
+         cl.getManagedConnection().destroy();
+      }
+      catch (Exception e)
+      {
+         //
+      }
    }
 }
