@@ -182,6 +182,14 @@ public class DeploymentImpl implements Deployment
          }
       }
 
+      if (adminObjects != null)
+      {
+         for (AdminObject ao : adminObjects)
+         {
+            ao.activate();
+         }
+      }
+
       if (resourceAdapter != null)
       {
          resourceAdapter.activate();
@@ -198,6 +206,14 @@ public class DeploymentImpl implements Deployment
          for (ConnectionFactory cf : connectionFactories)
          {
             cf.deactivate();
+         }
+      }
+
+      if (adminObjects != null)
+      {
+         for (AdminObject ao : adminObjects)
+         {
+            ao.deactivate();
          }
       }
 

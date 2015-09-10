@@ -38,6 +38,12 @@ public interface AdminObject
    public String getJndiName();
    
    /**
+    * Get the admin object
+    * @return The value
+    */
+   public Object getAdminObject();
+   
+   /**
     * Get the config properties
     * @return The value
     */
@@ -54,4 +60,16 @@ public interface AdminObject
     * @return The value
     */
    public StatisticsPlugin getStatistics();
+
+   /**
+    * Activate the admin object
+    * @exception Exception Thrown in case of an error
+    */
+   public void activate() throws Exception;
+
+   /**
+    * Deactivate the admin object
+    * @exception Exception Thrown in case of an error
+    */
+   public void deactivate() throws Exception;
 }

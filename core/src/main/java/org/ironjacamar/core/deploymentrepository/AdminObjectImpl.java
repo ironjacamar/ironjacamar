@@ -23,9 +23,16 @@ package org.ironjacamar.core.deploymentrepository;
 
 import org.ironjacamar.core.api.deploymentrepository.AdminObject;
 import org.ironjacamar.core.api.deploymentrepository.ConfigProperty;
+import org.ironjacamar.core.spi.naming.JndiStrategy;
 import org.ironjacamar.core.spi.statistics.StatisticsPlugin;
 
+import java.io.Serializable;
+import java.lang.reflect.Proxy;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+
+import javax.resource.spi.ResourceAdapterAssociation;
 
 /**
  * An admin object implementation
@@ -35,6 +42,12 @@ public class AdminObjectImpl implements AdminObject
 {
    /** JNDI name */
    private String jndiName;
+
+   /** The admin object */
+   private Object adminObject;
+   
+   /** The JNDI object */
+   private Object jndiObject;
    
    /** Config properties */
    private Collection<ConfigProperty> configProperties;
@@ -45,22 +58,32 @@ public class AdminObjectImpl implements AdminObject
    /** Statistics */
    private StatisticsPlugin statistics;
    
+   /** The JNDI strategy */
+   private JndiStrategy jndiStrategy;
+   
    /**
     * Constructor
     * @param jndiName The JNDI name
+    * @param ao The admin object
     * @param configProperties The configuration properties
     * @param activation The activation
     * @param statistics The statistics
+    * @param jndiStrategy The JNDI strategy
     */
    public AdminObjectImpl(String jndiName,
+                          Object ao,
                           Collection<ConfigProperty> configProperties,
                           org.ironjacamar.common.api.metadata.resourceadapter.AdminObject activation,
-                          StatisticsPlugin statistics)
+                          StatisticsPlugin statistics,
+                          JndiStrategy jndiStrategy)
    {
       this.jndiName = jndiName;
+      this.adminObject = ao;
+      this.jndiObject = null;
       this.configProperties = configProperties;
       this.activation = activation;
       this.statistics = statistics;
+      this.jndiStrategy = jndiStrategy;
    }
    
    /**
@@ -69,6 +92,14 @@ public class AdminObjectImpl implements AdminObject
    public String getJndiName()
    {
       return jndiName;
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   public Object getAdminObject()
+   {
+      return adminObject;
    }
    
    /**
@@ -93,5 +124,81 @@ public class AdminObjectImpl implements AdminObject
    public StatisticsPlugin getStatistics()
    {
       return statistics;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void activate() throws Exception
+   {
+      if (adminObject instanceof ResourceAdapterAssociation)
+      {
+         if (!(adminObject instanceof Serializable &&
+               adminObject instanceof javax.resource.Referenceable))
+         {
+            throw new Exception("TODO");
+         }
+      }
+      else
+      {
+         if (!(adminObject instanceof javax.naming.Referenceable))
+         {
+            DelegatorInvocationHandler dih = new DelegatorInvocationHandler(adminObject);
+
+            List<Class<?>> interfaces = new ArrayList<Class<?>>();
+            Class<?> clz = adminObject.getClass();
+            while (!clz.equals(Object.class))
+            {
+               Class<?>[] is = clz.getInterfaces();
+               if (is != null)
+               {
+                  for (Class<?> interfaceClass : is)
+                  {
+                     if (!interfaceClass.equals(javax.resource.Referenceable.class) &&
+                         !interfaceClass.equals(ResourceAdapterAssociation.class) &&
+                         !interfaceClass.equals(java.io.Serializable.class) &&
+                         !interfaceClass.equals(java.io.Externalizable.class))
+                     {
+                        if (!interfaces.contains(interfaceClass))
+                           interfaces.add(interfaceClass);
+                     }
+                  }
+               }
+
+               clz = clz.getSuperclass();
+            }
+
+            interfaces.add(java.io.Serializable.class);
+            interfaces.add(javax.resource.Referenceable.class);
+
+            jndiObject = Proxy.newProxyInstance(SecurityActions.getClassLoader(adminObject.getClass()),
+                                                interfaces.toArray(new Class<?>[interfaces.size()]),
+                                                dih);
+         }
+      }
+
+      if (jndiObject != null)
+      {
+         jndiStrategy.bind(jndiName, jndiObject);
+      }
+      else
+      {
+         jndiStrategy.bind(jndiName, adminObject);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void deactivate() throws Exception
+   {
+      if (jndiObject != null)
+      {
+         jndiStrategy.unbind(jndiName, jndiObject);
+      }
+      else
+      {
+         jndiStrategy.unbind(jndiName, adminObject);
+      }
    }
 }

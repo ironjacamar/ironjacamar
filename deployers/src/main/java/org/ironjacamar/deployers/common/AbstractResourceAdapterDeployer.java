@@ -23,6 +23,7 @@ package org.ironjacamar.deployers.common;
 
 import org.ironjacamar.common.api.metadata.common.TransactionSupportEnum;
 import org.ironjacamar.common.api.metadata.resourceadapter.Activation;
+import org.ironjacamar.common.api.metadata.resourceadapter.AdminObject;
 import org.ironjacamar.common.api.metadata.resourceadapter.ConnectionDefinition;
 import org.ironjacamar.common.api.metadata.spec.Connector;
 import org.ironjacamar.core.api.connectionmanager.ConnectionManager;
@@ -32,6 +33,7 @@ import org.ironjacamar.core.api.metadatarepository.Metadata;
 import org.ironjacamar.core.api.metadatarepository.MetadataRepository;
 import org.ironjacamar.core.connectionmanager.NoTransactionConnectionManager;
 import org.ironjacamar.core.connectionmanager.pool.DefaultPool;
+import org.ironjacamar.core.deploymentrepository.AdminObjectImpl;
 import org.ironjacamar.core.deploymentrepository.ConfigPropertyImpl;
 import org.ironjacamar.core.deploymentrepository.ConnectionFactoryImpl;
 import org.ironjacamar.core.deploymentrepository.DeploymentBuilder;
@@ -157,10 +159,21 @@ public abstract class AbstractResourceAdapterDeployer
          if (connector.getResourceadapter().getResourceadapterClass() != null)
             createResourceAdapter(builder, connector.getResourceadapter().getResourceadapterClass(),
                                   connector.getResourceadapter().getConfigProperties(), transactionSupport);
-      
-         for (ConnectionDefinition cd : activation.getConnectionDefinitions())
+
+         if (activation.getConnectionDefinitions() != null)
          {
-            createConnectionDefinition(builder, connector, cd, transactionSupport);
+            for (ConnectionDefinition cd : activation.getConnectionDefinitions())
+            {
+               createConnectionDefinition(builder, connector, cd, transactionSupport);
+            }
+         }
+
+         if (activation.getAdminObjects() != null)
+         {
+            for (AdminObject ao : activation.getAdminObjects())
+            {
+               createAdminObject(builder, connector, ao);
+            }
          }
 
          Deployment deployment = builder.build();
@@ -281,6 +294,42 @@ public abstract class AbstractResourceAdapterDeployer
       }
    }
 
+   /**
+    * Create admin object instance
+    * @param builder The deployment builder
+    * @param connector The metadata
+    * @param ao The admin object
+    * @throws DeployException Thrown if the resource adapter cant be created
+    */
+   protected void createAdminObject(DeploymentBuilder builder, Connector connector, AdminObject ao)
+      throws DeployException
+   {
+      try
+      {
+         String aoClass = findAdminObject(ao.getClassName(), connector);
+         Class<?> clz = Class.forName(aoClass, true, builder.getClassLoader());
+
+         Object adminObject = clz.newInstance();
+
+         Collection<org.ironjacamar.core.api.deploymentrepository.ConfigProperty> dcps =
+            injectConfigProperties(adminObject, findConfigProperties(aoClass, connector),
+                                   builder.getClassLoader());
+         
+         org.ironjacamar.core.spi.statistics.StatisticsPlugin statisticsPlugin = null;
+         if (adminObject instanceof org.ironjacamar.core.spi.statistics.Statistics)
+            statisticsPlugin = ((org.ironjacamar.core.spi.statistics.Statistics)adminObject).getStatistics();
+         
+         if (builder.getResourceAdapter() != null)
+            associateResourceAdapter(builder.getResourceAdapter().getResourceAdapter(), adminObject);
+
+         builder.adminObject(new AdminObjectImpl(ao.getJndiName(), adminObject, dcps, ao,
+                                                 statisticsPlugin, jndiStrategy));
+      }
+      catch (Throwable t)
+      {
+         throw new DeployException("createAdminObject", t);
+      }
+   }
 
    /**
     * Find the ManagedConnectionFactory class
@@ -296,6 +345,24 @@ public abstract class AbstractResourceAdapterDeployer
          if (className.equals(cd.getManagedConnectionFactoryClass().getValue()) ||
              className.equals(cd.getConnectionFactoryInterface().getValue()))
             return cd.getManagedConnectionFactoryClass().getValue();
+      }
+      return className;
+   }
+
+   /**
+    * Find the AdminObject class
+    * @param className The initial class name
+    * @param connector The metadata
+    * @return The AdminObject
+    */
+   private String findAdminObject(String className, Connector connector)
+   {
+      for (org.ironjacamar.common.api.metadata.spec.AdminObject ao :
+              connector.getResourceadapter().getAdminObjects())
+      {
+         if (className.equals(ao.getAdminobjectClass().getValue()) ||
+             className.equals(ao.getAdminobjectInterface().getValue()))
+            return ao.getAdminobjectClass().getValue();
       }
       return className;
    }
