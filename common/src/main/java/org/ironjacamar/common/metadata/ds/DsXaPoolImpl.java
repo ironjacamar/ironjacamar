@@ -50,7 +50,7 @@ public class DsXaPoolImpl extends org.ironjacamar.common.metadata.common.XaPoolI
 
    /**
     * Create a new XaPoolImpl.
-    *
+    * @param type type
     * @param minPoolSize minPoolSize
     * @param initialPoolSize initialPoolSize
     * @param maxPoolSize maxPoolSize
@@ -67,7 +67,8 @@ public class DsXaPoolImpl extends org.ironjacamar.common.metadata.common.XaPoolI
     * @param expressions expressions
     * @throws ValidateException ValidateException
     */
-   public DsXaPoolImpl(Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize,
+   public DsXaPoolImpl(String type,
+                       Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize,
                        Boolean prefill, Boolean useStrictMin,
                        FlushStrategy flushStrategy,
                        Boolean isSameRmOverride,
@@ -77,7 +78,7 @@ public class DsXaPoolImpl extends org.ironjacamar.common.metadata.common.XaPoolI
                        Capacity capacity, Extension connectionListener,
                        Map<String, String> expressions) throws ValidateException
    {
-      super(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy, capacity,
+      super(type, minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy, capacity,
             isSameRmOverride, padXid, wrapXaResource, noTxSeparatePool, expressions);
 
       this.allowMultipleUsers = allowMultipleUsers;
@@ -150,7 +151,16 @@ public class DsXaPoolImpl extends org.ironjacamar.common.metadata.common.XaPoolI
    {
       StringBuilder sb = new StringBuilder(1024);
 
-      sb.append("<xa-pool>");
+      sb.append("<xa-pool");
+
+      if (type != null)
+      {
+         sb.append(" ").append(XML.ATTRIBUTE_TYPE).append("=\"");
+         sb.append(type);
+         sb.append("\"");
+      }
+
+      sb.append(">");
 
       if (minPoolSize != null && !Defaults.MIN_POOL_SIZE.equals(minPoolSize))
       {

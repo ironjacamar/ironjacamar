@@ -342,6 +342,7 @@ public abstract class AbstractParser
    protected Pool parsePool(XMLStreamReader reader) throws XMLStreamException, ParserException,
       ValidateException
    {
+      String type = Defaults.TYPE;
       Integer minPoolSize = Defaults.MIN_POOL_SIZE;;
       Integer initialPoolSize = Defaults.INITIAL_POOL_SIZE;;
       Integer maxPoolSize = Defaults.MAX_POOL_SIZE;
@@ -352,6 +353,19 @@ public abstract class AbstractParser
 
       HashMap<String, String> expressions = new HashMap<String, String>();
 
+      for (int i = 0; i < reader.getAttributeCount(); i++)
+      {
+         switch (reader.getAttributeLocalName(i))
+         {
+            case CommonXML.ATTRIBUTE_TYPE : {
+               type = attributeAsString(reader, CommonXML.ATTRIBUTE_TYPE, expressions);
+               break;
+            }
+            default :
+               break;
+         }
+      }
+
       while (reader.hasNext())
       {
          switch (reader.nextTag())
@@ -360,7 +374,7 @@ public abstract class AbstractParser
                switch (reader.getLocalName())
                {
                   case CommonXML.ELEMENT_POOL :
-                     return new PoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin,
+                     return new PoolImpl(type, minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin,
                            flushStrategy, capacity,
                            expressions.size() > 0 ? expressions : null);
                   case CommonXML.ELEMENT_MAX_POOL_SIZE :
@@ -429,6 +443,7 @@ public abstract class AbstractParser
    protected XaPool parseXaPool(XMLStreamReader reader) throws XMLStreamException, ParserException,
       ValidateException
    {
+      String type = Defaults.TYPE;
       Integer minPoolSize = Defaults.MIN_POOL_SIZE;
       Integer initialPoolSize = Defaults.INITIAL_POOL_SIZE;
       Integer maxPoolSize = Defaults.MAX_POOL_SIZE;
@@ -443,6 +458,19 @@ public abstract class AbstractParser
 
       HashMap<String, String> expressions = new HashMap<String, String>();
 
+      for (int i = 0; i < reader.getAttributeCount(); i++)
+      {
+         switch (reader.getAttributeLocalName(i))
+         {
+            case CommonXML.ATTRIBUTE_TYPE : {
+               type = attributeAsString(reader, CommonXML.ATTRIBUTE_TYPE, expressions);
+               break;
+            }
+            default :
+               break;
+         }
+      }
+
       while (reader.hasNext())
       {
          switch (reader.nextTag())
@@ -451,7 +479,7 @@ public abstract class AbstractParser
                switch (reader.getLocalName())
                {
                   case CommonXML.ELEMENT_XA_POOL :
-                     return new XaPoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin,
+                     return new XaPoolImpl(type, minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin,
                            flushStrategy, capacity,
                            isSameRmOverride, padXid,
                            wrapXaDataSource, noTxSeparatePool,

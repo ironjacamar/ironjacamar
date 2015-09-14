@@ -840,6 +840,10 @@ public abstract class CommonIronJacamarParser extends AbstractParser
    {
       writer.writeStartElement(CommonXML.ELEMENT_POOL);
 
+      if (pool.getType() != null)
+         writer.writeAttribute(CommonXML.ATTRIBUTE_TYPE,
+                               pool.getValue(CommonXML.ATTRIBUTE_TYPE, pool.getType()));
+
       if (pool.getMinPoolSize() != null && (pool.hasExpression(CommonXML.ELEMENT_MIN_POOL_SIZE) ||
                                             !Defaults.MIN_POOL_SIZE.equals(pool.getMinPoolSize())))
       {
@@ -903,6 +907,10 @@ public abstract class CommonIronJacamarParser extends AbstractParser
    protected void storeXaPool(XaPool pool, XMLStreamWriter writer) throws Exception
    {
       writer.writeStartElement(CommonXML.ELEMENT_XA_POOL);
+
+      if (pool.getType() != null)
+         writer.writeAttribute(CommonXML.ATTRIBUTE_TYPE,
+                               pool.getValue(CommonXML.ATTRIBUTE_TYPE, pool.getType()));
 
       if (pool.getMinPoolSize() != null && (pool.hasExpression(CommonXML.ELEMENT_MIN_POOL_SIZE) ||
                                             !Defaults.MIN_POOL_SIZE.equals(pool.getMinPoolSize())))

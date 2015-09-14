@@ -75,6 +75,11 @@ public interface Defaults
    // POOL
 
    /**
+    * Type
+    */
+   public static final String TYPE = null;
+   
+   /**
     * Min pool size
     */
    public static final Integer MIN_POOL_SIZE = Integer.valueOf(0);

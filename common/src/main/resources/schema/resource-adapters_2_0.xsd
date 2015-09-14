@@ -517,6 +517,15 @@
         </xs:annotation>
       </xs:element>
     </xs:sequence>
+    <xs:attribute name="type" type="xs:token" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          <![CDATA[[
+            Defines the pool type
+           ]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="xa-poolType">

@@ -97,6 +97,11 @@ public interface CommonXML
    public static final String ATTRIBUTE_USE_CCM = "use-ccm";
 
    /**
+    * type
+    */
+   public static final String ATTRIBUTE_TYPE = "type";
+
+   /**
     * admin-object
     */
    public static final String ELEMENT_ADMIN_OBJECT = "admin-object";

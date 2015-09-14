@@ -47,6 +47,11 @@ public class PoolImpl extends AbstractMetadata implements Pool
    private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
    /**
+    * type
+    */
+   protected String type;
+
+   /**
     * minPoolSize
     */
    protected Integer minPoolSize;
@@ -84,6 +89,7 @@ public class PoolImpl extends AbstractMetadata implements Pool
    /**
     * Constructor
     *
+    * @param type type
     * @param minPoolSize minPoolSize
     * @param initialPoolSize initialPoolSize
     * @param maxPoolSize maxPoolSize
@@ -94,13 +100,14 @@ public class PoolImpl extends AbstractMetadata implements Pool
     * @param expressions expressions
     * @throws ValidateException ValidateException
     */
-   public PoolImpl(Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize, 
+   public PoolImpl(String type, Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize,
                    Boolean prefill, Boolean useStrictMin,
                    FlushStrategy flushStrategy, Capacity capacity,
                    Map<String, String> expressions)
       throws ValidateException
    {
       super(expressions);
+      this.type = type;
       this.minPoolSize = minPoolSize;
       this.initialPoolSize = initialPoolSize;
       this.maxPoolSize = maxPoolSize;
@@ -109,6 +116,14 @@ public class PoolImpl extends AbstractMetadata implements Pool
       this.flushStrategy = flushStrategy;
       this.capacity = capacity;
       this.validate();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String getType()
+   {
+      return type;
    }
 
    /**
@@ -196,6 +211,7 @@ public class PoolImpl extends AbstractMetadata implements Pool
    {
       final int prime = 31;
       int result = 1;
+      result = prime * result + ((type == null) ? 0 : type.hashCode());
       result = prime * result + ((minPoolSize == null) ? 0 : minPoolSize.hashCode());
       result = prime * result + ((initialPoolSize == null) ? 0 : initialPoolSize.hashCode());
       result = prime * result + ((maxPoolSize == null) ? 0 : maxPoolSize.hashCode());
@@ -217,6 +233,13 @@ public class PoolImpl extends AbstractMetadata implements Pool
       if (!(obj instanceof PoolImpl))
          return false;
       PoolImpl other = (PoolImpl) obj;
+      if (type == null)
+      {
+         if (other.type != null)
+            return false;
+      }
+      else if (!type.equals(other.type))
+         return false;
       if (minPoolSize == null)
       {
          if (other.minPoolSize != null)
@@ -276,7 +299,16 @@ public class PoolImpl extends AbstractMetadata implements Pool
    {
       StringBuilder sb = new StringBuilder(1024);
 
-      sb.append("<pool>");
+      sb.append("<pool");
+
+      if (type != null)
+      {
+         sb.append(" ").append(CommonXML.ATTRIBUTE_TYPE).append("=\"");
+         sb.append(type);
+         sb.append("\"");
+      }
+
+      sb.append(">");
 
       if (minPoolSize != null && !Defaults.MIN_POOL_SIZE.equals(minPoolSize))
       {

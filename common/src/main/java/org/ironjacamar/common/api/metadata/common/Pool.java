@@ -31,6 +31,12 @@ import org.ironjacamar.common.api.metadata.ValidatableMetadata;
 public interface Pool extends JCAMetadata, ValidatableMetadata
 {
    /**
+    * Get the type
+    * @return The value
+    */
+   public String getType();
+
+   /**
     * Get the minPoolSize.
     *
     * @return the minPoolSize.
@@ -65,9 +71,8 @@ public interface Pool extends JCAMetadata, ValidatableMetadata
    public Boolean isUseStrictMin();
 
    /**
-    * Get the useStrictMin.
-    *
-    * @return the useStrictMin.
+    * Get the flush strategy
+    * @return The value
     */
    public FlushStrategy getFlushStrategy();
 

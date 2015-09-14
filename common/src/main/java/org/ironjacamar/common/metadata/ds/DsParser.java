@@ -681,6 +681,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
    protected DsPool parsePool(XMLStreamReader reader) throws XMLStreamException, ParserException,
       ValidateException
    {
+      String type = Defaults.TYPE;
       Integer minPoolSize = Defaults.MIN_POOL_SIZE;
       Integer initialPoolSize = Defaults.INITIAL_POOL_SIZE;
       Integer maxPoolSize = Defaults.MAX_POOL_SIZE;
@@ -693,6 +694,19 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
 
       HashMap<String, String> expressions = new HashMap<String, String>();
 
+      for (int i = 0; i < reader.getAttributeCount(); i++)
+      {
+         switch (reader.getAttributeLocalName(i))
+         {
+            case XML.ATTRIBUTE_TYPE : {
+               type = attributeAsString(reader, XML.ATTRIBUTE_TYPE, expressions);
+               break;
+            }
+            default :
+               break;
+         }
+      }
+
       while (reader.hasNext())
       {
          switch (reader.nextTag())
@@ -700,8 +714,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
             case END_ELEMENT : {
                if (XML.ELEMENT_POOL.equals(reader.getLocalName()))
                {
-                  return new DsPoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy,
-                                        allowMultipleUsers, capacity, connectionListener,
+                  return new DsPoolImpl(type, minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin,
+                                        flushStrategy, allowMultipleUsers, capacity, connectionListener,
                                         expressions.size() > 0 ? expressions : null);
                }
                else
@@ -786,6 +800,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
    protected DsXaPool parseXaPool(XMLStreamReader reader) throws XMLStreamException, ParserException,
       ValidateException
    {
+      String type = Defaults.TYPE;
       Integer minPoolSize = Defaults.MIN_POOL_SIZE;
       Integer initialPoolSize = Defaults.INITIAL_POOL_SIZE;
       Integer maxPoolSize = Defaults.MAX_POOL_SIZE;
@@ -802,6 +817,19 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
 
       HashMap<String, String> expressions = new HashMap<String, String>();
 
+      for (int i = 0; i < reader.getAttributeCount(); i++)
+      {
+         switch (reader.getAttributeLocalName(i))
+         {
+            case XML.ATTRIBUTE_TYPE : {
+               type = attributeAsString(reader, XML.ATTRIBUTE_TYPE, expressions);
+               break;
+            }
+            default :
+               break;
+         }
+      }
+
       while (reader.hasNext())
       {
          switch (reader.nextTag())
@@ -809,7 +837,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
             case END_ELEMENT : {
                if (XML.ELEMENT_XA_POOL.equals(reader.getLocalName()))
                {
-                  return new DsXaPoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin,
+                  return new DsXaPoolImpl(type, minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin,
                                           flushStrategy, isSameRmOverride, padXid,
                                           wrapXaDataSource, noTxSeparatePool, allowMultipleUsers, capacity,
                                           connectionListener,

@@ -52,7 +52,7 @@ public class DsPoolImpl extends org.ironjacamar.common.metadata.common.PoolImpl 
 
    /**
     * Create a new PoolImpl.
-    *
+    * @param type type
     * @param minPoolSize minPoolSize
     * @param initialPoolSize initialPoolSize
     * @param maxPoolSize maxPoolSize
@@ -65,14 +65,15 @@ public class DsPoolImpl extends org.ironjacamar.common.metadata.common.PoolImpl 
     * @param expressions expressions
     * @throws ValidateException ValidateException
     */
-   public DsPoolImpl(Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize, 
+   public DsPoolImpl(String type, Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize, 
                      Boolean prefill, Boolean useStrictMin,
                      FlushStrategy flushStrategy, Boolean allowMultipleUsers,
                      Capacity capacity, Extension connectionListener,
                      Map<String, String> expressions)
       throws ValidateException
    {
-      super(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy, capacity, expressions);
+      super(type, minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin,
+            flushStrategy, capacity, expressions);
       this.allowMultipleUsers = allowMultipleUsers;
       this.connectionListener = connectionListener;
    }
@@ -145,7 +146,16 @@ public class DsPoolImpl extends org.ironjacamar.common.metadata.common.PoolImpl 
    {
       StringBuilder sb = new StringBuilder(1024);
 
-      sb.append("<pool>");
+      sb.append("<pool");
+
+      if (type != null)
+      {
+         sb.append(" ").append(XML.ATTRIBUTE_TYPE).append("=\"");
+         sb.append(type);
+         sb.append("\"");
+      }
+
+      sb.append(">");
 
       if (minPoolSize != null && !Defaults.MIN_POOL_SIZE.equals(minPoolSize))
       {
