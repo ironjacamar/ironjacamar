@@ -21,16 +21,23 @@
 
 package org.ironjacamar.core.connectionmanager.pool;
 
+import org.ironjacamar.core.connectionmanager.ConnectionManager;
+
 /**
  * The base class for all pool implementations
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public abstract class AbstractPool implements Pool
 {
+   /** The connection manager */
+   protected ConnectionManager cm;
+   
    /**
     * Constructor
+    * @param cm The connection manager
     */
-   public AbstractPool()
+   public AbstractPool(ConnectionManager cm)
    {
+      this.cm = cm;
    }
 }

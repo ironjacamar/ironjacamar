@@ -22,44 +22,28 @@
 package org.ironjacamar.core.connectionmanager.pool;
 
 import org.ironjacamar.core.connectionmanager.ConnectionManager;
-import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
-import org.ironjacamar.core.connectionmanager.listener.NoTransactionConnectionListener;
-
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.ManagedConnection;
-import javax.security.auth.Subject;
 
 /**
- * The default pool
+ * The pool factory
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class DefaultPool extends AbstractPool
+public class PoolFactory
 {
    /**
     * Constructor
+    */
+   private PoolFactory()
+   {
+   }
+
+   /**
+    * Create a pool
+    * @param type The type
     * @param cm The connection manager
+    * @return The pool
     */
-   public DefaultPool(ConnectionManager cm)
+   public static Pool createPool(String type, ConnectionManager cm)
    {
-      super(cm);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public ConnectionListener createConnectionListener(Subject subject, ConnectionRequestInfo cri)
-      throws ResourceException
-   {
-      ManagedConnection mc = cm.getManagedConnectionFactory().createManagedConnection(subject, cri);
-      return new NoTransactionConnectionListener(cm, mc);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void destroyConnectionListener(ConnectionListener cl) throws ResourceException
-   {
-      cl.getManagedConnection().destroy();
+      return new DefaultPool(cm);
    }
 }

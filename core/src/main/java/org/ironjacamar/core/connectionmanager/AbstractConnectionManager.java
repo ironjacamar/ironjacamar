@@ -21,9 +21,6 @@
 
 package org.ironjacamar.core.connectionmanager;
 
-import org.ironjacamar.core.api.connectionmanager.ConnectionManager;
-import org.ironjacamar.core.api.connectionmanager.listener.ConnectionListener;
-import org.ironjacamar.core.connectionmanager.listener.NoTransactionConnectionListener;
 import org.ironjacamar.core.connectionmanager.pool.Pool;
 
 import javax.resource.ResourceException;
@@ -36,34 +33,55 @@ import javax.resource.spi.ManagedConnectionFactory;
  */
 public abstract class AbstractConnectionManager implements ConnectionManager
 {
+   /** The managed connection factory */
+   protected ManagedConnectionFactory mcf;
+
    /** The pool */
    protected Pool pool;
 
    /**
     * Constructor
-    * @param pool The pool
+    * @param mcf The managed connection factory
     */
-   public AbstractConnectionManager(Pool pool)
+   public AbstractConnectionManager(ManagedConnectionFactory mcf)
    {
-      this.pool = pool;
+      this.mcf = mcf;
+      this.pool = null;
    }
    
    /**
     * {@inheritDoc}
     */
-   public Object allocateConnection(ManagedConnectionFactory mcf, ConnectionRequestInfo cri) throws ResourceException
+   public void setPool(Pool pool)
    {
-      return new NoTransactionConnectionListener(this, mcf.createManagedConnection(null, cri)).getConnection(null, cri);
+      this.pool = pool;
    }
 
    /**
     * {@inheritDoc}
     */
-   public void returnManagedConnection(ConnectionListener cl, boolean kill)
+   public ManagedConnectionFactory getManagedConnectionFactory()
+   {
+      return mcf;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public Object allocateConnection(ManagedConnectionFactory mcf, ConnectionRequestInfo cri) throws ResourceException
+   {
+      return pool.createConnectionListener(null, cri).getConnection(null, cri);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void returnManagedConnection(org.ironjacamar.core.api.connectionmanager.listener.ConnectionListener cl,
+                                       boolean kill)
    {
       try
       {
-         cl.getManagedConnection().destroy();
+         pool.destroyConnectionListener((org.ironjacamar.core.connectionmanager.listener.ConnectionListener)cl);
       }
       catch (Exception e)
       {

@@ -21,10 +21,32 @@
 
 package org.ironjacamar.core.connectionmanager.pool;
 
+import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
+
+import javax.resource.ResourceException;
+import javax.resource.spi.ConnectionRequestInfo;
+import javax.security.auth.Subject;
+
 /**
  * A pool
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public interface Pool
 {
+   /**
+    * Create a connection listener
+    * @param subject The subject
+    * @param cri The ConnectionRequestInfo object
+    * @return The connection listener
+    * @exception ResourceException Thrown if the connection listener cannot be created
+    */
+   public ConnectionListener createConnectionListener(Subject subject, ConnectionRequestInfo cri)
+      throws ResourceException;
+
+   /**
+    * Destroy a connection listener
+    * @param cl The connection listener
+    * @exception ResourceException Thrown if the connection listener cannot be destroed
+    */
+   public void destroyConnectionListener(ConnectionListener cl) throws ResourceException;
 }

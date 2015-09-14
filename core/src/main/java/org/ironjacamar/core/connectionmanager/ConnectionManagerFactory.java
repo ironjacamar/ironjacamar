@@ -21,20 +21,32 @@
 
 package org.ironjacamar.core.connectionmanager;
 
+import org.ironjacamar.common.api.metadata.common.TransactionSupportEnum;
+
 import javax.resource.spi.ManagedConnectionFactory;
 
 /**
- * The NoTransaction connection manager
+ * The connection manager factory
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class NoTransactionConnectionManager extends AbstractConnectionManager
+public class ConnectionManagerFactory
 {
    /**
     * Constructor
-    * @param mcf The managed connection factory
     */
-   public NoTransactionConnectionManager(ManagedConnectionFactory mcf)
+   private ConnectionManagerFactory()
    {
-      super(mcf);
+   }
+
+   /**
+    * Create a connection manager
+    * @param tse The transaction support level
+    * @param mcf The managed connection factory
+    * @return The connection manager
+    */
+   public static ConnectionManager createConnectionManager(TransactionSupportEnum tse,
+                                                           ManagedConnectionFactory mcf)
+   {
+      return new NoTransactionConnectionManager(mcf);
    }
 }

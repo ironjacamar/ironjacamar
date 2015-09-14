@@ -26,13 +26,13 @@ import org.ironjacamar.common.api.metadata.resourceadapter.Activation;
 import org.ironjacamar.common.api.metadata.resourceadapter.AdminObject;
 import org.ironjacamar.common.api.metadata.resourceadapter.ConnectionDefinition;
 import org.ironjacamar.common.api.metadata.spec.Connector;
-import org.ironjacamar.core.api.connectionmanager.ConnectionManager;
 import org.ironjacamar.core.api.deploymentrepository.Deployment;
 import org.ironjacamar.core.api.deploymentrepository.DeploymentRepository;
 import org.ironjacamar.core.api.metadatarepository.Metadata;
 import org.ironjacamar.core.api.metadatarepository.MetadataRepository;
-import org.ironjacamar.core.connectionmanager.NoTransactionConnectionManager;
-import org.ironjacamar.core.connectionmanager.pool.DefaultPool;
+import org.ironjacamar.core.connectionmanager.ConnectionManager;
+import org.ironjacamar.core.connectionmanager.ConnectionManagerFactory;
+import org.ironjacamar.core.connectionmanager.pool.PoolFactory;
 import org.ironjacamar.core.deploymentrepository.AdminObjectImpl;
 import org.ironjacamar.core.deploymentrepository.ConfigPropertyImpl;
 import org.ironjacamar.core.deploymentrepository.ConnectionFactoryImpl;
@@ -264,8 +264,12 @@ public abstract class AbstractResourceAdapterDeployer
             injectConfigProperties(mcf, findConfigProperties(mcfClass, connector),
                                    builder.getClassLoader());
 
-         org.ironjacamar.core.connectionmanager.pool.Pool pool = new DefaultPool();
-         ConnectionManager cm = new NoTransactionConnectionManager(pool);
+         ConnectionManager cm =
+            ConnectionManagerFactory.createConnectionManager(transactionSupport, mcf);
+
+         String poolType = cd.getPool() != null ? cd.getPool().getType() : null;
+         org.ironjacamar.core.connectionmanager.pool.Pool pool = PoolFactory.createPool(poolType, cm);
+         cm.setPool(pool);
          
          org.ironjacamar.core.api.deploymentrepository.Pool dpool = new PoolImpl(pool, null);
 

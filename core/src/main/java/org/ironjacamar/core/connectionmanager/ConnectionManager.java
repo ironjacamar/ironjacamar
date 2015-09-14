@@ -21,20 +21,25 @@
 
 package org.ironjacamar.core.connectionmanager;
 
+import org.ironjacamar.core.connectionmanager.pool.Pool;
+
 import javax.resource.spi.ManagedConnectionFactory;
 
 /**
- * The NoTransaction connection manager
+ * The internal connection manager API
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class NoTransactionConnectionManager extends AbstractConnectionManager
+public interface ConnectionManager extends org.ironjacamar.core.api.connectionmanager.ConnectionManager
 {
    /**
-    * Constructor
-    * @param mcf The managed connection factory
+    * Set the pool
+    * @param pool The pool
     */
-   public NoTransactionConnectionManager(ManagedConnectionFactory mcf)
-   {
-      super(mcf);
-   }
+   public void setPool(Pool pool);
+
+   /**
+    * Get the managed connection factory
+    * @return The value
+    */
+   public ManagedConnectionFactory getManagedConnectionFactory();
 }
