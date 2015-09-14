@@ -69,7 +69,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
       connectionHandles.remove(event.getConnectionHandle());
 
       if (connectionHandles.size() == 0)
-         cm.returnManagedConnection(this, false);
+         cm.returnConnectionListener(this, false);
    }
    
    /**
@@ -80,7 +80,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
       connectionHandles.remove(event.getConnectionHandle());
 
       if (connectionHandles.size() == 0)
-         cm.returnManagedConnection(this, true);
+         cm.returnConnectionListener(this, true);
    }
 
    /**

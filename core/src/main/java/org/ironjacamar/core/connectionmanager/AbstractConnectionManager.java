@@ -76,8 +76,8 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    /**
     * {@inheritDoc}
     */
-   public void returnManagedConnection(org.ironjacamar.core.api.connectionmanager.listener.ConnectionListener cl,
-                                       boolean kill)
+   public void returnConnectionListener(org.ironjacamar.core.api.connectionmanager.listener.ConnectionListener cl,
+                                        boolean kill)
    {
       try
       {

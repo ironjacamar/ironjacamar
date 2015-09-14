@@ -30,9 +30,9 @@ import org.ironjacamar.core.api.connectionmanager.listener.ConnectionListener;
 public interface ConnectionManager extends javax.resource.spi.ConnectionManager
 {
    /**
-    * Kill given connection listener wrapped connection instance.
-    * @param cl connection listener that wraps connection
-    * @param kill kill connection or not
+    * Return the connection listener
+    * @param cl The connection listener
+    * @param kill Should the connection listener be destroyed
     */
-   public void returnManagedConnection(ConnectionListener cl, boolean kill);
+   public void returnConnectionListener(ConnectionListener cl, boolean kill);
 }

@@ -177,12 +177,12 @@ public class LocalXAResourceImpl implements LocalXAResource,
       }
       catch (LocalResourceException lre)
       {
-         connectionManager.returnManagedConnection(cl, true);
+         connectionManager.returnConnectionListener(cl, true);
          throw new LocalXAException(bundle.couldNotCommitLocalTx(), XAException.XAER_RMFAIL, lre);
       }
       catch (ResourceException re)
       {
-         connectionManager.returnManagedConnection(cl, true);
+         connectionManager.returnConnectionListener(cl, true);
          throw new LocalXAException(bundle.couldNotCommitLocalTx(), XAException.XA_RBROLLBACK, re);
       }
    }
@@ -249,12 +249,12 @@ public class LocalXAResourceImpl implements LocalXAResource,
       }
       catch (LocalResourceException lre)
       {
-         connectionManager.returnManagedConnection(cl, true);
+         connectionManager.returnConnectionListener(cl, true);
          throw new LocalXAException(bundle.couldNotRollbackLocalTx(), XAException.XAER_RMFAIL, lre);
       }
       catch (ResourceException re)
       {
-         connectionManager.returnManagedConnection(cl, true);
+         connectionManager.returnConnectionListener(cl, true);
          throw new LocalXAException(bundle.couldNotRollbackLocalTx(), XAException.XAER_RMERR, re);
       }
    }

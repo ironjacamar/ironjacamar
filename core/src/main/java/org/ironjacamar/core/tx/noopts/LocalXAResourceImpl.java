@@ -119,7 +119,7 @@ public class LocalXAResourceImpl implements LocalXAResource, XAResourceWrapper
       }
       catch (ResourceException re)
       {
-         connectionManager.returnManagedConnection(cl, true);
+         connectionManager.returnConnectionListener(cl, true);
          throw new LocalXAException("commit", XAException.XA_RBROLLBACK, re);
       }
    }
@@ -175,7 +175,7 @@ public class LocalXAResourceImpl implements LocalXAResource, XAResourceWrapper
       }
       catch (ResourceException re)
       {
-         connectionManager.returnManagedConnection(cl, true);
+         connectionManager.returnConnectionListener(cl, true);
          throw new LocalXAException("rollback", XAException.XAER_RMERR, re);
       }
    }
