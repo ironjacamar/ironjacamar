@@ -35,13 +35,6 @@ public interface XaPool extends Pool
    public Boolean isIsSameRmOverride();
 
    /**
-    * Get the interleaving.
-    *
-    * @return the interleaving.
-    */
-   public Boolean isInterleaving();
-
-   /**
     * Get the padXid.
     *
     * @return the padXid.

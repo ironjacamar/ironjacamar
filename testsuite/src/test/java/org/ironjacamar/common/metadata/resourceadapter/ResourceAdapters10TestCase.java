@@ -231,7 +231,6 @@ public class ResourceAdapters10TestCase
                   assertTrue(pool.isPrefill());
                   assertTrue(pool.isUseStrictMin());
                   assertTrue(pool.isIsSameRmOverride());
-                  assertTrue(pool.isInterleaving());
                   assertTrue(pool.isNoTxSeparatePool());
                   assertTrue(pool.isPadXid());
                   assertFalse(pool.isWrapXaResource());
@@ -279,7 +278,6 @@ public class ResourceAdapters10TestCase
                   assertFalse(pool.isPrefill());
                   assertFalse(pool.isUseStrictMin());
                   assertFalse(pool.isIsSameRmOverride());
-                  assertFalse(pool.isInterleaving());
                   assertFalse(pool.isNoTxSeparatePool());
                   assertFalse(pool.isPadXid());
                   assertTrue(pool.isWrapXaResource());
@@ -317,7 +315,6 @@ public class ResourceAdapters10TestCase
                   assertFalse(pool.isPrefill());
                   assertFalse(pool.isUseStrictMin());
                   assertNull(pool.isIsSameRmOverride());
-                  assertFalse(pool.isInterleaving());
                   assertFalse(pool.isNoTxSeparatePool());
                   assertFalse(pool.isPadXid());
                   assertTrue(pool.isWrapXaResource());

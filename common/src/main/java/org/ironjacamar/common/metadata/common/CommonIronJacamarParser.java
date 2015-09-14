@@ -963,11 +963,6 @@ public abstract class CommonIronJacamarParser extends AbstractParser
          writer.writeEndElement();
       }
 
-      if (pool.isInterleaving() != null && Boolean.TRUE.equals(pool.isInterleaving()))
-      {
-         writer.writeEmptyElement(CommonXML.ELEMENT_INTERLEAVING);
-      }
-
       if (pool.isNoTxSeparatePool() != null && Boolean.TRUE.equals(pool.isNoTxSeparatePool()))
       {
          writer.writeEmptyElement(CommonXML.ELEMENT_NO_TX_SEPARATE_POOLS);

@@ -105,11 +105,6 @@ public interface Defaults
    public static final FlushStrategy FLUSH_STRATEGY = FlushStrategy.FAILING_CONNECTION_ONLY;
    
    /**
-    * Interleaving
-    */
-   public static final Boolean INTERLEAVING = Boolean.FALSE;
-   
-   /**
     * Is same rm override
     */
    public static final Boolean IS_SAME_RM_OVERRIDE = null;

@@ -49,7 +49,7 @@ import static org.junit.Assert.fail;
  * @author <a href="andrey.balyaev@gmail.com">Andrey Balyaev</a>
  *
  */
-public class IronJacomarExpressionStoreTestCase
+public class IronJacamarExpressionStoreTestCase
 {
    /**
     * Test stored values changed by environment variables
@@ -65,7 +65,7 @@ public class IronJacomarExpressionStoreTestCase
       System.setProperty("Property6nested", "nestedvalue6");
       System.setProperty("initial-pool-size", "3");
 
-      try (InputStream is = IronJacomarExpressionStoreTestCase.class.getClassLoader().
+      try (InputStream is = IronJacamarExpressionStoreTestCase.class.getClassLoader().
             getResourceAsStream("../../resources/test/ironjacamar/expression.xml");
             ByteArrayOutputStream os = new ByteArrayOutputStream())
       {

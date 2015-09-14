@@ -315,7 +315,6 @@ public class DataSources12TestCase
       assertTrue(xpool.isPrefill());
       assertTrue(xpool.isUseStrictMin());
       assertEquals(FlushStrategy.GRACEFULLY, xpool.getFlushStrategy());
-      assertTrue(xpool.isInterleaving());
       assertTrue(xpool.isIsSameRmOverride());
       assertTrue(xpool.isNoTxSeparatePool());
       assertTrue(xpool.isPadXid());

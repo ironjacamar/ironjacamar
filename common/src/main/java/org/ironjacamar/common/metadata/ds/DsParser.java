@@ -794,7 +794,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Boolean allowMultipleUsers = Defaults.ALLOW_MULTIPLE_USERS;
       Capacity capacity = null;
       Extension connectionListener = null;
-      Boolean interleaving = Defaults.INTERLEAVING;
       Boolean isSameRmOverride = Defaults.IS_SAME_RM_OVERRIDE;
       Boolean padXid = Defaults.PAD_XID;
       Boolean noTxSeparatePool = Defaults.NO_TX_SEPARATE_POOL;
@@ -811,7 +810,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                if (XML.ELEMENT_XA_POOL.equals(reader.getLocalName()))
                {
                   return new DsXaPoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin,
-                                          flushStrategy, isSameRmOverride, interleaving, padXid,
+                                          flushStrategy, isSameRmOverride, padXid,
                                           wrapXaDataSource, noTxSeparatePool, allowMultipleUsers, capacity,
                                           connectionListener,
                                           expressions.size() > 0 ? expressions : null);
@@ -823,7 +822,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      case XML.ELEMENT_MAX_POOL_SIZE :
                      case XML.ELEMENT_INITIAL_POOL_SIZE :
                      case XML.ELEMENT_MIN_POOL_SIZE :
-                     case XML.ELEMENT_INTERLEAVING :
                      case XML.ELEMENT_IS_SAME_RM_OVERRIDE :
                      case XML.ELEMENT_NO_TX_SEPARATE_POOLS :
                      case XML.ELEMENT_PAD_XID :
@@ -854,10 +852,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   }
                   case XML.ELEMENT_MIN_POOL_SIZE : {
                      minPoolSize = elementAsInteger(reader, XML.ELEMENT_MIN_POOL_SIZE, expressions);
-                     break;
-                  }
-                  case XML.ELEMENT_INTERLEAVING : {
-                     interleaving = elementAsBoolean(reader, XML.ELEMENT_INTERLEAVING, expressions);
                      break;
                   }
                   case XML.ELEMENT_IS_SAME_RM_OVERRIDE : {
@@ -1810,11 +1804,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
          writer.writeStartElement(XML.ELEMENT_IS_SAME_RM_OVERRIDE);
          writer.writeCharacters(pool.getValue(XML.ELEMENT_IS_SAME_RM_OVERRIDE, pool.isIsSameRmOverride().toString()));
          writer.writeEndElement();
-      }
-
-      if (pool.isInterleaving() != null && Boolean.TRUE.equals(pool.isInterleaving()))
-      {
-         writer.writeEmptyElement(XML.ELEMENT_INTERLEAVING);
       }
 
       if (pool.isNoTxSeparatePool() != null && Boolean.TRUE.equals(pool.isNoTxSeparatePool()))

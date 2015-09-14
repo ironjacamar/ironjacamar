@@ -222,11 +222,6 @@ public interface CommonXML
    public static final String ELEMENT_INITIAL_POOL_SIZE = "initial-pool-size";
 
    /**
-    * interleaving
-    */
-   public static final String ELEMENT_INTERLEAVING = "interleaving";
-
-   /**
     * is-same-rm-override
     */
    public static final String ELEMENT_IS_SAME_RM_OVERRIDE = "is-same-rm-override";

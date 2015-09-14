@@ -435,7 +435,6 @@ public abstract class AbstractParser
       Boolean prefill = Defaults.PREFILL;
       FlushStrategy flushStrategy = Defaults.FLUSH_STRATEGY;
       Capacity capacity = null;
-      Boolean interleaving = Defaults.INTERLEAVING;
       Boolean isSameRmOverride = Defaults.IS_SAME_RM_OVERRIDE;
       Boolean padXid = Defaults.PAD_XID;
       Boolean noTxSeparatePool = Defaults.NO_TX_SEPARATE_POOL;
@@ -454,13 +453,12 @@ public abstract class AbstractParser
                   case CommonXML.ELEMENT_XA_POOL :
                      return new XaPoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin,
                            flushStrategy, capacity,
-                           isSameRmOverride, interleaving, padXid,
+                           isSameRmOverride, padXid,
                            wrapXaDataSource, noTxSeparatePool,
                            expressions.size() > 0 ? expressions : null);
                   case CommonXML.ELEMENT_MAX_POOL_SIZE :
                   case CommonXML.ELEMENT_INITIAL_POOL_SIZE :
                   case CommonXML.ELEMENT_MIN_POOL_SIZE :
-                  case CommonXML.ELEMENT_INTERLEAVING :
                   case CommonXML.ELEMENT_IS_SAME_RM_OVERRIDE :
                   case CommonXML.ELEMENT_NO_TX_SEPARATE_POOLS :
                   case CommonXML.ELEMENT_PAD_XID :
@@ -487,10 +485,6 @@ public abstract class AbstractParser
                   }
                   case CommonXML.ELEMENT_MIN_POOL_SIZE : {
                      minPoolSize = elementAsInteger(reader, CommonXML.ELEMENT_MIN_POOL_SIZE, expressions);
-                     break;
-                  }
-                  case CommonXML.ELEMENT_INTERLEAVING : {
-                     interleaving = elementAsBoolean(reader, CommonXML.ELEMENT_INTERLEAVING, expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_IS_SAME_RM_OVERRIDE : {

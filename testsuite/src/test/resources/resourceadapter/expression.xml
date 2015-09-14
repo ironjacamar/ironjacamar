@@ -46,7 +46,6 @@
             </decrementer>
           </capacity>
 	  <is-same-rm-override>${is-same-rm-override:true}</is-same-rm-override>
-	  <interleaving/>
 	  <no-tx-separate-pools/>
 	  <pad-xid>${pad-xid:true}</pad-xid>
 	  <wrap-xa-resource>${wrap-xa-resource:false}</wrap-xa-resource>

@@ -534,16 +534,6 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="interleaving" type="boolean-presenceType" minOccurs="0">
-            <xs:annotation>
-              <xs:documentation>
-                <![CDATA[[
-                  An element to enable interleaving for XA connection factories 
-                  Ex: <interleaving/>
-                 ]]>
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
           <xs:element name="no-tx-separate-pools" type="boolean-presenceType" minOccurs="0">
             <xs:annotation>
               <xs:documentation>

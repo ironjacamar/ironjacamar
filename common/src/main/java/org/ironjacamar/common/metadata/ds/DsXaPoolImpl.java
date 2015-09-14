@@ -58,7 +58,6 @@ public class DsXaPoolImpl extends org.ironjacamar.common.metadata.common.XaPoolI
     * @param useStrictMin useStrictMin
     * @param flushStrategy flushStrategy
     * @param isSameRmOverride isSameRmOverride
-    * @param interleaving interleaving
     * @param padXid padXid
     * @param wrapXaResource wrapXaResource
     * @param noTxSeparatePool noTxSeparatePool
@@ -71,7 +70,7 @@ public class DsXaPoolImpl extends org.ironjacamar.common.metadata.common.XaPoolI
    public DsXaPoolImpl(Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize,
                        Boolean prefill, Boolean useStrictMin,
                        FlushStrategy flushStrategy,
-                       Boolean isSameRmOverride, Boolean interleaving, 
+                       Boolean isSameRmOverride,
                        Boolean padXid, Boolean wrapXaResource,
                        Boolean noTxSeparatePool,
                        Boolean allowMultipleUsers,
@@ -79,7 +78,7 @@ public class DsXaPoolImpl extends org.ironjacamar.common.metadata.common.XaPoolI
                        Map<String, String> expressions) throws ValidateException
    {
       super(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy, capacity,
-            isSameRmOverride, interleaving, padXid, wrapXaResource, noTxSeparatePool, expressions);
+            isSameRmOverride, padXid, wrapXaResource, noTxSeparatePool, expressions);
 
       this.allowMultipleUsers = allowMultipleUsers;
       this.connectionListener = connectionListener;
@@ -233,11 +232,6 @@ public class DsXaPoolImpl extends org.ironjacamar.common.metadata.common.XaPoolI
          sb.append("<").append(XML.ELEMENT_IS_SAME_RM_OVERRIDE).append(">");
          sb.append(isSameRmOverride);
          sb.append("</").append(XML.ELEMENT_IS_SAME_RM_OVERRIDE).append(">");
-      }
-
-      if (interleaving != null && Boolean.TRUE.equals(interleaving))
-      {
-         sb.append("<").append(XML.ELEMENT_INTERLEAVING).append("/>");
       }
 
       if (noTxSeparatePool != null && Boolean.TRUE.equals(noTxSeparatePool))

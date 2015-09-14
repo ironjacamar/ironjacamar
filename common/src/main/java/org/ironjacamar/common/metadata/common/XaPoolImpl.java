@@ -43,9 +43,6 @@ public class XaPoolImpl extends PoolImpl implements XaPool
    /** is-same-rm-override */
    protected Boolean isSameRmOverride;
 
-   /** interleaving */
-   protected Boolean interleaving;
-
    /** pad-xid */
    protected Boolean padXid;
 
@@ -66,7 +63,6 @@ public class XaPoolImpl extends PoolImpl implements XaPool
     * @param flushStrategy flushStrategy
     * @param capacity capacity
     * @param isSameRmOverride isSameRmOverride
-    * @param interleaving interleaving
     * @param padXid padXid
     * @param wrapXaResource wrapXaResource
     * @param noTxSeparatePool noTxSeparatePool
@@ -76,14 +72,13 @@ public class XaPoolImpl extends PoolImpl implements XaPool
    public XaPoolImpl(Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize,
                      Boolean prefill, Boolean useStrictMin,
                      FlushStrategy flushStrategy, Capacity capacity,
-                     Boolean isSameRmOverride, Boolean interleaving, 
+                     Boolean isSameRmOverride,
                      Boolean padXid, Boolean wrapXaResource,
                      Boolean noTxSeparatePool,
                      Map<String, String> expressions) throws ValidateException
    {
       super(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy, capacity, expressions);
       this.isSameRmOverride = isSameRmOverride;
-      this.interleaving = interleaving;
       this.padXid = padXid;
       this.wrapXaResource = wrapXaResource;
       this.noTxSeparatePool = noTxSeparatePool;
@@ -95,14 +90,6 @@ public class XaPoolImpl extends PoolImpl implements XaPool
    public Boolean isIsSameRmOverride()
    {
       return isSameRmOverride;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public Boolean isInterleaving()
-   {
-      return interleaving;
    }
 
    /**
@@ -136,7 +123,6 @@ public class XaPoolImpl extends PoolImpl implements XaPool
    {
       final int prime = 31;
       int result = super.hashCode();
-      result = prime * result + ((interleaving == null) ? 0 : interleaving.hashCode());
       result = prime * result + ((isSameRmOverride == null) ? 0 : isSameRmOverride.hashCode());
       result = prime * result + ((noTxSeparatePool == null) ? 0 : noTxSeparatePool.hashCode());
       result = prime * result + ((padXid == null) ? 0 : padXid.hashCode());
@@ -156,13 +142,6 @@ public class XaPoolImpl extends PoolImpl implements XaPool
       if (!(obj instanceof XaPoolImpl))
          return false;
       XaPoolImpl other = (XaPoolImpl) obj;
-      if (interleaving == null)
-      {
-         if (other.interleaving != null)
-            return false;
-      }
-      else if (!interleaving.equals(other.interleaving))
-         return false;
       if (isSameRmOverride == null)
       {
          if (other.isSameRmOverride != null)
@@ -253,11 +232,6 @@ public class XaPoolImpl extends PoolImpl implements XaPool
          sb.append("<").append(CommonXML.ELEMENT_IS_SAME_RM_OVERRIDE).append(">");
          sb.append(isSameRmOverride);
          sb.append("</").append(CommonXML.ELEMENT_IS_SAME_RM_OVERRIDE).append(">");
-      }
-
-      if (interleaving != null && Boolean.TRUE.equals(interleaving))
-      {
-         sb.append("<").append(CommonXML.ELEMENT_INTERLEAVING).append("/>");
       }
 
       if (noTxSeparatePool != null && Boolean.TRUE.equals(noTxSeparatePool))

@@ -238,7 +238,6 @@ public class IronJacamar20TestCase
             assertTrue(xpool.isPrefill());
             assertTrue(xpool.isUseStrictMin());
             assertTrue(xpool.isIsSameRmOverride());
-            assertTrue(xpool.isInterleaving());
             assertTrue(xpool.isNoTxSeparatePool());
             assertTrue(xpool.isPadXid());
             assertFalse(xpool.isWrapXaResource());
@@ -308,7 +307,6 @@ public class IronJacamar20TestCase
             assertFalse(xpool.isPrefill());
             assertFalse(xpool.isUseStrictMin());
             assertFalse(xpool.isIsSameRmOverride());
-            assertFalse(xpool.isInterleaving());
             assertFalse(xpool.isNoTxSeparatePool());
             assertFalse(xpool.isPadXid());
             assertTrue(xpool.isWrapXaResource());
@@ -357,7 +355,6 @@ public class IronJacamar20TestCase
             assertFalse(xpool.isPrefill());
             assertFalse(xpool.isUseStrictMin());
             assertNull(xpool.isIsSameRmOverride());
-            assertFalse(xpool.isInterleaving());
             assertFalse(xpool.isNoTxSeparatePool());
             assertFalse(xpool.isPadXid());
             assertTrue(xpool.isWrapXaResource());
