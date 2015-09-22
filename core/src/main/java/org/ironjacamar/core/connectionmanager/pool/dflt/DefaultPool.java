@@ -19,16 +19,20 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.connectionmanager.pool;
+package org.ironjacamar.core.connectionmanager.pool.dflt;
 
+import org.ironjacamar.core.api.connectionmanager.pool.PoolConfiguration;
 import org.ironjacamar.core.connectionmanager.ConnectionManager;
+import org.ironjacamar.core.connectionmanager.Credential;
 import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
 import org.ironjacamar.core.connectionmanager.listener.NoTransactionConnectionListener;
+import org.ironjacamar.core.connectionmanager.pool.AbstractPool;
+import org.ironjacamar.core.connectionmanager.pool.ManagedConnectionPool;
+
+import java.util.concurrent.TimeUnit;
 
 import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnection;
-import javax.security.auth.Subject;
 
 /**
  * The default pool
@@ -39,20 +43,35 @@ public class DefaultPool extends AbstractPool
    /**
     * Constructor
     * @param cm The connection manager
+    * @param pc The pool configuration
     */
-   public DefaultPool(ConnectionManager cm)
+   public DefaultPool(ConnectionManager cm, PoolConfiguration pc)
    {
-      super(cm);
+      super(cm, pc);
    }
 
    /**
     * {@inheritDoc}
     */
-   public ConnectionListener createConnectionListener(Subject subject, ConnectionRequestInfo cri)
+   public ConnectionListener createConnectionListener(Credential credential)
       throws ResourceException
    {
-      ManagedConnection mc = cm.getManagedConnectionFactory().createManagedConnection(subject, cri);
-      return new NoTransactionConnectionListener(cm, mc);
+      try
+      {
+         if (semaphore.tryAcquire(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS))
+         {
+            ManagedConnection mc =
+               cm.getManagedConnectionFactory().createManagedConnection(credential.getSubject(),
+                                                                        credential.getConnectionRequestInfo());
+            return new NoTransactionConnectionListener(cm, mc, credential);
+         }
+      }
+      catch (Exception e)
+      {
+         throw new ResourceException(e);
+      }
+
+      throw new ResourceException("No ConnectionListener");
    }
 
    /**
@@ -60,6 +79,25 @@ public class DefaultPool extends AbstractPool
     */
    public void destroyConnectionListener(ConnectionListener cl) throws ResourceException
    {
-      cl.getManagedConnection().destroy();
+      try
+      {
+         cl.getManagedConnection().destroy();
+      }
+      catch (Exception e)
+      {
+         throw new ResourceException(e);
+      }
+      finally
+      {
+         semaphore.release();
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   protected ManagedConnectionPool createManagedConnectionPool(Credential credential)
+   {
+      return new DefaultManagedConnectionPool(this, credential);
    }
 }

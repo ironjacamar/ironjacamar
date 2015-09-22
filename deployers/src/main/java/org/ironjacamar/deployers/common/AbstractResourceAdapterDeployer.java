@@ -26,6 +26,7 @@ import org.ironjacamar.common.api.metadata.resourceadapter.Activation;
 import org.ironjacamar.common.api.metadata.resourceadapter.AdminObject;
 import org.ironjacamar.common.api.metadata.resourceadapter.ConnectionDefinition;
 import org.ironjacamar.common.api.metadata.spec.Connector;
+import org.ironjacamar.core.api.connectionmanager.pool.PoolConfiguration;
 import org.ironjacamar.core.api.deploymentrepository.Deployment;
 import org.ironjacamar.core.api.deploymentrepository.DeploymentRepository;
 import org.ironjacamar.core.api.metadatarepository.Metadata;
@@ -268,7 +269,13 @@ public abstract class AbstractResourceAdapterDeployer
             ConnectionManagerFactory.createConnectionManager(transactionSupport, mcf);
 
          String poolType = cd.getPool() != null ? cd.getPool().getType() : null;
-         org.ironjacamar.core.connectionmanager.pool.Pool pool = PoolFactory.createPool(poolType, cm);
+
+         PoolConfiguration pc = new PoolConfiguration();
+         applyPoolConfiguration(pc, cd.getPool());
+         applyPoolConfiguration(pc, cd.getTimeout());
+         applyPoolConfiguration(pc, cd.getValidation());
+
+         org.ironjacamar.core.connectionmanager.pool.Pool pool = PoolFactory.createPool(poolType, cm, pc);
          cm.setPool(pool);
          
          org.ironjacamar.core.api.deploymentrepository.Pool dpool = new PoolImpl(pool, null);
@@ -584,5 +591,80 @@ public abstract class AbstractResourceAdapterDeployer
    private boolean isXA(TransactionSupportEnum tse)
    {
       return TransactionSupportEnum.XATransaction == tse;
+   }
+
+   /**
+    * Apply pool to pool configuration
+    * @param pc The pool configuration
+    * @param p The pool definition
+    * @return The configuration
+    */
+   private PoolConfiguration applyPoolConfiguration(PoolConfiguration pc,
+                                                    org.ironjacamar.common.api.metadata.common.Pool p)
+   {
+      if (p != null)
+      {
+         if (p.getMinPoolSize() != null)
+            pc.setMinSize(p.getMinPoolSize().intValue());
+
+         if (p.getInitialPoolSize() != null)
+            pc.setInitialSize(p.getInitialPoolSize().intValue());
+
+         if (p.getMaxPoolSize() != null)
+            pc.setMaxSize(p.getMaxPoolSize().intValue());
+
+         if (p.isPrefill() != null)
+            pc.setPrefill(p.isPrefill().booleanValue());
+      }
+      
+      return pc;
+   }
+
+   /**
+    * Apply timeout to pool configuration
+    * @param pc The pool configuration
+    * @param t The timeout definition
+    * @return The configuration
+    */
+   private PoolConfiguration applyPoolConfiguration(PoolConfiguration pc,
+                                                    org.ironjacamar.common.api.metadata.common.Timeout t)
+   {
+      if (t != null)
+      {
+         if (t.getBlockingTimeoutMillis() != null)
+            pc.setBlockingTimeout(t.getBlockingTimeoutMillis().longValue());
+         
+         if (t.getIdleTimeoutMinutes() != null)
+            pc.setIdleTimeoutMinutes(t.getIdleTimeoutMinutes().intValue());
+      }
+      
+      return pc;
+   }
+
+   /**
+    * Apply validation to pool configuration
+    * @param pc The pool configuration
+    * @param v The validation definition
+    * @return The configuration
+    */
+   private PoolConfiguration applyPoolConfiguration(PoolConfiguration pc,
+                                                    org.ironjacamar.common.api.metadata.common.Validation v)
+   {
+      if (v != null)
+      {
+         if (v.isValidateOnMatch() != null)
+            pc.setValidateOnMatch(v.isValidateOnMatch().booleanValue());
+
+         if (v.isBackgroundValidation() != null)
+            pc.setBackgroundValidation(v.isBackgroundValidation().booleanValue());
+
+         if (v.getBackgroundValidationMillis() != null)
+            pc.setBackgroundValidationMillis(v.getBackgroundValidationMillis().longValue());
+
+         if (v.isUseFastFail() != null)
+            pc.setUseFastFail(v.isUseFastFail().booleanValue());
+      }
+      
+      return pc;
    }
 }

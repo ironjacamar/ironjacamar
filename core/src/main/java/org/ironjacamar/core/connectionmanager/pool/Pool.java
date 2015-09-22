@@ -21,11 +21,11 @@
 
 package org.ironjacamar.core.connectionmanager.pool;
 
+import org.ironjacamar.core.api.connectionmanager.pool.PoolConfiguration;
+import org.ironjacamar.core.connectionmanager.Credential;
 import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
 
 import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.security.auth.Subject;
 
 /**
  * A pool
@@ -34,19 +34,30 @@ import javax.security.auth.Subject;
 public interface Pool
 {
    /**
-    * Create a connection listener
-    * @param subject The subject
-    * @param cri The ConnectionRequestInfo object
+    * Get the pool configuration
+    * @return The configuration
+    */
+   public PoolConfiguration getConfiguration();
+   
+   /**
+    * Get a connection listener
+    * @param credential The credential
     * @return The connection listener
     * @exception ResourceException Thrown if the connection listener cannot be created
     */
-   public ConnectionListener createConnectionListener(Subject subject, ConnectionRequestInfo cri)
-      throws ResourceException;
+   public ConnectionListener getConnectionListener(Credential credential) throws ResourceException;
 
    /**
-    * Destroy a connection listener
+    * Return a connection listener
     * @param cl The connection listener
+    * @param kill Kill the connection listener
     * @exception ResourceException Thrown if the connection listener cannot be destroed
     */
-   public void destroyConnectionListener(ConnectionListener cl) throws ResourceException;
+   public void returnConnectionListener(ConnectionListener cl, boolean kill) throws ResourceException;
+
+   /**
+    * Is the pool full
+    * @return True if full, otherwise false
+    */
+   public boolean isFull();
 }

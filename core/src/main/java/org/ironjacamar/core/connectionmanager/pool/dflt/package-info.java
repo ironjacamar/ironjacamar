@@ -19,28 +19,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.connectionmanager.listener;
-
-import org.ironjacamar.core.api.connectionmanager.ConnectionManager;
-import org.ironjacamar.core.connectionmanager.Credential;
-
-import javax.resource.spi.ManagedConnection;
-
 /**
- * The NoTransaction connection listener
- * 
- * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ * The default pool
  */
-public class NoTransactionConnectionListener extends AbstractConnectionListener
-{
-   /**
-    * Constructor
-    * @param cm The connection manager
-    * @param mc The managed connection
-    * @param credential The credential
-    */
-   public NoTransactionConnectionListener(ConnectionManager cm, ManagedConnection mc, Credential credential)
-   {
-      super(cm, mc, credential);
-   }
-}
+package org.ironjacamar.core.connectionmanager.pool.dflt;

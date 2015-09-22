@@ -22,14 +22,16 @@
 package org.ironjacamar.core.connectionmanager.listener;
 
 import org.ironjacamar.core.api.connectionmanager.ConnectionManager;
+import org.ironjacamar.core.connectionmanager.Credential;
+
+import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.FREE;
 
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionEvent;
-import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnection;
-import javax.security.auth.Subject;
 
 /**
  * The abstract connection listener
@@ -44,6 +46,12 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    /** The managed connection */
    private ManagedConnection mc;
 
+   /** The credential */
+   private Credential credential;
+   
+   /** The state */
+   private AtomicInteger state;
+
    /** Connection handles */
    private CopyOnWriteArraySet<Object> connectionHandles;
    
@@ -51,14 +59,33 @@ public abstract class AbstractConnectionListener implements ConnectionListener
     * Constructor
     * @param cm The connection manager
     * @param mc The managed connection
+    * @param credential The credential
     */
-   public AbstractConnectionListener(ConnectionManager cm, ManagedConnection mc)
+   public AbstractConnectionListener(ConnectionManager cm, ManagedConnection mc, Credential credential)
    {
       this.cm = cm;
       this.mc = mc;
+      this.credential = credential;
+      this.state = new AtomicInteger(FREE);
       this.connectionHandles = new CopyOnWriteArraySet<Object>();
 
       mc.addConnectionEventListener(this);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean changeState(int currentState, int newState)
+   {
+      return state.compareAndSet(currentState, newState);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public Credential getCredential()
+   {
+      return credential;
    }
 
    /**
@@ -115,9 +142,9 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    /**
     * {@inheritDoc}
     */
-   public Object getConnection(Subject subject, ConnectionRequestInfo cri) throws ResourceException
+   public Object getConnection() throws ResourceException
    {
-      Object result = mc.getConnection(subject, cri);
+      Object result = mc.getConnection(credential.getSubject(), credential.getConnectionRequestInfo());
 
       connectionHandles.add(result);
 

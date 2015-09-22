@@ -21,7 +21,15 @@
 
 package org.ironjacamar.core.connectionmanager.pool;
 
+import org.ironjacamar.core.api.connectionmanager.pool.PoolConfiguration;
 import org.ironjacamar.core.connectionmanager.ConnectionManager;
+import org.ironjacamar.core.connectionmanager.Credential;
+import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
+
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Semaphore;
+
+import javax.resource.ResourceException;
 
 /**
  * The base class for all pool implementations
@@ -31,13 +39,93 @@ public abstract class AbstractPool implements Pool
 {
    /** The connection manager */
    protected ConnectionManager cm;
+
+   /** The pool configuration */
+   protected PoolConfiguration poolConfiguration;
+
+   /** The pools */
+   protected ConcurrentHashMap<Credential, ManagedConnectionPool> pools;
+   
+   /** The semaphore */
+   protected Semaphore semaphore;
    
    /**
     * Constructor
     * @param cm The connection manager
+    * @param pc The pool configuration
     */
-   public AbstractPool(ConnectionManager cm)
+   public AbstractPool(ConnectionManager cm, PoolConfiguration pc)
    {
       this.cm = cm;
+      this.poolConfiguration = pc;
+      this.pools = new ConcurrentHashMap<Credential, ManagedConnectionPool>();
+      this.semaphore = new Semaphore(poolConfiguration.getMaxSize());
    }
+
+   /**
+    * {@inheritDoc}
+    */
+   public PoolConfiguration getConfiguration()
+   {
+      return poolConfiguration;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public ConnectionListener getConnectionListener(Credential credential)
+      throws ResourceException
+   {
+      ManagedConnectionPool mcp = pools.get(credential);
+
+      if (mcp == null)
+      {
+         ManagedConnectionPool newMcp = createManagedConnectionPool(credential);
+         if (pools.putIfAbsent(credential, newMcp) == null)
+         {
+            mcp = newMcp;
+         }
+      }
+      
+      return mcp.getConnectionListener();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void returnConnectionListener(ConnectionListener cl, boolean kill) throws ResourceException
+   {
+      ManagedConnectionPool mcp = pools.get(cl.getCredential());
+      mcp.returnConnectionListener(cl, kill);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isFull()
+   {
+      return semaphore.availablePermits() == 0;
+   }
+
+   /**
+    * Create a connection listener
+    * @param credential The credential
+    * @return The connection listener
+    * @exception ResourceException Thrown if the connection listener cannot be created
+    */
+   protected abstract ConnectionListener createConnectionListener(Credential credential) throws ResourceException;
+
+   /**
+    * Destroy a connection listener
+    * @param cl The connection listener
+    * @exception ResourceException Thrown if the connection listener cannot be destroed
+    */
+   protected abstract void destroyConnectionListener(ConnectionListener cl) throws ResourceException;
+
+   /**
+    * Create a new managed connection pool instance
+    * @param credential The credential
+    * @return The instance
+    */
+   protected abstract ManagedConnectionPool createManagedConnectionPool(Credential credential);
 }

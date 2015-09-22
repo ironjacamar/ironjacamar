@@ -70,7 +70,8 @@ public abstract class AbstractConnectionManager implements ConnectionManager
     */
    public Object allocateConnection(ManagedConnectionFactory mcf, ConnectionRequestInfo cri) throws ResourceException
    {
-      return pool.createConnectionListener(null, cri).getConnection(null, cri);
+      Credential credential = new Credential(null, cri, false);
+      return pool.getConnectionListener(credential).getConnection();
    }
 
    /**
@@ -81,7 +82,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    {
       try
       {
-         pool.destroyConnectionListener((org.ironjacamar.core.connectionmanager.listener.ConnectionListener)cl);
+         pool.returnConnectionListener((org.ironjacamar.core.connectionmanager.listener.ConnectionListener)cl, kill);
       }
       catch (Exception e)
       {

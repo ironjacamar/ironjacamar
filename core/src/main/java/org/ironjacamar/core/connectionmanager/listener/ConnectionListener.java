@@ -21,9 +21,9 @@
 
 package org.ironjacamar.core.connectionmanager.listener;
 
+import org.ironjacamar.core.connectionmanager.Credential;
+
 import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.security.auth.Subject;
 
 /**
  * The internal connection listener API.
@@ -32,12 +32,36 @@ import javax.security.auth.Subject;
  */
 public interface ConnectionListener extends org.ironjacamar.core.api.connectionmanager.listener.ConnectionListener
 {
+   /** FREE state */
+   public int FREE = 1;
+
+   /** IN_USE state */
+   public int IN_USE = 2;
+
+   /** DESTROY state */
+   public int DESTROY = 3;
+
+   /** DESTROYED state */
+   public int DESTROYED = 4;
+
+   /**
+    * Change the state of the connection listener
+    * @param currentState The current state
+    * @param newState The new state
+    * @return True if the state was changed, otherwise false
+    */
+   public boolean changeState(int currentState, int newState);
+
+   /**
+    * Get the credentials
+    * @return The value
+    */
+   public Credential getCredential();
+
    /**
     * Get a connection
-    * @param subject The subject
-    * @param cri The connection request info
     * @return The connection
     * @exception ResourceException Thrown if a connection can't be obtained
     */
-   public Object getConnection(Subject subject, ConnectionRequestInfo cri) throws ResourceException;
+   public Object getConnection() throws ResourceException;
 }

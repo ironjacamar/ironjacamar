@@ -19,28 +19,29 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.connectionmanager.listener;
+package org.ironjacamar.core.connectionmanager.pool;
 
-import org.ironjacamar.core.api.connectionmanager.ConnectionManager;
-import org.ironjacamar.core.connectionmanager.Credential;
+import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
 
-import javax.resource.spi.ManagedConnection;
+import javax.resource.ResourceException;
 
 /**
- * The NoTransaction connection listener
- * 
- * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ * ManagedConnectionPool
  */
-public class NoTransactionConnectionListener extends AbstractConnectionListener
+public interface ManagedConnectionPool
 {
    /**
-    * Constructor
-    * @param cm The connection manager
-    * @param mc The managed connection
-    * @param credential The credential
+    * Get a connection listener
+    * @return The connection listener
+    * @exception ResourceException Thrown if the connection listener cannot be created
     */
-   public NoTransactionConnectionListener(ConnectionManager cm, ManagedConnection mc, Credential credential)
-   {
-      super(cm, mc, credential);
-   }
+   public ConnectionListener getConnectionListener() throws ResourceException;
+
+   /**
+    * Return a connection listener
+    * @param cl The connection listener
+    * @param kill Kill the connection listener
+    * @exception ResourceException Thrown if the connection listener cannot be destroed
+    */
+   public void returnConnectionListener(ConnectionListener cl, boolean kill) throws ResourceException;
 }

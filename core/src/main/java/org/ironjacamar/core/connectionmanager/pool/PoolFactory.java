@@ -21,7 +21,9 @@
 
 package org.ironjacamar.core.connectionmanager.pool;
 
+import org.ironjacamar.core.api.connectionmanager.pool.PoolConfiguration;
 import org.ironjacamar.core.connectionmanager.ConnectionManager;
+import org.ironjacamar.core.connectionmanager.pool.dflt.DefaultPool;
 
 /**
  * The pool factory
@@ -40,10 +42,11 @@ public class PoolFactory
     * Create a pool
     * @param type The type
     * @param cm The connection manager
+    * @param pc The pool configuration
     * @return The pool
     */
-   public static Pool createPool(String type, ConnectionManager cm)
+   public static Pool createPool(String type, ConnectionManager cm, PoolConfiguration pc)
    {
-      return new DefaultPool(cm);
+      return new DefaultPool(cm, pc);
    }
 }
