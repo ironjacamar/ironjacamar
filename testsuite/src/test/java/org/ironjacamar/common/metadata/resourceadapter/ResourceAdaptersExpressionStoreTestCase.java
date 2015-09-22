@@ -35,7 +35,8 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.junit.Test;
+import org.junit.Ignore;
+//import org.junit.Test;
 import org.w3c.dom.Document;
 
 import static org.junit.Assert.assertEquals;
@@ -54,7 +55,7 @@ public class ResourceAdaptersExpressionStoreTestCase
     * Test stored values changed by environment variables
     *  
     */
-   @Test
+   @Ignore
    public void testStoreEnvVariables()
    {
       System.setProperty("Property4", "Value4");
