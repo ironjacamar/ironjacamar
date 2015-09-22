@@ -79,7 +79,7 @@ allprojects {
   }
 
   jacoco {
-    toolVersion = '0.7.4.201502262128'
+    toolVersion = '0.7.5.201505241946'
   }
 }
 
@@ -225,7 +225,7 @@ subprojects { subProject ->
     configFile = rootProject.file('tools/checkstyle/checkstyle.xml')
     showViolations = true
     ignoreFailures = false
-    toolVersion = '6.6'
+    toolVersion = '6.10.1'
   }
 
   checkstyleMain.exclude '**/*_$bundle*'
@@ -233,7 +233,6 @@ subprojects { subProject ->
 
   distZip.enabled = false
   distTar.enabled = false
-  assembleMainDist.enabled = false
   
   tasks.withType(Jar){
     doFirst{
@@ -279,5 +278,5 @@ tasks.withType(Tar) {
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '2.4'
+  gradleVersion = '2.7'
 }
