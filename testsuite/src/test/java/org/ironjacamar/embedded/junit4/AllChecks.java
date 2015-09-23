@@ -23,6 +23,8 @@ package org.ironjacamar.embedded.junit4;
 import org.ironjacamar.core.api.deploymentrepository.DeploymentRepository;
 import org.ironjacamar.core.api.metadatarepository.MetadataRepository;
 
+import org.jboss.threads.QueueExecutor;
+
 /**
  * Verify all container objects
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
@@ -51,7 +53,6 @@ public class AllChecks extends Condition
 
          if (dr.getDeployments().size() > 0)
             throw new ConditionException("DeploymentRepository contains deployments: " + dr.getDeployments());
-
          MetadataRepository mr = resolver.lookup("MetadataRepository", MetadataRepository.class);
 
          if (mr == null)
@@ -59,6 +60,16 @@ public class AllChecks extends Condition
 
          if (mr.getMetadata().size() > 0)
             throw new ConditionException("MetadataRepository contains metadata: " + mr.getMetadata());
+
+         QueueExecutor srThread = resolver.lookup("ShortRunningThreadPool", QueueExecutor.class);
+         if (srThread.getQueueSize() > 0)
+            throw new ConditionException("ShortRunningThreadPool is not idle");
+
+         QueueExecutor lrThread = resolver.lookup("LongRunningThreadPool", QueueExecutor.class);
+         if (lrThread.getQueueSize() > 0)
+            throw new ConditionException("LongRunningThreadPool is not idle");
+
+
       }
       catch (ConditionException ce)
       {
