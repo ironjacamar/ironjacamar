@@ -90,8 +90,18 @@ public class ActivationDeployment implements Deployment
    {
       for (org.ironjacamar.core.api.deploymentrepository.Deployment d : deployments)
       {
-         // d.deactivate();
-         deploymentRepository.unregisterDeployment(d);
+         try
+         {
+            d.deactivate();
+         }
+         catch (Exception e)
+         {
+            e.printStackTrace();
+         }
+         finally
+         {
+            deploymentRepository.unregisterDeployment(d);
+         }
       }
    }
 }
