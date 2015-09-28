@@ -26,6 +26,7 @@ import org.jboss.jca.adapters.jdbc.BaseWrapperManagedConnectionFactory;
 import org.jboss.jca.adapters.jdbc.classloading.TCClassLoaderPlugin;
 import org.jboss.jca.adapters.jdbc.spi.URLSelectorStrategy;
 import org.jboss.jca.adapters.jdbc.util.Injection;
+import org.jboss.jca.core.util.PreferredClasses;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -420,13 +421,17 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       }
 
       Class<?> clz = null;
-      try
+      clz = PreferredClasses.getInstance().getClass(className);
+      if (clz == null)
       {
-         clz = Class.forName(className, true, getClassLoaderPlugin().getClassLoader());
-      }
-      catch (ClassNotFoundException cnfe)
-      {
-         // Not found
+         try
+         {
+            clz = Class.forName(className, true, getClassLoaderPlugin().getClassLoader());
+         }
+         catch (ClassNotFoundException cnfe)
+         {
+            // Not found
+         }
       }
 
       if (clz == null)
