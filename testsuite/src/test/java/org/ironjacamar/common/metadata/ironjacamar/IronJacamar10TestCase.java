@@ -240,7 +240,7 @@ public class IronJacamar10TestCase
             assertNull(s.getSecurityDomainAndApplication());
 
             assertEquals(5000L, (long)t.getBlockingTimeoutMillis());
-            assertEquals(4L, (long)t.getIdleTimeoutMinutes());
+            assertEquals(4, (int)t.getIdleTimeoutMinutes());
             assertEquals(2L, (long)t.getAllocationRetry());
             assertEquals(3000L, (long)t.getAllocationRetryWaitMillis());
             assertEquals(300L, (long)t.getXaResourceTimeout());

@@ -63,7 +63,7 @@ public class TimeoutImpl extends org.ironjacamar.common.metadata.common.TimeoutI
     * @param expressions expressions
     * @throws ValidateException ValidateException
     */
-   public TimeoutImpl(Long blockingTimeoutMillis, Long idleTimeoutMinutes, Integer allocationRetry,
+   public TimeoutImpl(Long blockingTimeoutMillis, Integer idleTimeoutMinutes, Integer allocationRetry,
                       Long allocationRetryWaitMillis, Integer xaResourceTimeout,
                       Boolean setTxQueryTimeout, Long queryTimeout,
                       Long useTryLock, Map<String, String> expressions) throws ValidateException

@@ -47,7 +47,7 @@ public class TimeoutImpl extends AbstractMetadata implements Timeout
    protected Long blockingTimeoutMillis;
 
    /** idleTimeoutMinutes **/
-   protected Long idleTimeoutMinutes;
+   protected Integer idleTimeoutMinutes;
 
    /** allocationRetry **/
    protected Integer allocationRetry;
@@ -69,7 +69,7 @@ public class TimeoutImpl extends AbstractMetadata implements Timeout
     * @param expressions expressions
     * @throws ValidateException ValidateException
     */
-   public TimeoutImpl(Long blockingTimeoutMillis, Long idleTimeoutMinutes, Integer allocationRetry,
+   public TimeoutImpl(Long blockingTimeoutMillis, Integer idleTimeoutMinutes, Integer allocationRetry,
                       Long allocationRetryWaitMillis, Integer xaResourceTimeout,
                       Map<String, String> expressions) throws ValidateException
    {
@@ -93,7 +93,7 @@ public class TimeoutImpl extends AbstractMetadata implements Timeout
    /**
     * {@inheritDoc}
     */
-   public Long getIdleTimeoutMinutes()
+   public Integer getIdleTimeoutMinutes()
    {
       return idleTimeoutMinutes;
    }

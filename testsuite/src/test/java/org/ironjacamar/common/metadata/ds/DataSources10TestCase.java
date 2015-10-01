@@ -255,7 +255,7 @@ public class DataSources10TestCase
       Timeout t = d.getTimeout();
       assertNotNull(t);
       assertEquals(20000L, (long)t.getBlockingTimeoutMillis());
-      assertEquals(4L, (long)t.getIdleTimeoutMinutes());
+      assertEquals(4, (int)t.getIdleTimeoutMinutes());
       assertEquals(120L, (long)t.getQueryTimeout());
       assertEquals(100L, (long)t.getUseTryLock());
       assertEquals(2L, (long)t.getAllocationRetry());
@@ -352,7 +352,7 @@ public class DataSources10TestCase
       t = xd.getTimeout();
       assertNotNull(t);
       assertEquals(20000L, (long)t.getBlockingTimeoutMillis());
-      assertEquals(4L, (long)t.getIdleTimeoutMinutes());
+      assertEquals(4, (int)t.getIdleTimeoutMinutes());
       assertEquals(120L, (long)t.getQueryTimeout());
       assertEquals(100L, (long)t.getUseTryLock());
       assertEquals(2L, (long)t.getAllocationRetry());

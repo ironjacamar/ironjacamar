@@ -41,7 +41,7 @@ public interface Timeout extends JCAMetadata
     *
     * @return the idleTimeoutMinutes.
     */
-   public Long getIdleTimeoutMinutes();
+   public Integer getIdleTimeoutMinutes();
 
    /**
     * Get the allocationRetryWaitMillis.

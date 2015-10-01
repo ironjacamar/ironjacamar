@@ -510,7 +510,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
    {
 
       Long blockingTimeoutMillis = null;
-      Long idleTimeoutMinutes = null;
+      Integer idleTimeoutMinutes = null;
       Boolean setTxQuertTimeout = Defaults.SET_TX_QUERY_TIMEOUT;
       Long queryTimeout = null;
       Integer allocationRetry = null;
@@ -568,7 +568,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      break;
                   }
                   case XML.ELEMENT_IDLE_TIMEOUT_MINUTES : {
-                     idleTimeoutMinutes = elementAsLong(reader, XML.ELEMENT_IDLE_TIMEOUT_MINUTES, expressions);
+                     idleTimeoutMinutes = elementAsInteger(reader, XML.ELEMENT_IDLE_TIMEOUT_MINUTES, expressions);
                      break;
                   }
                   case XML.ELEMENT_QUERY_TIMEOUT : {

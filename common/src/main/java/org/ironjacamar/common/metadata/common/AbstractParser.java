@@ -973,7 +973,7 @@ public abstract class AbstractParser
    {
       Long blockingTimeoutMillis = null;
       Long allocationRetryWaitMillis = null;
-      Long idleTimeoutMinutes = null;
+      Integer idleTimeoutMinutes = null;
       Integer allocationRetry = null;
       Integer xaResourceTimeout = null;
 
@@ -1018,7 +1018,7 @@ public abstract class AbstractParser
                      break;
                   }
                   case CommonXML.ELEMENT_IDLE_TIMEOUT_MINUTES : {
-                     idleTimeoutMinutes = elementAsLong(reader, CommonXML.ELEMENT_IDLE_TIMEOUT_MINUTES, expressions);
+                     idleTimeoutMinutes = elementAsInteger(reader, CommonXML.ELEMENT_IDLE_TIMEOUT_MINUTES, expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_XA_RESOURCE_TIMEOUT : {
