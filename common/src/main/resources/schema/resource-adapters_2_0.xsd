@@ -486,16 +486,6 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="use-strict-min" type="xs:boolean" minOccurs="0" maxOccurs="1">
-        <xs:annotation>
-          <xs:documentation>
-            <![CDATA[[
-              Define if the min-pool-size should be considered strictly.
-              Default false
-             ]]>
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
       <xs:element name="flush-strategy" type="xs:token" minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation>

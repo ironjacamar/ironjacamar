@@ -230,7 +230,6 @@ public class IronJacamar10TestCase
             assertEquals(5, (int)xpool.getMaxPoolSize());
             assertEquals(FlushStrategy.IDLE_CONNECTIONS, xpool.getFlushStrategy());
             assertTrue(xpool.isPrefill());
-            assertTrue(xpool.isUseStrictMin());
             assertTrue(xpool.isIsSameRmOverride());
             assertTrue(xpool.isNoTxSeparatePool());
             assertTrue(xpool.isPadXid());
@@ -280,7 +279,6 @@ public class IronJacamar10TestCase
             assertEquals(20, (int)xpool.getMaxPoolSize());
             assertEquals(FlushStrategy.ENTIRE_POOL, xpool.getFlushStrategy());
             assertFalse(xpool.isPrefill());
-            assertFalse(xpool.isUseStrictMin());
             assertFalse(xpool.isIsSameRmOverride());
             assertFalse(xpool.isNoTxSeparatePool());
             assertFalse(xpool.isPadXid());
@@ -322,7 +320,6 @@ public class IronJacamar10TestCase
             assertEquals(20, (int)xpool.getMaxPoolSize());
             assertEquals(FlushStrategy.FAILING_CONNECTION_ONLY, xpool.getFlushStrategy());
             assertFalse(xpool.isPrefill());
-            assertFalse(xpool.isUseStrictMin());
             assertNull(xpool.isIsSameRmOverride());
             assertFalse(xpool.isNoTxSeparatePool());
             assertFalse(xpool.isPadXid());

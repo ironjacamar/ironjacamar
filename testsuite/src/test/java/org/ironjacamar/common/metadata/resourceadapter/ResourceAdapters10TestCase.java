@@ -229,7 +229,6 @@ public class ResourceAdapters10TestCase
                   assertEquals(5, (int)pool.getMaxPoolSize());
                   assertEquals(FlushStrategy.IDLE_CONNECTIONS, pool.getFlushStrategy());
                   assertTrue(pool.isPrefill());
-                  assertTrue(pool.isUseStrictMin());
                   assertTrue(pool.isIsSameRmOverride());
                   assertTrue(pool.isNoTxSeparatePool());
                   assertTrue(pool.isPadXid());
@@ -276,7 +275,6 @@ public class ResourceAdapters10TestCase
                   assertEquals(20, (int)pool.getMaxPoolSize());
                   assertEquals(FlushStrategy.ENTIRE_POOL, pool.getFlushStrategy());
                   assertFalse(pool.isPrefill());
-                  assertFalse(pool.isUseStrictMin());
                   assertFalse(pool.isIsSameRmOverride());
                   assertFalse(pool.isNoTxSeparatePool());
                   assertFalse(pool.isPadXid());
@@ -313,7 +311,6 @@ public class ResourceAdapters10TestCase
                   assertEquals(20, (int)pool.getMaxPoolSize());
                   assertEquals(FlushStrategy.FAILING_CONNECTION_ONLY, pool.getFlushStrategy());
                   assertFalse(pool.isPrefill());
-                  assertFalse(pool.isUseStrictMin());
                   assertNull(pool.isIsSameRmOverride());
                   assertFalse(pool.isNoTxSeparatePool());
                   assertFalse(pool.isPadXid());
@@ -383,7 +380,6 @@ public class ResourceAdapters10TestCase
             assertEquals(20, (int)pool.getMaxPoolSize());
             assertEquals(FlushStrategy.FAILING_CONNECTION_ONLY, pool.getFlushStrategy());
             assertFalse(pool.isPrefill());
-            assertFalse(pool.isUseStrictMin());
             
             assertNull(cd.getSecurity());
             assertNull(cd.getTimeout());
@@ -414,7 +410,6 @@ public class ResourceAdapters10TestCase
             assertEquals(5, (int)pool.getMaxPoolSize());
             assertEquals(FlushStrategy.IDLE_CONNECTIONS, pool.getFlushStrategy());
             assertTrue(pool.isPrefill());
-            assertTrue(pool.isUseStrictMin());
             
             assertNull(cd.getSecurity());
             assertNull(cd.getTimeout());

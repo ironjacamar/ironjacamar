@@ -347,7 +347,6 @@ public abstract class AbstractParser
       Integer initialPoolSize = Defaults.INITIAL_POOL_SIZE;;
       Integer maxPoolSize = Defaults.MAX_POOL_SIZE;
       Boolean prefill = Defaults.PREFILL;
-      Boolean useStrictMin = Defaults.USE_STRICT_MIN;
       FlushStrategy flushStrategy = Defaults.FLUSH_STRATEGY;
       Capacity capacity = null;
 
@@ -374,14 +373,13 @@ public abstract class AbstractParser
                switch (reader.getLocalName())
                {
                   case CommonXML.ELEMENT_POOL :
-                     return new PoolImpl(type, minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin,
+                     return new PoolImpl(type, minPoolSize, initialPoolSize, maxPoolSize, prefill,
                            flushStrategy, capacity,
                            expressions.size() > 0 ? expressions : null);
                   case CommonXML.ELEMENT_MAX_POOL_SIZE :
                   case CommonXML.ELEMENT_MIN_POOL_SIZE :
                   case CommonXML.ELEMENT_INITIAL_POOL_SIZE :
                   case CommonXML.ELEMENT_PREFILL :
-                  case CommonXML.ELEMENT_USE_STRICT_MIN :
                   case CommonXML.ELEMENT_FLUSH_STRATEGY :
                   case CommonXML.ELEMENT_CAPACITY :
                      break;
@@ -406,10 +404,6 @@ public abstract class AbstractParser
                   }
                   case CommonXML.ELEMENT_PREFILL : {
                      prefill = elementAsBoolean(reader, CommonXML.ELEMENT_PREFILL, expressions);
-                     break;
-                  }
-                  case CommonXML.ELEMENT_USE_STRICT_MIN : {
-                     useStrictMin = elementAsBoolean(reader, CommonXML.ELEMENT_USE_STRICT_MIN, expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_FLUSH_STRATEGY : {
@@ -454,7 +448,6 @@ public abstract class AbstractParser
       Boolean padXid = Defaults.PAD_XID;
       Boolean noTxSeparatePool = Defaults.NO_TX_SEPARATE_POOL;
       Boolean wrapXaDataSource = Defaults.WRAP_XA_RESOURCE;
-      Boolean useStrictMin = Defaults.USE_STRICT_MIN;
 
       HashMap<String, String> expressions = new HashMap<String, String>();
 
@@ -479,7 +472,7 @@ public abstract class AbstractParser
                switch (reader.getLocalName())
                {
                   case CommonXML.ELEMENT_XA_POOL :
-                     return new XaPoolImpl(type, minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin,
+                     return new XaPoolImpl(type, minPoolSize, initialPoolSize, maxPoolSize, prefill,
                            flushStrategy, capacity,
                            isSameRmOverride, padXid,
                            wrapXaDataSource, noTxSeparatePool,
@@ -492,7 +485,6 @@ public abstract class AbstractParser
                   case CommonXML.ELEMENT_PAD_XID :
                   case CommonXML.ELEMENT_WRAP_XA_RESOURCE :
                   case CommonXML.ELEMENT_PREFILL :
-                  case CommonXML.ELEMENT_USE_STRICT_MIN :
                   case CommonXML.ELEMENT_FLUSH_STRATEGY :
                   case CommonXML.ELEMENT_CAPACITY :
                      break;
@@ -533,10 +525,6 @@ public abstract class AbstractParser
                   }
                   case CommonXML.ELEMENT_PREFILL : {
                      prefill = elementAsBoolean(reader, CommonXML.ELEMENT_PREFILL, expressions);
-                     break;
-                  }
-                  case CommonXML.ELEMENT_USE_STRICT_MIN : {
-                     useStrictMin = elementAsBoolean(reader, CommonXML.ELEMENT_USE_STRICT_MIN, expressions);
                      break;
                   }
                   case CommonXML.ELEMENT_FLUSH_STRATEGY : {

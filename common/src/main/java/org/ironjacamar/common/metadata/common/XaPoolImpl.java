@@ -59,7 +59,6 @@ public class XaPoolImpl extends PoolImpl implements XaPool
     * @param initialPoolSize initialPoolSize
     * @param maxPoolSize maxPoolSize
     * @param prefill prefill
-    * @param useStrictMin useStrictMin
     * @param flushStrategy flushStrategy
     * @param capacity capacity
     * @param isSameRmOverride isSameRmOverride
@@ -70,14 +69,14 @@ public class XaPoolImpl extends PoolImpl implements XaPool
     * @throws ValidateException ValidateException
     */
    public XaPoolImpl(String type, Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize,
-                     Boolean prefill, Boolean useStrictMin,
+                     Boolean prefill,
                      FlushStrategy flushStrategy, Capacity capacity,
                      Boolean isSameRmOverride,
                      Boolean padXid, Boolean wrapXaResource,
                      Boolean noTxSeparatePool,
                      Map<String, String> expressions) throws ValidateException
    {
-      super(type, minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin,
+      super(type, minPoolSize, initialPoolSize, maxPoolSize, prefill,
             flushStrategy, capacity, expressions);
       this.isSameRmOverride = isSameRmOverride;
       this.padXid = padXid;
@@ -218,13 +217,6 @@ public class XaPoolImpl extends PoolImpl implements XaPool
          sb.append("<").append(CommonXML.ELEMENT_PREFILL).append(">");
          sb.append(prefill);
          sb.append("</").append(CommonXML.ELEMENT_PREFILL).append(">");
-      }
-
-      if (useStrictMin != null && !Defaults.USE_STRICT_MIN.equals(useStrictMin))
-      {
-         sb.append("<").append(CommonXML.ELEMENT_USE_STRICT_MIN).append(">");
-         sb.append(useStrictMin);
-         sb.append("</").append(CommonXML.ELEMENT_USE_STRICT_MIN).append(">");
       }
 
       if (flushStrategy != null && !Defaults.FLUSH_STRATEGY.equals(flushStrategy))

@@ -876,14 +876,6 @@ public abstract class CommonIronJacamarParser extends AbstractParser
          writer.writeEndElement();
       }
 
-      if (pool.isUseStrictMin() != null && (pool.hasExpression(CommonXML.ELEMENT_USE_STRICT_MIN) ||
-                                            !Defaults.USE_STRICT_MIN.equals(pool.isUseStrictMin())))
-      {
-         writer.writeStartElement(CommonXML.ELEMENT_USE_STRICT_MIN);
-         writer.writeCharacters(pool.getValue(CommonXML.ELEMENT_USE_STRICT_MIN, pool.isUseStrictMin().toString()));
-         writer.writeEndElement();
-      }
-
       if (pool.getFlushStrategy() != null && (pool.hasExpression(CommonXML.ELEMENT_FLUSH_STRATEGY) ||
                                               !Defaults.FLUSH_STRATEGY.equals(pool.getFlushStrategy())))
       {
@@ -941,14 +933,6 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       {
          writer.writeStartElement(CommonXML.ELEMENT_PREFILL);
          writer.writeCharacters(pool.getValue(CommonXML.ELEMENT_PREFILL, pool.isPrefill().toString()));
-         writer.writeEndElement();
-      }
-
-      if (pool.isUseStrictMin() != null && (pool.hasExpression(CommonXML.ELEMENT_USE_STRICT_MIN) ||
-                                            !Defaults.USE_STRICT_MIN.equals(pool.isUseStrictMin())))
-      {
-         writer.writeStartElement(CommonXML.ELEMENT_USE_STRICT_MIN);
-         writer.writeCharacters(pool.getValue(CommonXML.ELEMENT_USE_STRICT_MIN, pool.isUseStrictMin().toString()));
          writer.writeEndElement();
       }
 

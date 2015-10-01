@@ -55,7 +55,6 @@ public class DsXaPoolImpl extends org.ironjacamar.common.metadata.common.XaPoolI
     * @param initialPoolSize initialPoolSize
     * @param maxPoolSize maxPoolSize
     * @param prefill prefill
-    * @param useStrictMin useStrictMin
     * @param flushStrategy flushStrategy
     * @param isSameRmOverride isSameRmOverride
     * @param padXid padXid
@@ -69,7 +68,7 @@ public class DsXaPoolImpl extends org.ironjacamar.common.metadata.common.XaPoolI
     */
    public DsXaPoolImpl(String type,
                        Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize,
-                       Boolean prefill, Boolean useStrictMin,
+                       Boolean prefill,
                        FlushStrategy flushStrategy,
                        Boolean isSameRmOverride,
                        Boolean padXid, Boolean wrapXaResource,
@@ -78,7 +77,7 @@ public class DsXaPoolImpl extends org.ironjacamar.common.metadata.common.XaPoolI
                        Capacity capacity, Extension connectionListener,
                        Map<String, String> expressions) throws ValidateException
    {
-      super(type, minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy, capacity,
+      super(type, minPoolSize, initialPoolSize, maxPoolSize, prefill, flushStrategy, capacity,
             isSameRmOverride, padXid, wrapXaResource, noTxSeparatePool, expressions);
 
       this.allowMultipleUsers = allowMultipleUsers;
@@ -188,13 +187,6 @@ public class DsXaPoolImpl extends org.ironjacamar.common.metadata.common.XaPoolI
          sb.append("<").append(XML.ELEMENT_PREFILL).append(">");
          sb.append(prefill);
          sb.append("</").append(XML.ELEMENT_PREFILL).append(">");
-      }
-
-      if (useStrictMin != null && !Defaults.USE_STRICT_MIN.equals(useStrictMin))
-      {
-         sb.append("<").append(XML.ELEMENT_USE_STRICT_MIN).append(">");
-         sb.append(useStrictMin);
-         sb.append("</").append(XML.ELEMENT_USE_STRICT_MIN).append(">");
       }
 
       if (flushStrategy != null && !Defaults.FLUSH_STRATEGY.equals(flushStrategy))

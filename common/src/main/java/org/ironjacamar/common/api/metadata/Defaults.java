@@ -100,11 +100,6 @@ public interface Defaults
    public static final Boolean PREFILL = Boolean.FALSE;
    
    /**
-    * Use strict min
-    */
-   public static final Boolean USE_STRICT_MIN = Boolean.FALSE;
-   
-   /**
     * Flush strategy
     */
    public static final FlushStrategy FLUSH_STRATEGY = FlushStrategy.FAILING_CONNECTION_ONLY;

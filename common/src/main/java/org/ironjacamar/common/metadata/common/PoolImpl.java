@@ -72,11 +72,6 @@ public class PoolImpl extends AbstractMetadata implements Pool
    protected Boolean prefill;
 
    /**
-    * use-strict-min
-    */
-   protected Boolean useStrictMin;
-
-   /**
     * flush-strategy
     */
    protected FlushStrategy flushStrategy;
@@ -94,14 +89,13 @@ public class PoolImpl extends AbstractMetadata implements Pool
     * @param initialPoolSize initialPoolSize
     * @param maxPoolSize maxPoolSize
     * @param prefill prefill
-    * @param useStrictMin useStrictMin
     * @param flushStrategy flushStrategy
     * @param capacity capacity
     * @param expressions expressions
     * @throws ValidateException ValidateException
     */
    public PoolImpl(String type, Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize,
-                   Boolean prefill, Boolean useStrictMin,
+                   Boolean prefill,
                    FlushStrategy flushStrategy, Capacity capacity,
                    Map<String, String> expressions)
       throws ValidateException
@@ -112,7 +106,6 @@ public class PoolImpl extends AbstractMetadata implements Pool
       this.initialPoolSize = initialPoolSize;
       this.maxPoolSize = maxPoolSize;
       this.prefill = prefill;
-      this.useStrictMin = useStrictMin;
       this.flushStrategy = flushStrategy;
       this.capacity = capacity;
       this.validate();
@@ -156,14 +149,6 @@ public class PoolImpl extends AbstractMetadata implements Pool
    public Boolean isPrefill()
    {
       return prefill;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public Boolean isUseStrictMin()
-   {
-      return useStrictMin;
    }
 
    /**
@@ -216,7 +201,6 @@ public class PoolImpl extends AbstractMetadata implements Pool
       result = prime * result + ((initialPoolSize == null) ? 0 : initialPoolSize.hashCode());
       result = prime * result + ((maxPoolSize == null) ? 0 : maxPoolSize.hashCode());
       result = prime * result + ((prefill == null) ? 0 : prefill.hashCode());
-      result = prime * result + ((useStrictMin == null) ? 0 : useStrictMin.hashCode());
       result = prime * result + ((flushStrategy == null) ? 0 : flushStrategy.hashCode());
       return result;
    }
@@ -267,13 +251,6 @@ public class PoolImpl extends AbstractMetadata implements Pool
             return false;
       }
       else if (!prefill.equals(other.prefill))
-         return false;
-      if (useStrictMin == null)
-      {
-         if (other.useStrictMin != null)
-            return false;
-      }
-      else if (!useStrictMin.equals(other.useStrictMin))
          return false;
       if (flushStrategy == null)
       {
@@ -336,13 +313,6 @@ public class PoolImpl extends AbstractMetadata implements Pool
          sb.append("<").append(CommonXML.ELEMENT_PREFILL).append(">");
          sb.append(prefill);
          sb.append("</").append(CommonXML.ELEMENT_PREFILL).append(">");
-      }
-
-      if (useStrictMin != null && !Defaults.USE_STRICT_MIN.equals(useStrictMin))
-      {
-         sb.append("<").append(CommonXML.ELEMENT_USE_STRICT_MIN).append(">");
-         sb.append(useStrictMin);
-         sb.append("</").append(CommonXML.ELEMENT_USE_STRICT_MIN).append(">");
       }
 
       if (flushStrategy != null && !Defaults.FLUSH_STRATEGY.equals(flushStrategy))

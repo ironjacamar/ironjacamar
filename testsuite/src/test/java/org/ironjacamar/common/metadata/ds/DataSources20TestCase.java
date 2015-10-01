@@ -217,7 +217,6 @@ public class DataSources20TestCase
       assertEquals(2, (int)pool.getInitialPoolSize());
       assertEquals(5, (int)pool.getMaxPoolSize());
       assertTrue(pool.isPrefill());
-      assertTrue(pool.isUseStrictMin());
       assertEquals(FlushStrategy.ALL_CONNECTIONS, pool.getFlushStrategy());
       assertTrue(pool.isAllowMultipleUsers());
       Capacity cp = pool.getCapacity();
@@ -317,7 +316,6 @@ public class DataSources20TestCase
       assertEquals(2, (int)xpool.getInitialPoolSize());
       assertEquals(5, (int)xpool.getMaxPoolSize());
       assertTrue(xpool.isPrefill());
-      assertTrue(xpool.isUseStrictMin());
       assertEquals(FlushStrategy.GRACEFULLY, xpool.getFlushStrategy());
       assertTrue(xpool.isIsSameRmOverride());
       assertTrue(xpool.isNoTxSeparatePool());

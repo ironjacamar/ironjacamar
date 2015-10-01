@@ -57,7 +57,6 @@ public class DsPoolImpl extends org.ironjacamar.common.metadata.common.PoolImpl 
     * @param initialPoolSize initialPoolSize
     * @param maxPoolSize maxPoolSize
     * @param prefill prefill
-    * @param useStrictMin useStrictMin
     * @param flushStrategy flushStrategy
     * @param allowMultipleUsers allowMultipleUsers
     * @param capacity capacity
@@ -66,13 +65,13 @@ public class DsPoolImpl extends org.ironjacamar.common.metadata.common.PoolImpl 
     * @throws ValidateException ValidateException
     */
    public DsPoolImpl(String type, Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize, 
-                     Boolean prefill, Boolean useStrictMin,
+                     Boolean prefill,
                      FlushStrategy flushStrategy, Boolean allowMultipleUsers,
                      Capacity capacity, Extension connectionListener,
                      Map<String, String> expressions)
       throws ValidateException
    {
-      super(type, minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin,
+      super(type, minPoolSize, initialPoolSize, maxPoolSize, prefill,
             flushStrategy, capacity, expressions);
       this.allowMultipleUsers = allowMultipleUsers;
       this.connectionListener = connectionListener;
@@ -183,13 +182,6 @@ public class DsPoolImpl extends org.ironjacamar.common.metadata.common.PoolImpl 
          sb.append("<").append(XML.ELEMENT_PREFILL).append(">");
          sb.append(prefill);
          sb.append("</").append(XML.ELEMENT_PREFILL).append(">");
-      }
-
-      if (useStrictMin != null && !Defaults.USE_STRICT_MIN.equals(useStrictMin))
-      {
-         sb.append("<").append(XML.ELEMENT_USE_STRICT_MIN).append(">");
-         sb.append(useStrictMin);
-         sb.append("</").append(XML.ELEMENT_USE_STRICT_MIN).append(">");
       }
 
       if (flushStrategy != null && !Defaults.FLUSH_STRATEGY.equals(flushStrategy))

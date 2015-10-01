@@ -31,7 +31,6 @@
 	<initial-pool-size>${initial-pool-size:2}</initial-pool-size>
 	<max-pool-size>${max-pool-size:5}</max-pool-size>
 	<prefill>${prefill:false}</prefill>
-	<use-strict-min>${use-strict-min:true}</use-strict-min>
 	<flush-strategy>${flush-strategy:IdleConnections}</flush-strategy>
         <capacity>
           <incrementer class-name="${incrementer:ic}">

@@ -342,11 +342,6 @@ public interface CommonXML
    public static final String ELEMENT_USE_FAST_FAIL = "use-fast-fail";
 
    /**
-    * use-strict-min
-    */
-   public static final String ELEMENT_USE_STRICT_MIN = "use-strict-min";
-
-   /**
     * validate-on-match
     */
    public static final String ELEMENT_VALIDATE_ON_MATCH = "validate-on-match";

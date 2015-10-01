@@ -64,13 +64,6 @@ public interface Pool extends JCAMetadata, ValidatableMetadata
    public Boolean isPrefill();
 
    /**
-    * Get the useStrictMin.
-    *
-    * @return the useStrictMin.
-    */
-   public Boolean isUseStrictMin();
-
-   /**
     * Get the flush strategy
     * @return The value
     */

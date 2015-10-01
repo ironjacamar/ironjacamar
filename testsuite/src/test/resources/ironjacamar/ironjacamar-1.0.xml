@@ -18,7 +18,6 @@
 	<min-pool-size>1</min-pool-size>
 	<max-pool-size>5</max-pool-size>
 	<prefill>true</prefill>
-	<use-strict-min>true</use-strict-min>
 	<flush-strategy>IdleConnections</flush-strategy>
 	<is-same-rm-override>true</is-same-rm-override>
 	<no-tx-separate-pools />
@@ -56,7 +55,6 @@
 			   enabled="false">
       <xa-pool>
 	<prefill>false</prefill>
-	<use-strict-min>false</use-strict-min>
 	<flush-strategy>EntirePool</flush-strategy>
 	<is-same-rm-override>false</is-same-rm-override>
 	<pad-xid>false</pad-xid>

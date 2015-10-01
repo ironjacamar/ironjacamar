@@ -213,7 +213,6 @@ public class DataSources11TestCase
       assertEquals(1, (int)pool.getMinPoolSize());
       assertEquals(5, (int)pool.getMaxPoolSize());
       assertTrue(pool.isPrefill());
-      assertTrue(pool.isUseStrictMin());
       assertEquals(FlushStrategy.ENTIRE_POOL, pool.getFlushStrategy());
       assertTrue(pool.isAllowMultipleUsers());
       
@@ -296,7 +295,6 @@ public class DataSources11TestCase
       assertEquals(1, (int)xpool.getMinPoolSize());
       assertEquals(5, (int)xpool.getMaxPoolSize());
       assertTrue(xpool.isPrefill());
-      assertTrue(xpool.isUseStrictMin());
       assertEquals(FlushStrategy.IDLE_CONNECTIONS, xpool.getFlushStrategy());
       assertTrue(xpool.isIsSameRmOverride());
       assertTrue(xpool.isNoTxSeparatePool());

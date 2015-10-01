@@ -686,7 +686,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Integer initialPoolSize = Defaults.INITIAL_POOL_SIZE;
       Integer maxPoolSize = Defaults.MAX_POOL_SIZE;
       Boolean prefill = Defaults.PREFILL;
-      Boolean useStrictMin = Defaults.USE_STRICT_MIN;
       FlushStrategy flushStrategy = Defaults.FLUSH_STRATEGY;
       Boolean allowMultipleUsers = Defaults.ALLOW_MULTIPLE_USERS;
       Capacity capacity = null;
@@ -714,7 +713,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
             case END_ELEMENT : {
                if (XML.ELEMENT_POOL.equals(reader.getLocalName()))
                {
-                  return new DsPoolImpl(type, minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin,
+                  return new DsPoolImpl(type, minPoolSize, initialPoolSize, maxPoolSize, prefill,
                                         flushStrategy, allowMultipleUsers, capacity, connectionListener,
                                         expressions.size() > 0 ? expressions : null);
                }
@@ -726,7 +725,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      case XML.ELEMENT_INITIAL_POOL_SIZE :
                      case XML.ELEMENT_MIN_POOL_SIZE :
                      case XML.ELEMENT_PREFILL :
-                     case XML.ELEMENT_USE_STRICT_MIN :
                      case XML.ELEMENT_FLUSH_STRATEGY :
                      case XML.ELEMENT_ALLOW_MULTIPLE_USERS :
                      case XML.ELEMENT_CAPACITY :
@@ -755,10 +753,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   }
                   case XML.ELEMENT_PREFILL : {
                      prefill = elementAsBoolean(reader, XML.ELEMENT_PREFILL, expressions);
-                     break;
-                  }
-                  case XML.ELEMENT_USE_STRICT_MIN : {
-                     useStrictMin = elementAsBoolean(reader, XML.ELEMENT_USE_STRICT_MIN, expressions);
                      break;
                   }
                   case XML.ELEMENT_FLUSH_STRATEGY : {
@@ -813,7 +807,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Boolean padXid = Defaults.PAD_XID;
       Boolean noTxSeparatePool = Defaults.NO_TX_SEPARATE_POOL;
       Boolean wrapXaDataSource = Defaults.WRAP_XA_RESOURCE;
-      Boolean useStrictMin = Defaults.USE_STRICT_MIN;
 
       HashMap<String, String> expressions = new HashMap<String, String>();
 
@@ -837,7 +830,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
             case END_ELEMENT : {
                if (XML.ELEMENT_XA_POOL.equals(reader.getLocalName()))
                {
-                  return new DsXaPoolImpl(type, minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin,
+                  return new DsXaPoolImpl(type, minPoolSize, initialPoolSize, maxPoolSize, prefill,
                                           flushStrategy, isSameRmOverride, padXid,
                                           wrapXaDataSource, noTxSeparatePool, allowMultipleUsers, capacity,
                                           connectionListener,
@@ -855,7 +848,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      case XML.ELEMENT_PAD_XID :
                      case XML.ELEMENT_WRAP_XA_RESOURCE :
                      case XML.ELEMENT_PREFILL :
-                     case XML.ELEMENT_USE_STRICT_MIN :
                      case XML.ELEMENT_FLUSH_STRATEGY :
                      case XML.ELEMENT_ALLOW_MULTIPLE_USERS :
                      case XML.ELEMENT_CAPACITY :
@@ -900,10 +892,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   }
                   case XML.ELEMENT_PREFILL : {
                      prefill = elementAsBoolean(reader, XML.ELEMENT_PREFILL, expressions);
-                     break;
-                  }
-                  case XML.ELEMENT_USE_STRICT_MIN : {
-                     useStrictMin = elementAsBoolean(reader, XML.ELEMENT_USE_STRICT_MIN, expressions);
                      break;
                   }
                   case XML.ELEMENT_FLUSH_STRATEGY : {
@@ -1685,14 +1673,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
          writer.writeEndElement();
       }
 
-      if (pool.isUseStrictMin() != null && (pool.hasExpression(XML.ELEMENT_USE_STRICT_MIN) ||
-                                            !Defaults.USE_STRICT_MIN.equals(pool.isUseStrictMin())))
-      {
-         writer.writeStartElement(XML.ELEMENT_USE_STRICT_MIN);
-         writer.writeCharacters(pool.getValue(XML.ELEMENT_USE_STRICT_MIN, pool.isUseStrictMin().toString()));
-         writer.writeEndElement();
-      }
-
       if (pool.getFlushStrategy() != null && (pool.hasExpression(XML.ELEMENT_FLUSH_STRATEGY) ||
                                               !Defaults.FLUSH_STRATEGY.equals(pool.getFlushStrategy())))
       {
@@ -1775,14 +1755,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       {
          writer.writeStartElement(XML.ELEMENT_PREFILL);
          writer.writeCharacters(pool.getValue(XML.ELEMENT_PREFILL, pool.isPrefill().toString()));
-         writer.writeEndElement();
-      }
-
-      if (pool.isUseStrictMin() != null && (pool.hasExpression(XML.ELEMENT_USE_STRICT_MIN) ||
-                                            !Defaults.USE_STRICT_MIN.equals(pool.isUseStrictMin())))
-      {
-         writer.writeStartElement(XML.ELEMENT_USE_STRICT_MIN);
-         writer.writeCharacters(pool.getValue(XML.ELEMENT_USE_STRICT_MIN, pool.isUseStrictMin().toString()));
          writer.writeEndElement();
       }
 

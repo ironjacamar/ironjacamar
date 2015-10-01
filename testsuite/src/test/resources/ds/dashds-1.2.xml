@@ -17,7 +17,6 @@
       <initial-pool-size>2</initial-pool-size>
       <max-pool-size>5</max-pool-size>
       <prefill>true</prefill>
-      <use-strict-min>true</use-strict-min>
       <flush-strategy>AllConnections</flush-strategy>
       <allow-multiple-users/>
       <capacity>
@@ -89,7 +88,6 @@
       <initial-pool-size>2</initial-pool-size>
       <max-pool-size>5</max-pool-size>
       <prefill>true</prefill>
-      <use-strict-min>true</use-strict-min>
       <flush-strategy>Gracefully</flush-strategy>
       <allow-multiple-users/>
       <capacity>

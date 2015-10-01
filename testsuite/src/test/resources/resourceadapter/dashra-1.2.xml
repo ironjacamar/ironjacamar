@@ -22,7 +22,6 @@
 	  <initial-pool-size>5</initial-pool-size>
 	  <max-pool-size>5</max-pool-size>
 	  <prefill>true</prefill>
-	  <use-strict-min>true</use-strict-min>
 	  <flush-strategy>IdleConnections</flush-strategy>
           <capacity>
             <incrementer class-name="ic">
@@ -66,7 +65,6 @@
 			     enabled="false" sharable="false" enlistment="false" connectable="false">
 	<xa-pool>
 	  <prefill>false</prefill>
-	  <use-strict-min>false</use-strict-min>
 	  <flush-strategy>EntirePool</flush-strategy>
 	  <is-same-rm-override>false</is-same-rm-override>
 	  <pad-xid>false</pad-xid>
@@ -116,7 +114,6 @@
 	  <initial-pool-size>5</initial-pool-size>
 	  <max-pool-size>5</max-pool-size>
 	  <prefill>true</prefill>
-	  <use-strict-min>true</use-strict-min>
 	  <flush-strategy>IdleConnections</flush-strategy>
           <capacity>
             <incrementer class-name="ic">
@@ -143,7 +140,6 @@
       <connection-definition jndi-name="java:jboss/name9">
         <pool>
 	  <prefill>false</prefill>
-	  <use-strict-min>false</use-strict-min>
 	</pool>
       </connection-definition>
     </connection-definitions>
