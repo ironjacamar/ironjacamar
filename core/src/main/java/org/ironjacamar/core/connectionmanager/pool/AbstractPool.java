@@ -81,7 +81,8 @@ public abstract class AbstractPool implements Pool
       if (mcp == null)
       {
          ManagedConnectionPool newMcp = createManagedConnectionPool(credential);
-         if (pools.putIfAbsent(credential, newMcp) == null)
+         mcp = pools.putIfAbsent(credential, newMcp);
+         if (mcp == null)
          {
             mcp = newMcp;
          }

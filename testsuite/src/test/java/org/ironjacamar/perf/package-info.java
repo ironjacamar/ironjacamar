@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2014, Red Hat Inc, and individual contributors
+ * Copyright 2015, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,32 +19,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-dependencies {
-  testCompile parent.subprojects.sourceSets.main.output
-}
-
-compileTestJava {
-  classpath += project.sourceSets.main.runtimeClasspath
-}
-
-test {
-  exclude '**/*PerfTestCase*'
-  jacoco {
-    append = false
-  }
-  finalizedBy jacocoTestReport
-}
-
-jar.enabled = false
-
-jacocoTestReport {
-  group = "Reporting"
-  description = "Generate Jacoco coverage reports after running tests."
-  sourceDirectories = files(parent.subprojects.sourceSets.main.allSource.srcDirs)
-  classDirectories  = files(parent.subprojects.sourceSets.main.output)
-  reports {
-    xml.enabled true
-    csv.enabled false
-    html.enabled true
-  }
-}
+/**
+ * Performance test cases for IronJacamar
+ */
+package org.ironjacamar.perf;

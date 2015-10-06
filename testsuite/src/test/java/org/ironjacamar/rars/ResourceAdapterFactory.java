@@ -99,9 +99,16 @@ public class ResourceAdapterFactory
    /**
     * Create the perf.rar deployment
     * @param tsl The transaction support level
+    * @param ccm Use CCM
+    * @param txBeginDuration The begin duration for the transaction
+    * @param txCommitDuration The commit duration for the transaction
+    * @param poolSize The pool size
     * @return The resource adapter descriptor
     */
-   public static ResourceAdaptersDescriptor createPerfDeployment(TransactionSupportLevel tsl)
+   public static ResourceAdaptersDescriptor createPerfDeployment(TransactionSupportLevel tsl,
+                                                                 boolean ccm,
+                                                                 long txBeginDuration, long txCommitDuration,
+                                                                 int poolSize)
    {
       ResourceAdaptersDescriptor dashRaXml = Descriptors.create(ResourceAdaptersDescriptor.class, "perf-ra.xml");
 
@@ -122,16 +129,29 @@ public class ResourceAdapterFactory
       ConnectionDefinitionsType dashRaXmlCdst = dashRaXmlRt.getOrCreateConnectionDefinitions();
       org.ironjacamar.embedded.dsl.resourceadapters20.api.ConnectionDefinitionType dashRaXmlCdt =
          dashRaXmlCdst.createConnectionDefinition()
-            .className(PerfManagedConnectionFactory.class.getName())
-            .jndiName("java:/eis/PerfConnectionFactory").poolName("PerfConnectionFactory");
+         .className(PerfManagedConnectionFactory.class.getName())
+         .jndiName("java:/eis/PerfConnectionFactory").poolName("PerfConnectionFactory")
+         .useCcm(ccm);
 
-      org.ironjacamar.embedded.dsl.resourceadapters20.api.XaPoolType dashRaXmlPt = dashRaXmlCdt.getOrCreateXaPool()
-         .minPoolSize(0).initialPoolSize(0).maxPoolSize(10);
+      dashRaXmlCdt.createConfigProperty().name("TxBeginDuration").text(Long.toString(txBeginDuration));
+      dashRaXmlCdt.createConfigProperty().name("TxCommitDuration").text(Long.toString(txCommitDuration));
+
+      org.ironjacamar.embedded.dsl.resourceadapters20.api.TimeoutType dashRaXmlTt = dashRaXmlCdt.getOrCreateTimeout()
+         .idleTimeoutMinutes(Integer.valueOf(0));
 
       if (tsl == TransactionSupportLevel.XATransaction)
       {
+         org.ironjacamar.embedded.dsl.resourceadapters20.api.XaPoolType dashRaXmlPt = dashRaXmlCdt.getOrCreateXaPool()
+            .minPoolSize(poolSize).initialPoolSize(poolSize).maxPoolSize(poolSize).prefill(Boolean.TRUE)
+            .wrapXaResource(Boolean.FALSE);
+
          org.ironjacamar.embedded.dsl.resourceadapters20.api.RecoverType dashRaXmlRyt =
             dashRaXmlCdt.getOrCreateRecovery().noRecovery(Boolean.TRUE);
+      }
+      else
+      {
+         org.ironjacamar.embedded.dsl.resourceadapters20.api.PoolType dashRaXmlPt = dashRaXmlCdt.getOrCreatePool()
+            .minPoolSize(poolSize).initialPoolSize(poolSize).maxPoolSize(poolSize).prefill(Boolean.TRUE);
       }
 
       return dashRaXml;
