@@ -78,7 +78,6 @@
       <flush-strategy>IdleConnections</flush-strategy>
       <allow-multiple-users/>
       <is-same-rm-override>true</is-same-rm-override>
-      <no-tx-separate-pools/>
       <pad-xid>true</pad-xid>
       <wrap-xa-resource>false</wrap-xa-resource>
     </xa-pool>

@@ -59,7 +59,6 @@ public class DsXaPoolImpl extends org.ironjacamar.common.metadata.common.XaPoolI
     * @param isSameRmOverride isSameRmOverride
     * @param padXid padXid
     * @param wrapXaResource wrapXaResource
-    * @param noTxSeparatePool noTxSeparatePool
     * @param allowMultipleUsers allowMultipleUsers
     * @param capacity capacity
     * @param connectionListener connectionListener
@@ -72,13 +71,12 @@ public class DsXaPoolImpl extends org.ironjacamar.common.metadata.common.XaPoolI
                        FlushStrategy flushStrategy,
                        Boolean isSameRmOverride,
                        Boolean padXid, Boolean wrapXaResource,
-                       Boolean noTxSeparatePool,
                        Boolean allowMultipleUsers,
                        Capacity capacity, Extension connectionListener,
                        Map<String, String> expressions) throws ValidateException
    {
       super(type, minPoolSize, initialPoolSize, maxPoolSize, prefill, flushStrategy, capacity,
-            isSameRmOverride, padXid, wrapXaResource, noTxSeparatePool, expressions);
+            isSameRmOverride, padXid, wrapXaResource, expressions);
 
       this.allowMultipleUsers = allowMultipleUsers;
       this.connectionListener = connectionListener;
@@ -234,11 +232,6 @@ public class DsXaPoolImpl extends org.ironjacamar.common.metadata.common.XaPoolI
          sb.append("<").append(XML.ELEMENT_IS_SAME_RM_OVERRIDE).append(">");
          sb.append(isSameRmOverride);
          sb.append("</").append(XML.ELEMENT_IS_SAME_RM_OVERRIDE).append(">");
-      }
-
-      if (noTxSeparatePool != null && Boolean.TRUE.equals(noTxSeparatePool))
-      {
-         sb.append("<").append(XML.ELEMENT_NO_TX_SEPARATE_POOLS).append("/>");
       }
 
       if (padXid != null && !Defaults.PAD_XID.equals(padXid))

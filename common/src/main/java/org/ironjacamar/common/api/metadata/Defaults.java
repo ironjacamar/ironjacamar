@@ -115,11 +115,6 @@ public interface Defaults
    public static final Boolean PAD_XID = Boolean.FALSE;
    
    /**
-    * No tx separate pool
-    */
-   public static final Boolean NO_TX_SEPARATE_POOL = Boolean.FALSE;
-   
-   /**
     * Wrap XAResource
     */
    public static final Boolean WRAP_XA_RESOURCE = Boolean.TRUE;

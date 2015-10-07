@@ -47,11 +47,4 @@ public interface XaPool extends Pool
     * @return the wrapXaResource.
     */
    public Boolean isWrapXaResource();
-
-   /**
-    * Get the noTxSeparatePool.
-    *
-    * @return the noTxSeparatePool.
-    */
-   public Boolean isNoTxSeparatePool();
 }

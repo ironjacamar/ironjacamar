@@ -296,7 +296,6 @@ public class DataSources10TestCase
       assertTrue(xpool.isPrefill());
       assertEquals(FlushStrategy.IDLE_CONNECTIONS, xpool.getFlushStrategy());
       assertTrue(xpool.isIsSameRmOverride());
-      assertTrue(xpool.isNoTxSeparatePool());
       assertTrue(xpool.isPadXid());
       assertFalse(xpool.isWrapXaResource());
  

@@ -257,11 +257,6 @@ public interface CommonXML
    public static final String ELEMENT_MIN_POOL_SIZE = "min-pool-size";
 
    /**
-    * no-tx-separate-pools
-    */
-   public static final String ELEMENT_NO_TX_SEPARATE_POOLS = "no-tx-separate-pools";
-
-   /**
     * pad-xid
     */
    public static final String ELEMENT_PAD_XID = "pad-xid";

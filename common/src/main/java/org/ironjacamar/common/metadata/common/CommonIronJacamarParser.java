@@ -955,11 +955,6 @@ public abstract class CommonIronJacamarParser extends AbstractParser
          writer.writeEndElement();
       }
 
-      if (pool.isNoTxSeparatePool() != null && Boolean.TRUE.equals(pool.isNoTxSeparatePool()))
-      {
-         writer.writeEmptyElement(CommonXML.ELEMENT_NO_TX_SEPARATE_POOLS);
-      }
-
       if (pool.isPadXid() != null && (pool.hasExpression(CommonXML.ELEMENT_PAD_XID) ||
                                       !Defaults.PAD_XID.equals(pool.isPadXid())))
       {

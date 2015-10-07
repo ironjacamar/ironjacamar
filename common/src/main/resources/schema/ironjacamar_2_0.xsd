@@ -445,16 +445,6 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="use-strict-min" type="xs:boolean" minOccurs="0" maxOccurs="1">
-        <xs:annotation>
-          <xs:documentation>
-            <![CDATA[[
-              Specifies if the min-pool-size should be considered strictly.
-              Default false
-             ]]>
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
       <xs:element name="flush-strategy" type="xs:token" minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation>
@@ -498,18 +488,6 @@
                   The is-same-rm-override element allows one to unconditionally 
                   set whether the javax.transaction.xa.XAResource.isSameRM(XAResource) returns 
                   true or false. Ex: <is-same-rm-override>true</is-same-rm-override>
-                 ]]>
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element name="no-tx-separate-pools" type="boolean-presenceType" minOccurs="0">
-            <xs:annotation>
-              <xs:documentation>
-                <![CDATA[[
-                  Oracle does not like XA connections getting used both inside and outside a JTA transaction. 
-                  To workaround the problem you can create separate sub-pools for the different contexts
-                  using <no-tx-separate-pools/>
-                  Ex: <no-tx-separate-pools/>
                  ]]>
               </xs:documentation>
             </xs:annotation>

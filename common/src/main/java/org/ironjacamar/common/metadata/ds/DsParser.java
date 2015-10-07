@@ -805,7 +805,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Extension connectionListener = null;
       Boolean isSameRmOverride = Defaults.IS_SAME_RM_OVERRIDE;
       Boolean padXid = Defaults.PAD_XID;
-      Boolean noTxSeparatePool = Defaults.NO_TX_SEPARATE_POOL;
       Boolean wrapXaDataSource = Defaults.WRAP_XA_RESOURCE;
 
       HashMap<String, String> expressions = new HashMap<String, String>();
@@ -832,7 +831,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                {
                   return new DsXaPoolImpl(type, minPoolSize, initialPoolSize, maxPoolSize, prefill,
                                           flushStrategy, isSameRmOverride, padXid,
-                                          wrapXaDataSource, noTxSeparatePool, allowMultipleUsers, capacity,
+                                          wrapXaDataSource, allowMultipleUsers, capacity,
                                           connectionListener,
                                           expressions.size() > 0 ? expressions : null);
                }
@@ -844,7 +843,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      case XML.ELEMENT_INITIAL_POOL_SIZE :
                      case XML.ELEMENT_MIN_POOL_SIZE :
                      case XML.ELEMENT_IS_SAME_RM_OVERRIDE :
-                     case XML.ELEMENT_NO_TX_SEPARATE_POOLS :
                      case XML.ELEMENT_PAD_XID :
                      case XML.ELEMENT_WRAP_XA_RESOURCE :
                      case XML.ELEMENT_PREFILL :
@@ -876,10 +874,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   }
                   case XML.ELEMENT_IS_SAME_RM_OVERRIDE : {
                      isSameRmOverride = elementAsBoolean(reader, XML.ELEMENT_IS_SAME_RM_OVERRIDE, expressions);
-                     break;
-                  }
-                  case XML.ELEMENT_NO_TX_SEPARATE_POOLS : {
-                     noTxSeparatePool = elementAsBoolean(reader, XML.ELEMENT_NO_TX_SEPARATE_POOLS, expressions);
                      break;
                   }
                   case XML.ELEMENT_PAD_XID : {
@@ -1804,11 +1798,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
          writer.writeStartElement(XML.ELEMENT_IS_SAME_RM_OVERRIDE);
          writer.writeCharacters(pool.getValue(XML.ELEMENT_IS_SAME_RM_OVERRIDE, pool.isIsSameRmOverride().toString()));
          writer.writeEndElement();
-      }
-
-      if (pool.isNoTxSeparatePool() != null && Boolean.TRUE.equals(pool.isNoTxSeparatePool()))
-      {
-         writer.writeEmptyElement(XML.ELEMENT_NO_TX_SEPARATE_POOLS);
       }
 
       if (pool.isPadXid() != null && (pool.hasExpression(XML.ELEMENT_PAD_XID) ||

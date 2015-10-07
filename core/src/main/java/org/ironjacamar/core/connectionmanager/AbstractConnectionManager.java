@@ -70,7 +70,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
     */
    public Object allocateConnection(ManagedConnectionFactory mcf, ConnectionRequestInfo cri) throws ResourceException
    {
-      Credential credential = new Credential(null, cri, false);
+      Credential credential = new Credential(null, cri);
       return pool.getConnectionListener(credential).getConnection();
    }
 

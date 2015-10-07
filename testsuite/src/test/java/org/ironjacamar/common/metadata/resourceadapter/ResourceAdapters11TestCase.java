@@ -240,7 +240,6 @@ public class ResourceAdapters11TestCase
                   assertEquals(FlushStrategy.IDLE_CONNECTIONS, pool.getFlushStrategy());
                   assertTrue(pool.isPrefill());
                   assertTrue(pool.isIsSameRmOverride());
-                  assertTrue(pool.isNoTxSeparatePool());
                   assertTrue(pool.isPadXid());
                   assertFalse(pool.isWrapXaResource());
                   assertNotNull(cp);
@@ -292,7 +291,6 @@ public class ResourceAdapters11TestCase
                   assertEquals(FlushStrategy.ENTIRE_POOL, pool.getFlushStrategy());
                   assertFalse(pool.isPrefill());
                   assertFalse(pool.isIsSameRmOverride());
-                  assertFalse(pool.isNoTxSeparatePool());
                   assertFalse(pool.isPadXid());
                   assertTrue(pool.isWrapXaResource());
                   assertNull(pool.getCapacity());
@@ -332,7 +330,6 @@ public class ResourceAdapters11TestCase
                   assertEquals(FlushStrategy.FAILING_CONNECTION_ONLY, pool.getFlushStrategy());
                   assertFalse(pool.isPrefill());
                   assertNull(pool.isIsSameRmOverride());
-                  assertFalse(pool.isNoTxSeparatePool());
                   assertFalse(pool.isPadXid());
                   assertTrue(pool.isWrapXaResource());
                   assertNull(pool.getCapacity());

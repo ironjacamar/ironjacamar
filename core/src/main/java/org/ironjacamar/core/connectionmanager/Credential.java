@@ -36,9 +36,6 @@ public final class Credential
    /** The connection request information */
    private final ConnectionRequestInfo cri;
    
-   /** Separate no tx */
-   private boolean separateNoTx;
-
    /** The cached hashCode */
    private int hashCode;
 
@@ -46,13 +43,11 @@ public final class Credential
     * Constructor
     * @param subject subject instance
     * @param cri connection request info
-    * @param separateNoTx seperateNoTx
     */
-   public Credential(Subject subject, ConnectionRequestInfo cri, boolean separateNoTx)
+   public Credential(Subject subject, ConnectionRequestInfo cri)
    {
       this.subject = subject;
       this.cri = cri;
-      this.separateNoTx = separateNoTx;
       this.hashCode = Integer.MAX_VALUE;
    }
 
@@ -72,15 +67,6 @@ public final class Credential
    public ConnectionRequestInfo getConnectionRequestInfo()
    {
       return cri;
-   }
-   
-   /**
-    * Is seperateNoTx 
-    * @return The value
-    */
-   public boolean isSeparateNoTx()
-   {
-      return separateNoTx;
    }
    
    /**
@@ -116,10 +102,6 @@ public final class Credential
             result = cri.equals(other.cri);
          else
             result = other.cri == null;
-      }
-      if (result)
-      {
-         result = separateNoTx == other.separateNoTx;
       }
       
       return result;
