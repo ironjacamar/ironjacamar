@@ -23,6 +23,7 @@ package org.jboss.jca.common.metadata.merge;
 
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.ds.DataSources;
+import org.jboss.jca.common.api.metadata.ds.XaDataSource;
 import org.jboss.jca.common.api.metadata.resourceadapter.Activation;
 import org.jboss.jca.common.api.metadata.resourceadapter.Activations;
 import org.jboss.jca.common.api.metadata.spec.ConfigProperty;
@@ -39,6 +40,7 @@ import org.jboss.jca.common.metadata.spec.RaParser;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -220,9 +222,18 @@ public class MergerTestCase
 
          //then merged properties are presents
 
+         // recreate config-property-value string from datasource
+         XaDataSource xads = ds.getXaDataSource().get(0);
+         StringBuffer configPropertyValueBuf = new StringBuffer();
+         for (Map.Entry<String, String> xaConfigProperty : xads.getXaDataSourceProperty().entrySet())
+         {
+            configPropertyValueBuf.append(xaConfigProperty.getKey());
+            configPropertyValueBuf.append("=");
+            configPropertyValueBuf.append(xaConfigProperty.getValue());
+            configPropertyValueBuf.append(";");
+         }
          assertThat(mergedProperties, hasItem(Merger.ConfigPropertyFactory.createConfigProperty(
-               Merger.ConfigPropertyFactory.Prototype.XADATASOURCEPROPERTIES,
-               "DatabaseName=database_name;User=user;ServerName=server_name;PortNumber=5432;" + "Password=password;")));
+               Merger.ConfigPropertyFactory.Prototype.XADATASOURCEPROPERTIES, configPropertyValueBuf.toString())));
 
          assertThat(mergedProperties, hasItem(Merger.ConfigPropertyFactory.createConfigProperty(
                Merger.ConfigPropertyFactory.Prototype.XADATASOURCECLASS, "org.postgresql.xa.PGXADataSource")));
