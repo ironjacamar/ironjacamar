@@ -1614,6 +1614,8 @@ public abstract class AbstractResourceAdapterDeployer
                                     Boolean wrapXAResource = Defaults.WRAP_XA_RESOURCE;
                                     Boolean padXid = Defaults.PAD_XID;
                                     Recovery recoveryMD = null;
+                                    Boolean enlistmentTrace = Defaults.ENLISTMENT_TRACE;
+                                    
                                     if (connectionDefinition != null && connectionDefinition.isXa())
                                     {
                                        XaPool xaPool = (XaPool)connectionDefinition.getPool();
@@ -1637,6 +1639,9 @@ public abstract class AbstractResourceAdapterDeployer
 
                                     pool.setInterleaving(interleaving.booleanValue());
 
+                                    if (connectionDefinition != null)
+                                       enlistmentTrace = connectionDefinition.isEnlistmentTrace();
+                                    
                                     cm = cmf.createTransactional(tsl, pool,
                                                                  getSubjectFactory(securityDomain), securityDomain,
                                                                  useCCM, getCachedConnectionManager(),
@@ -1644,7 +1649,7 @@ public abstract class AbstractResourceAdapterDeployer
                                                                  enlistment,
                                                                  connectable,
                                                                  tracking,
-                                                                 null,
+                                                                 enlistmentTrace,
                                                                  flushStrategy,
                                                                  allocationRetry, allocationRetryWaitMillis,
                                                                  getTransactionIntegration(),

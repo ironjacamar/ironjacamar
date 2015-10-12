@@ -583,6 +583,7 @@ public class Main
                                                           poolName, Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT,
                                                           Defaults.USE_CCM, Defaults.SHARABLE, Defaults.ENLISTMENT,
                                                           Defaults.CONNECTABLE, Defaults.TRACKING, Defaults.MCP,
+                                                          Defaults.ENLISTMENT_TRACE,
                                                           pool, null, null,
                                                           secImpl, recovery, Boolean.TRUE);
                }
@@ -593,6 +594,7 @@ public class Main
                                                           poolName, Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT,
                                                           Defaults.USE_CCM, Defaults.SHARABLE, Defaults.ENLISTMENT,
                                                           Defaults.CONNECTABLE, Defaults.TRACKING, Defaults.MCP,
+                                                          Defaults.ENLISTMENT_TRACE,
                                                           pool, null, null,
                                                           secImpl, null, Boolean.FALSE);
                }

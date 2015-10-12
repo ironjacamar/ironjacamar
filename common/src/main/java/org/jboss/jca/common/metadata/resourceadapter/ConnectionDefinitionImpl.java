@@ -95,6 +95,8 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
 
    private String mcp;
 
+   private Boolean enlistmentTrace;
+
    /**
     * Create a new ConnectionDefinition.
     *
@@ -110,6 +112,7 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
     * @param connectable connectable
     * @param tracking tracking
     * @param mcp mcp
+    * @param enlistmentTrace enlistmentTrace
     * @param pool pool
     * @param timeOut timeOut
     * @param validation validation
@@ -120,7 +123,7 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
    public ConnectionDefinitionImpl(Map<String, String> configProperties, String className, String jndiName,
                                    String poolName, Boolean enabled, Boolean useJavaContext, Boolean useCcm,
                                    Boolean sharable, Boolean enlistment, Boolean connectable, Boolean tracking,
-                                   String mcp, Pool pool, TimeOut timeOut,
+                                   String mcp, Boolean enlistmentTrace, Pool pool, TimeOut timeOut,
                                    Validation validation, Security security, Recovery recovery, Boolean isXA)
    {
       if (configProperties != null)
@@ -152,6 +155,7 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
       this.tracking = tracking;
 
       this.mcp = mcp;
+      this.enlistmentTrace = enlistmentTrace;
    }
 
    /**
@@ -301,6 +305,14 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
    /**
     * {@inheritDoc}
     */
+   public Boolean isEnlistmentTrace()
+   {
+      return enlistmentTrace;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public int hashCode()
    {
       final int prime = 31;
@@ -326,6 +338,7 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
       result = prime * result + ((tracking == null) ? 0 : tracking.hashCode());
 
       result = prime * result + ((mcp == null) ? 0 : mcp.hashCode());
+      result = prime * result + ((enlistmentTrace == null) ? 0 : enlistmentTrace.hashCode());
 
       return result;
    }
@@ -471,6 +484,13 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
       }
       else if (!mcp.equals(other.mcp))
          return false;
+      if (enlistmentTrace == null)
+      {
+         if (other.enlistmentTrace != null)
+            return false;
+      }
+      else if (!enlistmentTrace.equals(other.enlistmentTrace))
+         return false;
 
       return true;
    }
@@ -520,6 +540,10 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
 
       if (mcp != null)
          sb.append(" ").append(ConnectionDefinition.Attribute.MCP).append("=\"").append(mcp).append("\"");
+
+      if (enlistmentTrace != null)
+         sb.append(" ").append(ConnectionDefinition.Attribute.ENLISTMENT_TRACE).append("=\"")
+            .append(enlistmentTrace).append("\"");
 
       sb.append(">");
 

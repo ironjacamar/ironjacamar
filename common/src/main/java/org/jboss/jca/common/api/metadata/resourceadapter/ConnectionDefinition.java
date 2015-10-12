@@ -164,6 +164,13 @@ public interface ConnectionDefinition extends JCAMetadata
     * @return The value
     */
    public String getMcp();
+
+   /**
+    * Get the enlistment trace
+    *
+    * @return the enlistment trace
+    */
+   public Boolean isEnlistmentTrace();
    
    /**
     *
@@ -350,7 +357,12 @@ public interface ConnectionDefinition extends JCAMetadata
       /** mcp attribute
        *
        */
-      MCP("mcp");
+      MCP("mcp"),
+
+      /**
+       * enlistment trace attribute
+       */
+      ENLISTMENT_TRACE("enlistment-trace");
 
       private String name;
 

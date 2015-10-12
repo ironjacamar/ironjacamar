@@ -372,6 +372,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       Boolean connectable = Defaults.CONNECTABLE;
       Boolean tracking = Defaults.TRACKING;
       String mcp = Defaults.MCP;
+      Boolean enlistmentTrace = Defaults.ENLISTMENT_TRACE;
       int attributeSize = reader.getAttributeCount();
 
       if (isXA == null)
@@ -427,6 +428,10 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                mcp = attributeAsString(reader, attribute.getLocalName());
                break;
             }
+            case ENLISTMENT_TRACE : {
+               enlistmentTrace = attributeAsBoolean(reader, attribute.getLocalName(), Defaults.ENLISTMENT_TRACE);
+               break;
+            }
             default :
                throw new ParserException(bundle.unexpectedAttribute(attribute.getLocalName(), reader.getLocalName()));
          }
@@ -444,7 +449,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
 
                   return new ConnectionDefinitionImpl(configProperties, className, jndiName, poolName, enabled,
                                                       useJavaContext, useCcm, sharable, enlistment,
-                                                      connectable, tracking, mcp,
+                                                      connectable, tracking, mcp, enlistmentTrace,
                                                       pool, timeOut, validation,
                                                       security, recovery, isXA);
                }

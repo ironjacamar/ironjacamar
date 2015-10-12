@@ -138,7 +138,8 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
          new ConnectionDefinitionImpl(connConfigProperty, "FIXME", jndiName, poolName,
                                       Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT, Defaults.USE_CCM,
                                       Defaults.SHARABLE, Defaults.ENLISTMENT, Defaults.CONNECTABLE, Defaults.TRACKING,
-                                      Defaults.MCP, pool, timeOut, validation, security, recovery, isXA);
+                                      Defaults.MCP, Defaults.ENLISTMENT_TRACE,
+                                      pool, timeOut, validation, security, recovery, isXA);
       
       connectionDefinitions = new ArrayList<ConnectionDefinition>();
       connectionDefinitions.add(connDef);
