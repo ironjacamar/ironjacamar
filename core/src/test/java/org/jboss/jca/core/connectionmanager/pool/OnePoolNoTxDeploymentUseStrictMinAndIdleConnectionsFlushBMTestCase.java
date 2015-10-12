@@ -49,7 +49,7 @@ import static org.junit.Assert.*;
 @BMRules(value =
       {
       @BMRule(name = "wait prefill1", 
-         targetClass = "SemaphoreArrayListManagedConnectionPool", 
+         targetClass = "SemaphoreConcurrentLinkedDequeManagedConnectionPool", 
          targetMethod = "initialize", 
          targetLocation = "EXIT",
          action = "waitFor(\"filled\")"),
@@ -64,7 +64,7 @@ import static org.junit.Assert.*;
          targetLocation = "LINE 129",
          action = "waitFor(\"filled\")"),
       @BMRule(name = "filled", 
-         targetClass = "SemaphoreArrayListManagedConnectionPool", 
+         targetClass = "SemaphoreConcurrentLinkedDequeManagedConnectionPool", 
          targetMethod = "fillTo", 
          targetLocation = "EXIT",
          action = "signalWake(\"filled\", true)") 

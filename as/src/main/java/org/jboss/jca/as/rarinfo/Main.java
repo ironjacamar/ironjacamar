@@ -582,7 +582,8 @@ public class Main
                   connImpl = new ConnectionDefinitionImpl(configProperty, mcfClassName, "java:jboss/eis/" + poolName,
                                                           poolName, Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT,
                                                           Defaults.USE_CCM, Defaults.SHARABLE, Defaults.ENLISTMENT,
-                                                          Defaults.CONNECTABLE, Defaults.TRACKING, pool, null, null,
+                                                          Defaults.CONNECTABLE, Defaults.TRACKING, Defaults.MCP,
+                                                          pool, null, null,
                                                           secImpl, recovery, Boolean.TRUE);
                }
                else
@@ -591,7 +592,8 @@ public class Main
                   connImpl = new ConnectionDefinitionImpl(configProperty, mcfClassName, "java:jboss/eis/" + poolName,
                                                           poolName, Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT,
                                                           Defaults.USE_CCM, Defaults.SHARABLE, Defaults.ENLISTMENT,
-                                                          Defaults.CONNECTABLE, Defaults.TRACKING, pool, null, null,
+                                                          Defaults.CONNECTABLE, Defaults.TRACKING, Defaults.MCP,
+                                                          pool, null, null,
                                                           secImpl, null, Boolean.FALSE);
                }
                

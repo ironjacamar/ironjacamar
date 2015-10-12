@@ -160,6 +160,12 @@ public interface ConnectionDefinition extends JCAMetadata
    public Boolean isTracking();
 
    /**
+    * Get mcp
+    * @return The value
+    */
+   public String getMcp();
+   
+   /**
     *
     * A Tag.
     *
@@ -339,7 +345,12 @@ public interface ConnectionDefinition extends JCAMetadata
       /** tracking attribute
        *
        */
-      TRACKING("tracking");
+      TRACKING("tracking"),
+
+      /** mcp attribute
+       *
+       */
+      MCP("mcp");
 
       private String name;
 

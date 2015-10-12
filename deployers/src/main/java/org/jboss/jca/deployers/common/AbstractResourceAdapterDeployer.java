@@ -1518,12 +1518,15 @@ public abstract class AbstractResourceAdapterDeployer
                                     tracking = connectionDefinition.isTracking();
                                  }
 
-                                 String mcpClass = null;
-                                 ManagedConnectionPoolFactory mcpf = new ManagedConnectionPoolFactory();
-                                 if (mcpf.isOverride())
-                                    mcpClass = mcpf.getDefaultImplementation();
+                                 String mcpClass = connectionDefinition != null ? connectionDefinition.getMcp() : null;
                                  if (mcpClass == null)
-                                    mcpClass = ManagedConnectionPoolFactory.DEFAULT_IMPLEMENTATION;
+                                 {
+                                    ManagedConnectionPoolFactory mcpf = new ManagedConnectionPoolFactory();
+                                    if (mcpf.isOverride())
+                                       mcpClass = mcpf.getDefaultImplementation();
+                                 }
+                                 if (mcpClass == null)
+                                    mcpClass = ManagedConnectionPoolFactory.EXPERIMENTAL_IMPLEMENTATION;
 
                                  org.jboss.jca.core.connectionmanager.pool.api.Pool pool =
                                     pf.create(strategy, mcf, pc, noTxSeparatePool.booleanValue(),
