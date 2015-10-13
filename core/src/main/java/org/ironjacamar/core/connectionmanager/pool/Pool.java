@@ -60,4 +60,9 @@ public interface Pool
     * @return True if full, otherwise false
     */
    public boolean isFull();
+
+   /**
+    * Shutdown the pool
+    */
+   public void shutdown();
 }

@@ -44,4 +44,9 @@ public interface ManagedConnectionPool
     * @exception ResourceException Thrown if the connection listener cannot be destroed
     */
    public void returnConnectionListener(ConnectionListener cl, boolean kill) throws ResourceException;
+
+   /**
+    * Shutdown the managed connection pool
+    */
+   public void shutdown();
 }

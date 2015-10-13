@@ -42,4 +42,15 @@ public interface ConnectionManager extends org.ironjacamar.core.api.connectionma
     * @return The value
     */
    public ManagedConnectionFactory getManagedConnectionFactory();
+
+   /**
+    * Is shutdown
+    * @return True if shutdown, otherwise false
+    */
+   public boolean isShutdown();
+   
+   /**
+    * Shutdown the connection manager
+    */
+   public void shutdown();
 }

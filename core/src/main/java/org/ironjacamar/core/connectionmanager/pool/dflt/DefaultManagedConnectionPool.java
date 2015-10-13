@@ -116,4 +116,36 @@ public class DefaultManagedConnectionPool implements ManagedConnectionPool
          }
       }
    }
+
+   /**
+    * {@inheritDoc}
+    */
+   public synchronized void shutdown()
+   {
+      for (ConnectionListener cl : listeners)
+      {
+         if (cl.getState() == IN_USE)
+         {
+            // TODO
+         }
+         else if (cl.getState() == DESTROY)
+         {
+            // TODO
+         }
+         
+         try
+         {
+            pool.destroyConnectionListener(cl);
+         }
+         catch (ResourceException re)
+         {
+            // TODO
+         }
+         finally
+         {
+            cl.setState(DESTROYED);
+         }
+      }
+      listeners.clear();
+   }
 }

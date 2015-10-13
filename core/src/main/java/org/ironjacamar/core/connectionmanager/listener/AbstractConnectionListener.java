@@ -83,6 +83,22 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    /**
     * {@inheritDoc}
     */
+   public int getState()
+   {
+      return state.get();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setState(int state)
+   {
+      this.state.set(state);
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
    public Credential getCredential()
    {
       return credential;

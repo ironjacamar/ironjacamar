@@ -176,5 +176,6 @@ public class ConnectionFactoryImpl implements ConnectionFactory
    public void deactivate() throws Exception
    {
       jndiStrategy.unbind(jndiName, cf);
+      ((org.ironjacamar.core.connectionmanager.ConnectionManager)connectionManager).shutdown();
    }
 }

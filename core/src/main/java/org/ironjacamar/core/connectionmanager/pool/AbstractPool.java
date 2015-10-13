@@ -80,11 +80,23 @@ public abstract class AbstractPool implements Pool
 
       if (mcp == null)
       {
-         ManagedConnectionPool newMcp = createManagedConnectionPool(credential);
-         mcp = pools.putIfAbsent(credential, newMcp);
-         if (mcp == null)
+         synchronized (this)
          {
-            mcp = newMcp;
+            mcp = pools.get(credential);
+
+            if (mcp == null)
+            {
+               ManagedConnectionPool newMcp = createManagedConnectionPool(credential);
+               mcp = pools.putIfAbsent(credential, newMcp);
+               if (mcp == null)
+               {
+                  mcp = newMcp;
+               }
+               else
+               {
+                  newMcp.shutdown();
+               }
+            }
          }
       }
       
@@ -106,6 +118,17 @@ public abstract class AbstractPool implements Pool
    public boolean isFull()
    {
       return semaphore.availablePermits() == 0;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public synchronized void shutdown()
+   {
+      for (ManagedConnectionPool mcp : pools.values())
+         mcp.shutdown();
+
+      pools.clear();
    }
 
    /**

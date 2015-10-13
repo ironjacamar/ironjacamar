@@ -53,6 +53,18 @@ public interface ConnectionListener extends org.ironjacamar.core.api.connectionm
    public boolean changeState(int currentState, int newState);
 
    /**
+    * Get the state of the connection listener
+    * @return The state
+    */
+   public int getState();
+
+   /**
+    * Set the state of the connection listener
+    * @param state The state
+    */
+   public void setState(int state);
+
+   /**
     * Get the credentials
     * @return The value
     */

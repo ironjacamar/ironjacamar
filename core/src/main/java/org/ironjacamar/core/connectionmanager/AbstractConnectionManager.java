@@ -23,6 +23,8 @@ package org.ironjacamar.core.connectionmanager;
 
 import org.ironjacamar.core.connectionmanager.pool.Pool;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnectionFactory;
@@ -33,8 +35,11 @@ import javax.resource.spi.ManagedConnectionFactory;
  */
 public abstract class AbstractConnectionManager implements ConnectionManager
 {
+   /** Startup/ShutDown flag */
+   protected final AtomicBoolean shutdown = new AtomicBoolean(false);
+
    /** The managed connection factory */
-   protected ManagedConnectionFactory mcf;
+   protected final ManagedConnectionFactory mcf;
 
    /** The pool */
    protected Pool pool;
@@ -68,8 +73,30 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    /**
     * {@inheritDoc}
     */
+   public synchronized void shutdown()
+   {
+      shutdown.set(true);
+
+      if (pool != null)
+         pool.shutdown();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isShutdown()
+   {
+      return shutdown.get();
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
    public Object allocateConnection(ManagedConnectionFactory mcf, ConnectionRequestInfo cri) throws ResourceException
    {
+      if (shutdown.get())
+         throw new ResourceException();
+      
       Credential credential = new Credential(null, cri);
       return pool.getConnectionListener(credential).getConnection();
    }
