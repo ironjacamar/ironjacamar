@@ -826,11 +826,17 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       try
       {
          checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] commit()", jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
 
-         if (spy)
-            spyLogger.debugf("%s [%s] commit()", jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
-
-         mc.jdbcCommit();
+            mc.jdbcCommit();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
       finally
       {
@@ -849,11 +855,17 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       try
       {
          checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] rollback()", jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
 
-         if (spy)
-            spyLogger.debugf("%s [%s] rollback()", jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
-
-         mc.jdbcRollback();
+            mc.jdbcRollback();
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
       finally
       {
@@ -872,12 +884,18 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       try
       {
          checkTransaction();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] rollback(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION, savepoint);
 
-         if (spy)
-            spyLogger.debugf("%s [%s] rollback(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION, savepoint);
-
-         mc.jdbcRollback(savepoint);
+            mc.jdbcRollback(savepoint);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
       finally
       {
@@ -985,12 +1003,18 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       try
       {
          checkStatus();
+         try
+         {
+            if (spy)
+               spyLogger.debugf("%s [%s] setTransactionIsolation(%s)",
+                                jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION, isolationLevel);
 
-         if (spy)
-            spyLogger.debugf("%s [%s] setTransactionIsolation(%s)",
-                             jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION, isolationLevel);
-
-         mc.setJdbcTransactionIsolation(isolationLevel);
+            mc.setJdbcTransactionIsolation(isolationLevel);
+         }
+         catch (Throwable t)
+         {
+            throw checkException(t);
+         }
       }
       finally
       {
@@ -1587,19 +1611,22 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
 
                mc.getRealConnection().setClientInfo(properties);
             }
-            catch (SQLClientInfoException e)
-            {
-               throw e;
-            }
-            catch (SQLException e)
-            {
-               SQLClientInfoException t = new SQLClientInfoException();
-               t.initCause(e);
-               throw t;
-            }
             catch (Throwable t)
             {
-               throw checkException(t);
+               try
+               {
+                  checkException(t);
+               }
+               catch (SQLClientInfoException e)
+               {
+                  throw e;
+               }
+               catch (SQLException e)
+               {
+                  SQLClientInfoException scie = new SQLClientInfoException();
+                  scie.initCause(e);
+                  throw scie;
+               }
             }
          }
          finally
@@ -1641,19 +1668,22 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
 
                mc.getRealConnection().setClientInfo(name, value);
             }
-            catch (SQLClientInfoException e)
-            {
-               throw e;
-            }
-            catch (SQLException e)
-            {
-               SQLClientInfoException t = new SQLClientInfoException();
-               t.initCause(e);
-               throw t;
-            }
             catch (Throwable t)
             {
-               throw checkException(t);
+               try
+               {
+                  checkException(t);
+               }
+               catch (SQLClientInfoException e)
+               {
+                  throw e;
+               }
+               catch (SQLException e)
+               {
+                  SQLClientInfoException scie = new SQLClientInfoException();
+                  scie.initCause(e);
+                  throw scie;
+               }
             }
          }
          finally
