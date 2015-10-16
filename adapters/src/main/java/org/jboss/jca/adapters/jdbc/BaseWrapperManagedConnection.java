@@ -1048,8 +1048,8 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
    {
       synchronized (stateLock)
       {
-         this.jdbcTransactionIsolation = isolationLevel;
          con.setTransactionIsolation(jdbcTransactionIsolation);
+         this.jdbcTransactionIsolation = isolationLevel;
       }
    }
 
