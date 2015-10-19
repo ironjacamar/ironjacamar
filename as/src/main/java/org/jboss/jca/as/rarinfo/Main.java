@@ -114,6 +114,7 @@ public class Main
    private static final int ERROR = 1;
    private static final int OTHER = 2;
    
+   private static final String EXCEPTIONS_FILE = "-exceptions.txt";
    private static final String REPORT_FILE = "-report.txt";
    private static final String RAXML_FILE = "META-INF/ra.xml";
 
@@ -205,6 +206,7 @@ public class Main
    public static void main(String[] args)
    {
       final int argsLength = args.length;
+      PrintStream error = null;
       PrintStream out = null;
       ZipFile zipFile = null;
       URLClassLoader cl = null;
@@ -306,6 +308,15 @@ public class Main
          else
          {
             out = new PrintStream(rarFile.substring(0, rarFile.length() - 4) + REPORT_FILE);
+         }
+         
+         if (stdout)
+         {
+            error = System.out;
+         } 
+         else 
+         {
+            error = new PrintStream(rarFile.substring(0, rarFile.length() - 4) + EXCEPTIONS_FILE);
          }
          
          String archiveFile;
@@ -429,7 +440,7 @@ public class Main
             out.println("-----------------");
             out.println("Class: " + ra.getResourceadapterClass());
                
-            introspected = getIntrospectedProperties(ra.getResourceadapterClass(), cl);
+            introspected = getIntrospectedProperties(ra.getResourceadapterClass(), cl, error);
 
             if (ra.getConfigProperties() != null)
             {
@@ -496,19 +507,19 @@ public class Main
                if (needPrint)
                {
                   //ValidatingManagedConnectionFactory
-                  hasValidatingMcfInterface(out, mcfClassName, cl);
+                  hasValidatingMcfInterface(out, error, mcfClassName, cl);
 
                   //ResourceAdapterAssociation
-                  hasResourceAdapterAssociation(out, mcfClassName, cl);
+                  hasResourceAdapterAssociation(out, error, mcfClassName, cl);
                   
                   //ManagedConnectionFactory implements javax.resource.spi.TransactionSupport
-                  hasMcfTransactionSupport(out, mcfClassName, cl);
+                  hasMcfTransactionSupport(out, error, mcfClassName, cl);
                   
                   //DissociatableManagedConnection
-                  hasDissociatableMcInterface(out, mcfClassName, cl, mcf.getConfigProperties());
+                  hasDissociatableMcInterface(out, error, mcfClassName, cl, mcf.getConfigProperties());
                      
                   //LazyEnlistableManagedConnection
-                  hasEnlistableMcInterface(out, mcfClassName, cl, mcf.getConfigProperties());
+                  hasEnlistableMcInterface(out, error, mcfClassName, cl, mcf.getConfigProperties());
 
                   //CCI
                   String cfi = getValueString(mcf.getConnectionFactoryInterface());
@@ -535,7 +546,7 @@ public class Main
                   catch (Throwable t)
                   {
                      // Nothing we can do
-                     t.printStackTrace(System.err);
+                     t.printStackTrace(error);
                      out.println("Unknown");
                   }
                }
@@ -544,7 +555,7 @@ public class Main
                if (mcf.getConfigProperties() != null)
                   configProperty = new HashMap<String, String>();
 
-               introspected = getIntrospectedProperties(mcfClassName, cl);
+               introspected = getIntrospectedProperties(mcfClassName, cl, error);
 
                for (ConfigProperty cp : mcf.getConfigProperties())
                {
@@ -624,7 +635,7 @@ public class Main
                   out.println("Class: " + aoClassname);
 
                   //ResourceAdapterAssociation
-                  hasResourceAdapterAssociation(out, aoClassname, cl);
+                  hasResourceAdapterAssociation(out, error, aoClassname, cl);
 
                   out.println("  Interface: " + getValueString(ao.getAdminobjectInterface()));
                   needPrint = true;
@@ -639,7 +650,7 @@ public class Main
                if (ao.getConfigProperties() != null)
                   configProperty = new HashMap<String, String>();
                
-               introspected = getIntrospectedProperties(aoClassname, cl);
+               introspected = getIntrospectedProperties(aoClassname, cl, error);
                
                for (ConfigProperty cp : ao.getConfigProperties())
                {
@@ -698,7 +709,7 @@ public class Main
                   out.println("Class: " + asClassname);
                   out.println("  Message-listener: " + getValueString(ml.getMessagelistenerType()));
 
-                  introspected = getIntrospectedProperties(asClassname, cl);
+                  introspected = getIntrospectedProperties(asClassname, cl, error);
 
                   if (ml.getActivationspec() != null && 
                       ml.getActivationspec().getRequiredConfigProperties() != null)
@@ -741,7 +752,7 @@ public class Main
       catch (Throwable t)
       {
          System.err.println("Error: " + t.getMessage());
-         t.printStackTrace(System.err);
+         t.printStackTrace(error);
          System.exit(ERROR);
       }
       finally
@@ -831,7 +842,7 @@ public class Main
     * @param classname classname
     * @param cl classloader
     */
-   private static void hasValidatingMcfInterface(PrintStream out, String classname, URLClassLoader cl)
+   private static void hasValidatingMcfInterface(PrintStream out, PrintStream error, String classname, URLClassLoader cl)
    {
       try
       {
@@ -850,7 +861,7 @@ public class Main
       catch (Throwable t)
       {
          // Nothing we can do
-         t.printStackTrace(System.err);
+         t.printStackTrace(error);
          out.println("Unknown");
       }
    }
@@ -859,10 +870,11 @@ public class Main
     * hasResourceAdapterAssociation
     *
     * @param out output stream
+    * @param error output stream
     * @param classname classname
     * @param cl classloader
     */
-   private static void hasResourceAdapterAssociation(PrintStream out, String classname, URLClassLoader cl)
+   private static void hasResourceAdapterAssociation(PrintStream out, PrintStream error, String classname, URLClassLoader cl)
    {
       try
       {
@@ -881,7 +893,7 @@ public class Main
       catch (Throwable t)
       {
          // Nothing we can do
-         t.printStackTrace(System.err);
+         t.printStackTrace(error);
          out.println("Unknown");
       }
    }
@@ -890,10 +902,11 @@ public class Main
     * hasMcfTransactionSupport
     *
     * @param out output stream
+    * @param error output stream
     * @param classname classname
     * @param cl classloader
     */
-   private static void hasMcfTransactionSupport(PrintStream out, String classname, URLClassLoader cl)
+   private static void hasMcfTransactionSupport(PrintStream out, PrintStream error, String classname, URLClassLoader cl)
    {
       try
       {
@@ -914,24 +927,24 @@ public class Main
       catch (Throwable t)
       {
          // Nothing we can do
-         t.printStackTrace(System.err);
+         t.printStackTrace(error);
          out.println("Unknown");
       }
    }
 
-   private static void hasDissociatableMcInterface(PrintStream out, String classname, URLClassLoader cl, 
+   private static void hasDissociatableMcInterface(PrintStream out, PrintStream error, String classname, URLClassLoader cl, 
          List<? extends ConfigProperty> listConfProp)
    {
-      hasMcInterface(out, classname, cl, listConfProp, "DissociatableManagedConnection", "Sharable");
+      hasMcInterface(out, error, classname, cl, listConfProp, "DissociatableManagedConnection", "Sharable");
    }
    
-   private static void hasEnlistableMcInterface(PrintStream out, String classname, URLClassLoader cl,
+   private static void hasEnlistableMcInterface(PrintStream out, PrintStream error, String classname, URLClassLoader cl,
          List<? extends ConfigProperty> listConfProp)
    {
-      hasMcInterface(out, classname, cl, listConfProp, "LazyEnlistableManagedConnection", "Enlistment");
+      hasMcInterface(out, error, classname, cl, listConfProp, "LazyEnlistableManagedConnection", "Enlistment");
    }
    
-   private static void hasMcInterface(PrintStream out, String classname, URLClassLoader cl, 
+   private static void hasMcInterface(PrintStream out, PrintStream error, String classname, URLClassLoader cl, 
          List<? extends ConfigProperty> listConfProp, String mcClassName, String tip)
    {
       ManagedConnection mcClz = null;
@@ -965,7 +978,7 @@ public class Main
       catch (Throwable t)
       {
          // Nothing we can do
-         t.printStackTrace(System.err);
+         t.printStackTrace(error);
          out.println("Unknown");
       }
       finally
@@ -1257,7 +1270,7 @@ public class Main
     * @param cl classloader
     * @return The properties (name, type)
     */
-   private static Map<String, String> getIntrospectedProperties(String clz, URLClassLoader cl)
+   private static Map<String, String> getIntrospectedProperties(String clz, URLClassLoader cl, PrintStream error)
    {
       Map<String, String> result = null;
 
@@ -1294,7 +1307,7 @@ public class Main
       catch (Throwable t)
       {
          // Nothing we can do
-         t.printStackTrace(System.err);
+         t.printStackTrace(error);
       }
       return result;
    }
