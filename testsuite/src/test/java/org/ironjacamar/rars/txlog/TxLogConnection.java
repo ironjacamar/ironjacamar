@@ -27,15 +27,34 @@ package org.ironjacamar.rars.txlog;
 public interface TxLogConnection
 {
    /**
+    * Get id
+    * @return The identifier
+    */
+   public String getId();
+
+   /**
     * Get state
     * @return The state string
     */
    public String getState();
 
    /**
+    * Get state
+    * @param id The identifier
+    * @return The state string
+    */
+   public String getState(String id);
+
+   /**
     * Clear state
     */
    public void clearState();
+
+   /**
+    * Clear state
+    * @param id The identifier
+    */
+   public void clearState(String id);
 
    /**
     * Is in pool
