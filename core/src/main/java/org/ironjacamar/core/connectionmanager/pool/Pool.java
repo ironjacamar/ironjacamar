@@ -31,7 +31,7 @@ import javax.resource.ResourceException;
  * A pool
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface Pool
+public interface Pool extends org.ironjacamar.core.api.connectionmanager.pool.Pool
 {
    /**
     * Get the pool configuration

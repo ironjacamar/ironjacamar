@@ -19,25 +19,12 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.api.deploymentrepository;
-
-import org.ironjacamar.core.spi.statistics.StatisticsPlugin;
+package org.ironjacamar.core.api.connectionmanager.pool;
 
 /**
- * A pool
- * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ * The pool
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public interface Pool
 {
-   /**
-    * Get the pool
-    * @return The value
-    */
-   public org.ironjacamar.core.api.connectionmanager.pool.Pool getPool();
-
-   /**
-    * Get the statistics
-    * @return The value
-    */
-   public StatisticsPlugin getStatistics();
 }

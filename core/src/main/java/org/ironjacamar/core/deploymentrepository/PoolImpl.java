@@ -31,7 +31,7 @@ import org.ironjacamar.core.spi.statistics.StatisticsPlugin;
 public class PoolImpl implements Pool
 {
    /** The pool */
-   private org.ironjacamar.core.connectionmanager.pool.Pool pool;
+   private org.ironjacamar.core.api.connectionmanager.pool.Pool pool;
 
    /** The statistics */
    private StatisticsPlugin statistics;
@@ -41,13 +41,21 @@ public class PoolImpl implements Pool
     * @param pool The pool
     * @param statistics The statistics
     */
-   public PoolImpl(org.ironjacamar.core.connectionmanager.pool.Pool pool,
+   public PoolImpl(org.ironjacamar.core.api.connectionmanager.pool.Pool pool,
                    StatisticsPlugin statistics)
    {
       this.pool = pool;
       this.statistics = statistics;
    }
    
+   /**
+    * {@inheritDoc}
+    */
+   public org.ironjacamar.core.api.connectionmanager.pool.Pool getPool()
+   {
+      return pool;
+   }
+
    /**
     * {@inheritDoc}
     */
