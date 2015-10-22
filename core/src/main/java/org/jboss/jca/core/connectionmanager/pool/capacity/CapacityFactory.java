@@ -25,6 +25,7 @@ import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.connectionmanager.pool.api.CapacityDecrementer;
 import org.jboss.jca.core.connectionmanager.pool.api.CapacityIncrementer;
 import org.jboss.jca.core.util.Injection;
+import org.jboss.jca.core.util.PreferredClasses;
 
 import java.util.Map;
 
@@ -218,6 +219,19 @@ public class CapacityFactory
     */
    private static Object loadClass(String clz)
    {
+      try
+      {
+         Class<?> c = PreferredClasses.getInstance().getClass(clz);
+         if (c != null)
+         {
+            return c.newInstance(); 
+         }
+      }
+      catch (Throwable t)
+      {
+         log.tracef("Throwable while loading %s using registered preferred class: %s", clz, t.getMessage());
+      }
+
       try
       {
          Class<?> c = Class.forName(clz, true, SecurityActions.getClassLoader(CapacityFactory.class));

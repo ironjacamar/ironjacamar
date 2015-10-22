@@ -27,6 +27,7 @@ import org.jboss.jca.adapters.jdbc.classloading.TCClassLoaderPlugin;
 import org.jboss.jca.adapters.jdbc.spi.URLXASelectorStrategy;
 import org.jboss.jca.adapters.jdbc.spi.XAData;
 import org.jboss.jca.adapters.jdbc.util.Injection;
+import org.jboss.jca.core.util.PreferredClasses;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -248,13 +249,17 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
       }
 
       Class<?> clz = null;
-      try
+      clz = PreferredClasses.getInstance().getClass(className);
+      if (clz == null)
       {
-         clz = Class.forName(className, true, getClassLoaderPlugin().getClassLoader());
-      }
-      catch (ClassNotFoundException cnfe)
-      {
-         // Not found
+         try
+         {
+            clz = Class.forName(className, true, getClassLoaderPlugin().getClassLoader());
+         }
+         catch (ClassNotFoundException cnfe)
+         {
+            // Not found
+         }          
       }
 
       if (clz == null)

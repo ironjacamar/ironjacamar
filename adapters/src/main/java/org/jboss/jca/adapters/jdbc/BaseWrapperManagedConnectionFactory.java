@@ -37,6 +37,7 @@ import org.jboss.jca.adapters.jdbc.spi.reauth.ReauthPlugin;
 import org.jboss.jca.adapters.jdbc.statistics.JdbcStatisticsPlugin;
 import org.jboss.jca.adapters.jdbc.util.Injection;
 import org.jboss.jca.core.spi.statistics.Statistics;
+import org.jboss.jca.core.util.PreferredClasses;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -758,14 +759,22 @@ public abstract class BaseWrapperManagedConnectionFactory
       Class<?> clz = null;
       ClassLoader usedCl = null;
 
-      try
+      clz = PreferredClasses.getInstance().getClass(reauthPluginClassName);
+      if (clz == null)
       {
-         clz = Class.forName(reauthPluginClassName, true, getClassLoaderPlugin().getClassLoader());
-         usedCl = getClassLoaderPlugin().getClassLoader();
+         try
+         {
+            clz = Class.forName(reauthPluginClassName, true, getClassLoaderPlugin().getClassLoader());
+            usedCl = getClassLoaderPlugin().getClassLoader();
+         }
+         catch (ClassNotFoundException cnfe)
+         {
+            // Not found
+         }
       }
-      catch (ClassNotFoundException cnfe)
+      else
       {
-         // Not found
+         usedCl = SecurityActions.getClassLoader(clz);
       }
 
       if (clz == null)
@@ -893,14 +902,22 @@ public abstract class BaseWrapperManagedConnectionFactory
       Class<?> clz = null;
       ClassLoader usedCl = null;
 
-      try
+      clz = PreferredClasses.getInstance().getClass(connectionListenerClassName);
+      if (clz == null)
       {
-         clz = Class.forName(connectionListenerClassName, true, getClassLoaderPlugin().getClassLoader());
-         usedCl = getClassLoaderPlugin().getClassLoader();
+         try
+         {
+            clz = Class.forName(connectionListenerClassName, true, getClassLoaderPlugin().getClassLoader());
+            usedCl = getClassLoaderPlugin().getClassLoader();
+         }
+         catch (ClassNotFoundException cnfe)
+         {
+            // Not found
+         }
       }
-      catch (ClassNotFoundException cnfe)
+      else
       {
-         // Not found
+         usedCl = SecurityActions.getClassLoader(clz);
       }
 
       if (clz == null)
@@ -1158,13 +1175,17 @@ public abstract class BaseWrapperManagedConnectionFactory
          throw new IllegalArgumentException("Plugin isn't defined");
 
       Class<?> clz = null;
-      try
+      clz = PreferredClasses.getInstance().getClass(plugin);
+      if (clz == null)
       {
-         clz = Class.forName(plugin, true, getClassLoaderPlugin().getClassLoader());
-      }
-      catch (ClassNotFoundException cnfe)
-      {
-         // Not found
+         try
+         {
+            clz = Class.forName(plugin, true, getClassLoaderPlugin().getClassLoader());
+         }
+         catch (ClassNotFoundException cnfe)
+         {
+            // Not found
+         }
       }
 
       if (clz == null)
