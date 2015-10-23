@@ -127,9 +127,6 @@ public abstract class AbstractResourceAdapterDeployer
    /** the logger **/
    protected final DeployersLogger log;
 
-   /** trace boolean check */
-   protected final boolean trace;
-
    /** boolean to set if validation is needed at class level or it should be considered already valid
     * (IOW  object put in repository at previous steps have been already validated at class level**/
    protected final boolean validateClasses;
@@ -147,7 +144,6 @@ public abstract class AbstractResourceAdapterDeployer
    {
       super();
       this.log = getLogger();
-      this.trace = log.isTraceEnabled();
       this.validateClasses = validateClasses;
    }
 
@@ -780,12 +776,10 @@ public abstract class AbstractResourceAdapterDeployer
 
                            ActivationSpec as = (ActivationSpec)oa;
 
-                           if (trace)
-                           {
-                              log.trace("ActivationSpec: " + as.getClass().getName());
-                              log.trace("ActivationSpec defined in classloader: " +
+                           log.tracef("ActivationSpec: %s", as.getClass().getName());
+                           log.tracef("ActivationSpec defined in classloader: %s",
                                         SecurityActions.getClassLoader(as.getClass()));
-                           }
+
 
                            // Associate for validation
                            associateResourceAdapter(resourceAdapter, as);
@@ -914,12 +908,9 @@ public abstract class AbstractResourceAdapterDeployer
 
                               associateResourceAdapter(resourceAdapter, ao);
 
-                              if (trace)
-                              {
-                                 log.trace("AdminObject: " + ao.getClass().getName());
-                                 log.trace("AdminObject defined in classloader: " +
+                              log.tracef("AdminObject: %s", ao.getClass().getName());
+                              log.tracef("AdminObject defined in classloader: %s",
                                            SecurityActions.getClassLoader(ao.getClass()));
-                              }
 
                               archiveValidationObjects.add(new ValidateObject(Key.ADMIN_OBJECT, ao, aoMeta
                                                                               .getConfigProperties()));
@@ -1207,13 +1198,10 @@ public abstract class AbstractResourceAdapterDeployer
          // Check metadata for JNDI information and activate explicit
          boolean activateDeployment = checkActivation(cmd, ijmd);
 
-         if (log.isTraceEnabled())
-         {
-            log.tracef("Connector=%s", cmd);
-            log.tracef("IronJacamar=%s", ijmd);
-            log.tracef("RaXML=%s", raxml);
-            log.tracef("ActivateDeployment=%s", activateDeployment);
-         }
+         log.tracef("Connector=%s", cmd);
+         log.tracef("IronJacamar=%s", ijmd);
+         log.tracef("RaXML=%s", raxml);
+         log.tracef("ActivateDeployment=%s", activateDeployment);
 
          // Load native libraries
          if (activateDeployment)
@@ -1301,12 +1289,10 @@ public abstract class AbstractResourceAdapterDeployer
                            }
                         }
 
-                        if (trace)
-                        {
-                           log.trace("ResourceAdapter: " + resourceAdapter.getClass().getName());
-                           log.trace("ResourceAdapter defined in classloader: " +
+                        log.tracef("ResourceAdapter: %s", resourceAdapter.getClass().getName());
+                        log.tracef("ResourceAdapter defined in classloader: %s",
                                      SecurityActions.getClassLoader(resourceAdapter.getClass()));
-                        }
+
 
                         archiveValidationObjects.add(new ValidateObject(Key.RESOURCE_ADAPTER, resourceAdapter, ra1516
                            .getConfigProperties()));
@@ -1441,12 +1427,9 @@ public abstract class AbstractResourceAdapterDeployer
                            }
                         }
 
-                        if (trace)
-                        {
-                           log.trace("ManagedConnectionFactory: " + mcf.getClass().getName());
-                           log.trace("ManagedConnectionFactory is defined in classloader: " +
+                        log.tracef("ManagedConnectionFactory: %s", mcf.getClass().getName());
+                        log.tracef("ManagedConnectionFactory is defined in classloader: %s",
                                      SecurityActions.getClassLoader(mcf.getClass()));
-                        }
 
                         mcf.setLogWriter(getLogPrintWriter());
 
@@ -1724,12 +1707,9 @@ public abstract class AbstractResourceAdapterDeployer
                         }
                         else
                         {
-                           if (trace)
-                           {
-                              log.trace("ConnectionFactory: " + cf.getClass().getName());
-                              log.trace("ConnectionFactory defined in classloader: " +
+                           log.tracef("ConnectionFactory: %s", cf.getClass().getName());
+                           log.tracef("ConnectionFactory defined in classloader: %s",
                                         SecurityActions.getClassLoader(cf.getClass()));
-                           }
                         }
 
                         archiveValidationObjects.add(new ValidateObject(Key.CONNECTION_FACTORY, cf));
@@ -1975,12 +1955,9 @@ public abstract class AbstractResourceAdapterDeployer
                                        }
                                     }
 
-                                    if (trace)
-                                    {
-                                       log.trace("ManagedConnectionFactory: " + mcf.getClass().getName());
-                                       log.trace("ManagedConnectionFactory defined in classloader: " +
+                                    log.tracef("ManagedConnectionFactory: %s", mcf.getClass().getName());
+                                    log.tracef("ManagedConnectionFactory defined in classloader: %s",
                                                  SecurityActions.getClassLoader(mcf.getClass()));
-                                    }
 
                                     mcf.setLogWriter(getLogPrintWriter());
 
@@ -2258,12 +2235,9 @@ public abstract class AbstractResourceAdapterDeployer
                                     }
                                     else
                                     {
-                                       if (trace)
-                                       {
-                                          log.trace("ConnectionFactory: " + cf.getClass().getName());
-                                          log.trace("ConnectionFactory defined in classloader: " +
+                                       log.tracef("ConnectionFactory: %s", cf.getClass().getName());
+                                       log.tracef("ConnectionFactory defined in classloader: %s",
                                                     SecurityActions.getClassLoader(cf.getClass()));
-                                       }
                                     }
 
                                     archiveValidationObjects.add(new ValidateObject(Key.CONNECTION_FACTORY, cf));

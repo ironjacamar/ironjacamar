@@ -38,7 +38,6 @@ import org.eclipse.jetty.util.thread.ThreadPool;
 public class ExecutorThreadPool extends AbstractLifeCycle implements ThreadPool
 {
    private static Logger log = Logger.getLogger(ExecutorThreadPool.class);
-   private static boolean trace = log.isTraceEnabled();
 
    private final ExecutorService executor;
 

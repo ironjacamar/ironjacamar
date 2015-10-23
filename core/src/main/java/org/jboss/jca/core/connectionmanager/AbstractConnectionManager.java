@@ -63,9 +63,6 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    /** Log instance */
    private final CoreLogger log;
 
-   /** Log trace */
-   protected boolean trace;
-   
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
    
@@ -105,7 +102,6 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    protected AbstractConnectionManager()
    {
       this.log = getLogger();
-      this.trace = log.isTraceEnabled();
    }
 
    /**
@@ -240,18 +236,13 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    {
       if (pool == null)
       {
-         if (trace)
-         {
-            log.trace("No pooling strategy found! for connection manager : " + this);
-            return null;
-         }
+         log.tracef("No pooling strategy found! for connection manager : %s", this);
+         return null;
       }
       else
       {
          return pool.getManagedConnectionFactory();
       }
-
-      return null;
    }
 
    /**
@@ -309,8 +300,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    {
       this.connectable = v;
 
-      if (trace)
-         log.tracef("connectable=%s", connectable);
+      log.tracef("connectable=%s", connectable);
    }
 
    /**
@@ -372,8 +362,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
                   throw new ResourceException(bundle.connectionManagerIsShutdown(jndiName));
                }
 
-               if (trace)
-                  log.tracef("%s: Attempting allocation retry (%s, %s, %s)", jndiName, transaction, subject, cri);
+               log.tracef("%s: Attempting allocation retry (%s, %s, %s)", jndiName, transaction, subject, cri);
 
                if (Thread.currentThread().isInterrupted())
                {
@@ -526,8 +515,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
          }
          catch (ResourceException re)
          {
-            if (trace)
-               log.trace("Get exception from managedConnectionDisconnected, maybe delist() have problem" + re);
+            log.trace("Get exception from managedConnectionDisconnected, maybe delist() have problem%s", re);
             returnManagedConnection(cl, true);
          }
          throw new ResourceException(bundle.uncheckedThrowableInManagedConnectionGetConnection(cl), t);
@@ -554,8 +542,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       // nothing to do
       if (unsharableResources.contains(jndiName))
       {
-         if (trace)
-            log.trace("disconnect for unshareable connection: nothing to do");
+         log.trace("disconnect for unshareable connection: nothing to do");
          return;
       }
 
@@ -586,8 +573,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       // nothing to do
       if (unsharableResources.contains(jndiName))
       {
-         if (trace)
-            log.trace("reconnect for unshareable connection: nothing to do");
+         log.trace("reconnect for unshareable connection: nothing to do");
          return;
       }
 
@@ -745,8 +731,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
          }
       }
 
-      if (trace)
-         log.tracef("Subject: %s", subject);
+      log.tracef("Subject: %s", subject);
 
       return subject;
    }

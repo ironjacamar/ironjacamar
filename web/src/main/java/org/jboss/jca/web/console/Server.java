@@ -56,7 +56,6 @@ import org.jboss.util.propertyeditor.PropertyEditors;
 public class Server
 {
    private static Logger log = Logger.getLogger(Server.class);
-   private static boolean trace = log.isTraceEnabled();
 
    private static MBeanServer mbeanServer = null;
 
@@ -274,8 +273,7 @@ public class Server
          String value = (String) attributes.get(attrName);
          if (value.equals("null") && server.getAttribute(objName, attrName) == null)
          {
-            if (trace)
-               log.trace("ignoring 'null' for " + attrName);
+            log.tracef("ignoring 'null' for %s", attrName);
             continue;
          }
 
@@ -288,15 +286,14 @@ public class Server
          }
          catch (ClassNotFoundException e)
          {
-            if (trace)
+            if (log.isTraceEnabled())
                log.trace("Failed to load class for attribute: " + attrType, e);
             throw new ReflectionException(e, "Failed to load class for attribute: " + attrType);
          }
          catch (IntrospectionException e)
          {
-            if (trace)
-               log.trace("Skipped setting attribute: " + attrName + 
-                         ", cannot find PropertyEditor for type: " + attrType);
+            log.tracef("Skipped setting attribute: %s, cannot find PropertyEditor for type: %s", 
+                       attrName, attrType);
             continue;
          }
 
@@ -358,7 +355,7 @@ public class Server
          }
          catch (ClassNotFoundException e)
          {
-            if (trace)
+            if (log.isTraceEnabled())
                log.trace("Failed to load class for arg" + p, e);
             throw new ReflectionException(e, "Failed to load class for arg" + p);
          }

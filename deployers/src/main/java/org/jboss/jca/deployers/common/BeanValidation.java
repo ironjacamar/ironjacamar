@@ -50,8 +50,6 @@ public class BeanValidation
 {
    private static DeployersLogger log = Logger.getMessageLogger(DeployersLogger.class, BeanValidation.class.getName());
 
-   private static boolean trace = log.isTraceEnabled();
-
    private static String factoryName = "java:/ValidatorFactory";
 
    private volatile ValidatorFactory factory;
@@ -96,8 +94,7 @@ public class BeanValidation
       Set errors = null;
       if (groupsClasses == null || groupsClasses.size() == 0)
       {
-         if (trace)
-            log.trace("Validating: " + object + " against groups " + Default.class.getName());
+         log.tracef("Validating: %s against groups %s", object, Default.class.getName());
 
          errors = v.validate(object, Default.class);
       }
@@ -105,8 +102,7 @@ public class BeanValidation
       {
          Class[] vargs = groupsClasses.toArray(new Class[groupsClasses.size()]);
 
-         if (trace)
-            log.trace("Validating: " + object + " against groups " + Arrays.toString(vargs));
+         log.tracef("Validating: %s against groups %s", object,  Arrays.toString(vargs));
 
          errors = v.validate(object, vargs);
       }

@@ -41,7 +41,6 @@ import org.eclipse.jetty.webapp.WebAppContext;
 public class WARDeployer implements Deployer
 {
    private static Logger log = Logger.getLogger(WARDeployer.class);
-   private static boolean trace = log.isTraceEnabled();
 
    private WebServer webServer;
        

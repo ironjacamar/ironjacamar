@@ -52,7 +52,6 @@ public class HtmlAdaptorServlet extends HttpServlet
    private static final long serialVersionUID = 1L;
 
    private static Logger log = Logger.getLogger(HtmlAdaptorServlet.class);
-   private static boolean trace = log.isTraceEnabled();
 
    private static final String ACTION_PARAM = "action";
    private static final String DISPLAY_MBEANS_ACTION = "displayMBeans";
@@ -176,8 +175,7 @@ public class HtmlAdaptorServlet extends HttpServlet
    {
       String name = request.getParameter("name");
 
-      if (trace)
-         log.trace("inspectMBean, name=" + name);
+      log.tracef("inspectMBean, name=%s", name);
 
       try
       {
@@ -205,8 +203,7 @@ public class HtmlAdaptorServlet extends HttpServlet
    {
       String name = request.getParameter("name");
 
-      if (trace)
-         log.trace("updateAttributes, name=" + name);
+      log.tracef("updateAttributes, name=%s", name);
 
       Enumeration paramNames = request.getParameterNames();
       HashMap<String, String> attributes = new HashMap<String, String>();
@@ -220,8 +217,7 @@ public class HtmlAdaptorServlet extends HttpServlet
 
          String value = request.getParameter(param);
 
-         if (trace)
-            log.trace("name=" + param + ", value='" + value + "'");
+         log.tracef("name=%s, value='%s'", param, value);
 
          // Ignore null values, these are empty write-only fields
          if (value == null || value.length() == 0)
@@ -260,8 +256,7 @@ public class HtmlAdaptorServlet extends HttpServlet
 
       String name = URLDecoder.decode(reqname, "UTF-8");
 
-      if (trace)
-         log.trace("invokeOp, name=" + name);
+      log.tracef("invokeOp, name=%s", name);
 
       String[] args = getArgs(request);
       String methodIndex = request.getParameter("methodIndex");
@@ -296,8 +291,7 @@ public class HtmlAdaptorServlet extends HttpServlet
    {
       String name = request.getParameter("name");
 
-      if (trace)
-         log.trace("invokeOpByName, name=" + name);
+      log.tracef("invokeOpByName, name=%s", name);
 
       String[] argTypes = request.getParameterValues("argType");
       String[] args = getArgs(request);
@@ -339,8 +333,7 @@ public class HtmlAdaptorServlet extends HttpServlet
 
          argList.add(value);
 
-         if (trace)
-            log.trace(name + "=" + value);
+         log.tracef("%s=%s", name, value);
       }
 
       String[] args = new String[argList.size()];

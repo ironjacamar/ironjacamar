@@ -362,8 +362,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
          throw new ResourceException(bundle.errorCheckingForTransaction(), t);
       }
 
-      if (trace)
-         log.tracef("getManagedConnection interleaving=%s , tx=%s", interleaving, trackByTransaction);  
+      log.tracef("getManagedConnection interleaving=%s , tx=%s", interleaving, trackByTransaction);  
       
       return super.getManagedConnection(trackByTransaction, subject, cri);
    }
@@ -484,7 +483,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
       }
       catch (Throwable t)
       {
-         if (trace)
+         if (log.isTraceEnabled())
             log.trace("Could not enlist in transaction on entering meta-aware object! " + cl, t);  
 
          throw new ResourceException(bundle.notEnlistInTransactionOnEnteringMetaAwareObject(), t);
@@ -509,15 +508,13 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
       //if there are no more handles and tx is complete, we can return to pool.
       if (cl.isManagedConnectionFree())
       {
-         if (trace)
-            log.tracef("Disconnected isManagedConnectionFree=true cl=%s", cl);
+         log.tracef("Disconnected isManagedConnectionFree=true cl=%s", cl);
 
          returnManagedConnection(cl, false);
       }
       else
       {
-         if (trace)
-            log.tracef("Disconnected isManagedConnectionFree=false cl=%s", cl);
+         log.tracef("Disconnected isManagedConnectionFree=false cl=%s", cl);
       }
 
       // Rethrow the error
@@ -604,8 +601,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
             if (eisProductVersion == null)
                eisProductVersion = getJndiName();
 
-            if (trace)
-               log.tracef("Generating XAResourceWrapper for TxConnectionManager (%s)", this);
+            log.tracef("Generating XAResourceWrapper for TxConnectionManager (%s)", this);
 
             xaResource = txIntegration.createXAResourceWrapper(mc.getXAResource(), padXid, 
                                                                isSameRMOverride, 
@@ -614,8 +610,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
          }
          else
          {
-            if (trace)
-               log.tracef("Not wrapping XAResource.");
+            log.tracef("Not wrapping XAResource.");
 
             xaResource = mc.getXAResource();
          }

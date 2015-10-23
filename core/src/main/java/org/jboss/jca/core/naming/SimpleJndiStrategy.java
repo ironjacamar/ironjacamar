@@ -52,8 +52,6 @@ import org.jboss.logging.Messages;
 public class SimpleJndiStrategy implements JndiStrategy
 {
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, SimpleJndiStrategy.class.getName());
-
-   private static boolean trace = log.isTraceEnabled();
    
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
@@ -130,8 +128,8 @@ public class SimpleJndiStrategy implements JndiStrategy
       String jndiName = jndis[0];
       Object cf = cfs[0];
 
-      if (trace)
-         log.trace("Binding " + cf.getClass().getName() + " under " + jndiName);
+      if(log.isTraceEnabled())
+         log.tracef("Binding % under %s", cf.getClass().getName(), jndiName);
       
       if (cf == null)
          throw new IllegalArgumentException("Connection factory is null");
@@ -224,8 +222,7 @@ public class SimpleJndiStrategy implements JndiStrategy
 
       String className = cf.getClass().getName();
 
-      if (trace)
-         log.trace("Unbinding " + className + " under " + jndiName);
+      log.tracef("Unbinding %s under %s", className, jndiName);
 
       Context context = null;
       try
@@ -302,8 +299,8 @@ public class SimpleJndiStrategy implements JndiStrategy
       String jndiName = jndis[0];
       Object ao = aos[0];
 
-      if (trace)
-         log.trace("Binding " + ao.getClass().getName() + " under " + jndiName);
+      if(log.isTraceEnabled())
+          log.tracef("Binding %s under %s", ao.getClass().getName(), jndiName);
       
       if (ao == null)
          throw new IllegalArgumentException("Admin object is null");
@@ -399,8 +396,7 @@ public class SimpleJndiStrategy implements JndiStrategy
 
       String className = ao.getClass().getName();
 
-      if (trace)
-         log.trace("Unbinding " + className + " under " + jndiName);
+      log.tracef("Unbinding %s under %s", className, jndiName);
 
       Context context = null;
       try

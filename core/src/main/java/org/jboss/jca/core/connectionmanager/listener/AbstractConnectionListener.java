@@ -52,9 +52,6 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
 {
    private final CoreLogger log;
    
-   /** Log trace */
-   protected boolean trace;
-   
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
    
@@ -106,7 +103,6 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
       this.internalManagedPoolContext = context;
       this.flushStrategy = flushStrategy;
       this.log = getLogger();
-      this.trace = log.isTraceEnabled();
       this.lastUse = System.currentTimeMillis();
    }
 
@@ -274,11 +270,9 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
       {
          log.unregisteredNullHandleManagedConnection(managedConnection);
       }
-      
-      if (trace)
-      {
-         log.trace("unregisterConnection: " + connectionHandles.size() + " handles left");  
-      }            
+
+      log.tracef("unregisterConnection: %d handles left", connectionHandles.size());  
+          
    }
    
    /**

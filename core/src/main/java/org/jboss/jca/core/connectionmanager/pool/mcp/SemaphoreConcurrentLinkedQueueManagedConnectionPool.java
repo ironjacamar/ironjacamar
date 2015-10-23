@@ -69,9 +69,6 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
    /** Whether debug is enabled */
    private boolean debug;
 
-   /** Whether trace is enabled */
-   private boolean trace;
-
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
 
@@ -152,7 +149,6 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
       this.pool = p;
       this.log = pool.getLogger();
       this.debug = log.isDebugEnabled();
-      this.trace = log.isTraceEnabled();
       this.clq = new ConcurrentLinkedQueue<ConnectionListenerWrapper>();
       this.cls = new ConcurrentHashMap<ConnectionListener, ConnectionListenerWrapper>();
       this.statistics = new ManagedConnectionPoolStatisticsImpl(maxSize);
@@ -250,7 +246,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
     */
    public ConnectionListener getConnection(Subject subject, ConnectionRequestInfo cri) throws ResourceException
    {
-      if (trace)
+      if (log.isTraceEnabled())
       {
          synchronized (cls)
          {
@@ -313,9 +309,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
 
                      if (matchedMC != null)
                      {
-
-                        if (trace)
-                           log.trace("supplying ManagedConnection from pool: " + clw.getConnectionListener());
+                        log.tracef("supplying ManagedConnection from pool: %s", clw.getConnectionListener());
 
                         clw.setHasPermit(true);
 
@@ -357,7 +351,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                   // connection
                   if (poolConfiguration.isUseFastFail())
                   {
-                     if (trace)
+                     if (log.isTraceEnabled())
                         log.trace("Fast failing for connection attempt. No more attempts will be made to "
                               + "acquire connection from pool and a new connection will be created immeadiately");
                      break;
@@ -383,8 +377,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                if (statistics.isEnabled())
                   statistics.setInUsedCount(checkedOutSize.get());
 
-               if (trace)
-                  log.trace("supplying new ManagedConnection: " + clw.getConnectionListener());
+               log.tracef("supplying new ManagedConnection: %s", clw.getConnectionListener());
 
                if ((poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) &&
                      pool instanceof PrefillPool &&
@@ -443,7 +436,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
     */
    public void returnConnection(ConnectionListener cl, boolean kill)
    {
-      if (trace)
+      if (log.isTraceEnabled())
       {
          synchronized (cls)
          {
@@ -472,8 +465,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
       ConnectionListenerWrapper clw = cls.get(cl);
       if (cl.getState() == ConnectionState.DESTROYED)
       {
-         if (trace)
-            log.trace("ManagedConnection is being returned after it was destroyed: " + cl);
+         log.tracef("ManagedConnection is being returned after it was destroyed: %s", cl);
 
          if (clw != null && clw.hasPermit())
          {
@@ -550,8 +542,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
 
       if (kill)
       {
-         if (trace)
-            log.trace("Destroying returned connection " + cl);
+         log.tracef("Destroying returned connection %s", cl);
 
          doDestroy(clw);
          clw = null;
@@ -576,12 +567,11 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
    public void flush(boolean kill)
    {
       ArrayList<ConnectionListenerWrapper> destroy = null;
-
       synchronized (cls)
       {
          if (kill)
          {
-            if (trace)
+            if (log.isTraceEnabled())
             {
                SortedSet<ConnectionListener> checkedOut = new TreeSet<ConnectionListener>();
                for (Entry<ConnectionListener, ConnectionListenerWrapper> entry : cls.entrySet())
@@ -589,7 +579,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                   if (entry.getValue().isCheckedOut())
                      checkedOut.add(entry.getKey());
                }
-               log.trace("Flushing pool checkedOut=" + checkedOut + " inPool=" + cls);
+               log.tracef("Flushing pool checkedOut=%s inPool=%s", checkedOut, cls);
             }
 
             // Mark checked out connections as requiring destruction
@@ -597,8 +587,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
             {
                if (entry.getValue().isCheckedOut())
                {
-                  if (trace)
-                     log.trace("Flush marking checked out connection for destruction " + entry.getKey());
+                  log.tracef("Flush marking checked out connection for destruction %s", entry.getKey());
 
                   entry.getValue().setCheckedOut(false);
                   checkedOutSize.decrementAndGet();
@@ -651,8 +640,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
       {
          for (ConnectionListenerWrapper clw : destroy)
          {
-            if (trace)
-               log.trace("Destroying flushed connection " + clw.getConnectionListener());
+            log.tracef("Destroying flushed connection %s", clw.getConnectionListener());
 
             doDestroy(clw);
             clw = null;
@@ -710,8 +698,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
       {
          for (ConnectionListenerWrapper clw : destroyConnections)
          {
-            if (trace)
-               log.trace("Destroying connection " + clw.getConnectionListener());
+            log.tracef("Destroying connection %s", clw.getConnectionListener());
 
             doDestroy(clw);
             clw = null;
@@ -750,7 +737,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
     */
    public void shutdown()
    {
-      if (trace)
+      if(log.isTraceEnabled())
          log.tracef("Shutdown - Pool: %s MCP: %s", pool.getName(), Integer.toHexString(System.identityHashCode(this)));
 
       IdleRemover.getInstance().unregisterPool(this);
@@ -817,8 +804,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                   {
                      ConnectionListener cl = createConnectionEventListener(defaultSubject, defaultCri);
 
-                     if (trace)
-                        log.trace("Filling pool cl=" + cl);
+                     log.tracef("Filling pool cl=%s", cl);
 
                      cls.put(cl, new ConnectionListenerWrapper(cl, false, false));
                      poolSize.incrementAndGet();
@@ -845,8 +831,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
          {
             Thread.interrupted();
 
-            if (trace)
-               log.trace("Interrupted while requesting permit in fillToMin");
+            log.trace("Interrupted while requesting permit in fillToMin");
          }
       }
    }
@@ -912,8 +897,8 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
          {
             if (clw.getConnectionListener().getState() == ConnectionState.DESTROYED)
             {
-               if (trace)
-                  log.trace("ManagedConnection is already destroyed " + clw.getConnectionListener());
+               if (log.isTraceEnabled())
+                  log.tracef("ManagedConnection is already destroyed %s", clw.getConnectionListener());
 
                return;
             }
@@ -954,8 +939,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
          // Add 1 to min-pool-size since it is strict
          remove = isSize(poolConfiguration.getMinSize() + 1);
 
-         if (trace)
-            log.trace("StrictMin is active. Current connection will be removed is " + remove);
+         log.tracef("StrictMin is active. Current connection will be removed is %s", remove);
       }
 
       return remove;
@@ -967,8 +951,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
    public void validateConnections() throws Exception
    {
 
-      if (trace)
-         log.trace("Attempting to  validate connections for pool " + this);
+      log.tracef("Attempting to  validate connections for pool %s", this);
 
       if (permits.tryAcquire(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS))
       {

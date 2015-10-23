@@ -94,8 +94,6 @@ public class Annotations
    private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
    private static CommonLogger log = Logger.getMessageLogger(CommonLogger.class, Annotations.class.getName());
 
-   private static boolean trace = log.isTraceEnabled();
-
    private enum Metadatas
    {
       RA, ACTIVATION_SPEC, MANAGED_CONN_FACTORY, ADMIN_OBJECT, PLAIN;
@@ -253,8 +251,7 @@ public class Annotations
             String raClass = annotation.getClassName();
             javax.resource.spi.Connector connectorAnnotation = (javax.resource.spi.Connector)annotation.getAnnotation();
 
-            if (trace)
-               log.trace("Processing: " + connectorAnnotation + " for " + raClass);
+            log.tracef("Processing: %s for %s", connectorAnnotation, raClass);
 
             connector = attachConnector(raClass, classLoader, connectorAnnotation, connectionDefinitions,
                                         configProperties, plainConfigProperties, inboundResourceadapter, adminObjs);
@@ -373,8 +370,7 @@ public class Annotations
 
             if (!requiredWorkContexts.contains(requiredWorkContext.getName()))
             {
-               if (trace)
-                  log.trace("RequiredWorkContext=" + requiredWorkContext.getName());
+               log.tracef("RequiredWorkContext=%s", requiredWorkContext.getName());
 
                requiredWorkContexts.add(requiredWorkContext.getName());
             }
@@ -453,8 +449,7 @@ public class Annotations
          {
             if (raClasses.contains(((ConfigProperty16Impl) configProperty16).getAttachedClassName()))
             {
-               if (trace)
-                  log.tracef("Attaching: %s (%s)", configProperty16, raClass);
+               log.tracef("Attaching: %s (%s)", configProperty16, raClass);
                   
                validProperties.add(configProperty16);
             }
@@ -566,8 +561,7 @@ public class Annotations
             ConnectionDefinitions connectionDefinitionsAnnotation = (ConnectionDefinitions) annotation
                .getAnnotation();
 
-            if (trace)
-               log.trace("Processing: " + connectionDefinitionsAnnotation);
+            log.tracef("Processing: %s", connectionDefinitionsAnnotation);
 
             return attachConnectionDefinitions(connectionDefinitionsAnnotation, annotation.getClassName(),
                                                classLoader,
@@ -639,8 +633,7 @@ public class Annotations
             ConnectionDefinition cd = attachConnectionDefinition(annotation, classLoader,
                                                                  configProperty, plainConfigProperty);
 
-            if (trace)
-               log.tracef("Adding connection definition: %s", cd);
+            log.tracef("Adding connection definition: %s", cd);
 
             connectionDefinitions.add(cd);
          }
@@ -667,8 +660,7 @@ public class Annotations
       javax.resource.spi.ConnectionDefinition cd =
          (javax.resource.spi.ConnectionDefinition) annotation.getAnnotation();
 
-      if (trace)
-         log.trace("Processing: " + annotation);
+      log.tracef("Processing: %s", annotation);
 
       return attachConnectionDefinition(annotation.getClassName(), cd, classLoader,
                                         configProperty, plainConfigProperty);
@@ -690,8 +682,8 @@ public class Annotations
                                                            ArrayList<? extends ConfigProperty> plainConfigProperties)
       throws Exception
    {
-      if (trace)
-         log.trace("Processing: " + cd);
+
+      log.tracef("Processing: %s", cd);
 
       ArrayList<ConfigProperty> validProperties = new ArrayList<ConfigProperty>();
 
@@ -702,8 +694,7 @@ public class Annotations
          {
             if (mcf.equals(((ConfigProperty16Impl) configProperty16).getAttachedClassName()))
             {
-               if (trace)
-                  log.tracef("Attaching: %s (%s)", configProperty16, mcf);
+               log.tracef("Attaching: %s (%s)", configProperty16, mcf);
                   
                validProperties.add(configProperty16);
             }
@@ -717,8 +708,7 @@ public class Annotations
          {
             if (mcfClasses.contains(((ConfigProperty16Impl) configProperty16).getAttachedClassName()))
             {
-               if (trace)
-                  log.tracef("Attaching: %s (%s)", configProperty16, mcf);
+               log.tracef("Attaching: %s (%s)", configProperty16, mcf);
                   
                validProperties.add(configProperty16);
             }
@@ -752,14 +742,14 @@ public class Annotations
       Collection<Annotation> values = annotationRepository.getAnnotation(javax.resource.spi.ConfigProperty.class);
       if (values != null)
       {
+
          valueMap = new HashMap<Annotations.Metadatas, ArrayList<ConfigProperty16>>();
          for (Annotation annotation : values)
          {
             javax.resource.spi.ConfigProperty configPropertyAnnotation = (javax.resource.spi.ConfigProperty) annotation
                   .getAnnotation();
 
-            if (trace)
-               log.trace("Processing: " + configPropertyAnnotation);
+            log.tracef("Processing: %s", configPropertyAnnotation);
 
             XsdString configPropertyValue = XsdString.NULL_XSDSTRING;
             if (configPropertyAnnotation.defaultValue() != null && !configPropertyAnnotation.defaultValue().equals(""))
@@ -952,8 +942,7 @@ public class Annotations
          {
             AdministeredObject a = (AdministeredObject) annotation.getAnnotation();
 
-            if (trace)
-               log.trace("Processing: " + a);
+            log.tracef("Processing: %s", a);
             String aoName = null;
             String aoClassName = annotation.getClassName();
             Class<?> aClass = Class.forName(aoClassName, true, classLoader);
@@ -989,8 +978,7 @@ public class Annotations
                {
                   if (aoClassName.equals(((ConfigProperty16Impl) configProperty16).getAttachedClassName()))
                   {
-                     if (trace)
-                        log.tracef("Attaching: %s (%s)", configProperty16, aoClassName);
+                     log.tracef("Attaching: %s (%s)", configProperty16, aoClassName);
                   
                      validProperties.add(configProperty16);
                   }
@@ -1004,8 +992,7 @@ public class Annotations
                {
                   if (aoClasses.contains(((ConfigProperty16Impl) configProperty16).getAttachedClassName()))
                   {
-                     if (trace)
-                        log.tracef("Attaching: %s (%s)", configProperty16, aoClassName);
+                     log.tracef("Attaching: %s (%s)", configProperty16, aoClassName);
                   
                      validProperties.add(configProperty16);
                   }
@@ -1115,8 +1102,8 @@ public class Annotations
 
       Activation activation = (Activation) annotation.getAnnotation();
       ArrayList<MessageListener> messageListeners = null;
-      if (trace)
-         log.trace("Processing: " + activation);
+      log.tracef("Processing: %s", activation);
+
       if (activation.messageListeners() != null)
       {
          messageListeners = new ArrayList<MessageListener>(activation.messageListeners().length);

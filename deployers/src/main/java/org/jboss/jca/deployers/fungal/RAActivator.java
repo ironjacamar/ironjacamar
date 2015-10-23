@@ -66,9 +66,6 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
    /** The logger */
    private static DeployersLogger log = Logger.getMessageLogger(DeployersLogger.class, RAActivator.class.getName());
 
-   /** Trace enabled */
-   private static boolean trace = log.isTraceEnabled();
-
    /** Enabled */
    private boolean enabled;
 
@@ -159,8 +156,7 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
 
          for (String deployment : rarDeployments)
          {
-            if (trace)
-               log.trace("Processing: " + deployment);
+            log.tracef("Processing: %s", deployment);
 
             boolean include = true;
 

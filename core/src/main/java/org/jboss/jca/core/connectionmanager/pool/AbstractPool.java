@@ -70,9 +70,6 @@ public abstract class AbstractPool implements Pool
    /** The logger */
    protected final CoreLogger log;
 
-   /** Is trace enabled */
-   private boolean trace;
-   
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
    
@@ -121,7 +118,6 @@ public abstract class AbstractPool implements Pool
       this.poolConfiguration = pc;
       this.noTxSeparatePools = noTxSeparatePools;
       this.log = getLogger();
-      this.trace = log.isTraceEnabled();
       this.statistics = new PoolStatisticsImpl(pc.getMaxSize(), mcpPools);
    }
 
@@ -469,8 +465,7 @@ public abstract class AbstractPool implements Pool
       // Get connection from the managed connection pool
       ConnectionListener cl = mcp.getConnection(subject, cri);
 
-      if (trace)
-         log.tracef("Got connection from pool: %s", cl);
+      log.tracef("Got connection from pool: %s", cl);
 
       return cl;
    }
@@ -509,8 +504,7 @@ public abstract class AbstractPool implements Pool
          ConnectionListener cl = (ConnectionListener)tsr.getResource(mcp);
          if (cl != null)
          {
-            if (trace)
-               log.tracef("Previous connection tracked by transaction=%s tx=%s", cl, trackByTransaction);
+            log.tracef("Previous connection tracked by transaction=%s tx=%s", cl, trackByTransaction);
             return cl;
          }
 
@@ -548,8 +542,8 @@ public abstract class AbstractPool implements Pool
       // Instead we do a double check after we got the transaction to see
       // whether another thread beat us to the punch.
       ConnectionListener cl = mcp.getConnection(subject, cri);
-      if (trace)
-         log.tracef("Got connection from pool tracked by transaction=%s tx=%s", cl, trackByTransaction);
+
+      log.tracef("Got connection from pool tracked by transaction=%s tx=%s", cl, trackByTransaction);
 
       TransactionSynchronizationRegistry tsr = getTransactionSynchronizationRegistry();
       Lock lock = getLock();
@@ -558,8 +552,7 @@ public abstract class AbstractPool implements Pool
       {
          if (cl != null)
          {
-            if (trace)
-               log.tracef("Killing connection tracked by transaction=%s tx=%s", cl, trackByTransaction);
+            log.tracef("Killing connection tracked by transaction=%s tx=%s", cl, trackByTransaction);
 
             mcp.returnConnection(cl, true);
          }
@@ -577,8 +570,7 @@ public abstract class AbstractPool implements Pool
 
          if (cl != null)
          {
-            if (trace)
-               log.tracef("Killing connection tracked by transaction=%s tx=%s", cl, trackByTransaction);
+            log.tracef("Killing connection tracked by transaction=%s tx=%s", cl, trackByTransaction);
 
             mcp.returnConnection(cl, true);
          }
@@ -595,8 +587,7 @@ public abstract class AbstractPool implements Pool
          {
             mcp.returnConnection(cl, false);
 
-            if (trace)
-               log.tracef("Another thread already got a connection tracked by transaction=%s tx=%s",
+            log.tracef("Another thread already got a connection tracked by transaction=%s tx=%s",
                        other, trackByTransaction);
 
             cl = other;
@@ -606,8 +597,7 @@ public abstract class AbstractPool implements Pool
          cl.setTrackByTx(true);
          tsr.putResource(mcp, cl);
 
-         if (trace)
-            log.tracef("Using connection from pool tracked by transaction=%s tx=%s", cl, trackByTransaction);
+         log.tracef("Using connection from pool tracked by transaction=%s tx=%s", cl, trackByTransaction);
 
          return cl;
       }
@@ -615,8 +605,7 @@ public abstract class AbstractPool implements Pool
       {
          if (cl != null)
          {
-            if (trace)
-               log.tracef("Killing connection tracked by transaction=%s tx=%s", cl, trackByTransaction);
+            log.tracef("Killing connection tracked by transaction=%s tx=%s", cl, trackByTransaction);
 
             mcp.returnConnection(cl, true);
          }
@@ -628,6 +617,7 @@ public abstract class AbstractPool implements Pool
          lock.unlock();
       }
    }
+   
 
    /**
     * {@inheritDoc}
@@ -649,8 +639,7 @@ public abstract class AbstractPool implements Pool
       //Return connection to the pool
       mcp.returnConnection(cl, kill);
 
-      if (trace)
-         log.tracef("Returning connection to pool %s", cl);
+      log.tracef("Returning connection to pool %s", cl);
    }
 
    /**

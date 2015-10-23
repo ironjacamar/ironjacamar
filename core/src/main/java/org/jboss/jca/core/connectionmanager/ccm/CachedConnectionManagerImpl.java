@@ -65,8 +65,6 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
    /** Log instance */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, 
                                                            CachedConnectionManager.class.getName());
-   /** Trace */
-   private static boolean trace = log.isTraceEnabled();
 
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
@@ -189,8 +187,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
    {
       KeyConnectionAssociation key = peekMetaAwareObject();
 
-      if (trace)
-         log.tracef("user tx started, key: %s", key);
+      log.tracef("user tx started, key: %s", key);
 
       if (key != null)
       {
@@ -239,8 +236,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
       LinkedList<Object> stack = currentObjects.get();
       KeyConnectionAssociation oldKey = (KeyConnectionAssociation) stack.removeLast();
 
-      if (trace)
-         log.tracef("popped object: %s", oldKey);
+      log.tracef("popped object: %s", oldKey);
 
       if (debug)
       {
@@ -272,8 +268,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
 
       KeyConnectionAssociation key = peekMetaAwareObject();
 
-      if (trace)
-         log.tracef("registering connection from connection manager: %s, connection : %s, key: %s",
+      log.tracef("registering connection from connection manager: %s, connection : %s, key: %s",
                     cm, connection, key);
 
       if (key != null)
@@ -317,8 +312,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
 
       KeyConnectionAssociation key = peekMetaAwareObject();
 
-      if (trace)
-         log.tracef("unregistering connection from connection manager: %s, connection: %s, key: %s",
+      log.tracef("unregistering connection from connection manager: %s, connection: %s, key: %s",
                     cm, connection, key);
 
       if (key == null)
@@ -356,16 +350,14 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
       LinkedList<Object> stack = currentObjects.get();
       if (stack == null)
       {
-         if (trace)
-            log.tracef("new stack for key: %s", rawKey);
+         log.tracef("new stack for key: %s", rawKey);
 
          stack = new LinkedList<Object>();
          currentObjects.set(stack);
       }
       else
       {
-         if (trace)
-            log.tracef("old stack for key: %s", rawKey);
+         log.tracef("old stack for key: %s", rawKey);
       }
 
       KeyConnectionAssociation key = new KeyConnectionAssociation(rawKey);
@@ -383,8 +375,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
     */
    public void unregisterConnectionCacheListener(ConnectionCacheListener cm)
    {
-      if (trace)
-         log.tracef("unregisterConnectionCacheListener: %s", cm);
+      log.tracef("unregisterConnectionCacheListener: %s", cm);
 
       Iterator<ConcurrentMap<ConnectionCacheListener, CopyOnWriteArrayList<ConnectionRecord>>> it =
          objectToConnectionManagerMap.values().iterator();

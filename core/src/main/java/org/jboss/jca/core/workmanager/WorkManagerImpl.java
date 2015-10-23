@@ -70,10 +70,7 @@ public class WorkManagerImpl implements WorkManager
 {
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, WorkManagerImpl.class.getName());
-   
-   /** Whether trace is enabled */
-   private static boolean trace = log.isTraceEnabled();
-   
+
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
    
@@ -316,8 +313,7 @@ public class WorkManagerImpl implements WorkManager
                       WorkListener workListener) 
       throws WorkException
    {
-      if (trace)
-         log.tracef("doWork(%s, %s, %s, %s)", work, startTimeout, execContext, workListener);
+      log.tracef("doWork(%s, %s, %s, %s)", work, startTimeout, execContext, workListener);
 
       WorkException exception = null;
       WorkWrapper wrapper = null;
@@ -389,8 +385,7 @@ public class WorkManagerImpl implements WorkManager
                workListener.workRejected(event);
             }
 
-            if (trace)
-               log.tracef("Exception %s for %s", exception, this);
+            log.tracef("Exception %s for %s", exception, this);
 
             throw exception;
          }
@@ -495,8 +490,7 @@ public class WorkManagerImpl implements WorkManager
                workListener.workRejected(event);
             }
 
-            if (trace)
-               log.tracef("Exception %s for %s", exception, this);
+            log.tracef("Exception %s for %s", exception, this);
 
             throw exception;
          }
@@ -593,8 +587,7 @@ public class WorkManagerImpl implements WorkManager
                workListener.workRejected(event);
             }
 
-            if (trace)
-               log.tracef("Exception %s for %s", exception, this);
+            log.tracef("Exception %s for %s", exception, this);
 
             throw exception;
          }
@@ -840,8 +833,7 @@ public class WorkManagerImpl implements WorkManager
    {
       if (wrapper.getWorkException() != null)
       {
-         if (trace)
-            log.tracef("Exception %s for %s", wrapper.getWorkException(), this);
+         log.tracef("Exception %s for %s", wrapper.getWorkException(), this);
 
          throw wrapper.getWorkException();  
       }
@@ -857,8 +849,7 @@ public class WorkManagerImpl implements WorkManager
     */
    private void setup(WorkWrapper wrapper, WorkListener workListener) throws WorkCompletedException, WorkException
    {
-      if (trace)
-         log.tracef("Setting up work: %s, work listener: %s", wrapper, workListener);
+      log.tracef("Setting up work: %s, work listener: %s", wrapper, workListener);
 
       Work work = wrapper.getWork();
       
@@ -898,10 +889,7 @@ public class WorkManagerImpl implements WorkManager
                // Not supported
                if (contextType == null)
                {
-                  if (trace)
-                  {
-                     log.trace("Not supported work context class : " + context.getClass().getName());
-                  }
+                  log.tracef("Not supported work context class : %s", context.getClass().getName());
 
                   WorkCompletedException wce = 
                      new WorkCompletedException(bundle.unsupportedWorkContextClass(context.getClass().getName()),
@@ -920,10 +908,7 @@ public class WorkManagerImpl implements WorkManager
                   {
                      if (isTransactionContext)
                      {
-                        if (trace)
-                        {
-                           log.trace("Duplicate transaction work context : " + context.getClass().getName());
-                        }
+                        log.tracef("Duplicate transaction work context : %s", context.getClass().getName());
 
                         WorkCompletedException wce =
                            new WorkCompletedException(bundle.duplicateTransactionWorkContextClass(context.getClass()
@@ -944,10 +929,7 @@ public class WorkManagerImpl implements WorkManager
                   {
                      if (isSecurityContext)
                      {
-                        if (trace)
-                        {
-                           log.trace("Duplicate security work context : " + context.getClass().getName());
-                        }
+                        log.tracef("Duplicate security work context : %s", context.getClass().getName());
                         
                         WorkCompletedException wce =
                            new WorkCompletedException(bundle.duplicateSecurityWorkContextClass(context.getClass()
@@ -968,10 +950,8 @@ public class WorkManagerImpl implements WorkManager
                   {
                      if (isHintcontext)
                      {
-                        if (trace)
-                        {
-                           log.trace("Duplicate hint work context : " + context.getClass().getName());
-                        }
+                        log.tracef("Duplicate hint work context : %s", context.getClass().getName());
+
 
                         WorkCompletedException wce =
                            new WorkCompletedException(bundle.duplicateHintWorkContextClass(context.getClass()

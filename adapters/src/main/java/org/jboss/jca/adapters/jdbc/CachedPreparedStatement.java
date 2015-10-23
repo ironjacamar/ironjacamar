@@ -52,7 +52,6 @@ public abstract class CachedPreparedStatement extends JBossWrapper implements Pr
 {
    private static final long serialVersionUID = 2085461257386274373L;
    protected static Logger log = Logger.getLogger(CachedPreparedStatement.class);
-   protected static boolean trace = log.isTraceEnabled();
    
    private PreparedStatement ps;
    private AtomicBoolean cached = new AtomicBoolean(true);
@@ -446,7 +445,7 @@ public abstract class CachedPreparedStatement extends JBossWrapper implements Pr
     */
    private void closePreparedStatement() throws SQLException
    {
-      if (trace)
+      if (log.isTraceEnabled())
       {
          Throwable t = new Throwable("PreparedStatement.close() called");
          t.setStackTrace(SecurityActions.getStackTrace(Thread.currentThread()));

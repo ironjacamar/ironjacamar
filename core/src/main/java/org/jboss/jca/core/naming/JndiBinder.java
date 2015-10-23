@@ -46,8 +46,6 @@ public class JndiBinder implements ObjectFactory
 {
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, JndiBinder.class.getName());
 
-   private static boolean trace = log.isTraceEnabled();
-
    private static ConcurrentMap<String, Object> objs = new ConcurrentHashMap<String, Object>();
 
    private String name;
@@ -103,8 +101,8 @@ public class JndiBinder implements ObjectFactory
       if (obj == null)
          throw new IllegalArgumentException("Obj is null");
 
-      if (trace)
-         log.trace("Binding " + obj.getClass().getName() + " under " + name);
+      if(log.isTraceEnabled())
+         log.tracef("Binding %s under %s", obj.getClass().getName(), name);
 
       Context context = new InitialContext();
       try
@@ -148,8 +146,7 @@ public class JndiBinder implements ObjectFactory
       if (name == null)
          throw new IllegalArgumentException("Name is null");
 
-      if (trace)
-         log.trace("Unbinding " + name);
+      log.tracef("Unbinding %s", name);
 
       Context context = null;
       try
