@@ -64,9 +64,6 @@ public abstract class AbstractRemoteTransport<T> implements Transport
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, AbstractRemoteTransport.class.getName());
 
-   /** Whether trace is enabled */
-   private static boolean trace = log.isTraceEnabled();
-
    /** The identifier of the transport */
    private String id;
 
@@ -108,8 +105,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
    @Override
    public long ping(Address address)
    {
-      if (trace)
-         log.tracef("PING(%s)", address);
+      log.tracef("PING(%s)", address);
 
       if (address.getTransportId() == null || getId().equals(address.getTransportId()))
          return localPing();
@@ -135,8 +131,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
    @Override
    public long getShortRunningFree(Address address)
    {
-      if (trace)
-         log.tracef("GET_SHORT_RUNNING_FREE(%s)", address);
+      log.tracef("GET_SHORT_RUNNING_FREE(%s)", address);
 
       if (address.getTransportId() == null || getId().equals(address.getTransportId()))
          return localGetShortRunningFree(address);
@@ -159,8 +154,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
    @Override
    public long getLongRunningFree(Address address)
    {
-      if (trace)
-         log.tracef("GET_LONGRUNNING_FREE(%s)", address);
+      log.tracef("GET_LONGRUNNING_FREE(%s)", address);
 
       if (address.getTransportId() == null || getId().equals(address.getTransportId()))
          return localGetLongRunningFree(address);
@@ -183,8 +177,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
    @Override
    public void updateShortRunningFree(Address address, long freeCount)
    {
-      if (trace)
-         log.tracef("UPDATE_SHORT_RUNNING_FREE(%s, %d)", address, freeCount);
+      log.tracef("UPDATE_SHORT_RUNNING_FREE(%s, %d)", address, freeCount);
 
       localUpdateShortRunningFree(address, freeCount);
 
@@ -214,8 +207,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
    @Override
    public void updateLongRunningFree(Address address, long freeCount)
    {
-      if (trace)
-         log.tracef("UPDATE_LONG_RUNNING_FREE(%s, %d)", address, freeCount);
+      log.tracef("UPDATE_LONG_RUNNING_FREE(%s, %d)", address, freeCount);
 
       localUpdateLongRunningFree(address, freeCount);
 
@@ -248,8 +240,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
    @Override
    public DistributedWorkManagerStatisticsValues getDistributedStatistics(Address address)
    {
-      if (trace)
-         log.tracef("GET_DISTRIBUTED_STATISTICS(%s)", address);
+      log.tracef("GET_DISTRIBUTED_STATISTICS(%s)", address);
 
       if (address.getTransportId() == null || getId().equals(address.getTransportId()))
          return localGetDistributedStatistics(address);
@@ -275,8 +266,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
    @Override
    public void clearDistributedStatistics(Address address)
    {
-      if (trace)
-         log.tracef("CLEAR_DISTRIBUTED_STATISTICS(%s)", address);
+      log.tracef("CLEAR_DISTRIBUTED_STATISTICS(%s)", address);
 
       if (!getId().equals(address.getTransportId()))
          localClearDistributedStatistics(address);
@@ -310,8 +300,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
    @Override
    public void deltaDoWorkAccepted(Address address)
    {
-      if (trace)
-         log.tracef("DELTA_DOWORK_ACCEPTED(%s)", address);
+      log.tracef("DELTA_DOWORK_ACCEPTED(%s)", address);
 
       if (address.getTransportId() != null && !getId().equals(address.getTransportId()))
       {
@@ -336,8 +325,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
    @Override
    public void deltaDoWorkRejected(Address address)
    {
-      if (trace)
-         log.tracef("DELTA_DOWORK_REJECTED(%s)", address);
+      log.tracef("DELTA_DOWORK_REJECTED(%s)", address);
 
       if (address.getTransportId() != null && !getId().equals(address.getTransportId()))
       {
@@ -362,8 +350,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
    @Override
    public void deltaStartWorkAccepted(Address address)
    {
-      if (trace)
-         log.tracef("DELTA_STARTWORK_ACCEPTED(%s)", address);
+      log.tracef("DELTA_STARTWORK_ACCEPTED(%s)", address);
 
       if (address.getTransportId() != null && !getId().equals(address.getTransportId()))
       {
@@ -388,8 +375,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
    @Override
    public void deltaStartWorkRejected(Address address)
    {
-      if (trace)
-         log.tracef("DELTA_STARTWORK_REJECTED(%s)", address);
+      log.tracef("DELTA_STARTWORK_REJECTED(%s)", address);
 
       if (address.getTransportId() != null && !getId().equals(address.getTransportId()))
       {
@@ -414,8 +400,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
    @Override
    public void deltaScheduleWorkAccepted(Address address)
    {
-      if (trace)
-         log.tracef("DELTA_SCHEDULEWORK_ACCEPTED(%s)", address);
+      log.tracef("DELTA_SCHEDULEWORK_ACCEPTED(%s)", address);
 
       if (address.getTransportId() != null && !getId().equals(address.getTransportId()))
       {
@@ -440,8 +425,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
    @Override
    public void deltaScheduleWorkRejected(Address address)
    {
-      if (trace)
-         log.tracef("DELTA_SCHEDULEWORK_REJECTED(%s)", address);
+      log.tracef("DELTA_SCHEDULEWORK_REJECTED(%s)", address);
 
       if (address.getTransportId() != null && !getId().equals(address.getTransportId()))
       {
@@ -466,8 +450,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
    @Override
    public void deltaWorkSuccessful(Address address)
    {
-      if (trace)
-         log.tracef("DELTA_WORK_SUCCESSFUL(%s)", address);
+      log.tracef("DELTA_WORK_SUCCESSFUL(%s)", address);
 
       if (address.getTransportId() != null && !getId().equals(address.getTransportId()))
       {
@@ -492,8 +475,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
    @Override
    public void deltaWorkFailed(Address address)
    {
-      if (trace)
-         log.tracef("DELTA_WORK_FAILED(%s)", address);
+      log.tracef("DELTA_WORK_FAILED(%s)", address);
 
       if (address.getTransportId() != null && !getId().equals(address.getTransportId()))
       {
@@ -518,8 +500,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
    @Override
    public void doWork(Address address, DistributableWork work) throws WorkException
    {
-      if (trace)
-         log.tracef("DO_WORK(%s, %s)", address, work);
+      log.tracef("DO_WORK(%s, %s)", address, work);
 
       ClassBundle cb = ClassBundleFactory.createClassBundle(work);
 
@@ -533,8 +514,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
    @Override
    public void scheduleWork(Address address, DistributableWork work) throws WorkException
    {
-      if (trace)
-         log.tracef("SCHEDULE_WORK(%s, %s)", address, work);
+      log.tracef("SCHEDULE_WORK(%s, %s)", address, work);
 
       ClassBundle cb = ClassBundleFactory.createClassBundle(work);
 
@@ -548,8 +528,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
    @Override
    public long startWork(Address address, DistributableWork work) throws WorkException
    {
-      if (trace)
-         log.tracef("START_WORK(%s, %s)", address, work);
+      log.tracef("START_WORK(%s, %s)", address, work);
 
       ClassBundle cb = ClassBundleFactory.createClassBundle(work);
 
@@ -650,8 +629,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
          }
       }
 
-      if (trace)
-         log.tracef("Addresses: %s", result);
+      log.tracef("Addresses: %s", result);
 
       return Collections.unmodifiableSet(result);
    }
@@ -663,8 +641,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
     */
    public void join(Address logicalAddress, T physicalAddress)
    {
-      if (trace)
-         log.tracef("JOIN(%s, %s)", logicalAddress, physicalAddress);
+      log.tracef("JOIN(%s, %s)", logicalAddress, physicalAddress);
 
       if (!nodes.containsKey(logicalAddress))
       {
@@ -696,8 +673,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
     */
    public void leave(T physicalAddress)
    {
-      if (trace)
-         log.tracef("LEAVE(%s)", physicalAddress);
+      log.tracef("LEAVE(%s)", physicalAddress);
 
       Set<Address> remove = new HashSet<Address>();
 
@@ -743,8 +719,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
     */
    public long localPing()
    {
-      if (trace)
-         log.tracef("LOCAL_PING()");
+      log.tracef("LOCAL_PING()");
 
       return 0L;
    }
@@ -757,8 +732,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
     */
    public void localWorkManagerAdd(Address address, T physicalAddress)
    {
-      if (trace)
-         log.tracef("LOCAL_WORKMANAGER_ADD(%s, %s)", address, physicalAddress);
+      log.tracef("LOCAL_WORKMANAGER_ADD(%s, %s)", address, physicalAddress);
 
       join(address, physicalAddress);
    }
@@ -770,8 +744,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
     */
    public void localWorkManagerRemove(Address address)
    {
-      if (trace)
-         log.tracef("LOCAL_WORKMANAGER_REMOVE(%s)", address);
+      log.tracef("LOCAL_WORKMANAGER_REMOVE(%s)", address);
 
       nodes.remove(address);
 
@@ -803,8 +776,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
     */
    public void localDoWork(Address address, DistributableWork work) throws WorkException
    {
-      if (trace)
-         log.tracef("LOCAL_DO_WORK(%s, %s)", address, work);
+      log.tracef("LOCAL_DO_WORK(%s, %s)", address, work);
 
       WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
       DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(address);
@@ -822,8 +794,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
     */
    public long localStartWork(Address address, DistributableWork work) throws WorkException
    {
-      if (trace)
-         log.tracef("LOCAL_START_WORK(%s, %s)", address, work);
+      log.tracef("LOCAL_START_WORK(%s, %s)", address, work);
 
       WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
       DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(address);
@@ -840,8 +811,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
     */
    public void localScheduleWork(Address address, DistributableWork work) throws WorkException
    {
-      if (trace)
-         log.tracef("LOCAL_SCHEDULE_WORK(%s, %s)", address, work);
+      log.tracef("LOCAL_SCHEDULE_WORK(%s, %s)", address, work);
 
       WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
       DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(address);
@@ -857,8 +827,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
     */
    public long localGetShortRunningFree(Address address)
    {
-      if (trace)
-         log.tracef("LOCAL_GET_SHORTRUNNING_FREE(%s)", address);
+      log.tracef("LOCAL_GET_SHORTRUNNING_FREE(%s)", address);
 
       WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
       WorkManager wm = wmc.resolveWorkManager(address);
@@ -881,8 +850,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
     */
    public long localGetLongRunningFree(Address address)
    {
-      if (trace)
-         log.tracef("LOCAL_GET_LONGRUNNING_FREE(%s)", address);
+      log.tracef("LOCAL_GET_LONGRUNNING_FREE(%s)", address);
 
       WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
       WorkManager wm = wmc.resolveWorkManager(address);
@@ -905,8 +873,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
     */
    public void localUpdateShortRunningFree(Address logicalAddress, Long freeCount)
    {
-      if (trace)
-         log.tracef("LOCAL_UPDATE_SHORTRUNNING_FREE(%s, %d)", logicalAddress, freeCount);
+      log.tracef("LOCAL_UPDATE_SHORTRUNNING_FREE(%s, %d)", logicalAddress, freeCount);
 
       WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
       DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(logicalAddress);
@@ -935,8 +902,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
     */
    public void localUpdateLongRunningFree(Address logicalAddress, Long freeCount)
    {
-      if (trace)
-         log.tracef("LOCAL_UPDATE_LONGRUNNING_FREE(%s, %d)", logicalAddress, freeCount);
+      log.tracef("LOCAL_UPDATE_LONGRUNNING_FREE(%s, %d)", logicalAddress, freeCount);
 
       WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
       DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(logicalAddress);
@@ -965,8 +931,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
     */
    public DistributedWorkManagerStatisticsValues localGetDistributedStatistics(Address address)
    {
-      if (trace)
-         log.tracef("LOCAL_GET_DISTRIBUTED_STATISTICS(%s)", address);
+      log.tracef("LOCAL_GET_DISTRIBUTED_STATISTICS(%s)", address);
 
       WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
       DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(address);
@@ -996,8 +961,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
     */
    public void localClearDistributedStatistics(Address logicalAddress)
    {
-      if (trace)
-         log.tracef("LOCAL_CLEAR_DISTRIBUTED_STATISTICS(%s)", logicalAddress);
+      log.tracef("LOCAL_CLEAR_DISTRIBUTED_STATISTICS(%s)", logicalAddress);
 
       WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
       DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(logicalAddress);
@@ -1019,8 +983,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
     */
    public void localDeltaDoWorkAccepted(Address address)
    {
-      if (trace)
-         log.tracef("LOCAL_DELTA_DOWORK_ACCEPTED(%s)", address);
+      log.tracef("LOCAL_DELTA_DOWORK_ACCEPTED(%s)", address);
 
       WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
       DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(address);
@@ -1042,8 +1005,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
     */
    public void localDeltaDoWorkRejected(Address address)
    {
-      if (trace)
-         log.tracef("LOCAL_DELTA_DOWORK_REJECTED(%s)", address);
+      log.tracef("LOCAL_DELTA_DOWORK_REJECTED(%s)", address);
 
       WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
       DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(address);
@@ -1065,8 +1027,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
     */
    public void localDeltaStartWorkAccepted(Address address)
    {
-      if (trace)
-         log.tracef("LOCAL_DELTA_STARTWORK_ACCEPTED(%s)", address);
+      log.tracef("LOCAL_DELTA_STARTWORK_ACCEPTED(%s)", address);
 
       WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
       DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(address);
@@ -1088,8 +1049,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
     */
    public void localDeltaStartWorkRejected(Address address)
    {
-      if (trace)
-         log.tracef("LOCAL_DELTA_STARTWORK_REJECTED(%s)", address);
+      log.tracef("LOCAL_DELTA_STARTWORK_REJECTED(%s)", address);
 
       WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
       DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(address);
@@ -1111,8 +1071,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
     */
    public void localDeltaScheduleWorkAccepted(Address address)
    {
-      if (trace)
-         log.tracef("LOCAL_DELTA_SCHEDULEWORK_ACCEPTED(%s)", address);
+      log.tracef("LOCAL_DELTA_SCHEDULEWORK_ACCEPTED(%s)", address);
 
       WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
       DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(address);
@@ -1134,8 +1093,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
     */
    public void localDeltaScheduleWorkRejected(Address address)
    {
-      if (trace)
-         log.tracef("LOCAL_DELTA_SCHEDULEWORK_REJECTED(%s)", address);
+      log.tracef("LOCAL_DELTA_SCHEDULEWORK_REJECTED(%s)", address);
 
       WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
       DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(address);
@@ -1157,8 +1115,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
     */
    public void localDeltaWorkSuccessful(Address address)
    {
-      if (trace)
-         log.tracef("LOCAL_DELTA_WORK_SUCCESSFUL(%s)", address);
+      log.tracef("LOCAL_DELTA_WORK_SUCCESSFUL(%s)", address);
 
       WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
       DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(address);
@@ -1180,8 +1137,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
     */
    public void localDeltaWorkFailed(Address address)
    {
-      if (trace)
-         log.tracef("LOCAL_DELTA_WORK_FAILED(%s)", address);
+      log.tracef("LOCAL_DELTA_WORK_FAILED(%s)", address);
 
       WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
       DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(address);

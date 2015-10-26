@@ -44,9 +44,6 @@ public abstract class AbstractSelector extends AbstractNotificationListener impl
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class,
                                                            AbstractSelector.class.getName());
 
-   /** Whether trace is enabled */
-   private static boolean trace = log.isTraceEnabled();
-
    /**
     * Constructor
     */
@@ -62,12 +59,9 @@ public abstract class AbstractSelector extends AbstractNotificationListener impl
     */
    protected Map<Address, Long> getSelectionMap(String wmId, DistributableWork work)
    {
-      if (trace)
-      {
-         log.tracef("getSelectionMap(%s, %s)", wmId, work);
-         log.tracef("ShortRunning: %s", shortRunning);
-         log.tracef("LongRunning: %s", longRunning);
-      }
+      log.tracef("getSelectionMap(%s, %s)", wmId, work);
+      log.tracef("ShortRunning: %s", shortRunning);
+      log.tracef("LongRunning: %s", longRunning);
 
       Map<Address, Long> sorted = null;
 

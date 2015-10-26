@@ -74,9 +74,6 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    /** Whether debug is enabled */
    private boolean debug;
 
-   /** Whether trace is enabled */
-   private boolean trace;
-
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
 
@@ -162,7 +159,6 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       this.fifo = p.isFIFO();
       this.log = pool.getLogger();
       this.debug = log.isDebugEnabled();
-      this.trace = log.isTraceEnabled();
       this.cls = new ArrayList<ConnectionListener>(this.maxSize);
       this.supportsLazyAssociation = null;
       this.lastIdleCheck = System.currentTimeMillis();
@@ -270,7 +266,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
     */
    public ConnectionListener getConnection(Subject subject, ConnectionRequestInfo cri) throws ResourceException
    {
-      if (trace)
+
+      if (log.isTraceEnabled())
       {
          synchronized (cls)
          {
@@ -303,14 +300,13 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
             if (supportsLazyAssociation != null && supportsLazyAssociation.booleanValue())
             {
-               if (trace)
+               if (log.isTraceEnabled())
                   log.tracef("Trying to detach - Pool: %s MCP: %s", pool.getName(),
                              Integer.toHexString(System.identityHashCode(this)));
 
                if (!detachConnectionListener())
                {
-                  if (trace)
-                     log.tracef("Detaching didn't succeed - Pool: %s MCP: %s", pool.getName(),
+                  log.tracef("Detaching didn't succeed - Pool: %s MCP: %s", pool.getName(),
                                 Integer.toHexString(System.identityHashCode(this)));
                }
             }
@@ -382,8 +378,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                               catch (Throwable t)
                               {
                                  valid = false;
-                                 if (trace)
-                                    log.tracef("Exception while ValidateOnMatch: " + t.getMessage(), t);
+                                 if (log.isTraceEnabled())
+                                    log.trace("Exception while ValidateOnMatch: " + t.getMessage(), t);
                               }
                            }
                            else
@@ -394,8 +390,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
                         if (valid)
                         {
-                           if (trace)
-                              log.trace("supplying ManagedConnection from pool: " + cl);
+                           log.tracef("supplying ManagedConnection from pool: %s", cl);
 
                            clPermits.put(cl, cl);
 
@@ -476,7 +471,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                   // if we should continue attempting to acquire a connection
                   if (poolConfiguration.isUseFastFail())
                   {
-                     if (trace)
+                     if (log.isTraceEnabled())
                         log.trace("Fast failing for connection attempt. No more attempts will be made to " +
                                "acquire connection from pool and a new connection will be created immeadiately");
                      break;
@@ -503,8 +498,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                   checkedOut.add(cl);
                }
 
-               if (trace)
-                  log.trace("supplying new ManagedConnection: " + cl);
+               log.tracef("supplying new ManagedConnection: %s", cl);
 
                clPermits.put(cl, cl);
 
@@ -655,7 +649,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       if (pool.getInternalStatistics().isEnabled() && cl.getState() != ConnectionState.DESTROYED)
          pool.getInternalStatistics().deltaTotalUsageTime(System.currentTimeMillis() - cl.getLastCheckedOutTime());
 
-      if (trace)
+      if (log.isTraceEnabled())
       {
          synchronized (cls)
          {
@@ -675,8 +669,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
       if (cl.getState() == ConnectionState.DESTROYED)
       {
-         if (trace)
-            log.trace("ManagedConnection is being returned after it was destroyed: " + cl);
+         log.tracef("ManagedConnection is being returned after it was destroyed: %s", cl);
 
          ConnectionListener present = clPermits.remove(cl);
          if (present != null)
@@ -755,8 +748,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
       if (kill)
       {
-         if (trace)
-            log.trace("Destroying returned connection " + cl);
+         log.tracef("Destroying returned connection %s", cl);
 
          if (Tracer.isEnabled())
             Tracer.destroyConnectionListener(pool.getName(), this, cl, true, false, false, false, false,
@@ -781,16 +773,14 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       {
          if (FlushMode.ALL == mode)
          {
-            if (trace)
-               log.trace("Flushing pool checkedOut=" + checkedOut + " inPool=" + cls);
+            log.tracef("Flushing pool checkedOut=%s inPool=%s", checkedOut, cls);
 
             // Mark checked out connections as requiring destruction
             while (checkedOut.size() > 0)
             {
                ConnectionListener cl = checkedOut.remove(0);
 
-               if (trace)
-                  log.trace("Flush marking checked out connection for destruction " + cl);
+               log.tracef("Flush marking checked out connection for destruction %s", cl);
 
                cl.setState(ConnectionState.DESTROY);
 
@@ -812,14 +802,12 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          }
          else if (FlushMode.GRACEFULLY == mode)
          {
-            if (trace)
-               log.trace("Gracefully flushing pool checkedOut=" + checkedOut + " inPool=" + cls);
+            log.tracef("Gracefully flushing pool checkedOut=%s inPool=%s",checkedOut , cls);
 
             // Mark checked out connections as requiring destruction upon return
             for (ConnectionListener cl : checkedOut)
             {
-               if (trace)
-                  log.trace("Graceful flush marking checked out connection for destruction " + cl);
+               log.tracef("Graceful flush marking checked out connection for destruction %s", cl);
 
                cl.setState(ConnectionState.DESTROY);
             }
@@ -883,8 +871,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       {
          for (ConnectionListener cl : destroy)
          {
-            if (trace)
-               log.trace("Destroying flushed connection " + cl);
+            log.tracef("Destroying flushed connection %s", cl);
 
             if (Tracer.isEnabled())
                Tracer.destroyConnectionListener(pool.getName(), this, cl, false, false, false, true, false,
@@ -936,7 +923,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       boolean destroy = true;
       int destroyed = 0;
 
-      if (trace)
+      if (log.isTraceEnabled())
       {
          synchronized (cls)
          {
@@ -977,8 +964,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                   if (pool.getInternalStatistics().isEnabled())
                      pool.getInternalStatistics().deltaTimedOut();
 
-                  if (trace)
-                     log.trace("Idle connection cl=" + cl);
+                  log.tracef("Idle connection cl=%s", cl);
 
                   // We need to destroy this one
                   cls.remove(0);
@@ -998,8 +984,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       {
          for (ConnectionListener cl : destroyConnections)
          {
-            if (trace)
-               log.trace("Destroying connection " + cl);
+            log.tracef("Destroying connection %s", cl);
 
             if (pool.getInternalStatistics().isEnabled())
                pool.getInternalStatistics().deltaTotalPoolTime(System.currentTimeMillis() -
@@ -1048,7 +1033,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
     */
    public synchronized void shutdown()
    {
-      if (trace)
+      if (log.isTraceEnabled())
          log.tracef("Shutdown - Pool: %s MCP: %s", pool.getName(), Integer.toHexString(System.identityHashCode(this)));
 
       IdleRemover.getInstance().unregisterPool(this);
@@ -1082,7 +1067,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       if (!(pool instanceof PrefillPool))
          return;
 
-      if (trace)
+      if (log.isTraceEnabled())
       {
          synchronized (cls)
          {
@@ -1140,8 +1125,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                      {
                         if (!isSize(size))
                         {
-                           if (trace)
-                              log.trace("Filling pool cl=" + cl);
+                           log.tracef("Filling pool cl=%s", cl);
 
                            cls.add(cl);
                            added = true;
@@ -1176,8 +1160,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          {
             Thread.interrupted();
 
-            if (trace)
-               log.trace("Interrupted while requesting permit in fillTo");
+            log.trace("Interrupted while requesting permit in fillTo");
          }
       }
    }
@@ -1233,8 +1216,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                         {
                            if (!isSize(poolConfiguration.getMaxSize()))
                            {
-                              if (trace)
-                                 log.trace("Capacity fill: cl=" + cl);
+                              log.tracef("Capacity fill: cl=%s", cl);
 
                               cls.add(cl);
                               created++;
@@ -1271,8 +1253,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          {
             Thread.interrupted();
 
-            if (trace)
-               log.trace("Interrupted while requesting permit in increaseCapacity");
+            log.trace("Interrupted while requesting permit in increaseCapacity");
          }
       }
    }
@@ -1319,8 +1300,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    {
       if (cl.getState() == ConnectionState.DESTROYED)
       {
-         if (trace)
-            log.trace("ManagedConnection is already destroyed " + cl);
+         log.tracef("ManagedConnection is already destroyed %s", cl);
 
          return;
       }
@@ -1356,8 +1336,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          // Add 1 to min-pool-size since it is strict
          remove = isSize(poolConfiguration.getMinSize() + 1);
 
-         if (trace)
-            log.trace("StrictMin is active. Current connection will be removed is " + remove);
+         log.tracef("StrictMin is active. Current connection will be removed is %b", remove);
       }
 
       return remove;
@@ -1369,11 +1348,9 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    public void validateConnections() throws Exception
    {
 
-      if (trace)
-         log.trace("Attempting to  validate connections for pool " + this);
-
-      if (trace)
+      if (log.isTraceEnabled())
       {
+         log.tracef("Attempting to  validate connections for pool %s", this);
          synchronized (cls)
          {
             String method = "validateConnections()";
@@ -1602,8 +1579,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                cl = it.next();
                if (!cl.isEnlisted() && cl.getManagedConnection() instanceof DissociatableManagedConnection)
                {
-                  if (trace)
-                     log.tracef("Detach: %s", cl);
+                  log.tracef("Detach: %s", cl);
 
                   DissociatableManagedConnection dmc = (DissociatableManagedConnection)cl.getManagedConnection();
                   dmc.dissociateConnections();

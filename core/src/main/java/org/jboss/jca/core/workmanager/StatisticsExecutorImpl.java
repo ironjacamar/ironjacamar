@@ -45,9 +45,6 @@ public class StatisticsExecutorImpl implements StatisticsExecutor
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class,
                                                            StatisticsExecutorImpl.class.getName());
 
-   /** Whether trace is enabled */
-   private static boolean trace = log.isTraceEnabled();
-
    private final BlockingExecutor realExecutor;
 
    /**

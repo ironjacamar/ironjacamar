@@ -36,9 +36,6 @@ public class ResourceAdapterClassLoader extends ClassLoader
    private static CoreLogger log =
       Logger.getMessageLogger(CoreLogger.class, ResourceAdapterClassLoader.class.getName());
 
-   /** Whether trace is enabled */
-   private static boolean trace = log.isTraceEnabled();
-
    /** The work class loader */
    private WorkClassLoader workClassLoader;
 
@@ -59,7 +56,7 @@ public class ResourceAdapterClassLoader extends ClassLoader
    @Override
    public Class<?> loadClass(String name) throws ClassNotFoundException
    {
-      if (trace)
+      if (log.isTraceEnabled())
          log.tracef("%s: loadClass(%s)", Integer.toHexString(System.identityHashCode(this)), name);
 
       try
@@ -69,7 +66,7 @@ public class ResourceAdapterClassLoader extends ClassLoader
       catch (Throwable t)
       {
          // Default to delegate
-         if (trace)
+         if (log.isTraceEnabled())
             log.tracef("%s: Failed to load=%s", Integer.toHexString(System.identityHashCode(this)), name);
       }
 
@@ -85,7 +82,7 @@ public class ResourceAdapterClassLoader extends ClassLoader
    @Override
    public Class<?> findClass(String name) throws ClassNotFoundException
    {
-      if (trace)
+      if (log.isTraceEnabled())
          log.tracef("%s: findClass(%s)", Integer.toHexString(System.identityHashCode(this)), name);
 
       try
@@ -95,7 +92,7 @@ public class ResourceAdapterClassLoader extends ClassLoader
       catch (Throwable t)
       {
          // Default to delegate
-         if (trace)
+         if (log.isTraceEnabled())
             log.tracef("%s: Failed to find=%s", Integer.toHexString(System.identityHashCode(this)), name);
       }
 

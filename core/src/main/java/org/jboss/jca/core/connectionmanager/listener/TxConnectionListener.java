@@ -272,17 +272,12 @@ public class TxConnectionListener extends AbstractConnectionListener
          if (transactionSynchronization != null && transactionSynchronization.currentTx != null)
          {
             String error = "Attempt to use connection outside a transaction when already a tx!";
-            if (trace)
-            {
-               log.trace(error + " " + this);
-            }
+            log.tracef("%s %s", error, this);
+            
 
             throw new IllegalStateException(error);
          }
-         if (trace)
-         {
-            log.trace("No transaction, no need to enlist: " + this);
-         }
+         log.tracef("No transaction, no need to enlist: %s", this);
 
          return;
       }
@@ -296,19 +291,13 @@ public class TxConnectionListener extends AbstractConnectionListener
          if (!txConnectionManager.isAllowMarkedForRollback())
          {
             String error = "Transaction " + threadTx + " is not active " + TxUtils.getStatusAsString(status);
-            if (trace)
-            {
-               log.trace(error + " cl=" + this);
-            }
+            log.tracef("%s cl=%s",error, this);
 
             throw new IllegalStateException(error);
          }
       }
 
-      if (trace)
-      {
-         log.trace("Pre-enlist: " + this + " threadTx=" + threadTx);
-      }
+      log.tracef("Pre-enlist: %s threadTx=%s", this, threadTx);
 
       // Our synchronization
       TransactionSynchronization ourSynchronization = null;
@@ -335,10 +324,7 @@ public class TxConnectionListener extends AbstractConnectionListener
          if (!isTrackByTx() && transactionSynchronization != null)
          {
             String error = "Can't enlist - already a tx!";
-            if (trace)
-            {
-               log.trace(error + " " + this);
-            }
+            log.tracef("%s %s", error, this);
             throw new IllegalStateException(error);
          }
 
@@ -346,20 +332,14 @@ public class TxConnectionListener extends AbstractConnectionListener
          if (transactionSynchronization != null && !transactionSynchronization.currentTx.equals(threadTx))
          {
             String error = "Trying to change transaction " + threadTx + " in enlist!";
-            if (trace)
-            {
-               log.trace(error + " " + this);
-            }
+            log.tracef("%s %s", error, this);
             throw new IllegalStateException(error);
          }
 
          // Get the synchronizer
          try
          {
-            if (this.trace)
-            {
-               log.trace("Get synchronizer " + this + " threadTx=" + threadTx);
-            }
+            log.tracef("Get synchronizer %s threadTx=%s",this, threadTx);
 
             synchronizer =
                TransactionSynchronizer.getRegisteredSynchronizer(threadTx,
@@ -409,10 +389,7 @@ public class TxConnectionListener extends AbstractConnectionListener
       }
 
       // What was the result of our enlistment?
-      if (this.trace)
-      {
-         log.trace("Check enlisted " + this + " threadTx=" + threadTx);
-      }
+      log.tracef("Check enlisted %s threadTx=%s", this, threadTx);
 
       ourSynchronization.checkEnlisted();
       setEnlisted(true);
@@ -424,8 +401,7 @@ public class TxConnectionListener extends AbstractConnectionListener
    @Override
    public boolean delist() throws ResourceException
    {
-      if (trace)
-         log.trace("delisting " + this);
+      log.tracef("delisting %s", this);
 
       boolean success = true;
 
@@ -450,15 +426,13 @@ public class TxConnectionListener extends AbstractConnectionListener
 
                      if (!synchronizer.removeEnlisted(synchronization))
                      {
-                        if (trace)
-                           log.tracef("%s not found in %s", synchronization, synchronizer);
+                        log.tracef("%s not found in %s", synchronization, synchronizer);
                      }   
                   }
 
                   if (!getState().equals(ConnectionState.DESTROYED))
                   {
-                     if (trace)
-                        log.tracef("delistResource(%s, TMSUSPEND)", getXAResource());
+                     log.tracef("delistResource(%s, TMSUSPEND)", getXAResource());
 
                      boolean suspendResult = tx.delistResource(getXAResource(), XAResource.TMSUSPEND);
 
@@ -474,8 +448,7 @@ public class TxConnectionListener extends AbstractConnectionListener
                      }
                      else
                      {
-                        if (trace)
-                           log.trace("delist-suspend: " + this);
+                        log.tracef("delist-suspend: %s", this);
                      }
                   }
                }
@@ -498,8 +471,7 @@ public class TxConnectionListener extends AbstractConnectionListener
                      {
                         if (TxUtils.isActive(tx))
                         {
-                           if (trace)
-                              log.tracef("delistResource(%s, TMSUCCESS)", getXAResource());
+                           log.tracef("delistResource(%s, TMSUCCESS)", getXAResource());
 
                            boolean successResult = tx.delistResource(getXAResource(), XAResource.TMSUCCESS);
 
@@ -511,8 +483,7 @@ public class TxConnectionListener extends AbstractConnectionListener
 
                            if (successResult)
                            {
-                              if (trace)
-                                 log.trace("delist-success: " + this);
+                              log.tracef("delist-success: %s", this);
                            }
                            else
                            {
@@ -522,8 +493,7 @@ public class TxConnectionListener extends AbstractConnectionListener
                         }
                         else
                         {
-                           if (trace)
-                              log.tracef("delistResource(%s, TMFAIL)", getXAResource());
+                           log.tracef("delistResource(%s, TMFAIL)", getXAResource());
 
                            boolean failResult = tx.delistResource(getXAResource(), XAResource.TMFAIL);
                            
@@ -535,8 +505,7 @@ public class TxConnectionListener extends AbstractConnectionListener
 
                            if (failResult)
                            {
-                              if (trace)
-                                 log.trace("delist-fail: " + this);
+                              log.tracef("delist-fail: %s", this);
                            }
                            else
                            {
@@ -553,8 +522,7 @@ public class TxConnectionListener extends AbstractConnectionListener
             setEnlisted(false);
          }
 
-         if (trace)
-            log.trace("delisted " + this);
+         log.tracef("delisted %s", this);
 
          return success;
       }
@@ -574,16 +542,14 @@ public class TxConnectionListener extends AbstractConnectionListener
    @Override
    public void dissociate() throws ResourceException
    {
-      if (trace)
-         log.tracef("dissociate: %s", this);
+      log.tracef("dissociate: %s", this);
 
       try
       {
          TransactionManager tm = getConnectionManager().getTransactionIntegration().getTransactionManager();
          int status = tm.getStatus();
 
-         if (trace)
-            log.tracef("dissociate: status=%s", TxUtils.getStatusAsString(status));
+         log.tracef("dissociate: status=%s", TxUtils.getStatusAsString(status));
 
          if (status != Status.STATUS_NO_TRANSACTION)
          {
@@ -594,14 +560,12 @@ public class TxConnectionListener extends AbstractConnectionListener
                   Transaction tx = tm.getTransaction();
                   boolean delistResult = tx.delistResource(getXAResource(), XAResource.TMSUCCESS);
 
-                  if (trace)
-                     log.tracef("dissociate: delistResult=%s", delistResult);
+                  log.tracef("dissociate: delistResult=%s", delistResult);
                }
             }
             else
             {
-               if (trace)
-                  log.tracef("dissociate: not enlisted (%s)", this);
+               log.tracef("dissociate: not enlisted (%s)", this);
             }
 
             if (isTrackByTx())
@@ -669,8 +633,7 @@ public class TxConnectionListener extends AbstractConnectionListener
    @Override
    public void connectionClosed(ConnectionEvent ce)
    {
-      if (trace)
-         log.trace("connectionClosed called mc=" + this.getManagedConnection());
+      log.tracef("connectionClosed called mc=%s", this.getManagedConnection());
       if (this.getManagedConnection() != (ManagedConnection)ce.getSource())
          throw new IllegalArgumentException("ConnectionClosed event received from wrong ManagedConnection! Expected: " +
                this.getManagedConnection() + ", actual: " + ce.getSource());
@@ -694,8 +657,7 @@ public class TxConnectionListener extends AbstractConnectionListener
          {
             boolean success = delist();
 
-            if (trace)
-               log.trace("isManagedConnectionFree=true mc=" + this.getManagedConnection());
+            log.tracef("isManagedConnectionFree=true mc=%s", this.getManagedConnection());
 
             if (success || (tracking != null && !tracking.booleanValue()))
             {
@@ -709,8 +671,7 @@ public class TxConnectionListener extends AbstractConnectionListener
          }
          else
          {
-            if (trace)
-               log.trace("isManagedConnectionFree=false mc=" + this.getManagedConnection());
+            log.tracef("isManagedConnectionFree=false mc=%s", this.getManagedConnection());
          }
       }
       catch (Throwable t)
@@ -802,15 +763,13 @@ public class TxConnectionListener extends AbstractConnectionListener
                
                if (TxUtils.isUncommitted(tx) && doDelistResource)
                {
-                  if (trace)
-                     log.tracef("connectionErrorOccurred: delistResource(%s, TMFAIL)", getXAResource());
+                  log.tracef("connectionErrorOccurred: delistResource(%s, TMFAIL)", getXAResource());
 
                   boolean failResult = tx.delistResource(getXAResource(), XAResource.TMFAIL);
                   
                   if (failResult)
                   {
-                     if (trace)
-                        log.trace("connectionErrorOccurred: delist-fail: " + this);
+                     log.tracef("connectionErrorOccurred: delist-fail: %s", this);
                   }
                   else
                   {
@@ -953,8 +912,7 @@ public class TxConnectionListener extends AbstractConnectionListener
             this.failedToEnlist = null;
          }
 
-         if (trace)
-            log.tracef("%s: Constructor", toString());
+         log.tracef("%s: Constructor", toString());
       }
 
       /**
@@ -975,10 +933,7 @@ public class TxConnectionListener extends AbstractConnectionListener
          if (this.enlistError != null)
          {
             String error = "Error enlisting resource in transaction=" + this.currentTx;
-            if (trace)
-            {
-               log.trace(error + " " + TxConnectionListener.this);
-            }
+            log.tracef("%s %s", error, TxConnectionListener.this);
 
             // Wrap the error to give a reasonable stacktrace since the resource
             // could have been enlisted by a different thread
@@ -1012,10 +967,7 @@ public class TxConnectionListener extends AbstractConnectionListener
          if (!enlisted)
          {
             String error = "Resource is not enlisted in transaction=" + currentTx;
-            if (trace)
-            {
-               log.trace(error + " " + TxConnectionListener.this);
-            }
+            log.tracef("%s %s", error, TxConnectionListener.this);
             throw new IllegalStateException("Resource was not enlisted.");
          }
       }
@@ -1027,10 +979,7 @@ public class TxConnectionListener extends AbstractConnectionListener
        */
       public boolean enlist()
       {
-         if (trace)
-         {
-            log.trace("Enlisting resource " + TxConnectionListener.this);
-         }
+         log.tracef("Enlisting resource %s", TxConnectionListener.this);
          try
          {
             XAResource resource = getXAResource();
@@ -1075,7 +1024,7 @@ public class TxConnectionListener extends AbstractConnectionListener
          {
             if (enlistError != null)
             {
-               if (trace)
+               if (log.isTraceEnabled())
                {
                   log.trace("Failed to enlist resource " + TxConnectionListener.this, enlistError);
                }
@@ -1088,10 +1037,7 @@ public class TxConnectionListener extends AbstractConnectionListener
 
             enlisted = true;
 
-            if (trace)
-            {
-               log.trace("Enlisted resource " + TxConnectionListener.this);
-            }
+            log.tracef("Enlisted resource %s", TxConnectionListener.this);
 
             return true;
          }
@@ -1112,8 +1058,7 @@ public class TxConnectionListener extends AbstractConnectionListener
                   {
                      if (TxUtils.isActive(currentTx))
                      {
-                        if (trace)
-                           log.tracef("delistResource(%s, TMSUCCESS)", TxConnectionListener.this.getXAResource());
+                        log.tracef("delistResource(%s, TMSUCCESS)", TxConnectionListener.this.getXAResource());
 
                         currentTx.delistResource(TxConnectionListener.this.getXAResource(), XAResource.TMSUCCESS);
 
@@ -1125,8 +1070,7 @@ public class TxConnectionListener extends AbstractConnectionListener
                      }
                      else
                      {
-                        if (trace)
-                           log.tracef("delistResource(%s, TMFAIL)", TxConnectionListener.this.getXAResource());
+                        log.tracef("delistResource(%s, TMFAIL)", TxConnectionListener.this.getXAResource());
 
                         currentTx.delistResource(TxConnectionListener.this.getXAResource(), XAResource.TMFAIL);
 
@@ -1139,15 +1083,14 @@ public class TxConnectionListener extends AbstractConnectionListener
                   }
                   else
                   {
-                     if (trace)
-                        log.tracef("Non-uncommitted transaction for %s (%s)", TxConnectionListener.this,
+                     if(log.isTraceEnabled())
+                         log.tracef("Non-uncommitted transaction for %s (%s)", TxConnectionListener.this,
                                    currentTx != null ? TxUtils.getStatusAsString(currentTx.getStatus()) : "None");
                   }
                }
                else
                {
-                  if (trace && wasTrackByTx)
-                     log.tracef("No delistResource for: %s", TxConnectionListener.this);
+                  log.tracef("No delistResource for: %s", TxConnectionListener.this);
                }
             }
             catch (Throwable t)
@@ -1157,8 +1100,7 @@ public class TxConnectionListener extends AbstractConnectionListener
          }
          else
          {
-            if (trace)
-               log.tracef("Unenlisted resource: %s", TxConnectionListener.this);
+            log.tracef("Unenlisted resource: %s", TxConnectionListener.this);
          }
       }
 
@@ -1200,11 +1142,8 @@ public class TxConnectionListener extends AbstractConnectionListener
             // This is where we close when doing track by transaction
             if (wasTrackByTx)
             {
-               if (trace)
-               {
-                  log.trace("afterCompletion(" + status + ") isTrackByTx=" + isTrackByTx() +
-                            " for " + TxConnectionListener.this);
-               }
+               log.tracef("afterCompletion(%d) isTrackByTx=%b for %s" 
+                          , status, isTrackByTx(), TxConnectionListener.this);
 
                if (wasFreed(null))
                {
@@ -1247,8 +1186,8 @@ public class TxConnectionListener extends AbstractConnectionListener
                   }
                   else
                   {
-                     if (trace)
-                        log.tracef(new Exception("Connection across boundary"), "ConnectionListener=%s",
+                     if (log.isTraceEnabled())
+                        log.tracef( new Exception("Connection across boundary"), "ConnectionListener=%s",
                                    TxConnectionListener.this);
                   }
                }

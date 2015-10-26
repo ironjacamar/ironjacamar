@@ -41,9 +41,6 @@ public class ClassBundleFactory
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class,
                                                            ClassBundleFactory.class.getName());
 
-   /** Whether trace is enabled */
-   private static boolean trace = log.isTraceEnabled();
-
    /**
     * Constructor
     */
@@ -60,9 +57,8 @@ public class ClassBundleFactory
    {
       if (s == null)
          return null;
-      
-      if (trace)
-         log.tracef("Creating class bundle for: %s", s);
+
+      log.tracef("Creating class bundle for: %s", s);
 
       ClassBundle cb = new ClassBundle();
 
@@ -75,8 +71,7 @@ public class ClassBundleFactory
 
             if (!name.startsWith("java") && !name.startsWith("javax"))
             {
-               if (trace)
-                  log.tracef("Creating class definition for: %s", name);
+               log.tracef("Creating class definition for: %s", name);
 
                ClassDefinition cd = ClassDefinitionFactory.createClassDefinition(s, clz);
                if (!cb.getDefinitions().contains(cd))
@@ -86,7 +81,7 @@ public class ClassBundleFactory
       }
       else
       {
-         if (trace)
+         if (log.isTraceEnabled())
             log.tracef("No interfaces for: %s", s.getClass().getName());
       }
 
@@ -99,8 +94,7 @@ public class ClassBundleFactory
 
             if (!name.startsWith("java") && !name.startsWith("javax"))
             {
-               if (trace)
-                  log.tracef("Creating class definition for: %s", name);
+               log.tracef("Creating class definition for: %s", name);
 
                ClassDefinition cd = ClassDefinitionFactory.createClassDefinition(s, clz);
                if (!cb.getDefinitions().contains(cd))
@@ -110,7 +104,7 @@ public class ClassBundleFactory
       }
       else
       {
-         if (trace)
+         if (log.isTraceEnabled())
             log.tracef("No classes for: %s", s.getClass().getName());
       }
 
@@ -123,8 +117,7 @@ public class ClassBundleFactory
 
             if (!name.startsWith("java") && !name.startsWith("javax"))
             {
-               if (trace)
-                  log.tracef("Creating class definition for: %s", name);
+               log.tracef("Creating class definition for: %s", name);
 
                ClassDefinition cd = ClassDefinitionFactory.createClassDefinition(s, clz);
                if (!cb.getDefinitions().contains(cd))
@@ -134,7 +127,7 @@ public class ClassBundleFactory
       }
       else
       {
-         if (trace)
+         if (log.isTraceEnabled())
             log.tracef("No fields for: %s", s.getClass().getName());
       }
 
@@ -144,8 +137,7 @@ public class ClassBundleFactory
          String name = clz.getName();
          if (!name.startsWith("java") && !name.startsWith("javax"))
          {
-            if (trace)
-               log.tracef("Creating class definition for: %s", name);
+            log.tracef("Creating class definition for: %s", name);
 
             ClassDefinition cd = ClassDefinitionFactory.createClassDefinition(s, clz);
             if (!cb.getDefinitions().contains(cd))
@@ -161,8 +153,7 @@ public class ClassBundleFactory
 
       cb.getDefinitions().add(ClassDefinitionFactory.createClassDefinition(s));
 
-      if (trace)
-         log.tracef("Class bundle: %s", cb);
+      log.tracef("Class bundle: %s", cb);
 
       return cb;
    }
@@ -194,8 +185,7 @@ public class ClassBundleFactory
                   {
                      if (!result.contains(defClz))
                      {
-                        if (trace)
-                           log.tracef("Adding field: %s", defClzName);
+                        log.tracef("Adding field: %s", defClzName);
                         
                         result.add(defClz);
                      }

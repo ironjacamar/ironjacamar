@@ -43,9 +43,6 @@ public abstract class AbstractNotificationListener implements NotificationListen
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class,
                                                            AbstractNotificationListener.class.getName());
 
-   /** Whether trace is enabled */
-   private static boolean trace = log.isTraceEnabled();
-
    /** Short running */
    protected Map<String, Map<Address, Long>> shortRunning;
 
@@ -66,8 +63,7 @@ public abstract class AbstractNotificationListener implements NotificationListen
     */
    public void join(Address address)
    {
-      if (trace)
-         log.tracef("join(%s)", address);
+      log.tracef("join(%s)", address);
 
       Map<Address, Long> sr = shortRunning.get(address.getWorkManagerId());
 
@@ -91,8 +87,7 @@ public abstract class AbstractNotificationListener implements NotificationListen
     */
    public void leave(Address address)
    {
-      if (trace)
-         log.tracef("leave(%s)", address);
+      log.tracef("leave(%s)", address);
 
       Map<Address, Long> sr = shortRunning.get(address.getWorkManagerId());
 
@@ -132,8 +127,7 @@ public abstract class AbstractNotificationListener implements NotificationListen
     */
    public void updateShortRunningFree(Address address, long free)
    {
-      if (trace)
-         log.tracef("updateShortRunningFree(%s, %d)", address, free);
+      log.tracef("updateShortRunningFree(%s, %d)", address, free);
 
       Map<Address, Long> sr = shortRunning.get(address.getWorkManagerId());
 
@@ -149,8 +143,7 @@ public abstract class AbstractNotificationListener implements NotificationListen
     */
    public void updateLongRunningFree(Address address, long free)
    {
-      if (trace)
-         log.tracef("updateLongRunningFree(%s, %d)", address, free);
+      log.tracef("updateLongRunningFree(%s, %d)", address, free);
 
       Map<Address, Long> lr = longRunning.get(address.getWorkManagerId());
 

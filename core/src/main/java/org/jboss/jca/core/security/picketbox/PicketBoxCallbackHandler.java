@@ -52,9 +52,6 @@ public class PicketBoxCallbackHandler implements CallbackHandler, Serializable
    /** Log instance */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, PicketBoxCallbackHandler.class.getName());
 
-   /** Trace */
-   private static boolean trace = log.isTraceEnabled();
-
    /** Callback mappings */
    private org.jboss.jca.core.spi.security.Callback mappings;
 
@@ -81,7 +78,7 @@ public class PicketBoxCallbackHandler implements CallbackHandler, Serializable
    public void handle(javax.security.auth.callback.Callback[] callbacks) throws UnsupportedCallbackException,
                                                                                 IOException
    {
-      if (trace)
+      if (log.isTraceEnabled())
          log.tracef("handle(%s)", Arrays.toString(callbacks));
 
       if (callbacks != null && callbacks.length > 0)

@@ -53,9 +53,6 @@ public class Communication implements Runnable
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, Communication.class.getName());
 
-   /** Trace logging */
-   private static boolean trace = log.isTraceEnabled();
-
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
 
@@ -102,7 +99,7 @@ public class Communication implements Runnable
 
                String address = (String)wois.readObject();
 
-               if (trace)
+               if (log.isTraceEnabled())
                   log.tracef("%s: JOIN(%s)", socket.getInetAddress(), address);
 
                Set<Address> workManagers = 
@@ -132,7 +129,7 @@ public class Communication implements Runnable
 
                String address = (String)wois.readObject();
 
-               if (trace)
+               if (log.isTraceEnabled())
                   log.tracef("%s: LEAVE(%s)", socket.getInetAddress(), address);
 
                transport.leave(address);
@@ -144,7 +141,7 @@ public class Communication implements Runnable
                   throw new IllegalArgumentException(bundle.invalidNumberOfParameters(numberOfParameters,
                                                                                       "GET_WORKMANAGERS"));
 
-               if (trace)
+               if (log.isTraceEnabled())
                   log.tracef("%s: GET_WORKMANAGERS()", socket.getInetAddress());
 
                returnValue = (Serializable)transport.getAddresses(transport.getOwnAddress());
@@ -160,7 +157,7 @@ public class Communication implements Runnable
                Address id = (Address)wois.readObject();
                String address = (String)wois.readObject();
 
-               if (trace)
+               if (log.isTraceEnabled())
                   log.tracef("%s: WORKMANAGER_ADD(%s, %s)", socket.getInetAddress(), id, address);
 
                transport.localWorkManagerAdd(id, address);
@@ -175,7 +172,7 @@ public class Communication implements Runnable
 
                Address id = (Address)wois.readObject();
 
-               if (trace)
+               if (log.isTraceEnabled())
                   log.tracef("%s: WORKMANAGER_REMOVE(%s)", socket.getInetAddress(), id);
 
                transport.localWorkManagerRemove(id);
@@ -188,7 +185,7 @@ public class Communication implements Runnable
                   throw new IllegalArgumentException(bundle.invalidNumberOfParameters(numberOfParameters,
                                                                                       "PING"));
 
-               if (trace)
+               if (log.isTraceEnabled())
                   log.tracef("%s: PING()", socket.getInetAddress());
 
                transport.localPing();
@@ -204,7 +201,7 @@ public class Communication implements Runnable
                Address id = (Address)wois.readObject();
                ClassBundle cb = (ClassBundle)wois.readObject();
 
-               if (trace)
+               if (log.isTraceEnabled())
                   log.tracef("DO_WORK/ClassBundle: %s", cb);
 
                WorkClassLoader wcl = SecurityActions.createWorkClassLoader(cb);
@@ -212,7 +209,7 @@ public class Communication implements Runnable
 
                DistributableWork work = (DistributableWork)wois.readObject();
 
-               if (trace)
+               if (log.isTraceEnabled())
                   log.tracef("%s: DO_WORK(%s, %s)", socket.getInetAddress(), id, work);
 
                transport.localDoWork(id, work);
@@ -228,15 +225,14 @@ public class Communication implements Runnable
                Address id = (Address)wois.readObject();
                ClassBundle cb = (ClassBundle)wois.readObject();
 
-               if (trace)
-                  log.tracef("START_WORK/ClassBundle: %s", cb);
+               log.tracef("START_WORK/ClassBundle: %s", cb);
 
                WorkClassLoader wcl = SecurityActions.createWorkClassLoader(cb);
                wois.setWorkClassLoader(wcl);
 
                DistributableWork work = (DistributableWork)wois.readObject();
 
-               if (trace)
+               if (log.isTraceEnabled())
                   log.tracef("%s: START_WORK(%s, %s)", socket.getInetAddress(), id, work);
 
                returnValue = transport.localStartWork(id, work);
@@ -252,15 +248,14 @@ public class Communication implements Runnable
                Address id = (Address)wois.readObject();
                ClassBundle cb = (ClassBundle)wois.readObject();
 
-               if (trace)
-                  log.tracef("SCHEDULE_WORK/ClassBundle: %s", cb);
+               log.tracef("SCHEDULE_WORK/ClassBundle: %s", cb);
 
                WorkClassLoader wcl = SecurityActions.createWorkClassLoader(cb);
                wois.setWorkClassLoader(wcl);
 
                DistributableWork work = (DistributableWork)wois.readObject();
 
-               if (trace)
+               if (log.isTraceEnabled())
                   log.tracef("%s: SCHEDULE_WORK(%s, %s)", socket.getInetAddress(), id, work);
 
                transport.localScheduleWork(id, work);
@@ -275,7 +270,7 @@ public class Communication implements Runnable
 
                Address id = (Address)wois.readObject();
 
-               if (trace)
+               if (log.isTraceEnabled())
                   log.tracef("%s: GET_SHORTRUNNING_FREE(%s)", socket.getInetAddress(), id);
 
                returnValue = transport.localGetShortRunningFree(id);
@@ -290,7 +285,7 @@ public class Communication implements Runnable
 
                Address id = (Address)wois.readObject();
 
-               if (trace)
+               if (log.isTraceEnabled())
                   log.tracef("%s: GET_LONGRUNNING_FREE(%s)", socket.getInetAddress(), id);
 
                returnValue = transport.localGetLongRunningFree(id);
@@ -306,7 +301,7 @@ public class Communication implements Runnable
                Address id = (Address)wois.readObject();
                Long freeCount = (Long)wois.readObject();
 
-               if (trace)
+               if (log.isTraceEnabled())
                   log.tracef("%s: UPDATE_SHORTRUNNING_FREE(%s, %d)", socket.getInetAddress(), id, freeCount);
 
                transport.localUpdateShortRunningFree(id, freeCount);
@@ -322,7 +317,7 @@ public class Communication implements Runnable
                Address id = (Address)wois.readObject();
                Long freeCount = (Long)wois.readObject();
 
-               if (trace)
+               if (log.isTraceEnabled())
                   log.tracef("%s: UPDATE_LONGRUNNING_FREE(%s, %d)", socket.getInetAddress(), id, freeCount);
 
                transport.localUpdateLongRunningFree(id, freeCount);
@@ -337,7 +332,7 @@ public class Communication implements Runnable
 
                Address id = (Address)wois.readObject();
 
-               if (trace)
+               if (log.isTraceEnabled())
                   log.tracef("%s: GET_DISTRIBUTED_STATISTICS(%s)", socket.getInetAddress(), id);
 
                returnValue = transport.localGetDistributedStatistics(id);
@@ -352,7 +347,7 @@ public class Communication implements Runnable
 
                Address id = (Address)wois.readObject();
 
-               if (trace)
+               if (log.isTraceEnabled())
                   log.tracef("%s: CLEAR_DISTRIBUTED_STATISTICS(%s)", socket.getInetAddress(), id);
 
                transport.localClearDistributedStatistics(id);
@@ -367,7 +362,7 @@ public class Communication implements Runnable
 
                Address id = (Address)wois.readObject();
 
-               if (trace)
+               if (log.isTraceEnabled())
                   log.tracef("%s: DELTA_DOWORK_ACCEPTED(%s)", socket.getInetAddress(), id);
 
                transport.localDeltaDoWorkAccepted(id);
@@ -382,7 +377,7 @@ public class Communication implements Runnable
 
                Address id = (Address)wois.readObject();
 
-               if (trace)
+               if (log.isTraceEnabled())
                   log.tracef("%s: DELTA_DOWORK_REJECTED(%s)", socket.getInetAddress(), id);
 
                transport.localDeltaDoWorkRejected(id);
@@ -397,7 +392,7 @@ public class Communication implements Runnable
 
                Address id = (Address)wois.readObject();
 
-               if (trace)
+               if (log.isTraceEnabled())
                   log.tracef("%s: DELTA_STARTWORK_ACCEPTED(%s)", socket.getInetAddress(), id);
 
                transport.localDeltaStartWorkAccepted(id);
@@ -412,7 +407,7 @@ public class Communication implements Runnable
 
                Address id = (Address)wois.readObject();
 
-               if (trace)
+               if (log.isTraceEnabled())
                   log.tracef("%s: DELTA_STARTWORK_REJECTED(%s)", socket.getInetAddress(), id);
 
                transport.localDeltaStartWorkRejected(id);
@@ -427,7 +422,7 @@ public class Communication implements Runnable
 
                Address id = (Address)wois.readObject();
 
-               if (trace)
+               if (log.isTraceEnabled())
                   log.tracef("%s: DELTA_SCHEDULEWORK_ACCEPTED(%s)", socket.getInetAddress(), id);
 
                transport.localDeltaScheduleWorkAccepted(id);
@@ -442,7 +437,7 @@ public class Communication implements Runnable
 
                Address id = (Address)wois.readObject();
 
-               if (trace)
+               if (log.isTraceEnabled())
                   log.tracef("%s: DELTA_SCHEDULEWORK_REJECTED(%s)", socket.getInetAddress(), id);
 
                transport.localDeltaScheduleWorkRejected(id);
@@ -457,7 +452,7 @@ public class Communication implements Runnable
 
                Address id = (Address)wois.readObject();
 
-               if (trace)
+               if (log.isTraceEnabled())
                   log.tracef("%s: DELTA_WORK_SUCCESSFUL(%s)", socket.getInetAddress(), id);
 
                transport.localDeltaWorkSuccessful(id);
@@ -472,7 +467,7 @@ public class Communication implements Runnable
 
                Address id = (Address)wois.readObject();
 
-               if (trace)
+               if (log.isTraceEnabled())
                   log.tracef("%s: DELTA_WORK_FAILED(%s)", socket.getInetAddress(), id);
 
                transport.localDeltaWorkFailed(id);
@@ -499,14 +494,14 @@ public class Communication implements Runnable
       }
       catch (WorkException we)
       {
-         if (trace)
+         if (log.isTraceEnabled())
             log.tracef("%s: WORK_EXCEPTION(%s)", socket.getInetAddress(), we.getMessage());
 
          sendResponse(Response.WORK_EXCEPTION, we);
       }
       catch (Throwable t)
       {
-         if (trace)
+         if (log.isTraceEnabled())
             log.tracef("%s: THROWABLE(%s)", socket.getInetAddress(), t.getMessage());
 
          sendResponse(Response.GENERIC_EXCEPTION, t);
@@ -529,7 +524,7 @@ public class Communication implements Runnable
 
    private void sendResponse(Response response, Serializable... parameters)
    {
-      if (trace)
+      if (log.isTraceEnabled())
          log.tracef("Sending response: %s with %s", response,
                     parameters != null ? Arrays.toString(parameters) : "null");
 

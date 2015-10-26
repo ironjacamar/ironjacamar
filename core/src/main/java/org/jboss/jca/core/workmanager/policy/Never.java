@@ -41,10 +41,7 @@ public class Never extends AbstractPolicy
 {
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, Never.class.getName());
-   
-   /** Whether trace is enabled */
-   private static boolean trace = log.isTraceEnabled();
-   
+
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
 
@@ -60,8 +57,7 @@ public class Never extends AbstractPolicy
     */
    public synchronized boolean shouldDistribute(DistributedWorkManager dwm, DistributableWork work)
    {
-      if (trace)
-         log.tracef("Work=%s", work);
+      log.tracef("Work=%s", work);
 
       Boolean override = WorkManagerUtil.getShouldDistribute(work);
       if (override != null)

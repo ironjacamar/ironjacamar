@@ -43,9 +43,6 @@ public class WorkClassLoader extends ClassLoader
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, WorkClassLoader.class.getName());
 
-   /** Whether trace is enabled */
-   private static boolean trace = log.isTraceEnabled();
-
    /** The resource adapter class loader */
    private ResourceAdapterClassLoader resourceAdapterClassLoader;
 
@@ -68,7 +65,7 @@ public class WorkClassLoader extends ClassLoader
       super(SecurityActions.getClassLoader(WorkClassLoader.class));
 
       List<Class<?>> classes = new ArrayList<Class<?>>(cb.getDefinitions().size());
-
+      final boolean trace = log.isTraceEnabled();
       for (ClassDefinition cd : cb.getDefinitions())
       {
          if (trace)
@@ -95,7 +92,7 @@ public class WorkClassLoader extends ClassLoader
     */
    public void setResourceAdapterClassLoader(ResourceAdapterClassLoader v)
    {
-      if (trace)
+      if (log.isTraceEnabled())
          log.tracef("%s: setResourceAdapterClassLoader(%s)", Integer.toHexString(System.identityHashCode(this)), v);
 
       resourceAdapterClassLoader = v;
@@ -107,7 +104,7 @@ public class WorkClassLoader extends ClassLoader
    @Override
    public Class<?> loadClass(String name) throws ClassNotFoundException
    {
-      if (trace)
+      if (log.isTraceEnabled())
          log.tracef("%s: loadClass(%s)", Integer.toHexString(System.identityHashCode(this)), name);
 
       Class<?> result = super.loadClass(name);
@@ -149,7 +146,7 @@ public class WorkClassLoader extends ClassLoader
    @Override
    public Class<?> findClass(String name) throws ClassNotFoundException
    {
-      if (trace)
+      if (log.isTraceEnabled())
          log.tracef("%s: findClass(%s)", Integer.toHexString(System.identityHashCode(this)), name);
 
       if (resourceAdapterClassLoader != null)

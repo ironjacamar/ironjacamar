@@ -43,9 +43,6 @@ public class FirstAvailable extends AbstractSelector
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, FirstAvailable.class.getName());
 
-   /** Whether trace is enabled */
-   private static boolean trace = log.isTraceEnabled();
-
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
 
@@ -61,8 +58,7 @@ public class FirstAvailable extends AbstractSelector
     */
    public synchronized Address selectDistributedWorkManager(Address own, DistributableWork work)
    {
-      if (trace)
-         log.tracef("Own: %s, Work: %s", own, work);
+      log.tracef("Own: %s, Work: %s", own, work);
 
       /*
         TODO
@@ -80,8 +76,7 @@ public class FirstAvailable extends AbstractSelector
       Map<Address, Long> selectionMap = getSelectionMap(own.getWorkManagerId(), work);
       // No sorting needed
 
-      if (trace)
-         log.tracef("SelectionMap: %s", selectionMap);
+      log.tracef("SelectionMap: %s", selectionMap);
 
       if (selectionMap != null)
       {
@@ -93,8 +88,7 @@ public class FirstAvailable extends AbstractSelector
                Long free = entry.getValue();
                if (free != null && free.longValue() > 0)
                {
-                  if (trace)
-                     log.tracef("WorkManager: %s", id);
+                  log.tracef("WorkManager: %s", id);
                   
                   return id;
                }
@@ -102,8 +96,7 @@ public class FirstAvailable extends AbstractSelector
          }
       }
 
-      if (trace)
-         log.tracef("WorkManager: None");
+      log.tracef("WorkManager: None");
 
       return null;
    }

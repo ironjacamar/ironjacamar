@@ -60,9 +60,6 @@ public abstract class CachedPreparedStatement extends JBossWrapper implements Pr
    /** The logger */
    protected static Logger log = Logger.getLogger(CachedPreparedStatement.class);
 
-   /** Trace logging */
-   protected static boolean trace = log.isTraceEnabled();
-   
    private PreparedStatement ps;
    private AtomicBoolean cached = new AtomicBoolean(true);
    private AtomicInteger inUse = new AtomicInteger(1);
@@ -455,7 +452,7 @@ public abstract class CachedPreparedStatement extends JBossWrapper implements Pr
     */
    private void closePreparedStatement() throws SQLException
    {
-      if (trace)
+      if (log.isTraceEnabled())
       {
          Throwable t = new Throwable("PreparedStatement.close() called");
          t.setStackTrace(SecurityActions.getStackTrace(Thread.currentThread()));

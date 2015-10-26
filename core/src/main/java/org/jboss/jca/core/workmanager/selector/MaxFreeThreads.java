@@ -43,9 +43,6 @@ public class MaxFreeThreads extends AbstractSelector
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, MaxFreeThreads.class.getName());
 
-   /** Whether trace is enabled */
-   private static boolean trace = log.isTraceEnabled();
-
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
 
@@ -98,8 +95,7 @@ public class MaxFreeThreads extends AbstractSelector
          }
       }
 
-      if (trace)
-         log.tracef("WorkManager: %s (%s)", result, freeThread);
+      log.tracef("WorkManager: %s (%s)", result, freeThread);
 
       return result;
    }

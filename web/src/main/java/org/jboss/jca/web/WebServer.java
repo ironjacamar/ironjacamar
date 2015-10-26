@@ -42,7 +42,6 @@ import org.eclipse.jetty.server.handler.HandlerList;
 public class WebServer implements DeployerPhases
 {
    private static Logger log = Logger.getLogger(WebServer.class);
-   private static boolean trace = log.isTraceEnabled();
 
    /** The server */
    private Server server;

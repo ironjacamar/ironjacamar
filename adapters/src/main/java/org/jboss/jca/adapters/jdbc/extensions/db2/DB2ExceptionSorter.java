@@ -44,10 +44,7 @@ public class DB2ExceptionSorter implements ExceptionSorter, Serializable
    
    /** The logger */
    private static Logger logger = Logger.getLogger(DB2ExceptionSorter.class);
-   
-   /** The trace */
-   private static boolean trace = logger.isTraceEnabled();
-   
+
    /** The serialVersionUID */
    private static final long serialVersionUID = -4724550353693159378L;
 
@@ -75,10 +72,7 @@ public class DB2ExceptionSorter implements ExceptionSorter, Serializable
          isFatal = true;
       }
       
-      if (trace)
-      {
-         logger.trace("Evaluated SQL error code " + code + " isException returned " + isFatal);       
-      }
+      logger.tracef("Evaluated SQL error code %d isException returned %b", code,  isFatal);
       
       return isFatal;
    }

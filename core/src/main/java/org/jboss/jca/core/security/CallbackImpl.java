@@ -50,9 +50,6 @@ public class CallbackImpl implements Callback
    /** Log instance */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, CallbackImpl.class.getName());
 
-   /** Trace */
-   private static boolean trace = log.isTraceEnabled();
-
    /** Is mapping required */
    private boolean mappingRequired;
 

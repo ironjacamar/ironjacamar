@@ -41,9 +41,6 @@ public class WorkManagerEventQueue
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class,
                                                            WorkManagerEventQueue.class.getName());
 
-   /** Whether trace is enabled */
-   private static boolean trace = log.isTraceEnabled();
-
    /** The instance */
    private static final WorkManagerEventQueue INSTANCE = new WorkManagerEventQueue();
 
@@ -73,8 +70,7 @@ public class WorkManagerEventQueue
     */
    public synchronized void addEvent(WorkManagerEvent event)
    {
-      if (trace)
-         log.tracef("addEvent(%s)", event);
+      log.tracef("addEvent(%s)", event);
 
       List<WorkManagerEvent> e = events.get(event.getAddress().getWorkManagerName());
 
@@ -103,8 +99,7 @@ public class WorkManagerEventQueue
          e.clear();
       }
 
-      if (trace)
-         log.tracef("getEvents(%s): %s", workManagerName, result);
+      log.tracef("getEvents(%s): %s", workManagerName, result);
 
       return result;
    }

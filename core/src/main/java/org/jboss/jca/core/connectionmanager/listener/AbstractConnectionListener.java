@@ -54,10 +54,7 @@ import org.jboss.logging.Messages;
 public abstract class AbstractConnectionListener implements ConnectionListener, ConnectableResourceListener
 {
    private final CoreLogger log;
-   
-   /** Log trace */
-   protected boolean trace;
-   
+
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
    
@@ -126,7 +123,6 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
       this.managedConnectionPool = mcp;
       this.flushStrategy = flushStrategy;
       this.log = getLogger();
-      this.trace = log.isTraceEnabled();
       this.enlisted = false;
 
       long createdTime = System.currentTimeMillis();
@@ -275,7 +271,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
     */   
    public boolean isManagedConnectionFree()
    {
-      if (trace)
+      if (log.isTraceEnabled())
          log.tracef("[%s] isManagedConnectionFree: %s", getIdentifier(), connectionHandles.isEmpty());
 
       return connectionHandles.isEmpty();
@@ -309,7 +305,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
          if (Tracer.isEnabled())
             Tracer.getConnection(pool != null ? pool.getName() : null, managedConnectionPool, this, handle);
 
-         if (trace)
+         if (log.isTraceEnabled())
             log.tracef("[%s] registerConnection: %s [size=%s] (%s)", getIdentifier(), handle,
                        connectionHandles.size(), connectionHandles);
 
@@ -376,7 +372,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
          log.unregisteredNullHandleManagedConnection(managedConnection);
       }
       
-      if (trace)
+      if (log.isTraceEnabled())
          log.tracef("[%s] unregisterConnection: " + connectionHandles.size() + " handles left (%s)",
                     getIdentifier(), connectionHandles);
    }
@@ -386,7 +382,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
     */
    public  void unregisterConnections()
    {
-      if (trace)
+      if (log.isTraceEnabled())
          log.tracef("[%s] unregisterConnections", getIdentifier());
 
       if (getCachedConnectionManager() != null)

@@ -84,9 +84,6 @@ public class EndpointImpl implements Endpoint
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, Endpoint.class.getName());
 
-   /** Trace logging */
-   private static boolean trace = log.isTraceEnabled();
-
    /** Is bean validation for inflow enabled */
    private static boolean bvEnabled;
 
@@ -201,8 +198,7 @@ public class EndpointImpl implements Endpoint
          XAResourceRecovery xrr = transactionIntegration.createXAResourceRecovery(rar, spec,
                                                                                   productName, productVersion);
 
-         if (trace)
-            log.tracef("Adding %s for recovery", xrr);
+         log.tracef("Adding %s for recovery", xrr);
 
          try
          {
@@ -239,8 +235,7 @@ public class EndpointImpl implements Endpoint
          XAResourceRecovery xrr = recovery.remove(spec);
          if (xrr != null)
          {
-            if (trace)
-               log.tracef("Removing %s for recovery", xrr);
+            log.tracef("Removing %s for recovery", xrr);
 
             try
             {

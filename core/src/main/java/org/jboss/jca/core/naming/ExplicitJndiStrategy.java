@@ -50,8 +50,6 @@ public class ExplicitJndiStrategy implements JndiStrategy
 {
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, ExplicitJndiStrategy.class.getName());
 
-   private static boolean trace = log.isTraceEnabled();
-   
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
    
@@ -120,8 +118,8 @@ public class ExplicitJndiStrategy implements JndiStrategy
             String jndiName = jndis[i];
             Object cf = cfs[i];
 
-            if (trace)
-               log.trace("Binding " + cf.getClass().getName() + " under " + jndiName);
+            if (log.isTraceEnabled())
+               log.tracef("Binding %s under %s", cf.getClass().getName(), jndiName);
 
             if (cf == null)
                throw new IllegalArgumentException("Connection factory is null");
@@ -212,8 +210,7 @@ public class ExplicitJndiStrategy implements JndiStrategy
 
             String className = cf.getClass().getName();
 
-            if (trace)
-               log.trace("Unbinding " + className + " under " + jndiName);
+            log.tracef("Unbinding %s under %s", className, jndiName);
 
             Util.unbind(context, jndiName);
 
@@ -285,8 +282,8 @@ public class ExplicitJndiStrategy implements JndiStrategy
             String jndiName = jndis[i];
             Object ao = aos[i];
 
-            if (trace)
-               log.trace("Binding " + ao.getClass().getName() + " under " + jndiName);
+            if (log.isTraceEnabled())
+               log.tracef("Binding %s under %s", ao.getClass().getName(), jndiName);
 
             if (ao == null)
                throw new IllegalArgumentException("Admin object is null");
@@ -380,8 +377,7 @@ public class ExplicitJndiStrategy implements JndiStrategy
 
             String className = ao.getClass().getName();
 
-            if (trace)
-               log.trace("Unbinding " + className + " under " + jndiName);
+            log.tracef("Unbinding %s under %s", className, jndiName);
 
             Util.unbind(context, jndiName);
 

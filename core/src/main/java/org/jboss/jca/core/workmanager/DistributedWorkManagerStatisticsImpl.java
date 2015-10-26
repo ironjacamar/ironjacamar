@@ -46,9 +46,6 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class,
                                                            DistributedWorkManagerStatistics.class.getName());
 
-   /** Whether trace is enabled */
-   private static boolean trace = log.isTraceEnabled();
-
    /** Own identifier */
    private Address own;
 
@@ -153,8 +150,7 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
     */
    public void join(Address address)
    {
-      if (trace)
-         log.tracef("join(%s)", address);
+      log.tracef("join(%s)", address);
 
       workManagers.add(address);
 
@@ -174,8 +170,7 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
     */
    public void leave(Address address)
    {
-      if (trace)
-         log.tracef("leave(%s)", address);
+      log.tracef("leave(%s)", address);
 
       workManagers.remove(address);
    }
@@ -344,8 +339,7 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
       startWorkAccepted.set(0);
       startWorkRejected.set(0);
 
-      if (trace)
-         log.tracef("clear: %s", workManagers);
+      log.tracef("clear: %s", workManagers);
 
       if (own != null && transport != null && transport.isInitialized())
          transport.clearDistributedStatistics(own);
@@ -358,8 +352,7 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
    {
       doWorkAccepted.incrementAndGet();
 
-      if (trace)
-         log.tracef("sendDeltaDoWorkAccepted: %s", workManagers);
+      log.tracef("sendDeltaDoWorkAccepted: %s", workManagers);
 
       if (own != null && transport != null && transport.isInitialized())
       {
@@ -378,8 +371,7 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
    {
       doWorkRejected.incrementAndGet();
 
-      if (trace)
-         log.tracef("sendDeltaDoWorkRejected: %s", workManagers);
+      log.tracef("sendDeltaDoWorkRejected: %s", workManagers);
 
       if (own != null && transport != null && transport.isInitialized())
       {
@@ -398,8 +390,7 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
    {
       scheduleWorkAccepted.incrementAndGet();
 
-      if (trace)
-         log.tracef("sendDeltaScheduleWorkAccepted: %s", workManagers);
+      log.tracef("sendDeltaScheduleWorkAccepted: %s", workManagers);
 
       if (own != null && transport != null && transport.isInitialized())
       {
@@ -418,8 +409,7 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
    {
       scheduleWorkRejected.incrementAndGet();
 
-      if (trace)
-         log.tracef("sendDeltaScheduleWorkRejected: %s", workManagers);
+      log.tracef("sendDeltaScheduleWorkRejected: %s", workManagers);
 
       if (own != null && transport != null && transport.isInitialized())
       {
@@ -438,8 +428,7 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
    {
       startWorkAccepted.incrementAndGet();
 
-      if (trace)
-         log.tracef("sendDeltaStartWorkAccepted: %s", workManagers);
+      log.tracef("sendDeltaStartWorkAccepted: %s", workManagers);
 
       if (own != null && transport != null && transport.isInitialized())
       {
@@ -458,8 +447,7 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
    {
       startWorkRejected.incrementAndGet();
 
-      if (trace)
-         log.tracef("sendDeltaStartWorkRejected: %s", workManagers);
+      log.tracef("sendDeltaStartWorkRejected: %s", workManagers);
 
       if (own != null && transport != null && transport.isInitialized())
       {
@@ -478,8 +466,7 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
    {
       successful.incrementAndGet();
 
-      if (trace)
-         log.tracef("sendDeltaWorkSuccessful: %s", workManagers);
+      log.tracef("sendDeltaWorkSuccessful: %s", workManagers);
 
       if (own != null && transport != null && transport.isInitialized())
       {
@@ -498,8 +485,7 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
    {
       failed.incrementAndGet();
 
-      if (trace)
-         log.tracef("sendDeltaWorkFailed: %s", workManagers);
+      log.tracef("sendDeltaWorkFailed: %s", workManagers);
 
       if (own != null && transport != null && transport.isInitialized())
       {

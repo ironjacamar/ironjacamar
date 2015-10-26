@@ -56,9 +56,6 @@ public class DefaultCallback implements Callback
    /** Log instance */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, DefaultCallback.class.getName());
 
-   /** Trace */
-   private static boolean trace = log.isTraceEnabled();
-
    /** Default callback.properties file name */
    private static final String DEFAULT_CALLBACK_PROPERTIES = "callback.properties";
 
@@ -251,8 +248,7 @@ public class DefaultCallback implements Callback
 
             if (f.exists())
             {
-               if (trace)
-                  log.trace("callback.properties: Using file: " + file);
+               log.tracef("callback.properties: Using file: %s", file);
 
                is = new FileInputStream(f);
             }
@@ -260,8 +256,7 @@ public class DefaultCallback implements Callback
 
          if (is == null)
          {
-            if (trace)
-               log.trace("callback.properties: Using classloader");
+            log.trace("callback.properties: Using classloader");
 
             is = SecurityActions.getResourceAsStream(DEFAULT_CALLBACK_PROPERTIES);
          }

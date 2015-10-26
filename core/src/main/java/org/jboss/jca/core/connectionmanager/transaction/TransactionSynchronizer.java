@@ -57,9 +57,6 @@ public class TransactionSynchronizer implements Synchronization
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, TransactionSynchronizer.class.getName());
 
-   /** Trace */
-   private static boolean trace = log.isTraceEnabled();
-
    /** The records */
    private static ConcurrentMap<Object, Record> records =
       new ConcurrentHashMap<Object, Record>(512, 0.75f, 512);
@@ -208,7 +205,7 @@ public class TransactionSynchronizer implements Synchronization
          {
             record = newRecord;
 
-            if (trace)
+            if (log.isTraceEnabled())
                log.tracef("Adding: %s [%s]", System.identityHashCode(id), id.toString());
 
             try
@@ -301,7 +298,7 @@ public class TransactionSynchronizer implements Synchronization
          {
             record = newRecord;
 
-            if (trace)
+            if (log.isTraceEnabled())
                log.tracef("Adding: %s [%s]", System.identityHashCode(id), id.toString());
 
             try
@@ -414,7 +411,7 @@ public class TransactionSynchronizer implements Synchronization
          {
             records.remove(altKey);
 
-            if (trace)
+            if (log.isTraceEnabled())
                log.tracef("Removed: %s [%s]", System.identityHashCode(identifier), identifier.toString());
          }
          else
@@ -424,7 +421,7 @@ public class TransactionSynchronizer implements Synchronization
       }
       else
       {
-         if (trace)
+         if (log.isTraceEnabled())
             log.tracef("Removed: %s [%s]", System.identityHashCode(identifier), identifier.toString());
       }
    }

@@ -52,8 +52,6 @@ public class LocalXAResourceImpl implements LocalXAResource,
    /** Log instance */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, LocalXAResourceImpl.class.getName());
 
-   private static boolean trace = log.isTraceEnabled();
-   
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
    
@@ -116,8 +114,7 @@ public class LocalXAResourceImpl implements LocalXAResource,
     */
    public void start(Xid xid, int flags) throws XAException
    {
-      if (trace)
-         log.tracef("start(%s, %s)", xid, flags);  
+      log.tracef("start(%s, %s)", xid, flags);  
       
       if (currentXid != null && flags == XAResource.TMNOFLAGS)
       {
@@ -154,8 +151,7 @@ public class LocalXAResourceImpl implements LocalXAResource,
     */
    public void end(Xid xid, int flags) throws XAException
    {
-      if (trace)
-         log.tracef("end(%s,%s)", xid, flags);  
+      log.tracef("end(%s,%s)", xid, flags);  
    }
 
    /**

@@ -66,9 +66,6 @@ public class WorkWrapper implements Runnable
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, 
       WorkWrapper.class.getName());
 
-   /** Whether we are tracing */
-   private static boolean trace = log.isTraceEnabled();
-   
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
    
@@ -256,8 +253,7 @@ public class WorkWrapper implements Runnable
          if (completedLatch != null)
             completedLatch.countDown();
 
-         if (trace)
-            log.tracef("Executed work: %s", this);
+         log.tracef("Executed work: %s", this);
       }
    }
 
@@ -267,8 +263,7 @@ public class WorkWrapper implements Runnable
     */
    protected void start() throws WorkException
    {
-      if (trace)
-         log.tracef("Starting work: %s", this);  
+      log.tracef("Starting work: %s", this);  
 
       if (workListener != null)
       {
@@ -306,8 +301,7 @@ public class WorkWrapper implements Runnable
          getWorkContext(javax.resource.spi.work.SecurityContext.class);
       if (securityContext != null && workManager.getCallbackSecurity() != null)
       {
-         if (trace)
-            log.tracef("Setting security context: %s", securityContext);
+         log.tracef("Setting security context: %s", securityContext);
 
          try
          {
@@ -328,16 +322,14 @@ public class WorkWrapper implements Runnable
             Subject executionSubject = null;
             Subject serviceSubject = null;
          
-            if (trace)
-               log.tracef("Callback security: %s", workManager.getCallbackSecurity());
+            log.tracef("Callback security: %s", workManager.getCallbackSecurity());
 
             if (securityIntegration.getSecurityContext() == null ||
                 workManager.getCallbackSecurity().getDomain() != null)
             {
                String scDomain = workManager.getCallbackSecurity().getDomain();
 
-               if (trace)
-                  log.tracef("Creating security context: %s", scDomain);
+               log.tracef("Creating security context: %s", scDomain);
 
                if (scDomain == null || scDomain.trim().equals(""))
                {
@@ -352,16 +344,14 @@ public class WorkWrapper implements Runnable
             {
                sc = securityIntegration.getSecurityContext();
 
-               if (trace)
-                  log.tracef("Using security context: %s", sc);
+               log.tracef("Using security context: %s", sc);
             }
 
             executionSubject = sc.getAuthenticatedSubject();
 
             if (executionSubject == null)
             {
-               if (trace)
-                  log.tracef("Creating empty subject");
+               log.trace("Creating empty subject");
 
                executionSubject = new Subject();
             }
@@ -376,8 +366,7 @@ public class WorkWrapper implements Runnable
                {
                   Principal defaultPrincipal = workManager.getCallbackSecurity().getDefaultPrincipal();
 
-                  if (trace)
-                     log.tracef("Adding default principal: %s", defaultPrincipal);
+                  log.tracef("Adding default principal: %s", defaultPrincipal);
 
                   CallerPrincipalCallback cpc =
                      new CallerPrincipalCallback(executionSubject, defaultPrincipal);
@@ -389,7 +378,7 @@ public class WorkWrapper implements Runnable
                {
                   String[] defaultGroups = workManager.getCallbackSecurity().getDefaultGroups();
 
-                  if (trace)
+                  if (log.isTraceEnabled())
                      log.tracef("Adding default groups: %s", Arrays.toString(defaultGroups));
                   
                   GroupPrincipalCallback gpc = 
@@ -405,8 +394,7 @@ public class WorkWrapper implements Runnable
                }
             }
 
-            if (trace)
-               log.tracef("Setting authenticated subject (%s) on security context (%s)", executionSubject, sc);
+            log.tracef("Setting authenticated subject (%s) on security context (%s)", executionSubject, sc);
 
             // Set the authenticated subject
             sc.setAuthenticatedSubject(executionSubject);
@@ -437,8 +425,7 @@ public class WorkWrapper implements Runnable
          }
       }
 
-      if (trace)
-         log.tracef("Started work: %s", this);  
+      log.tracef("Started work: %s", this);  
    }
 
    /**
@@ -446,8 +433,7 @@ public class WorkWrapper implements Runnable
     */
    protected void end()
    {
-      if (trace)
-         log.tracef("Ending work: %s", this);  
+      log.tracef("Ending work: %s", this);  
 
       ExecutionContext ctx = getWorkContext(TransactionContext.class);
       if (ctx == null)
@@ -464,8 +450,7 @@ public class WorkWrapper implements Runnable
          }
       }
 
-      if (trace)
-         log.tracef("Ended work: %s", this);  
+      log.tracef("Ended work: %s", this);  
    }
 
    /**
@@ -473,8 +458,7 @@ public class WorkWrapper implements Runnable
     */
    protected void cancel()
    {
-      if (trace)
-         log.tracef("Cancel work: %s", this);  
+      log.tracef("Cancel work: %s", this);  
 
       ExecutionContext ctx = getWorkContext(TransactionContext.class);
       if (ctx == null)
@@ -491,8 +475,7 @@ public class WorkWrapper implements Runnable
          }
       }
 
-      if (trace)
-         log.tracef("Canceled work: %s", this);  
+      log.tracef("Canceled work: %s", this);  
    }
 
    /**
@@ -537,8 +520,7 @@ public class WorkWrapper implements Runnable
          workContexts = new HashMap<Class<? extends WorkContext>, WorkContext>(1);
       }
 
-      if (trace)
-         log.tracef("Adding work context %s for %s", workContextClass, this);  
+      log.tracef("Adding work context %s for %s", workContextClass, this);  
 
       workContexts.put(workContextClass, workContext);
    }
@@ -551,8 +533,7 @@ public class WorkWrapper implements Runnable
    {
       if (workContext != null && workContext instanceof WorkContextLifecycleListener)
       {
-         if (trace)
-            log.tracef("WorkContextSetupComplete(%s) for %s", workContext, this);  
+         log.tracef("WorkContextSetupComplete(%s) for %s", workContext, this);  
 
          WorkContextLifecycleListener listener = (WorkContextLifecycleListener)workContext;
          listener.contextSetupComplete();   
@@ -567,8 +548,7 @@ public class WorkWrapper implements Runnable
    {
       if (workContext != null && workContext instanceof WorkContextLifecycleListener)
       {
-         if (trace)
-            log.tracef("WorkContextSetupFailed(%s) for %s", workContext, this);  
+         log.tracef("WorkContextSetupFailed(%s) for %s", workContext, this);  
 
          WorkContextLifecycleListener listener = (WorkContextLifecycleListener)workContext;
          listener.contextSetupFailed(WorkContextErrorCodes.CONTEXT_SETUP_FAILED);   

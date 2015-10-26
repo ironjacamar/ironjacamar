@@ -37,9 +37,6 @@ public class WorkManagerEvent
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class,
                                                            WorkManagerEvent.class.getName());
 
-   /** Whether trace is enabled */
-   private static boolean trace = log.isTraceEnabled();
-
    /** JOIN */
    public static final int TYPE_JOIN = 0;
 

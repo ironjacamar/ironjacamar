@@ -71,9 +71,6 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, JGroupsTransport.class.getName());
 
-   /** Whether trace is enabled */
-   private static boolean trace = log.isTraceEnabled();
-
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
 
@@ -502,7 +499,7 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
          }
          catch (Throwable t)
          {
-            if (trace)
+            if (log.isTraceEnabled())
                log.tracef("Throwable during disp.stop(): %s", t.getMessage());
          }
 
@@ -517,7 +514,7 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
          }
          catch (Throwable t)
          {
-            if (trace)
+            if (log.isTraceEnabled())
                log.tracef("Throwable during channel.disconnect(): %s", t.getMessage());
          }
 
@@ -527,7 +524,7 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
          }
          catch (Throwable t)
          {
-            if (trace)
+            if (log.isTraceEnabled())
                log.tracef("Throwable during channel.close(): %s", t.getMessage());
          }
 
@@ -540,13 +537,12 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
       throws WorkException
    {
       Serializable returnValue = null;
-
-      if (trace)
+      if (log.isTraceEnabled())
          log.tracef("%s: sending message=%s to %s", channel.getAddress(), request, destAddress);
 
       if (channel == null || !channel.isOpen() || !channel.isConnected())
       {
-         if (trace)
+         if (log.isTraceEnabled())
             log.tracef("%s: channel not connected", channel != null ? channel.getAddress() : "<empty>");
 
          return null;
@@ -922,7 +918,7 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
    @Override
    public void viewAccepted(View view)
    {
-      if (trace)
+      if (log.isTraceEnabled())
       {
          log.tracef("java.net.preferIPv4Stack=%s", SecurityActions.getSystemProperty("java.net.preferIPv4Stack"));
          log.tracef("viewAccepted called w/ View=%s", view);
@@ -972,22 +968,19 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
    @Override
    public void block()
    {
-      if (trace)
-         log.tracef("block called");
+      log.tracef("block called");
    }
 
    @Override
    public void suspect(org.jgroups.Address address)
    {
-      if (trace)
-         log.tracef("suspect called w/ Address=%s", address);
+      log.tracef("suspect called w/ Address=%s", address);
    }
 
    @Override
    public void unblock()
    {
-      if (trace)
-         log.tracef("unblock called");
+      log.tracef("unblock called");
    }
 
    /**

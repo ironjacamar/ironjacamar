@@ -48,9 +48,6 @@ public class WorkManagerCoordinator
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class,
                                                            WorkManagerCoordinator.class.getName());
 
-   /** Whether trace is enabled */
-   private static boolean trace = log.isTraceEnabled();
-
    /** The instance */
    private static final WorkManagerCoordinator INSTANCE = new WorkManagerCoordinator();
 
@@ -97,8 +94,7 @@ public class WorkManagerCoordinator
          if (wm.getName() == null || wm.getName().trim().equals(""))
             throw new IllegalArgumentException("The name of WorkManager is invalid: " + wm);
 
-         if (trace)
-            log.tracef("Registering WorkManager: %s", wm);
+         log.tracef("Registering WorkManager: %s", wm);
 
          if (!workmanagers.keySet().contains(wm.getName()))
          {
@@ -112,8 +108,7 @@ public class WorkManagerCoordinator
 
                if (events.size() > 0)
                {
-                  if (trace)
-                     log.tracef("%s: Events=%s", wm.getName(), events);
+                  log.tracef("%s: Events=%s", wm.getName(), events);
 
                   for (WorkManagerEvent event : events)
                   {
@@ -196,8 +191,7 @@ public class WorkManagerCoordinator
          if (wm.getName() == null || wm.getName().trim().equals(""))
             throw new IllegalArgumentException("The name of WorkManager is invalid: " + wm);
 
-         if (trace)
-            log.tracef("Unregistering WorkManager: %s", wm);
+         log.tracef("Unregistering WorkManager: %s", wm);
 
          if (workmanagers.keySet().contains(wm.getName()))
          {
@@ -229,8 +223,7 @@ public class WorkManagerCoordinator
     */
    public void setDefaultWorkManager(WorkManager wm)
    {
-      if (trace)
-         log.tracef("Default WorkManager: %s", wm);
+      log.tracef("Default WorkManager: %s", wm);
 
       String currentName = null;
 
@@ -256,17 +249,13 @@ public class WorkManagerCoordinator
     */
    public WorkManager resolveWorkManager(Address address)
    {
-      if (trace)
-      {
-         log.tracef("resolveWorkManager(%s)", address);
-         log.tracef("  ActiveWorkManagers: %s", activeWorkmanagers);
-      }
+      log.tracef("resolveWorkManager(%s)", address);
+      log.tracef("  ActiveWorkManagers: %s", activeWorkmanagers);
 
       WorkManager wm = activeWorkmanagers.get(address.getWorkManagerId());
       if (wm != null)
       {
-         if (trace)
-            log.tracef(" WorkManager: %s", wm);
+         log.tracef(" WorkManager: %s", wm);
 
          return wm;
       }
@@ -290,8 +279,7 @@ public class WorkManagerCoordinator
             activeWorkmanagers.put(address.getWorkManagerId(), wm);
             refCountWorkmanagers.put(address.getWorkManagerId(), Integer.valueOf(0));
 
-            if (trace)
-               log.tracef("Created WorkManager: %s", wm);
+            log.tracef("Created WorkManager: %s", wm);
 
             return wm;
          }
@@ -311,11 +299,8 @@ public class WorkManagerCoordinator
     */
    public DistributedWorkManager resolveDistributedWorkManager(Address address)
    {
-      if (trace)
-      {
-         log.tracef("resolveDistributedWorkManager(%s)", address);
-         log.tracef("  ActiveWorkManagers: %s", activeWorkmanagers);
-      }
+      log.tracef("resolveDistributedWorkManager(%s)", address);
+      log.tracef("  ActiveWorkManagers: %s", activeWorkmanagers);
 
       WorkManager wm = activeWorkmanagers.get(address.getWorkManagerId());
 
@@ -323,15 +308,13 @@ public class WorkManagerCoordinator
       {
          if (wm instanceof DistributedWorkManager)
          {
-            if (trace)
-               log.tracef(" WorkManager: %s", wm);
+            log.tracef(" WorkManager: %s", wm);
 
             return (DistributedWorkManager)wm;
          }
          else
          {
-            if (trace)
-               log.tracef(" WorkManager not distributable: %s", wm);
+            log.tracef(" WorkManager not distributable: %s", wm);
 
             return null;
          }
@@ -355,8 +338,7 @@ public class WorkManagerCoordinator
                activeWorkmanagers.put(address.getWorkManagerId(), dwm);
                refCountWorkmanagers.put(address.getWorkManagerId(), Integer.valueOf(0));
                
-               if (trace)
-                  log.tracef("Created WorkManager: %s", dwm);
+               log.tracef("Created WorkManager: %s", dwm);
                
                return dwm;
             }
@@ -384,8 +366,7 @@ public class WorkManagerCoordinator
       // Check for an active work manager
       if (activeWorkmanagers.keySet().contains(id))
       {
-         if (trace)
-            log.tracef("RefCounting WorkManager: %s", id);
+         log.tracef("RefCounting WorkManager: %s", id);
 
          Integer i = refCountWorkmanagers.get(id);
          refCountWorkmanagers.put(id, Integer.valueOf(i.intValue() + 1));
@@ -438,8 +419,7 @@ public class WorkManagerCoordinator
          activeWorkmanagers.put(id, wm);
          refCountWorkmanagers.put(id, Integer.valueOf(1));
 
-         if (trace)
-            log.tracef("Created WorkManager: %s", wm);
+         log.tracef("Created WorkManager: %s", wm);
 
          return wm;
       }
@@ -464,8 +444,7 @@ public class WorkManagerCoordinator
          int newValue = i.intValue() - 1;
          if (newValue == 0)
          {
-            if (trace)
-               log.tracef("Removed WorkManager: %s", id);
+            log.tracef("Removed WorkManager: %s", id);
 
             WorkManager wm = activeWorkmanagers.get(id);
             if (wm instanceof DistributedWorkManager)
@@ -480,8 +459,7 @@ public class WorkManagerCoordinator
          }
          else
          {
-            if (trace)
-               log.tracef("DerefCount WorkManager: %s", id);
+            log.tracef("DerefCount WorkManager: %s", id);
 
             refCountWorkmanagers.put(id, Integer.valueOf(newValue));
          }

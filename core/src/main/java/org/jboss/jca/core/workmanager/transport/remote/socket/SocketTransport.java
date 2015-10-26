@@ -54,9 +54,6 @@ public class SocketTransport extends AbstractRemoteTransport<String> implements 
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, SocketTransport.class.getName());
 
-   /** Whether trace is enabled */
-   private static boolean trace = log.isTraceEnabled();
-
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
 
@@ -127,8 +124,7 @@ public class SocketTransport extends AbstractRemoteTransport<String> implements 
       {
          for (String addr : peers)
          {
-            if (trace)
-               log.tracef("Peer: %s", addr);
+            log.tracef("Peer: %s", addr);
 
             try
             {
@@ -138,8 +134,7 @@ public class SocketTransport extends AbstractRemoteTransport<String> implements 
                // Update the local information
                Set<Address> workManagers = (Set<Address>)sendMessage(addr, Request.GET_WORKMANAGERS);
 
-               if (trace)
-                  log.tracef("Peer WorkManagers: %s", workManagers);
+               log.tracef("Peer WorkManagers: %s", workManagers);
 
                if (workManagers != null)
                {
@@ -186,7 +181,7 @@ public class SocketTransport extends AbstractRemoteTransport<String> implements 
       Socket socket = null;
       ObjectOutputStream oos = null;
 
-      if (trace)
+      if (log.isTraceEnabled())
          log.tracef("%s:%d: sending message=%s to %s:%s", ss.getInetAddress().getHostName(),
                     ss.getLocalPort(), request, addressPart[0], addressPart[1]);
 

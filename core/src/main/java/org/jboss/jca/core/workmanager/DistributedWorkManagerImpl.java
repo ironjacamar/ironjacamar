@@ -55,9 +55,6 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class,
                                                            DistributedWorkManagerImpl.class.getName());
 
-   /** Whether trace is enabled */
-   private static boolean trace = log.isTraceEnabled();
-
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
 
@@ -553,8 +550,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    @Override
    protected void deltaDoWorkAccepted()
    {
-      if (trace)
-         log.trace("deltaDoWorkAccepted");
+      log.trace("deltaDoWorkAccepted");
 
       super.deltaDoWorkAccepted();
 
@@ -578,8 +574,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    @Override
    protected void deltaDoWorkRejected()
    {
-      if (trace)
-         log.trace("deltaDoWorkRejected");
+      log.trace("deltaDoWorkRejected");
 
       super.deltaDoWorkRejected();
 
@@ -603,8 +598,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    @Override
    protected void deltaStartWorkAccepted()
    {
-      if (trace)
-         log.trace("deltaStartWorkAccepted");
+      log.trace("deltaStartWorkAccepted");
 
       super.deltaStartWorkAccepted();
 
@@ -628,8 +622,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    @Override
    protected void deltaStartWorkRejected()
    {
-      if (trace)
-         log.trace("deltaStartWorkRejected");
+      log.trace("deltaStartWorkRejected");
 
       super.deltaStartWorkRejected();
 
@@ -653,8 +646,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    @Override
    protected void deltaScheduleWorkAccepted()
    {
-      if (trace)
-         log.trace("deltaScheduleWorkAccepted");
+      log.trace("deltaScheduleWorkAccepted");
 
       super.deltaScheduleWorkAccepted();
 
@@ -678,8 +670,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    @Override
    protected void deltaScheduleWorkRejected()
    {
-      if (trace)
-         log.trace("deltaScheduleWorkRejected");
+      log.trace("deltaScheduleWorkRejected");
 
       super.deltaScheduleWorkRejected();
 
@@ -703,8 +694,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    @Override
    protected void deltaWorkSuccessful()
    {
-      if (trace)
-         log.trace("deltaWorkSuccessful");
+      log.trace("deltaWorkSuccessful");
 
       super.deltaWorkSuccessful();
 
@@ -728,8 +718,7 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
    @Override
    protected void deltaWorkFailed()
    {
-      if (trace)
-         log.trace("deltaWorkFailed");
+      log.trace("deltaWorkFailed");
 
       super.deltaWorkFailed();
 

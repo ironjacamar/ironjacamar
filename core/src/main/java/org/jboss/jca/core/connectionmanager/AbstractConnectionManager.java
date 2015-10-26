@@ -64,9 +64,6 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    /** Log instance */
    private final CoreLogger log;
 
-   /** Log trace */
-   protected boolean trace;
-   
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
    
@@ -127,7 +124,6 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    protected AbstractConnectionManager()
    {
       this.log = getLogger();
-      this.trace = log.isTraceEnabled();
       this.scheduledExecutorService = null;
       this.scheduledGraceful = null;
       this.gracefulCallback = null;
@@ -362,8 +358,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    {
       this.sharable = v;
 
-      if (trace)
-         log.tracef("sharable=%s", sharable);
+      log.tracef("sharable=%s", sharable);
    }
 
    /**
@@ -383,8 +378,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    {
       this.enlistment = v;
 
-      if (trace)
-         log.tracef("enlistment=%s", enlistment);
+      log.tracef("enlistment=%s", enlistment);
    }
 
    /**
@@ -404,8 +398,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    {
       this.connectable = v;
 
-      if (trace)
-         log.tracef("connectable=%s", connectable);
+      log.tracef("connectable=%s", connectable);
    }
 
    /**
@@ -425,8 +418,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    {
       this.tracking = v;
 
-      if (trace)
-         log.tracef("tracking=%s", tracking);
+      log.tracef("tracking=%s", tracking);
    }
 
    /**
@@ -446,8 +438,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    {
       this.enlistmentTrace = v;
 
-      if (trace)
-         log.tracef("enlistment_trace=%s", enlistmentTrace);
+      log.tracef("enlistment_trace=%s", enlistmentTrace);
    }
 
    /**
@@ -510,18 +501,14 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    {
       if (pool == null)
       {
-         if (trace)
-         {
-            log.trace("No pooling strategy found! for connection manager : " + this);
-            return null;
-         }
+         log.tracef("No pooling strategy found! for connection manager : %s", this);
+         return null;
       }
       else
       {
          return pool.getManagedConnectionFactory();
       }
 
-      return null;
    }
 
    /**
@@ -621,8 +608,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
                   throw new ResourceException(bundle.connectionManagerIsShutdown(jndiName));
                }
 
-               if (trace)
-                  log.tracef("%s: Attempting allocation retry (%s, %s, %s)", jndiName, transaction, subject, cri);
+               log.tracef("%s: Attempting allocation retry (%s, %s, %s)", jndiName, transaction, subject, cri);
 
                if (Thread.currentThread().isInterrupted())
                {
@@ -777,8 +763,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
          }
          catch (ResourceException re)
          {
-            if (trace)
-               log.trace("Get exception from managedConnectionDisconnected, maybe delist() have problem" + re);
+            log.tracef("Get exception from managedConnectionDisconnected, maybe delist() have problem %s", re);
             returnManagedConnection(cl, true);
          }
          throw new ResourceException(bundle.uncheckedThrowableInManagedConnectionGetConnection(cl), t);
@@ -859,8 +844,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
 
       if (cl != null)
       {
-         if (trace)
-            log.tracef("DissociateManagedConnection: cl=%s, connection=%s", cl, connection);
+         log.tracef("DissociateManagedConnection: cl=%s, connection=%s", cl, connection);
 
          if (getCachedConnectionManager() != null)
          {
@@ -878,13 +862,11 @@ public abstract class AbstractConnectionManager implements ConnectionManager
 
          if (cl.getNumberOfConnections() == 0)
          {
-            if (trace)
-               log.tracef("DissociateManagedConnection: Returning cl=%s", cl);
+            log.tracef("DissociateManagedConnection: Returning cl=%s", cl);
 
             cl.dissociate();
 
-            if (trace)
-               log.tracef("DissociateManagedConnection: isManagedConnectionFree=%s", cl.isManagedConnectionFree());
+            log.tracef("DissociateManagedConnection: isManagedConnectionFree=%s", cl.isManagedConnectionFree());
 
             if (cl.isManagedConnectionFree())
             {
@@ -1046,8 +1028,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
          }
       }
 
-      if (trace)
-         log.tracef("Subject: %s", subject);
+      log.tracef("Subject: %s", subject);
 
       return subject;
    }

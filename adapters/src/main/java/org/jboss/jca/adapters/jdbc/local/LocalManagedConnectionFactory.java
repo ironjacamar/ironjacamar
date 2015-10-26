@@ -230,7 +230,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
             logCopy = (Properties) props.clone();
             logCopy.setProperty("password", "--hidden--");
          }
-         log.trace("Using properties: " + logCopy);
+         log.tracef("Using properties: %s", logCopy);
       }
 
       if (getURLDelimiter() != null && !getURLDelimiter().trim().equals("") && urlSelector == null)
@@ -353,14 +353,11 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
    private LocalManagedConnection getHALocalManagedConnection(final Properties props, final Properties copy)
       throws ResourceException
    {
-      boolean trace = log.isTraceEnabled();
-
       while (urlSelector.hasMore())
       {
          String url = urlSelector.active();
 
-         if (trace)
-            log.tracef("Trying to create a connection to %s", url);
+         log.tracef("Trying to create a connection to %s", url);
 
          try
          {
@@ -385,7 +382,6 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
     */
    protected void initUrlSelector()
    {
-      boolean trace = log.isTraceEnabled();
       List<String> urlsList = new ArrayList<String>();
 
       StringTokenizer st = new StringTokenizer(getConnectionURL(), urlDelimiter);
@@ -393,8 +389,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       {
          String url = st.nextToken();
          urlsList.add(url);
-         if (trace)
-            log.trace("added HA connection url: " + url);
+         log.tracef("added HA connection url: %s", url);
       }
 
       if (getUrlSelectorStrategyClassName() == null)
@@ -577,16 +572,13 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
     */
    protected synchronized Driver getDriver(final String url) throws ResourceException
    {
-      boolean trace = log.isTraceEnabled();
-
       // don't bother if it is loaded already
       if (driver != null)
       {
          return driver;
       }
 
-      if (trace)
-         log.trace("Checking driver for URL: " + url);
+      log.tracef("Checking driver for URL: %s", url);
 
       if (driverClass == null)
       {

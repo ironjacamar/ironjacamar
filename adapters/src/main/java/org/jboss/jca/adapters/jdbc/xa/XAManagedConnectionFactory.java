@@ -190,8 +190,6 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
    @SuppressWarnings("unchecked")
    private void initSelector() throws ResourceException
    {
-      boolean trace = log.isTraceEnabled();
-
       if (urlProperty != null && !urlProperty.trim().equals(""))
       {
          String urlsStr = xaProps.get(urlProperty);
@@ -214,8 +212,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
                XADataSource xads = createXaDataSource(xaPropsCopy);
                xaDataList.add(new XAData(xads, url));
 
-               if (trace)
-                  log.trace("added XA HA connection url: " + url);
+               log.tracef("added XA HA connection url: %s", url);
             }
 
             if (getUrlSelectorStrategyClassName() == null)
@@ -424,8 +421,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
       {
          XAData xaData = xadsSelector.active();
 
-         if (log.isTraceEnabled())
-            log.trace("Trying to create an XA connection to " + xaData.getUrl());
+         log.tracef("Trying to create an XA connection to %s", xaData.getUrl());
 
          final Subject copySubject = subject != null ? SecurityActions.createSubject(false, subject) : null;
 

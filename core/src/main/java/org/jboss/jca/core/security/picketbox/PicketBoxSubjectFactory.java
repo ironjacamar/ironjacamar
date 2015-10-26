@@ -41,9 +41,6 @@ public class PicketBoxSubjectFactory implements org.jboss.jca.core.spi.security.
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, PicketBoxSubjectFactory.class.getName());
 
-   private static boolean trace = log.isTraceEnabled();
-
-
    /**
     * Constructor
     * @param delegator The delegator
@@ -68,10 +65,10 @@ public class PicketBoxSubjectFactory implements org.jboss.jca.core.spi.security.
    {
       Subject subject = delegator.createSubject(sd);
 
-      if (trace)
+      if (log.isTraceEnabled())
       {
-         log.trace("Subject=" + subject);
-         log.trace("Subject identity=" + Integer.toHexString(System.identityHashCode(subject)));
+         log.tracef("Subject=%s", subject);
+         log.tracef("Subject identity=%s", Integer.toHexString(System.identityHashCode(subject)));
       }
       return subject;
    }

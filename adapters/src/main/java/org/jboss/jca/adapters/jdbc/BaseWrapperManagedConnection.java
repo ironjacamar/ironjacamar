@@ -77,9 +77,6 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
    /** The bundle */
    protected static AdaptersBundle bundle = Messages.getBundle(AdaptersBundle.class);
 
-   /** Trace logging */
-   private boolean trace;
-
    /** The managed connection factory */
    protected final BaseWrapperManagedConnectionFactory mcf;
 
@@ -188,7 +185,6 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
       this.mcf = mcf;
       this.con = con;
       this.props = props;
-      this.trace = mcf.log.isTraceEnabled();
       this.tryLock = mcf.getUseTryLock().intValue();
 
       if (psCacheSize > 0)
@@ -387,7 +383,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
       if (tryLock < 0)
          return;
 
-      if (trace)
+      if (getLog().isTraceEnabled())
          dumpLockInformation(true);
 
       if (tryLock == 0)
@@ -415,7 +411,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
       if (tryLock < 0)
          return;
 
-      if (trace)
+      if (getLog().isTraceEnabled())
          dumpLockInformation(false);
 
       if (lock.isHeldByCurrentThread())
@@ -486,7 +482,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
       }
       catch (SQLException ignored)
       {
-         if (trace)
+         if (getLog().isTraceEnabled())
             getLog().trace("Ignored error during rollback: ", ignored);
       }
       try
@@ -495,7 +491,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
       }
       catch (SQLException ignored)
       {
-         if (trace)
+         if (getLog().isTraceEnabled())
             getLog().trace("Ignored error during close: ", ignored);
       }
 
@@ -667,7 +663,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
       {
          if (destroyed)
          {
-            if (trace)
+            if (getLog().isTraceEnabled())
                getLog().trace("Not broadcasting error, already destroyed " + this, e);
             return;
          }
@@ -946,7 +942,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
                }
                catch (Throwable t)
                {
-                  if (trace)
+                  if (getLog().isTraceEnabled())
                      getLog().trace("Error notifying of connection committed for listener: " + cel, t);
                }
             }
@@ -1020,7 +1016,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
                }
                catch (Throwable t)
                {
-                  if (trace)
+                  if (getLog().isTraceEnabled())
                      getLog().trace("Error notifying of connection committed for listener: " + cel, t);
                }
             }
@@ -1106,7 +1102,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
                }
                catch (Throwable t)
                {
-                  if (trace)
+                  if (getLog().isTraceEnabled())
                      getLog().trace("Error notifying of connection committed for listener: " + cel, t);
                }
             }
@@ -1143,7 +1139,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
                }
                catch (Throwable t)
                {
-                  if (trace)
+                  if (getLog().isTraceEnabled())
                      getLog().trace("Error notifying of connection rollback for listener: " + cel, t);
                }
             }

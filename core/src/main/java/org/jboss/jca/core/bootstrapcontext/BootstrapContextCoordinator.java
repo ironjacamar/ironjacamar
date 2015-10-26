@@ -44,9 +44,6 @@ public class BootstrapContextCoordinator
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class,
                                                            BootstrapContextCoordinator.class.getName());
 
-   /** Whether trace is enabled */
-   private static boolean trace = log.isTraceEnabled();
-
    /** The instance */
    private static final BootstrapContextCoordinator INSTANCE = new BootstrapContextCoordinator();
 
@@ -133,8 +130,7 @@ public class BootstrapContextCoordinator
     */
    public void setDefaultBootstrapContext(CloneableBootstrapContext bc)
    {
-      if (trace)
-         log.tracef("Default BootstrapContext: %s", bc);
+      log.tracef("Default BootstrapContext: %s", bc);
 
       String currentName = null;
 
@@ -210,8 +206,7 @@ public class BootstrapContextCoordinator
          activeBootstrapContexts.put(id, bc);
          refCountBootstrapContexts.put(id, Integer.valueOf(1));
 
-         if (trace)
-            log.tracef("Created BootstrapContext: %s", bc);
+         log.tracef("Created BootstrapContext: %s", bc);
 
          return bc;
       }
