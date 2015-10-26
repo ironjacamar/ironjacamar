@@ -289,6 +289,8 @@ public class IronJacamar extends BlockJUnit4ClassRunner
             Configuration configuration = tc.getAnnotation(Configuration.class);
             if (configuration != null)
                fullProfile = configuration.full();
+
+            extensionStart(tc);
             
             embedded = EmbeddedFactory.create(fullProfile);
             embedded.startup();
@@ -501,10 +503,30 @@ public class IronJacamar extends BlockJUnit4ClassRunner
             
             embedded.shutdown();
             embedded = null;
+
+            extensionStop(tc);
          }
       };
    }
 
+   /**
+    * Extension start
+    * @param tc The test class
+    * @exception Exception Thrown in case of an error
+    */
+   public void extensionStart(TestClass tc) throws Exception
+   {
+   }
+   
+   /**
+    * Extension stop
+    * @param tc The test class
+    * @exception Exception Thrown in case of an error
+    */
+   public void extensionStop(TestClass tc) throws Exception
+   {
+   }
+   
    /**
     * Filter and sort
     * @param fms The FrameworkMethods

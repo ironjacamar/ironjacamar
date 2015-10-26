@@ -27,6 +27,8 @@ version = "2.0.0.SNAPSHOT"
 ext {
   libraries = [
     apiviz: "org.jboss.apiviz:apiviz:1.3.2.GA",
+    byteman: "org.jboss.byteman:byteman:3.0.1",
+    byteman_submit: "org.jboss.byteman:byteman-submit:3.0.1",
     fungal: "com.github.fungal:fungal:0.11.0.Final",
     fungal_cli: "com.github.fungal:fungal-cli:0.11.0.Final",
     hibernate_validator: "org.hibernate:hibernate-validator:5.1.3.Final",
@@ -102,12 +104,17 @@ subprojects { subProject ->
     apiVizTool {
       description = "APIViz"
     }
+    byteman {
+      description = "Byteman"
+    }
     jbossLoggingTool {
       description = "JBoss Logging Tool Processor"
     }
   }
 
   dependencies {
+    compile(libraries.byteman)
+    compile(libraries.byteman_submit)
     compile(libraries.fungal)
     compile(libraries.fungal_cli)
     compile(libraries.hibernate_validator)
@@ -138,9 +145,12 @@ subprojects { subProject ->
     compile(libraries.transaction_spec)
     compile(libraries.validation_spec)
 
+    testCompile(libraries.byteman)
+    testCompile(libraries.byteman_submit)
     testCompile(libraries.junit)
 
     apiVizTool(libraries.apiviz)
+    byteman(libraries.byteman)
     jbossLoggingTool(libraries.jboss_logging_processor)
   }
 
@@ -247,6 +257,12 @@ subprojects { subProject ->
         )
       }
     }
+  }
+
+  test {
+    useJUnit()
+
+    jvmArgs "-javaagent:" + project.configurations.byteman.asPath + "=listener:true"
   }
 }
 
