@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <datasources> 
   <datasource jta="${jta:true}" jndi-name="${jndi-name:java:jboss/datasources/complexDs}"
-              pool-name="${pool-name:complexDs_Pool}" enabled="${enabled:false}"
+              id="${id:complexDs_Pool}" enabled="${enabled:false}"
               spy="${spy:true}"
               use-ccm="${use-ccm:false}" connectable="${connectable:true}"
               tracking="${tracking:false}">
@@ -79,7 +79,7 @@
       <share-prepared-statements/>
     </statement>
   </datasource>
-  <xa-datasource jndi-name="${jndi-name:java:jboss/xa-datasources/complexXaDs}" pool-name="${pool-name:complexXaDs_Pool}"
+  <xa-datasource jndi-name="${jndi-name:java:jboss/xa-datasources/complexXaDs}" id="${id:complexXaDs_Pool}"
                  enabled="${enabled:true}"
                  spy="${spy:false}" use-ccm="${use-ccm:true}" connectable="${connectable:false}" tracking="true">
     <xa-datasource-property name="name1">${Property1:Property1}</xa-datasource-property>
@@ -154,13 +154,13 @@
       <share-prepared-statements/>
     </statement>
     <recovery no-recovery="${no-recovery:false}">
-      <recover-credential>
+      <recovery-credential>
         <security-domain>${security-domain:HsqlDbRealm}</security-domain>
-      </recover-credential>
-      <recover-plugin class-name="${recover-plugin:someClass5}">
+      </recovery-credential>
+      <recovery-plugin class-name="${recover-plugin:someClass5}">
         <config-property name="name1">${Property1:Property1}</config-property>
         <config-property name="name2">${Property2:Property2}</config-property>
-      </recover-plugin>
+      </recovery-plugin>
     </recovery>
   </xa-datasource>
   <drivers>

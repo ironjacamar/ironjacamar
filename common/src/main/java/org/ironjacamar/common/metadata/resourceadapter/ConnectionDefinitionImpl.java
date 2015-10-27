@@ -54,8 +54,8 @@ public class ConnectionDefinitionImpl extends AbstractMetadata implements Connec
    /** jndi-name */
    protected String jndiName;
 
-   /** pool-name */
-   protected String poolName;
+   /** id */
+   protected String id;
 
    /** enable */
    protected Boolean enabled;
@@ -97,7 +97,7 @@ public class ConnectionDefinitionImpl extends AbstractMetadata implements Connec
     * @param configProperties configProperties
     * @param className className
     * @param jndiName jndiName
-    * @param poolName poolName
+    * @param id id
     * @param enabled enabled
     * @param useCcm useCcm
     * @param sharable sharable
@@ -113,7 +113,7 @@ public class ConnectionDefinitionImpl extends AbstractMetadata implements Connec
     * @param expressions expressions
     */
    public ConnectionDefinitionImpl(Map<String, String> configProperties, String className, String jndiName,
-                                   String poolName, Boolean enabled, Boolean useCcm,
+                                   String id, Boolean enabled, Boolean useCcm,
                                    Boolean sharable, Boolean enlistment, Boolean connectable, Boolean tracking,
                                    Pool pool, Timeout timeout,
                                    Validation validation, Security security, Recovery recovery, Boolean isXA,
@@ -131,7 +131,7 @@ public class ConnectionDefinitionImpl extends AbstractMetadata implements Connec
       }
       this.className = className;
       this.jndiName = jndiName;
-      this.poolName = poolName;
+      this.id = id;
       this.enabled = enabled;
       this.useCcm = useCcm;
       this.pool = pool;
@@ -175,9 +175,9 @@ public class ConnectionDefinitionImpl extends AbstractMetadata implements Connec
    /**
     * {@inheritDoc}
     */
-   public String getPoolName()
+   public String getId()
    {
-      return poolName;
+      return id;
    }
 
    /**
@@ -288,7 +288,7 @@ public class ConnectionDefinitionImpl extends AbstractMetadata implements Connec
       result = prime * result + ((enabled == null) ? 0 : enabled.hashCode());
       result = prime * result + ((jndiName == null) ? 0 : jndiName.hashCode());
       result = prime * result + ((pool == null) ? 0 : pool.hashCode());
-      result = prime * result + ((poolName == null) ? 0 : poolName.hashCode());
+      result = prime * result + ((id == null) ? 0 : id.hashCode());
       result = prime * result + ((recovery == null) ? 0 : recovery.hashCode());
       result = prime * result + ((security == null) ? 0 : security.hashCode());
       result = prime * result + ((timeout == null) ? 0 : timeout.hashCode());
@@ -352,12 +352,12 @@ public class ConnectionDefinitionImpl extends AbstractMetadata implements Connec
       }
       else if (!pool.equals(other.pool))
          return false;
-      if (poolName == null)
+      if (id == null)
       {
-         if (other.poolName != null)
+         if (other.id != null)
             return false;
       }
-      else if (!poolName.equals(other.poolName))
+      else if (!id.equals(other.id))
          return false;
       if (recovery == null)
       {
@@ -453,8 +453,8 @@ public class ConnectionDefinitionImpl extends AbstractMetadata implements Connec
       if (enabled != null && !Defaults.ENABLED.equals(enabled))
          sb.append(" ").append(XML.ATTRIBUTE_ENABLED).append("=\"").append(enabled).append("\"");
 
-      if (poolName != null)
-         sb.append(" ").append(XML.ATTRIBUTE_POOL_NAME).append("=\"").append(poolName).append("\"");
+      if (id != null)
+         sb.append(" ").append(XML.ATTRIBUTE_ID).append("=\"").append(id).append("\"");
 
       if (useCcm != null && !Defaults.USE_CCM.equals(useCcm))
          sb.append(" ").append(XML.ATTRIBUTE_USE_CCM).append("=\"").append(useCcm).append("\"");

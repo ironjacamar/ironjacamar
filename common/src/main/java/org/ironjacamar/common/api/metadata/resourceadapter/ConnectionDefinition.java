@@ -55,10 +55,10 @@ public interface ConnectionDefinition extends JCAMetadata
    public String getJndiName();
 
    /**
-    * Get the poolName.
-    * @return the poolName.
+    * Get the identifier
+    * @return the value
     */
-   public String getPoolName();
+   public String getId();
 
    /**
     * Get the enabled.

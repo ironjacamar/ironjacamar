@@ -944,7 +944,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
 
       //attributes reading
 
-      String poolName = null;
+      String id = null;
       Boolean enabled = Defaults.ENABLED;
       String jndiName = null;
       Boolean spy = Defaults.SPY;
@@ -966,12 +966,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                jndiName = attributeAsString(reader, XML.ATTRIBUTE_JNDI_NAME, expressions);
                break;
             }
-            case XML.ATTRIBUTE_POOL_NAME : {
-               poolName = attributeAsString(reader, XML.ATTRIBUTE_POOL_NAME, expressions);
-               break;
-            }
-            case "use-java-context" : {
-               // Deprecated
+            case XML.ATTRIBUTE_ID : {
+               id = attributeAsString(reader, XML.ATTRIBUTE_ID, expressions);
                break;
             }
             case XML.ATTRIBUTE_SPY : {
@@ -1005,7 +1001,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                {
                   return new XADataSourceImpl(transactionIsolation, timeoutSettings, securitySettings,
                                               statementSettings, validationSettings, urlDelimiter, urlProperty,
-                                              urlSelectorStrategyClassName, poolName, enabled,
+                                              urlSelectorStrategyClassName, id, enabled,
                                               jndiName, spy, useCcm, connectable, tracking, xaDataSourceProperty,
                                               xaDataSourceClass, driver, newConnectionSql, xaPool, recovery,
                                               expressions.size() > 0 ? expressions : null);
@@ -1138,7 +1134,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       DsPool pool = null;
 
       //attributes reading
-      String poolName = null;
+      String id = null;
       Boolean enabled = Defaults.ENABLED;
       String jndiName = null;
       Boolean spy = Defaults.SPY;
@@ -1161,12 +1157,8 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                jndiName = attributeAsString(reader, XML.ATTRIBUTE_JNDI_NAME, expressions);
                break;
             }
-            case XML.ATTRIBUTE_POOL_NAME : {
-               poolName = attributeAsString(reader, XML.ATTRIBUTE_POOL_NAME, expressions);
-               break;
-            }
-            case "use-java-context" : {
-               // Deprecated
+            case XML.ATTRIBUTE_ID : {
+               id = attributeAsString(reader, XML.ATTRIBUTE_ID, expressions);
                break;
             }
             case XML.ATTRIBUTE_SPY : {
@@ -1205,7 +1197,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   return new DataSourceImpl(connectionUrl, driverClass, dataSourceClass, driver, transactionIsolation,
                                             connectionProperties, timeoutSettings, securitySettings,
                                             statementSettings, validationSettings, urlDelimiter,
-                                            urlSelectorStrategyClassName, newConnectionSql, poolName,
+                                            urlSelectorStrategyClassName, newConnectionSql, id,
                                             enabled, jndiName, spy, useCcm, jta, connectable, tracking, pool,
                                             expressions.size() > 0 ? expressions : null);
                }
@@ -1329,9 +1321,9 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
          writer.writeAttribute(XML.ATTRIBUTE_JNDI_NAME,
                                ds.getValue(XML.ATTRIBUTE_JNDI_NAME, ds.getJndiName()));
 
-      if (ds.getPoolName() != null)
-         writer.writeAttribute(XML.ATTRIBUTE_POOL_NAME,
-                               ds.getValue(XML.ATTRIBUTE_POOL_NAME, ds.getPoolName()));
+      if (ds.getId() != null)
+         writer.writeAttribute(XML.ATTRIBUTE_ID,
+                               ds.getValue(XML.ATTRIBUTE_ID, ds.getId()));
 
       if (ds.isEnabled() != null && (ds.hasExpression(XML.ATTRIBUTE_ENABLED) ||
                                      !Defaults.ENABLED.equals(ds.isEnabled())))
@@ -1460,9 +1452,9 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
          writer.writeAttribute(XML.ATTRIBUTE_JNDI_NAME,
                                xads.getValue(XML.ATTRIBUTE_JNDI_NAME, xads.getJndiName()));
 
-      if (xads.getPoolName() != null)
-         writer.writeAttribute(XML.ATTRIBUTE_POOL_NAME,
-                               xads.getValue(XML.ATTRIBUTE_POOL_NAME, xads.getPoolName()));
+      if (xads.getId() != null)
+         writer.writeAttribute(XML.ATTRIBUTE_ID,
+                               xads.getValue(XML.ATTRIBUTE_ID, xads.getId()));
 
       if (xads.isEnabled() != null && (xads.hasExpression(XML.ATTRIBUTE_ENABLED) ||
                                        !Defaults.ENABLED.equals(xads.isEnabled())))

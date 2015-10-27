@@ -116,7 +116,7 @@ public class ResourceAdaptersExpressionStoreTestCase
                      + "${bean-validation-group3:group2}");
 
          // nested expression, value is set
-         test(document, xPath, xpcon + "recovery/recover-plugin/config-property",
+         test(document, xPath, xpcon + "recovery/recovery-plugin/config-property",
                "${Property5:${Property5X:nestedvalue5X}}");
 
          //Test simple expression with boolean default value, value is not changed

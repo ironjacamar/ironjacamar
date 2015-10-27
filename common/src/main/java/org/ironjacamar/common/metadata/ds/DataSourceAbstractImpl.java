@@ -85,9 +85,9 @@ public abstract class DataSourceAbstractImpl extends AbstractMetadata implements
    protected String urlSelectorStrategyClassName;
 
    /**
-   * poolName
+   * id
    */
-   protected String poolName;
+   protected String id;
 
    /**
    * enabled
@@ -132,7 +132,7 @@ public abstract class DataSourceAbstractImpl extends AbstractMetadata implements
     * @param validation validation
     * @param urlDelimiter urlDelimiter
     * @param urlSelectorStrategyClassName urlSelectorStrategyClassName
-    * @param poolName poolName
+    * @param id id
     * @param enabled enabled
     * @param jndiName jndiName
     * @param spy spy
@@ -147,7 +147,7 @@ public abstract class DataSourceAbstractImpl extends AbstractMetadata implements
    protected DataSourceAbstractImpl(TransactionIsolation transactionIsolation, Timeout timeout,
                                     DsSecurity security, Statement statement, Validation validation,
                                     String urlDelimiter, String urlSelectorStrategyClassName,
-                                    String poolName, Boolean enabled, String jndiName,
+                                    String id, Boolean enabled, String jndiName,
                                     Boolean spy, Boolean useCcm, String driver, String newConnectionSql,
                                     Boolean connectable, Boolean tracking, Map<String, String> expressions)
       throws ValidateException
@@ -160,7 +160,7 @@ public abstract class DataSourceAbstractImpl extends AbstractMetadata implements
       this.validation = validation;
       this.urlDelimiter = urlDelimiter;
       this.urlSelectorStrategyClassName = urlSelectorStrategyClassName;
-      this.poolName = poolName;
+      this.id = id;
       this.enabled = enabled;
       this.jndiName = jndiName;
       this.spy = spy;
@@ -231,9 +231,9 @@ public abstract class DataSourceAbstractImpl extends AbstractMetadata implements
    /**
     * {@inheritDoc}
     */
-   public String getPoolName()
+   public String getId()
    {
-      return poolName;
+      return id;
    }
 
    /**
@@ -320,9 +320,6 @@ public abstract class DataSourceAbstractImpl extends AbstractMetadata implements
       if (this.jndiName == null)
          throw new ValidateException(bundle.requiredAttributeMissing(XML.ATTRIBUTE_JNDI_NAME,
                                                                      this.getClass().getCanonicalName()));
-      if (this.poolName == null)
-         throw new ValidateException(bundle.requiredAttributeMissing(XML.ATTRIBUTE_POOL_NAME,
-                                                                     this.getClass().getCanonicalName()));
 
       if (this.timeout != null)
          this.timeout.validate();
@@ -343,7 +340,7 @@ public abstract class DataSourceAbstractImpl extends AbstractMetadata implements
       int result = 1;
       result = prime * result + ((enabled == null) ? 0 : enabled.hashCode());
       result = prime * result + ((jndiName == null) ? 0 : jndiName.hashCode());
-      result = prime * result + ((poolName == null) ? 0 : poolName.hashCode());
+      result = prime * result + ((id == null) ? 0 : id.hashCode());
       result = prime * result + ((security == null) ? 0 : security.hashCode());
       result = prime * result + ((statement == null) ? 0 : statement.hashCode());
       result = prime * result + ((timeout == null) ? 0 : timeout.hashCode());
@@ -385,12 +382,12 @@ public abstract class DataSourceAbstractImpl extends AbstractMetadata implements
       }
       else if (!jndiName.equals(other.jndiName))
          return false;
-      if (poolName == null)
+      if (id == null)
       {
-         if (other.poolName != null)
+         if (other.id != null)
             return false;
       }
-      else if (!poolName.equals(other.poolName))
+      else if (!id.equals(other.id))
          return false;
       if (security == null)
       {

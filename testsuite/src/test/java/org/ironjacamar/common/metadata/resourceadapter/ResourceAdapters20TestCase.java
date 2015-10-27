@@ -218,11 +218,11 @@ public class ResourceAdapters20TestCase
                Validation v = cd.getValidation();
                Recovery r = cd.getRecovery();
                Credential c = r.getCredential();
-               Extension e = r.getRecoverPlugin();
+               Extension e = r.getPlugin();
                if (cd.getClassName().contains("Class1"))
                {
                   assertEquals("java:jboss/name1", cd.getJndiName());
-                  assertEquals("Pool1", cd.getPoolName());
+                  assertEquals("Pool1", cd.getId());
                   assertTrue(cd.isUseCcm());
                   assertTrue(cd.isEnabled());
                   assertTrue(cd.isSharable());
@@ -277,7 +277,7 @@ public class ResourceAdapters20TestCase
                else if (cd.getClassName().contains("Class2"))
                {
                   assertEquals("java:jboss/name2", cd.getJndiName());
-                  assertNull(cd.getPoolName());
+                  assertNull(cd.getId());
                   assertFalse(cd.isUseCcm());
                   assertFalse(cd.isEnabled());
                   assertFalse(cd.isSharable());
@@ -319,7 +319,7 @@ public class ResourceAdapters20TestCase
                else if (cd.getClassName().contains("Class3"))
                {
                   assertEquals("java:jboss/name3", cd.getJndiName());
-                  assertNull(cd.getPoolName());
+                  assertNull(cd.getId());
                   assertTrue(cd.isUseCcm());
                   assertTrue(cd.isEnabled());
                   assertTrue(cd.isSharable());
@@ -362,7 +362,7 @@ public class ResourceAdapters20TestCase
                   if (ao.getClassName().equals("Class4"))
                   {
                      assertEquals("java:jboss/name4", ao.getJndiName());
-                     assertEquals("Pool4", ao.getPoolName());
+                     assertEquals("Pool4", ao.getId());
                      assertTrue(ao.isEnabled());
                      assertEquals(2, mp.size());
                      assertEquals("3.6", mp.get("Property7"));
@@ -371,7 +371,7 @@ public class ResourceAdapters20TestCase
                   else if (ao.getClassName().equals("Class5"))
                   {
                      assertEquals("java:jboss/name5", ao.getJndiName());
-                     assertNull(ao.getPoolName());
+                     assertNull(ao.getId());
                      assertTrue(ao.isEnabled());
                      assertEquals(0, mp.size());
                   }
@@ -393,7 +393,7 @@ public class ResourceAdapters20TestCase
             ConnectionDefinition cd = cds.get(0);
             assertEquals("java:jboss/name9", cd.getJndiName());
             assertNull(cd.getClassName());
-            assertNull(cd.getPoolName());
+            assertNull(cd.getId());
             assertTrue(cd.isUseCcm());
             assertTrue(cd.isEnabled());
             assertTrue(cd.isSharable());
@@ -429,7 +429,7 @@ public class ResourceAdapters20TestCase
             ConnectionDefinition cd = cds.get(0);
             assertEquals("java:jboss/name8", cd.getJndiName());
             assertNull(cd.getClassName());
-            assertNull(cd.getPoolName());
+            assertNull(cd.getId());
             assertTrue(cd.isUseCcm());
             assertTrue(cd.isEnabled());
             assertTrue(cd.isSharable());
@@ -462,7 +462,7 @@ public class ResourceAdapters20TestCase
                if ((ao.getClassName() != null) && ao.getClassName().equals("Class6"))
                {
                   assertEquals("java:jboss/name6", ao.getJndiName());
-                  assertEquals("Pool6", ao.getPoolName());
+                  assertEquals("Pool6", ao.getId());
                   assertFalse(ao.isEnabled());
                   assertEquals(2, mp.size());
                   assertEquals(".", mp.get("Property9"));
@@ -471,7 +471,7 @@ public class ResourceAdapters20TestCase
                else if (ao.getClassName() == null)
                {
                   assertEquals("java:jboss/name7", ao.getJndiName());
-                  assertNull(ao.getPoolName());
+                  assertNull(ao.getId());
                   assertTrue(ao.isEnabled());
                   assertEquals(0, mp.size());
                }
@@ -494,7 +494,7 @@ public class ResourceAdapters20TestCase
             AdminObject ao = aos.get(0);
             assertEquals("java:jboss/name0", ao.getJndiName());
             assertNull(ao.getClassName());
-            assertNull(ao.getPoolName());
+            assertNull(ao.getId());
             assertTrue(ao.isEnabled());
             mp = ao.getConfigProperties();
             assertEquals(0, mp.size());

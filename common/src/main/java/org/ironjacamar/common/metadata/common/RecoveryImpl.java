@@ -40,7 +40,7 @@ public class RecoveryImpl extends AbstractMetadata implements Recovery
 
    private Credential credential;
 
-   private Extension recoverPlugin;
+   private Extension plugin;
 
    private Boolean noRecovery;
 
@@ -48,17 +48,17 @@ public class RecoveryImpl extends AbstractMetadata implements Recovery
     * Create a new Recovery.
     *
     * @param credential credential
-    * @param recoverPlugin plugin
+    * @param plugin plugin
     * @param noRecovery niRecovery
     * @param expressions expressions
     * @throws ValidateException in case of not valid metadata creation
     */
-   public RecoveryImpl(Credential credential, Extension recoverPlugin, Boolean noRecovery,
+   public RecoveryImpl(Credential credential, Extension plugin, Boolean noRecovery,
                        Map<String, String> expressions) throws ValidateException
    {
       super(expressions);
       this.credential = credential;
-      this.recoverPlugin = recoverPlugin;
+      this.plugin = plugin;
       this.noRecovery = noRecovery;
       this.validate();
    }
@@ -78,9 +78,9 @@ public class RecoveryImpl extends AbstractMetadata implements Recovery
     *
     * @return the plugin.
     */
-   public Extension getRecoverPlugin()
+   public Extension getPlugin()
    {
-      return recoverPlugin;
+      return plugin;
    }
 
    /**
@@ -105,7 +105,7 @@ public class RecoveryImpl extends AbstractMetadata implements Recovery
       final int prime = 31;
       int result = 1;
       result = prime * result + ((noRecovery == null) ? 0 : noRecovery.hashCode());
-      result = prime * result + ((recoverPlugin == null) ? 0 : recoverPlugin.hashCode());
+      result = prime * result + ((plugin == null) ? 0 : plugin.hashCode());
       result = prime * result + ((credential == null) ? 0 : credential.hashCode());
       return result;
    }
@@ -127,12 +127,12 @@ public class RecoveryImpl extends AbstractMetadata implements Recovery
       }
       else if (!noRecovery.equals(other.noRecovery))
          return false;
-      if (recoverPlugin == null)
+      if (plugin == null)
       {
-         if (other.recoverPlugin != null)
+         if (other.plugin != null)
             return false;
       }
-      else if (!recoverPlugin.equals(other.recoverPlugin))
+      else if (!plugin.equals(other.plugin))
          return false;
       if (credential == null)
       {
@@ -156,7 +156,7 @@ public class RecoveryImpl extends AbstractMetadata implements Recovery
 
       if (credential != null)
       {
-         sb.append("<").append("recover-credential").append(">");
+         sb.append("<").append("recovery-credential").append(">");
          if (credential.getUserName() != null)
          {
             sb.append("<").append("user-name").append(">");
@@ -173,19 +173,19 @@ public class RecoveryImpl extends AbstractMetadata implements Recovery
             sb.append(credential.getSecurityDomain());
             sb.append("</").append("security-domain").append(">");
          }
-         sb.append("</").append("recover-credential").append(">");
+         sb.append("</").append("recovery-credential").append(">");
       }
 
-      if (recoverPlugin != null)
+      if (plugin != null)
       {
-         sb.append("<").append("recover-plugin");
+         sb.append("<").append("recovery-plugin");
          sb.append(" ").append("class-name").append("=\"");
-         sb.append(recoverPlugin.getClassName()).append("\"");
+         sb.append(plugin.getClassName()).append("\"");
          sb.append(">");
 
-         if (recoverPlugin.getConfigPropertiesMap().size() > 0)
+         if (plugin.getConfigPropertiesMap().size() > 0)
          {
-            Iterator<Map.Entry<String, String>> it = recoverPlugin.getConfigPropertiesMap().entrySet().iterator();
+            Iterator<Map.Entry<String, String>> it = plugin.getConfigPropertiesMap().entrySet().iterator();
             
             while (it.hasNext())
             {
@@ -198,7 +198,7 @@ public class RecoveryImpl extends AbstractMetadata implements Recovery
             }
          }
 
-         sb.append("</").append("recover-plugin").append(">");
+         sb.append("</").append("recovery-plugin").append(">");
       }
 
       sb.append("</recovery>");

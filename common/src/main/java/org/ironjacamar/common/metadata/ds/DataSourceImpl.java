@@ -79,7 +79,7 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
     * @param urlDelimiter urlDelimiter
     * @param urlSelectorStrategyClassName urlSelectorStrategyClassName
     * @param newConnectionSql newConnectionSql
-    * @param poolName poolName
+    * @param id id
     * @param enabled enabled
     * @param jndiName jndiName
     * @param spy spy
@@ -95,13 +95,13 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
                          TransactionIsolation transactionIsolation, Map<String, String> connectionProperties, 
                          Timeout timeout, DsSecurity security, Statement statement, Validation validation, 
                          String urlDelimiter, String urlSelectorStrategyClassName, String newConnectionSql, 
-                         String poolName, Boolean enabled, String jndiName, 
+                         String id, Boolean enabled, String jndiName, 
                          Boolean spy, Boolean useccm, Boolean jta, Boolean connectable, Boolean tracking, DsPool pool,
                          Map<String, String> expressions)
       throws ValidateException
    {
       super(transactionIsolation, timeout, security, statement, validation, urlDelimiter, urlSelectorStrategyClassName,
-            poolName, enabled, jndiName, spy, useccm, driver, newConnectionSql, connectable, tracking,
+            id, enabled, jndiName, spy, useccm, driver, newConnectionSql, connectable, tracking,
             expressions);
 
       this.jta = jta;
@@ -294,8 +294,8 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
       if (jndiName != null)
          sb.append(" ").append(XML.ATTRIBUTE_JNDI_NAME).append("=\"").append(jndiName).append("\"");
 
-      if (poolName != null)
-         sb.append(" ").append(XML.ATTRIBUTE_POOL_NAME).append("=\"").append(poolName).append("\"");
+      if (id != null)
+         sb.append(" ").append(XML.ATTRIBUTE_ID).append("=\"").append(id).append("\"");
 
       if (enabled != null && !Defaults.ENABLED.equals(enabled))
          sb.append(" ").append(XML.ATTRIBUTE_ENABLED).append("=\"").append(enabled).append("\"");

@@ -125,7 +125,7 @@
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
-              A class that implements org.jboss.jca.adapters.jdbc.URLSelectorStrategy
+              A class that implements org.ironjacamar.adapters.jdbc.URLSelectorStrategy
              ]]>
           </xs:documentation>
         </xs:annotation>
@@ -251,7 +251,7 @@
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
-               A class that implements org.jboss.jca.adapters.jdbc.URLSelectorStrategy
+               A class that implements org.ironjacamar.adapters.jdbc.URLSelectorStrategy
              ]]>
           </xs:documentation>
         </xs:annotation>
@@ -338,11 +338,11 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute name="pool-name" type="xs:token" use="required">
+    <xs:attribute name="id" type="xs:token" use="required">
       <xs:annotation>
         <xs:documentation>
           <![CDATA[[
-            Specifies the pool name for the datasource used for management
+            Specifies the identifier for the datasource used for management. It will default to jndi-name if not defined
            ]]>
         </xs:documentation>
       </xs:annotation>
@@ -356,18 +356,18 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute default="false" name="spy" type="xs:boolean">
+    <xs:attribute  name="spy" type="xs:boolean" default="false">
       <xs:annotation>
         <xs:documentation>
           <![CDATA[[
             Enable spy functionality on the JDBC layer - e.g. log all JDBC traffic to the datasource.
-            Remember to enable the logging category (org.jboss.jdbc) too.
+            Remember to enable the logging category (org.ironjacamar.jdbc) too.
             Ex: spy="true"
            ]]>
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute default="true" name="use-ccm" type="xs:boolean">
+    <xs:attribute name="use-ccm" type="xs:boolean" default="true">
       <xs:annotation>
         <xs:documentation>
           <![CDATA[[
@@ -426,11 +426,11 @@
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
-              An org.jboss.jca.adapters.jdbc.ValidConnectionChecker that provides 
+              An org.ironjacamar.adapters.jdbc.ValidConnectionChecker that provides 
               a SQLException isValidConnection(Connection e) method to validate is a connection 
               is valid. An exception means the connection is destroyed. This overrides 
               the check-valid-connection-sql when present. Ex:
-              <valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.vendor.OracleValidConnectionChecker"/>
+              <valid-connection-checker class-name="org.ironjacamar.adapters.jdbc.extensions.oracle.OracleValidConnectionChecker"/>
              ]]>
           </xs:documentation>
         </xs:annotation>
@@ -489,15 +489,15 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element minOccurs="0" name="stale-connection-checker" type="extensionType">
+      <xs:element name="stale-connection-checker" type="extensionType" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
-              An org.jboss.jca.adapters.jdbc.StaleConnectionChecker that provides 
+              An org.ironjacamar.adapters.jdbc.StaleConnectionChecker that provides 
               a boolean isStaleConnection(SQLException e) method which if it it returns 
-              true will wrap the exception in an org.jboss.jca.adapters.jdbc.StaleConnectionException 
+              true will wrap the exception in an org.ironjacamar.adapters.jdbc.StaleConnectionException 
               which is a subclass of SQLException. Ex: 
-              <stale-connection-checker class-name="org.jboss.jca.adapters.jdbc.vendor.OracleStaleConnectionChecker"/>
+              <stale-connection-checker class-name="org.ironjacamar.adapters.jdbc.extensions.oracle.OracleStaleConnectionChecker"/>
              ]]>
           </xs:documentation>
         </xs:annotation>
@@ -506,11 +506,11 @@
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
-              An org.jboss.jca.adapters.jdbc.ExceptionSorter that provides a 
+              An org.ironjacamar.adapters.jdbc.ExceptionSorter that provides a 
               boolean isExceptionFatal(SQLException e) method to validate is an exception 
               should be broadcast to all javax.resource.spi.ConnectionEventListener as 
               a connectionErrorOccurred message. Ex: 
-              <exception-sorter class-name="org.jboss.jca.adapters.jdbc.vendor.OracleExceptionSorter"/>
+              <exception-sorter class-name="org.ironjacamar.adapters.jdbc.extensions.oracle.OracleExceptionSorter"/>
              ]]>
           </xs:documentation>
         </xs:annotation>
@@ -595,7 +595,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="xa-resource-timeout" type="xs:token" minOccurs="0">
+      <xs:element name="xa-resource-timeout" type="xs:nonNegativeInteger" minOccurs="0">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
@@ -730,7 +730,7 @@
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
-              An org.jboss.jca.adapters.jdbc.spi.listener.ConnectionListener that provides 
+              An org.ironjacamar.adapters.jdbc.spi.listener.ConnectionListener that provides 
               a possible to listen for connection activation and passivation in order to
               perform actions before the connection is returned to the application or returned
               to the pool. Ex:
@@ -761,16 +761,6 @@
                   The is-same-rm-override element allows one to unconditionally 
                   set whether the javax.transaction.xa.XAResource.isSameRM(XAResource) returns 
                   true or false. Ex: <is-same-rm-override>true</is-same-rm-override>
-                 ]]>
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element name="interleaving" type="boolean-presenceType" minOccurs="0">
-            <xs:annotation>
-              <xs:documentation>
-                <![CDATA[[
-                  An element to enable interleaving for XA connection factories 
-                  Ex: <interleaving/>
                  ]]>
               </xs:documentation>
             </xs:annotation>
@@ -871,7 +861,7 @@
   </xs:complexType>
   <xs:complexType name="recoverType">
     <xs:sequence>
-      <xs:element name="recover-credential" type="dsSecurityType" minOccurs="0" maxOccurs="1">
+      <xs:element name="recovery-credential" type="dsSecurityType" minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
@@ -881,7 +871,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="recover-plugin" type="extensionType" minOccurs="0" maxOccurs="1">
+      <xs:element name="recovery-plugin" type="extensionType" minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
@@ -957,17 +947,17 @@
       <xs:annotation>
         <xs:documentation>
           <![CDATA[[
-            Specifies the major version of this driver. If the major and minor version is obmitted the fist availabe
+            Specifies the major version of this driver. If the major and minor version is obmitted the first avaiable
             Driver in module will be used.
            ]]>
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute name="minor-verion" type="xs:int" use="optional">
+    <xs:attribute name="minor-version" type="xs:int" use="optional">
     <xs:annotation>
         <xs:documentation>
           <![CDATA[[
-            Specifies the minor version of this driver. If the major and minor version is obmitted the fist availabe
+            Specifies the minor version of this driver. If the major and minor version is obmitted the first availabe
             Driver in module will be used.
            ]]>
         </xs:documentation>

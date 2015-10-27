@@ -72,11 +72,6 @@ public interface CommonXML
    public static final String ATTRIBUTE_NO_RECOVERY = "no-recovery";
 
    /**
-    * pool-name
-    */
-   public static final String ATTRIBUTE_POOL_NAME = "pool-name";
-
-   /**
     * sharable
     */
    public static final String ATTRIBUTE_SHARABLE = "sharable";
@@ -282,14 +277,14 @@ public interface CommonXML
    public static final String ELEMENT_RECOVERY = "recovery";
 
    /**
-    * recover-credential
+    * recovery-credential
     */
-   public static final String ELEMENT_RECOVER_CREDENTIAL = "recover-credential";
+   public static final String ELEMENT_RECOVERY_CREDENTIAL = "recovery-credential";
 
    /**
-    * recover-plugin
+    * recovery-plugin
     */
-   public static final String ELEMENT_RECOVER_PLUGIN = "recover-plugin";
+   public static final String ELEMENT_RECOVERY_PLUGIN = "recovery-plugin";
 
    /**
     * resource-adapter

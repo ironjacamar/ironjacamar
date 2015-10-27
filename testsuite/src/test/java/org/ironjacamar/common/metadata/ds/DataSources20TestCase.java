@@ -120,7 +120,7 @@ public class DataSources20TestCase
    {
       DsParser parser = new DsParser();
 
-      InputStream is = DataSources10TestCase.class.getClassLoader().
+      InputStream is = DataSources20TestCase.class.getClassLoader().
          getResourceAsStream("../../resources/test/ds/dashds-2.0.xml");
       assertNotNull(is);
 
@@ -196,7 +196,7 @@ public class DataSources20TestCase
       assertTrue(d.isConnectable());
       assertFalse(d.isTracking());
       assertEquals("java:jboss/datasources/complexDs", d.getJndiName());
-      assertEquals("complexDs_Pool", d.getPoolName());
+      assertEquals("complexDs_Pool", d.getId());
       
       assertEquals("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1", d.getConnectionUrl());
       assertEquals("org.hsqldb.jdbcDriver", d.getDriverClass());
@@ -297,7 +297,7 @@ public class DataSources20TestCase
       assertFalse(xd.isConnectable());
       assertTrue(xd.isTracking());
       assertEquals("java:jboss/xa-datasources/complexXaDs", xd.getJndiName());
-      assertEquals("complexXaDs_Pool", xd.getPoolName());
+      assertEquals("complexXaDs_Pool", xd.getId());
       
       assertEquals("org.pg.JdbcXADataSource", xd.getXaDataSourceClass());
       assertEquals("pg", xd.getDriver());
@@ -352,7 +352,7 @@ public class DataSources20TestCase
       Credential c = r.getCredential();
       assertNotNull(c);
       assertEquals("HsqlDbRealm", c.getSecurityDomain());
-      e = r.getRecoverPlugin();
+      e = r.getPlugin();
       properties = e.getConfigPropertiesMap();
       assertEquals(2, properties.size()); 
       assertEquals("Property1", properties.get("name1"));

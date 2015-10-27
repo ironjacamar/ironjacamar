@@ -57,10 +57,10 @@ public interface CommonDataSource extends JCAMetadata, ValidatableMetadata
    public Validation getValidation();
 
    /**
-    * Get the poolName.
-    * @return the poolName.
+    * Get the identifier
+    * @return the value
     */
-   public String getPoolName();
+   public String getId();
 
    /**
     * Get the enabled.

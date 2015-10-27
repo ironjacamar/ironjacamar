@@ -47,7 +47,7 @@ public class AdminObjectImpl extends AbstractMetadata implements AdminObject
 
    private String jndiName;
 
-   private String poolName;
+   private String id;
 
    private Boolean enabled;
 
@@ -57,12 +57,12 @@ public class AdminObjectImpl extends AbstractMetadata implements AdminObject
     * @param configProperties configProperties
     * @param className className
     * @param jndiName jndiName
-    * @param poolName poolName
+    * @param id id
     * @param enabled enabled
     * @param expressions expressions
     */
    public AdminObjectImpl(Map<String, String> configProperties, String className, String jndiName,
-                          String poolName, Boolean enabled,
+                          String id, Boolean enabled,
                           Map<String, String> expressions)
    {
       super(expressions);
@@ -77,7 +77,7 @@ public class AdminObjectImpl extends AbstractMetadata implements AdminObject
       }
       this.className = className;
       this.jndiName = jndiName;
-      this.poolName = poolName;
+      this.id = id;
       this.enabled = enabled;
    }
 
@@ -116,9 +116,9 @@ public class AdminObjectImpl extends AbstractMetadata implements AdminObject
    /**
     * {@inheritDoc}
     */
-   public String getPoolName()
+   public String getId()
    {
-      return poolName;
+      return id;
    }
 
    /**
@@ -132,7 +132,7 @@ public class AdminObjectImpl extends AbstractMetadata implements AdminObject
       result = prime * result + ((configProperties == null) ? 0 : configProperties.hashCode());
       result = prime * result + ((enabled == null) ? 0 : enabled.hashCode());
       result = prime * result + ((jndiName == null) ? 0 : jndiName.hashCode());
-      result = prime * result + ((poolName == null) ? 0 : poolName.hashCode());
+      result = prime * result + ((id == null) ? 0 : id.hashCode());
       return result;
    }
 
@@ -176,12 +176,12 @@ public class AdminObjectImpl extends AbstractMetadata implements AdminObject
       }
       else if (!jndiName.equals(other.jndiName))
          return false;
-      if (poolName == null)
+      if (id == null)
       {
-         if (other.poolName != null)
+         if (other.id != null)
             return false;
       }
-      else if (!poolName.equals(other.poolName))
+      else if (!id.equals(other.id))
          return false;
       return true;
    }
@@ -204,8 +204,8 @@ public class AdminObjectImpl extends AbstractMetadata implements AdminObject
       if (enabled != null && !Defaults.ENABLED.equals(enabled))
          sb.append(" ").append(XML.ATTRIBUTE_ENABLED).append("=\"").append(enabled).append("\"");
 
-      if (poolName != null)
-         sb.append(" ").append(XML.ATTRIBUTE_POOL_NAME).append("=\"").append(poolName).append("\"");
+      if (id != null)
+         sb.append(" ").append(XML.ATTRIBUTE_ID).append("=\"").append(id).append("\"");
 
       sb.append(">");
 

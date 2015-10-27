@@ -16,7 +16,7 @@
     <connection-definition class-name="${class-name:Class1}"
 			   jndi-name="${jndi-name:java:jboss/name1}"
                            enabled="${enabled:true}"
-                           pool-name="${pool-name}${pool-number}-X"
+                           id="${id}${pool-number}-X"
 			   use-ccm="${use-ccm:false}" sharable="${sharable:false}"
                            enlistment="${enlistment:false}" connectable="${connectable:true}"
                            tracking="${tracking:true}">
@@ -62,22 +62,22 @@
 	<use-fast-fail>${use-fast-fail:true}</use-fast-fail>
       </validation>
       <recovery no-recovery="${no-recovery:false}">
-	<recover-credential>
+	<recovery-credential>
 	  <user-name>${user-name:sa}</user-name>
 	  <password>${password:sa-pass}</password>
-	</recover-credential>
-	<recover-plugin class-name="${class-name:someClass2}">
+	</recovery-credential>
+	<recovery-plugin class-name="${class-name:someClass2}">
 	  <config-property name="Property5">${Property5:${Property5X:Property5}}</config-property>
 	  <config-property name="Property6">${Property6:${Property6X:Property6}}</config-property>
 	  <config-property name="Property7">${Property7:${Property7X:Property7}}</config-property>
-	</recover-plugin>
+	</recovery-plugin>
       </recovery>
     </connection-definition>
   </connection-definitions>
   <admin-objects>
     <admin-object class-name="${class-name:Class4}" jndi-name="${jndi-name:java:jboss/name4}"
                   enabled="${enabled:false}"
-		  pool-name="${pool-name:Pool4}">
+		  id="${id:Pool4}">
       <config-property name="Property7">${Property7:3.6}</config-property>
       <config-property name="Property8">${Property8}</config-property>
     </admin-object>

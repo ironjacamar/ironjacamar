@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <datasources> 
-  <datasource jta="false" jndi-name="java:jboss/datasources/complexDs" enabled="false" pool-name="complexDs_Pool"
+  <datasource jta="false" jndi-name="java:jboss/datasources/complexDs" enabled="false" id="complexDs_Pool"
               spy="true" use-ccm="false" connectable="true" tracking="false">
     <connection-url>jdbc:h2:mem:test;DB_CLOSE_DELAY=-1</connection-url>
     <driver-class>org.hsqldb.jdbcDriver</driver-class>
@@ -72,7 +72,7 @@
       <track-statements>nowarn</track-statements>
     </statement>
   </datasource>
-  <xa-datasource jndi-name="java:jboss/xa-datasources/complexXaDs" pool-name="complexXaDs_Pool"
+  <xa-datasource jndi-name="java:jboss/xa-datasources/complexXaDs" id="complexXaDs_Pool"
                  spy="false" use-ccm="true" connectable="false" tracking="true" enabled="true">
     <xa-datasource-property name="name1">Property1</xa-datasource-property>
     <xa-datasource-property name="name2">Property2</xa-datasource-property>
@@ -112,13 +112,13 @@
       </reauth-plugin>
     </security>
     <recovery no-recovery="false">
-      <recover-credential>
+      <recovery-credential>
         <security-domain>HsqlDbRealm</security-domain>
-      </recover-credential>
-      <recover-plugin class-name="someClass5">
+      </recovery-credential>
+      <recovery-plugin class-name="someClass5">
         <config-property name="name1">Property1</config-property>
         <config-property name="name2">Property2</config-property>
-      </recover-plugin>
+      </recovery-plugin>
     </recovery>
     <validation>
       <valid-connection-checker class-name="someClass2">

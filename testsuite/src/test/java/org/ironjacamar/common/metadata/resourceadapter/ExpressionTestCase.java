@@ -114,7 +114,7 @@ public class ExpressionTestCase
       System.setProperty("bean-validation-group1-5", "Bean5");
       System.setProperty("bean-validation-group2-5", "Validation5");
       System.setProperty("bean-validation-group3-5", "Group5");
-      System.setProperty("pool-name", "Pool");
+      System.setProperty("id", "Pool");
       System.setProperty("pool-number", "1");
       System.setProperty("Property6", "Value6");
       System.setProperty("Property7X", "Value7");
@@ -157,7 +157,7 @@ public class ExpressionTestCase
          // Test a complex expression without a default value
          ConnectionDefinition conndef = a.getConnectionDefinitions().get(0);
          
-         assertEquals("Pool1-X", conndef.getPoolName());
+         assertEquals("Pool1-X", conndef.getId());
  
          // Test with empty default value
          assertEquals("", a.getBeanValidationGroups().get(2));
@@ -166,13 +166,13 @@ public class ExpressionTestCase
          assertEquals("${security-domain:domain", conndef.getSecurity().getSecurityDomain());
 
          // Test nested expressions without set properties
-         assertEquals("Property5", conndef.getRecovery().getRecoverPlugin().getConfigPropertiesMap().get("Property5"));
+         assertEquals("Property5", conndef.getRecovery().getPlugin().getConfigPropertiesMap().get("Property5"));
  
          // Test nested expressions with some properties set
-         assertEquals("Value6", conndef.getRecovery().getRecoverPlugin().getConfigPropertiesMap().get("Property6"));
+         assertEquals("Value6", conndef.getRecovery().getPlugin().getConfigPropertiesMap().get("Property6"));
 
          // Test nested expressions with some properties set
-         assertEquals("Value7", conndef.getRecovery().getRecoverPlugin().getConfigPropertiesMap().get("Property7"));
+         assertEquals("Value7", conndef.getRecovery().getPlugin().getConfigPropertiesMap().get("Property7"));
 
          // integer property with property set
          assertEquals(6000L,  conndef.getValidation().getBackgroundValidationMillis().longValue());
@@ -208,7 +208,7 @@ public class ExpressionTestCase
          System.clearProperty("bean-validation-group1-5");
          System.clearProperty("bean-validation-group2-5");
          System.clearProperty("bean-validation-group3-5");
-         System.clearProperty("pool-name");
+         System.clearProperty("id");
          System.clearProperty("pool-number");
          System.clearProperty("Property6");
          System.clearProperty("Property7X");

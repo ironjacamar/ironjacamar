@@ -40,7 +40,7 @@ public interface Recovery extends JCAMetadata, ValidatableMetadata
     * Get the plugin.
     * @return the plugin.
     */
-   public Extension getRecoverPlugin();
+   public Extension getPlugin();
 
    /**
     * Get the noRecovery.

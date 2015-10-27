@@ -159,11 +159,11 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
-    <xs:attribute name="pool-name" type="xs:token" use="optional">
+    <xs:attribute name="id" type="xs:token" use="optional">
       <xs:annotation>
         <xs:documentation>
           <![CDATA[[
-            Specifies the pool name for the object
+            Specifies the identifier for the object. It will default to jndi-name if not defined
            ]]>
         </xs:documentation>
       </xs:annotation>
@@ -639,7 +639,7 @@
   </xs:complexType>
   <xs:complexType name="recoverType">
     <xs:sequence>
-      <xs:element name="recover-credential" type="credentialType" minOccurs="0" maxOccurs="1">
+      <xs:element name="recovery-credential" type="credentialType" minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
@@ -649,7 +649,7 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="recover-plugin" type="extensionType" minOccurs="0" maxOccurs="1">
+      <xs:element name="recovery-plugin" type="extensionType" minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[

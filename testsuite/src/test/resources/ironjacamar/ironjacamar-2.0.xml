@@ -11,7 +11,7 @@
   <config-property name="Property2">B</config-property>
   <connection-definitions>
     <connection-definition class-name="Class1"
-			   jndi-name="java:jboss/name1" pool-name="Pool1" use-ccm="true"
+			   jndi-name="java:jboss/name1" id="Pool1" use-ccm="true"
 			   enabled="true" sharable="true" enlistment="true">
       <config-property name="Property3">1</config-property>
       <config-property name="Property4">2</config-property>
@@ -51,14 +51,14 @@
 	<use-fast-fail>true</use-fast-fail>
       </validation>
       <recovery no-recovery="false">
-	<recover-credential>
+	<recovery-credential>
 	  <user-name>sa</user-name>
 	  <password>sa-pass</password>
-	</recover-credential>
-	<recover-plugin class-name="someClass2">
+	</recovery-credential>
+	<recovery-plugin class-name="someClass2">
 	  <config-property name="Property5">some</config-property>
 	  <config-property name="Property6">true</config-property>
-	</recover-plugin>
+	</recovery-plugin>
       </recovery>
     </connection-definition>
     <connection-definition class-name="Class2"
@@ -80,9 +80,9 @@
 	<use-fast-fail>false</use-fast-fail>
       </validation>
       <recovery no-recovery="true">
-	<recover-credential>
+	<recovery-credential>
 	  <security-domain>HsqlDbRealm</security-domain>
-	</recover-credential>
+	</recovery-credential>
       </recovery>
     </connection-definition>
     <connection-definition class-name="Class3"
@@ -99,7 +99,7 @@
   </connection-definitions>
   <admin-objects>
     <admin-object class-name="Class4" jndi-name="java:jboss/name4"
-		  pool-name="Pool4" enabled="true">
+		  id="Pool4" enabled="true">
       <config-property name="Property7">3.6</config-property>
       <config-property name="Property8" />
     </admin-object>

@@ -130,7 +130,7 @@ public class ResourceAdapterFactory
       org.ironjacamar.embedded.dsl.resourceadapters20.api.ConnectionDefinitionType dashRaXmlCdt =
          dashRaXmlCdst.createConnectionDefinition()
          .className(PerfManagedConnectionFactory.class.getName())
-         .jndiName("java:/eis/PerfConnectionFactory").poolName("PerfConnectionFactory")
+         .jndiName("java:/eis/PerfConnectionFactory").id("PerfConnectionFactory")
          .useCcm(ccm);
 
       dashRaXmlCdt.createConfigProperty().name("TxBeginDuration").text(Long.toString(txBeginDuration));
@@ -218,7 +218,7 @@ public class ResourceAdapterFactory
       org.ironjacamar.embedded.dsl.resourceadapters20.api.ConnectionDefinitionType dashRaXmlCdt =
          dashRaXmlCdst.createConnectionDefinition()
             .className(TxLogManagedConnectionFactory.class.getName())
-            .jndiName("java:/eis/TxLogConnectionFactory").poolName("TxLogConnectionFactory");
+            .jndiName("java:/eis/TxLogConnectionFactory").id("TxLogConnectionFactory");
 
       org.ironjacamar.embedded.dsl.resourceadapters20.api.XaPoolType dashRaXmlPt = dashRaXmlCdt.getOrCreateXaPool()
          .minPoolSize(0).initialPoolSize(0).maxPoolSize(10);
@@ -284,7 +284,7 @@ public class ResourceAdapterFactory
       org.ironjacamar.embedded.dsl.resourceadapters20.api.ConnectionDefinitionType dashRaXmlCdt =
          dashRaXmlCdst.createConnectionDefinition()
             .className(WorkManagedConnectionFactory.class.getName())
-            .jndiName("java:/eis/WorkConnectionFactory").poolName("WorkConnectionFactory");
+            .jndiName("java:/eis/WorkConnectionFactory").id("WorkConnectionFactory");
 
       org.ironjacamar.embedded.dsl.resourceadapters20.api.PoolType dashRaXmlPt = dashRaXmlCdt.getOrCreatePool()
          .minPoolSize(0).initialPoolSize(0).maxPoolSize(10);

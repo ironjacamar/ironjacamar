@@ -84,7 +84,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       String className = null;
       Boolean enabled = Defaults.ENABLED;
       String jndiName = null;
-      String poolName = null;
+      String id = null;
 
       HashMap<String, String> expressions = new HashMap<String, String>();
 
@@ -106,12 +106,8 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                className = attributeAsString(reader, CommonXML.ATTRIBUTE_CLASS_NAME, expressions);
                break;
             }
-            case "use-java-context" : {
-               // Deprecated
-               break;
-            }
-            case CommonXML.ATTRIBUTE_POOL_NAME : {
-               poolName = attributeAsString(reader, CommonXML.ATTRIBUTE_POOL_NAME, expressions);
+            case CommonXML.ATTRIBUTE_ID : {
+               id = attributeAsString(reader, CommonXML.ATTRIBUTE_ID, expressions);
                break;
             }
             default :
@@ -129,7 +125,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
             case END_ELEMENT : {
                if (CommonXML.ELEMENT_ADMIN_OBJECT.equals(reader.getLocalName()))
                {
-                  return new AdminObjectImpl(configProperties, className, jndiName, poolName, enabled,
+                  return new AdminObjectImpl(configProperties, className, jndiName, id, enabled,
                                              expressions.size() > 0 ? expressions : null);
                }
                else
@@ -388,7 +384,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       String className = null;
       Boolean enabled = Defaults.ENABLED;
       String jndiName = null;
-      String poolName = null;
+      String id = null;
       Boolean useCcm = Defaults.USE_CCM;
       Boolean sharable = Defaults.SHARABLE;
       Boolean enlistment = Defaults.ENLISTMENT;
@@ -417,12 +413,8 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                className = attributeAsString(reader, CommonXML.ATTRIBUTE_CLASS_NAME, expressions);
                break;
             }
-            case CommonXML.ATTRIBUTE_POOL_NAME : {
-               poolName = attributeAsString(reader, CommonXML.ATTRIBUTE_POOL_NAME, expressions);
-               break;
-            }
-            case "use-java-context" : {
-               // Deprecated
+            case CommonXML.ATTRIBUTE_ID : {
+               id = attributeAsString(reader, CommonXML.ATTRIBUTE_ID, expressions);
                break;
             }
             case CommonXML.ATTRIBUTE_USE_CCM : {
@@ -462,7 +454,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
             case END_ELEMENT : {
                if (CommonXML.ELEMENT_CONNECTION_DEFINITION.equals(reader.getLocalName()))
                {
-                  return new ConnectionDefinitionImpl(configProperties, className, jndiName, poolName, enabled,
+                  return new ConnectionDefinitionImpl(configProperties, className, jndiName, id, enabled,
                                                       useCcm, sharable, enlistment,
                                                       connectable, tracking,
                                                       pool, timeout, validation,
@@ -717,9 +709,9 @@ public abstract class CommonIronJacamarParser extends AbstractParser
          writer.writeAttribute(CommonXML.ATTRIBUTE_ENABLED,
                                cd.getValue(CommonXML.ATTRIBUTE_ENABLED, cd.isEnabled().toString()));
 
-      if (cd.getPoolName() != null)
-         writer.writeAttribute(CommonXML.ATTRIBUTE_POOL_NAME,
-                               cd.getValue(CommonXML.ATTRIBUTE_POOL_NAME, cd.getPoolName()));
+      if (cd.getId() != null)
+         writer.writeAttribute(CommonXML.ATTRIBUTE_ID,
+                               cd.getValue(CommonXML.ATTRIBUTE_ID, cd.getId()));
 
       if (cd.isUseCcm() != null && (cd.hasExpression(CommonXML.ATTRIBUTE_USE_CCM) ||
                                     !Defaults.USE_CCM.equals(cd.isUseCcm())))
@@ -809,9 +801,9 @@ public abstract class CommonIronJacamarParser extends AbstractParser
          writer.writeAttribute(CommonXML.ATTRIBUTE_ENABLED,
                                ao.getValue(CommonXML.ATTRIBUTE_ENABLED, ao.isEnabled().toString()));
 
-      if (ao.getPoolName() != null)
-         writer.writeAttribute(CommonXML.ATTRIBUTE_POOL_NAME,
-                               ao.getValue(CommonXML.ATTRIBUTE_POOL_NAME, ao.getPoolName()));
+      if (ao.getId() != null)
+         writer.writeAttribute(CommonXML.ATTRIBUTE_ID,
+                               ao.getValue(CommonXML.ATTRIBUTE_ID, ao.getId()));
 
       if (ao.getConfigProperties() != null && ao.getConfigProperties().size() > 0)
       {

@@ -215,7 +215,7 @@ public class IronJacamar20TestCase
          if (cd.getClassName().equals("Class1"))
          {
             assertEquals("java:jboss/name1", cd.getJndiName());
-            assertEquals("Pool1", cd.getPoolName());
+            assertEquals("Pool1", cd.getId());
             assertTrue(cd.isUseCcm());
             assertTrue(cd.isEnabled());
             assertTrue(cd.isXa());
@@ -275,7 +275,7 @@ public class IronJacamar20TestCase
             assertEquals("sa", c.getUserName());
             assertEquals("sa-pass", c.getPassword());
             assertNull(c.getSecurityDomain());
-            e = r.getRecoverPlugin();
+            e = r.getPlugin();
             assertEquals("someClass2", e.getClassName());
             map = e.getConfigPropertiesMap();
             assertEquals(2, map.size());
@@ -285,7 +285,7 @@ public class IronJacamar20TestCase
          else if (cd.getClassName().equals("Class2"))
          {
             assertEquals("java:jboss/name2", cd.getJndiName());
-            assertNull(cd.getPoolName());
+            assertNull(cd.getId());
             assertFalse(cd.isUseCcm());
             assertFalse(cd.isEnabled());
             assertTrue(cd.isXa());
@@ -325,12 +325,12 @@ public class IronJacamar20TestCase
             assertNull(c.getUserName());
             assertNull(c.getPassword());
 
-            assertNull(r.getRecoverPlugin());
+            assertNull(r.getPlugin());
          }
          else if (cd.getClassName().equals("Class3"))
          {
             assertEquals("java:jboss/name3", cd.getJndiName());
-            assertNull(cd.getPoolName());
+            assertNull(cd.getId());
             assertTrue(cd.isUseCcm());
             assertTrue(cd.isEnabled());
             assertTrue(cd.isXa());
@@ -362,7 +362,7 @@ public class IronJacamar20TestCase
 
             assertFalse(r.isNoRecovery());
             assertNull(r.getCredential());
-            assertNull(r.getRecoverPlugin());
+            assertNull(r.getPlugin());
          }
          else
          {
@@ -385,7 +385,7 @@ public class IronJacamar20TestCase
       }
       assertEquals("Class4", ao1.getClassName());
       assertEquals("java:jboss/name4", ao1.getJndiName());
-      assertEquals("Pool4", ao1.getPoolName());
+      assertEquals("Pool4", ao1.getId());
       assertTrue(ao1.isEnabled());
 
       map = ao1.getConfigProperties();
@@ -395,7 +395,7 @@ public class IronJacamar20TestCase
 
       assertEquals("Class5", ao2.getClassName());
       assertEquals("java:jboss/name5", ao2.getJndiName());
-      assertNull(ao2.getPoolName());
+      assertNull(ao2.getId());
       assertTrue(ao2.isEnabled());
 
       map = ao2.getConfigProperties();

@@ -646,7 +646,7 @@ public abstract class AbstractParser
                switch (reader.getLocalName())
                {
                   case CommonXML.ELEMENT_SECURITY :
-                  case CommonXML.ELEMENT_RECOVER_CREDENTIAL :
+                  case CommonXML.ELEMENT_RECOVERY_CREDENTIAL :
                      return new CredentialImpl(userName, password, securityDomain,
                         expressions.size() > 0 ? expressions : null);
                   case CommonXML.ELEMENT_PASSWORD :
@@ -725,8 +725,8 @@ public abstract class AbstractParser
                   case CommonXML.ELEMENT_RECOVERY :
                      return new RecoveryImpl(security, plugin, noRecovery,
                         expressions.size() > 0 ? expressions : null);
-                  case CommonXML.ELEMENT_RECOVER_CREDENTIAL :
-                  case CommonXML.ELEMENT_RECOVER_PLUGIN :
+                  case CommonXML.ELEMENT_RECOVERY_CREDENTIAL :
+                  case CommonXML.ELEMENT_RECOVERY_PLUGIN :
                      break;
                   default :
                      throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
@@ -735,12 +735,12 @@ public abstract class AbstractParser
             case START_ELEMENT : {
                switch (reader.getLocalName())
                {
-                  case CommonXML.ELEMENT_RECOVER_CREDENTIAL : {
+                  case CommonXML.ELEMENT_RECOVERY_CREDENTIAL : {
                      security = parseCredential(reader);
                      break;
                   }
-                  case CommonXML.ELEMENT_RECOVER_PLUGIN : {
-                     plugin = parseExtension(reader, CommonXML.ELEMENT_RECOVER_PLUGIN);
+                  case CommonXML.ELEMENT_RECOVERY_PLUGIN : {
+                     plugin = parseExtension(reader, CommonXML.ELEMENT_RECOVERY_PLUGIN);
                      break;
                   }
                   default :
@@ -835,7 +835,7 @@ public abstract class AbstractParser
     * Parse capacity tag
     *
     * @param reader reader
-    * @return the parsed recovery object
+    * @return the parsed capacity object
     * @throws XMLStreamException in case of error
     * @throws ParserException in case of error
     * @throws ValidateException in case of error
@@ -1114,7 +1114,7 @@ public abstract class AbstractParser
 
       if (r.getCredential() != null)
       {
-         writer.writeStartElement(CommonXML.ELEMENT_RECOVER_CREDENTIAL);
+         writer.writeStartElement(CommonXML.ELEMENT_RECOVERY_CREDENTIAL);
          if (r.getCredential().getUserName() != null)
          {
             writer.writeStartElement(CommonXML.ELEMENT_USER_NAME);
@@ -1137,17 +1137,17 @@ public abstract class AbstractParser
          writer.writeEndElement();
       }
 
-      if (r.getRecoverPlugin() != null)
+      if (r.getPlugin() != null)
       {
-         writer.writeStartElement(CommonXML.ELEMENT_RECOVER_PLUGIN);
+         writer.writeStartElement(CommonXML.ELEMENT_RECOVERY_PLUGIN);
          writer.writeAttribute(CommonXML.ATTRIBUTE_CLASS_NAME,
-                               r.getRecoverPlugin().getValue(CommonXML.ATTRIBUTE_CLASS_NAME,
-                                                             r.getRecoverPlugin().getClassName()));
+                               r.getPlugin().getValue(CommonXML.ATTRIBUTE_CLASS_NAME,
+                                                      r.getPlugin().getClassName()));
 
-         if (r.getRecoverPlugin().getConfigPropertiesMap().size() > 0)
+         if (r.getPlugin().getConfigPropertiesMap().size() > 0)
          {
             Iterator<Map.Entry<String, String>> it =
-               r.getRecoverPlugin().getConfigPropertiesMap().entrySet().iterator();
+               r.getPlugin().getConfigPropertiesMap().entrySet().iterator();
             
             while (it.hasNext())
             {
@@ -1155,8 +1155,8 @@ public abstract class AbstractParser
 
                writer.writeStartElement(CommonXML.ELEMENT_CONFIG_PROPERTY);
                writer.writeAttribute(CommonXML.ATTRIBUTE_NAME, entry.getKey());
-               writer.writeCharacters(r.getRecoverPlugin().getValue(CommonXML.ELEMENT_CONFIG_PROPERTY,
-                                                                    entry.getKey(), entry.getValue()));
+               writer.writeCharacters(r.getPlugin().getValue(CommonXML.ELEMENT_CONFIG_PROPERTY,
+                                                             entry.getKey(), entry.getValue()));
                writer.writeEndElement();
             }
          }
