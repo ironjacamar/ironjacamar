@@ -113,7 +113,8 @@
     </security>
     <recovery no-recovery="false">
       <recovery-credential>
-        <security-domain>HsqlDbRealm</security-domain>
+        <user-name>RecoveryUser</user-name>
+        <password>RecoveryPassword</password>
       </recovery-credential>
       <recovery-plugin class-name="someClass5">
         <config-property name="name1">Property1</config-property>

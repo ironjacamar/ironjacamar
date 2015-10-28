@@ -23,7 +23,6 @@ package org.ironjacamar.common.metadata.ds;
 import org.ironjacamar.common.api.metadata.common.Extension;
 import org.ironjacamar.common.api.metadata.ds.DsSecurity;
 import org.ironjacamar.common.api.validator.ValidateException;
-import org.ironjacamar.common.metadata.common.CredentialImpl;
 
 import java.util.Iterator;
 import java.util.Map;

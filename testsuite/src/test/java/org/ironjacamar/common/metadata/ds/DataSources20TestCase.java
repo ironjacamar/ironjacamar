@@ -21,10 +21,10 @@
 package org.ironjacamar.common.metadata.ds;
 
 import org.ironjacamar.common.api.metadata.common.Capacity;
-import org.ironjacamar.common.api.metadata.common.Credential;
 import org.ironjacamar.common.api.metadata.common.Extension;
 import org.ironjacamar.common.api.metadata.common.FlushStrategy;
 import org.ironjacamar.common.api.metadata.common.Recovery;
+import org.ironjacamar.common.api.metadata.ds.Credential;
 import org.ironjacamar.common.api.metadata.ds.DataSource;
 import org.ironjacamar.common.api.metadata.ds.DataSources;
 import org.ironjacamar.common.api.metadata.ds.Driver;
@@ -54,6 +54,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -349,9 +350,11 @@ public class DataSources20TestCase
       Recovery r = xd.getRecovery();
       assertNotNull(r);
       assertFalse(r.isNoRecovery());
-      Credential c = r.getCredential();
+      Credential c = (Credential)r.getCredential();
       assertNotNull(c);
-      assertEquals("HsqlDbRealm", c.getSecurityDomain());
+      assertEquals("RecoveryUser", c.getUserName());
+      assertEquals("RecoveryPassword", c.getPassword());
+      assertNull(c.getSecurityDomain());
       e = r.getPlugin();
       properties = e.getConfigPropertiesMap();
       assertEquals(2, properties.size()); 

@@ -119,6 +119,11 @@ interface XML extends CommonXML
    public static final String ELEMENT_NEW_CONNECTION_SQL = "new-connection-sql";
 
    /**
+    * password
+    */
+   public static final String ELEMENT_PASSWORD = "password";
+
+   /**
     * prepared-statement-cache-size
     */
    public static final String ELEMENT_PREPARED_STATEMENT_CACHE_SIZE = "prepared-statement-cache-size";
@@ -182,6 +187,11 @@ interface XML extends CommonXML
     * use-try-lock
     */
    public static final String ELEMENT_USE_TRY_LOCK = "use-try-lock";
+
+   /**
+    * user-name
+    */
+   public static final String ELEMENT_USER_NAME = "user-name";
 
    /**
     * valid-connection-checker

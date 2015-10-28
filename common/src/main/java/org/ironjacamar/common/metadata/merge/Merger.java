@@ -20,7 +20,6 @@
  */
 package org.ironjacamar.common.metadata.merge;
 
-import org.ironjacamar.common.api.metadata.common.Credential;
 import org.ironjacamar.common.api.metadata.common.TransactionSupportEnum;
 import org.ironjacamar.common.api.metadata.ds.CommonDataSource;
 import org.ironjacamar.common.api.metadata.ds.DataSource;
@@ -363,35 +362,6 @@ public class Merger
                .getConfigPropertyName().getValue());
             switch (prototype)
             {
-               case USERNAME : {
-                  if (ds != null)
-                  {
-                     Credential security = ds.getSecurity();
-                     if (security != null && security.getUserName() != null &&
-                         !security.getUserName().trim().equals(""))
-                     {
-                        configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype,
-                           security.getUserName()));
-                     }
-                  }
-                  break;
-               }
-
-               case PASSWORD : {
-                  if (ds != null)
-                  {
-                     Credential security = ds.getSecurity();
-                     if (security != null && security.getPassword() != null &&
-                         !security.getPassword().trim().equals(""))
-                     {
-                        configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype,
-                           security.getPassword()));
-                     }
-                  }
-
-                  break;
-               }
-
                case XADATASOURCEPROPERTIES : {
                   if (xads != null && xads.getXaDataSourceProperty() != null)
                   {

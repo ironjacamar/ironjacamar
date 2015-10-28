@@ -257,11 +257,6 @@ public interface CommonXML
    public static final String ELEMENT_PAD_XID = "pad-xid";
 
    /**
-    * password
-    */
-   public static final String ELEMENT_PASSWORD = "password";
-
-   /**
     * pool
     */
    public static final String ELEMENT_POOL = "pool";
@@ -320,11 +315,6 @@ public interface CommonXML
     * users
     */
    public static final String ELEMENT_USERS = "users";
-
-   /**
-    * user-name
-    */
-   public static final String ELEMENT_USER_NAME = "user-name";
 
    /**
     * use-fast-fail

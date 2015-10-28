@@ -31,24 +31,8 @@ import org.ironjacamar.common.api.metadata.ValidatableMetadata;
 public interface Credential extends JCAMetadata, ValidatableMetadata
 {
    /**
-    * Get the userName.
-    *
-    * @return the userName.
-    */
-   public String getUserName();
-
-   /**
-    * Get the password.
-    *
-    * @return the password.
-    */
-   public String getPassword();
-
-   /**
-    *
-    * get the security domain for pure security-domain security management
-    *
-    * @return the security-domain to use
+    * Get the security domain
+    * @return The value
     */
    public String getSecurityDomain();
 }

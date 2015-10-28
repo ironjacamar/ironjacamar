@@ -263,9 +263,7 @@ public class ResourceAdapters20TestCase
                   
                   assertFalse(r.isNoRecovery());
                   assertNotNull(c);
-                  assertEquals("sa", c.getUserName());
-                  assertEquals("sa-pass", c.getPassword());
-                  assertNull(c.getSecurityDomain());
+                  assertEquals("MyRecoveryRealm", c.getSecurityDomain());
                   
                   assertNotNull(e);
                   assertEquals("someClass2", e.getClassName());
@@ -311,8 +309,6 @@ public class ResourceAdapters20TestCase
                   
                   assertTrue(r.isNoRecovery());
                   assertNotNull(c);
-                  assertNull(c.getUserName());
-                  assertNull(c.getPassword());
                   assertEquals("HsqlDbRealm", c.getSecurityDomain());
                   assertNull(e);
                }

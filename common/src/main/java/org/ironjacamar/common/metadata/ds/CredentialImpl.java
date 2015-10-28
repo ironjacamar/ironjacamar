@@ -18,10 +18,10 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.ironjacamar.common.metadata.common;
+package org.ironjacamar.common.metadata.ds;
 
 import org.ironjacamar.common.CommonBundle;
-import org.ironjacamar.common.api.metadata.common.Credential;
+import org.ironjacamar.common.api.metadata.ds.Credential;
 import org.ironjacamar.common.api.validator.ValidateException;
 
 import java.util.Map;
@@ -29,33 +29,36 @@ import java.util.Map;
 import org.jboss.logging.Messages;
 
 /**
- * Credential implementation
+ * A datasource credential implementation
  *
- * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class CredentialImpl extends AbstractMetadata implements Credential
+public class CredentialImpl extends org.ironjacamar.common.metadata.common.CredentialImpl implements Credential
 {
    /** The serialVersionUID */
-   private static final long serialVersionUID = -5842402120520191086L;
+   private static final long serialVersionUID = 1L;
 
    /** The bundle */
    private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
-   /** The security domain */
-   protected final String securityDomain;
+   private final String userName;
+
+   private final String password;
 
    /**
-    * Create a new credential
-    *
+    * Constructor
+    * @param userName userName
+    * @param password password
     * @param securityDomain securityDomain
     * @param expressions expressions
     * @throws ValidateException ValidateException
     */
-   public CredentialImpl(String securityDomain, Map<String, String> expressions) throws ValidateException
+   public CredentialImpl(String userName, String password, String securityDomain,
+                         Map<String, String> expressions) throws ValidateException
    {
-      super(expressions);
-      this.securityDomain = securityDomain;
+      super(securityDomain, expressions);
+      this.userName = userName;
+      this.password = password;
       this.validate();
    }
 
@@ -63,9 +66,18 @@ public class CredentialImpl extends AbstractMetadata implements Credential
     * {@inheritDoc}
     */
    @Override
-   public final String getSecurityDomain()
+   public final String getUserName()
    {
-      return securityDomain;
+      return userName;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public final String getPassword()
+   {
+      return password;
    }
 
    /**
@@ -76,6 +88,8 @@ public class CredentialImpl extends AbstractMetadata implements Credential
    {
       final int prime = 31;
       int result = 1;
+      result = prime * result + ((userName == null) ? 0 : userName.hashCode());
+      result = prime * result + ((password == null) ? 0 : password.hashCode());
       result = prime * result + ((securityDomain == null) ? 0 : securityDomain.hashCode());
       return result;
    }
@@ -93,6 +107,20 @@ public class CredentialImpl extends AbstractMetadata implements Credential
       if (!(obj instanceof CredentialImpl))
          return false;
       CredentialImpl other = (CredentialImpl) obj;
+      if (userName == null)
+      {
+         if (other.userName != null)
+            return false;
+      }
+      else if (!userName.equals(other.userName))
+         return false;
+      if (password == null)
+      {
+         if (other.password != null)
+            return false;
+      }
+      else if (!password.equals(other.password))
+         return false;
       if (securityDomain == null)
       {
          if (other.securityDomain != null)
@@ -106,9 +134,15 @@ public class CredentialImpl extends AbstractMetadata implements Credential
    /**
     * {@inheritDoc}
     */
+   @Override
    public void validate() throws ValidateException
    {
-      if (securityDomain == null)
-         throw new ValidateException(bundle.invalidSecurityConfiguration());
+      if (userName != null)
+      {
+         if (securityDomain != null)
+         {
+            throw new ValidateException(bundle.invalidSecurityConfiguration());
+         }
+      }
    }
 }

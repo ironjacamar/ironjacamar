@@ -639,36 +639,13 @@
   </xs:complexType>
   <xs:complexType name="credentialType">
     <xs:sequence>
-      <xs:element name="user-name" type="xs:token" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>
-              <![CDATA[[
-                Specify the username used when creating a new connection. 
-                Ex: <user-name>sa</user-name>
-               ]]>
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="password" type="xs:token" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation>
-              <![CDATA[[
-                Specify the password used when creating a new connection. 
-                Ex: <password>sa-pass</password>
-               ]]>
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
       <xs:element name="security-domain" type="xs:token" minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation>
             <![CDATA[[
-              Indicates Subject (from security domain) are used to distinguish connections in the pool. 
-              The content of the security-domain is the name of the JAAS security manager that will handle
-              authentication. This name correlates to the JAAS login-config.xml descriptor
-              application-policy/name attribute.
+              Defines the security domain that holds the Subject instances used for recovery
               Ex:
-              <security-domain>HsqlDbRealm</security-domain>
+              <security-domain>MyRecoveryRealm</security-domain>
             ]]>
           </xs:documentation>
         </xs:annotation>

@@ -50,8 +50,7 @@
 	</validation>
 	<recovery no-recovery="false">
 	  <recovery-credential>
-	    <user-name>sa</user-name>
-	    <password>sa-pass</password>
+            <security-domain>MyRecoveryRealm</security-domain>
 	  </recovery-credential>
 	  <recovery-plugin class-name="someClass2">
 	    <config-property name="Property5">some</config-property>

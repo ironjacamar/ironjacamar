@@ -25,6 +25,7 @@ import org.ironjacamar.common.api.metadata.common.Capacity;
 import org.ironjacamar.common.api.metadata.common.Extension;
 import org.ironjacamar.common.api.metadata.common.FlushStrategy;
 import org.ironjacamar.common.api.metadata.common.Recovery;
+import org.ironjacamar.common.api.metadata.ds.Credential;
 import org.ironjacamar.common.api.metadata.ds.DataSource;
 import org.ironjacamar.common.api.metadata.ds.DataSources;
 import org.ironjacamar.common.api.metadata.ds.Driver;
@@ -1303,6 +1304,142 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
    }
 
    /**
+    *
+    * Parse recovery tag
+    *
+    * @param reader reader
+    * @return the parsed recovery object
+    * @throws XMLStreamException in case of error
+    * @throws ParserException in case of error
+    * @throws ValidateException in case of error
+    */
+   @Override
+   protected Recovery parseRecovery(XMLStreamReader reader) throws XMLStreamException, ParserException,
+      ValidateException
+   {
+      Boolean noRecovery = Defaults.NO_RECOVERY;
+      Credential security = null;
+      Extension plugin = null;
+
+      HashMap<String, String> expressions = new HashMap<String, String>();
+
+      for (int i = 0; i < reader.getAttributeCount(); i++)
+      {
+         switch (reader.getAttributeLocalName(i))
+         {
+            case XML.ATTRIBUTE_NO_RECOVERY : {
+               noRecovery = attributeAsBoolean(reader, XML.ATTRIBUTE_NO_RECOVERY, Boolean.FALSE, expressions);
+               break;
+            }
+            default :
+               break;
+         }
+      }
+
+      while (reader.hasNext())
+      {
+         switch (reader.nextTag())
+         {
+            case END_ELEMENT : {
+               switch (reader.getLocalName())
+               {
+                  case XML.ELEMENT_RECOVERY :
+                     return new RecoveryImpl(security, plugin, noRecovery,
+                        expressions.size() > 0 ? expressions : null);
+                  case XML.ELEMENT_RECOVERY_CREDENTIAL :
+                  case XML.ELEMENT_RECOVERY_PLUGIN :
+                     break;
+                  default :
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
+               }
+            }
+            case START_ELEMENT : {
+               switch (reader.getLocalName())
+               {
+                  case XML.ELEMENT_RECOVERY_CREDENTIAL : {
+                     security = parseCredential(reader);
+                     break;
+                  }
+                  case XML.ELEMENT_RECOVERY_PLUGIN : {
+                     plugin = parseExtension(reader, XML.ELEMENT_RECOVERY_PLUGIN);
+                     break;
+                  }
+                  default :
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
+               }
+               break;
+            }
+         }
+      }
+      throw new ParserException(bundle.unexpectedEndOfDocument());
+   }
+
+   /**
+    *
+    * parse credential tag
+    *
+    * @param reader reader
+    * @return the parse Object
+    * @throws XMLStreamException in case of error
+    * @throws ParserException in case of error
+    * @throws ValidateException in case of error
+    */
+   @Override
+   protected Credential parseCredential(XMLStreamReader reader) throws XMLStreamException, ParserException,
+      ValidateException
+   {
+
+      String userName = null;
+      String password = null;
+      String securityDomain = null;
+
+      HashMap<String, String> expressions = new HashMap<String, String>();
+
+      while (reader.hasNext())
+      {
+         switch (reader.nextTag())
+         {
+            case END_ELEMENT : {
+               switch (reader.getLocalName())
+               {
+                  case XML.ELEMENT_SECURITY :
+                  case XML.ELEMENT_RECOVERY_CREDENTIAL :
+                     return new CredentialImpl(userName, password, securityDomain,
+                        expressions.size() > 0 ? expressions : null);
+                  case XML.ELEMENT_USER_NAME :
+                  case XML.ELEMENT_PASSWORD :
+                  case XML.ELEMENT_SECURITY_DOMAIN :
+                     break;
+                  default :
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
+               }
+            }
+            case START_ELEMENT : {
+               switch (reader.getLocalName())
+               {
+                  case XML.ELEMENT_USER_NAME : {
+                     userName = elementAsString(reader, XML.ELEMENT_USER_NAME, expressions);
+                     break;
+                  }
+                  case XML.ELEMENT_PASSWORD : {
+                     password = elementAsString(reader, XML.ELEMENT_PASSWORD, expressions);
+                     break;
+                  }
+                  case XML.ELEMENT_SECURITY_DOMAIN : {
+                     securityDomain = elementAsString(reader, XML.ELEMENT_SECURITY_DOMAIN, expressions);
+                     break;
+                  }
+                  default :
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
+               }
+               break;
+            }
+         }
+      }
+      throw new ParserException(bundle.unexpectedEndOfDocument());
+   }
+
+   /**
     * Store a datasource
     * @param ds The datasource
     * @param writer The writer
@@ -2094,6 +2231,78 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       if (s.isSharePreparedStatements() != null && Boolean.TRUE.equals(s.isSharePreparedStatements()))
       {
          writer.writeEmptyElement(XML.ELEMENT_SHARE_PREPARED_STATEMENTS);
+      }
+
+      writer.writeEndElement();
+   }
+
+   /**
+    * Store recovery
+    * @param r The recovery
+    * @param writer The writer
+    * @exception Exception Thrown if an error occurs
+    */
+   @Override
+   protected void storeRecovery(Recovery r, XMLStreamWriter writer) throws Exception
+   {
+      writer.writeStartElement(XML.ELEMENT_RECOVERY);
+
+      if (r.isNoRecovery() != null)
+         writer.writeAttribute(XML.ATTRIBUTE_NO_RECOVERY,
+                               r.getValue(XML.ATTRIBUTE_NO_RECOVERY, r.isNoRecovery().toString()));
+
+      if (r.getCredential() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_RECOVERY_CREDENTIAL);
+
+         Credential c = (Credential)r.getCredential();
+         if (c.getUserName() != null)
+         {
+            writer.writeStartElement(XML.ELEMENT_USER_NAME);
+            writer.writeCharacters(c.getValue(XML.ELEMENT_USER_NAME,
+                                              c.getUserName()));
+            writer.writeEndElement();
+
+            writer.writeStartElement(XML.ELEMENT_PASSWORD);
+            writer.writeCharacters(c.getValue(XML.ELEMENT_PASSWORD,
+                                              c.getPassword()));
+            writer.writeEndElement();
+         }
+         else
+         {
+            writer.writeStartElement(XML.ELEMENT_SECURITY_DOMAIN);
+            writer.writeCharacters(c.getValue(XML.ELEMENT_SECURITY_DOMAIN,
+                                              c.getSecurityDomain()));
+            writer.writeEndElement();
+         }
+         writer.writeEndElement();
+      }
+
+      if (r.getPlugin() != null)
+      {
+         writer.writeStartElement(XML.ELEMENT_RECOVERY_PLUGIN);
+         writer.writeAttribute(XML.ATTRIBUTE_CLASS_NAME,
+                               r.getPlugin().getValue(XML.ATTRIBUTE_CLASS_NAME,
+                                                      r.getPlugin().getClassName()));
+
+         if (r.getPlugin().getConfigPropertiesMap().size() > 0)
+         {
+            Iterator<Map.Entry<String, String>> it =
+               r.getPlugin().getConfigPropertiesMap().entrySet().iterator();
+            
+            while (it.hasNext())
+            {
+               Map.Entry<String, String> entry = it.next();
+
+               writer.writeStartElement(XML.ELEMENT_CONFIG_PROPERTY);
+               writer.writeAttribute(XML.ATTRIBUTE_NAME, entry.getKey());
+               writer.writeCharacters(r.getPlugin().getValue(XML.ELEMENT_CONFIG_PROPERTY,
+                                                             entry.getKey(), entry.getValue()));
+               writer.writeEndElement();
+            }
+         }
+
+         writer.writeEndElement();
       }
 
       writer.writeEndElement();

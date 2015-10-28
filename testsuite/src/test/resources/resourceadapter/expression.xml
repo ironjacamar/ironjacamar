@@ -65,8 +65,7 @@
         </validation>
         <recovery no-recovery="${no-recovery:false}">
 	  <recovery-credential>
-	    <user-name>${user-name:sa}</user-name>
-	    <password>${password:sa-pass}</password>
+            <security-domain>MyRecoveryRealm</security-domain>
 	  </recovery-credential>
 	  <recovery-plugin class-name="${class-name:someClass2}">
 	    <config-property name="Property5">${Property5:${Property5X:Property5}}</config-property>

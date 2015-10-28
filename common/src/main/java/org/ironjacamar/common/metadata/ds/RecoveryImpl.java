@@ -18,34 +18,26 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.ironjacamar.common.metadata.common;
+package org.ironjacamar.common.metadata.ds;
 
-import org.ironjacamar.common.api.metadata.common.Credential;
 import org.ironjacamar.common.api.metadata.common.Extension;
-import org.ironjacamar.common.api.metadata.common.Recovery;
+import org.ironjacamar.common.api.metadata.ds.Credential;
 import org.ironjacamar.common.api.validator.ValidateException;
 
 import java.util.Iterator;
 import java.util.Map;
 
 /**
- * A Recovery
+ * A datasource recovery
  *
- * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class RecoveryImpl extends AbstractMetadata implements Recovery
+public class RecoveryImpl extends org.ironjacamar.common.metadata.common.RecoveryImpl
 {
    /** The serialVersionUID */
-   private static final long serialVersionUID = -7425365995463321893L;
+   private static final long serialVersionUID = 1L;
 
-   /** The credential */
    private Credential credential;
-
-   /** The extension */
-   protected Extension plugin;
-
-   /** No recovery */
-   protected Boolean noRecovery;
 
    /**
     * Create a new Recovery.
@@ -59,94 +51,22 @@ public class RecoveryImpl extends AbstractMetadata implements Recovery
    public RecoveryImpl(Credential credential, Extension plugin, Boolean noRecovery,
                        Map<String, String> expressions) throws ValidateException
    {
-      super(expressions);
+      super(credential, plugin, noRecovery, expressions);
       this.credential = credential;
-      this.plugin = plugin;
-      this.noRecovery = noRecovery;
-      this.validate();
    }
 
    /**
-    * Get the security.
-    *
-    * @return the security.
+    * {@inheritDoc}
     */
+   @Override
    public Credential getCredential()
    {
       return credential;
    }
 
    /**
-    * Get the plugin.
-    *
-    * @return the plugin.
+    * {@inheritDoc}
     */
-   public Extension getPlugin()
-   {
-      return plugin;
-   }
-
-   /**
-    * Get the noRecovery.
-    *
-    * @return the noRecovery.
-    */
-   public Boolean isNoRecovery()
-   {
-      return noRecovery;
-   }
-
-   @Override
-   public void validate() throws ValidateException
-   {
-      // the only field not yet validated is a Boolean and all value are fine
-   }
-
-   @Override
-   public int hashCode()
-   {
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ((noRecovery == null) ? 0 : noRecovery.hashCode());
-      result = prime * result + ((plugin == null) ? 0 : plugin.hashCode());
-      result = prime * result + ((credential == null) ? 0 : credential.hashCode());
-      return result;
-   }
-
-   @Override
-   public boolean equals(Object obj)
-   {
-      if (this == obj)
-         return true;
-      if (obj == null)
-         return false;
-      if (!(obj instanceof RecoveryImpl))
-         return false;
-      RecoveryImpl other = (RecoveryImpl) obj;
-      if (noRecovery == null)
-      {
-         if (other.noRecovery != null)
-            return false;
-      }
-      else if (!noRecovery.equals(other.noRecovery))
-         return false;
-      if (plugin == null)
-      {
-         if (other.plugin != null)
-            return false;
-      }
-      else if (!plugin.equals(other.plugin))
-         return false;
-      if (credential == null)
-      {
-         if (other.credential != null)
-            return false;
-      }
-      else if (!credential.equals(other.credential))
-         return false;
-      return true;
-   }
-
    @Override
    public String toString()
    {
@@ -160,11 +80,22 @@ public class RecoveryImpl extends AbstractMetadata implements Recovery
       if (credential != null)
       {
          sb.append("<").append("recovery-credential").append(">");
+         if (credential.getUserName() != null)
+         {
+            sb.append("<").append("user-name").append(">");
+            sb.append(credential.getUserName());
+            sb.append("</").append("user-name").append(">");
 
-         sb.append("<").append("security-domain").append(">");
-         sb.append(credential.getSecurityDomain());
-         sb.append("</").append("security-domain").append(">");
-
+            sb.append("<").append("password").append(">");
+            sb.append(credential.getPassword());
+            sb.append("</").append("password").append(">");
+         }
+         else
+         {
+            sb.append("<").append("security-domain").append(">");
+            sb.append(credential.getSecurityDomain());
+            sb.append("</").append("security-domain").append(">");
+         }
          sb.append("</").append("recovery-credential").append(">");
       }
 

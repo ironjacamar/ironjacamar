@@ -272,9 +272,7 @@ public class IronJacamar20TestCase
             assertFalse(r.isNoRecovery());
             Credential c = r.getCredential();
             assertNotNull(c);
-            assertEquals("sa", c.getUserName());
-            assertEquals("sa-pass", c.getPassword());
-            assertNull(c.getSecurityDomain());
+            assertEquals("MyRecoveryRealm", c.getSecurityDomain());
             e = r.getPlugin();
             assertEquals("someClass2", e.getClassName());
             map = e.getConfigPropertiesMap();
@@ -322,8 +320,6 @@ public class IronJacamar20TestCase
             Credential c = r.getCredential();
             assertNotNull(c);
             assertEquals("HsqlDbRealm", c.getSecurityDomain());
-            assertNull(c.getUserName());
-            assertNull(c.getPassword());
 
             assertNull(r.getPlugin());
          }

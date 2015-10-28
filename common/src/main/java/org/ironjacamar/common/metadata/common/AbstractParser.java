@@ -631,9 +631,6 @@ public abstract class AbstractParser
    protected Credential parseCredential(XMLStreamReader reader) throws XMLStreamException, ParserException,
       ValidateException
    {
-
-      String userName = null;
-      String password = null;
       String securityDomain = null;
 
       HashMap<String, String> expressions = new HashMap<String, String>();
@@ -647,10 +644,8 @@ public abstract class AbstractParser
                {
                   case CommonXML.ELEMENT_SECURITY :
                   case CommonXML.ELEMENT_RECOVERY_CREDENTIAL :
-                     return new CredentialImpl(userName, password, securityDomain,
+                     return new CredentialImpl(securityDomain,
                         expressions.size() > 0 ? expressions : null);
-                  case CommonXML.ELEMENT_PASSWORD :
-                  case CommonXML.ELEMENT_USER_NAME :
                   case CommonXML.ELEMENT_SECURITY_DOMAIN :
                      break;
                   default :
@@ -660,14 +655,6 @@ public abstract class AbstractParser
             case START_ELEMENT : {
                switch (reader.getLocalName())
                {
-                  case CommonXML.ELEMENT_PASSWORD : {
-                     password = elementAsString(reader, CommonXML.ELEMENT_PASSWORD, expressions);
-                     break;
-                  }
-                  case CommonXML.ELEMENT_USER_NAME : {
-                     userName = elementAsString(reader, CommonXML.ELEMENT_USER_NAME, expressions);
-                     break;
-                  }
                   case CommonXML.ELEMENT_SECURITY_DOMAIN : {
                      securityDomain = elementAsString(reader, CommonXML.ELEMENT_SECURITY_DOMAIN, expressions);
                      break;
@@ -1115,25 +1102,12 @@ public abstract class AbstractParser
       if (r.getCredential() != null)
       {
          writer.writeStartElement(CommonXML.ELEMENT_RECOVERY_CREDENTIAL);
-         if (r.getCredential().getUserName() != null)
-         {
-            writer.writeStartElement(CommonXML.ELEMENT_USER_NAME);
-            writer.writeCharacters(r.getCredential().getValue(CommonXML.ELEMENT_USER_NAME,
-                                                              r.getCredential().getUserName()));
-            writer.writeEndElement();
 
-            writer.writeStartElement(CommonXML.ELEMENT_PASSWORD);
-            writer.writeCharacters(r.getCredential().getValue(CommonXML.ELEMENT_PASSWORD,
-                                                              r.getCredential().getPassword()));
-            writer.writeEndElement();
-         }
-         else
-         {
-            writer.writeStartElement(CommonXML.ELEMENT_SECURITY_DOMAIN);
-            writer.writeCharacters(r.getCredential().getValue(CommonXML.ELEMENT_SECURITY_DOMAIN,
+         writer.writeStartElement(CommonXML.ELEMENT_SECURITY_DOMAIN);
+         writer.writeCharacters(r.getCredential().getValue(CommonXML.ELEMENT_SECURITY_DOMAIN,
                                                               r.getCredential().getSecurityDomain()));
-            writer.writeEndElement();
-         }
+         writer.writeEndElement();
+
          writer.writeEndElement();
       }
 

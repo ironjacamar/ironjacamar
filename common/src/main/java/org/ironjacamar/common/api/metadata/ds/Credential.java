@@ -20,23 +20,23 @@
  */
 package org.ironjacamar.common.api.metadata.ds;
 
-import org.ironjacamar.common.api.metadata.common.Extension;
-
 /**
- *
- * A DsSecurity.
- *
- * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
- *
+ * A datasource credential
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface DsSecurity extends Credential
+public interface Credential extends org.ironjacamar.common.api.metadata.common.Credential
 {
+   /**
+    * Get the userName.
+    *
+    * @return the userName.
+    */
+   public String getUserName();
 
    /**
-    * Get the reauthPlugin extension
+    * Get the password.
     *
-    * @return the reauthPlugin
+    * @return the password.
     */
-   public Extension getReauthPlugin();
+   public String getPassword();
 }
-
