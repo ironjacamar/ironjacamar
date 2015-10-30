@@ -40,10 +40,6 @@ public class DsPoolImpl extends org.ironjacamar.common.metadata.common.PoolImpl 
    /** The serialVersionUID */
    private static final long serialVersionUID = 1L;
 
-   /**
-    * allow-multiple-users
-    */
-   protected Boolean allowMultipleUsers;
 
    /**
     * connection-listener
@@ -58,7 +54,6 @@ public class DsPoolImpl extends org.ironjacamar.common.metadata.common.PoolImpl 
     * @param maxPoolSize maxPoolSize
     * @param prefill prefill
     * @param flushStrategy flushStrategy
-    * @param allowMultipleUsers allowMultipleUsers
     * @param capacity capacity
     * @param connectionListener connectionListener
     * @param expressions expressions
@@ -66,23 +61,14 @@ public class DsPoolImpl extends org.ironjacamar.common.metadata.common.PoolImpl 
     */
    public DsPoolImpl(String type, Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize, 
                      Boolean prefill,
-                     FlushStrategy flushStrategy, Boolean allowMultipleUsers,
+                     FlushStrategy flushStrategy,
                      Capacity capacity, Extension connectionListener,
                      Map<String, String> expressions)
       throws ValidateException
    {
       super(type, minPoolSize, initialPoolSize, maxPoolSize, prefill,
             flushStrategy, capacity, expressions);
-      this.allowMultipleUsers = allowMultipleUsers;
       this.connectionListener = connectionListener;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public Boolean isAllowMultipleUsers()
-   {
-      return allowMultipleUsers;
    }
 
    /**
@@ -100,7 +86,6 @@ public class DsPoolImpl extends org.ironjacamar.common.metadata.common.PoolImpl 
    {
       final int prime = 31;
       int result = super.hashCode();
-      result = prime * result + ((allowMultipleUsers == null) ? 0 : allowMultipleUsers.hashCode());
       result = prime * result + ((connectionListener == null) ? 7 : 7 * connectionListener.hashCode());
       return result;
    }
@@ -121,13 +106,6 @@ public class DsPoolImpl extends org.ironjacamar.common.metadata.common.PoolImpl 
          return false;
 
       DsPoolImpl other = (DsPoolImpl) obj;
-      if (allowMultipleUsers == null)
-      {
-         if (other.allowMultipleUsers != null)
-            return false;
-      }
-      else if (!allowMultipleUsers.equals(other.allowMultipleUsers))
-         return false;
       if (connectionListener == null)
       {
          if (other.connectionListener != null)
@@ -191,10 +169,6 @@ public class DsPoolImpl extends org.ironjacamar.common.metadata.common.PoolImpl 
          sb.append("</").append(XML.ELEMENT_FLUSH_STRATEGY).append(">");
       }
 
-      if (allowMultipleUsers != null && allowMultipleUsers.booleanValue())
-      {
-         sb.append("<").append(XML.ELEMENT_ALLOW_MULTIPLE_USERS).append("/>");
-      }
 
       if (capacity != null)
          sb.append(capacity);

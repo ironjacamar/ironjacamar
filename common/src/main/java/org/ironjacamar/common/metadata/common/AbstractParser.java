@@ -554,8 +554,6 @@ public abstract class AbstractParser
    {
 
       String securityDomain = null;
-      String securityDomainAndApplication = null;
-      boolean application = Defaults.APPLICATION_MANAGED_SECURITY;
 
       HashMap<String, String> expressions = new HashMap<String, String>();
 
@@ -567,12 +565,9 @@ public abstract class AbstractParser
                switch (reader.getLocalName())
                {
                   case CommonXML.ELEMENT_SECURITY :
-                     return new SecurityImpl(securityDomain, securityDomainAndApplication,
-                           application,
+                     return new SecurityImpl(securityDomain,
                            expressions.size() > 0 ? expressions : null);
                   case CommonXML.ELEMENT_SECURITY_DOMAIN :
-                  case CommonXML.ELEMENT_SECURITY_DOMAIN_AND_APPLICATION :
-                  case CommonXML.ELEMENT_APPLICATION :
                      break;
                   default :
                      throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
@@ -584,16 +579,6 @@ public abstract class AbstractParser
 
                   case CommonXML.ELEMENT_SECURITY_DOMAIN : {
                      securityDomain = elementAsString(reader, CommonXML.ELEMENT_SECURITY_DOMAIN, expressions);
-                     break;
-                  }
-                  case CommonXML.ELEMENT_SECURITY_DOMAIN_AND_APPLICATION : {
-                     securityDomainAndApplication = elementAsString(reader,
-                                                                    CommonXML.ELEMENT_SECURITY_DOMAIN_AND_APPLICATION,
-                                                                    expressions);
-                     break;
-                  }
-                  case CommonXML.ELEMENT_APPLICATION : {
-                     application = elementAsBoolean(reader, CommonXML.ELEMENT_APPLICATION, expressions);
                      break;
                   }
                   default :

@@ -54,11 +54,6 @@ interface XML extends CommonXML
    public static final String ATTRIBUTE_SPY = "spy";
 
    /**
-    * allow-multiple-users
-    */
-   public static final String ELEMENT_ALLOW_MULTIPLE_USERS = "allow-multiple-users";
-
-   /**
     * check-valid-connection-sql
     */
    public static final String ELEMENT_CHECK_VALID_CONNECTION_SQL = "check-valid-connection-sql";

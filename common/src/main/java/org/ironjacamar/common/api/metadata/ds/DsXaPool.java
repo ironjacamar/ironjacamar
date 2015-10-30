@@ -30,11 +30,6 @@ import org.ironjacamar.common.api.metadata.common.XaPool;
  */
 public interface DsXaPool extends XaPool
 {
-   /**
-    * Are multiple users allowed to create connections
-    * @return True, if multiple users are supported, otherwise false
-    */
-   public Boolean isAllowMultipleUsers();
 
    /**
     * Get the connection listener

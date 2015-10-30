@@ -51,10 +51,10 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.jboss.logging.Messages;
+
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
-
-import org.jboss.logging.Messages;
 
 /**
  * A CommonIronJacamarParser.
@@ -799,11 +799,10 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       if (ao.isEnabled() != null && (ao.hasExpression(CommonXML.ATTRIBUTE_ENABLED) ||
                                      !Defaults.ENABLED.equals(ao.isEnabled())))
          writer.writeAttribute(CommonXML.ATTRIBUTE_ENABLED,
-                               ao.getValue(CommonXML.ATTRIBUTE_ENABLED, ao.isEnabled().toString()));
+               ao.getValue(CommonXML.ATTRIBUTE_ENABLED, ao.isEnabled().toString()));
 
       if (ao.getId() != null)
-         writer.writeAttribute(CommonXML.ATTRIBUTE_ID,
-                               ao.getValue(CommonXML.ATTRIBUTE_ID, ao.getId()));
+         writer.writeAttribute(CommonXML.ATTRIBUTE_ID, ao.getValue(CommonXML.ATTRIBUTE_ID, ao.getId()));
 
       if (ao.getConfigProperties() != null && ao.getConfigProperties().size() > 0)
       {
@@ -976,21 +975,10 @@ public abstract class CommonIronJacamarParser extends AbstractParser
    {
       writer.writeStartElement(CommonXML.ELEMENT_SECURITY);
 
-      if (s.isApplication())
-      {
-         writer.writeEmptyElement(CommonXML.ELEMENT_APPLICATION);
-      }
-      else if (s.getSecurityDomain() != null)
+      if (s.getSecurityDomain() != null)
       {
          writer.writeStartElement(CommonXML.ELEMENT_SECURITY_DOMAIN);
          writer.writeCharacters(s.getValue(CommonXML.ELEMENT_SECURITY_DOMAIN, s.getSecurityDomain()));
-         writer.writeEndElement();
-      }
-      else if (s.getSecurityDomainAndApplication() != null)
-      {
-         writer.writeStartElement(CommonXML.ELEMENT_SECURITY_DOMAIN_AND_APPLICATION);
-         writer.writeCharacters(s.getValue(CommonXML.ELEMENT_SECURITY_DOMAIN_AND_APPLICATION,
-                                           s.getSecurityDomainAndApplication()));
          writer.writeEndElement();
       }
 

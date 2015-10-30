@@ -254,9 +254,7 @@ public class IronJacamar20TestCase
             assertEquals("2", map.get("P2"));
             assertEquals("dc", e.getClassName());
 
-            assertTrue(s.isApplication());
-            assertNull(s.getSecurityDomain());
-            assertNull(s.getSecurityDomainAndApplication());
+            assertNull(s);
 
             assertEquals(5000L, (long)t.getBlockingTimeoutMillis());
             assertEquals(4, (int)t.getIdleTimeoutMinutes());
@@ -305,9 +303,7 @@ public class IronJacamar20TestCase
             assertFalse(xpool.isPadXid());
             assertTrue(xpool.isWrapXaResource());
 
-            assertFalse(s.isApplication());
             assertEquals("domain", s.getSecurityDomain());
-            assertNull(s.getSecurityDomainAndApplication());
 
             assertNull(t);
 
@@ -349,9 +345,7 @@ public class IronJacamar20TestCase
             assertFalse(xpool.isPadXid());
             assertTrue(xpool.isWrapXaResource());
 
-            assertFalse(s.isApplication());
-            assertNull(s.getSecurityDomain());
-            assertEquals("domain", s.getSecurityDomainAndApplication());
+            assertEquals("domain", s.getSecurityDomain());
 
             assertNull(t);
             assertNull(v);

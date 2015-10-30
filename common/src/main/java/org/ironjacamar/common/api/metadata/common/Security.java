@@ -37,18 +37,4 @@ public interface Security extends JCAMetadata, ValidatableMetadata
     */
    public String getSecurityDomain();
 
-   /**
-    * get the security domain for security-domain/application hybrid security management
-    *
-    * @return the security-domain to use
-    */
-   public String getSecurityDomainAndApplication();
-
-   /**
-    * Indicates that app supplied parameters (such as from getConnection(user, pw))
-    * are used to distinguish connections in the pool.
-    *
-    * @return the boolean indicating the appl supplier is considered or not. Default false.
-    */
-   public boolean isApplication();
 }

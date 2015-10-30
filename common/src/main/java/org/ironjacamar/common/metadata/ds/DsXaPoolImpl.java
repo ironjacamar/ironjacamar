@@ -40,10 +40,7 @@ public class DsXaPoolImpl extends org.ironjacamar.common.metadata.common.XaPoolI
    /** The serialVersionUID */
    private static final long serialVersionUID = 1L;
 
-   /** allow-multiple-users */
-   protected final Boolean allowMultipleUsers;
-
-   /**
+    /**
     * connection-listener
     */
    protected final Extension connectionListener;
@@ -59,7 +56,6 @@ public class DsXaPoolImpl extends org.ironjacamar.common.metadata.common.XaPoolI
     * @param isSameRmOverride isSameRmOverride
     * @param padXid padXid
     * @param wrapXaResource wrapXaResource
-    * @param allowMultipleUsers allowMultipleUsers
     * @param capacity capacity
     * @param connectionListener connectionListener
     * @param expressions expressions
@@ -71,24 +67,13 @@ public class DsXaPoolImpl extends org.ironjacamar.common.metadata.common.XaPoolI
                        FlushStrategy flushStrategy,
                        Boolean isSameRmOverride,
                        Boolean padXid, Boolean wrapXaResource,
-                       Boolean allowMultipleUsers,
                        Capacity capacity, Extension connectionListener,
                        Map<String, String> expressions) throws ValidateException
    {
       super(type, minPoolSize, initialPoolSize, maxPoolSize, prefill, flushStrategy, capacity,
             isSameRmOverride, padXid, wrapXaResource, expressions);
 
-      this.allowMultipleUsers = allowMultipleUsers;
       this.connectionListener = connectionListener;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public final Boolean isAllowMultipleUsers()
-   {
-      return allowMultipleUsers;
    }
 
    /**
@@ -105,7 +90,6 @@ public class DsXaPoolImpl extends org.ironjacamar.common.metadata.common.XaPoolI
    {
       final int prime = 31;
       int result = super.hashCode();
-      result = prime * result + ((allowMultipleUsers == null) ? 0 : allowMultipleUsers.hashCode());
       result = prime * result + ((connectionListener == null) ? 7 : 7 * connectionListener.hashCode());
       return result;
    }
@@ -123,13 +107,6 @@ public class DsXaPoolImpl extends org.ironjacamar.common.metadata.common.XaPoolI
          return false;
 
       DsXaPoolImpl other = (DsXaPoolImpl) obj;
-      if (allowMultipleUsers == null)
-      {
-         if (other.allowMultipleUsers != null)
-            return false;
-      }
-      else if (!allowMultipleUsers.equals(other.allowMultipleUsers))
-         return false;
       if (connectionListener == null)
       {
          if (other.connectionListener != null)
@@ -192,11 +169,6 @@ public class DsXaPoolImpl extends org.ironjacamar.common.metadata.common.XaPoolI
          sb.append("<").append(XML.ELEMENT_FLUSH_STRATEGY).append(">");
          sb.append(flushStrategy);
          sb.append("</").append(XML.ELEMENT_FLUSH_STRATEGY).append(">");
-      }
-
-      if (allowMultipleUsers != null && allowMultipleUsers.booleanValue())
-      {
-         sb.append("<").append(XML.ELEMENT_ALLOW_MULTIPLE_USERS).append("/>");
       }
 
       if (capacity != null)

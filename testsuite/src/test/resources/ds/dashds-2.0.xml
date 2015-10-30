@@ -18,7 +18,6 @@
       <max-pool-size>5</max-pool-size>
       <prefill>true</prefill>
       <flush-strategy>AllConnections</flush-strategy>
-      <allow-multiple-users/>
       <capacity>
         <incrementer class-name="ic">
           <config-property name="name1">Property1</config-property>
@@ -89,7 +88,6 @@
       <max-pool-size>5</max-pool-size>
       <prefill>true</prefill>
       <flush-strategy>Gracefully</flush-strategy>
-      <allow-multiple-users/>
       <capacity>
         <incrementer class-name="ic">
           <config-property name="name1">Property1</config-property>

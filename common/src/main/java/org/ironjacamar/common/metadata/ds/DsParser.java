@@ -688,7 +688,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Integer maxPoolSize = Defaults.MAX_POOL_SIZE;
       Boolean prefill = Defaults.PREFILL;
       FlushStrategy flushStrategy = Defaults.FLUSH_STRATEGY;
-      Boolean allowMultipleUsers = Defaults.ALLOW_MULTIPLE_USERS;
       Capacity capacity = null;
       Extension connectionListener = null;
 
@@ -715,7 +714,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                if (XML.ELEMENT_POOL.equals(reader.getLocalName()))
                {
                   return new DsPoolImpl(type, minPoolSize, initialPoolSize, maxPoolSize, prefill,
-                                        flushStrategy, allowMultipleUsers, capacity, connectionListener,
+                                        flushStrategy, capacity, connectionListener,
                                         expressions.size() > 0 ? expressions : null);
                }
                else
@@ -727,7 +726,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      case XML.ELEMENT_MIN_POOL_SIZE :
                      case XML.ELEMENT_PREFILL :
                      case XML.ELEMENT_FLUSH_STRATEGY :
-                     case XML.ELEMENT_ALLOW_MULTIPLE_USERS :
                      case XML.ELEMENT_CAPACITY :
                      case XML.ELEMENT_CONNECTION_LISTENER :
                         break;
@@ -758,10 +756,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   }
                   case XML.ELEMENT_FLUSH_STRATEGY : {
                      flushStrategy = elementAsFlushStrategy(reader, expressions);
-                     break;
-                  }
-                  case XML.ELEMENT_ALLOW_MULTIPLE_USERS : {
-                     allowMultipleUsers = Boolean.TRUE;
                      break;
                   }
                   case XML.ELEMENT_CAPACITY : {
@@ -801,7 +795,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Integer maxPoolSize = Defaults.MAX_POOL_SIZE;
       Boolean prefill = Defaults.PREFILL;
       FlushStrategy flushStrategy = Defaults.FLUSH_STRATEGY;
-      Boolean allowMultipleUsers = Defaults.ALLOW_MULTIPLE_USERS;
       Capacity capacity = null;
       Extension connectionListener = null;
       Boolean isSameRmOverride = Defaults.IS_SAME_RM_OVERRIDE;
@@ -832,7 +825,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                {
                   return new DsXaPoolImpl(type, minPoolSize, initialPoolSize, maxPoolSize, prefill,
                                           flushStrategy, isSameRmOverride, padXid,
-                                          wrapXaDataSource, allowMultipleUsers, capacity,
+                                          wrapXaDataSource, capacity,
                                           connectionListener,
                                           expressions.size() > 0 ? expressions : null);
                }
@@ -848,7 +841,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                      case XML.ELEMENT_WRAP_XA_RESOURCE :
                      case XML.ELEMENT_PREFILL :
                      case XML.ELEMENT_FLUSH_STRATEGY :
-                     case XML.ELEMENT_ALLOW_MULTIPLE_USERS :
                      case XML.ELEMENT_CAPACITY :
                      case XML.ELEMENT_CONNECTION_LISTENER :
                         break;
@@ -891,10 +883,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   }
                   case XML.ELEMENT_FLUSH_STRATEGY : {
                      flushStrategy = elementAsFlushStrategy(reader, expressions);
-                     break;
-                  }
-                  case XML.ELEMENT_ALLOW_MULTIPLE_USERS : {
-                     allowMultipleUsers = Boolean.TRUE;
                      break;
                   }
                   case XML.ELEMENT_CAPACITY : {
@@ -1804,9 +1792,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
          writer.writeEndElement();
       }
 
-      if (pool.isAllowMultipleUsers() != null && Boolean.TRUE.equals(pool.isAllowMultipleUsers()))
-         writer.writeEmptyElement(XML.ELEMENT_ALLOW_MULTIPLE_USERS);
-
       if (pool.getCapacity() != null)
          storeCapacity(pool.getCapacity(), writer);
 
@@ -1888,9 +1873,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
          writer.writeCharacters(pool.getValue(XML.ELEMENT_FLUSH_STRATEGY, pool.getFlushStrategy().toString()));
          writer.writeEndElement();
       }
-
-      if (pool.isAllowMultipleUsers() != null && Boolean.TRUE.equals(pool.isAllowMultipleUsers()))
-         writer.writeEmptyElement(XML.ELEMENT_ALLOW_MULTIPLE_USERS);
 
       if (pool.getCapacity() != null)
          storeCapacity(pool.getCapacity(), writer);

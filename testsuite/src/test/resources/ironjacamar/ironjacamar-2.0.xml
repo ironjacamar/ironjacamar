@@ -35,9 +35,6 @@
 	<pad-xid>true</pad-xid>
 	<wrap-xa-resource>false</wrap-xa-resource>
       </xa-pool>
-      <security>
-	<application />
-      </security>
       <timeout>
 	<blocking-timeout-millis>5000</blocking-timeout-millis>
 	<idle-timeout-minutes>4</idle-timeout-minutes>
@@ -90,8 +87,8 @@
 	<flush-strategy>FailingConnectionOnly</flush-strategy>
       </xa-pool>
       <security>
-	<security-domain-and-application>domain
-	</security-domain-and-application>
+	<security-domain>domain
+	</security-domain>
       </security>
       <recovery />
     </connection-definition>

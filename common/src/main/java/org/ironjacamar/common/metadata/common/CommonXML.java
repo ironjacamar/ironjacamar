@@ -116,10 +116,6 @@ public interface CommonXML
     */
    public static final String ELEMENT_ALLOCATION_RETRY_WAIT_MILLIS = "allocation-retry-wait-millis";
 
-   /**
-    * application
-    */
-   public static final String ELEMENT_APPLICATION = "application";
 
    /**
     * background-validation
@@ -296,10 +292,6 @@ public interface CommonXML
     */
    public static final String ELEMENT_SECURITY_DOMAIN = "security-domain";
 
-   /**
-    * security-domain-and-application
-    */
-   public static final String ELEMENT_SECURITY_DOMAIN_AND_APPLICATION = "security-domain-and-application";
 
    /**
     * timeout

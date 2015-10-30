@@ -45,87 +45,37 @@ public class SecurityImpl extends AbstractMetadata implements Security
 
    private String securityDomainManaged;
 
-   private String securityDomainAndApplicationManaged;
-
-   private boolean applicationManaged;
-
    /**
     * Constructor
     *
     * @param securityDomainManaged securityDomainManaged
-    * @param securityDomainAndApplicationManaged securityDomainAndApplicationManaged
-    * @param applicationManaged applicationManagedS
     * @param expressions expressions
     * @throws ValidateException ValidateException
     */
    public SecurityImpl(String securityDomainManaged,
-                       String securityDomainAndApplicationManaged, boolean applicationManaged,
                        Map<String, String> expressions) throws ValidateException
    {
       super(expressions);
       this.securityDomainManaged = securityDomainManaged;
-      this.securityDomainAndApplicationManaged = securityDomainAndApplicationManaged;
-      this.applicationManaged = applicationManaged;
       this.validate();
    }
 
    /**
     * {@inheritDoc}
     */
+   @Override
    public String getSecurityDomain()
    {
       return securityDomainManaged;
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   public String getSecurityDomainAndApplication()
-   {
-      return securityDomainAndApplicationManaged;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public boolean isApplication()
-   {
-      return applicationManaged;
-   }
 
    /**
     * {@inheritDoc}
     */
    public void validate() throws ValidateException
    {
-      if (securityDomainManaged != null && !securityDomainManaged.trim().equals(""))
-      {
-         if (securityDomainAndApplicationManaged != null && !securityDomainAndApplicationManaged.trim().equals(""))
-         {
-            throw new ValidateException(bundle.invalidSecurityConfiguration());
-         }
-         if (applicationManaged)
-         {
-            throw new ValidateException(bundle.invalidSecurityConfiguration());
-         }
-      }
-      else
-      {
-         if (securityDomainAndApplicationManaged != null && !securityDomainAndApplicationManaged.trim().equals(""))
-         {
-            if (applicationManaged)
-            {
-               throw new ValidateException(bundle.invalidSecurityConfiguration());
-            }
-         }
-         else
-         {
-            if (!applicationManaged)
-            {
-               throw new ValidateException(bundle.invalidSecurityConfiguration());
-            }
-         }
-      }
+      //do nothing
    }
 
    /**
@@ -135,9 +85,6 @@ public class SecurityImpl extends AbstractMetadata implements Security
    {
       final int prime = 31;
       int result = 1;
-      result = prime * result + (applicationManaged ? 1231 : 1237);
-      result = prime * result +
-               ((securityDomainAndApplicationManaged == null) ? 0 : securityDomainAndApplicationManaged.hashCode());
       result = prime * result + ((securityDomainManaged == null) ? 0 : securityDomainManaged.hashCode());
       return result;
    }
@@ -154,15 +101,6 @@ public class SecurityImpl extends AbstractMetadata implements Security
       if (!(obj instanceof SecurityImpl))
          return false;
       SecurityImpl other = (SecurityImpl) obj;
-      if (applicationManaged != other.applicationManaged)
-         return false;
-      if (securityDomainAndApplicationManaged == null)
-      {
-         if (other.securityDomainAndApplicationManaged != null)
-            return false;
-      }
-      else if (!securityDomainAndApplicationManaged.equals(other.securityDomainAndApplicationManaged))
-         return false;
       if (securityDomainManaged == null)
       {
          if (other.securityDomainManaged != null)
@@ -182,21 +120,11 @@ public class SecurityImpl extends AbstractMetadata implements Security
 
       sb.append("<security>");
 
-      if (applicationManaged)
-      {
-         sb.append("<").append(CommonXML.ELEMENT_APPLICATION).append("/>");
-      }
-      else if (securityDomainManaged != null)
+      if (securityDomainManaged != null)
       {
          sb.append("<").append(CommonXML.ELEMENT_SECURITY_DOMAIN).append(">");
          sb.append(securityDomainManaged);
          sb.append("</").append(CommonXML.ELEMENT_SECURITY_DOMAIN).append(">");
-      }
-      else if (securityDomainAndApplicationManaged != null)
-      {
-         sb.append("<").append(CommonXML.ELEMENT_SECURITY_DOMAIN_AND_APPLICATION).append(">");
-         sb.append(securityDomainAndApplicationManaged);
-         sb.append("</").append(CommonXML.ELEMENT_SECURITY_DOMAIN_AND_APPLICATION).append(">");
       }
 
       sb.append("</security>");

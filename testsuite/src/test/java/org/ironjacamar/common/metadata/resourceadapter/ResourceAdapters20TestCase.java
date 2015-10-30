@@ -247,10 +247,8 @@ public class ResourceAdapters20TestCase
                   assertEquals("ic", cp.getIncrementer().getClassName());
                   assertEquals("dc", cp.getDecrementer().getClassName());
                   
-                  assertTrue(s.isApplication());
-                  assertNull(s.getSecurityDomain());
-                  assertNull(s.getSecurityDomainAndApplication());
-                  
+                  assertNull(s);
+
                   assertEquals(5000L, (long)t.getBlockingTimeoutMillis());
                   assertEquals(4, (int)t.getIdleTimeoutMinutes());
                   assertEquals(2L, (long)t.getAllocationRetry());
@@ -296,10 +294,8 @@ public class ResourceAdapters20TestCase
                   assertTrue(pool.isWrapXaResource());
                   assertNull(pool.getCapacity());
                   
-                  assertFalse(s.isApplication());
                   assertEquals("domain", s.getSecurityDomain());
-                  assertNull(s.getSecurityDomainAndApplication());
-                  
+
                   assertNull(t);
                   
                   assertNull(v.getBackgroundValidationMillis());
@@ -336,10 +332,8 @@ public class ResourceAdapters20TestCase
                   assertTrue(pool.isWrapXaResource());
                   assertNull(pool.getCapacity());
                   
-                  assertFalse(s.isApplication());
-                  assertEquals("domain", s.getSecurityDomainAndApplication());
-                  assertNull(s.getSecurityDomain());
-                  
+                  assertEquals("domain", s.getSecurityDomain());
+
                   assertNull(t);
                   assertNull(v);
                   assertFalse(r.isNoRecovery());

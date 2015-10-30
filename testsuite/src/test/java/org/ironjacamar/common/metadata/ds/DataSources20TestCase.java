@@ -219,7 +219,6 @@ public class DataSources20TestCase
       assertEquals(5, (int)pool.getMaxPoolSize());
       assertTrue(pool.isPrefill());
       assertEquals(FlushStrategy.ALL_CONNECTIONS, pool.getFlushStrategy());
-      assertTrue(pool.isAllowMultipleUsers());
       Capacity cp = pool.getCapacity();
       assertNotNull(cp);
       Extension e = cp.getIncrementer();
@@ -321,7 +320,6 @@ public class DataSources20TestCase
       assertTrue(xpool.isIsSameRmOverride());
       assertTrue(xpool.isPadXid());
       assertFalse(xpool.isWrapXaResource());
-      assertTrue(xpool.isAllowMultipleUsers());
       cp = xpool.getCapacity();
       assertNotNull(cp);
       e = cp.getIncrementer();

@@ -30,11 +30,6 @@ import org.ironjacamar.common.api.metadata.common.Pool;
  */
 public interface DsPool extends Pool
 {
-   /**
-    * Are multiple users allowed to create connections
-    * @return True, if multiple users are supported, otherwise false
-    */
-   public Boolean isAllowMultipleUsers();
 
    /**
     * Get the connection listener

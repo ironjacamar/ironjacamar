@@ -707,16 +707,6 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
-      <xs:element name="allow-multiple-users" type="boolean-presenceType" minOccurs="0" maxOccurs="1">
-        <xs:annotation>
-          <xs:documentation>
-            <![CDATA[[
-              Specifies if multiple users will access the datasource through the getConnection(user, password)
-              method and hence if the internal pool type should account for that
-             ]]>
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
       <xs:element name="capacity" type="capacityType" minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation>

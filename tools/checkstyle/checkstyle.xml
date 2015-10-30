@@ -112,6 +112,8 @@
       <property name="groups" value="org.ironjacamar,java,javax,org.jboss"/>
       <property name="ordered" value="true"/>
       <property name="separated" value="true"/>
+      <property name="option" value="bottom"/>
+      <property name="sortStaticImportsAlphabetically" value="true"/>
     </module>
 
     <!-- Flag reminder comments -->
