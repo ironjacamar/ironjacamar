@@ -23,6 +23,18 @@ configurations {
 }
 
 dependencies {
+  compile(libraries.byteman)
+  compile(libraries.byteman_submit)
+  compile(libraries.fungal)
+  compile(libraries.javax_inject)
+  compile(libraries.junit)
+  compile(libraries.shrinkwrap_api)
+  compile(libraries.shrinkwrap_impl)
+  compile(libraries.shrinkwrap_spi)
+  compile(libraries.shrinkwrap_descriptors_api)
+  compile(libraries.shrinkwrap_descriptors_impl)
+  compile(libraries.shrinkwrap_descriptors_spi)
+
   compile project(':api')
   compile project(':common')
   compile project(':core')

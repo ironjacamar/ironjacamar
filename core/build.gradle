@@ -20,6 +20,12 @@
  */
 
 dependencies {
+  compile(libraries.jboss_jaspi)
+  compile(libraries.jboss_threads)
+  compile(libraries.jgroups)
+  compile(libraries.narayana_spi)
+  compile(libraries.picketbox)
+
   compile project(':api')
   compile project(':common')
 }
@@ -28,7 +34,7 @@ jar {
   manifest {
     attributes("Implementation-Title" : "IronJacamar Core")
   }
-  baseName = "ironjacamar-core-impl"
+  baseName = "ironjacamar-core"
   dependsOn classes
   from sourceSets.main.output
 }

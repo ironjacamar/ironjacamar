@@ -20,6 +20,10 @@
  */
 
 dependencies {
+  compile(libraries.jandex)
+  compile(libraries.jboss_logging)
+  compile(libraries.validation_spec)
+
   compile(project(':api'))
 }
 

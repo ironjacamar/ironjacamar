@@ -113,41 +113,7 @@ subprojects { subProject ->
   }
 
   dependencies {
-    compile(libraries.byteman)
-    compile(libraries.byteman_submit)
-    compile(libraries.fungal)
-    compile(libraries.fungal_cli)
-    compile(libraries.hibernate_validator)
-    compile(libraries.jandex)
-    compile(libraries.javax_inject)
-    compile(libraries.jboss_common)
-    compile(libraries.jboss_jaspi)
-    compile(libraries.jboss_logging)
-    compile(libraries.jboss_logging_manager)
-    compile(libraries.jboss_logging_manager_log4j)
     compile(libraries.jboss_logging_processor)
-    compile(libraries.jboss_naming)
-    compile(libraries.jboss_stdio)
-    compile(libraries.jboss_threads)
-    compile(libraries.jgroups)
-    compile(libraries.junit)
-    compile(libraries.log4j)
-    compile(libraries.narayana_jta)
-    compile(libraries.narayana_integration)
-    compile(libraries.narayana_spi)
-    compile(libraries.picketbox)
-    compile(libraries.shrinkwrap_api)
-    compile(libraries.shrinkwrap_impl)
-    compile(libraries.shrinkwrap_spi)
-    compile(libraries.shrinkwrap_descriptors_api)
-    compile(libraries.shrinkwrap_descriptors_impl)
-    compile(libraries.shrinkwrap_descriptors_spi)
-    compile(libraries.transaction_spec)
-    compile(libraries.validation_spec)
-
-    testCompile(libraries.byteman)
-    testCompile(libraries.byteman_submit)
-    testCompile(libraries.junit)
 
     apiVizTool(libraries.apiviz)
     byteman(libraries.byteman)
@@ -268,12 +234,13 @@ subprojects { subProject ->
 
 //copy dependencies .jar to be collected by the distribution task
 task copyDependencies(type: Copy) {
-  from project(':api').configurations.compile
+  from project(':testsuite').configurations.testCompile
   into rootProject.libsDir
-  include '**/*'
+  include '**/*.jar'
   exclude '**/jboss-logging-processor*'
   rename (/(.+)(-[\d]+.+)\.jar/, '$1.jar')
   rename (/(.+)(-[\d]+).jar/, '$1.jar')
+  includeEmptyDirs = false
 }
 
 distributions {

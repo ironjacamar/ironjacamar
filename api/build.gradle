@@ -19,6 +19,10 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
+dependencies {
+  compile(libraries.transaction_spec)
+}
+
 jar {
   manifest {
     attributes("Implementation-Title" : "The Java EE Connector Architecture 1.7 API")
