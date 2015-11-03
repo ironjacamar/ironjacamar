@@ -18,12 +18,10 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.ironjacamar.deployers.fungal;
+package org.ironjacamar.embedded.deployers;
 
-import org.ironjacamar.common.api.metadata.resourceadapter.Activation;
 import org.ironjacamar.common.api.metadata.spec.Connector;
-import org.ironjacamar.common.metadata.ironjacamar.IronJacamarParser;
-import org.ironjacamar.common.metadata.merge.Merger;
+import org.ironjacamar.common.metadata.spec.RaParser;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,7 +31,6 @@ import java.net.URL;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
-import com.github.fungal.api.classloading.KernelClassLoader;
 import com.github.fungal.spi.deployers.CloneableDeployer;
 import com.github.fungal.spi.deployers.Context;
 import com.github.fungal.spi.deployers.DeployException;
@@ -41,15 +38,15 @@ import com.github.fungal.spi.deployers.Deployer;
 import com.github.fungal.spi.deployers.Deployment;
 
 /**
- * Activate the resource adapter based on the META-INF/ironjacamar.xml file if present
+ * Load the META-INF/ra.xml file if present
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class IronJacamarXmlDeployer extends AbstractFungalRADeployer implements CloneableDeployer
+public class RaXmlMetadataDeployer extends AbstractFungalRADeployer implements CloneableDeployer
 {
    /**
     * Constructor
     */
-   public IronJacamarXmlDeployer()
+   public RaXmlMetadataDeployer()
    {
    }
 
@@ -66,7 +63,7 @@ public class IronJacamarXmlDeployer extends AbstractFungalRADeployer implements 
     */
    public int getOrder()
    {
-      return Constants.DEPLOYER_IRONJACAMAR_XML;
+      return Constants.DEPLOYER_RA_XML_METADATA;
    }
 
    /**
@@ -82,28 +79,19 @@ public class IronJacamarXmlDeployer extends AbstractFungalRADeployer implements 
       FileInputStream fis = null;
       try
       {
-         File ijXml = new File(archive, "META-INF/ironjacamar.xml");
+         File raXml = new File(archive, "META-INF/ra.xml");
 
-         if (ijXml.exists())
+         if (raXml.exists())
          {
-            IronJacamarParser parser = new IronJacamarParser();
+            RaParser parser = new RaParser();
 
-            fis = new FileInputStream(ijXml);
+            fis = new FileInputStream(raXml);
             
             XMLStreamReader xsr = XMLInputFactory.newInstance().createXMLStreamReader(fis);
 
-            Activation a = parser.parse(xsr);
+            Connector c = parser.parse(xsr);
 
-            Connector c = (Connector)context.get(Constants.ATTACHMENT_MERGED_METADATA);
-            if (c == null)
-               c = (Connector)context.get(Constants.ATTACHMENT_RA_XML_METADATA);
-
-            KernelClassLoader cl = (KernelClassLoader)context.get(Constants.ATTACHMENT_CLASSLOADER);
-
-            Merger merger = new Merger();
-            Connector actC = merger.merge(c.copy(), a);
-            
-            activate(actC, a, cl);
+            context.put(Constants.ATTACHMENT_RA_XML_METADATA, c);
          }
 
          return null;
@@ -133,11 +121,6 @@ public class IronJacamarXmlDeployer extends AbstractFungalRADeployer implements 
     */
    public Deployer clone() throws CloneNotSupportedException
    {
-      IronJacamarXmlDeployer i = new IronJacamarXmlDeployer();
-      i.setDeploymentRepository(deploymentRepository);
-      i.setMetadataRepository(metadataRepository);
-      i.setBootstrapContext(bootstrapContext);
-      i.setJndiStrategy(jndiStrategy);
-      return i;
+      return new RaXmlMetadataDeployer();
    }
 }

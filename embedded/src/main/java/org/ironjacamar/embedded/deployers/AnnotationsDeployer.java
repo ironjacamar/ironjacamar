@@ -18,19 +18,19 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.ironjacamar.deployers.fungal;
+package org.ironjacamar.embedded.deployers;
 
+import org.ironjacamar.common.annotations.Annotations;
 import org.ironjacamar.common.api.metadata.spec.Connector;
-import org.ironjacamar.common.metadata.spec.RaParser;
+import org.ironjacamar.common.api.metadata.spec.Connector.Version;
+import org.ironjacamar.common.spi.annotations.repository.AnnotationRepository;
+import org.ironjacamar.common.spi.annotations.repository.AnnotationScanner;
+import org.ironjacamar.common.spi.annotations.repository.AnnotationScannerFactory;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.net.URL;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamReader;
-
+import com.github.fungal.api.classloading.KernelClassLoader;
 import com.github.fungal.spi.deployers.CloneableDeployer;
 import com.github.fungal.spi.deployers.Context;
 import com.github.fungal.spi.deployers.DeployException;
@@ -38,15 +38,15 @@ import com.github.fungal.spi.deployers.Deployer;
 import com.github.fungal.spi.deployers.Deployment;
 
 /**
- * Load the META-INF/ra.xml file if present
+ * Process the annotations if present
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class RaXmlMetadataDeployer extends AbstractFungalRADeployer implements CloneableDeployer
+public class AnnotationsDeployer extends AbstractFungalRADeployer implements CloneableDeployer
 {
    /**
     * Constructor
     */
-   public RaXmlMetadataDeployer()
+   public AnnotationsDeployer()
    {
    }
 
@@ -63,7 +63,7 @@ public class RaXmlMetadataDeployer extends AbstractFungalRADeployer implements C
     */
    public int getOrder()
    {
-      return Constants.DEPLOYER_RA_XML_METADATA;
+      return Constants.DEPLOYER_ANNOTATIONS;
    }
 
    /**
@@ -76,43 +76,33 @@ public class RaXmlMetadataDeployer extends AbstractFungalRADeployer implements C
       if (archive == null)
          throw new DeployException("Deployment " + url.toExternalForm() + " not found");
 
-      FileInputStream fis = null;
+      Connector c = (Connector)context.get(Constants.ATTACHMENT_RA_XML_METADATA);
+
+      // JCA 1.0 / JCA 1.5
+      if (c != null && (Version.V_10.equals(c.getVersion()) || Version.V_15.equals(c.getVersion())))
+         return null;
+      
+      // JCA 1.6 / JCA 1.7 metadata complete
+      if (c != null && c.isMetadataComplete())
+         return null;
+      
       try
       {
-         File raXml = new File(archive, "META-INF/ra.xml");
+         KernelClassLoader cl = (KernelClassLoader)context.get(Constants.ATTACHMENT_CLASSLOADER);
 
-         if (raXml.exists())
-         {
-            RaParser parser = new RaParser();
+         Annotations processor = new Annotations();
+         AnnotationScanner scanner = AnnotationScannerFactory.getAnnotationScanner();
+         AnnotationRepository repository = scanner.scan(cl.getURLs(), cl);
 
-            fis = new FileInputStream(raXml);
-            
-            XMLStreamReader xsr = XMLInputFactory.newInstance().createXMLStreamReader(fis);
+         Connector merged = processor.merge(c, repository, cl);
 
-            Connector c = parser.parse(xsr);
-
-            context.put(Constants.ATTACHMENT_RA_XML_METADATA, c);
-         }
+         context.put(Constants.ATTACHMENT_MERGED_METADATA, merged);
 
          return null;
       }
       catch (Throwable t)
       {
          throw new DeployException("Deployment " + url.toExternalForm() + " failed", t);
-      }
-      finally
-      {
-         if (fis != null)
-         {
-            try
-            {
-               fis.close();
-            }
-            catch (IOException ignore)
-            {
-               // Ignore
-            }
-         }
       }
    }
    
@@ -121,6 +111,6 @@ public class RaXmlMetadataDeployer extends AbstractFungalRADeployer implements C
     */
    public Deployer clone() throws CloneNotSupportedException
    {
-      return new RaXmlMetadataDeployer();
+      return new AnnotationsDeployer();
    }
 }

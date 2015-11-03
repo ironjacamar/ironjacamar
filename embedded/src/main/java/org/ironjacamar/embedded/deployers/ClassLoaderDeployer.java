@@ -18,18 +18,12 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.ironjacamar.deployers.fungal;
-
-import org.ironjacamar.common.annotations.Annotations;
-import org.ironjacamar.common.api.metadata.spec.Connector;
-import org.ironjacamar.common.api.metadata.spec.Connector.Version;
-import org.ironjacamar.common.spi.annotations.repository.AnnotationRepository;
-import org.ironjacamar.common.spi.annotations.repository.AnnotationScanner;
-import org.ironjacamar.common.spi.annotations.repository.AnnotationScannerFactory;
+package org.ironjacamar.embedded.deployers;
 
 import java.io.File;
 import java.net.URL;
 
+import com.github.fungal.api.classloading.ClassLoaderFactory;
 import com.github.fungal.api.classloading.KernelClassLoader;
 import com.github.fungal.spi.deployers.CloneableDeployer;
 import com.github.fungal.spi.deployers.Context;
@@ -38,18 +32,31 @@ import com.github.fungal.spi.deployers.Deployer;
 import com.github.fungal.spi.deployers.Deployment;
 
 /**
- * Process the annotations if present
+ * ClassLoader deployer
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class AnnotationsDeployer extends AbstractFungalRADeployer implements CloneableDeployer
+public class ClassLoaderDeployer extends AbstractFungalRADeployer implements CloneableDeployer
 {
+   /** Parent first */
+   private boolean parentFirst;
+
    /**
     * Constructor
     */
-   public AnnotationsDeployer()
+   public ClassLoaderDeployer()
    {
+      this.parentFirst = true;
    }
 
+   /**
+    * Set parent first class loader type
+    * @param v The value
+    */
+   public void setParentFirst(boolean v)
+   {
+      parentFirst = v;
+   }
+   
    /**
     * {@inheritDoc}
     */
@@ -63,7 +70,7 @@ public class AnnotationsDeployer extends AbstractFungalRADeployer implements Clo
     */
    public int getOrder()
    {
-      return Constants.DEPLOYER_ANNOTATIONS;
+      return Constants.DEPLOYER_CLASSLOADER;
    }
 
    /**
@@ -75,28 +82,21 @@ public class AnnotationsDeployer extends AbstractFungalRADeployer implements Clo
 
       if (archive == null)
          throw new DeployException("Deployment " + url.toExternalForm() + " not found");
-
-      Connector c = (Connector)context.get(Constants.ATTACHMENT_RA_XML_METADATA);
-
-      // JCA 1.0 / JCA 1.5
-      if (c != null && (Version.V_10.equals(c.getVersion()) || Version.V_15.equals(c.getVersion())))
-         return null;
-      
-      // JCA 1.6 / JCA 1.7 metadata complete
-      if (c != null && c.isMetadataComplete())
-         return null;
       
       try
       {
-         KernelClassLoader cl = (KernelClassLoader)context.get(Constants.ATTACHMENT_CLASSLOADER);
-
-         Annotations processor = new Annotations();
-         AnnotationScanner scanner = AnnotationScannerFactory.getAnnotationScanner();
-         AnnotationRepository repository = scanner.scan(cl.getURLs(), cl);
-
-         Connector merged = processor.merge(c, repository, cl);
-
-         context.put(Constants.ATTACHMENT_MERGED_METADATA, merged);
+         URL[] urls = getUrls(archive);
+         KernelClassLoader cl = null;
+         if (parentFirst)
+         {
+            cl = ClassLoaderFactory.create(ClassLoaderFactory.TYPE_PARENT_FIRST, urls, parent);
+         }
+         else
+         {
+            cl = ClassLoaderFactory.create(ClassLoaderFactory.TYPE_PARENT_LAST, urls, parent);
+         }
+         
+         context.put(Constants.ATTACHMENT_CLASSLOADER, cl);
 
          return null;
       }
@@ -111,6 +111,8 @@ public class AnnotationsDeployer extends AbstractFungalRADeployer implements Clo
     */
    public Deployer clone() throws CloneNotSupportedException
    {
-      return new AnnotationsDeployer();
+      ClassLoaderDeployer c = new ClassLoaderDeployer();
+      c.setParentFirst(parentFirst);
+      return c;
    }
 }

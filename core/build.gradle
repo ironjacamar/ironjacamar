@@ -19,41 +19,18 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-configurations {
-  api
-}
-
 dependencies {
   compile project(':api')
   compile project(':common')
-
-  compile project(path: ':common', configuration: 'api')
-  compile project(path: ':common', configuration: 'spi')
-}
-
-
-task apiJar(type: Jar) {
-  manifest {
-    attributes("Implementation-Title" : "IronJacamar Core API")
-  }
-  baseName = "ironjacamar-core-api"
-  dependsOn classes
-  from sourceSets.main.output
-  include('org/ironjacamar/core/*.class', 'org/ironjacamar/core/api/**', 'org/ironjacamar/core/spi/**')
 }
 
 jar {
   manifest {
-    attributes("Implementation-Title" : "IronJacamar Core Implementation")
+    attributes("Implementation-Title" : "IronJacamar Core")
   }
   baseName = "ironjacamar-core-impl"
-  dependsOn classes, apiJar
+  dependsOn classes
   from sourceSets.main.output
-  exclude('org/ironjacamar/core/*.class', 'org/ironjacamar/core/api/**', 'org/ironjacamar/core/spi/**')
-}
-
-artifacts {
-  api apiJar
 }
 
 javadoc {
@@ -64,7 +41,7 @@ javadoc {
   options.doclet = "org.jboss.apiviz.APIviz"
   options.docletpath file(configurations.apiVizTool.asPath)
   options.bottom = "Copyright 2015 IronJacamar (<a href=\"http://www.ironjacamar.org\">http://www.ironjacamar.org</a>)"
-  options.linksOffline 'http://docs.oracle.com/javase/7/docs/api/', 'http://docs.oracle.com/javase/7/docs/api/'
+  options.linksOffline 'http://docs.oracle.com/javase/8/docs/api/', 'http://docs.oracle.com/javase/8/docs/api/'
   doLast{
      copy {
        from rootProject.file('tools/api')

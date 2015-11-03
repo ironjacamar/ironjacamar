@@ -18,21 +18,17 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.ironjacamar.deployers.fungal;
+package org.ironjacamar.embedded.deployers;
 
 import org.ironjacamar.common.api.metadata.resourceadapter.Activation;
-import org.ironjacamar.common.api.metadata.resourceadapter.Activations;
 import org.ironjacamar.common.api.metadata.spec.Connector;
+import org.ironjacamar.common.metadata.ironjacamar.IronJacamarParser;
 import org.ironjacamar.common.metadata.merge.Merger;
-import org.ironjacamar.common.metadata.resourceadapter.ResourceAdapterParser;
-import org.ironjacamar.core.api.metadatarepository.Metadata;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
@@ -45,15 +41,15 @@ import com.github.fungal.spi.deployers.Deployer;
 import com.github.fungal.spi.deployers.Deployment;
 
 /**
- * -ra.xml deployer
+ * Activate the resource adapter based on the META-INF/ironjacamar.xml file if present
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class DashRaXmlDeployer extends AbstractFungalRADeployer implements CloneableDeployer
+public class IronJacamarXmlDeployer extends AbstractFungalRADeployer implements CloneableDeployer
 {
    /**
     * Constructor
     */
-   public DashRaXmlDeployer()
+   public IronJacamarXmlDeployer()
    {
    }
 
@@ -62,10 +58,7 @@ public class DashRaXmlDeployer extends AbstractFungalRADeployer implements Clone
     */
    public boolean accepts(URL deployment)
    {
-      if (deployment != null && deployment.toExternalForm().endsWith("-ra.xml"))
-         return true;
-
-      return false;
+      return isRarArchive(deployment);
    }
 
    /**
@@ -73,7 +66,7 @@ public class DashRaXmlDeployer extends AbstractFungalRADeployer implements Clone
     */
    public int getOrder()
    {
-      return Constants.DEPLOYER_DASH_RA_XML;
+      return Constants.DEPLOYER_IRONJACAMAR_XML;
    }
 
    /**
@@ -81,51 +74,39 @@ public class DashRaXmlDeployer extends AbstractFungalRADeployer implements Clone
     */
    public Deployment deploy(URL url, Context context, ClassLoader parent) throws DeployException
    {
+      File archive = (File)context.get(Constants.ATTACHMENT_ARCHIVE);
+
+      if (archive == null)
+         throw new DeployException("Deployment " + url.toExternalForm() + " not found");
+
       FileInputStream fis = null;
       try
       {
-         File dashRaXml = new File(url.toURI());
+         File ijXml = new File(archive, "META-INF/ironjacamar.xml");
 
-         ResourceAdapterParser parser = new ResourceAdapterParser();
-         
-         fis = new FileInputStream(dashRaXml);
-         
-         XMLStreamReader xsr = XMLInputFactory.newInstance().createXMLStreamReader(fis);
-
-         Activations activations = parser.parse(xsr);
-         Merger merger = new Merger();
-
-         ClassLoaderDeployer classLoaderDeployer =
-            context.getKernel().getBean("ClassLoaderDeployer", ClassLoaderDeployer.class);
-
-         List<org.ironjacamar.core.api.deploymentrepository.Deployment> deployments =
-            new ArrayList<org.ironjacamar.core.api.deploymentrepository.Deployment>();
-         
-         for (Activation activation : activations.getActivations())
+         if (ijXml.exists())
          {
-            Metadata metadata = metadataRepository.findByName(activation.getArchive());
+            IronJacamarParser parser = new IronJacamarParser();
 
-            if (metadata == null)
-               throw new DeployException("Deployment " + activation.getArchive() + " not found");
+            fis = new FileInputStream(ijXml);
+            
+            XMLStreamReader xsr = XMLInputFactory.newInstance().createXMLStreamReader(fis);
 
-            Connector c = metadata.getMetadata();
-            File archive = metadata.getArchive();
-            
-            Connector actC = merger.merge(c.copy(), activation);
-            
-            // Create a class loader for the archive
-            context.put(Constants.ATTACHMENT_ARCHIVE, archive);
-            classLoaderDeployer.clone().deploy(url, context, parent);
+            Activation a = parser.parse(xsr);
+
+            Connector c = (Connector)context.get(Constants.ATTACHMENT_MERGED_METADATA);
+            if (c == null)
+               c = (Connector)context.get(Constants.ATTACHMENT_RA_XML_METADATA);
+
             KernelClassLoader cl = (KernelClassLoader)context.get(Constants.ATTACHMENT_CLASSLOADER);
+
+            Merger merger = new Merger();
+            Connector actC = merger.merge(c.copy(), a);
             
-            deployments.add(activate(actC, activation, cl));
+            activate(actC, a, cl);
          }
 
-         return new ActivationDeployment(url, deployments, deploymentRepository, deployments.get(0).getClassLoader());
-      }
-      catch (DeployException de)
-      {
-         throw de;
+         return null;
       }
       catch (Throwable t)
       {
@@ -152,11 +133,11 @@ public class DashRaXmlDeployer extends AbstractFungalRADeployer implements Clone
     */
    public Deployer clone() throws CloneNotSupportedException
    {
-      DashRaXmlDeployer d = new DashRaXmlDeployer();
-      d.setDeploymentRepository(deploymentRepository);
-      d.setMetadataRepository(metadataRepository);
-      d.setBootstrapContext(bootstrapContext);
-      d.setJndiStrategy(jndiStrategy);
-      return d;
+      IronJacamarXmlDeployer i = new IronJacamarXmlDeployer();
+      i.setDeploymentRepository(deploymentRepository);
+      i.setMetadataRepository(metadataRepository);
+      i.setBootstrapContext(bootstrapContext);
+      i.setJndiStrategy(jndiStrategy);
+      return i;
    }
 }

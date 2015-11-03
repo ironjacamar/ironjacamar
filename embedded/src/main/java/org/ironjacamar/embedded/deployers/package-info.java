@@ -20,6 +20,6 @@
  */
 
 /**
- * IronJacamar / Embedded - JUnit 4 support
+ * IronJacamar / Embedded - Deployers
  */
-package org.ironjacamar.embedded.junit4;
+package org.ironjacamar.embedded.deployers;

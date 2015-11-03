@@ -19,49 +19,18 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-configurations {
-  api
-  spi
-}
-
 dependencies {
   compile(project(':api'))
 }
 
-task apiJar(type: Jar) {
-  manifest {
-    attributes("Implementation-Title" : "IronJacamar Common API")
-  }
-  baseName = "ironjacamar-common-api"
-  dependsOn classes
-  from sourceSets.main.output
-  include('dtd/*', 'schema/*', 'org/ironjacamar/common/*.class', 'org/ironjacamar/common/api/**')
-}
-
-task spiJar(type: Jar) {
-  manifest {
-    attributes("Implementation-Title" : "IronJacamar Common SPI")
-  }
-  baseName = "ironjacamar-common-spi"
-  dependsOn classes
-  from sourceSets.main.output
-  include('org/ironjacamar/common/spi/**')
-}
-
 jar {
   manifest {
-    attributes("Implementation-Title" : "IronJacamar Common Implementation")
+    attributes("Implementation-Title" : "IronJacamar Common")
   }
-  baseName = "ironjacamar-common-impl"
-  dependsOn classes, apiJar, spiJar
+  baseName = "ironjacamar-common"
+  dependsOn classes
   from sourceSets.main.output
-  include('org/ironjacamar/common/**')
-  exclude('org/ironjacamar/common/*.class', 'org/ironjacamar/common/api/**', 'org/ironjacamar/common/spi/**')
-}
-
-artifacts {
-  api apiJar
-  spi spiJar
+  include('dtd/*', 'schema/*', 'org/ironjacamar/common/**')
 }
 
 javadoc {
@@ -71,8 +40,8 @@ javadoc {
   title = "IronJacamar / Common"
   options.doclet = "org.jboss.apiviz.APIviz"
   options.docletpath file(configurations.apiVizTool.asPath)
-  options.bottom = "Copyright 2014 IronJacamar (<a href=\"http://www.ironjacamar.org\">http://www.ironjacamar.org</a>)"
-  options.linksOffline 'http://docs.oracle.com/javase/7/docs/api/', 'http://docs.oracle.com/javase/7/docs/api/'
+  options.bottom = "Copyright 2015 IronJacamar (<a href=\"http://www.ironjacamar.org\">http://www.ironjacamar.org</a>)"
+  options.linksOffline 'http://docs.oracle.com/javase/8/docs/api/', 'http://docs.oracle.com/javase/8/docs/api/'
   doLast{
      copy {
        from rootProject.file('tools/api')

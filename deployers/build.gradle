@@ -23,13 +23,7 @@ dependencies {
   compile project(':api')
   compile project(':common')
   compile project(':core')
-
-  compile project(path: ':common', configuration: 'api')
-  compile project(path: ':common', configuration: 'spi')
-
-  compile project(path: ':core', configuration: 'api')
 }
-
 
 jar {
   manifest {
@@ -41,10 +35,6 @@ jar {
   include('org/ironjacamar/deployers/**')
 }
 
-artifacts {
-  archives jar
-}
-
 javadoc {
   source sourceSets.main.allJava
   exclude '**/*_$bundle*'
@@ -53,7 +43,7 @@ javadoc {
   options.doclet = "org.jboss.apiviz.APIviz"
   options.docletpath file(configurations.apiVizTool.asPath)
   options.bottom = "Copyright 2015 IronJacamar (<a href=\"http://www.ironjacamar.org\">http://www.ironjacamar.org</a>)"
-  options.linksOffline 'http://docs.oracle.com/javase/7/docs/api/', 'http://docs.oracle.com/javase/7/docs/api/'
+  options.linksOffline 'http://docs.oracle.com/javase/8/docs/api/', 'http://docs.oracle.com/javase/8/docs/api/'
   doLast{
      copy {
        from rootProject.file('tools/api')

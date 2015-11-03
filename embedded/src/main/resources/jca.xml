@@ -152,29 +152,29 @@
 
   <!-- Deployment chain -->
   <bean name="RarFileExtractorDeployer"
-        class="org.ironjacamar.deployers.fungal.RarFileExtractorDeployer"/>
+        class="org.ironjacamar.embedded.deployers.RarFileExtractorDeployer"/>
 
   <bean name="ClassLoaderDeployer"
-        class="org.ironjacamar.deployers.fungal.ClassLoaderDeployer">
+        class="org.ironjacamar.embedded.deployers.ClassLoaderDeployer">
     <property name="ParentFirst">false</property>
   </bean>
 
   <bean name="RaXmlMetadataDeployer"
-        class="org.ironjacamar.deployers.fungal.RaXmlMetadataDeployer"/>
+        class="org.ironjacamar.embedded.deployers.RaXmlMetadataDeployer"/>
 
   <bean name="AnnotationsDeployer"
-        class="org.ironjacamar.deployers.fungal.AnnotationsDeployer"/>
+        class="org.ironjacamar.embedded.deployers.AnnotationsDeployer"/>
 
   <bean name="ValidateMetadataDeployer"
-        class="org.ironjacamar.deployers.fungal.ValidateMetadataDeployer"/>
+        class="org.ironjacamar.embedded.deployers.ValidateMetadataDeployer"/>
 
   <bean name="MetadataDeployer"
-        class="org.ironjacamar.deployers.fungal.MetadataDeployer">
+        class="org.ironjacamar.embedded.deployers.MetadataDeployer">
     <property name="MetadataRepository"><inject bean="MetadataRepository"/></property>
   </bean>
 
   <bean name="IronJacamarXmlDeployer"
-        class="org.ironjacamar.deployers.fungal.IronJacamarXmlDeployer">
+        class="org.ironjacamar.embedded.deployers.IronJacamarXmlDeployer">
     <property name="MetadataRepository"><inject bean="MetadataRepository"/></property>
     <property name="DeploymentRepository"><inject bean="DeploymentRepository"/></property>
     <property name="BootstrapContext"><inject bean="BootstrapContext"/></property>
@@ -183,7 +183,7 @@
   </bean>
 
   <bean name="DashRaXmlDeployer"
-        class="org.ironjacamar.deployers.fungal.DashRaXmlDeployer">
+        class="org.ironjacamar.embedded.deployers.DashRaXmlDeployer">
     <property name="MetadataRepository"><inject bean="MetadataRepository"/></property>
     <property name="DeploymentRepository"><inject bean="DeploymentRepository"/></property>
     <property name="BootstrapContext"><inject bean="BootstrapContext"/></property>

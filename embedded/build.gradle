@@ -19,16 +19,14 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 configurations {
-	metadata
+  metadata
 }
 
 dependencies {
   compile project(':api')
   compile project(':common')
   compile project(':core')
-
-  compile project(path: ':common', configuration: 'api')
-  compile project(path: ':common', configuration: 'spi')
+  compile project(':deployers')
 
   metadata rootProject.libraries.saxon
   metadata rootProject.libraries.saxon_dom
@@ -224,20 +222,17 @@ checkstyleMain.exclude '**/org/jboss/*'
 checkstyleMain.exclude '**/org/ironjacamar/embedded/dsl/*'
 checkstyleMain.include '**/org/ironjacamar/embedded/dsl/InputStream*'
 
-artifacts {
-  archives jar
-}
-
 javadoc {
   source sourceSets.main.allJava
   exclude '**/*_$bundle*'
   exclude '**/*_$logger*'
+  exclude '**/deployers/*'
   exclude '**/impl/*'
   title = "IronJacamar / Embedded"
   options.doclet = "org.jboss.apiviz.APIviz"
   options.docletpath file(configurations.apiVizTool.asPath)
   options.bottom = "Copyright 2015 IronJacamar (<a href=\"http://www.ironjacamar.org\">http://www.ironjacamar.org</a>)"
-  options.linksOffline 'http://docs.oracle.com/javase/7/docs/api/', 'http://docs.oracle.com/javase/7/docs/api/'
+  options.linksOffline 'http://docs.oracle.com/javase/8/docs/api/', 'http://docs.oracle.com/javase/8/docs/api/'
   doLast{
      copy {
        from rootProject.file('tools/api')
