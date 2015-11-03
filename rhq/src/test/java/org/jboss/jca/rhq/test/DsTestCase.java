@@ -273,7 +273,7 @@ public class DsTestCase
       pool.flush(true);  // it flushes all connections from the pool.
       
       assertEquals(0, poolStatistics.getActiveCount());
-      assertEquals(0, poolStatistics.getCreatedCount());
+      assertEquals(1, poolStatistics.getCreatedCount());
       assertEquals(ds.getPoolConfiguration().getMaxSize(), poolStatistics.getAvailableCount());
       
       conn.close();
