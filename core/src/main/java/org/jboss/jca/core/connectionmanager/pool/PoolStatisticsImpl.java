@@ -679,6 +679,9 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
       if (!enabled.get())
          return 0;
 
+      if (createdCount.get() < destroyedCount.get())
+         clear();
+
       return createdCount.get() - destroyedCount.get();
    }
 
