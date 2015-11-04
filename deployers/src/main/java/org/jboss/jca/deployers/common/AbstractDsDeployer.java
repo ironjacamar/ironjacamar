@@ -294,15 +294,17 @@ public abstract class AbstractDsDeployer
                               ((DataSourceImpl) dataSource).forceDriverClass(driverClass);
                         }
 
-                        if (dataSource.getDriverClass() == null && dataSource.getDataSourceClass() == null &&
-                            dataSource.getDriver() != null && dataSource instanceof DataSourceImpl)
+                        if (dataSource.getDataSourceClass() == null && dataSource.getDriver() != null &&
+                            dataSource instanceof DataSourceImpl)
                         {
                            String driverName = dataSource.getDriver();
 
                            if (dataSources.getDriver(driverName) != null)
                            {
                               String dataSourceClass = dataSources.getDriver(driverName).getDataSourceClass();
-                              ((DataSourceImpl) dataSource).forceDataSourceClass(dataSourceClass);
+
+                              if (dataSourceClass != null)
+                                ((DataSourceImpl) dataSource).forceDataSourceClass(dataSourceClass);
                            }
                         }
 
