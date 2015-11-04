@@ -31,6 +31,7 @@ import java.io.ObjectOutputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -298,13 +299,32 @@ public class PoolStatisticsImpl implements PoolStatistics
       if (isEnabled())
       {
          int result = 0;
+         boolean reset = false;
+         Iterator<ManagedConnectionPool> it = mcpPools.values().iterator();
 
-         for (ManagedConnectionPool mcp : mcpPools.values())
+         while (!reset && it.hasNext())
          {
-            result += mcp.getStatistics().getActiveCount();
+            ManagedConnectionPool mcp = it.next();
+            int c = mcp.getStatistics().getActiveCount();
+
+            if (c >= 0)
+            {
+               result += c;
+            }
+            else
+            {
+               reset = true;
+            }
          }
          
-         return result;
+         if (reset)
+         {
+            clear();
+         }
+         else
+         {
+            return result;
+         }
       }
 
       return 0;
