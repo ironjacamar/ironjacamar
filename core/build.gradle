@@ -20,11 +20,21 @@
  */
 
 dependencies {
-  compile(libraries.jboss_jaspi)
-  compile(libraries.jboss_threads)
-  compile(libraries.jgroups)
-  compile(libraries.narayana_spi)
-  compile(libraries.picketbox)
+  compile(libraries.jboss_jaspi) {
+    transitive = false
+  }
+  compile(libraries.jboss_threads) {
+    transitive = false
+  }
+  compile(libraries.jgroups) {
+    transitive = false
+  }
+  compile(libraries.narayana_spi) {
+    transitive = false
+  }
+  compile(libraries.picketbox) {
+    transitive = false
+  }
 
   compile project(':api')
   compile project(':common')

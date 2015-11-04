@@ -20,36 +20,94 @@
  */
 
 dependencies {
-  testCompile(libraries.byteman)
-  testCompile(libraries.byteman_submit)
-  testCompile(libraries.fungal)
-  testCompile(libraries.fungal_cli)
-  testCompile(libraries.hibernate_validator)
-  testCompile(libraries.jandex)
-  testCompile(libraries.javax_inject)
-  testCompile(libraries.jboss_common)
-  testCompile(libraries.jboss_jaspi)
-  testCompile(libraries.jboss_logging)
-  testCompile(libraries.jboss_logging_manager)
-  testCompile(libraries.jboss_logging_manager_log4j)
-  testCompile(libraries.jboss_naming)
-  testCompile(libraries.jboss_stdio)
-  testCompile(libraries.jboss_threads)
-  testCompile(libraries.jgroups)
+  testCompile(libraries.byteman) {
+    transitive = false
+  }
+  testCompile(libraries.byteman_submit) {
+    transitive = false
+  }
+  testCompile(libraries.fungal) {
+    transitive = false
+  }
+  testCompile(libraries.fungal_cli) {
+    transitive = false
+  }
+  testCompile(libraries.hibernate_validator) {
+    transitive = false
+  }
+  testCompile(libraries.jandex) {
+    transitive = false
+  }
+  testCompile(libraries.javax_inject) {
+    transitive = false
+  }
+  testCompile(libraries.jboss_common) {
+    transitive = false
+  }
+  testCompile(libraries.jboss_jaspi) {
+    transitive = false
+  }
+  testCompile(libraries.jboss_logging) {
+    transitive = false
+  }
+  testCompile(libraries.jboss_logging_manager) {
+    transitive = false
+  }
+  testCompile(libraries.jboss_logging_manager_log4j) {
+    transitive = false
+  }
+  testCompile(libraries.jboss_naming) {
+    transitive = false
+  }
+  testCompile(libraries.jboss_stdio) {
+    transitive = false
+  }
+  testCompile(libraries.jboss_threads) {
+    transitive = false
+  }
+  testCompile(libraries.jgroups) {
+    transitive = false
+  }
   testCompile(libraries.junit)
-  testCompile(libraries.log4j)
-  testCompile(libraries.narayana_jta)
-  testCompile(libraries.narayana_integration)
-  testCompile(libraries.narayana_spi)
-  testCompile(libraries.picketbox)
-  testCompile(libraries.shrinkwrap_api)
-  testCompile(libraries.shrinkwrap_impl)
-  testCompile(libraries.shrinkwrap_spi)
-  testCompile(libraries.shrinkwrap_descriptors_api)
-  testCompile(libraries.shrinkwrap_descriptors_impl)
-  testCompile(libraries.shrinkwrap_descriptors_spi)
-  testCompile(libraries.transaction_spec)
-  testCompile(libraries.validation_spec)
+  testCompile(libraries.log4j) {
+    transitive = false
+  }
+  testCompile(libraries.narayana_jta) {
+    transitive = false
+  }
+  testCompile(libraries.narayana_integration) {
+    transitive = false
+  }
+  testCompile(libraries.narayana_spi) {
+    transitive = false
+  }
+  testCompile(libraries.picketbox) {
+    transitive = false
+  }
+  testCompile(libraries.shrinkwrap_api) {
+    transitive = false
+  }
+  testCompile(libraries.shrinkwrap_impl) {
+    transitive = false
+  }
+  testCompile(libraries.shrinkwrap_spi) {
+    transitive = false
+  }
+  testCompile(libraries.shrinkwrap_descriptors_api) {
+    transitive = false
+  }
+  testCompile(libraries.shrinkwrap_descriptors_impl) {
+    transitive = false
+  }
+  testCompile(libraries.shrinkwrap_descriptors_spi) {
+    transitive = false
+  }
+  testCompile(libraries.transaction_spec) {
+    transitive = false
+  }
+  testCompile(libraries.validation_spec) {
+    transitive = false
+  }
 
   testCompile parent.subprojects.sourceSets.main.output
 }

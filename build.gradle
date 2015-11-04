@@ -238,6 +238,7 @@ task copyDependencies(type: Copy) {
   into rootProject.libsDir
   include '**/*.jar'
   exclude '**/jboss-logging-processor*'
+  exclude '**/tools*'
   rename (/(.+)(-[\d]+.+)\.jar/, '$1.jar')
   rename (/(.+)(-[\d]+).jar/, '$1.jar')
   includeEmptyDirs = false

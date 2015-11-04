@@ -20,9 +20,15 @@
  */
 
 dependencies {
-  compile(libraries.jandex)
-  compile(libraries.jboss_logging)
-  compile(libraries.validation_spec)
+  compile(libraries.jandex) {
+    transitive = false
+  }
+  compile(libraries.jboss_logging) {
+    transitive = false
+  }
+  compile(libraries.validation_spec) {
+    transitive = false
+  }
 
   compile(project(':api'))
 }

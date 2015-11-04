@@ -20,7 +20,9 @@
  */
 
 dependencies {
-  compile(libraries.transaction_spec)
+  compile(libraries.transaction_spec) {
+    transitive = false
+  }
 }
 
 jar {

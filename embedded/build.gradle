@@ -23,17 +23,39 @@ configurations {
 }
 
 dependencies {
-  compile(libraries.byteman)
-  compile(libraries.byteman_submit)
-  compile(libraries.fungal)
-  compile(libraries.javax_inject)
-  compile(libraries.junit)
-  compile(libraries.shrinkwrap_api)
-  compile(libraries.shrinkwrap_impl)
-  compile(libraries.shrinkwrap_spi)
-  compile(libraries.shrinkwrap_descriptors_api)
-  compile(libraries.shrinkwrap_descriptors_impl)
-  compile(libraries.shrinkwrap_descriptors_spi)
+  compile(libraries.byteman) {
+    transitive = false
+  }
+  compile(libraries.byteman_submit) {
+    transitive = false
+  }
+  compile(libraries.fungal) {
+    transitive = false
+  }
+  compile(libraries.javax_inject) {
+    transitive = false
+  }
+  compile(libraries.junit) {
+    transitive = false
+  }
+  compile(libraries.shrinkwrap_api) {
+    transitive = false
+  }
+  compile(libraries.shrinkwrap_impl) {
+    transitive = false
+  }
+  compile(libraries.shrinkwrap_spi) {
+    transitive = false
+  }
+  compile(libraries.shrinkwrap_descriptors_api) {
+    transitive = false
+  }
+  compile(libraries.shrinkwrap_descriptors_impl) {
+    transitive = false
+  }
+  compile(libraries.shrinkwrap_descriptors_spi) {
+    transitive = false
+  }
 
   compile project(':api')
   compile project(':common')
