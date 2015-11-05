@@ -74,6 +74,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.ResourceAdapter;
@@ -254,7 +255,7 @@ public abstract class AbstractDsDeployer
                for (DataSource dataSource : ds)
                {
                   if (log.isTraceEnabled())
-                     log.tracef("DataSource=%s", dataSource);
+                     log.tracef("DataSource=%s", stripPassword(dataSource.toString()));
 
                   if (dataSource.isEnabled())
                   {
@@ -343,7 +344,7 @@ public abstract class AbstractDsDeployer
                for (XaDataSource xaDataSource : xads)
                {
                   if (log.isTraceEnabled())
-                     log.tracef("XaDataSource=%s", xaDataSource);
+                     log.tracef("XaDataSource=%s", stripPassword(xaDataSource.toString()));
 
                   if (xaDataSource.isEnabled())
                   {
@@ -1337,6 +1338,31 @@ public abstract class AbstractDsDeployer
             found = true;
          }
       }
+   }
+
+   /**
+    * Strip password
+    * @param str The string
+    * @return The result
+    */
+   private String stripPassword(String str)
+   {
+      if (str.indexOf("<password>") == -1)
+         return str;
+
+      Pattern pattern = Pattern.compile("<password>[^<]*</password>");
+      String[] strs = pattern.split(str);
+
+      StringBuilder sb = new StringBuilder();
+      for (int i = 0; i < strs.length; i++)
+      {
+         String s = strs[i];
+         sb.append(s);
+         if (i < strs.length - 1)
+            sb.append("<password>****</password>");
+      }
+
+      return sb.toString();
    }
 
    /**
