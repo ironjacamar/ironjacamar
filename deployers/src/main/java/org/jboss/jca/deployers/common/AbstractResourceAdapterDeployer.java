@@ -93,6 +93,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.regex.Pattern;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ActivationSpec;
@@ -1165,7 +1166,7 @@ public abstract class AbstractResourceAdapterDeployer
          if (log.isTraceEnabled())
          {
             log.tracef("Connector=%s", cmd);
-            log.tracef("Activation=%s", activation);
+            log.tracef("Activation=%s", stripPassword(activation.toString()));
             log.tracef("ActivateDeployment=%s", activateDeployment);
          }
 
@@ -2183,6 +2184,31 @@ public abstract class AbstractResourceAdapterDeployer
       }
 
       return null;
+   }
+
+   /**
+    * Strip password
+    * @param str The string
+    * @return The result
+    */
+   private String stripPassword(String str)
+   {
+      if (str.indexOf("<password>") == -1)
+         return str;
+
+      Pattern pattern = Pattern.compile("<password>[^<]*</password>");
+      String[] strs = pattern.split(str);
+
+      StringBuilder sb = new StringBuilder();
+      for (int i = 0; i < strs.length; i++)
+      {
+         String s = strs[i];
+         sb.append(s);
+         if (i < strs.length - 1)
+            sb.append("<password>****</password>");
+      }
+
+      return sb.toString();
    }
 
    /**
