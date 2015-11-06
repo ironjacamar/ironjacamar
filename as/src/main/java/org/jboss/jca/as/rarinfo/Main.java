@@ -466,7 +466,10 @@ public class Main
             }
 
             if (introspected == null)
-               out.println("  Unable to resolve introspected config-property's");
+            {
+               out.println("  ConfigProperty:");
+               out.println("    Unknown");
+            }
             
          }
 
@@ -522,33 +525,7 @@ public class Main
                   hasEnlistableMcInterface(out, error, mcfClassName, cl, mcf.getConfigProperties());
 
                   //CCI
-                  String cfi = getValueString(mcf.getConnectionFactoryInterface());
-                  try
-                  {
-                     out.print("  CCI: ");
-                     Class<?> clazz = Class.forName(cfi, true, cl);
-                     if (isCCI(cfi, clazz, mcfClassName, cl))
-                     {
-                        out.println("Yes");
-                     }
-                     else
-                     {
-                        out.println("No");
-                        
-                        out.println("  ConnectionFactory (" + cfi + "):");
-                        outputMethodInfo(out, clazz, cl);
-                        
-                        Class<?> ci = Class.forName(getValueString(mcf.getConnectionInterface()), true, cl);
-                        out.println("  Connection (" + getValueString(mcf.getConnectionInterface()) + "):");
-                        outputMethodInfo(out, ci, cl);
-                     }
-                  }
-                  catch (Throwable t)
-                  {
-                     // Nothing we can do
-                     t.printStackTrace(error);
-                     out.println("Unknown");
-                  }
+                  printCCIInfo(mcf, mcfClassName, cl, out, error);
                }
                   
                Map<String, String> configProperty = null;
@@ -580,7 +557,10 @@ public class Main
                }
 
                if (introspected == null)
-                  out.println("  Unable to resolve introspected config-property's");
+               {
+                  out.println("  ConfigProperty:");
+                  out.println("    Unknown");
+               }
 
                String poolName = getValueString(mcf.getConnectionInterface()).substring(
                   getValueString(mcf.getConnectionInterface()).lastIndexOf('.') + 1);
@@ -675,7 +655,10 @@ public class Main
                }
                   
                if (introspected == null)
-                  out.println("  Unable to resolve introspected config-property's");
+               {
+                  out.println("  ConfigProperty:");
+                  out.println("    Unknown");
+               }
 
                AdminObjectImpl aoImpl = new AdminObjectImpl(configProperty, aoClassname,
                   "java:jboss/eis/ao/" + poolName, poolName, Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT);
@@ -732,7 +715,10 @@ public class Main
                   }
 
                   if (introspected == null)
-                     out.println("  Unable to resolve introspected config-property's");
+                  {
+                     out.println("  ConfigProperty:");
+                     out.println("    Unknown");
+                  }
                }
             }
          }
@@ -798,6 +784,7 @@ public class Main
       throws ClassNotFoundException
    {
       Method[] methods = clazz.getMethods();
+      
       for (Method method : methods)
       {
          // Output return type, method name, parameters, exceptions
@@ -1063,29 +1050,45 @@ public class Main
       }
    }
    
-   private static boolean isCCI(String cfi, Class<?> clazz, String mcfClassName, URLClassLoader cl) throws Exception
+   private static void printCCIInfo(org.jboss.jca.common.api.metadata.spec.ConnectionDefinition connectionDefinition, String mcfClassName, URLClassLoader cl, PrintStream out, PrintStream error)
    { 
-      if (cfi.equals("javax.resource.cci.ConnectionFactory"))
-         return true;
+      Class<?> cfiClazz = null;
+      Class<?> ciClazz = null;
       
-      if (hasInterface(clazz, "javax.resource.cci.ConnectionFactory"))
-         return true;
+      String cci = "No";
+      String cfi = getValueString(connectionDefinition.getConnectionFactoryInterface());
+      String ci = getValueString(connectionDefinition.getConnectionInterface());
+       
+      if ("javax.resource.cci.ConnectionFactory".equals(cfi))
+         cci = "Yes";
+
+      out.print("  CCI: ");
+      out.println(cci);
+
+      out.println("  ConnectionFactory (" + cfi + ")");
+
+      try 
+      {
+         cfiClazz = Class.forName(cfi, true, cl); 
+         outputMethodInfo(out, cfiClazz, cl);
+      } 
+      catch (Throwable t) 
+      {
+         out.println("    Unknown");
+         t.printStackTrace(error);
+      }
       
-      Class mcfClazz = Class.forName(mcfClassName, true, cl);
-                     
-      Method m = mcfClazz.getMethod("createConnectionFactory", (Class[]) null);
-                     
-      Class rt = m.getReturnType();
-         
-      if (rt.isAssignableFrom(javax.resource.cci.ConnectionFactory.class))
-         return true;
- 
-      Object mcfInstance = mcfClazz.newInstance();
-      Object result = m.invoke(mcfInstance, (Object[])null);
-      if (result instanceof javax.resource.cci.ConnectionFactory)
-         return true;
-      
-      return false;
+      try 
+      {
+         out.println("  Connection (" + ci + ")");
+         ciClazz = Class.forName(ci, true, cl);
+         outputMethodInfo(out, ciClazz, cl);
+      }
+      catch (Throwable t)
+      {
+         out.println("    Unknown");
+         t.printStackTrace(error);
+      }
    }
 
    /**
