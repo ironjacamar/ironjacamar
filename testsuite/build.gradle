@@ -108,7 +108,6 @@ dependencies {
   testCompile(libraries.validation_spec) {
     transitive = false
   }
-
   testCompile parent.subprojects.sourceSets.main.output
 }
 
