@@ -43,6 +43,7 @@ import org.ironjacamar.core.deploymentrepository.PoolImpl;
 import org.ironjacamar.core.deploymentrepository.ResourceAdapterImpl;
 import org.ironjacamar.core.metadatarepository.MetadataImpl;
 import org.ironjacamar.core.spi.naming.JndiStrategy;
+import org.ironjacamar.core.spi.security.SubjectFactory;
 import org.ironjacamar.core.spi.transaction.TransactionIntegration;
 import org.ironjacamar.core.util.Injection;
 
@@ -76,6 +77,8 @@ public abstract class AbstractResourceAdapterDeployer
 
    /** The CachedConnectionManager */
    protected CachedConnectionManager cachedConnectionManager;
+   /** The Subject Factory */
+   protected SubjectFactory subjectFactory;
 
    /**
     * Constructor
@@ -88,6 +91,7 @@ public abstract class AbstractResourceAdapterDeployer
       this.jndiStrategy = null;
       this.transactionIntegration = null;
       this.cachedConnectionManager = null;
+      this.subjectFactory = null;
    }
 
    /**
@@ -134,7 +138,16 @@ public abstract class AbstractResourceAdapterDeployer
    {
       this.transactionIntegration = v;
    }
-   
+
+   /**
+    * Set the subject factory
+    * @param subjectFactory The value
+    */
+   public void setSubjectFactory(SubjectFactory subjectFactory)
+   {
+      this.subjectFactory = subjectFactory;
+   }
+
    /**
     * Set the cached connection manager
     * @param v The value
@@ -307,7 +320,12 @@ public abstract class AbstractResourceAdapterDeployer
 
          org.ironjacamar.core.connectionmanager.pool.Pool pool = PoolFactory.createPool(poolType, cm, pc);
          cm.setPool(pool);
-         
+
+         if (subjectFactory != null)
+            cm.setSubjectFactory(subjectFactory);
+         if (cd.getSecurity() != null && cd.getSecurity().getSecurityDomain() != null)
+            cm.setSecurityDomain(cd.getSecurity().getSecurityDomain());
+
          org.ironjacamar.core.api.deploymentrepository.Pool dpool = new PoolImpl(pool, null);
 
          org.ironjacamar.core.spi.statistics.StatisticsPlugin statisticsPlugin = null;

@@ -24,6 +24,7 @@ package org.ironjacamar.core.connectionmanager;
 import org.ironjacamar.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
 import org.ironjacamar.core.connectionmanager.pool.Pool;
+import org.ironjacamar.core.spi.security.SubjectFactory;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnectionFactory;
@@ -76,4 +77,16 @@ public interface ConnectionManager extends org.ironjacamar.core.api.connectionma
     * Shutdown the connection manager
     */
    public void shutdown();
+
+   /**
+    * set SubjectFactory
+    * @param subjectFactory the subjectFactory
+    */
+   public void setSubjectFactory(SubjectFactory subjectFactory);
+
+   /**
+    * set securityDomain
+    * @param securityDomain the securityDomain
+    */
+   public void setSecurityDomain(String securityDomain);
 }

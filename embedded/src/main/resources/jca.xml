@@ -91,7 +91,15 @@
   <!-- PicketBox -->
   <bean name="PicketBox"
         class="org.ironjacamar.core.security.picketbox.PicketBoxSecurityIntegration">
-  </bean> 
+  </bean>
+  <!-- Default security factory -->
+  <bean name="DefaultSubjectFactory"
+        interface="org.ironjacamar.core.spi.security.SubjectFactory"
+        class="org.ironjacamar.core.security.DefaultSubjectFactory">
+    <property name="SecurityDomain">DefaultSecurityDomain</property>
+    <property name="UserName">user</property>
+    <property name="Password">password</property>
+  </bean>
 
   <!-- Work Manager -->
   <bean name="WorkManager" 
@@ -189,6 +197,7 @@
     <property name="JndiStrategy"><inject bean="JndiStrategy"/></property>
     <property name="TransactionIntegration"><inject bean="TransactionIntegration"/></property>
     <property name="CachedConnectionManager"><inject bean="CachedConnectionManager"/></property>
+    <property name="SubjectFactory"><inject bean="DefaultSubjectFactory"/></property>
     <depends>ClassLoaderDeployer</depends>
   </bean>
 
@@ -200,6 +209,7 @@
     <property name="JndiStrategy"><inject bean="JndiStrategy"/></property>
     <property name="TransactionIntegration"><inject bean="TransactionIntegration"/></property>
     <property name="CachedConnectionManager"><inject bean="CachedConnectionManager"/></property>
+    <property name="SubjectFactory"><inject bean="DefaultSubjectFactory"/></property>
     <depends>ClassLoaderDeployer</depends>
   </bean>
 

@@ -140,6 +140,7 @@ public class IronJacamarXmlDeployer extends AbstractFungalRADeployer implements 
       i.setJndiStrategy(jndiStrategy);
       i.setTransactionIntegration(transactionIntegration);
       i.setCachedConnectionManager(cachedConnectionManager);
+      i.setSubjectFactory(subjectFactory);
       return i;
    }
 }

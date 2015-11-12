@@ -23,6 +23,7 @@ package org.ironjacamar.core.connectionmanager;
 
 import org.ironjacamar.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.ironjacamar.core.connectionmanager.pool.Pool;
+import org.ironjacamar.core.spi.security.SubjectFactory;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -32,24 +33,42 @@ import javax.resource.spi.ManagedConnectionFactory;
 
 /**
  * The base class for all connection manager implementations
+ *
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public abstract class AbstractConnectionManager implements ConnectionManager
 {
-   /** Startup/ShutDown flag */
+   /**
+    * Startup/ShutDown flag
+    */
    protected final AtomicBoolean shutdown = new AtomicBoolean(false);
 
-   /** The managed connection factory */
+   /**
+    * The managed connection factory
+    */
    protected final ManagedConnectionFactory mcf;
 
-   /** The pool */
+   /**
+    * The pool
+    */
    protected Pool pool;
 
    /** The cached connection manager */
    protected CachedConnectionManager ccm;
    
    /**
+    * the subject factory
+    */
+   protected SubjectFactory subjectFactory;
+
+   /**
+    * the security domain
+    */
+   protected String securityDomain;
+
+   /**
     * Constructor
+    *
     * @param mcf The managed connection factory
     * @param ccm The cached connection manager
     */
@@ -60,7 +79,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       this.ccm = ccm;
       this.pool = null;
    }
-   
+
    /**
     * {@inheritDoc}
     */
@@ -103,7 +122,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    {
       return shutdown.get();
    }
-   
+
    /**
     * {@inheritDoc}
     */
@@ -111,14 +130,21 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    {
       if (shutdown.get())
          throw new ResourceException();
-      
-      Credential credential = new Credential(null, cri);
+      Credential credential;
+      if (subjectFactory == null || securityDomain == null)
+      {
+         credential = new Credential(null, cri);
+      }
+      else
+      {
+         credential = new Credential(subjectFactory.createSubject(securityDomain), cri);
+      }
       org.ironjacamar.core.connectionmanager.listener.ConnectionListener cl = getConnectionListener(credential);
       Object connection = cl.getConnection();
 
       if (ccm != null)
          ccm.registerConnection(this, cl, connection);
-      
+
       return connection;
    }
 
@@ -126,11 +152,11 @@ public abstract class AbstractConnectionManager implements ConnectionManager
     * {@inheritDoc}
     */
    public void returnConnectionListener(org.ironjacamar.core.api.connectionmanager.listener.ConnectionListener cl,
-                                        boolean kill)
+         boolean kill)
    {
       try
       {
-         pool.returnConnectionListener((org.ironjacamar.core.connectionmanager.listener.ConnectionListener)cl, kill);
+         pool.returnConnectionListener((org.ironjacamar.core.connectionmanager.listener.ConnectionListener) cl, kill);
       }
       catch (Exception e)
       {
@@ -140,13 +166,32 @@ public abstract class AbstractConnectionManager implements ConnectionManager
 
    /**
     * Get a connection listener
+    *
     * @param credential The credential
     * @return The listener
-    * @exception ResourceException Thrown in case of an error
+    * @throws ResourceException Thrown in case of an error
     */
-   protected org.ironjacamar.core.connectionmanager.listener.ConnectionListener
-      getConnectionListener(Credential credential) throws ResourceException
+   protected org.ironjacamar.core.connectionmanager.listener.ConnectionListener getConnectionListener(
+         Credential credential) throws ResourceException
    {
       return pool.getConnectionListener(credential);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void setSubjectFactory(SubjectFactory subjectFactory)
+   {
+      this.subjectFactory = subjectFactory;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void setSecurityDomain(String securityDomain)
+   {
+      this.securityDomain = securityDomain;
    }
 }
