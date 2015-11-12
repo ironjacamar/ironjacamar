@@ -31,6 +31,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.sql.Connection;
@@ -49,6 +50,8 @@ import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnection;
 import javax.security.auth.Subject;
 import javax.sql.DataSource;
+
+import static java.security.AccessController.doPrivileged;
 
 /**
  * LocalManagedConnectionFactory
@@ -216,10 +219,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       // Since we use our copy to identify compatibility in matchManagedConnection, we need
       // a pristine copy for our own use.  So give the friendly driver a copy.
       final Properties copy = (Properties) props.clone();
-      Subject copySubject = null;
-
-      if (subject != null)
-         copySubject = SecurityActions.createSubject(false, subject);
+      final Subject copySubject = subject != null ? SecurityActions.createSubject(false, subject) : null;
 
       if (log.isTraceEnabled())
       {
@@ -240,26 +240,33 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       {
          try
          {
-            return Subject.doAs(copySubject, new PrivilegedExceptionAction<ManagedConnection>()
+            return doPrivileged(new PrivilegedExceptionAction<ManagedConnection>()
             {
-               public ManagedConnection run() throws ResourceException
+               public ManagedConnection run() throws PrivilegedActionException
                {
-                  if (urlSelector != null)
+                  return Subject.doAs(copySubject, new PrivilegedExceptionAction<ManagedConnection>()
                   {
-                     return getHALocalManagedConnection(props, copy);
-                  }
-                  else
-                  {
-                     return getLocalManagedConnection(props, copy);
-                  }
+                     public ManagedConnection run() throws ResourceException
+                     {
+                        if (urlSelector != null)
+                        {
+                           return getHALocalManagedConnection(props, copy);
+                        }
+                        else
+                        {
+                           return getLocalManagedConnection(props, copy);
+                        }
+                     }
+                  });
                }
             });
          }
          catch (PrivilegedActionException pe)
          {
-            if (pe.getException() instanceof ResourceException)
+            if (pe.getException() instanceof PrivilegedActionException
+                    && ((PrivilegedActionException) pe.getException()).getException() instanceof ResourceException)
             {
-               throw (ResourceException)pe.getException();
+               throw (ResourceException)((PrivilegedActionException) pe.getException()).getException();
             }
             else
             {

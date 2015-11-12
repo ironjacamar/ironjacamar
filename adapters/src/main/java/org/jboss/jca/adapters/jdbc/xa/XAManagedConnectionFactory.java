@@ -52,6 +52,8 @@ import javax.security.auth.Subject;
 import javax.sql.XAConnection;
 import javax.sql.XADataSource;
 
+import static java.security.AccessController.doPrivileged;
+
 /**
  * XAManagedConnectionFactory
  *
@@ -385,19 +387,26 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
          {
             try
             {
-               return Subject.doAs(copySubject, new PrivilegedExceptionAction<ManagedConnection>()
+               return doPrivileged(new PrivilegedExceptionAction<ManagedConnection>()
                {
-                  public ManagedConnection run() throws ResourceException
+                  public ManagedConnection run() throws PrivilegedActionException
                   {
-                     return getXAManagedConnection(copySubject, cri);
+                     return Subject.doAs(copySubject, new PrivilegedExceptionAction<ManagedConnection>()
+                     {
+                        public ManagedConnection run() throws ResourceException
+                        {
+                           return getXAManagedConnection(copySubject, cri);
+                        }
+                     });
                   }
                });
             }
             catch (PrivilegedActionException pe)
             {
-               if (pe.getException() instanceof ResourceException)
+               if (pe.getException() instanceof PrivilegedActionException
+                       && ((PrivilegedActionException) pe.getException()).getException() instanceof ResourceException)
                {
-                  throw (ResourceException)pe.getException();
+                  throw (ResourceException)((PrivilegedActionException) pe.getException()).getException();
                }
                else
                {
@@ -424,17 +433,25 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
          {
             try
             {
-               return Subject.doAs(copySubject, new PrivilegedExceptionAction<ManagedConnection>()
+               return doPrivileged(new PrivilegedExceptionAction<ManagedConnection>()
                {
-                  public ManagedConnection run() throws ResourceException
+                  public ManagedConnection run() throws PrivilegedActionException
                   {
-                     return getXAManagedConnection(copySubject, cri);
+                     return Subject.doAs(copySubject, new PrivilegedExceptionAction<ManagedConnection>()
+                     {
+                        public ManagedConnection run() throws ResourceException
+                        {
+                           return getXAManagedConnection(copySubject, cri);
+                        }
+                     });
                   }
                });
             }
             catch (PrivilegedActionException pe)
             {
-               log.errorCreatingXAConnection(xaData.getUrl(), pe.getException());
+               log.errorCreatingXAConnection(xaData.getUrl(), (pe.getException() instanceof PrivilegedActionException)
+                       ? ((PrivilegedActionException) pe.getException()).getException()
+                       : pe.getException());
                xadsSelector.fail(xaData);
             }
          }
