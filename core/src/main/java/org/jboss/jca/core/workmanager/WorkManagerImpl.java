@@ -319,20 +319,11 @@ public class WorkManagerImpl implements WorkManager
       if (trace)
          log.tracef("doWork(%s, %s, %s, %s)", work, startTimeout, execContext, workListener);
 
-      if (shutdown.get())
-         throw new WorkRejectedException(bundle.workmanagerShutdown());
-
       WorkException exception = null;
       WorkWrapper wrapper = null;
       try
       {
-         if (work == null)
-            throw new WorkRejectedException(bundle.workIsNull());
-
-         if (startTimeout < 0)
-            throw new WorkRejectedException(bundle.startTimeoutIsNegative(startTimeout));
-
-         checkAndVerifyWork(work, execContext);
+         doFirstChecks(work, startTimeout, execContext);
       
          if (workListener != null)
          {
@@ -430,22 +421,13 @@ public class WorkManagerImpl implements WorkManager
    {
       log.tracef("startWork(%s, %s, %s, %s)", work, startTimeout, execContext, workListener);
 
-      if (shutdown.get())
-         throw new WorkRejectedException(bundle.workmanagerShutdown());
-
       WorkException exception = null;
       WorkWrapper wrapper = null;
       try
       {
-         if (work == null)
-            throw new WorkRejectedException(bundle.workIsNull());
-
-         if (startTimeout < 0)
-            throw new WorkRejectedException(bundle.startTimeoutIsNegative(startTimeout));
-
          long started = System.currentTimeMillis();
 
-         checkAndVerifyWork(work, execContext);
+         doFirstChecks(work, startTimeout, execContext);
       
          if (workListener != null)
          {
@@ -545,20 +527,11 @@ public class WorkManagerImpl implements WorkManager
    {
       log.tracef("scheduleWork(%s, %s, %s, %s)", work, startTimeout, execContext, workListener);
 
-      if (shutdown.get())
-         throw new WorkRejectedException(bundle.workmanagerShutdown());
-
       WorkException exception = null;
       WorkWrapper wrapper = null;
       try
       {
-         if (work == null)
-            throw new WorkRejectedException(bundle.workIsNull());
-
-         if (startTimeout < 0)
-            throw new WorkRejectedException(bundle.startTimeoutIsNegative(startTimeout));
-
-         checkAndVerifyWork(work, execContext);
+         doFirstChecks(work, startTimeout, execContext);
       
          if (workListener != null)
          {
@@ -629,6 +602,27 @@ public class WorkManagerImpl implements WorkManager
          if (wrapper != null)
             checkWorkCompletionException(wrapper);
       }
+   }
+
+   /**
+    * Do first checks for work starting methods
+    * @param work to check
+    * @param startTimeout to check
+    * @param execContext to check
+    * @throws WorkException in case of check don't pass
+    */
+   public void doFirstChecks(Work work, long startTimeout, ExecutionContext execContext) throws WorkException
+   {
+      if (isShutdown())
+         throw new WorkRejectedException(bundle.workmanagerShutdown());
+
+      if (work == null)
+         throw new WorkRejectedException(bundle.workIsNull());
+
+      if (startTimeout < 0)
+         throw new WorkRejectedException(bundle.startTimeoutIsNegative(startTimeout));
+
+      checkAndVerifyWork(work, execContext);
    }
 
    /**

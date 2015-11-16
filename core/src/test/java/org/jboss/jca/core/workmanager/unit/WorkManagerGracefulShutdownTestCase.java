@@ -27,6 +27,8 @@ import org.jboss.jca.embedded.Embedded;
 import org.jboss.jca.embedded.EmbeddedFactory;
 
 import javax.resource.spi.work.Work;
+import javax.resource.spi.work.WorkEvent;
+import javax.resource.spi.work.WorkListener;
 import javax.resource.spi.work.WorkRejectedException;
 
 import org.jboss.logging.Logger;
@@ -159,6 +161,93 @@ public class WorkManagerGracefulShutdownTestCase
          });
    }
 
+   /**
+    * Test doWorkRejected
+    */
+   @Test
+   public void testDoWorkRejected() throws Throwable
+   {
+      workManager.prepareShutdown();
+      TestWorkListener listener = new TestWorkListener();
+      try {
+         workManager.doWork(new Work()
+            {
+               /**
+                * Run
+                */
+               public void run()
+               {
+               }
+
+               /**
+                * Release
+                */
+               public void release()
+               {
+               }
+            }, WorkManager.INDEFINITE, null, listener);
+      } catch (WorkRejectedException e) {}
+      assertTrue(listener.wasRejected);
+   }
+
+   /**
+    * Test startWorkRejected
+    */
+   @Test
+   public void testStartWorkRejected() throws Throwable
+   {
+      workManager.prepareShutdown();
+      TestWorkListener listener = new TestWorkListener();
+      try {
+         workManager.startWork(new Work()
+            {
+               /**
+                * Run
+                */
+               public void run()
+               {
+               }
+
+               /**
+                * Release
+                */
+               public void release()
+               {
+               }
+            }, WorkManager.INDEFINITE, null, listener);
+      } catch (WorkRejectedException e) {}
+      assertTrue(listener.wasRejected);
+   }
+
+   /**
+    * Test scheduleWorkRejected
+    */
+   @Test
+   public void testScheduleWorkRejected() throws Throwable
+   {
+      workManager.prepareShutdown();
+      TestWorkListener listener = new TestWorkListener();
+      try {
+         workManager.scheduleWork(new Work()
+            {
+               /**
+                * Run
+                */
+               public void run()
+               {
+               }
+
+               /**
+                * Release
+                */
+               public void release()
+               {
+               }
+            }, WorkManager.INDEFINITE, null, listener);
+      } catch (WorkRejectedException e) {}
+      assertTrue(listener.wasRejected);
+   }
+
    // --------------------------------------------------------------------------------||
    // Lifecycle Methods --------------------------------------------------------------||
    // --------------------------------------------------------------------------------||
@@ -192,5 +281,38 @@ public class WorkManagerGracefulShutdownTestCase
 
       // Set embedded to null
       embedded = null;
+   }
+
+   private class TestWorkListener implements WorkListener {
+      boolean wasRejected = false;
+
+      /**
+      * workAccepted
+      */
+      public void workAccepted(WorkEvent e)
+      {
+      }
+
+      /**
+      * workCompleted
+      */
+      public void workCompleted(WorkEvent e)
+      {
+      }
+
+      /**
+      * workRejected
+      */
+      public void workRejected(WorkEvent e)
+      {
+         wasRejected = true;
+      }
+
+      /**
+      * workStarted
+      */
+      public void workStarted(WorkEvent e)
+      {
+      }
    }
 }
