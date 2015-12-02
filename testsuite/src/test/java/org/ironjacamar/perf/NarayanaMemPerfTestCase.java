@@ -22,17 +22,15 @@ package org.ironjacamar.perf;
 
 import org.ironjacamar.embedded.EmbeddedFactory;
 
-import java.net.URL;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 /**
- * NoopTS performance tests
+ * Narayana/memory performance tests
  *
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class NoopTSPerfTestCase extends Performance
+public class NarayanaMemPerfTestCase extends Performance
 {
    /**
     * Lifecycle start, before the suite is executed
@@ -42,21 +40,10 @@ public class NoopTSPerfTestCase extends Performance
    public static void beforeClass() throws Throwable
    {
       // Create and set an embedded JCA instance
-      embedded = EmbeddedFactory.create(false);
+      embedded = EmbeddedFactory.create();
 
       // Startup
       embedded.startup();
-
-      // Deploy
-      URL stdio = NoopTSPerfTestCase.class.getClassLoader().getResource("stdio.xml");
-      URL naming = NoopTSPerfTestCase.class.getClassLoader().getResource("naming.xml");
-      URL transaction = NoopTSPerfTestCase.class.getClassLoader().getResource("noop-transaction.xml");
-      URL jca = NoopTSPerfTestCase.class.getClassLoader().getResource("jca.xml");
-
-      embedded.deploy(stdio);
-      embedded.deploy(naming);
-      embedded.deploy(transaction);
-      embedded.deploy(jca);
 
       beforeRun();
       printSettings();
@@ -72,17 +59,6 @@ public class NoopTSPerfTestCase extends Performance
       afterRun();
       dumpData();
 
-      // Undeploy
-      URL stdio = NoopTSPerfTestCase.class.getClassLoader().getResource("stdio.xml");
-      URL naming = NoopTSPerfTestCase.class.getClassLoader().getResource("naming.xml");
-      URL transaction = NoopTSPerfTestCase.class.getClassLoader().getResource("noop-transaction.xml");
-      URL jca = NoopTSPerfTestCase.class.getClassLoader().getResource("jca.xml");
-
-      embedded.undeploy(jca);
-      embedded.undeploy(transaction);
-      embedded.undeploy(naming);
-      embedded.undeploy(stdio);
-
       // Shutdown embedded
       embedded.shutdown();
 
@@ -96,6 +72,6 @@ public class NoopTSPerfTestCase extends Performance
     */
    public static void main(String[] args)
    {
-      org.junit.runner.JUnitCore.main(NoopTSPerfTestCase.class.getName());
+      org.junit.runner.JUnitCore.main(NarayanaMemPerfTestCase.class.getName());
    }
 }
