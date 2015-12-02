@@ -21,22 +21,26 @@
 
 package org.ironjacamar.core.connectionmanager;
 
+import org.ironjacamar.core.spi.transaction.TransactionIntegration;
+
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 
 /**
- * The NoTransaction connection manager
+ * The LocalTransaction connection manager
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class NoTransactionConnectionManager extends AbstractConnectionManager
+public class LocalTransactionConnectionManager extends AbstractTransactionalConnectionManager
 {
    /**
     * Constructor
     * @param mcf The managed connection factory
+    * @param ti The transaction integration
     */
-   public NoTransactionConnectionManager(ManagedConnectionFactory mcf)
+   public LocalTransactionConnectionManager(ManagedConnectionFactory mcf,
+                                            TransactionIntegration ti)
    {
-      super(mcf);
+      super(mcf, ti);
    }
 
    /**
@@ -44,6 +48,6 @@ public class NoTransactionConnectionManager extends AbstractConnectionManager
     */
    public TransactionSupportLevel getTransactionSupport()
    {
-      return TransactionSupportLevel.NoTransaction;
+      return TransactionSupportLevel.LocalTransaction;
    }
 }

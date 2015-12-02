@@ -41,7 +41,7 @@ import javax.resource.spi.ManagedConnection;
 public abstract class AbstractConnectionListener implements ConnectionListener
 {
    /** The connection manager */
-   private ConnectionManager cm;
+   protected ConnectionManager cm;
    
    /** The managed connection */
    private ManagedConnection mc;
@@ -53,7 +53,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    private AtomicInteger state;
 
    /** Connection handles */
-   private CopyOnWriteArraySet<Object> connectionHandles;
+   protected CopyOnWriteArraySet<Object> connectionHandles;
    
    /**
     * Constructor
@@ -111,7 +111,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    {
       connectionHandles.remove(event.getConnectionHandle());
 
-      if (connectionHandles.size() == 0)
+      if (connectionHandles.size() == 0 && !isEnlisted())
          cm.returnConnectionListener(this, false);
    }
    
@@ -122,7 +122,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    {
       connectionHandles.remove(event.getConnectionHandle());
 
-      if (connectionHandles.size() == 0)
+      if (connectionHandles.size() == 0 && !isEnlisted())
          cm.returnConnectionListener(this, true);
    }
 

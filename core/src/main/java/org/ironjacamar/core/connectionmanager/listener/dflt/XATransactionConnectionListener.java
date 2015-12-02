@@ -19,28 +19,32 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.connectionmanager.listener;
+package org.ironjacamar.core.connectionmanager.listener.dflt;
 
 import org.ironjacamar.core.api.connectionmanager.ConnectionManager;
 import org.ironjacamar.core.connectionmanager.Credential;
+import org.ironjacamar.core.connectionmanager.listener.AbstractTransactionalConnectionListener;
 
 import javax.resource.spi.ManagedConnection;
+import javax.transaction.xa.XAResource;
 
 /**
- * The NoTransaction connection listener
+ * The XATransaction connection listener
  * 
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class NoTransactionConnectionListener extends AbstractConnectionListener
+public class XATransactionConnectionListener extends AbstractTransactionalConnectionListener
 {
    /**
     * Constructor
     * @param cm The connection manager
     * @param mc The managed connection
     * @param credential The credential
+    * @param xaResource The XAResource
     */
-   public NoTransactionConnectionListener(ConnectionManager cm, ManagedConnection mc, Credential credential)
+   public XATransactionConnectionListener(ConnectionManager cm, ManagedConnection mc, Credential credential,
+                                          XAResource xaResource)
    {
-      super(cm, mc, credential);
+      super(cm, mc, credential, xaResource);
    }
 }

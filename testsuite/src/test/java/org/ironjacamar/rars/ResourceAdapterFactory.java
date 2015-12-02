@@ -198,7 +198,19 @@ public class ResourceAdapterFactory
     */
    public static ResourceAdaptersDescriptor createTxLogDeployment(TransactionSupportLevel tsl)
    {
-      ResourceAdaptersDescriptor dashRaXml = Descriptors.create(ResourceAdaptersDescriptor.class, "txlog-ra.xml");
+      return createTxLogDeployment(tsl, "");
+   }
+
+   /**
+    * Create the txlog.rar deployment
+    * @param tsl The transaction support level
+    * @param postfix The JNDI postfix
+    * @return The resource adapter descriptor
+    */
+   public static ResourceAdaptersDescriptor createTxLogDeployment(TransactionSupportLevel tsl, String postfix)
+   {
+      ResourceAdaptersDescriptor dashRaXml = Descriptors.create(ResourceAdaptersDescriptor.class,
+                                                                "txlog" + postfix + "-ra.xml");
 
       ResourceAdapterType dashRaXmlRt = dashRaXml.createResourceAdapter().archive("txlog.rar");
       if (tsl == null || tsl == TransactionSupportLevel.NoTransaction)
@@ -218,7 +230,7 @@ public class ResourceAdapterFactory
       org.ironjacamar.embedded.dsl.resourceadapters20.api.ConnectionDefinitionType dashRaXmlCdt =
          dashRaXmlCdst.createConnectionDefinition()
             .className(TxLogManagedConnectionFactory.class.getName())
-            .jndiName("java:/eis/TxLogConnectionFactory").id("TxLogConnectionFactory");
+            .jndiName("java:/eis/TxLogConnectionFactory" + postfix).id("TxLogConnectionFactory" + postfix);
 
       org.ironjacamar.embedded.dsl.resourceadapters20.api.XaPoolType dashRaXmlPt = dashRaXmlCdt.getOrCreateXaPool()
          .minPoolSize(0).initialPoolSize(0).maxPoolSize(10);

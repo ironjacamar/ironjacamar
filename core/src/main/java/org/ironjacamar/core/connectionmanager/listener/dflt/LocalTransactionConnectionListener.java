@@ -19,31 +19,32 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.connectionmanager;
+package org.ironjacamar.core.connectionmanager.listener.dflt;
 
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
+import org.ironjacamar.core.api.connectionmanager.ConnectionManager;
+import org.ironjacamar.core.connectionmanager.Credential;
+import org.ironjacamar.core.connectionmanager.listener.AbstractTransactionalConnectionListener;
+
+import javax.resource.spi.ManagedConnection;
+import javax.transaction.xa.XAResource;
 
 /**
- * The NoTransaction connection manager
+ * The LocalTransaction connection listener
+ * 
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class NoTransactionConnectionManager extends AbstractConnectionManager
+public class LocalTransactionConnectionListener extends AbstractTransactionalConnectionListener
 {
    /**
     * Constructor
-    * @param mcf The managed connection factory
+    * @param cm The connection manager
+    * @param mc The managed connection
+    * @param credential The credential
+    * @param xaResource The XAResource
     */
-   public NoTransactionConnectionManager(ManagedConnectionFactory mcf)
+   public LocalTransactionConnectionListener(ConnectionManager cm, ManagedConnection mc, Credential credential,
+                                             XAResource xaResource)
    {
-      super(mcf);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public TransactionSupportLevel getTransactionSupport()
-   {
-      return TransactionSupportLevel.NoTransaction;
+      super(cm, mc, credential, xaResource);
    }
 }

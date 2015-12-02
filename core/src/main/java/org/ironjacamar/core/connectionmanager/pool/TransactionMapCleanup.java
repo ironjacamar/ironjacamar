@@ -19,31 +19,52 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.connectionmanager;
+package org.ironjacamar.core.connectionmanager.pool;
 
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
+import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.transaction.Synchronization;
 
 /**
- * The NoTransaction connection manager
+ * Cleanup the transaction map
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class NoTransactionConnectionManager extends AbstractConnectionManager
+public class TransactionMapCleanup implements Synchronization
 {
+   /** The key */
+   private Object key;
+
+   /** The map */
+   private ConcurrentHashMap<Object, Map<ManagedConnectionPool, ConnectionListener>> transactionMap;
+
    /**
     * Constructor
-    * @param mcf The managed connection factory
+    * @param key The key
+    * @param transactionMap The transaction map
     */
-   public NoTransactionConnectionManager(ManagedConnectionFactory mcf)
+   public TransactionMapCleanup(Object key,
+                                ConcurrentHashMap<Object, Map<ManagedConnectionPool,
+                                ConnectionListener>> transactionMap)
    {
-      super(mcf);
+      this.key = key;
+      this.transactionMap = transactionMap;
    }
 
    /**
     * {@inheritDoc}
     */
-   public TransactionSupportLevel getTransactionSupport()
+   public void beforeCompletion()
    {
-      return TransactionSupportLevel.NoTransaction;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void afterCompletion(int status)
+   {
+      transactionMap.remove(key);
    }
 }

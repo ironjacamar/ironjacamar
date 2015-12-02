@@ -98,7 +98,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
          throw new ResourceException();
       
       Credential credential = new Credential(null, cri);
-      return pool.getConnectionListener(credential).getConnection();
+      return getConnectionListener(credential).getConnection();
    }
 
    /**
@@ -115,5 +115,17 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       {
          //
       }
+   }
+
+   /**
+    * Get a connection listener
+    * @param credential The credential
+    * @return The listener
+    * @exception ResourceException Thrown in case of an error
+    */
+   protected org.ironjacamar.core.connectionmanager.listener.ConnectionListener
+      getConnectionListener(Credential credential) throws ResourceException
+   {
+      return pool.getConnectionListener(credential);
    }
 }

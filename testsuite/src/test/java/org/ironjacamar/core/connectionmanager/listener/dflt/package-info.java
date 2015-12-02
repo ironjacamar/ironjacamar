@@ -19,31 +19,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.connectionmanager;
-
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
-
 /**
- * The NoTransaction connection manager
- * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ * Test cases for the default connection listeners
  */
-public class NoTransactionConnectionManager extends AbstractConnectionManager
-{
-   /**
-    * Constructor
-    * @param mcf The managed connection factory
-    */
-   public NoTransactionConnectionManager(ManagedConnectionFactory mcf)
-   {
-      super(mcf);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public TransactionSupportLevel getTransactionSupport()
-   {
-      return TransactionSupportLevel.NoTransaction;
-   }
-}
+package org.ironjacamar.core.connectionmanager.listener.dflt;

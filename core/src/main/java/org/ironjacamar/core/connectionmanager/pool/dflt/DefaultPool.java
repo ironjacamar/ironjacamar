@@ -24,8 +24,11 @@ package org.ironjacamar.core.connectionmanager.pool.dflt;
 import org.ironjacamar.core.api.connectionmanager.pool.PoolConfiguration;
 import org.ironjacamar.core.connectionmanager.ConnectionManager;
 import org.ironjacamar.core.connectionmanager.Credential;
+import org.ironjacamar.core.connectionmanager.TransactionalConnectionManager;
 import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
-import org.ironjacamar.core.connectionmanager.listener.NoTransactionConnectionListener;
+import org.ironjacamar.core.connectionmanager.listener.dflt.LocalTransactionConnectionListener;
+import org.ironjacamar.core.connectionmanager.listener.dflt.NoTransactionConnectionListener;
+import org.ironjacamar.core.connectionmanager.listener.dflt.XATransactionConnectionListener;
 import org.ironjacamar.core.connectionmanager.pool.AbstractPool;
 import org.ironjacamar.core.connectionmanager.pool.ManagedConnectionPool;
 
@@ -33,6 +36,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnection;
+import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
+import javax.transaction.xa.XAResource;
 
 /**
  * The default pool
@@ -63,8 +68,56 @@ public class DefaultPool extends AbstractPool
             ManagedConnection mc =
                cm.getManagedConnectionFactory().createManagedConnection(credential.getSubject(),
                                                                         credential.getConnectionRequestInfo());
-            return new NoTransactionConnectionListener(cm, mc, credential);
+
+            if (cm.getTransactionSupport() == TransactionSupportLevel.NoTransaction)
+            {
+               return new NoTransactionConnectionListener(cm, mc, credential);
+            }
+            else if (cm.getTransactionSupport() == TransactionSupportLevel.LocalTransaction)
+            {
+               TransactionalConnectionManager txCM = (TransactionalConnectionManager)cm;
+               XAResource xaResource = null;
+               String eisProductName = null;
+               String eisProductVersion = null;
+
+               try
+               {
+                  if (mc.getMetaData() != null)
+                  {
+                     eisProductName = mc.getMetaData().getEISProductName();
+                     eisProductVersion = mc.getMetaData().getEISProductVersion();
+                  }
+               }
+               catch (ResourceException re)
+               {
+                  // Ignore
+               }
+
+               if (eisProductName == null)
+                  eisProductName = "";
+
+               if (eisProductVersion == null)
+                  eisProductVersion = "";
+
+               if (xaResource == null)
+                  xaResource = txCM.getTransactionIntegration().createLocalXAResource(cm,
+                                                                                      eisProductName, eisProductVersion,
+                                                                                      "",
+                                                                                      null);
+
+               return new LocalTransactionConnectionListener(cm, mc, credential, xaResource);
+            }
+            else
+            {
+               XAResource xaResource = mc.getXAResource();
+
+               return new XATransactionConnectionListener(cm, mc, credential, xaResource);
+            }
          }
+      }
+      catch (ResourceException re)
+      {
+         throw re;
       }
       catch (Exception e)
       {

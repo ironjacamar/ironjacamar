@@ -29,6 +29,7 @@ import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.DESTROYED;
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.FREE;
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.IN_USE;
+import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.TO_POOL;
 
 import java.util.concurrent.ConcurrentLinkedDeque;
 
@@ -98,11 +99,21 @@ public class DefaultManagedConnectionPool implements ManagedConnectionPool
    {
       if (!kill)
       {
-         cl.changeState(IN_USE, FREE);
+         cl.changeState(IN_USE, TO_POOL);
+         try
+         {
+            cl.getManagedConnection().cleanup();
+            cl.changeState(TO_POOL, FREE);
+         }
+         catch (ResourceException re)
+         {
+            kill = true;
+         }
       }
-      else
+
+      if (kill)
       {
-         if (cl.changeState(IN_USE, DESTROY))
+         if (cl.changeState(IN_USE, DESTROY) || cl.changeState(TO_POOL, DESTROY))
          {
             try
             {

@@ -22,6 +22,7 @@
 package org.ironjacamar.core.connectionmanager;
 
 import org.ironjacamar.common.api.metadata.common.TransactionSupportEnum;
+import org.ironjacamar.core.spi.transaction.TransactionIntegration;
 
 import javax.resource.spi.ManagedConnectionFactory;
 
@@ -42,11 +43,24 @@ public class ConnectionManagerFactory
     * Create a connection manager
     * @param tse The transaction support level
     * @param mcf The managed connection factory
+    * @param ti The transaction integration
     * @return The connection manager
     */
    public static ConnectionManager createConnectionManager(TransactionSupportEnum tse,
-                                                           ManagedConnectionFactory mcf)
+                                                           ManagedConnectionFactory mcf,
+                                                           TransactionIntegration ti)
    {
-      return new NoTransactionConnectionManager(mcf);
+      if (tse == TransactionSupportEnum.NoTransaction)
+      {
+         return new NoTransactionConnectionManager(mcf);
+      }
+      else if (tse == TransactionSupportEnum.LocalTransaction)
+      {
+         return new LocalTransactionConnectionManager(mcf, ti);
+      }
+      else
+      {
+         return new XATransactionConnectionManager(mcf, ti);
+      }
    }
 }

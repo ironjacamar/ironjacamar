@@ -24,6 +24,7 @@ package org.ironjacamar.core.connectionmanager;
 import org.ironjacamar.core.connectionmanager.pool.Pool;
 
 import javax.resource.spi.ManagedConnectionFactory;
+import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 
 /**
  * The internal connection manager API
@@ -31,6 +32,12 @@ import javax.resource.spi.ManagedConnectionFactory;
  */
 public interface ConnectionManager extends org.ironjacamar.core.api.connectionmanager.ConnectionManager
 {
+   /**
+    * Get the transaction support level
+    * @return The value
+    */
+   public TransactionSupportLevel getTransactionSupport();
+
    /**
     * Set the pool
     * @param pool The pool

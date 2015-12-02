@@ -138,6 +138,7 @@ public class IronJacamarXmlDeployer extends AbstractFungalRADeployer implements 
       i.setMetadataRepository(metadataRepository);
       i.setBootstrapContext(bootstrapContext);
       i.setJndiStrategy(jndiStrategy);
+      i.setTransactionIntegration(transactionIntegration);
       return i;
    }
 }

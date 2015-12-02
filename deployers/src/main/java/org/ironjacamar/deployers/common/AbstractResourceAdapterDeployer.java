@@ -42,6 +42,7 @@ import org.ironjacamar.core.deploymentrepository.PoolImpl;
 import org.ironjacamar.core.deploymentrepository.ResourceAdapterImpl;
 import org.ironjacamar.core.metadatarepository.MetadataImpl;
 import org.ironjacamar.core.spi.naming.JndiStrategy;
+import org.ironjacamar.core.spi.transaction.TransactionIntegration;
 import org.ironjacamar.core.util.Injection;
 
 import java.io.File;
@@ -69,6 +70,9 @@ public abstract class AbstractResourceAdapterDeployer
    /** The JndiStrategy */
    protected JndiStrategy jndiStrategy;
 
+   /** The TransactionIntegration */
+   protected TransactionIntegration transactionIntegration;
+
    /**
     * Constructor
     */
@@ -78,6 +82,7 @@ public abstract class AbstractResourceAdapterDeployer
       this.metadataRepository = null;
       this.bootstrapContext = null;
       this.jndiStrategy = null;
+      this.transactionIntegration = null;
    }
 
    /**
@@ -114,6 +119,15 @@ public abstract class AbstractResourceAdapterDeployer
    public void setJndiStrategy(JndiStrategy v)
    {
       this.jndiStrategy = v;
+   }
+   
+   /**
+    * Set the transaction integration
+    * @param v The value
+    */
+   public void setTransactionIntegration(TransactionIntegration v)
+   {
+      this.transactionIntegration = v;
    }
    
    /**
@@ -266,7 +280,7 @@ public abstract class AbstractResourceAdapterDeployer
                                    builder.getClassLoader());
 
          ConnectionManager cm =
-            ConnectionManagerFactory.createConnectionManager(transactionSupport, mcf);
+            ConnectionManagerFactory.createConnectionManager(transactionSupport, mcf, transactionIntegration);
 
          String poolType = cd.getPool() != null ? cd.getPool().getType() : null;
 

@@ -44,6 +44,9 @@ public interface ConnectionListener extends org.ironjacamar.core.api.connectionm
    /** DESTROYED state */
    public int DESTROYED = 4;
 
+   /** TO_POOL state */
+   public int TO_POOL = 5;
+
    /**
     * Change the state of the connection listener
     * @param currentState The current state
@@ -70,6 +73,18 @@ public interface ConnectionListener extends org.ironjacamar.core.api.connectionm
     */
    public Credential getCredential();
 
+   /**
+    * Is the listener enlisted
+    * @return True if enlisted, otherwise false
+    */
+   public boolean isEnlisted();
+
+   /**
+    * Enlist the listener
+    * @exception ResourceException Thrown if the listener can't be enlisted
+    */
+   public void enlist() throws ResourceException;
+   
    /**
     * Get a connection
     * @return The connection

@@ -179,6 +179,7 @@
     <property name="DeploymentRepository"><inject bean="DeploymentRepository"/></property>
     <property name="BootstrapContext"><inject bean="BootstrapContext"/></property>
     <property name="JndiStrategy"><inject bean="JndiStrategy"/></property>
+    <property name="TransactionIntegration"><inject bean="TransactionIntegration"/></property>
     <depends>ClassLoaderDeployer</depends>
   </bean>
 
@@ -188,6 +189,7 @@
     <property name="DeploymentRepository"><inject bean="DeploymentRepository"/></property>
     <property name="BootstrapContext"><inject bean="BootstrapContext"/></property>
     <property name="JndiStrategy"><inject bean="JndiStrategy"/></property>
+    <property name="TransactionIntegration"><inject bean="TransactionIntegration"/></property>
     <depends>ClassLoaderDeployer</depends>
   </bean>
 

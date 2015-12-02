@@ -19,31 +19,45 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.connectionmanager;
+package org.ironjacamar.core.connectionmanager.listener.dflt;
 
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
+import org.ironjacamar.core.api.connectionmanager.ConnectionManager;
+import org.ironjacamar.core.connectionmanager.Credential;
+import org.ironjacamar.core.connectionmanager.listener.AbstractConnectionListener;
+
+import javax.resource.ResourceException;
+import javax.resource.spi.ManagedConnection;
 
 /**
- * The NoTransaction connection manager
+ * The NoTransaction connection listener
+ * 
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class NoTransactionConnectionManager extends AbstractConnectionManager
+public class NoTransactionConnectionListener extends AbstractConnectionListener
 {
    /**
     * Constructor
-    * @param mcf The managed connection factory
+    * @param cm The connection manager
+    * @param mc The managed connection
+    * @param credential The credential
     */
-   public NoTransactionConnectionManager(ManagedConnectionFactory mcf)
+   public NoTransactionConnectionListener(ConnectionManager cm, ManagedConnection mc, Credential credential)
    {
-      super(mcf);
+      super(cm, mc, credential);
    }
 
    /**
     * {@inheritDoc}
     */
-   public TransactionSupportLevel getTransactionSupport()
+   public boolean isEnlisted()
    {
-      return TransactionSupportLevel.NoTransaction;
+      return false;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void enlist() throws ResourceException
+   {
    }
 }

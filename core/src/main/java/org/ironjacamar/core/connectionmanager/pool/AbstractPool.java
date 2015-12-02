@@ -24,12 +24,18 @@ package org.ironjacamar.core.connectionmanager.pool;
 import org.ironjacamar.core.api.connectionmanager.pool.PoolConfiguration;
 import org.ironjacamar.core.connectionmanager.ConnectionManager;
 import org.ironjacamar.core.connectionmanager.Credential;
+import org.ironjacamar.core.connectionmanager.TransactionalConnectionManager;
 import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
+import org.ironjacamar.core.spi.transaction.TxUtils;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 
 import javax.resource.ResourceException;
+import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
+import javax.transaction.Transaction;
 
 /**
  * The base class for all pool implementations
@@ -46,6 +52,9 @@ public abstract class AbstractPool implements Pool
    /** The pools */
    protected ConcurrentHashMap<Credential, ManagedConnectionPool> pools;
    
+   /** The transaction map */
+   protected ConcurrentHashMap<Object, Map<ManagedConnectionPool, ConnectionListener>> transactionMap;
+   
    /** The semaphore */
    protected Semaphore semaphore;
    
@@ -59,6 +68,7 @@ public abstract class AbstractPool implements Pool
       this.cm = cm;
       this.poolConfiguration = pc;
       this.pools = new ConcurrentHashMap<Credential, ManagedConnectionPool>();
+      this.transactionMap = new ConcurrentHashMap<Object, Map<ManagedConnectionPool, ConnectionListener>>();
       this.semaphore = new Semaphore(poolConfiguration.getMaxSize());
    }
 
@@ -76,6 +86,7 @@ public abstract class AbstractPool implements Pool
    public ConnectionListener getConnectionListener(Credential credential)
       throws ResourceException
    {
+      ConnectionListener cl = null;
       ManagedConnectionPool mcp = pools.get(credential);
 
       if (mcp == null)
@@ -99,8 +110,67 @@ public abstract class AbstractPool implements Pool
             }
          }
       }
-      
-      return mcp.getConnectionListener();
+
+      if (cm.getTransactionSupport() == TransactionSupportLevel.LocalTransaction ||
+          cm.getTransactionSupport() == TransactionSupportLevel.XATransaction)
+      {
+         try
+         {
+            TransactionalConnectionManager txCM = (TransactionalConnectionManager)cm;
+            Transaction tx = txCM.getTransactionIntegration().getTransactionManager().getTransaction();
+
+            if (TxUtils.isUncommitted(tx))
+            {
+               Object id = txCM.getTransactionIntegration().getTransactionSynchronizationRegistry().getTransactionKey();
+
+               Map<ManagedConnectionPool, ConnectionListener> currentMap = transactionMap.get(id);
+
+               if (currentMap == null)
+               {
+                  Map<ManagedConnectionPool, ConnectionListener> map =
+                     new HashMap<ManagedConnectionPool, ConnectionListener>();
+
+                  currentMap = transactionMap.putIfAbsent(id, map);
+                  if (currentMap == null)
+                  {
+                     currentMap = map;
+                  }
+               }
+
+               cl = currentMap.get(mcp);
+
+               if (cl == null)
+               {
+                  if (TxUtils.isActive(tx))
+                  {
+                     cl = mcp.getConnectionListener();
+
+                     currentMap.put(mcp, cl);
+
+                     txCM.getTransactionIntegration().getTransactionSynchronizationRegistry().
+                        registerInterposedSynchronization(new TransactionMapCleanup(id, transactionMap));
+                  }
+                  else
+                  {
+                     throw new ResourceException();
+                  }
+               }
+            }
+         }
+         catch (ResourceException re)
+         {
+            throw re;
+         }
+         catch (Exception e)
+         {
+            throw new ResourceException(e);
+         }
+      }
+
+      if (cl == null)
+         cl = mcp.getConnectionListener();
+
+      return cl;
    }
 
    /**
