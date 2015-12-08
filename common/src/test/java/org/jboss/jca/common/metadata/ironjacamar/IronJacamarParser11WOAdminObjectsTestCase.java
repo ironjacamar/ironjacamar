@@ -89,6 +89,7 @@ public class IronJacamarParser11WOAdminObjectsTestCase extends XMLParserTestBase
       assertFalse(cd.isXa());
       Pool pool = cd.getPool();
       assertFalse(pool.isPrefill());
+      assertFalse(pool.isFair());
       assertFalse(pool.isUseStrictMin());
       //default values
       assertEquals(0, (int) pool.getMinPoolSize());

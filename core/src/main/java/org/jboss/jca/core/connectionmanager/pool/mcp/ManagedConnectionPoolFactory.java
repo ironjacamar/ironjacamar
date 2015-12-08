@@ -66,7 +66,7 @@ public class ManagedConnectionPoolFactory
    
    static
    {
-      String clz = SecurityActions.getSystemProperty("ironjacamar.mcp");
+         String clz = SecurityActions.getSystemProperty("ironjacamar.mcp");
 
       if (clz != null && !clz.trim().equals(""))
       {

@@ -67,10 +67,10 @@ public class DsPoolImpl extends org.jboss.jca.common.metadata.common.PoolImpl im
    public DsPoolImpl(Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize, 
                      Boolean prefill, Boolean useStrictMin,
                      FlushStrategy flushStrategy, Boolean allowMultipleUsers,
-                     Capacity capacity, Extension connectionListener)
+                     Capacity capacity, Boolean fair, Extension connectionListener)
       throws ValidateException
    {
-      super(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy, capacity);
+      super(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy, capacity, fair);
       this.allowMultipleUsers = allowMultipleUsers;
       this.connectionListener = connectionListener;
    }
@@ -171,6 +171,13 @@ public class DsPoolImpl extends org.jboss.jca.common.metadata.common.PoolImpl im
          sb.append("<").append(DsPool.Tag.PREFILL).append(">");
          sb.append(prefill);
          sb.append("</").append(DsPool.Tag.PREFILL).append(">");
+      }
+
+      if (fair != null)
+      {
+         sb.append("<").append(DsPool.Tag.FAIR).append(">");
+         sb.append(fair);
+         sb.append("</").append(DsPool.Tag.FAIR).append(">");
       }
 
       if (useStrictMin != null)

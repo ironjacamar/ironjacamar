@@ -93,6 +93,7 @@ public class IronJacamarParser11PartialTestCase extends XMLParserTestBase
       assertEquals(1, (int) pool.getMinPoolSize());
       assertEquals(5, (int) pool.getMaxPoolSize());
       assertTrue(pool.isPrefill());
+      assertTrue(pool.isFair());
       assertTrue(pool.isUseStrictMin());
       assertEquals(pool.getFlushStrategy(), FlushStrategy.IDLE_CONNECTIONS);
       

@@ -154,7 +154,7 @@ public abstract class AbstractPool implements Pool
       this.mcpClass = mcp;
       this.log = getLogger();
       this.statistics = new PoolStatisticsImpl(pc.getMaxSize());
-      this.permits = new Semaphore(pc.getMaxSize(), true, statistics);
+      this.permits = new Semaphore(pc.getMaxSize(), pc.isFairPermits(), statistics);
       this.capacity = null;
       this.interleaving = false;
       this.noLazyEnlistmentAvailable = new AtomicBoolean(false);

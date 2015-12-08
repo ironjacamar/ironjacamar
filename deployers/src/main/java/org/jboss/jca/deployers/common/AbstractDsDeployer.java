@@ -599,7 +599,7 @@ public abstract class AbstractDsDeployer
       }
       if (mcpClass == null)
          mcpClass = ManagedConnectionPoolFactory.EXPERIMENTAL_IMPLEMENTATION;
-      
+
       Pool pool = pf.create(strategy, mcf, pc, false, true, mcpClass);
 
       // Capacity
@@ -1285,6 +1285,9 @@ public abstract class AbstractDsDeployer
 
          if (pp.isUseStrictMin() != null)
             pc.setStrictMin(pp.isUseStrictMin());
+
+         if (pp.isFair() != null)
+            pc.setFairPermits( pp.isFair() );
       }
 
       if (tp != null)

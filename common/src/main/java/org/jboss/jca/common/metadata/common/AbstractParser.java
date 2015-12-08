@@ -297,6 +297,7 @@ public abstract class AbstractParser
       Integer initialPoolSize = Defaults.INITIAL_POOL_SIZE;;
       Integer maxPoolSize = Defaults.MAX_POOL_SIZE;
       Boolean prefill = Defaults.PREFILL;
+      Boolean fair = Defaults.FAIR;
       Boolean useStrictMin = Defaults.USE_STRICT_MIN;
       FlushStrategy flushStrategy = Defaults.FLUSH_STRATEGY;
       Capacity capacity = null;
@@ -309,7 +310,7 @@ public abstract class AbstractParser
                if (DataSource.Tag.forName(reader.getLocalName()) == DataSource.Tag.POOL)
                {
                   return new PoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin,
-                                      flushStrategy, capacity);
+                                      flushStrategy, capacity, fair);
                }
                else
                {
@@ -337,6 +338,10 @@ public abstract class AbstractParser
                   }
                   case PREFILL : {
                      prefill = elementAsBoolean(reader);
+                     break;
+                  }
+                  case FAIR : {
+                     fair = elementAsBoolean(reader);
                      break;
                   }
                   case USE_STRICT_MIN : {
@@ -378,6 +383,7 @@ public abstract class AbstractParser
       Integer initialPoolSize = Defaults.INITIAL_POOL_SIZE;
       Integer maxPoolSize = Defaults.MAX_POOL_SIZE;
       Boolean prefill = Defaults.PREFILL;
+      Boolean fair = Defaults.FAIR;
       FlushStrategy flushStrategy = Defaults.FLUSH_STRATEGY;
       Capacity capacity = null;
       Boolean interleaving = Defaults.INTERLEAVING;
@@ -396,7 +402,7 @@ public abstract class AbstractParser
                {
 
                   return new XaPoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin,
-                                        flushStrategy, capacity,
+                                        flushStrategy, capacity, fair,
                                         isSameRmOverride, interleaving, padXid,
                                         wrapXaDataSource, noTxSeparatePool);
 
@@ -447,6 +453,10 @@ public abstract class AbstractParser
                   }
                   case PREFILL : {
                      prefill = elementAsBoolean(reader);
+                     break;
+                  }
+                  case FAIR : {
+                     fair = elementAsBoolean(reader);
                      break;
                   }
                   case USE_STRICT_MIN : {

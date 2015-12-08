@@ -74,9 +74,9 @@ public class DsXaPoolImpl extends org.jboss.jca.common.metadata.common.XaPoolImp
                        Boolean padXid, Boolean wrapXaResource,
                        Boolean noTxSeparatePool,
                        Boolean allowMultipleUsers,
-                       Capacity capacity, Extension connectionListener) throws ValidateException
+                       Capacity capacity, Boolean fair, Extension connectionListener) throws ValidateException
    {
-      super(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy, capacity,
+      super(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy, capacity, fair,
             isSameRmOverride, interleaving, padXid, wrapXaResource, noTxSeparatePool);
 
       this.allowMultipleUsers = allowMultipleUsers;
@@ -177,6 +177,13 @@ public class DsXaPoolImpl extends org.jboss.jca.common.metadata.common.XaPoolImp
          sb.append("<").append(DsXaPool.Tag.PREFILL).append(">");
          sb.append(prefill);
          sb.append("</").append(DsXaPool.Tag.PREFILL).append(">");
+      }
+
+      if (fair != null)
+      {
+         sb.append("<").append(DsXaPool.Tag.FAIR).append(">");
+         sb.append(fair);
+         sb.append("</").append(DsXaPool.Tag.FAIR).append(">");
       }
 
       if (useStrictMin != null)

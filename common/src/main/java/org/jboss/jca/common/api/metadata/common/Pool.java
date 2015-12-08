@@ -84,6 +84,14 @@ public interface Pool extends JCAMetadata, ValidatableMetadata
     */
    public Capacity getCapacity();
 
+
+   /**
+    * Get the useStrictMin.
+    *
+    * @return the useStrictMin.
+    */
+   public Boolean isFair();
+
    /**
     *
     * A Tag.
@@ -119,6 +127,11 @@ public interface Pool extends JCAMetadata, ValidatableMetadata
       PREFILL("prefill"),
 
       /**
+       * fair tag
+       */
+      FAIR("fair"),
+
+      /**
        * use-strict-min tag
        */
       USE_STRICT_MIN("use-strict-min"),
@@ -132,6 +145,7 @@ public interface Pool extends JCAMetadata, ValidatableMetadata
        * capacity tag
        */
       CAPACITY("capacity");
+
 
       private String name;
 

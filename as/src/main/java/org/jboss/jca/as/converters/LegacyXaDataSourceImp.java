@@ -142,7 +142,7 @@ public class LegacyXaDataSourceImp implements XaDataSource
       dsImpl = new XADataSourceImpl(transactionIsolation, timeOut, security,
                                     statement, validation, urlDelimiter, "|", urlSelectorStrategyClassName, 
                                     useJavaContext, poolName, enabled, jndiName, spy, useCcm,
-                                    Defaults.CONNECTABLE, Defaults.TRACKING, Defaults.MCP, Defaults.ENLISTMENT_TRACE,
+                                    Defaults.CONNECTABLE, Defaults.TRACKING, Defaults.MCP, Defaults.FAIR, Defaults.ENLISTMENT_TRACE,
                                     xaDataSourceProperty, xaDataSourceClass, driver, newConnectionSql, 
                                     xaPool, recovery);
    }
@@ -262,7 +262,7 @@ public class LegacyXaDataSourceImp implements XaDataSource
    {
       xaPool = new DsXaPoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy,
             isSameRmOverride, interleaving, padXid,
-            wrapXaResource, noTxSeparatePool, false, null, null);
+            wrapXaResource, noTxSeparatePool, false, null, Defaults.FAIR, null);
 
       return this;
    }

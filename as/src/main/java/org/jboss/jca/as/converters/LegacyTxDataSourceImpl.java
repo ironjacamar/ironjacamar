@@ -133,7 +133,7 @@ public class LegacyTxDataSourceImpl implements LocalTxDataSource
                                   statement, validation, urlDelimiter,
                                   urlSelectorStrategyClassName, newConnectionSql, useJavaContext, poolName,
                                   enabled, jndiName, spy, useCcm, jta, Defaults.CONNECTABLE, Defaults.TRACKING,
-                                  Defaults.MCP, Defaults.ENLISTMENT_TRACE, pool);
+                                  Defaults.MCP, Defaults.FAIR, Defaults.ENLISTMENT_TRACE, pool);
    }
    
    @Override
@@ -242,7 +242,7 @@ public class LegacyTxDataSourceImpl implements LocalTxDataSource
          FlushStrategy flushStrategy) throws Exception
    {
       pool = new DsPoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, 
-         useStrictMin, flushStrategy, false, null, null);
+         useStrictMin, flushStrategy, false, null, Defaults.FAIR, null);
       return this;
    }
    

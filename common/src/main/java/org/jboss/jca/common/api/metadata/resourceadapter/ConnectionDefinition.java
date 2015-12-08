@@ -166,12 +166,19 @@ public interface ConnectionDefinition extends JCAMetadata
    public String getMcp();
 
    /**
+    * Use fair semaphores
+    *
+    * @return the enlistment trace
+    */
+   public Boolean isFair();
+   
+   /**
     * Get the enlistment trace
     *
     * @return the enlistment trace
     */
    public Boolean isEnlistmentTrace();
-   
+
    /**
     *
     * A Tag.
@@ -358,6 +365,11 @@ public interface ConnectionDefinition extends JCAMetadata
        *
        */
       MCP("mcp"),
+
+      /** mcp attribute
+       *
+       */
+      FAIR("fair"),
 
       /**
        * enlistment trace attribute

@@ -132,6 +132,7 @@ public class DsParserXMLTestCase extends XMLParserTestBase
       assertEquals((int) pool.getInitialPoolSize(), 5);
       assertEquals((int) pool.getMaxPoolSize(), 5);
       assertTrue(pool.isPrefill());
+      assertTrue(pool.isFair());
       assertTrue(pool.isUseStrictMin());
       assertEquals(pool.getFlushStrategy(), FlushStrategy.ENTIRE_POOL);
       assertTrue(pool.isAllowMultipleUsers());
@@ -201,6 +202,7 @@ public class DsParserXMLTestCase extends XMLParserTestBase
       assertEquals((int) poolXa.getInitialPoolSize(), 5);
       assertEquals((int) poolXa.getMaxPoolSize(), 5);
       assertTrue(poolXa.isPrefill());
+      assertTrue(poolXa.isFair());
       assertTrue(poolXa.isUseStrictMin());
       assertEquals(poolXa.getFlushStrategy(), FlushStrategy.IDLE_CONNECTIONS);
       assertTrue(poolXa.isAllowMultipleUsers());

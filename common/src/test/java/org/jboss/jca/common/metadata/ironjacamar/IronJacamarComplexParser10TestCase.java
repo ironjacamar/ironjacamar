@@ -107,6 +107,7 @@ public class IronJacamarComplexParser10TestCase extends XMLParserTestBase
       assertEquals(1, (int) xaPool.getMinPoolSize());
       assertEquals(5, (int) xaPool.getMaxPoolSize());
       assertTrue(xaPool.isPrefill());
+      assertTrue(xaPool.isFair());
       assertTrue(xaPool.isUseStrictMin());
       assertEquals(xaPool.getFlushStrategy(), FlushStrategy.IDLE_CONNECTIONS);
       assertTrue(xaPool.isSameRmOverride());
@@ -165,6 +166,7 @@ public class IronJacamarComplexParser10TestCase extends XMLParserTestBase
       assertEquals(0, (int) xaPool.getMinPoolSize());
       assertEquals(20, (int) xaPool.getMaxPoolSize());
       assertFalse(xaPool.isPrefill());
+      assertFalse(xaPool.isFair());
       assertFalse(xaPool.isUseStrictMin());
       assertEquals(xaPool.getFlushStrategy(), FlushStrategy.ENTIRE_POOL);
       assertFalse(xaPool.isSameRmOverride());
@@ -213,6 +215,7 @@ public class IronJacamarComplexParser10TestCase extends XMLParserTestBase
       assertEquals(0, (int) xaPool.getMinPoolSize());
       assertEquals(20, (int) xaPool.getMaxPoolSize());
       assertFalse(xaPool.isPrefill());
+      assertFalse(xaPool.isFair());
       assertEquals(xaPool.getFlushStrategy(), FlushStrategy.FAILING_CONNECTION_ONLY);
       assertEquals(null, xaPool.isSameRmOverride());
       //default for boolean-presenceType

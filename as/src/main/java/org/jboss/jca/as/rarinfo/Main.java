@@ -413,10 +413,10 @@ public class Main
 
          SecurityImpl secImpl = new SecurityImpl("", "", true);
          PoolImpl poolImpl = new PoolImpl(0, null, 10, Defaults.PREFILL, Defaults.USE_STRICT_MIN, 
-                                          Defaults.FLUSH_STRATEGY, null);
+                                          Defaults.FLUSH_STRATEGY, null, Defaults.FAIR);
          XaPoolImpl xaPoolImpl = new XaPoolImpl(0, null, 10, Defaults.PREFILL, Defaults.USE_STRICT_MIN, 
-                                                Defaults.FLUSH_STRATEGY, null, Defaults.IS_SAME_RM_OVERRIDE,
-                                                Defaults.INTERLEAVING,
+                                                Defaults.FLUSH_STRATEGY, null, Defaults.FAIR,
+                                                Defaults.IS_SAME_RM_OVERRIDE, Defaults.INTERLEAVING,
                                                 Defaults.PAD_XID, Defaults.WRAP_XA_RESOURCE,
                                                 Defaults.NO_TX_SEPARATE_POOL);
 
@@ -583,7 +583,7 @@ public class Main
                                                           poolName, Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT,
                                                           Defaults.USE_CCM, Defaults.SHARABLE, Defaults.ENLISTMENT,
                                                           Defaults.CONNECTABLE, Defaults.TRACKING, Defaults.MCP,
-                                                          Defaults.ENLISTMENT_TRACE,
+                                                          Defaults.FAIR, Defaults.ENLISTMENT_TRACE,
                                                           pool, null, null,
                                                           secImpl, recovery, Boolean.TRUE);
                }
@@ -594,7 +594,7 @@ public class Main
                                                           poolName, Defaults.ENABLED, Defaults.USE_JAVA_CONTEXT,
                                                           Defaults.USE_CCM, Defaults.SHARABLE, Defaults.ENLISTMENT,
                                                           Defaults.CONNECTABLE, Defaults.TRACKING, Defaults.MCP,
-                                                          Defaults.ENLISTMENT_TRACE,
+                                                          Defaults.FAIR, Defaults.ENLISTMENT_TRACE,
                                                           pool, null, null,
                                                           secImpl, null, Boolean.FALSE);
                }

@@ -372,6 +372,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       Boolean connectable = Defaults.CONNECTABLE;
       Boolean tracking = Defaults.TRACKING;
       String mcp = Defaults.MCP;
+      Boolean fair = Defaults.FAIR;
       Boolean enlistmentTrace = Defaults.ENLISTMENT_TRACE;
       int attributeSize = reader.getAttributeCount();
 
@@ -449,7 +450,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
 
                   return new ConnectionDefinitionImpl(configProperties, className, jndiName, poolName, enabled,
                                                       useJavaContext, useCcm, sharable, enlistment,
-                                                      connectable, tracking, mcp, enlistmentTrace,
+                                                      connectable, tracking, mcp, fair, enlistmentTrace,
                                                       pool, timeOut, validation,
                                                       security, recovery, isXA);
                }

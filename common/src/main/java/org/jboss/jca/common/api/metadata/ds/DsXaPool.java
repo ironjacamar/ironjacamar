@@ -81,6 +81,11 @@ public interface DsXaPool extends XaPool
       PREFILL("prefill"),
 
       /**
+       * fair tag
+       */
+      FAIR("fair"),
+
+      /**
        * use-strict-min tag
        */
       USE_STRICT_MIN("use-strict-min"),

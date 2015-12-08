@@ -69,6 +69,9 @@ public class PoolConfiguration
     */
    private AtomicBoolean useFastFail;
 
+   /** Fair semaphore permits, default true */
+   private AtomicBoolean fairPermits;
+
    /**
     * Constructor
     */
@@ -85,6 +88,7 @@ public class PoolConfiguration
       prefill = new AtomicBoolean(false);
       strictMin = new AtomicBoolean(false);
       useFastFail = new AtomicBoolean(false);
+      fairPermits = new AtomicBoolean(true);
    }
 
    /**
@@ -278,10 +282,27 @@ public class PoolConfiguration
    /**
     * @param useFastFail the useFastFail to set
     */
+   public void setFairPermits(boolean useFairPermits)
+   {
+      this.fairPermits.set(useFairPermits);
+   }
+
+   /**
+    * @return the useFastFail
+    */
+   public boolean isFairPermits()
+   {
+      return fairPermits.get();
+   }
+
+   /**
+    * @param useFastFail the useFastFail to set
+    */
    public void setUseFastFail(boolean useFastFail)
    {
       this.useFastFail.set(useFastFail);
    }
+
 
    /**
     * String representation
@@ -304,6 +325,7 @@ public class PoolConfiguration
       sb.append(" prefill=").append(prefill.get());
       sb.append(" strictMin=").append(strictMin.get());
       sb.append(" useFastFail=").append(useFastFail.get());
+      sb.append(" fairPermits=").append(fairPermits.get());
       sb.append("]");
 
       return sb.toString();

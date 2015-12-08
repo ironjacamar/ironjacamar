@@ -81,6 +81,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
     * @param connectable connectable
     * @param tracking tracking
     * @param mcp mcp
+    * @param fair fair
     * @param enlistmentTrace enlistmentTrace
     * @param xaDataSourceProperty xaDataSourceProperty
     * @param xaDataSourceClass xaDataSourceClass
@@ -94,14 +95,14 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
                            Statement statement, Validation validation, String urlDelimiter, String urlProperty,
                            String urlSelectorStrategyClassName, Boolean useJavaContext, String poolName,
                            Boolean enabled, String jndiName, Boolean spy, Boolean useCcm, Boolean connectable,
-                           Boolean tracking, String mcp, Boolean enlistmentTrace,
+                           Boolean tracking, String mcp, Boolean fair, Boolean enlistmentTrace,
                            Map<String, String> xaDataSourceProperty, String xaDataSourceClass, String driver,
                            String newConnectionSql,
                            DsXaPool xaPool, Recovery recovery) throws ValidateException
    {
       super(transactionIsolation, timeOut, security, statement, validation, urlDelimiter, urlSelectorStrategyClassName,
             useJavaContext, poolName, enabled, jndiName, spy, useCcm, driver, newConnectionSql, connectable, tracking,
-            mcp, enlistmentTrace);
+            mcp, fair, enlistmentTrace);
 
       if (xaDataSourceProperty != null)
       {
