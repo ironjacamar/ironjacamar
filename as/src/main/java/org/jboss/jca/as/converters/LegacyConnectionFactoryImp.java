@@ -206,11 +206,11 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
    {
       if (transactionSupport == TransactionSupportEnum.XATransaction)
          pool = new XaPoolImpl(minPoolSize, null, maxPoolSize, prefill, Defaults.USE_STRICT_MIN, 
-            Defaults.FLUSH_STRATEGY, capacity, Defaults.IS_SAME_RM_OVERRIDE, interleaving, Defaults.PAD_XID, 
+            Defaults.FLUSH_STRATEGY, capacity, Defaults.FAIR, Defaults.IS_SAME_RM_OVERRIDE, interleaving, Defaults.PAD_XID,
             Defaults.WRAP_XA_RESOURCE, noTxSeparatePool);
       else
          pool = new PoolImpl(minPoolSize, null, maxPoolSize, prefill, Defaults.USE_STRICT_MIN,
-                             Defaults.FLUSH_STRATEGY, capacity);
+                             Defaults.FLUSH_STRATEGY, capacity, Defaults.FAIR);
       this.noTxSeparatePool = noTxSeparatePool;
       this.setInterleaving(interleaving);
       return this;

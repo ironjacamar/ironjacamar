@@ -22,6 +22,7 @@
 package org.jboss.jca.common.metadata.common;
 
 import org.jboss.jca.common.CommonBundle;
+import org.jboss.jca.common.api.metadata.Defaults;
 import org.jboss.jca.common.api.metadata.common.Capacity;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.common.api.metadata.common.Pool;
@@ -80,6 +81,11 @@ public class PoolImpl implements Pool
    protected Capacity capacity;
 
    /**
+    * is-fair
+    */
+   protected Boolean fair;
+
+   /**
     * Constructor
     *
     * @param minPoolSize minPoolSize
@@ -93,7 +99,7 @@ public class PoolImpl implements Pool
     */
    public PoolImpl(Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize, 
                    Boolean prefill, Boolean useStrictMin,
-                   FlushStrategy flushStrategy, Capacity capacity)
+                   FlushStrategy flushStrategy, Capacity capacity, Boolean fair)
       throws ValidateException
    {
       this.minPoolSize = minPoolSize;
@@ -103,6 +109,7 @@ public class PoolImpl implements Pool
       this.useStrictMin = useStrictMin;
       this.flushStrategy = flushStrategy;
       this.capacity = capacity;
+      this.fair = fair;
       this.validate();
    }
 
@@ -165,6 +172,14 @@ public class PoolImpl implements Pool
    /**
     * {@inheritDoc}
     */
+   public Boolean isFair()
+   {
+      return fair;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public void validate() throws ValidateException
    {
       if (this.maxPoolSize != null && this.maxPoolSize.intValue() < 0)
@@ -200,6 +215,7 @@ public class PoolImpl implements Pool
       result = prime * result + ((prefill == null) ? 0 : prefill.hashCode());
       result = prime * result + ((useStrictMin == null) ? 0 : useStrictMin.hashCode());
       result = prime * result + ((flushStrategy == null) ? 0 : flushStrategy.hashCode());
+      result = prime * result + ((fair == null) ? 0 : fair.hashCode());
       return result;
    }
 
@@ -264,6 +280,13 @@ public class PoolImpl implements Pool
       }
       else if (!capacity.equals(other.capacity))
          return false;
+      if (fair == null)
+      {
+         if (other.fair != null)
+            return false;
+      }
+      else if (!fair.equals(other.fair))
+         return false;
       return true;
    }
 
@@ -309,6 +332,13 @@ public class PoolImpl implements Pool
          sb.append("<").append(Pool.Tag.USE_STRICT_MIN).append(">");
          sb.append(useStrictMin);
          sb.append("</").append(Pool.Tag.USE_STRICT_MIN).append(">");
+      }
+
+      if (fair != null && !fair.equals(Defaults.FAIR))
+      {
+         sb.append("<").append(Pool.Tag.FAIR).append(">");
+         sb.append(fair);
+         sb.append("</").append(Pool.Tag.FAIR).append(">");
       }
 
       if (flushStrategy != null)

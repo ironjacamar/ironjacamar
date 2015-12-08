@@ -81,6 +81,11 @@ public interface DsPool extends Pool
       PREFILL("prefill"),
 
       /**
+       * fair tag
+       */
+      FAIR("fair"),
+
+      /**
        * use-strict-min tag
        */
       USE_STRICT_MIN("use-strict-min"),
