@@ -1166,7 +1166,7 @@ public abstract class AbstractResourceAdapterDeployer
          if (log.isTraceEnabled())
          {
             log.tracef("Connector=%s", cmd);
-            log.tracef("Activation=%s", stripPassword(activation.toString()));
+            log.tracef("Activation=%s", stripPassword(activation != null ? activation.toString() : ""));
             log.tracef("ActivateDeployment=%s", activateDeployment);
          }
 
