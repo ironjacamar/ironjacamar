@@ -21,6 +21,7 @@
 
 package org.ironjacamar.core.connectionmanager;
 
+import org.ironjacamar.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.ironjacamar.core.connectionmanager.pool.Pool;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -44,13 +45,19 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    /** The pool */
    protected Pool pool;
 
+   /** The cached connection manager */
+   protected CachedConnectionManager ccm;
+   
    /**
     * Constructor
     * @param mcf The managed connection factory
+    * @param ccm The cached connection manager
     */
-   public AbstractConnectionManager(ManagedConnectionFactory mcf)
+   public AbstractConnectionManager(ManagedConnectionFactory mcf,
+                                    CachedConnectionManager ccm)
    {
       this.mcf = mcf;
+      this.ccm = ccm;
       this.pool = null;
    }
    
@@ -68,6 +75,14 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    public ManagedConnectionFactory getManagedConnectionFactory()
    {
       return mcf;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public CachedConnectionManager getCachedConnectionManager()
+   {
+      return ccm;
    }
 
    /**
@@ -98,7 +113,13 @@ public abstract class AbstractConnectionManager implements ConnectionManager
          throw new ResourceException();
       
       Credential credential = new Credential(null, cri);
-      return getConnectionListener(credential).getConnection();
+      org.ironjacamar.core.connectionmanager.listener.ConnectionListener cl = getConnectionListener(credential);
+      Object connection = cl.getConnection();
+
+      if (ccm != null)
+         ccm.registerConnection(this, cl, connection);
+      
+      return connection;
    }
 
    /**

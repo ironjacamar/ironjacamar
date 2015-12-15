@@ -21,6 +21,7 @@
 
 package org.ironjacamar.core.connectionmanager;
 
+import org.ironjacamar.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.ironjacamar.core.spi.transaction.TransactionIntegration;
 
 import javax.resource.spi.ManagedConnectionFactory;
@@ -35,12 +36,14 @@ public class XATransactionConnectionManager extends AbstractTransactionalConnect
    /**
     * Constructor
     * @param mcf The managed connection factory
+    * @param ccm The cached connection manager
     * @param ti The transaction integration
     */
    public XATransactionConnectionManager(ManagedConnectionFactory mcf,
+                                         CachedConnectionManager ccm,
                                          TransactionIntegration ti)
    {
-      super(mcf, ti);
+      super(mcf, ccm, ti);
    }
 
    /**

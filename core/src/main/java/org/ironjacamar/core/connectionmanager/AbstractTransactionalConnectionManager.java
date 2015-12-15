@@ -21,6 +21,8 @@
 
 package org.ironjacamar.core.connectionmanager;
 
+import org.ironjacamar.core.api.connectionmanager.ccm.CachedConnectionManager;
+import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
 import org.ironjacamar.core.spi.transaction.TransactionIntegration;
 import org.ironjacamar.core.spi.transaction.TxUtils;
 
@@ -40,12 +42,14 @@ public abstract class AbstractTransactionalConnectionManager extends AbstractCon
    /**
     * Constructor
     * @param mcf The managed connection factory
+    * @param ccm The cached connection manager
     * @param ti The transaction integration
     */
    public AbstractTransactionalConnectionManager(ManagedConnectionFactory mcf,
+                                                 CachedConnectionManager ccm,
                                                  TransactionIntegration ti)
    {
-      super(mcf);
+      super(mcf, ccm);
       this.ti = ti;
    }
 
@@ -55,6 +59,26 @@ public abstract class AbstractTransactionalConnectionManager extends AbstractCon
    public TransactionIntegration getTransactionIntegration()
    {
       return ti;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void transactionStarted(ConnectionListener cl) throws ResourceException
+   {
+      try
+      {
+         if (!cl.isEnlisted() && TxUtils.isUncommitted(ti.getTransactionManager().getTransaction()))
+            cl.enlist();
+      }
+      catch (ResourceException re)
+      {
+         throw re;
+      }
+      catch (Exception e)
+      {
+         throw new ResourceException(e);
+      }
    }
 
    /**

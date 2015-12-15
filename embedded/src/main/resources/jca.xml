@@ -150,6 +150,14 @@
         interface="org.ironjacamar.core.api.deploymentrepository.DeploymentRepository"
         class="org.ironjacamar.core.deploymentrepository.DeploymentRepositoryImpl"/>
 
+  <bean name="CachedConnectionManager" 
+        interface="org.ironjacamar.core.api.connectionmanager.ccm.CachedConnectionManager"
+        class="org.ironjacamar.core.connectionmanager.ccm.CachedConnectionManagerImpl">
+    <constructor>
+      <parameter><inject bean="TransactionIntegration"/></parameter>
+    </constructor>
+  </bean>
+  
   <!-- Deployment chain -->
   <bean name="RarFileExtractorDeployer"
         class="org.ironjacamar.embedded.deployers.RarFileExtractorDeployer"/>
@@ -180,6 +188,7 @@
     <property name="BootstrapContext"><inject bean="BootstrapContext"/></property>
     <property name="JndiStrategy"><inject bean="JndiStrategy"/></property>
     <property name="TransactionIntegration"><inject bean="TransactionIntegration"/></property>
+    <property name="CachedConnectionManager"><inject bean="CachedConnectionManager"/></property>
     <depends>ClassLoaderDeployer</depends>
   </bean>
 
@@ -190,6 +199,7 @@
     <property name="BootstrapContext"><inject bean="BootstrapContext"/></property>
     <property name="JndiStrategy"><inject bean="JndiStrategy"/></property>
     <property name="TransactionIntegration"><inject bean="TransactionIntegration"/></property>
+    <property name="CachedConnectionManager"><inject bean="CachedConnectionManager"/></property>
     <depends>ClassLoaderDeployer</depends>
   </bean>
 

@@ -21,11 +21,12 @@
 
 package org.ironjacamar.core.connectionmanager.listener;
 
-import org.ironjacamar.core.api.connectionmanager.ConnectionManager;
+import org.ironjacamar.core.connectionmanager.ConnectionManager;
 import org.ironjacamar.core.connectionmanager.Credential;
 
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.FREE;
 
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -109,7 +110,14 @@ public abstract class AbstractConnectionListener implements ConnectionListener
     */
    public void connectionClosed(ConnectionEvent event)
    {
-      connectionHandles.remove(event.getConnectionHandle());
+      Object connection = event.getConnectionHandle();
+      if (connectionHandles.remove(connection))
+      {
+         if (cm.getCachedConnectionManager() != null)
+         {
+            cm.getCachedConnectionManager().unregisterConnection(cm, this, connection);
+         }
+      }
 
       if (connectionHandles.size() == 0 && !isEnlisted())
          cm.returnConnectionListener(this, false);
@@ -120,7 +128,14 @@ public abstract class AbstractConnectionListener implements ConnectionListener
     */
    public void connectionErrorOccurred(ConnectionEvent event)
    {
-      connectionHandles.remove(event.getConnectionHandle());
+      Object connection = event.getConnectionHandle();
+      if (connectionHandles.remove(connection))
+      {
+         if (cm.getCachedConnectionManager() != null)
+         {
+            cm.getCachedConnectionManager().unregisterConnection(cm, this, connection);
+         }
+      }
 
       if (connectionHandles.size() == 0 && !isEnlisted())
          cm.returnConnectionListener(this, true);
@@ -165,6 +180,30 @@ public abstract class AbstractConnectionListener implements ConnectionListener
       connectionHandles.add(result);
 
       return result;
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   public Set<Object> getConnections()
+   {
+      return connectionHandles;
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   public void addConnection(Object c)
+   {
+      connectionHandles.add(c);
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   public void clearConnections()
+   {
+      connectionHandles.clear();
    }
    
    /**

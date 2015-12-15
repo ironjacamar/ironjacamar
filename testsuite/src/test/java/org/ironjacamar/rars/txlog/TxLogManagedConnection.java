@@ -25,8 +25,10 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionEvent;
@@ -111,8 +113,8 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
    /** Listeners */
    private List<ConnectionEventListener> listeners;
 
-   /** Connection */
-   private TxLogConnectionImpl connection;
+   /** Connections */
+   private Set<TxLogConnectionImpl> connections;
 
    /** Transaction timeout */
    private int timeout;
@@ -130,7 +132,7 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
       this.id = Integer.toHexString(System.identityHashCode(this));
       this.logwriter = null;
       this.listeners = Collections.synchronizedList(new ArrayList<ConnectionEventListener>(1));
-      this.connection = null;
+      this.connections = new HashSet<TxLogConnectionImpl>();
       this.inPool = true;
    }
 
@@ -147,10 +149,11 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
                                ConnectionRequestInfo cxRequestInfo)
       throws ResourceException
    {
-      if (connection == null)
-         connection = new TxLogConnectionImpl(this, mcf);
+      TxLogConnectionImpl connection = new TxLogConnectionImpl(this, mcf);
 
+      connections.add(connection);
       inPool = false;
+      
       return connection;
    }
 
@@ -169,7 +172,9 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
       if (!(connection instanceof TxLogConnectionImpl))
          throw new ResourceException("Wrong connection handle");
 
-      this.connection = (TxLogConnectionImpl)connection;
+      TxLogConnectionImpl handle = (TxLogConnectionImpl)connection;
+      handle.setManagedConnection(this);
+      connections.add(handle);
    }
 
    /**
@@ -181,6 +186,7 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
    {
       // We want to be able to use txState across checkouts
       inPool = true;
+      connections.clear();
    }
 
    /**
@@ -229,6 +235,8 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
     */
    void closeHandle(TxLogConnection handle)
    {
+      connections.remove((TxLogConnectionImpl)handle);
+
       ConnectionEvent event = new ConnectionEvent(this, ConnectionEvent.CONNECTION_CLOSED);
       event.setConnectionHandle(handle);
 
@@ -247,6 +255,8 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
     */
    void errorHandle(TxLogConnection handle, Exception exception)
    {
+      connections.remove((TxLogConnectionImpl)handle);
+
       ConnectionEvent event = new ConnectionEvent(this, ConnectionEvent.CONNECTION_ERROR_OCCURRED, exception);
       event.setConnectionHandle(handle);
 

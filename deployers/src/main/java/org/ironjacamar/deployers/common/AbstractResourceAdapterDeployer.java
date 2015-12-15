@@ -26,6 +26,7 @@ import org.ironjacamar.common.api.metadata.resourceadapter.Activation;
 import org.ironjacamar.common.api.metadata.resourceadapter.AdminObject;
 import org.ironjacamar.common.api.metadata.resourceadapter.ConnectionDefinition;
 import org.ironjacamar.common.api.metadata.spec.Connector;
+import org.ironjacamar.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.ironjacamar.core.api.connectionmanager.pool.PoolConfiguration;
 import org.ironjacamar.core.api.deploymentrepository.Deployment;
 import org.ironjacamar.core.api.deploymentrepository.DeploymentRepository;
@@ -73,6 +74,9 @@ public abstract class AbstractResourceAdapterDeployer
    /** The TransactionIntegration */
    protected TransactionIntegration transactionIntegration;
 
+   /** The CachedConnectionManager */
+   protected CachedConnectionManager cachedConnectionManager;
+
    /**
     * Constructor
     */
@@ -83,6 +87,7 @@ public abstract class AbstractResourceAdapterDeployer
       this.bootstrapContext = null;
       this.jndiStrategy = null;
       this.transactionIntegration = null;
+      this.cachedConnectionManager = null;
    }
 
    /**
@@ -128,6 +133,15 @@ public abstract class AbstractResourceAdapterDeployer
    public void setTransactionIntegration(TransactionIntegration v)
    {
       this.transactionIntegration = v;
+   }
+   
+   /**
+    * Set the cached connection manager
+    * @param v The value
+    */
+   public void setCachedConnectionManager(CachedConnectionManager v)
+   {
+      this.cachedConnectionManager = v;
    }
    
    /**
@@ -280,7 +294,9 @@ public abstract class AbstractResourceAdapterDeployer
                                    builder.getClassLoader());
 
          ConnectionManager cm =
-            ConnectionManagerFactory.createConnectionManager(transactionSupport, mcf, transactionIntegration);
+            ConnectionManagerFactory.createConnectionManager(transactionSupport, mcf,
+                                                             cd.isUseCcm() ? cachedConnectionManager : null,
+                                                             transactionIntegration);
 
          String poolType = cd.getPool() != null ? cd.getPool().getType() : null;
 

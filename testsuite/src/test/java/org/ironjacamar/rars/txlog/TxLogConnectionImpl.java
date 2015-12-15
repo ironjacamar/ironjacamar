@@ -113,6 +113,15 @@ public class TxLogConnectionImpl implements TxLogConnection
    }
 
    /**
+    * Set the managed connection
+    * @param v The value
+    */
+   void setManagedConnection(TxLogManagedConnection v)
+   {
+      mc = v;
+   }
+
+   /**
     * {@inheritDoc}
     */
    @Override

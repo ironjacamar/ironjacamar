@@ -23,6 +23,8 @@ package org.ironjacamar.core.connectionmanager.listener;
 
 import org.ironjacamar.core.connectionmanager.Credential;
 
+import java.util.Set;
+
 import javax.resource.ResourceException;
 
 /**
@@ -91,4 +93,21 @@ public interface ConnectionListener extends org.ironjacamar.core.api.connectionm
     * @exception ResourceException Thrown if a connection can't be obtained
     */
    public Object getConnection() throws ResourceException;
+
+   /**
+    * Get the connection handles associated
+    * @return The value
+    */
+   public Set<Object> getConnections();
+
+   /**
+    * Add a connection handle
+    * @param c The handle
+    */
+   public void addConnection(Object c);
+
+   /**
+    * Clear all connection handles
+    */
+   public void clearConnections();
 }

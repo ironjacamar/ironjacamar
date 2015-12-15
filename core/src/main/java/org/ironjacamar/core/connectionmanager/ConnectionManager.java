@@ -21,8 +21,11 @@
 
 package org.ironjacamar.core.connectionmanager;
 
+import org.ironjacamar.core.api.connectionmanager.ccm.CachedConnectionManager;
+import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
 import org.ironjacamar.core.connectionmanager.pool.Pool;
 
+import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 
@@ -32,6 +35,12 @@ import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
  */
 public interface ConnectionManager extends org.ironjacamar.core.api.connectionmanager.ConnectionManager
 {
+   /**
+    * Get the cached connection manager
+    * @return The value
+    */
+   public CachedConnectionManager getCachedConnectionManager();
+
    /**
     * Get the transaction support level
     * @return The value
@@ -49,6 +58,13 @@ public interface ConnectionManager extends org.ironjacamar.core.api.connectionma
     * @return The value
     */
    public ManagedConnectionFactory getManagedConnectionFactory();
+
+   /**
+    * Transaction started
+    * @param cl The connection listener
+    * @exception ResourceException Thrown if an enlistment error occurs
+    */
+   public void transactionStarted(ConnectionListener cl) throws ResourceException;
 
    /**
     * Is shutdown

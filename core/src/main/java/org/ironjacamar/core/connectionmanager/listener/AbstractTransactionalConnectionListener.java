@@ -21,7 +21,7 @@
 
 package org.ironjacamar.core.connectionmanager.listener;
 
-import org.ironjacamar.core.api.connectionmanager.ConnectionManager;
+import org.ironjacamar.core.connectionmanager.ConnectionManager;
 import org.ironjacamar.core.connectionmanager.Credential;
 import org.ironjacamar.core.connectionmanager.TransactionalConnectionManager;
 import org.ironjacamar.core.spi.transaction.ConnectableResource;

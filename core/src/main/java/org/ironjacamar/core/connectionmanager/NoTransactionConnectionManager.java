@@ -21,6 +21,10 @@
 
 package org.ironjacamar.core.connectionmanager;
 
+import org.ironjacamar.core.api.connectionmanager.ccm.CachedConnectionManager;
+import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
+
+import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 
@@ -33,10 +37,12 @@ public class NoTransactionConnectionManager extends AbstractConnectionManager
    /**
     * Constructor
     * @param mcf The managed connection factory
+    * @param ccm The cached connection manager
     */
-   public NoTransactionConnectionManager(ManagedConnectionFactory mcf)
+   public NoTransactionConnectionManager(ManagedConnectionFactory mcf,
+                                         CachedConnectionManager ccm)
    {
-      super(mcf);
+      super(mcf, ccm);
    }
 
    /**
@@ -45,5 +51,12 @@ public class NoTransactionConnectionManager extends AbstractConnectionManager
    public TransactionSupportLevel getTransactionSupport()
    {
       return TransactionSupportLevel.NoTransaction;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void transactionStarted(ConnectionListener cl) throws ResourceException
+   {
    }
 }

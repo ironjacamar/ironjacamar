@@ -18,7 +18,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.ironjacamar.core.connectionmanager.pool.dflt;
+package org.ironjacamar.core.connectionmanager.listener.dflt;
 
 import org.ironjacamar.embedded.Configuration;
 import org.ironjacamar.embedded.Deployment;
