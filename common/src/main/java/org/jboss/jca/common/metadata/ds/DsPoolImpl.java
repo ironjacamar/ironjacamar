@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.common.metadata.ds;
 
+import org.jboss.jca.common.api.metadata.Defaults;
 import org.jboss.jca.common.api.metadata.common.Capacity;
 import org.jboss.jca.common.api.metadata.common.Extension;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
@@ -173,7 +174,7 @@ public class DsPoolImpl extends org.jboss.jca.common.metadata.common.PoolImpl im
          sb.append("</").append(DsPool.Tag.PREFILL).append(">");
       }
 
-      if (fair != null)
+      if (fair != null && !fair.equals(Defaults.FAIR))
       {
          sb.append("<").append(DsPool.Tag.FAIR).append(">");
          sb.append(fair);

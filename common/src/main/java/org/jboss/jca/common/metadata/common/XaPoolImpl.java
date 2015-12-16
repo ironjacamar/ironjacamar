@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.common.metadata.common;
 
+import org.jboss.jca.common.api.metadata.Defaults;
 import org.jboss.jca.common.api.metadata.common.Capacity;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.common.api.metadata.common.XaPool;
@@ -228,7 +229,7 @@ public class XaPoolImpl extends PoolImpl implements XaPool
          sb.append("</").append(XaPool.Tag.PREFILL).append(">");
       }
 
-      if (fair != null)
+      if (fair != null && !fair.equals(Defaults.FAIR))
       {
          sb.append("<").append(XaPool.Tag.FAIR).append(">");
          sb.append(fair);

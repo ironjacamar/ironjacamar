@@ -35,11 +35,10 @@ import org.jboss.jca.common.api.metadata.resourceadapter.AdminObject;
 import org.jboss.jca.common.api.metadata.resourceadapter.ConnectionDefinition;
 import org.jboss.jca.common.metadata.XMLParserTestBase;
 import org.jboss.jca.common.metadata.resourceadapter.ActivationImpl;
+import org.junit.BeforeClass;
 
 import java.util.List;
 import java.util.Map;
-
-import org.junit.BeforeClass;
 
 import static org.junit.Assert.*;
 
@@ -50,7 +49,7 @@ import static org.junit.Assert.*;
  * @author <a href="mailto:vrastsel@redhat.com">Vladimir Rastseluev</a>
  *
  */
-public class IronJacamarComplexParser11TestCase extends XMLParserTestBase
+public class IronJacamarComplexParser13TestCase extends XMLParserTestBase
 {
    /**
    *
@@ -61,11 +60,11 @@ public class IronJacamarComplexParser11TestCase extends XMLParserTestBase
    public static void beforeClass()
    {
       parser = new IronJacamarParser();
-      parsedFileName = "ironjacamar/unit/ironjacamar11-all.xml";
+      parsedFileName = "ironjacamar/unit/ironjacamar13-all.xml";
    }
 
    /**
-    * 
+    *
     * checks, if all IronJacamars 1.1 properties set correctly
     * {inheritDoc}
     * @param result of parsing
@@ -86,7 +85,7 @@ public class IronJacamarComplexParser11TestCase extends XMLParserTestBase
       assertEquals(cp.get("Property1"), "A");
       assertEquals(cp.get("Property2"), "B");
 
-      List<org.jboss.jca.common.api.metadata.resourceadapter.ConnectionDefinition> cds = ra.getConnectionDefinitions();
+      List<ConnectionDefinition> cds = ra.getConnectionDefinitions();
       assertEquals(3, cds.size());
       //conn-def 1
       ConnectionDefinition cd = cds.get(0);
@@ -113,6 +112,7 @@ public class IronJacamarComplexParser11TestCase extends XMLParserTestBase
       assertEquals(2, (int) xaPool.getInitialPoolSize());
       assertEquals(5, (int) xaPool.getMaxPoolSize());
       assertTrue(xaPool.isPrefill());
+      assertTrue(xaPool.isFair());
       assertTrue(xaPool.isUseStrictMin());
       assertEquals(xaPool.getFlushStrategy(), FlushStrategy.IDLE_CONNECTIONS);
       assertNotNull(xaPool.getCapacity());
@@ -235,6 +235,7 @@ public class IronJacamarComplexParser11TestCase extends XMLParserTestBase
       assertEquals(0, (int) xaPool.getMinPoolSize());
       assertEquals(20, (int) xaPool.getMaxPoolSize());
       assertFalse(xaPool.isPrefill());
+      assertFalse(xaPool.isFair());
       assertEquals(xaPool.getFlushStrategy(), FlushStrategy.FAILING_CONNECTION_ONLY);
       assertNull(xaPool.getCapacity());
       assertEquals(null, xaPool.isSameRmOverride());

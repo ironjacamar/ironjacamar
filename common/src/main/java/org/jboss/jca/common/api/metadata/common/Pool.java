@@ -72,9 +72,9 @@ public interface Pool extends JCAMetadata, ValidatableMetadata
    public Boolean isUseStrictMin();
 
    /**
-    * Get the useStrictMin.
+    * Get the flushStrategy.
     *
-    * @return the useStrictMin.
+    * @return the flushStrategy.
     */
    public FlushStrategy getFlushStrategy();
 
@@ -86,9 +86,9 @@ public interface Pool extends JCAMetadata, ValidatableMetadata
 
 
    /**
-    * Get the useStrictMin.
+    * Get pool fairness.
     *
-    * @return the useStrictMin.
+    * @return pool fairness.
     */
    public Boolean isFair();
 

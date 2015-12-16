@@ -69,7 +69,7 @@ public class PoolConfiguration
     */
    private AtomicBoolean useFastFail;
 
-   /** Fair semaphore permits, default true */
+   /** Fairness of semaphore permits, default true */
    private AtomicBoolean fairPermits;
 
    /**

@@ -123,15 +123,6 @@ public interface CommonDataSource extends JCAMetadata, ValidatableMetadata
    public String getMcp();
 
    /**
-    * Get fair
-    *
-    * @return fair
-    */
-
-   public Boolean getFair();
-
-
-   /**
     * Get the enlistment trace
     *
     * @return the enlistment trace

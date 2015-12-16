@@ -22,6 +22,7 @@
 package org.jboss.jca.common.metadata.common;
 
 import org.jboss.jca.common.CommonBundle;
+import org.jboss.jca.common.api.metadata.Defaults;
 import org.jboss.jca.common.api.metadata.common.Capacity;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.common.api.metadata.common.Pool;
@@ -80,7 +81,7 @@ public class PoolImpl implements Pool
    protected Capacity capacity;
 
    /**
-    * use-strict-min
+    * is-fair
     */
    protected Boolean fair;
 
@@ -326,11 +327,11 @@ public class PoolImpl implements Pool
          sb.append("</").append(Pool.Tag.PREFILL).append(">");
       }
 
-      if (fair != null)
+      if (fair != null && !fair.equals(Defaults.FAIR))
       {
          sb.append("<").append(Pool.Tag.FAIR).append(">");
          sb.append(fair);
-         sb.append("</").append(Pool.Tag.CAPACITY).append(">");
+         sb.append("</").append(Pool.Tag.FAIR).append(">");
       }
 
       if (useStrictMin != null)

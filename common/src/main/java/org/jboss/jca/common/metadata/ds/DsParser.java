@@ -930,7 +930,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   return new XADataSourceImpl(transactionIsolation, timeOutSettings, securitySettings,
                                               statementSettings, validationSettings, urlDelimiter, urlProperty,
                                               urlSelectorStrategyClassName, useJavaContext, poolName, enabled,
-                                              jndiName, spy, useCcm, connectable, tracking, mcp, fair, enlistmentTrace,
+                                              jndiName, spy, useCcm, connectable, tracking, mcp, enlistmentTrace,
                                               xaDataSourceProperty,
                                               xaDataSourceClass, driver, newConnectionSql, xaPool, recovery);
                }
@@ -1125,7 +1125,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                                             connectionProperties, timeOutSettings, securitySettings,
                                             statementSettings, validationSettings, urlDelimiter,
                                             urlSelectorStrategyClassName, newConnectionSql, useJavaContext, poolName,
-                                            enabled, jndiName, spy, useCcm, jta, connectable, tracking, mcp, fair,
+                                            enabled, jndiName, spy, useCcm, jta, connectable, tracking, mcp,
                                             enlistmentTrace, pool);
                }
                else

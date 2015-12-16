@@ -21,7 +21,6 @@
  */
 package org.jboss.jca.common.metadata.resourceadapter;
 
-import org.jboss.jca.common.api.metadata.Defaults;
 import org.jboss.jca.common.api.metadata.common.Pool;
 import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.metadata.common.Security;
@@ -96,8 +95,6 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
 
    private String mcp;
 
-   private Boolean fair;
-
    private Boolean enlistmentTrace;
 
    /**
@@ -129,43 +126,6 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
                                    String mcp, Boolean enlistmentTrace, Pool pool, TimeOut timeOut,
                                    Validation validation, Security security, Recovery recovery, Boolean isXA)
    {
-      this(configProperties, className, jndiName,
-              poolName, enabled, useJavaContext, useCcm,
-              sharable, enlistment, connectable, tracking,
-              mcp, Defaults.FAIR, enlistmentTrace, pool, timeOut,
-              validation, security, recovery, isXA);
-   }
-
-   /**
-    * Create a new ConnectionDefinition.
-    *
-    * @param configProperties configProperties
-    * @param className className
-    * @param jndiName jndiName
-    * @param poolName poolName
-    * @param enabled enabled
-    * @param useJavaContext useJavaContext
-    * @param useCcm useCcm
-    * @param sharable sharable
-    * @param enlistment enlistment
-    * @param connectable connectable
-    * @param tracking tracking
-    * @param mcp mcp
-    * @param fair fair
-    * @param enlistmentTrace enlistmentTrace
-    * @param pool pool
-    * @param timeOut timeOut
-    * @param validation validation
-    * @param security security
-    * @param recovery recovery
-    * @param isXA isXA
-    */
-   public ConnectionDefinitionImpl(Map<String, String> configProperties, String className, String jndiName,
-                                   String poolName, Boolean enabled, Boolean useJavaContext, Boolean useCcm,
-                                   Boolean sharable, Boolean enlistment, Boolean connectable, Boolean tracking,
-                                   String mcp, Boolean fair, Boolean enlistmentTrace, Pool pool, TimeOut timeOut,
-                                   Validation validation, Security security, Recovery recovery, Boolean isXA)
-   {
       if (configProperties != null)
       {
          this.configProperties = new HashMap<String, String>(configProperties.size());
@@ -195,7 +155,6 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
       this.tracking = tracking;
 
       this.mcp = mcp;
-      this.fair = fair;
       this.enlistmentTrace = enlistmentTrace;
    }
 
@@ -346,14 +305,6 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
    /**
     * {@inheritDoc}
     */
-   public Boolean isFair()
-   {
-      return fair;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
    public Boolean isEnlistmentTrace()
    {
       return enlistmentTrace;
@@ -387,7 +338,6 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
       result = prime * result + ((tracking == null) ? 0 : tracking.hashCode());
 
       result = prime * result + ((mcp == null) ? 0 : mcp.hashCode());
-      result = prime * result + ((fair == null) ? 0 : fair.hashCode());
       result = prime * result + ((enlistmentTrace == null) ? 0 : enlistmentTrace.hashCode());
 
       return result;
@@ -534,13 +484,6 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
       }
       else if (!mcp.equals(other.mcp))
          return false;
-      if (fair == null)
-      {
-         if (other.fair != null)
-            return false;
-      }
-      else if (!fair.equals(other.fair))
-         return false;
       if (enlistmentTrace == null)
       {
          if (other.enlistmentTrace != null)
@@ -597,9 +540,6 @@ public class ConnectionDefinitionImpl implements ConnectionDefinition
 
       if (mcp != null)
          sb.append(" ").append(ConnectionDefinition.Attribute.MCP).append("=\"").append(mcp).append("\"");
-
-      if (fair != null)
-         sb.append(" ").append(ConnectionDefinition.Attribute.FAIR).append("=\"").append(fair).append("\"");
 
       if (enlistmentTrace != null)
          sb.append(" ").append(ConnectionDefinition.Attribute.ENLISTMENT_TRACE).append("=\"")
