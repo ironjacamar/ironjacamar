@@ -413,7 +413,7 @@ public class Main
 
          SecurityImpl secImpl = new SecurityImpl("", "", true);
          PoolImpl poolImpl = new PoolImpl(0, null, 10, Defaults.PREFILL, Defaults.USE_STRICT_MIN, 
-                                          Defaults.FLUSH_STRATEGY, null, Defaults.FAIR);
+                                          Defaults.FLUSH_STRATEGY, null, null);
          XaPoolImpl xaPoolImpl = new XaPoolImpl(0, null, 10, Defaults.PREFILL, Defaults.USE_STRICT_MIN, 
                                                 Defaults.FLUSH_STRATEGY, null, Defaults.FAIR,
                                                 Defaults.IS_SAME_RM_OVERRIDE, Defaults.INTERLEAVING,
