@@ -327,18 +327,18 @@ public class PoolImpl implements Pool
          sb.append("</").append(Pool.Tag.PREFILL).append(">");
       }
 
-      if (fair != null && !fair.equals(Defaults.FAIR))
-      {
-         sb.append("<").append(Pool.Tag.FAIR).append(">");
-         sb.append(fair);
-         sb.append("</").append(Pool.Tag.FAIR).append(">");
-      }
-
       if (useStrictMin != null)
       {
          sb.append("<").append(Pool.Tag.USE_STRICT_MIN).append(">");
          sb.append(useStrictMin);
          sb.append("</").append(Pool.Tag.USE_STRICT_MIN).append(">");
+      }
+
+      if (fair != null && !fair.equals(Defaults.FAIR))
+      {
+         sb.append("<").append(Pool.Tag.FAIR).append(">");
+         sb.append(fair);
+         sb.append("</").append(Pool.Tag.FAIR).append(">");
       }
 
       if (flushStrategy != null)
