@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.common.metadata.ds;
 
+import org.jboss.jca.common.api.metadata.Defaults;
 import org.jboss.jca.common.api.metadata.common.Capacity;
 import org.jboss.jca.common.api.metadata.common.Extension;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
@@ -67,10 +68,10 @@ public class DsPoolImpl extends org.jboss.jca.common.metadata.common.PoolImpl im
    public DsPoolImpl(Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize, 
                      Boolean prefill, Boolean useStrictMin,
                      FlushStrategy flushStrategy, Boolean allowMultipleUsers,
-                     Capacity capacity, Extension connectionListener)
+                     Capacity capacity, Boolean fair, Extension connectionListener)
       throws ValidateException
    {
-      super(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy, capacity);
+      super(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy, capacity, fair);
       this.allowMultipleUsers = allowMultipleUsers;
       this.connectionListener = connectionListener;
    }
@@ -178,6 +179,13 @@ public class DsPoolImpl extends org.jboss.jca.common.metadata.common.PoolImpl im
          sb.append("<").append(DsPool.Tag.USE_STRICT_MIN).append(">");
          sb.append(useStrictMin);
          sb.append("</").append(DsPool.Tag.USE_STRICT_MIN).append(">");
+      }
+
+      if (fair != null && !fair.equals(Defaults.FAIR))
+      {
+         sb.append("<").append(DsPool.Tag.FAIR).append(">");
+         sb.append(fair);
+         sb.append("</").append(DsPool.Tag.FAIR).append(">");
       }
 
       if (flushStrategy != null)

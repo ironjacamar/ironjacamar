@@ -112,6 +112,11 @@ public interface Defaults
    public static final Boolean PREFILL = Boolean.FALSE;
    
    /**
+    * Fair
+    */
+   public static final Boolean FAIR = Boolean.TRUE;
+
+   /**
     * Use strict min
     */
    public static final Boolean USE_STRICT_MIN = Boolean.FALSE;

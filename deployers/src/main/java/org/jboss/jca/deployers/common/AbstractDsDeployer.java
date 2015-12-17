@@ -1285,6 +1285,9 @@ public abstract class AbstractDsDeployer
 
          if (pp.isUseStrictMin() != null)
             pc.setStrictMin(pp.isUseStrictMin());
+
+         if (pp.isFair() != null)
+            pc.setFair( pp.isFair() );
       }
 
       if (tp != null)

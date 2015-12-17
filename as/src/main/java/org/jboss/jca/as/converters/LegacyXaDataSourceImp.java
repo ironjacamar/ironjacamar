@@ -262,7 +262,7 @@ public class LegacyXaDataSourceImp implements XaDataSource
    {
       xaPool = new DsXaPoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy,
             isSameRmOverride, interleaving, padXid,
-            wrapXaResource, noTxSeparatePool, false, null, null);
+            wrapXaResource, noTxSeparatePool, false, null, null, null);
 
       return this;
    }

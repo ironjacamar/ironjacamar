@@ -242,7 +242,7 @@ public class LegacyTxDataSourceImpl implements LocalTxDataSource
          FlushStrategy flushStrategy) throws Exception
    {
       pool = new DsPoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, 
-         useStrictMin, flushStrategy, false, null, null);
+         useStrictMin, flushStrategy, false, null, null, null);
       return this;
    }
    

@@ -624,6 +624,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       FlushStrategy flushStrategy = Defaults.FLUSH_STRATEGY;
       Boolean allowMultipleUsers = Defaults.ALLOW_MULTIPLE_USERS;
       Capacity capacity = null;
+      Boolean fair = Defaults.FAIR;
       Extension connectionListener = null;
 
       while (reader.hasNext())
@@ -635,7 +636,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                    org.jboss.jca.common.api.metadata.ds.DataSource.Tag.POOL)
                {
                   return new DsPoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy,
-                                        allowMultipleUsers, capacity, connectionListener);
+                                        allowMultipleUsers, capacity, fair, connectionListener);
                }
                else
                {
@@ -664,6 +665,10 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   }
                   case PREFILL : {
                      prefill = elementAsBoolean(reader);
+                     break;
+                  }
+                  case FAIR : {
+                     fair = elementAsBoolean(reader);
                      break;
                   }
                   case USE_STRICT_MIN : {
@@ -716,6 +721,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       FlushStrategy flushStrategy = Defaults.FLUSH_STRATEGY;
       Boolean allowMultipleUsers = Defaults.ALLOW_MULTIPLE_USERS;
       Capacity capacity = null;
+      Boolean fair = Defaults.FAIR;
       Extension connectionListener = null;
       Boolean interleaving = Defaults.INTERLEAVING;
       Boolean isSameRmOverride = Defaults.IS_SAME_RM_OVERRIDE;
@@ -735,7 +741,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   return new DsXaPoolImpl(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin,
                                           flushStrategy, isSameRmOverride, interleaving, padXid,
                                           wrapXaDataSource, noTxSeparatePool, allowMultipleUsers, capacity,
-                                          connectionListener);
+                                          fair, connectionListener);
                }
                else
                {
@@ -784,6 +790,10 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   }
                   case PREFILL : {
                      prefill = elementAsBoolean(reader);
+                     break;
+                  }
+                  case FAIR : {
+                     fair = elementAsBoolean(reader);
                      break;
                   }
                   case USE_STRICT_MIN : {
@@ -855,6 +865,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Boolean connectable = Defaults.CONNECTABLE;
       Boolean tracking = Defaults.TRACKING;
       String mcp = Defaults.MCP;
+      Boolean fair = Defaults.FAIR;
       Boolean enlistmentTrace = Defaults.ENLISTMENT_TRACE;
 
       for (org.jboss.jca.common.api.metadata.ds.XaDataSource.Attribute attribute :
@@ -1045,6 +1056,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Boolean connectable = Defaults.CONNECTABLE;
       Boolean tracking = Defaults.TRACKING;
       String mcp = Defaults.MCP;
+      Boolean fair = Defaults.FAIR;
       Boolean enlistmentTrace = Defaults.ENLISTMENT_TRACE;
 
       for (org.jboss.jca.common.api.metadata.ds.DataSource.Attribute attribute :

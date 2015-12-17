@@ -72,9 +72,9 @@ public interface Pool extends JCAMetadata, ValidatableMetadata
    public Boolean isUseStrictMin();
 
    /**
-    * Get the useStrictMin.
+    * Get the flushStrategy.
     *
-    * @return the useStrictMin.
+    * @return the flushStrategy.
     */
    public FlushStrategy getFlushStrategy();
 
@@ -83,6 +83,14 @@ public interface Pool extends JCAMetadata, ValidatableMetadata
     * @return The value
     */
    public Capacity getCapacity();
+
+
+   /**
+    * Get pool fairness.
+    *
+    * @return pool fairness.
+    */
+   public Boolean isFair();
 
    /**
     *
@@ -119,6 +127,11 @@ public interface Pool extends JCAMetadata, ValidatableMetadata
       PREFILL("prefill"),
 
       /**
+       * fair tag
+       */
+      FAIR("fair"),
+
+      /**
        * use-strict-min tag
        */
       USE_STRICT_MIN("use-strict-min"),
@@ -132,6 +145,7 @@ public interface Pool extends JCAMetadata, ValidatableMetadata
        * capacity tag
        */
       CAPACITY("capacity");
+
 
       private String name;
 

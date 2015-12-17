@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.common.metadata.common;
 
+import org.jboss.jca.common.api.metadata.Defaults;
 import org.jboss.jca.common.api.metadata.common.Capacity;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.common.api.metadata.common.XaPool;
@@ -68,16 +69,17 @@ public class XaPoolImpl extends PoolImpl implements XaPool
     * @param padXid padXid
     * @param wrapXaResource wrapXaResource
     * @param noTxSeparatePool noTxSeparatePool
+    * @param fair fair
     * @throws ValidateException ValidateException
     */
    public XaPoolImpl(Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize,
                      Boolean prefill, Boolean useStrictMin,
                      FlushStrategy flushStrategy, Capacity capacity,
-                     Boolean isSameRmOverride, Boolean interleaving, 
+                     Boolean fair, Boolean isSameRmOverride, Boolean interleaving,
                      Boolean padXid, Boolean wrapXaResource,
                      Boolean noTxSeparatePool) throws ValidateException
    {
-      super(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy, capacity);
+      super(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy, capacity, fair);
       this.isSameRmOverride = isSameRmOverride;
       this.interleaving = interleaving;
       this.padXid = padXid;
@@ -232,6 +234,13 @@ public class XaPoolImpl extends PoolImpl implements XaPool
          sb.append("<").append(XaPool.Tag.USE_STRICT_MIN).append(">");
          sb.append(useStrictMin);
          sb.append("</").append(XaPool.Tag.USE_STRICT_MIN).append(">");
+      }
+
+      if (fair != null && !fair.equals(Defaults.FAIR))
+      {
+         sb.append("<").append(XaPool.Tag.FAIR).append(">");
+         sb.append(fair);
+         sb.append("</").append(XaPool.Tag.FAIR).append(">");
       }
 
       if (flushStrategy != null)

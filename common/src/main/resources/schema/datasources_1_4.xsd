@@ -734,6 +734,17 @@
           </xs:documentation>
         </xs:annotation>
       </xs:element>
+      <xs:element name="fair" type="xs:boolean" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>
+            <![CDATA[[
+              Whether to use a fair semaphore to control access to the pool. Empty element denotes
+              a true value. e.g. <fair>true</fair>.
+              Default is true
+             ]]>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
       <xs:element name="flush-strategy" type="xs:token" minOccurs="0" maxOccurs="1">
         <xs:annotation>
           <xs:documentation>
