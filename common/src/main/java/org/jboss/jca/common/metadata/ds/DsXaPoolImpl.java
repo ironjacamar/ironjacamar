@@ -180,18 +180,18 @@ public class DsXaPoolImpl extends org.jboss.jca.common.metadata.common.XaPoolImp
          sb.append("</").append(DsXaPool.Tag.PREFILL).append(">");
       }
 
-      if (fair != null  && !fair.equals(Defaults.FAIR))
-      {
-         sb.append("<").append(DsXaPool.Tag.FAIR).append(">");
-         sb.append(fair);
-         sb.append("</").append(DsXaPool.Tag.FAIR).append(">");
-      }
-
       if (useStrictMin != null)
       {
          sb.append("<").append(DsXaPool.Tag.USE_STRICT_MIN).append(">");
          sb.append(useStrictMin);
          sb.append("</").append(DsXaPool.Tag.USE_STRICT_MIN).append(">");
+      }
+
+      if (fair != null && !fair.equals(Defaults.FAIR))
+      {
+         sb.append("<").append(DsXaPool.Tag.FAIR).append(">");
+         sb.append(fair);
+         sb.append("</").append(DsXaPool.Tag.FAIR).append(">");
       }
 
       if (flushStrategy != null)

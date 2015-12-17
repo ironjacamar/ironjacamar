@@ -174,18 +174,18 @@ public class DsPoolImpl extends org.jboss.jca.common.metadata.common.PoolImpl im
          sb.append("</").append(DsPool.Tag.PREFILL).append(">");
       }
 
-      if (fair != null && !fair.equals(Defaults.FAIR))
-      {
-         sb.append("<").append(DsPool.Tag.FAIR).append(">");
-         sb.append(fair);
-         sb.append("</").append(DsPool.Tag.FAIR).append(">");
-      }
-
       if (useStrictMin != null)
       {
          sb.append("<").append(DsPool.Tag.USE_STRICT_MIN).append(">");
          sb.append(useStrictMin);
          sb.append("</").append(DsPool.Tag.USE_STRICT_MIN).append(">");
+      }
+
+      if (fair != null && !fair.equals(Defaults.FAIR))
+      {
+         sb.append("<").append(DsPool.Tag.FAIR).append(">");
+         sb.append(fair);
+         sb.append("</").append(DsPool.Tag.FAIR).append(">");
       }
 
       if (flushStrategy != null)

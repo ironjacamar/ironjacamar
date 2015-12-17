@@ -229,18 +229,18 @@ public class XaPoolImpl extends PoolImpl implements XaPool
          sb.append("</").append(XaPool.Tag.PREFILL).append(">");
       }
 
-      if (fair != null && !fair.equals(Defaults.FAIR))
-      {
-         sb.append("<").append(XaPool.Tag.FAIR).append(">");
-         sb.append(fair);
-         sb.append("</").append(XaPool.Tag.FAIR).append(">");
-      }
-
       if (useStrictMin != null)
       {
          sb.append("<").append(XaPool.Tag.USE_STRICT_MIN).append(">");
          sb.append(useStrictMin);
          sb.append("</").append(XaPool.Tag.USE_STRICT_MIN).append(">");
+      }
+
+      if (fair != null && !fair.equals(Defaults.FAIR))
+      {
+         sb.append("<").append(XaPool.Tag.FAIR).append(">");
+         sb.append(fair);
+         sb.append("</").append(XaPool.Tag.FAIR).append(">");
       }
 
       if (flushStrategy != null)

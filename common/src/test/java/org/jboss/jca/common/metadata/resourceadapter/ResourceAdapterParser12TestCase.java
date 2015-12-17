@@ -116,7 +116,6 @@ public class ResourceAdapterParser12TestCase extends XMLParserTestBase
       assertEquals(5, (int) xaPool.getInitialPoolSize());
       assertEquals(5, (int) xaPool.getMaxPoolSize());
       assertTrue(xaPool.isPrefill());
-      assertTrue(xaPool.isFair());
       assertTrue(xaPool.isUseStrictMin());
       assertEquals(xaPool.getFlushStrategy(), FlushStrategy.IDLE_CONNECTIONS);
       assertNotNull(xaPool.getCapacity());
@@ -181,7 +180,6 @@ public class ResourceAdapterParser12TestCase extends XMLParserTestBase
       assertEquals(0, (int) xaPool.getMinPoolSize());
       assertEquals(20, (int) xaPool.getMaxPoolSize());
       assertFalse(xaPool.isPrefill());
-      assertFalse(xaPool.isFair());
       assertFalse(xaPool.isUseStrictMin());
       assertEquals(xaPool.getFlushStrategy(), FlushStrategy.ENTIRE_POOL);
       assertFalse(xaPool.isSameRmOverride());
@@ -233,7 +231,6 @@ public class ResourceAdapterParser12TestCase extends XMLParserTestBase
       assertEquals(0, (int) xaPool.getMinPoolSize());
       assertEquals(20, (int) xaPool.getMaxPoolSize());
       assertFalse(xaPool.isPrefill());
-      assertFalse(xaPool.isFair());
       assertEquals(xaPool.getFlushStrategy(), FlushStrategy.FAILING_CONNECTION_ONLY);
       assertEquals(null, xaPool.isSameRmOverride());
       //default for boolean-presenceType
@@ -312,7 +309,6 @@ public class ResourceAdapterParser12TestCase extends XMLParserTestBase
       assertEquals(5, (int) pool.getInitialPoolSize());
       assertEquals(5, (int) pool.getMaxPoolSize());
       assertTrue(pool.isPrefill());
-      assertTrue(pool.isFair());
       assertTrue(pool.isUseStrictMin());
       assertEquals(pool.getFlushStrategy(), FlushStrategy.IDLE_CONNECTIONS);
       assertNotNull(pool.getCapacity());
@@ -377,7 +373,6 @@ public class ResourceAdapterParser12TestCase extends XMLParserTestBase
       assertFalse(cd.isXa());
       Pool cpool = cd.getPool();
       assertFalse(cpool.isPrefill());
-      assertFalse(cpool.isFair());
       assertFalse(cpool.isUseStrictMin());
       //default values
       assertEquals(0, (int) cpool.getMinPoolSize());

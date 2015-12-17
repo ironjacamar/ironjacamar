@@ -171,7 +171,7 @@ public interface ConnectionDefinition extends JCAMetadata
     * @return the enlistment trace
     */
    public Boolean isEnlistmentTrace();
-
+   
    /**
     *
     * A Tag.
