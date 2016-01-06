@@ -65,6 +65,7 @@ public class DsXaPoolImpl extends org.jboss.jca.common.metadata.common.XaPoolImp
     * @param noTxSeparatePool noTxSeparatePool
     * @param allowMultipleUsers allowMultipleUsers
     * @param capacity capacity
+    * @param fair fair
     * @param connectionListener connectionListener
     * @throws ValidateException ValidateException
     */

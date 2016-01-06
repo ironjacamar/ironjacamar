@@ -37,10 +37,11 @@ import org.jboss.jca.common.api.metadata.resourceadapter.Activations;
 import org.jboss.jca.common.api.metadata.resourceadapter.AdminObject;
 import org.jboss.jca.common.api.metadata.resourceadapter.ConnectionDefinition;
 import org.jboss.jca.common.metadata.XMLParserTestBase;
-import org.junit.BeforeClass;
 
 import java.util.List;
 import java.util.Map;
+
+import org.junit.BeforeClass;
 
 import static org.junit.Assert.*;
 
@@ -232,7 +233,7 @@ public class ResourceAdapterParser13TestCase extends XMLParserTestBase
       assertEquals(0, (int) xaPool.getMinPoolSize());
       assertEquals(20, (int) xaPool.getMaxPoolSize());
       assertFalse(xaPool.isPrefill());
-      assertFalse(xaPool.isFair());
+      assertTrue(xaPool.isFair());
       assertEquals(xaPool.getFlushStrategy(), FlushStrategy.FAILING_CONNECTION_ONLY);
       assertEquals(null, xaPool.isSameRmOverride());
       //default for boolean-presenceType
@@ -376,7 +377,7 @@ public class ResourceAdapterParser13TestCase extends XMLParserTestBase
       assertFalse(cd.isXa());
       Pool cpool = cd.getPool();
       assertFalse(cpool.isPrefill());
-      assertFalse(cpool.isFair());
+      assertTrue(cpool.isFair());
       assertFalse(cpool.isUseStrictMin());
       //default values
       assertEquals(0, (int) cpool.getMinPoolSize());

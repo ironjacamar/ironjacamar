@@ -62,6 +62,7 @@ public class DsPoolImpl extends org.jboss.jca.common.metadata.common.PoolImpl im
     * @param flushStrategy flushStrategy
     * @param allowMultipleUsers allowMultipleUsers
     * @param capacity capacity
+    * @param fair fair
     * @param connectionListener connectionListener
     * @throws ValidateException ValidateException
     */

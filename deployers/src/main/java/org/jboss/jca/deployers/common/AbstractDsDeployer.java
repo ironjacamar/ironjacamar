@@ -305,7 +305,7 @@ public abstract class AbstractDsDeployer
                               String dataSourceClass = dataSources.getDriver(driverName).getDataSourceClass();
 
                               if (dataSourceClass != null)
-                                ((DataSourceImpl) dataSource).forceDataSourceClass(dataSourceClass);
+                                 ((DataSourceImpl) dataSource).forceDataSourceClass(dataSourceClass);
                            }
                         }
 
@@ -1287,7 +1287,7 @@ public abstract class AbstractDsDeployer
             pc.setStrictMin(pp.isUseStrictMin());
 
          if (pp.isFair() != null)
-            pc.setFair( pp.isFair() );
+            pc.setFair(pp.isFair());
       }
 
       if (tp != null)

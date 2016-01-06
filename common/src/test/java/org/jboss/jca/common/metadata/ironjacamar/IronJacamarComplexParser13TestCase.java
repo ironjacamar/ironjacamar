@@ -35,10 +35,11 @@ import org.jboss.jca.common.api.metadata.resourceadapter.AdminObject;
 import org.jboss.jca.common.api.metadata.resourceadapter.ConnectionDefinition;
 import org.jboss.jca.common.metadata.XMLParserTestBase;
 import org.jboss.jca.common.metadata.resourceadapter.ActivationImpl;
-import org.junit.BeforeClass;
 
 import java.util.List;
 import java.util.Map;
+
+import org.junit.BeforeClass;
 
 import static org.junit.Assert.*;
 

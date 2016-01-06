@@ -95,6 +95,7 @@ public class PoolImpl implements Pool
     * @param useStrictMin useStrictMin
     * @param flushStrategy flushStrategy
     * @param capacity capacity
+    * @param fair fair
     * @throws ValidateException ValidateException
     */
    public PoolImpl(Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize, 

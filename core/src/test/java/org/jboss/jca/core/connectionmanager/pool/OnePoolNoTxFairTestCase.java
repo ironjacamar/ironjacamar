@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2013, Red Hat Inc, and individual contributors
+ * Copyright 2016, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -21,63 +21,122 @@
  */
 package org.jboss.jca.core.connectionmanager.pool;
 
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
+import org.jboss.jca.core.connectionmanager.ConnectionManagerUtil;
+import org.jboss.jca.core.connectionmanager.rar.SimpleConnection;
+import org.jboss.jca.core.connectionmanager.rar.SimpleConnectionFactory;
+import org.jboss.jca.core.connectionmanager.rar.SimpleConnectionFactoryImpl;
+import org.jboss.jca.core.connectionmanager.rar.SimpleConnectionFactoryImpl1;
+import org.jboss.jca.core.connectionmanager.rar.SimpleConnectionImpl;
+import org.jboss.jca.core.connectionmanager.rar.SimpleConnectionImpl1;
 import org.jboss.jca.core.connectionmanager.rar.SimpleManagedConnectionFactory;
-import org.jboss.jca.embedded.dsl.ironjacamar11.api.ConnectionDefinitionType;
-import org.jboss.jca.embedded.dsl.ironjacamar11.api.IronjacamarDescriptor;
-import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
+import org.jboss.jca.core.connectionmanager.rar.SimpleManagedConnectionFactory1;
+import org.jboss.jca.core.connectionmanager.rar.SimpleResourceAdapter;
+import org.jboss.jca.embedded.dsl.ironjacamar13.api.ConnectionDefinitionType;
+import org.jboss.jca.embedded.dsl.ironjacamar13.api.ConnectionDefinitionsType;
+import org.jboss.jca.embedded.dsl.ironjacamar13.api.IronjacamarDescriptor;
 
-import static org.junit.Assert.*;
+import javax.annotation.Resource;
+
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.asset.StringAsset;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
+import org.jboss.shrinkwrap.descriptor.api.Descriptors;
+import org.jboss.shrinkwrap.descriptor.api.connector15.ConnectorDescriptor;
+import org.jboss.shrinkwrap.descriptor.api.connector15.OutboundResourceadapterType;
+import org.jboss.shrinkwrap.descriptor.api.connector15.ResourceadapterType;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import static org.junit.Assert.assertFalse;
 
 /**
- * 
- * A OnePoolNoTxBackgroundValidationTestCase
- * 
- * NOTE that this class is in org.jboss.jca.core.connectionmanager.pool and not in
- * org.jboss.jca.core.connectionmanager.pool.strategy because it needs to access to 
- * AbstractPool's package protected methods.
- * Please don't move it, and keep this class packaging consistent with AbstractPool's
- * 
- * @author <a href="mailto:johara@redhat.com">John O'Hara</a>
- * 
+ * Test of fair setting
+ * @author <a href="mailto:jesper.pedersen@redhat.com">Jesper Pedersen</a>
  */
-public class OnePoolNoTxFairTestCase extends OnePoolNoTxTestCaseAbstract
+@RunWith(Arquillian.class)
+public class OnePoolNoTxFairTestCase
 {
+   /**
+    * The connection factory
+    */
+   @Resource(mappedName = "java:/eis/Pool")
+   private SimpleConnectionFactory cf;
 
    /**
-    * 
-    * deployment
-    * 
-    * @return archive
+    * The archive
+    * @return The archive
     */
    @Deployment
    public static ResourceAdapterArchive deployment()
    {
-      return createNoTxDeployment(getIJ());
+      ResourceAdapterArchive raa = ShrinkWrap.create(ResourceAdapterArchive.class, "pool.rar");
+      JavaArchive ja = ShrinkWrap.create(JavaArchive.class);
+      ja.addPackage(SimpleConnectionFactory.class.getPackage());
+      raa.addAsLibrary(ja);
+      raa.addAsManifestResource(new StringAsset(getRaXml().exportAsString()), "ra.xml");
+      raa.addAsManifestResource(new StringAsset(getIJXml().exportAsString()), "ironjacamar.xml");
+      return raa;
+   }
+
+   /**
+    * The IronJacamar descriptor
+    * @return The descriptor
+    */
+   private static IronjacamarDescriptor getIJXml()
+   {
+      IronjacamarDescriptor ijXml = Descriptors.create(IronjacamarDescriptor.class);
+      ConnectionDefinitionsType ijCdst = ijXml.getOrCreateConnectionDefinitions();
+      ConnectionDefinitionType ijCdt = ijCdst.createConnectionDefinition()
+         .className(SimpleManagedConnectionFactory.class.getName()).jndiName("java:/eis/Pool");
+      ijCdt.getOrCreatePool().fair(false);
+
+      return ijXml;
    }
 
    /**
     * 
-    * get IronjacamarDescriptor for deployment
+    * create ConnectorDescriptor
     * 
-    * @return IronjacamarDescriptor
+    * @param tx Transaction support level
+    * @return ConnectorDescriptor
     */
-   public static IronjacamarDescriptor getIJ()
+   private static ConnectorDescriptor getRaXml()
    {
-      IronjacamarDescriptor ij = getBasicIJXml(SimpleManagedConnectionFactory.class.getName());
-      ConnectionDefinitionType ijCdt = ij.getOrCreateConnectionDefinitions().getOrCreateConnectionDefinition();
-      ijCdt.removeValidation().getOrCreateValidation().backgroundValidation(false).backgroundValidationMillis(1);
-      ijCdt.getOrCreateConfigProperty().name("first").text("invalid");
+      ConnectorDescriptor raXml = Descriptors.create(ConnectorDescriptor.class, "ra.xml").version("1.5");
+      ResourceadapterType rt = raXml.getOrCreateResourceadapter().resourceadapterClass(
+         SimpleResourceAdapter.class.getName());
 
-      return ij;
+      OutboundResourceadapterType ort = rt.getOrCreateOutboundResourceadapter().transactionSupport("NoTransaction")
+         .reauthenticationSupport(false);
+      org.jboss.shrinkwrap.descriptor.api.connector15.ConnectionDefinitionType cdt = ort.createConnectionDefinition()
+         .managedconnectionfactoryClass(SimpleManagedConnectionFactory.class.getName())
+         .connectionfactoryInterface(SimpleConnectionFactory.class.getName())
+         .connectionfactoryImplClass(SimpleConnectionFactoryImpl.class.getName())
+         .connectionInterface(SimpleConnection.class.getName())
+         .connectionImplClass(SimpleConnectionImpl.class.getName());
+
+      org.jboss.shrinkwrap.descriptor.api.connector15.ConnectionDefinitionType cdt1 = ort.createConnectionDefinition()
+         .managedconnectionfactoryClass(SimpleManagedConnectionFactory1.class.getName())
+         .connectionfactoryInterface(SimpleConnectionFactory.class.getName())
+         .connectionfactoryImplClass(SimpleConnectionFactoryImpl1.class.getName())
+         .connectionInterface(SimpleConnection.class.getName())
+         .connectionImplClass(SimpleConnectionImpl1.class.getName());
+
+      return raXml;
    }
-
-   @Override
-   public void checkPool() throws Exception
+   
+   /**
+    * Test fair
+    * @exception Exception Thrown in case of an error
+    */
+   @Test
+   public void testFair() throws Exception
    {
-      AbstractPool pool = getPool();
-      fillPoolToSize(5);
-      assertEquals(pool.getPoolConfiguration().isFair(), true);
+      AbstractPool pool = (AbstractPool)ConnectionManagerUtil.extract(cf).getPool();
+      assertFalse(pool.getPoolConfiguration().isFair());
    }
 }

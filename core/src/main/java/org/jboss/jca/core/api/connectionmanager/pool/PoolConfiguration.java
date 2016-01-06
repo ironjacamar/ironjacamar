@@ -280,11 +280,11 @@ public class PoolConfiguration
    }
 
    /**
-    * @param fair the fair to set
+    * @param useFair the fair value
     */
-   public void setFair(boolean useFairPermits)
+   public void setFair(boolean useFair)
    {
-      this.fair.set(useFairPermits);
+      this.fair.set(useFair);
    }
 
    /**

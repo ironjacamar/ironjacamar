@@ -662,7 +662,7 @@ public abstract class AbstractResourceAdapterDeployer
             pc.setStrictMin(pp.isUseStrictMin());
 
          if (pp.isFair() != null)
-            pc.setFair( pp.isFair() );
+            pc.setFair(pp.isFair());
       }
 
       if (tp != null)

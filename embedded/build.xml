@@ -206,6 +206,22 @@
             pathToImpl="${build.embedded.dir}/src/main/java"
             pathToServices="${build.embedded.dir}/src/main/resources/META-INF/services"/>
       <descriptors>
+        <descriptor pathToXsd="common/src/main/resources/schema/ironjacamar_1_3.xsd"
+                    nameSpace="ironjacamar"
+                    packageApi="org.jboss.jca.embedded.dsl.ironjacamar13.api"
+                    packageImpl="org.jboss.jca.embedded.dsl.ironjacamar13.impl"
+                    descriptorName="IronjacamarDescriptor"
+                    elementName="ironjacamar"
+                    elementType="ironjacamar:ironjacamarType"/>
+      </descriptors>
+    </metadata-parser>
+
+    <metadata-parser verbose="false"
+                     classpathref="main.lib.path.id">
+      <path pathToApi="${build.embedded.dir}/src/main/java"
+            pathToImpl="${build.embedded.dir}/src/main/java"
+            pathToServices="${build.embedded.dir}/src/main/resources/META-INF/services"/>
+      <descriptors>
         <descriptor pathToXsd="common/src/main/resources/schema/resource-adapters_1_0.xsd"
                     nameSpace="resource-adapters"
                     packageApi="org.jboss.jca.embedded.dsl.resourceadapters10.api"
@@ -242,6 +258,22 @@
                     nameSpace="resource-adapters"
                     packageApi="org.jboss.jca.embedded.dsl.resourceadapters12.api"
                     packageImpl="org.jboss.jca.embedded.dsl.resourceadapters12.impl"
+                    descriptorName="ResourceAdaptersDescriptor"
+                    elementName="resource-adapters"
+                    elementType="resource-adapters:resource-adaptersType"/>
+      </descriptors>
+    </metadata-parser>
+
+    <metadata-parser verbose="false"
+                     classpathref="main.lib.path.id">
+      <path pathToApi="${build.embedded.dir}/src/main/java"
+            pathToImpl="${build.embedded.dir}/src/main/java"
+            pathToServices="${build.embedded.dir}/src/main/resources/META-INF/services"/>
+      <descriptors>
+        <descriptor pathToXsd="common/src/main/resources/schema/resource-adapters_1_3.xsd"
+                    nameSpace="resource-adapters"
+                    packageApi="org.jboss.jca.embedded.dsl.resourceadapters13.api"
+                    packageImpl="org.jboss.jca.embedded.dsl.resourceadapters13.impl"
                     descriptorName="ResourceAdaptersDescriptor"
                     elementName="resource-adapters"
                     elementType="resource-adapters:resource-adaptersType"/>
