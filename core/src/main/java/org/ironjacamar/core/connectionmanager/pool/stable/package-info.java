@@ -19,17 +19,8 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.api.connectionmanager.pool;
-
 /**
- * The pool
- * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ * The stable pool -- performing checks against poor programming
+ * practices
  */
-public interface Pool
-{
-   /**
-    * Get the type name
-    * @return The value
-    */
-   public String getType();
-}
+package org.ironjacamar.core.connectionmanager.pool.stable;

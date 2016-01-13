@@ -24,6 +24,13 @@ package org.ironjacamar.core.connectionmanager.pool;
 import org.ironjacamar.core.api.connectionmanager.pool.PoolConfiguration;
 import org.ironjacamar.core.connectionmanager.ConnectionManager;
 import org.ironjacamar.core.connectionmanager.pool.dflt.DefaultPool;
+import org.ironjacamar.core.connectionmanager.pool.stable.StablePool;
+
+import java.lang.reflect.Constructor;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.ServiceLoader;
 
 /**
  * The pool factory
@@ -31,6 +38,25 @@ import org.ironjacamar.core.connectionmanager.pool.dflt.DefaultPool;
  */
 public class PoolFactory
 {
+   /** Custom pool types */
+   private static Map<String, Class<? extends Pool>> customPoolTypes = new HashMap<>();
+
+   static
+   {
+      ServiceLoader<Pool> sl = ServiceLoader.load(Pool.class, PoolFactory.class.getClassLoader());
+      try
+      {
+         for (Pool p : sl)
+         {
+            customPoolTypes.put(p.getType(), (Class<? extends Pool>)p.getClass());
+         }
+      }
+      catch (Exception e)
+      {
+         throw new RuntimeException("Exception during loading of pool services", e);
+      }
+   }
+
    /**
     * Constructor
     */
@@ -47,6 +73,34 @@ public class PoolFactory
     */
    public static Pool createPool(String type, ConnectionManager cm, PoolConfiguration pc)
    {
-      return new DefaultPool(cm, pc);
+      if (type == null || type.equals(""))
+         return new DefaultPool(cm, pc);
+
+      type = type.toLowerCase(Locale.US);
+      
+      switch (type)
+      {
+         case "default":
+            return new DefaultPool(cm, pc);
+         case "stable":
+            return new StablePool(cm, pc);
+         default:
+         {
+            Class<? extends Pool> clz = customPoolTypes.get(type);
+
+            if (clz == null)
+               throw new RuntimeException(type + " can not be found");
+
+            try
+            {
+               Constructor constructor = clz.getConstructor(ConnectionManager.class, PoolConfiguration.class);
+               return (Pool)constructor.newInstance(cm, pc);
+            }
+            catch (Exception e)
+            {
+               throw new RuntimeException(type + " can not be created", e);
+            }
+         }
+      }
    }
 }

@@ -160,6 +160,7 @@ public class DashRaXmlDeployer extends AbstractFungalRADeployer implements Clone
       d.setTransactionIntegration(transactionIntegration);
       d.setCachedConnectionManager(cachedConnectionManager);
       d.setSubjectFactory(subjectFactory);
+      d.setDefaultPoolType(defaultPoolType);
       return d;
    }
 }

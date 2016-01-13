@@ -77,9 +77,13 @@ public abstract class AbstractResourceAdapterDeployer
 
    /** The CachedConnectionManager */
    protected CachedConnectionManager cachedConnectionManager;
+
    /** The Subject Factory */
    protected SubjectFactory subjectFactory;
 
+   /** The default pool type */
+   protected String defaultPoolType;
+   
    /**
     * Constructor
     */
@@ -92,6 +96,7 @@ public abstract class AbstractResourceAdapterDeployer
       this.transactionIntegration = null;
       this.cachedConnectionManager = null;
       this.subjectFactory = null;
+      this.defaultPoolType = null;
    }
 
    /**
@@ -155,6 +160,15 @@ public abstract class AbstractResourceAdapterDeployer
    public void setCachedConnectionManager(CachedConnectionManager v)
    {
       this.cachedConnectionManager = v;
+   }
+   
+   /**
+    * Set the default pool type
+    * @param v The value
+    */
+   public void setDefaultPoolType(String v)
+   {
+      this.defaultPoolType = v;
    }
    
    /**
@@ -312,6 +326,9 @@ public abstract class AbstractResourceAdapterDeployer
                                                              transactionIntegration);
 
          String poolType = cd.getPool() != null ? cd.getPool().getType() : null;
+
+         if (poolType == null || poolType.equals(""))
+            poolType = defaultPoolType;
 
          PoolConfiguration pc = new PoolConfiguration();
          applyPoolConfiguration(pc, cd.getPool());

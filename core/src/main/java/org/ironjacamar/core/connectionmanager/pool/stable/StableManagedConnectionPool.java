@@ -19,7 +19,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.connectionmanager.pool.dflt;
+package org.ironjacamar.core.connectionmanager.pool.stable;
 
 import org.ironjacamar.core.connectionmanager.Credential;
 import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
@@ -32,16 +32,17 @@ import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.TO_POOL;
 
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.TimeUnit;
 
 import javax.resource.ResourceException;
 
 /**
- * The default ManagedConnectionPool
+ * The stable ManagedConnectionPool
  */
-public class DefaultManagedConnectionPool implements ManagedConnectionPool
+public class StableManagedConnectionPool implements ManagedConnectionPool
 {
    /** The associated pool */
-   private DefaultPool pool;
+   private StablePool pool;
 
    /** The credential */
    private Credential credential;
@@ -54,7 +55,7 @@ public class DefaultManagedConnectionPool implements ManagedConnectionPool
     * @param pool The pool
     * @param credential The credential
     */
-   public DefaultManagedConnectionPool(DefaultPool pool, Credential credential)
+   public StableManagedConnectionPool(StablePool pool, Credential credential)
    {
       this.pool = pool;
       this.credential = credential;
@@ -66,27 +67,32 @@ public class DefaultManagedConnectionPool implements ManagedConnectionPool
     */
    public ConnectionListener getConnectionListener() throws ResourceException
    {
-      long timestamp = System.currentTimeMillis();
-      while (System.currentTimeMillis() - timestamp <= pool.getConfiguration().getBlockingTimeout())
+      // Use request semaphore, as a fair queue across all credentials
+      try
       {
-         for (ConnectionListener cl : listeners)
+         if (pool.getRequestSemaphore().tryAcquire(pool.getConfiguration().getBlockingTimeout(), TimeUnit.MILLISECONDS))
          {
-            if (cl.changeState(FREE, IN_USE))
-               return cl;
-         }
+            for (ConnectionListener cl : listeners)
+            {
+               if (cl.changeState(FREE, IN_USE))
+                  return cl;
+            }
 
-         if (!pool.isFull())
-         {
             try
             {
-               listeners.addFirst(pool.createConnectionListener(credential));
+               ConnectionListener cl = pool.createConnectionListener(credential);
+               cl.setState(IN_USE);
+               listeners.addLast(cl);
+               return cl;
             }
             catch (ResourceException re)
             {
             }
          }
-
-         Thread.yield();
+      }
+      catch (Exception e)
+      {
+         // TODO
       }
 
       throw new ResourceException("No ConnectionListener");
@@ -97,40 +103,47 @@ public class DefaultManagedConnectionPool implements ManagedConnectionPool
     */
    public void returnConnectionListener(ConnectionListener cl, boolean kill) throws ResourceException
    {
-      if (!kill)
+      try
       {
-         if (cl.changeState(IN_USE, TO_POOL))
+         if (!kill)
          {
-            try
+            if (cl.changeState(IN_USE, TO_POOL))
             {
-               cl.getManagedConnection().cleanup();
-               cl.changeState(TO_POOL, FREE);
+               try
+               {
+                  cl.getManagedConnection().cleanup();
+                  cl.changeState(TO_POOL, FREE);
+               }
+               catch (ResourceException re)
+               {
+                  kill = true;
+               }
             }
-            catch (ResourceException re)
+            else
             {
                kill = true;
             }
          }
-         else
+
+         if (kill)
          {
-            kill = true;
+            if (cl.getState() == DESTROY || cl.changeState(IN_USE, DESTROY) || cl.changeState(TO_POOL, DESTROY))
+            {
+               try
+               {
+                  pool.destroyConnectionListener(cl);
+               }
+               finally
+               {
+                  cl.changeState(DESTROY, DESTROYED);
+                  listeners.remove(cl);
+               }
+            }
          }
       }
-
-      if (kill)
+      finally
       {
-         if (cl.getState() == DESTROY || cl.changeState(IN_USE, DESTROY) || cl.changeState(TO_POOL, DESTROY))
-         {
-            try
-            {
-               pool.destroyConnectionListener(cl);
-            }
-            finally
-            {
-               cl.changeState(DESTROY, DESTROYED);
-               listeners.remove(cl);
-            }
-         }
+         pool.getRequestSemaphore().release();
       }
    }
 

@@ -19,17 +19,32 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.api.connectionmanager.pool;
+package org.ironjacamar.core.connectionmanager.listener;
+
+import javax.resource.ResourceException;
+import javax.transaction.Synchronization;
+import javax.transaction.Transaction;
 
 /**
- * The pool
+ * A transaction synchronization object
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface Pool
+public interface TransactionSynchronization extends Synchronization
 {
    /**
-    * Get the type name
-    * @return The value
+    * Init
+    * @param tx The transaction
     */
-   public String getType();
+   public void init(Transaction tx);
+
+   /**
+    * Enlist
+    * @exception ResourceException Thrown if an error occurs
+    */
+   public void enlist() throws ResourceException;
+
+   /**
+    * Set the cancel flag
+    */
+   public void cancel();
 }

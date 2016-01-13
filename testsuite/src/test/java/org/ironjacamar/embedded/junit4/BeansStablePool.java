@@ -18,18 +18,41 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+package org.ironjacamar.embedded.junit4;
 
-package org.ironjacamar.core.api.connectionmanager.pool;
+import org.ironjacamar.embedded.deployers.DashRaXmlDeployer;
+import org.ironjacamar.embedded.deployers.IronJacamarXmlDeployer;
 
 /**
- * The pool
+ * Change configuration to use "stable" as pool for all deployments
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface Pool
+public class BeansStablePool extends Beans
 {
    /**
-    * Get the type name
-    * @return The value
+    * Constructor
     */
-   public String getType();
+   public BeansStablePool()
+   {
+      super();
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   public void execute(Resolver resolver) throws Exception
+   {
+      try
+      {
+         IronJacamarXmlDeployer ijXmlDeployer = resolver.lookup("IronJacamarXmlDeployer", IronJacamarXmlDeployer.class);
+         ijXmlDeployer.setDefaultPoolType("stable");
+
+         DashRaXmlDeployer dashRaXmlDeployer = resolver.lookup("DashRaXmlDeployer", DashRaXmlDeployer.class);
+         dashRaXmlDeployer.setDefaultPoolType("stable");
+      }
+      catch (Throwable t)
+      {
+         throw new Exception("Error: " + t.getMessage(), t);
+      }
+   }
 }

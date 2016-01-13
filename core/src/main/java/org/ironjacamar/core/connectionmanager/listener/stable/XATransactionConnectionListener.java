@@ -19,17 +19,31 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.api.connectionmanager.pool;
+package org.ironjacamar.core.connectionmanager.listener.stable;
+
+import org.ironjacamar.core.connectionmanager.ConnectionManager;
+import org.ironjacamar.core.connectionmanager.Credential;
+
+import javax.resource.spi.ManagedConnection;
+import javax.transaction.xa.XAResource;
 
 /**
- * The pool
- * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ * The XATransaction connection listener
+ * 
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface Pool
+public class XATransactionConnectionListener extends AbstractTransactionalConnectionListener
 {
    /**
-    * Get the type name
-    * @return The value
+    * Constructor
+    * @param cm The connection manager
+    * @param mc The managed connection
+    * @param credential The credential
+    * @param xaResource The XAResource
     */
-   public String getType();
+   public XATransactionConnectionListener(ConnectionManager cm, ManagedConnection mc, Credential credential,
+                                          XAResource xaResource)
+   {
+      super(cm, mc, credential, xaResource);
+   }
 }

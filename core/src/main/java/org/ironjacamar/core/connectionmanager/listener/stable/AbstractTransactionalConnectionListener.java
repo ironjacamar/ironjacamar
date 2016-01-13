@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2015, Red Hat Inc, and individual contributors
+ * Copyright 2016, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,42 +19,28 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.connectionmanager.listener;
+package org.ironjacamar.core.connectionmanager.listener.stable;
 
 import org.ironjacamar.core.connectionmanager.ConnectionManager;
 import org.ironjacamar.core.connectionmanager.Credential;
-import org.ironjacamar.core.connectionmanager.TransactionalConnectionManager;
-import org.ironjacamar.core.spi.transaction.ConnectableResource;
+import org.ironjacamar.core.connectionmanager.listener.TransactionSynchronization;
+import org.ironjacamar.core.connectionmanager.pool.stable.StablePool;
 import org.ironjacamar.core.spi.transaction.TxUtils;
-import org.ironjacamar.core.spi.transaction.local.LocalXAResource;
 
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.DESTROY;
-import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.DESTROYED;
 
 import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionEvent;
 import javax.resource.spi.ManagedConnection;
 import javax.transaction.Transaction;
 import javax.transaction.xa.XAResource;
 
 /**
- * An abstract transactional connection listener, which is enlisted on the transaction boundary
+ * An abstract transactional connection listener for the stable configuration
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public abstract class AbstractTransactionalConnectionListener extends AbstractConnectionListener
+public abstract class AbstractTransactionalConnectionListener extends
+   org.ironjacamar.core.connectionmanager.listener.AbstractTransactionalConnectionListener
 {
-   /** Transaction synchronization instance */
-   protected TransactionSynchronization transactionSynchronization;
-
-   /** Enlisted flag */
-   protected boolean enlisted;
-   
-   /** XAResource instance */
-   protected XAResource xaResource;
-
-   /** Whether there is a local transaction */
-   protected boolean localTransaction;
-
    /**
     * Constructor
     * @param cm The connection manager
@@ -65,97 +51,37 @@ public abstract class AbstractTransactionalConnectionListener extends AbstractCo
    public AbstractTransactionalConnectionListener(ConnectionManager cm, ManagedConnection mc, Credential credential,
                                                   XAResource xaResource)
    {
-      super(cm, mc, credential);
-
-      this.transactionSynchronization = null;
-      this.enlisted = false;
-      this.xaResource = xaResource;
-      this.localTransaction = false;
-
-      if (xaResource instanceof LocalXAResource)
-      {
-         ((LocalXAResource)xaResource).setConnectionManager(cm);
-         ((LocalXAResource)xaResource).setConnectionListener(this);
-      }
-      if (xaResource instanceof ConnectableResource)
-      {
-         /*
-           ((ConnectableResource) xaResource).setConnectableResourceListener(this);
-         */
-      }
+      super(cm, mc, credential, xaResource);
    }
 
    /**
     * {@inheritDoc}
     */
-   public boolean isEnlisted()
+   public synchronized void enlist() throws ResourceException
    {
-      return enlisted;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public void enlist() throws ResourceException
-   {
-      if (isEnlisted() || getState() == DESTROY || getState() == DESTROYED)
-         return;
-
-      try
+      if (isEnlisted())
       {
-         TransactionalConnectionManager txCM = (TransactionalConnectionManager)cm;
-         Transaction tx = txCM.getTransactionIntegration().getTransactionManager().getTransaction();
-      
-         transactionSynchronization = createTransactionSynchronization();
-         transactionSynchronization.init(tx);
-         transactionSynchronization.enlist();
-
-         txCM.getTransactionIntegration().getTransactionSynchronizationRegistry().
-            registerInterposedSynchronization(transactionSynchronization);
-
-         enlisted = true;
+         try
+         {
+            StablePool sp = (StablePool)cm.getPool();
+            Object tx = sp.verifyConnectionListener(this);
+            if (tx != null)
+               throw new ResourceException(tx.toString());
+         }
+         finally
+         {
+            setState(DESTROY);
+         }
       }
-      catch (ResourceException re)
-      {
-         throw re;
-      }
-      catch (Exception e)
-      {
-         throw new ResourceException(e);
-      }
-   }
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void localTransactionStarted(ConnectionEvent ce)
-   {
-      localTransaction = true;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void localTransactionCommitted(ConnectionEvent ce)
-   {
-      localTransaction = false;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void localTransactionRolledback(ConnectionEvent ce)
-   {
-      localTransaction = false;
+      super.enlist();
    }
 
    /**
     * Create the transaction synchronization object
     * @return The object
     */
+   @Override
    protected TransactionSynchronization createTransactionSynchronization()
    {
       return new TransactionSynchronizationImpl();
@@ -172,6 +98,9 @@ public abstract class AbstractTransactionalConnectionListener extends AbstractCo
       /** Cancel */
       private boolean cancel;
 
+      /** */
+      private Throwable throwable;
+      
       /**
        * Constructor
        */
@@ -186,6 +115,7 @@ public abstract class AbstractTransactionalConnectionListener extends AbstractCo
       {
          this.transaction = tx;
          this.cancel = false;
+         this.throwable = new Throwable("Unabled to enlist resource, see the previous warnings.");
       }
 
       /**
@@ -198,12 +128,13 @@ public abstract class AbstractTransactionalConnectionListener extends AbstractCo
          {
             if (!transaction.enlistResource(xaResource))
             {
-               enlistError = new ResourceException("Failed to enlist");
+               enlistError = new ResourceException("Failed to enlist", throwable);
             }
          }
          catch (Exception e)
          {
             enlistError = new ResourceException(e);
+            enlistError.initCause(throwable);
          }
 
          if (enlistError != null)

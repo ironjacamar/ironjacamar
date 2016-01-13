@@ -91,6 +91,14 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    /**
     * {@inheritDoc}
     */
+   public Pool getPool()
+   {
+      return pool;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public ManagedConnectionFactory getManagedConnectionFactory()
    {
       return mcf;

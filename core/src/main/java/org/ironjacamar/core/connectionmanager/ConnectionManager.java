@@ -55,6 +55,12 @@ public interface ConnectionManager extends org.ironjacamar.core.api.connectionma
    public void setPool(Pool pool);
 
    /**
+    * Get the pool
+    * @return The pool
+    */
+   public Pool getPool();
+
+   /**
     * Get the managed connection factory
     * @return The value
     */

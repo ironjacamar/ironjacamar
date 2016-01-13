@@ -27,6 +27,9 @@ import org.ironjacamar.core.connectionmanager.Credential;
 import org.ironjacamar.core.connectionmanager.TransactionalConnectionManager;
 import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
 import org.ironjacamar.core.spi.transaction.TxUtils;
+import org.ironjacamar.core.spi.transaction.local.LocalXAResource;
+
+import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.DESTROY;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,8 +37,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 
 import javax.resource.ResourceException;
+import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 import javax.transaction.Transaction;
+import javax.transaction.xa.XAResource;
 
 /**
  * The base class for all pool implementations
@@ -179,6 +184,10 @@ public abstract class AbstractPool implements Pool
    public void returnConnectionListener(ConnectionListener cl, boolean kill) throws ResourceException
    {
       ManagedConnectionPool mcp = pools.get(cl.getCredential());
+
+      if (!kill)
+         kill = cl.getState() == DESTROY;
+
       mcp.returnConnectionListener(cl, kill);
    }
 
@@ -202,6 +211,54 @@ public abstract class AbstractPool implements Pool
    }
 
    /**
+    * Get a LocalXAResource instance
+    * @param mc The ManagedConnection
+    * @return The instance
+    * @exception ResourceException Thrown if an error occurs
+    */
+   protected LocalXAResource getLocalXAResource(ManagedConnection mc) throws ResourceException
+   {
+      TransactionalConnectionManager txCM = (TransactionalConnectionManager)cm;
+      String eisProductName = null;
+      String eisProductVersion = null;
+
+      try
+      {
+         if (mc.getMetaData() != null)
+         {
+            eisProductName = mc.getMetaData().getEISProductName();
+            eisProductVersion = mc.getMetaData().getEISProductVersion();
+         }
+      }
+      catch (ResourceException re)
+      {
+         // Ignore
+      }
+
+      if (eisProductName == null)
+         eisProductName = "";
+
+      if (eisProductVersion == null)
+         eisProductVersion = "";
+
+      return txCM.getTransactionIntegration().createLocalXAResource(cm,
+                                                                    eisProductName, eisProductVersion,
+                                                                    "",
+                                                                    null);
+   }
+
+   /**
+    * Get a XAResource instance
+    * @param mc The ManagedConnection
+    * @return The instance
+    * @exception ResourceException Thrown if an error occurs
+    */
+   protected XAResource getXAResource(ManagedConnection mc) throws ResourceException
+   {
+      return mc.getXAResource();
+   }
+   
+   /**
     * Create a connection listener
     * @param credential The credential
     * @return The connection listener
@@ -212,7 +269,7 @@ public abstract class AbstractPool implements Pool
    /**
     * Destroy a connection listener
     * @param cl The connection listener
-    * @exception ResourceException Thrown if the connection listener cannot be destroed
+    * @exception ResourceException Thrown if the connection listener cannot be destroyed
     */
    protected abstract void destroyConnectionListener(ConnectionListener cl) throws ResourceException;
 
