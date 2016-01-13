@@ -295,6 +295,21 @@ public class IronJacamar extends BlockJUnit4ClassRunner
             embedded = EmbeddedFactory.create(fullProfile);
             embedded.startup();
 
+            Initializer initializer = tc.getAnnotation(Initializer.class);
+            if (initializer != null && initializer.clazz() != null)
+            {
+               try
+               {
+                  Class<? extends Beans> iClz = initializer.clazz();
+                  Beans bC = iClz.newInstance();
+                  bC.execute(new EmbeddedJCAResolver(embedded));
+               }
+               catch (Exception e)
+               {
+                  throw new Exception("Initializer error from: " + initializer.clazz(), e);
+               }
+            }
+            
             PreCondition preCondition = tc.getAnnotation(PreCondition.class);
             if (preCondition != null && preCondition.condition() != null)
             {
@@ -498,6 +513,21 @@ public class IronJacamar extends BlockJUnit4ClassRunner
                catch (Exception e)
                {
                   throw new ConditionException("PostCondition error from: " + postCondition.condition(), e);
+               }
+            }
+            
+            Finalizer finalizer = tc.getAnnotation(Finalizer.class);
+            if (finalizer != null && finalizer.clazz() != null)
+            {
+               try
+               {
+                  Class<? extends Beans> fClz = finalizer.clazz();
+                  Beans fC = fClz.newInstance();
+                  fC.execute(new EmbeddedJCAResolver(embedded));
+               }
+               catch (Exception e)
+               {
+                  throw new Exception("Finalizer error from: " + finalizer.clazz(), e);
                }
             }
             
