@@ -246,6 +246,9 @@ public class ConnImplCodeGen extends AbstractCodeGen
          out.write("public void callMe()");
          writeLeftCurlyBracket(out, indent);
          writeIndent(out, indent + 1);
+         out.write("if (mc != null)");
+         writeEol(out);
+         writeIndent(out, indent + 2);
          out.write("mc.callMe();");
          writeRightCurlyBracket(out, indent);
       }
@@ -264,7 +267,31 @@ public class ConnImplCodeGen extends AbstractCodeGen
       out.write("public void close()");
       writeLeftCurlyBracket(out, indent);
       writeIndent(out, indent + 1);
+      out.write("if (mc != null)");
+      writeLeftCurlyBracket(out, indent + 1);
+      writeIndent(out, indent + 2);
       out.write("mc.closeHandle(this);");
+      writeEol(out);
+      writeIndent(out, indent + 2);
+      out.write("mc = null;");
+      writeRightCurlyBracket(out, indent + 1);
+      writeRightCurlyBracket(out, indent);
+
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Set ManagedConnection");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("void setManagedConnection(" + def.getMcfDefs().get(getNumOfMcf()).getMcClass() + " mc)");
+      writeLeftCurlyBracket(out, indent);
+      writeIndent(out, indent + 1);
+      out.write("this.mc = mc;");
       writeRightCurlyBracket(out, indent);
    }
 }

@@ -76,6 +76,21 @@ public class CciConnCodeGen extends AbstractCodeGen
       writeMetaData(def, out, indent);
       writeResultSetInfo(def, out, indent);
       
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("/**");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" * Set ManagedConnection");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write(" */");
+      writeEol(out);
+      writeIndent(out, indent);
+      out.write("void setManagedConnection(" + def.getMcfDefs().get(getNumOfMcf()).getMcClass() + " mc)");
+      writeLeftCurlyBracket(out, indent);
+      writeRightCurlyBracket(out, indent);
+
       writeRightCurlyBracket(out, 0);
    }
 

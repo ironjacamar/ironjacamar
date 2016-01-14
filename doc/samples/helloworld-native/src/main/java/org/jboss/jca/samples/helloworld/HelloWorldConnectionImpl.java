@@ -67,6 +67,9 @@ public class HelloWorldConnectionImpl implements HelloWorldConnection
     */
    public String helloWorld(String name)
    {
+      if (mc == null)
+         return "Not connected";
+      
       return mc.helloWorld(name);
    }
 
@@ -75,6 +78,19 @@ public class HelloWorldConnectionImpl implements HelloWorldConnection
     */
    public void close()
    {
-      mc.closeHandle(this);
+      if (mc != null)
+      {
+         mc.closeHandle(this);
+         mc = null;
+      }
+   }
+
+   /**
+    * Set ManagedConnection
+    * @param mc The ManagedConnection
+    */
+   void setManagedConnection(HelloWorldManagedConnection mc)
+   {
+      this.mc = mc;
    }
 }

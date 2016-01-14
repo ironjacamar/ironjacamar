@@ -24,7 +24,9 @@ package org.jboss.jca.samples.helloworld;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.resource.NotSupportedException;
@@ -64,8 +66,8 @@ public class HelloWorldManagedConnection implements ManagedConnection,
    /** Listeners */
    private List<ConnectionEventListener> listeners;
 
-   /** Connection */
-   private HelloWorldConnectionImpl connection;
+   /** Connections */
+   private Set<HelloWorldConnectionImpl> connections;
 
    /**
     * Constructor
@@ -79,7 +81,7 @@ public class HelloWorldManagedConnection implements ManagedConnection,
       this.mcf = mcf;
       this.logWriter = null;
       this.listeners = Collections.synchronizedList(new ArrayList<ConnectionEventListener>(1));
-      this.connection = null;
+      this.connections = new HashSet<HelloWorldConnectionImpl>();
    }
 
    /**
@@ -95,12 +97,9 @@ public class HelloWorldManagedConnection implements ManagedConnection,
                                ConnectionRequestInfo cxRequestInfo) 
       throws ResourceException
    {
-      if (connection != null)
-      {
-         connection.setManagedConnection(null);
-      }
+      HelloWorldConnectionImpl connection = new HelloWorldConnectionImpl(this, mcf, cm, cxRequestInfo);
 
-      connection = new HelloWorldConnectionImpl(this, mcf, cm, cxRequestInfo);
+      connections.add(connection);
 
       return connection;
    }
@@ -120,13 +119,9 @@ public class HelloWorldManagedConnection implements ManagedConnection,
       if (!(connection instanceof HelloWorldConnectionImpl))
          throw new ResourceException("Wrong connection handle");
 
-      if (this.connection != null)
-      {
-         this.connection.setManagedConnection(null);
-      }
-
-      this.connection = (HelloWorldConnectionImpl)connection;
-      this.connection.setManagedConnection(this);
+      HelloWorldConnectionImpl handle = (HelloWorldConnectionImpl)connection;
+      handle.setManagedConnection(this);
+      connections.add(handle);
    }
 
    /**
@@ -137,10 +132,9 @@ public class HelloWorldManagedConnection implements ManagedConnection,
     */
    public void dissociateConnections() throws ResourceException
    {
-      if (connection != null)
+      for (HelloWorldConnectionImpl connection : connections)
       {
          connection.setManagedConnection(null);
-         connection = null;
       }
    }
 
@@ -152,11 +146,11 @@ public class HelloWorldManagedConnection implements ManagedConnection,
     */
    public void cleanup() throws ResourceException
    {
-      if (connection != null)
+      for (HelloWorldConnectionImpl connection : connections)
       {
          connection.setManagedConnection(null);
-         connection = null;
       }
+      connections.clear();
    }
 
    /**
@@ -166,11 +160,6 @@ public class HelloWorldManagedConnection implements ManagedConnection,
     */
    public void destroy() throws ResourceException
    {
-      if (connection != null)
-      {
-         connection.setManagedConnection(null);
-         connection = null;
-      }
    }
 
    /**
@@ -273,6 +262,8 @@ public class HelloWorldManagedConnection implements ManagedConnection,
     */
    void closeHandle(HelloWorldConnection handle)
    {
+      connections.remove((HelloWorldConnectionImpl)handle);
+
       ConnectionEvent event = new ConnectionEvent(this, ConnectionEvent.CONNECTION_CLOSED);
       event.setConnectionHandle(handle);
 

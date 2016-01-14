@@ -85,13 +85,13 @@ public class McCodeGen extends AbstractCodeGen
       writeEol(out);
       
       writeIndent(out, indent);
-      out.write("/** Connection */");
+      out.write("/** Connections */");
       writeEol(out);
       writeIndent(out, indent);
       if (def.getMcfDefs().get(getNumOfMcf()).isUseCciConnection())
-         out.write("private " + def.getMcfDefs().get(getNumOfMcf()).getCciConnClass() + " connection;");
+         out.write("private Set<" + def.getMcfDefs().get(getNumOfMcf()).getCciConnClass() + "> connections;");
       else
-         out.write("private " + def.getMcfDefs().get(getNumOfMcf()).getConnImplClass() + " connection;");
+         out.write("private Set<" + def.getMcfDefs().get(getNumOfMcf()).getConnImplClass() + "> connections;");
 
       writeEol(out);
       writeEol(out);
@@ -138,7 +138,10 @@ public class McCodeGen extends AbstractCodeGen
       out.write("this.listeners = Collections.synchronizedList(new ArrayList<ConnectionEventListener>(1));");
       writeEol(out);
       writeIndent(out, indent + 1);
-      out.write("this.connection = null;");
+      if (def.getMcfDefs().get(getNumOfMcf()).isUseCciConnection())
+         out.write("this.connections = new HashSet<" + def.getMcfDefs().get(getNumOfMcf()).getCciConnClass() + ">();");
+      else
+         out.write("this.connections = new HashSet<" + def.getMcfDefs().get(getNumOfMcf()).getConnImplClass() + ">();");
       
       if (def.isSupportEis())
       {
@@ -192,7 +195,11 @@ public class McCodeGen extends AbstractCodeGen
       writeEol(out);
       out.write("import java.util.Collections;");
       writeEol(out);
+      out.write("import java.util.HashSet;");
+      writeEol(out);
       out.write("import java.util.List;");
+      writeEol(out);
+      out.write("import java.util.Set;");
       writeEol(out);
       importLogging(def, out);
       out.write("import javax.resource.NotSupportedException;");
@@ -276,9 +283,14 @@ public class McCodeGen extends AbstractCodeGen
       writeLogging(def, out, indent + 1, "trace", "getConnection");
       writeIndent(out, indent + 1);
       if (def.getMcfDefs().get(getNumOfMcf()).isUseCciConnection())
-         out.write("connection = new " + def.getMcfDefs().get(getNumOfMcf()).getCciConnClass() + "();");
+         out.write(def.getMcfDefs().get(getNumOfMcf()).getCciConnClass() + " connection = new " +
+                   def.getMcfDefs().get(getNumOfMcf()).getCciConnClass() + "();");
       else
-         out.write("connection = new " + def.getMcfDefs().get(getNumOfMcf()).getConnImplClass() + "(this, mcf);");
+         out.write(def.getMcfDefs().get(getNumOfMcf()).getConnImplClass() + " connection = new " +
+                   def.getMcfDefs().get(getNumOfMcf()).getConnImplClass() + "(this, mcf);");
+      writeEol(out);
+      writeIndent(out, indent + 1);
+      out.write("connections.add(connection);");
       writeEol(out);
       writeIndent(out, indent + 1);
       out.write("return connection;");
@@ -332,12 +344,22 @@ public class McCodeGen extends AbstractCodeGen
       writeEol(out);
       writeEol(out);
       writeIndent(out, indent + 1);
-      out.write("this.connection = (");
+      if (def.getMcfDefs().get(getNumOfMcf()).isUseCciConnection())
+         out.write(def.getMcfDefs().get(getNumOfMcf()).getCciConnClass());
+      else
+         out.write(def.getMcfDefs().get(getNumOfMcf()).getConnImplClass());
+      out.write(" handle = (");
       if (def.getMcfDefs().get(getNumOfMcf()).isUseCciConnection())
          out.write(def.getMcfDefs().get(getNumOfMcf()).getCciConnClass());
       else
          out.write(def.getMcfDefs().get(getNumOfMcf()).getConnImplClass());
       out.write(")connection;");
+      writeEol(out);
+      writeIndent(out, indent + 1);
+      out.write("handle.setManagedConnection(this);");
+      writeEol(out);
+      writeIndent(out, indent + 1);
+      out.write("connections.add(handle);");
       writeRightCurlyBracket(out, indent);
       writeEol(out);
    }
@@ -371,6 +393,20 @@ public class McCodeGen extends AbstractCodeGen
       out.write("public void cleanup() throws ResourceException");
       writeLeftCurlyBracket(out, indent);
       writeLogging(def, out, indent + 1, "trace", "cleanup");
+      writeIndent(out, indent + 1);
+      out.write("for (");
+      if (def.getMcfDefs().get(getNumOfMcf()).isUseCciConnection())
+         out.write(def.getMcfDefs().get(getNumOfMcf()).getCciConnClass());
+      else
+         out.write(def.getMcfDefs().get(getNumOfMcf()).getConnImplClass());
+      out.write(" connection : connections)");
+      writeLeftCurlyBracket(out, indent + 1);
+      writeIndent(out, indent + 2);
+      out.write("connection.setManagedConnection(null);");
+      writeRightCurlyBracket(out, indent + 1);
+      writeIndent(out, indent + 1);
+      out.write("connections.clear();");
+      writeEol(out);
       writeRightCurlyBracket(out, indent);
       writeEol(out);
 
@@ -514,6 +550,14 @@ public class McCodeGen extends AbstractCodeGen
       else
          out.write(def.getMcfDefs().get(getNumOfMcf()).getConnInterfaceClass() + " handle)");
       writeLeftCurlyBracket(out, indent);
+      writeIndent(out, indent + 1);
+      out.write("connections.remove((");
+      if (def.getMcfDefs().get(getNumOfMcf()).isUseCciConnection())
+         out.write(def.getMcfDefs().get(getNumOfMcf()).getCciConnClass());
+      else
+         out.write(def.getMcfDefs().get(getNumOfMcf()).getConnImplClass());
+      out.write(")handle);");
+      writeEol(out);
       writeIndent(out, indent + 1);
       out.write("ConnectionEvent event = new ConnectionEvent(this, ConnectionEvent.CONNECTION_CLOSED);");
       writeEol(out);

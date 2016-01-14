@@ -97,14 +97,7 @@ public class HelloWorldConnectionImpl implements HelloWorldConnection
       if (mc != null)
       {
          mc.closeHandle(this);
-      }
-      else
-      {
-         if (cm instanceof LazyAssociatableConnectionManager)
-         {
-            LazyAssociatableConnectionManager lacm = (LazyAssociatableConnectionManager)cm;
-            lacm.inactiveConnectionClosed(this, mcf);
-         }
+         mc = null;
       }
    }
 
