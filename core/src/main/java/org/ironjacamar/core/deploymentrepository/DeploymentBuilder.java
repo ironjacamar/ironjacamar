@@ -229,7 +229,7 @@ public class DeploymentBuilder
    public Collection<ConnectionFactory> getConnectionFactories()
    {
       if (connectionFactories == null)
-         return null;
+         return Collections.emptyList();
       
       return Collections.unmodifiableCollection(connectionFactories);
    }
@@ -255,7 +255,7 @@ public class DeploymentBuilder
    public Collection<AdminObject> getAdminObjects()
    {
       if (adminObjects == null)
-         return null;
+         return Collections.emptyList();
       
       return Collections.unmodifiableCollection(adminObjects);
    }
@@ -282,6 +282,6 @@ public class DeploymentBuilder
    {
       return new DeploymentImpl(identifier, name, archive, classLoader,
                                 metadata, activation,
-                                resourceAdapter, connectionFactories, adminObjects);
+                                resourceAdapter, getConnectionFactories(), getAdminObjects());
    }
 }
