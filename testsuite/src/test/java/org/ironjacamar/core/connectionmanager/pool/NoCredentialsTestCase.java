@@ -35,6 +35,7 @@ import org.ironjacamar.embedded.junit4.PreCondition;
 import org.ironjacamar.rars.ResourceAdapterFactory;
 import org.ironjacamar.rars.security.UnifiedSecurityConnection;
 import org.ironjacamar.rars.security.UnifiedSecurityConnectionFactory;
+import org.ironjacamar.rars.security.UnifiedSecurityCri;
 import org.ironjacamar.util.TestUtils;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,6 +43,8 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 
 import javax.annotation.Resource;
 import javax.inject.Inject;
+import javax.resource.spi.TransactionSupport;
+import javax.transaction.UserTransaction;
 
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
@@ -51,7 +54,9 @@ import org.junit.runner.RunWith;
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.FREE;
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.IN_USE;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * No credential test case
@@ -65,10 +70,24 @@ import static org.junit.Assert.assertNotNull;
 public class NoCredentialsTestCase
 {
    /**
-    * The cf
+    * The noTxCf w/o Tx
     */
-   @Resource(mappedName = "java:/eis/UnifiedSecurityConnectionFactory")
-   private UnifiedSecurityConnectionFactory cf;
+   @Resource(mappedName = "java:/eis/UnifiedSecurityNoTxConnectionFactory")
+   private UnifiedSecurityConnectionFactory noTxCf;
+
+
+   /**
+    * The connection factory w/ Local Tx
+    */
+   @Resource(mappedName = "java:/eis/UnifiedSecurityLocalTxConnectionFactory")
+   private UnifiedSecurityConnectionFactory localTxCf;
+
+
+   /**
+    * The connection factory w/ XA Tx
+    */
+   @Resource(mappedName = "java:/eis/UnifiedSecurityXATxConnectionFactory")
+   private UnifiedSecurityConnectionFactory xaTxCf;
 
    /**
     * The deployment repository
@@ -76,6 +95,10 @@ public class NoCredentialsTestCase
    @Inject
    private static DeploymentRepository dr;
 
+
+   /** The UserTransaction */
+   @Inject
+   private static UserTransaction ut;
 
    /**
     * The resource adapter
@@ -88,32 +111,211 @@ public class NoCredentialsTestCase
       return ResourceAdapterFactory.createUnifiedSecurityRar();
    }
 
+
+   /**
+    * The activation w7o Tx
+    *
+    * @throws Throwable In case of an error
+    */
+   @Deployment(order = 2)
+   private ResourceAdaptersDescriptor createNoTxActivation() throws Throwable
+   {
+      return ResourceAdapterFactory.createUnifiedSecurityDeployment(null, null,
+            TransactionSupport.TransactionSupportLevel.NoTransaction,
+            "UnifiedSecurityNoTxConnectionFactory");
+   }
+
    /**
     * The activation
     *
     * @throws Throwable In case of an error
     */
-   @Deployment(order = 2)
-   private ResourceAdaptersDescriptor createActivation() throws Throwable
+   @Deployment(order = 3)
+   private ResourceAdaptersDescriptor createActivationLocalTx() throws Throwable
    {
-      return ResourceAdapterFactory.createUnifiedSecurityDeployment(null, null);
+      return ResourceAdapterFactory.createUnifiedSecurityDeployment(null, null,
+            TransactionSupport.TransactionSupportLevel.LocalTransaction,
+            "UnifiedSecurityLocalTxConnectionFactory");
    }
 
    /**
-    * Deployment
+    * The activation
+    *
+    * @throws Throwable In case of an error
+    */
+   @Deployment(order = 4)
+   private ResourceAdaptersDescriptor createActivationXaTx() throws Throwable
+   {
+      return ResourceAdapterFactory.createUnifiedSecurityDeployment(null, null,
+            TransactionSupport.TransactionSupportLevel.XATransaction,
+            "UnifiedSecurityXATxConnectionFactory");
+   }
+
+
+
+   /**
+    * Deployment test w/ LocalTx
     *
     * @throws Throwable In case of an error
     */
    @Test
-   public void testDeployment() throws Throwable
+   public void testLocalTx() throws Throwable
    {
-      assertNotNull(cf);
+      assertNotNull(localTxCf);
       assertNotNull(dr);
 
-      assertEquals(1, dr.getDeployments().size());
+      assertEquals(3, dr.getDeployments().size());
 
       org.ironjacamar.core.api.deploymentrepository.Deployment d = dr
-            .findByJndi("java:/eis/UnifiedSecurityConnectionFactory");
+            .findByJndi("java:/eis/UnifiedSecurityLocalTxConnectionFactory");
+      assertNotNull(d);
+
+      org.ironjacamar.core.api.deploymentrepository.ConnectionFactory dcf = d.getConnectionFactories().iterator()
+            .next();
+      assertNotNull(dcf);
+
+      org.ironjacamar.core.api.deploymentrepository.Pool p = dcf.getPool();
+      assertNotNull(p);
+
+      DefaultPool defaultPool = (DefaultPool) p.getPool();
+
+      ConcurrentHashMap<Credential, ManagedConnectionPool> mcps =
+            (ConcurrentHashMap<Credential, ManagedConnectionPool>) TestUtils
+                  .extract(defaultPool, "pools");
+      assertNotNull(mcps);
+      assertEquals(0, mcps.size());
+
+      ut.begin();
+
+      UnifiedSecurityConnection c = localTxCf.getConnection();
+      assertNotNull(c);
+      assertNull(c.getUserName());
+      assertNull(c.getPassword());
+
+      UnifiedSecurityConnection c1 = localTxCf.getConnection();
+      assertNotNull(c1);
+      assertNull(c1.getUserName());
+      assertNull(c1.getPassword());
+
+      assertNotEquals(c, c1);
+
+      assertEquals(1, mcps.size());
+
+      ManagedConnectionPool mcp = mcps.values().iterator().next();
+      assertNotNull(mcp);
+
+      ConcurrentLinkedDeque<ConnectionListener> listeners = (ConcurrentLinkedDeque<ConnectionListener>) TestUtils
+            .extract(mcp, "listeners");
+      assertNotNull(listeners);
+      assertEquals(1, listeners.size());
+
+      ConnectionListener cl = listeners.getFirst();
+      assertEquals(IN_USE, cl.getState());
+      assertNull(((UnifiedSecurityCri) cl.getCredential().getConnectionRequestInfo()));
+
+      c.close();
+
+      c1.close();
+
+      ut.commit();
+
+      assertEquals(FREE, cl.getState());
+      assertEquals(1, listeners.size());
+      assertEquals(1, mcps.size());
+
+      // We cheat and shutdown the pool to clear out mcps
+      defaultPool.shutdown();
+   }
+
+   /**
+    * Deployment test w/ XATx
+    *
+    * @throws Throwable In case of an error
+    */
+   @Test
+   public void testXATx() throws Throwable
+   {
+      assertNotNull(xaTxCf);
+      assertNotNull(dr);
+
+      assertEquals(3, dr.getDeployments().size());
+
+      org.ironjacamar.core.api.deploymentrepository.Deployment d = dr
+            .findByJndi("java:/eis/UnifiedSecurityXATxConnectionFactory");
+      assertNotNull(d);
+
+      org.ironjacamar.core.api.deploymentrepository.ConnectionFactory dcf = d.getConnectionFactories().iterator()
+            .next();
+      assertNotNull(dcf);
+
+      org.ironjacamar.core.api.deploymentrepository.Pool p = dcf.getPool();
+      assertNotNull(p);
+
+      DefaultPool defaultPool = (DefaultPool) p.getPool();
+
+      ConcurrentHashMap<Credential, ManagedConnectionPool> mcps =
+            (ConcurrentHashMap<Credential, ManagedConnectionPool>) TestUtils
+                  .extract(defaultPool, "pools");
+      assertNotNull(mcps);
+      assertEquals(0, mcps.size());
+
+      ut.begin();
+
+      UnifiedSecurityConnection c = xaTxCf.getConnection();
+      assertNotNull(c);
+      assertNull(c.getUserName());
+      assertNull(c.getPassword());
+
+
+      UnifiedSecurityConnection c1 = xaTxCf.getConnection();
+      assertNotNull(c1);
+      assertNull(c1.getUserName());
+      assertNull(c1.getPassword());
+
+      assertNotEquals(c, c1);
+
+      assertEquals(1, mcps.size());
+
+      ManagedConnectionPool mcp = mcps.values().iterator().next();
+      assertNotNull(mcp);
+
+      ConcurrentLinkedDeque<ConnectionListener> listeners = (ConcurrentLinkedDeque<ConnectionListener>) TestUtils
+            .extract(mcp, "listeners");
+      assertNotNull(listeners);
+      assertEquals(1, listeners.size());
+
+      ConnectionListener cl = listeners.getFirst();
+      assertEquals(IN_USE, cl.getState());
+      assertNull(((UnifiedSecurityCri) cl.getCredential().getConnectionRequestInfo()));
+
+      c.close();
+      c1.close();
+
+      ut.commit();
+
+      assertEquals(FREE, cl.getState());
+      assertEquals(1, listeners.size());
+      assertEquals(1, mcps.size());
+
+      // We cheat and shutdown the pool to clear out mcps
+      defaultPool.shutdown();
+   }
+
+   /**
+    * Deployment test w/o Tx
+    *
+    * @throws Throwable In case of an error
+    */
+   @Test
+   public void testNoTx() throws Throwable
+   {
+      assertNotNull(noTxCf);
+      assertNotNull(dr);
+
+      assertEquals(3, dr.getDeployments().size());
+
+      org.ironjacamar.core.api.deploymentrepository.Deployment d = dr
+            .findByJndi("java:/eis/UnifiedSecurityNoTxConnectionFactory");
       assertNotNull(d);
 
       org.ironjacamar.core.api.deploymentrepository.ConnectionFactory dcf = d.getConnectionFactories().iterator()
@@ -131,8 +333,17 @@ public class NoCredentialsTestCase
       assertNotNull(mcps);
       assertEquals(0, mcps.size());
 
-      UnifiedSecurityConnection c = cf.getConnection();
+      UnifiedSecurityConnection c = noTxCf.getConnection();
       assertNotNull(c);
+      assertNull(c.getUserName());
+      assertNull(c.getPassword());
+
+      UnifiedSecurityConnection c1 = noTxCf.getConnection();
+      assertNotNull(c1);
+      assertNull(c1.getUserName());
+      assertNull(c1.getPassword());
+
+      assertNotEquals(c, c1);
 
       assertEquals(1, mcps.size());
 
@@ -142,15 +353,24 @@ public class NoCredentialsTestCase
       ConcurrentLinkedDeque<ConnectionListener> listeners = (ConcurrentLinkedDeque<ConnectionListener>) TestUtils
             .extract(mcp, "listeners");
       assertNotNull(listeners);
-      assertEquals(1, listeners.size());
+      assertEquals(2, listeners.size());
 
       ConnectionListener cl = listeners.getFirst();
       assertEquals(IN_USE, cl.getState());
+      assertNull(((UnifiedSecurityCri) cl.getCredential().getConnectionRequestInfo()));
+
+      c1.close();
+      assertEquals(FREE, cl.getState());
+
+      cl = listeners.getLast();
+
+      assertEquals(IN_USE, cl.getState());
+      assertNull(((UnifiedSecurityCri) cl.getCredential().getConnectionRequestInfo()));
 
       c.close();
 
       assertEquals(FREE, cl.getState());
-      assertEquals(1, listeners.size());
+      assertEquals(2, listeners.size());
       assertEquals(1, mcps.size());
 
       // We cheat and shutdown the pool to clear out mcps

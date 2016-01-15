@@ -301,7 +301,8 @@ public class ResourceAdapterFactory
    }
 
    /**
-    * Create the work.rar
+    * Create the unified-security.rar
+    *
     *
     * @return The resource adapter archive
     */
@@ -337,9 +338,14 @@ public class ResourceAdapterFactory
     *
     * @param bc The BootstrapContext name; <code>null</code> if default
     * @param securityDomain The SecurityDomain name; <code>null</code> if default
+    * @param tsl     The transaction support level
+    * @param id The JNDI postfix and id
+    *
+    *
     * @return The resource adapter descriptor
     */
-   public static ResourceAdaptersDescriptor createUnifiedSecurityDeployment(String bc, String securityDomain)
+   public static ResourceAdaptersDescriptor createUnifiedSecurityDeployment(String bc, String securityDomain,
+         TransactionSupportLevel tsl, String id)
    {
       ResourceAdaptersDescriptor dashRaXml = Descriptors
             .create(ResourceAdaptersDescriptor.class, "unified-security-ra.xml");
@@ -348,10 +354,23 @@ public class ResourceAdapterFactory
       if (bc != null)
          dashRaXmlRt.bootstrapContext(bc);
 
+      if (tsl == null || tsl == TransactionSupportLevel.NoTransaction)
+      {
+         dashRaXmlRt.transactionSupport("NoTransaction");
+      }
+      else if (tsl == TransactionSupportLevel.LocalTransaction)
+      {
+         dashRaXmlRt.transactionSupport("LocalTransaction");
+      }
+      else
+      {
+         dashRaXmlRt.transactionSupport("XATransaction");
+      }
+
       ConnectionDefinitionsType dashRaXmlCdst = dashRaXmlRt.getOrCreateConnectionDefinitions();
       org.ironjacamar.embedded.dsl.resourceadapters20.api.ConnectionDefinitionType dashRaXmlCdt = dashRaXmlCdst
             .createConnectionDefinition().className(UnifiedSecurityManagedConnectionFactory.class.getName())
-            .jndiName("java:/eis/UnifiedSecurityConnectionFactory").id("UnifiedSecurityConnectionFactory");
+            .jndiName("java:/eis/" + id).id(id);
 
       if (securityDomain != null)
       {
