@@ -61,9 +61,13 @@ import static org.junit.Assert.fail;
 @PostCondition(condition = AllChecks.class)
 public class EnlistmentLocalTransactionTestCase
 {
-   /** The txlog connection factory */
-   @Resource(mappedName = "java:/eis/TxLogConnectionFactory")
-   private static TxLogConnectionFactory cf;
+   /** The txlog connection factory 1 */
+   @Resource(mappedName = "java:/eis/TxLogConnectionFactory1")
+   private static TxLogConnectionFactory cf1;
+
+   /** The txlog connection factory 2 */
+   @Resource(mappedName = "java:/eis/TxLogConnectionFactory2")
+   private static TxLogConnectionFactory cf2;
 
    /** The TransactionManager */
    @Inject
@@ -84,13 +88,23 @@ public class EnlistmentLocalTransactionTestCase
    }
    
    /**
-    * The activation
+    * The activation for resource 1
     * @throws Throwable In case of an error
     */
    @Deployment(order = 2)
-   private static ResourceAdaptersDescriptor createActivation() throws Throwable
+   private static ResourceAdaptersDescriptor createActivationOne() throws Throwable
    {
-      return ResourceAdapterFactory.createTxLogDeployment(TransactionSupportLevel.LocalTransaction);
+      return ResourceAdapterFactory.createTxLogDeployment(TransactionSupportLevel.LocalTransaction, "1");
+   }
+   
+   /**
+    * The activation for resource 2
+    * @throws Throwable In case of an error
+    */
+   @Deployment(order = 3)
+   private static ResourceAdaptersDescriptor createActivationTwo() throws Throwable
+   {
+      return ResourceAdapterFactory.createTxLogDeployment(TransactionSupportLevel.LocalTransaction, "2");
    }
    
    /**
@@ -101,12 +115,12 @@ public class EnlistmentLocalTransactionTestCase
    @SuppressWarnings("unchecked")
    public void testCommit() throws Throwable
    {
-      assertNotNull(cf);
+      assertNotNull(cf1);
       assertNotNull(ut);
 
       ut.begin();
       
-      TxLogConnection c = cf.getConnection();
+      TxLogConnection c = cf1.getConnection();
       assertNotNull(c);
 
       String id = c.getId();
@@ -119,7 +133,7 @@ public class EnlistmentLocalTransactionTestCase
 
       assertTrue(c.isInPool());
 
-      c = cf.getConnection();
+      c = cf1.getConnection();
 
       assertEquals("01", c.getState(id));
       c.clearState(id);
@@ -135,12 +149,12 @@ public class EnlistmentLocalTransactionTestCase
    @SuppressWarnings("unchecked")
    public void testRollback() throws Throwable
    {
-      assertNotNull(cf);
+      assertNotNull(cf1);
       assertNotNull(ut);
 
       ut.begin();
       
-      TxLogConnection c = cf.getConnection();
+      TxLogConnection c = cf1.getConnection();
       assertNotNull(c);
 
       String id = c.getId();
@@ -153,7 +167,7 @@ public class EnlistmentLocalTransactionTestCase
 
       assertTrue(c.isInPool());
 
-      c = cf.getConnection();
+      c = cf1.getConnection();
 
       assertEquals("02", c.getState(id));
       c.clearState(id);
@@ -169,7 +183,7 @@ public class EnlistmentLocalTransactionTestCase
    @SuppressWarnings("unchecked")
    public void testSetRollbackOnlyBefore() throws Throwable
    {
-      assertNotNull(cf);
+      assertNotNull(cf1);
       assertNotNull(ut);
 
       ut.begin();
@@ -177,7 +191,7 @@ public class EnlistmentLocalTransactionTestCase
 
       try
       {
-         TxLogConnection c = cf.getConnection();
+         TxLogConnection c = cf1.getConnection();
          fail("Connection was obtained");
       }
       catch (ResourceException re)
@@ -196,12 +210,12 @@ public class EnlistmentLocalTransactionTestCase
    @SuppressWarnings("unchecked")
    public void testSetRollbackOnlyAfter() throws Throwable
    {
-      assertNotNull(cf);
+      assertNotNull(cf1);
       assertNotNull(ut);
 
       ut.begin();
       
-      TxLogConnection c = cf.getConnection();
+      TxLogConnection c = cf1.getConnection();
       assertNotNull(c);
 
       ut.setRollbackOnly();
@@ -212,7 +226,7 @@ public class EnlistmentLocalTransactionTestCase
 
       assertFalse(c.isInPool());
 
-      c = cf.getConnection();
+      c = cf1.getConnection();
       String idNext = c.getId();
 
       assertEquals(idOrig, idNext);
@@ -223,7 +237,7 @@ public class EnlistmentLocalTransactionTestCase
 
       assertTrue(c.isInPool());
 
-      c = cf.getConnection();
+      c = cf1.getConnection();
 
       assertEquals("02", c.getState(idOrig));
       c.clearState(idOrig);
@@ -239,12 +253,12 @@ public class EnlistmentLocalTransactionTestCase
    @SuppressWarnings("unchecked")
    public void testSuspendResume() throws Throwable
    {
-      assertNotNull(cf);
+      assertNotNull(cf1);
       assertNotNull(tm);
 
       tm.begin();
       
-      TxLogConnection c1 = cf.getConnection();
+      TxLogConnection c1 = cf1.getConnection();
       assertNotNull(c1);
 
       String id1 = c1.getId();
@@ -253,7 +267,7 @@ public class EnlistmentLocalTransactionTestCase
 
       tm.begin();
       
-      TxLogConnection c2 = cf.getConnection();
+      TxLogConnection c2 = cf1.getConnection();
       assertNotNull(c2);
 
       String id2 = c2.getId();
@@ -275,7 +289,7 @@ public class EnlistmentLocalTransactionTestCase
 
       assertTrue(c1.isInPool());
 
-      c1 = cf.getConnection();
+      c1 = cf1.getConnection();
 
       assertEquals("01", c1.getState(id1));
       assertEquals("01", c1.getState(id2));
@@ -284,6 +298,51 @@ public class EnlistmentLocalTransactionTestCase
       c1.clearState(id1);
       c1.clearState(id2);
       
+      c1.close();
+   }
+
+   /**
+    * 2 LocalXAResource enlistment
+    * @throws Throwable In case of an error
+    */
+   @Test
+   @SuppressWarnings("unchecked")
+   public void testTwoLocalXAResourceEnlistment() throws Throwable
+   {
+      assertNotNull(cf1);
+      assertNotNull(cf2);
+      assertNotNull(tm);
+
+      tm.begin();
+      
+      TxLogConnection c1 = cf1.getConnection();
+      assertNotNull(c1);
+
+      String id1 = c1.getId();
+
+      try
+      {
+         TxLogConnection c2 = cf2.getConnection();
+         fail("2 LocalXAResource enlisted");
+      }
+      catch (ResourceException e)
+      {
+         // Ok
+      }
+      
+      c1.close();
+
+      assertFalse(c1.isInPool());
+
+      tm.rollback();
+
+      assertTrue(c1.isInPool());
+
+      c1 = cf1.getConnection();
+
+      assertEquals("02", c1.getState(id1));
+      
+      c1.clearState(id1);
       c1.close();
    }
 }
