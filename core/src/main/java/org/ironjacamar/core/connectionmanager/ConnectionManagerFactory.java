@@ -22,6 +22,7 @@
 package org.ironjacamar.core.connectionmanager;
 
 import org.ironjacamar.common.api.metadata.common.TransactionSupportEnum;
+import org.ironjacamar.core.api.connectionmanager.ConnectionManagerConfiguration;
 import org.ironjacamar.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.ironjacamar.core.spi.transaction.TransactionIntegration;
 
@@ -45,25 +46,27 @@ public class ConnectionManagerFactory
     * @param tse The transaction support level
     * @param mcf The managed connection factory
     * @param ccm The cached connection manager
+    * @param cmc The connection manager configuration
     * @param ti The transaction integration
     * @return The connection manager
     */
    public static ConnectionManager createConnectionManager(TransactionSupportEnum tse,
                                                            ManagedConnectionFactory mcf,
                                                            CachedConnectionManager ccm,
+                                                           ConnectionManagerConfiguration cmc,
                                                            TransactionIntegration ti)
    {
       if (tse == TransactionSupportEnum.NoTransaction)
       {
-         return new NoTransactionConnectionManager(mcf, ccm);
+         return new NoTransactionConnectionManager(mcf, ccm, cmc);
       }
       else if (tse == TransactionSupportEnum.LocalTransaction)
       {
-         return new LocalTransactionConnectionManager(mcf, ccm, ti);
+         return new LocalTransactionConnectionManager(mcf, ccm, cmc, ti);
       }
       else
       {
-         return new XATransactionConnectionManager(mcf, ccm, ti);
+         return new XATransactionConnectionManager(mcf, ccm, cmc, ti);
       }
    }
 }

@@ -26,6 +26,7 @@ import org.ironjacamar.common.api.metadata.resourceadapter.Activation;
 import org.ironjacamar.common.api.metadata.resourceadapter.AdminObject;
 import org.ironjacamar.common.api.metadata.resourceadapter.ConnectionDefinition;
 import org.ironjacamar.common.api.metadata.spec.Connector;
+import org.ironjacamar.core.api.connectionmanager.ConnectionManagerConfiguration;
 import org.ironjacamar.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.ironjacamar.core.api.connectionmanager.pool.PoolConfiguration;
 import org.ironjacamar.core.api.deploymentrepository.Deployment;
@@ -320,10 +321,20 @@ public abstract class AbstractResourceAdapterDeployer
             injectConfigProperties(mcf, findConfigProperties(mcfClass, connector),
                                    builder.getClassLoader());
 
+         ConnectionManagerConfiguration cmc = new ConnectionManagerConfiguration();
+         applyConnectionManagerConfiguration(cmc, cd);
+         applyConnectionManagerConfiguration(cmc, cd.getSecurity());
+         applyConnectionManagerConfiguration(cmc, cd.getTimeout());
+         if (isXA(transactionSupport))
+            applyConnectionManagerConfiguration(cmc, (org.ironjacamar.common.api.metadata.common.XaPool)cd.getPool());
+         
          ConnectionManager cm =
             ConnectionManagerFactory.createConnectionManager(transactionSupport, mcf,
                                                              cd.isUseCcm() ? cachedConnectionManager : null,
+                                                             cmc,
                                                              transactionIntegration);
+         if (subjectFactory != null)
+            cm.setSubjectFactory(subjectFactory);
 
          String poolType = cd.getPool() != null ? cd.getPool().getType() : null;
 
@@ -337,11 +348,6 @@ public abstract class AbstractResourceAdapterDeployer
 
          org.ironjacamar.core.connectionmanager.pool.Pool pool = PoolFactory.createPool(poolType, cm, pc);
          cm.setPool(pool);
-
-         if (subjectFactory != null)
-            cm.setSubjectFactory(subjectFactory);
-         if (cd.getSecurity() != null && cd.getSecurity().getSecurityDomain() != null)
-            cm.setSecurityDomain(cd.getSecurity().getSecurityDomain());
 
          org.ironjacamar.core.api.deploymentrepository.Pool dpool = new PoolImpl(pool, null);
 
@@ -659,13 +665,93 @@ public abstract class AbstractResourceAdapterDeployer
    }
 
    /**
+    * Apply connection definition to connection manager configuration
+    * @param cmc The connection manager configuration
+    * @param cd The connection definition definition
+    */
+   private void applyConnectionManagerConfiguration(ConnectionManagerConfiguration cmc,
+      org.ironjacamar.common.api.metadata.resourceadapter.ConnectionDefinition cd)
+   {
+      if (cd.getJndiName() != null)
+         cmc.setJndiName(cd.getJndiName());
+
+      if (cd.isSharable() != null)
+         cmc.setSharable(cd.isSharable());
+
+      if (cd.isEnlistment() != null)
+         cmc.setEnlistment(cd.isEnlistment());
+
+      if (cd.isConnectable() != null)
+         cmc.setConnectable(cd.isConnectable());
+
+      if (cd.isTracking() != null)
+         cmc.setTracking(cd.isTracking());
+   }
+
+   /**
+    * Apply security to connection manager configuration
+    * @param cmc The connection manager configuration
+    * @param s The security definition
+    */
+   private void applyConnectionManagerConfiguration(ConnectionManagerConfiguration cmc,
+      org.ironjacamar.common.api.metadata.common.Security s)
+   {
+      if (s != null)
+      {
+         if (s.getSecurityDomain() != null)
+            cmc.setSecurityDomain(s.getSecurityDomain());
+      }
+   }
+
+   /**
+    * Apply xa-pool to connection manager configuration
+    * @param cmc The connection manager configuration
+    * @param xp The xa-pool definition
+    */
+   private void applyConnectionManagerConfiguration(ConnectionManagerConfiguration cmc,
+      org.ironjacamar.common.api.metadata.common.XaPool xp)
+   {
+      if (xp != null)
+      {
+         if (xp.isIsSameRmOverride() != null)
+            cmc.setIsSameRMOverride(xp.isIsSameRmOverride());
+
+         if (xp.isPadXid() != null)
+            cmc.setPadXid(xp.isPadXid());
+
+         if (xp.isWrapXaResource() != null)
+            cmc.setWrapXAResource(xp.isWrapXaResource());
+      }
+   }
+
+   /**
+    * Apply timeout to connection manager configuration
+    * @param cmc The connection manager configuration
+    * @param t The timeout definition
+    */
+   private void applyConnectionManagerConfiguration(ConnectionManagerConfiguration cmc,
+      org.ironjacamar.common.api.metadata.common.Timeout t)
+   {
+      if (t != null)
+      {
+         if (t.getAllocationRetry() != null)
+            cmc.setAllocationRetry(t.getAllocationRetry());
+
+         if (t.getAllocationRetryWaitMillis() != null)
+            cmc.setAllocationRetryWaitMillis(t.getAllocationRetryWaitMillis());
+
+         if (t.getXaResourceTimeout() != null)
+            cmc.setXAResourceTimeout(t.getXaResourceTimeout());
+      }
+   }
+
+   /**
     * Apply pool to pool configuration
     * @param pc The pool configuration
     * @param p The pool definition
-    * @return The configuration
     */
-   private PoolConfiguration applyPoolConfiguration(PoolConfiguration pc,
-                                                    org.ironjacamar.common.api.metadata.common.Pool p)
+   private void applyPoolConfiguration(PoolConfiguration pc,
+                                       org.ironjacamar.common.api.metadata.common.Pool p)
    {
       if (p != null)
       {
@@ -681,18 +767,15 @@ public abstract class AbstractResourceAdapterDeployer
          if (p.isPrefill() != null)
             pc.setPrefill(p.isPrefill().booleanValue());
       }
-      
-      return pc;
    }
 
    /**
     * Apply timeout to pool configuration
     * @param pc The pool configuration
     * @param t The timeout definition
-    * @return The configuration
     */
-   private PoolConfiguration applyPoolConfiguration(PoolConfiguration pc,
-                                                    org.ironjacamar.common.api.metadata.common.Timeout t)
+   private void applyPoolConfiguration(PoolConfiguration pc,
+                                       org.ironjacamar.common.api.metadata.common.Timeout t)
    {
       if (t != null)
       {
@@ -702,18 +785,15 @@ public abstract class AbstractResourceAdapterDeployer
          if (t.getIdleTimeoutMinutes() != null)
             pc.setIdleTimeoutMinutes(t.getIdleTimeoutMinutes().intValue());
       }
-      
-      return pc;
    }
 
    /**
     * Apply validation to pool configuration
     * @param pc The pool configuration
     * @param v The validation definition
-    * @return The configuration
     */
-   private PoolConfiguration applyPoolConfiguration(PoolConfiguration pc,
-                                                    org.ironjacamar.common.api.metadata.common.Validation v)
+   private void applyPoolConfiguration(PoolConfiguration pc,
+                                       org.ironjacamar.common.api.metadata.common.Validation v)
    {
       if (v != null)
       {
@@ -729,7 +809,5 @@ public abstract class AbstractResourceAdapterDeployer
          if (v.isUseFastFail() != null)
             pc.setUseFastFail(v.isUseFastFail().booleanValue());
       }
-      
-      return pc;
    }
 }

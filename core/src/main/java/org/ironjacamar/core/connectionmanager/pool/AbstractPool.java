@@ -219,8 +219,10 @@ public abstract class AbstractPool implements Pool
    protected LocalXAResource getLocalXAResource(ManagedConnection mc) throws ResourceException
    {
       TransactionalConnectionManager txCM = (TransactionalConnectionManager)cm;
+      LocalXAResource xaResource = null;
       String eisProductName = null;
       String eisProductVersion = null;
+      String jndiName = cm.getConnectionManagerConfiguration().getJndiName();
 
       try
       {
@@ -236,15 +238,44 @@ public abstract class AbstractPool implements Pool
       }
 
       if (eisProductName == null)
-         eisProductName = "";
+         eisProductName = jndiName;
 
       if (eisProductVersion == null)
-         eisProductVersion = "";
+         eisProductVersion = jndiName;
 
-      return txCM.getTransactionIntegration().createLocalXAResource(cm,
-                                                                    eisProductName, eisProductVersion,
-                                                                    "",
-                                                                    null);
+      if (cm.getConnectionManagerConfiguration().isConnectable())
+      {
+         if (mc instanceof org.ironjacamar.core.spi.transaction.ConnectableResource)
+         {
+            org.ironjacamar.core.spi.transaction.ConnectableResource cr =
+               (org.ironjacamar.core.spi.transaction.ConnectableResource)mc;
+
+            xaResource = txCM.getTransactionIntegration().createConnectableLocalXAResource(cm,
+                                                                                           eisProductName,
+                                                                                           eisProductVersion,
+                                                                                           jndiName,
+                                                                                           cr,
+                                                                                           null);
+         }
+         else if (txCM.getTransactionIntegration().isConnectableResource(mc))
+         {
+            xaResource = txCM.getTransactionIntegration().createConnectableLocalXAResource(cm,
+                                                                                           eisProductName,
+                                                                                           eisProductVersion,
+                                                                                           jndiName,
+                                                                                           mc,
+                                                                                           null);
+         }
+      }
+
+      if (xaResource == null)
+         xaResource = txCM.getTransactionIntegration().createLocalXAResource(cm,
+                                                                             eisProductName,
+                                                                             eisProductVersion,
+                                                                             jndiName,
+                                                                             null);
+    
+      return xaResource;
    }
 
    /**
@@ -255,7 +286,94 @@ public abstract class AbstractPool implements Pool
     */
    protected XAResource getXAResource(ManagedConnection mc) throws ResourceException
    {
-      return mc.getXAResource();
+      TransactionalConnectionManager txCM = (TransactionalConnectionManager)cm;
+      XAResource xaResource = null;
+
+      if (cm.getConnectionManagerConfiguration().isWrapXAResource())
+      {
+         String eisProductName = null;
+         String eisProductVersion = null;
+         String jndiName = cm.getConnectionManagerConfiguration().getJndiName();
+         boolean padXid =  cm.getConnectionManagerConfiguration().isPadXid();
+         Boolean isSameRMOverride =  cm.getConnectionManagerConfiguration().isIsSameRMOverride();
+
+         try
+         {
+            if (mc.getMetaData() != null)
+            {
+               eisProductName = mc.getMetaData().getEISProductName();
+               eisProductVersion = mc.getMetaData().getEISProductVersion();
+            }
+         }
+         catch (ResourceException re)
+         {
+            // Ignore
+         }
+
+         if (eisProductName == null)
+            eisProductName = jndiName;
+
+         if (eisProductVersion == null)
+            eisProductVersion = jndiName;
+
+         if (cm.getConnectionManagerConfiguration().isConnectable())
+         {
+            if (mc instanceof org.ironjacamar.core.spi.transaction.ConnectableResource)
+            {
+               org.ironjacamar.core.spi.transaction.ConnectableResource cr =
+                  (org.ironjacamar.core.spi.transaction.ConnectableResource)mc;
+
+               xaResource = txCM.getTransactionIntegration().createConnectableXAResourceWrapper(mc.getXAResource(),
+                                                                                                padXid, 
+                                                                                                isSameRMOverride, 
+                                                                                                eisProductName,
+                                                                                                eisProductVersion,
+                                                                                                jndiName,
+                                                                                                cr,
+                                                                                                null);
+            }
+            else if (txCM.getTransactionIntegration().isConnectableResource(mc))
+            {
+               xaResource = txCM.getTransactionIntegration().createConnectableXAResourceWrapper(mc.getXAResource(),
+                                                                                                padXid, 
+                                                                                                isSameRMOverride, 
+                                                                                                eisProductName,
+                                                                                                eisProductVersion,
+                                                                                                jndiName,
+                                                                                                mc,
+                                                                                                null);
+            }
+         }
+
+         if (xaResource == null)
+         {
+            XAResource xar = mc.getXAResource();
+
+            if (!(xar instanceof org.ironjacamar.core.spi.transaction.xa.XAResourceWrapper))
+            {
+               boolean firstResource = txCM.getTransactionIntegration().isFirstResource(mc);
+
+               xaResource = txCM.getTransactionIntegration().createXAResourceWrapper(xar,
+                                                                                     padXid,
+                                                                                     isSameRMOverride,
+                                                                                     eisProductName,
+                                                                                     eisProductVersion,
+                                                                                     jndiName,
+                                                                                     firstResource,
+                                                                                     null);
+            }
+            else
+            {
+               xaResource = xar;
+            }
+         }
+      }
+      else
+      {
+         xaResource = mc.getXAResource();
+      }
+      
+      return xaResource;
    }
    
    /**

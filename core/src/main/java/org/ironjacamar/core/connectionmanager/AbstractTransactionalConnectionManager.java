@@ -21,6 +21,7 @@
 
 package org.ironjacamar.core.connectionmanager;
 
+import org.ironjacamar.core.api.connectionmanager.ConnectionManagerConfiguration;
 import org.ironjacamar.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
 import org.ironjacamar.core.spi.transaction.TransactionIntegration;
@@ -43,13 +44,15 @@ public abstract class AbstractTransactionalConnectionManager extends AbstractCon
     * Constructor
     * @param mcf The managed connection factory
     * @param ccm The cached connection manager
+    * @param cmc The connection manager configuration
     * @param ti The transaction integration
     */
    public AbstractTransactionalConnectionManager(ManagedConnectionFactory mcf,
                                                  CachedConnectionManager ccm,
+                                                 ConnectionManagerConfiguration cmc,
                                                  TransactionIntegration ti)
    {
-      super(mcf, ccm);
+      super(mcf, ccm, cmc);
       this.ti = ti;
    }
 

@@ -21,6 +21,7 @@
 
 package org.ironjacamar.core.connectionmanager;
 
+import org.ironjacamar.core.api.connectionmanager.ConnectionManagerConfiguration;
 import org.ironjacamar.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.ironjacamar.core.connectionmanager.pool.Pool;
 import org.ironjacamar.core.spi.security.SubjectFactory;
@@ -56,27 +57,28 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    /** The cached connection manager */
    protected CachedConnectionManager ccm;
    
+   /** The configuration */
+   protected ConnectionManagerConfiguration cmConfiguration;
+
    /**
     * the subject factory
     */
    protected SubjectFactory subjectFactory;
 
    /**
-    * the security domain
-    */
-   protected String securityDomain;
-
-   /**
     * Constructor
     *
     * @param mcf The managed connection factory
     * @param ccm The cached connection manager
+    * @param cmc The connection manager configuration
     */
    public AbstractConnectionManager(ManagedConnectionFactory mcf,
-                                    CachedConnectionManager ccm)
+                                    CachedConnectionManager ccm,
+                                    ConnectionManagerConfiguration cmc)
    {
       this.mcf = mcf;
       this.ccm = ccm;
+      this.cmConfiguration = cmc;
       this.pool = null;
    }
 
@@ -115,6 +117,22 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    /**
     * {@inheritDoc}
     */
+   public ConnectionManagerConfiguration getConnectionManagerConfiguration()
+   {
+      return cmConfiguration;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setSubjectFactory(SubjectFactory subjectFactory)
+   {
+      this.subjectFactory = subjectFactory;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public synchronized void shutdown()
    {
       shutdown.set(true);
@@ -139,13 +157,13 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       if (shutdown.get())
          throw new ResourceException();
       Credential credential;
-      if (subjectFactory == null || securityDomain == null)
+      if (subjectFactory == null || cmConfiguration.getSecurityDomain() == null)
       {
          credential = new Credential(null, cri);
       }
       else
       {
-         credential = new Credential(subjectFactory.createSubject(securityDomain), cri);
+         credential = new Credential(subjectFactory.createSubject(cmConfiguration.getSecurityDomain()), cri);
       }
       org.ironjacamar.core.connectionmanager.listener.ConnectionListener cl = getConnectionListener(credential);
       Object connection = cl.getConnection();
@@ -183,23 +201,5 @@ public abstract class AbstractConnectionManager implements ConnectionManager
          Credential credential) throws ResourceException
    {
       return pool.getConnectionListener(credential);
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void setSubjectFactory(SubjectFactory subjectFactory)
-   {
-      this.subjectFactory = subjectFactory;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void setSecurityDomain(String securityDomain)
-   {
-      this.securityDomain = securityDomain;
    }
 }

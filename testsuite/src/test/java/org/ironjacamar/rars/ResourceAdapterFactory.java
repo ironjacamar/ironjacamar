@@ -314,7 +314,7 @@ public class ResourceAdapterFactory
       org.jboss.shrinkwrap.descriptor.api.connector16.ResourceadapterType rt = raXml.getOrCreateResourceadapter()
             .resourceadapterClass(UnifiedSecurityResourceAdapter.class.getName());
       org.jboss.shrinkwrap.descriptor.api.connector16.OutboundResourceadapterType ort = rt
-            .getOrCreateOutboundResourceadapter().transactionSupport("NoTransaction").reauthenticationSupport(false);
+            .getOrCreateOutboundResourceadapter().transactionSupport("XATransaction").reauthenticationSupport(false);
       org.jboss.shrinkwrap.descriptor.api.connector16.ConnectionDefinitionType cdt = ort.createConnectionDefinition()
             .managedconnectionfactoryClass(UnifiedSecurityManagedConnectionFactory.class.getName())
             .connectionfactoryInterface(UnifiedSecurityConnectionFactory.class.getName())
@@ -377,10 +377,16 @@ public class ResourceAdapterFactory
          dashRaXmlCdt.getOrCreateSecurity().securityDomain(securityDomain);
       }
 
-      org.ironjacamar.embedded.dsl.resourceadapters20.api.PoolType dashRaXmlPt = dashRaXmlCdt.getOrCreatePool()
+      if (tsl != TransactionSupportLevel.XATransaction)
+      {
+         org.ironjacamar.embedded.dsl.resourceadapters20.api.PoolType dashRaXmlPt = dashRaXmlCdt.getOrCreatePool()
             .minPoolSize(0).initialPoolSize(0).maxPoolSize(2);
-
-
+      }
+      else
+      {
+         org.ironjacamar.embedded.dsl.resourceadapters20.api.XaPoolType dashRaXmlPt = dashRaXmlCdt.getOrCreateXaPool()
+            .minPoolSize(0).initialPoolSize(0).maxPoolSize(2);
+      }
 
       return dashRaXml;
    }

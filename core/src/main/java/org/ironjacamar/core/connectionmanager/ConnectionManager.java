@@ -21,6 +21,7 @@
 
 package org.ironjacamar.core.connectionmanager;
 
+import org.ironjacamar.core.api.connectionmanager.ConnectionManagerConfiguration;
 import org.ironjacamar.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
 import org.ironjacamar.core.connectionmanager.pool.Pool;
@@ -67,6 +68,12 @@ public interface ConnectionManager extends org.ironjacamar.core.api.connectionma
    public ManagedConnectionFactory getManagedConnectionFactory();
 
    /**
+    * Get the connection manager configuration
+    * @return The value
+    */
+   public ConnectionManagerConfiguration getConnectionManagerConfiguration();
+
+   /**
     * Transaction started
     * @param cl The connection listener
     * @exception ResourceException Thrown if an enlistment error occurs
@@ -89,10 +96,4 @@ public interface ConnectionManager extends org.ironjacamar.core.api.connectionma
     * @param subjectFactory the subjectFactory
     */
    public void setSubjectFactory(SubjectFactory subjectFactory);
-
-   /**
-    * set securityDomain
-    * @param securityDomain the securityDomain
-    */
-   public void setSecurityDomain(String securityDomain);
 }

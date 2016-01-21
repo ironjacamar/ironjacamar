@@ -21,6 +21,7 @@
 
 package org.ironjacamar.core.connectionmanager;
 
+import org.ironjacamar.core.api.connectionmanager.ConnectionManagerConfiguration;
 import org.ironjacamar.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
 
@@ -38,11 +39,13 @@ public class NoTransactionConnectionManager extends AbstractConnectionManager
     * Constructor
     * @param mcf The managed connection factory
     * @param ccm The cached connection manager
+    * @param cmc The connection manager configuration
     */
    public NoTransactionConnectionManager(ManagedConnectionFactory mcf,
-                                         CachedConnectionManager ccm)
+                                         CachedConnectionManager ccm,
+                                         ConnectionManagerConfiguration cmc)
    {
-      super(mcf, ccm);
+      super(mcf, ccm, cmc);
    }
 
    /**
