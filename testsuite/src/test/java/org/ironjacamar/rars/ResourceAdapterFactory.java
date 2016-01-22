@@ -340,12 +340,14 @@ public class ResourceAdapterFactory
     * @param securityDomain The SecurityDomain name; <code>null</code> if default
     * @param tsl     The transaction support level
     * @param id The JNDI postfix and id
+    * @param prefill boolean to prefill or not
+    * @param initialPoolSize The initial pool size value
     *
     *
     * @return The resource adapter descriptor
     */
    public static ResourceAdaptersDescriptor createUnifiedSecurityDeployment(String bc, String securityDomain,
-         TransactionSupportLevel tsl, String id)
+         TransactionSupportLevel tsl, String id, boolean prefill, int initialPoolSize)
    {
       ResourceAdaptersDescriptor dashRaXml = Descriptors
             .create(ResourceAdaptersDescriptor.class, "unified-security-ra.xml");
@@ -380,13 +382,14 @@ public class ResourceAdapterFactory
       if (tsl != TransactionSupportLevel.XATransaction)
       {
          org.ironjacamar.embedded.dsl.resourceadapters20.api.PoolType dashRaXmlPt = dashRaXmlCdt.getOrCreatePool()
-            .minPoolSize(0).initialPoolSize(0).maxPoolSize(2);
+            .minPoolSize(5).initialPoolSize(initialPoolSize).maxPoolSize(20).prefill(prefill);
       }
       else
       {
          org.ironjacamar.embedded.dsl.resourceadapters20.api.XaPoolType dashRaXmlPt = dashRaXmlCdt.getOrCreateXaPool()
-            .minPoolSize(0).initialPoolSize(0).maxPoolSize(2);
+            .minPoolSize(5).initialPoolSize(initialPoolSize).maxPoolSize(20).prefill(prefill);
       }
+
 
       return dashRaXml;
    }

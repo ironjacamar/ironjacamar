@@ -29,8 +29,6 @@ import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
 import org.ironjacamar.core.spi.transaction.TxUtils;
 import org.ironjacamar.core.spi.transaction.local.LocalXAResource;
 
-import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.DESTROY;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -41,6 +39,8 @@ import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 import javax.transaction.Transaction;
 import javax.transaction.xa.XAResource;
+
+import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.DESTROY;
 
 /**
  * The base class for all pool implementations
@@ -62,7 +62,10 @@ public abstract class AbstractPool implements Pool
    
    /** The semaphore */
    protected Semaphore semaphore;
-   
+
+   private Credential prefillCredential;
+
+
    /**
     * Constructor
     * @param cm The connection manager
@@ -92,29 +95,7 @@ public abstract class AbstractPool implements Pool
       throws ResourceException
    {
       ConnectionListener cl = null;
-      ManagedConnectionPool mcp = pools.get(credential);
-
-      if (mcp == null)
-      {
-         synchronized (this)
-         {
-            mcp = pools.get(credential);
-
-            if (mcp == null)
-            {
-               ManagedConnectionPool newMcp = createManagedConnectionPool(credential);
-               mcp = pools.putIfAbsent(credential, newMcp);
-               if (mcp == null)
-               {
-                  mcp = newMcp;
-               }
-               else
-               {
-                  newMcp.shutdown();
-               }
-            }
-         }
-      }
+      ManagedConnectionPool mcp = getManagedConnectionPool(credential);
 
       if (cm.getTransactionSupport() == TransactionSupportLevel.LocalTransaction ||
           cm.getTransactionSupport() == TransactionSupportLevel.XATransaction)
@@ -179,6 +160,40 @@ public abstract class AbstractPool implements Pool
    }
 
    /**
+    * Get from existing pools or create mcp w/ specified credential
+    * It's used during prefill operation
+    * @param credential credential used to match
+    * @return
+    */
+   private ManagedConnectionPool getManagedConnectionPool(Credential credential)
+   {
+      ManagedConnectionPool mcp = pools.get(credential);
+
+      if (mcp == null)
+      {
+         synchronized (this)
+         {
+            mcp = pools.get(credential);
+
+            if (mcp == null)
+            {
+               ManagedConnectionPool newMcp = createManagedConnectionPool(credential);
+               mcp = pools.putIfAbsent(credential, newMcp);
+               if (mcp == null)
+               {
+                  mcp = newMcp;
+               }
+               else
+               {
+                  newMcp.shutdown();
+               }
+            }
+         }
+      }
+      return mcp;
+   }
+
+   /**
     * {@inheritDoc}
     */
    public void returnConnectionListener(ConnectionListener cl, boolean kill) throws ResourceException
@@ -208,6 +223,15 @@ public abstract class AbstractPool implements Pool
          mcp.shutdown();
 
       pools.clear();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public boolean isShutdown()
+   {
+      return cm.isShutdown();
    }
 
    /**
@@ -397,4 +421,52 @@ public abstract class AbstractPool implements Pool
     * @return The instance
     */
    protected abstract ManagedConnectionPool createManagedConnectionPool(Credential credential);
+
+   /**
+    * Prefill the connection pool
+    *
+    */
+   @Override
+   public void prefill()
+   {
+
+      if (poolConfiguration.isPrefill())
+      {
+         ManagedConnectionPool mcp = pools.get(getPrefillCredential());
+
+         if (mcp == null)
+         {
+            // Trigger the initial-pool-size prefill by creating the ManagedConnectionPool
+            getManagedConnectionPool(getPrefillCredential());
+         }
+         else
+         {
+            // Standard prefill request
+            mcp.prefill();
+         }
+
+      }
+   }
+
+   /**
+    * Get prefill credential
+    * @return credential used to prefill
+    */
+   public Credential getPrefillCredential()
+   {
+      if (this.prefillCredential == null)
+      {
+         if (cm.getSubjectFactory() == null || cm.getConnectionManagerConfiguration().getSecurityDomain() == null)
+         {
+            prefillCredential = new Credential(null, null);
+         }
+         else
+         {
+            prefillCredential = new Credential(cm.getSubjectFactory()
+                  .createSubject(cm.getConnectionManagerConfiguration().getSecurityDomain()), null);
+         }
+      }
+      return this.prefillCredential;
+   }
+
 }

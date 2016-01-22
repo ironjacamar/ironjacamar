@@ -65,4 +65,23 @@ public interface Pool extends org.ironjacamar.core.api.connectionmanager.pool.Po
     * Shutdown the pool
     */
    public void shutdown();
+
+   /**
+    * Shutdown the pool in progress
+    * @return true id shutdown is in progress
+    */
+   public boolean isShutdown();
+
+   /**
+    * Prefill the connection pool
+    *
+    *
+    */
+   public void prefill();
+
+   /**
+    * Get prefill credential
+    * @return credential used to prefill
+    */
+   public Credential getPrefillCredential();
 }

@@ -23,7 +23,9 @@ package org.ironjacamar.core.connectionmanager.pool.stable;
 
 import org.ironjacamar.core.connectionmanager.Credential;
 import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
+import org.ironjacamar.core.connectionmanager.pool.FillRequest;
 import org.ironjacamar.core.connectionmanager.pool.ManagedConnectionPool;
+import org.ironjacamar.core.connectionmanager.pool.PoolFiller;
 
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.DESTROY;
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.DESTROYED;
@@ -41,18 +43,25 @@ import javax.resource.ResourceException;
  */
 public class StableManagedConnectionPool implements ManagedConnectionPool
 {
-   /** The associated pool */
+   /**
+    * The associated pool
+    */
    private StablePool pool;
 
-   /** The credential */
+   /**
+    * The credential
+    */
    private Credential credential;
-   
-   /** The connection listeners */
+
+   /**
+    * The connection listeners
+    */
    private ConcurrentLinkedDeque<ConnectionListener> listeners;
-   
+
    /**
     * Constructor
-    * @param pool The pool
+    *
+    * @param pool       The pool
     * @param credential The credential
     */
    public StableManagedConnectionPool(StablePool pool, Credential credential)
@@ -60,6 +69,11 @@ public class StableManagedConnectionPool implements ManagedConnectionPool
       this.pool = pool;
       this.credential = credential;
       this.listeners = new ConcurrentLinkedDeque<ConnectionListener>();
+      if (this.credential.equals(pool.getPrefillCredential()) &&
+            pool.getConfiguration().isPrefill()  && pool.getConfiguration().getInitialSize() > 0)
+      {
+         PoolFiller.fillPool(new FillRequest(this, pool.getConfiguration().getInitialSize()));
+      }
    }
 
    /**
@@ -162,7 +176,7 @@ public class StableManagedConnectionPool implements ManagedConnectionPool
          {
             // TODO
          }
-         
+
          try
          {
             pool.destroyConnectionListener(cl);
@@ -178,4 +192,96 @@ public class StableManagedConnectionPool implements ManagedConnectionPool
       }
       listeners.clear();
    }
+
+   /**
+    * Prefill
+    */
+   @Override public void prefill()
+   {
+      if (this.credential.equals(pool.getPrefillCredential()) && pool.getConfiguration().isPrefill()
+            && pool.getConfiguration().getMinSize() > 0)
+      {
+         PoolFiller.fillPool(new FillRequest(this, pool.getConfiguration().getMinSize()));
+      }
+   }
+
+   /**
+    * Fill to
+    *
+    * @param size The size
+    */
+   public void fillTo(int size)
+   {
+      if (size <= 0)
+         return;
+
+
+      //TODO: trace and debug here
+
+      while (!pool.isFull())
+      {
+         // Get a permit - avoids a race when the pool is nearly full
+         // Also avoids unnessary fill checking when all connections are checked out
+         try
+         {
+            //TODO:statistics
+            if (pool.getRequestSemaphore()
+                  .tryAcquire(pool.getConfiguration().getBlockingTimeout(), TimeUnit.MILLISECONDS))
+            {
+               try
+               {
+                  if (pool.isShutdown())
+                  {
+                     return;
+                  }
+
+                  // We already have enough connections
+                  if (listeners.size() >= size)
+                  {
+                     return;
+                  }
+
+                  // Create a connection to fill the pool
+                  try
+                  {
+                     ConnectionListener cl = pool.createConnectionListener(credential);
+
+                     //TODO:Trace
+                     boolean added = false;
+
+                     if (listeners.size() < size)
+                     {
+
+                        listeners.add(cl);
+                        added = true;
+                     }
+
+                     if (!added)
+                     {
+                        //TODO: Trace
+                        pool.destroyConnectionListener(cl);
+                        return;
+                     }
+                  }
+                  catch (ResourceException re)
+                  {
+                     return;
+                  }
+               }
+               finally
+               {
+                  pool.getRequestSemaphore().release();
+               }
+            }
+         }
+         catch (InterruptedException ignored)
+         {
+            Thread.interrupted();
+            //TODO:trace
+         }
+      }
+   }
+
+
+
 }

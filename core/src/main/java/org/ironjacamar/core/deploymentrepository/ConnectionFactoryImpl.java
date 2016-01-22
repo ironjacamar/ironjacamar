@@ -168,6 +168,7 @@ public class ConnectionFactoryImpl implements ConnectionFactory
    public void activate() throws Exception
    {
       jndiStrategy.bind(jndiName, cf);
+      ((org.ironjacamar.core.connectionmanager.pool.Pool)pool.getPool()).prefill();
    }
 
    /**

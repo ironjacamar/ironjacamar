@@ -133,6 +133,15 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    /**
     * {@inheritDoc}
     */
+   @Override
+   public SubjectFactory getSubjectFactory()
+   {
+      return this.subjectFactory;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public synchronized void shutdown()
    {
       shutdown.set(true);

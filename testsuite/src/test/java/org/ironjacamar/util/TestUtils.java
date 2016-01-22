@@ -21,6 +21,10 @@
 package org.ironjacamar.util;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Test utility class
@@ -72,5 +76,53 @@ public class TestUtils
       }
 
       return null;
+   }
+
+   /**
+    * Check size of a collection populated in another thread. Collection is supposed to be thread safe
+    * @param collection collection to check
+    * @param size size limit
+    * @param timeout the maximum time to wait
+    * @param unit the time unit of the timeout argument
+
+    * @return {@code true} if collection size is reached before timeout
+    *         {@code false} if the timeout elapsed before collection size reached
+    * @throws InterruptedException if interrupted while waiting
+    */
+   public static boolean isCorrectCollectionSizeTimeOut(Collection<?> collection,
+         int size, long timeout, TimeUnit unit)
+         throws InterruptedException
+   {
+      Runnable task = () -> {
+         try
+         {
+            while (collection.size() != size)
+            {
+               TimeUnit.MILLISECONDS.sleep(10);
+            }
+         }
+         catch (InterruptedException e)
+         {
+            throw new IllegalStateException("task interrupted", e);
+         }
+      };
+      ExecutorService executor = Executors.newSingleThreadExecutor();
+      executor.submit(task);
+      executor.shutdown();
+      return executor.awaitTermination(timeout, unit);
+   }
+
+   /**
+    * Check size of a collection populated in another thread. Collection is supposed to be thread safe
+    * @param collection collection to check
+    * @param size size limit
+    * @return {@code true} if collection size is reached before timeout
+    *         {@code false} if the timeout elapsed before collection size reached
+    * @throws InterruptedException if interrupted while waiting
+    */
+   public static boolean isCorrectCollectionSizeTenSecTimeout(Collection<?> collection, int size)
+         throws InterruptedException
+   {
+      return isCorrectCollectionSizeTimeOut(collection, size, 10, TimeUnit.SECONDS);
    }
 }

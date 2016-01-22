@@ -96,4 +96,11 @@ public interface ConnectionManager extends org.ironjacamar.core.api.connectionma
     * @param subjectFactory the subjectFactory
     */
    public void setSubjectFactory(SubjectFactory subjectFactory);
+
+   /**
+    * get SubjectFactory
+    *
+    * @return the subjectFactory
+    */
+   public SubjectFactory getSubjectFactory();
 }

@@ -117,7 +117,7 @@
     </module>
 
     <!-- Flag reminder comments -->
-    <module name="TodoComment"/>
+    <!-- <module name="TodoComment"/> -->
 
     <!-- Enforce length limits -->
     <module name="LineLength">

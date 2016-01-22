@@ -122,7 +122,7 @@ public class NoCredentialsTestCase
    {
       return ResourceAdapterFactory.createUnifiedSecurityDeployment(null, null,
             TransactionSupport.TransactionSupportLevel.NoTransaction,
-            "UnifiedSecurityNoTxConnectionFactory");
+            "UnifiedSecurityNoTxConnectionFactory", false, 0);
    }
 
    /**
@@ -135,7 +135,7 @@ public class NoCredentialsTestCase
    {
       return ResourceAdapterFactory.createUnifiedSecurityDeployment(null, null,
             TransactionSupport.TransactionSupportLevel.LocalTransaction,
-            "UnifiedSecurityLocalTxConnectionFactory");
+            "UnifiedSecurityLocalTxConnectionFactory", false, 0);
    }
 
    /**
@@ -148,7 +148,7 @@ public class NoCredentialsTestCase
    {
       return ResourceAdapterFactory.createUnifiedSecurityDeployment(null, null,
             TransactionSupport.TransactionSupportLevel.XATransaction,
-            "UnifiedSecurityXATxConnectionFactory");
+            "UnifiedSecurityXATxConnectionFactory", false, 0);
    }
 
 

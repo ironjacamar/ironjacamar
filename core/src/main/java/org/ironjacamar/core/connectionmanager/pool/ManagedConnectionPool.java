@@ -49,4 +49,16 @@ public interface ManagedConnectionPool
     * Shutdown the managed connection pool
     */
    public void shutdown();
+
+   /**
+    * prefill the pool
+    */
+   public void prefill();
+
+   /**
+    * Fill to
+    * @param size The size
+    */
+   public void fillTo(int size);
+
 }

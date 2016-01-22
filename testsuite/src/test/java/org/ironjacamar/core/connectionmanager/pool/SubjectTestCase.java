@@ -130,7 +130,7 @@ public class SubjectTestCase
    {
       return ResourceAdapterFactory.createUnifiedSecurityDeployment(null, "DefaultSecurityDomain",
             TransactionSupport.TransactionSupportLevel.NoTransaction,
-            "UnifiedSecurityNoTxConnectionFactory");
+            "UnifiedSecurityNoTxConnectionFactory", false, 0);
    }
 
    /**
@@ -143,7 +143,7 @@ public class SubjectTestCase
    {
       return ResourceAdapterFactory.createUnifiedSecurityDeployment(null, "DefaultSecurityDomain",
             TransactionSupport.TransactionSupportLevel.LocalTransaction,
-            "UnifiedSecurityLocalTxConnectionFactory");
+            "UnifiedSecurityLocalTxConnectionFactory", false, 0);
    }
 
 
@@ -157,7 +157,7 @@ public class SubjectTestCase
    {
       return ResourceAdapterFactory.createUnifiedSecurityDeployment(null, "DefaultSecurityDomain",
             TransactionSupport.TransactionSupportLevel.XATransaction,
-            "UnifiedSecurityXATxConnectionFactory");
+            "UnifiedSecurityXATxConnectionFactory", false, 0);
    }
 
 

@@ -23,17 +23,19 @@ package org.ironjacamar.core.connectionmanager.pool.dflt;
 
 import org.ironjacamar.core.connectionmanager.Credential;
 import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
+import org.ironjacamar.core.connectionmanager.pool.FillRequest;
 import org.ironjacamar.core.connectionmanager.pool.ManagedConnectionPool;
+import org.ironjacamar.core.connectionmanager.pool.PoolFiller;
+
+import java.util.concurrent.ConcurrentLinkedDeque;
+
+import javax.resource.ResourceException;
 
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.DESTROY;
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.DESTROYED;
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.FREE;
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.IN_USE;
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.TO_POOL;
-
-import java.util.concurrent.ConcurrentLinkedDeque;
-
-import javax.resource.ResourceException;
 
 /**
  * The default ManagedConnectionPool
@@ -59,6 +61,11 @@ public class DefaultManagedConnectionPool implements ManagedConnectionPool
       this.pool = pool;
       this.credential = credential;
       this.listeners = new ConcurrentLinkedDeque<ConnectionListener>();
+      if (this.credential.equals(pool.getPrefillCredential()) && pool.getConfiguration().isPrefill()
+            && pool.getConfiguration().getInitialSize() > 0)
+      {
+         PoolFiller.fillPool(new FillRequest(this, pool.getConfiguration().getInitialSize()));
+      }
    }
 
    /**
@@ -134,6 +141,8 @@ public class DefaultManagedConnectionPool implements ManagedConnectionPool
       }
    }
 
+
+
    /**
     * {@inheritDoc}
     */
@@ -164,5 +173,79 @@ public class DefaultManagedConnectionPool implements ManagedConnectionPool
          }
       }
       listeners.clear();
+   }
+
+   /**
+    * Prefill
+    */
+   @Override
+   public void prefill()
+   {
+      if (this.credential.equals(pool.getPrefillCredential()) && pool.getConfiguration().isPrefill()
+            && pool.getConfiguration().getMinSize() > 0)
+      {
+         PoolFiller.fillPool(new FillRequest(this, pool.getConfiguration().getMinSize()));
+      }
+   }
+
+   /**
+    * Fill to
+    *
+    * @param size The size
+    */
+   public void fillTo(int size)
+   {
+      if (size <= 0)
+         return;
+
+
+      //TODO: trace and debug here
+
+      while (!pool.isFull())
+      {
+         // Get a permit - avoids a race when the pool is nearly full
+         // Also avoids unnessary fill checking when all connections are checked out
+
+         //TODO:statistics
+
+         if (pool.isShutdown())
+         {
+            return;
+         }
+
+         // We already have enough connections
+         if (listeners.size() >= size)
+         {
+            return;
+         }
+
+         // Create a connection to fill the pool
+         try
+         {
+            ConnectionListener cl = pool.createConnectionListener(credential);
+
+            //TODO:Trace
+            boolean added = false;
+
+            if (listeners.size() < size)
+            {
+
+               listeners.add(cl);
+               added = true;
+            }
+
+            if (!added)
+            {
+               //TODO: Trace
+               pool.destroyConnectionListener(cl);
+               return;
+            }
+         }
+         catch (ResourceException re)
+         {
+            return;
+         }
+
+      }
    }
 }
