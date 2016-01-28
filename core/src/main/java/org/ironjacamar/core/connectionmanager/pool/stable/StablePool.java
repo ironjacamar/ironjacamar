@@ -41,6 +41,8 @@ import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 import javax.transaction.Transaction;
 
+import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.DESTROYED;
+
 /**
  * The stable pool
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
@@ -124,6 +126,7 @@ public class StablePool extends AbstractPool
       }
       finally
       {
+         cl.setState(DESTROYED);
          semaphore.release();
       }
    }

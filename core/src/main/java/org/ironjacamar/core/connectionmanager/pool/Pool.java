@@ -22,6 +22,7 @@
 package org.ironjacamar.core.connectionmanager.pool;
 
 import org.ironjacamar.core.api.connectionmanager.pool.PoolConfiguration;
+import org.ironjacamar.core.connectionmanager.ConnectionManager;
 import org.ironjacamar.core.connectionmanager.Credential;
 import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
 
@@ -33,6 +34,12 @@ import javax.resource.ResourceException;
  */
 public interface Pool extends org.ironjacamar.core.api.connectionmanager.pool.Pool
 {
+   /**
+    * Get the connection manager
+    * @return The value
+    */
+   public ConnectionManager getConnectionManager();
+   
    /**
     * Get the pool configuration
     * @return The configuration

@@ -37,6 +37,8 @@ import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 
+import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.DESTROYED;
+
 /**
  * The default pool
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
@@ -116,6 +118,7 @@ public class DefaultPool extends AbstractPool
       }
       finally
       {
+         cl.setState(DESTROYED);
          semaphore.release();
       }
    }

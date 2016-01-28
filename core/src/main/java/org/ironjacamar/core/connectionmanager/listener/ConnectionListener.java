@@ -49,6 +49,9 @@ public interface ConnectionListener extends org.ironjacamar.core.api.connectionm
    /** TO_POOL state */
    public int TO_POOL = 5;
 
+   /** VALIDATION state */
+   public int VALIDATION = 6;
+
    /**
     * Change the state of the connection listener
     * @param currentState The current state
@@ -110,4 +113,15 @@ public interface ConnectionListener extends org.ironjacamar.core.api.connectionm
     * Clear all connection handles
     */
    public void clearConnections();
+
+   /**
+    * Get the last timestamp where the listener was validated
+    * @return The value
+    */
+   public long getValidated();
+
+   /**
+    * Mark the listener as validated
+    */
+   public void validated();
 }

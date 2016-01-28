@@ -166,6 +166,12 @@
     </constructor>
   </bean>
   
+  <bean name="ConnectionValidator">
+    <constructor factoryClass="org.ironjacamar.core.connectionmanager.pool.ConnectionValidator"
+                 factoryMethod="getInstance">
+    </constructor>
+  </bean>
+
   <!-- Deployment chain -->
   <bean name="RarFileExtractorDeployer"
         class="org.ironjacamar.embedded.deployers.RarFileExtractorDeployer"/>
@@ -199,6 +205,7 @@
     <property name="CachedConnectionManager"><inject bean="CachedConnectionManager"/></property>
     <property name="SubjectFactory"><inject bean="DefaultSubjectFactory"/></property>
     <depends>ClassLoaderDeployer</depends>
+    <depends>ConnectionValidator</depends>
   </bean>
 
   <bean name="DashRaXmlDeployer"
@@ -211,6 +218,7 @@
     <property name="CachedConnectionManager"><inject bean="CachedConnectionManager"/></property>
     <property name="SubjectFactory"><inject bean="DefaultSubjectFactory"/></property>
     <depends>ClassLoaderDeployer</depends>
+    <depends>ConnectionValidator</depends>
   </bean>
 
 </deployment>

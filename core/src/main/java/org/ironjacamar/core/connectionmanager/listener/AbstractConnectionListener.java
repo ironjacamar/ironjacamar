@@ -56,6 +56,9 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    /** Connection handles */
    protected CopyOnWriteArraySet<Object> connectionHandles;
    
+   /** Last validated timestamp */
+   private long validated;
+
    /**
     * Constructor
     * @param cm The connection manager
@@ -69,6 +72,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
       this.credential = credential;
       this.state = new AtomicInteger(FREE);
       this.connectionHandles = new CopyOnWriteArraySet<Object>();
+      this.validated = System.currentTimeMillis();
 
       mc.addConnectionEventListener(this);
    }
@@ -206,6 +210,22 @@ public abstract class AbstractConnectionListener implements ConnectionListener
       connectionHandles.clear();
    }
    
+   /**
+    * {@inheritDoc}
+    */
+   public long getValidated()
+   {
+      return validated;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void validated()
+   {
+      validated = System.currentTimeMillis();
+   }
+
    /**
     * {@inheritDoc}
     */

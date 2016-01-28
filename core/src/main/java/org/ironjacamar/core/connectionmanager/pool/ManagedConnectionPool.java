@@ -61,4 +61,8 @@ public interface ManagedConnectionPool
     */
    public void fillTo(int size);
 
+   /**
+    * Validate connecitons.
+    */
+   public void validateConnections();
 }

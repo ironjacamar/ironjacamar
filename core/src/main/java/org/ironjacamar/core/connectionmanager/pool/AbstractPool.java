@@ -83,6 +83,14 @@ public abstract class AbstractPool implements Pool
    /**
     * {@inheritDoc}
     */
+   public ConnectionManager getConnectionManager()
+   {
+      return cm;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public PoolConfiguration getConfiguration()
    {
       return poolConfiguration;
