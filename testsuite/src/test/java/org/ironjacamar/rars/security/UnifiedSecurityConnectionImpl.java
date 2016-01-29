@@ -78,6 +78,14 @@ public class UnifiedSecurityConnectionImpl implements UnifiedSecurityConnection
    }
 
    /**
+    * {@inheritDoc}
+    */
+   @Override public void fail()
+   {
+      mc.errorHandle(this, new Exception());
+   }
+
+   /**
     *
     * set the managed connection
     * @param mc the managed connection

@@ -382,12 +382,12 @@ public class ResourceAdapterFactory
       if (tsl != TransactionSupportLevel.XATransaction)
       {
          org.ironjacamar.embedded.dsl.resourceadapters20.api.PoolType dashRaXmlPt = dashRaXmlCdt.getOrCreatePool()
-            .minPoolSize(5).initialPoolSize(initialPoolSize).maxPoolSize(20).prefill(prefill);
+            .minPoolSize(initialPoolSize).initialPoolSize(initialPoolSize).maxPoolSize(20).prefill(prefill);
       }
       else
       {
          org.ironjacamar.embedded.dsl.resourceadapters20.api.XaPoolType dashRaXmlPt = dashRaXmlCdt.getOrCreateXaPool()
-            .minPoolSize(5).initialPoolSize(initialPoolSize).maxPoolSize(20).prefill(prefill);
+            .minPoolSize(initialPoolSize).initialPoolSize(initialPoolSize).maxPoolSize(20).prefill(prefill);
       }
 
 

@@ -424,4 +424,24 @@ public class UnifiedSecurityManagedConnection implements ManagedConnection, Loca
       return AccessController.doPrivileged(
             (PrivilegedAction<Set<PasswordCredential>>) () -> subject.getPrivateCredentials(PasswordCredential.class));
    }
+
+   /**
+    * Error handle
+    *
+    * @param handle The handle
+    * @param exception The exception
+    */
+   void errorHandle(UnifiedSecurityConnection handle, Exception exception)
+   {
+      connectionSet.remove(handle);
+
+      ConnectionEvent event = new ConnectionEvent(this, ConnectionEvent.CONNECTION_ERROR_OCCURRED, exception);
+      event.setConnectionHandle(handle);
+
+      List<ConnectionEventListener> copy = new ArrayList<ConnectionEventListener>(listeners);
+      for (ConnectionEventListener cel : copy)
+      {
+         cel.connectionErrorOccurred(event);
+      }
+   }
 }

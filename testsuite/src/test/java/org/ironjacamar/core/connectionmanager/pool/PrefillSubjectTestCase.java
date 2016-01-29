@@ -112,6 +112,66 @@ public class PrefillSubjectTestCase
             "UnifiedSecurityNoTxConnectionFactory", true, 10);
    }
 
+   /**
+    * test w/o Tx 2 w/ 2 different credential -> 2 connections -> 2 CLs
+    *
+    * @throws Throwable In case of an error
+    */
+   @Test
+   public void testMinPoolSize() throws Throwable
+   {
+      assertNotNull(noTxCf);
+      assertNotNull(dr);
+
+      assertEquals(1, dr.getDeployments().size());
+
+      org.ironjacamar.core.api.deploymentrepository.Deployment d = dr
+            .findByJndi("java:/eis/UnifiedSecurityNoTxConnectionFactory");
+      assertNotNull(d);
+
+      org.ironjacamar.core.api.deploymentrepository.ConnectionFactory dcf = d.getConnectionFactories().iterator()
+            .next();
+      assertNotNull(dcf);
+
+      org.ironjacamar.core.api.deploymentrepository.Pool p = dcf.getPool();
+      assertNotNull(p);
+
+      DefaultPool defaultPool = (DefaultPool) p.getPool();
+
+      ConcurrentHashMap<Credential, ManagedConnectionPool> mcps =
+            (ConcurrentHashMap<Credential, ManagedConnectionPool>) TestUtils
+                  .extract(defaultPool, "pools");
+      assertNotNull(mcps);
+      assertEquals(1, mcps.size());
+
+      ManagedConnectionPool mcp = mcps.values().iterator().next();
+      assertNotNull(mcp);
+
+      ConcurrentLinkedDeque<ConnectionListener> listeners = (ConcurrentLinkedDeque<ConnectionListener>) TestUtils
+            .extract(mcp, "listeners");
+      assertNotNull(listeners);
+      assertTrue(TestUtils.isCorrectCollectionSizeTenSecTimeout(listeners, 10));
+
+      UnifiedSecurityConnection firstConnection = noTxCf.getConnection();
+      assertNotNull(firstConnection);
+      assertEquals("user", firstConnection.getUserName());
+      assertEquals(1, mcps.size());
+
+      firstConnection.fail();
+
+      assertEquals(listeners.size(), 9);
+
+      defaultPool.prefill();
+
+      assertTrue(TestUtils.isCorrectCollectionSizeTenSecTimeout(listeners, 10));
+
+
+      firstConnection.close();
+      // We cheat and shutdown the pool to clear out mcps
+
+
+      defaultPool.shutdown();
+   }
 
    /**
     * test w/o Tx 2 w/ 2 different credential -> 2 connections -> 2 CLs

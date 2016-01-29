@@ -113,7 +113,7 @@ public class PrefillNoCredentialsTestCase
     * @throws Throwable In case of an error
     */
    @Test
-   public void testInitialPoolSize() throws Throwable
+   public void testMinPoolSize() throws Throwable
    {
       assertNotNull(noTxCf);
       assertNotNull(dr);
@@ -136,6 +136,76 @@ public class PrefillNoCredentialsTestCase
       ConcurrentHashMap<Credential, ManagedConnectionPool> mcps =
             (ConcurrentHashMap<Credential, ManagedConnectionPool>) TestUtils
             .extract(defaultPool, "pools");
+      assertNotNull(mcps);
+
+      assertEquals(1, mcps.size());
+
+      ManagedConnectionPool mcp = mcps.values().iterator().next();
+      assertNotNull(mcp);
+
+      ConcurrentLinkedDeque<ConnectionListener> listeners = (ConcurrentLinkedDeque<ConnectionListener>) TestUtils
+            .extract(mcp, "listeners");
+      assertNotNull(listeners);
+      assertTrue(TestUtils.isCorrectCollectionSizeTenSecTimeout(listeners, 10));
+
+      UnifiedSecurityConnection c = noTxCf.getConnection();
+      assertNotNull(c);
+      assertNull(c.getUserName());
+      assertNull(c.getPassword());
+
+
+      assertEquals(1, mcps.size());
+
+
+      c.fail();
+
+      assertEquals(9, listeners.size());
+      assertEquals(1, mcps.size());
+
+      defaultPool.prefill();
+
+      assertTrue(TestUtils.isCorrectCollectionSizeTenSecTimeout(listeners, 10));
+
+
+
+      c.close();
+
+
+
+      // We cheat and shutdown the pool to clear out mcps
+      defaultPool.shutdown();
+   }
+
+
+   /**
+    * Deployment test w/o Tx
+    *
+    * @throws Throwable In case of an error
+    */
+   @Test
+   public void testInitialSize() throws Throwable
+   {
+      assertNotNull(noTxCf);
+      assertNotNull(dr);
+
+      assertEquals(1, dr.getDeployments().size());
+
+      org.ironjacamar.core.api.deploymentrepository.Deployment d = dr
+            .findByJndi("java:/eis/UnifiedSecurityNoTxConnectionFactory");
+      assertNotNull(d);
+
+      org.ironjacamar.core.api.deploymentrepository.ConnectionFactory dcf = d.getConnectionFactories().iterator()
+            .next();
+      assertNotNull(dcf);
+
+      org.ironjacamar.core.api.deploymentrepository.Pool p = dcf.getPool();
+      assertNotNull(p);
+
+      DefaultPool defaultPool = (DefaultPool) p.getPool();
+
+      ConcurrentHashMap<Credential, ManagedConnectionPool> mcps =
+            (ConcurrentHashMap<Credential, ManagedConnectionPool>) TestUtils
+                  .extract(defaultPool, "pools");
       assertNotNull(mcps);
 
       assertEquals(1, mcps.size());

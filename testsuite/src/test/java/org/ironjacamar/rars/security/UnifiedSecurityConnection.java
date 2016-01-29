@@ -46,5 +46,8 @@ public interface UnifiedSecurityConnection
     */
    public String getPassword();
 
-
+   /**
+    * Fail
+    */
+   public void fail();
 }
