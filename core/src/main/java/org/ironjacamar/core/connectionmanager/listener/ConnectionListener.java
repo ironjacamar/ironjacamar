@@ -124,4 +124,27 @@ public interface ConnectionListener extends org.ironjacamar.core.api.connectionm
     * Mark the listener as validated
     */
    public void validated();
+
+   /**
+    * Get the last timestamp where the listener was used
+    * @return The value
+    */
+   public long getFromPool();
+
+   /**
+    * Mark the listener as used
+    */
+   public void fromPool();
+
+   /**
+    * Get the last timestamp where the listener was free
+    * @return The value
+    */
+   public long getToPool();
+
+   /**
+    * Mark the listener as free
+    * @exception ResourceException Thrown in case of an error
+    */
+   public void toPool() throws ResourceException;
 }

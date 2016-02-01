@@ -33,6 +33,7 @@ import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionEvent;
+import javax.resource.spi.LocalTransaction;
 import javax.resource.spi.ManagedConnection;
 import javax.transaction.Transaction;
 import javax.transaction.xa.XAResource;
@@ -150,6 +151,38 @@ public abstract class AbstractTransactionalConnectionListener extends AbstractCo
    public void localTransactionRolledback(ConnectionEvent ce)
    {
       localTransaction = false;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void toPool() throws ResourceException
+   {
+      if (localTransaction)
+      {
+         LocalTransaction localTransaction = null;
+         ManagedConnection mc = getManagedConnection();
+         try
+         {
+            localTransaction = mc.getLocalTransaction();
+         }
+         catch (Throwable t)
+         {
+            throw new ResourceException(t);
+         }
+
+         if (localTransaction == null)
+         {
+            throw new ResourceException();
+         }
+         else
+         {
+            localTransaction.rollback();
+         }
+      }
+      
+      super.toPool();
    }
 
    /**

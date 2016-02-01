@@ -134,7 +134,7 @@ public class StablePool extends AbstractPool
    /**
     * {@inheritDoc}
     */
-   protected ManagedConnectionPool createManagedConnectionPool(Credential credential)
+   public ManagedConnectionPool createManagedConnectionPool(Credential credential)
    {
       return new StableManagedConnectionPool(this, credential);
    }

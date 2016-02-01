@@ -172,6 +172,12 @@
     </constructor>
   </bean>
 
+  <bean name="IdleConnectionRemover">
+    <constructor factoryClass="org.ironjacamar.core.connectionmanager.pool.IdleConnectionRemover"
+                 factoryMethod="getInstance">
+    </constructor>
+  </bean>
+
   <!-- Deployment chain -->
   <bean name="RarFileExtractorDeployer"
         class="org.ironjacamar.embedded.deployers.RarFileExtractorDeployer"/>
@@ -206,6 +212,7 @@
     <property name="SubjectFactory"><inject bean="DefaultSubjectFactory"/></property>
     <depends>ClassLoaderDeployer</depends>
     <depends>ConnectionValidator</depends>
+    <depends>IdleConnectionRemover</depends>
   </bean>
 
   <bean name="DashRaXmlDeployer"
@@ -219,6 +226,7 @@
     <property name="SubjectFactory"><inject bean="DefaultSubjectFactory"/></property>
     <depends>ClassLoaderDeployer</depends>
     <depends>ConnectionValidator</depends>
+    <depends>IdleConnectionRemover</depends>
   </bean>
 
 </deployment>

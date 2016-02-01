@@ -63,6 +63,28 @@ public interface Pool extends org.ironjacamar.core.api.connectionmanager.pool.Po
    public void returnConnectionListener(ConnectionListener cl, boolean kill) throws ResourceException;
 
    /**
+    * Create a connection listener
+    * @param credential The credential
+    * @return The connection listener
+    * @exception ResourceException Thrown if the connection listener cannot be created
+    */
+   public ConnectionListener createConnectionListener(Credential credential) throws ResourceException;
+
+   /**
+    * Destroy a connection listener
+    * @param cl The connection listener
+    * @exception ResourceException Thrown if the connection listener cannot be destroyed
+    */
+   public void destroyConnectionListener(ConnectionListener cl) throws ResourceException;
+
+   /**
+    * Create a new managed connection pool instance
+    * @param credential The credential
+    * @return The instance
+    */
+   public ManagedConnectionPool createManagedConnectionPool(Credential credential);
+
+   /**
     * Is the pool full
     * @return True if full, otherwise false
     */
@@ -91,4 +113,10 @@ public interface Pool extends org.ironjacamar.core.api.connectionmanager.pool.Po
     * @return credential used to prefill
     */
    public Credential getPrefillCredential();
+
+   /**
+    * Empty a ManagedConnectionPool
+    * @param mcp The instance
+    */
+   public void emptyManagedConnectionPool(ManagedConnectionPool mcp);
 }

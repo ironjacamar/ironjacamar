@@ -59,6 +59,12 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    /** Last validated timestamp */
    private long validated;
 
+   /** Last fromPool timestamp */
+   private long fromPool;
+
+   /** Last toPool timestamp */
+   private long toPool;
+
    /**
     * Constructor
     * @param cm The connection manager
@@ -72,7 +78,12 @@ public abstract class AbstractConnectionListener implements ConnectionListener
       this.credential = credential;
       this.state = new AtomicInteger(FREE);
       this.connectionHandles = new CopyOnWriteArraySet<Object>();
-      this.validated = System.currentTimeMillis();
+
+      long timestamp = System.currentTimeMillis();
+
+      this.validated = timestamp;
+      this.fromPool = timestamp;
+      this.toPool = timestamp;
 
       mc.addConnectionEventListener(this);
    }
@@ -224,6 +235,38 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    public void validated()
    {
       validated = System.currentTimeMillis();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getFromPool()
+   {
+      return fromPool;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void fromPool()
+   {
+      fromPool = System.currentTimeMillis();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public long getToPool()
+   {
+      return toPool;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void toPool() throws ResourceException
+   {
+      toPool = System.currentTimeMillis();
    }
 
    /**

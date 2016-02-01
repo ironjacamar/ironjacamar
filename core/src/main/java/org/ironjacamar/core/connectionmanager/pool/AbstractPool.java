@@ -409,28 +409,6 @@ public abstract class AbstractPool implements Pool
    }
    
    /**
-    * Create a connection listener
-    * @param credential The credential
-    * @return The connection listener
-    * @exception ResourceException Thrown if the connection listener cannot be created
-    */
-   protected abstract ConnectionListener createConnectionListener(Credential credential) throws ResourceException;
-
-   /**
-    * Destroy a connection listener
-    * @param cl The connection listener
-    * @exception ResourceException Thrown if the connection listener cannot be destroyed
-    */
-   protected abstract void destroyConnectionListener(ConnectionListener cl) throws ResourceException;
-
-   /**
-    * Create a new managed connection pool instance
-    * @param credential The credential
-    * @return The instance
-    */
-   protected abstract ManagedConnectionPool createManagedConnectionPool(Credential credential);
-
-   /**
     * Prefill the connection pool
     *
     */
@@ -477,4 +455,12 @@ public abstract class AbstractPool implements Pool
       return this.prefillCredential;
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   public synchronized void emptyManagedConnectionPool(ManagedConnectionPool mcp)
+   {
+      pools.values().remove(mcp);
+      mcp.shutdown();
+   }
 }

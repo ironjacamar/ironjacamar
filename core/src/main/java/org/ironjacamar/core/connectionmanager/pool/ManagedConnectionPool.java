@@ -62,7 +62,12 @@ public interface ManagedConnectionPool
    public void fillTo(int size);
 
    /**
-    * Validate connecitons.
+    * Validate connections
     */
    public void validateConnections();
+
+   /**
+    * Remove idle connections
+    */
+   public void removeIdleConnections();
 }
