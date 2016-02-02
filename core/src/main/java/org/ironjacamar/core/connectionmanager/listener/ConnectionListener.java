@@ -55,6 +55,9 @@ public interface ConnectionListener extends org.ironjacamar.core.api.connectionm
    /** ZOMBIE state */
    public int ZOMBIE = 7;
 
+   /** ZOMBIE state */
+   public int FLUSH = 8;
+
    /**
     * Change the state of the connection listener
     * @param currentState The current state

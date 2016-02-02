@@ -21,6 +21,7 @@
 
 package org.ironjacamar.core.connectionmanager.pool;
 
+import org.ironjacamar.common.api.metadata.common.FlushStrategy;
 import org.ironjacamar.core.api.connectionmanager.pool.PoolConfiguration;
 import org.ironjacamar.core.connectionmanager.ConnectionManager;
 import org.ironjacamar.core.connectionmanager.Credential;
@@ -65,10 +66,12 @@ public interface Pool extends org.ironjacamar.core.api.connectionmanager.pool.Po
    /**
     * Create a connection listener
     * @param credential The credential
+    * @param mcp The ManagedCOnnectionPool
     * @return The connection listener
     * @exception ResourceException Thrown if the connection listener cannot be created
     */
-   public ConnectionListener createConnectionListener(Credential credential) throws ResourceException;
+   public ConnectionListener createConnectionListener(Credential credential, ManagedConnectionPool mcp)
+         throws ResourceException;
 
    /**
     * Destroy a connection listener
@@ -119,4 +122,22 @@ public interface Pool extends org.ironjacamar.core.api.connectionmanager.pool.Po
     * @param mcp The instance
     */
    public void emptyManagedConnectionPool(ManagedConnectionPool mcp);
+
+   /**
+    * Get the flush strategy
+    * @return The value
+    */
+   public FlushStrategy getFlushStrategy();
+
+   /**
+    * Flush idle connections from the pool
+    */
+   public void flush();
+
+   /**
+    * Flush the pool
+    * @param mode The flush mode
+    */
+   public void flush(FlushMode mode);
+
 }

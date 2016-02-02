@@ -344,6 +344,7 @@ public class ResourceAdapterFactory
 
       ResourceAdapterArchive raa = ShrinkWrap.create(ResourceAdapterArchive.class, "unified-security.rar");
 
+
       JavaArchive ja = ShrinkWrap.create(JavaArchive.class, "unified-security.jar");
       ja.addPackages(true, UnifiedSecurityConnection.class.getPackage());
 
@@ -369,12 +370,57 @@ public class ResourceAdapterFactory
    public static ResourceAdaptersDescriptor createUnifiedSecurityDeployment(String bc, String securityDomain,
          TransactionSupportLevel tsl, String id, boolean prefill, int initialPoolSize)
    {
+      return createUnifiedSecurityDeployment(bc, securityDomain, tsl, id, prefill, initialPoolSize,
+            "FailingConnectionOnly");
+   }
+
+
+   /**
+    * Create the work.rar deployment
+    *
+    * @param bc The BootstrapContext name; <code>null</code> if default
+    * @param securityDomain The SecurityDomain name; <code>null</code> if default
+    * @param tsl     The transaction support level
+    * @param id The JNDI postfix and id
+    * @param prefill boolean to prefill or not
+    * @param initialPoolSize The initial pool size value
+    * @param flushStrategy  the flush strategy
+    *
+    *
+    * @return The resource adapter descriptor
+    */
+   public static ResourceAdaptersDescriptor createUnifiedSecurityDeployment(String bc, String securityDomain,
+         TransactionSupportLevel tsl, String id, boolean prefill, int initialPoolSize, String flushStrategy)
+   {
+      return createUnifiedSecurityDeployment(bc, securityDomain, tsl, id, prefill, initialPoolSize,
+            flushStrategy, false);
+   }
+   /**
+    * Create the work.rar deployment
+    *
+    * @param bc The BootstrapContext name; <code>null</code> if default
+    * @param securityDomain The SecurityDomain name; <code>null</code> if default
+    * @param tsl     The transaction support level
+    * @param id The JNDI postfix and id
+    * @param prefill boolean to prefill or not
+    * @param initialPoolSize The initial pool size value
+    * @param flushStrategy  the flush strategy
+    * @param validateOnMatch if true validate On match is enabled
+    *
+    *
+    * @return The resource adapter descriptor
+    */
+   public static ResourceAdaptersDescriptor createUnifiedSecurityDeployment(String bc, String securityDomain,
+         TransactionSupportLevel tsl, String id, boolean prefill, int initialPoolSize, String flushStrategy,
+         boolean validateOnMatch)
+   {
       ResourceAdaptersDescriptor dashRaXml = Descriptors
             .create(ResourceAdaptersDescriptor.class, "unified-security-ra.xml");
 
       ResourceAdapterType dashRaXmlRt = dashRaXml.createResourceAdapter().archive("unified-security.rar");
       if (bc != null)
          dashRaXmlRt.bootstrapContext(bc);
+
 
       if (tsl == null || tsl == TransactionSupportLevel.NoTransaction)
       {
@@ -394,6 +440,15 @@ public class ResourceAdapterFactory
             .createConnectionDefinition().className(UnifiedSecurityManagedConnectionFactory.class.getName())
             .jndiName("java:/eis/" + id).id(id);
 
+      if (validateOnMatch)
+      {
+         org.ironjacamar.embedded.dsl.resourceadapters20.api.ValidationType dashRaXmlVt = dashRaXmlCdt
+               .getOrCreateValidation();
+
+         dashRaXmlVt.validateOnMatch(Boolean.TRUE);
+      }
+
+
       if (securityDomain != null)
       {
          dashRaXmlCdt.getOrCreateSecurity().securityDomain(securityDomain);
@@ -402,12 +457,14 @@ public class ResourceAdapterFactory
       if (tsl != TransactionSupportLevel.XATransaction)
       {
          org.ironjacamar.embedded.dsl.resourceadapters20.api.PoolType dashRaXmlPt = dashRaXmlCdt.getOrCreatePool()
-            .minPoolSize(initialPoolSize).initialPoolSize(initialPoolSize).maxPoolSize(20).prefill(prefill);
+               .minPoolSize(initialPoolSize).initialPoolSize(initialPoolSize).maxPoolSize(20).prefill(prefill)
+               .flushStrategy(flushStrategy);
       }
       else
       {
          org.ironjacamar.embedded.dsl.resourceadapters20.api.XaPoolType dashRaXmlPt = dashRaXmlCdt.getOrCreateXaPool()
-            .minPoolSize(initialPoolSize).initialPoolSize(initialPoolSize).maxPoolSize(20).prefill(prefill);
+               .minPoolSize(initialPoolSize).initialPoolSize(initialPoolSize).maxPoolSize(20).prefill(prefill)
+               .flushStrategy(flushStrategy);;
       }
 
 

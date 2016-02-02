@@ -23,6 +23,7 @@ package org.ironjacamar.rars.security;
 import java.io.PrintWriter;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -34,6 +35,7 @@ import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.ResourceAdapterAssociation;
+import javax.resource.spi.ValidatingManagedConnectionFactory;
 import javax.resource.spi.security.PasswordCredential;
 import javax.security.auth.Subject;
 
@@ -48,7 +50,8 @@ import org.jboss.logging.Logger;
       connectionFactoryImpl = UnifiedSecurityConnectionFactoryImpl.class,
       connection = UnifiedSecurityConnection.class,
       connectionImpl = UnifiedSecurityConnectionImpl.class)
-public class UnifiedSecurityManagedConnectionFactory implements ManagedConnectionFactory, ResourceAdapterAssociation
+public class UnifiedSecurityManagedConnectionFactory implements ManagedConnectionFactory, ResourceAdapterAssociation,
+      ValidatingManagedConnectionFactory
 {
 
    /**
@@ -78,6 +81,7 @@ public class UnifiedSecurityManagedConnectionFactory implements ManagedConnectio
    {
 
    }
+
 
    /**
     * Creates a Connection Factory instance.
@@ -299,5 +303,23 @@ public class UnifiedSecurityManagedConnectionFactory implements ManagedConnectio
             (PrivilegedAction<Set<PasswordCredential>>) () -> subject.getPrivateCredentials(PasswordCredential.class));
    }
 
+   @Override
+   public Set getInvalidConnections(Set connectionSet) throws ResourceException
+   {
+      Set result = new HashSet<>();
+
+      Iterator it = connectionSet.iterator();
+
+      while (it.hasNext())
+      {
+         UnifiedSecurityManagedConnection mc = (UnifiedSecurityManagedConnection) it.next();
+         if (mc.isInvalid())
+         {
+            result.add(mc);
+         }
+      }
+
+      return result;
+   }
 
 }

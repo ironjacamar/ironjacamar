@@ -21,9 +21,11 @@
 
 package org.ironjacamar.core.connectionmanager.listener.dflt;
 
+import org.ironjacamar.common.api.metadata.common.FlushStrategy;
 import org.ironjacamar.core.connectionmanager.ConnectionManager;
 import org.ironjacamar.core.connectionmanager.Credential;
 import org.ironjacamar.core.connectionmanager.listener.AbstractTransactionalConnectionListener;
+import org.ironjacamar.core.connectionmanager.pool.ManagedConnectionPool;
 
 import javax.resource.spi.ManagedConnection;
 import javax.transaction.xa.XAResource;
@@ -42,10 +44,13 @@ public class XATransactionConnectionListener extends AbstractTransactionalConnec
     * @param credential The credential
     * @param xaResource The XAResource
     * @param xaResourceTimeout The timeout for the XAResource instance
+    * @param mcp The ManagedConnectionPool
+    * @param flushStrategy The FlushStrategy
     */
    public XATransactionConnectionListener(ConnectionManager cm, ManagedConnection mc, Credential credential,
-                                          XAResource xaResource, int xaResourceTimeout)
+                                          XAResource xaResource, int xaResourceTimeout,
+                                          ManagedConnectionPool mcp, FlushStrategy flushStrategy)
    {
-      super(cm, mc, credential, xaResource, xaResourceTimeout);
+      super(cm, mc, credential, xaResource, xaResourceTimeout, mcp, flushStrategy);
    }
 }

@@ -70,4 +70,16 @@ public interface ManagedConnectionPool
     * Remove idle connections
     */
    public void removeIdleConnections();
+
+    /** Checks if the pool is empty or not
+    * @return True if is emtpy; otherwise false
+    */
+   public boolean isEmpty();
+
+   /**
+    * Flush
+    * @param mode The flush mode
+    */
+   public void flush(FlushMode mode);
+
 }

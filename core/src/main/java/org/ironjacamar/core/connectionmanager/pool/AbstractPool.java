@@ -21,11 +21,13 @@
 
 package org.ironjacamar.core.connectionmanager.pool;
 
+import org.ironjacamar.common.api.metadata.common.FlushStrategy;
 import org.ironjacamar.core.api.connectionmanager.pool.PoolConfiguration;
 import org.ironjacamar.core.connectionmanager.ConnectionManager;
 import org.ironjacamar.core.connectionmanager.Credential;
 import org.ironjacamar.core.connectionmanager.TransactionalConnectionManager;
 import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
+import org.ironjacamar.core.spi.transaction.ConnectableResource;
 import org.ironjacamar.core.spi.transaction.TxUtils;
 import org.ironjacamar.core.spi.transaction.local.LocalXAResource;
 
@@ -44,30 +46,43 @@ import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener
 
 /**
  * The base class for all pool implementations
+ *
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public abstract class AbstractPool implements Pool
 {
-   /** The connection manager */
+   /**
+    * The connection manager
+    */
    protected ConnectionManager cm;
 
-   /** The pool configuration */
+   /**
+    * The pool configuration
+    */
    protected PoolConfiguration poolConfiguration;
 
-   /** The pools */
+   /**
+    * The pools
+    */
    protected ConcurrentHashMap<Credential, ManagedConnectionPool> pools;
-   
-   /** The transaction map */
+
+   /**
+    * The transaction map
+    */
    protected ConcurrentHashMap<Object, Map<ManagedConnectionPool, ConnectionListener>> transactionMap;
-   
-   /** The semaphore */
+
+   /**
+    * The semaphore
+    */
    protected Semaphore semaphore;
 
    private Credential prefillCredential;
 
+   private FlushStrategy flushStrategy;
 
    /**
     * Constructor
+    *
     * @param cm The connection manager
     * @param pc The pool configuration
     */
@@ -78,6 +93,7 @@ public abstract class AbstractPool implements Pool
       this.pools = new ConcurrentHashMap<Credential, ManagedConnectionPool>();
       this.transactionMap = new ConcurrentHashMap<Object, Map<ManagedConnectionPool, ConnectionListener>>();
       this.semaphore = new Semaphore(poolConfiguration.getMaxSize());
+      this.flushStrategy = poolConfiguration.getFlushStrategy();
    }
 
    /**
@@ -99,18 +115,17 @@ public abstract class AbstractPool implements Pool
    /**
     * {@inheritDoc}
     */
-   public ConnectionListener getConnectionListener(Credential credential)
-      throws ResourceException
+   public ConnectionListener getConnectionListener(Credential credential) throws ResourceException
    {
       ConnectionListener cl = null;
       ManagedConnectionPool mcp = getManagedConnectionPool(credential);
 
-      if (cm.getTransactionSupport() == TransactionSupportLevel.LocalTransaction ||
-          cm.getTransactionSupport() == TransactionSupportLevel.XATransaction)
+      if (cm.getTransactionSupport() == TransactionSupportLevel.LocalTransaction
+            || cm.getTransactionSupport() == TransactionSupportLevel.XATransaction)
       {
          try
          {
-            TransactionalConnectionManager txCM = (TransactionalConnectionManager)cm;
+            TransactionalConnectionManager txCM = (TransactionalConnectionManager) cm;
             Transaction tx = txCM.getTransactionIntegration().getTransactionManager().getTransaction();
 
             if (TxUtils.isUncommitted(tx))
@@ -121,8 +136,7 @@ public abstract class AbstractPool implements Pool
 
                if (currentMap == null)
                {
-                  Map<ManagedConnectionPool, ConnectionListener> map =
-                     new HashMap<ManagedConnectionPool, ConnectionListener>();
+                  Map<ManagedConnectionPool, ConnectionListener> map = new HashMap<>();
 
                   currentMap = transactionMap.putIfAbsent(id, map);
                   if (currentMap == null)
@@ -142,7 +156,7 @@ public abstract class AbstractPool implements Pool
                      currentMap.put(mcp, cl);
 
                      txCM.getTransactionIntegration().getTransactionSynchronizationRegistry().
-                        registerInterposedSynchronization(new TransactionMapCleanup(id, transactionMap));
+                           registerInterposedSynchronization(new TransactionMapCleanup(id, transactionMap));
                   }
                   else
                   {
@@ -170,6 +184,7 @@ public abstract class AbstractPool implements Pool
    /**
     * Get from existing pools or create mcp w/ specified credential
     * It's used during prefill operation
+    *
     * @param credential credential used to match
     * @return
     */
@@ -244,13 +259,14 @@ public abstract class AbstractPool implements Pool
 
    /**
     * Get a LocalXAResource instance
+    *
     * @param mc The ManagedConnection
     * @return The instance
-    * @exception ResourceException Thrown if an error occurs
+    * @throws ResourceException Thrown if an error occurs
     */
    protected LocalXAResource getLocalXAResource(ManagedConnection mc) throws ResourceException
    {
-      TransactionalConnectionManager txCM = (TransactionalConnectionManager)cm;
+      TransactionalConnectionManager txCM = (TransactionalConnectionManager) cm;
       LocalXAResource xaResource = null;
       String eisProductName = null;
       String eisProductVersion = null;
@@ -279,46 +295,35 @@ public abstract class AbstractPool implements Pool
       {
          if (mc instanceof org.ironjacamar.core.spi.transaction.ConnectableResource)
          {
-            org.ironjacamar.core.spi.transaction.ConnectableResource cr =
-               (org.ironjacamar.core.spi.transaction.ConnectableResource)mc;
+            ConnectableResource cr = (ConnectableResource) mc;
 
-            xaResource = txCM.getTransactionIntegration().createConnectableLocalXAResource(cm,
-                                                                                           eisProductName,
-                                                                                           eisProductVersion,
-                                                                                           jndiName,
-                                                                                           cr,
-                                                                                           null);
+            xaResource = txCM.getTransactionIntegration()
+                  .createConnectableLocalXAResource(cm, eisProductName, eisProductVersion, jndiName, cr, null);
          }
          else if (txCM.getTransactionIntegration().isConnectableResource(mc))
          {
-            xaResource = txCM.getTransactionIntegration().createConnectableLocalXAResource(cm,
-                                                                                           eisProductName,
-                                                                                           eisProductVersion,
-                                                                                           jndiName,
-                                                                                           mc,
-                                                                                           null);
+            xaResource = txCM.getTransactionIntegration()
+                  .createConnectableLocalXAResource(cm, eisProductName, eisProductVersion, jndiName, mc, null);
          }
       }
 
       if (xaResource == null)
-         xaResource = txCM.getTransactionIntegration().createLocalXAResource(cm,
-                                                                             eisProductName,
-                                                                             eisProductVersion,
-                                                                             jndiName,
-                                                                             null);
-    
+         xaResource = txCM.getTransactionIntegration()
+               .createLocalXAResource(cm, eisProductName, eisProductVersion, jndiName, null);
+
       return xaResource;
    }
 
    /**
     * Get a XAResource instance
+    *
     * @param mc The ManagedConnection
     * @return The instance
-    * @exception ResourceException Thrown if an error occurs
+    * @throws ResourceException Thrown if an error occurs
     */
    protected XAResource getXAResource(ManagedConnection mc) throws ResourceException
    {
-      TransactionalConnectionManager txCM = (TransactionalConnectionManager)cm;
+      TransactionalConnectionManager txCM = (TransactionalConnectionManager) cm;
       XAResource xaResource = null;
 
       if (cm.getConnectionManagerConfiguration().isWrapXAResource())
@@ -326,8 +331,8 @@ public abstract class AbstractPool implements Pool
          String eisProductName = null;
          String eisProductVersion = null;
          String jndiName = cm.getConnectionManagerConfiguration().getJndiName();
-         boolean padXid =  cm.getConnectionManagerConfiguration().isPadXid();
-         Boolean isSameRMOverride =  cm.getConnectionManagerConfiguration().isIsSameRMOverride();
+         boolean padXid = cm.getConnectionManagerConfiguration().isPadXid();
+         Boolean isSameRMOverride = cm.getConnectionManagerConfiguration().isIsSameRMOverride();
 
          try
          {
@@ -352,28 +357,17 @@ public abstract class AbstractPool implements Pool
          {
             if (mc instanceof org.ironjacamar.core.spi.transaction.ConnectableResource)
             {
-               org.ironjacamar.core.spi.transaction.ConnectableResource cr =
-                  (org.ironjacamar.core.spi.transaction.ConnectableResource)mc;
+               ConnectableResource cr = (ConnectableResource) mc;
 
-               xaResource = txCM.getTransactionIntegration().createConnectableXAResourceWrapper(mc.getXAResource(),
-                                                                                                padXid, 
-                                                                                                isSameRMOverride, 
-                                                                                                eisProductName,
-                                                                                                eisProductVersion,
-                                                                                                jndiName,
-                                                                                                cr,
-                                                                                                null);
+               xaResource = txCM.getTransactionIntegration()
+                     .createConnectableXAResourceWrapper(mc.getXAResource(), padXid, isSameRMOverride, eisProductName,
+                           eisProductVersion, jndiName, cr, null);
             }
             else if (txCM.getTransactionIntegration().isConnectableResource(mc))
             {
-               xaResource = txCM.getTransactionIntegration().createConnectableXAResourceWrapper(mc.getXAResource(),
-                                                                                                padXid, 
-                                                                                                isSameRMOverride, 
-                                                                                                eisProductName,
-                                                                                                eisProductVersion,
-                                                                                                jndiName,
-                                                                                                mc,
-                                                                                                null);
+               xaResource = txCM.getTransactionIntegration()
+                     .createConnectableXAResourceWrapper(mc.getXAResource(), padXid, isSameRMOverride, eisProductName,
+                           eisProductVersion, jndiName, mc, null);
             }
          }
 
@@ -385,14 +379,9 @@ public abstract class AbstractPool implements Pool
             {
                boolean firstResource = txCM.getTransactionIntegration().isFirstResource(mc);
 
-               xaResource = txCM.getTransactionIntegration().createXAResourceWrapper(xar,
-                                                                                     padXid,
-                                                                                     isSameRMOverride,
-                                                                                     eisProductName,
-                                                                                     eisProductVersion,
-                                                                                     jndiName,
-                                                                                     firstResource,
-                                                                                     null);
+               xaResource = txCM.getTransactionIntegration()
+                     .createXAResourceWrapper(xar, padXid, isSameRMOverride, eisProductName, eisProductVersion,
+                           jndiName, firstResource, null);
             }
             else
             {
@@ -404,13 +393,12 @@ public abstract class AbstractPool implements Pool
       {
          xaResource = mc.getXAResource();
       }
-      
+
       return xaResource;
    }
-   
+
    /**
     * Prefill the connection pool
-    *
     */
    @Override
    public void prefill()
@@ -436,8 +424,10 @@ public abstract class AbstractPool implements Pool
 
    /**
     * Get prefill credential
+    *
     * @return credential used to prefill
     */
+   @Override
    public Credential getPrefillCredential()
    {
       if (this.prefillCredential == null)
@@ -448,8 +438,9 @@ public abstract class AbstractPool implements Pool
          }
          else
          {
-            prefillCredential = new Credential(cm.getSubjectFactory()
-                  .createSubject(cm.getConnectionManagerConfiguration().getSecurityDomain()), null);
+            prefillCredential = new Credential(
+                  cm.getSubjectFactory().createSubject(cm.getConnectionManagerConfiguration().getSecurityDomain()),
+                  null);
          }
       }
       return this.prefillCredential;
@@ -463,4 +454,66 @@ public abstract class AbstractPool implements Pool
       pools.values().remove(mcp);
       mcp.shutdown();
    }
+
+   /**
+    * Get the flush strategy
+    * @return The value
+    */
+   @Override
+   public FlushStrategy getFlushStrategy()
+   {
+      return flushStrategy;
+   }
+
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void flush()
+   {
+      flush(FlushMode.IDLE);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public synchronized void flush(FlushMode mode)
+   {
+
+      for (Credential credential : pools.keySet())
+      {
+         ManagedConnectionPool mcp = pools.get(credential);
+         if (mcp != null)
+         {
+            try
+            {
+               mcp.flush(mode);
+            }
+            catch (Exception e)
+            {
+               // Should not happen
+               // TODO: just add a log
+            }
+
+            if (mcp.isEmpty() && !poolConfiguration.isPrefill())
+            {
+               try
+               {
+                  mcp.shutdown();
+               }
+               catch (Exception e)
+               {
+                  // Should not happen
+                  // TODO: just add a log
+               }
+
+               pools.remove(credential);
+            }
+
+         }
+      }
+   }
+
 }

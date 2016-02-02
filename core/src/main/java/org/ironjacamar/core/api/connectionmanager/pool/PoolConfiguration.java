@@ -21,6 +21,8 @@
 
 package org.ironjacamar.core.api.connectionmanager.pool;
 
+import org.ironjacamar.common.api.metadata.common.FlushStrategy;
+
 /**
  * The pool configuration. 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
@@ -58,6 +60,10 @@ public class PoolConfiguration
    /** Use fast fail */
    private boolean useFastFail;
 
+   /** The Flush Strategy */
+   private FlushStrategy flushStrategy;
+
+
    /**
     * Constructor
     */
@@ -73,6 +79,7 @@ public class PoolConfiguration
       backgroundValidationMillis = 60000;
       prefill = false;
       useFastFail = false;
+      flushStrategy = null;
    }
 
    /**
@@ -276,6 +283,24 @@ public class PoolConfiguration
    }
 
    /**
+    * Set flush-strategy
+    * @param f The value
+    */
+   public void setFlushStrategy(FlushStrategy f)
+   {
+      flushStrategy = f;
+   }
+
+   /**
+    * Get flush-strategy;
+    * @return The value
+    */
+   public FlushStrategy getFlushStrategy()
+   {
+      return flushStrategy;
+   }
+
+   /**
     * String representation
     * @return The string
     */
@@ -295,6 +320,7 @@ public class PoolConfiguration
       sb.append(" backgroundValidationMillis=").append(backgroundValidationMillis);
       sb.append(" prefill=").append(prefill);
       sb.append(" useFastFail=").append(useFastFail);
+      sb.append(" flushStrategy=").append(flushStrategy);
       sb.append("]");
 
       return sb.toString();

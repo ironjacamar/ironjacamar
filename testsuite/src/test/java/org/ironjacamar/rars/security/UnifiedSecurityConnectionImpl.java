@@ -95,7 +95,11 @@ public class UnifiedSecurityConnectionImpl implements UnifiedSecurityConnection
       this.mc = mc;
    }
 
-
-
-
+   /**
+    * invalidate connection
+    */
+   public void invalidate()
+   {
+      mc.invalidate();
+   }
 }

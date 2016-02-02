@@ -98,6 +98,7 @@ public class TestUtils
          {
             while (collection.size() != size)
             {
+
                TimeUnit.MILLISECONDS.sleep(10);
             }
          }
@@ -125,4 +126,28 @@ public class TestUtils
    {
       return isCorrectCollectionSizeTimeOut(collection, size, 10, TimeUnit.SECONDS);
    }
+
+
+   /**
+    * Check size of a collection populated in another thread. Collection is supposed to be thread safe
+    * @param collection collection to check
+    * @param size size limit
+    * @return {@code true} if collection size is reached before timeout
+    *         {@code false} if the timeout elapsed before collection size reached
+    * @throws InterruptedException if interrupted while waiting
+    */
+   public static int collectionSizeTenSecTimeout(Collection<?> collection, int size)
+         throws InterruptedException
+   {
+      if (isCorrectCollectionSizeTimeOut(collection, size, 10, TimeUnit.SECONDS))
+      {
+         return size;
+      }
+      else
+      {
+         return collection.size();
+      }
+   }
+
+
 }

@@ -21,8 +21,10 @@
 
 package org.ironjacamar.core.connectionmanager.listener.stable;
 
+import org.ironjacamar.common.api.metadata.common.FlushStrategy;
 import org.ironjacamar.core.connectionmanager.ConnectionManager;
 import org.ironjacamar.core.connectionmanager.Credential;
+import org.ironjacamar.core.connectionmanager.pool.ManagedConnectionPool;
 
 import javax.resource.spi.ManagedConnection;
 import javax.transaction.xa.XAResource;
@@ -40,10 +42,12 @@ public class LocalTransactionConnectionListener extends AbstractTransactionalCon
     * @param mc The managed connection
     * @param credential The credential
     * @param xaResource The XAResource
+    * @param mcp The ManagedConnectionPool
+    * @param flushStrategy The FlushStrategy
     */
    public LocalTransactionConnectionListener(ConnectionManager cm, ManagedConnection mc, Credential credential,
-                                             XAResource xaResource)
+         XAResource xaResource, ManagedConnectionPool mcp, FlushStrategy flushStrategy)
    {
-      super(cm, mc, credential, xaResource, 0);
+      super(cm, mc, credential, xaResource, 0, mcp, flushStrategy);
    }
 }

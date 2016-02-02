@@ -21,9 +21,11 @@
 
 package org.ironjacamar.core.connectionmanager.listener.stable;
 
+import org.ironjacamar.common.api.metadata.common.FlushStrategy;
 import org.ironjacamar.core.connectionmanager.ConnectionManager;
 import org.ironjacamar.core.connectionmanager.Credential;
 import org.ironjacamar.core.connectionmanager.listener.AbstractConnectionListener;
+import org.ironjacamar.core.connectionmanager.pool.ManagedConnectionPool;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnection;
@@ -40,10 +42,13 @@ public class NoTransactionConnectionListener extends AbstractConnectionListener
     * @param cm The connection manager
     * @param mc The managed connection
     * @param credential The credential
+    * @param mcp The ManagedConnectionPool
+    * @param flushStrategy The FlushStrategy
     */
-   public NoTransactionConnectionListener(ConnectionManager cm, ManagedConnection mc, Credential credential)
+   public NoTransactionConnectionListener(ConnectionManager cm, ManagedConnection mc, Credential credential,
+         ManagedConnectionPool mcp, FlushStrategy flushStrategy)
    {
-      super(cm, mc, credential);
+      super(cm, mc, credential, mcp, flushStrategy);
    }
 
    /**

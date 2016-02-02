@@ -1,22 +1,22 @@
 /*
- * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2015, Red Hat Inc, and individual contributors
- * as indicated by the @author tags. See the copyright.txt file in the
- * distribution for a full listing of individual contributors.
+ *  IronJacamar, a Java EE Connector Architecture implementation
+ *  Copyright 2016, Red Hat Inc, and individual contributors
+ *  as indicated by the @author tags. See the copyright.txt file in the
+ *  distribution for a full listing of individual contributors.
  *
- * This is free software; you can redistribute it and/or modify it
- * under the terms of the Eclipse Public License 1.0 as
- * published by the Free Software Foundation.
+ *  This is free software; you can redistribute it and/or modify it
+ *  under the terms of the Eclipse Public License 1.0 as
+ *  published by the Free Software Foundation.
  *
- * This software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the Eclipse
- * Public License for more details.
+ *  This software is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the Eclipse
+ *  Public License for more details.
  *
- * You should have received a copy of the Eclipse Public License
- * along with this software; if not, write to the Free
- * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ *  You should have received a copy of the Eclipse Public License
+ *  along with this software; if not, write to the Free
+ *  Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ *  02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
 package org.ironjacamar.core.connectionmanager.pool.dflt;
@@ -24,6 +24,7 @@ package org.ironjacamar.core.connectionmanager.pool.dflt;
 import org.ironjacamar.core.api.deploymentrepository.DeploymentRepository;
 import org.ironjacamar.core.connectionmanager.Credential;
 import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
+import org.ironjacamar.core.connectionmanager.pool.FlushMode;
 import org.ironjacamar.core.connectionmanager.pool.ManagedConnectionPool;
 import org.ironjacamar.embedded.Configuration;
 import org.ironjacamar.embedded.Deployment;
@@ -64,13 +65,20 @@ import static org.junit.Assert.assertTrue;
 @Configuration(full = true)
 @PreCondition(condition = AllChecks.class)
 @PostCondition(condition = AllChecks.class)
-public class PrefillNoCredentialsTestCase
+public class FlushMethodCallNoCredentialsTestCase
 {
    /**
     * The noTxCf w/o Tx
     */
    @Resource(mappedName = "java:/eis/UnifiedSecurityNoTxConnectionFactory")
    private UnifiedSecurityConnectionFactory noTxCf;
+
+
+   /**
+    * The noTxCf w/o Tx w/o Prefill
+    */
+   @Resource(mappedName = "java:/eis/UnifiedSecurityNoTxNoPrefillConnectionFactory")
+   private UnifiedSecurityConnectionFactory noTxNoPrefillCf;
 
 
    /**
@@ -108,87 +116,31 @@ public class PrefillNoCredentialsTestCase
 
 
    /**
-    * Deployment test w/o Tx
+    * The activation w7o Tx w/o Prefill
     *
     * @throws Throwable In case of an error
     */
-   @Test
-   public void testMinPoolSize() throws Throwable
+   @Deployment(order = 3)
+   private ResourceAdaptersDescriptor createNoTxNoPrefillActivation() throws Throwable
    {
-      assertNotNull(noTxCf);
-      assertNotNull(dr);
-
-      assertEquals(1, dr.getDeployments().size());
-
-      org.ironjacamar.core.api.deploymentrepository.Deployment d = dr
-            .findByJndi("java:/eis/UnifiedSecurityNoTxConnectionFactory");
-      assertNotNull(d);
-
-      org.ironjacamar.core.api.deploymentrepository.ConnectionFactory dcf = d.getConnectionFactories().iterator()
-            .next();
-      assertNotNull(dcf);
-
-      org.ironjacamar.core.api.deploymentrepository.Pool p = dcf.getPool();
-      assertNotNull(p);
-
-      DefaultPool defaultPool = (DefaultPool) p.getPool();
-
-      ConcurrentHashMap<Credential, ManagedConnectionPool> mcps =
-            (ConcurrentHashMap<Credential, ManagedConnectionPool>) TestUtils
-            .extract(defaultPool, "pools");
-      assertNotNull(mcps);
-
-      assertEquals(1, mcps.size());
-
-      ManagedConnectionPool mcp = mcps.values().iterator().next();
-      assertNotNull(mcp);
-
-      ConcurrentLinkedDeque<ConnectionListener> listeners = (ConcurrentLinkedDeque<ConnectionListener>) TestUtils
-            .extract(mcp, "listeners");
-      assertNotNull(listeners);
-      assertTrue(TestUtils.isCorrectCollectionSizeTenSecTimeout(listeners, 10));
-
-      UnifiedSecurityConnection c = noTxCf.getConnection();
-      assertNotNull(c);
-      assertNull(c.getUserName());
-      assertNull(c.getPassword());
-
-
-      assertEquals(1, mcps.size());
-
-
-      c.fail();
-
-      assertTrue(TestUtils.isCorrectCollectionSizeTenSecTimeout(listeners, 10));
-      assertEquals(1, mcps.size());
-
-      defaultPool.prefill();
-
-      assertTrue(TestUtils.isCorrectCollectionSizeTenSecTimeout(listeners, 10));
-
-
-
-      c.close();
-
-
-
-      // We cheat and shutdown the pool to clear out mcps
-      defaultPool.shutdown();
+      return ResourceAdapterFactory.createUnifiedSecurityDeployment(null, null,
+            TransactionSupport.TransactionSupportLevel.NoTransaction,
+            "UnifiedSecurityNoTxNoPrefillConnectionFactory", false, 0);
    }
 
 
    /**
-    * Deployment test w/o Tx
+    * Deployment test w/o Tx w/ Prefill
     *
     * @throws Throwable In case of an error
     */
    @Test
-   public void testInitialSize() throws Throwable
+   public void testPrefillInitialSize() throws Throwable
    {
       assertNotNull(noTxCf);
       assertNotNull(dr);
 
-      assertEquals(1, dr.getDeployments().size());
+      assertEquals(2, dr.getDeployments().size());
 
       org.ironjacamar.core.api.deploymentrepository.Deployment d = dr
             .findByJndi("java:/eis/UnifiedSecurityNoTxConnectionFactory");
@@ -232,6 +184,167 @@ public class PrefillNoCredentialsTestCase
 
       assertEquals(1, mcps.size());
 
+      defaultPool.flush();
+
+      assertTrue(TestUtils.isCorrectCollectionSizeTenSecTimeout(listeners, 10));
+
+      assertEquals(1, mcps.size());
+
+      c1.close();
+
+      c.close();
+
+      // We cheat and shutdown the pool to clear out mcps
+      defaultPool.shutdown();
+   }
+
+
+   /**
+    * Deployment test w/o Tx
+    *
+    * @throws Throwable In case of an error
+    */
+   @Test
+   public void testNoPrefillFlushIdle() throws Throwable
+   {
+      assertNotNull(noTxNoPrefillCf);
+      assertNotNull(dr);
+
+      assertEquals(2, dr.getDeployments().size());
+
+      org.ironjacamar.core.api.deploymentrepository.Deployment d = dr
+            .findByJndi("java:/eis/UnifiedSecurityNoTxNoPrefillConnectionFactory");
+      assertNotNull(d);
+
+      org.ironjacamar.core.api.deploymentrepository.ConnectionFactory dcf = d.getConnectionFactories().iterator()
+            .next();
+      assertNotNull(dcf);
+
+      org.ironjacamar.core.api.deploymentrepository.Pool p = dcf.getPool();
+      assertNotNull(p);
+
+      DefaultPool defaultPool = (DefaultPool) p.getPool();
+
+      ConcurrentHashMap<Credential, ManagedConnectionPool> mcps =
+            (ConcurrentHashMap<Credential, ManagedConnectionPool>) TestUtils
+                  .extract(defaultPool, "pools");
+      assertNotNull(mcps);
+
+      assertEquals(0, mcps.size());
+
+      UnifiedSecurityConnection c = noTxNoPrefillCf.getConnection();
+      assertNotNull(c);
+      assertNull(c.getUserName());
+      assertNull(c.getPassword());
+
+      UnifiedSecurityConnection c1 = noTxNoPrefillCf.getConnection();
+      assertNotNull(c1);
+      assertNull(c1.getUserName());
+      assertNull(c1.getPassword());
+
+      assertNotEquals(c, c1);
+
+      assertEquals(1, mcps.size());
+
+      ManagedConnectionPool mcp = mcps.values().iterator().next();
+      assertNotNull(mcp);
+
+      ConcurrentLinkedDeque<ConnectionListener> listeners = (ConcurrentLinkedDeque<ConnectionListener>) TestUtils
+            .extract(mcp, "listeners");
+      assertNotNull(listeners);
+
+      assertTrue(TestUtils.isCorrectCollectionSizeTenSecTimeout(listeners, 2));
+
+      defaultPool.flush();
+
+      assertTrue(TestUtils.isCorrectCollectionSizeTenSecTimeout(listeners, 2));
+
+      assertEquals(1, mcps.size());
+
+      assertTrue(TestUtils.isCorrectCollectionSizeTenSecTimeout(listeners, 2));
+      assertEquals(1, mcps.size());
+
+      c1.close();
+
+      c.close();
+
+      defaultPool.flush();
+
+      assertTrue(TestUtils.isCorrectCollectionSizeTenSecTimeout(listeners, 0));
+
+
+
+      assertEquals(0, mcps.size());
+
+      // We cheat and shutdown the pool to clear out mcps
+      defaultPool.shutdown();
+   }
+
+
+   /**
+    * Deployment test w/o Tx
+    *
+    * @throws Throwable In case of an error
+    */
+   @Test
+   public void testNoPrefillFlushAll() throws Throwable
+   {
+      assertNotNull(noTxNoPrefillCf);
+      assertNotNull(dr);
+
+      assertEquals(2, dr.getDeployments().size());
+
+      org.ironjacamar.core.api.deploymentrepository.Deployment d = dr
+            .findByJndi("java:/eis/UnifiedSecurityNoTxNoPrefillConnectionFactory");
+      assertNotNull(d);
+
+      org.ironjacamar.core.api.deploymentrepository.ConnectionFactory dcf = d.getConnectionFactories().iterator()
+            .next();
+      assertNotNull(dcf);
+
+      org.ironjacamar.core.api.deploymentrepository.Pool p = dcf.getPool();
+      assertNotNull(p);
+
+      DefaultPool defaultPool = (DefaultPool) p.getPool();
+
+      ConcurrentHashMap<Credential, ManagedConnectionPool> mcps =
+            (ConcurrentHashMap<Credential, ManagedConnectionPool>) TestUtils
+                  .extract(defaultPool, "pools");
+      assertNotNull(mcps);
+
+      assertEquals(0, mcps.size());
+
+
+      UnifiedSecurityConnection c = noTxNoPrefillCf.getConnection();
+      assertNotNull(c);
+      assertNull(c.getUserName());
+      assertNull(c.getPassword());
+
+      UnifiedSecurityConnection c1 = noTxNoPrefillCf.getConnection();
+      assertNotNull(c1);
+      assertNull(c1.getUserName());
+      assertNull(c1.getPassword());
+
+      assertNotEquals(c, c1);
+
+      assertEquals(1, mcps.size());
+
+      ManagedConnectionPool mcp = mcps.values().iterator().next();
+      assertNotNull(mcp);
+
+      ConcurrentLinkedDeque<ConnectionListener> listeners = (ConcurrentLinkedDeque<ConnectionListener>) TestUtils
+            .extract(mcp, "listeners");
+      assertNotNull(listeners);
+
+      assertTrue(TestUtils.isCorrectCollectionSizeTenSecTimeout(listeners, 2));
+
+      defaultPool.flush(FlushMode.ALL);
+
+      assertTrue(TestUtils.isCorrectCollectionSizeTenSecTimeout(listeners, 0));
+      mcps = (ConcurrentHashMap<Credential, ManagedConnectionPool>) TestUtils
+                  .extract(defaultPool, "pools");
+
+      assertEquals(0, mcps.size());
       c1.close();
 
       c.close();

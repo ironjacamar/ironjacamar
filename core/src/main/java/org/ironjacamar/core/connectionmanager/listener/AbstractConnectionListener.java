@@ -21,10 +21,11 @@
 
 package org.ironjacamar.core.connectionmanager.listener;
 
+import org.ironjacamar.common.api.metadata.common.FlushStrategy;
 import org.ironjacamar.core.connectionmanager.ConnectionManager;
 import org.ironjacamar.core.connectionmanager.Credential;
-
-import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.FREE;
+import org.ironjacamar.core.connectionmanager.pool.FlushMode;
+import org.ironjacamar.core.connectionmanager.pool.ManagedConnectionPool;
 
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -47,6 +48,9 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    /** The managed connection */
    private ManagedConnection mc;
 
+   /** The managed connection pool*/
+   private ManagedConnectionPool mcp;
+
    /** The credential */
    private Credential credential;
    
@@ -65,16 +69,24 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    /** Last toPool timestamp */
    private long toPool;
 
+   /** Flush strategy **/
+   private FlushStrategy flushStrategy;
+
    /**
     * Constructor
     * @param cm The connection manager
     * @param mc The managed connection
     * @param credential The credential
+    * @param mcp The ManagedConnectionPool
+    * @param flushStrategy The FlushStrategy
     */
-   public AbstractConnectionListener(ConnectionManager cm, ManagedConnection mc, Credential credential)
+   public AbstractConnectionListener(ConnectionManager cm, ManagedConnection mc, Credential credential,
+         ManagedConnectionPool mcp, FlushStrategy flushStrategy)
    {
       this.cm = cm;
       this.mc = mc;
+      this.mcp = mcp;
+      this.flushStrategy = flushStrategy;
       this.credential = credential;
       this.state = new AtomicInteger(FREE);
       this.connectionHandles = new CopyOnWriteArraySet<Object>();
@@ -111,7 +123,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    {
       this.state.set(state);
    }
-   
+
    /**
     * {@inheritDoc}
     */
@@ -154,6 +166,43 @@ public abstract class AbstractConnectionListener implements ConnectionListener
 
       if (connectionHandles.size() == 0 && !isEnlisted())
          cm.returnConnectionListener(this, true);
+
+      if (flushStrategy == FlushStrategy.FAILING_CONNECTION_ONLY)
+      {
+         mcp.prefill();
+      }
+      else if (flushStrategy == FlushStrategy.INVALID_IDLE_CONNECTIONS)
+      {
+         mcp.flush(FlushMode.INVALID);
+      }
+      else if (flushStrategy == FlushStrategy.IDLE_CONNECTIONS)
+      {
+         mcp.flush(FlushMode.IDLE);
+      }
+      else if (flushStrategy == FlushStrategy.GRACEFULLY)
+      {
+         mcp.flush(FlushMode.GRACEFULLY);
+      }
+      else if (flushStrategy == FlushStrategy.ENTIRE_POOL)
+      {
+         mcp.flush(FlushMode.ALL);
+      }
+      else if (flushStrategy == FlushStrategy.ALL_INVALID_IDLE_CONNECTIONS)
+      {
+         cm.getPool().flush(FlushMode.INVALID);
+      }
+      else if (flushStrategy == FlushStrategy.ALL_IDLE_CONNECTIONS)
+      {
+         cm.getPool().flush(FlushMode.IDLE);
+      }
+      else if (flushStrategy == FlushStrategy.ALL_GRACEFULLY)
+      {
+         cm.getPool().flush(FlushMode.GRACEFULLY);
+      }
+      else if (flushStrategy == FlushStrategy.ALL_CONNECTIONS)
+      {
+         cm.getPool().flush(FlushMode.ALL);
+      }
    }
 
    /**

@@ -74,7 +74,7 @@ public class StablePool extends AbstractPool
    /**
     * {@inheritDoc}
     */
-   public ConnectionListener createConnectionListener(Credential credential)
+   public ConnectionListener createConnectionListener(Credential credential, ManagedConnectionPool mcp)
       throws ResourceException
    {
       try
@@ -87,17 +87,18 @@ public class StablePool extends AbstractPool
 
             if (cm.getTransactionSupport() == TransactionSupportLevel.NoTransaction)
             {
-               return new NoTransactionConnectionListener(cm, mc, credential);
+               return new NoTransactionConnectionListener(cm, mc, credential, mcp, cm.getPool().getFlushStrategy());
             }
             else if (cm.getTransactionSupport() == TransactionSupportLevel.LocalTransaction)
             {
-               return new LocalTransactionConnectionListener(cm, mc, credential, getLocalXAResource(mc));
+               return new LocalTransactionConnectionListener(cm, mc, credential, getLocalXAResource(mc), mcp,
+                     cm.getPool().getFlushStrategy());
             }
             else
             {
                return new XATransactionConnectionListener(cm, mc, credential, getXAResource(mc),
-                                                          cm.getConnectionManagerConfiguration()
-                                                             .getXAResourceTimeout());
+                     cm.getConnectionManagerConfiguration().getXAResourceTimeout(), mcp,
+                     cm.getPool().getFlushStrategy());
             }
          }
       }

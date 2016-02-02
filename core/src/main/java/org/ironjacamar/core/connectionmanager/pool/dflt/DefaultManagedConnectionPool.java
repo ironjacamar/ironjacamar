@@ -26,6 +26,7 @@ import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
 import org.ironjacamar.core.connectionmanager.pool.AbstractManagedConnectionPool;
 import org.ironjacamar.core.connectionmanager.pool.ConnectionValidator;
 import org.ironjacamar.core.connectionmanager.pool.FillRequest;
+import org.ironjacamar.core.connectionmanager.pool.FlushMode;
 import org.ironjacamar.core.connectionmanager.pool.IdleConnectionRemover;
 import org.ironjacamar.core.connectionmanager.pool.PoolFiller;
 
@@ -36,6 +37,7 @@ import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.ValidatingManagedConnectionFactory;
 
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.DESTROY;
+import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.FLUSH;
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.FREE;
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.IN_USE;
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.TO_POOL;
@@ -47,15 +49,20 @@ import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener
  */
 public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
 {
-   /** The associated pool */
+   /**
+    * The associated pool
+    */
    private DefaultPool pool;
 
-   /** The connection listeners */
+   /**
+    * The connection listeners
+    */
    private ConcurrentLinkedDeque<ConnectionListener> listeners;
-   
+
    /**
     * Constructor
-    * @param pool The pool
+    *
+    * @param pool       The pool
     * @param credential The credential
     */
    public DefaultManagedConnectionPool(DefaultPool pool, Credential credential)
@@ -65,14 +72,14 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
       this.listeners = new ConcurrentLinkedDeque<ConnectionListener>();
 
       if (credential.equals(pool.getPrefillCredential()) &&
-          pool.getConfiguration().isPrefill() &&
-          pool.getConfiguration().getInitialSize() > 0)
+            pool.getConfiguration().isPrefill() &&
+            pool.getConfiguration().getInitialSize() > 0)
       {
          PoolFiller.fillPool(new FillRequest(this, pool.getConfiguration().getInitialSize()));
       }
 
-      if (pool.getConfiguration().isBackgroundValidation() &&
-          pool.getConfiguration().getBackgroundValidationMillis() > 0)
+      if (pool.getConfiguration().isBackgroundValidation()
+            && pool.getConfiguration().getBackgroundValidationMillis() > 0)
       {
          //Register validation
          ConnectionValidator.getInstance().registerPool(this, pool.getConfiguration().getBackgroundValidationMillis());
@@ -131,7 +138,7 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
          {
             try
             {
-               listeners.addFirst(pool.createConnectionListener(credential));
+               listeners.addFirst(pool.createConnectionListener(credential, this));
             }
             catch (ResourceException re)
             {
@@ -189,8 +196,6 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
       }
    }
 
-
-
    /**
     * {@inheritDoc}
     */
@@ -217,7 +222,7 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
          {
             // TODO
          }
-         
+
          try
          {
             pool.destroyConnectionListener(cl);
@@ -234,8 +239,7 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
    /**
     * Prefill
     */
-   @Override
-   public void prefill()
+   @Override public void prefill()
    {
       if (credential.equals(pool.getPrefillCredential()) &&
           pool.getConfiguration().isPrefill() &&
@@ -255,7 +259,6 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
    {
       if (size <= 0)
          return;
-
 
       //TODO: trace and debug here
 
@@ -280,7 +283,7 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
          // Create a connection to fill the pool
          try
          {
-            ConnectionListener cl = pool.createConnectionListener(credential);
+            ConnectionListener cl = pool.createConnectionListener(credential, this);
 
             //TODO:Trace
             boolean added = false;
@@ -318,7 +321,7 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
 
       if (mcf instanceof ValidatingManagedConnectionFactory)
       {
-         ValidatingManagedConnectionFactory vcf = (ValidatingManagedConnectionFactory)mcf;
+         ValidatingManagedConnectionFactory vcf = (ValidatingManagedConnectionFactory) mcf;
          long timestamp = System.currentTimeMillis();
 
          for (ConnectionListener cl : listeners)
@@ -372,6 +375,7 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
                   destroyAndRemoveConnectionListener(cl, listeners);
                }
             }
+
          }
       }
 
@@ -399,5 +403,65 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
          if (emptyManagedConnectionPool && listeners.size() == 0)
             pool.emptyManagedConnectionPool(this);
       }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isEmpty()
+   {
+      return listeners.isEmpty();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void flush(FlushMode mode)
+   {
+
+      // Destroy connections in the pool
+      for (ConnectionListener cl : listeners)
+      {
+         switch (mode)
+         {
+            case ALL:
+            {
+               destroyAndRemoveConnectionListener(cl, listeners);
+               break;
+            }
+
+            case INVALID:
+            {
+               if (cl.changeState(FREE, VALIDATION))
+               {
+                  validateConnectionListener(listeners, cl, FREE);
+               }
+               break;
+            }
+            case IDLE:
+            {
+               if (cl.changeState(FREE, FLUSH))
+               {
+                  destroyAndRemoveConnectionListener(cl, listeners);
+               }
+               break;
+            }
+            case GRACEFULLY:
+            {
+               if (cl.changeState(FREE, FLUSH))
+               {
+                  destroyAndRemoveConnectionListener(cl, listeners);
+               }
+               else if (cl.getState() == IN_USE || cl.getState() == TO_POOL || cl.getState() == VALIDATION)
+               {
+                  cl.setState(DESTROY);
+               }
+               break;
+            }
+         }
+      }
+
+      // Trigger prefill
+      prefill();
    }
 }

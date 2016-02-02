@@ -776,6 +776,9 @@ public abstract class AbstractResourceAdapterDeployer
 
          if (p.isPrefill() != null)
             pc.setPrefill(p.isPrefill().booleanValue());
+         if (p.getFlushStrategy() != null)
+            pc.setFlushStrategy(p.getFlushStrategy());
+
       }
    }
 

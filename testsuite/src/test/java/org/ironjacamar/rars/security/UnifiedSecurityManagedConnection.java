@@ -84,6 +84,8 @@ public class UnifiedSecurityManagedConnection implements ManagedConnection, Loca
 
    private final ConnectionRequestInfo cri;
 
+   private boolean invalid;
+
    /**
     * Default constructor
     *
@@ -443,5 +445,22 @@ public class UnifiedSecurityManagedConnection implements ManagedConnection, Loca
       {
          cel.connectionErrorOccurred(event);
       }
+   }
+
+   /**
+    * check if connection is invalid
+    * @return true if invalid
+    */
+   public boolean isInvalid()
+   {
+      return invalid;
+   }
+
+   /**
+    * invalidate connection
+    */
+   void invalidate()
+   {
+      this.invalid = Boolean.TRUE;
    }
 }
