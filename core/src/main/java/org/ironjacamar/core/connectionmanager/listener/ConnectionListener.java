@@ -52,6 +52,9 @@ public interface ConnectionListener extends org.ironjacamar.core.api.connectionm
    /** VALIDATION state */
    public int VALIDATION = 6;
 
+   /** ZOMBIE state */
+   public int ZOMBIE = 7;
+
    /**
     * Change the state of the connection listener
     * @param currentState The current state

@@ -40,6 +40,7 @@ import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.IN_USE;
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.TO_POOL;
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.VALIDATION;
+import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.ZOMBIE;
 
 /**
  * The default ManagedConnectionPool
@@ -113,9 +114,15 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
                }
                else
                {
-                  cl.changeState(VALIDATION, IN_USE);
-                  cl.fromPool();
-                  return cl;
+                  if (cl.changeState(VALIDATION, IN_USE))
+                  {
+                     cl.fromPool();
+                     return cl;
+                  }
+                  else
+                  {
+                     destroyAndRemoveConnectionListener(cl, listeners);
+                  }
                }
             }
          }
@@ -154,7 +161,8 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
             {
                cl.getManagedConnection().cleanup();
                cl.toPool();
-               cl.changeState(TO_POOL, FREE);
+               if (!cl.changeState(TO_POOL, FREE))
+                  kill = true;
             }
             catch (ResourceException re)
             {
@@ -169,16 +177,13 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
 
       if (kill)
       {
-         if (cl.getState() == DESTROY || cl.changeState(IN_USE, DESTROY) || cl.changeState(TO_POOL, DESTROY))
+         try
          {
-            try
-            {
-               pool.destroyConnectionListener(cl);
-            }
-            finally
-            {
-               listeners.remove(cl);
-            }
+            pool.destroyConnectionListener(cl);
+         }
+         finally
+         {
+            listeners.remove(cl);
          }
       }
    }
@@ -219,6 +224,7 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
          catch (ResourceException re)
          {
             // TODO
+            cl.setState(ZOMBIE);
          }
       }
       listeners.clear();
@@ -326,7 +332,10 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
                }
                else
                {
-                  cl.changeState(VALIDATION, FREE);
+                  if (!cl.changeState(VALIDATION, FREE))
+                  {
+                     destroyAndRemoveConnectionListener(cl, listeners);
+                  }
                }
             }
          }
@@ -353,22 +362,14 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
          {
             if (cl.getToPool() < timeout)
             {
-               try
-               {
-                  pool.destroyConnectionListener(cl);
-               }
-               catch (ResourceException e)
-               {
-                  // TODO:
-               }
-               finally
-               {
-                  listeners.remove(cl);
-               }
+               destroyAndRemoveConnectionListener(cl, listeners);
             }
             else
             {
-               cl.changeState(VALIDATION, FREE);
+               if (!cl.changeState(VALIDATION, FREE))
+               {
+                  destroyAndRemoveConnectionListener(cl, listeners);
+               }
             }
          }
       }

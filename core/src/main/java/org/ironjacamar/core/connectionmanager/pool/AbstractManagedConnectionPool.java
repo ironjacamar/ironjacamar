@@ -25,6 +25,7 @@ import org.ironjacamar.core.connectionmanager.Credential;
 import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
 
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.VALIDATION;
+import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.ZOMBIE;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -80,49 +81,61 @@ public abstract class AbstractManagedConnectionPool implements ManagedConnection
 
             if (candidateSet != null && candidateSet.size() > 0)
             {
-               try
-               {
-                  pool.destroyConnectionListener(cl);
-               }
-               catch (ResourceException e)
-               {
-                  // TODO:
-               }
-               finally
-               {
-                  listeners.remove(cl);
-               }
+               destroyAndRemoveConnectionListener(cl, listeners);
             }
             else
             {
                cl.validated();
-               cl.changeState(VALIDATION, newState);
-               return cl;
+               if (cl.changeState(VALIDATION, newState))
+               {
+                  return cl;
+               }
+               else
+               {
+                  destroyAndRemoveConnectionListener(cl, listeners);
+               }
             }
          }
          catch (ResourceException re)
          {
-            try
-            {
-               pool.destroyConnectionListener(cl);
-            }
-            catch (ResourceException e)
-            {
-               // TODO:
-            }
-            finally
-            {
-               listeners.remove(cl);
-            }
+            destroyAndRemoveConnectionListener(cl, listeners);
          }
       }
       else
       {
          // TODO: log
-         cl.changeState(VALIDATION, newState);
-         return cl;
+         if (cl.changeState(VALIDATION, newState))
+         {
+            return cl;
+         }
+         else
+         {
+            destroyAndRemoveConnectionListener(cl, listeners);
+         }
       }
 
       return null;
+   }
+
+   /**
+    * Destroy and remove a connection listener
+    * @param cl The connection listener
+    * @param listeners The listeners
+    */
+   protected void destroyAndRemoveConnectionListener(ConnectionListener cl, Collection<ConnectionListener> listeners)
+   {
+      try
+      {
+         pool.destroyConnectionListener(cl);
+      }
+      catch (ResourceException e)
+      {
+         // TODO:
+         cl.setState(ZOMBIE);
+      }
+      finally
+      {
+         listeners.remove(cl);
+      }
    }
 }
