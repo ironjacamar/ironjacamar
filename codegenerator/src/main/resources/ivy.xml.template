@@ -1,0 +1,32 @@
+<ivy-module version="2.2" 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
+
+  <info organisation="${ivy.package.name}" 
+        module="${ivy.module.name}"
+        revision="${version}">
+    <license name="lgpl" url="TODO"/>
+    <repository name="jboss" url="TODO"/>
+  </info>
+
+  <configurations defaultconfmapping="compile->default;test->default">
+    <conf name="compile" transitive="false"/>
+    <conf name="test" extends="compile" transitive="true"/>
+  </configurations>
+
+  <dependencies>
+    <dependency org="org.jboss.ironjacamar" name="ironjacamar-spec-api" rev="${version.ironjacamar}" conf="compile"/>
+    <dependency org="org.jboss.ironjacamar" name="ironjacamar-common-api" rev="${version.ironjacamar}" conf="test"/>
+    <dependency org="org.jboss.ironjacamar" name="ironjacamar-common-impl" rev="${version.ironjacamar}" conf="test"/>
+    <dependency org="org.jboss.ironjacamar" name="ironjacamar-common-spi" rev="${version.ironjacamar}" conf="test"/>
+    <dependency org="org.jboss.ironjacamar" name="ironjacamar-core-api" rev="${version.ironjacamar}" conf="test"/>
+    <dependency org="org.jboss.ironjacamar" name="ironjacamar-core-impl" rev="${version.ironjacamar}" conf="test"/>
+    <dependency org="org.jboss.ironjacamar" name="ironjacamar-depchain" rev="${version.ironjacamar}" conf="test"/>
+    <dependency org="org.jboss.ironjacamar" name="ironjacamar-deployers-common" rev="${version.ironjacamar}" conf="test"/>
+    <dependency org="org.jboss.ironjacamar" name="ironjacamar-deployers-fungal" rev="${version.ironjacamar}" conf="test"/>
+    <dependency org="org.jboss.ironjacamar" name="ironjacamar-embedded" rev="${version.ironjacamar}" conf="test"/>
+    <dependency org="org.jboss.ironjacamar" name="ironjacamar-validator" rev="${version.ironjacamar}" conf="test"/>
+    <dependency org="junit" name="junit" rev="${version.junit}" conf="test"/>
+  </dependencies>
+
+</ivy-module>

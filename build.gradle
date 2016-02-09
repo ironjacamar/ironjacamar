@@ -18,6 +18,7 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
+import org.apache.tools.ant.filters.*;
 
 defaultTasks 'build'
 
@@ -111,7 +112,6 @@ allprojects {
   }
 }
 
-
 buildscript {
   repositories {
     mavenCentral()
@@ -184,7 +184,15 @@ subprojects { subProject ->
       String line -> line.replaceAll("@VERSION@", rootProject.version)
     }
   }
-  
+
+  afterEvaluate {
+    configure(tasks.processResources) {
+      filter(ReplaceTokens,
+              tokens: [IJ_VERSION: rootProject.version])
+    }
+  }
+
+
   task compile
   compile.dependsOn compileJava, processResources, compileTestJava, processTestResources
 
@@ -291,6 +299,12 @@ def distributionSJC = copySpec {
   include '**/*'
 }
 
+def distributionCodeGen = copySpec {
+  from rootProject.file('codegenerator/src/dist/resources/')
+  into 'doc/codegenerator'
+  include '**/*'
+}
+
 def distributionSchemas = copySpec {
   from rootProject.file('common/src/main/resources/')
   into 'doc'
@@ -321,7 +335,7 @@ def distributionConsole = copySpec {
 distributions {
   main {
     contents {
-      with distributionSJC, distributionSchemas, distributionLib, distributionDependencies, distributionJetty, distributionConsole
+      with distributionSJC, distributionSchemas, distributionLib, distributionDependencies, distributionJetty, distributionConsole, distributionCodeGen
     }
   }
 }

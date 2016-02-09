@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<definition>
+
+   <version>1.6</version>
+   <package>org.jca</package>
+   <annotation>true</annotation>
+
+   <SupportOutbound>true</SupportOutbound>
+   <SupportInbound>true</SupportInbound>
+
+   <UseResourceAdapter>true</UseResourceAdapter>
+   <ResourceAdapter>AcmeResourceAdapter</ResourceAdapter>
+   <RaConfigProp>
+      <name>p1</name>
+      <type>String</type>
+      <value>hello</value>
+   </RaConfigProp>
+   <RaAssociation/>
+   <ImplRaAssociation>true</ImplRaAssociation>
+   
+   <ManagedConnectionFactory>AcmeManagedConnectionFactory</ManagedConnectionFactory>
+   <McfConfigProp>
+      <name>p2</name>
+      <type>Integer</type>
+      <value>13</value>
+   </McfConfigProp>
+   <ManagedConnection>AcmeManagedConnection</ManagedConnection>
+
+   <Transaction>LocalTransaction</Transaction>
+   <SupportReauthen>false</SupportReauthen>
+   <SecurityPermission><permissionSpec>MyPermissionSpec</permissionSpec></SecurityPermission>
+   <AuthenMechanism>
+      <authMechanism>BasicPassword</authMechanism>
+      <credentialInterface>PasswordCredential</credentialInterface>
+   </AuthenMechanism>
+   <AuthenMechanism>
+      <authMechanism>BasicPassword</authMechanism>
+      <credentialInterface>GenericCredential</credentialInterface>
+   </AuthenMechanism>
+
+   <UseCciConnection>false</UseCciConnection>
+   <ConnectionFactoryInterface>AcmeConnectionFactoryInterface</ConnectionFactoryInterface>
+   <ConnectionFactoryImpl>AcmeConnectionFactoryImpl</ConnectionFactoryImpl>
+   <ConnectionInterface>AcmeConnectionInterface</ConnectionInterface>
+   <ConnectionImpl>AcmeConnectionImpl</ConnectionImpl>
+
+   <DefineMethod>true</DefineMethod>
+   <Method>
+      <MethodName>callMe</MethodName>
+      <ReturnType>void</ReturnType>
+      <params>
+         <name>m1</name>
+         <type>Integer</type>
+      </params>
+      <params>
+         <name>m2</name>
+         <type>String</type>
+      </params>
+      <ExceptionType>Exception</ExceptionType>
+   </Method>
+
+
+   <MessageListener>AcmeMessageListener</MessageListener>
+   <ActivationSpec>AcmeActivationSpec</ActivationSpec>
+   <AsConfigProp>
+      <name>p3</name>
+      <type>Float</type>
+      <value>3.14</value>
+      <required>3.14</required>
+   </AsConfigProp>
+   <Activation>AcmeActivation</Activation>
+
+   <build>ant</build>
+</definition>
