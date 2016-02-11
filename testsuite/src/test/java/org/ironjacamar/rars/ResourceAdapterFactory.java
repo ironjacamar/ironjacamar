@@ -35,6 +35,16 @@ import org.ironjacamar.rars.security.UnifiedSecurityConnectionFactoryImpl;
 import org.ironjacamar.rars.security.UnifiedSecurityConnectionImpl;
 import org.ironjacamar.rars.security.UnifiedSecurityManagedConnectionFactory;
 import org.ironjacamar.rars.security.UnifiedSecurityResourceAdapter;
+import org.ironjacamar.rars.test.TestAdminObject;
+import org.ironjacamar.rars.test.TestAdminObjectImpl;
+import org.ironjacamar.rars.test.TestConnection;
+import org.ironjacamar.rars.test.TestConnectionFactory;
+import org.ironjacamar.rars.test.TestConnectionFactoryImpl;
+import org.ironjacamar.rars.test.TestConnectionImpl;
+import org.ironjacamar.rars.test.TestManagedConnectionFactory;
+import org.ironjacamar.rars.test.TestResourceAdapter;
+import org.ironjacamar.rars.test.inflow.TestActivationSpec;
+import org.ironjacamar.rars.test.inflow.TestMessageListener;
 import org.ironjacamar.rars.txlog.TxLogConnection;
 import org.ironjacamar.rars.txlog.TxLogConnectionFactory;
 import org.ironjacamar.rars.txlog.TxLogConnectionFactoryImpl;
@@ -391,6 +401,88 @@ public class ResourceAdapterFactory
       }
 
 
+      return dashRaXml;
+   }
+
+   /**
+    * Create the test.rar
+    *
+    * @return The resource adapter archive
+    */
+   public static ResourceAdapterArchive createTestRar()
+   {
+      org.jboss.shrinkwrap.descriptor.api.connector15.ConnectorDescriptor raXml = Descriptors
+            .create(org.jboss.shrinkwrap.descriptor.api.connector15.ConnectorDescriptor.class, "ra.xml").version("1.5");
+
+      org.jboss.shrinkwrap.descriptor.api.connector15.ResourceadapterType rt = raXml.getOrCreateResourceadapter()
+         .resourceadapterClass(TestResourceAdapter.class.getName());
+
+      org.jboss.shrinkwrap.descriptor.api.connector15.OutboundResourceadapterType ort = rt
+         .getOrCreateOutboundResourceadapter().transactionSupport("NoTransaction").reauthenticationSupport(false);
+
+      org.jboss.shrinkwrap.descriptor.api.connector15.ConnectionDefinitionType cdt = ort.createConnectionDefinition()
+         .managedconnectionfactoryClass(TestManagedConnectionFactory.class.getName())
+         .connectionfactoryInterface(TestConnectionFactory.class.getName())
+         .connectionfactoryImplClass(TestConnectionFactoryImpl.class.getName())
+         .connectionInterface(TestConnection.class.getName())
+         .connectionImplClass(TestConnectionImpl.class.getName());
+
+      cdt.createConfigProperty().configPropertyName("FailureCount").configPropertyType(Integer.class.getName())
+         .configPropertyValue("0");
+
+      rt.createAdminobject().adminobjectInterface(TestAdminObject.class.getName())
+        .adminobjectClass(TestAdminObjectImpl.class.getName());
+
+      rt.getOrCreateInboundResourceadapter().getOrCreateMessageadapter().getOrCreateMessagelistener()
+        .messagelistenerType(TestMessageListener.class.getName())
+        .getOrCreateActivationspec().activationspecClass(TestActivationSpec.class.getName());
+
+      ResourceAdapterArchive raa = ShrinkWrap.create(ResourceAdapterArchive.class, "test.rar");
+
+      JavaArchive ja = ShrinkWrap.create(JavaArchive.class, "test.jar");
+      ja.addPackages(true, PerfConnection.class.getPackage());
+
+      raa.addAsLibrary(ja);
+      raa.addAsManifestResource(new StringAsset(raXml.exportAsString()), "ra.xml");
+
+      return raa;
+   }
+
+   /**
+    * Create the test.rar deployment
+    *
+    * @param validation True is foreground, false is background
+    * @param failureCount The failure count
+    * @return The resource adapter descriptor
+    */
+   public static ResourceAdaptersDescriptor createTestDeployment(boolean validation, int failureCount)
+   {
+      ResourceAdaptersDescriptor dashRaXml = Descriptors.create(ResourceAdaptersDescriptor.class, "test-ra.xml");
+
+      ResourceAdapterType dashRaXmlRt = dashRaXml.createResourceAdapter().archive("test.rar");
+
+      ConnectionDefinitionsType dashRaXmlCdst = dashRaXmlRt.getOrCreateConnectionDefinitions();
+      org.ironjacamar.embedded.dsl.resourceadapters20.api.ConnectionDefinitionType dashRaXmlCdt = dashRaXmlCdst
+         .createConnectionDefinition().className(TestManagedConnectionFactory.class.getName())
+         .jndiName("java:/eis/TestConnectionFactory").id("TestConnectionFactory");
+
+      dashRaXmlCdt.createConfigProperty().name("FailureCount").text(Integer.toString(failureCount));
+
+      org.ironjacamar.embedded.dsl.resourceadapters20.api.ValidationType dashRaXmlVt =
+         dashRaXmlCdt.getOrCreateValidation();
+
+      if (validation)
+      {
+         dashRaXmlVt.validateOnMatch(Boolean.TRUE);
+      }
+      else
+      {
+         dashRaXmlVt.backgroundValidation(Boolean.TRUE).backgroundValidationMillis(0);
+      }
+
+      dashRaXmlRt.getOrCreateAdminObjects().createAdminObject().className(TestAdminObjectImpl.class.getName())
+         .jndiName("java:/eis/TestAdminObject");
+      
       return dashRaXml;
    }
 }

@@ -51,6 +51,7 @@ import org.ironjacamar.core.util.Injection;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.ResourceAdapterAssociation;
@@ -215,7 +216,9 @@ public abstract class AbstractResourceAdapterDeployer
 
          if (connector.getResourceadapter().getResourceadapterClass() != null)
             createResourceAdapter(builder, connector.getResourceadapter().getResourceadapterClass(),
-                                  connector.getResourceadapter().getConfigProperties(), transactionSupport);
+                                  connector.getResourceadapter().getConfigProperties(),
+                                  activation.getConfigProperties(),
+                                  transactionSupport);
 
          if (activation.getConnectionDefinitions() != null)
          {
@@ -257,6 +260,7 @@ public abstract class AbstractResourceAdapterDeployer
     * @param builder The deployment builder
     * @param raClz The resource adapter class
     * @param configProperties The config properties
+    * @param overrides The config properties overrides
     * @param transactionSupport The transaction support level
     * @throws DeployException Thrown if the resource adapter cant be created
     */
@@ -264,6 +268,7 @@ public abstract class AbstractResourceAdapterDeployer
       createResourceAdapter(DeploymentBuilder builder,
                             String raClz,
                             Collection<org.ironjacamar.common.api.metadata.spec.ConfigProperty> configProperties,
+                            Map<String, String> overrides,
                             TransactionSupportEnum transactionSupport)
       throws DeployException
    {
@@ -274,7 +279,7 @@ public abstract class AbstractResourceAdapterDeployer
             (javax.resource.spi.ResourceAdapter)clz.newInstance();
 
          Collection<org.ironjacamar.core.api.deploymentrepository.ConfigProperty> dcps =
-            injectConfigProperties(resourceAdapter, configProperties, builder.getClassLoader());
+            injectConfigProperties(resourceAdapter, configProperties, overrides, builder.getClassLoader());
 
          org.ironjacamar.core.spi.statistics.StatisticsPlugin statisticsPlugin = null;
          if (resourceAdapter instanceof org.ironjacamar.core.spi.statistics.Statistics)
@@ -318,7 +323,7 @@ public abstract class AbstractResourceAdapterDeployer
             (javax.resource.spi.ManagedConnectionFactory)clz.newInstance();
 
          Collection<org.ironjacamar.core.api.deploymentrepository.ConfigProperty> dcps =
-            injectConfigProperties(mcf, findConfigProperties(mcfClass, connector),
+            injectConfigProperties(mcf, findConfigProperties(mcfClass, connector), cd.getConfigProperties(),
                                    builder.getClassLoader());
 
          ConnectionManagerConfiguration cmc = new ConnectionManagerConfiguration();
@@ -394,7 +399,7 @@ public abstract class AbstractResourceAdapterDeployer
          Object adminObject = clz.newInstance();
 
          Collection<org.ironjacamar.core.api.deploymentrepository.ConfigProperty> dcps =
-            injectConfigProperties(adminObject, findConfigProperties(aoClass, connector),
+            injectConfigProperties(adminObject, findConfigProperties(aoClass, connector), ao.getConfigProperties(),
                                    builder.getClassLoader());
          
          org.ironjacamar.core.spi.statistics.StatisticsPlugin statisticsPlugin = null;
@@ -472,6 +477,7 @@ public abstract class AbstractResourceAdapterDeployer
     * Inject the config properties into the object
     * @param o The object
     * @param configProperties The config properties
+    * @param overrides The overrides
     * @param classLoader The class loader
     * @return The deployment data
     * @exception Throwable Thrown if an error occurs
@@ -479,6 +485,7 @@ public abstract class AbstractResourceAdapterDeployer
    private Collection<org.ironjacamar.core.api.deploymentrepository.ConfigProperty>
       injectConfigProperties(Object o,
                              Collection<org.ironjacamar.common.api.metadata.spec.ConfigProperty> configProperties,
+                             Map<String, String> overrides,
                              ClassLoader classLoader)
       throws Throwable
    {
@@ -492,20 +499,23 @@ public abstract class AbstractResourceAdapterDeployer
          {
             String name = cp.getConfigPropertyName().getValue();
             Class<?> type = Class.forName(cp.getConfigPropertyType().getValue(), true, classLoader);
-            Object value = cp.isValueSet() ? cp.getConfigPropertyValue().getValue() : null;
             boolean readOnly = cp.getConfigPropertySupportsDynamicUpdates() != null ?
                cp.getConfigPropertySupportsDynamicUpdates().booleanValue() : true;
             boolean confidential = cp.getConfigPropertyConfidential() != null ?
                cp.getConfigPropertyConfidential().booleanValue() : false;
             boolean declared = true;
 
-            if (cp.isValueSet())
+            Object value = cp.isValueSet() ? cp.getConfigPropertyValue().getValue() : null;
+            if (overrides.containsKey(cp.getConfigPropertyName().getValue()))
+               value = overrides.get(cp.getConfigPropertyName().getValue());
+
+            if (value != null)
             {
                try
                {
                   injector.inject(o,
                                   cp.getConfigPropertyName().getValue(),
-                                  cp.getConfigPropertyValue().getValue(),
+                                  value,
                                   cp.getConfigPropertyType().getValue());
                }
                catch (Throwable t)
@@ -516,7 +526,7 @@ public abstract class AbstractResourceAdapterDeployer
                   {
                      injector.inject(o,
                                      cp.getConfigPropertyName().getValue(),
-                                     cp.getConfigPropertyValue().getValue(),
+                                     value,
                                      type.getName());
                   }
                   else

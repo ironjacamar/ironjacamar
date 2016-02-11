@@ -357,7 +357,7 @@ public class StableManagedConnectionPool extends AbstractManagedConnectionPool
          {
             if (cl.changeState(FREE, VALIDATION))
             {
-               if (cl.getValidated() + pool.getConfiguration().getBackgroundValidationMillis() < timestamp)
+               if (cl.getValidated() + pool.getConfiguration().getBackgroundValidationMillis() <= timestamp)
                {
                   ConnectionListener result = validateConnectionListener(listeners, cl, FREE);
                   if (result == null)
