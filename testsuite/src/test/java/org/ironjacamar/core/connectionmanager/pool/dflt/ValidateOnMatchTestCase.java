@@ -72,7 +72,7 @@ public class ValidateOnMatchTestCase
    @Deployment(order = 2)
    private static ResourceAdaptersDescriptor createActivation() throws Throwable
    {
-      return ResourceAdapterFactory.createTestDeployment(true, 1);
+      return ResourceAdapterFactory.createTestDeployment(0, Boolean.TRUE, 1);
    }
    
    /**
@@ -89,7 +89,7 @@ public class ValidateOnMatchTestCase
       assertNotNull(c);
 
       // Decremented in first pass
-      assertEquals(0, c.getFailureCount());
+      assertEquals(0, c.getInvalidConnectionFailureCount());
       
       c.close();
    }

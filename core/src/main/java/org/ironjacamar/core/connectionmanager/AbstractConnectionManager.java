@@ -31,6 +31,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnectionFactory;
+import javax.resource.spi.RetryableException;
 
 /**
  * The base class for all connection manager implementations
@@ -209,6 +210,76 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    protected org.ironjacamar.core.connectionmanager.listener.ConnectionListener getConnectionListener(
          Credential credential) throws ResourceException
    {
-      return pool.getConnectionListener(credential);
+      Exception failure = null;
+
+      // First attempt
+      boolean isInterrupted = Thread.interrupted();
+      boolean innerIsInterrupted = false;
+      try
+      {
+         return pool.getConnectionListener(credential);
+      }
+      catch (ResourceException e)
+      {
+         failure = e;
+
+         // Retry?
+         if (cmConfiguration.getAllocationRetry() != 0 || e instanceof RetryableException)
+         {
+            int to = cmConfiguration.getAllocationRetry();
+            long sleep = cmConfiguration.getAllocationRetryWaitMillis();
+
+            if (to == 0 && e instanceof RetryableException)
+               to = 1;
+
+            for (int i = 0; i < to; i++)
+            {
+               if (shutdown.get())
+               {
+                  throw new ResourceException();
+               }
+
+               if (Thread.currentThread().isInterrupted())
+               {
+                  Thread.interrupted();
+                  innerIsInterrupted = true;
+               }
+
+               try
+               {
+                  if (sleep > 0)
+                     Thread.sleep(sleep);
+
+                  return pool.getConnectionListener(credential);
+               }
+               catch (ResourceException re)
+               {
+                  failure = re;
+               }
+               catch (InterruptedException ie)
+               {
+                  failure = ie;
+                  innerIsInterrupted = true;
+               }
+            }
+         }
+      }
+      catch (Exception e)
+      {
+         failure = e;
+      }
+      finally
+      {
+         if (isInterrupted || innerIsInterrupted)
+         {
+            Thread.currentThread().interrupt();
+      
+            if (innerIsInterrupted)
+               throw new ResourceException(failure);
+         }
+      }
+
+      // If we get here all retries failed, throw the lastest failure
+      throw new ResourceException(failure);
    }
 }

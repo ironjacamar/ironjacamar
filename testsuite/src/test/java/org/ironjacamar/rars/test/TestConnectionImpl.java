@@ -45,10 +45,21 @@ public class TestConnectionImpl implements TestConnection
    /**
     * {@inheritDoc}
     */
-   public int getFailureCount()
+   public int getCreateFailureCount()
    {
       if (mc != null)
-         return mc.getFailureCount();
+         return mc.getCreateFailureCount();
+
+      return -1;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public int getInvalidConnectionFailureCount()
+   {
+      if (mc != null)
+         return mc.getInvalidConnectionFailureCount();
 
       return -1;
    }

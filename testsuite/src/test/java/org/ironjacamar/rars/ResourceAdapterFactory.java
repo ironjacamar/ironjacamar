@@ -427,8 +427,11 @@ public class ResourceAdapterFactory
          .connectionInterface(TestConnection.class.getName())
          .connectionImplClass(TestConnectionImpl.class.getName());
 
-      cdt.createConfigProperty().configPropertyName("FailureCount").configPropertyType(Integer.class.getName())
-         .configPropertyValue("0");
+      cdt.createConfigProperty().configPropertyName("CreateFailureCount")
+         .configPropertyType(Integer.class.getName()).configPropertyValue("0");
+
+      cdt.createConfigProperty().configPropertyName("InvalidConnectionFailureCount")
+         .configPropertyType(Integer.class.getName()).configPropertyValue("0");
 
       rt.createAdminobject().adminobjectInterface(TestAdminObject.class.getName())
         .adminobjectClass(TestAdminObjectImpl.class.getName());
@@ -451,11 +454,13 @@ public class ResourceAdapterFactory
    /**
     * Create the test.rar deployment
     *
-    * @param validation True is foreground, false is background
-    * @param failureCount The failure count
+    * @param allocationRetry The number of allocation retries
+    * @param validation True is foreground, false is background, null is none
+    * @param invalidConnectionFailureCount The invalid connection failure count
     * @return The resource adapter descriptor
     */
-   public static ResourceAdaptersDescriptor createTestDeployment(boolean validation, int failureCount)
+   public static ResourceAdaptersDescriptor createTestDeployment(int allocationRetry,
+                                                                 Boolean validation, int invalidConnectionFailureCount)
    {
       ResourceAdaptersDescriptor dashRaXml = Descriptors.create(ResourceAdaptersDescriptor.class, "test-ra.xml");
 
@@ -466,18 +471,31 @@ public class ResourceAdapterFactory
          .createConnectionDefinition().className(TestManagedConnectionFactory.class.getName())
          .jndiName("java:/eis/TestConnectionFactory").id("TestConnectionFactory");
 
-      dashRaXmlCdt.createConfigProperty().name("FailureCount").text(Integer.toString(failureCount));
-
-      org.ironjacamar.embedded.dsl.resourceadapters20.api.ValidationType dashRaXmlVt =
-         dashRaXmlCdt.getOrCreateValidation();
-
-      if (validation)
+      if (allocationRetry > 0)
       {
-         dashRaXmlVt.validateOnMatch(Boolean.TRUE);
+         dashRaXmlCdt.createConfigProperty().name("CreateFailureCount")
+            .text(Integer.toString(allocationRetry));
+
+         dashRaXmlCdt.getOrCreateTimeout().allocationRetry(Integer.valueOf(allocationRetry))
+            .allocationRetryWaitMillis(100);
       }
-      else
+      
+      if (validation != null)
       {
-         dashRaXmlVt.backgroundValidation(Boolean.TRUE).backgroundValidationMillis(0);
+         dashRaXmlCdt.createConfigProperty().name("InvalidConnectionFailureCount")
+            .text(Integer.toString(invalidConnectionFailureCount));
+
+         org.ironjacamar.embedded.dsl.resourceadapters20.api.ValidationType dashRaXmlVt =
+            dashRaXmlCdt.getOrCreateValidation();
+
+         if (validation)
+         {
+            dashRaXmlVt.validateOnMatch(Boolean.TRUE);
+         }
+         else
+         {
+            dashRaXmlVt.backgroundValidation(Boolean.TRUE).backgroundValidationMillis(0);
+         }
       }
 
       dashRaXmlRt.getOrCreateAdminObjects().createAdminObject().className(TestAdminObjectImpl.class.getName())

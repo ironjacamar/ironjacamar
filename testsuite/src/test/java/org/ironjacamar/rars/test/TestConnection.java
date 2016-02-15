@@ -26,10 +26,16 @@ package org.ironjacamar.rars.test;
 public interface TestConnection
 {
    /**
-    * Get failure count
+    * Get create failure count
     * @return The value
     */
-   public int getFailureCount();
+   public int getCreateFailureCount();
+
+   /**
+    * Get invalid connection failure count
+    * @return The value
+    */
+   public int getInvalidConnectionFailureCount();
 
    /**
     * Close

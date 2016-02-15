@@ -191,11 +191,20 @@ public class TestManagedConnection implements ManagedConnection
    }
 
    /**
-    * Get failure count
+    * Get create failure count
     * @return The value
     */
-   int getFailureCount()
+   int getCreateFailureCount()
    {
-      return mcf.getFailureCount().intValue();
+      return mcf.getCreateFailureCount().intValue();
+   }
+
+   /**
+    * Get invalid connection failure count
+    * @return The value
+    */
+   int getInvalidConnectionFailureCount()
+   {
+      return mcf.getInvalidConnectionFailureCount().intValue();
    }
 }

@@ -145,6 +145,7 @@ public class StableManagedConnectionPool extends AbstractManagedConnectionPool
             }
             catch (ResourceException re)
             {
+               throw re;
             }
             finally
             {

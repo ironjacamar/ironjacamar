@@ -32,6 +32,7 @@ import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.ResourceAdapterAssociation;
+import javax.resource.spi.RetryableUnavailableException;
 import javax.resource.spi.ValidatingManagedConnectionFactory;
 
 import javax.security.auth.Subject;
@@ -52,33 +53,55 @@ public class TestManagedConnectionFactory implements ManagedConnectionFactory,
    /** The logwriter */
    private PrintWriter logwriter;
 
-   /** failureCount */
-   private Integer failureCount;
+   /** Create failure count */
+   private Integer createFailureCount;
+
+   /** Invalid connection failure count */
+   private Integer invalidConnectionFailureCount;
 
    /**
     * Default constructor
     */
    public TestManagedConnectionFactory()
    {
-      this.failureCount = Integer.valueOf(0);
+      this.createFailureCount = Integer.valueOf(0);
+      this.invalidConnectionFailureCount = Integer.valueOf(0);
    }
 
    /** 
-    * Set failureCount
-    * @param failureCount The value
+    * Set create failure count
+    * @param v The value
     */
-   public void setFailureCount(Integer failureCount)
+   public void setCreateFailureCount(Integer v)
    {
-      this.failureCount = failureCount;
+      this.createFailureCount = v;
    }
 
    /** 
-    * Get failureCount
+    * Get create failure count
     * @return The value
     */
-   public Integer getFailureCount()
+   public Integer getCreateFailureCount()
    {
-      return failureCount;
+      return createFailureCount;
+   }
+
+   /** 
+    * Set invalid connection failure count
+    * @param v The value
+    */
+   public void setInvalidConnectionFailureCount(Integer v)
+   {
+      this.invalidConnectionFailureCount = v;
+   }
+
+   /** 
+    * Get invalid connection failure count
+    * @return The value
+    */
+   public Integer getInvalidConnectionFailureCount()
+   {
+      return invalidConnectionFailureCount;
    }
 
    /**
@@ -103,6 +126,12 @@ public class TestManagedConnectionFactory implements ManagedConnectionFactory,
    public ManagedConnection createManagedConnection(Subject subject,
                                                     ConnectionRequestInfo cxRequestInfo) throws ResourceException
    {
+      if (createFailureCount.intValue() > 0)
+      {
+         createFailureCount--;
+         throw new RetryableUnavailableException();
+      }
+      
       return new TestManagedConnection(this);
    }
 
@@ -134,13 +163,11 @@ public class TestManagedConnectionFactory implements ManagedConnectionFactory,
    {
       Set result = new HashSet();
 
-      System.out.println("FailureCount: " + failureCount);
-
       Iterator it = connectionSet.iterator();
-      while (failureCount > 0 && it.hasNext())
+      while (invalidConnectionFailureCount > 0 && it.hasNext())
       {
          result.add(it.next());
-         failureCount--;
+         invalidConnectionFailureCount--;
       }
       
       return result;
@@ -185,8 +212,12 @@ public class TestManagedConnectionFactory implements ManagedConnectionFactory,
    public int hashCode()
    {
       int result = 17;
-      if (failureCount != null)
-         result += 31 * result + 7 * failureCount.hashCode();
+      if (invalidConnectionFailureCount != null)
+         result += 31 * result + 7 * invalidConnectionFailureCount.hashCode();
+      else
+         result += 31 * result + 7;
+      if (createFailureCount != null)
+         result += 31 * result + 7 * createFailureCount.hashCode();
       else
          result += 31 * result + 7;
       return result;
@@ -208,10 +239,17 @@ public class TestManagedConnectionFactory implements ManagedConnectionFactory,
       TestManagedConnectionFactory obj = (TestManagedConnectionFactory)other;
       if (result)
       {
-         if (failureCount == null)
-            result = obj.getFailureCount() == null;
+         if (invalidConnectionFailureCount == null)
+            result = obj.getInvalidConnectionFailureCount() == null;
          else
-            result = failureCount.equals(obj.getFailureCount());
+            result = invalidConnectionFailureCount.equals(obj.getInvalidConnectionFailureCount());
+      }
+      if (result)
+      {
+         if (createFailureCount == null)
+            result = obj.getCreateFailureCount() == null;
+         else
+            result = createFailureCount.equals(obj.getCreateFailureCount());
       }
       return result;
    }
