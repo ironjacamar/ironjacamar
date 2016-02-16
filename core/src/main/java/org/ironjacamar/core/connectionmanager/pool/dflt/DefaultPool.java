@@ -87,7 +87,9 @@ public class DefaultPool extends AbstractPool
             }
             else
             {
-               return new XATransactionConnectionListener(cm, mc, credential, getXAResource(mc));
+               return new XATransactionConnectionListener(cm, mc, credential, getXAResource(mc),
+                                                          cm.getConnectionManagerConfiguration()
+                                                             .getXAResourceTimeout());
             }
          }
       }

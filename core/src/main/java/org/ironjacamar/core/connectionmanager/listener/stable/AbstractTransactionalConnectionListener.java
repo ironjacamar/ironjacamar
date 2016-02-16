@@ -47,11 +47,12 @@ public abstract class AbstractTransactionalConnectionListener extends
     * @param mc The managed connection
     * @param credential The credential
     * @param xaResource The associated XAResource
+    * @param xaResourceTimeout The timeout for the XAResource instance
     */
    public AbstractTransactionalConnectionListener(ConnectionManager cm, ManagedConnection mc, Credential credential,
-                                                  XAResource xaResource)
+                                                  XAResource xaResource, int xaResourceTimeout)
    {
-      super(cm, mc, credential, xaResource);
+      super(cm, mc, credential, xaResource, xaResourceTimeout);
    }
 
    /**

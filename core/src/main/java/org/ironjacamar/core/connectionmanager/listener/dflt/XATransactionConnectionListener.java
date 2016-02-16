@@ -41,10 +41,11 @@ public class XATransactionConnectionListener extends AbstractTransactionalConnec
     * @param mc The managed connection
     * @param credential The credential
     * @param xaResource The XAResource
+    * @param xaResourceTimeout The timeout for the XAResource instance
     */
    public XATransactionConnectionListener(ConnectionManager cm, ManagedConnection mc, Credential credential,
-                                          XAResource xaResource)
+                                          XAResource xaResource, int xaResourceTimeout)
    {
-      super(cm, mc, credential, xaResource);
+      super(cm, mc, credential, xaResource, xaResourceTimeout);
    }
 }

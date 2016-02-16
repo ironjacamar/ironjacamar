@@ -36,6 +36,7 @@ import javax.resource.spi.ConnectionEvent;
 import javax.resource.spi.LocalTransaction;
 import javax.resource.spi.ManagedConnection;
 import javax.transaction.Transaction;
+import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 
 /**
@@ -53,6 +54,9 @@ public abstract class AbstractTransactionalConnectionListener extends AbstractCo
    /** XAResource instance */
    protected XAResource xaResource;
 
+   /** XAResource timeout */
+   protected int xaResourceTimeout;
+   
    /** Whether there is a local transaction */
    protected boolean localTransaction;
 
@@ -62,15 +66,17 @@ public abstract class AbstractTransactionalConnectionListener extends AbstractCo
     * @param mc The managed connection
     * @param credential The credential
     * @param xaResource The associated XAResource
+    * @param xaResourceTimeout The timeout for the XAResource instance
     */
    public AbstractTransactionalConnectionListener(ConnectionManager cm, ManagedConnection mc, Credential credential,
-                                                  XAResource xaResource)
+                                                  XAResource xaResource, int xaResourceTimeout)
    {
       super(cm, mc, credential);
 
       this.transactionSynchronization = null;
       this.enlisted = false;
       this.xaResource = xaResource;
+      this.xaResourceTimeout = xaResourceTimeout;
       this.localTransaction = false;
 
       if (xaResource instanceof LocalXAResource)
@@ -84,6 +90,8 @@ public abstract class AbstractTransactionalConnectionListener extends AbstractCo
            ((ConnectableResource) xaResource).setConnectableResourceListener(this);
          */
       }
+
+      resetXAResourceTimeout();
    }
 
    /**
@@ -181,8 +189,29 @@ public abstract class AbstractTransactionalConnectionListener extends AbstractCo
             localTransaction.rollback();
          }
       }
+
+      resetXAResourceTimeout();
       
       super.toPool();
+   }
+
+   /**
+    * Reset XAResource timeout
+    */
+   private void resetXAResourceTimeout()
+   {
+      // Do a reset of the underlying XAResource timeout
+      if (!(xaResource instanceof LocalXAResource) && xaResourceTimeout > 0)
+      {
+         try
+         {
+            xaResource.setTransactionTimeout(xaResourceTimeout);
+         }
+         catch (XAException e)
+         {
+            // TODO: log
+         }
+      }
    }
 
    /**

@@ -44,6 +44,6 @@ public class LocalTransactionConnectionListener extends AbstractTransactionalCon
    public LocalTransactionConnectionListener(ConnectionManager cm, ManagedConnection mc, Credential credential,
                                              XAResource xaResource)
    {
-      super(cm, mc, credential, xaResource);
+      super(cm, mc, credential, xaResource, 0);
    }
 }
