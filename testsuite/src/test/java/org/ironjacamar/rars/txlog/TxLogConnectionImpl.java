@@ -99,6 +99,36 @@ public class TxLogConnectionImpl implements TxLogConnection
    /**
     * {@inheritDoc}
     */
+   public int getTransactionTimeout()
+   {
+      try
+      {
+         return mc.getTransactionTimeout();
+      }
+      catch (Exception e)
+      {
+         return -1;
+      }
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   public boolean setTransactionTimeout(int v)
+   {
+      try
+      {
+         return mc.setTransactionTimeout(v);
+      }
+      catch (Exception e)
+      {
+         return false;
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public void close()
    {
       mc.closeHandle(this);

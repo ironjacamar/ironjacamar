@@ -63,6 +63,19 @@ public interface TxLogConnection
    public boolean isInPool();
 
    /**
+    * Get the transaction timeout
+    * @return The value
+    */
+   public int getTransactionTimeout();
+
+   /**
+    * Set the transaction timeout
+    * @param v The value
+    * @return The result
+    */
+   public boolean setTransactionTimeout(int v);
+
+   /**
     * Close
     */
    public void close();

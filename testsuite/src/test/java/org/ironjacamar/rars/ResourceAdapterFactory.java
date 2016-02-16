@@ -241,11 +241,21 @@ public class ResourceAdapterFactory
             .createConnectionDefinition().className(TxLogManagedConnectionFactory.class.getName())
             .jndiName("java:/eis/TxLogConnectionFactory" + postfix).id("TxLogConnectionFactory" + postfix);
 
-      org.ironjacamar.embedded.dsl.resourceadapters20.api.XaPoolType dashRaXmlPt = dashRaXmlCdt.getOrCreateXaPool()
+      if (tsl == null ||
+          tsl == TransactionSupportLevel.NoTransaction ||
+          tsl == TransactionSupportLevel.LocalTransaction)
+      {
+         org.ironjacamar.embedded.dsl.resourceadapters20.api.PoolType dashRaXmlPt = dashRaXmlCdt.getOrCreatePool()
+            .minPoolSize(0).initialPoolSize(0).maxPoolSize(10);
+      }
+      else
+      {
+         org.ironjacamar.embedded.dsl.resourceadapters20.api.TimeoutType dashRaXmlTt = dashRaXmlCdt.getOrCreateTimeout()
+            .xaResourceTimeout(200);
+
+         org.ironjacamar.embedded.dsl.resourceadapters20.api.XaPoolType dashRaXmlPt = dashRaXmlCdt.getOrCreateXaPool()
             .minPoolSize(0).initialPoolSize(0).maxPoolSize(10);
 
-      if (tsl == TransactionSupportLevel.XATransaction)
-      {
          org.ironjacamar.embedded.dsl.resourceadapters20.api.RecoverType dashRaXmlRyt = dashRaXmlCdt
                .getOrCreateRecovery().noRecovery(Boolean.TRUE);
       }
