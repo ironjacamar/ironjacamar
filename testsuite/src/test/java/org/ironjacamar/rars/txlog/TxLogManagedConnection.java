@@ -382,6 +382,15 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
       return inPool;
    }
 
+   /**
+    * Is recovery
+    * @return The value
+    */
+   boolean isRecovery()
+   {
+      return mcf.didRecoveryTrigger();
+   }
+
    // LocalTransaction
 
    /**
@@ -547,6 +556,7 @@ public class TxLogManagedConnection implements ManagedConnection, LocalTransacti
     */
    public Xid[] recover(int flag) throws XAException
    {
+      mcf.recoveryTriggered();
       return new Xid[] {};
    }
  

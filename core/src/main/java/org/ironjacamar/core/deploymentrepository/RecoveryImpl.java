@@ -21,7 +21,13 @@
 
 package org.ironjacamar.core.deploymentrepository;
 
+import org.ironjacamar.core.api.deploymentrepository.ConfigProperty;
 import org.ironjacamar.core.api.deploymentrepository.Recovery;
+import org.ironjacamar.core.spi.transaction.recovery.XAResourceRecovery;
+import org.ironjacamar.core.spi.transaction.recovery.XAResourceRecoveryRegistry;
+
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Recovery module implementation
@@ -29,10 +35,103 @@ import org.ironjacamar.core.api.deploymentrepository.Recovery;
  */
 public class RecoveryImpl implements Recovery
 {
+   /** Activated */
+   private boolean activated;
+
+   /** Class name of the plugin used */
+   private String pluginClassName;
+
+   /** The config properties */
+   private Collection<ConfigProperty> dcps;
+
+   /** The recovery module */
+   private XAResourceRecovery recovery;
+   
+   /** The recovery registry */
+   private XAResourceRecoveryRegistry registry;
+   
    /**
     * Constructor
+    * @param pluginClassName The class name of the plugin
+    * @param dcps The used config properties
+    * @param recovery The recovery module
+    * @param jndiName The JNDI name
+    * @param registry The registry
     */
-   public RecoveryImpl()
+   public RecoveryImpl(String pluginClassName, Collection<ConfigProperty> dcps,
+                       XAResourceRecovery recovery, String jndiName, XAResourceRecoveryRegistry registry)
    {
+      this.activated = false;
+      this.pluginClassName = pluginClassName;
+      this.dcps = dcps;
+      this.recovery = recovery;
+      this.registry = registry;
+
+      if (jndiName != null)
+      {
+         this.recovery.setJndiName(jndiName);
+      }
+      else
+      {
+         this.recovery.setJndiName("ResourceAdapter");
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String getPluginClassName()
+   {
+      return pluginClassName;
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   public Collection<ConfigProperty> getConfigProperties()
+   {
+      return Collections.unmodifiableCollection(dcps);
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isActivated()
+   {
+      return activated;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean activate() throws Exception
+   {
+      if (!activated)
+      {
+         recovery.initialize();
+         registry.addXAResourceRecovery(recovery);
+         
+         activated = true;
+         return true;
+      }
+
+      return false;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean deactivate() throws Exception
+   {
+      if (activated)
+      {
+         recovery.shutdown();
+         registry.removeXAResourceRecovery(recovery);
+         
+         activated = false;
+         return true;
+      }
+
+      return false;
    }
 }

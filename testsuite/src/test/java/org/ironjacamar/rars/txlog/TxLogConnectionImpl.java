@@ -99,6 +99,14 @@ public class TxLogConnectionImpl implements TxLogConnection
    /**
     * {@inheritDoc}
     */
+   public boolean isRecovery()
+   {
+      return mc.isRecovery();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public int getTransactionTimeout()
    {
       try

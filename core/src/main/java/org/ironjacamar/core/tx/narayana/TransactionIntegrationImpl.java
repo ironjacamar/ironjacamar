@@ -158,14 +158,13 @@ public class TransactionIntegrationImpl implements TransactionIntegration
    public XAResourceRecovery createXAResourceRecovery(ManagedConnectionFactory mcf,
                                                       Boolean pad, Boolean override, 
                                                       Boolean wrapXAResource,
-                                                      String recoverUserName, String recoverPassword, 
                                                       String recoverSecurityDomain,
                                                       SubjectFactory subjectFactory,
                                                       RecoveryPlugin plugin,
                                                       XAResourceStatistics xastat)
    {
       return new XAResourceRecoveryImpl(this, mcf, pad, override, wrapXAResource,
-                                        recoverUserName, recoverPassword, recoverSecurityDomain,
+                                        recoverSecurityDomain,
                                         subjectFactory, plugin, xastat);
    }
 

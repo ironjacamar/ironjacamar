@@ -36,6 +36,9 @@ import javax.resource.spi.BootstrapContext;
  */
 public class ResourceAdapterImpl implements ResourceAdapter
 {
+   /** Activated */
+   private boolean activated;
+
    /** The resource adapter */
    private javax.resource.spi.ResourceAdapter resourceAdapter;
 
@@ -65,6 +68,7 @@ public class ResourceAdapterImpl implements ResourceAdapter
                               StatisticsPlugin statistics,
                               Recovery recovery)
    {
+      this.activated = false;
       this.resourceAdapter = resourceAdapter;
       this.bc = bc;
       this.configProperties = configProperties;
@@ -72,6 +76,14 @@ public class ResourceAdapterImpl implements ResourceAdapter
       this.recovery = recovery;
    }
    
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isActivated()
+   {
+      return activated;
+   }
+
    /**
     * {@inheritDoc}
     */
@@ -115,16 +127,32 @@ public class ResourceAdapterImpl implements ResourceAdapter
    /**
     * {@inheritDoc}
     */
-   public void activate() throws Exception
+   public boolean activate() throws Exception
    {
-      resourceAdapter.start(bc);
+      if (!activated)
+      {
+         resourceAdapter.start(bc);
+
+         activated = true;
+         return true;
+      }
+
+      return false;
    }
 
    /**
     * {@inheritDoc}
     */
-   public void deactivate() throws Exception
+   public boolean deactivate() throws Exception
    {
-      resourceAdapter.stop();
+      if (activated)
+      {
+         resourceAdapter.stop();
+
+         activated = false;
+         return true;
+      }
+
+      return false;
    }
 }

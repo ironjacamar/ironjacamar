@@ -38,6 +38,9 @@ import java.util.Collection;
  */
 public class ConnectionFactoryImpl implements ConnectionFactory
 {
+   /** Activated */
+   private boolean activated;
+
    /** The JNDI name */
    private String jndiName;
 
@@ -87,6 +90,7 @@ public class ConnectionFactoryImpl implements ConnectionFactory
                                 Recovery recovery,
                                 JndiStrategy jndiStrategy)
    {
+      this.activated = false;
       this.jndiName = jndiName;
       this.cf = cf;
       this.configProperties = configProperties;
@@ -165,18 +169,48 @@ public class ConnectionFactoryImpl implements ConnectionFactory
    /**
     * {@inheritDoc}
     */
-   public void activate() throws Exception
+   public boolean isActivated()
    {
-      jndiStrategy.bind(jndiName, cf);
-      ((org.ironjacamar.core.connectionmanager.pool.Pool)pool.getPool()).prefill();
+      return activated;
    }
 
    /**
     * {@inheritDoc}
     */
-   public void deactivate() throws Exception
+   public boolean activate() throws Exception
    {
-      jndiStrategy.unbind(jndiName, cf);
-      ((org.ironjacamar.core.connectionmanager.ConnectionManager)connectionManager).shutdown();
+      if (!activated)
+      {
+         jndiStrategy.bind(jndiName, cf);
+         ((org.ironjacamar.core.connectionmanager.pool.Pool)pool.getPool()).prefill();
+
+         if (recovery != null)
+            recovery.activate();
+         
+         activated = true;
+         return true;
+      }
+
+      return false;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean deactivate() throws Exception
+   {
+      if (activated)
+      {
+         if (recovery != null)
+            recovery.deactivate();
+         
+         jndiStrategy.unbind(jndiName, cf);
+         ((org.ironjacamar.core.connectionmanager.ConnectionManager)connectionManager).shutdown();
+
+         activated = false;
+         return true;
+      }
+
+      return false;
    }
 }

@@ -65,10 +65,6 @@ public class XAResourceRecoveryImpl implements org.ironjacamar.core.spi.transact
 
    private final Boolean wrapXAResource;
 
-   private final String recoverUserName;
-
-   private final String recoverPassword;
-
    private final String recoverSecurityDomain;
 
    private final SubjectFactory subjectFactory;
@@ -89,8 +85,6 @@ public class XAResourceRecoveryImpl implements org.ironjacamar.core.spi.transact
     * @param padXid padXid
     * @param isSameRMOverrideValue isSameRMOverrideValue
     * @param wrapXAResource wrapXAResource
-    * @param recoverUserName recoverUserName
-    * @param recoverPassword recoverPassword
     * @param recoverSecurityDomain recoverSecurityDomain
     * @param subjectFactory subjectFactory
     * @param plugin recovery plugin
@@ -99,7 +93,7 @@ public class XAResourceRecoveryImpl implements org.ironjacamar.core.spi.transact
    public XAResourceRecoveryImpl(TransactionIntegration ti,
                                  ManagedConnectionFactory mcf,
                                  Boolean padXid, Boolean isSameRMOverrideValue, Boolean wrapXAResource,
-                                 String recoverUserName, String recoverPassword, String recoverSecurityDomain,
+                                 String recoverSecurityDomain,
                                  SubjectFactory subjectFactory,
                                  RecoveryPlugin plugin,
                                  XAResourceStatistics xastat)
@@ -118,8 +112,6 @@ public class XAResourceRecoveryImpl implements org.ironjacamar.core.spi.transact
       this.padXid = padXid;
       this.isSameRMOverrideValue = isSameRMOverrideValue;
       this.wrapXAResource = wrapXAResource;
-      this.recoverUserName = recoverUserName;
-      this.recoverPassword = recoverPassword;
       this.recoverSecurityDomain = recoverSecurityDomain;
       this.subjectFactory = subjectFactory;
 
@@ -288,54 +280,38 @@ public class XAResourceRecoveryImpl implements org.ironjacamar.core.spi.transact
           */
          public Subject run()
          {
-            if (recoverUserName != null && recoverPassword != null)
+            try
             {
-               log.debugf("Recovery user name=%s", recoverUserName);
+               String domain = recoverSecurityDomain;
 
-               // User name and password use-case
-               Subject subject = SecurityActions.createSubject(recoverUserName, recoverPassword, mcf);
-
-               log.debugf("Recovery Subject=%s", subject);
-
-               return subject;
-            }
-            else
-            {
-               // Security-domain use-case
-               try
+               if (domain != null && subjectFactory != null)
                {
-                  // Select the domain
-                  String domain = recoverSecurityDomain;
-
-                  if (domain != null && subjectFactory != null)
-                  {
-                     Subject subject = SecurityActions.createSubject(subjectFactory, domain);
+                  Subject subject = SecurityActions.createSubject(subjectFactory, domain);
                      
-                     Set<PasswordCredential> pcs = SecurityActions.getPasswordCredentials(subject);
-                     if (pcs.size() > 0)
-                     {
-                        for (PasswordCredential pc : pcs)
-                        {
-                           pc.setManagedConnectionFactory(mcf);
-                        }
-                     }
-
-                     log.debugf("Recovery Subject=%s", subject);
-
-                     return subject;
-                  }
-                  else
+                  Set<PasswordCredential> pcs = SecurityActions.getPasswordCredentials(subject);
+                  if (pcs.size() > 0)
                   {
-                     log.noCrashRecoverySecurityDomain(jndiName);
+                     for (PasswordCredential pc : pcs)
+                     {
+                        pc.setManagedConnectionFactory(mcf);
+                     }
                   }
-               }
-               catch (Throwable t)
-               {
-                  log.exceptionDuringCrashRecoverySubject(jndiName, t.getMessage(), t);
-               }
 
-               return null;
+                  log.debugf("Recovery Subject=%s", subject);
+
+                  return subject;
+               }
+               else
+               {
+                  log.noCrashRecoverySecurityDomain(jndiName);
+               }
             }
+            catch (Throwable t)
+            {
+               log.exceptionDuringCrashRecoverySubject(jndiName, t.getMessage(), t);
+            }
+
+            return null;
          }
       });
    }

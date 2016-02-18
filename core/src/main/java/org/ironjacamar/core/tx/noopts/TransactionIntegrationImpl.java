@@ -133,7 +133,7 @@ public class TransactionIntegrationImpl implements TransactionIntegration
    public XAResourceRecovery createXAResourceRecovery(ResourceAdapter rar, ActivationSpec as,
                                                       String productName, String productVersion)
    {
-      return new XAResourceRecoveryImpl();
+      return new XAResourceRecoveryImpl(rar, as);
    }
 
    /**
@@ -142,13 +142,12 @@ public class TransactionIntegrationImpl implements TransactionIntegration
    public XAResourceRecovery createXAResourceRecovery(ManagedConnectionFactory mcf,
                                                       Boolean pad, Boolean override, 
                                                       Boolean wrapXAResource,
-                                                      String recoverUserName, String recoverPassword, 
                                                       String recoverSecurityDomain,
                                                       SubjectFactory subjectFactory,
                                                       RecoveryPlugin plugin,
                                                       XAResourceStatistics xastat)
    {
-      return new XAResourceRecoveryImpl();
+      return new XAResourceRecoveryImpl(mcf, recoverSecurityDomain, subjectFactory);
    }
 
    /**

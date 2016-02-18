@@ -21,11 +21,14 @@
 
 package org.ironjacamar.deployers.common;
 
+import org.ironjacamar.common.api.metadata.Defaults;
+import org.ironjacamar.common.api.metadata.common.Extension;
 import org.ironjacamar.common.api.metadata.common.TransactionSupportEnum;
 import org.ironjacamar.common.api.metadata.resourceadapter.Activation;
 import org.ironjacamar.common.api.metadata.resourceadapter.AdminObject;
 import org.ironjacamar.common.api.metadata.resourceadapter.ConnectionDefinition;
 import org.ironjacamar.common.api.metadata.spec.Connector;
+import org.ironjacamar.common.api.metadata.spec.XsdString;
 import org.ironjacamar.core.api.connectionmanager.ConnectionManagerConfiguration;
 import org.ironjacamar.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.ironjacamar.core.api.connectionmanager.pool.PoolConfiguration;
@@ -41,11 +44,15 @@ import org.ironjacamar.core.deploymentrepository.ConfigPropertyImpl;
 import org.ironjacamar.core.deploymentrepository.ConnectionFactoryImpl;
 import org.ironjacamar.core.deploymentrepository.DeploymentBuilder;
 import org.ironjacamar.core.deploymentrepository.PoolImpl;
+import org.ironjacamar.core.deploymentrepository.RecoveryImpl;
 import org.ironjacamar.core.deploymentrepository.ResourceAdapterImpl;
 import org.ironjacamar.core.metadatarepository.MetadataImpl;
+import org.ironjacamar.core.recovery.DefaultRecoveryPlugin;
 import org.ironjacamar.core.spi.naming.JndiStrategy;
+import org.ironjacamar.core.spi.recovery.RecoveryPlugin;
 import org.ironjacamar.core.spi.security.SubjectFactory;
 import org.ironjacamar.core.spi.transaction.TransactionIntegration;
+import org.ironjacamar.core.spi.transaction.recovery.XAResourceRecovery;
 import org.ironjacamar.core.util.Injection;
 
 import java.io.File;
@@ -363,7 +370,7 @@ public abstract class AbstractResourceAdapterDeployer
          org.ironjacamar.core.api.deploymentrepository.Recovery recovery = null;
          if (isXA(transactionSupport))
          {
-            // Do recovery
+            recovery = createRecovery(mcf, cd);
          }
 
          if (builder.getResourceAdapter() != null)
@@ -506,7 +513,7 @@ public abstract class AbstractResourceAdapterDeployer
             boolean declared = true;
 
             Object value = cp.isValueSet() ? cp.getConfigPropertyValue().getValue() : null;
-            if (overrides.containsKey(cp.getConfigPropertyName().getValue()))
+            if (overrides != null && overrides.containsKey(cp.getConfigPropertyName().getValue()))
                value = overrides.get(cp.getConfigPropertyName().getValue());
 
             if (value != null)
@@ -822,5 +829,102 @@ public abstract class AbstractResourceAdapterDeployer
          if (v.isUseFastFail() != null)
             pc.setUseFastFail(v.isUseFastFail().booleanValue());
       }
+   }
+
+   /**
+    * Create a recovery module
+    * @param mcf The ManagedConnectionFactory
+    * @param cd The connection definition
+    * @return The recovery module, or <code>null</code> if no recovery
+    * @exception Throwable In case on an error
+    */
+   private org.ironjacamar.core.api.deploymentrepository.Recovery
+      createRecovery(javax.resource.spi.ManagedConnectionFactory mcf, ConnectionDefinition cd) throws Throwable
+   {
+      Boolean padXid = Defaults.PAD_XID;
+      Boolean isSameRMOverride = Defaults.IS_SAME_RM_OVERRIDE;
+      Boolean wrapXAResource = Defaults.WRAP_XA_RESOURCE;
+      String securityDomain = null;
+      RecoveryPlugin plugin = null;
+      Collection<org.ironjacamar.core.api.deploymentrepository.ConfigProperty> dcps = null;
+      
+      if (transactionIntegration.getRecoveryRegistry() == null)
+         return null;
+
+      if (subjectFactory == null)
+         return null;
+
+      if (cd.getRecovery() != null && cd.getRecovery().isNoRecovery())
+         return null;
+
+      // Check security domain
+      if (cd.getRecovery() != null && cd.getRecovery().getCredential() != null)
+         securityDomain = cd.getRecovery().getCredential().getSecurityDomain();
+
+      if (securityDomain == null && cd.getSecurity() != null)
+         securityDomain = cd.getSecurity().getSecurityDomain();
+
+      if (securityDomain == null)
+         return null;
+
+      if (cd.getRecovery() != null && cd.getRecovery().getPlugin() != null)
+      {
+         Extension extension = cd.getRecovery().getPlugin();
+         Collection<org.ironjacamar.common.api.metadata.spec.ConfigProperty> configProperties =
+            new ArrayList<org.ironjacamar.common.api.metadata.spec.ConfigProperty>();
+
+         for (Map.Entry<String, String> property : extension.getConfigPropertiesMap().entrySet())
+         {
+            org.ironjacamar.common.api.metadata.spec.ConfigProperty c =
+               new org.ironjacamar.common.metadata.spec.ConfigPropertyImpl(null,
+                                                                           new XsdString(property.getKey(), null),
+                                                                           XsdString.NULL_XSDSTRING,
+                                                                           new XsdString(property.getValue(), null),
+                                                                           Boolean.FALSE, Boolean.FALSE,
+                                                                           Boolean.FALSE,
+                                                                           null, false,
+                                                                           null, null, null, null);
+
+            configProperties.add(c);
+         }
+
+         Class<?> clz = Class.forName(extension.getClassName(), true, mcf.getClass().getClassLoader());
+         plugin = (RecoveryPlugin)clz.newInstance();
+         
+         dcps = injectConfigProperties(plugin, configProperties, null, plugin.getClass().getClassLoader());
+      }
+
+      if (plugin == null)
+         plugin = new DefaultRecoveryPlugin();
+
+      if (dcps == null)
+         dcps = new ArrayList<>(1);
+
+      if (cd.getPool() != null)
+      {
+         org.ironjacamar.common.api.metadata.common.XaPool xaPool =
+            (org.ironjacamar.common.api.metadata.common.XaPool)cd.getPool();
+
+         if (xaPool.isPadXid() != null)
+            padXid = xaPool.isPadXid();
+
+         if (xaPool.isIsSameRmOverride() != null)
+            isSameRMOverride = xaPool.isIsSameRmOverride();
+
+         if (xaPool.isWrapXaResource() != null)
+            wrapXAResource = xaPool.isWrapXaResource();
+      }
+
+      XAResourceRecovery r = transactionIntegration.createXAResourceRecovery(mcf,
+                                                                             padXid,
+                                                                             isSameRMOverride,
+                                                                             wrapXAResource,
+                                                                             securityDomain,
+                                                                             subjectFactory,
+                                                                             plugin,
+                                                                             null);
+
+      return new RecoveryImpl(plugin.getClass().getName(), dcps, r, cd.getJndiName(),
+                              transactionIntegration.getRecoveryRegistry());
    }
 }

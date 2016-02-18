@@ -82,14 +82,22 @@ public interface ConnectionFactory
    public Recovery getRecovery();
 
    /**
+    * Is the connection factory active ?
+    * @return <code>true</code> if activated, <code>false</code> if not
+    */
+   public boolean isActivated();
+
+   /**
     * Activate the connection factory
+    * @return <code>true</code> if activated, <code>false</code> if already activated
     * @exception Exception Thrown in case of an error
     */
-   public void activate() throws Exception;
+   public boolean activate() throws Exception;
 
    /**
     * Deactivate the connection factory
+    * @return <code>true</code> if deactivated, <code>false</code> if already deactivated
     * @exception Exception Thrown in case of an error
     */
-   public void deactivate() throws Exception;
+   public boolean deactivate() throws Exception;
 }

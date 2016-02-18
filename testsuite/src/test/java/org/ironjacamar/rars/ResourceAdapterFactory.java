@@ -256,8 +256,7 @@ public class ResourceAdapterFactory
          org.ironjacamar.embedded.dsl.resourceadapters20.api.XaPoolType dashRaXmlPt = dashRaXmlCdt.getOrCreateXaPool()
             .minPoolSize(0).initialPoolSize(0).maxPoolSize(10);
 
-         org.ironjacamar.embedded.dsl.resourceadapters20.api.RecoverType dashRaXmlRyt = dashRaXmlCdt
-               .getOrCreateRecovery().noRecovery(Boolean.TRUE);
+         dashRaXmlCdt.getOrCreateRecovery().getOrCreateRecoveryCredential().securityDomain("DefaultSecurityDomain");
       }
 
       return dashRaXml;

@@ -48,6 +48,12 @@
     <uncallback method="removeListener"/>
   </bean>
 
+  <!-- XAResourceRecoveryRegistry -->
+  <bean name="XAResourceRecoveryRegistry"
+        interface="org.ironjacamar.core.spi.transaction.recovery.XAResourceRecoveryRegistry" 
+        class="org.ironjacamar.core.tx.noopts.XAResourceRecoveryRegistryImpl">
+  </bean>
+
   <!-- Transaction integration -->
   <bean name="TransactionIntegration"
         interface="org.ironjacamar.core.spi.transaction.TransactionIntegration"
@@ -57,7 +63,7 @@
       <parameter><inject bean="TransactionSynchronizationRegistry"/></parameter>
       <parameter><inject bean="UserTransactionRegistry"/></parameter>
       <parameter><inject bean="XATerminator"/></parameter>
-      <parameter><null/></parameter>
+      <parameter><inject bean="XAResourceRecoveryRegistry"/></parameter>
     </constructor>
   </bean>
 

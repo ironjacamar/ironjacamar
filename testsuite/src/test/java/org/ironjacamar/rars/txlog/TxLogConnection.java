@@ -63,6 +63,12 @@ public interface TxLogConnection
    public boolean isInPool();
 
    /**
+    * Is recovery
+    * @return The value
+    */
+   public boolean isRecovery();
+
+   /**
     * Get the transaction timeout
     * @return The value
     */

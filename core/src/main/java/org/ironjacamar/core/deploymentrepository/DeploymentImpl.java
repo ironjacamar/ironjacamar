@@ -37,6 +37,9 @@ import java.util.Collection;
  */
 public class DeploymentImpl implements Deployment
 {
+   /** Activated */
+   private boolean activated;
+
    /** The identifier */
    private String identifier;
    
@@ -86,6 +89,7 @@ public class DeploymentImpl implements Deployment
                          Collection<ConnectionFactory> connectionFactories,
                          Collection<AdminObject> adminObjects)
    {
+      this.activated = false;
       this.identifier = identifier;
       this.name = name;
       this.archive = archive;
@@ -172,55 +176,79 @@ public class DeploymentImpl implements Deployment
    /**
     * {@inheritDoc}
     */
-   public void activate() throws Exception
+   public boolean isActivated()
    {
-      if (connectionFactories != null)
-      {
-         for (ConnectionFactory cf : connectionFactories)
-         {
-            cf.activate();
-         }
-      }
-
-      if (adminObjects != null)
-      {
-         for (AdminObject ao : adminObjects)
-         {
-            ao.activate();
-         }
-      }
-
-      if (resourceAdapter != null)
-      {
-         resourceAdapter.activate();
-      }
+      return activated;
    }
 
    /**
     * {@inheritDoc}
     */
-   public void deactivate() throws Exception
+   public boolean activate() throws Exception
    {
-      if (connectionFactories != null)
+      if (!activated)
       {
-         for (ConnectionFactory cf : connectionFactories)
+         if (connectionFactories != null)
          {
-            cf.deactivate();
+            for (ConnectionFactory cf : connectionFactories)
+            {
+               cf.activate();
+            }
          }
+
+         if (adminObjects != null)
+         {
+            for (AdminObject ao : adminObjects)
+            {
+               ao.activate();
+            }
+         }
+
+         if (resourceAdapter != null)
+         {
+            resourceAdapter.activate();
+         }
+
+         activated = true;
+         return true;
       }
 
-      if (adminObjects != null)
-      {
-         for (AdminObject ao : adminObjects)
-         {
-            ao.deactivate();
-         }
-      }
+      return false;
+   }
 
-      if (resourceAdapter != null)
+   /**
+    * {@inheritDoc}
+    */
+   public boolean deactivate() throws Exception
+   {
+      if (activated)
       {
-         resourceAdapter.deactivate();
+         if (connectionFactories != null)
+         {
+            for (ConnectionFactory cf : connectionFactories)
+            {
+               cf.deactivate();
+            }
+         }
+
+         if (adminObjects != null)
+         {
+            for (AdminObject ao : adminObjects)
+            {
+               ao.deactivate();
+            }
+         }
+
+         if (resourceAdapter != null)
+         {
+            resourceAdapter.deactivate();
+         }
+
+         activated = false;
+         return true;
       }
+      
+      return false;
    }
 
    /**

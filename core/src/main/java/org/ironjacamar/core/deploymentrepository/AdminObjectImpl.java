@@ -40,6 +40,9 @@ import javax.resource.spi.ResourceAdapterAssociation;
  */
 public class AdminObjectImpl implements AdminObject
 {
+   /** Activated */
+   private boolean activated;
+
    /** JNDI name */
    private String jndiName;
 
@@ -77,6 +80,7 @@ public class AdminObjectImpl implements AdminObject
                           StatisticsPlugin statistics,
                           JndiStrategy jndiStrategy)
    {
+      this.activated = false;
       this.jndiName = jndiName;
       this.adminObject = ao;
       this.jndiObject = null;
@@ -129,76 +133,100 @@ public class AdminObjectImpl implements AdminObject
    /**
     * {@inheritDoc}
     */
-   public void activate() throws Exception
+   public boolean isActivated()
    {
-      if (adminObject instanceof ResourceAdapterAssociation)
-      {
-         if (!(adminObject instanceof Serializable &&
-               adminObject instanceof javax.resource.Referenceable))
-         {
-            throw new Exception("TODO");
-         }
-      }
-      else
-      {
-         if (!(adminObject instanceof javax.naming.Referenceable))
-         {
-            DelegatorInvocationHandler dih = new DelegatorInvocationHandler(adminObject);
-
-            List<Class<?>> interfaces = new ArrayList<Class<?>>();
-            Class<?> clz = adminObject.getClass();
-            while (!clz.equals(Object.class))
-            {
-               Class<?>[] is = clz.getInterfaces();
-               if (is != null)
-               {
-                  for (Class<?> interfaceClass : is)
-                  {
-                     if (!interfaceClass.equals(javax.resource.Referenceable.class) &&
-                         !interfaceClass.equals(ResourceAdapterAssociation.class) &&
-                         !interfaceClass.equals(java.io.Serializable.class) &&
-                         !interfaceClass.equals(java.io.Externalizable.class))
-                     {
-                        if (!interfaces.contains(interfaceClass))
-                           interfaces.add(interfaceClass);
-                     }
-                  }
-               }
-
-               clz = clz.getSuperclass();
-            }
-
-            interfaces.add(java.io.Serializable.class);
-            interfaces.add(javax.resource.Referenceable.class);
-
-            jndiObject = Proxy.newProxyInstance(SecurityActions.getClassLoader(adminObject.getClass()),
-                                                interfaces.toArray(new Class<?>[interfaces.size()]),
-                                                dih);
-         }
-      }
-
-      if (jndiObject != null)
-      {
-         jndiStrategy.bind(jndiName, jndiObject);
-      }
-      else
-      {
-         jndiStrategy.bind(jndiName, adminObject);
-      }
+      return activated;
    }
 
    /**
     * {@inheritDoc}
     */
-   public void deactivate() throws Exception
+   public boolean activate() throws Exception
    {
-      if (jndiObject != null)
+      if (!activated)
       {
-         jndiStrategy.unbind(jndiName, jndiObject);
+         if (adminObject instanceof ResourceAdapterAssociation)
+         {
+            if (!(adminObject instanceof Serializable &&
+                  adminObject instanceof javax.resource.Referenceable))
+            {
+               throw new Exception("TODO");
+            }
+         }
+         else
+         {
+            if (!(adminObject instanceof javax.naming.Referenceable))
+            {
+               DelegatorInvocationHandler dih = new DelegatorInvocationHandler(adminObject);
+
+               List<Class<?>> interfaces = new ArrayList<Class<?>>();
+               Class<?> clz = adminObject.getClass();
+               while (!clz.equals(Object.class))
+               {
+                  Class<?>[] is = clz.getInterfaces();
+                  if (is != null)
+                  {
+                     for (Class<?> interfaceClass : is)
+                     {
+                        if (!interfaceClass.equals(javax.resource.Referenceable.class) &&
+                            !interfaceClass.equals(ResourceAdapterAssociation.class) &&
+                            !interfaceClass.equals(java.io.Serializable.class) &&
+                            !interfaceClass.equals(java.io.Externalizable.class))
+                        {
+                           if (!interfaces.contains(interfaceClass))
+                              interfaces.add(interfaceClass);
+                        }
+                     }
+                  }
+
+                  clz = clz.getSuperclass();
+               }
+
+               interfaces.add(java.io.Serializable.class);
+               interfaces.add(javax.resource.Referenceable.class);
+
+               jndiObject = Proxy.newProxyInstance(SecurityActions.getClassLoader(adminObject.getClass()),
+                                                   interfaces.toArray(new Class<?>[interfaces.size()]),
+                                                   dih);
+            }
+         }
+
+         if (jndiObject != null)
+         {
+            jndiStrategy.bind(jndiName, jndiObject);
+         }
+         else
+         {
+            jndiStrategy.bind(jndiName, adminObject);
+         }
+
+         activated = true;
+         return true;
       }
-      else
+
+      return false;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean deactivate() throws Exception
+   {
+      if (activated)
       {
-         jndiStrategy.unbind(jndiName, adminObject);
+         if (jndiObject != null)
+         {
+            jndiStrategy.unbind(jndiName, jndiObject);
+         }
+         else
+         {
+            jndiStrategy.unbind(jndiName, adminObject);
+         }
+
+         activated = false;
+         return true;
       }
+
+      return false;
    }
 }

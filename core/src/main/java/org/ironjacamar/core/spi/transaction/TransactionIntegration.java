@@ -106,8 +106,6 @@ public interface TransactionIntegration
     * @param pad Should the branch qualifier for Xid's be padded
     * @param override Should the isSameRM value be overriden; <code>null</code> for instance equally check
     * @param wrapXAResource Should the XAResource be wrapped
-    * @param recoverUserName The user name for recovery
-    * @param recoverPassword The password for recovery
     * @param recoverSecurityDomain The security domain for recovery
     * @param subjectFactory The subject factory
     * @param plugin The recovery plugin
@@ -117,7 +115,6 @@ public interface TransactionIntegration
    public XAResourceRecovery createXAResourceRecovery(ManagedConnectionFactory mcf,
                                                       Boolean pad, Boolean override, 
                                                       Boolean wrapXAResource,
-                                                      String recoverUserName, String recoverPassword, 
                                                       String recoverSecurityDomain,
                                                       SubjectFactory subjectFactory,
                                                       RecoveryPlugin plugin,

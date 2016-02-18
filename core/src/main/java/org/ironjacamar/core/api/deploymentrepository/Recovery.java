@@ -21,10 +21,43 @@
 
 package org.ironjacamar.core.api.deploymentrepository;
 
+import java.util.Collection;
+
 /**
  * Recovery module
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public interface Recovery
 {
+   /**
+    * Get the class name of the recovery plugin used
+    * @return The value
+    */
+   public String getPluginClassName();
+   
+   /**
+    * Get the configuration properties used -- read-only
+    * @return The value
+    */
+   public Collection<ConfigProperty> getConfigProperties();
+
+   /**
+    * Is the recovery active ?
+    * @return <code>true</code> if activated, <code>false</code> if not
+    */
+   public boolean isActivated();
+
+   /**
+    * Activate the recovery
+    * @return <code>true</code> if activated, <code>false</code> if already activated
+    * @exception Exception Thrown in case of an error
+    */
+   public boolean activate() throws Exception;
+
+   /**
+    * Deactivate the recovery
+    * @return <code>true</code> if deactivated, <code>false</code> if already deactivated
+    * @exception Exception Thrown in case of an error
+    */
+   public boolean deactivate() throws Exception;
 }

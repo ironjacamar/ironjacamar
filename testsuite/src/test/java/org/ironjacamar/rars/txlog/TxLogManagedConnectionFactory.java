@@ -49,12 +49,15 @@ public class TxLogManagedConnectionFactory implements ManagedConnectionFactory
    /** The logwriter */
    private PrintWriter logwriter;
 
+   /** Recovery triggered */
+   private boolean recovery;
+   
    /**
     * Default constructor
     */
    public TxLogManagedConnectionFactory()
    {
-
+      this.recovery = false;
    }
 
    /**
@@ -145,6 +148,23 @@ public class TxLogManagedConnectionFactory implements ManagedConnectionFactory
       logwriter = out;
    }
 
+   /**
+    * Recovery triggered
+    */
+   void recoveryTriggered()
+   {
+      recovery = true;
+   }
+   
+   /**
+    * Recovery triggered
+    * @return The value
+    */
+   boolean didRecoveryTrigger()
+   {
+      return recovery;
+   }
+   
    /** 
     * Returns a hash code value for the object.
     * @return A hash code value for this object.
