@@ -273,16 +273,12 @@ public class FlushMethodCallSubjectTestCase
 
       defaultPool.flush();
 
-      assertEquals(1, mcps.size());
+      assertEquals(0, mcps.size());
 
       // We cheat and shutdown the pool to clear out mcps
 
       defaultSubjectFactory.setUserName("user");
       defaultSubjectFactory.setPassword("pwd");
-
-      defaultPool.flush();
-
-      assertEquals(0, mcps.size());
 
 
       defaultPool.shutdown();
@@ -345,14 +341,11 @@ public class FlushMethodCallSubjectTestCase
 
       defaultPool.flush(FlushMode.ALL);
 
-      assertEquals(1, mcps.size());
+      assertEquals(0, mcps.size());
 
       defaultSubjectFactory.setUserName("user");
       defaultSubjectFactory.setPassword("pwd");
 
-      defaultPool.flush(FlushMode.ALL);
-
-      assertEquals(0, mcps.size());
 
       firstConnection.close();
       secondConnection.close();

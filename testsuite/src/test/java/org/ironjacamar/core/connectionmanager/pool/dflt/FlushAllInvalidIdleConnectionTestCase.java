@@ -297,7 +297,7 @@ public class FlushAllInvalidIdleConnectionTestCase
       assertTrue(TestUtils.isCorrectCollectionSizeTenSecTimeout(secondListeners, 0));
       assertTrue(TestUtils.isCorrectCollectionSizeTenSecTimeout(thirdListeners, 1));
 
-      assertEquals(3, mcps.size());
+      assertEquals(1, mcps.size());
 
 
 

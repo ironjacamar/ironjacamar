@@ -197,7 +197,7 @@ public class FlushAllConnectionsTestCase
 
       assertTrue(TestUtils.isCorrectCollectionSizeTenSecTimeout(listeners, 0));
 
-      assertEquals(1, mcps.size());
+      assertEquals(0, mcps.size());
 
       c2.close();
 
@@ -290,7 +290,7 @@ public class FlushAllConnectionsTestCase
       assertTrue(TestUtils.isCorrectCollectionSizeTenSecTimeout(thirdListeners, 0));
 
 
-      assertEquals(3, mcps.size());
+      assertEquals(0, mcps.size());
 
       thirdConnection.close();
 

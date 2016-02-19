@@ -294,7 +294,7 @@ public class FlushAllGracefullyTestCase
       assertEquals(thirdListeners.getFirst().getState(), ConnectionListener.DESTROY);
 
 
-      assertEquals(3, mcps.size());
+      assertEquals(1, mcps.size());
 
       thirdConnection.close();
 
