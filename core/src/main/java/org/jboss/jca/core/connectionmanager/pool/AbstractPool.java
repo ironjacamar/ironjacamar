@@ -448,41 +448,32 @@ public abstract class AbstractPool implements Pool
    /**
     * {@inheritDoc}
     */
-   public synchronized void emptyManagedConnectionPool(ManagedConnectionPool pool)
+   public void emptyManagedConnectionPool(ManagedConnectionPool pool)
    {
       log.debugf("%s: emptyManagedConnectionPool(%s)", poolName, pool);
 
       if (pool != null)
       {
          // We only consider removal if there are more than 1 managed connection pool
-         if (mcpPools.size() > 1)
+         if (mcpPools.size() > 1 && pool.isEmpty())
          {
-            Iterator<ManagedConnectionPool> it = mcpPools.values().iterator();
-
-            while (it.hasNext())
+            if (mcpPools.values().remove(pool))
             {
-               ManagedConnectionPool other = it.next();
-               if (other == pool && pool.isEmpty())
+               try
                {
-                  try
-                  {
-                     pool.shutdown();
-                  }
-                  catch (Exception e)
-                  {
-                     // Should not happen
-                     log.trace("MCP.shutdown: " + e.getMessage(), e);
-                  }
-
-                  if (Tracer.isEnabled())
-                     Tracer.destroyManagedConnectionPool(getName(), pool);
-                     
-                  if (trace)
-                     log.tracef("%s: mcpPools=%s", getName(), mcpPools);
-
-                  it.remove();
-                  break;
+                  pool.shutdown();
                }
+               catch (Exception e)
+               {
+                  // Should not happen
+                  log.trace("MCP.shutdown: " + e.getMessage(), e);
+               }
+
+               if (Tracer.isEnabled())
+                  Tracer.destroyManagedConnectionPool(getName(), pool);
+                     
+               if (trace)
+                  log.tracef("%s: mcpPools=%s", getName(), mcpPools);
             }
          }
       }
