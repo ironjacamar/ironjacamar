@@ -12,6 +12,7 @@
   </datasource>
   <drivers>
       <driver name="h2">
+         <driver-class>org.h2.Driver</driver-class>
          <datasource-class>org.h2.jdbcx.JdbcDataSource</datasource-class>
       </driver>
   </drivers>
