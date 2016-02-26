@@ -354,5 +354,13 @@ public interface AdaptersBundle
     */
    @Message(id = 31102, value = "Failed to load XA datasource: %s")
    public String failedToLoadXADataSource(String clz);
+
+   /**
+    * No URL connection property defined for data-source
+    * @param cls the data-source class name
+    * @return The value
+    */
+   @Message(id = 31103, value = "At least one connection property must be defined for datasource-class: %s")
+   public String nonConnectionPropertyDefinedForDatasource(String cls);
 }
 

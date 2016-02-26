@@ -31,7 +31,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.security.PrivilegedAction;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
 import java.sql.Connection;
@@ -44,14 +43,14 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import static java.security.AccessController.doPrivileged;
+
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionManager;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnection;
 import javax.security.auth.Subject;
 import javax.sql.DataSource;
-
-import static java.security.AccessController.doPrivileged;
 
 /**
  * LocalManagedConnectionFactory
@@ -102,8 +101,11 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       if (driverClass == null && dataSourceClass == null)
          throw new ResourceException(bundle.driverClassNull());
 
-      if (connectionURL == null && driverClass != null)
+      if (dataSourceClass == null && connectionURL == null && driverClass != null)
          throw new ResourceException(bundle.connectionURLNull());
+
+      if (dataSourceClass != null && connectionProps.size() == 0)
+          throw new ResourceException(bundle.nonConnectionPropertyDefinedForDatasource(dataSourceClass));
 
       return super.createConnectionFactory(cm);
    }
