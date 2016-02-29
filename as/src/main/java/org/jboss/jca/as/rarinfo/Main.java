@@ -84,6 +84,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import javax.resource.ResourceException;
+import javax.resource.cci.Connection;
 import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.xml.parsers.DocumentBuilder;
@@ -522,33 +523,7 @@ public class Main
                   hasEnlistableMcInterface(out, error, mcfClassName, cl, mcf.getConfigProperties());
 
                   //CCI
-                  String cfi = getValueString(mcf.getConnectionFactoryInterface());
-                  try
-                  {
-                     out.print("  CCI: ");
-                     Class<?> clazz = Class.forName(cfi, true, cl);
-                     if (isCCI(cfi, clazz, mcfClassName, cl))
-                     {
-                        out.println("Yes");
-                     }
-                     else
-                     {
-                        out.println("No");
-                        
-                        out.println("  ConnectionFactory (" + cfi + "):");
-                        outputMethodInfo(out, clazz, cl);
-                        
-                        Class<?> ci = Class.forName(getValueString(mcf.getConnectionInterface()), true, cl);
-                        out.println("  Connection (" + getValueString(mcf.getConnectionInterface()) + "):");
-                        outputMethodInfo(out, ci, cl);
-                     }
-                  }
-                  catch (Throwable t)
-                  {
-                     // Nothing we can do
-                     t.printStackTrace(error);
-                     out.println("Unknown");
-                  }
+                  printCCIInfo(mcf, mcfClassName, cl, out, error);
                }
                   
                Map<String, String> configProperty = null;
@@ -1063,29 +1038,109 @@ public class Main
       }
    }
    
-   private static boolean isCCI(String cfi, Class<?> clazz, String mcfClassName, URLClassLoader cl) throws Exception
+   private static void printCCIInfo(org.jboss.jca.common.api.metadata.spec.ConnectionDefinition mcf, String mcfClassName, URLClassLoader cl, PrintStream out, PrintStream error)
    { 
-      if (cfi.equals("javax.resource.cci.ConnectionFactory"))
-         return true;
+      boolean checksDone = false;
+      Class mcfClazz = null;
+      Class<?> ci = null;
+      Class<?> clazz = null;
+      Connection conImpl = null;
+      Method m = null;
+      Object mcfInstance = null;
+      Object result = null;
+      String cci = "Unknown";
+      String cf = "Unknown";
+      String cfi = getValueString(mcf.getConnectionFactoryInterface());
+      String conClass = null;
+       
+      try 
+      {
+         mcfClazz = Class.forName(mcfClassName, true, cl);
+       
+         m = mcfClazz.getMethod("createConnectionFactory", (Class[]) null);
+       
+         mcfInstance = mcfClazz.newInstance();
+         result = m.invoke(mcfInstance, (Object[])null);
+         if (result instanceof javax.resource.cci.ConnectionFactory)
+         {
+            cf = ((javax.resource.cci.ConnectionFactory) result).getClass().getCanonicalName();
+            cci = "Yes";  
+         }
+         checksDone = true;
+      }
+      catch (Throwable t)
+      {
+         t.printStackTrace(error);
+      }
+       
+      if (!checksDone)
+      {
+         try 
+         {
+            Class rt = m.getReturnType();
+           
+            if (rt.isAssignableFrom(javax.resource.cci.ConnectionFactory.class))
+               cci = "Yes";
+
+            checksDone = true;
+         } 
+         catch (Throwable t)
+         {
+            t.printStackTrace(error);
+         }
+      }
+       
+      try 
+      {
+         clazz = Class.forName(cfi, true, cl);
+       
+         if (!checksDone)
+         {
+            if (hasInterface(clazz, "javax.resource.cci.ConnectionFactory"))
+               cci = "Yes";
+
+            checksDone = true;
+         }
+      } 
+      catch (Exception t)
+      {
+         t.printStackTrace(error);
+      }
+      if (!checksDone)
+      {
+         if (cfi.equals("javax.resource.cci.ConnectionFactory"))
+            cci = "Yes";
+      }
+
+      if (cci.equals("Unknown"))
+          cci = "No";
       
-      if (hasInterface(clazz, "javax.resource.cci.ConnectionFactory"))
-         return true;
+      out.print("  CCI: ");
+      out.println(cci);
       
-      Class mcfClazz = Class.forName(mcfClassName, true, cl);
-                     
-      Method m = mcfClazz.getMethod("createConnectionFactory", (Class[]) null);
-                     
-      Class rt = m.getReturnType();
-         
-      if (rt.isAssignableFrom(javax.resource.cci.ConnectionFactory.class))
-         return true;
- 
-      Object mcfInstance = mcfClazz.newInstance();
-      Object result = m.invoke(mcfInstance, (Object[])null);
-      if (result instanceof javax.resource.cci.ConnectionFactory)
-         return true;
+      out.println("  ConnectionFactory (" + (cci.equals("Yes") ? cf : cfi) + ")");
+      try
+      {
+         outputMethodInfo(out, clazz, cl);
+         conImpl = ((javax.resource.cci.ConnectionFactory) result).getConnection();        
+         conClass = conImpl.getClass().getCanonicalName();       
+      } 
+      catch (Throwable t) 
+      {
+         t.printStackTrace(error);
+      } 
       
-      return false;
+      try 
+      {
+         ci = Class.forName(getValueString(mcf.getConnectionInterface()), true, cl);
+         out.println("  Connection (" + (conClass != null ? conClass : getValueString(mcf.getConnectionInterface())) + "):");
+         outputMethodInfo(out, ci, cl);
+      }
+      catch (Throwable t)
+      {
+         // Nothing we can do
+         t.printStackTrace(error);
+      }
    }
 
    /**
