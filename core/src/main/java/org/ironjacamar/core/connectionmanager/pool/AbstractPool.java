@@ -120,6 +120,9 @@ public abstract class AbstractPool implements Pool
       ConnectionListener cl = null;
       ManagedConnectionPool mcp = getManagedConnectionPool(credential);
 
+      if (isShutdown())
+         throw new ResourceException();
+      
       if (cm.getTransactionSupport() == TransactionSupportLevel.LocalTransaction
             || cm.getTransactionSupport() == TransactionSupportLevel.XATransaction)
       {
@@ -403,6 +406,8 @@ public abstract class AbstractPool implements Pool
    @Override
    public void prefill()
    {
+      if (isShutdown())
+         return;
 
       if (poolConfiguration.isPrefill())
       {
@@ -418,7 +423,6 @@ public abstract class AbstractPool implements Pool
             // Standard prefill request
             mcp.prefill();
          }
-
       }
    }
 
@@ -449,10 +453,10 @@ public abstract class AbstractPool implements Pool
    /**
     * {@inheritDoc}
     */
-   public synchronized void emptyManagedConnectionPool(ManagedConnectionPool mcp)
+   public void emptyManagedConnectionPool(ManagedConnectionPool mcp)
    {
-      pools.values().remove(mcp);
-      mcp.shutdown();
+      if (pools.values().remove(mcp))
+         mcp.shutdown();
    }
 
    /**
@@ -481,6 +485,8 @@ public abstract class AbstractPool implements Pool
    @Override
    public synchronized void flush(FlushMode mode)
    {
+      if (isShutdown())
+         return;
 
       for (Credential credential : pools.keySet())
       {
@@ -511,9 +517,7 @@ public abstract class AbstractPool implements Pool
 
                pools.remove(credential);
             }
-
          }
       }
    }
-
 }
