@@ -25,7 +25,9 @@ import org.ironjacamar.core.spi.statistics.StatisticsPlugin;
 
 import java.util.Collection;
 
+import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.BootstrapContext;
+import javax.resource.spi.endpoint.MessageEndpointFactory;
 
 /**
  * A resource adapter
@@ -34,7 +36,7 @@ import javax.resource.spi.BootstrapContext;
 public interface ResourceAdapter
 {
    /**
-    * Get the resource adapter
+    * Get the resource adapter - for introspection only
     * @return The value
     */
    public javax.resource.spi.ResourceAdapter getResourceAdapter();
@@ -62,6 +64,37 @@ public interface ResourceAdapter
     * @return The value
     */
    public Recovery getRecovery();
+
+   /**
+    * Does the resource adapter support the message listener
+    * @param ml The class name of the message listener
+    * @return True if there is support, otherwise false
+    */
+   public boolean isMessageListenerSupported(String ml);
+
+   /**
+    * Create message listener
+    * @param ml The class name of the message listener
+    * @return The value
+    * @exception Exception if the message listener can't be created
+    */
+   public MessageListener createMessageListener(String ml) throws Exception;
+
+   /**
+    * Endpoint activation
+    * @param mef The message endpoint factory
+    * @param as The activation spec
+    * @exception Exception Thrown in case of an error
+    */
+   public void endpointActivation(MessageEndpointFactory mef, ActivationSpec as) throws Exception;
+
+   /**
+    * Endpoint deactivation
+    * @param mef The message endpoint factory
+    * @param as The activation spec
+    * @exception Exception Thrown in case of an error
+    */
+   public void endpointDeactivation(MessageEndpointFactory mef, ActivationSpec as) throws Exception;
 
    /**
     * Is the resource adapter active ?

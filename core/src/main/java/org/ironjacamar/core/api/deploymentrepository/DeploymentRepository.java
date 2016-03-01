@@ -50,11 +50,18 @@ public interface DeploymentRepository
    public Deployment findById(String id);
 
    /**
-    * Find a deployment
+    * Find deployments
     * @param name The name of the deployment
     * @return The active deployments
     */
    public Collection<Deployment> findByName(String name);
+
+   /**
+    * Find deployments
+    * @param messageListener The class name of the message listener
+    * @return The deployments
+    */
+   public Collection<Deployment> findByMessageListener(String messageListener);
 
    /**
     * Register a deployment

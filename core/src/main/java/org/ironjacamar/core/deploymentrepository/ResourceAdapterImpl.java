@@ -22,13 +22,20 @@
 package org.ironjacamar.core.deploymentrepository;
 
 import org.ironjacamar.core.api.deploymentrepository.ConfigProperty;
+import org.ironjacamar.core.api.deploymentrepository.MessageListener;
 import org.ironjacamar.core.api.deploymentrepository.Recovery;
 import org.ironjacamar.core.api.deploymentrepository.ResourceAdapter;
 import org.ironjacamar.core.spi.statistics.StatisticsPlugin;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
+import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.BootstrapContext;
+import javax.resource.spi.endpoint.MessageEndpointFactory;
 
 /**
  * A resource adapter implementation
@@ -54,6 +61,12 @@ public class ResourceAdapterImpl implements ResourceAdapter
    /** The recovery */
    private Recovery recovery;
 
+   /** The message listeners */
+   private Map<String, ActivationSpecImpl> messageListeners;
+   
+   /** Active endpoints */
+   private Map<MessageEndpointFactory, Set<ActivationSpec>> activeEndpoints;
+   
    /**
     * Constructor
     * @param resourceAdapter The resource adapter
@@ -61,12 +74,14 @@ public class ResourceAdapterImpl implements ResourceAdapter
     * @param configProperties The configuration properties
     * @param statistics The statistics
     * @param recovery The recovery module
+    * @param messageListeners The message listeners
     */
    public ResourceAdapterImpl(javax.resource.spi.ResourceAdapter resourceAdapter,
                               BootstrapContext bc,
                               Collection<ConfigProperty> configProperties,
                               StatisticsPlugin statistics,
-                              Recovery recovery)
+                              Recovery recovery,
+                              Map<String, ActivationSpecImpl> messageListeners)
    {
       this.activated = false;
       this.resourceAdapter = resourceAdapter;
@@ -74,6 +89,8 @@ public class ResourceAdapterImpl implements ResourceAdapter
       this.configProperties = configProperties;
       this.statistics = statistics;
       this.recovery = recovery;
+      this.messageListeners = messageListeners;
+      this.activeEndpoints = new HashMap<>();
    }
    
    /**
@@ -127,6 +144,99 @@ public class ResourceAdapterImpl implements ResourceAdapter
    /**
     * {@inheritDoc}
     */
+   public boolean isMessageListenerSupported(String ml)
+   {
+      if (messageListeners != null && ml != null)
+         return messageListeners.containsKey(ml);
+
+      return false;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public MessageListener createMessageListener(String ml) throws Exception
+   {
+      if (isMessageListenerSupported(ml))
+      {
+         Class<?> mlClz = Class.forName(ml, true, resourceAdapter.getClass().getClassLoader());
+         return new MessageListenerImpl(mlClz, messageListeners.get(ml), resourceAdapter.getClass().getClassLoader());
+      }
+
+      throw new Exception(ml + " not supported by " + resourceAdapter.getClass().getName());
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   public void endpointActivation(MessageEndpointFactory mef, ActivationSpec as) throws Exception
+   {
+      if (mef == null)
+         throw new Exception("MessageEndpointFactory is null");
+
+      if (as == null)
+         throw new Exception("ActivationSpec is null");
+
+      // TODO: Bean validation
+      
+      try
+      {
+         as.validate();
+      }
+      catch (UnsupportedOperationException uoe)
+      {
+         // Ignore
+      }
+
+      resourceAdapter.endpointActivation(mef, as);
+
+      // TODO: Recovery
+
+      Set<ActivationSpec> s = activeEndpoints.get(mef);
+      if (s == null)
+         s = new HashSet<>();
+      s.add(as);
+      activeEndpoints.put(mef, s);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void endpointDeactivation(MessageEndpointFactory mef, ActivationSpec as) throws Exception
+   {
+      if (mef == null)
+         throw new Exception("MessageEndpointFactory is null");
+
+      if (as == null)
+         throw new Exception("ActivationSpec is null");
+
+      // TODO: Recovery
+
+      try
+      {
+         resourceAdapter.endpointDeactivation(mef, as);
+      }
+      finally
+      {
+         Set<ActivationSpec> s = activeEndpoints.get(mef);
+         if (s != null)
+         {
+            s.remove(as);
+            if (s.size() == 0)
+            {
+               activeEndpoints.remove(mef);
+            }
+            else
+            {
+               activeEndpoints.put(mef, s);
+            }
+         }
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public boolean activate() throws Exception
    {
       if (!activated)
@@ -147,6 +257,9 @@ public class ResourceAdapterImpl implements ResourceAdapter
    {
       if (activated)
       {
+         if (activeEndpoints.size() > 0)
+            throw new Exception("Still active endpoints");
+
          resourceAdapter.stop();
 
          activated = false;

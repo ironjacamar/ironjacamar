@@ -106,6 +106,20 @@ public class DeploymentRepositoryImpl implements DeploymentRepository
    /**
     * {@inheritDoc}
     */
+   public Collection<Deployment> findByMessageListener(String messageListener)
+   {
+      Collection<Deployment> result = new ArrayList<Deployment>();
+      for (Deployment d : deployments)
+      {
+         if (d.getResourceAdapter() != null && d.getResourceAdapter().isMessageListenerSupported(messageListener))
+            result.add(d);
+      }
+      return Collections.unmodifiableCollection(result);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public boolean registerDeployment(Deployment deployment)
    {
       if (deployments.contains(deployment))

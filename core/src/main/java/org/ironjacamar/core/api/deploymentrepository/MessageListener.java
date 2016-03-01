@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2015, Red Hat Inc, and individual contributors
+ * Copyright 2016, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -18,69 +18,48 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.ironjacamar.rars.test.inflow;
+
+package org.ironjacamar.core.api.deploymentrepository;
+
+import java.util.Map;
+import java.util.Set;
 
 import javax.resource.spi.ActivationSpec;
-import javax.resource.spi.InvalidPropertyException;
-import javax.resource.spi.ResourceAdapter;
 
 /**
- * TestActivationSpec
+ * A message listener
+ * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class TestActivationSpec implements ActivationSpec
+public interface MessageListener
 {
-   /** The resource adapter */
-   private ResourceAdapter ra;
-
-   /** The name */
-   private String name;
-
    /**
-    * Default constructor
-    */
-   public TestActivationSpec()
-   {
-      this.name = "";
-   }
-
-   /**
-    * Get the name
+    * Get the message listener
     * @return The value
     */
-   public String getName()
-   {
-      return name;
-   }
-   
-   /**
-    * Set the name
-    * @param v The value
-    */
-   public void setName(String v)
-   {
-      name = v;
-   }
-   
-   /**
-    * {@inheritDoc}
-    */
-   public void validate() throws InvalidPropertyException
-   {
-   }
+   public Class<?> getMessageListener();
 
    /**
-    * {@inheritDoc}
+    * Get the activation spec
+    * @return The value
     */
-   public ResourceAdapter getResourceAdapter()
-   {
-      return ra;
-   }
+   public Class<?> getActivationSpec();
 
    /**
-    * {@inheritDoc}
+    * Get the config properties (name, type)
+    * @return The value
     */
-   public void setResourceAdapter(ResourceAdapter ra)
-   {
-      this.ra = ra;
-   }
+   public Map<String, Class<?>> getConfigProperties();
+
+   /**
+    * Get the required config properties (name)
+    * @return The value
+    */
+   public Set<String> getRequiredConfigProperties();
+
+   /**
+    * Create an activation spec instance
+    * @return The value
+    * @exception Exception If creation fails
+    */
+   public ActivationSpec createActivationSpec() throws Exception;
 }

@@ -28,6 +28,7 @@ import org.ironjacamar.common.api.metadata.resourceadapter.Activation;
 import org.ironjacamar.common.api.metadata.resourceadapter.AdminObject;
 import org.ironjacamar.common.api.metadata.resourceadapter.ConnectionDefinition;
 import org.ironjacamar.common.api.metadata.spec.Connector;
+import org.ironjacamar.common.api.metadata.spec.InboundResourceAdapter;
 import org.ironjacamar.common.api.metadata.spec.XsdString;
 import org.ironjacamar.core.api.connectionmanager.ConnectionManagerConfiguration;
 import org.ironjacamar.core.api.connectionmanager.ccm.CachedConnectionManager;
@@ -39,6 +40,7 @@ import org.ironjacamar.core.api.metadatarepository.MetadataRepository;
 import org.ironjacamar.core.connectionmanager.ConnectionManager;
 import org.ironjacamar.core.connectionmanager.ConnectionManagerFactory;
 import org.ironjacamar.core.connectionmanager.pool.PoolFactory;
+import org.ironjacamar.core.deploymentrepository.ActivationSpecImpl;
 import org.ironjacamar.core.deploymentrepository.AdminObjectImpl;
 import org.ironjacamar.core.deploymentrepository.ConfigPropertyImpl;
 import org.ironjacamar.core.deploymentrepository.ConnectionFactoryImpl;
@@ -56,9 +58,13 @@ import org.ironjacamar.core.spi.transaction.recovery.XAResourceRecovery;
 import org.ironjacamar.core.util.Injection;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.ResourceAdapterAssociation;
@@ -225,7 +231,8 @@ public abstract class AbstractResourceAdapterDeployer
             createResourceAdapter(builder, connector.getResourceadapter().getResourceadapterClass(),
                                   connector.getResourceadapter().getConfigProperties(),
                                   activation.getConfigProperties(),
-                                  transactionSupport);
+                                  transactionSupport,
+                                  connector.getResourceadapter().getInboundResourceadapter());
 
          if (activation.getConnectionDefinitions() != null)
          {
@@ -269,6 +276,7 @@ public abstract class AbstractResourceAdapterDeployer
     * @param configProperties The config properties
     * @param overrides The config properties overrides
     * @param transactionSupport The transaction support level
+    * @param ira The inbound resource adapter definition
     * @throws DeployException Thrown if the resource adapter cant be created
     */
    protected void
@@ -276,7 +284,8 @@ public abstract class AbstractResourceAdapterDeployer
                             String raClz,
                             Collection<org.ironjacamar.common.api.metadata.spec.ConfigProperty> configProperties,
                             Map<String, String> overrides,
-                            TransactionSupportEnum transactionSupport)
+                            TransactionSupportEnum transactionSupport,
+                            InboundResourceAdapter ira)
       throws DeployException
    {
       try
@@ -299,7 +308,8 @@ public abstract class AbstractResourceAdapterDeployer
          }
 
          builder.resourceAdapter(new ResourceAdapterImpl(resourceAdapter, bootstrapContext, dcps,
-                                                         statisticsPlugin, recovery));
+                                                         statisticsPlugin, recovery,
+                                                         createInboundMapping(ira, builder.getClassLoader())));
       }
       catch (Throwable t)
       {
@@ -627,6 +637,27 @@ public abstract class AbstractResourceAdapterDeployer
    }
    
    /**
+    * Is a support type
+    * @param t The type
+    * @return True if supported, otherwise false
+    */
+   private boolean isSupported(Class<?> t)
+   {
+      if (Boolean.class.equals(t) || boolean.class.equals(t) ||
+          Byte.class.equals(t) || byte.class.equals(t) ||
+          Short.class.equals(t) || short.class.equals(t) ||
+          Integer.class.equals(t) || int.class.equals(t) ||
+          Long.class.equals(t) || long.class.equals(t) ||
+          Float.class.equals(t) || float.class.equals(t) ||
+          Double.class.equals(t) || double.class.equals(t) ||
+          Character.class.equals(t) || char.class.equals(t) ||
+          String.class.equals(t))
+         return true;
+
+      return false;
+   }
+   
+   /**
     * Associate resource adapter with the object if it implements ResourceAdapterAssociation
     * @param resourceAdapter The resource adapter
     * @param object The possible association object
@@ -926,5 +957,73 @@ public abstract class AbstractResourceAdapterDeployer
 
       return new RecoveryImpl(plugin.getClass().getName(), dcps, r, cd.getJndiName(),
                               transactionIntegration.getRecoveryRegistry());
+   }
+
+   /**
+    * Create an inbound mapping
+    * @param ira The inbound resource adapter definition
+    * @param cl The class loader
+    * @return The mapping
+    * @exception Exception Thrown in case of an error
+    */
+   private Map<String, ActivationSpecImpl> createInboundMapping(InboundResourceAdapter ira, ClassLoader cl)
+      throws Exception
+   {
+      if (ira != null)
+      {
+         Map<String, ActivationSpecImpl> result = new HashMap<>();
+
+         for (org.ironjacamar.common.api.metadata.spec.MessageListener ml :
+                 ira.getMessageadapter().getMessagelisteners())
+         {
+            String type = ml.getMessagelistenerType().getValue();
+            org.ironjacamar.common.api.metadata.spec.Activationspec as = ml.getActivationspec();
+            String clzName = as.getActivationspecClass().getValue();
+            Class<?> clz = Class.forName(clzName, true, cl);
+            Map<String, Class<?>> configProperties = createPropertyMap(clz);
+            Set<String> requiredConfigProperties = new HashSet<>();
+
+            if (as.getRequiredConfigProperties() != null)
+            {
+               for (org.ironjacamar.common.api.metadata.spec.RequiredConfigProperty rcp :
+                       as.getRequiredConfigProperties())
+               {
+                  requiredConfigProperties.add(rcp.getConfigPropertyName().getValue());
+               }
+            }
+
+            ActivationSpecImpl asi = new ActivationSpecImpl(clzName, configProperties, requiredConfigProperties);
+            if (!result.containsKey(type))
+               result.put(type, asi);
+         }
+         
+         return result;
+      }
+
+      return null;
+   }
+
+   /**
+    * Get property map
+    * @param clz The class
+    * @return The map
+    * @exception Exception Thrown in case of an error
+    */
+   private Map<String, Class<?>> createPropertyMap(Class<?> clz) throws Exception
+   {
+      Map<String, Class<?>> result = new HashMap<>();
+
+      for (Method m : clz.getMethods())
+      {
+         if (m.getName().startsWith("set"))
+         {
+            if (m.getReturnType().equals(Void.TYPE) &&
+                m.getParameterCount() == 1 &&
+                isSupported(m.getParameterTypes()[0]))
+               result.put(m.getName().substring(3), m.getParameterTypes()[0]);
+         }
+      }
+      
+      return result;
    }
 }

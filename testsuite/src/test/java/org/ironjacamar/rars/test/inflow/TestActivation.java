@@ -22,7 +22,10 @@ package org.ironjacamar.rars.test.inflow;
 
 import org.ironjacamar.rars.test.TestResourceAdapter;
 
+import java.lang.reflect.Method;
+
 import javax.resource.ResourceException;
+import javax.resource.spi.endpoint.MessageEndpoint;
 import javax.resource.spi.endpoint.MessageEndpointFactory;
 
 /**
@@ -89,7 +92,27 @@ public class TestActivation
     */
    public void start() throws ResourceException
    {
+      try
+      {
+         Method m = TestMessageListener.class.getMethod("onMessage", new Class<?>[] {String.class});
+         
+         MessageEndpoint me = endpointFactory.createEndpoint(null);
+         me.beforeDelivery(m);
 
+         TestMessageListener tml = (TestMessageListener)me;
+         tml.onMessage(spec.getName());
+         
+         me.afterDelivery();
+         me.release();
+      }
+      catch (ResourceException re)
+      {
+         throw re;
+      }
+      catch (Exception e)
+      {
+         throw new ResourceException(e);
+      }
    }
 
    /**

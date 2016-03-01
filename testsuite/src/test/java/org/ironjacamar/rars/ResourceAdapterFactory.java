@@ -503,9 +503,10 @@ public class ResourceAdapterFactory
         .adminobjectClass(TestAdminObjectImpl.class.getName());
 
       rt.getOrCreateInboundResourceadapter().getOrCreateMessageadapter().getOrCreateMessagelistener()
-        .messagelistenerType(TestMessageListener.class.getName())
-        .getOrCreateActivationspec().activationspecClass(TestActivationSpec.class.getName());
-
+         .messagelistenerType(TestMessageListener.class.getName())
+         .getOrCreateActivationspec().activationspecClass(TestActivationSpec.class.getName())
+         .getOrCreateRequiredConfigProperty().configPropertyName("Name");
+      
       ResourceAdapterArchive raa = ShrinkWrap.create(ResourceAdapterArchive.class, "test.rar");
 
       JavaArchive ja = ShrinkWrap.create(JavaArchive.class, "test.jar");
