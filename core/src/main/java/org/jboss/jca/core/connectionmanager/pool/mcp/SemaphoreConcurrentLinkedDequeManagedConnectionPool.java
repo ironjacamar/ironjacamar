@@ -560,7 +560,8 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
                else
                {
                   throw new ResourceException(
-                     bundle.unexpectedThrowableWhileTryingCreateConnection(clw != null ? clw.getConnectionListener() : null), t);
+                     bundle.unexpectedThrowableWhileTryingCreateConnection(
+                             clw != null ? clw.getConnectionListener() : null), t);
                }
             }
          } 
@@ -1179,7 +1180,7 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
                   }
                   catch (ResourceException re) 
                   {
-                     log.unableFillPool(re);
+                     log.unableFillPool(re, cm.getJndiName());
                      return;
                   }
                } 
@@ -1265,7 +1266,7 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
                      } 
                      catch (ResourceException re) 
                      {
-                        log.unableFillPool(re);
+                        log.unableFillPool(re, cm.getJndiName());
                         return;
                      }
                   }

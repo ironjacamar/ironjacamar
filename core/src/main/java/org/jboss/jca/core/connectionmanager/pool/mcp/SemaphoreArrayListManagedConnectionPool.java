@@ -1162,7 +1162,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                   }
                   catch (ResourceException re)
                   {
-                     log.unableFillPool(re);
+                     log.unableFillPool(re, cm.getJndiName());
                      return;
                   }
                }
@@ -1256,7 +1256,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                      }
                      catch (ResourceException re)
                      {
-                        log.unableFillPool(re);
+                        log.unableFillPool(re, cm.getJndiName());
                         return;
                      }
                   }
