@@ -1078,8 +1078,19 @@ public abstract class BaseWrapperManagedConnectionFactory
          if (anonymous instanceof BaseWrapperManagedConnection)
          {
             BaseWrapperManagedConnection mc = (BaseWrapperManagedConnection) anonymous;
+            Connection c = null;
+            try
+            {
+               c = mc.getRealConnection();
+               SQLException e = isValidConnection(c);
 
-            if (!mc.checkValid())
+               if (e != null)
+               {
+                  log.invalidConnection(c.toString(), e);
+                  invalid.add(mc);
+               }
+            }
+            catch (SQLException se)
             {
                invalid.add(mc);
             }

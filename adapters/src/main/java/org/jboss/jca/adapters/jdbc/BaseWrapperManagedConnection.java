@@ -504,27 +504,6 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
    }
 
    /**
-    * Check valid
-    * @return <code>True</code> if valid; otherwise <code>false</code>
-    */
-   public boolean checkValid()
-   {
-      SQLException e = mcf.isValidConnection(con);
-
-      if (e == null)
-      {
-         // It's ok
-         return true;
-      }
-      else
-      {
-         getLog().invalidConnection(con.toString(), e);
-         broadcastConnectionError(e);
-         return false;
-      }
-   }
-
-   /**
     * Get the properties
     * @return The value
     */
