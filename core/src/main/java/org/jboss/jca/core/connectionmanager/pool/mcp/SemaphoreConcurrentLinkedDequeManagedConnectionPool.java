@@ -438,7 +438,7 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
 
                      if (pool.getInternalStatistics().isEnabled())
                      {
-                        pool.getInternalStatistics().deltaTotalPoolTime(lastUsed -
+                        pool.getInternalStatistics().deltaTotalPoolTime(System.currentTimeMillis() -
                            clw.getConnectionListener().getLastReturnedTime());
                      }
 
@@ -458,7 +458,7 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
 
                      if (pool.getInternalStatistics().isEnabled())
                      {
-                        pool.getInternalStatistics().deltaTotalPoolTime(lastUsed -
+                        pool.getInternalStatistics().deltaTotalPoolTime(System.currentTimeMillis() -
                            clw.getConnectionListener().getLastReturnedTime());
                      }
 
@@ -530,7 +530,7 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
             } 
             catch (Throwable t) 
             {
-               if ((clw != null && clw.getConnectionListener() != null) || !(t instanceof RetryableException))
+               if (clw != null || !(t instanceof RetryableException))
                   log.throwableWhileAttemptingGetNewGonnection(clw != null ? clw.getConnectionListener() : null, t);
 
                // Return permit and rethrow
@@ -1350,36 +1350,29 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
       {
          removeConnectionListenerFromPool(clw);
          
-         if (clw.getConnectionListener() != null) 
+         if (clw.getConnectionListener().getState() == ConnectionState.DESTROYED) 
          {
-            if (clw.getConnectionListener().getState() == ConnectionState.DESTROYED) 
-            {
-               log.tracef("ManagedConnection is already destroyed %s", clw.getConnectionListener());
-
-               return;
-            }
-
-            if (pool.getInternalStatistics().isEnabled())
-               pool.getInternalStatistics().deltaDestroyedCount();
-
-            clw.getConnectionListener().setState(ConnectionState.DESTROYED);
-            poolSize.decrementAndGet();
-
-            ManagedConnection mc = clw.getConnectionListener().getManagedConnection();
-            try 
-            {
-               mc.destroy();
-            }
-            catch (Throwable t) 
-            {
-               log.debugf(t, "Exception destroying ManagedConnection %s", clw.getConnectionListener());
-            }
-
-            mc.removeConnectionEventListener(clw.getConnectionListener());
-
-            clw.setConnectionListener(null);
-
+            log.tracef("ManagedConnection is already destroyed %s", clw.getConnectionListener());
+            return;
          }
+
+         if (pool.getInternalStatistics().isEnabled())
+            pool.getInternalStatistics().deltaDestroyedCount();
+
+         clw.getConnectionListener().setState(ConnectionState.DESTROYED);
+         poolSize.decrementAndGet();
+
+         ManagedConnection mc = clw.getConnectionListener().getManagedConnection();
+         try
+         {
+            mc.destroy();
+         }
+         catch (Throwable t)
+         {
+            log.debugf(t, "Exception destroying ManagedConnection %s", clw.getConnectionListener());
+         }
+
+         mc.removeConnectionEventListener(clw.getConnectionListener());
       }
    }
 
@@ -1394,10 +1387,7 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
       if (clw != null)
       {
          clq.remove(clw);
-
-         // ConcurrentHashMap does *not* not allow null to be used as a key or value, 
-         if (clw.getConnectionListener() != null)
-            cls.remove(clw.getConnectionListener());
+         cls.remove(clw.getConnectionListener());
 
          //update counter and statistics
          if (clw.isCheckedOut()) 
@@ -1771,16 +1761,6 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
       public ConnectionListener getConnectionListener() 
       {
          return cl;
-      }
-
-      /**
-       * Set wrapped Connection Listener
-       * 
-       * @param connectionListener wrapped Connection Listener
-       */
-      public void setConnectionListener(ConnectionListener connectionListener) 
-      {
-         this.cl = connectionListener;
       }
 
       /**
