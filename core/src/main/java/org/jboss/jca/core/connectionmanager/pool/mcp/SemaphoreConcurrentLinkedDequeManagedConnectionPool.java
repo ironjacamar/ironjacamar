@@ -554,7 +554,8 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
                else
                {
                   throw new ResourceException(
-                     bundle.unexpectedThrowableWhileTryingCreateConnection(clw != null ? clw.getConnectionListener() : null), t);
+                     bundle.unexpectedThrowableWhileTryingCreateConnection(
+                             clw != null ? clw.getConnectionListener() : null), t);
                }
             }
          } 
@@ -757,7 +758,7 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
                   if (entry.getValue().isCheckedOut())
                      checkedOut.add(entry.getKey());
                }
-               log.tracef("Flushing pool checkedOut=%s inPool=%s",checkedOut , cls);
+               log.tracef("Flushing pool checkedOut=%s inPool=%s", checkedOut , cls);
             }
 
             // Mark checked out connections as requiring destruction
@@ -802,7 +803,7 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
                   if (entry.getValue().isCheckedOut())
                      checkedOut.add(entry.getKey());
                }
-               log.tracef("Gracefully flushing pool checkedOut=%s inPool=%s",checkedOut , cls);
+               log.tracef("Gracefully flushing pool checkedOut=%s inPool=%s", checkedOut , cls);
             }
 
             for (Entry<ConnectionListener, ConnectionListenerWrapper> entry : cls.entrySet()) 
@@ -1165,7 +1166,7 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
                   }
                   catch (ResourceException re) 
                   {
-                     log.unableFillPool(re);
+                     log.unableFillPool(re, cm.getJndiName());
                      return;
                   }
                } 
@@ -1249,7 +1250,7 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
                      } 
                      catch (ResourceException re) 
                      {
-                        log.unableFillPool(re);
+                        log.unableFillPool(re, cm.getJndiName());
                         return;
                      }
                   }

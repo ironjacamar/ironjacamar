@@ -802,7 +802,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          }
          else if (FlushMode.GRACEFULLY == mode)
          {
-            log.tracef("Gracefully flushing pool checkedOut=%s inPool=%s",checkedOut , cls);
+            log.tracef("Gracefully flushing pool checkedOut=%s inPool=%s", checkedOut , cls);
 
             // Mark checked out connections as requiring destruction upon return
             for (ConnectionListener cl : checkedOut)
@@ -1146,7 +1146,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                   }
                   catch (ResourceException re)
                   {
-                     log.unableFillPool(re);
+                     log.unableFillPool(re, cm.getJndiName());
                      return;
                   }
                }
@@ -1238,7 +1238,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                      }
                      catch (ResourceException re)
                      {
-                        log.unableFillPool(re);
+                        log.unableFillPool(re, cm.getJndiName());
                         return;
                      }
                   }

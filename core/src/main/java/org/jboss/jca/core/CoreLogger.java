@@ -412,10 +412,11 @@ public interface CoreLogger extends BasicLogger
    /**
     * Unable to fill pool
     * @param t The exception
+    * @param jndiName the jndi-name
     */
    @LogMessage(level = WARN)
-   @Message(id = 610, value = "Unable to fill pool")
-   public void unableFillPool(@Cause Throwable t);
+   @Message(id = 610, value = "Unable to fill pool: %s")
+   public void unableFillPool(@Cause Throwable t, String jndiName);
    
    /**
     * Background validation was specified with a non compliant ManagedConnectionFactory interface
