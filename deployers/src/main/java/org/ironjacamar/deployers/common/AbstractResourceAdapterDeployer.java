@@ -232,6 +232,7 @@ public abstract class AbstractResourceAdapterDeployer
                                   connector.getResourceadapter().getConfigProperties(),
                                   activation.getConfigProperties(),
                                   transactionSupport,
+                                  getProductName(connector), getProductVersion(connector),
                                   connector.getResourceadapter().getInboundResourceadapter());
 
          if (activation.getConnectionDefinitions() != null)
@@ -276,6 +277,8 @@ public abstract class AbstractResourceAdapterDeployer
     * @param configProperties The config properties
     * @param overrides The config properties overrides
     * @param transactionSupport The transaction support level
+    * @param productName The product name
+    * @param productVersion The product version
     * @param ira The inbound resource adapter definition
     * @throws DeployException Thrown if the resource adapter cant be created
     */
@@ -285,6 +288,7 @@ public abstract class AbstractResourceAdapterDeployer
                             Collection<org.ironjacamar.common.api.metadata.spec.ConfigProperty> configProperties,
                             Map<String, String> overrides,
                             TransactionSupportEnum transactionSupport,
+                            String productName, String productVersion,
                             InboundResourceAdapter ira)
       throws DeployException
    {
@@ -300,16 +304,17 @@ public abstract class AbstractResourceAdapterDeployer
          org.ironjacamar.core.spi.statistics.StatisticsPlugin statisticsPlugin = null;
          if (resourceAdapter instanceof org.ironjacamar.core.spi.statistics.Statistics)
             statisticsPlugin = ((org.ironjacamar.core.spi.statistics.Statistics)resourceAdapter).getStatistics();
-         
-         org.ironjacamar.core.api.deploymentrepository.Recovery recovery = null;
+
+         TransactionIntegration ti = null;
          if (isXA(transactionSupport))
          {
-            // Do recovery
+            ti = transactionIntegration;
          }
 
          builder.resourceAdapter(new ResourceAdapterImpl(resourceAdapter, bootstrapContext, dcps,
-                                                         statisticsPlugin, recovery,
-                                                         createInboundMapping(ira, builder.getClassLoader())));
+                                                         statisticsPlugin, productName, productVersion,
+                                                         createInboundMapping(ira, builder.getClassLoader()),
+                                                         ti));
       }
       catch (Throwable t)
       {
@@ -1025,5 +1030,32 @@ public abstract class AbstractResourceAdapterDeployer
       }
       
       return result;
+   }
+
+   /**
+    * Get the product name for the resource adapter
+    * @param raXml The connector
+    * @return The value
+    */
+   private String getProductName(Connector raXml)
+   {
+      if (raXml != null && !XsdString.isNull(raXml.getEisType()))
+         return raXml.getEisType().getValue();
+
+      return "";
+   }
+
+   /**
+    * Get the product version for the resource adapter
+    * @param raXml The connector
+    * @return The value
+    */
+   private String getProductVersion(Connector raXml)
+   {
+      if (raXml != null)
+         if (!XsdString.isNull(raXml.getResourceadapterVersion()))
+            return raXml.getResourceadapterVersion().getValue();
+
+      return "";
    }
 }

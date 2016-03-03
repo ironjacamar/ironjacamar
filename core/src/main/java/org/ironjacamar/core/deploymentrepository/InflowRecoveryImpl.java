@@ -21,28 +21,27 @@
 
 package org.ironjacamar.core.deploymentrepository;
 
-import org.ironjacamar.core.api.deploymentrepository.ConfigProperty;
-import org.ironjacamar.core.api.deploymentrepository.Recovery;
+import org.ironjacamar.core.api.deploymentrepository.InflowRecovery;
 import org.ironjacamar.core.spi.transaction.recovery.XAResourceRecovery;
 import org.ironjacamar.core.spi.transaction.recovery.XAResourceRecoveryRegistry;
 
-import java.util.Collection;
-import java.util.Collections;
+import javax.resource.spi.ActivationSpec;
+import javax.resource.spi.endpoint.MessageEndpointFactory;
 
 /**
- * Recovery module implementation
+ * Inflow recovery module implementation
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class RecoveryImpl implements Recovery
+public class InflowRecoveryImpl implements InflowRecovery
 {
    /** Activated */
    private boolean activated;
 
-   /** Class name of the plugin used */
-   private String pluginClassName;
+   /** The message endpoint factory */
+   private MessageEndpointFactory mef;
 
-   /** The config properties */
-   private Collection<ConfigProperty> dcps;
+   /** The activation spec */
+   private ActivationSpec as;
 
    /** The recovery module */
    private XAResourceRecovery recovery;
@@ -52,39 +51,37 @@ public class RecoveryImpl implements Recovery
    
    /**
     * Constructor
-    * @param pluginClassName The class name of the plugin
-    * @param dcps The used config properties
+    * @param mef The message endpoint factory
+    * @param as The activation spec
     * @param recovery The recovery module
-    * @param jndiName The JNDI name
     * @param registry The registry
     */
-   public RecoveryImpl(String pluginClassName, Collection<ConfigProperty> dcps,
-                       XAResourceRecovery recovery, String jndiName, XAResourceRecoveryRegistry registry)
+   public InflowRecoveryImpl(MessageEndpointFactory mef, ActivationSpec as,
+                             XAResourceRecovery recovery, XAResourceRecoveryRegistry registry)
    {
       this.activated = false;
-      this.pluginClassName = pluginClassName;
-      this.dcps = dcps;
+      this.mef = mef;
+      this.as = as;
       this.recovery = recovery;
       this.registry = registry;
-      this.recovery.setJndiName(jndiName);
    }
 
    /**
     * {@inheritDoc}
     */
-   public String getPluginClassName()
+   public MessageEndpointFactory getMessageEndpointFactory()
    {
-      return pluginClassName;
+      return mef;
    }
-   
+
    /**
     * {@inheritDoc}
     */
-   public Collection<ConfigProperty> getConfigProperties()
+   public ActivationSpec getActivationSpec()
    {
-      return Collections.unmodifiableCollection(dcps);
+      return as;
    }
-   
+
    /**
     * {@inheritDoc}
     */

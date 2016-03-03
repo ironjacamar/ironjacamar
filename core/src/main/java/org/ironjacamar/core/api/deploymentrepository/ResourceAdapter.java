@@ -60,12 +60,6 @@ public interface ResourceAdapter
    public StatisticsPlugin getStatistics();
 
    /**
-    * Get the recovery
-    * @return The value
-    */
-   public Recovery getRecovery();
-
-   /**
     * Does the resource adapter support the message listener
     * @param ml The class name of the message listener
     * @return True if there is support, otherwise false
@@ -95,6 +89,12 @@ public interface ResourceAdapter
     * @exception Exception Thrown in case of an error
     */
    public void endpointDeactivation(MessageEndpointFactory mef, ActivationSpec as) throws Exception;
+
+   /**
+    * Get the inflow recovery
+    * @return The value
+    */
+   public Collection<InflowRecovery> getRecovery();
 
    /**
     * Is the resource adapter active ?

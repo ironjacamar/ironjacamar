@@ -22,16 +22,17 @@
 package org.ironjacamar.core.deploymentrepository;
 
 import org.ironjacamar.core.api.deploymentrepository.ConfigProperty;
+import org.ironjacamar.core.api.deploymentrepository.InflowRecovery;
 import org.ironjacamar.core.api.deploymentrepository.MessageListener;
-import org.ironjacamar.core.api.deploymentrepository.Recovery;
 import org.ironjacamar.core.api.deploymentrepository.ResourceAdapter;
 import org.ironjacamar.core.spi.statistics.StatisticsPlugin;
+import org.ironjacamar.core.spi.transaction.TransactionIntegration;
+import org.ironjacamar.core.spi.transaction.recovery.XAResourceRecovery;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.BootstrapContext;
@@ -57,40 +58,51 @@ public class ResourceAdapterImpl implements ResourceAdapter
 
    /** The statistics */
    private StatisticsPlugin statistics;
-   
-   /** The recovery */
-   private Recovery recovery;
 
+   /** The product name */
+   private String productName;
+   
+   /** The product version */
+   private String productVersion;
+   
    /** The message listeners */
    private Map<String, ActivationSpecImpl> messageListeners;
+
+   /** Transaction integration */
+   private TransactionIntegration transactionIntegration;
    
    /** Active endpoints */
-   private Map<MessageEndpointFactory, Set<ActivationSpec>> activeEndpoints;
-   
+   private Map<Endpoint, InflowRecovery> activeEndpoints;
+
    /**
     * Constructor
     * @param resourceAdapter The resource adapter
     * @param bc The BootstrapContext
     * @param configProperties The configuration properties
     * @param statistics The statistics
-    * @param recovery The recovery module
+    * @param productName The product name
+    * @param productVersion The product version
     * @param messageListeners The message listeners
+    * @param ti The transaction integration
     */
    public ResourceAdapterImpl(javax.resource.spi.ResourceAdapter resourceAdapter,
                               BootstrapContext bc,
                               Collection<ConfigProperty> configProperties,
                               StatisticsPlugin statistics,
-                              Recovery recovery,
-                              Map<String, ActivationSpecImpl> messageListeners)
+                              String productName, String productVersion,
+                              Map<String, ActivationSpecImpl> messageListeners,
+                              TransactionIntegration ti)
    {
       this.activated = false;
       this.resourceAdapter = resourceAdapter;
       this.bc = bc;
       this.configProperties = configProperties;
       this.statistics = statistics;
-      this.recovery = recovery;
+      this.productName = productName;
+      this.productVersion = productVersion;
       this.messageListeners = messageListeners;
       this.activeEndpoints = new HashMap<>();
+      this.transactionIntegration = ti;
    }
    
    /**
@@ -131,14 +143,6 @@ public class ResourceAdapterImpl implements ResourceAdapter
    public StatisticsPlugin getStatistics()
    {
       return statistics;
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   public Recovery getRecovery()
-   {
-      return recovery;
    }
 
    /**
@@ -190,13 +194,18 @@ public class ResourceAdapterImpl implements ResourceAdapter
 
       resourceAdapter.endpointActivation(mef, as);
 
-      // TODO: Recovery
+      InflowRecovery ir = null;
+      if (transactionIntegration != null && transactionIntegration.getRecoveryRegistry() != null)
+      {
+         XAResourceRecovery xar = transactionIntegration.createXAResourceRecovery(resourceAdapter,
+                                                                                  as,
+                                                                                  productName, productVersion);
 
-      Set<ActivationSpec> s = activeEndpoints.get(mef);
-      if (s == null)
-         s = new HashSet<>();
-      s.add(as);
-      activeEndpoints.put(mef, s);
+         ir = new InflowRecoveryImpl(mef, as, xar, transactionIntegration.getRecoveryRegistry());
+         ir.activate();
+      }
+
+      activeEndpoints.put(new Endpoint(mef, as), ir);
    }
 
    /**
@@ -210,28 +219,28 @@ public class ResourceAdapterImpl implements ResourceAdapter
       if (as == null)
          throw new Exception("ActivationSpec is null");
 
-      // TODO: Recovery
+      Endpoint e = new Endpoint(mef, as);
+      InflowRecovery ir = activeEndpoints.get(e);
 
+      if (ir != null)
+         ir.deactivate();
+      
       try
       {
          resourceAdapter.endpointDeactivation(mef, as);
       }
       finally
       {
-         Set<ActivationSpec> s = activeEndpoints.get(mef);
-         if (s != null)
-         {
-            s.remove(as);
-            if (s.size() == 0)
-            {
-               activeEndpoints.remove(mef);
-            }
-            else
-            {
-               activeEndpoints.put(mef, s);
-            }
-         }
+         activeEndpoints.remove(e);
       }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public Collection<InflowRecovery> getRecovery()
+   {
+      return Collections.unmodifiableCollection(activeEndpoints.values());
    }
 
    /**
@@ -267,5 +276,55 @@ public class ResourceAdapterImpl implements ResourceAdapter
       }
 
       return false;
+   }
+
+   /**
+    * Endpoint
+    */
+   static class Endpoint
+   {
+      private MessageEndpointFactory mef;
+      private ActivationSpec as;
+
+      /**
+       * Constructor
+       * @param mef The MessageEndpointFactory
+       * @param as The ActivationSpec
+       */
+      Endpoint(MessageEndpointFactory mef, ActivationSpec as)
+      {
+         this.mef = mef;
+         this.as = as;
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public int hashCode()
+      {
+         int hash = 7;
+         hash += 7 * mef.hashCode();
+         hash += 7 * as.hashCode();
+         return hash;
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public boolean equals(Object o)
+      {
+         if (o == this)
+            return true;
+
+         if (o == null || !(o instanceof Endpoint))
+            return false;
+
+         Endpoint e = (Endpoint)o;
+
+         if (mef.equals(e.mef) && as.equals(e.as))
+            return true;
+
+         return false;
+      }
    }
 }
