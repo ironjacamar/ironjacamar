@@ -24,6 +24,8 @@ package org.ironjacamar.core.connectionmanager.pool;
 import org.ironjacamar.core.connectionmanager.Credential;
 import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
 
+import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.FREE;
+import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.IN_USE;
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.VALIDATION;
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.ZOMBIE;
 
@@ -32,6 +34,7 @@ import java.util.Collections;
 import java.util.Set;
 
 import javax.resource.ResourceException;
+import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.ValidatingManagedConnectionFactory;
 
@@ -137,5 +140,53 @@ public abstract class AbstractManagedConnectionPool implements ManagedConnection
       {
          listeners.remove(cl);
       }
+   }
+
+   /**
+    * Find a ConnectionListener instance
+    * @param mc The associated ManagedConnection
+    * @param c The connection (optional)
+    * @param listeners The listeners
+    * @return The ConnectionListener, or <code>null</code>
+    */
+   protected ConnectionListener findConnectionListener(ManagedConnection mc, Object c,
+                                                       Collection<ConnectionListener> listeners)
+   {
+      for (ConnectionListener cl : listeners)
+      {
+         if (cl.getManagedConnection().equals(mc))
+            if (c == null || cl.getConnections().contains(c))
+               return cl;
+      }
+
+      return null;
+   }
+
+   /**
+    * Remove a free ConnectionListener instance
+    * @param free True if FREE, false if IN_USE
+    * @param listeners The listeners
+    * @return The ConnectionListener, or <code>null</code>
+    */
+   protected ConnectionListener removeConnectionListener(boolean free, Collection<ConnectionListener> listeners)
+   {
+      if (free)
+      {
+         for (ConnectionListener cl : listeners)
+         {
+            if (cl.changeState(FREE, IN_USE))
+               return cl;
+         }
+      }
+      else
+      {
+         for (ConnectionListener cl : listeners)
+         {
+            if (cl.getState() == IN_USE)
+               return cl;
+         }
+      }
+
+      return null;
    }
 }

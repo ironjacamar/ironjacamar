@@ -28,6 +28,8 @@ import org.ironjacamar.core.spi.transaction.TransactionIntegration;
 import org.ironjacamar.core.spi.transaction.TxUtils;
 
 import javax.resource.ResourceException;
+import javax.resource.spi.LazyEnlistableManagedConnection;
+import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
 
 /**
@@ -71,7 +73,9 @@ public abstract class AbstractTransactionalConnectionManager extends AbstractCon
    {
       try
       {
-         if (!cl.isEnlisted() && TxUtils.isUncommitted(ti.getTransactionManager().getTransaction()))
+         if (!cl.isEnlisted() &&
+             TxUtils.isUncommitted(ti.getTransactionManager().getTransaction()) &&
+             shouldEnlist(cl))
             cl.enlist();
       }
       catch (ResourceException re)
@@ -88,6 +92,21 @@ public abstract class AbstractTransactionalConnectionManager extends AbstractCon
     * {@inheritDoc}
     */
    @Override
+   public void lazyEnlist(ManagedConnection mc) throws ResourceException
+   {
+      if (!cmConfiguration.isEnlistment())
+         throw new ResourceException();
+
+      if (mc == null || !(mc instanceof LazyEnlistableManagedConnection))
+         throw new ResourceException();
+
+      pool.enlist(mc);
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   @Override
    protected org.ironjacamar.core.connectionmanager.listener.ConnectionListener
       getConnectionListener(Credential credential) throws ResourceException
    {
@@ -96,7 +115,9 @@ public abstract class AbstractTransactionalConnectionManager extends AbstractCon
 
       try
       {
-         if (!cl.isEnlisted() && TxUtils.isUncommitted(ti.getTransactionManager().getTransaction()))
+         if (!cl.isEnlisted() &&
+             TxUtils.isUncommitted(ti.getTransactionManager().getTransaction()) &&
+             shouldEnlist(cl))
             cl.enlist();
       
          return cl;
@@ -109,5 +130,18 @@ public abstract class AbstractTransactionalConnectionManager extends AbstractCon
       {
          throw new ResourceException(e);
       }
+   }
+
+   /**
+    * Should enlist the ConnectionListener
+    * @param cl The ConnectionListener
+    * @return True if enlist, otherwise false
+    */
+   private boolean shouldEnlist(ConnectionListener cl)
+   {
+      if (cmConfiguration.isEnlistment() && cl.getManagedConnection() instanceof LazyEnlistableManagedConnection)
+         return false;
+
+      return true;
    }
 }

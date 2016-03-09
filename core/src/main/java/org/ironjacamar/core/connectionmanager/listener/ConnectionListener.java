@@ -22,6 +22,7 @@
 package org.ironjacamar.core.connectionmanager.listener;
 
 import org.ironjacamar.core.connectionmanager.Credential;
+import org.ironjacamar.core.connectionmanager.pool.ManagedConnectionPool;
 
 import java.util.Set;
 
@@ -97,6 +98,18 @@ public interface ConnectionListener extends org.ironjacamar.core.api.connectionm
    public void enlist() throws ResourceException;
    
    /**
+    * Delist the listener
+    * @exception ResourceException Thrown if the listener can't be delisted
+    */
+   public void delist() throws ResourceException;
+   
+   /**
+    * Get the managed connection pool
+    * @return The value
+    */
+   public ManagedConnectionPool getManagedConnectionPool();
+
+   /**
     * Get a connection
     * @return The connection
     * @exception ResourceException Thrown if a connection can't be obtained
@@ -114,6 +127,12 @@ public interface ConnectionListener extends org.ironjacamar.core.api.connectionm
     * @param c The handle
     */
    public void addConnection(Object c);
+
+   /**
+    * Remove a connection handle
+    * @param c The handle
+    */
+   public void removeConnection(Object c);
 
    /**
     * Clear all connection handles

@@ -30,8 +30,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
+import javax.resource.spi.DissociatableManagedConnection;
+import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.RetryableException;
+import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
+
+import org.jboss.logging.Logger;
 
 /**
  * The base class for all connection manager implementations
@@ -40,6 +45,9 @@ import javax.resource.spi.RetryableException;
  */
 public abstract class AbstractConnectionManager implements ConnectionManager
 {
+   /** The logger */
+   private static Logger log = Logger.getLogger(AbstractConnectionManager.class);
+
    /**
     * Startup/ShutDown flag
     */
@@ -66,6 +74,9 @@ public abstract class AbstractConnectionManager implements ConnectionManager
     */
    protected SubjectFactory subjectFactory;
 
+   /** Supports lazy association */
+   private Boolean supportsLazyAssociation;
+   
    /**
     * Constructor
     *
@@ -81,6 +92,8 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       this.ccm = ccm;
       this.cmConfiguration = cmc;
       this.pool = null;
+      this.subjectFactory = null;
+      this.supportsLazyAssociation = null;
    }
 
    /**
@@ -173,7 +186,10 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       }
       else
       {
-         credential = new Credential(subjectFactory.createSubject(cmConfiguration.getSecurityDomain()), cri);
+         credential = new Credential(SecurityActions.createSubject(subjectFactory,
+                                                                   cmConfiguration.getSecurityDomain(),
+                                                                   mcf),
+                                     cri);
       }
       org.ironjacamar.core.connectionmanager.listener.ConnectionListener cl = getConnectionListener(credential);
       Object connection = cl.getConnection();
@@ -210,6 +226,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    protected org.ironjacamar.core.connectionmanager.listener.ConnectionListener getConnectionListener(
          Credential credential) throws ResourceException
    {
+      org.ironjacamar.core.connectionmanager.listener.ConnectionListener result = null;
       Exception failure = null;
 
       // First attempt
@@ -217,7 +234,15 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       boolean innerIsInterrupted = false;
       try
       {
-         return pool.getConnectionListener(credential);
+         result = pool.getConnectionListener(credential);
+
+         if (supportsLazyAssociation == null)
+         {
+            supportsLazyAssociation =
+               (result.getManagedConnection() instanceof DissociatableManagedConnection) ? Boolean.TRUE : Boolean.FALSE;
+         }
+
+         return result;
       }
       catch (ResourceException e)
       {
@@ -279,7 +304,200 @@ public abstract class AbstractConnectionManager implements ConnectionManager
          }
       }
 
+      if (cmConfiguration.isSharable() && Boolean.TRUE.equals(supportsLazyAssociation))
+         return associateConnectionListener(credential, null);
+
       // If we get here all retries failed, throw the lastest failure
       throw new ResourceException(failure);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void lazyEnlist(ManagedConnection mc) throws ResourceException
+   {
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   public void associateConnection(Object connection, ManagedConnectionFactory mcf, ConnectionRequestInfo cri)
+      throws ResourceException
+   {
+      associateManagedConnection(connection, mcf, cri);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void inactiveConnectionClosed(Object connection, ManagedConnectionFactory mcf)
+   {
+      // Foo-bar concept
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   public ManagedConnection associateManagedConnection(Object connection, ManagedConnectionFactory mcf,
+                                                       ConnectionRequestInfo cri)
+      throws ResourceException
+   {
+      log.tracef("associateManagedConnection(%s, %s, %s)", connection, mcf, cri);
+      
+      if (!this.mcf.equals(mcf))
+      {
+         throw new ResourceException();
+      }
+
+      if (connection == null)
+         throw new ResourceException();
+
+      Credential credential = null;
+      if (getSubjectFactory() == null || cmConfiguration.getSecurityDomain() == null)
+      {
+         credential = new Credential(null, cri);
+      }
+      else
+      {
+         credential = new Credential(SecurityActions.createSubject(subjectFactory,
+                                                                   cmConfiguration.getSecurityDomain(),
+                                                                   mcf),
+                                     cri);
+      }
+
+      return associateConnectionListener(credential, connection).getManagedConnection();
+   }
+
+   /**
+    * Associate a ConnectionListener
+    * @param credential The credential
+    * @param connection The connection handle (optional)
+    * @return The connection listener instance
+    * @exception ResourceException Thrown in case of an error
+    */
+   private org.ironjacamar.core.connectionmanager.listener.ConnectionListener
+      associateConnectionListener(Credential credential, Object connection)
+      throws ResourceException
+   {
+      log.tracef("associateConnectionListener(%s, %s)", credential, connection);
+      
+      if (isShutdown())
+      {
+         throw new ResourceException();
+      }
+
+      org.ironjacamar.core.connectionmanager.listener.ConnectionListener cl =
+         pool.getActiveConnectionListener(credential);
+
+      if (cl == null)
+      {
+         try
+         {
+            cl = pool.getConnectionListener(credential);
+         }
+         catch (ResourceException re)
+         {
+            org.ironjacamar.core.connectionmanager.listener.ConnectionListener removeCl =
+               pool.removeConnectionListener(null);
+
+            if (removeCl != null)
+            {
+               try
+               {
+                  returnConnectionListener(removeCl, true);
+                  cl = pool.getConnectionListener(credential);
+               }
+               catch (ResourceException ire)
+               {
+                  // Nothing we can do
+               }
+            }
+            else
+            {
+               if (getTransactionSupport() == TransactionSupportLevel.NoTransaction)
+               {
+                  org.ironjacamar.core.connectionmanager.listener.ConnectionListener targetCl =
+                     pool.removeConnectionListener(credential);
+
+                  if (targetCl != null)
+                  {
+                     if (targetCl.getManagedConnection() instanceof DissociatableManagedConnection)
+                     {
+                        DissociatableManagedConnection dmc =
+                           (DissociatableManagedConnection)targetCl.getManagedConnection();
+
+                        dmc.dissociateConnections();
+
+                        if (ccm != null)
+                        {
+                           for (Object c : targetCl.getConnections())
+                           {
+                              ccm.unregisterConnection(this, targetCl, connection);
+                           }
+                        }
+
+                        cl = targetCl;
+                     }
+                  }
+               }
+            }
+
+            if (cl == null)
+               throw new ResourceException();
+         }
+      }
+
+      if (connection != null)
+      {
+         // Associate managed connection with the connection
+         cl.getManagedConnection().associateConnection(connection);
+         cl.addConnection(connection);
+
+         if (ccm != null)
+         {
+            ccm.registerConnection(this, cl, connection);
+         }
+      }
+
+      return cl;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean dissociateManagedConnection(Object connection, ManagedConnection mc, ManagedConnectionFactory mcf)
+      throws ResourceException
+   {
+      log.tracef("dissociateManagedConnection(%s, %s, %s)", connection, mc, mcf);
+      
+      if (connection == null || mc == null || mcf == null)
+         throw new ResourceException();
+
+      org.ironjacamar.core.connectionmanager.listener.ConnectionListener cl =
+         pool.findConnectionListener(mc, connection);
+
+      if (cl != null)
+      {
+         if (ccm != null)
+         {
+            ccm.unregisterConnection(this, cl, connection);
+         }
+
+         cl.removeConnection(connection);
+
+         if (cl.getConnections().size() == 0)
+         {
+            pool.delist(cl);
+            returnConnectionListener(cl, false);
+
+            return true;
+         }
+      }
+      else
+      {
+         throw new ResourceException();
+      }
+
+      return false;
    }
 }

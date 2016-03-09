@@ -33,6 +33,7 @@ import org.ironjacamar.core.connectionmanager.pool.PoolFiller;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 import javax.resource.ResourceException;
+import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.ValidatingManagedConnectionFactory;
 
@@ -463,5 +464,21 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
 
       // Trigger prefill
       prefill();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public ConnectionListener findConnectionListener(ManagedConnection mc, Object c)
+   {
+      return findConnectionListener(mc, c, listeners);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public ConnectionListener removeConnectionListener(boolean free)
+   {
+      return removeConnectionListener(free, listeners);
    }
 }

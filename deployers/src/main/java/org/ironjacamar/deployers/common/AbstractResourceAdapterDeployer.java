@@ -66,9 +66,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.ResourceAdapterAssociation;
+
+import org.jboss.logging.Logger;
 
 /**
  * Base class for resource adapter deployers
@@ -76,6 +79,9 @@ import javax.resource.spi.ResourceAdapterAssociation;
  */
 public abstract class AbstractResourceAdapterDeployer
 {
+   /** The logger */
+   private static Logger log = Logger.getLogger(AbstractResourceAdapterDeployer.class);
+
    /** The DeploymentRepository */
    protected DeploymentRepository deploymentRepository;
 
@@ -225,6 +231,9 @@ public abstract class AbstractResourceAdapterDeployer
    public Deployment activate(Connector connector, Activation activation, ClassLoader cl)
       throws DeployException
    {
+      log.tracef("Connector=%s", connector);
+      log.tracef("Activation=%s", stripPassword(activation.toString()));
+
       try
       {
          DeploymentBuilder builder = new DeploymentBuilder();
@@ -1072,5 +1081,30 @@ public abstract class AbstractResourceAdapterDeployer
             return raXml.getResourceadapterVersion().getValue();
 
       return "";
+   }
+
+   /**
+    * Strip password
+    * @param str The string
+    * @return The result
+    */
+   private String stripPassword(String str)
+   {
+      if (str.indexOf("<password>") == -1)
+         return str;
+
+      Pattern pattern = Pattern.compile("<password>[^<]*</password>");
+      String[] strs = pattern.split(str);
+
+      StringBuilder sb = new StringBuilder();
+      for (int i = 0; i < strs.length; i++)
+      {
+         String s = strs[i];
+         sb.append(s);
+         if (i < strs.length - 1)
+            sb.append("<password>****</password>");
+      }
+
+      return sb.toString();
    }
 }

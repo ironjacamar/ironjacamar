@@ -237,6 +237,14 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    /**
     * {@inheritDoc}
     */
+   public ManagedConnectionPool getManagedConnectionPool()
+   {
+      return mcp;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public Object getConnection() throws ResourceException
    {
       Object result = mc.getConnection(credential.getSubject(), credential.getConnectionRequestInfo());
@@ -260,6 +268,14 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    public void addConnection(Object c)
    {
       connectionHandles.add(c);
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   public void removeConnection(Object c)
+   {
+      connectionHandles.remove(c);
    }
    
    /**

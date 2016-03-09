@@ -65,4 +65,11 @@ public class NoTransactionConnectionListener extends AbstractConnectionListener
    public void enlist() throws ResourceException
    {
    }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void delist() throws ResourceException
+   {
+   }
 }

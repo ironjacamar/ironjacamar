@@ -24,6 +24,7 @@ package org.ironjacamar.core.connectionmanager.pool;
 import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
 
 import javax.resource.ResourceException;
+import javax.resource.spi.ManagedConnection;
 
 /**
  * ManagedConnectionPool
@@ -71,7 +72,8 @@ public interface ManagedConnectionPool
     */
    public void removeIdleConnections();
 
-    /** Checks if the pool is empty or not
+   /**
+    * Checks if the pool is empty or not
     * @return True if is emtpy; otherwise false
     */
    public boolean isEmpty();
@@ -82,4 +84,18 @@ public interface ManagedConnectionPool
     */
    public void flush(FlushMode mode);
 
+   /**
+    * Find a ConnectionListener instance
+    * @param mc The associated ManagedConnection
+    * @param c The connection (optional)
+    * @return The ConnectionListener, or <code>null</code>
+    */
+   public ConnectionListener findConnectionListener(ManagedConnection mc, Object c);
+
+   /**
+    * Remove a ConnectionListener instance
+    * @param free True if FREE, false if IN_USE
+    * @return The ConnectionListener, or <code>null</code>
+    */
+   public ConnectionListener removeConnectionListener(boolean free);
 }

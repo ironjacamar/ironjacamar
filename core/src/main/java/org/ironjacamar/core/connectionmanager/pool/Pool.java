@@ -28,6 +28,7 @@ import org.ironjacamar.core.connectionmanager.Credential;
 import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
 
 import javax.resource.ResourceException;
+import javax.resource.spi.ManagedConnection;
 
 /**
  * A pool
@@ -140,4 +141,39 @@ public interface Pool extends org.ironjacamar.core.api.connectionmanager.pool.Po
     */
    public void flush(FlushMode mode);
 
+   /**
+    * Enlist
+    * @param mc The ManagedConnection
+    * @exception ResourceException Thrown in case of an error
+    */
+   public void enlist(ManagedConnection mc) throws ResourceException;
+
+   /**
+    * Delist
+    * @param cl The ConnectionListener
+    * @exception ResourceException Thrown in case of an error
+    */
+   public void delist(ConnectionListener cl) throws ResourceException;
+
+   /**
+    * Find a ConnectionListener instance
+    * @param mc The associated ManagedConnection
+    * @param c The connection (optional)
+    * @return The ConnectionListener, or <code>null</code>
+    */
+   public ConnectionListener findConnectionListener(ManagedConnection mc, Object c);
+
+   /**
+    * Get the active ConnectionListener instance
+    * @param credential The credential
+    * @return The ConnectionListener, or <code>null</code>
+    */
+   public ConnectionListener getActiveConnectionListener(Credential credential);
+
+   /**
+    * Remove a ConnectionListener instance
+    * @param credential The target credential (optional)
+    * @return The ConnectionListener, or <code>null</code>
+    */
+   public ConnectionListener removeConnectionListener(Credential credential);
 }

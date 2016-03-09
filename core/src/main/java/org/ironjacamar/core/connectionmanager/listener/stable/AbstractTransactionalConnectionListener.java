@@ -84,6 +84,19 @@ public abstract class AbstractTransactionalConnectionListener extends
    }
 
    /**
+    * {@inheritDoc}
+    */
+   public synchronized void delist() throws ResourceException
+   {
+      if (!isEnlisted())
+      {
+         setState(DESTROY);
+      }
+
+      super.delist();
+   }
+
+   /**
     * Create the transaction synchronization object
     * @return The object
     */

@@ -42,6 +42,8 @@ import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 import javax.transaction.Transaction;
 import javax.transaction.xa.XAResource;
 
+import org.jboss.logging.Logger;
+
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.DESTROY;
 
 /**
@@ -51,6 +53,9 @@ import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener
  */
 public abstract class AbstractPool implements Pool
 {
+   /** The logger */
+   private static Logger log = Logger.getLogger(AbstractPool.class);
+
    /**
     * The connection manager
     */
@@ -117,6 +122,8 @@ public abstract class AbstractPool implements Pool
     */
    public ConnectionListener getConnectionListener(Credential credential) throws ResourceException
    {
+      log.tracef("getConnectionListener(%s)", credential);
+
       ConnectionListener cl = null;
       ManagedConnectionPool mcp = getManagedConnectionPool(credential);
 
@@ -159,7 +166,7 @@ public abstract class AbstractPool implements Pool
                      currentMap.put(mcp, cl);
 
                      txCM.getTransactionIntegration().getTransactionSynchronizationRegistry().
-                           registerInterposedSynchronization(new TransactionMapCleanup(id, transactionMap));
+                        registerInterposedSynchronization(new TransactionMapCleanup(id, transactionMap));
                   }
                   else
                   {
@@ -224,6 +231,8 @@ public abstract class AbstractPool implements Pool
     */
    public void returnConnectionListener(ConnectionListener cl, boolean kill) throws ResourceException
    {
+      log.tracef("returnConnectionListener(%s, %s)", cl, kill);
+
       ManagedConnectionPool mcp = pools.get(cl.getCredential());
 
       if (!kill)
@@ -442,9 +451,11 @@ public abstract class AbstractPool implements Pool
          }
          else
          {
-            prefillCredential = new Credential(
-                  cm.getSubjectFactory().createSubject(cm.getConnectionManagerConfiguration().getSecurityDomain()),
-                  null);
+            prefillCredential =
+               new Credential(SecurityActions.createSubject(cm.getSubjectFactory(),
+                                                            cm.getConnectionManagerConfiguration().getSecurityDomain(),
+                                                            cm.getManagedConnectionFactory()),
+                              null);
          }
       }
       return this.prefillCredential;
@@ -493,31 +504,231 @@ public abstract class AbstractPool implements Pool
          ManagedConnectionPool mcp = pools.get(credential);
          if (mcp != null)
          {
-            try
-            {
-               mcp.flush(mode);
-            }
-            catch (Exception e)
-            {
-               // Should not happen
-               // TODO: just add a log
-            }
+            mcp.flush(mode);
 
             if (mcp.isEmpty() && !poolConfiguration.isPrefill())
             {
-               try
-               {
-                  mcp.shutdown();
-               }
-               catch (Exception e)
-               {
-                  // Should not happen
-                  // TODO: just add a log
-               }
-
+               mcp.shutdown();
                pools.remove(credential);
             }
          }
       }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void enlist(ManagedConnection mc) throws ResourceException
+   {
+      if (cm.getTransactionSupport() == TransactionSupportLevel.NoTransaction)
+         return;
+
+      ConnectionListener cl = findConnectionListener(mc, null);
+      if (cl != null)
+      {
+         if (cl.isEnlisted())
+            throw new ResourceException();
+
+         try
+         {
+            TransactionalConnectionManager txCM = (TransactionalConnectionManager) cm;
+            Transaction tx = txCM.getTransactionIntegration().getTransactionManager().getTransaction();
+
+            if (TxUtils.isUncommitted(tx))
+            {
+               Object id = txCM.getTransactionIntegration().getTransactionSynchronizationRegistry().getTransactionKey();
+
+               Map<ManagedConnectionPool, ConnectionListener> currentMap = transactionMap.get(id);
+
+               if (currentMap == null)
+               {
+                  Map<ManagedConnectionPool, ConnectionListener> map = new HashMap<>();
+
+                  currentMap = transactionMap.putIfAbsent(id, map);
+                  if (currentMap == null)
+                  {
+                     currentMap = map;
+                  }
+               }
+
+               ConnectionListener existing = currentMap.get(cl.getManagedConnectionPool());
+
+               if (existing == null)
+               {
+                  if (TxUtils.isActive(tx))
+                  {
+                     cl.enlist();
+                     
+                     currentMap.put(cl.getManagedConnectionPool(), cl);
+
+                     txCM.getTransactionIntegration().getTransactionSynchronizationRegistry().
+                        registerInterposedSynchronization(new TransactionMapCleanup(id, transactionMap));
+                  }
+                  else
+                  {
+                     throw new ResourceException();
+                  }
+               }
+               else
+               {
+                  log.tracef("Already a connection listener in the pool tracked by transaction=%s (existing=%s)",
+                             id, existing);
+
+                  if (existing.equals(cl))
+                  {
+                     if (TxUtils.isActive(tx))
+                     {
+                        cl.enlist();
+                     }
+                     else
+                     {
+                        throw new ResourceException();
+                     }
+                  }
+                  else
+                  {
+                     throw new ResourceException();
+                  }
+               }
+            }
+            else
+            {
+               throw new ResourceException();
+            }
+         }
+         catch (ResourceException re)
+         {
+            throw re;
+         }
+         catch (Throwable t)
+         {
+            throw new ResourceException(t);
+         }
+      }
+      else
+      {
+         throw new ResourceException();
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void delist(ConnectionListener cl) throws ResourceException
+   {
+      if (cm.getTransactionSupport() == TransactionSupportLevel.NoTransaction)
+         return;
+
+      if (cl != null)
+      {
+         try
+         {
+            TransactionalConnectionManager txCM = (TransactionalConnectionManager) cm;
+            Transaction tx = txCM.getTransactionIntegration().getTransactionManager().getTransaction();
+
+            if (TxUtils.isUncommitted(tx))
+            {
+               try
+               {
+                  cl.delist();
+               }
+               finally
+               {
+                  Object id = txCM.getTransactionIntegration()
+                     .getTransactionSynchronizationRegistry().getTransactionKey();
+
+                  Map<ManagedConnectionPool, ConnectionListener> currentMap = transactionMap.get(id);
+
+                  if (currentMap != null)
+                  {
+                     ConnectionListener registered = currentMap.remove(cl.getManagedConnectionPool());
+                     transactionMap.put(id, currentMap);
+                  }
+               }
+            }
+         }
+         catch (ResourceException re)
+         {
+            throw re;
+         }
+         catch (Exception e)
+         {
+            throw new ResourceException(e);
+         }
+      }
+      else
+      {
+         throw new ResourceException();
+      }
+   }
+   
+   /**
+    * {@inheritDoc}
+    */
+   public ConnectionListener findConnectionListener(ManagedConnection mc, Object c)
+   {
+      for (ManagedConnectionPool mcp : pools.values())
+      {
+         ConnectionListener cl = mcp.findConnectionListener(mc, c);
+         if (cl != null)
+            return cl;
+      }
+
+      return null;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public ConnectionListener removeConnectionListener(Credential credential)
+   {
+      if (credential == null)
+      {
+         // Any free
+         for (ManagedConnectionPool mcp : pools.values())
+         {
+            ConnectionListener cl = mcp.removeConnectionListener(true);
+            if (cl != null)
+               return cl;
+         }
+      }
+      else
+      {
+         ManagedConnectionPool mcp = pools.get(credential);
+         if (mcp != null)
+            return mcp.removeConnectionListener(false);
+      }
+
+      return null;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public ConnectionListener getActiveConnectionListener(Credential credential)
+   {
+      if (cm.getTransactionSupport() == TransactionSupportLevel.NoTransaction)
+         return null;
+
+      try
+      {
+         TransactionalConnectionManager txCM = (TransactionalConnectionManager) cm;
+         Transaction tx = txCM.getTransactionIntegration().getTransactionManager().getTransaction();
+
+         if (TxUtils.isUncommitted(tx))
+         {
+            Object id = txCM.getTransactionIntegration().getTransactionSynchronizationRegistry().getTransactionKey();
+            Map<ManagedConnectionPool, ConnectionListener> currentMap = transactionMap.get(id);
+            ManagedConnectionPool key = pools.get(credential);
+
+            return currentMap.get(key);
+         }
+      }
+      catch (Exception e)
+      {
+         log.tracef(e, "getActiveConnectionListener(%s)", credential);
+      }
+
+      return null;
    }
 }

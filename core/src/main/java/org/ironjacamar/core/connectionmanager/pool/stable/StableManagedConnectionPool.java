@@ -34,6 +34,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.TimeUnit;
 
 import javax.resource.ResourceException;
+import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.ValidatingManagedConnectionFactory;
 
@@ -496,4 +497,19 @@ public class StableManagedConnectionPool extends AbstractManagedConnectionPool
       prefill();
    }
 
+   /**
+    * {@inheritDoc}
+    */
+   public ConnectionListener findConnectionListener(ManagedConnection mc, Object c)
+   {
+      return findConnectionListener(mc, c, listeners);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public ConnectionListener removeConnectionListener(boolean free)
+   {
+      return removeConnectionListener(free, listeners);
+   }
 }

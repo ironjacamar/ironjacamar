@@ -37,9 +37,13 @@ import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionEvent;
 import javax.resource.spi.LocalTransaction;
 import javax.resource.spi.ManagedConnection;
+import javax.transaction.Status;
 import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
+
+import org.jboss.logging.Logger;
 
 /**
  * An abstract transactional connection listener, which is enlisted on the transaction boundary
@@ -47,6 +51,9 @@ import javax.transaction.xa.XAResource;
  */
 public abstract class AbstractTransactionalConnectionListener extends AbstractConnectionListener
 {
+   /** The logger */
+   private static Logger log = Logger.getLogger(AbstractTransactionalConnectionListener.class);
+
    /** Transaction synchronization instance */
    protected TransactionSynchronization transactionSynchronization;
 
@@ -116,6 +123,8 @@ public abstract class AbstractTransactionalConnectionListener extends AbstractCo
       if (isEnlisted() || getState() == DESTROY || getState() == DESTROYED)
          return;
 
+      log.tracef("Enlisting: %s", this);
+      
       try
       {
          TransactionalConnectionManager txCM = (TransactionalConnectionManager)cm;
@@ -129,10 +138,51 @@ public abstract class AbstractTransactionalConnectionListener extends AbstractCo
             registerInterposedSynchronization(transactionSynchronization);
 
          enlisted = true;
+
+         log.tracef("Enlisted: %s", this);
       }
       catch (ResourceException re)
       {
          throw re;
+      }
+      catch (Exception e)
+      {
+         throw new ResourceException(e);
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void delist() throws ResourceException
+   {
+      log.tracef("Delisting: %s", this);
+      
+      try
+      {
+         TransactionalConnectionManager txCM = (TransactionalConnectionManager)cm;
+         TransactionManager tm = txCM.getTransactionIntegration().getTransactionManager();
+         int status = tm.getStatus();
+
+         if (status != Status.STATUS_NO_TRANSACTION)
+         {
+            if (enlisted)
+            {
+               Transaction tx = tm.getTransaction();
+               boolean delistResult = tx.delistResource(xaResource, XAResource.TMSUCCESS);
+            }
+         }
+
+         localTransaction = false;
+      
+         if (transactionSynchronization != null)
+         {
+            transactionSynchronization.cancel();
+            transactionSynchronization = null;
+         }
+
+         enlisted = false;
+         log.tracef("Delisted: %s", this);
       }
       catch (Exception e)
       {

@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2015, Red Hat Inc, and individual contributors
+ * Copyright 2016, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -21,9 +21,14 @@
 
 package org.ironjacamar.core.connectionmanager;
 
+import org.ironjacamar.core.spi.security.SubjectFactory;
+
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.Set;
 
+import javax.resource.spi.ManagedConnectionFactory;
+import javax.resource.spi.security.PasswordCredential;
 import javax.security.auth.Subject;
 
 /**
@@ -37,6 +42,68 @@ class SecurityActions
     */
    private SecurityActions()
    {
+   }
+
+   /**
+    * Get a Subject instance
+    * @param subjectFactory The subject factory
+    * @param domain The domain
+    * @param mcf The ManagedConnectionFactory
+    * @return The instance
+    */
+   static Subject createSubject(final SubjectFactory subjectFactory,
+                                final String domain,
+                                final ManagedConnectionFactory mcf)
+   {
+      if (System.getSecurityManager() == null)
+      {
+         Subject subject = subjectFactory.createSubject(domain);
+         Set<PasswordCredential> s = getPasswordCredentials(subject);
+         if (s != null && s.size() > 0)
+         {
+            for (PasswordCredential pc : s)
+            {
+               pc.setManagedConnectionFactory(mcf);
+            }
+         }
+         return subject;
+      }
+
+      return AccessController.doPrivileged(new PrivilegedAction<Subject>() 
+      {
+         public Subject run()
+         {
+            Subject subject = subjectFactory.createSubject(domain);
+            Set<PasswordCredential> s = getPasswordCredentials(subject);
+            if (s != null && s.size() > 0)
+            {
+               for (PasswordCredential pc : s)
+               {
+                  pc.setManagedConnectionFactory(mcf);
+               }
+            }
+            return subject;
+         }
+      });
+   }
+
+   /**
+    * Get the PasswordCredential from the Subject
+    * @param subject The subject
+    * @return The instances
+    */
+   static Set<PasswordCredential> getPasswordCredentials(final Subject subject)
+   {
+      if (System.getSecurityManager() == null)
+         return subject.getPrivateCredentials(PasswordCredential.class);
+
+      return AccessController.doPrivileged(new PrivilegedAction<Set<PasswordCredential>>() 
+      {
+         public Set<PasswordCredential> run()
+         {
+            return subject.getPrivateCredentials(PasswordCredential.class);
+         }
+      });
    }
 
    /**

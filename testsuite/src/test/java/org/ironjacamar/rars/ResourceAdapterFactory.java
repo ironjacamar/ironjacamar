@@ -24,6 +24,12 @@ package org.ironjacamar.rars;
 import org.ironjacamar.embedded.dsl.resourceadapters20.api.ConnectionDefinitionsType;
 import org.ironjacamar.embedded.dsl.resourceadapters20.api.ResourceAdapterType;
 import org.ironjacamar.embedded.dsl.resourceadapters20.api.ResourceAdaptersDescriptor;
+import org.ironjacamar.rars.lazy.LazyConnection;
+import org.ironjacamar.rars.lazy.LazyConnectionFactory;
+import org.ironjacamar.rars.lazy.LazyConnectionFactoryImpl;
+import org.ironjacamar.rars.lazy.LazyConnectionImpl;
+import org.ironjacamar.rars.lazy.LazyManagedConnectionFactory;
+import org.ironjacamar.rars.lazy.LazyResourceAdapter;
 import org.ironjacamar.rars.perf.PerfConnection;
 import org.ironjacamar.rars.perf.PerfConnectionFactory;
 import org.ironjacamar.rars.perf.PerfConnectionFactoryImpl;
@@ -77,6 +83,99 @@ public class ResourceAdapterFactory
     */
    private ResourceAdapterFactory()
    {
+   }
+
+   /**
+    * Create the lazy.rar
+    *
+    * @return The resource adapter archive
+    */
+   public static ResourceAdapterArchive createLazyRar()
+   {
+      org.jboss.shrinkwrap.descriptor.api.connector15.ConnectorDescriptor raXml = Descriptors
+            .create(org.jboss.shrinkwrap.descriptor.api.connector15.ConnectorDescriptor.class, "ra.xml").version("1.5");
+
+      org.jboss.shrinkwrap.descriptor.api.connector15.ResourceadapterType rt = raXml.getOrCreateResourceadapter()
+            .resourceadapterClass(LazyResourceAdapter.class.getName());
+
+      rt.createConfigProperty().configPropertyName("Enable")
+         .configPropertyType(Boolean.class.getName()).configPropertyValue(Boolean.TRUE.toString());
+
+      rt.createConfigProperty().configPropertyName("LocalTransaction")
+         .configPropertyType(Boolean.class.getName()).configPropertyValue(Boolean.FALSE.toString());
+
+      rt.createConfigProperty().configPropertyName("XATransaction")
+         .configPropertyType(Boolean.class.getName()).configPropertyValue(Boolean.FALSE.toString());
+
+      org.jboss.shrinkwrap.descriptor.api.connector15.OutboundResourceadapterType ort = rt
+            .getOrCreateOutboundResourceadapter().transactionSupport("XATransaction").reauthenticationSupport(false);
+      org.jboss.shrinkwrap.descriptor.api.connector15.ConnectionDefinitionType cdt = ort.createConnectionDefinition()
+            .managedconnectionfactoryClass(LazyManagedConnectionFactory.class.getName())
+            .connectionfactoryInterface(LazyConnectionFactory.class.getName())
+            .connectionfactoryImplClass(LazyConnectionFactoryImpl.class.getName())
+            .connectionInterface(LazyConnection.class.getName())
+            .connectionImplClass(LazyConnectionImpl.class.getName());
+
+      ResourceAdapterArchive raa = ShrinkWrap.create(ResourceAdapterArchive.class, "lazy.rar");
+
+      JavaArchive ja = ShrinkWrap.create(JavaArchive.class, "lazy.jar");
+      ja.addPackages(true, LazyConnection.class.getPackage());
+
+      raa.addAsLibrary(ja);
+      raa.addAsManifestResource(new StringAsset(raXml.exportAsString()), "ra.xml");
+
+      return raa;
+   }
+
+   /**
+    * Create the lazy.rar deployment
+    *
+    * @param tsl              The transaction support level
+    * @return The resource adapter descriptor
+    */
+   public static ResourceAdaptersDescriptor createLazyDeployment(TransactionSupportLevel tsl)
+   {
+      ResourceAdaptersDescriptor dashRaXml = Descriptors.create(ResourceAdaptersDescriptor.class, "lazy-ra.xml");
+
+      ResourceAdapterType dashRaXmlRt = dashRaXml.createResourceAdapter().archive("lazy.rar");
+      if (tsl == null || tsl == TransactionSupportLevel.NoTransaction)
+      {
+         dashRaXmlRt.transactionSupport("NoTransaction");
+      }
+      else if (tsl == TransactionSupportLevel.LocalTransaction)
+      {
+         dashRaXmlRt.transactionSupport("LocalTransaction");
+         dashRaXmlRt.createConfigProperty().name("LocalTransaction").text(Boolean.TRUE.toString());
+      }
+      else
+      {
+         dashRaXmlRt.transactionSupport("XATransaction");
+         dashRaXmlRt.createConfigProperty().name("XATransaction").text(Boolean.TRUE.toString());
+      }
+
+      ConnectionDefinitionsType dashRaXmlCdst = dashRaXmlRt.getOrCreateConnectionDefinitions();
+      org.ironjacamar.embedded.dsl.resourceadapters20.api.ConnectionDefinitionType dashRaXmlCdt = dashRaXmlCdst
+         .createConnectionDefinition().className(LazyManagedConnectionFactory.class.getName())
+         .jndiName("java:/eis/LazyConnectionFactory").id("LazyConnectionFactory").sharable(true).enlistment(true);
+
+      org.ironjacamar.embedded.dsl.resourceadapters20.api.TimeoutType dashRaXmlTt = dashRaXmlCdt.getOrCreateTimeout()
+         .blockingTimeoutMillis(100).idleTimeoutMinutes(Integer.valueOf(0));
+
+      if (tsl == TransactionSupportLevel.XATransaction)
+      {
+         org.ironjacamar.embedded.dsl.resourceadapters20.api.XaPoolType dashRaXmlPt = dashRaXmlCdt.getOrCreateXaPool()
+            .minPoolSize(0).initialPoolSize(0).maxPoolSize(1);
+
+         org.ironjacamar.embedded.dsl.resourceadapters20.api.RecoverType dashRaXmlRyt = dashRaXmlCdt
+            .getOrCreateRecovery().noRecovery(Boolean.TRUE);
+      }
+      else
+      {
+         org.ironjacamar.embedded.dsl.resourceadapters20.api.PoolType dashRaXmlPt = dashRaXmlCdt.getOrCreatePool()
+            .minPoolSize(0).initialPoolSize(0).maxPoolSize(1);
+      }
+
+      return dashRaXml;
    }
 
    /**
