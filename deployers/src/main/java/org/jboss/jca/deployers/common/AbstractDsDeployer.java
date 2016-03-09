@@ -751,7 +751,7 @@ public abstract class AbstractDsDeployer
          Subject subject = null;
 
          if (subjectFactory != null)
-            subject = createSubject(subjectFactory, securityDomain, mcf);
+            subject = createSubject(subjectFactory, securityDomain, mcf, jndiName);
 
          pp.prefill(subject, null, false);
       }
@@ -1122,7 +1122,7 @@ public abstract class AbstractDsDeployer
          Subject subject = null;
 
          if (subjectFactory != null)
-            subject = createSubject(subjectFactory, securityDomain, mcf);
+            subject = createSubject(subjectFactory, securityDomain, mcf, jndiName);
 
          pp.prefill(subject, null, noTxSeparatePool.booleanValue());
       }
@@ -1404,11 +1404,13 @@ public abstract class AbstractDsDeployer
     * @param subjectFactory The subject factory
     * @param securityDomain The security domain
     * @param mcf The managed connection factory
+    * @param jndiName The jndi-name of the data-source
     * @return The subject; <code>null</code> in case of an error
     */
    protected Subject createSubject(final SubjectFactory subjectFactory,
                                    final String securityDomain,
-                                   final ManagedConnectionFactory mcf)
+                                   final ManagedConnectionFactory mcf,
+                                   final String jndiName)
    {
       if (subjectFactory == null)
          throw new IllegalArgumentException("SubjectFactory is null");
@@ -1440,7 +1442,7 @@ public abstract class AbstractDsDeployer
             }
             catch (Throwable t)
             {
-               log.error("Exception during createSubject()" + t.getMessage(), t);
+               log.error("Exception during createSubject() for " + jndiName + ": " + t.getMessage(), t);
             }
 
             return null;

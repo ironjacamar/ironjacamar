@@ -83,7 +83,7 @@ public class PoolBySubject extends AbstractPrefillPool
          ConnectionManager cm = getConnectionManager();
          ManagedConnectionFactory mcf = getManagedConnectionFactory();
        
-         Subject subject = createSubject(cm.getSubjectFactory(), cm.getSecurityDomain(), mcf);
+         Subject subject = createSubject(cm.getSubjectFactory(), cm.getSecurityDomain(), mcf, cm.getJndiName());
   
          if (subject != null)
             return internalTestConnection(null, subject);
@@ -109,11 +109,13 @@ public class PoolBySubject extends AbstractPrefillPool
     * @param subjectFactory The subject factory
     * @param securityDomain The security domain
     * @param mcf The managed connection factory
+    * @param jndiName The jndi-name
     * @return The subject; <code>null</code> in case of an error
     */
    protected Subject createSubject(final SubjectFactory subjectFactory,
                                    final String securityDomain,
-                                   final ManagedConnectionFactory mcf)
+                                   final ManagedConnectionFactory mcf,
+                                   final String jndiName)
    {
       if (subjectFactory == null)
          throw new IllegalArgumentException("SubjectFactory is null");
@@ -142,7 +144,7 @@ public class PoolBySubject extends AbstractPrefillPool
             }
             catch (Throwable t)
             {
-               log.exceptionDuringCreateSubject(t.getMessage(), t);
+               log.exceptionDuringCreateSubject(jndiName, t.getMessage(), t);
             }
 
             return null;
