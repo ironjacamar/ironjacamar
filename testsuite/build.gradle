@@ -116,6 +116,10 @@ compileTestJava {
 }
 
 test {
+  systemProperty 'java.util.logging.manager', 'org.jboss.logmanager.LogManager'
+  systemProperty 'org.jboss.logging.Logger.pluginClass', 'org.jboss.logging.logmanager.LoggerPluginImpl'
+  systemProperty 'log4j.defaultInitOverride', 'true'
+
   exclude '**/*PerfTestCase*'
   jacoco {
     append = false
