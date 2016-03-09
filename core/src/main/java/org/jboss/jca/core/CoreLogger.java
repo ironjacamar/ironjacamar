@@ -383,12 +383,13 @@ public interface CoreLogger extends BasicLogger
 
    /**
     * Exception during createSubject()
+    * @param jndiName The jndi-name
     * @param description throwable description
     * @param t The exception
     */
    @LogMessage(level = ERROR)
-   @Message(id = 614, value = "Exception during createSubject() %s")
-   public void exceptionDuringCreateSubject(String description, @Cause Throwable t);   
+   @Message(id = 614, value = "Exception during createSubject() for %s: %s")
+   public void exceptionDuringCreateSubject(String jndiName, String description, @Cause Throwable t);
 
    /**
     * Going to destroy connection listener during shutdown
