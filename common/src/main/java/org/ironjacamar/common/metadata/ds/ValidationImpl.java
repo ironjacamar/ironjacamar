@@ -25,7 +25,6 @@ import org.ironjacamar.common.api.metadata.common.Extension;
 import org.ironjacamar.common.api.metadata.ds.Validation;
 import org.ironjacamar.common.api.validator.ValidateException;
 
-import java.util.Iterator;
 import java.util.Map;
 
 import org.jboss.logging.Messages;
@@ -170,26 +169,7 @@ public class ValidationImpl extends org.ironjacamar.common.metadata.common.Valid
       if (validConnectionChecker != null)
       {
          sb.append("<").append(XML.ELEMENT_VALID_CONNECTION_CHECKER);
-         sb.append(" ").append(XML.ATTRIBUTE_CLASS_NAME).append("=\"");
-         sb.append(validConnectionChecker.getClassName()).append("\"");
-         sb.append(">");
-
-         if (validConnectionChecker.getConfigPropertiesMap().size() > 0)
-         {
-            Iterator<Map.Entry<String, String>> it =
-               validConnectionChecker.getConfigPropertiesMap().entrySet().iterator();
-            
-            while (it.hasNext())
-            {
-               Map.Entry<String, String> entry = it.next();
-
-               sb.append("<").append(XML.ELEMENT_CONFIG_PROPERTY);
-               sb.append(" name=\"").append(entry.getKey()).append("\">");
-               sb.append(entry.getValue());
-               sb.append("</").append(XML.ELEMENT_CONFIG_PROPERTY).append(">");
-            }
-         }
-
+         sb.append(validConnectionChecker.toString());
          sb.append("</").append(XML.ELEMENT_VALID_CONNECTION_CHECKER).append(">");
       }
 
@@ -231,52 +211,14 @@ public class ValidationImpl extends org.ironjacamar.common.metadata.common.Valid
       if (staleConnectionChecker != null)
       {
          sb.append("<").append(XML.ELEMENT_STALE_CONNECTION_CHECKER);
-         sb.append(" ").append(XML.ATTRIBUTE_CLASS_NAME).append("=\"");
-         sb.append(staleConnectionChecker.getClassName()).append("\"");
-         sb.append(">");
-
-         if (staleConnectionChecker.getConfigPropertiesMap().size() > 0)
-         {
-            Iterator<Map.Entry<String, String>> it =
-               staleConnectionChecker.getConfigPropertiesMap().entrySet().iterator();
-            
-            while (it.hasNext())
-            {
-               Map.Entry<String, String> entry = it.next();
-
-               sb.append("<").append(XML.ELEMENT_CONFIG_PROPERTY);
-               sb.append(" name=\"").append(entry.getKey()).append("\">");
-               sb.append(entry.getValue());
-               sb.append("</").append(XML.ELEMENT_CONFIG_PROPERTY).append(">");
-            }
-         }
-
+         sb.append(staleConnectionChecker.toString());
          sb.append("</").append(XML.ELEMENT_STALE_CONNECTION_CHECKER).append(">");
       }
 
       if (exceptionSorter != null)
       {
          sb.append("<").append(XML.ELEMENT_EXCEPTION_SORTER);
-         sb.append(" ").append(XML.ATTRIBUTE_CLASS_NAME).append("=\"");
-         sb.append(exceptionSorter.getClassName()).append("\"");
-         sb.append(">");
-
-         if (exceptionSorter.getConfigPropertiesMap().size() > 0)
-         {
-            Iterator<Map.Entry<String, String>> it =
-               exceptionSorter.getConfigPropertiesMap().entrySet().iterator();
-            
-            while (it.hasNext())
-            {
-               Map.Entry<String, String> entry = it.next();
-
-               sb.append("<").append(XML.ELEMENT_CONFIG_PROPERTY);
-               sb.append(" name=\"").append(entry.getKey()).append("\">");
-               sb.append(entry.getValue());
-               sb.append("</").append(XML.ELEMENT_CONFIG_PROPERTY).append(">");
-            }
-         }
-
+         sb.append(exceptionSorter.toString());
          sb.append("</").append(XML.ELEMENT_EXCEPTION_SORTER).append(">");
       }
 

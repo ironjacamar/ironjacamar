@@ -605,6 +605,8 @@
       <xs:element name="config-property" type="config-propertyType"></xs:element>
     </xs:sequence>
     <xs:attribute name="class-name" type="xs:token" use="required"></xs:attribute>
+    <xs:attribute name="module-name" type="xs:token" use="optional"></xs:attribute>
+    <xs:attribute name="module-slot" type="xs:token" use="optional"></xs:attribute>
   </xs:complexType>
   <xs:complexType name="credentialType">
     <xs:sequence>

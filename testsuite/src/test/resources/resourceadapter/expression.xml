@@ -67,7 +67,8 @@
 	  <recovery-credential>
             <security-domain>MyRecoveryRealm</security-domain>
 	  </recovery-credential>
-	  <recovery-plugin class-name="${class-name:someClass2}">
+	  <recovery-plugin class-name="${class-name:someClass2}"
+                       module-name="${module-name:some-module-name}" module-slot="${module-slot:some-module-slot}">
 	    <config-property name="Property5">${Property5:${Property5X:Property5}}</config-property>
 	    <config-property name="Property6">${Property6:${Property6X:Property6}}</config-property>
 	    <config-property name="Property7">${Property7:${Property7X:Property7}}</config-property>

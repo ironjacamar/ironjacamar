@@ -24,7 +24,6 @@ import org.ironjacamar.common.api.metadata.common.Extension;
 import org.ironjacamar.common.api.metadata.ds.Credential;
 import org.ironjacamar.common.api.validator.ValidateException;
 
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -102,25 +101,7 @@ public class RecoveryImpl extends org.ironjacamar.common.metadata.common.Recover
       if (plugin != null)
       {
          sb.append("<").append("recovery-plugin");
-         sb.append(" ").append("class-name").append("=\"");
-         sb.append(plugin.getClassName()).append("\"");
-         sb.append(">");
-
-         if (plugin.getConfigPropertiesMap().size() > 0)
-         {
-            Iterator<Map.Entry<String, String>> it = plugin.getConfigPropertiesMap().entrySet().iterator();
-            
-            while (it.hasNext())
-            {
-               Map.Entry<String, String> entry = it.next();
-
-               sb.append("<").append("config-property");
-               sb.append(" name=\"").append(entry.getKey()).append("\">");
-               sb.append(entry.getValue());
-               sb.append("</").append("config-property").append(">");
-            }
-         }
-
+         sb.append(plugin.toString());
          sb.append("</").append("recovery-plugin").append(">");
       }
 

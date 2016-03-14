@@ -27,7 +27,6 @@ import org.ironjacamar.common.api.metadata.common.FlushStrategy;
 import org.ironjacamar.common.api.metadata.ds.DsXaPool;
 import org.ironjacamar.common.api.validator.ValidateException;
 
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -177,24 +176,8 @@ public class DsXaPoolImpl extends org.ironjacamar.common.metadata.common.XaPoolI
       if (connectionListener != null)
       {
          sb.append("<").append(XML.ELEMENT_CONNECTION_LISTENER);
-         sb.append(" ").append(XML.ATTRIBUTE_CLASS_NAME).append("=\"");
-         sb.append(connectionListener.getClassName()).append("\"");
-         sb.append(">");
+         sb.append(connectionListener.toString());
 
-         if (connectionListener.getConfigPropertiesMap().size() > 0)
-         {
-            Iterator<Map.Entry<String, String>> it = connectionListener.getConfigPropertiesMap().entrySet().iterator();
-            
-            while (it.hasNext())
-            {
-               Map.Entry<String, String> entry = it.next();
-
-               sb.append("<").append(XML.ELEMENT_CONFIG_PROPERTY);
-               sb.append(" name=\"").append(entry.getKey()).append("\">");
-               sb.append(entry.getValue());
-               sb.append("</").append(XML.ELEMENT_CONFIG_PROPERTY).append(">");
-            }
-         }
 
          sb.append("</").append(XML.ELEMENT_CONNECTION_LISTENER).append(">");
       }

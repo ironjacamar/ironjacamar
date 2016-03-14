@@ -265,6 +265,8 @@ public class ResourceAdapters20TestCase
                   
                   assertNotNull(e);
                   assertEquals("someClass2", e.getClassName());
+                  assertEquals("some-module-name", e.getModuleName());
+                  assertEquals("some-module-slot", e.getModuleSlot());
                   mp = e.getConfigPropertiesMap();
                   assertEquals(2, mp.size());
                   assertEquals("some", mp.get("Property5"));

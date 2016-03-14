@@ -42,6 +42,7 @@ import org.ironjacamar.common.api.validator.ValidateException;
 import org.ironjacamar.common.metadata.MetadataParser;
 import org.ironjacamar.common.metadata.ParserException;
 import org.ironjacamar.common.metadata.common.AbstractParser;
+import org.ironjacamar.common.metadata.common.CommonXML;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -1879,29 +1880,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
 
       if (pool.getConnectionListener() != null)
       {
-         writer.writeStartElement(XML.ELEMENT_CONNECTION_LISTENER);
-         writer.writeAttribute(XML.ATTRIBUTE_CLASS_NAME,
-                               pool.getConnectionListener().getValue(XML.ATTRIBUTE_CLASS_NAME,
-                                                                     pool.getConnectionListener().getClassName()));
-
-         if (pool.getConnectionListener().getConfigPropertiesMap().size() > 0)
-         {
-            Iterator<Map.Entry<String, String>> it =
-               pool.getConnectionListener().getConfigPropertiesMap().entrySet().iterator();
-            
-            while (it.hasNext())
-            {
-               Map.Entry<String, String> entry = it.next();
-
-               writer.writeStartElement(XML.ELEMENT_CONFIG_PROPERTY);
-               writer.writeAttribute(XML.ATTRIBUTE_NAME, entry.getKey());
-               writer.writeCharacters(pool.getConnectionListener().getValue(XML.ELEMENT_CONFIG_PROPERTY,
-                                                                            entry.getKey(), entry.getValue()));
-               writer.writeEndElement();
-            }
-         }
-
-         writer.writeEndElement();
+         storeExtension(pool.getConnectionListener(), writer, XML.ELEMENT_CONNECTION_LISTENER);
       }
 
       if (pool.isIsSameRmOverride() != null)
@@ -1959,28 +1938,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
 
       if (s.getReauthPlugin() != null)
       {
-         writer.writeStartElement(XML.ELEMENT_REAUTH_PLUGIN);
-         writer.writeAttribute(XML.ATTRIBUTE_CLASS_NAME,
-                               s.getReauthPlugin().getValue(XML.ATTRIBUTE_CLASS_NAME,
-                                                            s.getReauthPlugin().getClassName()));
-
-         if (s.getReauthPlugin().getConfigPropertiesMap().size() > 0)
-         {
-            Iterator<Map.Entry<String, String>> it = s.getReauthPlugin().getConfigPropertiesMap().entrySet().iterator();
-            
-            while (it.hasNext())
-            {
-               Map.Entry<String, String> entry = it.next();
-
-               writer.writeStartElement(XML.ELEMENT_CONFIG_PROPERTY);
-               writer.writeAttribute(XML.ATTRIBUTE_NAME, entry.getKey());
-               writer.writeCharacters(s.getReauthPlugin().getValue(XML.ELEMENT_CONFIG_PROPERTY,
-                                                                   entry.getKey(), entry.getValue()));
-               writer.writeEndElement();
-            }
-         }
-
-         writer.writeEndElement();
+         storeExtension(s.getReauthPlugin(), writer, XML.ELEMENT_REAUTH_PLUGIN);
       }
 
       writer.writeEndElement();
@@ -1998,29 +1956,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
 
       if (v.getValidConnectionChecker() != null)
       {
-         writer.writeStartElement(XML.ELEMENT_VALID_CONNECTION_CHECKER);
-         writer.writeAttribute(XML.ATTRIBUTE_CLASS_NAME,
-                               v.getValidConnectionChecker().getValue(XML.ATTRIBUTE_CLASS_NAME,
-                                                                      v.getValidConnectionChecker().getClassName()));
-
-         if (v.getValidConnectionChecker().getConfigPropertiesMap().size() > 0)
-         {
-            Iterator<Map.Entry<String, String>> it =
-               v.getValidConnectionChecker().getConfigPropertiesMap().entrySet().iterator();
-            
-            while (it.hasNext())
-            {
-               Map.Entry<String, String> entry = it.next();
-
-               writer.writeStartElement(XML.ELEMENT_CONFIG_PROPERTY);
-               writer.writeAttribute(XML.ATTRIBUTE_NAME, entry.getKey());
-               writer.writeCharacters(v.getValidConnectionChecker().getValue(XML.ELEMENT_CONFIG_PROPERTY,
-                                                                             entry.getKey(), entry.getValue()));
-               writer.writeEndElement();
-            }
-         }
-
-         writer.writeEndElement();
+         storeExtension(v.getValidConnectionChecker(), writer, XML.ELEMENT_VALID_CONNECTION_CHECKER);
       }
 
       if (v.getCheckValidConnectionSql() != null)
@@ -2061,56 +1997,12 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
 
       if (v.getStaleConnectionChecker() != null)
       {
-         writer.writeStartElement(XML.ELEMENT_STALE_CONNECTION_CHECKER);
-         writer.writeAttribute(XML.ATTRIBUTE_CLASS_NAME,
-                               v.getStaleConnectionChecker().getValue(XML.ATTRIBUTE_CLASS_NAME,
-                                                                      v.getStaleConnectionChecker().getClassName()));
-
-         if (v.getStaleConnectionChecker().getConfigPropertiesMap().size() > 0)
-         {
-            Iterator<Map.Entry<String, String>> it =
-               v.getStaleConnectionChecker().getConfigPropertiesMap().entrySet().iterator();
-            
-            while (it.hasNext())
-            {
-               Map.Entry<String, String> entry = it.next();
-
-               writer.writeStartElement(XML.ELEMENT_CONFIG_PROPERTY);
-               writer.writeAttribute(XML.ATTRIBUTE_NAME, entry.getKey());
-               writer.writeCharacters(v.getStaleConnectionChecker().getValue(XML.ELEMENT_CONFIG_PROPERTY,
-                                                                             entry.getKey(), entry.getValue()));
-               writer.writeEndElement();
-            }
-         }
-
-         writer.writeEndElement();
+         storeExtension(v.getStaleConnectionChecker(), writer, XML.ELEMENT_STALE_CONNECTION_CHECKER);
       }
 
       if (v.getExceptionSorter() != null)
       {
-         writer.writeStartElement(XML.ELEMENT_EXCEPTION_SORTER);
-         writer.writeAttribute(XML.ATTRIBUTE_CLASS_NAME,
-                               v.getExceptionSorter().getValue(XML.ATTRIBUTE_CLASS_NAME,
-                                                               v.getExceptionSorter().getClassName()));
-
-         if (v.getExceptionSorter().getConfigPropertiesMap().size() > 0)
-         {
-            Iterator<Map.Entry<String, String>> it =
-               v.getExceptionSorter().getConfigPropertiesMap().entrySet().iterator();
-            
-            while (it.hasNext())
-            {
-               Map.Entry<String, String> entry = it.next();
-
-               writer.writeStartElement(XML.ELEMENT_CONFIG_PROPERTY);
-               writer.writeAttribute(XML.ATTRIBUTE_NAME, entry.getKey());
-               writer.writeCharacters(v.getExceptionSorter().getValue(XML.ELEMENT_CONFIG_PROPERTY,
-                                                                      entry.getKey(), entry.getValue()));
-               writer.writeEndElement();
-            }
-         }
-
-         writer.writeEndElement();
+         storeExtension(v.getExceptionSorter(), writer, XML.ELEMENT_EXCEPTION_SORTER);
       }
 
       writer.writeEndElement();
@@ -2262,29 +2154,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
 
       if (r.getPlugin() != null)
       {
-         writer.writeStartElement(XML.ELEMENT_RECOVERY_PLUGIN);
-         writer.writeAttribute(XML.ATTRIBUTE_CLASS_NAME,
-                               r.getPlugin().getValue(XML.ATTRIBUTE_CLASS_NAME,
-                                                      r.getPlugin().getClassName()));
-
-         if (r.getPlugin().getConfigPropertiesMap().size() > 0)
-         {
-            Iterator<Map.Entry<String, String>> it =
-               r.getPlugin().getConfigPropertiesMap().entrySet().iterator();
-            
-            while (it.hasNext())
-            {
-               Map.Entry<String, String> entry = it.next();
-
-               writer.writeStartElement(XML.ELEMENT_CONFIG_PROPERTY);
-               writer.writeAttribute(XML.ATTRIBUTE_NAME, entry.getKey());
-               writer.writeCharacters(r.getPlugin().getValue(XML.ELEMENT_CONFIG_PROPERTY,
-                                                             entry.getKey(), entry.getValue()));
-               writer.writeEndElement();
-            }
-         }
-
-         writer.writeEndElement();
+         storeExtension(r.getPlugin(), writer, CommonXML.ELEMENT_RECOVERY_PLUGIN);
       }
 
       writer.writeEndElement();

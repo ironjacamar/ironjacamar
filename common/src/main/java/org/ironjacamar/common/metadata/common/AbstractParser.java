@@ -44,11 +44,11 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
-import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
-import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
-
 import org.jboss.logging.Logger;
 import org.jboss.logging.Messages;
+
+import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
+import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
 /**
  *
@@ -742,6 +742,8 @@ public abstract class AbstractParser
    {
 
       String className = null;
+      String moduleName = null;
+      String moduleSlot = null;
       Map<String, String> properties = null;
       HashMap<String, String> expressions = new HashMap<String, String>();
 
@@ -751,6 +753,14 @@ public abstract class AbstractParser
          {
             case CommonXML.ATTRIBUTE_CLASS_NAME : {
                className = attributeAsString(reader, CommonXML.ATTRIBUTE_CLASS_NAME, expressions);
+               break;
+            }
+            case CommonXML.ATTRIBUTE_MODULE_NAME : {
+               moduleName = attributeAsString(reader, CommonXML.ATTRIBUTE_MODULE_NAME, expressions);
+               break;
+            }
+            case CommonXML.ATTRIBUTE_MODULE_SLOT: {
+               moduleSlot = attributeAsString(reader, CommonXML.ATTRIBUTE_MODULE_SLOT, expressions);
                break;
             }
             default :
@@ -770,7 +780,8 @@ public abstract class AbstractParser
                      throw new ParserException(bundle.missingClassName(enclosingTag));
                   }
 
-                  return new ExtensionImpl(className, properties, expressions.size() > 0 ? expressions : null);
+                  return new ExtensionImpl(className, moduleName, moduleSlot, properties,
+                        expressions.size() > 0 ? expressions : null);
                }
                else
                {
@@ -1015,56 +1026,51 @@ public abstract class AbstractParser
 
       if (c.getIncrementer() != null)
       {
-         writer.writeStartElement(CommonXML.ELEMENT_INCREMENTER);
-         writer.writeAttribute(CommonXML.ATTRIBUTE_CLASS_NAME,
-                               c.getIncrementer().getValue(CommonXML.ATTRIBUTE_CLASS_NAME,
-                                                           c.getIncrementer().getClassName()));
-
-         if (c.getIncrementer().getConfigPropertiesMap().size() > 0)
-         {
-            Iterator<Map.Entry<String, String>> it =
-               c.getIncrementer().getConfigPropertiesMap().entrySet().iterator();
-            
-            while (it.hasNext())
-            {
-               Map.Entry<String, String> entry = it.next();
-
-               writer.writeStartElement(CommonXML.ELEMENT_CONFIG_PROPERTY);
-               writer.writeAttribute(CommonXML.ATTRIBUTE_NAME, entry.getKey());
-               writer.writeCharacters(c.getIncrementer().getValue(CommonXML.ELEMENT_CONFIG_PROPERTY,
-                                                                  entry.getKey(), entry.getValue()));
-               writer.writeEndElement();
-            }
-         }
-
-         writer.writeEndElement();
+         storeExtension(c.getIncrementer(), writer, CommonXML.ELEMENT_INCREMENTER);
       }
 
       if (c.getDecrementer() != null)
       {
-         writer.writeStartElement(CommonXML.ELEMENT_DECREMENTER);
-         writer.writeAttribute(CommonXML.ATTRIBUTE_CLASS_NAME,
-                               c.getDecrementer().getValue(CommonXML.ATTRIBUTE_CLASS_NAME,
-                                                           c.getDecrementer().getClassName()));
+         storeExtension(c.getDecrementer(), writer, CommonXML.ELEMENT_DECREMENTER);
+      }
 
-         if (c.getDecrementer().getConfigPropertiesMap().size() > 0)
+      writer.writeEndElement();
+   }
+   /**
+    * Store capacity
+    * @param e The extension
+    * @param writer The writer
+    * @param elementName the element name
+    * @exception XMLStreamException Thrown if an error occurs
+    */
+   protected void storeExtension(Extension e, XMLStreamWriter writer, String elementName) throws XMLStreamException
+   {
+      writer.writeStartElement(elementName);
+      writer.writeAttribute(CommonXML.ATTRIBUTE_CLASS_NAME,
+                            e.getValue(CommonXML.ATTRIBUTE_CLASS_NAME,
+                                                        e.getClassName()));
+      if (e.getModuleName() != null)
+         writer.writeAttribute(CommonXML.ATTRIBUTE_MODULE_NAME,
+               e.getValue(CommonXML.ATTRIBUTE_MODULE_NAME, e.getModuleName()));
+      if (e.getModuleSlot() != null)
+         writer.writeAttribute(CommonXML.ATTRIBUTE_MODULE_SLOT,
+               e.getValue(CommonXML.ATTRIBUTE_MODULE_SLOT, e.getModuleSlot()));
+
+      if (e.getConfigPropertiesMap().size() > 0)
+      {
+         Iterator<Map.Entry<String, String>> it =
+            e.getConfigPropertiesMap().entrySet().iterator();
+
+         while (it.hasNext())
          {
-            Iterator<Map.Entry<String, String>> it =
-               c.getDecrementer().getConfigPropertiesMap().entrySet().iterator();
-            
-            while (it.hasNext())
-            {
-               Map.Entry<String, String> entry = it.next();
+            Map.Entry<String, String> entry = it.next();
 
-               writer.writeStartElement(CommonXML.ELEMENT_CONFIG_PROPERTY);
-               writer.writeAttribute(CommonXML.ATTRIBUTE_NAME, entry.getKey());
-               writer.writeCharacters(c.getDecrementer().getValue(CommonXML.ELEMENT_CONFIG_PROPERTY,
-                                                                  entry.getKey(), entry.getValue()));
-               writer.writeEndElement();
-            }
+            writer.writeStartElement(CommonXML.ELEMENT_CONFIG_PROPERTY);
+            writer.writeAttribute(CommonXML.ATTRIBUTE_NAME, entry.getKey());
+            writer.writeCharacters(e.getValue(CommonXML.ELEMENT_CONFIG_PROPERTY,
+                                                               entry.getKey(), entry.getValue()));
+            writer.writeEndElement();
          }
-
-         writer.writeEndElement();
       }
 
       writer.writeEndElement();
@@ -1098,29 +1104,7 @@ public abstract class AbstractParser
 
       if (r.getPlugin() != null)
       {
-         writer.writeStartElement(CommonXML.ELEMENT_RECOVERY_PLUGIN);
-         writer.writeAttribute(CommonXML.ATTRIBUTE_CLASS_NAME,
-                               r.getPlugin().getValue(CommonXML.ATTRIBUTE_CLASS_NAME,
-                                                      r.getPlugin().getClassName()));
-
-         if (r.getPlugin().getConfigPropertiesMap().size() > 0)
-         {
-            Iterator<Map.Entry<String, String>> it =
-               r.getPlugin().getConfigPropertiesMap().entrySet().iterator();
-            
-            while (it.hasNext())
-            {
-               Map.Entry<String, String> entry = it.next();
-
-               writer.writeStartElement(CommonXML.ELEMENT_CONFIG_PROPERTY);
-               writer.writeAttribute(CommonXML.ATTRIBUTE_NAME, entry.getKey());
-               writer.writeCharacters(r.getPlugin().getValue(CommonXML.ELEMENT_CONFIG_PROPERTY,
-                                                             entry.getKey(), entry.getValue()));
-               writer.writeEndElement();
-            }
-         }
-
-         writer.writeEndElement();
+         storeExtension(r.getPlugin(), writer, CommonXML.ELEMENT_RECOVERY_PLUGIN);
       }
 
       writer.writeEndElement();

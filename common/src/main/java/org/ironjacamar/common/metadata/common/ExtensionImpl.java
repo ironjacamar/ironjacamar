@@ -25,6 +25,7 @@ import org.ironjacamar.common.api.validator.ValidateException;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -42,14 +43,20 @@ public class ExtensionImpl extends AbstractMetadata implements Extension
 
    private Map<String, String> configPropertiesMap;
 
+   private String moduleName;
+
+   private String moduleSlot;
+
    /**
     * Constructor
     * @param className the className
+    * @param moduleName module Name
+    * @param moduleSlot module slot
     * @param configPropertiesMap configPropertiesMap
     * @param expressions expressions
     * @throws ValidateException ValidateException
     */
-   public ExtensionImpl(String className, Map<String, String> configPropertiesMap,
+   public ExtensionImpl(String className, String moduleName, String moduleSlot, Map<String, String> configPropertiesMap,
                         Map<String, String> expressions) throws ValidateException
    {
       super(expressions);
@@ -63,6 +70,8 @@ public class ExtensionImpl extends AbstractMetadata implements Extension
       {
          this.configPropertiesMap = Collections.emptyMap();
       }
+      this.moduleName = moduleName;
+      this.moduleSlot = moduleSlot;
       this.validate();
    }
 
@@ -86,6 +95,24 @@ public class ExtensionImpl extends AbstractMetadata implements Extension
       return Collections.unmodifiableMap(configPropertiesMap);
    }
 
+   /**
+    * Get the module name.
+    * @return the module name.
+    */
+   public String getModuleName()
+   {
+      return moduleName;
+   }
+
+   /**
+    * Get the module slot.
+    * @return the module slot.
+    */
+   public  String getModuleSlot()
+   {
+      return moduleSlot;
+   }
+
    @Override
    public int hashCode()
    {
@@ -93,6 +120,8 @@ public class ExtensionImpl extends AbstractMetadata implements Extension
       int result = 1;
       result = prime * result + ((className == null) ? 0 : className.hashCode());
       result = prime * result + ((configPropertiesMap == null) ? 0 : configPropertiesMap.hashCode());
+      result = prime * result + ((moduleName == null) ? 0 : moduleName.hashCode());
+      result = prime * result + ((moduleSlot == null) ? 0 : moduleSlot.hashCode());
       return result;
    }
 
@@ -120,6 +149,21 @@ public class ExtensionImpl extends AbstractMetadata implements Extension
       }
       else if (!configPropertiesMap.equals(other.configPropertiesMap))
          return false;
+      if (moduleName == null)
+      {
+         if (other.moduleName != null)
+            return false;
+      }
+      else if (!moduleName.equals(other.moduleName))
+         return false;
+      if (moduleSlot == null)
+      {
+         if (other.moduleSlot != null)
+            return false;
+      }
+      else if (!moduleSlot.equals(other.moduleSlot))
+         return false;
+
       return true;
    }
 
@@ -128,6 +172,41 @@ public class ExtensionImpl extends AbstractMetadata implements Extension
    {
       if (this.className == null || className.trim().length() == 0)
          throw new ValidateException("class-name is required in " + this.getClass().getCanonicalName());
+   }
+
+   @Override
+   public String toString()
+   {
+      StringBuilder sb = new StringBuilder(1024);
+      sb.append(" ").append("class-name").append("=\"");
+      sb.append(this.getClassName()).append("\"");
+      if (this.getModuleName() != null)
+      {
+         sb.append(" ").append("module-name").append("=\"");
+         sb.append(this.getModuleName()).append("\"");
+      }
+      if (this.getModuleSlot() != null)
+      {
+         sb.append(" ").append("module-slot").append("=\"");
+         sb.append(this.getModuleSlot()).append("\"");
+      }
+      sb.append(">");
+
+      if (this.getConfigPropertiesMap().size() > 0)
+      {
+         Iterator<Map.Entry<String, String>> it = this.getConfigPropertiesMap().entrySet().iterator();
+
+         while (it.hasNext())
+         {
+            Map.Entry<String, String> entry = it.next();
+
+            sb.append("<").append("config-property");
+            sb.append(" name=\"").append(entry.getKey()).append("\">");
+            sb.append(entry.getValue());
+            sb.append("</").append("config-property").append(">");
+         }
+      }
+      return sb.toString();
    }
 }
 

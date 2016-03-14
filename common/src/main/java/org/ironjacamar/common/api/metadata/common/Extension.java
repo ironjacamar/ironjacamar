@@ -44,5 +44,17 @@ public interface Extension extends JCAMetadata, ValidatableMetadata
     * @return the configPropertiesMap.
     */
    public Map<String, String> getConfigPropertiesMap();
+
+   /**
+    * Get the module name.
+    * @return the module name.
+    */
+   public String getModuleName();
+
+   /**
+    * Get the module slot.
+    * @return the module slot.
+    */
+   public  String getModuleSlot();
 }
 

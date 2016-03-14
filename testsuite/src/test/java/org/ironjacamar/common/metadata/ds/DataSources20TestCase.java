@@ -359,7 +359,9 @@ public class DataSources20TestCase
       assertEquals("Property1", properties.get("name1"));
       assertEquals("Property2", properties.get("name2"));
       assertEquals("someClass5", e.getClassName());
-      
+      assertEquals("some-module-name", e.getModuleName());
+      assertEquals("some-module-slot", e.getModuleSlot());
+
       v = xd.getValidation();
       assertNotNull(v);
       assertEquals("select 1", v.getCheckValidConnectionSql());

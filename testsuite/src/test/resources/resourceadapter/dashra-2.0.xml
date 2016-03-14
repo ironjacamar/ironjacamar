@@ -49,7 +49,7 @@
 	  <recovery-credential>
             <security-domain>MyRecoveryRealm</security-domain>
 	  </recovery-credential>
-	  <recovery-plugin class-name="someClass2">
+	  <recovery-plugin class-name="someClass2" module-name="some-module-name" module-slot="some-module-slot">
 	    <config-property name="Property5">some</config-property>
 	    <config-property name="Property6">true</config-property>
 	  </recovery-plugin>

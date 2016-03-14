@@ -24,9 +24,6 @@ import org.ironjacamar.common.api.metadata.common.Capacity;
 import org.ironjacamar.common.api.metadata.common.Extension;
 import org.ironjacamar.common.api.validator.ValidateException;
 
-import java.util.Iterator;
-import java.util.Map;
-
 /**
  * Capacity definition 
  *
@@ -132,48 +129,15 @@ public class CapacityImpl extends AbstractMetadata implements Capacity
       if (incrementer != null)
       {
          sb.append("<").append("incrementer");
-         sb.append(" ").append("class-name").append("=\"");
-         sb.append(incrementer.getClassName()).append("\"");
-         sb.append(">");
-
-         if (incrementer.getConfigPropertiesMap().size() > 0)
-         {
-            Iterator<Map.Entry<String, String>> it = incrementer.getConfigPropertiesMap().entrySet().iterator();
-            
-            while (it.hasNext())
-            {
-               Map.Entry<String, String> entry = it.next();
-
-               sb.append("<").append("config-property");
-               sb.append(" name=\"").append(entry.getKey()).append("\">");
-               sb.append(entry.getValue());
-               sb.append("</").append("config-property").append(">");
-            }
-         }
+         sb.append(incrementer.toString());
 
          sb.append("</").append("incrementer").append(">");
       }
       if (decrementer != null)
       {
          sb.append("<").append("decrementer");
-         sb.append(" ").append("class-name").append("=\"");
-         sb.append(decrementer.getClassName()).append("\"");
-         sb.append(">");
+         sb.append(decrementer.toString());
 
-         if (decrementer.getConfigPropertiesMap().size() > 0)
-         {
-            Iterator<Map.Entry<String, String>> it = decrementer.getConfigPropertiesMap().entrySet().iterator();
-            
-            while (it.hasNext())
-            {
-               Map.Entry<String, String> entry = it.next();
-
-               sb.append("<").append("config-property");
-               sb.append(" name=\"").append(entry.getKey()).append("\">");
-               sb.append(entry.getValue());
-               sb.append("</").append("config-property").append(">");
-            }
-         }
 
          sb.append("</").append("decrementer").append(">");
       }

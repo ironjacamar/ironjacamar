@@ -32,6 +32,16 @@ public interface CommonXML
    public static final String ATTRIBUTE_CLASS_NAME = "class-name";
 
    /**
+    * module-name
+    */
+   public static final String ATTRIBUTE_MODULE_NAME = "module-name";
+
+   /**
+    * module-slot
+    */
+   public static final String ATTRIBUTE_MODULE_SLOT = "module-slot";
+
+   /**
     * connectable
     */
    public static final String ATTRIBUTE_CONNECTABLE = "connectable";
@@ -151,6 +161,7 @@ public interface CommonXML
     * capacity
     */
    public static final String ELEMENT_CAPACITY = "capacity";
+
 
    /**
     * config-property

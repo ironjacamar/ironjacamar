@@ -24,7 +24,6 @@ import org.ironjacamar.common.api.metadata.common.Extension;
 import org.ironjacamar.common.api.metadata.ds.DsSecurity;
 import org.ironjacamar.common.api.validator.ValidateException;
 
-import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -128,25 +127,7 @@ public class DsSecurityImpl extends CredentialImpl implements DsSecurity
       if (getReauthPlugin() != null)
       {
          sb.append("<").append(XML.ELEMENT_REAUTH_PLUGIN);
-         sb.append(" ").append(XML.ATTRIBUTE_CLASS_NAME).append("=\"");
-         sb.append(getReauthPlugin().getClassName()).append("\"");
-         sb.append(">");
-
-         if (getReauthPlugin().getConfigPropertiesMap().size() > 0)
-         {
-            Iterator<Map.Entry<String, String>> it = getReauthPlugin().getConfigPropertiesMap().entrySet().iterator();
-            
-            while (it.hasNext())
-            {
-               Map.Entry<String, String> entry = it.next();
-
-               sb.append("<").append(XML.ELEMENT_CONFIG_PROPERTY);
-               sb.append(" name=\"").append(entry.getKey()).append("\">");
-               sb.append(entry.getValue());
-               sb.append("</").append(XML.ELEMENT_CONFIG_PROPERTY).append(">");
-            }
-         }
-
+         sb.append(getReauthPlugin().toString());
          sb.append("</").append(XML.ELEMENT_REAUTH_PLUGIN).append(">");
       }
 
