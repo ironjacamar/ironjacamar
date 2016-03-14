@@ -23,6 +23,7 @@ package org.ironjacamar.core.api.deploymentrepository;
 
 import org.ironjacamar.common.api.metadata.resourceadapter.Activation;
 import org.ironjacamar.common.api.metadata.spec.Connector;
+import org.ironjacamar.core.spi.classloading.ClassLoaderPlugin;
 
 import java.io.File;
 import java.util.Collection;
@@ -86,6 +87,13 @@ public interface Deployment
     * @return The value
     */
    public Collection<AdminObject> getAdminObjects();
+
+   /**
+    * Get the class loader plugin
+    *
+    * @return The value
+    */
+   public ClassLoaderPlugin getClassLoaderPlugin();
 
    /**
     * Is the deployment active ?
