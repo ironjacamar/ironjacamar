@@ -50,6 +50,7 @@ import org.ironjacamar.core.deploymentrepository.RecoveryImpl;
 import org.ironjacamar.core.deploymentrepository.ResourceAdapterImpl;
 import org.ironjacamar.core.metadatarepository.MetadataImpl;
 import org.ironjacamar.core.recovery.DefaultRecoveryPlugin;
+import org.ironjacamar.core.spi.classloading.ClassLoaderPlugin;
 import org.ironjacamar.core.spi.naming.JndiStrategy;
 import org.ironjacamar.core.spi.recovery.RecoveryPlugin;
 import org.ironjacamar.core.spi.security.SubjectFactory;
@@ -95,6 +96,9 @@ public abstract class AbstractResourceAdapterDeployer
 
    /** The Subject Factory */
    protected SubjectFactory subjectFactory;
+
+   /** The Subject Factory */
+   protected ClassLoaderPlugin classLoaderPlugin;
 
    /** The default pool type */
    protected String defaultPoolType;
@@ -169,6 +173,16 @@ public abstract class AbstractResourceAdapterDeployer
    }
 
    /**
+    * Set the class loader plugin
+    * @param classLoaderPlugin The value
+    */
+   public void setClassLoaderPlugin(ClassLoaderPlugin classLoaderPlugin)
+   {
+      this.classLoaderPlugin = classLoaderPlugin;
+   }
+
+
+   /**
     * Set the cached connection manager
     * @param v The value
     */
@@ -226,6 +240,7 @@ public abstract class AbstractResourceAdapterDeployer
 
          builder.archive(md.getArchive());
          builder.classLoader(cl);
+         builder.classLoaderPlugin(classLoaderPlugin);
 
          if (connector.getResourceadapter().getResourceadapterClass() != null)
             createResourceAdapter(builder, connector.getResourceadapter().getResourceadapterClass(),

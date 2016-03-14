@@ -101,6 +101,11 @@
     <property name="Password">password</property>
   </bean>
 
+  <bean name="DefaulClassLoaderPlugin"
+        interface="org.ironjacamar.core.spi.classloading.ClassLoaderPlugin"
+        class="org.ironjacamar.core.classloading.IronJacamarClassLoaderPlugin">
+  </bean>
+
   <!-- Work Manager -->
   <bean name="WorkManager" 
         interface="org.ironjacamar.core.api.workmanager.WorkManager"
@@ -210,6 +215,7 @@
     <property name="TransactionIntegration"><inject bean="TransactionIntegration"/></property>
     <property name="CachedConnectionManager"><inject bean="CachedConnectionManager"/></property>
     <property name="SubjectFactory"><inject bean="DefaultSubjectFactory"/></property>
+    <property name="ClassLoaderPlugin"><inject bean="DefaulClassLoaderPlugin"/></property>
     <depends>ClassLoaderDeployer</depends>
     <depends>ConnectionValidator</depends>
     <depends>IdleConnectionRemover</depends>
@@ -224,6 +230,7 @@
     <property name="TransactionIntegration"><inject bean="TransactionIntegration"/></property>
     <property name="CachedConnectionManager"><inject bean="CachedConnectionManager"/></property>
     <property name="SubjectFactory"><inject bean="DefaultSubjectFactory"/></property>
+    <property name="ClassLoaderPlugin"><inject bean="DefaulClassLoaderPlugin"/></property>
     <depends>ClassLoaderDeployer</depends>
     <depends>ConnectionValidator</depends>
     <depends>IdleConnectionRemover</depends>

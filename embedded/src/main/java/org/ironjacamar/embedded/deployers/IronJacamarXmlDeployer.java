@@ -141,6 +141,7 @@ public class IronJacamarXmlDeployer extends AbstractFungalRADeployer implements 
       i.setTransactionIntegration(transactionIntegration);
       i.setCachedConnectionManager(cachedConnectionManager);
       i.setSubjectFactory(subjectFactory);
+      i.setClassLoaderPlugin(classLoaderPlugin);
       i.setDefaultPoolType(defaultPoolType);
       return i;
    }

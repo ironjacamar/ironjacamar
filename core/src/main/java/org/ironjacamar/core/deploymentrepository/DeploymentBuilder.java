@@ -27,6 +27,7 @@ import org.ironjacamar.core.api.deploymentrepository.AdminObject;
 import org.ironjacamar.core.api.deploymentrepository.ConnectionFactory;
 import org.ironjacamar.core.api.deploymentrepository.Deployment;
 import org.ironjacamar.core.api.deploymentrepository.ResourceAdapter;
+import org.ironjacamar.core.spi.classloading.ClassLoaderPlugin;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -66,6 +67,10 @@ public class DeploymentBuilder
    /** The admin objects */
    private Collection<AdminObject> adminObjects;
 
+   /**The class loader plugin */
+   private ClassLoaderPlugin classLoaderPlugin;
+
+
    /**
     * Constructor
     */
@@ -80,6 +85,7 @@ public class DeploymentBuilder
       this.resourceAdapter = null;
       this.connectionFactories = null;
       this.adminObjects = null;
+      this.classLoaderPlugin = null;
    }
    
    /**
@@ -159,6 +165,17 @@ public class DeploymentBuilder
    public DeploymentBuilder classLoader(ClassLoader v)
    {
       classLoader = v;
+      return this;
+   }
+
+   /**
+    * Set class loader plugin
+    * @param v The value
+    * @return The builder
+    */
+   public DeploymentBuilder classLoaderPlugin(ClassLoaderPlugin v)
+   {
+      classLoaderPlugin = v;
       return this;
    }
 
@@ -282,6 +299,6 @@ public class DeploymentBuilder
    {
       return new DeploymentImpl(identifier, name, archive, classLoader,
                                 metadata, activation,
-                                resourceAdapter, getConnectionFactories(), getAdminObjects());
+                                resourceAdapter, getConnectionFactories(), getAdminObjects(), classLoaderPlugin);
    }
 }

@@ -27,6 +27,7 @@ import org.ironjacamar.core.api.deploymentrepository.AdminObject;
 import org.ironjacamar.core.api.deploymentrepository.ConnectionFactory;
 import org.ironjacamar.core.api.deploymentrepository.Deployment;
 import org.ironjacamar.core.api.deploymentrepository.ResourceAdapter;
+import org.ironjacamar.core.spi.classloading.ClassLoaderPlugin;
 
 import java.io.File;
 import java.util.Collection;
@@ -67,6 +68,9 @@ public class DeploymentImpl implements Deployment
    /** The admin objects */
    private Collection<AdminObject> adminObjects;
 
+   /**The class loader plugin */
+   private ClassLoaderPlugin classLoaderPlugin;
+
    /**
     * Constructor
     * @param identifier The identifier
@@ -78,6 +82,7 @@ public class DeploymentImpl implements Deployment
     * @param resourceAdapter The resource adapter
     * @param connectionFactories The connection factories
     * @param adminObjects The admin objects
+    * @param classLoaderPlugin the class loader plugin
     */
    public DeploymentImpl(String identifier,
                          String name,
@@ -87,7 +92,8 @@ public class DeploymentImpl implements Deployment
                          Activation activation,
                          ResourceAdapter resourceAdapter,
                          Collection<ConnectionFactory> connectionFactories,
-                         Collection<AdminObject> adminObjects)
+                         Collection<AdminObject> adminObjects,
+                         ClassLoaderPlugin classLoaderPlugin)
    {
       this.activated = false;
       this.identifier = identifier;
@@ -99,6 +105,7 @@ public class DeploymentImpl implements Deployment
       this.resourceAdapter = resourceAdapter;
       this.connectionFactories = connectionFactories;
       this.adminObjects = adminObjects;
+      this.classLoaderPlugin = classLoaderPlugin;
    }
    
    /**
@@ -171,6 +178,15 @@ public class DeploymentImpl implements Deployment
    public Collection<AdminObject> getAdminObjects()
    {
       return adminObjects;
+   }
+
+   /**
+    *{@inheritDoc}
+    */
+   @Override
+   public ClassLoaderPlugin getClassLoaderPlugin()
+   {
+      return classLoaderPlugin;
    }
 
    /**
