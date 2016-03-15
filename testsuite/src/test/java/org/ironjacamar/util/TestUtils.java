@@ -93,7 +93,8 @@ public class TestUtils
          int size, long timeout, TimeUnit unit)
          throws InterruptedException
    {
-      Runnable task = () -> {
+      Runnable task = () ->
+      {
          try
          {
             while (collection.size() != size)

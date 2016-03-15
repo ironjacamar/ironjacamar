@@ -62,6 +62,7 @@
       <property name="allowUndeclaredRTE" value="true"/>
       <property name="allowThrowsTagsForSubclasses" value="true"/>
       <property name="scope" value="package"/>
+      <property name="tokens" value="METHOD_DEF, CTOR_DEF"/>
     </module>
     <module name="JavadocVariable">
       <property name="scope" value="package"/>

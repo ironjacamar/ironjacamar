@@ -109,7 +109,7 @@ public class ExpressionTemplateTestCase
    @Test
    public void testGetValueUnresolved()
    {
-      expressionValueTest(new Expression("a", "b", null) , "b");
+      expressionValueTest(new Expression("a", "b", null), "b");
    }
 
    /**
@@ -118,7 +118,7 @@ public class ExpressionTemplateTestCase
    @Test
    public void testGetValueResolvedEmpty()
    {
-      expressionValueTest(new Expression("a", "b", "  ") , "b");
+      expressionValueTest(new Expression("a", "b", "  "), "b");
    }
 
    /**
@@ -127,7 +127,7 @@ public class ExpressionTemplateTestCase
    @Test
    public void testGetValueUnresolvedNoDefault()
    {
-      expressionValueTest(new Expression("a", null, null) , "");
+      expressionValueTest(new Expression("a", null, null), "");
    }
 
    /**
@@ -137,7 +137,7 @@ public class ExpressionTemplateTestCase
    @Test
    public void testGetValueResolvedAndDefaultEmpty()
    {
-      expressionValueTest(new Expression("a", "", "  ") , "");
+      expressionValueTest(new Expression("a", "", "  "), "");
    }
 
    /**
@@ -146,7 +146,7 @@ public class ExpressionTemplateTestCase
    @Test
    public void testGetValueResolved1()
    {
-      expressionValueTest(new Expression("a", "b", "c") , "c");
+      expressionValueTest(new Expression("a", "b", "c"), "c");
    }
 
    /**
@@ -156,7 +156,7 @@ public class ExpressionTemplateTestCase
    @Test
    public void testGetValueResolved2()
    {
-      expressionValueTest(new Expression("a", null, "c") , "c");
+      expressionValueTest(new Expression("a", null, "c"), "c");
    }
 
    /**
@@ -175,7 +175,7 @@ public class ExpressionTemplateTestCase
    @Test
    public void testToSubstitutionUnresolved()
    {
-      expressionSubstitutionTest(new Expression("a", "b", null) , "${a:b}");
+      expressionSubstitutionTest(new Expression("a", "b", null), "${a:b}");
    }
 
    /**
@@ -184,7 +184,7 @@ public class ExpressionTemplateTestCase
    @Test
    public void testToSubstitutionResolvedEmpty()
    {
-      expressionSubstitutionTest(new Expression("a", "b", "  ") , "${a:  }");
+      expressionSubstitutionTest(new Expression("a", "b", "  "), "${a:  }");
    }
 
    /**
@@ -193,7 +193,7 @@ public class ExpressionTemplateTestCase
    @Test
    public void testToSubstitutionUnresolvedNoDefault()
    {
-      expressionSubstitutionTest(new Expression("a", null, null) , "${a}");
+      expressionSubstitutionTest(new Expression("a", null, null), "${a}");
    }
 
    /**
@@ -203,7 +203,7 @@ public class ExpressionTemplateTestCase
    @Test
    public void testToSubstitutionResolvedAndDefaultEmpty()
    {
-      expressionSubstitutionTest(new Expression("a", "", null) , "${a:}");
+      expressionSubstitutionTest(new Expression("a", "", null), "${a:}");
    }
 
    /**
@@ -212,7 +212,7 @@ public class ExpressionTemplateTestCase
    @Test
    public void testToSubstitutionResolved1()
    {
-      expressionSubstitutionTest(new Expression("a", "b", "c") , "${a:c}");
+      expressionSubstitutionTest(new Expression("a", "b", "c"), "${a:c}");
    }
 
    /**
@@ -222,7 +222,7 @@ public class ExpressionTemplateTestCase
    @Test
    public void testToSubstitutionResolved2()
    {
-      expressionSubstitutionTest(new Expression("a", null, "c") , "${a}");
+      expressionSubstitutionTest(new Expression("a", null, "c"), "${a}");
    }
 
    /**

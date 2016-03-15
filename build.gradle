@@ -201,7 +201,7 @@ subprojects { subProject ->
     configFile = rootProject.file('tools/checkstyle/checkstyle.xml')
     showViolations = true
     ignoreFailures = false
-    toolVersion = '6.10.1'
+    toolVersion = '6.16.1'
   }
 
   checkstyleMain.exclude '**/*_$bundle*'
