@@ -205,6 +205,8 @@ public class ResourceAdapterImpl implements ResourceAdapter
       if (as == null)
          throw new Exception("ActivationSpec is null");
 
+      as.setResourceAdapter(resourceAdapter);
+      
       try
       {
          as.validate();

@@ -68,6 +68,8 @@ public class TestActivationSpec implements ActivationSpec
     */
    public void validate() throws InvalidPropertyException
    {
+      if (ra == null)
+         throw new InvalidPropertyException();
    }
 
    /**
