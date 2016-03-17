@@ -23,6 +23,7 @@ package org.ironjacamar.rars.test.inflow;
 import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.InvalidPropertyException;
 import javax.resource.spi.ResourceAdapter;
+import javax.validation.constraints.NotNull;
 
 /**
  * TestActivationSpec
@@ -33,6 +34,7 @@ public class TestActivationSpec implements ActivationSpec
    private ResourceAdapter ra;
 
    /** The name */
+   @NotNull
    private String name;
 
    /**

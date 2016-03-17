@@ -37,6 +37,8 @@ import java.util.List;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
+import org.jboss.logging.Logger;
+
 import com.github.fungal.api.classloading.KernelClassLoader;
 import com.github.fungal.spi.deployers.CloneableDeployer;
 import com.github.fungal.spi.deployers.Context;
@@ -50,6 +52,9 @@ import com.github.fungal.spi.deployers.Deployment;
  */
 public class DashRaXmlDeployer extends AbstractFungalRADeployer implements CloneableDeployer
 {
+   /** The logger */
+   private static Logger log = Logger.getLogger(DashRaXmlDeployer.class);
+
    /**
     * Constructor
     */
@@ -125,10 +130,12 @@ public class DashRaXmlDeployer extends AbstractFungalRADeployer implements Clone
       }
       catch (DeployException de)
       {
+         log.error(de.getMessage(), de);
          throw de;
       }
       catch (Throwable t)
       {
+         log.error(t.getMessage(), t);
          throw new DeployException("Deployment " + url.toExternalForm() + " failed", t);
       }
       finally
@@ -161,6 +168,7 @@ public class DashRaXmlDeployer extends AbstractFungalRADeployer implements Clone
       d.setCachedConnectionManager(cachedConnectionManager);
       d.setSubjectFactory(subjectFactory);
       d.setClassLoaderPlugin(classLoaderPlugin);
+      d.setBeanValidation(beanValidation);
       d.setDefaultPoolType(defaultPoolType);
       return d;
    }

@@ -26,6 +26,9 @@ dependencies {
   testCompile(libraries.byteman_submit) {
     transitive = false
   }
+  testCompile(libraries.fasterxml) {
+    transitive = false
+  }
   testCompile(libraries.fungal) {
     transitive = false
   }
@@ -36,6 +39,9 @@ dependencies {
     transitive = false
   }
   testCompile(libraries.jandex) {
+    transitive = false
+  }
+  testCompile(libraries.javax_el) {
     transitive = false
   }
   testCompile(libraries.javax_inject) {

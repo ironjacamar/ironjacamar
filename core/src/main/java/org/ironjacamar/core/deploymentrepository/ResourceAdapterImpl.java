@@ -25,18 +25,26 @@ import org.ironjacamar.core.api.deploymentrepository.ConfigProperty;
 import org.ironjacamar.core.api.deploymentrepository.InflowRecovery;
 import org.ironjacamar.core.api.deploymentrepository.MessageListener;
 import org.ironjacamar.core.api.deploymentrepository.ResourceAdapter;
+import org.ironjacamar.core.spi.bv.BeanValidation;
 import org.ironjacamar.core.spi.statistics.StatisticsPlugin;
 import org.ironjacamar.core.spi.transaction.TransactionIntegration;
 import org.ironjacamar.core.spi.transaction.recovery.XAResourceRecovery;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.resource.spi.ActivationSpec;
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.endpoint.MessageEndpointFactory;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 /**
  * A resource adapter implementation
@@ -68,6 +76,15 @@ public class ResourceAdapterImpl implements ResourceAdapter
    /** The message listeners */
    private Map<String, ActivationSpecImpl> messageListeners;
 
+   /** Is a 1.6+ archive */
+   private boolean is16;
+
+   /** Bean validation */
+   private BeanValidation beanValidation;
+
+   /** Bean validation groups */
+   private List<String> bvGroups;
+
    /** Transaction integration */
    private TransactionIntegration transactionIntegration;
    
@@ -83,6 +100,9 @@ public class ResourceAdapterImpl implements ResourceAdapter
     * @param productName The product name
     * @param productVersion The product version
     * @param messageListeners The message listeners
+    * @param is16 Is a 1.6+ archive
+    * @param beanValidation Bean validation
+    * @param bvGroups The bean validation groups
     * @param ti The transaction integration
     */
    public ResourceAdapterImpl(javax.resource.spi.ResourceAdapter resourceAdapter,
@@ -91,6 +111,7 @@ public class ResourceAdapterImpl implements ResourceAdapter
                               StatisticsPlugin statistics,
                               String productName, String productVersion,
                               Map<String, ActivationSpecImpl> messageListeners,
+                              boolean is16, BeanValidation beanValidation, List<String> bvGroups,
                               TransactionIntegration ti)
    {
       this.activated = false;
@@ -101,6 +122,9 @@ public class ResourceAdapterImpl implements ResourceAdapter
       this.productName = productName;
       this.productVersion = productVersion;
       this.messageListeners = messageListeners;
+      this.is16 = is16;
+      this.beanValidation = beanValidation;
+      this.bvGroups = bvGroups;
       this.activeEndpoints = new HashMap<>();
       this.transactionIntegration = ti;
    }
@@ -181,8 +205,6 @@ public class ResourceAdapterImpl implements ResourceAdapter
       if (as == null)
          throw new Exception("ActivationSpec is null");
 
-      // TODO: Bean validation
-      
       try
       {
          as.validate();
@@ -192,6 +214,11 @@ public class ResourceAdapterImpl implements ResourceAdapter
          // Ignore
       }
 
+      if (is16)
+      {
+         verifyBeanValidation(as);
+      }
+      
       resourceAdapter.endpointActivation(mef, as);
 
       InflowRecovery ir = null;
@@ -276,6 +303,48 @@ public class ResourceAdapterImpl implements ResourceAdapter
       }
 
       return false;
+   }
+
+   /**
+    * Verify activation spec against bean validation
+    * @param as The activation spec
+    * @exception Exception Thrown in case of a violation
+    */
+   @SuppressWarnings("unchecked")
+   private void verifyBeanValidation(Object as) throws Exception
+   {
+      if (beanValidation != null)
+      {
+         ValidatorFactory vf = null;
+
+         try
+         {
+            vf = beanValidation.getValidatorFactory();
+            Validator v = vf.getValidator();
+
+            Collection<String> l = bvGroups;
+            if (l == null || l.isEmpty())
+               l = Arrays.asList(javax.validation.groups.Default.class.getName());
+
+            Collection<Class<?>> groups = new ArrayList<>();
+            for (String clz : l)
+            {
+               groups.add(Class.forName(clz, true, resourceAdapter.getClass().getClassLoader()));
+            }
+         
+            Set failures = v.validate(as, groups.toArray(new Class<?>[groups.size()]));
+         
+            if (failures.size() > 0)
+            {
+               throw new ConstraintViolationException("Violation for " + as, failures);
+            }
+         }
+         finally
+         {
+            if (vf != null)
+               vf.close();
+         }
+      }
    }
 
    /**

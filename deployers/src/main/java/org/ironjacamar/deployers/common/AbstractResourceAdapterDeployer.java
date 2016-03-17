@@ -50,6 +50,7 @@ import org.ironjacamar.core.deploymentrepository.RecoveryImpl;
 import org.ironjacamar.core.deploymentrepository.ResourceAdapterImpl;
 import org.ironjacamar.core.metadatarepository.MetadataImpl;
 import org.ironjacamar.core.recovery.DefaultRecoveryPlugin;
+import org.ironjacamar.core.spi.bv.BeanValidation;
 import org.ironjacamar.core.spi.classloading.ClassLoaderPlugin;
 import org.ironjacamar.core.spi.naming.JndiStrategy;
 import org.ironjacamar.core.spi.recovery.RecoveryPlugin;
@@ -61,6 +62,7 @@ import org.ironjacamar.core.util.Injection;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -70,6 +72,9 @@ import java.util.regex.Pattern;
 
 import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.ResourceAdapterAssociation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 
 import org.jboss.logging.Logger;
 
@@ -103,8 +108,11 @@ public abstract class AbstractResourceAdapterDeployer
    /** The Subject Factory */
    protected SubjectFactory subjectFactory;
 
-   /** The Subject Factory */
+   /** The class loader plugin */
    protected ClassLoaderPlugin classLoaderPlugin;
+
+   /** The bean validation */
+   protected BeanValidation beanValidation;
 
    /** The default pool type */
    protected String defaultPoolType;
@@ -121,6 +129,8 @@ public abstract class AbstractResourceAdapterDeployer
       this.transactionIntegration = null;
       this.cachedConnectionManager = null;
       this.subjectFactory = null;
+      this.classLoaderPlugin = null;
+      this.beanValidation = null;
       this.defaultPoolType = null;
    }
 
@@ -195,6 +205,15 @@ public abstract class AbstractResourceAdapterDeployer
    public void setCachedConnectionManager(CachedConnectionManager v)
    {
       this.cachedConnectionManager = v;
+   }
+   
+   /**
+    * Set the bean validation
+    * @param v The value
+    */
+   public void setBeanValidation(BeanValidation v)
+   {
+      this.beanValidation = v;
    }
    
    /**
@@ -277,6 +296,9 @@ public abstract class AbstractResourceAdapterDeployer
 
          Deployment deployment = builder.build();
 
+         if (is16(deployment.getMetadata()))
+            verifyBeanValidation(deployment);
+
          deployment.activate();
       
          if (!deploymentRepository.registerDeployment(deployment))
@@ -338,6 +360,8 @@ public abstract class AbstractResourceAdapterDeployer
          builder.resourceAdapter(new ResourceAdapterImpl(resourceAdapter, bootstrapContext, dcps,
                                                          statisticsPlugin, productName, productVersion,
                                                          createInboundMapping(ira, builder.getClassLoader()),
+                                                         is16(builder.getMetadata()), beanValidation,
+                                                         builder.getActivation().getBeanValidationGroups(),
                                                          ti));
       }
       catch (Throwable t)
@@ -1106,5 +1130,121 @@ public abstract class AbstractResourceAdapterDeployer
       }
 
       return sb.toString();
+   }
+
+   /**
+    * Is a 1.6+ deployment
+    * @param connector The metadata
+    * @return True if 1.6+, otherwise false
+    */
+   private boolean is16(Connector connector)
+   {
+      if (connector == null ||
+          connector.getVersion() == Connector.Version.V_16 ||
+          connector.getVersion() == Connector.Version.V_17)
+         return true;
+
+      return false;
+   }
+
+   /**
+    * Verify deployment against bean validation
+    * @param deployment The deployment
+    * @exception DeployException Thrown in case of a violation
+    */
+   @SuppressWarnings("unchecked")
+   private void verifyBeanValidation(Deployment deployment) throws DeployException
+   {
+      if (beanValidation != null)
+      {
+         ValidatorFactory vf = null;
+
+         try
+         {
+            vf = beanValidation.getValidatorFactory();
+            Validator v = vf.getValidator();
+
+            Collection<String> l = deployment.getActivation().getBeanValidationGroups();
+            if (l == null || l.isEmpty())
+               l = Arrays.asList(javax.validation.groups.Default.class.getName());
+
+            Collection<Class<?>> groups = new ArrayList<>();
+            for (String clz : l)
+            {
+               try
+               {
+                  groups.add(Class.forName(clz, true, deployment.getClassLoader()));
+               }
+               catch (Exception e)
+               {
+                  throw new DeployException(e.getMessage(), e);
+               }
+            }
+         
+            Set failures = new HashSet();
+
+            if (deployment.getResourceAdapter() != null)
+            {
+               try
+               {
+                  Set f = v.validate(deployment.getResourceAdapter().getResourceAdapter(),
+                                     groups.toArray(new Class<?>[groups.size()]));
+                  if (!f.isEmpty())
+                     failures.addAll(f);
+               }
+               catch (Exception e)
+               {
+                  throw new DeployException(e.getMessage(), e);
+               }
+            }
+            if (deployment.getConnectionFactories() != null)
+            {
+               for (org.ironjacamar.core.api.deploymentrepository.ConnectionFactory cf :
+                       deployment.getConnectionFactories())
+               {
+                  try
+                  {
+                     Set f = v.validate(cf.getConnectionFactory(),
+                                        groups.toArray(new Class<?>[groups.size()]));
+                     if (!f.isEmpty())
+                        failures.addAll(f);
+                  }
+                  catch (Exception e)
+                  {
+                     throw new DeployException(e.getMessage(), e);
+                  }
+               }
+            }
+            if (deployment.getAdminObjects() != null)
+            {
+               for (org.ironjacamar.core.api.deploymentrepository.AdminObject ao :
+                       deployment.getAdminObjects())
+               {
+                  try
+                  {
+                     Set f = v.validate(ao.getAdminObject(),
+                                        groups.toArray(new Class<?>[groups.size()]));
+                     if (!f.isEmpty())
+                        failures.addAll(f);
+                  }
+                  catch (Exception e)
+                  {
+                     throw new DeployException(e.getMessage(), e);
+                  }
+               }
+            }
+         
+            if (failures.size() > 0)
+            {
+               throw new DeployException("Violation for " + deployment.getIdentifier(),
+                                         new ConstraintViolationException(failures));
+            }
+         }
+         finally
+         {
+            if (vf != null)
+               vf.close();
+         }
+      }
    }
 }

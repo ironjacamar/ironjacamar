@@ -36,6 +36,7 @@ import javax.resource.spi.RetryableUnavailableException;
 import javax.resource.spi.ValidatingManagedConnectionFactory;
 
 import javax.security.auth.Subject;
+import javax.validation.constraints.NotNull;
 
 /**
  * TestManagedConnectionFactory
@@ -54,9 +55,11 @@ public class TestManagedConnectionFactory implements ManagedConnectionFactory,
    private PrintWriter logwriter;
 
    /** Create failure count */
+   @NotNull
    private Integer createFailureCount;
 
    /** Invalid connection failure count */
+   @NotNull
    private Integer invalidConnectionFailureCount;
 
    /**

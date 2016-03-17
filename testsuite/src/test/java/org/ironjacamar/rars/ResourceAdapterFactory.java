@@ -576,16 +576,16 @@ public class ResourceAdapterFactory
     */
    public static ResourceAdapterArchive createTestRar()
    {
-      org.jboss.shrinkwrap.descriptor.api.connector15.ConnectorDescriptor raXml = Descriptors
-            .create(org.jboss.shrinkwrap.descriptor.api.connector15.ConnectorDescriptor.class, "ra.xml").version("1.5");
+      org.jboss.shrinkwrap.descriptor.api.connector16.ConnectorDescriptor raXml = Descriptors
+            .create(org.jboss.shrinkwrap.descriptor.api.connector16.ConnectorDescriptor.class, "ra.xml").version("1.6");
 
-      org.jboss.shrinkwrap.descriptor.api.connector15.ResourceadapterType rt = raXml.getOrCreateResourceadapter()
+      org.jboss.shrinkwrap.descriptor.api.connector16.ResourceadapterType rt = raXml.getOrCreateResourceadapter()
          .resourceadapterClass(TestResourceAdapter.class.getName());
 
-      org.jboss.shrinkwrap.descriptor.api.connector15.OutboundResourceadapterType ort = rt
+      org.jboss.shrinkwrap.descriptor.api.connector16.OutboundResourceadapterType ort = rt
          .getOrCreateOutboundResourceadapter().transactionSupport("NoTransaction").reauthenticationSupport(false);
 
-      org.jboss.shrinkwrap.descriptor.api.connector15.ConnectionDefinitionType cdt = ort.createConnectionDefinition()
+      org.jboss.shrinkwrap.descriptor.api.connector16.ConnectionDefinitionType cdt = ort.createConnectionDefinition()
          .managedconnectionfactoryClass(TestManagedConnectionFactory.class.getName())
          .connectionfactoryInterface(TestConnectionFactory.class.getName())
          .connectionfactoryImplClass(TestConnectionFactoryImpl.class.getName())

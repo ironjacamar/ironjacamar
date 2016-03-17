@@ -183,6 +183,10 @@
     </constructor>
   </bean>
 
+  <bean name="BeanValidation"
+        interface="org.ironjacamar.core.spi.bv.BeanValidation"
+        class="org.ironjacamar.core.bv.BeanValidationImpl"/>
+
   <!-- Deployment chain -->
   <bean name="RarFileExtractorDeployer"
         class="org.ironjacamar.embedded.deployers.RarFileExtractorDeployer"/>
@@ -216,6 +220,7 @@
     <property name="CachedConnectionManager"><inject bean="CachedConnectionManager"/></property>
     <property name="SubjectFactory"><inject bean="DefaultSubjectFactory"/></property>
     <property name="ClassLoaderPlugin"><inject bean="DefaulClassLoaderPlugin"/></property>
+    <property name="BeanValidation"><inject bean="BeanValidation"/></property>
     <depends>ClassLoaderDeployer</depends>
     <depends>ConnectionValidator</depends>
     <depends>IdleConnectionRemover</depends>
@@ -231,6 +236,7 @@
     <property name="CachedConnectionManager"><inject bean="CachedConnectionManager"/></property>
     <property name="SubjectFactory"><inject bean="DefaultSubjectFactory"/></property>
     <property name="ClassLoaderPlugin"><inject bean="DefaulClassLoaderPlugin"/></property>
+    <property name="BeanValidation"><inject bean="BeanValidation"/></property>
     <depends>ClassLoaderDeployer</depends>
     <depends>ConnectionValidator</depends>
     <depends>IdleConnectionRemover</depends>

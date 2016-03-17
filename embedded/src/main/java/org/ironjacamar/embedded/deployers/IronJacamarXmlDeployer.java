@@ -33,6 +33,8 @@ import java.net.URL;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 
+import org.jboss.logging.Logger;
+
 import com.github.fungal.api.classloading.KernelClassLoader;
 import com.github.fungal.spi.deployers.CloneableDeployer;
 import com.github.fungal.spi.deployers.Context;
@@ -46,6 +48,9 @@ import com.github.fungal.spi.deployers.Deployment;
  */
 public class IronJacamarXmlDeployer extends AbstractFungalRADeployer implements CloneableDeployer
 {
+   /** The logger */
+   private static Logger log = Logger.getLogger(IronJacamarXmlDeployer.class);
+
    /**
     * Constructor
     */
@@ -110,6 +115,7 @@ public class IronJacamarXmlDeployer extends AbstractFungalRADeployer implements 
       }
       catch (Throwable t)
       {
+         log.error(t.getMessage(), t);
          throw new DeployException("Deployment " + url.toExternalForm() + " failed", t);
       }
       finally
@@ -142,6 +148,7 @@ public class IronJacamarXmlDeployer extends AbstractFungalRADeployer implements 
       i.setCachedConnectionManager(cachedConnectionManager);
       i.setSubjectFactory(subjectFactory);
       i.setClassLoaderPlugin(classLoaderPlugin);
+      i.setBeanValidation(beanValidation);
       i.setDefaultPoolType(defaultPoolType);
       return i;
    }
