@@ -62,6 +62,14 @@ public abstract class AbstractManagedConnectionPool implements ManagedConnection
    }
 
    /**
+    * {@inheritDoc}
+    */
+   public Pool getPool()
+   {
+      return pool;
+   }
+   
+   /**
     * Validate a connection listener
     * @param listeners The listeners
     * @param cl The connection listener

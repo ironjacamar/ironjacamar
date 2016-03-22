@@ -30,6 +30,9 @@ import org.ironjacamar.common.api.metadata.common.FlushStrategy;
  */
 public class PoolConfiguration
 {
+   /** The id */
+   private String id;
+
    /** Minumum size of the pool */
    private int minSize;
 
@@ -69,6 +72,7 @@ public class PoolConfiguration
     */
    public PoolConfiguration()
    {
+      id = null;
       minSize = 0;
       initialSize = null;
       maxSize = 20;
@@ -80,6 +84,24 @@ public class PoolConfiguration
       prefill = false;
       useFastFail = false;
       flushStrategy = null;
+   }
+
+   /**
+    * Get id
+    * @return The value
+    */
+   public String getId()
+   {
+      return id;
+   }
+
+   /**
+    * Set id
+    * @param v The value
+    */
+   public void setId(String v)
+   {
+      id = v;
    }
 
    /**

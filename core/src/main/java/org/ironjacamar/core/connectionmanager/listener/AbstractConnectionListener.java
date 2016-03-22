@@ -26,6 +26,7 @@ import org.ironjacamar.core.connectionmanager.ConnectionManager;
 import org.ironjacamar.core.connectionmanager.Credential;
 import org.ironjacamar.core.connectionmanager.pool.FlushMode;
 import org.ironjacamar.core.connectionmanager.pool.ManagedConnectionPool;
+import org.ironjacamar.core.tracer.Tracer;
 
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -138,7 +139,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    public void connectionClosed(ConnectionEvent event)
    {
       Object connection = event.getConnectionHandle();
-      if (connectionHandles.remove(connection))
+      if (removeConnection(connection))
       {
          if (cm.getCachedConnectionManager() != null)
          {
@@ -156,7 +157,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    public void connectionErrorOccurred(ConnectionEvent event)
    {
       Object connection = event.getConnectionHandle();
-      if (connectionHandles.remove(connection))
+      if (removeConnection(connection))
       {
          if (cm.getCachedConnectionManager() != null)
          {
@@ -164,8 +165,17 @@ public abstract class AbstractConnectionListener implements ConnectionListener
          }
       }
 
-      if (connectionHandles.size() == 0 && !isEnlisted())
-         cm.returnConnectionListener(this, true);
+      if (cm.getCachedConnectionManager() != null)
+      {
+         for (Object c : connectionHandles)
+            cm.getCachedConnectionManager().unregisterConnection(cm, this, c);
+      }
+
+      clearConnections();
+      
+      haltCatchFire();
+      
+      cm.returnConnectionListener(this, true);
 
       if (flushStrategy == FlushStrategy.FAILING_CONNECTION_ONLY)
       {
@@ -249,7 +259,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    {
       Object result = mc.getConnection(credential.getSubject(), credential.getConnectionRequestInfo());
 
-      connectionHandles.add(result);
+      addConnection(result);
 
       return result;
    }
@@ -265,17 +275,23 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    /**
     * {@inheritDoc}
     */
-   public void addConnection(Object c)
+   public boolean addConnection(Object c)
    {
-      connectionHandles.add(c);
+      if (Tracer.isEnabled())
+         Tracer.getConnection(cm.getPool().getConfiguration().getId(), mcp, this, c);
+
+      return connectionHandles.add(c);
    }
    
    /**
     * {@inheritDoc}
     */
-   public void removeConnection(Object c)
+   public boolean removeConnection(Object c)
    {
-      connectionHandles.remove(c);
+      if (Tracer.isEnabled())
+         Tracer.returnConnection(cm.getPool().getConfiguration().getId(), mcp, this, c);
+
+      return connectionHandles.remove(c);
    }
    
    /**
@@ -283,6 +299,12 @@ public abstract class AbstractConnectionListener implements ConnectionListener
     */
    public void clearConnections()
    {
+      if (Tracer.isEnabled())
+      {
+         for (Object c : connectionHandles)
+            Tracer.returnConnection(cm.getPool().getConfiguration().getId(), mcp, this, c);
+      }
+
       connectionHandles.clear();
    }
    
@@ -334,6 +356,14 @@ public abstract class AbstractConnectionListener implements ConnectionListener
       toPool = System.currentTimeMillis();
    }
 
+   /**
+    * Halt and Catch Fire
+    */
+   void haltCatchFire()
+   {
+      // Do nothing by default
+   }
+   
    /**
     * {@inheritDoc}
     */
