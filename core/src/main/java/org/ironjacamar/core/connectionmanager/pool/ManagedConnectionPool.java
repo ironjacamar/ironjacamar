@@ -47,6 +47,12 @@ public interface ManagedConnectionPool
    public void returnConnectionListener(ConnectionListener cl, boolean kill) throws ResourceException;
 
    /**
+    * Get the pool
+    * @return The value
+    */
+   public Pool getPool();
+
+   /**
     * Shutdown the managed connection pool
     */
    public void shutdown();

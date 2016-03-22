@@ -29,6 +29,7 @@ import org.ironjacamar.core.connectionmanager.pool.FillRequest;
 import org.ironjacamar.core.connectionmanager.pool.FlushMode;
 import org.ironjacamar.core.connectionmanager.pool.IdleConnectionRemover;
 import org.ironjacamar.core.connectionmanager.pool.PoolFiller;
+import org.ironjacamar.core.tracer.Tracer;
 
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.TimeUnit;
@@ -115,10 +116,24 @@ public class StableManagedConnectionPool extends AbstractManagedConnectionPool
                      if (result != null)
                      {
                         result.fromPool();
+
+                        if (Tracer.isEnabled())
+                           Tracer.getConnectionListener(pool.getConfiguration().getId(),
+                                                        this, cl, true, false,
+                                                        Tracer.isRecordCallstacks() ?
+                                                        new Throwable("CALLSTACK") : null);
+
                         return result;
                      }
                      else
                      {
+                        if (Tracer.isEnabled())
+                           Tracer.destroyConnectionListener(pool.getConfiguration().getId(),
+                                                            this, cl, false, false, true, false, false,
+                                                            false, false,
+                                                            Tracer.isRecordCallstacks() ?
+                                                            new Throwable("CALLSTACK") : null);
+                        
                         if (pool.getConfiguration().isUseFastFail())
                            break;
                      }
@@ -128,10 +143,24 @@ public class StableManagedConnectionPool extends AbstractManagedConnectionPool
                      if (cl.changeState(VALIDATION, IN_USE))
                      {
                         cl.fromPool();
+
+                        if (Tracer.isEnabled())
+                           Tracer.getConnectionListener(pool.getConfiguration().getId(),
+                                                        this, cl, true, false,
+                                                        Tracer.isRecordCallstacks() ?
+                                                        new Throwable("CALLSTACK") : null);
+                        
                         return cl;
                      }
                      else
                      {
+                        if (Tracer.isEnabled())
+                           Tracer.destroyConnectionListener(pool.getConfiguration().getId(),
+                                                            this, cl, false, false, false, false, true,
+                                                            false, false,
+                                                            Tracer.isRecordCallstacks() ?
+                                                            new Throwable("CALLSTACK") : null);
+                     
                         destroyAndRemoveConnectionListener(cl, listeners);
                      }
                   }
@@ -144,6 +173,13 @@ public class StableManagedConnectionPool extends AbstractManagedConnectionPool
                cl.setState(IN_USE);
                cl.fromPool();
                listeners.addLast(cl);
+
+               if (Tracer.isEnabled())
+                  Tracer.getConnectionListener(pool.getConfiguration().getId(),
+                                               this, cl, true, false,
+                                               Tracer.isRecordCallstacks() ?
+                                               new Throwable("CALLSTACK") : null);
+               
                return cl;
             }
             catch (ResourceException re)
@@ -197,6 +233,13 @@ public class StableManagedConnectionPool extends AbstractManagedConnectionPool
          {
             try
             {
+               if (Tracer.isEnabled())
+                  Tracer.destroyConnectionListener(pool.getConfiguration().getId(),
+                                                   this, cl, true, false, false, false, false,
+                                                   false, false,
+                                                   Tracer.isRecordCallstacks() ?
+                                                   new Throwable("CALLSTACK") : null);
+                     
                pool.destroyConnectionListener(cl);
             }
             finally
@@ -240,6 +283,9 @@ public class StableManagedConnectionPool extends AbstractManagedConnectionPool
 
          try
          {
+            if (Tracer.isEnabled())
+               Tracer.clearConnectionListener(pool.getConfiguration().getId(), this, cl);
+
             pool.destroyConnectionListener(cl);
          }
          catch (ResourceException re)
@@ -306,6 +352,13 @@ public class StableManagedConnectionPool extends AbstractManagedConnectionPool
                   {
                      ConnectionListener cl = pool.createConnectionListener(credential, this);
 
+                     if (Tracer.isEnabled())
+                        Tracer.createConnectionListener(pool.getConfiguration().getId(), this, cl,
+                                                        cl.getManagedConnection(),
+                                                        false, true, false,
+                                                        Tracer.isRecordCallstacks() ?
+                                                        new Throwable("CALLSTACK") : null);
+
                      //TODO:Trace
                      boolean added = false;
 
@@ -319,6 +372,14 @@ public class StableManagedConnectionPool extends AbstractManagedConnectionPool
                      if (!added)
                      {
                         //TODO: Trace
+
+                        if (Tracer.isEnabled())
+                           Tracer.destroyConnectionListener(pool.getConfiguration().getId(), this, cl,
+                                                            false, false, false, false,
+                                                            false, true, false,
+                                                            Tracer.isRecordCallstacks() ?
+                                                            new Throwable("CALLSTACK") : null);
+                     
                         pool.destroyConnectionListener(cl);
                         return;
                      }
@@ -364,12 +425,28 @@ public class StableManagedConnectionPool extends AbstractManagedConnectionPool
                {
                   ConnectionListener result = validateConnectionListener(listeners, cl, FREE);
                   if (result == null)
+                  {
+                     if (Tracer.isEnabled())
+                        Tracer.destroyConnectionListener(pool.getConfiguration().getId(), this, cl,
+                                                         false, false, true,
+                                                         false, false, false, false,
+                                                         Tracer.isRecordCallstacks() ?
+                                                         new Throwable("CALLSTACK") : null);
+                     
                      anyDestroyed = true;
+                  }
                }
                else
                {
                   if (!cl.changeState(VALIDATION, FREE))
                   {
+                     if (Tracer.isEnabled())
+                        Tracer.destroyConnectionListener(pool.getConfiguration().getId(), this, cl,
+                                                         false, false, false,
+                                                         false, true, false, false,
+                                                         Tracer.isRecordCallstacks() ?
+                                                         new Throwable("CALLSTACK") : null);
+                     
                      destroyAndRemoveConnectionListener(cl, listeners);
                   }
                }
@@ -398,12 +475,26 @@ public class StableManagedConnectionPool extends AbstractManagedConnectionPool
          {
             if (cl.getToPool() < timeout)
             {
+               if (Tracer.isEnabled())
+                  Tracer.destroyConnectionListener(pool.getConfiguration().getId(), this, cl,
+                                                   false, true, false, false, false,
+                                                   false, false,
+                                                   Tracer.isRecordCallstacks() ?
+                                                   new Throwable("CALLSTACK") : null);
+                     
                destroyAndRemoveConnectionListener(cl, listeners);
             }
             else
             {
                if (!cl.changeState(VALIDATION, FREE))
                {
+                  if (Tracer.isEnabled())
+                     Tracer.destroyConnectionListener(pool.getConfiguration().getId(), this, cl,
+                                                      false, false, false, false, true,
+                                                      false, false,
+                                                      Tracer.isRecordCallstacks() ?
+                                                      new Throwable("CALLSTACK") : null);
+                     
                   destroyAndRemoveConnectionListener(cl, listeners);
                }
             }
@@ -458,6 +549,13 @@ public class StableManagedConnectionPool extends AbstractManagedConnectionPool
          {
             case ALL:
             {
+               if (Tracer.isEnabled())
+                  Tracer.destroyConnectionListener(pool.getConfiguration().getId(), this, cl,
+                                                   false, false, false, true, false,
+                                                   false, false,
+                                                   Tracer.isRecordCallstacks() ?
+                                                   new Throwable("CALLSTACK") : null);
+                     
                destroyAndRemoveConnectionListener(cl, listeners);
                break;
             }
@@ -474,6 +572,13 @@ public class StableManagedConnectionPool extends AbstractManagedConnectionPool
             {
                if (cl.changeState(FREE, FLUSH))
                {
+                  if (Tracer.isEnabled())
+                     Tracer.destroyConnectionListener(pool.getConfiguration().getId(), this, cl,
+                                                      false, false, false, true, false,
+                                                      false, false,
+                                                      Tracer.isRecordCallstacks() ?
+                                                      new Throwable("CALLSTACK") : null);
+                     
                   destroyAndRemoveConnectionListener(cl, listeners);
                }
                break;
@@ -482,6 +587,13 @@ public class StableManagedConnectionPool extends AbstractManagedConnectionPool
             {
                if (cl.changeState(FREE, FLUSH))
                {
+                  if (Tracer.isEnabled())
+                     Tracer.destroyConnectionListener(pool.getConfiguration().getId(), this, cl,
+                                                      false, false, false, true, false,
+                                                      false, false,
+                                                      Tracer.isRecordCallstacks() ?
+                                                      new Throwable("CALLSTACK") : null);
+                  
                   destroyAndRemoveConnectionListener(cl, listeners);
                }
                else if (cl.getState() == IN_USE || cl.getState() == TO_POOL || cl.getState() == VALIDATION)

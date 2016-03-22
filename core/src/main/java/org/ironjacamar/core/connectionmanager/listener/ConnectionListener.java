@@ -125,14 +125,16 @@ public interface ConnectionListener extends org.ironjacamar.core.api.connectionm
    /**
     * Add a connection handle
     * @param c The handle
+    * @return True if added, otherwise false
     */
-   public void addConnection(Object c);
+   public boolean addConnection(Object c);
 
    /**
     * Remove a connection handle
     * @param c The handle
+    * @return True if removed, otherwise false
     */
-   public void removeConnection(Object c);
+   public boolean removeConnection(Object c);
 
    /**
     * Clear all connection handles

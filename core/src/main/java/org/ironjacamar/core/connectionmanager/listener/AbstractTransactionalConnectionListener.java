@@ -27,8 +27,10 @@ import org.ironjacamar.core.connectionmanager.Credential;
 import org.ironjacamar.core.connectionmanager.TransactionalConnectionManager;
 import org.ironjacamar.core.connectionmanager.pool.ManagedConnectionPool;
 import org.ironjacamar.core.spi.transaction.ConnectableResource;
+import org.ironjacamar.core.spi.transaction.TransactionIntegration;
 import org.ironjacamar.core.spi.transaction.TxUtils;
 import org.ironjacamar.core.spi.transaction.local.LocalXAResource;
+import org.ironjacamar.core.tracer.Tracer;
 
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.DESTROY;
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.DESTROYED;
@@ -170,6 +172,21 @@ public abstract class AbstractTransactionalConnectionListener extends AbstractCo
             {
                Transaction tx = tm.getTransaction();
                boolean delistResult = tx.delistResource(xaResource, XAResource.TMSUCCESS);
+
+               if (Tracer.isEnabled())
+                  Tracer.delistConnectionListener(cm.getPool().getConfiguration().getId(),
+                                                  getManagedConnectionPool(),
+                                                  this, tx.toString(),
+                                                  true, false, false);
+
+               if (delistResult)
+               {
+                  log.tracef("delist-success: %s", this);
+               }
+               else
+               {
+                  log.debugf("delist-success failed: %s", this);
+               }
             }
          }
 
@@ -252,6 +269,80 @@ public abstract class AbstractTransactionalConnectionListener extends AbstractCo
    }
 
    /**
+    * {@inheritDoc}
+    */
+   @Override
+   void haltCatchFire()
+   {
+      if (isEnlisted())
+      {
+         if (transactionSynchronization != null)
+            transactionSynchronization.cancel();
+
+         String txId = "";
+         TransactionalConnectionManager txCM = (TransactionalConnectionManager)cm;
+         TransactionIntegration ti = txCM.getTransactionIntegration();
+
+         if (ti != null)
+         {
+            Transaction tx = null;
+            try
+            {
+               tx = ti.getTransactionManager().getTransaction();
+
+               if (Tracer.isEnabled() && tx != null)
+                  txId = tx.toString();
+               
+               if (TxUtils.isUncommitted(tx))
+               {
+                  log.tracef("connectionErrorOccurred: delistResource(%s, TMFAIL)", xaResource);
+
+                  boolean failResult = tx.delistResource(xaResource, XAResource.TMFAIL);
+                  
+                  if (failResult)
+                  {
+                     log.tracef("connectionErrorOccurred: delist-fail: %s", this);
+                  }
+                  else
+                  {
+                     log.debugf("connectionErrorOccurred: delist-fail failed: %s", this);
+                  }
+               }
+            }
+            catch (Exception e)
+            {
+               log.debugf(e, "connectionErrorOccurred: Exception during delistResource=%s", e.getMessage());
+            }
+            finally
+            {
+               if (TxUtils.isUncommitted(tx))
+               {
+                  try
+                  {
+                     tx.setRollbackOnly();
+                  }
+                  catch (Exception e)
+                  {
+                     // Just a hint
+                  }
+               }
+            }
+         }
+         
+         if (Tracer.isEnabled())
+         {
+            Tracer.delistConnectionListener(cm.getPool().getConfiguration().getId(),
+                                            getManagedConnectionPool(),
+                                            this, txId, false, true, false);
+         }
+      }
+
+      // Prepare to explode
+      enlisted = false;
+      transactionSynchronization = null;
+   }
+
+   /**
     * Reset XAResource timeout
     */
    private void resetXAResourceTimeout()
@@ -316,16 +407,41 @@ public abstract class AbstractTransactionalConnectionListener extends AbstractCo
          {
             if (!transaction.enlistResource(xaResource))
             {
+               if (Tracer.isEnabled())
+                  Tracer.enlistConnectionListener(cm.getPool().getConfiguration().getId(), 
+                                                  getManagedConnectionPool(),
+                                                  AbstractTransactionalConnectionListener.this,
+                                                  transaction.toString(), false, false);
+
                enlistError = new ResourceException("Failed to enlist");
+            }
+            else
+            {
+               if (Tracer.isEnabled())
+                  Tracer.enlistConnectionListener(cm.getPool().getConfiguration().getId(), 
+                                                  getManagedConnectionPool(),
+                                                  AbstractTransactionalConnectionListener.this,
+                                                  transaction.toString(), true, false);
             }
          }
          catch (Exception e)
          {
             enlistError = new ResourceException(e);
+
+            if (Tracer.isEnabled())
+               Tracer.enlistConnectionListener(cm.getPool().getConfiguration().getId(), 
+                                               getManagedConnectionPool(),
+                                               AbstractTransactionalConnectionListener.this,
+                                               transaction.toString(), false, false);
          }
 
          if (enlistError != null)
          {
+            if (Tracer.isEnabled())
+               Tracer.exception(cm.getPool().getConfiguration().getId(), 
+                                getManagedConnectionPool(),
+                                AbstractTransactionalConnectionListener.this, enlistError);
+
             transactionSynchronization = null;
             enlisted = false;
 
@@ -355,10 +471,26 @@ public abstract class AbstractTransactionalConnectionListener extends AbstractCo
                   if (TxUtils.isActive(transaction))
                   {
                      transaction.delistResource(xaResource, XAResource.TMSUCCESS);
+
+                     if (Tracer.isEnabled())
+                        Tracer.delistConnectionListener(cm.getPool().getConfiguration().getId(),
+                                                        getManagedConnectionPool(),
+                                                        AbstractTransactionalConnectionListener.this,
+                                                        transaction.toString(),
+                                                        true, false, false);
+
+
                   }
                   else
                   {
                      transaction.delistResource(xaResource, XAResource.TMFAIL);
+
+                     if (Tracer.isEnabled())
+                        Tracer.delistConnectionListener(cm.getPool().getConfiguration().getId(),
+                                                        getManagedConnectionPool(),
+                                                        AbstractTransactionalConnectionListener.this,
+                                                        transaction.toString(),
+                                                        false, false, false);
                   }
                }
             }
@@ -382,6 +514,12 @@ public abstract class AbstractTransactionalConnectionListener extends AbstractCo
 
             if (connectionHandles.size() == 0)
             {
+               if (Tracer.isEnabled() && status == Status.STATUS_ROLLEDBACK)
+                  Tracer.delistConnectionListener(cm.getPool().getConfiguration().getId(),
+                                                  getManagedConnectionPool(),
+                                                  AbstractTransactionalConnectionListener.this, "",
+                                                  true, true, false);
+
                cm.returnConnectionListener(AbstractTransactionalConnectionListener.this, false);
             }
          }

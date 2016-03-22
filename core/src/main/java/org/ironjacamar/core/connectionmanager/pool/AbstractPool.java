@@ -30,6 +30,7 @@ import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
 import org.ironjacamar.core.spi.transaction.ConnectableResource;
 import org.ironjacamar.core.spi.transaction.TxUtils;
 import org.ironjacamar.core.spi.transaction.local.LocalXAResource;
+import org.ironjacamar.core.tracer.Tracer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -215,6 +216,9 @@ public abstract class AbstractPool implements Pool
                if (mcp == null)
                {
                   mcp = newMcp;
+
+                  if (Tracer.isEnabled())
+                     Tracer.createManagedConnectionPool(poolConfiguration.getId(), mcp);
                }
                else
                {
@@ -238,6 +242,11 @@ public abstract class AbstractPool implements Pool
       if (!kill)
          kill = cl.getState() == DESTROY;
 
+      if (Tracer.isEnabled())
+         Tracer.returnConnectionListener(poolConfiguration.getId(), cl.getManagedConnectionPool(),
+                                         cl, kill, false,
+                                         Tracer.isRecordCallstacks() ? new Throwable("CALLSTACK") : null);
+
       mcp.returnConnectionListener(cl, kill);
    }
 
@@ -255,7 +264,12 @@ public abstract class AbstractPool implements Pool
    public synchronized void shutdown()
    {
       for (ManagedConnectionPool mcp : pools.values())
+      {
          mcp.shutdown();
+
+         if (Tracer.isEnabled())
+            Tracer.destroyManagedConnectionPool(poolConfiguration.getId(), mcp);
+      }
 
       pools.clear();
    }
@@ -467,7 +481,12 @@ public abstract class AbstractPool implements Pool
    public void emptyManagedConnectionPool(ManagedConnectionPool mcp)
    {
       if (pools.values().remove(mcp))
+      {
          mcp.shutdown();
+
+         if (Tracer.isEnabled())
+            Tracer.destroyManagedConnectionPool(poolConfiguration.getId(), mcp);
+      }
    }
 
    /**
@@ -510,6 +529,9 @@ public abstract class AbstractPool implements Pool
             {
                mcp.shutdown();
                pools.remove(credential);
+
+               if (Tracer.isEnabled())
+                  Tracer.destroyManagedConnectionPool(poolConfiguration.getId(), mcp);
             }
          }
       }

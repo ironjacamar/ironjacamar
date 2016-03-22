@@ -417,6 +417,7 @@ public abstract class AbstractResourceAdapterDeployer
             poolType = defaultPoolType;
 
          PoolConfiguration pc = new PoolConfiguration();
+         pc.setId(cd.getId() != null ? cd.getId() : cd.getJndiName());
          applyPoolConfiguration(pc, cd.getPool());
          applyPoolConfiguration(pc, cd.getTimeout());
          applyPoolConfiguration(pc, cd.getValidation());

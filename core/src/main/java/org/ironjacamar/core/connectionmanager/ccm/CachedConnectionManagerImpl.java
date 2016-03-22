@@ -21,10 +21,12 @@
 
 package org.ironjacamar.core.connectionmanager.ccm;
 
+import org.ironjacamar.core.CoreLogger;
 import org.ironjacamar.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.ironjacamar.core.connectionmanager.Credential;
 import org.ironjacamar.core.spi.transaction.TransactionIntegration;
 import org.ironjacamar.core.spi.transaction.TxUtils;
+import org.ironjacamar.core.tracer.Tracer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -46,6 +48,8 @@ import javax.transaction.Synchronization;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 
+import org.jboss.logging.Logger;
+
 /**
  * CacheConnectionManager.
  *
@@ -53,6 +57,10 @@ import javax.transaction.Transaction;
  */
 public class CachedConnectionManagerImpl implements CachedConnectionManager
 {
+   /** The logger */
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, 
+                                                           CachedConnectionManager.class.getName());
+
    /** Synchronization key */
    private static final String CLOSE_CONNECTION_SYNCHRONIZATION = "CLOSE_CONNECTION_SYNCHRONIZATION";
 
@@ -141,8 +149,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
    {
       Context context = currentContext();
 
-      //if (trace)
-      //   log.tracef("user tx started, context: %s", context);
+      log.tracef("user tx started, context: %s", context);
 
       if (context != null)
       {
@@ -193,6 +200,17 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
                      for (org.ironjacamar.core.connectionmanager.listener.ConnectionListener cl :
                              enlistmentMap.values())
                      {
+                        if (Tracer.isEnabled())
+                        {
+                           for (Object c : cl.getConnections())
+                           {
+                              Tracer.ccmUserTransaction(cl.getManagedConnectionPool().getPool()
+                                                        .getConfiguration().getId(),
+                                                        cl.getManagedConnectionPool(),
+                                                        cl, c, context.toString());
+                           }
+                        }
+
                         cm.transactionStarted(cl);
                      }
 
@@ -226,25 +244,23 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
 
       if (stack == null)
       {
-         //if (trace)
-         //   log.tracef("push: new stack for context: %s", context);
+         log.tracef("push: new stack for context: %s", context);
 
          stack = new LinkedList<Context>();
          threadContexts.set(stack);
       }
       else if (stack.isEmpty())
       {
-         //if (trace)
-         //   log.tracef("push: new stack for context: %s", context);
+         log.tracef("push: new stack for context: %s", context);
       }
       else
       {
-         //if (trace)
-         //{
-         //   log.tracef("push: old stack for context: %s", stack.getLast());
-         //   log.tracef("push: new stack for context: %s", context);
-         //}
+         log.tracef("push: old stack for context: %s", stack.getLast());
+         log.tracef("push: new stack for context: %s", context);
       }
+
+      if (Tracer.isEnabled())
+         Tracer.pushCCMContext(context.toString(), new Throwable("CALLSTACK"));
 
       stack.addLast(context);
    }
@@ -262,20 +278,21 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
 
       Context context = stack.removeLast();
 
-      /*
-      if (trace)
+      if (log.isTraceEnabled())
       {
          if (stack.size() > 0)
          {
-            //   log.tracef("pop: old stack for context: %s", context);
-            //   log.tracef("pop: new stack for context: %s", stack.getLast());
+            log.tracef("pop: old stack for context: %s", context);
+            log.tracef("pop: new stack for context: %s", stack.getLast());
          }
          else
          {
-            //   log.tracef("pop: old stack for context: %s", context);
+            log.tracef("pop: old stack for context: %s", context);
          }
       }
-      */
+
+      if (Tracer.isEnabled())
+         Tracer.popCCMContext(context.toString(), new Throwable("CALLSTACK"));
 
       if (debug)
       {
@@ -321,9 +338,8 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
 
       Context context = currentContext();
 
-      //if (trace)
-      //   log.tracef("registering connection from connection manager: %s, connection : %s, context: %s",
-      //              cm, connection, context);
+      log.tracef("registering connection from connection manager: %s, connection : %s, context: %s",
+                 cm, connection, context);
 
       if (context != null)
       {
@@ -333,6 +349,14 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
 
          org.ironjacamar.core.connectionmanager.listener.ConnectionListener iCl =
             (org.ironjacamar.core.connectionmanager.listener.ConnectionListener)cl;
+
+         if (Tracer.isEnabled())
+         {
+            Tracer.registerCCMConnection(iCl.getManagedConnectionPool().getPool()
+                                         .getConfiguration().getId(),
+                                         iCl.getManagedConnectionPool(),
+                                         iCl, connection, context.toString());
+         }
 
          context.registerConnection(iCm, iCl, connection);
       }
@@ -361,9 +385,8 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
 
       Context context = currentContext();
 
-      //if (trace)
-      //   log.tracef("unregistering connection from connection manager: %s, connection: %s, context: %s",
-      //              cm, connection, context);
+      log.tracef("unregistering connection from connection manager: %s, connection: %s, context: %s",
+                 cm, connection, context);
 
       if (context == null)
          return;
@@ -375,8 +398,26 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
       org.ironjacamar.core.connectionmanager.listener.ConnectionListener iCl =
          (org.ironjacamar.core.connectionmanager.listener.ConnectionListener)cl;
 
-      if (!context.unregisterConnection(iCm, iCl, connection))
+      if (context.unregisterConnection(iCm, iCl, connection))
       {
+         if (Tracer.isEnabled())
+         {
+            Tracer.unregisterCCMConnection(iCl.getManagedConnectionPool().getPool()
+                                           .getConfiguration().getId(),
+                                           iCl.getManagedConnectionPool(),
+                                           iCl, connection, context.toString());
+         }
+      }
+      else
+      {
+         if (Tracer.isEnabled())
+         {
+            Tracer.unknownCCMConnection(iCl.getManagedConnectionPool().getPool()
+                                        .getConfiguration().getId(),
+                                        iCl.getManagedConnectionPool(),
+                                        iCl, connection, context.toString());
+         }
+
          if (!ignoreConnections)
             throw new IllegalStateException(); //bundle.tryingToReturnUnknownConnection(connection.toString()));
       }
@@ -432,7 +473,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
       if (transactionIntegration != null && transactionIntegration.getUserTransactionRegistry() != null)
          transactionIntegration.getUserTransactionRegistry().addListener(this);
 
-      //log.debugf("start: %s", this.toString());
+      log.debugf("start: %s", this.toString());
    }
 
    /**
@@ -440,7 +481,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
     */
    public void stop()
    {
-      //log.debugf("stop: %s", this.toString());
+      log.debugf("stop: %s", this.toString());
 
       if (transactionIntegration != null && transactionIntegration.getUserTransactionRegistry() != null)
          transactionIntegration.getUserTransactionRegistry().removeListener(this);
@@ -466,6 +507,15 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
                if (ccs == null)
                {
                   unclosed = true;
+
+                  if (Tracer.isEnabled())
+                  {
+                     Tracer.closeCCMConnection(cl.getManagedConnectionPool().getPool()
+                                               .getConfiguration().getId(),
+                                               cl.getManagedConnectionPool(),
+                                               cl, c, context.toString());
+                  }
+
                   closeConnection(c);
                }
                else
@@ -513,7 +563,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
       }
       catch (Throwable t)
       {
-         //log.debug("Unable to synchronize with transaction", t);
+         log.debug("Unable to synchronize with transaction", t);
       }
 
       return null;
