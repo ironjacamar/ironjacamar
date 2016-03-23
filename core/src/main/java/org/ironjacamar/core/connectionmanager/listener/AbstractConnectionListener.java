@@ -26,6 +26,7 @@ import org.ironjacamar.core.connectionmanager.ConnectionManager;
 import org.ironjacamar.core.connectionmanager.Credential;
 import org.ironjacamar.core.connectionmanager.pool.FlushMode;
 import org.ironjacamar.core.connectionmanager.pool.ManagedConnectionPool;
+import org.ironjacamar.core.spi.transaction.ConnectableResourceListener;
 import org.ironjacamar.core.tracer.Tracer;
 
 import java.util.Set;
@@ -41,7 +42,7 @@ import javax.resource.spi.ManagedConnection;
  * 
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public abstract class AbstractConnectionListener implements ConnectionListener
+public abstract class AbstractConnectionListener implements ConnectionListener, ConnectableResourceListener
 {
    /** The connection manager */
    protected ConnectionManager cm;
@@ -354,6 +355,23 @@ public abstract class AbstractConnectionListener implements ConnectionListener
    public void toPool() throws ResourceException
    {
       toPool = System.currentTimeMillis();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void handleCreated(Object h)
+   {
+      addConnection(h);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void handleClosed(Object h)
+   {
+      // This is never called
+      removeConnection(h);
    }
 
    /**

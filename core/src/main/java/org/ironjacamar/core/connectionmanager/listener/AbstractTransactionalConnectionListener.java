@@ -101,9 +101,7 @@ public abstract class AbstractTransactionalConnectionListener extends AbstractCo
       }
       if (xaResource instanceof ConnectableResource)
       {
-         /*
-           ((ConnectableResource) xaResource).setConnectableResourceListener(this);
-         */
+         ((ConnectableResource)xaResource).setConnectableResourceListener(this);
       }
 
       resetXAResourceTimeout();
