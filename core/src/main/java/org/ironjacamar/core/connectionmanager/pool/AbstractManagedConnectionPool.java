@@ -50,6 +50,12 @@ public abstract class AbstractManagedConnectionPool implements ManagedConnection
    /** The credential */
    protected Credential credential;
 
+   /** pool is fifo*/
+   protected final boolean poolIsFifo;
+
+   /** last idle check */
+   protected long lastIdleCheck;
+
    /**
     * Constructor
     * @param pool The pool
@@ -59,6 +65,8 @@ public abstract class AbstractManagedConnectionPool implements ManagedConnection
    {
       this.pool = pool;
       this.credential = credential;
+      poolIsFifo = pool.isFIFO() && credential.equals(pool.getPrefillCredential());
+      this.lastIdleCheck = System.currentTimeMillis();
    }
 
    /**

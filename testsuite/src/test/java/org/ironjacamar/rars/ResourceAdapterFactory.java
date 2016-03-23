@@ -21,6 +21,7 @@
 
 package org.ironjacamar.rars;
 
+import org.ironjacamar.embedded.dsl.resourceadapters20.api.CapacityType;
 import org.ironjacamar.embedded.dsl.resourceadapters20.api.ConnectionDefinitionsType;
 import org.ironjacamar.embedded.dsl.resourceadapters20.api.ResourceAdapterType;
 import org.ironjacamar.embedded.dsl.resourceadapters20.api.ResourceAdaptersDescriptor;
@@ -509,7 +510,7 @@ public class ResourceAdapterFactory
          TransactionSupportLevel tsl, String id, boolean prefill, int initialPoolSize, String flushStrategy)
    {
       return createUnifiedSecurityDeployment(bc, securityDomain, tsl, id, prefill, initialPoolSize,
-            flushStrategy, false);
+            flushStrategy, false, null, null);
    }
    /**
     * Create the work.rar deployment
@@ -522,13 +523,15 @@ public class ResourceAdapterFactory
     * @param initialPoolSize The initial pool size value
     * @param flushStrategy  the flush strategy
     * @param validateOnMatch if true validate On match is enabled
-    *
-    *
+    * @param incrementerClass the incrementer class name for capacity settings
+    * @param decrementerClass the decrementer class name for capacity settings
     * @return The resource adapter descriptor
+    *
+    *
     */
    public static ResourceAdaptersDescriptor createUnifiedSecurityDeployment(String bc, String securityDomain,
          TransactionSupportLevel tsl, String id, boolean prefill, int initialPoolSize, String flushStrategy,
-         boolean validateOnMatch)
+         boolean validateOnMatch, String incrementerClass, String decrementerClass)
    {
       ResourceAdaptersDescriptor dashRaXml = Descriptors
             .create(ResourceAdaptersDescriptor.class, "unified-security-ra.xml");
@@ -575,17 +578,50 @@ public class ResourceAdapterFactory
          org.ironjacamar.embedded.dsl.resourceadapters20.api.PoolType dashRaXmlPt = dashRaXmlCdt.getOrCreatePool()
                .minPoolSize(initialPoolSize).initialPoolSize(initialPoolSize).maxPoolSize(20).prefill(prefill)
                .flushStrategy(flushStrategy);
+         if (incrementerClass != null || decrementerClass != null)
+         {
+            CapacityType capacityType = dashRaXmlPt.getOrCreateCapacity();
+            capacityType.getOrCreateDecrementer().className(decrementerClass);
+            capacityType.getOrCreateIncrementer().className(incrementerClass);
+         }
+
       }
       else
       {
          org.ironjacamar.embedded.dsl.resourceadapters20.api.XaPoolType dashRaXmlPt = dashRaXmlCdt.getOrCreateXaPool()
                .minPoolSize(initialPoolSize).initialPoolSize(initialPoolSize).maxPoolSize(20).prefill(prefill)
-               .flushStrategy(flushStrategy);;
+               .flushStrategy(flushStrategy);
+         if (incrementerClass != null || decrementerClass != null)
+         {
+            CapacityType capacityType = dashRaXmlPt.getOrCreateCapacity();
+            capacityType.getOrCreateDecrementer().className(decrementerClass);
+            capacityType.getOrCreateIncrementer().className(incrementerClass);
+         }
       }
 
 
       return dashRaXml;
    }
+
+
+
+   /**
+    * Create the work.rar deployment
+    * @param bc The BootstrapContext name; <code>null</code> if default
+    * @param securityDomain The SecurityDomain name; <code>null</code> if default
+    * @param tsl     The transaction support level
+    * @param id               The JNDI postfix and id
+    * @param decrementerClass the decrementer calss name
+    * @param incrementerClass the incrementer className
+    * @return The resource adapter descriptor
+    */
+   public static ResourceAdaptersDescriptor createCapacityActivation(String bc, String securityDomain,
+         TransactionSupportLevel tsl, String id, String incrementerClass, String decrementerClass)
+   {
+      return createUnifiedSecurityDeployment(bc, securityDomain, tsl, id, true, 1, "FailingConnectionOnly", false,
+            incrementerClass, decrementerClass);
+   }
+
 
    /**
     * Create the test.rar

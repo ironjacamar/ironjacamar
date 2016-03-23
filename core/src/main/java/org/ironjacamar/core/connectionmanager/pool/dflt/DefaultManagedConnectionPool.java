@@ -21,16 +21,23 @@
 
 package org.ironjacamar.core.connectionmanager.pool.dflt;
 
+import org.ironjacamar.core.api.connectionmanager.pool.CapacityDecrementer;
 import org.ironjacamar.core.api.connectionmanager.pool.FlushMode;
 import org.ironjacamar.core.connectionmanager.Credential;
 import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
 import org.ironjacamar.core.connectionmanager.pool.AbstractManagedConnectionPool;
+import org.ironjacamar.core.connectionmanager.pool.CapacityFiller;
+import org.ironjacamar.core.connectionmanager.pool.CapacityRequest;
 import org.ironjacamar.core.connectionmanager.pool.ConnectionValidator;
 import org.ironjacamar.core.connectionmanager.pool.FillRequest;
 import org.ironjacamar.core.connectionmanager.pool.IdleConnectionRemover;
 import org.ironjacamar.core.connectionmanager.pool.PoolFiller;
+import org.ironjacamar.core.connectionmanager.pool.capacity.DefaultCapacity;
+import org.ironjacamar.core.connectionmanager.pool.capacity.TimedOutDecrementer;
+import org.ironjacamar.core.connectionmanager.pool.capacity.TimedOutFIFODecrementer;
 import org.ironjacamar.core.tracer.Tracer;
 
+import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 import javax.resource.ResourceException;
@@ -86,7 +93,6 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
          //Register validation
          ConnectionValidator.getInstance().registerPool(this, pool.getConfiguration().getBackgroundValidationMillis());
       }
-
       if (pool.getConfiguration().getIdleTimeoutMinutes() > 0)
       {
          //Register idle connection cleanup
@@ -100,11 +106,25 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
     */
    public ConnectionListener getConnectionListener() throws ResourceException
    {
+
       long timestamp = System.currentTimeMillis();
       while (System.currentTimeMillis() - timestamp <= pool.getConfiguration().getBlockingTimeout())
       {
-         for (ConnectionListener cl : listeners)
+         final Iterator<ConnectionListener> listenersIterator;
+         if (poolIsFifo)
          {
+            //use FIFO
+            listenersIterator = listeners.iterator();
+         }
+         else
+         {
+            //use FILO because !pool.isFIFO or because credential!=prefillCredential and TimedOutDecrementer
+            //is forced as decrementer
+            listenersIterator = listeners.descendingIterator();
+         }
+         while (listenersIterator.hasNext())
+         {
+            ConnectionListener cl = listenersIterator.next();
             if (cl.changeState(FREE, VALIDATION))
             {
                if (pool.getConfiguration().isValidateOnMatch())
@@ -178,6 +198,7 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
                                                   new Throwable("CALLSTACK") : null);
 
                listeners.addFirst(cl);
+
             }
             catch (ResourceException re)
             {
@@ -186,8 +207,14 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
             finally
             {
                prefill();
+               // Trigger capacity increase
+               if (pool.getCapacity().getIncrementer() != null)
+                  CapacityFiller.schedule(new CapacityRequest(this));
             }
          }
+
+
+
 
          Thread.yield();
       }
@@ -283,6 +310,73 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
          }
       }
       listeners.clear();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public void increaseCapacity()
+   {
+      //Only the prefill credential MCP should be affected by the incrementer
+      if (!credential.equals(pool.getPrefillCredential()))
+         return;
+      // We have already created one connection when this method is scheduled
+      int created = 1;
+      boolean create = true;
+
+      while (create && !pool.isFull())
+      {
+
+         if (pool.isShutdown())
+         {
+            return;
+         }
+
+         int currentSize = listeners.size();
+
+         create = pool.getCapacity().getIncrementer()
+               .shouldCreate(currentSize, pool.getConfiguration().getMaxSize(), created);
+
+         if (create)
+         {
+            try
+            {
+               ConnectionListener cl = pool.createConnectionListener(credential, this);
+
+               if (Tracer.isEnabled())
+                  Tracer.createConnectionListener(pool.getConfiguration().getId(), this, cl, cl.getManagedConnection(),
+                        false, false, true, Tracer.isRecordCallstacks() ? new Throwable("CALLSTACK") : null);
+
+               boolean added = false;
+               if (listeners.size() < pool.getConfiguration().getMaxSize())
+               {
+                              /*if (trace)
+                                 log.trace("Capacity fill: cl=" + cl);*/
+
+                  listeners.add(cl);
+                  created++;
+                  added = true;
+               }
+
+               if (!added)
+               {
+                  if (Tracer.isEnabled())
+                     Tracer.destroyConnectionListener(pool.getConfiguration().getId(), this, cl, false, false, true,
+                           false, false, false, true, Tracer.isRecordCallstacks() ? new Throwable("CALLSTACK") : null);
+
+                  pool.destroyConnectionListener(cl);
+                  return;
+               }
+            }
+            catch (ResourceException re)
+            {
+               //log.unableFillPool(re);
+               return;
+            }
+         }
+
+      }
    }
 
    /**
@@ -438,13 +532,43 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
     */
    public void removeIdleConnections()
    {
-      long timeout = System.currentTimeMillis() - pool.getConfiguration().getIdleTimeoutMinutes() * 1000L * 60;
+      long now = System.currentTimeMillis();
+      long timeoutSetting = pool.getConfiguration().getIdleTimeoutMinutes() * 1000L * 60;
 
+      CapacityDecrementer decrementer = pool.getCapacity().getDecrementer();
+
+      if (decrementer == null || !credential.equals(pool.getPrefillCredential()))
+      {
+         decrementer = DefaultCapacity.DEFAULT_DECREMENTER;
+      }
+
+      synchronized (this)
+      {
+         if (TimedOutDecrementer.class.getName().equals(decrementer.getClass().getName())
+               || TimedOutFIFODecrementer.class.getName().equals(decrementer.getClass().getName()))
+         {
+            // Allow through each minute
+            if (now < (lastIdleCheck + 60000L))
+               return;
+         }
+         else
+         {
+            // Otherwise, strict check
+            if (now < (lastIdleCheck + timeoutSetting))
+               return;
+         }
+
+         lastIdleCheck = now;
+      }
+
+      long timeout = now - timeoutSetting;
+      int destroyed = 0;
       for (ConnectionListener cl : listeners)
       {
          if (cl.changeState(FREE, VALIDATION))
          {
-            if (cl.getToPool() < timeout)
+            if (decrementer
+                  .shouldDestroy(cl, timeout, listeners.size(), pool.getConfiguration().getMinSize(), destroyed))
             {
                if (Tracer.isEnabled())
                   Tracer.destroyConnectionListener(pool.getConfiguration().getId(), this, cl,
@@ -454,6 +578,7 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
                                                    new Throwable("CALLSTACK") : null);
                      
                destroyAndRemoveConnectionListener(cl, listeners);
+               destroyed++;
             }
             else
             {
@@ -467,6 +592,7 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
                                                       new Throwable("CALLSTACK") : null);
                      
                   destroyAndRemoveConnectionListener(cl, listeners);
+                  destroyed++;
                }
             }
          }
@@ -594,4 +720,5 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
    {
       return removeConnectionListener(free, listeners);
    }
+
 }

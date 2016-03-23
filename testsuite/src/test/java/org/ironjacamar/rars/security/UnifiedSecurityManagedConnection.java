@@ -448,6 +448,15 @@ public class UnifiedSecurityManagedConnection implements ManagedConnection, Loca
    }
 
    /**
+    * get Listeners
+    * @return listeners
+    */
+   public List<ConnectionEventListener> getListeners()
+   {
+      return listeners;
+   }
+
+   /**
     * check if connection is invalid
     * @return true if invalid
     */

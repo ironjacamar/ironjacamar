@@ -39,7 +39,9 @@ import org.ironjacamar.core.api.metadatarepository.Metadata;
 import org.ironjacamar.core.api.metadatarepository.MetadataRepository;
 import org.ironjacamar.core.connectionmanager.ConnectionManager;
 import org.ironjacamar.core.connectionmanager.ConnectionManagerFactory;
+import org.ironjacamar.core.connectionmanager.pool.Capacity;
 import org.ironjacamar.core.connectionmanager.pool.PoolFactory;
+import org.ironjacamar.core.connectionmanager.pool.capacity.CapacityFactory;
 import org.ironjacamar.core.deploymentrepository.ActivationSpecImpl;
 import org.ironjacamar.core.deploymentrepository.AdminObjectImpl;
 import org.ironjacamar.core.deploymentrepository.ConfigPropertyImpl;
@@ -425,8 +427,11 @@ public abstract class AbstractResourceAdapterDeployer
          org.ironjacamar.core.connectionmanager.pool.Pool pool = PoolFactory.createPool(poolType, cm, pc);
          cm.setPool(pool);
 
-         org.ironjacamar.core.api.deploymentrepository.Pool dpool = new PoolImpl(pool, null);
-
+         Capacity capacity = CapacityFactory
+               .create(cd.getPool() != null ? cd.getPool().getCapacity() : null, this.classLoaderPlugin);
+         pool.setCapacity(capacity);
+         org.ironjacamar.core.api.deploymentrepository.Pool dpool = new PoolImpl(pool, null,
+               capacity.getIncrementer(), capacity.getDecrementer());
          org.ironjacamar.core.spi.statistics.StatisticsPlugin statisticsPlugin = null;
          if (mcf instanceof org.ironjacamar.core.spi.statistics.Statistics)
             statisticsPlugin = ((org.ironjacamar.core.spi.statistics.Statistics)mcf).getStatistics();

@@ -158,4 +158,22 @@ public interface Pool extends org.ironjacamar.core.api.connectionmanager.pool.Po
     * @return The ConnectionListener, or <code>null</code>
     */
    public ConnectionListener removeConnectionListener(Credential credential);
+
+   /**
+    * Get the capacity policy
+    * @return The value
+    */
+   public Capacity getCapacity();
+
+   /**
+    * Set the capacity policy
+    * @param c The value
+    */
+   public void setCapacity(Capacity c);
+
+   /**
+    * Is the pool a FIFO or FILO pool
+    * @return True if FIFO
+    */
+   public boolean isFIFO();
 }

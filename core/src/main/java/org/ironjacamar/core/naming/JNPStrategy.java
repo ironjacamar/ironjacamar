@@ -21,7 +21,7 @@
 
 package org.ironjacamar.core.naming;
 
-//import org.jboss.jca.core.CoreBundle;
+//import org.ironjacamar.core.CoreBundle;
 import org.ironjacamar.core.CoreLogger;
 import org.ironjacamar.core.spi.naming.JndiStrategy;
 

@@ -32,10 +32,10 @@ public class DistributableContext implements WorkContext
    private static final long serialVersionUID = 1L;
 
    /** The distribute key */
-   public static final String DISTRIBUTE = "org.jboss.jca.core.api.workmanager.Distribute";
+   public static final String DISTRIBUTE = "org.ironjacamar.core.api.workmanager.Distribute";
 
    /** The workmanager key */
-   public static final String WORKMANAGER = "org.jboss.jca.core.api.workmanager.WorkManager";
+   public static final String WORKMANAGER = "org.ironjacamar.core.api.workmanager.WorkManager";
 
    private Boolean distribute;
    private String workManager;

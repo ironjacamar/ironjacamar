@@ -123,7 +123,7 @@ public class FlushInvalidIdleConnectionTestCase
    {
       return ResourceAdapterFactory.createUnifiedSecurityDeployment(null, null,
             TransactionSupport.TransactionSupportLevel.NoTransaction,
-            "UnifiedSecurityNoTxNoPrefillConnectionFactory", false, 0, "InvalidIdleConnections", true);
+            "UnifiedSecurityNoTxNoPrefillConnectionFactory", false, 0, "InvalidIdleConnections", true, null, null);
    }
 
 

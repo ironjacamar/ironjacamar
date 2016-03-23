@@ -74,6 +74,13 @@ public interface ManagedConnectionPool
     */
    public void validateConnections();
 
+
+   /**
+    * Increase capacity
+   */
+   public void increaseCapacity();
+
+
    /**
     * Remove idle connections
     */

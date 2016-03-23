@@ -50,4 +50,10 @@ public interface UnifiedSecurityConnection
     * Fail
     */
    public void fail();
+
+   /**
+    * get Listeners identity
+    * @return System.identityHashCode of associated listener
+    */
+   public int getListenerIdentity();
 }

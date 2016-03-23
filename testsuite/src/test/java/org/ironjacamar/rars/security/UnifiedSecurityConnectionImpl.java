@@ -102,4 +102,14 @@ public class UnifiedSecurityConnectionImpl implements UnifiedSecurityConnection
    {
       mc.invalidate();
    }
+
+
+    /**
+    * get Listeners identity
+    * @return System.identityHashCode of associated listener
+    */
+   public int getListenerIdentity()
+   {
+      return System.identityHashCode(mc.getListeners().get(0));
+   }
 }

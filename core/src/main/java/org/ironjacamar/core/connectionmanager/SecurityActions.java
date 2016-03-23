@@ -148,4 +148,50 @@ class SecurityActions
 
       return equals.booleanValue();
    }
+
+   /**
+    * Get the classloader.
+    *
+    * @param c The class
+    * @return The classloader
+    */
+   static ClassLoader getClassLoader(final Class<?> c)
+   {
+      if (System.getSecurityManager() == null)
+         return c.getClassLoader();
+
+      return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>()
+      {
+         public ClassLoader run()
+         {
+            return c.getClassLoader();
+         }
+      });
+   }
+
+   /**
+    * Set the context classloader.
+    *
+    * @param cl classloader
+    */
+   public static void setThreadContextClassLoader(final ClassLoader cl)
+   {
+      if (System.getSecurityManager() == null)
+      {
+         Thread.currentThread().setContextClassLoader(cl);
+      }
+      else
+      {
+         AccessController.doPrivileged(new PrivilegedAction<Object>()
+         {
+            public Object run()
+            {
+               Thread.currentThread().setContextClassLoader(cl);
+
+               return null;
+            }
+         });
+      }
+   }
+
 }

@@ -21,6 +21,8 @@
 
 package org.ironjacamar.core.api.deploymentrepository;
 
+import org.ironjacamar.core.api.connectionmanager.pool.CapacityDecrementer;
+import org.ironjacamar.core.api.connectionmanager.pool.CapacityIncrementer;
 import org.ironjacamar.core.spi.statistics.StatisticsPlugin;
 
 /**
@@ -40,4 +42,16 @@ public interface Pool
     * @return The value
     */
    public StatisticsPlugin getStatistics();
+
+   /**
+    * Get the capacityIncrementer
+    * @return The value
+    */
+   public CapacityIncrementer getCapacityIncrementer();
+
+   /**
+    * Get the capacityDecrementer
+    * @return The value
+    */
+   public CapacityDecrementer getCapacityDecrementer();
 }

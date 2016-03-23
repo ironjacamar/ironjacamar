@@ -28,6 +28,8 @@ import org.ironjacamar.core.connectionmanager.ConnectionManager;
 import org.ironjacamar.core.connectionmanager.Credential;
 import org.ironjacamar.core.connectionmanager.TransactionalConnectionManager;
 import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
+import org.ironjacamar.core.connectionmanager.pool.capacity.DefaultCapacity;
+import org.ironjacamar.core.connectionmanager.pool.capacity.TimedOutDecrementer;
 import org.ironjacamar.core.spi.transaction.ConnectableResource;
 import org.ironjacamar.core.spi.transaction.TxUtils;
 import org.ironjacamar.core.spi.transaction.local.LocalXAResource;
@@ -89,6 +91,10 @@ public abstract class AbstractPool implements Pool
 
    private FlushStrategy flushStrategy;
 
+   /** The capacity */
+   private Capacity capacity;
+
+
    /**
     * Constructor
     *
@@ -103,6 +109,7 @@ public abstract class AbstractPool implements Pool
       this.transactionMap = new ConcurrentHashMap<Object, Map<ManagedConnectionPool, ConnectionListener>>();
       this.semaphore = new Semaphore(poolConfiguration.getMaxSize());
       this.flushStrategy = poolConfiguration.getFlushStrategy();
+      this.capacity = null;
    }
 
    /**
@@ -816,5 +823,37 @@ public abstract class AbstractPool implements Pool
       }
 
       return null;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public Capacity getCapacity()
+   {
+      if (capacity == null)
+         return DefaultCapacity.INSTANCE;
+
+      return capacity;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setCapacity(Capacity c)
+   {
+      capacity = c;
+   }
+
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean isFIFO()
+   {
+      if (capacity == null || capacity.getDecrementer() == null ||
+            TimedOutDecrementer.class.getName().equals(capacity.getDecrementer().getClass().getName()))
+         return false;
+
+      return true;
    }
 }

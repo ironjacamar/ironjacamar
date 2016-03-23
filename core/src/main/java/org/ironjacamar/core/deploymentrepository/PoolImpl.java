@@ -21,6 +21,8 @@
 
 package org.ironjacamar.core.deploymentrepository;
 
+import org.ironjacamar.core.api.connectionmanager.pool.CapacityDecrementer;
+import org.ironjacamar.core.api.connectionmanager.pool.CapacityIncrementer;
 import org.ironjacamar.core.api.deploymentrepository.Pool;
 import org.ironjacamar.core.spi.statistics.StatisticsPlugin;
 
@@ -36,21 +38,34 @@ public class PoolImpl implements Pool
    /** The statistics */
    private StatisticsPlugin statistics;
 
+   /**The capacity incrementer */
+   private CapacityIncrementer capacityIncrementer;
+
+   /**The capacity decrementer */
+   private CapacityDecrementer capacityDecrementer;
+
    /**
     * Constructor
     * @param pool The pool
     * @param statistics The statistics
+    * @param capacityIncrementer the CapacityIncrementer
+    * @param capacityDecrementer the CapacityDecrementer
     */
    public PoolImpl(org.ironjacamar.core.api.connectionmanager.pool.Pool pool,
-                   StatisticsPlugin statistics)
+                   StatisticsPlugin statistics,
+                   CapacityIncrementer capacityIncrementer,
+                   CapacityDecrementer capacityDecrementer)
    {
       this.pool = pool;
       this.statistics = statistics;
+      this.capacityIncrementer = capacityIncrementer;
+      this.capacityDecrementer = capacityDecrementer;
    }
    
    /**
     * {@inheritDoc}
     */
+   @Override
    public org.ironjacamar.core.api.connectionmanager.pool.Pool getPool()
    {
       return pool;
@@ -59,8 +74,27 @@ public class PoolImpl implements Pool
    /**
     * {@inheritDoc}
     */
+   @Override
    public StatisticsPlugin getStatistics()
    {
       return statistics;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public CapacityIncrementer getCapacityIncrementer()
+   {
+      return capacityIncrementer;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public CapacityDecrementer getCapacityDecrementer()
+   {
+      return capacityDecrementer;
    }
 }
