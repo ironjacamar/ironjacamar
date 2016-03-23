@@ -29,6 +29,8 @@ import org.ironjacamar.core.connectionmanager.pool.ManagedConnectionPool;
 import org.ironjacamar.core.spi.transaction.ConnectableResourceListener;
 import org.ironjacamar.core.tracer.Tracer;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -62,6 +64,9 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
    /** Connection handles */
    protected CopyOnWriteArraySet<Object> connectionHandles;
    
+   /** Connection traces */
+   protected Map<Object, Exception> connectionTraces;
+
    /** Last validated timestamp */
    private long validated;
 
@@ -92,6 +97,10 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
       this.credential = credential;
       this.state = new AtomicInteger(FREE);
       this.connectionHandles = new CopyOnWriteArraySet<Object>();
+
+      if (cm.getConnectionManagerConfiguration().isTracking() != null &&
+          cm.getConnectionManagerConfiguration().isTracking().booleanValue())
+         this.connectionTraces = new HashMap<Object, Exception>();
 
       long timestamp = System.currentTimeMillis();
 
@@ -281,6 +290,9 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
       if (Tracer.isEnabled())
          Tracer.getConnection(cm.getPool().getConfiguration().getId(), mcp, this, c);
 
+      if (connectionTraces != null)
+         connectionTraces.put(c, new Exception());
+
       return connectionHandles.add(c);
    }
    
@@ -291,6 +303,9 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
    {
       if (Tracer.isEnabled())
          Tracer.returnConnection(cm.getPool().getConfiguration().getId(), mcp, this, c);
+
+      if (connectionTraces != null)
+         connectionTraces.remove(c);
 
       return connectionHandles.remove(c);
    }
@@ -305,6 +320,9 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
          for (Object c : connectionHandles)
             Tracer.returnConnection(cm.getPool().getConfiguration().getId(), mcp, this, c);
       }
+
+      if (connectionTraces != null)
+         connectionTraces.clear();
 
       connectionHandles.clear();
    }

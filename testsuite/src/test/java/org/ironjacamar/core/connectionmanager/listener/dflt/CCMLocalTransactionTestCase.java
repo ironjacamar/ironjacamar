@@ -92,7 +92,8 @@ public class CCMLocalTransactionTestCase
    @Deployment(order = 2)
    private static ResourceAdaptersDescriptor createActivation() throws Throwable
    {
-      return ResourceAdapterFactory.createTxLogDeployment(TransactionSupportLevel.LocalTransaction);
+      return ResourceAdapterFactory.createTxLogDeployment(TransactionSupportLevel.LocalTransaction,
+                                                          "", Boolean.FALSE);
    }
    
    /**

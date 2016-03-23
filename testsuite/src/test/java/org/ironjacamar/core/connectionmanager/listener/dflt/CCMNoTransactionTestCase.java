@@ -92,7 +92,8 @@ public class CCMNoTransactionTestCase
    @Deployment(order = 2)
    private static ResourceAdaptersDescriptor createActivation() throws Throwable
    {
-      return ResourceAdapterFactory.createTxLogDeployment(TransactionSupportLevel.NoTransaction);
+      return ResourceAdapterFactory.createTxLogDeployment(TransactionSupportLevel.NoTransaction,
+                                                          "", Boolean.FALSE);
    }
    
    /**

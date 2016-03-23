@@ -318,6 +318,21 @@ public class ResourceAdapterFactory
     */
    public static ResourceAdaptersDescriptor createTxLogDeployment(TransactionSupportLevel tsl, String postfix)
    {
+      return createTxLogDeployment(tsl, postfix, null);
+   }
+
+   /**
+    * Create the txlog.rar deployment
+    *
+    * @param tsl     The transaction support level
+    * @param postfix The JNDI postfix
+    * @param tracking Do tracking
+    * @return The resource adapter descriptor
+    */
+   public static ResourceAdaptersDescriptor createTxLogDeployment(TransactionSupportLevel tsl,
+                                                                  String postfix,
+                                                                  Boolean tracking)
+   {
       ResourceAdaptersDescriptor dashRaXml = Descriptors
             .create(ResourceAdaptersDescriptor.class, "txlog" + postfix + "-ra.xml");
 
@@ -337,8 +352,11 @@ public class ResourceAdapterFactory
 
       ConnectionDefinitionsType dashRaXmlCdst = dashRaXmlRt.getOrCreateConnectionDefinitions();
       org.ironjacamar.embedded.dsl.resourceadapters20.api.ConnectionDefinitionType dashRaXmlCdt = dashRaXmlCdst
-            .createConnectionDefinition().className(TxLogManagedConnectionFactory.class.getName())
-            .jndiName("java:/eis/TxLogConnectionFactory" + postfix).id("TxLogConnectionFactory" + postfix);
+         .createConnectionDefinition().className(TxLogManagedConnectionFactory.class.getName())
+         .jndiName("java:/eis/TxLogConnectionFactory" + postfix).id("TxLogConnectionFactory" + postfix);
+
+      if (tracking != null)
+         dashRaXmlCdt.tracking(tracking);
 
       if (tsl == null ||
           tsl == TransactionSupportLevel.NoTransaction ||

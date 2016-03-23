@@ -57,6 +57,43 @@ public interface CoreLogger extends BasicLogger
    @Message(id = 202, value = "SecurityContext setup failed since CallbackSecurity was null")
    public void securityContextSetupFailedCallbackSecurityNull();
 
+   // CORE (300)
+
+   /**
+    * Error during beforeCompletion
+    * @param cl AbstractConnectionListener instance
+    * @param t The exception
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 314, value = "Error during beforeCompletion: %s")
+   public void beforeCompletionErrorOccured(Object cl, @Cause Throwable t);
+
+   /**
+    * Active handles
+    * @param pool The name of the pool
+    * @param number The number of active handles
+    */
+   @LogMessage(level = ERROR)
+   @Message(id = 315, value = "Pool %s has %d active handles")
+   public void activeHandles(String pool, int number);
+
+   /**
+    * Active handle
+    * @param handle The handle
+    * @param e The trace
+    */
+   @LogMessage(level = ERROR)
+   @Message(id = 316, value = "Handle allocation: %s")
+   public void activeHandle(Object handle, @Cause Exception e);
+
+   /**
+    * TxConnectionListener boundary
+    * @param e The trace
+    */
+   @LogMessage(level = ERROR)
+   @Message(id = 317, value = "Transaction boundary")
+   public void txConnectionListenerBoundary(@Cause Exception e);
+
    // NAMING (700)
 
    /**

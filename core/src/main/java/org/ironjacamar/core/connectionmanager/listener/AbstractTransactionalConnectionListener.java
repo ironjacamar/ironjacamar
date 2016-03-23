@@ -22,6 +22,7 @@
 package org.ironjacamar.core.connectionmanager.listener;
 
 import org.ironjacamar.common.api.metadata.common.FlushStrategy;
+import org.ironjacamar.core.CoreLogger;
 import org.ironjacamar.core.connectionmanager.ConnectionManager;
 import org.ironjacamar.core.connectionmanager.Credential;
 import org.ironjacamar.core.connectionmanager.TransactionalConnectionManager;
@@ -34,6 +35,9 @@ import org.ironjacamar.core.tracer.Tracer;
 
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.DESTROY;
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.DESTROYED;
+
+import java.util.Iterator;
+import java.util.Map;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionEvent;
@@ -54,7 +58,8 @@ import org.jboss.logging.Logger;
 public abstract class AbstractTransactionalConnectionListener extends AbstractConnectionListener
 {
    /** The logger */
-   private static Logger log = Logger.getLogger(AbstractTransactionalConnectionListener.class);
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class,
+                                                           AbstractTransactionalConnectionListener.class.getName());
 
    /** Transaction synchronization instance */
    protected TransactionSynchronization transactionSynchronization;
@@ -354,7 +359,7 @@ public abstract class AbstractTransactionalConnectionListener extends AbstractCo
          }
          catch (XAException e)
          {
-            // TODO: log
+            log.debugf(e, "Exception during resetXAResourceTimeout for %s", this);
          }
       }
    }
@@ -462,12 +467,15 @@ public abstract class AbstractTransactionalConnectionListener extends AbstractCo
       {
          if (!cancel)
          {
+            log.tracef("beforeCompletion: %s", AbstractTransactionalConnectionListener.this);
             try
             {
                if (TxUtils.isUncommitted(transaction))
                {
                   if (TxUtils.isActive(transaction))
                   {
+                     log.tracef("delistResource(%s, TMSUCCESS)", xaResource);
+
                      transaction.delistResource(xaResource, XAResource.TMSUCCESS);
 
                      if (Tracer.isEnabled())
@@ -481,6 +489,8 @@ public abstract class AbstractTransactionalConnectionListener extends AbstractCo
                   }
                   else
                   {
+                     log.tracef("delistResource(%s, TMFAIL)", xaResource);
+
                      transaction.delistResource(xaResource, XAResource.TMFAIL);
 
                      if (Tracer.isEnabled())
@@ -491,11 +501,20 @@ public abstract class AbstractTransactionalConnectionListener extends AbstractCo
                                                         false, false, false);
                   }
                }
+               else
+               {
+                  log.tracef("Non-uncommitted transaction for %s (%s)", AbstractTransactionalConnectionListener.this,
+                             transaction != null ? TxUtils.getStatusAsString(transaction.getStatus()) : "None");
+               }
             }
             catch (Exception e)
             {
-               // TODO
+               log.beforeCompletionErrorOccured(AbstractTransactionalConnectionListener.this, e);
             }
+         }
+         else
+         {
+            log.tracef("Unenlisted resource: %s", AbstractTransactionalConnectionListener.this);
          }
       }
 
@@ -506,6 +525,8 @@ public abstract class AbstractTransactionalConnectionListener extends AbstractCo
       {
          if (!cancel)
          {
+            log.tracef("afterCompletion(%s): %s", status, AbstractTransactionalConnectionListener.this);
+
             // "Delist"
             transactionSynchronization = null;
             enlisted = false;
@@ -519,6 +540,43 @@ public abstract class AbstractTransactionalConnectionListener extends AbstractCo
                                                   true, true, false);
 
                cm.returnConnectionListener(AbstractTransactionalConnectionListener.this, false);
+            }
+            else
+            {
+               if (cm.getConnectionManagerConfiguration().isTracking() == null ||
+                   cm.getConnectionManagerConfiguration().isTracking().booleanValue())
+               {
+                  log.activeHandles(cm.getPool().getConfiguration().getId(), connectionHandles.size());
+
+                  if (connectionTraces != null)
+                  {
+                     Iterator<Map.Entry<Object, Exception>> it = connectionTraces.entrySet().iterator();
+                     while (it.hasNext())
+                     {
+                        Map.Entry<Object, Exception> entry = it.next();
+                        log.activeHandle(entry.getKey(), entry.getValue());
+                     }
+
+                     log.txConnectionListenerBoundary(new Exception());
+                  }
+
+                  if (Tracer.isEnabled())
+                  {
+                     for (Object c : connectionHandles)
+                     {
+                        Tracer.clearConnection(cm.getPool().getConfiguration().getId(),
+                                               getManagedConnectionPool(),
+                                               AbstractTransactionalConnectionListener.this, c);
+                     }
+                  }
+
+                  cm.returnConnectionListener(AbstractTransactionalConnectionListener.this, true);
+               }
+               else
+               {
+                  log.tracef(new Exception("Connection across boundary"), "ConnectionListener=%s",
+                             AbstractTransactionalConnectionListener.this);
+               }
             }
          }
       }
