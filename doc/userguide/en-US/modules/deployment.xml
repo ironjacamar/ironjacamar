@@ -2023,6 +2023,12 @@ copy postgres-xa-ds.xml ironjacamar-1.2.0.Final\deploy
               <code>org.jboss.jca.adapters.jdbc.extensions.novendor.JDBC4ValidConnectionChecker</code>
             </listitem>
             <listitem>
+              <code>org.jboss.jca.adapters.jdbc.extensions.novendor.ListExceptionSorter</code>
+            </listitem>
+            <listitem>
+              <code>org.jboss.jca.adapters.jdbc.extensions.novendor.ListStaleConnectionChecker</code>
+            </listitem>
+            <listitem>
               <code>org.jboss.jca.adapters.jdbc.extensions.novendor.NullExceptionSorter</code>
             </listitem>
             <listitem>
