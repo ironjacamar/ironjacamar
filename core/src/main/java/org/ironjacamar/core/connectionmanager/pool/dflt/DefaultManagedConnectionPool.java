@@ -21,12 +21,12 @@
 
 package org.ironjacamar.core.connectionmanager.pool.dflt;
 
+import org.ironjacamar.core.api.connectionmanager.pool.FlushMode;
 import org.ironjacamar.core.connectionmanager.Credential;
 import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
 import org.ironjacamar.core.connectionmanager.pool.AbstractManagedConnectionPool;
 import org.ironjacamar.core.connectionmanager.pool.ConnectionValidator;
 import org.ironjacamar.core.connectionmanager.pool.FillRequest;
-import org.ironjacamar.core.connectionmanager.pool.FlushMode;
 import org.ironjacamar.core.connectionmanager.pool.IdleConnectionRemover;
 import org.ironjacamar.core.connectionmanager.pool.PoolFiller;
 import org.ironjacamar.core.tracer.Tracer;

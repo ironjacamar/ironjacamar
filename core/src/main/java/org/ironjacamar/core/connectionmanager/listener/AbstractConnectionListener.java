@@ -22,9 +22,9 @@
 package org.ironjacamar.core.connectionmanager.listener;
 
 import org.ironjacamar.common.api.metadata.common.FlushStrategy;
+import org.ironjacamar.core.api.connectionmanager.pool.FlushMode;
 import org.ironjacamar.core.connectionmanager.ConnectionManager;
 import org.ironjacamar.core.connectionmanager.Credential;
-import org.ironjacamar.core.connectionmanager.pool.FlushMode;
 import org.ironjacamar.core.connectionmanager.pool.ManagedConnectionPool;
 import org.ironjacamar.core.spi.transaction.ConnectableResourceListener;
 import org.ironjacamar.core.tracer.Tracer;

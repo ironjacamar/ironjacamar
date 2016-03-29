@@ -106,13 +106,6 @@ public interface Pool extends org.ironjacamar.core.api.connectionmanager.pool.Po
    public boolean isShutdown();
 
    /**
-    * Prefill the connection pool
-    *
-    *
-    */
-   public void prefill();
-
-   /**
     * Get prefill credential
     * @return credential used to prefill
     */
@@ -129,17 +122,6 @@ public interface Pool extends org.ironjacamar.core.api.connectionmanager.pool.Po
     * @return The value
     */
    public FlushStrategy getFlushStrategy();
-
-   /**
-    * Flush idle connections from the pool
-    */
-   public void flush();
-
-   /**
-    * Flush the pool
-    * @param mode The flush mode
-    */
-   public void flush(FlushMode mode);
 
    /**
     * Enlist

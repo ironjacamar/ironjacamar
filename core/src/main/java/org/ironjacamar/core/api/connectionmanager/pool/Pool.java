@@ -32,4 +32,20 @@ public interface Pool
     * @return The value
     */
    public String getType();
+
+   /**
+    * Prefill the connection pool
+    */
+   public void prefill();
+
+   /**
+    * Flush idle connections from the pool
+    */
+   public void flush();
+
+   /**
+    * Flush the pool
+    * @param mode The flush mode
+    */
+   public void flush(FlushMode mode);
 }

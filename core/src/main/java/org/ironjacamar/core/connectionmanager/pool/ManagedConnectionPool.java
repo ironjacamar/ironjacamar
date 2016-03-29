@@ -21,6 +21,7 @@
 
 package org.ironjacamar.core.connectionmanager.pool;
 
+import org.ironjacamar.core.api.connectionmanager.pool.FlushMode;
 import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
 
 import javax.resource.ResourceException;

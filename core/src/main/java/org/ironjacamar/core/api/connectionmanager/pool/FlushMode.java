@@ -19,7 +19,7 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.connectionmanager.pool;
+package org.ironjacamar.core.api.connectionmanager.pool;
 
 /**
  * Flush strategy mode
@@ -38,7 +38,9 @@ public enum FlushMode
     */
    IDLE,
 
-   /** GRACEFULLY */
+   /** 
+    * Gracefully
+    */
    GRACEFULLY,
 
    /**
