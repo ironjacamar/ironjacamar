@@ -47,6 +47,7 @@ public class DsXaPoolImpl extends org.ironjacamar.common.metadata.common.XaPoolI
    /**
     * Create a new XaPoolImpl.
     * @param type type
+    * @param janitor janitor
     * @param minPoolSize minPoolSize
     * @param initialPoolSize initialPoolSize
     * @param maxPoolSize maxPoolSize
@@ -60,7 +61,7 @@ public class DsXaPoolImpl extends org.ironjacamar.common.metadata.common.XaPoolI
     * @param expressions expressions
     * @throws ValidateException ValidateException
     */
-   public DsXaPoolImpl(String type,
+   public DsXaPoolImpl(String type, String janitor,
                        Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize,
                        Boolean prefill,
                        FlushStrategy flushStrategy,
@@ -69,7 +70,7 @@ public class DsXaPoolImpl extends org.ironjacamar.common.metadata.common.XaPoolI
                        Capacity capacity, Extension connectionListener,
                        Map<String, String> expressions) throws ValidateException
    {
-      super(type, minPoolSize, initialPoolSize, maxPoolSize, prefill, flushStrategy, capacity,
+      super(type, janitor, minPoolSize, initialPoolSize, maxPoolSize, prefill, flushStrategy, capacity,
             isSameRmOverride, padXid, wrapXaResource, expressions);
 
       this.connectionListener = connectionListener;
@@ -130,6 +131,13 @@ public class DsXaPoolImpl extends org.ironjacamar.common.metadata.common.XaPoolI
       {
          sb.append(" ").append(XML.ATTRIBUTE_TYPE).append("=\"");
          sb.append(type);
+         sb.append("\"");
+      }
+
+      if (janitor != null)
+      {
+         sb.append(" ").append(XML.ATTRIBUTE_JANITOR).append("=\"");
+         sb.append(janitor);
          sb.append("\"");
       }
 

@@ -835,6 +835,10 @@ public abstract class CommonIronJacamarParser extends AbstractParser
          writer.writeAttribute(CommonXML.ATTRIBUTE_TYPE,
                                pool.getValue(CommonXML.ATTRIBUTE_TYPE, pool.getType()));
 
+      if (pool.getJanitor() != null)
+         writer.writeAttribute(CommonXML.ATTRIBUTE_JANITOR,
+                               pool.getValue(CommonXML.ATTRIBUTE_JANITOR, pool.getJanitor()));
+
       if (pool.getMinPoolSize() != null && (pool.hasExpression(CommonXML.ELEMENT_MIN_POOL_SIZE) ||
                                             !Defaults.MIN_POOL_SIZE.equals(pool.getMinPoolSize())))
       {
@@ -894,6 +898,10 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       if (pool.getType() != null)
          writer.writeAttribute(CommonXML.ATTRIBUTE_TYPE,
                                pool.getValue(CommonXML.ATTRIBUTE_TYPE, pool.getType()));
+
+      if (pool.getType() != null)
+         writer.writeAttribute(CommonXML.ATTRIBUTE_JANITOR,
+                               pool.getValue(CommonXML.ATTRIBUTE_JANITOR, pool.getJanitor()));
 
       if (pool.getMinPoolSize() != null && (pool.hasExpression(CommonXML.ELEMENT_MIN_POOL_SIZE) ||
                                             !Defaults.MIN_POOL_SIZE.equals(pool.getMinPoolSize())))

@@ -516,6 +516,15 @@
         </xs:documentation>
       </xs:annotation>
     </xs:attribute>
+    <xs:attribute name="janitor" type="xs:token" use="optional">
+      <xs:annotation>
+        <xs:documentation>
+          <![CDATA[[
+            Defines the type of janitor associated
+           ]]>
+        </xs:documentation>
+      </xs:annotation>
+    </xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="xa-poolType">

@@ -144,6 +144,9 @@ public class StableManagedConnectionPool extends AbstractManagedConnectionPool
                                                         Tracer.isRecordCallstacks() ?
                                                         new Throwable("CALLSTACK") : null);
 
+                        if (pool.getJanitor().isRecording())
+                           pool.getJanitor().registerConnectionListener(result);
+
                         return result;
                      }
                      else
@@ -171,6 +174,9 @@ public class StableManagedConnectionPool extends AbstractManagedConnectionPool
                                                         Tracer.isRecordCallstacks() ?
                                                         new Throwable("CALLSTACK") : null);
                         
+                        if (pool.getJanitor().isRecording())
+                           pool.getJanitor().registerConnectionListener(cl);
+
                         return cl;
                      }
                      else
@@ -201,6 +207,9 @@ public class StableManagedConnectionPool extends AbstractManagedConnectionPool
                                                Tracer.isRecordCallstacks() ?
                                                new Throwable("CALLSTACK") : null);
                
+               if (pool.getJanitor().isRecording())
+                  pool.getJanitor().registerConnectionListener(cl);
+
                return cl;
             }
             catch (ResourceException re)
@@ -232,6 +241,9 @@ public class StableManagedConnectionPool extends AbstractManagedConnectionPool
    {
       try
       {
+         if (pool.getJanitor().isRecording())
+            pool.getJanitor().unregisterConnectionListener(cl);
+
          if (!kill)
          {
             if (cl.changeState(IN_USE, TO_POOL))

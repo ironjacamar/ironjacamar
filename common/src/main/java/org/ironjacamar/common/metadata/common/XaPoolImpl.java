@@ -52,6 +52,7 @@ public class XaPoolImpl extends PoolImpl implements XaPool
    /**
     * Create a new XaPoolImpl.
     * @param type type
+    * @param janitor janitor
     * @param minPoolSize minPoolSize
     * @param initialPoolSize initialPoolSize
     * @param maxPoolSize maxPoolSize
@@ -64,14 +65,14 @@ public class XaPoolImpl extends PoolImpl implements XaPool
     * @param expressions expressions
     * @throws ValidateException ValidateException
     */
-   public XaPoolImpl(String type, Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize,
+   public XaPoolImpl(String type, String janitor, Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize,
                      Boolean prefill,
                      FlushStrategy flushStrategy, Capacity capacity,
                      Boolean isSameRmOverride,
                      Boolean padXid, Boolean wrapXaResource,
                      Map<String, String> expressions) throws ValidateException
    {
-      super(type, minPoolSize, initialPoolSize, maxPoolSize, prefill,
+      super(type, janitor, minPoolSize, initialPoolSize, maxPoolSize, prefill,
             flushStrategy, capacity, expressions);
       this.isSameRmOverride = isSameRmOverride;
       this.padXid = padXid;
@@ -164,6 +165,13 @@ public class XaPoolImpl extends PoolImpl implements XaPool
       {
          sb.append(" ").append(CommonXML.ATTRIBUTE_TYPE).append("=\"");
          sb.append(type);
+         sb.append("\"");
+      }
+
+      if (type != null)
+      {
+         sb.append(" ").append(CommonXML.ATTRIBUTE_JANITOR).append("=\"");
+         sb.append(janitor);
          sb.append("\"");
       }
 

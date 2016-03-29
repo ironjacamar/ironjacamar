@@ -80,6 +80,11 @@ public interface Defaults
    public static final String TYPE = null;
    
    /**
+    * Janitor
+    */
+   public static final String JANITOR = null;
+   
+   /**
     * Min pool size
     */
    public static final Integer MIN_POOL_SIZE = Integer.valueOf(0);

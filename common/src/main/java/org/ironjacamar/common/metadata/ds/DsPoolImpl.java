@@ -48,6 +48,7 @@ public class DsPoolImpl extends org.ironjacamar.common.metadata.common.PoolImpl 
    /**
     * Create a new PoolImpl.
     * @param type type
+    * @param janitor janitor
     * @param minPoolSize minPoolSize
     * @param initialPoolSize initialPoolSize
     * @param maxPoolSize maxPoolSize
@@ -58,14 +59,14 @@ public class DsPoolImpl extends org.ironjacamar.common.metadata.common.PoolImpl 
     * @param expressions expressions
     * @throws ValidateException ValidateException
     */
-   public DsPoolImpl(String type, Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize, 
+   public DsPoolImpl(String type, String janitor, Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize, 
                      Boolean prefill,
                      FlushStrategy flushStrategy,
                      Capacity capacity, Extension connectionListener,
                      Map<String, String> expressions)
       throws ValidateException
    {
-      super(type, minPoolSize, initialPoolSize, maxPoolSize, prefill,
+      super(type, janitor, minPoolSize, initialPoolSize, maxPoolSize, prefill,
             flushStrategy, capacity, expressions);
       this.connectionListener = connectionListener;
    }
@@ -128,6 +129,13 @@ public class DsPoolImpl extends org.ironjacamar.common.metadata.common.PoolImpl 
       {
          sb.append(" ").append(XML.ATTRIBUTE_TYPE).append("=\"");
          sb.append(type);
+         sb.append("\"");
+      }
+
+      if (janitor != null)
+      {
+         sb.append(" ").append(XML.ATTRIBUTE_JANITOR).append("=\"");
+         sb.append(janitor);
          sb.append("\"");
       }
 

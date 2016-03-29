@@ -45,6 +45,22 @@ class SecurityActions
    }
 
    /**
+    * Get a system property
+    * @param name The property name
+    * @return The property value
+    */
+   static String getSystemProperty(final String name)
+   {
+      return AccessController.doPrivileged(new PrivilegedAction<String>() 
+      {
+         public String run()
+         {
+            return System.getProperty(name);
+         }
+      });
+   }
+
+   /**
     * Get the classloader.
     * @param c The class
     * @return The classloader
@@ -212,5 +228,24 @@ class SecurityActions
       });
 
       return equals.booleanValue();
+   }
+
+   /**
+    * Get stack trace
+    * @param t The thread
+    * @return The trace
+    */
+   static StackTraceElement[] getStackTrace(final Thread t)
+   {
+      if (System.getSecurityManager() == null)
+         return t.getStackTrace();
+
+      return AccessController.doPrivileged(new PrivilegedAction<StackTraceElement[]>() 
+      {
+         public StackTraceElement[] run()
+         {
+            return t.getStackTrace();
+         }
+      });
    }
 }

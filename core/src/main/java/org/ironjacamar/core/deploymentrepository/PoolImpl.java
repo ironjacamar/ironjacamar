@@ -75,6 +75,14 @@ public class PoolImpl implements Pool
     * {@inheritDoc}
     */
    @Override
+   public org.ironjacamar.core.api.connectionmanager.pool.Janitor getJanitor()
+   {
+      return pool.getJanitor();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public StatisticsPlugin getStatistics()
    {
       return statistics;

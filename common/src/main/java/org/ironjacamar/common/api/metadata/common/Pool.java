@@ -37,6 +37,12 @@ public interface Pool extends JCAMetadata, ValidatableMetadata
    public String getType();
 
    /**
+    * Get the janitor
+    * @return The value
+    */
+   public String getJanitor();
+
+   /**
     * Get the minPoolSize.
     *
     * @return the minPoolSize.

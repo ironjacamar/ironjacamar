@@ -19,45 +19,45 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.api.deploymentrepository;
+package org.ironjacamar.core.connectionmanager.pool;
 
-import org.ironjacamar.core.api.connectionmanager.pool.CapacityDecrementer;
-import org.ironjacamar.core.api.connectionmanager.pool.CapacityIncrementer;
-import org.ironjacamar.core.spi.statistics.StatisticsPlugin;
+import java.util.Locale;
 
 /**
- * A pool
+ * The janitor factory
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface Pool
+public class JanitorFactory
 {
    /**
-    * Get the pool
-    * @return The value
+    * Constructor
     */
-   public org.ironjacamar.core.api.connectionmanager.pool.Pool getPool();
+   private JanitorFactory()
+   {
+   }
 
    /**
-    * Get the janitor
-    * @return The value
+    * Create a janitor
+    * @param type The type
+    * @return The janitor
     */
-   public org.ironjacamar.core.api.connectionmanager.pool.Janitor getJanitor();
+   public static Janitor createJanitor(String type)
+   {
+      if (type == null || type.equals(""))
+         return new MinimalJanitor();
 
-   /**
-    * Get the statistics
-    * @return The value
-    */
-   public StatisticsPlugin getStatistics();
-
-   /**
-    * Get the capacityIncrementer
-    * @return The value
-    */
-   public CapacityIncrementer getCapacityIncrementer();
-
-   /**
-    * Get the capacityDecrementer
-    * @return The value
-    */
-   public CapacityDecrementer getCapacityDecrementer();
+      type = type.toLowerCase(Locale.US);
+      
+      switch (type)
+      {
+         case "minimal":
+            return new MinimalJanitor();
+         case "full":
+            return new FullJanitor();
+         default:
+         {
+            return new MinimalJanitor();
+         }
+      }
+   }
 }

@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2015, Red Hat Inc, and individual contributors
+ * Copyright 2016, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -21,54 +21,30 @@
 
 package org.ironjacamar.core.api.connectionmanager.pool;
 
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.security.auth.Subject;
+import java.util.Map;
 
 /**
- * The pool
+ * The janitor
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface Pool
+public interface Janitor
 {
    /**
-    * Get the type name
-    * @return The value
+    * Dump the queued threads
+    * @return The strack traces of the queued thread, or empty if none
     */
-   public String getType();
+   public String[] dumpQueuedThreads();
 
    /**
-    * Get the janitor
-    * @return The value
+    * Get a map of connection listener allocations (id, allocation trace)
+    * @return The map
     */
-   public Janitor getJanitor();
+   public Map<String, String> getConnectionListeners();
 
    /**
-    * Prefill the connection pool
+    * Kill a connection listener
+    * @param id The connection listener identifier
+    * @return True if scheduled for destruction, otherwise false
     */
-   public void prefill();
-
-   /**
-    * Flush idle connections from the pool
-    */
-   public void flush();
-
-   /**
-    * Flush the pool
-    * @param mode The flush mode
-    */
-   public void flush(FlushMode mode);
-
-   /**
-    * Test if a connection can be obtained
-    * @return True if it was possible to get a connection; otherwise false
-    */
-   public boolean testConnection();
-
-   /**
-    * Test if a connection can be obtained
-    * @param cri Optional connection request info object
-    * @param subject Optional subject
-    * @return True if it was possible to get a connection; otherwise false
-    */
-   public boolean testConnection(ConnectionRequestInfo cri, Subject subject);
+   public boolean killConnectionListener(String id);
 }

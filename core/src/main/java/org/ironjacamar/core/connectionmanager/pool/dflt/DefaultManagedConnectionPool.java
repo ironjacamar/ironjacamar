@@ -140,6 +140,9 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
                                                      Tracer.isRecordCallstacks() ?
                                                      new Throwable("CALLSTACK") : null);
 
+                     if (pool.getJanitor().isRecording())
+                        pool.getJanitor().registerConnectionListener(result);
+
                      return result;
                   }
                   else
@@ -166,6 +169,9 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
                                                      this, cl, true, false,
                                                      Tracer.isRecordCallstacks() ?
                                                      new Throwable("CALLSTACK") : null);
+
+                     if (pool.getJanitor().isRecording())
+                        pool.getJanitor().registerConnectionListener(cl);
 
                      return cl;
                   }
@@ -227,6 +233,9 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
     */
    public void returnConnectionListener(ConnectionListener cl, boolean kill) throws ResourceException
    {
+      if (pool.getJanitor().isRecording())
+         pool.getJanitor().unregisterConnectionListener(cl);
+
       if (!kill)
       {
          if (cl.changeState(IN_USE, TO_POOL))

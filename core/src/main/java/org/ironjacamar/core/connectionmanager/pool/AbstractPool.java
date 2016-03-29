@@ -38,7 +38,6 @@ import org.ironjacamar.core.tracer.Tracer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Semaphore;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
@@ -96,6 +95,11 @@ public abstract class AbstractPool implements Pool
 
 
    /**
+    * The janitor
+    */
+   protected Janitor janitor;
+   
+   /**
     * Constructor
     *
     * @param cm The connection manager
@@ -110,6 +114,7 @@ public abstract class AbstractPool implements Pool
       this.semaphore = new Semaphore(poolConfiguration.getMaxSize());
       this.flushStrategy = poolConfiguration.getFlushStrategy();
       this.capacity = null;
+      this.janitor = null;
    }
 
    /**
@@ -126,6 +131,30 @@ public abstract class AbstractPool implements Pool
    public PoolConfiguration getConfiguration()
    {
       return poolConfiguration;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public Semaphore getPermits()
+   {
+      return semaphore;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public Janitor getJanitor()
+   {
+      return janitor;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void setJanitor(Janitor v)
+   {
+      janitor = v;
    }
 
    /**

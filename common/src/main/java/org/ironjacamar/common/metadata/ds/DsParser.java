@@ -684,6 +684,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       ValidateException
    {
       String type = Defaults.TYPE;
+      String janitor = Defaults.JANITOR;
       Integer minPoolSize = Defaults.MIN_POOL_SIZE;
       Integer initialPoolSize = Defaults.INITIAL_POOL_SIZE;
       Integer maxPoolSize = Defaults.MAX_POOL_SIZE;
@@ -702,6 +703,10 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                type = attributeAsString(reader, XML.ATTRIBUTE_TYPE, expressions);
                break;
             }
+            case XML.ATTRIBUTE_JANITOR : {
+               janitor = attributeAsString(reader, XML.ATTRIBUTE_JANITOR, expressions);
+               break;
+            }
             default :
                break;
          }
@@ -714,7 +719,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
             case END_ELEMENT : {
                if (XML.ELEMENT_POOL.equals(reader.getLocalName()))
                {
-                  return new DsPoolImpl(type, minPoolSize, initialPoolSize, maxPoolSize, prefill,
+                  return new DsPoolImpl(type, janitor, minPoolSize, initialPoolSize, maxPoolSize, prefill,
                                         flushStrategy, capacity, connectionListener,
                                         expressions.size() > 0 ? expressions : null);
                }
@@ -791,6 +796,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       ValidateException
    {
       String type = Defaults.TYPE;
+      String janitor = Defaults.JANITOR;
       Integer minPoolSize = Defaults.MIN_POOL_SIZE;
       Integer initialPoolSize = Defaults.INITIAL_POOL_SIZE;
       Integer maxPoolSize = Defaults.MAX_POOL_SIZE;
@@ -812,6 +818,10 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                type = attributeAsString(reader, XML.ATTRIBUTE_TYPE, expressions);
                break;
             }
+            case XML.ATTRIBUTE_JANITOR : {
+               janitor = attributeAsString(reader, XML.ATTRIBUTE_JANITOR, expressions);
+               break;
+            }
             default :
                break;
          }
@@ -824,7 +834,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
             case END_ELEMENT : {
                if (XML.ELEMENT_XA_POOL.equals(reader.getLocalName()))
                {
-                  return new DsXaPoolImpl(type, minPoolSize, initialPoolSize, maxPoolSize, prefill,
+                  return new DsXaPoolImpl(type, janitor, minPoolSize, initialPoolSize, maxPoolSize, prefill,
                                           flushStrategy, isSameRmOverride, padXid,
                                           wrapXaDataSource, capacity,
                                           connectionListener,

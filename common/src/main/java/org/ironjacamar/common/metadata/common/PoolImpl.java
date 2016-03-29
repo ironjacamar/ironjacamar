@@ -52,6 +52,11 @@ public class PoolImpl extends AbstractMetadata implements Pool
    protected String type;
 
    /**
+    * janitor
+    */
+   protected String janitor;
+
+   /**
     * minPoolSize
     */
    protected Integer minPoolSize;
@@ -85,6 +90,7 @@ public class PoolImpl extends AbstractMetadata implements Pool
     * Constructor
     *
     * @param type type
+    * @param janitor janitor
     * @param minPoolSize minPoolSize
     * @param initialPoolSize initialPoolSize
     * @param maxPoolSize maxPoolSize
@@ -94,7 +100,7 @@ public class PoolImpl extends AbstractMetadata implements Pool
     * @param expressions expressions
     * @throws ValidateException ValidateException
     */
-   public PoolImpl(String type, Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize,
+   public PoolImpl(String type, String janitor, Integer minPoolSize, Integer initialPoolSize, Integer maxPoolSize,
                    Boolean prefill,
                    FlushStrategy flushStrategy, Capacity capacity,
                    Map<String, String> expressions)
@@ -102,6 +108,7 @@ public class PoolImpl extends AbstractMetadata implements Pool
    {
       super(expressions);
       this.type = type;
+      this.janitor = janitor;
       this.minPoolSize = minPoolSize;
       this.initialPoolSize = initialPoolSize;
       this.maxPoolSize = maxPoolSize;
@@ -117,6 +124,14 @@ public class PoolImpl extends AbstractMetadata implements Pool
    public String getType()
    {
       return type;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public String getJanitor()
+   {
+      return janitor;
    }
 
    /**
@@ -197,6 +212,7 @@ public class PoolImpl extends AbstractMetadata implements Pool
       final int prime = 31;
       int result = 1;
       result = prime * result + ((type == null) ? 0 : type.hashCode());
+      result = prime * result + ((janitor == null) ? 0 : janitor.hashCode());
       result = prime * result + ((minPoolSize == null) ? 0 : minPoolSize.hashCode());
       result = prime * result + ((initialPoolSize == null) ? 0 : initialPoolSize.hashCode());
       result = prime * result + ((maxPoolSize == null) ? 0 : maxPoolSize.hashCode());
@@ -223,6 +239,13 @@ public class PoolImpl extends AbstractMetadata implements Pool
             return false;
       }
       else if (!type.equals(other.type))
+         return false;
+      if (janitor == null)
+      {
+         if (other.janitor != null)
+            return false;
+      }
+      else if (!janitor.equals(other.janitor))
          return false;
       if (minPoolSize == null)
       {
@@ -282,6 +305,13 @@ public class PoolImpl extends AbstractMetadata implements Pool
       {
          sb.append(" ").append(CommonXML.ATTRIBUTE_TYPE).append("=\"");
          sb.append(type);
+         sb.append("\"");
+      }
+
+      if (type != null)
+      {
+         sb.append(" ").append(CommonXML.ATTRIBUTE_JANITOR).append("=\"");
+         sb.append(janitor);
          sb.append("\"");
       }
 

@@ -40,6 +40,7 @@ import org.ironjacamar.core.api.metadatarepository.MetadataRepository;
 import org.ironjacamar.core.connectionmanager.ConnectionManager;
 import org.ironjacamar.core.connectionmanager.ConnectionManagerFactory;
 import org.ironjacamar.core.connectionmanager.pool.Capacity;
+import org.ironjacamar.core.connectionmanager.pool.JanitorFactory;
 import org.ironjacamar.core.connectionmanager.pool.PoolFactory;
 import org.ironjacamar.core.connectionmanager.pool.capacity.CapacityFactory;
 import org.ironjacamar.core.deploymentrepository.ActivationSpecImpl;
@@ -414,6 +415,7 @@ public abstract class AbstractResourceAdapterDeployer
             cm.setSubjectFactory(subjectFactory);
 
          String poolType = cd.getPool() != null ? cd.getPool().getType() : null;
+         String janitorType = cd.getPool() != null ? cd.getPool().getJanitor() : null;
 
          if (poolType == null || poolType.equals(""))
             poolType = defaultPoolType;
@@ -432,6 +434,11 @@ public abstract class AbstractResourceAdapterDeployer
          pool.setCapacity(capacity);
          org.ironjacamar.core.api.deploymentrepository.Pool dpool = new PoolImpl(pool, null,
                capacity.getIncrementer(), capacity.getDecrementer());
+
+         org.ironjacamar.core.connectionmanager.pool.Janitor janitor = JanitorFactory.createJanitor(janitorType);
+         janitor.setPool(pool);
+         pool.setJanitor(janitor);
+
          org.ironjacamar.core.spi.statistics.StatisticsPlugin statisticsPlugin = null;
          if (mcf instanceof org.ironjacamar.core.spi.statistics.Statistics)
             statisticsPlugin = ((org.ironjacamar.core.spi.statistics.Statistics)mcf).getStatistics();

@@ -47,6 +47,12 @@ public interface Pool extends org.ironjacamar.core.api.connectionmanager.pool.Po
     * @return The configuration
     */
    public PoolConfiguration getConfiguration();
+
+   /**
+    * Get the semaphore
+    * @return The semaphore
+    */
+   public Semaphore getPermits();
    
    /**
     * Get a connection listener
@@ -176,4 +182,10 @@ public interface Pool extends org.ironjacamar.core.api.connectionmanager.pool.Po
     * @return True if FIFO
     */
    public boolean isFIFO();
+
+   /**
+    * Set the janitor
+    * @param v The value
+    */
+   public void setJanitor(Janitor v);
 }

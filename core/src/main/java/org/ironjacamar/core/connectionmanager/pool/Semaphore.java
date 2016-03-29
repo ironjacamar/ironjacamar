@@ -19,56 +19,57 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.ironjacamar.core.api.connectionmanager.pool;
+package org.ironjacamar.core.connectionmanager.pool;
 
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.security.auth.Subject;
+import java.util.Collection;
+import java.util.concurrent.TimeUnit;
 
 /**
- * The pool
+ * A semaphore implementation
+ *
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface Pool
+public class Semaphore extends java.util.concurrent.Semaphore
 {
-   /**
-    * Get the type name
-    * @return The value
-    */
-   public String getType();
+   /** Serial version uid */
+   private static final long serialVersionUID = 1L;
+
+   /** Max size */
+   private int maxSize;
 
    /**
-    * Get the janitor
-    * @return The value
+    * Constructor
+    * @param maxSize The maxumum size
     */
-   public Janitor getJanitor();
+   public Semaphore(int maxSize)
+   {
+      super(maxSize, true);
+   }
 
    /**
-    * Prefill the connection pool
+    * {@inheritDoc}
     */
-   public void prefill();
+   @Override
+   public boolean tryAcquire(long timeout, TimeUnit unit) throws InterruptedException
+   {
+      return super.tryAcquire(timeout, unit);
+   }
 
    /**
-    * Flush idle connections from the pool
+    * {@inheritDoc}
     */
-   public void flush();
+   @Override
+   public void release()
+   {
+      super.release();
+   }
 
    /**
-    * Flush the pool
-    * @param mode The flush mode
+    * {@inheritDoc}
     */
-   public void flush(FlushMode mode);
-
-   /**
-    * Test if a connection can be obtained
-    * @return True if it was possible to get a connection; otherwise false
-    */
-   public boolean testConnection();
-
-   /**
-    * Test if a connection can be obtained
-    * @param cri Optional connection request info object
-    * @param subject Optional subject
-    * @return True if it was possible to get a connection; otherwise false
-    */
-   public boolean testConnection(ConnectionRequestInfo cri, Subject subject);
+   @Override
+   public Collection<Thread> getQueuedThreads()
+   {
+      return super.getQueuedThreads();
+   }
 }

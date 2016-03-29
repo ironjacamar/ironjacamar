@@ -107,6 +107,11 @@ public interface CommonXML
    public static final String ATTRIBUTE_TYPE = "type";
 
    /**
+    * janitor
+    */
+   public static final String ATTRIBUTE_JANITOR = "janitor";
+
+   /**
     * admin-object
     */
    public static final String ELEMENT_ADMIN_OBJECT = "admin-object";
