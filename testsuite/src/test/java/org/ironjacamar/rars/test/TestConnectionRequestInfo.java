@@ -18,51 +18,41 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-
-package org.ironjacamar.core.api.connectionmanager.pool;
+package org.ironjacamar.rars.test;
 
 import javax.resource.spi.ConnectionRequestInfo;
-import javax.security.auth.Subject;
 
 /**
- * The pool
- * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ * TestConnectionRequestInfo
  */
-public interface Pool
+public class TestConnectionRequestInfo implements ConnectionRequestInfo
 {
    /**
-    * Get the type name
-    * @return The value
+    * Constructor
     */
-   public String getType();
+   public TestConnectionRequestInfo()
+   {
+   }
 
    /**
-    * Prefill the connection pool
+    * {@inheritDoc}
     */
-   public void prefill();
+   public int hashCode()
+   {
+      return 42;
+   }
 
    /**
-    * Flush idle connections from the pool
+    * {@inheritDoc}
     */
-   public void flush();
+   public boolean equals(Object o)
+   {
+      if (o == this)
+         return true;
 
-   /**
-    * Flush the pool
-    * @param mode The flush mode
-    */
-   public void flush(FlushMode mode);
+      if (o == null || (!(o instanceof TestConnectionRequestInfo)))
+         return false;
 
-   /**
-    * Test if a connection can be obtained
-    * @return True if it was possible to get a connection; otherwise false
-    */
-   public boolean testConnection();
-
-   /**
-    * Test if a connection can be obtained
-    * @param cri Optional connection request info object
-    * @param subject Optional subject
-    * @return True if it was possible to get a connection; otherwise false
-    */
-   public boolean testConnection(ConnectionRequestInfo cri, Subject subject);
+      return true;
+   }
 }

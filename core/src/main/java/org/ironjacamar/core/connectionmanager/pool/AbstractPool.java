@@ -39,8 +39,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 
 import javax.resource.ResourceException;
+import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
+import javax.security.auth.Subject;
 import javax.transaction.Transaction;
 import javax.transaction.xa.XAResource;
 
@@ -536,6 +538,67 @@ public abstract class AbstractPool implements Pool
             }
          }
       }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean testConnection()
+   {
+      return internalTestConnection(getPrefillCredential());
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public boolean testConnection(ConnectionRequestInfo cri, Subject subject)
+   {
+      return internalTestConnection(new Credential(subject, cri));
+   }
+
+   /**
+    * Test if a connection can be obtained
+    * @param credential The credential
+    * @return True if possible; otherwise false
+    */
+   protected boolean internalTestConnection(Credential credential)
+   {
+      boolean result = false;
+      boolean kill = false;
+      ConnectionListener cl = null;
+
+      if (isShutdown())
+         return false;
+
+      if (isFull())
+         return false;
+
+      try
+      {
+         ManagedConnectionPool mcp = getManagedConnectionPool(credential);
+         cl = mcp.getConnectionListener();
+         result = true;
+      }
+      catch (Throwable t)
+      {
+         kill = true;
+      }
+      finally
+      {
+         if (cl != null)
+         {
+            try
+            {
+               returnConnectionListener(cl, kill);
+            }
+            catch (ResourceException ire)
+            {
+               // Ignore
+            }
+         }
+      }
+
+      return result;
    }
 
    /**
