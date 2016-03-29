@@ -40,20 +40,6 @@ dependencies {
   compile project(':common')
 }
 
-task versionFile(type: Copy) {
-  from 'src/main/java'
-  into 'src/main/java'
-  include '**/*.java.in'
-  rename {
-    String fileName -> fileName.replace('.in', '')
-  }
-  filter {
-    String line -> line.replaceAll("@VERSION@", rootProject.version)
-  }
-}
-
-compileJava.dependsOn versionFile
-
 jar {
   manifest {
     attributes("Implementation-Title" : "IronJacamar Core")

@@ -149,6 +149,18 @@ subprojects { subProject ->
     options.encoding = "UTF-8"
   }
 
+  task processInputFiles(type: Copy) {
+    from 'src/main/java'
+    into 'src/main/java'
+    include '**/*.java.in'
+    rename {
+      String fileName -> fileName.replace('.in', '')
+    }
+    filter {
+      String line -> line.replaceAll("@VERSION@", rootProject.version)
+    }
+  }
+  
   task compile
   compile.dependsOn compileJava, processResources, compileTestJava, processTestResources
 
@@ -193,7 +205,9 @@ subprojects { subProject ->
   task generateSources( type: Task )
   generateSources.dependsOn generateLoggingClasses
 
-  compileJava.dependsOn generateLoggingClasses
+  generateLoggingClasses.mustRunAfter processInputFiles
+
+  compileJava.dependsOn processInputFiles, generateLoggingClasses
   compileJava.options.define(compilerArgs: ["-proc:none", "-encoding", "UTF-8", "-Xlint:deprecation"])
   compileTestJava.options.define(compilerArgs: ["-proc:none", "-encoding", "UTF-8", "-Xlint:deprecation"])
 
