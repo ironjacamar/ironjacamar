@@ -23,9 +23,15 @@ package org.ironjacamar.core.connectionmanager;
 
 import org.ironjacamar.core.api.connectionmanager.ConnectionManagerConfiguration;
 import org.ironjacamar.core.api.connectionmanager.ccm.CachedConnectionManager;
+import org.ironjacamar.core.api.connectionmanager.pool.FlushMode;
 import org.ironjacamar.core.connectionmanager.pool.Pool;
+import org.ironjacamar.core.spi.graceful.GracefulCallback;
 import org.ironjacamar.core.spi.security.SubjectFactory;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.resource.ResourceException;
@@ -77,6 +83,15 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    /** Supports lazy association */
    private Boolean supportsLazyAssociation;
    
+   /** Scheduled executor for graceful shutdown */
+   private ScheduledExecutorService scheduledExecutorService;
+
+   /** Graceful job */
+   private ScheduledFuture scheduledGraceful;
+
+   /** Graceful call back */
+   private GracefulCallback gracefulCallback;
+
    /**
     * Constructor
     *
@@ -94,6 +109,9 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       this.pool = null;
       this.subjectFactory = null;
       this.supportsLazyAssociation = null;
+      this.scheduledExecutorService = null;
+      this.scheduledGraceful = null;
+      this.gracefulCallback = null;
    }
 
    /**
@@ -156,12 +174,139 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    /**
     * {@inheritDoc}
     */
+   public boolean cancelShutdown()
+   {
+      if (scheduledGraceful != null)
+      {
+         boolean result = scheduledGraceful.cancel(false);
+
+         if (result)
+         {
+            shutdown.set(false);
+
+            if (gracefulCallback != null)
+               gracefulCallback.cancel();
+
+            if (pool != null)
+               pool.prefill();
+
+            scheduledGraceful = null;
+            gracefulCallback = null;
+         }
+         else
+         {
+            return false;
+         }
+      }
+      else if (shutdown.get())
+      {
+         shutdown.set(false);
+
+         if (gracefulCallback != null)
+            gracefulCallback.cancel();
+
+         if (pool != null)
+            pool.prefill();
+
+         gracefulCallback = null;
+      }
+      else
+      {
+         return false;
+      }
+
+      return true;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void prepareShutdown()
+   {
+      prepareShutdown(0, null);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void prepareShutdown(GracefulCallback cb)
+   {
+      prepareShutdown(0, cb);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void prepareShutdown(int seconds)
+   {
+      prepareShutdown(seconds, null);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void prepareShutdown(int seconds, GracefulCallback cb)
+   {
+      shutdown.set(true);
+
+      if (gracefulCallback == null) 
+         gracefulCallback = cb;
+
+      if (pool != null)
+         pool.flush(FlushMode.GRACEFULLY);
+
+      if (seconds > 0)
+      {
+         if (scheduledGraceful == null)
+         {
+            if (scheduledExecutorService == null)
+               scheduledExecutorService = Executors.newScheduledThreadPool(1);
+
+            scheduledGraceful =
+               scheduledExecutorService.schedule(new ConnectionManagerShutdown(this), seconds, TimeUnit.SECONDS);
+         }
+      }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public int getDelay()
+   {
+      if (scheduledGraceful != null)
+         return (int)scheduledGraceful.getDelay(TimeUnit.SECONDS);
+
+      if (shutdown.get())
+         return Integer.MIN_VALUE;
+      
+      return Integer.MAX_VALUE;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public synchronized void shutdown()
    {
       shutdown.set(true);
 
       if (pool != null)
          pool.shutdown();
+
+      if (scheduledExecutorService != null)
+      {
+         if (scheduledGraceful != null && !scheduledGraceful.isDone())
+            scheduledGraceful.cancel(true);
+
+         scheduledGraceful = null;
+         scheduledExecutorService.shutdownNow();
+         scheduledExecutorService = null;
+      }
+
+      if (gracefulCallback != null)
+      {
+         gracefulCallback.done();
+         gracefulCallback = null;
+      }
    }
 
    /**

@@ -25,6 +25,7 @@ import org.ironjacamar.core.api.connectionmanager.ConnectionManagerConfiguration
 import org.ironjacamar.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
 import org.ironjacamar.core.connectionmanager.pool.Pool;
+import org.ironjacamar.core.spi.graceful.GracefulShutdown;
 import org.ironjacamar.core.spi.security.SubjectFactory;
 
 import javax.resource.ResourceException;
@@ -35,7 +36,8 @@ import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
  * The internal connection manager API
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface ConnectionManager extends org.ironjacamar.core.api.connectionmanager.ConnectionManager
+public interface ConnectionManager extends org.ironjacamar.core.api.connectionmanager.ConnectionManager,
+                                           GracefulShutdown
 {
    /**
     * Get the cached connection manager
