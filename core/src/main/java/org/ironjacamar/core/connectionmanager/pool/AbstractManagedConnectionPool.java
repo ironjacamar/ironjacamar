@@ -21,6 +21,7 @@
 
 package org.ironjacamar.core.connectionmanager.pool;
 
+import org.ironjacamar.core.CoreLogger;
 import org.ironjacamar.core.connectionmanager.Credential;
 import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
 
@@ -44,6 +45,9 @@ import javax.resource.spi.ValidatingManagedConnectionFactory;
  */
 public abstract class AbstractManagedConnectionPool implements ManagedConnectionPool
 {
+   /** The logger */
+   protected CoreLogger log;
+
    /** The pool */
    protected Pool pool;
 
@@ -63,9 +67,10 @@ public abstract class AbstractManagedConnectionPool implements ManagedConnection
     */
    public AbstractManagedConnectionPool(Pool pool, Credential credential)
    {
+      this.log = pool.getLogger();
       this.pool = pool;
       this.credential = credential;
-      poolIsFifo = pool.isFIFO() && credential.equals(pool.getPrefillCredential());
+      this.poolIsFifo = pool.isFIFO() && credential.equals(pool.getPrefillCredential());
       this.lastIdleCheck = System.currentTimeMillis();
    }
 
@@ -204,5 +209,24 @@ public abstract class AbstractManagedConnectionPool implements ManagedConnection
       }
 
       return null;
+   }
+
+   /**
+    * Get count
+    * @param type The type
+    * @param listeners The listeners
+    * @return The value
+    */
+   protected int getCount(int type, Collection<ConnectionListener> listeners)
+   {
+      int count = 0;
+
+      for (ConnectionListener cl : listeners)
+      {
+         if (cl.getState() == type)
+            count++;
+      }
+
+      return count;
    }
 }

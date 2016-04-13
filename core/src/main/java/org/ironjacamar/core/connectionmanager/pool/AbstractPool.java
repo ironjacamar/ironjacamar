@@ -24,6 +24,7 @@ package org.ironjacamar.core.connectionmanager.pool;
 import org.ironjacamar.common.api.metadata.common.FlushStrategy;
 import org.ironjacamar.core.api.connectionmanager.pool.FlushMode;
 import org.ironjacamar.core.api.connectionmanager.pool.PoolConfiguration;
+import org.ironjacamar.core.api.connectionmanager.pool.PoolStatistics;
 import org.ironjacamar.core.connectionmanager.ConnectionManager;
 import org.ironjacamar.core.connectionmanager.Credential;
 import org.ironjacamar.core.connectionmanager.TransactionalConnectionManager;
@@ -93,6 +94,10 @@ public abstract class AbstractPool implements Pool
    /** The capacity */
    private Capacity capacity;
 
+   /**
+    * The statistics
+    */
+   protected PoolStatisticsImpl statistics;
 
    /**
     * The janitor
@@ -111,7 +116,8 @@ public abstract class AbstractPool implements Pool
       this.poolConfiguration = pc;
       this.pools = new ConcurrentHashMap<Credential, ManagedConnectionPool>();
       this.transactionMap = new ConcurrentHashMap<Object, Map<ManagedConnectionPool, ConnectionListener>>();
-      this.semaphore = new Semaphore(poolConfiguration.getMaxSize());
+      this.statistics = new PoolStatisticsImpl(poolConfiguration.getMaxSize());
+      this.semaphore = new Semaphore(poolConfiguration.getMaxSize(), statistics);
       this.flushStrategy = poolConfiguration.getFlushStrategy();
       this.capacity = null;
       this.janitor = null;
@@ -139,6 +145,22 @@ public abstract class AbstractPool implements Pool
    public Semaphore getPermits()
    {
       return semaphore;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public PoolStatistics getStatistics()
+   {
+      return statistics;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public PoolStatisticsImpl getInternalStatistics()
+   {
+      return statistics;
    }
 
    /**
@@ -363,18 +385,18 @@ public abstract class AbstractPool implements Pool
             ConnectableResource cr = (ConnectableResource) mc;
 
             xaResource = txCM.getTransactionIntegration()
-                  .createConnectableLocalXAResource(cm, eisProductName, eisProductVersion, jndiName, cr, null);
+                  .createConnectableLocalXAResource(cm, eisProductName, eisProductVersion, jndiName, cr, statistics);
          }
          else if (txCM.getTransactionIntegration().isConnectableResource(mc))
          {
             xaResource = txCM.getTransactionIntegration()
-                  .createConnectableLocalXAResource(cm, eisProductName, eisProductVersion, jndiName, mc, null);
+                  .createConnectableLocalXAResource(cm, eisProductName, eisProductVersion, jndiName, mc, statistics);
          }
       }
 
       if (xaResource == null)
          xaResource = txCM.getTransactionIntegration()
-               .createLocalXAResource(cm, eisProductName, eisProductVersion, jndiName, null);
+               .createLocalXAResource(cm, eisProductName, eisProductVersion, jndiName, statistics);
 
       return xaResource;
    }
@@ -426,13 +448,13 @@ public abstract class AbstractPool implements Pool
 
                xaResource = txCM.getTransactionIntegration()
                      .createConnectableXAResourceWrapper(mc.getXAResource(), padXid, isSameRMOverride, eisProductName,
-                           eisProductVersion, jndiName, cr, null);
+                           eisProductVersion, jndiName, cr, statistics);
             }
             else if (txCM.getTransactionIntegration().isConnectableResource(mc))
             {
                xaResource = txCM.getTransactionIntegration()
                      .createConnectableXAResourceWrapper(mc.getXAResource(), padXid, isSameRMOverride, eisProductName,
-                           eisProductVersion, jndiName, mc, null);
+                           eisProductVersion, jndiName, mc, statistics);
             }
          }
 
@@ -446,7 +468,7 @@ public abstract class AbstractPool implements Pool
 
                xaResource = txCM.getTransactionIntegration()
                      .createXAResourceWrapper(xar, padXid, isSameRMOverride, eisProductName, eisProductVersion,
-                           jndiName, firstResource, null);
+                           jndiName, firstResource, statistics);
             }
             else
             {

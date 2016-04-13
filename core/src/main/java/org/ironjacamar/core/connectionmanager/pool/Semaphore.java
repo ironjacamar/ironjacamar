@@ -34,16 +34,18 @@ public class Semaphore extends java.util.concurrent.Semaphore
    /** Serial version uid */
    private static final long serialVersionUID = 1L;
 
-   /** Max size */
-   private int maxSize;
+   /** Statistics */
+   private PoolStatisticsImpl statistics;
 
    /**
     * Constructor
-    * @param maxSize The maxumum size
+    * @param maxSize The maximum size
+    * @param statistics The statistics
     */
-   public Semaphore(int maxSize)
+   public Semaphore(int maxSize, PoolStatisticsImpl statistics)
    {
       super(maxSize, true);
+      this.statistics = statistics;
    }
 
    /**
@@ -52,16 +54,10 @@ public class Semaphore extends java.util.concurrent.Semaphore
    @Override
    public boolean tryAcquire(long timeout, TimeUnit unit) throws InterruptedException
    {
-      return super.tryAcquire(timeout, unit);
-   }
+      if (statistics.isEnabled())
+         statistics.setMaxWaitCount(getQueueLength());
 
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public void release()
-   {
-      super.release();
+      return super.tryAcquire(timeout, unit);
    }
 
    /**

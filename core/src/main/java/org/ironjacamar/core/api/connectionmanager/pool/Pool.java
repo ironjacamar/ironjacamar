@@ -37,6 +37,12 @@ public interface Pool
    public String getType();
 
    /**
+    * Get the statistics
+    * @return The value
+    */
+   public PoolStatistics getStatistics();
+
+   /**
     * Get the janitor
     * @return The value
     */

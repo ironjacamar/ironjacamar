@@ -56,8 +56,37 @@ public interface ConnectionListener extends org.ironjacamar.core.api.connectionm
    /** ZOMBIE state */
    public int ZOMBIE = 7;
 
-   /** ZOMBIE state */
+   /** FLUSH state */
    public int FLUSH = 8;
+
+   /**
+    * Get the state description
+    * @return The description
+    */
+   public default String getStateDescription()
+   {
+      switch (getState())
+      {
+         case FREE:
+            return "Free";
+         case IN_USE:
+            return "InUse";
+         case DESTROY:
+            return "Destroy";
+         case DESTROYED:
+            return "Destroyed";
+         case TO_POOL:
+            return "ToPool";
+         case VALIDATION:
+            return "Validation";
+         case ZOMBIE:
+            return "Zombie";
+         case FLUSH:
+            return "Flush";
+         default:
+            return "Unknown";
+      }
+   }
 
    /**
     * Change the state of the connection listener

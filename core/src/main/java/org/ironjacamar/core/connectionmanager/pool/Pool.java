@@ -22,6 +22,7 @@
 package org.ironjacamar.core.connectionmanager.pool;
 
 import org.ironjacamar.common.api.metadata.common.FlushStrategy;
+import org.ironjacamar.core.CoreLogger;
 import org.ironjacamar.core.api.connectionmanager.pool.PoolConfiguration;
 import org.ironjacamar.core.connectionmanager.ConnectionManager;
 import org.ironjacamar.core.connectionmanager.Credential;
@@ -37,6 +38,12 @@ import javax.resource.spi.ManagedConnection;
 public interface Pool extends org.ironjacamar.core.api.connectionmanager.pool.Pool
 {
    /**
+    * Get the logger
+    * @return The value
+    */
+   public CoreLogger getLogger();
+
+   /**
     * Get the connection manager
     * @return The value
     */
@@ -47,6 +54,12 @@ public interface Pool extends org.ironjacamar.core.api.connectionmanager.pool.Po
     * @return The configuration
     */
    public PoolConfiguration getConfiguration();
+
+   /**
+    * Get the statistics implementation instance
+    * @return The value
+    */
+   public PoolStatisticsImpl getInternalStatistics();
 
    /**
     * Get the semaphore

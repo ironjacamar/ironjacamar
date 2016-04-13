@@ -31,6 +31,7 @@ import org.ironjacamar.core.connectionmanager.pool.CapacityRequest;
 import org.ironjacamar.core.connectionmanager.pool.ConnectionValidator;
 import org.ironjacamar.core.connectionmanager.pool.FillRequest;
 import org.ironjacamar.core.connectionmanager.pool.IdleConnectionRemover;
+import org.ironjacamar.core.connectionmanager.pool.ManagedConnectionPoolUtility;
 import org.ironjacamar.core.connectionmanager.pool.PoolFiller;
 import org.ironjacamar.core.connectionmanager.pool.capacity.DefaultCapacity;
 import org.ironjacamar.core.connectionmanager.pool.capacity.TimedOutDecrementer;
@@ -46,6 +47,7 @@ import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.ValidatingManagedConnectionFactory;
 
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.DESTROY;
+import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.DESTROYED;
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.FLUSH;
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.FREE;
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.IN_USE;
@@ -106,43 +108,66 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
     */
    public ConnectionListener getConnectionListener() throws ResourceException
    {
+      if (pool.getLogger().isTraceEnabled())
+      {
+         synchronized (this)
+         {
+            pool.getLogger().trace(ManagedConnectionPoolUtility.fullDetails(this,
+               "getConnectionListener()",
+               pool.getConnectionManager().getManagedConnectionFactory(),
+               pool.getConnectionManager(),
+               pool, pool.getConfiguration(),
+               listeners, pool.getInternalStatistics(),
+               credential.getSubject(),
+               credential.getConnectionRequestInfo()));
+         }
+      }
+      else if (pool.getLogger().isDebugEnabled())
+      {
+         pool.getLogger().debug(ManagedConnectionPoolUtility.details("getConnectionListener()",
+                                                                     pool.getConfiguration().getId(),
+                                                                     getCount(IN_USE, listeners),
+                                                                     pool.getConfiguration().getMaxSize()));
 
+      }
+      
       long timestamp = System.currentTimeMillis();
       while (System.currentTimeMillis() - timestamp <= pool.getConfiguration().getBlockingTimeout())
       {
-         final Iterator<ConnectionListener> listenersIterator;
-         if (poolIsFifo)
-         {
-            //use FIFO
-            listenersIterator = listeners.iterator();
-         }
-         else
-         {
-            //use FILO because !pool.isFIFO or because credential!=prefillCredential and TimedOutDecrementer
-            //is forced as decrementer
-            listenersIterator = listeners.descendingIterator();
-         }
+         Iterator<ConnectionListener> listenersIterator =
+            poolIsFifo ? listeners.iterator() : listeners.descendingIterator();
+
          while (listenersIterator.hasNext())
          {
             ConnectionListener cl = listenersIterator.next();
             if (cl.changeState(FREE, VALIDATION))
             {
+               if (pool.getInternalStatistics().isEnabled())
+                  pool.getInternalStatistics().deltaTotalBlockingTime(System.currentTimeMillis() - timestamp);
+
                if (pool.getConfiguration().isValidateOnMatch())
                {
                   ConnectionListener result = validateConnectionListener(listeners, cl, IN_USE);
                   if (result != null)
                   {
-                     result.fromPool();
-
                      if (Tracer.isEnabled())
                         Tracer.getConnectionListener(pool.getConfiguration().getId(),
-                                                     this, cl, true, false,
+                                                     this, result, true, false,
                                                      Tracer.isRecordCallstacks() ?
                                                      new Throwable("CALLSTACK") : null);
 
                      if (pool.getJanitor().isRecording())
                         pool.getJanitor().registerConnectionListener(result);
 
+                     result.fromPool();
+
+                     if (pool.getInternalStatistics().isEnabled())
+                     {
+                        pool.getInternalStatistics().deltaInUseCount(1);
+                        pool.getInternalStatistics().deltaTotalGetTime(result.getFromPool() - timestamp);
+                        pool.getInternalStatistics().deltaTotalPoolTime(result.getFromPool() - result.getToPool());
+                     }
+                     
                      return result;
                   }
                   else
@@ -162,8 +187,6 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
                {
                   if (cl.changeState(VALIDATION, IN_USE))
                   {
-                     cl.fromPool();
-
                      if (Tracer.isEnabled())
                         Tracer.getConnectionListener(pool.getConfiguration().getId(),
                                                      this, cl, true, false,
@@ -173,6 +196,15 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
                      if (pool.getJanitor().isRecording())
                         pool.getJanitor().registerConnectionListener(cl);
 
+                     cl.fromPool();
+
+                     if (pool.getInternalStatistics().isEnabled())
+                     {
+                        pool.getInternalStatistics().deltaInUseCount(1);
+                        pool.getInternalStatistics().deltaTotalGetTime(cl.getFromPool() - timestamp);
+                        pool.getInternalStatistics().deltaTotalPoolTime(cl.getFromPool() - cl.getToPool());
+                     }
+                     
                      return cl;
                   }
                   else
@@ -218,12 +250,17 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
                   CapacityFiller.schedule(new CapacityRequest(this));
             }
          }
-
-
-
+         else
+         {
+            if (pool.getInternalStatistics().isEnabled())
+               pool.getInternalStatistics().deltaWaitCount();
+         }
 
          Thread.yield();
       }
+
+      if (pool.getInternalStatistics().isEnabled())
+         pool.getInternalStatistics().deltaBlockingFailureCount();
 
       throw new ResourceException("No ConnectionListener");
    }
@@ -233,8 +270,37 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
     */
    public void returnConnectionListener(ConnectionListener cl, boolean kill) throws ResourceException
    {
+      if (pool.getLogger().isTraceEnabled())
+      {
+         synchronized (this)
+         {
+            pool.getLogger().trace(ManagedConnectionPoolUtility.fullDetails(this,
+               "returnConnectionListener(" + Integer.toHexString(System.identityHashCode(cl)) + ", " + kill + ")",
+               pool.getConnectionManager().getManagedConnectionFactory(),
+               pool.getConnectionManager(),
+               pool, pool.getConfiguration(),
+               listeners, pool.getInternalStatistics(),
+               credential.getSubject(),
+               credential.getConnectionRequestInfo()));
+         }
+      }
+      else if (pool.getLogger().isDebugEnabled())
+      {
+         pool.getLogger().debug(ManagedConnectionPoolUtility.details(
+            "returnConnectionListener(" + Integer.toHexString(System.identityHashCode(cl)) + ", " + kill + ")",
+            pool.getConfiguration().getId(),
+            getCount(IN_USE, listeners),
+            pool.getConfiguration().getMaxSize()));
+      }
+
       if (pool.getJanitor().isRecording())
          pool.getJanitor().unregisterConnectionListener(cl);
+
+      if (cl.getState() != DESTROYED && pool.getInternalStatistics().isEnabled())
+      {
+         pool.getInternalStatistics().deltaInUseCount(-1);
+         pool.getInternalStatistics().deltaTotalUsageTime(System.currentTimeMillis() - cl.getFromPool());
+      }
 
       if (!kill)
       {
@@ -258,7 +324,7 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
          }
       }
 
-      if (kill)
+      if (kill && cl.getState() != DESTROYED)
       {
          try
          {
@@ -414,13 +480,31 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
 
       //TODO: trace and debug here
 
+      if (pool.getLogger().isTraceEnabled())
+      {
+         synchronized (this)
+         {
+            pool.getLogger().trace(ManagedConnectionPoolUtility.fullDetails(this,
+               "fillTo(" + size + ")",
+               pool.getConnectionManager().getManagedConnectionFactory(),
+               pool.getConnectionManager(),
+               pool, pool.getConfiguration(),
+               listeners, pool.getInternalStatistics(),
+               credential.getSubject(),
+               credential.getConnectionRequestInfo()));
+         }
+      }
+      else if (pool.getLogger().isDebugEnabled())
+      {
+         pool.getLogger().debug(ManagedConnectionPoolUtility.details(
+            "fillTo(" + size + ")",
+            pool.getConfiguration().getId(),
+            getCount(IN_USE, listeners),
+            pool.getConfiguration().getMaxSize()));
+      }
+
       while (!pool.isFull())
       {
-         // Get a permit - avoids a race when the pool is nearly full
-         // Also avoids unnessary fill checking when all connections are checked out
-
-         //TODO:statistics
-
          if (pool.isShutdown())
          {
             return;
@@ -551,27 +635,48 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
          decrementer = DefaultCapacity.DEFAULT_DECREMENTER;
       }
 
-      synchronized (this)
+      if (TimedOutDecrementer.class.getName().equals(decrementer.getClass().getName()) ||
+          TimedOutFIFODecrementer.class.getName().equals(decrementer.getClass().getName()))
       {
-         if (TimedOutDecrementer.class.getName().equals(decrementer.getClass().getName())
-               || TimedOutFIFODecrementer.class.getName().equals(decrementer.getClass().getName()))
-         {
-            // Allow through each minute
-            if (now < (lastIdleCheck + 60000L))
-               return;
-         }
-         else
-         {
-            // Otherwise, strict check
-            if (now < (lastIdleCheck + timeoutSetting))
-               return;
-         }
-
-         lastIdleCheck = now;
+         // Allow through each minute
+         if (now < (lastIdleCheck + 60000L))
+            return;
       }
+      else
+      {
+         // Otherwise, strict check
+         if (now < (lastIdleCheck + timeoutSetting))
+            return;
+      }
+
+      lastIdleCheck = now;
 
       long timeout = now - timeoutSetting;
       int destroyed = 0;
+
+      if (pool.getLogger().isTraceEnabled())
+      {
+         synchronized (this)
+         {
+            pool.getLogger().trace(ManagedConnectionPoolUtility.fullDetails(this,
+               "removeIdleConnections(" + timeout + ")",
+               pool.getConnectionManager().getManagedConnectionFactory(),
+               pool.getConnectionManager(),
+               pool, pool.getConfiguration(),
+               listeners, pool.getInternalStatistics(),
+               credential.getSubject(),
+               credential.getConnectionRequestInfo()));
+         }
+      }
+      else if (pool.getLogger().isDebugEnabled())
+      {
+         pool.getLogger().debug(ManagedConnectionPoolUtility.details(
+            "removeIdleConnections(" + timeout + ")",
+            pool.getConfiguration().getId(),
+            getCount(IN_USE, listeners),
+            pool.getConfiguration().getMaxSize()));
+      }
+
       for (ConnectionListener cl : listeners)
       {
          if (cl.changeState(FREE, VALIDATION))
@@ -586,6 +691,9 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
                                                    Tracer.isRecordCallstacks() ?
                                                    new Throwable("CALLSTACK") : null);
                      
+               if (pool.getInternalStatistics().isEnabled())
+                  pool.getInternalStatistics().deltaTimedOut();
+                     
                destroyAndRemoveConnectionListener(cl, listeners);
                destroyed++;
             }
@@ -599,6 +707,9 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
                                                       false, false,
                                                       Tracer.isRecordCallstacks() ?
                                                       new Throwable("CALLSTACK") : null);
+                     
+                  if (pool.getInternalStatistics().isEnabled())
+                     pool.getInternalStatistics().deltaTimedOut();
                      
                   destroyAndRemoveConnectionListener(cl, listeners);
                   destroyed++;

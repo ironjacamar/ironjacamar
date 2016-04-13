@@ -21,6 +21,7 @@
 
 package org.ironjacamar.core.connectionmanager.pool.dflt;
 
+import org.ironjacamar.core.CoreLogger;
 import org.ironjacamar.core.api.connectionmanager.pool.PoolConfiguration;
 import org.ironjacamar.core.connectionmanager.ConnectionManager;
 import org.ironjacamar.core.connectionmanager.Credential;
@@ -37,6 +38,8 @@ import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 
+import org.jboss.logging.Logger;
+
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.DESTROYED;
 
 /**
@@ -45,6 +48,10 @@ import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener
  */
 public class DefaultPool extends AbstractPool
 {
+   /** The logger */
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, 
+                                                           DefaultPool.class.getName());
+
    /**
     * Constructor
     * @param cm The connection manager
@@ -66,6 +73,14 @@ public class DefaultPool extends AbstractPool
    /**
     * {@inheritDoc}
     */
+   public CoreLogger getLogger()
+   {
+      return log;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public ConnectionListener createConnectionListener(Credential credential, ManagedConnectionPool mcp)
       throws ResourceException
    {
@@ -73,9 +88,17 @@ public class DefaultPool extends AbstractPool
       {
          if (semaphore.tryAcquire(poolConfiguration.getBlockingTimeout(), TimeUnit.MILLISECONDS))
          {
+            long start = getInternalStatistics().isEnabled() ? System.currentTimeMillis() : 0L;
+
             ManagedConnection mc =
                cm.getManagedConnectionFactory().createManagedConnection(credential.getSubject(),
                                                                         credential.getConnectionRequestInfo());
+
+            if (getInternalStatistics().isEnabled())
+            {
+               getInternalStatistics().deltaCreatedCount();
+               getInternalStatistics().deltaTotalCreationTime(System.currentTimeMillis() - start);
+            }
 
             if (cm.getTransactionSupport() == TransactionSupportLevel.NoTransaction)
             {
@@ -111,6 +134,9 @@ public class DefaultPool extends AbstractPool
     */
    public void destroyConnectionListener(ConnectionListener cl) throws ResourceException
    {
+      if (getInternalStatistics().isEnabled())
+         getInternalStatistics().deltaDestroyedCount();
+
       try
       {
          cl.getManagedConnection().destroy();
