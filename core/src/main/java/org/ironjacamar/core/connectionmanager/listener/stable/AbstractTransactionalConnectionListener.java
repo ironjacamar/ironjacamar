@@ -212,7 +212,7 @@ public abstract class AbstractTransactionalConnectionListener extends
             transactionSynchronization = null;
             enlisted = false;
 
-            if (connectionHandles.size() == 0)
+            if (connectionHandles.isEmpty())
             {
                cm.returnConnectionListener(AbstractTransactionalConnectionListener.this, false);
             }

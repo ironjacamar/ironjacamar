@@ -189,7 +189,7 @@ public class IdleConnectionRemover
       {
          registeredPools.values().remove(mcp);
       
-         if (registeredPools.size() == 0) 
+         if (registeredPools.isEmpty()) 
             interval = Long.MAX_VALUE;
       }
    }

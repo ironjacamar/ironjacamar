@@ -252,14 +252,14 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                      break;
                   }
                   case XML.ELEMENT_DESCRIPTION : {
-                     if (description.size() > 0)
+                     if (!description.isEmpty())
                         throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                      else
                         description.add(elementAsLocalizedXsdString(reader));
                      break;
                   }
                   case XML.ELEMENT_DISPLAY_NAME : {
-                     if (displayName.size() > 0)
+                     if (!displayName.isEmpty())
                         throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                      else
                         displayName.add(elementAsLocalizedXsdString(reader));

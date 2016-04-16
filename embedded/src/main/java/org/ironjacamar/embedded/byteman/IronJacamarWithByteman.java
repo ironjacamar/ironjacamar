@@ -68,7 +68,7 @@ public class IronJacamarWithByteman extends IronJacamar
          scripts.add(createScriptText(scripts.size(), rule));
       }
 
-      if (scripts.size() > 0)
+      if (!scripts.isEmpty())
       {
          Submit submit = new Submit();
          String result = submit.addScripts(scripts);
@@ -98,7 +98,7 @@ public class IronJacamarWithByteman extends IronJacamar
          scripts.add(createScriptText(scripts.size(), rule));
       }
 
-      if (scripts.size() > 0)
+      if (!scripts.isEmpty())
       {
          Submit submit = new Submit();
          String result = submit.deleteScripts(scripts);

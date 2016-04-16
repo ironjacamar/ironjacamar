@@ -51,14 +51,14 @@ public class AllChecks extends Condition
          if (dr == null)
             throw new ConditionException("DeploymentRepository is null");
 
-         if (dr.getDeployments().size() > 0)
+         if (!dr.getDeployments().isEmpty())
             throw new ConditionException("DeploymentRepository contains deployments: " + dr.getDeployments());
          MetadataRepository mr = resolver.lookup("MetadataRepository", MetadataRepository.class);
 
          if (mr == null)
             throw new ConditionException("MetadataRepository is null");
 
-         if (mr.getMetadata().size() > 0)
+         if (!mr.getMetadata().isEmpty())
             throw new ConditionException("MetadataRepository contains metadata: " + mr.getMetadata());
 
          QueueExecutor srThread = resolver.lookup("ShortRunningThreadPool", QueueExecutor.class);

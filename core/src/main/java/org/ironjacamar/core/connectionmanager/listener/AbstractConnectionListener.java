@@ -157,7 +157,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
          }
       }
 
-      if (connectionHandles.size() == 0 && !isEnlisted())
+      if (connectionHandles.isEmpty() && !isEnlisted())
          cm.returnConnectionListener(this, false);
    }
    

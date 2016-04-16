@@ -364,7 +364,7 @@ public class ActivationImpl extends AbstractMetadata implements Activation
          sb.append("</").append(XML.ELEMENT_ARCHIVE).append(">");
       }
 
-      if (beanValidationGroups != null && beanValidationGroups.size() > 0)
+      if (beanValidationGroups != null && !beanValidationGroups.isEmpty())
       {
          sb.append("<").append(XML.ELEMENT_BEAN_VALIDATION_GROUPS).append(">");
          for (String bvg : beanValidationGroups)
@@ -383,7 +383,7 @@ public class ActivationImpl extends AbstractMetadata implements Activation
          sb.append("</").append(XML.ELEMENT_BOOTSTRAP_CONTEXT).append(">");
       }
 
-      if (configProperties != null && configProperties.size() > 0)
+      if (configProperties != null && !configProperties.isEmpty())
       {
          Iterator<Map.Entry<String, String>> it = configProperties.entrySet().iterator();
          while (it.hasNext())
@@ -409,7 +409,7 @@ public class ActivationImpl extends AbstractMetadata implements Activation
          sb.append(workmanager);
       }
 
-      if (connectionDefinitions != null && connectionDefinitions.size() > 0)
+      if (connectionDefinitions != null && !connectionDefinitions.isEmpty())
       {
          sb.append("<").append(XML.ELEMENT_CONNECTION_DEFINITIONS).append(">");
          for (ConnectionDefinition cd : connectionDefinitions)
@@ -419,7 +419,7 @@ public class ActivationImpl extends AbstractMetadata implements Activation
          sb.append("</").append(XML.ELEMENT_CONNECTION_DEFINITIONS).append(">");
       }
 
-      if (adminObjects != null && adminObjects.size() > 0)
+      if (adminObjects != null && !adminObjects.isEmpty())
       {
          sb.append("<").append(XML.ELEMENT_ADMIN_OBJECTS).append(">");
          for (AdminObject ao : adminObjects)

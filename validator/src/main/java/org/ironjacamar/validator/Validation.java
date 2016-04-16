@@ -233,10 +233,10 @@ public class Validation
          }
 
          List<Failure> classFailures = validator.validate(validateClasses);
-         if (classFailures != null && classFailures.size() > 0)
+         if (classFailures != null && !classFailures.isEmpty())
             failures.addAll(classFailures);
 
-         if (failures.size() > 0)
+         if (!failures.isEmpty())
          {
             if (report != null)
             {
@@ -343,7 +343,7 @@ public class Validation
       {
          List<ConnectionDefinition> cdMetas = cmd.getResourceadapter()
                .getOutboundResourceadapter().getConnectionDefinitions();
-         if (cdMetas.size() > 0)
+         if (!cdMetas.isEmpty())
          {
             for (ConnectionDefinition cdMeta : cdMetas)
             {
@@ -396,7 +396,7 @@ public class Validation
          List<MessageListener> mlMetas = cmd.getResourceadapter()
                .getInboundResourceadapter().getMessageadapter()
                .getMessagelisteners();
-         if (mlMetas.size() > 0)
+         if (!mlMetas.isEmpty())
          {
             for (MessageListener mlMeta : mlMetas)
             {
@@ -405,7 +405,7 @@ public class Validation
                {
 
                   if (mlMeta.getActivationspec().getConfigProperties() != null &&
-                      mlMeta.getActivationspec().getConfigProperties().size() > 0)
+                          !mlMeta.getActivationspec().getConfigProperties().isEmpty())
                   {
                      try
                      {
@@ -450,7 +450,7 @@ public class Validation
           cmd.getResourceadapter().getAdminObjects() != null)
       {
          List<AdminObject> aoMetas = cmd.getResourceadapter().getAdminObjects();
-         if (aoMetas.size() > 0)
+         if (!aoMetas.isEmpty())
          {
             for (AdminObject aoMeta : aoMetas)
             {

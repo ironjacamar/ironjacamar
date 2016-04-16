@@ -630,7 +630,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
 
          cl.removeConnection(connection);
 
-         if (cl.getConnections().size() == 0)
+         if (cl.getConnections().isEmpty())
          {
             pool.delist(cl);
             returnConnectionListener(cl, false);

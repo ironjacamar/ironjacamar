@@ -71,7 +71,7 @@ public class CapacityFactory
 
          if (incrementer != null)
          {
-            if (metadata.getIncrementer().getConfigPropertiesMap().size() > 0)
+            if (!metadata.getIncrementer().getConfigPropertiesMap().isEmpty())
             {
                Injection injector = new Injection();
 
@@ -107,7 +107,7 @@ public class CapacityFactory
 
          if (decrementer != null)
          {
-            if (metadata.getDecrementer().getConfigPropertiesMap().size() > 0)
+            if (!metadata.getDecrementer().getConfigPropertiesMap().isEmpty())
             {
                Injection injector = new Injection();
 
@@ -137,7 +137,7 @@ public class CapacityFactory
             {
                decrementer = loadDecrementer(metadata.getDecrementer(), classLoaderPlugin);
 
-               if (metadata.getDecrementer().getConfigPropertiesMap().size() > 0)
+               if (!metadata.getDecrementer().getConfigPropertiesMap().isEmpty())
                {
                   Injection injector = new Injection();
 

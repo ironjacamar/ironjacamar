@@ -61,7 +61,7 @@ public class AOConfigProperties implements Rule
           v.getClazz() != null)
       {
          ValidateClass vo = (ValidateClass)v;
-         if (vo.getConfigProperties() != null && vo.getConfigProperties().size() > 0)
+         if (vo.getConfigProperties() != null && !vo.getConfigProperties().isEmpty())
          {
             return ConfigPropertiesHelper.validateConfigPropertiesType(vo, SECTION,
                     rb.getString("ao.AOConfigProperties"));

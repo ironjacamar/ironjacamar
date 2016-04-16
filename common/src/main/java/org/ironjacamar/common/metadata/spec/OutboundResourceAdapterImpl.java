@@ -191,7 +191,7 @@ public class OutboundResourceAdapterImpl extends AbstractMetadata implements Out
     */
    public boolean validationAsBoolean()
    {
-      if (this.getConnectionDefinitions() == null || this.getConnectionDefinitions().size() == 0)
+      if (this.getConnectionDefinitions() == null || this.getConnectionDefinitions().isEmpty())
          return false;
 
       ConnectionDefinition cdm = this.getConnectionDefinitions().get(0);

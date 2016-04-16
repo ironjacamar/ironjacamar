@@ -217,7 +217,7 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
                {
                   return new ActivationImpl(id, archive, transactionSupport, connectionDefinitions, adminObjects,
                                             configProperties, beanValidationGroups, bootstrapContext, workmanager,
-                                            expressions.size() > 0 ? expressions : null);
+                          !expressions.isEmpty() ? expressions : null);
                }
                else
                {

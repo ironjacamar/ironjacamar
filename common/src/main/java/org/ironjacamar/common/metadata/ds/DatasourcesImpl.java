@@ -168,7 +168,7 @@ public class DatasourcesImpl extends AbstractMetadata implements DataSources
       sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
       sb.append("<datasources>");
 
-      if (datasource != null && datasource.size() > 0)
+      if (datasource != null && !datasource.isEmpty())
       {
          for (DataSource ds : datasource)
          {
@@ -176,7 +176,7 @@ public class DatasourcesImpl extends AbstractMetadata implements DataSources
          }
       }
 
-      if (xaDataSource != null && xaDataSource.size() > 0)
+      if (xaDataSource != null && !xaDataSource.isEmpty())
       {
          for (XaDataSource xads : xaDataSource)
          {
@@ -184,7 +184,7 @@ public class DatasourcesImpl extends AbstractMetadata implements DataSources
          }
       }
 
-      if (drivers != null && drivers.size() > 0)
+      if (drivers != null && !drivers.isEmpty())
       {
          sb.append("<").append(XML.ELEMENT_DRIVERS).append(">");
 

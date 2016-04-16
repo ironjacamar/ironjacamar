@@ -105,7 +105,7 @@ public class AnnotationRepositoryImpl implements AnnotationRepository
          }
       }
       annotations.trimToSize();
-      if (annotations.size() == 0)
+      if (annotations.isEmpty())
       {
          return null;
       }

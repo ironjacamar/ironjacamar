@@ -242,7 +242,7 @@ public class WorkManagerSecurityImpl extends AbstractMetadata implements WorkMan
          sb.append("</").append(XML.ELEMENT_DEFAULT_PRINCIPAL).append(">");
       }
 
-      if (defaultGroups != null && defaultGroups.size() > 0)
+      if (defaultGroups != null && !defaultGroups.isEmpty())
       {
          sb.append("<").append(XML.ELEMENT_DEFAULT_GROUPS).append(">");
          for (String group : defaultGroups)
@@ -254,11 +254,11 @@ public class WorkManagerSecurityImpl extends AbstractMetadata implements WorkMan
          sb.append("</").append(XML.ELEMENT_DEFAULT_GROUPS).append(">");
       }
 
-      if ((userMappings != null && userMappings.size() > 0) || (groupMappings != null && groupMappings.size() > 0))
+      if ((userMappings != null && !userMappings.isEmpty()) || (groupMappings != null && !groupMappings.isEmpty()))
       {
          sb.append("<").append(XML.ELEMENT_MAPPINGS).append(">");
 
-         if (userMappings != null && userMappings.size() > 0)
+         if (userMappings != null && !userMappings.isEmpty())
          {
             sb.append("<").append(XML.ELEMENT_USERS).append(">");
             
@@ -278,7 +278,7 @@ public class WorkManagerSecurityImpl extends AbstractMetadata implements WorkMan
             sb.append("</").append(XML.ELEMENT_USERS).append(">");
          }
 
-         if (groupMappings != null && groupMappings.size() > 0)
+         if (groupMappings != null && !groupMappings.isEmpty())
          {
             sb.append("<").append(XML.ELEMENT_GROUPS).append(">");
             

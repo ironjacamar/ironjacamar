@@ -276,7 +276,7 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
 
       sb.append(">");
 
-      if (xaDataSourceProperty != null && xaDataSourceProperty.size() > 0)
+      if (xaDataSourceProperty != null && !xaDataSourceProperty.isEmpty())
       {
          Iterator<Map.Entry<String, String>> it = xaDataSourceProperty.entrySet().iterator();
          while (it.hasNext())

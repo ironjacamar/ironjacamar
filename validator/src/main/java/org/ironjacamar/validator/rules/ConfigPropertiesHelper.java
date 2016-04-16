@@ -103,7 +103,7 @@ public class ConfigPropertiesHelper
          }
       }
 
-      if (failures.size() == 0)
+      if (failures.isEmpty())
          return null;
       return failures;
    }

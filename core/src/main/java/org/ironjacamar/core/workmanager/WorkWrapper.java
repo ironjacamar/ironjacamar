@@ -397,7 +397,7 @@ public class WorkWrapper implements Runnable
                   callbacks.add(gpc);
                }
 
-               if (callbacks.size() > 0)
+               if (!callbacks.isEmpty())
                {
                   Callback[] cb = new Callback[callbacks.size()];
                   cbh.handle(callbacks.toArray(cb));

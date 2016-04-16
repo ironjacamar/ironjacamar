@@ -106,7 +106,7 @@ public class Validator
     */
    public List<Failure> validate(List<Validate> objects)
    {
-      if (objects == null || objects.size() == 0)
+      if (objects == null || objects.isEmpty())
          return null;
 
       List<Rule> rules = extractRules(allRules);

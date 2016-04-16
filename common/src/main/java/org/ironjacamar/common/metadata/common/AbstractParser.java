@@ -380,7 +380,7 @@ public abstract class AbstractParser
                   case CommonXML.ELEMENT_POOL :
                      return new PoolImpl(type, janitor, minPoolSize, initialPoolSize, maxPoolSize, prefill,
                            flushStrategy, capacity,
-                           expressions.size() > 0 ? expressions : null);
+                             !expressions.isEmpty() ? expressions : null);
                   case CommonXML.ELEMENT_MAX_POOL_SIZE :
                   case CommonXML.ELEMENT_MIN_POOL_SIZE :
                   case CommonXML.ELEMENT_INITIAL_POOL_SIZE :
@@ -485,7 +485,7 @@ public abstract class AbstractParser
                            flushStrategy, capacity,
                            isSameRmOverride, padXid,
                            wrapXaDataSource,
-                           expressions.size() > 0 ? expressions : null);
+                             !expressions.isEmpty() ? expressions : null);
                   case CommonXML.ELEMENT_MAX_POOL_SIZE :
                   case CommonXML.ELEMENT_INITIAL_POOL_SIZE :
                   case CommonXML.ELEMENT_MIN_POOL_SIZE :
@@ -576,7 +576,7 @@ public abstract class AbstractParser
                {
                   case CommonXML.ELEMENT_SECURITY :
                      return new SecurityImpl(securityDomain,
-                           expressions.size() > 0 ? expressions : null);
+                             !expressions.isEmpty() ? expressions : null);
                   case CommonXML.ELEMENT_SECURITY_DOMAIN :
                      break;
                   default :
@@ -640,7 +640,7 @@ public abstract class AbstractParser
                   case CommonXML.ELEMENT_SECURITY :
                   case CommonXML.ELEMENT_RECOVERY_CREDENTIAL :
                      return new CredentialImpl(securityDomain,
-                        expressions.size() > 0 ? expressions : null);
+                             !expressions.isEmpty() ? expressions : null);
                   case CommonXML.ELEMENT_SECURITY_DOMAIN :
                      break;
                   default :
@@ -706,7 +706,7 @@ public abstract class AbstractParser
                {
                   case CommonXML.ELEMENT_RECOVERY :
                      return new RecoveryImpl(security, plugin, noRecovery,
-                        expressions.size() > 0 ? expressions : null);
+                             !expressions.isEmpty() ? expressions : null);
                   case CommonXML.ELEMENT_RECOVERY_CREDENTIAL :
                   case CommonXML.ELEMENT_RECOVERY_PLUGIN :
                      break;
@@ -791,7 +791,7 @@ public abstract class AbstractParser
                   }
 
                   return new ExtensionImpl(className, moduleName, moduleSlot, properties,
-                        expressions.size() > 0 ? expressions : null);
+                          !expressions.isEmpty() ? expressions : null);
                }
                else
                {
@@ -905,7 +905,7 @@ public abstract class AbstractParser
                   case CommonXML.ELEMENT_VALIDATION :
                      return new ValidationImpl(validateOnMatch, backgroundValidation, backgroundValidationMillis,
                         useFastFail,
-                        expressions.size() > 0 ? expressions : null);
+                             !expressions.isEmpty() ? expressions : null);
                   case CommonXML.ELEMENT_VALIDATE_ON_MATCH :
                   case CommonXML.ELEMENT_BACKGROUND_VALIDATION_MILLIS :
                   case CommonXML.ELEMENT_BACKGROUND_VALIDATION :
@@ -976,7 +976,7 @@ public abstract class AbstractParser
                   case CommonXML.ELEMENT_TIMEOUT :
                      return new TimeoutImpl(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry,
                            allocationRetryWaitMillis, xaResourceTimeout,
-                           expressions.size() > 0 ? expressions : null);
+                             !expressions.isEmpty() ? expressions : null);
                   case CommonXML.ELEMENT_ALLOCATION_RETRY_WAIT_MILLIS :
                   case CommonXML.ELEMENT_ALLOCATION_RETRY :
                   case CommonXML.ELEMENT_BLOCKING_TIMEOUT_MILLIS :
@@ -1066,7 +1066,7 @@ public abstract class AbstractParser
          writer.writeAttribute(CommonXML.ATTRIBUTE_MODULE_SLOT,
                e.getValue(CommonXML.ATTRIBUTE_MODULE_SLOT, e.getModuleSlot()));
 
-      if (e.getConfigPropertiesMap().size() > 0)
+      if (!e.getConfigPropertiesMap().isEmpty())
       {
          Iterator<Map.Entry<String, String>> it =
             e.getConfigPropertiesMap().entrySet().iterator();

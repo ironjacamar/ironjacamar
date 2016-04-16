@@ -59,7 +59,7 @@ class SecurityActions
       {
          Subject subject = subjectFactory.createSubject(domain);
          Set<PasswordCredential> s = getPasswordCredentials(subject);
-         if (s != null && s.size() > 0)
+         if (s != null && !s.isEmpty())
          {
             for (PasswordCredential pc : s)
             {
@@ -75,7 +75,7 @@ class SecurityActions
          {
             Subject subject = subjectFactory.createSubject(domain);
             Set<PasswordCredential> s = getPasswordCredentials(subject);
-            if (s != null && s.size() > 0)
+            if (s != null && !s.isEmpty())
             {
                for (PasswordCredential pc : s)
                {

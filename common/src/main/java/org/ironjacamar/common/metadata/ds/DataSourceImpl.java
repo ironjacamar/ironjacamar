@@ -342,7 +342,7 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
          sb.append("</").append(XML.ELEMENT_DRIVER).append(">");
       }
 
-      if (connectionProperties != null && connectionProperties.size() > 0)
+      if (connectionProperties != null && !connectionProperties.isEmpty())
       {
          Iterator<Map.Entry<String, String>> it = connectionProperties.entrySet().iterator();
          while (it.hasNext())

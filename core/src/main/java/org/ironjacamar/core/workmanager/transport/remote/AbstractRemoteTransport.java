@@ -709,7 +709,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
          }
       }
 
-      if (remove.size() > 0)
+      if (!remove.isEmpty())
       {
          WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
 

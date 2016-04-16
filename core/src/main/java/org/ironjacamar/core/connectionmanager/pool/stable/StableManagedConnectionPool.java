@@ -713,7 +713,7 @@ public class StableManagedConnectionPool extends AbstractManagedConnectionPool
          }
 
          // Empty pool
-         if (emptyManagedConnectionPool && listeners.size() == 0)
+         if (emptyManagedConnectionPool && listeners.isEmpty())
             pool.emptyManagedConnectionPool(this);
       }
    }

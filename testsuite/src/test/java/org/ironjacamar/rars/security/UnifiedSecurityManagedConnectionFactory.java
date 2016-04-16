@@ -155,8 +155,8 @@ public class UnifiedSecurityManagedConnectionFactory implements ManagedConnectio
 
                Set<PasswordCredential> credentials = this
                      .getPasswordCredentials(((UnifiedSecurityManagedConnection) mc).getSubject());
-               if (credentials != null && credentials.size() > 0 && givenCredentials != null
-                     && givenCredentials.size() > 0)
+               if (credentials != null && !credentials.isEmpty() && givenCredentials != null
+                     && !givenCredentials.isEmpty())
                {
                   for (PasswordCredential pc : credentials)
                   {

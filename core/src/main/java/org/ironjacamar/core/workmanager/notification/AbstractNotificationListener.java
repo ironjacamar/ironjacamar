@@ -99,7 +99,7 @@ public abstract class AbstractNotificationListener implements NotificationListen
       {
          sr.remove(address);
 
-         if (sr.size() > 0)
+         if (!sr.isEmpty())
          {
             shortRunning.put(address.getWorkManagerId(), sr);
          }
@@ -115,7 +115,7 @@ public abstract class AbstractNotificationListener implements NotificationListen
       {
          lr.remove(address);
 
-         if (lr.size() > 0)
+         if (!lr.isEmpty())
          {
             longRunning.put(address.getWorkManagerId(), lr);
          }

@@ -935,7 +935,7 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
                   Set<org.ironjacamar.core.spi.workmanager.Address> logicalAddresses =
                      (Set<org.ironjacamar.core.spi.workmanager.Address>)sendMessage(address, Request.GET_WORKMANAGERS);
 
-                  if (logicalAddresses != null && logicalAddresses.size() > 0)
+                  if (logicalAddresses != null && !logicalAddresses.isEmpty())
                   {
                      for (org.ironjacamar.core.spi.workmanager.Address logicalAddress : logicalAddresses)
                      {

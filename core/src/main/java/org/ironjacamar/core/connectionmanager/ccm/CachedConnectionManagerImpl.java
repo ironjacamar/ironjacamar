@@ -160,7 +160,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
                List<org.ironjacamar.core.connectionmanager.listener.ConnectionListener> cls =
                   context.getConnectionListeners(cm);
 
-               if (cls.size() > 0)
+               if (!cls.isEmpty())
                {
                   Map<Credential, org.ironjacamar.core.connectionmanager.listener.ConnectionListener> enlistmentMap =
                      new HashMap<>();
@@ -273,14 +273,14 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
    {
       LinkedList<Context> stack = threadContexts.get();
 
-      if (stack == null || stack.size() == 0)
+      if (stack == null || stack.isEmpty())
          return;
 
       Context context = stack.removeLast();
 
       if (log.isTraceEnabled())
       {
-         if (stack.size() > 0)
+         if (!stack.isEmpty())
          {
             log.tracef("pop: old stack for context: %s", context);
             log.tracef("pop: new stack for context: %s", stack.getLast());
@@ -671,7 +671,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
       {
          closing.set(true);
 
-         if (connections.size() > 0)
+         if (!connections.isEmpty())
          {
             for (Object c : connections)
             {

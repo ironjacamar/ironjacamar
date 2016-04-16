@@ -93,7 +93,7 @@ public class IronJacamar extends BlockJUnit4ClassRunner
 
             // Non-static @Deployment
             List<FrameworkMethod> fms = tc.getAnnotatedMethods(Deployment.class);
-            if (fms != null && fms.size() > 0)
+            if (fms != null && !fms.isEmpty())
             {
                Collection<FrameworkMethod> filtered = filterAndSort(fms, false);
                for (FrameworkMethod fm : filtered)
@@ -131,7 +131,7 @@ public class IronJacamar extends BlockJUnit4ClassRunner
 
             // Non-static @Inject / @Named
             List<FrameworkField> fields = tc.getAnnotatedFields(javax.inject.Inject.class);
-            if (fields != null && fields.size() > 0)
+            if (fields != null && !fields.isEmpty())
             {
                for (FrameworkField f : fields)
                {
@@ -162,7 +162,7 @@ public class IronJacamar extends BlockJUnit4ClassRunner
 
             // Non-static @Resource
             fields = tc.getAnnotatedFields(Resource.class);
-            if (fields != null && fields.size() > 0)
+            if (fields != null && !fields.isEmpty())
             {
                Context context = createContext();
                for (FrameworkField f : fields)
@@ -217,7 +217,7 @@ public class IronJacamar extends BlockJUnit4ClassRunner
             
             // Non-static @Resource
             List<FrameworkField> fields = tc.getAnnotatedFields(Resource.class);
-            if (fields != null && fields.size() > 0)
+            if (fields != null && !fields.isEmpty())
             {
                for (FrameworkField f : fields)
                {
@@ -232,7 +232,7 @@ public class IronJacamar extends BlockJUnit4ClassRunner
 
             // Non-static @Inject / @Named
             fields = tc.getAnnotatedFields(javax.inject.Inject.class);
-            if (fields != null && fields.size() > 0)
+            if (fields != null && !fields.isEmpty())
             {
                for (FrameworkField f : fields)
                {
@@ -246,7 +246,7 @@ public class IronJacamar extends BlockJUnit4ClassRunner
             }
 
             // Non-static @Deployment
-            if (deployments.size() > 0)
+            if (!deployments.isEmpty())
             {
                for (int i = deployments.size() - 1; i >= 0; i--)
                {
@@ -327,7 +327,7 @@ public class IronJacamar extends BlockJUnit4ClassRunner
             
             // Static @Deployment
             List<FrameworkMethod> fms = tc.getAnnotatedMethods(Deployment.class);
-            if (fms != null && fms.size() > 0)
+            if (fms != null && !fms.isEmpty())
             {
                Collection<FrameworkMethod> filtered = filterAndSort(fms, true);
                for (FrameworkMethod fm : filtered)
@@ -365,7 +365,7 @@ public class IronJacamar extends BlockJUnit4ClassRunner
 
             // Static @Inject / @Named
             List<FrameworkField> fields = tc.getAnnotatedFields(javax.inject.Inject.class);
-            if (fields != null && fields.size() > 0)
+            if (fields != null && !fields.isEmpty())
             {
                for (FrameworkField f : fields)
                {
@@ -396,7 +396,7 @@ public class IronJacamar extends BlockJUnit4ClassRunner
 
             // Static @Resource
             fields = tc.getAnnotatedFields(Resource.class);
-            if (fields != null && fields.size() > 0)
+            if (fields != null && !fields.isEmpty())
             {
                Context context = createContext();
                for (FrameworkField f : fields)
@@ -451,7 +451,7 @@ public class IronJacamar extends BlockJUnit4ClassRunner
 
             // Static @Resource
             List<FrameworkField> fields = tc.getAnnotatedFields(Resource.class);
-            if (fields != null && fields.size() > 0)
+            if (fields != null && !fields.isEmpty())
             {
                for (FrameworkField f : fields)
                {
@@ -466,7 +466,7 @@ public class IronJacamar extends BlockJUnit4ClassRunner
 
             // Static @Inject / @Named
             fields = tc.getAnnotatedFields(javax.inject.Inject.class);
-            if (fields != null && fields.size() > 0)
+            if (fields != null && !fields.isEmpty())
             {
                for (FrameworkField f : fields)
                {
@@ -480,7 +480,7 @@ public class IronJacamar extends BlockJUnit4ClassRunner
             }
 
             // Static @Deployment
-            if (staticDeployments.size() > 0)
+            if (!staticDeployments.isEmpty())
             {
                for (int i = staticDeployments.size() - 1; i >= 0; i--)
                {

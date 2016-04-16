@@ -126,21 +126,21 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       {
          writer.writeStartElement(XML.ELEMENT_DATASOURCES);
 
-         if (metadata.getDataSource() != null && metadata.getDataSource().size() > 0)
+         if (metadata.getDataSource() != null && !metadata.getDataSource().isEmpty())
          {
             for (DataSource ds : metadata.getDataSource())
             {
                storeDataSource(ds, writer);
             }
          }
-         if (metadata.getXaDataSource() != null && metadata.getXaDataSource().size() > 0)
+         if (metadata.getXaDataSource() != null && !metadata.getXaDataSource().isEmpty())
          {
             for (XaDataSource xads : metadata.getXaDataSource())
             {
                storeXaDataSource(xads, writer);
             }
          }
-         if (metadata.getDrivers() != null && metadata.getDrivers().size() > 0)
+         if (metadata.getDrivers() != null && !metadata.getDrivers().isEmpty())
          {
             writer.writeStartElement(XML.ELEMENT_DRIVERS);
             for (Driver drv : metadata.getDrivers())
@@ -283,7 +283,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                {
                   return new DriverImpl(name, majorVersion, minorVersion, module,
                                         driverClass, dataSourceClass, xaDataSourceClass,
-                                        expressions.size() > 0 ? expressions : null);
+                          !expressions.isEmpty() ? expressions : null);
                }
                else
                {
@@ -352,7 +352,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                if (XML.ELEMENT_SECURITY.equals(reader.getLocalName()))
                {
                   return new DsSecurityImpl(userName, password, securityDomain, reauthPlugin,
-                                            expressions.size() > 0 ? expressions : null);
+                          !expressions.isEmpty() ? expressions : null);
                }
                else
                {
@@ -431,7 +431,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   return new ValidationImpl(backgroundValidation, backgroundValidationMillis, useFastFail,
                                             validConnectionChecker, checkValidConnectionSql, validateOnMatch,
                                             staleConnectionChecker, exceptionSorter,
-                                            expressions.size() > 0 ? expressions : null);
+                          !expressions.isEmpty() ? expressions : null);
                }
                else
                {
@@ -532,7 +532,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   return new TimeoutImpl(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry,
                                          allocationRetryWaitMillis, xaResourceTimeout, setTxQuertTimeout,
                                          queryTimeout, useTryLock,
-                                         expressions.size() > 0 ? expressions : null);
+                          !expressions.isEmpty() ? expressions : null);
                }
                else
                {
@@ -625,7 +625,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                if (XML.ELEMENT_STATEMENT.equals(reader.getLocalName()))
                {
                   return new StatementImpl(sharePreparedStatements, preparedStatementsCacheSize, trackStatements,
-                                           expressions.size() > 0 ? expressions : null);
+                          !expressions.isEmpty() ? expressions : null);
                }
                else
                {
@@ -721,7 +721,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                {
                   return new DsPoolImpl(type, janitor, minPoolSize, initialPoolSize, maxPoolSize, prefill,
                                         flushStrategy, capacity, connectionListener,
-                                        expressions.size() > 0 ? expressions : null);
+                          !expressions.isEmpty() ? expressions : null);
                }
                else
                {
@@ -838,7 +838,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                                           flushStrategy, isSameRmOverride, padXid,
                                           wrapXaDataSource, capacity,
                                           connectionListener,
-                                          expressions.size() > 0 ? expressions : null);
+                          !expressions.isEmpty() ? expressions : null);
                }
                else
                {
@@ -1004,7 +1004,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                                               urlSelectorStrategyClassName, id, enabled,
                                               jndiName, spy, useCcm, connectable, tracking, xaDataSourceProperty,
                                               xaDataSourceClass, driver, newConnectionSql, xaPool, recovery,
-                                              expressions.size() > 0 ? expressions : null);
+                          !expressions.isEmpty() ? expressions : null);
                }
                else
                {
@@ -1199,7 +1199,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                                             statementSettings, validationSettings, urlDelimiter,
                                             urlSelectorStrategyClassName, newConnectionSql, id,
                                             enabled, jndiName, spy, useCcm, jta, connectable, tracking, pool,
-                                            expressions.size() > 0 ? expressions : null);
+                          !expressions.isEmpty() ? expressions : null);
                }
                else
                {
@@ -1344,7 +1344,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                {
                   case XML.ELEMENT_RECOVERY :
                      return new RecoveryImpl(security, plugin, noRecovery,
-                        expressions.size() > 0 ? expressions : null);
+                             !expressions.isEmpty() ? expressions : null);
                   case XML.ELEMENT_RECOVERY_CREDENTIAL :
                   case XML.ELEMENT_RECOVERY_PLUGIN :
                      break;
@@ -1404,7 +1404,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                   case XML.ELEMENT_SECURITY :
                   case XML.ELEMENT_RECOVERY_CREDENTIAL :
                      return new CredentialImpl(userName, password, securityDomain,
-                        expressions.size() > 0 ? expressions : null);
+                             !expressions.isEmpty() ? expressions : null);
                   case XML.ELEMENT_USER_NAME :
                   case XML.ELEMENT_PASSWORD :
                   case XML.ELEMENT_SECURITY_DOMAIN :
@@ -1513,7 +1513,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
          writer.writeEndElement();
       }
 
-      if (ds.getConnectionProperties() != null && ds.getConnectionProperties().size() > 0)
+      if (ds.getConnectionProperties() != null && !ds.getConnectionProperties().isEmpty())
       {
          Iterator<Map.Entry<String, String>> it = ds.getConnectionProperties().entrySet().iterator();
          while (it.hasNext())
@@ -1616,7 +1616,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
          writer.writeAttribute(XML.ATTRIBUTE_TRACKING,
                                xads.getValue(XML.ATTRIBUTE_TRACKING, xads.isTracking().toString()));
 
-      if (xads.getXaDataSourceProperty() != null && xads.getXaDataSourceProperty().size() > 0)
+      if (xads.getXaDataSourceProperty() != null && !xads.getXaDataSourceProperty().isEmpty())
       {
          Iterator<Map.Entry<String, String>> it =
             xads.getXaDataSourceProperty().entrySet().iterator();
@@ -1813,7 +1813,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
                                pool.getConnectionListener().getValue(XML.ATTRIBUTE_CLASS_NAME,
                                                                      pool.getConnectionListener().getClassName()));
 
-         if (pool.getConnectionListener().getConfigPropertiesMap().size() > 0)
+         if (!pool.getConnectionListener().getConfigPropertiesMap().isEmpty())
          {
             Iterator<Map.Entry<String, String>> it =
                pool.getConnectionListener().getConfigPropertiesMap().entrySet().iterator();

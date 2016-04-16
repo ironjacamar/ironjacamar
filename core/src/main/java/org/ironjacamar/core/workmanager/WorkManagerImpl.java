@@ -912,7 +912,7 @@ public class WorkManagerImpl implements WorkManager
       {
          synchronized (activeWorkWrappers)
          {
-            if (activeWorkWrappers.size() == 0)
+            if (activeWorkWrappers.isEmpty())
                shutdown();
          }
       }
@@ -1031,7 +1031,7 @@ public class WorkManagerImpl implements WorkManager
          WorkContextProvider wcProvider = (WorkContextProvider) work;
          List<WorkContext> contexts = wcProvider.getWorkContexts();
 
-         if (contexts != null && contexts.size() > 0)
+         if (contexts != null && !contexts.isEmpty())
          {
             Iterator<WorkContext> it = contexts.iterator();
             while (it.hasNext())
@@ -1185,7 +1185,7 @@ public class WorkManagerImpl implements WorkManager
          WorkContextProvider wcProvider = (WorkContextProvider) work;
          List<WorkContext> contexts = wcProvider.getWorkContexts();
 
-         if (contexts != null && contexts.size() > 0)
+         if (contexts != null && !contexts.isEmpty())
          {
             boolean isTransactionContext = false;
             boolean isSecurityContext = false;
@@ -1435,7 +1435,7 @@ public class WorkManagerImpl implements WorkManager
       sb.append(" activeWorkWrappers=[");
       synchronized (activeWorkWrappers)
       {
-         if (activeWorkWrappers.size() > 0)
+         if (!activeWorkWrappers.isEmpty())
          {
             Iterator<WorkWrapper> it = activeWorkWrappers.iterator();
 

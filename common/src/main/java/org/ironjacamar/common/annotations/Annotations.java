@@ -258,7 +258,7 @@ public class Annotations
             connector = attachConnector(raClass, classLoader, connectorAnnotation, connectionDefinitions,
                                         configProperties, plainConfigProperties, inboundResourceadapter, adminObjs);
          }
-         else if (values.size() == 0)
+         else if (values.isEmpty())
          {
             // JBJCA-240
             if (xmlResourceAdapterClass == null || xmlResourceAdapterClass.equals(""))
@@ -1316,7 +1316,7 @@ public class Annotations
    {
       Collection<Annotation> values = annotationRepository.getAnnotation(javax.validation.constraints.NotNull.class);
 
-      if (values == null || values.size() == 0)
+      if (values == null || values.isEmpty())
          return false;
 
       for (Annotation notNullAnnotation : values)

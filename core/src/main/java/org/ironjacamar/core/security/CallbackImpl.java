@@ -225,7 +225,7 @@ public class CallbackImpl implements Callback
 
       out.writeObject(defaultGroups);
       
-      if (principals != null && principals.size() > 0)
+      if (principals != null && !principals.isEmpty())
       {
          out.writeInt(principals.size());
          Iterator<Map.Entry<String, String>> it = principals.entrySet().iterator();
@@ -241,7 +241,7 @@ public class CallbackImpl implements Callback
          out.writeInt(0);
       }
 
-      if (groups != null && groups.size() > 0)
+      if (groups != null && !groups.isEmpty())
       {
          out.writeInt(groups.size());
          Iterator<Map.Entry<String, String>> it = groups.entrySet().iterator();

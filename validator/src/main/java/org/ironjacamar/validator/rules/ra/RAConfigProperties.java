@@ -64,7 +64,7 @@ public class RAConfigProperties implements Rule
           ResourceAdapter.class.isAssignableFrom(v.getClazz()))
       {
          ValidateClass vo = (ValidateClass)v;
-         if (vo.getConfigProperties() != null && vo.getConfigProperties().size() > 0)
+         if (vo.getConfigProperties() != null && !vo.getConfigProperties().isEmpty())
          {
             return ConfigPropertiesHelper.validateConfigPropertiesType(vo, SECTION,
                     rb.getString("ra.RAConfigProperties"));

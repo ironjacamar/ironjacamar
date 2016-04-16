@@ -573,7 +573,7 @@ public abstract class AbstractResourceAdapterDeployer
       throws Throwable
    {
       Collection<org.ironjacamar.core.api.deploymentrepository.ConfigProperty> dcps = null;
-      if (configProperties != null && configProperties.size() > 0)
+      if (configProperties != null && !configProperties.isEmpty())
       {
          Injection injector = new Injection();
 
@@ -1247,7 +1247,7 @@ public abstract class AbstractResourceAdapterDeployer
                }
             }
          
-            if (failures.size() > 0)
+            if (!failures.isEmpty())
             {
                throw new DeployException("Violation for " + deployment.getIdentifier(),
                                          new ConstraintViolationException(failures));

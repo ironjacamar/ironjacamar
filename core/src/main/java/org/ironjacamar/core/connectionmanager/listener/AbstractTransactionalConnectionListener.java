@@ -531,7 +531,7 @@ public abstract class AbstractTransactionalConnectionListener extends AbstractCo
             transactionSynchronization = null;
             enlisted = false;
 
-            if (connectionHandles.size() == 0)
+            if (connectionHandles.isEmpty())
             {
                if (Tracer.isEnabled() && status == Status.STATUS_ROLLEDBACK)
                   Tracer.delistConnectionListener(cm.getPool().getConfiguration().getId(),

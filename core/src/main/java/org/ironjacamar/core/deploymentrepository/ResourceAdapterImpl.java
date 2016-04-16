@@ -295,7 +295,7 @@ public class ResourceAdapterImpl implements ResourceAdapter
    {
       if (activated)
       {
-         if (activeEndpoints.size() > 0)
+         if (!activeEndpoints.isEmpty())
             throw new Exception("Still active endpoints");
 
          resourceAdapter.stop();
@@ -336,7 +336,7 @@ public class ResourceAdapterImpl implements ResourceAdapter
          
             Set failures = v.validate(as, groups.toArray(new Class<?>[groups.size()]));
          
-            if (failures.size() > 0)
+            if (!failures.isEmpty())
             {
                throw new ConstraintViolationException("Violation for " + as, failures);
             }

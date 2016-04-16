@@ -192,7 +192,7 @@ public class ExtensionImpl extends AbstractMetadata implements Extension
       }
       sb.append(">");
 
-      if (this.getConfigPropertiesMap().size() > 0)
+      if (!this.getConfigPropertiesMap().isEmpty())
       {
          Iterator<Map.Entry<String, String>> it = this.getConfigPropertiesMap().entrySet().iterator();
 

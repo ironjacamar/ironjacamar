@@ -105,7 +105,7 @@ public class ActivationsImpl extends AbstractMetadata implements Activations
       sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
       sb.append("<resource-adapters>");
 
-      if (activations != null && activations.size() > 0)
+      if (activations != null && !activations.isEmpty())
       {
          for (Activation a : activations)
          {

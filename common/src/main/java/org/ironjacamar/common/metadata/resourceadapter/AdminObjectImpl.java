@@ -209,7 +209,7 @@ public class AdminObjectImpl extends AbstractMetadata implements AdminObject
 
       sb.append(">");
 
-      if (configProperties != null && configProperties.size() > 0)
+      if (configProperties != null && !configProperties.isEmpty())
       {
          Iterator<Map.Entry<String, String>> it = configProperties.entrySet().iterator();
          while (it.hasNext())

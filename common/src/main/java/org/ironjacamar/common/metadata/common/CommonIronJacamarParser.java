@@ -126,7 +126,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                if (CommonXML.ELEMENT_ADMIN_OBJECT.equals(reader.getLocalName()))
                {
                   return new AdminObjectImpl(configProperties, className, jndiName, id, enabled,
-                                             expressions.size() > 0 ? expressions : null);
+                          !expressions.isEmpty() ? expressions : null);
                }
                else
                {
@@ -241,7 +241,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                   return new WorkManagerSecurityImpl(mappingRequired, domain,
                                                      defaultPrincipal, defaultGroups,
                                                      userMappings, groupMappings,
-                                                     expressions.size() > 0 ? expressions : null);
+                          !expressions.isEmpty() ? expressions : null);
                }
                else
                {
@@ -459,7 +459,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                                                       connectable, tracking,
                                                       pool, timeout, validation,
                                                       security, recovery, isXA,
-                                                      expressions.size() > 0 ? expressions : null);
+                          !expressions.isEmpty() ? expressions : null);
                }
                else
                {
@@ -533,7 +533,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
     */
    protected void storeCommon(Activation a, XMLStreamWriter writer) throws Exception
    {
-      if (a.getBeanValidationGroups() != null && a.getBeanValidationGroups().size() > 0)
+      if (a.getBeanValidationGroups() != null && !a.getBeanValidationGroups().isEmpty())
       {
          writer.writeStartElement(CommonXML.ELEMENT_BEAN_VALIDATION_GROUPS);
          for (int i = 0; i < a.getBeanValidationGroups().size(); i++)
@@ -553,7 +553,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
          writer.writeEndElement();
       }
 
-      if (a.getConfigProperties() != null && a.getConfigProperties().size() > 0)
+      if (a.getConfigProperties() != null && !a.getConfigProperties().isEmpty())
       {
          Iterator<Map.Entry<String, String>> it = a.getConfigProperties().entrySet().iterator();
          while (it.hasNext())
@@ -578,7 +578,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       if (a.getWorkManager() != null)
          storeWorkManager(a.getWorkManager(), writer);
 
-      if (a.getConnectionDefinitions() != null && a.getConnectionDefinitions().size() > 0)
+      if (a.getConnectionDefinitions() != null && !a.getConnectionDefinitions().isEmpty())
       {
          writer.writeStartElement(CommonXML.ELEMENT_CONNECTION_DEFINITIONS);
          for (ConnectionDefinition cd : a.getConnectionDefinitions())
@@ -588,7 +588,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
          writer.writeEndElement();
       }
 
-      if (a.getAdminObjects() != null && a.getAdminObjects().size() > 0)
+      if (a.getAdminObjects() != null && !a.getAdminObjects().isEmpty())
       {
          writer.writeStartElement(CommonXML.ELEMENT_ADMIN_OBJECTS);
          for (AdminObject ao : a.getAdminObjects())
@@ -627,7 +627,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
          writer.writeEndElement();
       }
 
-      if (s.getDefaultGroups() != null && s.getDefaultGroups().size() > 0)
+      if (s.getDefaultGroups() != null && !s.getDefaultGroups().isEmpty())
       {
          writer.writeStartElement(CommonXML.ELEMENT_DEFAULT_GROUPS);
          for (int i = 0; i < s.getDefaultGroups().size(); i++)
@@ -640,12 +640,12 @@ public abstract class CommonIronJacamarParser extends AbstractParser
          writer.writeEndElement();
       }
 
-      if ((s.getUserMappings() != null && s.getUserMappings().size() > 0) ||
-          (s.getGroupMappings() != null && s.getGroupMappings().size() > 0))
+      if ((s.getUserMappings() != null && !s.getUserMappings().isEmpty()) ||
+          (s.getGroupMappings() != null && !s.getGroupMappings().isEmpty()))
       {
          writer.writeStartElement(CommonXML.ELEMENT_MAPPINGS);
 
-         if (s.getUserMappings() != null && s.getUserMappings().size() > 0)
+         if (s.getUserMappings() != null && !s.getUserMappings().isEmpty())
          {
             writer.writeStartElement(CommonXML.ELEMENT_USERS);
             
@@ -662,7 +662,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
             writer.writeEndElement();
          }
 
-         if (s.getGroupMappings() != null && s.getGroupMappings().size() > 0)
+         if (s.getGroupMappings() != null && !s.getGroupMappings().isEmpty())
          {
             writer.writeStartElement(CommonXML.ELEMENT_GROUPS);
             
@@ -737,7 +737,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
          writer.writeAttribute(CommonXML.ATTRIBUTE_TRACKING,
                                cd.getValue(CommonXML.ATTRIBUTE_TRACKING, cd.isTracking().toString()));
 
-      if (cd.getConfigProperties() != null && cd.getConfigProperties().size() > 0)
+      if (cd.getConfigProperties() != null && !cd.getConfigProperties().isEmpty())
       {
          Iterator<Map.Entry<String, String>> it = cd.getConfigProperties().entrySet().iterator();
          while (it.hasNext())
@@ -804,7 +804,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
       if (ao.getId() != null)
          writer.writeAttribute(CommonXML.ATTRIBUTE_ID, ao.getValue(CommonXML.ATTRIBUTE_ID, ao.getId()));
 
-      if (ao.getConfigProperties() != null && ao.getConfigProperties().size() > 0)
+      if (ao.getConfigProperties() != null && !ao.getConfigProperties().isEmpty())
       {
          Iterator<Map.Entry<String, String>> it = ao.getConfigProperties().entrySet().iterator();
          while (it.hasNext())

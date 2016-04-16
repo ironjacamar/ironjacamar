@@ -65,7 +65,7 @@ public class ASConfigProperties implements Rule
           ActivationSpec.class.isAssignableFrom(v.getClazz()))
       {
          ValidateClass vo = (ValidateClass)v;
-         if (vo.getConfigProperties() != null && vo.getConfigProperties().size() > 0)
+         if (vo.getConfigProperties() != null && !vo.getConfigProperties().isEmpty())
          {
             return ConfigPropertiesHelper.validateConfigPropertiesType(vo, SECTION,
                rb.getString("as.ASConfigProperties"));

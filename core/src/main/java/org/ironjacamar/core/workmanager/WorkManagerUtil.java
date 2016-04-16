@@ -55,7 +55,7 @@ public class WorkManagerUtil
          WorkContextProvider wcProvider = (WorkContextProvider) work;
          List<WorkContext> contexts = wcProvider.getWorkContexts();
 
-         if (contexts != null && contexts.size() > 0)
+         if (contexts != null && !contexts.isEmpty())
          {
             boolean found = false;
             Iterator<WorkContext> it = contexts.iterator();

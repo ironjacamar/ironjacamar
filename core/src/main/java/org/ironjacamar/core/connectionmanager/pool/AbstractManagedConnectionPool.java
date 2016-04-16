@@ -103,7 +103,7 @@ public abstract class AbstractManagedConnectionPool implements ManagedConnection
             Set candidateSet = Collections.singleton(cl.getManagedConnection());
             candidateSet = vcf.getInvalidConnections(candidateSet);
 
-            if (candidateSet != null && candidateSet.size() > 0)
+            if (candidateSet != null && !candidateSet.isEmpty())
             {
                destroyAndRemoveConnectionListener(cl, listeners);
             }

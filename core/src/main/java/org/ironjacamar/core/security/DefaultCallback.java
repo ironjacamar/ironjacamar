@@ -270,7 +270,7 @@ public class DefaultCallback implements Callback
             Properties p = new Properties();
             p.load(is);
 
-            if (p.size() > 0)
+            if (!p.isEmpty())
             {
                Iterator<Map.Entry<Object, Object>> entries = p.entrySet().iterator();
                while (entries.hasNext())
@@ -385,7 +385,7 @@ public class DefaultCallback implements Callback
       out.writeObject(defaultGroups);
 
       out.writeInt(principals.size());
-      if (principals.size() > 0)
+      if (!principals.isEmpty())
       {
          Iterator<Map.Entry<String, String>> it = principals.entrySet().iterator();
          while (it.hasNext())
@@ -397,7 +397,7 @@ public class DefaultCallback implements Callback
       }
 
       out.writeInt(groups.size());
-      if (groups.size() > 0)
+      if (!groups.isEmpty())
       {
          Iterator<Map.Entry<String, String>> it = groups.entrySet().iterator();
          while (it.hasNext())

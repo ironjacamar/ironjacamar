@@ -111,7 +111,7 @@ public class UnifiedSecurityManagedConnectionMetaData implements ManagedConnecti
       else if (mc.getSubject() != null)
       {
          Set<PasswordCredential> credentials = this.getPasswordCredentials(mc.getSubject());
-         if (credentials != null && credentials.size() > 0)
+         if (credentials != null && !credentials.isEmpty())
          {
             for (PasswordCredential pc : credentials)
             {

@@ -148,7 +148,7 @@ public class IronJacamarParser extends CommonIronJacamarParser implements Metada
                   return new 
                      ActivationImpl(null, null, transactionSupport, connectionDefinitions, adminObjects,
                                     configProperties, beanValidationGroups, bootstrapContext, workManager,
-                                    expressions.size() > 0 ? expressions : null);
+                          !expressions.isEmpty() ? expressions : null);
                }
                else
                {

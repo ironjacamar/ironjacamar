@@ -80,7 +80,7 @@ public class InboundResourceAdapterImpl extends AbstractMetadata implements Inbo
    public boolean validationAsBoolean()
    {
       if (this.getMessageadapter() == null || this.getMessageadapter().getMessagelisteners() == null
-            || this.getMessageadapter().getMessagelisteners().size() == 0)
+            || this.getMessageadapter().getMessagelisteners().isEmpty())
          return false;
       MessageListener mlmd = this.getMessageadapter().getMessagelisteners().get(0);
       if (mlmd.getMessagelistenerType() == null || mlmd.getActivationspec() == null

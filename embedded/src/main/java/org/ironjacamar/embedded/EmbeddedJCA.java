@@ -136,7 +136,7 @@ class EmbeddedJCA implements Embedded
       if (!started)
          throw new IllegalStateException("Container not started");
 
-      if (shrinkwrapDeployments != null && shrinkwrapDeployments.size() > 0)
+      if (shrinkwrapDeployments != null && !shrinkwrapDeployments.isEmpty())
       {
          List<File> copy = new ArrayList<File>(shrinkwrapDeployments);
          for (File f : copy)
@@ -425,7 +425,7 @@ class EmbeddedJCA implements Embedded
       {
          shrinkwrapDeployments.remove(deployment);
 
-         if (shrinkwrapDeployments.size() == 0)
+         if (shrinkwrapDeployments.isEmpty())
             shrinkwrapDeployments = null;
 
          recursiveDelete(deployment);

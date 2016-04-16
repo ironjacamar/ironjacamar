@@ -289,7 +289,7 @@ public class XAResourceRecoveryImpl implements org.ironjacamar.core.spi.transact
                   Subject subject = SecurityActions.createSubject(subjectFactory, domain);
                      
                   Set<PasswordCredential> pcs = SecurityActions.getPasswordCredentials(subject);
-                  if (pcs.size() > 0)
+                  if (!pcs.isEmpty())
                   {
                      for (PasswordCredential pc : pcs)
                      {
@@ -341,7 +341,7 @@ public class XAResourceRecoveryImpl implements org.ironjacamar.core.spi.transact
 
             Set invalid = vmcf.getInvalidConnections(connectionSet);
 
-            if (invalid != null && invalid.size() > 0)
+            if (invalid != null && !invalid.isEmpty())
             {
                log.debugf("Invalid managed connection: %s", recoverMC);
 
