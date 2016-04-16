@@ -131,6 +131,7 @@ public class ResourceWarning extends javax.resource.ResourceException
     * <code>initCause</code> methods of the 
     * <code>java.lang.Throwable</code> class.
     */
+   @Deprecated
    public ResourceWarning getLinkedWarning() 
    {
       try 
@@ -154,6 +155,7 @@ public class ResourceWarning extends javax.resource.ResourceException
     * <code>initCause</code> methods of the 
     * <code>java.lang.Throwable</code> class.
     */
+   @Deprecated
    public void setLinkedWarning(ResourceWarning warning) 
    {
       setLinkedException(warning);

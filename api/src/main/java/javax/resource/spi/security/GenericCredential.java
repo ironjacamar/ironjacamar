@@ -58,7 +58,7 @@ import javax.resource.spi.SecurityException;
  *  is via the <code>org.ietf.jgss.GSSCredential</code> interface in 
  *  J2SE Version 1.4, which provides similar functionality.
  */
-
+@Deprecated
 public interface GenericCredential 
 {
 
