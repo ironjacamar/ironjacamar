@@ -366,26 +366,27 @@ public abstract class Performance
 
             if (ut != null)
             {
-               int status = ut.getStatus();
-               if (status == Status.STATUS_ACTIVE || status == Status.STATUS_MARKED_ROLLBACK)
+               try
                {
-                  try
+                  int status = ut.getStatus();
+                  if (status == Status.STATUS_ACTIVE || status == Status.STATUS_MARKED_ROLLBACK)
                   {
                      ut.rollback();
                   }
-                  catch (Exception inner)
-                  {
-                     System.err.println("Rollback: Thread: " + Thread.currentThread().getName());
-                     inner.printStackTrace(System.err);
-                  }
                }
+               catch (Exception inner)
+               {
+                  System.err.println("Rollback: Thread: " + Thread.currentThread().getName());
+                  inner.printStackTrace(System.err);
+               }
+            
             }
          }
          finally
          {
             done.countDown();
-            return Integer.valueOf(success);
          }
+         return Integer.valueOf(success);
       }
    }
 
