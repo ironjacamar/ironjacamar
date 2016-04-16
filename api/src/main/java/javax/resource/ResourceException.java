@@ -169,6 +169,7 @@ public class ResourceException extends Exception
     * <code>initCause</code> methods of the 
     * <code>java.lang.Throwable</code> class..
     */
+   @Deprecated
    public Exception getLinkedException() 
    {
       return linkedException;
@@ -185,6 +186,7 @@ public class ResourceException extends Exception
     * <code>initCause</code> methods of the 
     * <code>java.lang.Throwable</code> class.
     */
+   @Deprecated
    public void setLinkedException(Exception ex) 
    {
       linkedException = ex;
