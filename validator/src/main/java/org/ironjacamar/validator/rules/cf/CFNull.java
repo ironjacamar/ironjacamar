@@ -63,7 +63,7 @@ public class CFNull implements Rule
             ValidateClass vc = (ValidateClass)vo;
 
             List<Failure> failures = new ArrayList<Failure>(1);
-            Failure failure = null;
+            Failure failure;
 
             String code = null;
             if (vc.getClassName() != null)

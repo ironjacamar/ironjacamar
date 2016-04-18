@@ -958,7 +958,7 @@ public class Annotations
             String aoName = null;
             String aoClassName = annotation.getClassName();
             Class<?> aClass = Class.forName(aoClassName, true, classLoader);
-            List<Class<?>> declaredInterfaces = null;
+            List<Class<?>> declaredInterfaces;
             if (aClass.getInterfaces() != null && aClass.getInterfaces().length != 0)
             {
                declaredInterfaces = Arrays.asList(aClass.getInterfaces());

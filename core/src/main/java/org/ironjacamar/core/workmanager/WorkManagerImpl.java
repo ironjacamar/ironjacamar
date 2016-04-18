@@ -1193,7 +1193,7 @@ public class WorkManagerImpl implements WorkManager
 
             for (WorkContext context : contexts)
             {
-               Class<? extends WorkContext> contextType = null;
+               Class<? extends WorkContext> contextType;
 
                // Get supported work context class
                contextType = getSupportedWorkContextClass(context.getClass());

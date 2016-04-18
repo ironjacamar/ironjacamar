@@ -83,7 +83,7 @@ public class LocalConnectableXAResourceStatImpl extends LocalXAResourceStatImpl
     */
    public Object getConnection() throws Exception
    {
-      Object result = null;
+      Object result;
 
       if (cr1 != null)
       {

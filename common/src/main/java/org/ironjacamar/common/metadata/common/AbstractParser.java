@@ -256,7 +256,7 @@ public abstract class AbstractParser
    protected Integer elementAsInteger(XMLStreamReader reader, String key, Map<String, String> expressions)
       throws XMLStreamException, ParserException
    {
-      Integer integerValue = null;
+      Integer integerValue;
       String elementtext = rawElementText(reader);
 
       if (key != null && expressions != null && elementtext != null && elementtext.indexOf("${") != -1)
@@ -286,7 +286,7 @@ public abstract class AbstractParser
    protected Long elementAsLong(XMLStreamReader reader, String key, Map<String, String> expressions)
       throws XMLStreamException, ParserException
    {
-      Long longValue = null;
+      Long longValue;
       String elementtext = rawElementText(reader);
 
       if (key != null && expressions != null && elementtext != null && elementtext.indexOf("${") != -1)

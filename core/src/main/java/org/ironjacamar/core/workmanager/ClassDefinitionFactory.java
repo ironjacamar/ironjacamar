@@ -63,7 +63,7 @@ public class ClassDefinitionFactory
 
       String name = clz.getName();
       long serialVersionUID = 0L;
-      byte[] data = null;
+      byte[] data;
 
       ByteArrayOutputStream baos = new ByteArrayOutputStream();
       InputStream is = null;

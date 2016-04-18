@@ -119,7 +119,7 @@ public class Injection
       if (method != null)
       {
          Class<?> parameterClass = method.getParameterTypes()[0];
-         Object parameterValue = null;
+         Object parameterValue;
          try
          {
             parameterValue = getValue(propertyName, parameterClass, propertyValue, 
@@ -144,7 +144,7 @@ public class Injection
          if (field != null)
          {
             Class<?> fieldClass = field.getType();
-            Object fieldValue = null;
+            Object fieldValue;
             try
             {
                fieldValue = getValue(propertyName, fieldClass, propertyValue,
@@ -374,7 +374,7 @@ public class Injection
             while (st.hasMoreTokens())
             {
                String token = st.nextToken();
-               String key = "";
+               String key;
                String value = "";
 
                int index = token.indexOf("=");
@@ -444,7 +444,7 @@ public class Injection
                dv = -1;
          }
          
-         String systemProperty = "";
+         String systemProperty;
          String defaultValue = "";
          if (dv == -1)
          {

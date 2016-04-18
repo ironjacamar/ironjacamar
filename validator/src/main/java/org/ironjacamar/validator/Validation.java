@@ -103,7 +103,7 @@ public class Validation
          if (!f.exists())
             throw new IOException("Archive " + url.toExternalForm() + " doesnt exists");
 
-         File root = null;
+         File root;
 
          if (f.isFile())
          {
