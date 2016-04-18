@@ -136,7 +136,7 @@ public class IronJacamarParser extends CommonIronJacamarParser implements Metada
       Map<String, String> configProperties = null;
       WorkManager workManager = null;
       Boolean isXA = null;
-      HashMap<String, String> expressions = new HashMap<String, String>();
+      Map<String, String> expressions = new HashMap<String, String>();
       
       while (reader.hasNext())
       {

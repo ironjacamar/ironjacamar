@@ -246,7 +246,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Integer minorVersion = null;
       String module = null;
 
-      HashMap<String, String> expressions = new HashMap<String, String>();
+      Map<String, String> expressions = new HashMap<String, String>();
       
       for (int i = 0; i < reader.getAttributeCount(); i++)
       {
@@ -342,7 +342,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       String securityDomain = null;
       Extension reauthPlugin = null;
 
-      HashMap<String, String> expressions = new HashMap<String, String>();
+      Map<String, String> expressions = new HashMap<String, String>();
 
       while (reader.hasNext())
       {
@@ -419,7 +419,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Extension validConnectionChecker = null;
       Extension exceptionSorter = null;
 
-      HashMap<String, String> expressions = new HashMap<String, String>();
+      Map<String, String> expressions = new HashMap<String, String>();
       
       while (reader.hasNext())
       {
@@ -520,7 +520,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Long useTryLock = null;
       Integer xaResourceTimeout = null;
 
-      HashMap<String, String> expressions = new HashMap<String, String>();
+      Map<String, String> expressions = new HashMap<String, String>();
 
       while (reader.hasNext())
       {
@@ -615,7 +615,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Boolean sharePreparedStatements = Defaults.SHARE_PREPARED_STATEMENTS;
       TrackStatementsEnum trackStatements = null;
 
-      HashMap<String, String> expressions = new HashMap<String, String>();
+      Map<String, String> expressions = new HashMap<String, String>();
 
       while (reader.hasNext())
       {
@@ -693,7 +693,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Capacity capacity = null;
       Extension connectionListener = null;
 
-      HashMap<String, String> expressions = new HashMap<String, String>();
+      Map<String, String> expressions = new HashMap<String, String>();
 
       for (int i = 0; i < reader.getAttributeCount(); i++)
       {
@@ -808,7 +808,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Boolean padXid = Defaults.PAD_XID;
       Boolean wrapXaDataSource = Defaults.WRAP_XA_RESOURCE;
 
-      HashMap<String, String> expressions = new HashMap<String, String>();
+      Map<String, String> expressions = new HashMap<String, String>();
 
       for (int i = 0; i < reader.getAttributeCount(); i++)
       {
@@ -952,7 +952,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Boolean connectable = Defaults.CONNECTABLE;
       Boolean tracking = Defaults.TRACKING;
 
-      HashMap<String, String> expressions = new HashMap<String, String>();
+      Map<String, String> expressions = new HashMap<String, String>();
 
       for (int i = 0; i < reader.getAttributeCount(); i++)
       {
@@ -1143,7 +1143,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Boolean connectable = Defaults.CONNECTABLE;
       Boolean tracking = Defaults.TRACKING;
 
-      HashMap<String, String> expressions = new HashMap<String, String>();
+      Map<String, String> expressions = new HashMap<String, String>();
 
       for (int i = 0; i < reader.getAttributeCount(); i++)
       {
@@ -1320,7 +1320,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Credential security = null;
       Extension plugin = null;
 
-      HashMap<String, String> expressions = new HashMap<String, String>();
+      Map<String, String> expressions = new HashMap<String, String>();
 
       for (int i = 0; i < reader.getAttributeCount(); i++)
       {
@@ -1392,7 +1392,7 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       String password = null;
       String securityDomain = null;
 
-      HashMap<String, String> expressions = new HashMap<String, String>();
+      Map<String, String> expressions = new HashMap<String, String>();
 
       while (reader.hasNext())
       {

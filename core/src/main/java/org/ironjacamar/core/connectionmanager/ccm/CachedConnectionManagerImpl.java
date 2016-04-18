@@ -447,7 +447,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
 
       synchronized (connectionStackTraces)
       {
-         HashMap<String, String> result = new HashMap<String, String>();
+         Map<String, String> result = new HashMap<String, String>();
 
          for (Map.Entry<Object, Throwable> entry : connectionStackTraces.entrySet())
          {

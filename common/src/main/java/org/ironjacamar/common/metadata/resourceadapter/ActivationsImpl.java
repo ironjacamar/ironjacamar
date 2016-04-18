@@ -38,7 +38,7 @@ public class ActivationsImpl extends AbstractMetadata implements Activations
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 1L;
-   private final ArrayList<Activation> activations;
+   private final List<Activation> activations;
 
    /**
     * Constructor

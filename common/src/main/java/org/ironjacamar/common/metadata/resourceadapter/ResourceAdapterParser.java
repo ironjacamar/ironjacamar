@@ -191,7 +191,7 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
       WorkManager workmanager = null;
       Boolean isXA = null;
 
-      HashMap<String, String> expressions = new HashMap<String, String>();
+      Map<String, String> expressions = new HashMap<String, String>();
 
       int attributeSize = reader.getAttributeCount();
       for (int i = 0; i < attributeSize; i++)
