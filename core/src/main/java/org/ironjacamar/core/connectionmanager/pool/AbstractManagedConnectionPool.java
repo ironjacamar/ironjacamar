@@ -175,9 +175,8 @@ public abstract class AbstractManagedConnectionPool implements ManagedConnection
    {
       for (ConnectionListener cl : listeners)
       {
-         if (cl.getManagedConnection().equals(mc))
-            if (c == null || cl.getConnections().contains(c))
-               return cl;
+         if (cl.getManagedConnection().equals(mc) && (c == null || cl.getConnections().contains(c)))
+            return cl;
       }
 
       return null;

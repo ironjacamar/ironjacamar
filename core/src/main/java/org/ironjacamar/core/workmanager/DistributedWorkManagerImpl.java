@@ -121,18 +121,16 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
     */
    public synchronized void setPolicy(Policy v)
    {
-      if (policy != null)
+      if (policy != null && policy instanceof NotificationListener)
       {
-         if (policy instanceof NotificationListener)
-            listeners.remove((NotificationListener)policy);
+         listeners.remove((NotificationListener)policy);
       }
 
       policy = v;
 
-      if (policy != null)
+      if (policy != null && policy instanceof NotificationListener)
       {
-         if (policy instanceof NotificationListener)
-            listeners.add((NotificationListener)policy);
+         listeners.add((NotificationListener)policy);
       }
    }
 
@@ -149,18 +147,16 @@ public class DistributedWorkManagerImpl extends WorkManagerImpl implements Distr
     */
    public synchronized void setSelector(Selector v)
    {
-      if (selector != null)
+      if (selector != null && selector instanceof NotificationListener)
       {
-         if (selector instanceof NotificationListener)
-            listeners.remove((NotificationListener)selector);
+         listeners.remove((NotificationListener)selector);
       }
 
       selector = v;
 
-      if (selector != null)
+      if (selector != null && selector instanceof NotificationListener)
       {
-         if (selector instanceof NotificationListener)
-            listeners.add((NotificationListener)selector);
+         listeners.add((NotificationListener)selector);
       }
    }
 

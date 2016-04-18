@@ -85,13 +85,10 @@ public class MaxFreeThreads extends AbstractSelector
             if (!own.equals(id))
             {
                Long free = entry.getValue();
-               if (free != null && free.longValue() > 0)
+               if (free != null && free.longValue() > 0 && free.longValue() > freeThread)
                {
-                  if (free.longValue() > freeThread)
-                  {
-                     result = id;
-                     freeThread = free.longValue();
-                  }
+                  result = id;
+                  freeThread = free.longValue();
                }
             }
          }

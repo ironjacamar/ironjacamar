@@ -169,27 +169,24 @@ public abstract class AbstractTransactionalConnectionListener extends AbstractCo
          TransactionManager tm = txCM.getTransactionIntegration().getTransactionManager();
          int status = tm.getStatus();
 
-         if (status != Status.STATUS_NO_TRANSACTION)
+         if (status != Status.STATUS_NO_TRANSACTION && enlisted)
          {
-            if (enlisted)
+            Transaction tx = tm.getTransaction();
+            boolean delistResult = tx.delistResource(xaResource, XAResource.TMSUCCESS);
+
+            if (Tracer.isEnabled())
+               Tracer.delistConnectionListener(cm.getPool().getConfiguration().getId(),
+                                               getManagedConnectionPool(),
+                                               this, tx.toString(),
+                                               true, false, false);
+
+            if (delistResult)
             {
-               Transaction tx = tm.getTransaction();
-               boolean delistResult = tx.delistResource(xaResource, XAResource.TMSUCCESS);
-
-               if (Tracer.isEnabled())
-                  Tracer.delistConnectionListener(cm.getPool().getConfiguration().getId(),
-                                                  getManagedConnectionPool(),
-                                                  this, tx.toString(),
-                                                  true, false, false);
-
-               if (delistResult)
-               {
-                  log.tracef("delist-success: %s", this);
-               }
-               else
-               {
-                  log.debugf("delist-success failed: %s", this);
-               }
+               log.tracef("delist-success: %s", this);
+            }
+            else
+            {
+               log.debugf("delist-success failed: %s", this);
             }
          }
 

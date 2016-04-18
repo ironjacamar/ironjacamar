@@ -481,32 +481,29 @@ public class Annotations
          javax.resource.spi.SecurityPermission[] securityPermissionAnotations)
    {
       ArrayList<SecurityPermission> securityPermissions = null;
-      if (securityPermissionAnotations != null)
+      if (securityPermissionAnotations != null && securityPermissionAnotations.length != 0)
       {
-         if (securityPermissionAnotations.length != 0)
+         securityPermissions = new ArrayList<SecurityPermission>(securityPermissionAnotations.length);
+         for (javax.resource.spi.SecurityPermission securityPermission : securityPermissionAnotations)
          {
-            securityPermissions = new ArrayList<SecurityPermission>(securityPermissionAnotations.length);
-            for (javax.resource.spi.SecurityPermission securityPermission : securityPermissionAnotations)
+            ArrayList<LocalizedXsdString> desc = null;
+            if (securityPermission.description() != null && securityPermission.description().length > 0)
             {
-               ArrayList<LocalizedXsdString> desc = null;
-               if (securityPermission.description() != null && securityPermission.description().length > 0)
+               desc = new ArrayList<LocalizedXsdString>(securityPermission.description().length);
+
+               for (String d : securityPermission.description())
                {
-                  desc = new ArrayList<LocalizedXsdString>(securityPermission.description().length);
-
-                  for (String d : securityPermission.description())
-                  {
-                     if (d != null && !d.trim().equals(""))
-                        desc.add(new LocalizedXsdString(d, null));
-                  }
+                  if (d != null && !d.trim().equals(""))
+                     desc.add(new LocalizedXsdString(d, null));
                }
-
-               SecurityPermission spmd = new SecurityPermissionImpl(desc,
-                                                                    new XsdString(securityPermission.permissionSpec(),
-                                                                                  null), null);
-               securityPermissions.add(spmd);
             }
-            securityPermissions.trimToSize();
+
+            SecurityPermission spmd = new SecurityPermissionImpl(desc,
+                                                                 new XsdString(securityPermission.permissionSpec(),
+                                                                               null), null);
+            securityPermissions.add(spmd);
          }
+         securityPermissions.trimToSize();
       }
       return securityPermissions;
    }

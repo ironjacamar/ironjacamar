@@ -189,15 +189,12 @@ public class ClassBundleFactory
                   String defClzName = defClz.getName();
 
                   if (!defClz.isPrimitive() && !defClz.isArray() && 
-                      !defClzName.startsWith("java") && !defClzName.startsWith("javax"))
+                      !defClzName.startsWith("java") && !defClzName.startsWith("javax") && !result.contains(defClz))
                   {
-                     if (!result.contains(defClz))
-                     {
-                        if (trace)
-                           log.tracef("Adding field: %s", defClzName);
-                        
-                        result.add(defClz);
-                     }
+                     if (trace)
+                        log.tracef("Adding field: %s", defClzName);
+                     
+                     result.add(defClz);
                   }
                }
             }

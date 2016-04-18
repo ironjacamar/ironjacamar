@@ -733,19 +733,16 @@ public abstract class AbstractResourceAdapterDeployer
    protected void associateResourceAdapter(javax.resource.spi.ResourceAdapter resourceAdapter, Object object)
       throws DeployException
    {
-      if (resourceAdapter != null && object != null)
+      if (resourceAdapter != null && object != null && object instanceof ResourceAdapterAssociation)
       {
-         if (object instanceof ResourceAdapterAssociation)
+         try
          {
-            try
-            {
-               ResourceAdapterAssociation raa = (ResourceAdapterAssociation)object;
-               raa.setResourceAdapter(resourceAdapter);
-            }
-            catch (Throwable t)
-            {
-               throw new DeployException("associateResourceAdapter", t);
-            }
+            ResourceAdapterAssociation raa = (ResourceAdapterAssociation)object;
+            raa.setResourceAdapter(resourceAdapter);
+         }
+         catch (Throwable t)
+         {
+            throw new DeployException("associateResourceAdapter", t);
          }
       }
    }
@@ -810,10 +807,9 @@ public abstract class AbstractResourceAdapterDeployer
    private void applyConnectionManagerConfiguration(ConnectionManagerConfiguration cmc,
       org.ironjacamar.common.api.metadata.common.Security s)
    {
-      if (s != null)
+      if (s != null && s.getSecurityDomain() != null)
       {
-         if (s.getSecurityDomain() != null)
-            cmc.setSecurityDomain(s.getSecurityDomain());
+         cmc.setSecurityDomain(s.getSecurityDomain());
       }
    }
 
@@ -1113,9 +1109,8 @@ public abstract class AbstractResourceAdapterDeployer
     */
    private String getProductVersion(Connector raXml)
    {
-      if (raXml != null)
-         if (!XsdString.isNull(raXml.getResourceadapterVersion()))
-            return raXml.getResourceadapterVersion().getValue();
+      if (raXml != null && !XsdString.isNull(raXml.getResourceadapterVersion()))
+         return raXml.getResourceadapterVersion().getValue();
 
       return "";
    }

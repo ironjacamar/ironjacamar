@@ -222,10 +222,9 @@ public class IronJacamar extends BlockJUnit4ClassRunner
                for (FrameworkField f : fields)
                {
                   SecurityActions.setAccessible(f.getField());
-                  if (!Modifier.isStatic(f.getField().getModifiers()))
+                  if (!Modifier.isStatic(f.getField().getModifiers()) && !f.getField().getDeclaringClass().isPrimitive())
                   {
-                     if (!f.getField().getDeclaringClass().isPrimitive())
-                        f.getField().set(target, null);
+                     f.getField().set(target, null);
                   }
                }
             }
@@ -237,10 +236,9 @@ public class IronJacamar extends BlockJUnit4ClassRunner
                for (FrameworkField f : fields)
                {
                   SecurityActions.setAccessible(f.getField());
-                  if (!Modifier.isStatic(f.getField().getModifiers()))
+                  if (!Modifier.isStatic(f.getField().getModifiers()) && !f.getField().getDeclaringClass().isPrimitive())
                   {
-                     if (!f.getField().getDeclaringClass().isPrimitive())
-                        f.getField().set(target, null);
+                     f.getField().set(target, null);
                   }
                }
             }
@@ -456,10 +454,9 @@ public class IronJacamar extends BlockJUnit4ClassRunner
                for (FrameworkField f : fields)
                {
                   SecurityActions.setAccessible(f.getField());
-                  if (Modifier.isStatic(f.getField().getModifiers()))
+                  if (Modifier.isStatic(f.getField().getModifiers()) && !f.getField().getDeclaringClass().isPrimitive())
                   {
-                     if (!f.getField().getDeclaringClass().isPrimitive())
-                        f.getField().set(null, null);
+                     f.getField().set(null, null);
                   }
                }
             }
@@ -471,10 +468,9 @@ public class IronJacamar extends BlockJUnit4ClassRunner
                for (FrameworkField f : fields)
                {
                   SecurityActions.setAccessible(f.getField());
-                  if (Modifier.isStatic(f.getField().getModifiers()))
+                  if (Modifier.isStatic(f.getField().getModifiers()) && !f.getField().getDeclaringClass().isPrimitive())
                   {
-                     if (!f.getField().getDeclaringClass().isPrimitive())
-                        f.getField().set(null, null);
+                     f.getField().set(null, null);
                   }
                }
             }
