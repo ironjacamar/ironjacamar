@@ -365,7 +365,7 @@ public class Merger
                case XADATASOURCEPROPERTIES : {
                   if (xads != null && xads.getXaDataSourceProperty() != null)
                   {
-                     StringBuffer valueBuf = new StringBuffer();
+                     StringBuilder valueBuf = new StringBuilder();
                      for (Entry<String, String> xaConfigProperty : xads.getXaDataSourceProperty().entrySet())
                      {
                         valueBuf.append(xaConfigProperty.getKey());
@@ -480,7 +480,7 @@ public class Merger
                       ds.getValidation().getValidConnectionChecker() != null &&
                       ds.getValidation().getValidConnectionChecker().getClassName() != null)
                   {
-                     StringBuffer valueBuf = new StringBuffer();
+                     StringBuilder valueBuf = new StringBuilder();
                      for (Entry<String, String> connProperty : ds.getValidation().getValidConnectionChecker()
                         .getConfigPropertiesMap().entrySet())
                      {
@@ -508,7 +508,7 @@ public class Merger
                case EXCEPTIONSORTERPROPERTIES : {
                   if (ds != null && ds.getValidation() != null && ds.getValidation().getExceptionSorter() != null)
                   {
-                     StringBuffer valueBuf = new StringBuffer();
+                     StringBuilder valueBuf = new StringBuilder();
                      for (Entry<String, String> connProperty : ds.getValidation().getExceptionSorter()
                         .getConfigPropertiesMap().entrySet())
                      {
@@ -538,7 +538,7 @@ public class Merger
                   if (ds != null && ds.getValidation() != null &&
                       ds.getValidation().getStaleConnectionChecker() != null)
                   {
-                     StringBuffer valueBuf = new StringBuffer();
+                     StringBuilder valueBuf = new StringBuilder();
                      for (Entry<String, String> connProperty : ds.getValidation().getStaleConnectionChecker()
                         .getConfigPropertiesMap().entrySet())
                      {
@@ -619,7 +619,7 @@ public class Merger
                case CONNECTIONPROPERTIES : {
                   if (ds != null && ds.getConnectionProperties() != null)
                   {
-                     StringBuffer valueBuf = new StringBuffer();
+                     StringBuilder valueBuf = new StringBuilder();
                      for (Entry<String, String> connProperty : ds.getConnectionProperties().entrySet())
                      {
                         valueBuf.append(connProperty.getKey());
