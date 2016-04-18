@@ -52,6 +52,9 @@ public class AnnotationScannerFactory
       }
    }
 
+   private AnnotationScannerFactory() {
+   }
+
    /**
     * Register an annotation scanner
     * @param scanner The scanner

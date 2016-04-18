@@ -30,6 +30,9 @@ import java.security.PrivilegedAction;
  */
 class SecurityActions
 {
+   private SecurityActions() {
+   }
+
    /**
     * Get the classloader.
     * @param c The class

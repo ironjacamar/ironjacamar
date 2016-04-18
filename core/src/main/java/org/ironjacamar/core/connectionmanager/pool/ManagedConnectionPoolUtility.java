@@ -40,6 +40,9 @@ public class ManagedConnectionPoolUtility
 {
    private static String newLine = SecurityActions.getSystemProperty("line.separator");
 
+   private ManagedConnectionPoolUtility() {
+   }
+
    /**
     * Get the full details of a managed connection pool state
     * @param method The method identifier

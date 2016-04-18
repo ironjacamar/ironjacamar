@@ -41,6 +41,9 @@ import javax.resource.spi.work.WorkContextProvider;
  */
 public class WorkManagerUtil
 {
+   private WorkManagerUtil() {
+   }
+
    /**
     *
     * Utility method to decide if a work will have to run under long running thread pool

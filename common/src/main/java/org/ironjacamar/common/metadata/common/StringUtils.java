@@ -35,6 +35,9 @@ public class StringUtils
    /** a tag for map keys */
    private static String endTag = "<%&?>";
 
+   private StringUtils() {
+   }
+
    /**
     * Restores expression with substituted default value
     * @param m a Map with expressions

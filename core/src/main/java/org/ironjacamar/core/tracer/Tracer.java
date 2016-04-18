@@ -79,7 +79,10 @@ public class Tracer
          }
       }
    }
-   
+
+   private Tracer() {
+   }
+
    /**
     * Is enabled
     * @return The value
