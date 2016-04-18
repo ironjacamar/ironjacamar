@@ -351,7 +351,7 @@ public abstract class AbstractParser
       FlushStrategy flushStrategy = Defaults.FLUSH_STRATEGY;
       Capacity capacity = null;
 
-      HashMap<String, String> expressions = new HashMap<String, String>();
+      Map<String, String> expressions = new HashMap<String, String>();
 
       for (int i = 0; i < reader.getAttributeCount(); i++)
       {
@@ -454,7 +454,7 @@ public abstract class AbstractParser
       Boolean padXid = Defaults.PAD_XID;
       Boolean wrapXaDataSource = Defaults.WRAP_XA_RESOURCE;
 
-      HashMap<String, String> expressions = new HashMap<String, String>();
+      Map<String, String> expressions = new HashMap<String, String>();
 
       for (int i = 0; i < reader.getAttributeCount(); i++)
       {
@@ -565,7 +565,7 @@ public abstract class AbstractParser
 
       String securityDomain = null;
 
-      HashMap<String, String> expressions = new HashMap<String, String>();
+      Map<String, String> expressions = new HashMap<String, String>();
 
       while (reader.hasNext())
       {
@@ -628,7 +628,7 @@ public abstract class AbstractParser
    {
       String securityDomain = null;
 
-      HashMap<String, String> expressions = new HashMap<String, String>();
+      Map<String, String> expressions = new HashMap<String, String>();
 
       while (reader.hasNext())
       {
@@ -682,7 +682,7 @@ public abstract class AbstractParser
       Credential security = null;
       Extension plugin = null;
 
-      HashMap<String, String> expressions = new HashMap<String, String>();
+      Map<String, String> expressions = new HashMap<String, String>();
 
       for (int i = 0; i < reader.getAttributeCount(); i++)
       {
@@ -755,7 +755,7 @@ public abstract class AbstractParser
       String moduleName = null;
       String moduleSlot = null;
       Map<String, String> properties = null;
-      HashMap<String, String> expressions = new HashMap<String, String>();
+      Map<String, String> expressions = new HashMap<String, String>();
 
       for (int i = 0; i < reader.getAttributeCount(); i++)
       {
@@ -893,7 +893,7 @@ public abstract class AbstractParser
       Boolean backgroundValidation = Defaults.BACKGROUND_VALIDATION;
       Long backgroundValidationMillis = null;
 
-      HashMap<String, String> expressions = new HashMap<String, String>();
+      Map<String, String> expressions = new HashMap<String, String>();
 
       while (reader.hasNext())
       {
@@ -964,7 +964,7 @@ public abstract class AbstractParser
       Integer allocationRetry = null;
       Integer xaResourceTimeout = null;
 
-      HashMap<String, String> expressions = new HashMap<String, String>();
+      Map<String, String> expressions = new HashMap<String, String>();
 
       while (reader.hasNext())
       {
