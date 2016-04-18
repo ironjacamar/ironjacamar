@@ -265,8 +265,7 @@ public class UnifiedSecurityManagedConnectionFactory implements ManagedConnectio
    @Override
    public int hashCode()
    {
-      int result = 17;
-      return result;
+      return 17;
    }
 
    /**
@@ -284,8 +283,7 @@ public class UnifiedSecurityManagedConnectionFactory implements ManagedConnectio
          return true;
       if (!(other instanceof UnifiedSecurityManagedConnectionFactory))
          return false;
-      boolean result = true;
-      return result;
+      return true;
    }
 
    /**

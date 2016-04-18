@@ -129,8 +129,7 @@ public class UnifiedSecurityResourceAdapter implements ResourceAdapter, java.io.
    @Override
    public int hashCode()
    {
-      int result = 17;
-      return result;
+      return 17;
    }
 
    /**
@@ -148,8 +147,7 @@ public class UnifiedSecurityResourceAdapter implements ResourceAdapter, java.io.
          return true;
       if (!(other instanceof UnifiedSecurityResourceAdapter))
          return false;
-      boolean result = true;
-      return result;
+      return true;
    }
 
 }

@@ -196,8 +196,7 @@ public class LazyManagedConnectionFactory implements ManagedConnectionFactory, R
    @Override
    public int hashCode()
    {
-      int result = 17;
-      return result;
+      return 17;
    }
 
    /** 
@@ -215,7 +214,6 @@ public class LazyManagedConnectionFactory implements ManagedConnectionFactory, R
       if (!(other instanceof LazyManagedConnectionFactory))
          return false;
       LazyManagedConnectionFactory obj = (LazyManagedConnectionFactory)other;
-      boolean result = true; 
-      return result;
+      return true;
    }
 }
