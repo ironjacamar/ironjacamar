@@ -1002,14 +1002,11 @@ public abstract class AbstractRemoteTransport<T> implements Transport
       WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
       DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(logicalAddress);
 
-      if (dwm != null)
+      if (dwm != null && dwm.isDistributedStatisticsEnabled())
       {
-         if (dwm.isDistributedStatisticsEnabled())
-         {
-            DistributedWorkManagerStatisticsValues v =
-               new DistributedWorkManagerStatisticsValues(0, 0, 0, 0, 0, 0, 0, 0);
-            dwm.getDistributedStatistics().initialize(v);
-         }
+         DistributedWorkManagerStatisticsValues v =
+            new DistributedWorkManagerStatisticsValues(0, 0, 0, 0, 0, 0, 0, 0);
+         dwm.getDistributedStatistics().initialize(v);
       }
    }
 

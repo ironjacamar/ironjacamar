@@ -255,16 +255,13 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       if (pool != null)
          pool.flush(FlushMode.GRACEFULLY);
 
-      if (seconds > 0)
+      if (seconds > 0 && scheduledGraceful == null)
       {
-         if (scheduledGraceful == null)
-         {
-            if (scheduledExecutorService == null)
-               scheduledExecutorService = Executors.newScheduledThreadPool(1);
+         if (scheduledExecutorService == null)
+            scheduledExecutorService = Executors.newScheduledThreadPool(1);
 
-            scheduledGraceful =
-               scheduledExecutorService.schedule(new ConnectionManagerShutdown(this), seconds, TimeUnit.SECONDS);
-         }
+         scheduledGraceful =
+            scheduledExecutorService.schedule(new ConnectionManagerShutdown(this), seconds, TimeUnit.SECONDS);
       }
    }
 

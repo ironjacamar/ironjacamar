@@ -70,10 +70,9 @@ public abstract class AbstractSelector extends AbstractNotificationListener impl
 
       Map<Address, Long> sorted = null;
 
-      if (WorkManagerUtil.isLongRunning(work))
+      if (WorkManagerUtil.isLongRunning(work) && longRunning.get(wmId) != null)
       {
-         if (longRunning.get(wmId) != null)
-            sorted = new HashMap<Address, Long>(longRunning.get(wmId));
+         sorted = new HashMap<Address, Long>(longRunning.get(wmId));
       }
 
       if (sorted == null && shortRunning.get(wmId) != null)

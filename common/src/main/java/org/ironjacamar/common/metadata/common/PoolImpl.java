@@ -193,11 +193,10 @@ public class PoolImpl extends AbstractMetadata implements Pool
       if (this.minPoolSize != null && this.minPoolSize < 0)
          throw new ValidateException(bundle.invalidNegative(CommonXML.ELEMENT_MIN_POOL_SIZE));
 
-      if (this.minPoolSize != null && this.maxPoolSize != null)
+      if (this.minPoolSize != null && this.maxPoolSize != null && minPoolSize.intValue() > maxPoolSize.intValue())
       {
-         if (minPoolSize.intValue() > maxPoolSize.intValue())
-            throw new ValidateException(bundle.notValidNumber(minPoolSize.toString(),
-                                                              CommonXML.ELEMENT_MIN_POOL_SIZE));
+         throw new ValidateException(bundle.notValidNumber(minPoolSize.toString(),
+                 CommonXML.ELEMENT_MIN_POOL_SIZE));
       }
 
       if (this.flushStrategy == null)

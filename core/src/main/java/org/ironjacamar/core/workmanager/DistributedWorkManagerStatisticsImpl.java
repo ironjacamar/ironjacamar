@@ -157,14 +157,11 @@ public class DistributedWorkManagerStatisticsImpl implements DistributedWorkMana
 
       workManagers.add(address);
 
-      if (!initialized && own != null && transport != null)
+      if (!initialized && own != null && transport != null && !own.equals(address) && transport.isInitialized())
       {
-         if (!own.equals(address) && transport.isInitialized())
-         {
-            DistributedWorkManagerStatisticsValues values = transport.getDistributedStatistics(address);
-            if (values != null)
-               initialize(values);
-         }
+         DistributedWorkManagerStatisticsValues values = transport.getDistributedStatistics(address);
+         if (values != null)
+            initialize(values);
       }
    }
 

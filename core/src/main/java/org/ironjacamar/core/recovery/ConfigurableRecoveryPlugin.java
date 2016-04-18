@@ -155,36 +155,33 @@ public class ConfigurableRecoveryPlugin implements RecoveryPlugin
    @Override
    public void close(Object c) throws ResourceException
    {
-      if (enableClose)
+      if (enableClose && c != null)
       {
-         if (c != null)
+         if (c instanceof javax.resource.cci.Connection)
          {
-            if (c instanceof javax.resource.cci.Connection)
+            try
             {
-               try
-               {
-                  javax.resource.cci.Connection cci = (javax.resource.cci.Connection)c;
-                  cci.close();
-               }
-               catch (ResourceException re)
-               {
-                  log.exceptionDuringConnectionClose(re);
-                  throw new ResourceException(bundle.errorDuringConnectionClose(), re);
-               }
+               javax.resource.cci.Connection cci = (javax.resource.cci.Connection)c;
+               cci.close();
             }
-            else
+            catch (ResourceException re)
             {
-               try
-               {
-                  Method method = SecurityActions.getMethod(c.getClass(), closeMethod, (Class<?>[])null);
-                  SecurityActions.setAccessible(method, true);
-                  method.invoke(c, (Object[])null);
-               }
-               catch (Throwable t)
-               {
-                  log.debugf(t, "Error during connection %s()", closeMethod);
-                  throw new ResourceException(bundle.errorDuringConnectionClose(), t);
-               }
+               log.exceptionDuringConnectionClose(re);
+               throw new ResourceException(bundle.errorDuringConnectionClose(), re);
+            }
+         }
+         else
+         {
+            try
+            {
+               Method method = SecurityActions.getMethod(c.getClass(), closeMethod, (Class<?>[])null);
+               SecurityActions.setAccessible(method, true);
+               method.invoke(c, (Object[])null);
+            }
+            catch (Throwable t)
+            {
+               log.debugf(t, "Error during connection %s()", closeMethod);
+               throw new ResourceException(bundle.errorDuringConnectionClose(), t);
             }
          }
       }

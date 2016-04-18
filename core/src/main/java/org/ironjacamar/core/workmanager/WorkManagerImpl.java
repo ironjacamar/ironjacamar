@@ -1064,13 +1064,10 @@ public class WorkManagerImpl implements WorkManager
          verifyWork(work);
       }
 
-      if (work instanceof WorkContextProvider)
+      if (work instanceof WorkContextProvider && executionContext != null)
       {
          //Implements WorkContextProvider and not-null ExecutionContext
-         if (executionContext != null)
-         {
-            throw new WorkRejectedException(bundle.workExecutionContextMustNullImplementsWorkContextProvider());
-         }
+         throw new WorkRejectedException(bundle.workExecutionContextMustNullImplementsWorkContextProvider());
       }
    }
 

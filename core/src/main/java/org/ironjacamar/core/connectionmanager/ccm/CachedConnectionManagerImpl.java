@@ -294,12 +294,9 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
       if (Tracer.isEnabled())
          Tracer.popCCMContext(context.toString(), new Throwable("CALLSTACK"));
 
-      if (debug)
+      if (debug && closeAll(context) && error)
       {
-         if (closeAll(context) && error)
-         {
-            throw new ResourceException(); //bundle.someConnectionsWereNotClosed());
-         }
+         throw new ResourceException(); //bundle.someConnectionsWereNotClosed());
       }
 
       context.clear();

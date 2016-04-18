@@ -137,12 +137,9 @@ public class CredentialImpl extends org.ironjacamar.common.metadata.common.Crede
    @Override
    public void validate() throws ValidateException
    {
-      if (userName != null)
+      if (userName != null && securityDomain != null)
       {
-         if (securityDomain != null)
-         {
-            throw new ValidateException(bundle.invalidSecurityConfiguration());
-         }
+         throw new ValidateException(bundle.invalidSecurityConfiguration());
       }
    }
 }

@@ -155,16 +155,13 @@ public class Merger
 
    private void mergeTransactionSupport(Activation ij, Connector conn)
    {
-      if (ij.getTransactionSupport() != null)
+      if (ij.getTransactionSupport() != null && conn.getResourceadapter() != null)
       {
-         if (conn.getResourceadapter() != null)
+         ResourceAdapter ra = conn.getResourceadapter();
+         if (ra.getOutboundResourceadapter() != null)
          {
-            ResourceAdapter ra = conn.getResourceadapter();
-            if (ra.getOutboundResourceadapter() != null)
-            {
-               ((OutboundResourceAdapterImpl) ra.getOutboundResourceadapter()).
-                  forceTransactionSupport(ij.getTransactionSupport());
-            }
+            ((OutboundResourceAdapterImpl) ra.getOutboundResourceadapter()).
+               forceTransactionSupport(ij.getTransactionSupport());
          }
       }
    }
