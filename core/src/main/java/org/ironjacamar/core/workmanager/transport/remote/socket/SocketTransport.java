@@ -281,12 +281,10 @@ public class SocketTransport extends AbstractRemoteTransport<String> implements 
                return parameters[0];
             }
             case WORK_EXCEPTION : {
-               WorkException we = (WorkException)parameters[0];
-               throw we;
+               throw (WorkException)parameters[0];
             }
             case GENERIC_EXCEPTION : {
-               Throwable t = (Throwable)parameters[0];
-               throw t;
+               throw (Throwable)parameters[0];
             }
             default :
                if (log.isDebugEnabled())

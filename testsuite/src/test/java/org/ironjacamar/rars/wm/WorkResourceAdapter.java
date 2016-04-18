@@ -124,8 +124,7 @@ public class WorkResourceAdapter implements ResourceAdapter, java.io.Serializabl
    @Override
    public int hashCode()
    {
-      int result = 17;
-      return result;
+      return 17;
    }
 
    /** 

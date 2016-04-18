@@ -169,8 +169,7 @@ public class WorkManagedConnectionFactory implements ManagedConnectionFactory, R
    @Override
    public int hashCode()
    {
-      int result = 17;
-      return result;
+      return 17;
    }
 
    /** 
@@ -188,8 +187,7 @@ public class WorkManagedConnectionFactory implements ManagedConnectionFactory, R
       if (!(other instanceof WorkManagedConnectionFactory))
          return false;
       WorkManagedConnectionFactory obj = (WorkManagedConnectionFactory)other;
-      boolean result = true; 
-      return result;
+      return true;
    }
 
 }
