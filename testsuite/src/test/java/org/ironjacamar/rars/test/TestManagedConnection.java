@@ -29,13 +29,14 @@ import java.util.Set;
 
 import javax.resource.NotSupportedException;
 import javax.resource.ResourceException;
+import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.ConnectionEvent;
 import javax.resource.spi.ConnectionEventListener;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.LocalTransaction;
 import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionMetaData;
-
+import javax.resource.spi.work.WorkManager;
 import javax.security.auth.Subject;
 import javax.transaction.xa.XAResource;
 
@@ -66,6 +67,23 @@ public class TestManagedConnection implements ManagedConnection
       this.logwriter = null;
       this.listeners = Collections.synchronizedList(new ArrayList<ConnectionEventListener>(1));
       this.connections = new HashSet<TestConnectionImpl>();
+   }
+
+   /**
+    * Get the WorkManager instance
+    * @return The value
+    */
+   WorkManager getWorkManager()
+   {
+      return ((TestResourceAdapter)mcf.getResourceAdapter()).getWorkManager();
+   }
+   /**
+    * get BootstrapContext
+    * @return BootstrapContext
+    */
+   BootstrapContext getBootstrapContext()
+   {
+      return ((TestResourceAdapter)mcf.getResourceAdapter()).getBootstrapContext();
    }
 
    /**

@@ -425,7 +425,6 @@ public class ResourceAdapterFactory
       ResourceAdapterType dashRaXmlRt = dashRaXml.createResourceAdapter().archive("work.rar");
       if (bc != null)
          dashRaXmlRt.bootstrapContext(bc);
-
       ConnectionDefinitionsType dashRaXmlCdst = dashRaXmlRt.getOrCreateConnectionDefinitions();
       org.ironjacamar.embedded.dsl.resourceadapters20.api.ConnectionDefinitionType dashRaXmlCdt = dashRaXmlCdst
             .createConnectionDefinition().className(WorkManagedConnectionFactory.class.getName())
@@ -671,6 +670,7 @@ public class ResourceAdapterFactory
       return raa;
    }
 
+
    /**
     * Create the test.rar deployment
     *
@@ -680,16 +680,35 @@ public class ResourceAdapterFactory
     * @return The resource adapter descriptor
     */
    public static ResourceAdaptersDescriptor createTestDeployment(int allocationRetry,
-                                                                 Boolean validation, int invalidConnectionFailureCount)
+         Boolean validation, int invalidConnectionFailureCount)
+   {
+      return createTestDeployment(allocationRetry, validation, invalidConnectionFailureCount,
+            "TestConnectionFactory", "TestAdminObject", null);
+   }
+   /**
+    * Create the test.rar deployment
+    *
+    * @param allocationRetry The number of allocation retries
+    * @param validation True is foreground, false is background, null is none
+    * @param invalidConnectionFailureCount The invalid connection failure count
+    * @param connectionDefID the id of ConnectionDefinition
+    * @param adminObjectID the id of AdminObject
+    * @param bc the BootstrapContext
+    * @return The resource adapter descriptor
+    */
+   public static ResourceAdaptersDescriptor createTestDeployment(int allocationRetry, Boolean validation,
+         int invalidConnectionFailureCount, String connectionDefID, String adminObjectID, String bc)
    {
       ResourceAdaptersDescriptor dashRaXml = Descriptors.create(ResourceAdaptersDescriptor.class, "test-ra.xml");
 
       ResourceAdapterType dashRaXmlRt = dashRaXml.createResourceAdapter().archive("test.rar");
+      if (bc != null)
+         dashRaXmlRt.bootstrapContext(bc);
 
       ConnectionDefinitionsType dashRaXmlCdst = dashRaXmlRt.getOrCreateConnectionDefinitions();
       org.ironjacamar.embedded.dsl.resourceadapters20.api.ConnectionDefinitionType dashRaXmlCdt = dashRaXmlCdst
          .createConnectionDefinition().className(TestManagedConnectionFactory.class.getName())
-         .jndiName("java:/eis/TestConnectionFactory").id("TestConnectionFactory");
+         .jndiName("java:/eis/" + connectionDefID).id(connectionDefID);
 
       if (allocationRetry > 0)
       {
@@ -719,7 +738,7 @@ public class ResourceAdapterFactory
       }
 
       dashRaXmlRt.getOrCreateAdminObjects().createAdminObject().className(TestAdminObjectImpl.class.getName())
-         .jndiName("java:/eis/TestAdminObject");
+         .jndiName("java:/eis/" + adminObjectID);
       
       return dashRaXml;
    }

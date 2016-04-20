@@ -25,6 +25,7 @@ import org.ironjacamar.core.api.deploymentrepository.ConfigProperty;
 import org.ironjacamar.core.api.deploymentrepository.InflowRecovery;
 import org.ironjacamar.core.api.deploymentrepository.MessageListener;
 import org.ironjacamar.core.api.deploymentrepository.ResourceAdapter;
+import org.ironjacamar.core.bootstrapcontext.CloneableBootstrapContext;
 import org.ironjacamar.core.spi.bv.BeanValidation;
 import org.ironjacamar.core.spi.statistics.StatisticsPlugin;
 import org.ironjacamar.core.spi.transaction.TransactionIntegration;
@@ -299,7 +300,7 @@ public class ResourceAdapterImpl implements ResourceAdapter
             throw new Exception("Still active endpoints");
 
          resourceAdapter.stop();
-
+         ((CloneableBootstrapContext) bc).shutdown();
          activated = false;
          return true;
       }

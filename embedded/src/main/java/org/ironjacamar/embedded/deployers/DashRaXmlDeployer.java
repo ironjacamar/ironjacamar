@@ -162,7 +162,7 @@ public class DashRaXmlDeployer extends AbstractFungalRADeployer implements Clone
       DashRaXmlDeployer d = new DashRaXmlDeployer();
       d.setDeploymentRepository(deploymentRepository);
       d.setMetadataRepository(metadataRepository);
-      d.setBootstrapContext(bootstrapContext);
+      d.setBootstrapContextCoordinator(bootstrapContextCoordinator);
       d.setJndiStrategy(jndiStrategy);
       d.setTransactionIntegration(transactionIntegration);
       d.setCachedConnectionManager(cachedConnectionManager);

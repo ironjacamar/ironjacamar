@@ -135,9 +135,8 @@
   </bean>
 
   <!-- Work Manager Coordinator -->
-  <bean name="WorkManagerCoordinator">
-    <constructor factoryClass="org.ironjacamar.core.workmanager.WorkManagerCoordinator"
-                 factoryMethod="getInstance"/>
+  <bean name="WorkManagerCoordinator" class="org.ironjacamar.core.workmanager.WorkManagerCoordinator">
+
 
     <property name="DefaultWorkManager"><inject bean="WorkManager"/></property>
 
@@ -145,14 +144,28 @@
     <uncallback method="unregisterWorkManager"/>
   </bean>
 
-  <bean name="BootstrapContext"
+  <bean name="DefaultBootstrapContext"
         interface="javax.resource.spi.BootstrapContext"
         class="org.ironjacamar.core.bootstrapcontext.BootstrapContextImpl">
     <constructor>
       <parameter><inject bean="WorkManager"/></parameter>
       <parameter><inject bean="TransactionSynchronizationRegistry"/></parameter>
       <parameter><inject bean="XATerminator"/></parameter>
+      <parameter name="ValidatorFactory">
+        <inject bean="BeanValidation" property="ValidatorFactory" />
+      </parameter>
     </constructor>
+    <property name="Name">Default</property>
+  </bean>
+
+  <!-- Bootstrap Context Coordinator -->
+  <bean name="BootstrapContextCoordinator"
+    class="org.ironjacamar.core.bootstrapcontext.BootstrapContextCoordinator">
+    <property name="DefaultBootstrapContext"><inject bean="DefaultBootstrapContext"/></property>
+    <property name="WorkManagerCoordinator"><inject bean="WorkManagerCoordinator"/></property>
+
+    <incallback method="registerBootstrapContext"/>
+    <uncallback method="unregisterBootstrapContext"/>
   </bean>
 
   <bean name="MetadataRepository"
@@ -214,7 +227,7 @@
         class="org.ironjacamar.embedded.deployers.IronJacamarXmlDeployer">
     <property name="MetadataRepository"><inject bean="MetadataRepository"/></property>
     <property name="DeploymentRepository"><inject bean="DeploymentRepository"/></property>
-    <property name="BootstrapContext"><inject bean="BootstrapContext"/></property>
+    <property name="BootstrapContextCoordinator"><inject bean="BootstrapContextCoordinator"/></property>
     <property name="JndiStrategy"><inject bean="JndiStrategy"/></property>
     <property name="TransactionIntegration"><inject bean="TransactionIntegration"/></property>
     <property name="CachedConnectionManager"><inject bean="CachedConnectionManager"/></property>
@@ -230,7 +243,7 @@
         class="org.ironjacamar.embedded.deployers.DashRaXmlDeployer">
     <property name="MetadataRepository"><inject bean="MetadataRepository"/></property>
     <property name="DeploymentRepository"><inject bean="DeploymentRepository"/></property>
-    <property name="BootstrapContext"><inject bean="BootstrapContext"/></property>
+    <property name="BootstrapContextCoordinator"><inject bean="BootstrapContextCoordinator"/></property>
     <property name="JndiStrategy"><inject bean="JndiStrategy"/></property>
     <property name="TransactionIntegration"><inject bean="TransactionIntegration"/></property>
     <property name="CachedConnectionManager"><inject bean="CachedConnectionManager"/></property>

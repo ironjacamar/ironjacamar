@@ -1,0 +1,70 @@
+<!--
+  ~  IronJacamar, a Java EE Connector Architecture implementation
+  ~  Copyright 2016, Red Hat Inc, and individual contributors
+  ~  as indicated by the @author tags. See the copyright.txt file in the
+  ~  distribution for a full listing of individual contributors.
+  ~
+  ~  This is free software; you can redistribute it and/or modify it
+  ~  under the terms of the Eclipse Public License 1.0 as
+  ~  published by the Free Software Foundation.
+  ~
+  ~  This software is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the Eclipse
+  ~  Public License for more details.
+  ~
+  ~  You should have received a copy of the Eclipse Public License
+  ~  along with this software; if not, write to the Free
+  ~  Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~  02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  -->
+<deployment>
+    <bean name="WorkManager2"
+          interface="org.ironjacamar.core.api.workmanager.WorkManager"
+          class="org.ironjacamar.core.workmanager.WorkManagerImpl">
+
+        <!-- The name -->
+        <property name="Name">WorkManager2</property>
+
+        <!-- The short running thread pool -->
+        <property name="ShortRunningThreadPool"><inject bean="ShortRunningThreadPool"/></property>
+
+        <!-- The long running thread pool -->
+        <property name="LongRunningThreadPool"><inject bean="LongRunningThreadPool"/></property>
+
+        <!-- The XA terminator -->
+        <property name="XATerminator"><inject bean="TransactionIntegration" property="XATerminator"/></property>
+
+        <!-- The callback security module -->
+        <property name="CallbackSecurity"><inject bean="Callback"/></property>
+
+        <!-- The security integration module -->
+        <property name="SecurityIntegration">
+            <inject bean="PicketBox"/>
+        </property>
+
+        <destroy method="shutdown"/>
+    </bean>
+    <bean name="SecondBootstrapContext"
+          interface="javax.resource.spi.BootstrapContext"
+          class="org.ironjacamar.core.bootstrapcontext.BootstrapContextImpl">
+        <constructor>
+            <parameter>
+                <inject bean="WorkManager2"/>
+            </parameter>
+            <parameter>
+                <inject bean="TransactionSynchronizationRegistry"/>
+            </parameter>
+            <parameter>
+                <inject bean="XATerminator"/>
+            </parameter>
+            <parameter name="ValidatorFactory">
+                <inject bean="BeanValidation" property="ValidatorFactory" />
+            </parameter>
+        </constructor>
+        <property name="Name">Second</property>
+        <property name="WorkManagerName">
+            <inject bean="WorkManager2" property="Name"/>
+        </property>
+    </bean>
+</deployment>

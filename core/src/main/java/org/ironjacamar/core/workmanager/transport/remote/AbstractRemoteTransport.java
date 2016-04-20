@@ -76,6 +76,9 @@ public abstract class AbstractRemoteTransport<T> implements Transport
    /** The nodes */
    protected Map<Address, T> nodes;
 
+   /** the WorkManagerCoordinator */
+   protected WorkManagerCoordinator workManagerCoordinator;
+
    /**
     * Constructor
     */
@@ -100,6 +103,18 @@ public abstract class AbstractRemoteTransport<T> implements Transport
    public void setId(String id)
    {
       this.id = id;
+   }
+
+   /**
+    * Set the workManagerCoordinator
+    * @param wcc The workManagerCoordinator
+    */
+   public void setWorkManagerCoordinator(WorkManagerCoordinator wcc)
+   {
+      if (trace)
+         log.tracef("WorkManagerCoordinator: %s", wcc);
+
+      this.workManagerCoordinator = wcc;
    }
 
    /**
@@ -670,8 +685,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
       {
          nodes.put(logicalAddress, physicalAddress);
 
-         WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
-         DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(logicalAddress);
+         DistributedWorkManager dwm = workManagerCoordinator.resolveDistributedWorkManager(logicalAddress);
 
          if (dwm != null)
          {
@@ -711,13 +725,12 @@ public abstract class AbstractRemoteTransport<T> implements Transport
 
       if (!remove.isEmpty())
       {
-         WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
 
          for (Address logicalAddress : remove)
          {
             nodes.remove(logicalAddress);
 
-            DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(logicalAddress);
+            DistributedWorkManager dwm = workManagerCoordinator.resolveDistributedWorkManager(logicalAddress);
 
             if (dwm != null)
             {
@@ -775,8 +788,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
 
       nodes.remove(address);
 
-      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
-      DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(address);
+      DistributedWorkManager dwm = workManagerCoordinator.resolveDistributedWorkManager(address);
 
       if (dwm != null)
       {
@@ -806,8 +818,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
       if (trace)
          log.tracef("LOCAL_DO_WORK(%s, %s)", address, work);
 
-      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
-      DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(address);
+      DistributedWorkManager dwm = workManagerCoordinator.resolveDistributedWorkManager(address);
 
       dwm.localDoWork(work);
    }
@@ -825,8 +836,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
       if (trace)
          log.tracef("LOCAL_START_WORK(%s, %s)", address, work);
 
-      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
-      DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(address);
+      DistributedWorkManager dwm = workManagerCoordinator.resolveDistributedWorkManager(address);
 
       return dwm.localStartWork(work);
    }
@@ -843,8 +853,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
       if (trace)
          log.tracef("LOCAL_SCHEDULE_WORK(%s, %s)", address, work);
 
-      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
-      DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(address);
+      DistributedWorkManager dwm = workManagerCoordinator.resolveDistributedWorkManager(address);
 
       dwm.localScheduleWork(work);
    }
@@ -860,8 +869,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
       if (trace)
          log.tracef("LOCAL_GET_SHORTRUNNING_FREE(%s)", address);
 
-      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
-      WorkManager wm = wmc.resolveWorkManager(address);
+      WorkManager wm = workManagerCoordinator.resolveWorkManager(address);
 
       if (wm != null)
       {
@@ -884,8 +892,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
       if (trace)
          log.tracef("LOCAL_GET_LONGRUNNING_FREE(%s)", address);
 
-      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
-      WorkManager wm = wmc.resolveWorkManager(address);
+      WorkManager wm = workManagerCoordinator.resolveWorkManager(address);
 
       if (wm != null)
       {
@@ -908,8 +915,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
       if (trace)
          log.tracef("LOCAL_UPDATE_SHORTRUNNING_FREE(%s, %d)", logicalAddress, freeCount);
 
-      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
-      DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(logicalAddress);
+      DistributedWorkManager dwm = workManagerCoordinator.resolveDistributedWorkManager(logicalAddress);
 
       if (dwm != null)
       {
@@ -938,8 +944,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
       if (trace)
          log.tracef("LOCAL_UPDATE_LONGRUNNING_FREE(%s, %d)", logicalAddress, freeCount);
 
-      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
-      DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(logicalAddress);
+      DistributedWorkManager dwm = workManagerCoordinator.resolveDistributedWorkManager(logicalAddress);
 
       if (dwm != null)
       {
@@ -968,8 +973,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
       if (trace)
          log.tracef("LOCAL_GET_DISTRIBUTED_STATISTICS(%s)", address);
 
-      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
-      DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(address);
+      DistributedWorkManager dwm = workManagerCoordinator.resolveDistributedWorkManager(address);
 
       if (dwm != null)
       {
@@ -999,8 +1003,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
       if (trace)
          log.tracef("LOCAL_CLEAR_DISTRIBUTED_STATISTICS(%s)", logicalAddress);
 
-      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
-      DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(logicalAddress);
+      DistributedWorkManager dwm = workManagerCoordinator.resolveDistributedWorkManager(logicalAddress);
 
       if (dwm != null && dwm.isDistributedStatisticsEnabled())
       {
@@ -1019,8 +1022,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
       if (trace)
          log.tracef("LOCAL_DELTA_DOWORK_ACCEPTED(%s)", address);
 
-      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
-      DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(address);
+      DistributedWorkManager dwm = workManagerCoordinator.resolveDistributedWorkManager(address);
 
       if (dwm != null)
       {
@@ -1042,8 +1044,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
       if (trace)
          log.tracef("LOCAL_DELTA_DOWORK_REJECTED(%s)", address);
 
-      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
-      DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(address);
+      DistributedWorkManager dwm = workManagerCoordinator.resolveDistributedWorkManager(address);
 
       if (dwm != null)
       {
@@ -1065,8 +1066,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
       if (trace)
          log.tracef("LOCAL_DELTA_STARTWORK_ACCEPTED(%s)", address);
 
-      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
-      DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(address);
+      DistributedWorkManager dwm = workManagerCoordinator.resolveDistributedWorkManager(address);
 
       if (dwm != null)
       {
@@ -1088,8 +1088,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
       if (trace)
          log.tracef("LOCAL_DELTA_STARTWORK_REJECTED(%s)", address);
 
-      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
-      DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(address);
+      DistributedWorkManager dwm = workManagerCoordinator.resolveDistributedWorkManager(address);
 
       if (dwm != null)
       {
@@ -1111,8 +1110,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
       if (trace)
          log.tracef("LOCAL_DELTA_SCHEDULEWORK_ACCEPTED(%s)", address);
 
-      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
-      DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(address);
+      DistributedWorkManager dwm = workManagerCoordinator.resolveDistributedWorkManager(address);
 
       if (dwm != null)
       {
@@ -1134,8 +1132,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
       if (trace)
          log.tracef("LOCAL_DELTA_SCHEDULEWORK_REJECTED(%s)", address);
 
-      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
-      DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(address);
+      DistributedWorkManager dwm = workManagerCoordinator.resolveDistributedWorkManager(address);
 
       if (dwm != null)
       {
@@ -1157,8 +1154,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
       if (trace)
          log.tracef("LOCAL_DELTA_WORK_SUCCESSFUL(%s)", address);
 
-      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
-      DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(address);
+      DistributedWorkManager dwm = workManagerCoordinator.resolveDistributedWorkManager(address);
 
       if (dwm != null)
       {
@@ -1180,8 +1176,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
       if (trace)
          log.tracef("LOCAL_DELTA_WORK_FAILED(%s)", address);
 
-      WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
-      DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(address);
+      DistributedWorkManager dwm = workManagerCoordinator.resolveDistributedWorkManager(address);
 
       if (dwm != null)
       {

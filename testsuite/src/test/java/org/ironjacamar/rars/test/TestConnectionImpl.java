@@ -20,6 +20,11 @@
  */
 package org.ironjacamar.rars.test;
 
+import org.ironjacamar.core.workmanager.WorkManagerImpl;
+
+import javax.resource.spi.BootstrapContext;
+import javax.resource.spi.work.WorkManager;
+
 /**
  * TestConnectionImpl
  */
@@ -84,4 +89,28 @@ public class TestConnectionImpl implements TestConnection
    {
       this.mc = mc;
    }
+
+   /**
+    * {@inheritDoc}
+    */
+   public WorkManager getWorkManager()
+   {
+      return mc.getWorkManager();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public String getWorkManagerName()
+   {
+      return ((WorkManagerImpl) getWorkManager()).getName();
+   }
+
+   @Override
+   public BootstrapContext getBootstrapContext()
+   {
+      return mc.getBootstrapContext();
+   }
+
 }

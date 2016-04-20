@@ -37,6 +37,8 @@ import org.ironjacamar.core.api.deploymentrepository.Deployment;
 import org.ironjacamar.core.api.deploymentrepository.DeploymentRepository;
 import org.ironjacamar.core.api.metadatarepository.Metadata;
 import org.ironjacamar.core.api.metadatarepository.MetadataRepository;
+import org.ironjacamar.core.bootstrapcontext.BootstrapContextCoordinator;
+import org.ironjacamar.core.bootstrapcontext.CloneableBootstrapContext;
 import org.ironjacamar.core.connectionmanager.ConnectionManager;
 import org.ironjacamar.core.connectionmanager.ConnectionManagerFactory;
 import org.ironjacamar.core.connectionmanager.pool.Capacity;
@@ -73,7 +75,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.ResourceAdapterAssociation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
@@ -97,7 +98,7 @@ public abstract class AbstractResourceAdapterDeployer
    protected MetadataRepository metadataRepository;
 
    /** The BootstrapContext */
-   protected BootstrapContext bootstrapContext;
+   protected BootstrapContextCoordinator bootstrapContextCoordinator;
 
    /** The JndiStrategy */
    protected JndiStrategy jndiStrategy;
@@ -127,7 +128,7 @@ public abstract class AbstractResourceAdapterDeployer
    {
       this.deploymentRepository = null;
       this.metadataRepository = null;
-      this.bootstrapContext = null;
+      this.bootstrapContextCoordinator = null;
       this.jndiStrategy = null;
       this.transactionIntegration = null;
       this.cachedConnectionManager = null;
@@ -159,11 +160,11 @@ public abstract class AbstractResourceAdapterDeployer
     * Set the bootstrap context
     * @param v The value
     */
-   public void setBootstrapContext(BootstrapContext v)
+   public void setBootstrapContextCoordinator(BootstrapContextCoordinator v)
    {
-      this.bootstrapContext = v;
+      this.bootstrapContextCoordinator = v;
    }
-   
+
    /**
     * Set the JNDI strategy
     * @param v The value
@@ -274,12 +275,13 @@ public abstract class AbstractResourceAdapterDeployer
          builder.classLoaderPlugin(classLoaderPlugin);
 
          if (connector.getResourceadapter().getResourceadapterClass() != null)
+         {
+            CloneableBootstrapContext bootstrapContext = createBootstrapContext(connector, activation);
             createResourceAdapter(builder, connector.getResourceadapter().getResourceadapterClass(),
-                                  connector.getResourceadapter().getConfigProperties(),
-                                  activation.getConfigProperties(),
-                                  transactionSupport,
-                                  getProductName(connector), getProductVersion(connector),
-                                  connector.getResourceadapter().getInboundResourceadapter());
+                  connector.getResourceadapter().getConfigProperties(), activation.getConfigProperties(),
+                  transactionSupport, getProductName(connector), getProductVersion(connector),
+                  connector.getResourceadapter().getInboundResourceadapter(), bootstrapContext);
+         }
 
          if (activation.getConnectionDefinitions() != null)
          {
@@ -319,6 +321,28 @@ public abstract class AbstractResourceAdapterDeployer
       }
    }
 
+   private CloneableBootstrapContext createBootstrapContext(Connector connector, Activation activation)
+   {
+      CloneableBootstrapContext bootstrapContext;
+      String bootstrapContextName;
+      if (activation != null && activation.getBootstrapContext() != null &&
+            !activation.getBootstrapContext().trim().equals(""))
+      {
+         bootstrapContextName = activation.getBootstrapContext();
+
+         String bootstrapContextIdentifier = bootstrapContextCoordinator
+               .createIdentifier(connector.getResourceadapter().getResourceadapterClass(),
+                     connector.getResourceadapter().getConfigProperties(), bootstrapContextName);
+         bootstrapContext = bootstrapContextCoordinator
+               .createBootstrapContext(bootstrapContextIdentifier, bootstrapContextName);
+      }
+      else
+      {
+         bootstrapContext = bootstrapContextCoordinator.getDefaultBootstrapContext();
+      }
+      return bootstrapContext;
+   }
+
    /**
     * Create resource adapter instance
     * @param builder The deployment builder
@@ -329,6 +353,7 @@ public abstract class AbstractResourceAdapterDeployer
     * @param productName The product name
     * @param productVersion The product version
     * @param ira The inbound resource adapter definition
+    * @param bootstrapContext the bootstrapContext to use
     * @throws DeployException Thrown if the resource adapter cant be created
     */
    protected void
@@ -338,7 +363,7 @@ public abstract class AbstractResourceAdapterDeployer
                             Map<String, String> overrides,
                             TransactionSupportEnum transactionSupport,
                             String productName, String productVersion,
-                            InboundResourceAdapter ira)
+                            InboundResourceAdapter ira, CloneableBootstrapContext bootstrapContext)
       throws DeployException
    {
       try
@@ -359,13 +384,14 @@ public abstract class AbstractResourceAdapterDeployer
          {
             ti = transactionIntegration;
          }
+         bootstrapContext.setResourceAdapter(resourceAdapter);
 
          builder.resourceAdapter(new ResourceAdapterImpl(resourceAdapter, bootstrapContext, dcps,
-                                                         statisticsPlugin, productName, productVersion,
-                                                         createInboundMapping(ira, builder.getClassLoader()),
-                                                         is16(builder.getMetadata()), beanValidation,
-                                                         builder.getActivation().getBeanValidationGroups(),
-                                                         ti));
+               statisticsPlugin, productName, productVersion,
+               createInboundMapping(ira, builder.getClassLoader()),
+               is16(builder.getMetadata()), beanValidation,
+               builder.getActivation().getBeanValidationGroups(),
+               ti));
       }
       catch (Throwable t)
       {
@@ -1255,4 +1281,5 @@ public abstract class AbstractResourceAdapterDeployer
          }
       }
    }
+
 }

@@ -20,6 +20,9 @@
  */
 package org.ironjacamar.rars.test;
 
+import javax.resource.spi.BootstrapContext;
+import javax.resource.spi.work.WorkManager;
+
 /**
  * TestConnection
  */
@@ -41,4 +44,24 @@ public interface TestConnection
     * Close
     */
    public void close();
+
+   /**
+    * Get the WorkManager instance
+    * @return The value
+    */
+   WorkManager getWorkManager();
+
+
+   /**
+    * Get the WorkManager Name instance
+    * @return The value
+    */
+   String getWorkManagerName();
+
+   /**
+    * get BootstrapContext
+    * @return BootstrapContext
+    */
+   BootstrapContext getBootstrapContext();
+
 }

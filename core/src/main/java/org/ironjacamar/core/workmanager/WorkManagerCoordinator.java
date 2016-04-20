@@ -50,9 +50,6 @@ public class WorkManagerCoordinator
    /** Whether trace is enabled */
    private static boolean trace = log.isTraceEnabled();
 
-   /** The instance */
-   private static final WorkManagerCoordinator INSTANCE = new WorkManagerCoordinator();
-
    /** The work managers */
    private ConcurrentMap<String, WorkManager> workmanagers;
 
@@ -76,14 +73,6 @@ public class WorkManagerCoordinator
       this.refCountWorkmanagers = new HashMap<String, Integer>();
    }
 
-   /**
-    * Get the instance
-    * @return The instance
-    */
-   public static WorkManagerCoordinator getInstance()
-   {
-      return INSTANCE;
-   }
 
    /**
     * Register work manager

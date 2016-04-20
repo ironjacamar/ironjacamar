@@ -20,6 +20,7 @@
  */
 package org.ironjacamar.rars.test;
 
+import org.ironjacamar.core.bootstrapcontext.CloneableBootstrapContext;
 import org.ironjacamar.rars.test.inflow.TestActivation;
 import org.ironjacamar.rars.test.inflow.TestActivationSpec;
 
@@ -33,7 +34,7 @@ import javax.resource.spi.BootstrapContext;
 import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.ResourceAdapterInternalException;
 import javax.resource.spi.endpoint.MessageEndpointFactory;
-
+import javax.resource.spi.work.WorkManager;
 import javax.transaction.xa.XAResource;
 
 /**
@@ -49,6 +50,11 @@ public class TestResourceAdapter implements ResourceAdapter, java.io.Serializabl
    /** The activations by activation spec */
    private Map<TestActivationSpec, TestActivation> activations;
 
+   /** Work manager */
+   private WorkManager workManager;
+
+   private BootstrapContext bc;
+
    /**
     * Default constructor
     */
@@ -56,6 +62,26 @@ public class TestResourceAdapter implements ResourceAdapter, java.io.Serializabl
    {
       this.activations = Collections.synchronizedMap(new HashMap<TestActivationSpec, TestActivation>());
    }
+
+   /**
+    * Get the work manager
+    * @return The instance
+    */
+   WorkManager getWorkManager()
+   {
+      return workManager;
+   }
+
+   /**
+    * get BootstrapContextId
+    * @return BootstrapContext Id
+    */
+   BootstrapContext getBootstrapContext()
+   {
+      return bc;
+   }
+
+
 
    /**
     * {@inheritDoc}
@@ -83,8 +109,10 @@ public class TestResourceAdapter implements ResourceAdapter, java.io.Serializabl
     * {@inheritDoc}
     */
    public void start(BootstrapContext ctx)
-      throws ResourceAdapterInternalException
+         throws ResourceAdapterInternalException
    {
+      this.bc = (CloneableBootstrapContext) ctx;
+      this.workManager = ctx.getWorkManager();
    }
 
    /**

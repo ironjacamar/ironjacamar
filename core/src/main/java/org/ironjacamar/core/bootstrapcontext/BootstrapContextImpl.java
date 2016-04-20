@@ -20,29 +20,34 @@
  */
 package org.ironjacamar.core.bootstrapcontext;
 
+import org.ironjacamar.core.api.workmanager.WorkManager;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Timer;
 
-import javax.resource.spi.BootstrapContext;
+import javax.resource.spi.ResourceAdapter;
 import javax.resource.spi.XATerminator;
 import javax.resource.spi.work.HintsContext;
 import javax.resource.spi.work.SecurityContext;
 import javax.resource.spi.work.TransactionContext;
 import javax.resource.spi.work.WorkContext;
-import javax.resource.spi.work.WorkManager;
 import javax.transaction.TransactionSynchronizationRegistry;
+import javax.validation.ValidatorFactory;
 
 /**
  * Basic BootstrapContext implementation
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class BootstrapContextImpl implements BootstrapContext
+public class BootstrapContextImpl implements CloneableBootstrapContext
 {
    /** Work Manager */
    private WorkManager workManager;
+
+   /** Work Manager name */
+   private String workManagerName;
 
    /** Transaction synchronization registry */
    private TransactionSynchronizationRegistry transactionSynchronizationRegistry;
@@ -56,21 +61,32 @@ public class BootstrapContextImpl implements BootstrapContext
    /** Timers */
    private List<Timer> timers;
 
+   /** the name */
+   private String name;
+
+   /**the id */
+   private String id;
+
+   /** the ValidatorFactory */
+   private ValidatorFactory validatorFactory;
+
    /**
     * Constructor
     * @param wm The WorkManager
     * @param tsr The TransactionSynchronizationRegistry
     * @param terminator The XATerminator
+    * @param validatorFactory the ValidatorFactory
     */
    public BootstrapContextImpl(WorkManager wm,
                                TransactionSynchronizationRegistry tsr,
-                               XATerminator terminator)
+                               XATerminator terminator,
+                               ValidatorFactory validatorFactory)
    {
       this.workManager = wm;
       this.transactionSynchronizationRegistry = tsr;
       this.xaTerminator = terminator;
       this.supportedContexts = new HashSet<Class>(3);
-
+      this.validatorFactory = validatorFactory;
       this.supportedContexts.add(HintsContext.class);
       this.supportedContexts.add(SecurityContext.class);
       this.supportedContexts.add(TransactionContext.class);
@@ -84,6 +100,39 @@ public class BootstrapContextImpl implements BootstrapContext
    public TransactionSynchronizationRegistry getTransactionSynchronizationRegistry()
    {
       return transactionSynchronizationRegistry;
+   }
+
+   /**
+    * Set the transaction synchronization registry
+    * @param tsr The handle
+    */
+   public void setTransactionSynchronizationRegistry(TransactionSynchronizationRegistry tsr)
+   {
+      this.transactionSynchronizationRegistry = tsr;
+   }
+
+   @Override
+   public void setWorkManager(org.ironjacamar.core.api.workmanager.WorkManager wm)
+   {
+      this.workManager = wm;
+   }
+
+   @Override
+   public String getWorkManagerName()
+   {
+      return workManagerName;
+   }
+
+   @Override
+   public void setWorkManagerName(String wmn)
+   {
+      this.workManagerName = wmn;
+   }
+
+   @Override
+   public void setXATerminator(XATerminator xt)
+   {
+      this.xaTerminator = xt;
    }
 
    /**
@@ -145,4 +194,79 @@ public class BootstrapContextImpl implements BootstrapContext
          }
       }
    }
+
+   @Override
+   public String getId()
+   {
+      return id;
+   }
+
+   @Override
+   public void setId(String v)
+   {
+      this.id = v;
+   }
+
+   /**
+    * Get the name of the bootstrap context
+    * @return The value
+    */
+   @Override
+   public String getName()
+   {
+      return name;
+   }
+
+   @Override
+   public void setResourceAdapter(ResourceAdapter ra)
+   {
+      if (workManager != null)
+         workManager.setResourceAdapter(ra);
+   }
+
+   /**
+    * Set the name of the bootstrap context
+    * @param v The value
+    */
+   public void setName(String v)
+   {
+      name = v;
+   }
+
+   /**
+    * Get the validator factory
+    * @return The factory
+    */
+   public ValidatorFactory getValidatorFactory()
+   {
+      return validatorFactory;
+   }
+
+   /**
+    * Set validator factory
+    * @param validatorFactory the validatorFactory
+    */
+   public void setValidatorFactory(ValidatorFactory validatorFactory)
+   {
+      this.validatorFactory = validatorFactory;
+   }
+
+   /**
+    * Clone the BootstrapContext implementation
+    * @return A copy of the implementation
+    * @exception CloneNotSupportedException Thrown if the copy operation isn't supported
+    *
+    */
+   public BootstrapContextImpl clone() throws CloneNotSupportedException
+   {
+      BootstrapContextImpl bcbc = (BootstrapContextImpl)super.clone();
+      bcbc.setTransactionSynchronizationRegistry(getTransactionSynchronizationRegistry());
+      bcbc.setXATerminator(getXATerminator());
+      bcbc.setName(getName());
+      bcbc.setWorkManagerName(getWorkManagerName());
+      bcbc.setValidatorFactory(getValidatorFactory());
+
+      return bcbc;
+   }
+
 }
