@@ -24,6 +24,7 @@ package org.ironjacamar.core.naming;
 import org.ironjacamar.core.CoreLogger;
 
 import java.util.Hashtable;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -52,6 +53,12 @@ public class JndiBinder implements ObjectFactory
    private String name;
    private Object obj;
 
+   private int jndiPort;
+
+   private String jndiProtocol;
+
+   private String jndiHost;
+
    /**
     * Constructor
     */
@@ -75,6 +82,33 @@ public class JndiBinder implements ObjectFactory
    public void setObject(Object v)
    {
       this.obj = v;
+   }
+
+   /**
+    * set the jndi port
+    * @param jndiPort the jndi port
+    */
+   public void setJndiPort(int jndiPort)
+   {
+      this.jndiPort = jndiPort;
+   }
+
+   /**
+    * set the jndi protocol
+    * @param jndiProtocol the jndi protocol
+    */
+   public void setJndiProtocol(String jndiProtocol)
+   {
+      this.jndiProtocol = jndiProtocol;
+   }
+
+   /**
+    * set the jndi host
+    * @param jndiHost the jndi host
+    */
+   public void setJndiHost(String jndiHost)
+   {
+      this.jndiHost = jndiHost;
    }
 
    /**
@@ -105,7 +139,10 @@ public class JndiBinder implements ObjectFactory
       if (trace)
          log.trace("Binding " + obj.getClass().getName() + " under " + name);
 
-      Context context = new InitialContext();
+      Properties properties = new Properties();
+      properties.setProperty(Context.PROVIDER_URL, jndiProtocol + "://" + jndiHost + ":" + jndiPort);
+      Context context = new InitialContext(properties);
+
       try
       {
          String className = obj.getClass().getName();
@@ -153,7 +190,10 @@ public class JndiBinder implements ObjectFactory
       Context context = null;
       try
       {
-         context = new InitialContext();
+         Properties properties = new Properties();
+         properties.setProperty(Context.PROVIDER_URL, jndiProtocol + "://" + jndiHost + ":" + jndiPort);
+         context = new InitialContext(properties);
+
 
          Util.unbind(context, name);
 

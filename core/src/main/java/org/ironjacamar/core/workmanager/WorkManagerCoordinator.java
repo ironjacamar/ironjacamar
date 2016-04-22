@@ -35,6 +35,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import javax.resource.spi.ApplicationServerInternalException;
+
 import org.jboss.logging.Logger;
 
 /**
@@ -416,10 +418,20 @@ public class WorkManagerCoordinator
             if (dwm.getTransport() != null)
             {
                dwm.getTransport().register(new Address(wm.getId(), wm.getName(), dwm.getTransport().getId()));
+               try
+               {
+                  ((DistributedWorkManager) wm).getTransport().startup();
+               }
+               catch (Throwable t)
+               {
+                  throw new ApplicationServerInternalException("Unable to start the DWM Transport ID:" +
+                        ((DistributedWorkManager) wm).getTransport().getId(), t);
+               }
             }
             else
             {
-               log.debugf("DistributedWorkManager '%s' doesn't have a transport associated", dwm.getName());
+               throw new ApplicationServerInternalException("DistributedWorkManager " + dwm.getName() +
+                     " doesn't have a transport associated");
             }
          }
 

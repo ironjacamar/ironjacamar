@@ -717,7 +717,7 @@ public abstract class AbstractRemoteTransport<T> implements Transport
 
       for (Entry<Address, T> entry : nodes.entrySet())
       {
-         if (entry.getValue().equals(physicalAddress))
+         if (physicalAddress.equals(entry.getValue()))
          {
             remove.add(entry.getKey());
          }

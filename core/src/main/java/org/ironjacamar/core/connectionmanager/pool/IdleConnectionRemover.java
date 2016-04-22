@@ -137,7 +137,7 @@ public class IdleConnectionRemover
    {
       shutdown.set(true);
 
-      if (!isExternal)
+      if (!isExternal && executorService != null)
       {
          executorService.shutdownNow();
          executorService = null;

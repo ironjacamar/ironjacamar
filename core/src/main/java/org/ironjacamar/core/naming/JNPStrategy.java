@@ -57,8 +57,15 @@ public class JNPStrategy implements JndiStrategy
    
    private static ConcurrentMap<String, Object> objs = new ConcurrentHashMap<String, Object>();
 
+   private int jndiPort;
+
+   private String jndiProtocol;
+
+   private String jndiHost;
+
    /**
     * Constructor
+    *
     */
    public JNPStrategy()
    {
@@ -191,7 +198,62 @@ public class JNPStrategy implements JndiStrategy
       Properties properties = new Properties();
       properties.setProperty("java.naming.factory.initial", "org.jnp.interfaces.LocalOnlyContextFactory");
       properties.setProperty("java.naming.factory.url.pkgs", "org.jboss.naming:org.jnp.interfaces");
+      properties.setProperty(Context.PROVIDER_URL, jndiProtocol + "://" + jndiHost + ":" + jndiPort);
       return new InitialContext(properties);
+   }
+
+   /**
+    * get Jndi Port
+    * @return the JndiPort
+    */
+   public int getJndiPort()
+   {
+      return jndiPort;
+   }
+
+   /**
+    * get Jndi Protocol
+    * @return the Jndi Protocol
+    */
+   public String getJndiProtocol()
+   {
+      return jndiProtocol;
+   }
+
+   /**
+    * get Jndi Host
+    * @return the Jndi Host
+    */
+   public String getJndiHost()
+   {
+      return jndiHost;
+   }
+
+   /**
+    * set the jndi port
+    * @param jndiPort the jndi port
+    */
+   public void setJndiPort(int jndiPort)
+   {
+      this.jndiPort = jndiPort;
+   }
+
+   /**
+    * set the jndi protocol
+    * @param jndiProtocol the jndi protocol
+    */
+   public void setJndiProtocol(String jndiProtocol)
+   {
+      this.jndiProtocol = jndiProtocol;
+   }
+
+   /**
+    * set the jndi host
+    * @param jndiHost the jndi host
+    */
+   public void setJndiHost(String jndiHost)
+   {
+      this.jndiHost = jndiHost;
    }
 
    private static String qualifiedName(String name, String className)

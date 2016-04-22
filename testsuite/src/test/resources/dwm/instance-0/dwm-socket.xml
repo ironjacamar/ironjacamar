@@ -1,0 +1,189 @@
+<!--
+  ~  IronJacamar, a Java EE Connector Architecture implementation
+  ~  Copyright 2016, Red Hat Inc, and individual contributors
+  ~  as indicated by the @author tags. See the copyright.txt file in the
+  ~  distribution for a full listing of individual contributors.
+  ~  
+  ~  This is free software; you can redistribute it and/or modify it
+  ~  under the terms of the Eclipse Public License 1.0 as
+  ~  published by the Free Software Foundation.
+  ~  
+  ~  This software is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the Eclipse
+  ~  Public License for more details.
+  ~  
+  ~  You should have received a copy of the Eclipse Public License 
+  ~  along with this software; if not, write to the Free
+  ~  Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+  ~  02110-1301 USA, or see the FSF site: http://www.fsf.org.
+  -->
+
+<deployment>
+
+  <!-- DistributedWorkManagerThreadGroupSocket -->
+  <bean name="DistributedWorkManagerThreadGroupSocket"
+        class="java.lang.ThreadGroup">
+    <constructor>
+      <parameter>dwm</parameter>
+    </constructor>
+    <ignoreStop/>
+    <ignoreDestroy/>
+  </bean>
+
+  <!-- DistributedWorkManagerThreadFactorySocket -->
+  <bean name="DistributedWorkManagerThreadFactorySocket"
+        interface="java.util.concurrent.ThreadFactory"
+        class="org.jboss.threads.JBossThreadFactory">
+    <constructor>
+      <parameter><inject bean="DistributedWorkManagerThreadGroupSocket"/></parameter>
+      <parameter>false</parameter>
+      <parameter>5</parameter>
+      <parameter>work</parameter>
+      <parameter><null/></parameter>
+      <parameter><null/></parameter>
+    </constructor>
+  </bean>
+
+  <!-- DistributedWorkManagerShortRunningThreadPoolSocket -->
+  <bean name="DistributedWorkManagerShortRunningThreadPoolSocket"
+        class="org.jboss.threads.QueueExecutor">
+    <constructor>
+      <!-- Core threads -->
+      <parameter>20</parameter>
+      <!-- Max threads -->
+      <parameter>100</parameter>
+      <!-- 60 seconds keepalive -->
+      <parameter>60</parameter>
+      <parameter><inject bean="KeepAliveTimeUnit"/></parameter>
+      <!-- Queue size -->
+      <parameter>1024</parameter>
+      <!-- Thread factory -->
+      <parameter><inject bean="DistributedWorkManagerThreadFactorySocket"/></parameter>
+      <!-- Blocking -->
+      <parameter>true</parameter>
+      <!-- Handoff executor -->
+      <parameter><inject bean="RejectingExecutor"/></parameter>
+    </constructor>
+    <destroy method="shutdown"/>
+  </bean>
+
+  <!-- DistributedWorkManagerPolicySocket -->
+  <bean name="DistributedWorkManagerPolicySocket"
+        class="org.ironjacamar.core.workmanager.policy.Always">
+  </bean>
+
+  <!-- DistributedWorkManagerSelectorSocket -->
+  <bean name="DistributedWorkManagerSelectorSocket"
+        class="org.ironjacamar.core.workmanager.selector.FirstAvailable">
+  </bean>
+
+  <!-- DistributedWorkManagerTransportSocket -->
+  <bean name="DistributedWorkManagerTransportSocket"
+        class="org.ironjacamar.core.workmanager.transport.remote.socket.SocketTransport">
+    <!-- The id -->
+    <property name="Id">0</property>
+
+    <!-- The executor -->
+    <property name="ExecutorService">
+      <inject bean="Kernel" property="ExecutorService"/>
+    </property>
+
+    <!-- The host -->
+    <property name="Host">127.0.0.1</property>
+
+    <!-- The port -->
+    <property name="Port">1299</property>
+
+    <!-- The peers -->
+    <property name="Peers">
+      <set class="java.util.HashSet"
+           elementClass="java.lang.String">
+        <value>localhost:1300</value>
+      </set>
+    </property>
+
+    <property name="WorkManagerCoordinator" >
+      <inject bean="WorkManagerCoordinator" />
+    </property>
+
+    <start method="startup"/>
+    <stop method="shutdown"/>
+  </bean>
+
+  <!-- PicketBox -->
+  <bean name="PicketBoxSocket"
+        class="org.ironjacamar.core.security.picketbox.PicketBoxSecurityIntegration">
+  </bean>
+
+  <!-- DistributedWorkManagerSocket -->
+  <bean name="DistributedWorkManagerSocket"
+        interface="org.ironjacamar.core.api.workmanager.DistributedWorkManager"
+        class="org.ironjacamar.core.workmanager.DistributedWorkManagerImpl">
+
+    <!-- The name -->
+    <property name="Name">DWM-Socket</property>
+
+    <!-- The short running thread pool -->
+    <property name="ShortRunningThreadPool">
+       <inject bean="DistributedWorkManagerShortRunningThreadPoolSocket"/>
+    </property>
+
+    <!-- The XA terminator -->
+    <property name="XATerminator">
+       <inject bean="TransactionIntegration" property="XATerminator"/>
+    </property>
+
+    <!-- The callback security module -->
+    <property name="CallbackSecurity">
+       <inject bean="Callback"/>
+    </property>
+
+    <!-- The security integration module -->
+    <property name="SecurityIntegration">
+       <inject bean="PicketBoxSocket"/>
+    </property>
+
+    <!-- The policy -->
+    <property name="Policy">
+       <inject bean="DistributedWorkManagerPolicySocket"/>
+    </property>
+
+    <!-- The selector -->
+    <property name="Selector">
+       <inject bean="DistributedWorkManagerSelectorSocket"/>
+    </property>
+
+    <!-- The transport -->
+    <property name="Transport">
+       <inject bean="DistributedWorkManagerTransportSocket"/>
+    </property>
+
+    <!-- <destroy method="shutdown"/> -->
+  </bean>
+
+  <!-- DistributedBootstrapContextSocket -->
+  <bean name="DistributedBootstrapContextSocket"
+        interface="org.ironjacamar.core.api.bootstrapcontext.BootstrapContext"
+        class="org.ironjacamar.core.bootstrapcontext.BootstrapContextImpl">
+    <constructor>
+      <parameter>
+        <inject bean="DistributedWorkManagerSocket"/>
+      </parameter>
+      <parameter>
+        <inject bean="TransactionSynchronizationRegistry"/>
+      </parameter>
+      <parameter>
+        <inject bean="XATerminator"/>
+      </parameter>
+      <parameter name="ValidatorFactory">
+        <inject bean="BeanValidation" property="ValidatorFactory" />
+      </parameter>
+    </constructor>
+    <property name="Name">DWMBC-Socket</property>
+    <property name="WorkManagerName">
+      <inject bean="DistributedWorkManagerSocket" property="Name"/>
+    </property>
+  </bean>
+
+</deployment>

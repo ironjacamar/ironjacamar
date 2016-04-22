@@ -45,7 +45,7 @@ ext {
     jboss_naming: "org.jboss.naming:jnpserver:5.0.3.GA",
     jboss_stdio: "org.jboss.stdio:jboss-stdio:1.0.2.GA",
     jboss_threads: "org.jboss.threads:jboss-threads:2.2.1.Final",
-    jgroups: "org.jgroups:jgroups:3.2.7.Final",
+    jgroups: "org.jgroups:jgroups:3.6.9.Final",
     junit: "junit:junit:4.12",
     log4j: "log4j:log4j:1.2.16",
     narayana_jta: "org.jboss.narayana.jta:narayana-jta:5.3.1.Final",

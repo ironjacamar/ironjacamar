@@ -88,9 +88,9 @@
     <property name="JndiProtocol"><inject bean="JndiStrategy" property="JndiProtocol" /></property>
     <property name="JndiHost"><inject bean="JndiStrategy" property="JndiHost" /></property>
     <property name="JndiPort"><inject bean="JndiStrategy" property="JndiPort" /></property>
+
     <property name="name">java:/TransactionManager</property>
     <property name="object"><inject bean="TransactionManager"/></property>
-
     <install method="bind"/>
     <uninstall method="unbind"/>
 

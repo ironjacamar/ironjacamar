@@ -35,6 +35,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -50,6 +51,7 @@ import org.jboss.logging.Messages;
 
 import org.jgroups.Channel;
 import org.jgroups.MembershipListener;
+import org.jgroups.Message;
 import org.jgroups.View;
 import org.jgroups.blocks.MethodCall;
 import org.jgroups.blocks.MethodLookup;
@@ -60,7 +62,7 @@ import org.jgroups.util.Rsp;
 import org.jgroups.util.RspList;
 
 /**
- * The socket transport
+ * The JGroups transport
  *
  * @author <a href="mailto:stefano.maestri@redhat.com">Stefano Maestri</a>
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
@@ -459,6 +461,7 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
       if (clusterName == null)
          clusterName = "jca";
 
+
       channel.connect(clusterName);
    }
 
@@ -541,7 +544,12 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
          return null;
       }
 
-      RequestOptions opts = new RequestOptions(ResponseMode.GET_ALL, timeout);
+      // Set request optiuons.
+      // Note we are settings OOB flag for for the sync calls, to avoid the deadlocks.
+      // The only diff to regular messages is that OOB RPCs are not ordered, but we don't need this anyway
+      // as we're sending the next RPC only *after* we've received the response(s).
+      RequestOptions opts = new RequestOptions(ResponseMode.GET_ALL, timeout).setFlags(Message.Flag.OOB);
+
       try
       {
          switch (request)
@@ -550,9 +558,8 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
                org.jgroups.Address joiningAddress = (org.jgroups.Address) parameters[0];
                List<org.jgroups.Address> dests = destAddress == null ? null : Arrays.asList(destAddress);
 
-               RspList<ResponseValues> rspList = disp.callRemoteMethods(dests, new MethodCall(JOIN_METHOD,
-                                                                                              joiningAddress),
-                  opts);
+               RspList<ResponseValues> rspList = disp
+                     .callRemoteMethods(dests, new MethodCall(JOIN_METHOD, joiningAddress), opts);
                throwWorkExceptionIfHasExption(rspList);
                break;
             }
@@ -633,6 +640,10 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
                catch (WorkException we)
                {
                   throw we;
+               }
+               catch (InvocationTargetException ite)
+               {
+                  throw ite.getTargetException();
                }
                catch (Exception e)
                {

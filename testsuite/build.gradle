@@ -127,11 +127,15 @@ test {
   systemProperty 'log4j.defaultInitOverride', 'true'
 
   exclude '**/*PerfTestCase*'
+  if (miTest == 'false' ) {
+    exclude '**/*MITestCase*'
+  }
   jacoco {
     append = false
   }
   finalizedBy jacocoTestReport
 }
+
 
 jar.enabled = false
 

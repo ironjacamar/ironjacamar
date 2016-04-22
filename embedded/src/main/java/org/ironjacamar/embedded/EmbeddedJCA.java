@@ -421,7 +421,7 @@ class EmbeddedJCA implements Embedded
       if (deployment == null)
          throw new IllegalArgumentException("Deployment is null");
 
-      if (deployment.exists())
+      if (deployment.exists() || (shrinkwrapDeployments != null && shrinkwrapDeployments.contains(deployment)))
       {
          shrinkwrapDeployments.remove(deployment);
 

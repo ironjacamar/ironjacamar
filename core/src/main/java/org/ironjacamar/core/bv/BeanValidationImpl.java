@@ -23,6 +23,8 @@ package org.ironjacamar.core.bv;
 
 import org.ironjacamar.core.spi.bv.BeanValidation;
 
+import java.util.Properties;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -43,11 +45,23 @@ public class BeanValidationImpl implements BeanValidation
    /** The validator factory */
    private ValidatorFactory validatorFactory;
 
+   private final int jndiPort;
+
+   private final String jndiProtocol;
+
+   private final String jndiHost;
+
    /**
     * Constructor
+    * @param jndiProtocol the jndi protocol
+    * @param jndiHost the jndi host
+    * @param jndiPort the jndi port
     */
-   public BeanValidationImpl()
+   public BeanValidationImpl(final String jndiProtocol, final String jndiHost, final int jndiPort)
    {
+      this.jndiProtocol = jndiProtocol;
+      this.jndiHost = jndiHost;
+      this.jndiPort = jndiPort;
       validatorFactory = createValidatorFactory();
    }
 
@@ -81,7 +95,9 @@ public class BeanValidationImpl implements BeanValidation
       Context context = null;
       try
       {
-         context = new InitialContext();
+         Properties properties = new Properties();
+         properties.setProperty(Context.PROVIDER_URL, jndiProtocol + "://" + jndiHost + ":" + jndiPort);
+         context = new InitialContext(properties);
          context.rebind(VALIDATOR_FACTORY, new SerializableValidatorFactory(validatorFactory));
       }
       finally
@@ -110,7 +126,9 @@ public class BeanValidationImpl implements BeanValidation
       Context context = null;
       try
       {
-         context = new InitialContext();
+         Properties properties = new Properties();
+         properties.setProperty(Context.PROVIDER_URL, jndiProtocol + "://" + jndiHost + ":" + jndiPort);
+         context = new InitialContext(properties);
          context.unbind(VALIDATOR_FACTORY);
       }
       finally
