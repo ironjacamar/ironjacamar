@@ -52,20 +52,22 @@ public class IronJacamarWithByteman extends IronJacamar
    public void extensionStart(TestClass tc) throws Exception
    {
       List<ScriptText> scripts = new ArrayList<ScriptText>();
+      int key = 1;
       
       BMRules rules = tc.getAnnotation(BMRules.class);
       if (rules != null)
       {
          for (BMRule rule : rules.value())
          {
-            scripts.add(createScriptText(scripts.size(), rule));
+            scripts.add(createScriptText(key, rule));
+            key++;
          }
       }
 
       BMRule rule = tc.getAnnotation(BMRule.class);
       if (rule != null)
       {
-         scripts.add(createScriptText(scripts.size(), rule));
+         scripts.add(createScriptText(key, rule));
       }
 
       if (!scripts.isEmpty())
@@ -82,20 +84,22 @@ public class IronJacamarWithByteman extends IronJacamar
    public void extensionStop(TestClass tc) throws Exception
    {
       List<ScriptText> scripts = new ArrayList<ScriptText>();
+      int key = 1;
       
       BMRules rules = tc.getAnnotation(BMRules.class);
       if (rules != null)
       {
          for (BMRule rule : rules.value())
          {
-            scripts.add(createScriptText(scripts.size(), rule));
+            scripts.add(createScriptText(key, rule));
+            key++;
          }
       }
 
       BMRule rule = tc.getAnnotation(BMRule.class);
       if (rule != null)
       {
-         scripts.add(createScriptText(scripts.size(), rule));
+         scripts.add(createScriptText(key, rule));
       }
 
       if (!scripts.isEmpty())
