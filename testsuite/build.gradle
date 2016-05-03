@@ -20,6 +20,9 @@
  */
 
 dependencies {
+  testCompile(libraries.apache_el) {
+    transitive = false
+  }
   testCompile(libraries.byteman) {
     transitive = false
   }
@@ -39,9 +42,6 @@ dependencies {
     transitive = false
   }
   testCompile(libraries.jandex) {
-    transitive = false
-  }
-  testCompile(libraries.javax_el) {
     transitive = false
   }
   testCompile(libraries.javax_inject) {

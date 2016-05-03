@@ -1,0 +1,23 @@
+<deployment>
+
+  <!-- Web Server -->
+  <bean name="WebServer" class="org.ironjacamar.web.WebServer">
+    <property name="Host">${ironjacamar.bindaddress:localhost}</property>
+    <property name="Port">8080</property>
+    <property name="MBeanServer"><inject bean="Kernel" property="MBeanServer"/></property>
+    <property name="ExecutorService"><inject bean="Kernel" property="ExecutorService"/></property>
+    <depends>JBossStdioService</depends>
+  </bean>
+
+  <!-- WAR deployer -->
+  <bean name="WARDeployer" class="org.ironjacamar.web.WARDeployer">
+    <property name="WebServer"><inject bean="WebServer"/></property>
+  </bean>
+
+  <!-- JNDI viewer -->
+  <bean name="JNDIViewer" class="org.ironjacamar.web.JNDIViewer">
+    <property name="MBeanServer"><inject bean="Kernel" property="MBeanServer"/></property>
+    <property name="Domain"><inject bean="Kernel" property="Name"/></property>
+  </bean>
+
+</deployment>

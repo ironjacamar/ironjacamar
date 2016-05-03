@@ -1,0 +1,7 @@
+<antlib>
+  <taskdef name="start" classname="org.ironjacamar.sjc.ant.Start"/>
+  <taskdef name="stop" classname="org.ironjacamar.sjc.ant.Stop"/>
+  <taskdef name="deploy" classname="org.ironjacamar.sjc.ant.Deploy"/>
+  <taskdef name="undeploy" classname="org.ironjacamar.sjc.ant.Undeploy"/>
+  <taskdef name="ping" classname="org.ironjacamar.sjc.ant.Ping"/>
+</antlib>

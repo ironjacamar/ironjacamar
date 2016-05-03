@@ -99,7 +99,7 @@ class EmbeddedJCA implements Embedded
          Boolean.valueOf(SecurityActions.getSystemProperty("ironjacamar.embedded.management", "false"));
 
       KernelConfiguration kernelConfiguration = new KernelConfiguration();
-      kernelConfiguration = kernelConfiguration.name("iron.jacamar");
+      kernelConfiguration = kernelConfiguration.name("ironjacamar");
       kernelConfiguration = kernelConfiguration.home(null);
       kernelConfiguration = kernelConfiguration.classLoader(ClassLoaderFactory.TYPE_PARENT_FIRST);
       kernelConfiguration = kernelConfiguration.management(management);

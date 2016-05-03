@@ -13,20 +13,42 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the Eclipse
  * Public License for more details.
  *
- * You should have received a copy of the Eclipse Public License
+ * You should have received a copy of the Eclipse Public License 
  * along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-include "api"
-include "common"
-include "core"
-include "deployers"
-include "eis"
-include "embedded"
-include "validator"
-include "tracer"
-include "web"
-include "sjc"
-include "testsuite"
+package org.ironjacamar.web.console;
+
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+
+/**
+ * Privileged Blocks
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ */
+class SecurityActions
+{ 
+   /**
+    * Constructor
+    */
+   private SecurityActions()
+   {
+   }
+
+   /**
+    * Get the thread context class loader
+    * @return The class loader
+    */
+   static ClassLoader getThreadContextClassLoader()
+   {
+      return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>() 
+      {
+         public ClassLoader run()
+         {
+            return Thread.currentThread().getContextClassLoader();
+         }
+      });
+   }
+}

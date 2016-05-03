@@ -78,7 +78,7 @@ public class RarFileExtractorDeployer extends AbstractFungalRADeployer implement
          if (f.isFile())
          {
             FileUtil fileUtil = new FileUtil();
-            destination = new File(SecurityActions.getSystemProperty("iron.jacamar.home"), "/tmp/");
+            destination = new File(SecurityActions.getSystemProperty("ironjacamar.home"), "/tmp/");
             root = fileUtil.extract(f, destination);
             extracted = true;
          }

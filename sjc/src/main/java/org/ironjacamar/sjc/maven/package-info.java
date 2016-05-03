@@ -13,20 +13,13 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the Eclipse
  * Public License for more details.
  *
- * You should have received a copy of the Eclipse Public License
+ * You should have received a copy of the Eclipse Public License 
  * along with this software; if not, write to the Free
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-include "api"
-include "common"
-include "core"
-include "deployers"
-include "eis"
-include "embedded"
-include "validator"
-include "tracer"
-include "web"
-include "sjc"
-include "testsuite"
+/**
+ * IronJacamar Simple Java EE Connector Architecture Container / Maven
+ */
+package org.ironjacamar.sjc.maven;

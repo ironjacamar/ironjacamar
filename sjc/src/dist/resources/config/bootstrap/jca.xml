@@ -1,0 +1,264 @@
+<deployment>
+
+  <!-- Thread group -->
+  <bean name="ThreadGroup"
+        class="java.lang.ThreadGroup">
+    <constructor>
+      <parameter>workmanager</parameter>
+    </constructor>
+    <ignoreStop/>
+    <ignoreDestroy/>
+  </bean>
+
+  <!-- Thread factory -->
+  <bean name="ThreadFactory"
+        interface="java.util.concurrent.ThreadFactory"
+        class="org.jboss.threads.JBossThreadFactory">
+    <constructor>
+      <parameter><inject bean="ThreadGroup"/></parameter>
+      <parameter>false</parameter>
+      <parameter>5</parameter>
+      <parameter>work</parameter>
+      <parameter><null/></parameter>
+      <parameter><null/></parameter>
+    </constructor>
+  </bean>
+
+  <!-- Rejecting executor -->
+  <bean name="RejectingExecutor">
+    <constructor factoryMethod="rejectingExecutor" 
+                 factoryClass="org.jboss.threads.JBossExecutors">
+    </constructor>
+  </bean>
+
+  <!-- TimeUnit -->
+  <bean name="KeepAliveTimeUnit">
+    <constructor factoryMethod="valueOf" 
+                 factoryClass="java.util.concurrent.TimeUnit">
+      <parameter>SECONDS</parameter>
+    </constructor>
+  </bean>
+
+  <!-- Short running thread pool -->
+  <bean name="ShortRunningThreadPool" class="org.jboss.threads.QueueExecutor">
+    <constructor>
+      <!-- Core threads -->
+      <parameter>20</parameter>
+      <!-- Max threads -->
+      <parameter>100</parameter>
+      <!-- 60 seconds keepalive -->
+      <parameter>60</parameter>
+      <parameter><inject bean="KeepAliveTimeUnit"/></parameter>
+      <!-- Queue size -->
+      <parameter>1024</parameter>
+      <!-- Thread factory -->
+      <parameter><inject bean="ThreadFactory"/></parameter>
+      <!-- Blocking -->
+      <parameter>true</parameter>
+      <!-- Handoff executor -->
+      <parameter><inject bean="RejectingExecutor"/></parameter>
+    </constructor>
+    <destroy method="shutdown"/>
+  </bean>
+
+  <!-- Long running thread pool -->
+  <bean name="LongRunningThreadPool" class="org.jboss.threads.QueueExecutor">
+    <constructor>
+      <!-- Core threads -->
+      <parameter>20</parameter>
+      <!-- Max threads -->
+      <parameter>100</parameter>
+      <!-- 60 seconds keepalive -->
+      <parameter>60</parameter>
+      <parameter><inject bean="KeepAliveTimeUnit"/></parameter>
+      <!-- Queue size -->
+      <parameter>1024</parameter>
+      <!-- Thread factory -->
+      <parameter><inject bean="ThreadFactory"/></parameter>
+      <!-- Blocking -->
+      <parameter>true</parameter>
+      <!-- Handoff executor -->
+      <parameter><inject bean="RejectingExecutor"/></parameter>
+    </constructor>
+    <destroy method="shutdown"/>
+  </bean>
+
+  <!-- Callback -->
+  <bean name="Callback"
+        interface="org.ironjacamar.core.spi.security.Callback"
+        class="org.ironjacamar.core.security.DefaultCallback"/>
+
+  <!-- PicketBox -->
+  <bean name="PicketBox"
+        class="org.ironjacamar.core.security.picketbox.PicketBoxSecurityIntegration">
+  </bean>
+  <!-- Default security factory -->
+  <bean name="DefaultSubjectFactory"
+        interface="org.ironjacamar.core.spi.security.SubjectFactory"
+        class="org.ironjacamar.core.security.DefaultSubjectFactory">
+    <property name="SecurityDomain">DefaultSecurityDomain</property>
+    <property name="UserName">user</property>
+    <property name="Password">password</property>
+  </bean>
+
+  <bean name="DefaulClassLoaderPlugin"
+        interface="org.ironjacamar.core.spi.classloading.ClassLoaderPlugin"
+        class="org.ironjacamar.core.classloading.IronJacamarClassLoaderPlugin">
+  </bean>
+
+  <!-- Work Manager -->
+  <bean name="WorkManager" 
+        interface="org.ironjacamar.core.api.workmanager.WorkManager"
+        class="org.ironjacamar.core.workmanager.WorkManagerImpl">
+
+    <!-- The name -->
+    <property name="Name">Default</property>
+
+    <!-- The short running thread pool -->
+    <property name="ShortRunningThreadPool"><inject bean="ShortRunningThreadPool"/></property>
+
+    <!-- The long running thread pool -->
+    <property name="LongRunningThreadPool"><inject bean="LongRunningThreadPool"/></property>
+
+    <!-- The XA terminator -->
+    <property name="XATerminator"><inject bean="TransactionIntegration" property="XATerminator"/></property>
+
+    <!-- The callback security module -->
+    <property name="CallbackSecurity"><inject bean="Callback"/></property>
+
+    <!-- The security integration module -->
+    <property name="SecurityIntegration">
+       <inject bean="PicketBox"/>
+    </property>
+
+    <destroy method="shutdown"/>
+  </bean>
+
+  <!-- Work Manager Coordinator -->
+  <bean name="WorkManagerCoordinator" class="org.ironjacamar.core.workmanager.WorkManagerCoordinator">
+
+
+    <property name="DefaultWorkManager"><inject bean="WorkManager"/></property>
+
+    <incallback method="registerWorkManager"/>
+    <uncallback method="unregisterWorkManager"/>
+  </bean>
+
+  <bean name="DefaultBootstrapContext"
+        interface="javax.resource.spi.BootstrapContext"
+        class="org.ironjacamar.core.bootstrapcontext.BootstrapContextImpl">
+    <constructor>
+      <parameter><inject bean="WorkManager"/></parameter>
+      <parameter><inject bean="TransactionSynchronizationRegistry"/></parameter>
+      <parameter><inject bean="XATerminator"/></parameter>
+      <parameter name="ValidatorFactory">
+        <inject bean="BeanValidation" property="ValidatorFactory" />
+      </parameter>
+    </constructor>
+    <property name="Name">Default</property>
+  </bean>
+
+  <!-- Bootstrap Context Coordinator -->
+  <bean name="BootstrapContextCoordinator"
+    class="org.ironjacamar.core.bootstrapcontext.BootstrapContextCoordinator">
+    <property name="DefaultBootstrapContext"><inject bean="DefaultBootstrapContext"/></property>
+    <property name="WorkManagerCoordinator"><inject bean="WorkManagerCoordinator"/></property>
+
+    <incallback method="registerBootstrapContext"/>
+    <uncallback method="unregisterBootstrapContext"/>
+  </bean>
+
+  <bean name="MetadataRepository"
+        interface="org.ironjacamar.core.api.metadatarepository.MetadataRepository"
+        class="org.ironjacamar.core.metadatarepository.MetadataRepositoryImpl"/>
+
+  <bean name="DeploymentRepository"
+        interface="org.ironjacamar.core.api.deploymentrepository.DeploymentRepository"
+        class="org.ironjacamar.core.deploymentrepository.DeploymentRepositoryImpl"/>
+
+  <bean name="CachedConnectionManager" 
+        interface="org.ironjacamar.core.api.connectionmanager.ccm.CachedConnectionManager"
+        class="org.ironjacamar.core.connectionmanager.ccm.CachedConnectionManagerImpl">
+    <constructor>
+      <parameter><inject bean="TransactionIntegration"/></parameter>
+    </constructor>
+  </bean>
+  
+  <bean name="ConnectionValidator">
+    <constructor factoryClass="org.ironjacamar.core.connectionmanager.pool.ConnectionValidator"
+                 factoryMethod="getInstance">
+    </constructor>
+  </bean>
+
+  <bean name="IdleConnectionRemover">
+    <constructor factoryClass="org.ironjacamar.core.connectionmanager.pool.IdleConnectionRemover"
+                 factoryMethod="getInstance">
+    </constructor>
+  </bean>
+
+  <bean name="BeanValidation"
+        interface="org.ironjacamar.core.spi.bv.BeanValidation"
+        class="org.ironjacamar.core.bv.BeanValidationImpl">
+    <constructor>
+      <parameter><inject bean="JndiStrategy" property="JndiProtocol" /></parameter>
+      <parameter><inject bean="JndiStrategy" property="JndiHost" /></parameter>
+      <parameter><inject bean="JndiStrategy" property="JndiPort" /></parameter>
+    </constructor>
+  </bean>
+
+  <!-- Deployment chain -->
+  <bean name="RarFileExtractorDeployer"
+        class="org.ironjacamar.embedded.deployers.RarFileExtractorDeployer"/>
+
+  <bean name="ClassLoaderDeployer"
+        class="org.ironjacamar.embedded.deployers.ClassLoaderDeployer">
+    <property name="ParentFirst">false</property>
+  </bean>
+
+  <bean name="RaXmlMetadataDeployer"
+        class="org.ironjacamar.embedded.deployers.RaXmlMetadataDeployer"/>
+
+  <bean name="AnnotationsDeployer"
+        class="org.ironjacamar.embedded.deployers.AnnotationsDeployer"/>
+
+  <bean name="ValidateMetadataDeployer"
+        class="org.ironjacamar.embedded.deployers.ValidateMetadataDeployer"/>
+
+  <bean name="MetadataDeployer"
+        class="org.ironjacamar.embedded.deployers.MetadataDeployer">
+    <property name="MetadataRepository"><inject bean="MetadataRepository"/></property>
+  </bean>
+
+  <bean name="IronJacamarXmlDeployer"
+        class="org.ironjacamar.embedded.deployers.IronJacamarXmlDeployer">
+    <property name="MetadataRepository"><inject bean="MetadataRepository"/></property>
+    <property name="DeploymentRepository"><inject bean="DeploymentRepository"/></property>
+    <property name="BootstrapContextCoordinator"><inject bean="BootstrapContextCoordinator"/></property>
+    <property name="JndiStrategy"><inject bean="JndiStrategy"/></property>
+    <property name="TransactionIntegration"><inject bean="TransactionIntegration"/></property>
+    <property name="CachedConnectionManager"><inject bean="CachedConnectionManager"/></property>
+    <property name="SubjectFactory"><inject bean="DefaultSubjectFactory"/></property>
+    <property name="ClassLoaderPlugin"><inject bean="DefaulClassLoaderPlugin"/></property>
+    <property name="BeanValidation"><inject bean="BeanValidation"/></property>
+    <depends>ClassLoaderDeployer</depends>
+    <depends>ConnectionValidator</depends>
+    <depends>IdleConnectionRemover</depends>
+  </bean>
+
+  <bean name="DashRaXmlDeployer"
+        class="org.ironjacamar.embedded.deployers.DashRaXmlDeployer">
+    <property name="MetadataRepository"><inject bean="MetadataRepository"/></property>
+    <property name="DeploymentRepository"><inject bean="DeploymentRepository"/></property>
+    <property name="BootstrapContextCoordinator"><inject bean="BootstrapContextCoordinator"/></property>
+    <property name="JndiStrategy"><inject bean="JndiStrategy"/></property>
+    <property name="TransactionIntegration"><inject bean="TransactionIntegration"/></property>
+    <property name="CachedConnectionManager"><inject bean="CachedConnectionManager"/></property>
+    <property name="SubjectFactory"><inject bean="DefaultSubjectFactory"/></property>
+    <property name="ClassLoaderPlugin"><inject bean="DefaulClassLoaderPlugin"/></property>
+    <property name="BeanValidation"><inject bean="BeanValidation"/></property>
+    <depends>ClassLoaderDeployer</depends>
+    <depends>ConnectionValidator</depends>
+    <depends>IdleConnectionRemover</depends>
+  </bean>
+
+</deployment>

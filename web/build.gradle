@@ -1,0 +1,123 @@
+/*
+ * IronJacamar, a Java EE Connector Architecture implementation
+ * Copyright 2016, Red Hat Inc, and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the Eclipse Public License 1.0 as
+ * published by the Free Software Foundation.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the Eclipse
+ * Public License for more details.
+ *
+ * You should have received a copy of the Eclipse Public License 
+ * along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+ */
+
+dependencies {
+  compile(libraries.fungal) {
+    transitive = false
+  }
+  compile(libraries.jboss_common) {
+    transitive = false
+  }
+  compile(libraries.jboss_logging) {
+    transitive = false
+  }
+  compile(libraries.jetty_annotation) {
+    transitive = false
+  }
+  compile(libraries.jetty_asm) {
+    transitive = false
+  }
+  compile(libraries.jetty_asm_commons) {
+    transitive = false
+  }
+  compile(libraries.jetty_dom4j) {
+    transitive = false
+  }
+  compile(libraries.jetty_ecj) {
+    transitive = false
+  }
+  compile(libraries.jetty_jasper) {
+    transitive = false
+  }
+  compile(libraries.jetty_servlet) {
+    transitive = false
+  }
+  compile(libraries.jetty_servlet_jsp) {
+    transitive = false
+  }
+  compile(libraries.jetty_server_annotations) {
+    transitive = false
+  }
+  compile(libraries.jetty_server_continuation) {
+    transitive = false
+  }
+  compile(libraries.jetty_server_http) {
+    transitive = false
+  }
+  compile(libraries.jetty_server_io) {
+    transitive = false
+  }
+  compile(libraries.jetty_server_jmx) {
+    transitive = false
+  }
+  compile(libraries.jetty_server_jsp) {
+    transitive = false
+  }
+  compile(libraries.jetty_server_plus) {
+    transitive = false
+  }
+  compile(libraries.jetty_server_schemas) {
+    transitive = false
+  }
+  compile(libraries.jetty_server_security) {
+    transitive = false
+  }
+  compile(libraries.jetty_server_server) {
+    transitive = false
+  }
+  compile(libraries.jetty_server_servlet) {
+    transitive = false
+  }
+  compile(libraries.jetty_server_util) {
+    transitive = false
+  }
+  compile(libraries.jetty_server_webapp) {
+    transitive = false
+  }
+  compile(libraries.jetty_server_xml) {
+    transitive = false
+  }
+}
+
+jar {
+  manifest {
+    attributes("Implementation-Title" : "IronJacamar Web")
+  }
+  baseName = "ironjacamar-web"
+  dependsOn classes
+}
+
+javadoc {
+  source sourceSets.main.allJava
+  exclude '**/*_$bundle*'
+  exclude '**/*_$logger*'
+  title = "IronJacamar / Web"
+  options.doclet = "org.jboss.apiviz.APIviz"
+  options.docletpath file(configurations.apiVizTool.asPath)
+  options.bottom = "Copyright 2016 IronJacamar (<a href=\"http://www.ironjacamar.org\">http://www.ironjacamar.org</a>)"
+  options.linksOffline 'http://docs.oracle.com/javase/8/docs/api/', 'http://docs.oracle.com/javase/8/docs/api/'
+  doLast{
+     copy {
+       from rootProject.file('tools/api')
+       into 'build/docs/javadoc'
+     }   
+  }
+}

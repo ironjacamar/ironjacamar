@@ -21,11 +21,13 @@
 
 defaultTasks 'build'
 
-version = "2.0.0.SNAPSHOT"
+version = "2.0.0-SNAPSHOT"
 // Dependencies
 
 ext {
   libraries = [
+    apache_el: "org.mortbay.jasper:apache-el:8.0.27",
+    ant: "org.apache.ant:ant:1.9.7",
     apiviz: "org.jboss.apiviz:apiviz:1.3.2.GA",
     byteman: "org.jboss.byteman:byteman:3.0.5",
     byteman_submit: "org.jboss.byteman:byteman-submit:3.0.5",
@@ -34,7 +36,6 @@ ext {
     fungal_cli: "com.github.fungal:fungal-cli:0.11.0.Final",
     hibernate_validator: "org.hibernate:hibernate-validator:5.2.4.Final",
     jandex: "org.jboss:jandex:2.0.2.Final",
-    javax_el: "javax.el:el-api:2.2",
     javax_inject: "javax.inject:javax.inject:1",
     jboss_common: "org.jboss:jboss-common-core:2.5.0.Final",
     jboss_jaspi: "org.jboss.spec.javax.security.auth.message:jboss-jaspi-api_1.1_spec:1.0.0.Final",
@@ -45,9 +46,32 @@ ext {
     jboss_naming: "org.jboss.naming:jnpserver:5.0.3.GA",
     jboss_stdio: "org.jboss.stdio:jboss-stdio:1.0.2.GA",
     jboss_threads: "org.jboss.threads:jboss-threads:2.2.1.Final",
+    jetty_annotation: "javax.annotation:javax.annotation-api:1.2",
+    jetty_asm: "org.ow2.asm:asm:5.0.1",
+    jetty_asm_commons: "org.ow2.asm:asm-commons:5.0.1",
+    jetty_ecj: "org.eclipse.jdt.core.compiler:ecj:4.4.2",
+    jetty_dom4j: "dom4j:dom4j:1.6.1",
+    jetty_jasper: "org.mortbay.jasper:jasper-jsp:8.0.27",
+    jetty_server_annotations: "org.eclipse.jetty:jetty-annotations:9.3.8.v20160314",
+    jetty_server_continuation: "org.eclipse.jetty:jetty-continuation:9.3.8.v20160314",
+    jetty_server_http: "org.eclipse.jetty:jetty-http:9.3.8.v20160314",
+    jetty_server_io: "org.eclipse.jetty:jetty-io:9.3.8.v20160314",
+    jetty_server_jmx: "org.eclipse.jetty:jetty-jmx:9.3.8.v20160314",
+    jetty_server_jsp: "org.eclipse.jetty:apache-jsp:9.3.8.v20160314",
+    jetty_server_plus: "org.eclipse.jetty:jetty-plus:9.3.8.v20160314",
+    jetty_server_schemas: "org.eclipse.jetty.toolchain:jetty-schemas:3.1",
+    jetty_server_security: "org.eclipse.jetty:jetty-security:9.3.8.v20160314",
+    jetty_server_server: "org.eclipse.jetty:jetty-server:9.3.8.v20160314",
+    jetty_server_servlet: "org.eclipse.jetty:jetty-servlet:9.3.8.v20160314",
+    jetty_server_util: "org.eclipse.jetty:jetty-util:9.3.8.v20160314",
+    jetty_server_webapp: "org.eclipse.jetty:jetty-webapp:9.3.8.v20160314",
+    jetty_server_xml: "org.eclipse.jetty:jetty-xml:9.3.8.v20160314",
+    jetty_servlet: "javax.servlet:javax.servlet-api:3.1.0",
+    jetty_servlet_jsp: "org.mortbay.jasper:apache-jsp:8.0.27",
     jgroups: "org.jgroups:jgroups:3.6.9.Final",
     junit: "junit:junit:4.12",
     log4j: "log4j:log4j:1.2.16",
+    maven: "org.apache.maven:maven-plugin-api:3.3.9",
     narayana_jta: "org.jboss.narayana.jta:narayana-jta:5.3.1.Final",
     narayana_integration: "org.jboss.narayana.jts:narayana-jts-integration:5.3.1.Final",
     narayana_spi: "org.jboss:jboss-transaction-spi:7.3.1.Final",
@@ -248,29 +272,62 @@ subprojects { subProject ->
   }
 }
 
-//copy dependencies .jar to be collected by the distribution task
-task copyDependencies(type: Copy) {
+//Distribution
+def distributionDependencies = copySpec {
   from project(':testsuite').configurations.testCompile
-  into rootProject.libsDir
+  into 'lib'
   include '**/*.jar'
   exclude '**/jboss-logging-processor*'
+  exclude '**/jdeparser*'
   exclude '**/tools*'
   rename (/(.+)(-[\d]+.+)\.jar/, '$1.jar')
   rename (/(.+)(-[\d]+).jar/, '$1.jar')
   includeEmptyDirs = false
 }
 
+def distributionSJC = copySpec {
+  from rootProject.file('sjc/src/dist/resources/')
+  into ''
+  include '**/*'
+}
+
+def distributionSchemas = copySpec {
+  from rootProject.file('common/src/main/resources/')
+  into 'doc'
+  include '**/*'
+}
+
+def distributionLib = copySpec {
+  from {allprojects.libsDir}
+  into 'lib'
+}
+
+def distributionJetty = copySpec {
+  from project(':web').configurations.compile
+  into 'lib/jetty'
+  include '**/*.jar'
+  exclude '**/fungal*'
+  exclude '**/jboss*'
+  exclude '**/jdeparser*'
+  includeEmptyDirs = false
+}
+
+def distributionConsole = copySpec {
+  from rootProject.file('web/src/console/resources/')
+  into 'system'
+  include '**/*'
+}
+
 distributions {
   main {
     contents {
-      from {allprojects.libsDir}
-      into 'lib'
+      with distributionSJC, distributionSchemas, distributionLib, distributionDependencies, distributionJetty, distributionConsole
     }
   }
 }
 
-distZip.dependsOn subprojects.jar, copyDependencies
-distTar.dependsOn subprojects.jar, copyDependencies
+distZip.dependsOn subprojects.jar
+distTar.dependsOn subprojects.jar
 
 tasks.withType(Tar) {
   compression = Compression.GZIP
