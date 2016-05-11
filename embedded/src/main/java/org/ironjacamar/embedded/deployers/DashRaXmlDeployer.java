@@ -26,6 +26,7 @@ import org.ironjacamar.common.api.metadata.spec.Connector;
 import org.ironjacamar.common.metadata.merge.Merger;
 import org.ironjacamar.common.metadata.resourceadapter.ResourceAdapterParser;
 import org.ironjacamar.core.api.metadatarepository.Metadata;
+import org.ironjacamar.deployers.DeployersLogger;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -53,7 +54,7 @@ import com.github.fungal.spi.deployers.Deployment;
 public class DashRaXmlDeployer extends AbstractFungalRADeployer implements CloneableDeployer
 {
    /** The logger */
-   private static Logger log = Logger.getLogger(DashRaXmlDeployer.class);
+   private static DeployersLogger log = Logger.getMessageLogger(DeployersLogger.class, DashRaXmlDeployer.class.getName());
 
    /**
     * Constructor
@@ -171,5 +172,13 @@ public class DashRaXmlDeployer extends AbstractFungalRADeployer implements Clone
       d.setBeanValidation(beanValidation);
       d.setDefaultPoolType(defaultPoolType);
       return d;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   protected DeployersLogger getLogger()
+   {
+      return log;
    }
 }

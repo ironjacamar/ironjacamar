@@ -22,6 +22,7 @@ package org.ironjacamar.embedded.deployers;
 
 import org.ironjacamar.common.api.metadata.spec.Connector;
 import org.ironjacamar.common.metadata.spec.RaParser;
+import org.ironjacamar.deployers.DeployersLogger;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,6 +31,8 @@ import java.net.URL;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
+
+import org.jboss.logging.Logger;
 
 import com.github.fungal.spi.deployers.CloneableDeployer;
 import com.github.fungal.spi.deployers.Context;
@@ -43,6 +46,9 @@ import com.github.fungal.spi.deployers.Deployment;
  */
 public class RaXmlMetadataDeployer extends AbstractFungalRADeployer implements CloneableDeployer
 {
+   /** The logger */
+   private static DeployersLogger log = Logger.getMessageLogger(DeployersLogger.class, RaXmlMetadataDeployer.class.getName());
+
    /**
     * Constructor
     */
@@ -122,5 +128,13 @@ public class RaXmlMetadataDeployer extends AbstractFungalRADeployer implements C
    public Deployer clone() throws CloneNotSupportedException
    {
       return new RaXmlMetadataDeployer();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   protected DeployersLogger getLogger()
+   {
+      return log;
    }
 }

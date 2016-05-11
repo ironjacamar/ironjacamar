@@ -21,8 +21,11 @@
 package org.ironjacamar.embedded.deployers;
 
 import org.ironjacamar.common.api.metadata.spec.Connector;
+import org.ironjacamar.deployers.DeployersLogger;
 
 import java.net.URL;
+
+import org.jboss.logging.Logger;
 
 import com.github.fungal.spi.deployers.CloneableDeployer;
 import com.github.fungal.spi.deployers.Context;
@@ -36,6 +39,9 @@ import com.github.fungal.spi.deployers.Deployment;
  */
 public class ValidateMetadataDeployer extends AbstractFungalRADeployer implements CloneableDeployer
 {
+   /** The logger */
+   private static DeployersLogger log = Logger.getMessageLogger(DeployersLogger.class, ValidateMetadataDeployer.class.getName());
+
    /**
     * Constructor
     */
@@ -89,5 +95,13 @@ public class ValidateMetadataDeployer extends AbstractFungalRADeployer implement
    public Deployer clone() throws CloneNotSupportedException
    {
       return new ValidateMetadataDeployer();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   protected DeployersLogger getLogger()
+   {
+      return log;
    }
 }

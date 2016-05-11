@@ -20,9 +20,13 @@
  */
 package org.ironjacamar.embedded.deployers;
 
+import org.ironjacamar.deployers.DeployersLogger;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+
+import org.jboss.logging.Logger;
 
 import com.github.fungal.api.util.FileUtil;
 import com.github.fungal.spi.deployers.CloneableDeployer;
@@ -37,6 +41,9 @@ import com.github.fungal.spi.deployers.Deployment;
  */
 public class RarFileExtractorDeployer extends AbstractFungalRADeployer implements CloneableDeployer
 {
+   /** The logger */
+   private static DeployersLogger log = Logger.getMessageLogger(DeployersLogger.class, RarFileExtractorDeployer.class.getName());
+
    /**
     * Constructor
     */
@@ -123,5 +130,13 @@ public class RarFileExtractorDeployer extends AbstractFungalRADeployer implement
    public Deployer clone() throws CloneNotSupportedException
    {
       return new RarFileExtractorDeployer();
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   protected DeployersLogger getLogger()
+   {
+      return log;
    }
 }

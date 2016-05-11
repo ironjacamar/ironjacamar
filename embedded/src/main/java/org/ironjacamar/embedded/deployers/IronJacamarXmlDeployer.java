@@ -24,6 +24,7 @@ import org.ironjacamar.common.api.metadata.resourceadapter.Activation;
 import org.ironjacamar.common.api.metadata.spec.Connector;
 import org.ironjacamar.common.metadata.ironjacamar.IronJacamarParser;
 import org.ironjacamar.common.metadata.merge.Merger;
+import org.ironjacamar.deployers.DeployersLogger;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -49,7 +50,7 @@ import com.github.fungal.spi.deployers.Deployment;
 public class IronJacamarXmlDeployer extends AbstractFungalRADeployer implements CloneableDeployer
 {
    /** The logger */
-   private static Logger log = Logger.getLogger(IronJacamarXmlDeployer.class);
+   private static DeployersLogger log = Logger.getMessageLogger(DeployersLogger.class, IronJacamarXmlDeployer.class.getName());
 
    /**
     * Constructor
@@ -151,5 +152,13 @@ public class IronJacamarXmlDeployer extends AbstractFungalRADeployer implements 
       i.setBeanValidation(beanValidation);
       i.setDefaultPoolType(defaultPoolType);
       return i;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   protected DeployersLogger getLogger()
+   {
+      return log;
    }
 }

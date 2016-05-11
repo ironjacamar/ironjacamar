@@ -22,9 +22,12 @@ package org.ironjacamar.embedded.deployers;
 
 import org.ironjacamar.common.api.metadata.spec.Connector;
 import org.ironjacamar.core.api.metadatarepository.Metadata;
+import org.ironjacamar.deployers.DeployersLogger;
 
 import java.io.File;
 import java.net.URL;
+
+import org.jboss.logging.Logger;
 
 import com.github.fungal.spi.deployers.CloneableDeployer;
 import com.github.fungal.spi.deployers.Context;
@@ -38,6 +41,9 @@ import com.github.fungal.spi.deployers.Deployment;
  */
 public class MetadataDeployer extends AbstractFungalRADeployer implements CloneableDeployer
 {
+   /** The logger */
+   private static DeployersLogger log = Logger.getMessageLogger(DeployersLogger.class, MetadataDeployer.class.getName());
+
    /**
     * Constructor
     */
@@ -94,5 +100,13 @@ public class MetadataDeployer extends AbstractFungalRADeployer implements Clonea
       MetadataDeployer m = new MetadataDeployer();
       m.setMetadataRepository(metadataRepository);
       return m;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   protected DeployersLogger getLogger()
+   {
+      return log;
    }
 }

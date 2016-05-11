@@ -63,6 +63,8 @@ import org.ironjacamar.core.spi.security.SubjectFactory;
 import org.ironjacamar.core.spi.transaction.TransactionIntegration;
 import org.ironjacamar.core.spi.transaction.recovery.XAResourceRecovery;
 import org.ironjacamar.core.util.Injection;
+import org.ironjacamar.deployers.DeployersBundle;
+import org.ironjacamar.deployers.DeployersLogger;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -76,11 +78,12 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import javax.resource.spi.ResourceAdapterAssociation;
+import javax.resource.spi.TransactionSupport;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
-import org.jboss.logging.Logger;
+import org.jboss.logging.Messages;
 
 /**
  * Base class for resource adapter deployers
@@ -88,8 +91,11 @@ import org.jboss.logging.Logger;
  */
 public abstract class AbstractResourceAdapterDeployer
 {
-   /** The logger */
-   private static Logger log = Logger.getLogger(AbstractResourceAdapterDeployer.class);
+   /** The bundle */
+   private static DeployersBundle bundle = Messages.getBundle(DeployersBundle.class);
+
+   /** the logger **/
+   protected final DeployersLogger log;
 
    /** The DeploymentRepository */
    protected DeploymentRepository deploymentRepository;
@@ -126,6 +132,7 @@ public abstract class AbstractResourceAdapterDeployer
     */
    public AbstractResourceAdapterDeployer()
    {
+      this.log = getLogger();
       this.deploymentRepository = null;
       this.metadataRepository = null;
       this.bootstrapContextCoordinator = null;
@@ -416,6 +423,7 @@ public abstract class AbstractResourceAdapterDeployer
    {
       try
       {
+         TransactionSupportEnum tse = transactionSupport;
          String mcfClass = findManagedConnectionFactory(cd.getClassName(), connector);
          Class<?> clz = Class.forName(mcfClass, true, builder.getClassLoader());
          javax.resource.spi.ManagedConnectionFactory mcf =
@@ -425,15 +433,35 @@ public abstract class AbstractResourceAdapterDeployer
             injectConfigProperties(mcf, findConfigProperties(mcfClass, connector), cd.getConfigProperties(),
                                    builder.getClassLoader());
 
+         if (mcf instanceof TransactionSupport)
+         {
+            TransactionSupport.TransactionSupportLevel tsl = ((TransactionSupport) mcf).getTransactionSupport();
+            if (tsl == TransactionSupport.TransactionSupportLevel.NoTransaction)
+            {
+               tse = TransactionSupportEnum.NoTransaction;
+            }
+            else if (tsl == TransactionSupport.TransactionSupportLevel.LocalTransaction)
+            {
+               tse = TransactionSupportEnum.LocalTransaction;
+            }
+            else
+            {
+               tse = TransactionSupportEnum.XATransaction;
+            }
+
+            if (tse != transactionSupport)
+               log.changedTransactionSupport(cd.getJndiName());
+         }
+
          ConnectionManagerConfiguration cmc = new ConnectionManagerConfiguration();
          applyConnectionManagerConfiguration(cmc, cd);
          applyConnectionManagerConfiguration(cmc, cd.getSecurity());
          applyConnectionManagerConfiguration(cmc, cd.getTimeout());
-         if (isXA(transactionSupport))
+         if (isXA(tse))
             applyConnectionManagerConfiguration(cmc, (org.ironjacamar.common.api.metadata.common.XaPool)cd.getPool());
          
          ConnectionManager cm =
-            ConnectionManagerFactory.createConnectionManager(transactionSupport, mcf,
+            ConnectionManagerFactory.createConnectionManager(tse, mcf,
                                                              cd.isUseCcm() ? cachedConnectionManager : null,
                                                              cmc,
                                                              transactionIntegration);
@@ -470,7 +498,7 @@ public abstract class AbstractResourceAdapterDeployer
             statisticsPlugin = ((org.ironjacamar.core.spi.statistics.Statistics)mcf).getStatistics();
          
          org.ironjacamar.core.api.deploymentrepository.Recovery recovery = null;
-         if (isXA(transactionSupport))
+         if (isXA(tse))
          {
             recovery = createRecovery(mcf, cd);
          }
@@ -1282,4 +1310,9 @@ public abstract class AbstractResourceAdapterDeployer
       }
    }
 
+   /**
+    * Get the logger
+    * @return The value
+    */
+   protected abstract DeployersLogger getLogger();
 }

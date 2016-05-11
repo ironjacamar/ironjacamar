@@ -20,8 +20,12 @@
  */
 package org.ironjacamar.embedded.deployers;
 
+import org.ironjacamar.deployers.DeployersLogger;
+
 import java.io.File;
 import java.net.URL;
+
+import org.jboss.logging.Logger;
 
 import com.github.fungal.api.classloading.ClassLoaderFactory;
 import com.github.fungal.api.classloading.KernelClassLoader;
@@ -37,6 +41,9 @@ import com.github.fungal.spi.deployers.Deployment;
  */
 public class ClassLoaderDeployer extends AbstractFungalRADeployer implements CloneableDeployer
 {
+   /** The logger */
+   private static DeployersLogger log = Logger.getMessageLogger(DeployersLogger.class, ClassLoaderDeployer.class.getName());
+
    /** Parent first */
    private boolean parentFirst;
 
@@ -114,5 +121,13 @@ public class ClassLoaderDeployer extends AbstractFungalRADeployer implements Clo
       ClassLoaderDeployer c = new ClassLoaderDeployer();
       c.setParentFirst(parentFirst);
       return c;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   protected DeployersLogger getLogger()
+   {
+      return log;
    }
 }
