@@ -17,7 +17,7 @@ fi
 export IRONJACAMAR_HOME
 
 # Setup the java endorsed dirs
-IRONJACAMAR_ENDORSED_DIRS="$IRON_JACAMAR_HOME/lib/endorsed"
+IRONJACAMAR_ENDORSED_DIRS="$IRONJACAMAR_HOME/lib/endorsed"
 
 # Setup the JVM
 if [ "x$JAVA" = "x" ]; then
