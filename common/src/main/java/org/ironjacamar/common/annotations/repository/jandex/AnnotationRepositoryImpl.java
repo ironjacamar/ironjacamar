@@ -20,6 +20,7 @@
  */
 package org.ironjacamar.common.annotations.repository.jandex;
 
+import org.ironjacamar.common.CommonBundle;
 import org.ironjacamar.common.spi.annotations.repository.Annotation;
 import org.ironjacamar.common.spi.annotations.repository.AnnotationRepository;
 
@@ -36,6 +37,7 @@ import org.jboss.jandex.FieldInfo;
 import org.jboss.jandex.Index;
 import org.jboss.jandex.MethodInfo;
 import org.jboss.jandex.Type;
+import org.jboss.logging.Messages;
 
 /**
  * An AnnotationRepositoryImpl.
@@ -45,6 +47,8 @@ import org.jboss.jandex.Type;
  */
 public class AnnotationRepositoryImpl implements AnnotationRepository
 {
+   private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
+
    private Index backingRepository;
    private ClassLoader cl;
 
@@ -57,7 +61,7 @@ public class AnnotationRepositoryImpl implements AnnotationRepository
    public AnnotationRepositoryImpl(Index backingRepository, ClassLoader cl)
    {
       if (backingRepository == null)
-         throw new IllegalArgumentException("repository cannot be null");
+         throw new IllegalArgumentException(bundle.repositoryNull());
       
       this.backingRepository = backingRepository;
       this.cl = cl;

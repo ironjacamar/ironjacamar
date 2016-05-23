@@ -36,11 +36,30 @@ import static org.jboss.logging.Logger.Level.INFO;
 @MessageLogger(projectCode = "IJ2")
 public interface DeployersLogger extends BasicLogger
 {
+   // ABSTRACT RESOURCE ADAPTER DEPLOYER
+
+   /**
+    * Required license terms
+    * @param url The license url
+    */
+   @LogMessage(level = INFO)
+   @Message(id = 20001, value = "Required license terms for %s")
+   public void requiredLicenseTerms(String url);
+
+   /**
+    * Deployed
+    * @param archiveName The archive name
+    */
+   @LogMessage(level = INFO)
+   @Message(id = 20002, value = "Deployed: %s")
+   public void deployed(String archiveName);
+
    /**
     * Changed TransactionSupport
     * @param jndiName The JNDI name
     */
    @LogMessage(level = INFO)
-   @Message(id = 20019, value = "Changed TransactionSupport for %s")
+   @Message(id = 20003, value = "Changed TransactionSupport for %s")
    public void changedTransactionSupport(String jndiName);
+
 }

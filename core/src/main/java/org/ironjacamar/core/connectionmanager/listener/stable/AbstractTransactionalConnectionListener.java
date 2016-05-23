@@ -22,6 +22,7 @@
 package org.ironjacamar.core.connectionmanager.listener.stable;
 
 import org.ironjacamar.common.api.metadata.common.FlushStrategy;
+import org.ironjacamar.core.CoreBundle;
 import org.ironjacamar.core.connectionmanager.ConnectionManager;
 import org.ironjacamar.core.connectionmanager.Credential;
 import org.ironjacamar.core.connectionmanager.listener.TransactionSynchronization;
@@ -36,6 +37,8 @@ import javax.resource.spi.ManagedConnection;
 import javax.transaction.Transaction;
 import javax.transaction.xa.XAResource;
 
+import org.jboss.logging.Messages;
+
 /**
  * An abstract transactional connection listener for the stable configuration
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
@@ -43,6 +46,10 @@ import javax.transaction.xa.XAResource;
 public abstract class AbstractTransactionalConnectionListener extends
    org.ironjacamar.core.connectionmanager.listener.AbstractTransactionalConnectionListener
 {
+
+   /** The Message bundle */
+   CoreBundle bundle = Messages.getBundle(CoreBundle.class);
+
    /**
     * Constructor
     * @param cm The connection manager
@@ -134,7 +141,7 @@ public abstract class AbstractTransactionalConnectionListener extends
       {
          this.transaction = tx;
          this.cancel = false;
-         this.throwable = new Throwable("Unabled to enlist resource, see the previous warnings.");
+         this.throwable = new Throwable(bundle.unableToEnlist());
       }
 
       /**
@@ -147,7 +154,7 @@ public abstract class AbstractTransactionalConnectionListener extends
          {
             if (!transaction.enlistResource(xaResource))
             {
-               enlistError = new ResourceException("Failed to enlist", throwable);
+               enlistError = new ResourceException(bundle.failedToEnlist(), throwable);
             }
          }
          catch (Exception e)

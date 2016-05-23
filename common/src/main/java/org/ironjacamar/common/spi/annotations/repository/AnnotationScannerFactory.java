@@ -20,8 +20,12 @@
  */
 package org.ironjacamar.common.spi.annotations.repository;
 
+import org.ironjacamar.common.CommonBundle;
+
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+
+import org.jboss.logging.Messages;
 
 /**
  * The AnnotationScannerFactory which creates an annotation scanner instance
@@ -38,6 +42,9 @@ public class AnnotationScannerFactory
 
    /** The activate implementation */
    private static AnnotationScanner active = null;
+
+   private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
+
 
    static
    {
@@ -71,7 +78,7 @@ public class AnnotationScannerFactory
          return active;
 
       if (defaultImplementation == null)
-         throw new IllegalStateException("Unable to find an annotation scanner implementation");
+         throw new IllegalStateException(bundle.noAnnotationScanner());
 
       return defaultImplementation;
    }

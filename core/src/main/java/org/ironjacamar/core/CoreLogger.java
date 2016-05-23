@@ -28,6 +28,7 @@ import org.jboss.logging.annotations.Message;
 import org.jboss.logging.annotations.MessageLogger;
 
 import static org.jboss.logging.Logger.Level.ERROR;
+import static org.jboss.logging.Logger.Level.INFO;
 import static org.jboss.logging.Logger.Level.WARN;
 
 /**
@@ -38,6 +39,40 @@ import static org.jboss.logging.Logger.Level.WARN;
 @MessageLogger(projectCode = "IJ2")
 public interface CoreLogger extends BasicLogger
 {
+   // CACHED CONNECTION MANAGER (100)
+
+   /**
+    * Closing connection
+    * @param handle The hande
+    */
+   @LogMessage(level = INFO)
+   @Message(id = 100, value = "Closing a connection for you. Please close them yourself: %s")
+   public void closingConnection(Object handle);
+
+   /**
+    * Closing connection
+    * @param handle The hande
+    * @param t The exception
+    */
+   @LogMessage(level = INFO)
+   public void closingConnection(Object handle, @Cause Throwable t);
+
+   /**
+    * Closing connection results in throwable
+    * @param t The exception
+    */
+   @LogMessage(level = INFO)
+   @Message(id = 102, value = "Throwable trying to close a connection for you, please close it yourself")
+   public void closingConnectionThrowable(@Cause Throwable t);
+
+   /**
+    * No close method for closing connection
+    * @param clz The class name
+    */
+   @LogMessage(level = INFO)
+   @Message(id = 103, value = "Could not find a close method on alleged connection object (%s). " +
+         "Please close your own connections")
+   public void closingConnectionNoClose(String clz);
 
    // WORK MANAGER (200)
 
@@ -57,7 +92,33 @@ public interface CoreLogger extends BasicLogger
    @Message(id = 202, value = "SecurityContext setup failed since CallbackSecurity was null")
    public void securityContextSetupFailedCallbackSecurityNull();
 
-   // CORE (300)
+   // CONNECTION MANAGER LISTENER (300)
+
+   /**
+    * Connection error occurred
+    * @param cl AbstractConnectionListener instance
+    * @param t The exception
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 305, value = "Connection error occurred: %s")
+   public void connectionErrorOccurred(Object cl, @Cause Throwable t);
+
+   /**
+    * Unknown Connection error occurred
+    * @param cl AbstractConnectionListener instance
+    * @param t The exception
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 306, value = "Unknown connection error occurred: %s")
+   public void unknownConnectionErrorOccurred(Object cl, @Cause Throwable t);
+
+   /**
+    * Notified of error on a different managed connection
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 307, value = "Notified of error on a different managed connection")
+   public void notifiedErrorDifferentManagedConnection();
+
 
    /**
     * Error during beforeCompletion
@@ -93,6 +154,76 @@ public interface CoreLogger extends BasicLogger
    @LogMessage(level = ERROR)
    @Message(id = 317, value = "Transaction boundary")
    public void txConnectionListenerBoundary(@Cause Exception e);
+
+
+   // POOL MANAGER (600)
+
+   /**
+    * ConnectionValidator has been interrupted
+    */
+   @LogMessage(level = INFO)
+   @Message(id = 601, value = "ConnectionValidator has been interrupted")
+   public void returningConnectionValidatorInterrupted();
+
+   /**
+    * ConnectionValidator ignored unexpected runtime exception
+    * @param t The exception
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 602, value = "ConnectionValidator ignored unexpected runtime exception")
+   public void connectionValidatorIgnoredUnexpectedRuntimeException(@Cause Throwable t);
+
+   /**
+    * ConnectionValidator ignored unexpected error
+    * @param t The exception
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 603, value = "ConnectionValidator ignored unexpected error")
+   public void connectionValidatorIgnoredUnexpectedError(@Cause Throwable t);
+
+   /**
+    * Unable to fill pool
+    * @param id the id of the pool
+    * @param t The exception
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 610, value = "Unable to fill pool id=%s")
+   public void unableFillPool(String id, @Cause Throwable t);
+
+   /**
+    * Invalid incrementer policy
+    * @param clz The class name
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 617, value = "Invalid incrementer capacity policy: %s")
+   public void invalidCapacityIncrementer(String clz);
+
+   /**
+    * Invalid decrementer policy
+    * @param clz The class name
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 618, value = "Invalid decrementer capacity policy: %s")
+   public void invalidCapacityDecrementer(String clz);
+
+   /**
+    * Invalid policy option
+    * @param key The property name
+    * @param value The property value
+    * @param policy The class name
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 619, value = "Invalid property '%s' with value '%s' for %s")
+   public void invalidCapacityOption(String key, String value, String policy);
+
+   /**
+    * ValidateOnMatch was specified with a non compliant ManagedConnectionFactory interface
+    * @param mcf The ManagedConnectionFactory
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 620, value = "Warning: ValidateOnMatch validation was specified with a non compliant " +
+         "ManagedConnectionFactory: %s")
+   public void validateOnMatchNonCompliantManagedConnectionFactory(String mcf);
 
    // NAMING (700)
 
@@ -163,36 +294,6 @@ public interface CoreLogger extends BasicLogger
    // SECURITY (1000)
 
    /**
-    * No users.properties were found
-    */
-   @LogMessage(level = WARN)
-   @Message(id = 1001, value = "No users.properties were found")
-   public void noUsersPropertiesFound();
-
-   /**
-    * Error while loading users.properties
-    * @param t The exception
-    */
-   @LogMessage(level = ERROR)
-   @Message(id = 1002, value = "Error while loading users.properties")
-   public void errorWhileLoadingUsersProperties(@Cause Throwable t);
-
-   /**
-    * No roles.properties were found
-    */
-   @LogMessage(level = WARN)
-   @Message(id = 1003, value = "No roles.properties were found")
-   public void noRolesPropertiesFound();
-
-   /**
-    * Error while loading roles.properties
-    * @param t The exception
-    */
-   @LogMessage(level = ERROR)
-   @Message(id = 1004, value = "Error while loading roles.properties")
-   public void errorWhileLoadingRolesProperties(@Cause Throwable t);
-
-   /**
     * No callback.properties were found
     */
    @LogMessage(level = WARN)
@@ -217,4 +318,5 @@ public interface CoreLogger extends BasicLogger
    @Message(id = 1101, value = "Prepare called on a local tx. Use of local transactions on a JTA " +
          "transaction with more than one branch may result in inconsistent data in some cases of failure")
    public void prepareCalledOnLocaltx();
+
 }

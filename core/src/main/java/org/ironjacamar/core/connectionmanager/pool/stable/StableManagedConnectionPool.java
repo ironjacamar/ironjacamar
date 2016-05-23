@@ -430,8 +430,6 @@ public class StableManagedConnectionPool extends AbstractManagedConnectionPool
       if (size <= 0)
          return;
 
-      //TODO: trace and debug here
-
       if (pool.getLogger().isTraceEnabled())
       {
          synchronized (this)
@@ -490,7 +488,6 @@ public class StableManagedConnectionPool extends AbstractManagedConnectionPool
                                                         Tracer.isRecordCallstacks() ?
                                                         new Throwable("CALLSTACK") : null);
 
-                     //TODO:Trace
                      boolean added = false;
 
                      if (listeners.size() < size)
@@ -502,7 +499,6 @@ public class StableManagedConnectionPool extends AbstractManagedConnectionPool
 
                      if (!added)
                      {
-                        //TODO: Trace
 
                         if (Tracer.isEnabled())
                            Tracer.destroyConnectionListener(pool.getConfiguration().getId(), this, cl,
@@ -586,7 +582,7 @@ public class StableManagedConnectionPool extends AbstractManagedConnectionPool
       }
       else
       {
-         // TODO: log
+         log.validateOnMatchNonCompliantManagedConnectionFactory(mcf.getClass().getName());
       }
 
       if (anyDestroyed)

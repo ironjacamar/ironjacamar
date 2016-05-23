@@ -71,28 +71,11 @@ public class CapacityFactory
 
          if (incrementer != null)
          {
-            if (!metadata.getIncrementer().getConfigPropertiesMap().isEmpty())
-            {
-               Injection injector = new Injection();
-
-               Map<String, String> properties = metadata.getIncrementer().getConfigPropertiesMap();
-               for (Map.Entry<String, String> property : properties.entrySet())
-               {
-                  try
-                  {
-                     injector.inject(incrementer, property.getKey(), property.getValue());
-                  }
-                  catch (Throwable t)
-                  {
-                     //TODO: log log.invalidCapacityOption(property.getKey(),
-                     //                          property.getValue(), incrementer.getClass().getName());
-                  }
-               }
-            }
+            injectProperties(metadata.getIncrementer().getConfigPropertiesMap(), incrementer);
          }
          else
          {
-            //TODO: log log.invalidCapacityIncrementer(metadata.getIncrementer().getClassName());
+            log.invalidCapacityIncrementer(metadata.getIncrementer().getClassName());
          }
       }
 
@@ -107,24 +90,7 @@ public class CapacityFactory
 
          if (decrementer != null)
          {
-            if (!metadata.getDecrementer().getConfigPropertiesMap().isEmpty())
-            {
-               Injection injector = new Injection();
-
-               Map<String, String> properties = metadata.getDecrementer().getConfigPropertiesMap();
-               for (Map.Entry<String, String> property : properties.entrySet())
-               {
-                  try
-                  {
-                     injector.inject(decrementer, property.getKey(), property.getValue());
-                  }
-                  catch (Throwable t)
-                  {
-                     //TODO: log log.invalidCapacityOption(property.getKey(),
-                     //                          property.getValue(), decrementer.getClass().getName());
-                  }
-               }
-            }
+            injectProperties(metadata.getDecrementer().getConfigPropertiesMap(), decrementer);
 
          }
          else
@@ -137,28 +103,11 @@ public class CapacityFactory
             {
                decrementer = loadDecrementer(metadata.getDecrementer(), classLoaderPlugin);
 
-               if (!metadata.getDecrementer().getConfigPropertiesMap().isEmpty())
-               {
-                  Injection injector = new Injection();
-
-                  Map<String, String> properties = metadata.getDecrementer().getConfigPropertiesMap();
-                  for (Map.Entry<String, String> property : properties.entrySet())
-                  {
-                     try
-                     {
-                        injector.inject(decrementer, property.getKey(), property.getValue());
-                     }
-                     catch (Throwable t)
-                     {
-                        //TODO: log log.invalidCapacityOption(property.getKey(),
-                        //TODO: log                          property.getValue(), decrementer.getClass().getName());
-                     }
-                  }
-               }
+               injectProperties(metadata.getDecrementer().getConfigPropertiesMap(), decrementer);
             }
             else
             {
-               //TODO: log log.invalidCapacityDecrementer(metadata.getDecrementer().getClassName());
+               log.invalidCapacityDecrementer(metadata.getDecrementer().getClassName());
             }
          }
       }
@@ -167,6 +116,28 @@ public class CapacityFactory
          decrementer = DefaultCapacity.DEFAULT_DECREMENTER;
 
       return new ExplicitCapacity(incrementer, decrementer);
+   }
+
+
+   private static void injectProperties(Map<String, String> properties, Object decrementer)
+   {
+      if (!properties.isEmpty())
+      {
+         Injection injector = new Injection();
+
+         for (Map.Entry<String, String> property : properties.entrySet())
+         {
+            try
+            {
+               injector.inject(decrementer, property.getKey(), property.getValue());
+            }
+            catch (Throwable t)
+            {
+               log.invalidCapacityOption(property.getKey(),
+                                         property.getValue(), decrementer.getClass().getName());
+            }
+         }
+      }
    }
 
    /**

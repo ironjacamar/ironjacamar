@@ -20,6 +20,10 @@
  */
 package org.ironjacamar.common.api.metadata.spec;
 
+import org.ironjacamar.common.CommonBundle;
+
+import org.jboss.logging.Messages;
+
 /**
  * @author <a href="mailto:stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *The credential-interfaceType specifies the
@@ -50,6 +54,8 @@ public enum CredentialInterfaceEnum
     * enum instance representing javax.resource.spi.security.GenericCredential
     */
    GenericCredential("javax.resource.spi.security.GenericCredential");
+
+   private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
    private final String fullQualifiedName;
 
@@ -85,9 +91,7 @@ public enum CredentialInterfaceEnum
       }
       else
       {
-         throw new IllegalArgumentException("fullQualifiedName should be one of "
-               + "javax.resource.spi.security.PasswordCredential;" + " org.ietf.jgss.GSSCredential;"
-               + "javax.resource.spi.security.GenericCredential");
+         throw new IllegalArgumentException(bundle.fullQualifiedName());
       }
    }
 

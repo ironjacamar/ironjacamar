@@ -20,6 +20,8 @@
  */
 package org.ironjacamar.core.connectionmanager.pool;
 
+import org.ironjacamar.core.CoreLogger;
+
 import java.util.Comparator;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -33,12 +35,18 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.jboss.logging.Logger;
+
 /**
  * Idle connection remover
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class IdleConnectionRemover
 {
+   /** The logger */
+   private static CoreLogger logger = Logger.getMessageLogger(CoreLogger.class,
+         IdleConnectionRemover.class.getName());
+
    /** Thread name */
    private static final String THREAD_NAME = "IronJacamar IdleConnectionRemover";
    
@@ -252,19 +260,18 @@ public class IdleConnectionRemover
          }
          catch (InterruptedException e)
          {
-            /*
-              TODO
-              if (!shutdown.get())
-                 logger.returningConnectionValidatorInterrupted();
-            */
+
+            if (!shutdown.get())
+               logger.returningConnectionValidatorInterrupted();
+
          }
          catch (RuntimeException e)
          {
-            //TODO: logger.connectionValidatorIgnoredUnexpectedRuntimeException(e);
+            logger.connectionValidatorIgnoredUnexpectedRuntimeException(e);
          }
          catch (Exception e)
          {
-            //TODO: logger.connectionValidatorIgnoredUnexpectedError(e);
+            logger.connectionValidatorIgnoredUnexpectedError(e);
          }         
          finally
          {

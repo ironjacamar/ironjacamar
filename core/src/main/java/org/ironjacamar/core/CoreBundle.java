@@ -32,6 +32,24 @@ import org.jboss.logging.annotations.MessageBundle;
 @MessageBundle(projectCode = "IJ2")
 public interface CoreBundle
 {
+
+   // CACHED CONNECTION MANAGER (100)
+
+   /**
+    * Some connections were not closed
+    * @return The value
+    */
+   @Message(id = 151, value = "Some connections were not closed, see the log for the allocation stacktraces")
+   public String someConnectionsWereNotClosed();
+
+   /**
+    * Trying to return an unknown connection
+    * @param connection The connection
+    * @return The value
+    */
+   @Message(id = 152, value = "Trying to return an unknown connection: %s")
+   public String tryingToReturnUnknownConnection(String connection);
+
    // WORK MANAGER (200)
 
    /**
@@ -179,6 +197,43 @@ public interface CoreBundle
    @Message(id = 266, value = "Invalid number of parameters %d (%s)")
    public String invalidNumberOfParameters(int number, String c);
 
+   // CONNECTION MANAGER LISTENER (300)
+
+   /**
+    * No exception was reported
+    * @return The value
+    */
+   @Message(id = 351, value = "No exception was reported")
+   public String noExceptionWasReported();
+
+
+   /**
+    * Failed to enlist
+    * @return The value
+    */
+   @Message(id = 352, value = "Failed to enlist")
+   public String failedToEnlist();
+
+   /**
+    * Unabled to enlist resource, see the previous warnings.
+    * @return The value
+    */
+   @Message(id = 353, value = "Unabled to enlist resource, see the previous warnings.")
+   public String unableToEnlist();
+
+
+   // NAMING (700)
+
+   /**
+    * Deployment failed since jndi name is already deployed
+    * @param className class name
+    * @param jndiName jndi name
+    * @return The value
+    */
+   @Message(id = 751, value = "Deployment %s failed, %s is already deployed")
+   public String deploymentFailedSinceJndiNameHasDeployed(String className, String jndiName);
+
+
    // RECOVERY (900)
 
    /**
@@ -189,21 +244,6 @@ public interface CoreBundle
    @Message(id = 951, value = "Error during connection close")
    public String errorDuringConnectionClose();
 
-   /**
-    * Error during recovery initialization
-    *
-    * @return The value
-    */
-   @Message(id = 952, value = "Error during recovery initialization")
-   public String errorDuringRecoveryInitialization();
-
-   /**
-    * Error during recovery shutdown
-    *
-    * @return The value
-    */
-   @Message(id = 953, value = "Error during recovery shutdown")
-   public String errorDuringRecoveryShutdown();
 
    // TRANSCATION (1100)
 

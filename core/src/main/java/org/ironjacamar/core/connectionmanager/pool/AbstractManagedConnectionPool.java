@@ -24,6 +24,7 @@ package org.ironjacamar.core.connectionmanager.pool;
 import org.ironjacamar.core.CoreLogger;
 import org.ironjacamar.core.connectionmanager.Credential;
 import org.ironjacamar.core.connectionmanager.listener.ConnectionListener;
+import org.ironjacamar.core.tracer.Tracer;
 
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.FREE;
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.IN_USE;
@@ -105,6 +106,10 @@ public abstract class AbstractManagedConnectionPool implements ManagedConnection
 
             if (candidateSet != null && !candidateSet.isEmpty())
             {
+               if (Tracer.isEnabled())
+                  Tracer.destroyConnectionListener(pool.getConfiguration().getId(), this, cl, false, false, true, false,
+                        false, false, false, Tracer.isRecordCallstacks() ? new Throwable("CALLSTACK") : null);
+
                destroyAndRemoveConnectionListener(cl, listeners);
             }
             else
@@ -116,24 +121,35 @@ public abstract class AbstractManagedConnectionPool implements ManagedConnection
                }
                else
                {
+                  if (Tracer.isEnabled())
+                     Tracer.destroyConnectionListener(pool.getConfiguration().getId(), this, cl, false, false, true,
+                           false, false, false, false, Tracer.isRecordCallstacks() ? new Throwable("CALLSTACK") : null);
+
                   destroyAndRemoveConnectionListener(cl, listeners);
                }
             }
          }
          catch (ResourceException re)
          {
+            if (Tracer.isEnabled())
+               Tracer.destroyConnectionListener(pool.getConfiguration().getId(), this, cl, false, false, true, false,
+                     false, false, false, Tracer.isRecordCallstacks() ? new Throwable("CALLSTACK") : null);
+
             destroyAndRemoveConnectionListener(cl, listeners);
          }
       }
       else
       {
-         // TODO: log
+         log.debug("mcf is not instance of ValidatingManagedConnectionFactory");
          if (cl.changeState(VALIDATION, newState))
          {
             return cl;
          }
          else
          {
+            if (Tracer.isEnabled())
+               Tracer.destroyConnectionListener(pool.getConfiguration().getId(), this, cl, false, false, true, false,
+                     false, false, false, Tracer.isRecordCallstacks() ? new Throwable("CALLSTACK") : null);
             destroyAndRemoveConnectionListener(cl, listeners);
          }
       }
