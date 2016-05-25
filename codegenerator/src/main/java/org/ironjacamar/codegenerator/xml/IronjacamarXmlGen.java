@@ -34,10 +34,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A IvyXmlGen.
+ * An ironjacamar.xml generator
  *
  * @author Jeff Zhang
- * @version $Revision: $
  */
 public class IronjacamarXmlGen extends AbstractXmlGen
 {
@@ -74,14 +73,14 @@ public class IronjacamarXmlGen extends AbstractXmlGen
             strMcf.append("jndi-name=\"java:/eis/");
             strMcf.append(def.getMcfDefs().get(num).getCciConnFactoryClass());
             strMcf.append("\" ");
-            strMcf.append("pool-name=\"").append(def.getMcfDefs().get(num).getCciConnFactoryClass());
+            strMcf.append("id=\"").append(def.getMcfDefs().get(num).getCciConnFactoryClass());
          }
          else
          {
             strMcf.append("jndi-name=\"java:/eis/");
             strMcf.append(def.getMcfDefs().get(num).getCfInterfaceClass());
             strMcf.append("\" ");
-            strMcf.append("pool-name=\"").append(def.getMcfDefs().get(num).getCfInterfaceClass());
+            strMcf.append("id=\"").append(def.getMcfDefs().get(num).getCfInterfaceClass());
          }
          strMcf.append("\">\n");
 
@@ -93,10 +92,9 @@ public class IronjacamarXmlGen extends AbstractXmlGen
          if (def.getSupportTransaction().endsWith("XATransaction"))
          {
             strMcf.append("      <recovery>\n");
-            strMcf.append("        <recover-credential>\n");
-            strMcf.append("          <user-name>user</user-name>\n");
-            strMcf.append("          <password>password</password>\n");
-            strMcf.append("        </recover-credential>\n");
+            strMcf.append("        <recovery-credential>\n");
+            strMcf.append("          <security-domain>DefaultSecurityDomain</security-domain>\n");
+            strMcf.append("        </recovery-credential>\n");
             strMcf.append("      </recovery>\n");
          }
          strMcf.append("    </connection-definition>\n");
