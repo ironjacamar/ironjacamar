@@ -335,7 +335,7 @@ public class McfDef
    public String getCciConnFactoryClass()
    {
       if (cciConnFactoryClass == null || cciConnFactoryClass.equals(""))
-         cciConnFactoryClass = getDefaultValue() + "CciConnectionFactory";
+         cciConnFactoryClass = getDefaultValue() + "ConnectionFactory";
       return cciConnFactoryClass;
    }
 
@@ -357,7 +357,7 @@ public class McfDef
    public String getCciConnClass()
    {
       if (cciConnClass == null || cciConnClass.equals(""))
-         cciConnClass = getDefaultValue() + "CciConnection";
+         cciConnClass = getDefaultValue() + "Connection";
       return cciConnClass;
    }
 

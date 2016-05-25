@@ -585,7 +585,11 @@ public class BaseProfile implements Profile
    void generateTestCode(Definition def)
    {
       if (!def.isSupportOutbound())
+      {
+         File d = new File(def.getOutputDir() + "/src/test/resources");
+         d.mkdirs();
          return;
+      }
 
       try
       {

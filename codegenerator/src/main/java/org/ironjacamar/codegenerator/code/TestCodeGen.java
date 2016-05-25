@@ -144,8 +144,9 @@ public class TestCodeGen extends AbstractCodeGen
 
       writeWithIndent(out, indent + 1,
             "org.jboss.shrinkwrap.descriptor.api.connector" + def.getVersionNoDot() + ".ResourceadapterType rt = "
-                  + "raXml.getOrCreateResourceadapter()\n");
-      writeWithIndent(out, indent + 2, ".resourceadapterClass(" + def.getRaClass() + ".class.getName());\n");
+                      + "raXml.getOrCreateResourceadapter()" + (def.isUseRa() ? "" : ";") + "\n");
+      if (def.isUseRa())
+         writeWithIndent(out, indent + 2, ".resourceadapterClass(" + def.getRaClass() + ".class.getName());\n");
       writeWithIndent(out, indent + 1, "org.jboss.shrinkwrap.descriptor.api.connector" + def.getVersionNoDot() +
             ".OutboundResourceadapterType ort = rt\n");
       writeWithIndent(out, indent + 2,
@@ -180,7 +181,15 @@ public class TestCodeGen extends AbstractCodeGen
 
       writeWithIndent(out, indent + 1,
             "JavaArchive ja = ShrinkWrap.create(JavaArchive.class, deploymentName + \".rar\");\n");
-      writeWithIndent(out, indent + 1, "ja.addPackages(true, " + def.getRaClass() + ".class.getPackage());\n");
+      if (def.getMcfDefs().size() > 0)
+      {
+         writeWithIndent(out, indent + 1, "ja.addPackages(true, " +
+                         def.getMcfDefs().get(0).getMcfClass() + ".class.getPackage());\n");
+      }
+      else
+      {
+         writeWithIndent(out, indent + 1, "ja.addPackages(true, " + def.getRaClass() + ".class.getPackage());\n");
+      }
 
       writeWithIndent(out, indent + 1, "raa.addAsLibrary(ja);\n");
       writeWithIndent(out, indent + 1,

@@ -63,13 +63,17 @@ public class PackageInfoGen extends AbstractCodeGen
    {
       if (subDir != null)
       {
-         out.write("/** The " + def.getRaPackage() + "." + subDir + " package */\n\n");
-         out.write("package " + def.getRaPackage() + "." + subDir + ";\n\n");
+         out.write("/** The " + def.getRaPackage() + "." + subDir + " package */");
+         writeEol(out);
+         out.write("package " + def.getRaPackage() + "." + subDir + ";");
+         writeEol(out);
       }
       else
       {
-         out.write("/** The " + def.getRaPackage() + " package */\n\n");
-         out.write("package " + def.getRaPackage() + ";\n\n");
+         out.write("/** The " + def.getRaPackage() + " package */");
+         writeEol(out);
+         out.write("package " + def.getRaPackage() + ";");
+         writeEol(out);
       }
 
    }
