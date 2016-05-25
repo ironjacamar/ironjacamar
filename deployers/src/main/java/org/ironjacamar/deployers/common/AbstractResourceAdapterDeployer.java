@@ -254,22 +254,24 @@ public abstract class AbstractResourceAdapterDeployer
     * Activate a resource adapter
     * @param connector The merged metadata
     * @param activation The activation
+    * @param archiveName The name of the archive
     * @param cl The class loader
     * @return The deployment
     * @exception DeployException Thrown if a deployment error occurs
     */
-   public Deployment activate(Connector connector, Activation activation, ClassLoader cl)
+   public Deployment activate(Connector connector, Activation activation, String archiveName, ClassLoader cl)
       throws DeployException
    {
       log.tracef("Connector=%s", connector);
       log.tracef("Activation=%s", stripPassword(activation.toString()));
+      log.tracef("ArchiveName=%s", archiveName);
 
       try
       {
          DeploymentBuilder builder = new DeploymentBuilder();
          TransactionSupportEnum transactionSupport = getTransactionSupport(connector, activation);
 
-         Metadata md = metadataRepository.findByName(activation.getArchive());
+         Metadata md = metadataRepository.findByName(archiveName);
 
          builder.identifier(activation.getId());
          builder.name(md.getName());

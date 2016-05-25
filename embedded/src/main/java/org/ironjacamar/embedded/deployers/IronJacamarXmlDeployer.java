@@ -108,8 +108,8 @@ public class IronJacamarXmlDeployer extends AbstractFungalRADeployer implements 
 
             Merger merger = new Merger();
             Connector actC = merger.merge(c.copy(), a);
-            
-            activate(actC, a, cl);
+
+            activate(actC, a, archive.getName(), cl);
          }
 
          return null;

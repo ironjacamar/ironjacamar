@@ -124,7 +124,7 @@ public class DashRaXmlDeployer extends AbstractFungalRADeployer implements Clone
             classLoaderDeployer.clone().deploy(url, context, parent);
             KernelClassLoader cl = (KernelClassLoader)context.get(Constants.ATTACHMENT_CLASSLOADER);
             
-            deployments.add(activate(actC, activation, cl));
+            deployments.add(activate(actC, activation, activation.getArchive(), cl));
          }
 
          return new ActivationDeployment(url, deployments, deploymentRepository, deployments.get(0).getClassLoader());
