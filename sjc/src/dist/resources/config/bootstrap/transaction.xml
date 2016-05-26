@@ -44,7 +44,7 @@
     </constructor>
   </bean>
 
-  <bean name="StateManager" class="com.arjuna.ats.arjuna.objectstore.StoreManager">
+  <bean name="StoreManager" class="com.arjuna.ats.arjuna.objectstore.StoreManager">
     <constructor>
       <parameter><inject bean="ActionStore"/></parameter>
       <parameter><inject bean="StateStore"/></parameter>
@@ -73,7 +73,7 @@
     <property name="recoveryActivators">
       <null/>
     </property>
-    <depends>StateManager</depends>
+    <depends>StoreManager</depends>
   </bean>
 
   <bean name="CoreEnvironmentBean" class="com.arjuna.ats.arjuna.common.CoreEnvironmentBean">
@@ -123,7 +123,9 @@
 
   <bean name="TransactionSynchronizationRegistry" class="com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionSynchronizationRegistryImple"/>
 
-  <bean name="TxControl" class="com.arjuna.ats.arjuna.coordinator.TxControl"/>
+  <bean name="TxControl" class="com.arjuna.ats.arjuna.coordinator.TxControl">
+    <depends>StoreManager</depends>
+  </bean>
 
   <bean name="TransactionManager" class="com.arjuna.ats.jbossatx.jta.TransactionManagerService">
     <property name="jbossXATerminator"><inject bean="XATerminator"/></property>
