@@ -104,9 +104,6 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       if (dataSourceClass == null && connectionURL == null && driverClass != null)
          throw new ResourceException(bundle.connectionURLNull());
 
-      if (dataSourceClass != null && connectionProps.size() == 0)
-          throw new ResourceException(bundle.nonConnectionPropertyDefinedForDatasource(dataSourceClass));
-
       return super.createConnectionFactory(cm);
    }
 
