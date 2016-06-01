@@ -21,13 +21,22 @@
 
 
 dependencies {
+  compile(libraries.ant) {
+    transitive = false
+  }
+  compile(libraries.maven) {
+    transitive = false
+  }
+
   compile project(':api')
   compile project(':common')
 }
 
 jar {
   manifest {
-    attributes("Implementation-Title" : "IronJacamar Validator")
+    attributes("Implementation-Title" : "IronJacamar Validator",
+               "Class-Path" : "ironjacamar-spec-api.jar, ironjacamar-common.jar",
+               "Main-Class" : "org.ironjacamar.validator.cli.Main")
   }
   baseName = "ironjacamar-validator"
   dependsOn classes

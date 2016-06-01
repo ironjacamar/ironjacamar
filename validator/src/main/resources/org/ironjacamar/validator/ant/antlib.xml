@@ -1,0 +1,3 @@
+<antlib>
+  <taskdef name="validate" classname="org.ironjacamar.validator.ant.ValidatorTask"/>
+</antlib>
