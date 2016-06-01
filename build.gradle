@@ -332,10 +332,16 @@ def distributionConsole = copySpec {
   include '**/*'
 }
 
+def distributionTracer = copySpec {
+  from rootProject.file('tracer/src/dist/resources/')
+  into 'doc/tracer'
+  include '**/*'
+}
+
 distributions {
   main {
     contents {
-      with distributionSJC, distributionSchemas, distributionLib, distributionDependencies, distributionJetty, distributionConsole, distributionCodeGen
+      with distributionSJC, distributionSchemas, distributionLib, distributionDependencies, distributionJetty, distributionConsole, distributionCodeGen, distributionTracer
     }
   }
 }
