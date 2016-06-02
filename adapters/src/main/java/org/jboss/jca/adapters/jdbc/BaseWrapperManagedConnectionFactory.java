@@ -1124,7 +1124,7 @@ public abstract class BaseWrapperManagedConnectionFactory
 
       Properties props = new Properties();
       
-      if (connectionProps != null && connectionProps.size() > 0)
+      if (connectionProps != null)
          props.putAll(connectionProps);
 
       WrappedConnectionRequestInfo lcri = (WrappedConnectionRequestInfo)cri;
