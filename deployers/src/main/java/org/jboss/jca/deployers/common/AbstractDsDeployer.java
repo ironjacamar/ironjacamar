@@ -1067,58 +1067,53 @@ public abstract class AbstractDsDeployer
             log.debug("RecoverSecurityDomain=" + recoverSecurityDomain);
          }
 
-         if ((recoverUser != null && !recoverUser.trim().equals("") &&
-              recoverPassword != null && !recoverPassword.trim().equals("")) ||
-             (recoverSecurityDomain != null && !recoverSecurityDomain.trim().equals("")))
+         RecoveryPlugin plugin = null;
+
+         if (recoveryMD != null && recoveryMD.getRecoverPlugin() != null &&
+             recoveryMD.getRecoverPlugin().getClassName() != null)
          {
-            RecoveryPlugin plugin = null;
-
-            if (recoveryMD != null && recoveryMD.getRecoverPlugin() != null &&
-                recoveryMD.getRecoverPlugin().getClassName() != null)
+            List<ConfigProperty> configProperties = new ArrayList<ConfigProperty>(recoveryMD.getRecoverPlugin()
+                                                                                  .getConfigPropertiesMap().size());
+            for (Entry<String, String> property : recoveryMD.getRecoverPlugin().getConfigPropertiesMap()
+                    .entrySet())
             {
-               List<ConfigProperty> configProperties = new ArrayList<ConfigProperty>(recoveryMD.getRecoverPlugin()
-                                                                                     .getConfigPropertiesMap().size());
-               for (Entry<String, String> property : recoveryMD.getRecoverPlugin().getConfigPropertiesMap()
-                       .entrySet())
-               {
-                  ConfigProperty c =
-                     new ConfigPropertyImpl(null,
-                                            new XsdString(property.getKey(), null),
-                                            XsdString.NULL_XSDSTRING,
-                                            new XsdString(property.getValue(), null),
-                                            Boolean.FALSE, Boolean.FALSE, Boolean.FALSE,
-                                            null, false, null, null, null, null);
+               ConfigProperty c =
+                  new ConfigPropertyImpl(null,
+                                         new XsdString(property.getKey(), null),
+                                         XsdString.NULL_XSDSTRING,
+                                         new XsdString(property.getValue(), null),
+                                         Boolean.FALSE, Boolean.FALSE, Boolean.FALSE,
+                                         null, false, null, null, null, null);
 
-                  configProperties.add(c);
-               }
-
-               plugin = (RecoveryPlugin) initAndInject(recoveryMD.getRecoverPlugin().getClassName(),
-                                                       configProperties, cl);
-            }
-            else
-            {
-               plugin = new DefaultRecoveryPlugin();
+               configProperties.add(c);
             }
 
-            XAResourceStatistics xastat = null;
-
-            if (pool.getStatistics() != null && pool.getStatistics() instanceof XAResourceStatistics)
-            {
-               xastat = (XAResourceStatistics)pool.getStatistics();
-            }
-
-            recoveryImpl =
-               getTransactionIntegration().createXAResourceRecovery(mcf,
-                                                                    padXid,
-                                                                    isSameRMOverride,
-                                                                    wrapXAResource,
-                                                                    recoverUser,
-                                                                    recoverPassword,
-                                                                    recoverSecurityDomain,
-                                                                    getSubjectFactory(recoverSecurityDomain),
-                                                                    plugin,
-                                                                    xastat);
+            plugin = (RecoveryPlugin) initAndInject(recoveryMD.getRecoverPlugin().getClassName(),
+                                                    configProperties, cl);
          }
+         else
+         {
+            plugin = new DefaultRecoveryPlugin();
+         }
+
+         XAResourceStatistics xastat = null;
+
+         if (pool.getStatistics() != null && pool.getStatistics() instanceof XAResourceStatistics)
+         {
+            xastat = (XAResourceStatistics)pool.getStatistics();
+         }
+
+         recoveryImpl =
+            getTransactionIntegration().createXAResourceRecovery(mcf,
+                                                                 padXid,
+                                                                 isSameRMOverride,
+                                                                 wrapXAResource,
+                                                                 recoverUser,
+                                                                 recoverPassword,
+                                                                 recoverSecurityDomain,
+                                                                 getSubjectFactory(recoverSecurityDomain),
+                                                                 plugin,
+                                                                 xastat);
       }
 
       if (enableRecovery && getTransactionIntegration().getRecoveryRegistry() != null)

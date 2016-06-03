@@ -569,14 +569,6 @@ public interface CoreLogger extends BasicLogger
    public void exceptionDuringCrashRecoverySubject(String jndiName, String reason, @Cause Throwable t);
    
    /**
-    * No security domain defined for crash recovery
-    * @param jndiName The JNDI name
-    */
-   @LogMessage(level = WARN)
-   @Message(id = 904, value = "No security domain defined for crash recovery: %s")
-   public void noCrashRecoverySecurityDomain(String jndiName);
-
-   /**
     * Subject for crash recovery was null
     * @param jndiName The JNDI name
     */
