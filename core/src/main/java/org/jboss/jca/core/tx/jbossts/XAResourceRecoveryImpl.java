@@ -187,80 +187,77 @@ public class XAResourceRecoveryImpl implements org.jboss.jca.core.spi.transactio
       {
          Subject subject = getSubject();
 
-         // Check if we got a valid Subject instance; requirement for recovery
-         if (subject != null)
+         if (subject == null)
          {
-            ManagedConnection mc = open(subject);
-            XAResource xaResource = null;
-
-            Object connection = null;
-            try
+            log.nullSubjectCrashRecovery(jndiName);
+         }
+         
+         ManagedConnection mc = open(subject);
+         XAResource xaResource = null;
+         
+         Object connection = null;
+         try
+         {
+            connection = openConnection(mc, subject);
+            xaResource = mc.getXAResource();
+         }
+         catch (ResourceException reconnect)
+         {
+            closeConnection(connection);
+            connection = null;
+            close(mc);
+            mc = open(subject);
+            xaResource = mc.getXAResource();
+         }
+         finally
+         {
+            boolean forceDestroy = closeConnection(connection);
+            connection = null;
+         
+            if (forceDestroy)
             {
-               connection = openConnection(mc, subject);
-               xaResource = mc.getXAResource();
-            }
-            catch (ResourceException reconnect)
-            {
-               closeConnection(connection);
-               connection = null;
                close(mc);
                mc = open(subject);
                xaResource = mc.getXAResource();
             }
-            finally
-            {
-               boolean forceDestroy = closeConnection(connection);
-               connection = null;
-
-               if (forceDestroy)
-               {
-                  close(mc);
-                  mc = open(subject);
-                  xaResource = mc.getXAResource();
-               }
-            }
-            
-            if (wrapXAResource && !(xaResource instanceof org.jboss.jca.core.spi.transaction.xa.XAResourceWrapper))
-            {
-               String eisProductName = null;
-               String eisProductVersion = null;
-
-               try
-               {
-                  if (mc.getMetaData() != null)
-                  {
-                     eisProductName = mc.getMetaData().getEISProductName();
-                     eisProductVersion = mc.getMetaData().getEISProductVersion();
-                  }
-               }
-               catch (ResourceException re)
-               {
-                  // Ignore
-               }
-
-               if (eisProductName == null)
-                  eisProductName = jndiName;
-
-               if (eisProductVersion == null)
-                  eisProductVersion = jndiName;
-
-               xaResource = ti.createXAResourceWrapper(xaResource,
-                                                       padXid,
-                                                       isSameRMOverrideValue,
-                                                       eisProductName,
-                                                       eisProductVersion,
-                                                       jndiName, false,
-                                                       xastat);
-            }
-
-            log.debugf("Recovery XAResource=%s for %s", xaResource, jndiName);
-
-            return new XAResource[]{xaResource};
          }
-         else
+         
+         if (wrapXAResource && !(xaResource instanceof org.jboss.jca.core.spi.transaction.xa.XAResourceWrapper))
          {
-            log.nullSubjectCrashRecovery(jndiName);
+            String eisProductName = null;
+            String eisProductVersion = null;
+         
+            try
+            {
+               if (mc.getMetaData() != null)
+               {
+                  eisProductName = mc.getMetaData().getEISProductName();
+                  eisProductVersion = mc.getMetaData().getEISProductVersion();
+               }
+            }
+            catch (ResourceException re)
+            {
+               // Ignore
+            }
+         
+            if (eisProductName == null)
+               eisProductName = jndiName;
+         
+            if (eisProductVersion == null)
+               eisProductVersion = jndiName;
+         
+            xaResource = ti.createXAResourceWrapper(xaResource,
+                                                    padXid,
+                                                    isSameRMOverrideValue,
+                                                    eisProductName,
+                                                    eisProductVersion,
+                                                    jndiName, false,
+                                                    xastat);
          }
+         
+         log.debugf("Recovery XAResource=%s for %s", xaResource, jndiName);
+         
+         return new XAResource[]{xaResource};
       }
       catch (ResourceException re)
       {
@@ -299,17 +296,13 @@ public class XAResourceRecoveryImpl implements org.jboss.jca.core.spi.transactio
 
                return subject;
             }
-            else
+            else if (recoverSecurityDomain != null && subjectFactory != null)
             {
                // Security-domain use-case
                try
                {
-                  // Select the domain
-                  String domain = recoverSecurityDomain;
-
-                  if (domain != null && subjectFactory != null)
                   {
-                     Subject subject = SecurityActions.createSubject(subjectFactory, domain);
+                     Subject subject = SecurityActions.createSubject(subjectFactory, recoverSecurityDomain);
                      
                      Set<PasswordCredential> pcs = SecurityActions.getPasswordCredentials(subject);
                      if (pcs.size() > 0)
@@ -324,16 +317,16 @@ public class XAResourceRecoveryImpl implements org.jboss.jca.core.spi.transactio
 
                      return subject;
                   }
-                  else
-                  {
-                     log.noCrashRecoverySecurityDomain(jndiName);
-                  }
                }
                catch (Throwable t)
                {
                   log.exceptionDuringCrashRecoverySubject(jndiName, t.getMessage(), t);
                }
 
+               return null;
+            }
+            else
+            {
                return null;
             }
          }
