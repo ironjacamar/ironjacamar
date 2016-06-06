@@ -116,7 +116,7 @@ public class DashRaXmlDeployer extends AbstractFungalRADeployer implements Clone
 
             Connector c = metadata.getMetadata();
             File archive = metadata.getArchive();
-            
+
             Connector actC = merger.merge(c.copy(), activation);
             
             // Create a class loader for the archive
@@ -124,7 +124,7 @@ public class DashRaXmlDeployer extends AbstractFungalRADeployer implements Clone
             classLoaderDeployer.clone().deploy(url, context, parent);
             KernelClassLoader cl = (KernelClassLoader)context.get(Constants.ATTACHMENT_CLASSLOADER);
             
-            deployments.add(activate(actC, activation, activation.getArchive(), cl));
+            deployments.add(activate(actC, activation, activation.getArchive(), archive, cl));
          }
 
          return new ActivationDeployment(url, deployments, deploymentRepository, deployments.get(0).getClassLoader());

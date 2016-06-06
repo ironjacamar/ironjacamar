@@ -73,6 +73,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -255,16 +257,18 @@ public abstract class AbstractResourceAdapterDeployer
     * @param connector The merged metadata
     * @param activation The activation
     * @param archiveName The name of the archive
+    * @param root The root directory of the extracted resource adapter
     * @param cl The class loader
     * @return The deployment
     * @exception DeployException Thrown if a deployment error occurs
     */
-   public Deployment activate(Connector connector, Activation activation, String archiveName, ClassLoader cl)
+   public Deployment activate(Connector connector, Activation activation, String archiveName, File root, ClassLoader cl)
       throws DeployException
    {
       log.tracef("Connector=%s", connector);
       log.tracef("Activation=%s", stripPassword(activation.toString()));
       log.tracef("ArchiveName=%s", archiveName);
+      log.tracef("Root=%s", root.getAbsolutePath());
 
       try
       {
@@ -282,6 +286,8 @@ public abstract class AbstractResourceAdapterDeployer
          builder.archive(md.getArchive());
          builder.classLoader(cl);
          builder.classLoaderPlugin(classLoaderPlugin);
+
+         loadNativeLibraries(root);
 
          if (connector.getResourceadapter().getResourceadapterClass() != null)
          {
@@ -1329,6 +1335,60 @@ public abstract class AbstractResourceAdapterDeployer
          {
             if (vf != null)
                vf.close();
+         }
+      }
+   }
+
+   /**
+    * Load native libraries
+    * @param root The deployment root
+    */
+   private void loadNativeLibraries(File root)
+   {
+      if (root != null && root.exists())
+      {
+         List<String> libs = new ArrayList<String>();
+
+         if (root.isDirectory())
+         {
+            if (root.listFiles() != null)
+            {
+               for (File f : root.listFiles())
+               {
+                  if (f.isFile())
+                  {
+                     String fileName = f.getName().toLowerCase(Locale.US);
+                     if (fileName.endsWith(".a") || fileName.endsWith(".so") || fileName.endsWith(".dll"))
+                     {
+                        libs.add(f.getAbsolutePath());
+                     }
+                  }
+               }
+            }
+            else
+            {
+               log.debugf("Root is a directory, but there were an I/O error: %s", root.getAbsolutePath());
+            }
+         }
+
+         if (libs.size() > 0)
+         {
+            for (String lib : libs)
+            {
+               try
+               {
+                  SecurityActions.load(lib);
+                  log.debugf("Loaded library: %s", lib);
+               }
+               catch (Throwable t)
+               {
+                  log.debugf("Unable to load library: %s", lib);
+               }
+            }
+         }
+         else
+         {
+            log.debugf("No native libraries for %s", root.getAbsolutePath());
          }
       }
    }
