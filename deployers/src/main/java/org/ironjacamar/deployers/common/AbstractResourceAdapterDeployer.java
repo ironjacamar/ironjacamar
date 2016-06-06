@@ -645,8 +645,29 @@ public abstract class AbstractResourceAdapterDeployer
             boolean declared = true;
 
             Object value = cp.isValueSet() ? cp.getConfigPropertyValue().getValue() : null;
-            if (overrides != null && overrides.containsKey(cp.getConfigPropertyName().getValue()))
-               value = overrides.get(cp.getConfigPropertyName().getValue());
+            if (overrides != null)
+            {
+               if (overrides.containsKey(cp.getConfigPropertyName().getValue()))
+               {
+                  value = overrides.get(cp.getConfigPropertyName().getValue());
+               }
+               else
+               {
+                  String alternative = cp.getConfigPropertyName().getValue().substring(0, 1).toUpperCase();
+                  if (cp.getConfigPropertyName().getValue().length() > 1)
+                     alternative += cp.getConfigPropertyName().getValue().substring(1);
+
+                  if (overrides.containsKey(alternative))
+                  {
+                     value = overrides.get(alternative);
+                  }
+                  else
+                  {
+                     log.tracef("%s: Override for %s not found", o.getClass().getName(),
+                                cp.getConfigPropertyName().getValue());
+                  }
+               }
+            }
 
             if (value != null)
             {
