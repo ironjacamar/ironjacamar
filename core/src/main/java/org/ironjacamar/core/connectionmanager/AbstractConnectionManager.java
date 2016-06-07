@@ -522,22 +522,33 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       throws ResourceException
    {
       log.tracef("associateConnectionListener(%s, %s)", credential, connection);
-      
+
       if (isShutdown())
       {
          throw new ResourceException();
       }
+
+      if (!cmConfiguration.isSharable())
+         throw new ResourceException();
 
       org.ironjacamar.core.connectionmanager.listener.ConnectionListener cl =
          pool.getActiveConnectionListener(credential);
 
       if (cl == null)
       {
-         try
+         if (!pool.isFull())
          {
-            cl = pool.getConnectionListener(credential);
+            try
+            {
+               cl = pool.getConnectionListener(credential);
+            }
+            catch (ResourceException re)
+            {
+               // Ignore
+            }
          }
-         catch (ResourceException re)
+
+         if (cl == null)
          {
             org.ironjacamar.core.connectionmanager.listener.ConnectionListener removeCl =
                pool.removeConnectionListener(null);
@@ -546,6 +557,14 @@ public abstract class AbstractConnectionManager implements ConnectionManager
             {
                try
                {
+                  if (ccm != null)
+                  {
+                     for (Object c : removeCl.getConnections())
+                     {
+                        ccm.unregisterConnection(this, removeCl, c);
+                     }
+                  }
+
                   returnConnectionListener(removeCl, true);
                   cl = pool.getConnectionListener(credential);
                }
@@ -568,26 +587,47 @@ public abstract class AbstractConnectionManager implements ConnectionManager
                         DissociatableManagedConnection dmc =
                            (DissociatableManagedConnection)targetCl.getManagedConnection();
 
-                        dmc.dissociateConnections();
-
                         if (ccm != null)
                         {
                            for (Object c : targetCl.getConnections())
                            {
-                              ccm.unregisterConnection(this, targetCl, connection);
+                              ccm.unregisterConnection(this, targetCl, c);
                            }
                         }
 
+                        dmc.dissociateConnections();
+                        targetCl.clearConnections();
+
                         cl = targetCl;
+                     }
+                     else
+                     {
+                        try
+                        {
+                           if (ccm != null)
+                           {
+                              for (Object c : targetCl.getConnections())
+                              {
+                                 ccm.unregisterConnection(this, targetCl, c);
+                              }
+                           }
+
+                           returnConnectionListener(targetCl, true);
+                           cl = pool.getConnectionListener(credential);
+                        }
+                        catch (ResourceException ire)
+                        {
+                           // Nothing we can do
+                        }
                      }
                   }
                }
             }
-
-            if (cl == null)
-               throw new ResourceException();
          }
       }
+
+      if (cl == null)
+         throw new ResourceException();
 
       if (connection != null)
       {
