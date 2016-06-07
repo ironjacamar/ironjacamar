@@ -149,7 +149,10 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
    public void connectionClosed(ConnectionEvent event)
    {
       Object connection = event.getConnectionHandle();
-      if (removeConnection(connection) && cm.getCachedConnectionManager() != null)
+
+      removeConnection(connection);
+
+      if (cm.getCachedConnectionManager() != null)
       {
          cm.getCachedConnectionManager().unregisterConnection(cm, this, connection);
       }
@@ -164,7 +167,10 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
    public void connectionErrorOccurred(ConnectionEvent event)
    {
       Object connection = event.getConnectionHandle();
-      if (removeConnection(connection) && cm.getCachedConnectionManager() != null)
+
+      removeConnection(connection);
+   
+      if (cm.getCachedConnectionManager() != null)
       {
          cm.getCachedConnectionManager().unregisterConnection(cm, this, connection);
       }
