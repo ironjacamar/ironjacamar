@@ -20,9 +20,11 @@
  */
 package org.ironjacamar.embedded.junit4;
 
+import org.ironjacamar.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.ironjacamar.core.api.deploymentrepository.DeploymentRepository;
 import org.ironjacamar.core.api.metadatarepository.MetadataRepository;
 
+import org.jboss.logging.Logger;
 import org.jboss.threads.QueueExecutor;
 
 /**
@@ -31,6 +33,9 @@ import org.jboss.threads.QueueExecutor;
  */
 public class AllChecks extends Condition
 {
+   /** The logger */
+   private static Logger log = Logger.getLogger(AllChecks.class);
+
    /**
     * Constructor
     */
@@ -46,6 +51,15 @@ public class AllChecks extends Condition
    {
       try
       {
+         CachedConnectionManager ccm = resolver.lookup("CachedConnectionManager", CachedConnectionManager.class);
+         if (ccm == null)
+            throw new ConditionException("CachedConnectionManager is null");
+
+         ccm.setDebug(true);
+
+         if (ccm.getNumberOfConnections() != 0)
+            throw new ConditionException("CachedConnectionManager contains connections: " + ccm.listConnections());
+         
          DeploymentRepository dr = resolver.lookup("DeploymentRepository", DeploymentRepository.class);
 
          if (dr == null)
@@ -53,6 +67,7 @@ public class AllChecks extends Condition
 
          if (!dr.getDeployments().isEmpty())
             throw new ConditionException("DeploymentRepository contains deployments: " + dr.getDeployments());
+
          MetadataRepository mr = resolver.lookup("MetadataRepository", MetadataRepository.class);
 
          if (mr == null)
@@ -73,10 +88,12 @@ public class AllChecks extends Condition
       }
       catch (ConditionException ce)
       {
+         log.error(ce.getMessage(), ce);
          throw ce;
       }
       catch (Throwable t)
       {
+         log.error(t.getMessage(), t);
          throw new ConditionException("Error", t);
       }
    }
