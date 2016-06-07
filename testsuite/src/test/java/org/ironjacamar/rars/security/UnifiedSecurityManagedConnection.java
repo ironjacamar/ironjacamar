@@ -200,9 +200,13 @@ public class UnifiedSecurityManagedConnection implements ManagedConnection, Loca
     */
    void closeHandle(UnifiedSecurityConnection handle)
    {
+      connectionSet.remove(handle);
+
       ConnectionEvent event = new ConnectionEvent(this, ConnectionEvent.CONNECTION_CLOSED);
       event.setConnectionHandle(handle);
-      for (ConnectionEventListener cel : listeners)
+
+      List<ConnectionEventListener> copy = new ArrayList<ConnectionEventListener>(listeners);
+      for (ConnectionEventListener cel : copy)
       {
          cel.connectionClosed(event);
       }
