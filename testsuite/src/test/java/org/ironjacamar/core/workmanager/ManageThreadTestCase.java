@@ -147,6 +147,8 @@ public class ManageThreadTestCase
       assertFalse(mwA.getThreadId() == mwB.getThreadId());
       assertTrue(mwA.hasPostRun());
       assertTrue(mwB.hasPostRun());
+
+      wc.close();
    }
    
    /**
@@ -188,6 +190,8 @@ public class ManageThreadTestCase
       assertTrue(work1.hasPostRun());
       assertTrue(work2.hasPostRun());
       assertTrue(work3.hasPostRun());
+
+      wc.close();
    }
    
    /**
@@ -223,6 +227,8 @@ public class ManageThreadTestCase
          }
          assertEquals(work.getThreadPriority(), threadPriortity);
       }
+
+      wc.close();
    }   
 
    /**

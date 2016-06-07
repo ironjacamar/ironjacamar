@@ -32,6 +32,7 @@ import org.ironjacamar.embedded.junit4.IronJacamar;
 import org.ironjacamar.embedded.junit4.PostCondition;
 import org.ironjacamar.embedded.junit4.PreCondition;
 import org.ironjacamar.rars.ResourceAdapterFactory;
+import org.ironjacamar.rars.wm.WorkConnection;
 import org.ironjacamar.rars.wm.WorkConnectionFactory;
 
 import java.util.concurrent.CountDownLatch;
@@ -102,9 +103,11 @@ public class WorkAdapterAndWorkListenerTestCase
       StatusWorkAdapter wa = new StatusWorkAdapter();
       CallbackCount callbackCount = new CallbackCount();
       wa.setCallbackCount(callbackCount);
+      WorkConnection wc = null;
       try
       {
-         wcf.getConnection().doWork(work1, WorkManager.UNKNOWN, null, wa);
+         wc = wcf.getConnection();
+         wc.doWork(work1, WorkManager.UNKNOWN, null, wa);
          fail("there should be WorkRejectedException");
       }
       catch (WorkRejectedException e)
@@ -115,13 +118,15 @@ public class WorkAdapterAndWorkListenerTestCase
       {
          assertEquals("should be same", 1, callbackCount.getRejectedCount());
          assertEquals("should be same", 0, callbackCount.getStartCount());
-         assertEquals(wcf.getConnection().getWorkManager(), wa.getSource());
+         assertEquals(wc.getWorkManager(), wa.getSource());
          assertEquals(work1, wa.getWork());
          assertNotNull(wa.getException());
+         wc.close();
       }
       try
       {
-         wcf.getConnection().startWork(work1, WorkManager.UNKNOWN, null, wa);
+         wc = wcf.getConnection();
+         wc.startWork(work1, WorkManager.UNKNOWN, null, wa);
          fail("there should be WorkRejectedException");
       }
       catch (WorkRejectedException e)
@@ -132,14 +137,15 @@ public class WorkAdapterAndWorkListenerTestCase
       {
          assertEquals("should be same", 2, callbackCount.getRejectedCount());
          assertEquals("should be same", 0, callbackCount.getStartCount());
-         assertEquals(wcf.getConnection().getWorkManager(), wa.getSource());
+         assertEquals(wc.getWorkManager(), wa.getSource());
          assertEquals(work1, wa.getWork());
          assertNotNull(wa.getException());
-
+         wc.close();
       }
       try
       {
-         wcf.getConnection().scheduleWork(work1, WorkManager.UNKNOWN, null, wa);
+         wc = wcf.getConnection();
+         wc.scheduleWork(work1, WorkManager.UNKNOWN, null, wa);
          fail("there should be WorkRejectedException");
       }
       catch (WorkRejectedException e)
@@ -150,10 +156,10 @@ public class WorkAdapterAndWorkListenerTestCase
       {
          assertEquals("should be same", 3, callbackCount.getRejectedCount());
          assertEquals("should be same", 0, callbackCount.getStartCount());
-         assertEquals(wcf.getConnection().getWorkManager(), wa.getSource());
+         assertEquals(wc.getWorkManager(), wa.getSource());
          assertEquals(work1, wa.getWork());
          assertNotNull(wa.getException());
-
+         wc.close();
       }
    }
 
@@ -177,20 +183,21 @@ public class WorkAdapterAndWorkListenerTestCase
       CallbackCount callbackCount = new CallbackCount();
       wa.setCallbackCount(callbackCount);
 
-      wcf.getConnection().doWork(work1, WorkManager.INDEFINITE, null, wa);
+      WorkConnection wc = wcf.getConnection();
+      wc.doWork(work1, WorkManager.INDEFINITE, null, wa);
 
-      assertEquals(wcf.getConnection().getWorkManager(), wa.getSource());
+      assertEquals(wc.getWorkManager(), wa.getSource());
       assertEquals(work1, wa.getWork());
 
-      wcf.getConnection().startWork(work2, WorkManager.INDEFINITE, null, wa);
+      wc.startWork(work2, WorkManager.INDEFINITE, null, wa);
 
-      assertEquals(wcf.getConnection().getWorkManager(), wa.getSource());
+      assertEquals(wc.getWorkManager(), wa.getSource());
       assertEquals(work2, wa.getWork());
 
       //TODO not implemented 
       //assertTrue(wa.getStartDuration()>0);
 
-      wcf.getConnection().scheduleWork(work3, WorkManager.INDEFINITE, null, wa);
+      wc.scheduleWork(work3, WorkManager.INDEFINITE, null, wa);
 
       assertEquals("should be same", 3, callbackCount.getAcceptCount());
       assertEquals("should be same", 2, callbackCount.getStartCount());
@@ -201,5 +208,6 @@ public class WorkAdapterAndWorkListenerTestCase
 
       done2.await();
       done3.await();
+      wc.close();
    }
 }

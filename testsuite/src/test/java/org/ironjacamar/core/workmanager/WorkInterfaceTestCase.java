@@ -32,6 +32,7 @@ import org.ironjacamar.embedded.junit4.IronJacamar;
 import org.ironjacamar.embedded.junit4.PostCondition;
 import org.ironjacamar.embedded.junit4.PreCondition;
 import org.ironjacamar.rars.ResourceAdapterFactory;
+import org.ironjacamar.rars.wm.WorkConnection;
 import org.ironjacamar.rars.wm.WorkConnectionFactory;
 
 import javax.annotation.Resource;
@@ -99,8 +100,16 @@ public class WorkInterfaceTestCase
    public void testCannotDeclaredSynchronizedRunMethodWork() throws Throwable
    {
       SynchronizedRunWork sw = new SynchronizedRunWork();
-      wcf.getConnection().doWork(sw);
-      fail("Synchronized method not catched");
+      WorkConnection wc = wcf.getConnection();
+      try
+      {
+         wc.doWork(sw);
+         fail("Synchronized method not catched");
+      }
+      finally
+      {
+         wc.close();
+      }
    }
 
    /**
@@ -113,8 +122,16 @@ public class WorkInterfaceTestCase
    public void testCannotDeclaredSynchronizedReleaseMethodWork() throws Throwable
    {
       SynchronizedReleaseWork sw = new SynchronizedReleaseWork();
-      wcf.getConnection().doWork(sw);
-      fail("Synchronized method not catched");
+      WorkConnection wc = wcf.getConnection();
+      try
+      {
+         wc.doWork(sw);
+         fail("Synchronized method not catched");
+      }
+      finally
+      {
+         wc.close();
+      }
    }
 
    /**
@@ -127,9 +144,11 @@ public class WorkInterfaceTestCase
    public void testCanDeclaredSynchronizedBlocksInUnsynchronizedWork() throws Throwable
    {
       UnsynchronizedWork usw = new UnsynchronizedWork();
-      wcf.getConnection().doWork(usw);
+      WorkConnection wc = wcf.getConnection();
+      wc.doWork(usw);
       assertTrue(usw.isRan());
       assertTrue(usw.isReleased());
+      wc.close();
    }
    
    /**
@@ -147,8 +166,15 @@ public class WorkInterfaceTestCase
       ec.setXid(new XidImpl());
       ec.setTransactionTimeout(Long.MAX_VALUE);
 
-      wcf.getConnection().doWork(work, WorkManager.INDEFINITE, ec, null);
-
+      WorkConnection wc = wcf.getConnection();
+      try
+      {
+         wc.doWork(work, WorkManager.INDEFINITE, ec, null);
+      }
+      finally
+      {
+         wc.close();
+      }
    }
    /**
     * Implementation of Xid for test purpose

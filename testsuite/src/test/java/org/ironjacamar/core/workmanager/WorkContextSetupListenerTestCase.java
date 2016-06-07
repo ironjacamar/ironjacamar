@@ -32,6 +32,7 @@ import org.ironjacamar.embedded.junit4.IronJacamar;
 import org.ironjacamar.embedded.junit4.PostCondition;
 import org.ironjacamar.embedded.junit4.PreCondition;
 import org.ironjacamar.rars.ResourceAdapterFactory;
+import org.ironjacamar.rars.wm.WorkConnection;
 import org.ironjacamar.rars.wm.WorkConnectionFactory;
 
 import javax.annotation.Resource;
@@ -105,7 +106,8 @@ public class WorkContextSetupListenerTestCase
       WorkContextSetupListenerTransactionContext listener = new WorkContextSetupListenerTransactionContext();
       work.addContext(listener);
       ContextWorkAdapter wa = new ContextWorkAdapter();
-      wcf.getConnection().doWork(work, WorkManager.INDEFINITE, null, wa);
+      WorkConnection wc = wcf.getConnection();
+      wc.doWork(work, WorkManager.INDEFINITE, null, wa);
 
       assertEquals("", listener.getContextSetupFailedErrorCode());
       assertTrue(listener.isContextSetupComplete());
@@ -121,6 +123,7 @@ public class WorkContextSetupListenerTestCase
       assertTrue(wa.getTimeAccepted() <= wa.getTimeStarted());
       assertTrue(wa.getTimeStarted() <= listener.getTimeStamp());
       assertTrue(listener.getTimeStamp() <= wa.getTimeCompleted());
+      wc.close();
    }
 
    /**
@@ -137,15 +140,20 @@ public class WorkContextSetupListenerTestCase
       work.addContext(listener);
      
       ContextWorkAdapter wa = new ContextWorkAdapter();
-
+      WorkConnection wc = null;
       try
       {
-         wcf.getConnection().doWork(work, WorkManager.INDEFINITE, null, wa);
+         wc = wcf.getConnection();
+         wc.doWork(work, WorkManager.INDEFINITE, null, wa);
          fail("Exception expected");
       }
       catch (Throwable e)
       {
          //Expected
+      }
+      finally
+      {
+         wc.close();
       }
 
       assertEquals(WorkContextErrorCodes.DUPLICATE_CONTEXTS, listener.getContextSetupFailedErrorCode());

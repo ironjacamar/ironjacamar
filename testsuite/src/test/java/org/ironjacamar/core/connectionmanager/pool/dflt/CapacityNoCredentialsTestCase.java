@@ -329,7 +329,10 @@ public class CapacityNoCredentialsTestCase
 
       c.close();
       c1.close();
-      assertEquals(noTxCf.getConnection().getListenerIdentity(), System.identityHashCode(listeners.getFirst()));
+
+      c = noTxCf.getConnection();
+      assertEquals(c.getListenerIdentity(), System.identityHashCode(listeners.getFirst()));
+      c.close();
 
       Injection injection = new Injection();
       injection.inject(mcp, "lastIdleCheck", Long.MIN_VALUE, long.class.getName(), true);
@@ -396,7 +399,10 @@ public class CapacityNoCredentialsTestCase
 
       c.close();
       c1.close();
-      assertEquals(noTxCfFILO.getConnection().getListenerIdentity(), System.identityHashCode(listeners.getLast()));
+
+      c = noTxCfFILO.getConnection();
+      assertEquals(c.getListenerIdentity(), System.identityHashCode(listeners.getLast()));
+      c.close();
 
       Injection injection = new Injection();
       injection.inject(mcp, "lastIdleCheck", Long.MIN_VALUE, long.class.getName(), true);

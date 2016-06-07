@@ -34,6 +34,7 @@ import org.ironjacamar.embedded.junit4.IronJacamar;
 import org.ironjacamar.embedded.junit4.PostCondition;
 import org.ironjacamar.embedded.junit4.PreCondition;
 import org.ironjacamar.rars.ResourceAdapterFactory;
+import org.ironjacamar.rars.wm.WorkConnection;
 import org.ironjacamar.rars.wm.WorkConnectionFactory;
 
 import java.util.concurrent.CyclicBarrier;
@@ -107,13 +108,16 @@ public class NestedWorkAndContextsTestCase
       NestProviderWork workB = new NestProviderWork("B", null);
       workB.addContext(new WorkContextSetupListenerTransactionContext());
 
+      WorkConnection wc = wcf.getConnection();
       workA.setNestDo(true);
-      workA.setWorkManager(wcf.getConnection().getWorkManager());
+      workA.setWorkManager(wc.getWorkManager());
       workA.setWork(workB);
-      wcf.getConnection().doWork(workA, WorkManager.INDEFINITE, null, wa);
+      wc.doWork(workA, WorkManager.INDEFINITE, null, wa);
 
       assertEquals(wa.getStart(), "AB");
       assertEquals(wa.getDone(), "BA");
+
+      wc.close();
    }
 
    /**
@@ -132,17 +136,19 @@ public class NestedWorkAndContextsTestCase
       NestProviderWork workB = new NestProviderWork("B", null);
       workB.addContext(new HintsContext());
 
+      WorkConnection wc = wcf.getConnection();
       workA.setNestDo(false);
-      workA.setWorkManager(wcf.getConnection().getWorkManager());
+      workA.setWorkManager(wc.getWorkManager());
       workA.setWork(workB);
       
       CyclicBarrier barrier = new CyclicBarrier(3);
       workA.setBarrier(barrier);
       workB.setBarrier(barrier);
 
-      wcf.getConnection().startWork(workA, WorkManager.INDEFINITE, null, wa);
+      wc.startWork(workA, WorkManager.INDEFINITE, null, wa);
       barrier.await();
       assertEquals(wa.getStart(), "AB");
+      wc.close();
    }
 
    /**
@@ -161,17 +167,20 @@ public class NestedWorkAndContextsTestCase
       NestProviderWork workB = new NestProviderWork("B", null);
       workB.addContext(new HintsContext());
 
+      WorkConnection wc = wcf.getConnection();
       workA.setNestDo(false);
-      workA.setWorkManager(wcf.getConnection().getWorkManager());
+      workA.setWorkManager(wc.getWorkManager());
       workA.setWork(workB);
       
       CyclicBarrier barrier = new CyclicBarrier(3);
       workA.setBarrier(barrier);
       workB.setBarrier(barrier);
 
-      wcf.getConnection().scheduleWork(workA, WorkManager.INDEFINITE, null, wa);
+      wc.scheduleWork(workA, WorkManager.INDEFINITE, null, wa);
       barrier.await();
       assertEquals(wa.getStart(), "AB");
+
+      wc.close();
    }
 
    /**
@@ -188,10 +197,12 @@ public class NestedWorkAndContextsTestCase
       NestProviderWork workB = new NestProviderWork("B", null);
       workB.addContext(new UnsupportedContext());
 
+      WorkConnection wc = wcf.getConnection();
       workA.setNestDo(true);
-      workA.setWorkManager(wcf.getConnection().getWorkManager());
+      workA.setWorkManager(wc.getWorkManager());
       workA.setWork(workB);
-      wcf.getConnection().doWork(workA, WorkManager.INDEFINITE, null, wa);
+      wc.doWork(workA, WorkManager.INDEFINITE, null, wa);
+      wc.close();
    }
 
    /**
@@ -208,17 +219,20 @@ public class NestedWorkAndContextsTestCase
       NestProviderWork workB = new NestProviderWork("B", null);
       workB.addContext(new UnsupportedContext());
 
+      WorkConnection wc = wcf.getConnection();
       workA.setNestDo(false);
-      workA.setWorkManager(wcf.getConnection().getWorkManager());
+      workA.setWorkManager(wc.getWorkManager());
       workA.setWork(workB);
       
       CyclicBarrier barrier = new CyclicBarrier(2);
       workA.setBarrier(barrier);
       workB.setBarrier(barrier);
 
-      wcf.getConnection().startWork(workA, WorkManager.INDEFINITE, null, wa);
+      wc.startWork(workA, WorkManager.INDEFINITE, null, wa);
       barrier.await();
       assertNotNull(wa.getException());
+
+      wc.close();
    }
 
    /**
@@ -235,16 +249,18 @@ public class NestedWorkAndContextsTestCase
       NestProviderWork workB = new NestProviderWork("B", null);
       workB.addContext(new UnsupportedContext());
 
+      WorkConnection wc = wcf.getConnection();
       workA.setNestDo(false);
-      workA.setWorkManager(wcf.getConnection().getWorkManager());
+      workA.setWorkManager(wc.getWorkManager());
       workA.setWork(workB);
       
       CyclicBarrier barrier = new CyclicBarrier(2);
       workA.setBarrier(barrier);
       workB.setBarrier(barrier);
 
-      wcf.getConnection().getWorkManager().scheduleWork(workA, WorkManager.INDEFINITE, null, wa);
+      wc.getWorkManager().scheduleWork(workA, WorkManager.INDEFINITE, null, wa);
       barrier.await();
       assertNotNull(wa.getException());
+      wc.close();
    }
 }
