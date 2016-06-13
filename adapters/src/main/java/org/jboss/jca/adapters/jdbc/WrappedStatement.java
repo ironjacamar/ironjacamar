@@ -753,27 +753,17 @@ public abstract class WrappedStatement extends JBossWrapper implements Statement
     */
    public void cancel() throws SQLException
    {
-      if (doLocking)
-         lock();
+      checkState();
       try
       {
-         checkState();
-         try
-         {
-            if (spy)
-               spyLogger.debugf("%s [%s] cancel()", jndiName, spyLoggingCategory);
-         
-            s.cancel();
-         }
-         catch (Throwable t)
-         {
-            throw checkException(t);
-         }
+         if (spy)
+            spyLogger.debugf("%s [%s] cancel()", jndiName, spyLoggingCategory);
+
+         s.cancel();
       }
-      finally
+      catch (Throwable t)
       {
-         if (doLocking)
-            unlock();
+         throw checkException(t);
       }
    }
 

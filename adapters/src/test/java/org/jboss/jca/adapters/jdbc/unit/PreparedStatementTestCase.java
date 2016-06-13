@@ -39,9 +39,12 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
+import org.h2.constant.ErrorCode;
+import org.h2.util.Task;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -295,4 +298,113 @@ public class PreparedStatementTestCase
       st.close();
       c.close();
    }
+
+
+   /**
+    * prepared statement (cancel)
+    * @exception Throwable Thrown if case of an error
+    */
+   @Test
+   public void testPreparedStatementCancel() throws Throwable
+   {
+      Connection c = null;
+      Statement st = null;
+      PreparedStatement pstmt = null;
+      ResultSet rs = null;
+      try
+      {
+         assertNotNull(ds);
+         c = ds.getConnection();
+         assertNotNull(c);
+
+         st = c.createStatement();
+         assertNotNull(st);
+
+         // Create
+         st.execute("CREATE ALIAS SLEEP FOR \"java.lang.Thread.sleep\"");
+
+         // Prepared statement, sleep for 10 seconds
+         pstmt = c.prepareStatement("SELECT SLEEP(?) FROM SYSTEM_RANGE(1, 10000) LIMIT ?");
+         assertNotNull(pstmt);
+
+         pstmt.setInt(1, 1);
+         pstmt.setInt(2, 10000);
+
+         final PreparedStatement prep = pstmt;
+         Task t = new Task() {
+
+            @Override
+            public void call() throws Exception
+            {
+               prep.execute();
+            }
+         };
+         t.execute();
+         Thread.sleep(100);
+
+         prep.cancel();
+
+         SQLException e = (SQLException)t.getException();
+         assertNotNull(e);
+         assertEquals(ErrorCode.STATEMENT_WAS_CANCELED, e.getErrorCode());
+      }
+      catch (SQLException e)
+      {
+         // Ok
+      }
+      finally
+      {
+         if (rs != null)
+         {
+            try
+            {
+               rs.close();
+            }
+            catch (SQLException ignore)
+            {
+               // Ignore
+            }
+         }
+
+         if (pstmt != null)
+         {
+            try
+            {
+               pstmt.close();
+            }
+            catch (SQLException ignore)
+            {
+               // Ignore
+            }
+         }
+
+         if (st != null)
+         {
+            // Drop
+            st.execute("DROP ALIAS SLEEP");
+
+            try
+            {
+               st.close();
+            }
+            catch (SQLException ignore)
+            {
+               // Ignore
+            }
+         }
+
+         if (c != null)
+         {
+            try
+            {
+               c.close();
+            }
+            catch (SQLException ignore)
+            {
+               // Ignore
+            }
+         }
+      }
+   }
+
 }
