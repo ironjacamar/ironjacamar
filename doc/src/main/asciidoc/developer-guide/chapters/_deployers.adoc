@@ -1,0 +1,256 @@
+= Deployers
+:doctype: book
+:sectnums:
+:toc: left
+:icons: font
+:experimental:
+:sourcedir: .
+
+
+The deployer chains for the project is located in the `deployers` module.
+
+[[_rardeployer]]
+== RAR Deployer
+
+
+The responsibility of the RAR deployer is to deploy a resource adapter archive (.RAR) file.
+
+[[_rardeployer_fungal]]
+=== Fungal
+
+
+The Fungal kernel features a simple deployment framework, so only three classes are needed for the deployer chain.
+
+The classes are located in the
+
+[source]
+----
+
+deployers/src/main/java/org/jboss/jca/deployers/fungal
+----
+
+
+directory.
+
+[[_rardeployer_fungal_radeployer]]
+==== RADeployer
+
+
+This class represent a resource adapter deployer and implements the
+
+[source]
+----
+
+com.github.fungal.spi.deployers.Deployer
+com.github.fungal.spi.deployers.MultiStageDeployer
+com.github.fungal.spi.deployers.DeployerOrder
+----
+
+
+interfaces.
+
+The responsible of the class is to
+
+* Create a classloader for the deployment
+* Retrieve metadata and annotations such that they can be merged
+* Perform archive validation using the JCA validator
+* Perform bean validation
+* Register the metadata in the metadata repository
+* Register the resource adapter in the metadata repository
+* Identify and activate the resource adapter objects - if JNDI information is available
+* Bind connection factories and admin objects into JNDI - if JNDI information is available
+
+
+If the resource adapter isn't activated in this step based on an `ironjacamar.xml` file, the deployment will advance to the next step in the deployer chain.
+
+[[_rardeployer_fungal_radeployment]]
+==== RADeployment
+
+
+This class represent a resource adapter deployment and implements the
+
+[source]
+----
+
+com.github.fungal.spi.deployers.Deployment
+----
+
+
+interface.
+
+The responsible of the class is to
+
+* Unregister the resource adapter from the metadata repository
+* Unregister the JNDI bindings in the metadata repository - if the deployment was activated
+* Unbind connection factories and admin objects in JNDI - if the deployment was activated
+* Close the classloader
+* Clean up any temporary files
+
+
+[[_rardeployer_fungal_raxmldeployer]]
+==== RaXmlDeployer
+
+
+This class represent a resource adapter deployer and implements the
+
+[source]
+----
+
+com.github.fungal.spi.deployers.Deployer
+com.github.fungal.spi.deployers.MultiStageDeployer
+com.github.fungal.spi.deployers.DeployerOrder
+com.github.fungal.spi.deployers.DeployerPhases
+----
+
+
+interface.
+
+The class deploys resource adapter archives based on a `-ra.xml` which provides the necessary deployment information.
+
+The responsible of the class is to
+
+* Create a classloader for the deployment
+* Retrieve metadata from the metadata repository
+* Merge metadata from the deployment descriptor
+* Perform archive validation using the JCA validator
+* Perform bean validation
+* Register the metadata in the metadata repository
+* Identify and activate the resource adapter objects
+* Bind connection factories and admin objects into JNDI
+
+
+Since multiple resource adapter archives can be activated within a single `-ra.xml` file the class uses the `DeployerPhases` callbacks to unregister these from the container.
+If there is only a single resource adapter activation the deployer acts as part of  the normal deployer chain.
+
+[[_rardeployer_fungal_raxmldeployment]]
+==== RaXmlDeployment
+
+
+This class represent a resource adapter deployment from the `RaXmlDeployer` and implements the
+
+[source]
+----
+
+com.github.fungal.spi.deployers.Deployment
+----
+
+
+interface.
+
+The responsible of the class is to
+
+* Unregister the JNDI bindings in the metadata repository
+* Unbind connection factories and admin objects in JNDI
+* Close the classloader
+
+
+[[_rardeployer_fungal_raactivator]]
+==== RAActivator
+
+
+This class will activate all resource adapters which hasn't been deployed by a previous step.
+The class implements the 
+
+[source]
+----
+
+com.github.fungal.spi.deployers.DeployerPhases
+----
+
+
+interface.
+This interface allows the class to hook into the deployer lifecycle of the kernel and receive callback notifications.
+
+The responsible of the class is to
+
+* Find any resource adapters which hasn't been deployed through the metadata repository
+* Perform a deployment like `RADeployer`
+* Register each deployment with the kernel through the main deployer
+
+
+[[_rardeployer_fungal_raactivator_deployment]]
+==== RAActivatorDeployment
+
+
+This class represent a resource adapter deployment activated by the `RAActivator` and implements the
+
+[source]
+----
+
+com.github.fungal.spi.deployers.Deployment
+----
+
+
+interface.
+
+The responsible of the class is to
+
+* Unregister the JNDI bindings in the metadata repository
+* Unbind connection factories and admin objects in JNDI
+* Close the classloader
+
+
+[[_dsdeployer]]
+== DataSource Deployer
+
+
+The responsibility of the datasource deployer is to deploy a datasource deployment (-ds.xml) file.
+
+[[_dsdeployer_fungal]]
+=== Fungal
+
+
+The Fungal datasource deployer chain consists of two classes.
+
+The classes are located in the
+
+[source]
+----
+
+deployers/src/main/java/org/jboss/jca/deployers/fungal
+----
+
+
+directory.
+
+[[_dsdeployer_fungal_dsxmldeployer]]
+==== DsXmlDeployer
+
+
+This class represent a datasource deployer and implements the
+
+[source]
+----
+
+com.github.fungal.spi.deployers.Deployer
+----
+
+
+interface.
+
+The responsible of the class is to
+
+* Locate metadata about JDBC in the metadata repository
+* Activate each `DataSource` using `jdbc-local.rar` as a template
+* Activate each `XaDataSource` using `jdbc-xa.rar` as a template
+
+
+[[_dsdeployer_fungal_dsxmldeployment]]
+==== DsXmlDeployment
+
+
+This class represent a datasource deployment and implements the
+
+[source]
+----
+
+com.github.fungal.spi.deployers.Deployment
+----
+
+
+interface.
+
+The responsible of the class is to
+
+* Unbind the datasource in JNDI
+* Close the classloader

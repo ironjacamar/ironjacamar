@@ -1,0 +1,565 @@
+= Testing
+:doctype: book
+:sectnums:
+:toc: left
+:icons: font
+:experimental:
+:sourcedir: .
+
+[[_testinggoals]]
+== Overall goals
+
+
+The overall goals of our test environment is to execute tests that ensures that we have full coverage of the JCA specification as well as our implementation.
+
+The full test suite is executed using
+
+[source]
+----
+
+ant test
+----
+
+
+A single test case can be executed using
+
+[source]
+----
+
+ant -Dmodule=embedded -Dtest=org.jboss.jca.embedded.unit.ShrinkWrapTestCase one-test
+----
+
+
+where `-Dmodule` specifies which module to execute the test case in.
+This parameter defaults to ``core``.
+The `-Dtest` parameter specifies the test case itself.
+
+You can also execute all test cases of a single module using
+
+[source]
+----
+
+ant -Dmodule=embedded module-test
+----
+
+
+where `-Dmodule` specifies which module to execute the test cases in.
+This parameter defaults to ``core``.
+
+The build script does not fail in case of test errors or failure.
+
+You can control the behavior by using the `junit.haltonerror` and `junit.haltonfailure`  properties in the main `build.xml` file.
+Default value for both is ``no``. 
+
+You can of course change them statically in the `build.xml` file or temporary using ``-Djunit.haltonerror=yes``.
+There are other `jnuit.*` properties defined in the main `build.xml` that can be controlled in the same way. 
+
+[[_spectest]]
+=== Specification
+
+
+The purpose of the specification tests is to test our implementation against the actual specification text.
+
+Each test can only depend on:
+
+* The official Java Connector Architecture API (javax.resource)
+* Interfaces and classes in the test suite that extends/implements  the official API
+
+
+The test cases should be created in such a way such that they are easily identified by chapter, section and paragraph.
+For example:
+
+[source]
+----
+
+org.jboss.jca.core.spec.chaper10.section3
+----
+
+[[_jbinterfacetest]]
+=== IronJacamar specific interfaces
+
+
+The purpose of the IronJacamar specific interfaces tests is to test our specific interfaces.
+
+Each test can depend on:
+
+* The official Java Connector Architecture API (javax.resource)
+* The IronJacamar specific APIs (org.jboss.jca.xxx.api)
+* Interfaces and classes in the test suite that extends/implements these APIs
+
+
+The test cases lives in a package that have a meaningful name of the component it tests.
+For example:
+
+[source]
+----
+
+org.jboss.jca.core.workmanager
+----
+
+
+These test cases can use both the embedded JCA environment or be implemented as standard POJO based JUnit test cases.
+
+[[_jbimpltest]]
+=== IronJacamar specific implementation
+
+
+The purpose of the IronJacamar specific implementation tests is to test our specific implementation.
+These tests should cover all methods are not exposed through the interface.
+
+Each test can depend on:
+
+* The official Java Connector Architecture API (javax.resource)
+* The IronJacamar specific APIs (org.jboss.jca.xxx.api)
+* The IronJacamar specific implementation (org.jboss.jca.xxx.yyy)
+* Interfaces and classes in the test suite
+
+
+The test cases lives in a package that have a meaningful name of the component it tests.
+For example:
+
+[source]
+----
+
+org.jboss.jca.core.workmanager
+----
+
+
+These test cases can use both the embedded JCA environment or be implemented as standard POJO based JUnit test cases.
+
+[[_style]]
+== Testing principle and style
+
+
+Our tests follows the Behavior Driven Development (BDD) technique.
+In BDD you focus on specifying the behaviors of a class and write code (tests) that verify that behavior. 
+
+You may be thinking that BDD sounds awfully similar to Test Driven Development (TDD).  In some ways they are similar: they both encourage writing the tests first and to provide full coverage of the  code.
+However, TDD doesn't really provide a guide on which kind of tests you should be writing. 
+
+BDD provides you with guidance on how to do testing by focusing on what the behavior of a class is supposed to be.
+We introduce BDD to our testing environment by extending the standard JUnit 4.x test framework with BDD capabilities using assertion and mocking frameworks. 
+
+The BDD tests should 
+
+* Clearly define `given-when-then` conditions 
+* The method name defines what is expected: f.ex. shouldReturnFalseIfMethodXIsCalledWithNullString() 
+* Easy to read the assertions by using http://code.google.com/p/hamcrest/[Hamcrest Matchers]
+* Use `given` facts whenever possible to make the test case more readable. It could be the name of the deployed resource adapter, or using the  http://mockito.googlecode.com/svn/branches/1.8.0/javadoc/org/mockito/BDDMockito.html[ BDD Mockito class] to mock the fact. 
+
+
+We are using two different kind of tests:
+
+* Integration Tests: The goal of these test cases is to validate the whole process of deployment, and interacting with a sub-system by simulating a critical condition. 
+* Unit Tests: The goal of these test cases is to stress test some internal behaviour by mocking classes to perfectly reproduce conditions to test. 
+
+
+[[_integration]]
+=== Integration Tests
+
+
+The integration tests simulate a real condition using a particular deployment artifacts packaged as  resource adapters. 
+
+The resource adapters are created using either the main build environment or by using  http://community.jboss.org/wiki/ShrinkWrap[ShrinkWrap].
+Using resource adapters within the test cases will allow you to debug both the resource adapters themself or the JCA container. 
+
+The resource adapters represent the <<given>>
+ facts of our BDD tests,  the deployment of the resource adapters represent the <<when>>
+ phase,  while the <<then>>
+ phase is verified by assertion. 
+
+Note that some tests consider an exception a normal output condition using the JUnit 4.x  `@Exception(expected = "SomeClass.class")` annotation to identify and verify this situation.
+ 
+
+[[_unit]]
+=== Unit Tests
+
+
+We are mocking our input/output conditions in our unit tests using the http://mockito.googlecode.com[Mockito] framework to verify class and method behaviors. 
+
+An example:
+
+[source,java]
+----
+
+@Test
+public void printFailuresLogShouldReturnNotEmptyStringForWarning() throws Throwable
+{
+   //given
+   RADeployer deployer = new RADeployer();
+   File mockedDirectory = mock(File.class);
+   given(mockedDirectory.exists()).willReturn(false);
+
+   Failure failure = mock(Failure.class);
+   given(failure.getSeverity()).willReturn(Severity.WARNING);
+
+   List failures = Arrays.asList(failure);
+   FailureHelper fh = mock(FailureHelper.class);
+   given(fh.asText((ResourceBundle) anyObject())).willReturn("myText");
+  
+   deployer.setArchiveValidationFailOnWarn(true);
+  
+   //when
+   String returnValue = deployer.printFailuresLog(null, mock(Validator.class), 
+                                                  failures, mockedDirectory, fh);
+  
+   //then
+   assertThat(returnValue, is("myText"));
+}
+----
+
+
+As you can see the BDD style respects the test method name and using the `given-when-then` sequence in order. 
+
+[[_qa]]
+== Quality Assurance
+
+
+In addition to the test suite the IronJacamar project deploys various tools to increase the stability of the project.
+
+The following sections will describe each of these tools.
+
+=== Checkstyle
+
+
+Checkstyle is a tool that verifies that the formatting of the source code in the project is consistent.
+
+This allows for easier readability and a consistent feel of the project.
+
+The goal is to have zero errors in the report.
+The checkstyle report is generated using
+
+[source]
+----
+
+ant checkstyle
+----
+
+
+The report is generated into
+
+[source]
+----
+
+reports/checkstyle
+----
+
+
+The home of checkstyle is located here: http://checkstyle.sourceforge.net/.
+
+[[_findbugs]]
+=== Findbugs
+
+
+Findbugs is a tool that scans your project for bugs and provides reports based on its findings.
+
+This tool helps lower of the number of bugs found in the IronJacamar project.
+
+The goal is to have zero errors in the report and as few exclusions in the filter as possible.
+The findbugs report is generated using
+
+[source]
+----
+
+ant findbugs
+----
+
+
+The report is generated into
+
+[source]
+----
+
+reports/findbugs
+----
+
+
+The home of findbugs is located here: http://findbugs.sourceforge.net/.
+
+[[_jacoco]]
+=== JaCoCo
+
+
+JaCoCo generates a test suite matrix for your project which helps you identify where you need additional test coverage.
+
+The reports that the tool provides makes sure that the IronJacamar project has the correct test coverage.
+
+The goal is to have as high code coverage as possible in all areas.
+The JaCoco report is generated using
+
+[source]
+----
+
+ant jacoco
+----
+
+
+The report is generated into
+
+[source]
+----
+
+reports/jacoco
+----
+
+
+The home of JaCoCo is located here: http://www.eclemma.org/jacoco/.
+
+[[_tattletale]]
+=== Tattletale
+
+
+Tattletale generates reports about different quality matrix of the dependencies within the project.
+
+The reports that the tool provides makes sure that the IronJacamar project doesn't for example have cyclic dependencies within the project.
+
+The goal is to have as no issues flagged by the tool.
+The Tattletale reports are generated using
+
+[source]
+----
+
+ant tattletale
+----
+
+
+The reports are generated into
+
+[source]
+----
+
+reports/tattletale
+----
+
+
+The home of Tattletale is located here: http://www.jboss.org/tattletale.
+
+[[_performance]]
+== Performance testing
+
+
+Performance testing can identify areas that needs to be improved or completely replaced.
+
+=== JProfiler
+
+
+Insert the following line in `run.sh` or ``run.bat``:
+
+[source]
+----
+
+-agentpath:<path>/jprofiler6/bin/linux-x64/libjprofilerti.so=port=8849
+----
+
+
+where the Java command is executed.
+
+The home of JProfiler is located here: http://www.ej-technologies.com/products/jprofiler/overview.html.
+
+[[_oprofile]]
+=== OProfile
+
+
+OProfile can give a detailed overview of applications running on the machine, including Java program running with OpenJDK.
+
+The home of OProfile is located here: http://oprofile.sourceforge.net.
+
+[[_oprofile_install]]
+==== Installation
+
+
+Enable the Fedora debug repo:
+
+[source]
+----
+
+/etc/yum.repos.d/fedora.repo
+
+[fedora-debuginfo]
+name=Fedora $releasever - $basearch - Debug
+failovermethod=priority
+mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=fedora-debug-$releasever&arch=$basearch
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora-$basearch
+----
+
+
+Install:
+
+[source]
+----
+
+yum install -y oprofile oprofile-jit
+yum install -y yum-plugin-auto-update-debug-info
+yum install -y java-1.6.0-openjdk-debuginfo
+----
+
+[[_oprofile_running]]
+==== Running
+
+
+Insert the following line in `run.sh` or ``run.bat``:
+
+[source]
+----
+
+-agentpath:/usr/lib64/oprofile/libjvmti_oprofile.so
+----
+
+
+for 64bit JVMs or 
+
+[source]
+----
+
+-agentpath:/usr/lib/oprofile/libjvmti_oprofile.so
+----
+
+
+for 32 bit JVMs where the Java command is executed.
+
+Now execute:
+
+[source]
+----
+
+opcontrol --no-vmlinux
+opcontrol --start-daemon
+----
+
+
+and use the following commands:
+
+[source]
+----
+
+opcontrol --start # Starts profiling
+opcontrol --dump  # Dumps the profiling data out to the default file
+opcontrol --stop  # Stops profiling
+----
+
+
+Once you are done execute:
+
+[source]
+----
+
+opcontrol --shutdown  # Shuts the daemon down
+----
+
+
+A report can be generated by:
+
+[source]
+----
+
+opreport -l --output-file=<filename>
+----
+
+
+Remember that this is system wide profiling, so make sure that only the services that you want included are running.
+
+More information is available at http://oprofile.sourceforge.net/doc/index.html.
+
+[[_performance_test_suite]]
+=== Performance test suite
+
+
+IronJacamar features a basic performance test suite that tests interaction with a transaction manager. 
+
+The test suite is executed by 
+
+[source]
+----
+
+ant perf-test
+----
+
+
+which will run the tests, and output its data into the generated JUnit output. 
+
+The setup of the performance test suite is controlled in the 
+
+[source]
+----
+
+org.jboss.jca.core.tx.perf.Performance
+----
+
+
+class, where the following settings can be altered 
+
+* CLIENTS: The number of clients in each run
+* POOL_SIZES: The pool size in each run
+* DO_RAMP_UP: Should ramp up be performed
+* RAMP_UP_ITERATIONS: The number of iterations that the ramp-up should perform
+* TRANSACTIONS_PER_CLIENT: The number of transactions each client should perform
+* STATISTICS: Should statistics be enabled
+* RECORD_ENLISTMENT_TRACES: Should enlistment be recorded
+* USE_TRANSACTION_FOR_NOTRANSACTION: Use a transaction for NoTransaction scenario
+* USE_CCM: Register connections with the cached connection manager
+* TX_BEGIN_DURATION: The number of milliseconds spent in the resource during tx.begin()
+* TX_COMMIT_DURATION: The number of milliseconds spent in the resource during tx.commit()
+* MCP_IMPL: The implementation class of ManagedConnectionPool
+
+A report can be generated using 
+
+[source]
+----
+
+org.jboss.jca.core.tx.perf.PerfReport
+----
+
+
+which takes 3 arguments; output from NoopTS run, output from Narayana/MEM run and Narayana/FILE run. 
+
+The data is presented on the console, and a GNU plot script is generated. 
+
+The GNU plot can be generated using 
+
+[source]
+----
+
+gnuplot perf.plot
+----
+
+
+which will generate a `perf.png` file with the graphs. 
+
+Performance reports can be averaged using 
+
+[source]
+----
+
+org.jboss.jca.core.tx.perf.AvgReport
+----
+
+
+which takes the .dat files from the `PerfReport` applications and generates a `perf-avg.dat` and a `perf-avg.plot` file. 
+
+There is integration with JProfiler through the 
+
+[source]
+----
+
+ant jprofiler
+----
+
+
+task.
+It is required to define the installation directory and the session id before the task is executed. 
+
+The Bash scripts ``perf-jprofiler.sh``, `perf-flightrecorder.sh` and `perf-perf.sh` are located in `core/src/test/resource` and can be used as a template for command line based runs, like 
+
+[source]
+----
+
+ant prepare-test        
+cp core/src/test/resource/perf-logging.properties build/core/test/logging.properties
+cp core/src/test/resource/perf-perf.sh .
+./perf-perf.sh
+----
+
+
+as an example for running the Linux perf script. 

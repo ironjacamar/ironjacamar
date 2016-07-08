@@ -1,0 +1,185 @@
+= Building
+:doctype: book
+:sectnums:
+:toc: left
+:icons: font
+:experimental:
+:sourcedir: .
+
+[[_prerequisites]]
+== Prerequisites
+
+[[_jdk]]
+=== Java Development Kit (JDK)
+
+
+You must have the following JDK installed in order to build the project:
+
+* Sun JDK 1.8.x
+* OpenJDK 1.8.x
+
+
+Remember to ensure that "javac" and "java" are in your path (or symlinked).
+
+[source]
+----
+
+JAVA_HOME=/location/to/javahome
+export JAVA_HOME
+
+PATH=$JAVA_HOME/bin:$PATH
+export PATH
+----
+
+
+[[_gradle]]
+=== Gradle
+
+IronJacamar 2.x build is based on gradle. We are using gradle wrapper to avoid any needs of installation and
+configuration of the toll.
+
+[NOTE]
+====
+To build only older version (1.x series) of the project you must have Apache Ant 1.9.4+installed on your system.
+
+
+Please refer to specific version documentation for further and more detailed description.
+====
+
+[[_git]]
+=== Git
+
+
+You must have Git installed on your system.
+
+Remember to ensure that "git" are in your path (or symlinked).
+
+[[_obtainingthesource]]
+== Obtaining the source code
+
+[[_forking]]
+=== Forking the repository
+
+
+The IronJacamar repository is located at: 
+
+[source]
+----
+
+https://github.com/ironjacamar/ironjacamar
+----
+
+
+Press the "Fork" button in order to fork the repository to your own GitHub account. 
+
+Clone your repository to your machine using 
+
+[source]
+----
+
+git clone git@github.com:<your_account>/ironjacamar.git
+----
+
+
+Next add the upstream repository as a remote location: 
+
+[source]
+----
+
+cd ironjacamar
+git remote add upstream git@github.com:ironjacamar/ironjacamar.git
+----
+
+[[_gitbranches]]
+=== Git branches
+
+
+We have the following branches for the project:
+
+* master
++ 
+The head of development targeting the next upcoming release. (2.0)
+* 1.0
++ 
+The development targeting the IronJacamar 1.0 releases.
+* 1.1
++ 
+The development targeting the IronJacamar 1.1 releases.
+* 1.2
++ 
+The development targeting the IronJacamar 1.2 releases.
+
+
+[[_compiling]]
+== Compiling the source code
+
+
+In order to build IronJacamar you should execute from project's main directory:
+
+[source]
+----
+
+./gradlew <task>
+----
+
+Task is option and if you don't specify it gradle would execute default task of the project which is "build"
+
+For a complete list of available tasks and their description just run
+
+[source]
+----
+./gradlew tasks
+----
+
+[[_creating_a_patch]]
+== Creating a patch
+
+
+Our user guide explains in the "I would like to implement a feature" section how to get  started on a writing a new feature or submitting a patch to the project. 
+
+You should develop your feature on a Git branch using 
+
+[source]
+----
+
+git checkout -b <feature_name>
+----
+
+
+Once you are done you will need to rebase your work with the latest master 
+
+[source]
+----
+
+git fetch upstream
+git rebase -i upstream/master
+----
+
+
+You will need to resolve any conflicts of course.
+Note, that all pull requests must be rebased against upstream master in order to get merged. 
+
+Then push the feature to your repository 
+
+[source]
+----
+
+git push origin <feature_name>
+----
+
+
+Go to your account on GitHub.com and submit a pull request via the "Pull request" button 
+
+[source]
+----
+
+https://www.github.com/<your_account>/ironjacamar
+----
+
+
+Remember to select the correct branch, fill in the subject with a short description of the feature, and fill in the description with the full description of the feature. 
+
+If your feature / bug-fix applies to multiple branches you will need to submit multiple pull requests - one pull request per branch.
+
+Remember your commit message should contain the issue ID and its description previously created in our issue tracker.
+Please refer to issue tracking chapter of this document for more information on how to create and manage issues.

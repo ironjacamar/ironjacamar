@@ -1,0 +1,140 @@
+= Introduction
+:doctype: book
+:sectnums:
+:toc: left
+:icons: font
+:experimental:
+:sourcedir: .
+
+
+The Java Connector Architecture (JCA) defines a standard architecture for connecting the Java EE platform to
+heterogeneous Enterprise Information Systems (EIS).
+Examples of EISs include Enterprise Resource Planning (ERP), mainframe transaction processing (TP),
+databases and messaging systems.
+
+The connector architecture defines a set of scalable, secure, and transactional mechanisms that enable the integration
+of EISs with application servers and enterprise applications.
+
+The connector architecture also defines a Common Client Interface (CCI) for EIS access.
+The CCI defines a client API for interacting with heterogeneous EISs.
+
+The connector architecture enables an EIS vendor to provide a standard resource adapter for its EIS.
+A resource adapter is a system-level software driver that is used by a Java application to connect to an EIS.
+The resource adapter plugs into an application server and provides connectivity between the EIS, the application
+server, and the enterprise application.
+The resource adapter serves as a protocol adapter that allows any arbitrary EIS communication protocol to be used for
+connectivity.
+An application server vendor extends its system once to support the connector architecture and is then assured of
+seamless connectivity to multiple EISs.
+Likewise, an EIS vendor provides one standard resource adapter which has the capability to plug in to any application
+server that supports the connector architecture.
+
+[[_whatsnew]]
+== What's New
+
+[[_whatsnew_jca17]]
+=== Java Connector Architecture 1.7
+
+
+The Java Connector Architecture 1.7 specification adds the following areas:
+
+* Adds an activation name for message endpoints to uniquely identify them
+* Deployment annotations for connection factories and administration objects
+
+
+[NOTE]
+====
+The deployment annotations are only meant for developer usage, and should not be used in test or production environments. 
+
+The IronJacamar standalone and embedded distributions doesn't support these annotations. 
+====
+
+[[_whatsnew_jca16]]
+=== Java Connector Architecture 1.6
+
+
+The Java Connector Architecture 1.6 specification adds the following major areas:
+
+* Ease of Development: The use of annotations reduces or completely eliminates the need to deal with a
+  deployment descriptor in many cases. The use of annotations also reduces the need
+  to keep the deployment descriptor synchronized with changes to source code.
+* Generic work context contract: A generic contract that enables a resource adapter
+  to control the execution context of a Work instance that it has submitted to the
+  application server for execution. 
+* Security work context: A standard contract that enables a resource adapter to
+  establish security information while submitting a Work instance for execution to a
+  WorkManager and while delivering messages to message endpoints residing in
+  the application server.
+* Standalone Container Environment: A defined set of services that makes up a standalone
+  execution environment for resource adapters.
+
+
+[[_overview]]
+== Overview
+
+
+The Java EE Connector Architecture features three different types of resource adapters 
+
+* Outbound: The resource adapter allows the application to communicate to the Enterprise Information System (EIS).
+* Inbound: The resource adapter allows messages to flow from the Enterprise Information System (EIS) to the application.
+* Bi-directional: The resource adapter features both an outbound and an inbound part.
+
+For more information about Java EE Connector Architecture see the specification. 
+
+[[_overview_outbound]]
+=== Outbound resource adapter
+
+
+The Java Connector Architecture specification consists of a number of outbound components: 
+
+
+image::outbound.png[]
+
+The application uses the  
+
+* ConnectionFactory: The connection factory is looked up in Java Naming and Directory Interface (JNDI)
+  and is used to create a connection.
+* Connection: The connection contains the Enterprise Information System (EIS) specific operations.
+
+The resource adapter contains  
+
+* ManagedConnectionFactory: The managed connection factory creates managed connections.
+* ManagedConnection: The managed connection represents a physical connection to the target
+  Enterprise Information System (EIS). The managed connection notifies the application server
+  of events such as connection closed and connection error.
+
+IronJacamar - the application server - contains  
+
+* ConnectionManager: The connection manager handles all managed connections in regards to
+  pooling, transaction and security.
+* ConnectionEventListener: The connection event listener allows the connection manager to know
+  the status of each managed connection.
+
+
+[[_overview_inbound]]
+=== Inbound resource adapter
+
+
+The Java Connector Architecture specification consists of a number of inbound components: 
+
+
+image::inbound.png[]
+
+The application uses the  
+
+* ActivationSpec: The activation specification specifies the different properties that the
+  application is looking for from the resource adapter and hence the Enterprise Information System (EIS).
+  This specification can be hidden from the user by a facade provided by the application server.
+
+The resource adapter contains  
+
+* ResourceAdapter: The resource adapter provides the activation point for inbound communication.
+* Resource adapter specific: The resource adapter specific code handles communication with the
+  Enterprise Information System (EIS) and deliver messages through the MessageEndpointFactory.
+
+IronJacamar - the application server - contains  
+
+* MessageEndpointFactory: The MessageEndpointFactory is registered with the ResourceAdapter instance
+  and creates the MessageEndpoint instances.
+* MessageEndpoint: The MessageEndpoint contains the actual message from the Enterprise Information System (EIS)
+  which the application uses. This could for example be a message driven Enterprise JavaBean (EJB/MDB).

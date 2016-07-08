@@ -1,0 +1,201 @@
+= Pool
+:doctype: book
+:sectnums:
+:toc: left
+:icons: font
+:experimental:
+:sourcedir: .
+
+[[_pool_overview]]
+== Overview
+
+
+The pool controls the physical connection to the target Enterprise Information System, such as a database. 
+
+It is up to the pool to create, hand out and destroy connections in the defined lifecycle based on the configuration parameters supplied by the user. 
+
+The pool architecture  
+
+
+image::pool.png[]
+
+
+[NOTE]
+====
+      Each of the components in the pool architecture can be accessed by multiple threads at the
+      same time, hence each component needs to make sure that thread safely is maintained.
+    
+====
+
+[[_pool_public]]
+== Public API
+
+
+The public API defines the API that programs external to the IronJacamar project can use to configure, and use the pool. 
+
+The `Pool` interface allows access to the name of the pool, flushing connections, verifying if a connection can be obtained from the pool and dump any queued threads. 
+
+The `PoolConfiguration` class holds the configuration parameters for the pool. 
+
+The `FlushMode` enum defines the different flush modes supported. 
+
+The `PoolStatistics` interface defines the statistics available for a pool. 
+
+The package for the public API is ``org.jboss.jca.core.api.connectionmanager.pool``. 
+
+[[_pool_private]]
+== Private API
+
+
+The private API defines the API that can be used internally IronJacamar to control the pool.
+The API extends the public API where it makes sense in order to provide a more uniform interface to the implementation. 
+
+The `PoolFactory` class will create a `Pool` based upon the passed in configuration. 
+
+The `PoolStrategy` enum defines how the pool is split based on credential equallity. 
+
+The `Pool` interface extends the public API with methods that should only be available from with IronJacamar such as getting a connection listener, returning a connection listener, and shutting down the pool. 
+
+The `PrefillPool` interface defines the contract for pool implementations that supports prefilling of connections upon startup, such as `OnePool` and ``PoolBySubject``. 
+
+The `Capacity` interface provides a handle to the policies used for increasing and decreasing the pool. 
+
+The `CapacityIncrementer` interface defines if a physical connection should be created given the input parameters. 
+
+The `CapacityDecrementer` interface defines if a physical connection should be destroyed given the input parameters. 
+
+The package for the private API is ``org.jboss.jca.core.connectionmanager.pool.api``. 
+
+[[_pool_implementation]]
+== Implementation
+
+
+The pool implementation provides a concrete implementation of the contracts defined by the public and private APIs. 
+
+The package for the pool implementation is ``org.jboss.jca.core.connectionmanager.pool``. 
+
+[[_pool_implementation_abstractpool]]
+=== AbstractPool
+
+`AbstractPool` provides the methods that are shared across all pool implementations. 
+
+`getKey(Subject, ConnectionRequestInfo, boolean)` defines the key used to lookup the `ManagedConnectionPool` instance.
+The implementation of this method is different for each pool type. 
+
+`getManagedConnectionPool(Object, Subject, ConnectionRequestInfo)` retrieves the correct `ManagedConnectionPool` instance.
+If the `ManagedConnectionPool` doesn't yet exists then one is created, and initialized. 
+
+`emptyManagedConnectionPool(ManagedConnectionPool)` removes a `ManagedConnectionPool` instance, if unused. 
+
+`flush` flushes the `ManagedConnectionPool` instances, based on the ``FlushMode``. 
+
+`getConnection(Transaction, Subject, ConnectionRequestInfo)` returns a `ConnectionListener` instance, which has the physical connection to the Enterprise Information System attached.
+The method uses 3 sub methods to return the correct listener instance. `getSimpleConnection` returns a `ConnectionListener` if there is no transaction associated. `getTransactionOldConnection` returns the `ConnectionListener` already associated with the transaction, if any. `getTransactionNewConnection` creates a new ``ConnectionListener``, and associates it with the transaction. 
+
+`findConnectionListener` finds a specific `ConnectionListener` instance. 
+
+`returnConnectionListener` returns a `ConnectionListener` instance to the correct ``ManagedConnectionPool``. 
+
+`shutdown` shuts down the pool.
+This is done using synchronization such that any components having a reference will be notified through an error. 
+
+`internalTestConnection(ConnectionRequestInfo, Subject)` tries to obtain a `ConnectionListener` based on the input given. 
+
+`getLock()` returns the lock that guards the maximum number of active ``ConnectionListener``'s in the pool.
+This method is used by the `ManagedConnectionPool` instances when modifying their data structure that holds the ``ConnectionListener``'s. 
+
+`dumpQueuedThreads()` returns a stack trace of each of the queued threads waiting to obtain a `ConnectionListener` instance. 
+
+[[_pool_implementation_prefill]]
+=== AbstractPrefillPool
+
+
+The `AbstractPrefillPool` enables the pool to prefill connections during startup, and through its lifecycle. 
+
+`prefill(Subject, ConnectionRequestInfo, boolean)` handles the prefilling process. 
+
+[[_pool_implementation_types]]
+=== Pool types
+
+
+IronJacamar features 5 different pool types.
+Each pool type has its own `getKey` method implementation that defines how a `ManagedConnectionPool` instance is located. 
+
+`OnePool` uses one `ManagedConnectionPool` instance to hold all ``ConnectionListener``s. 
+
+`PoolByCri` splits the `ManagedConnectionPool` instances based on the `ConnectionRequestInfo` instance. 
+
+`PoolBySubject` splits the `ManagedConnectionPool` instances based on the `Subject` instance. 
+
+`PoolBySubjectAndCri` splits the `ManagedConnectionPool` instances based on both the `ConnectionRequestInfo` instance and the `Subject` instance. 
+
+`ReauthPool` allows the `ConnectionListener` instances to reauthenticate, so the `ManagedConnectionPool` instances can change over time based on the `ConnectionRequestInfo` and `Subject` instances. 
+
+The package for the pool types is ``org.jboss.jca.core.connectionmanager.pool.strategy``. 
+
+[[_pool_mcp]]
+== ManagedConnectionPool
+
+
+The `ManagedConnectionPool` controls the `ConnectionListener` instances, which each has a physical connection (``ManagedConnection``) associated. 
+
+The package is `org.jboss.jca.core.connectionmanager.pool.mcp`
+
+[[_pool_mcp_private]]
+=== Private API
+
+`ManagedConnectionPool` instances should only be accessed from within IronJacamar, so they only have a private API. 
+
+The `ManagedConnectionPoolFactory` class creates a `ManagedConnectionPool` instance. 
+
+The `ManagedConnectionPool` interface defines the methods exposed to the pool, connection validator, and idle remover.
+These methods includes getting a connection listener, finding a connection listener, and returning a connection listener. 
+
+The `ManagedConnectionPoolStatistics` interface defines the statistics for the `ManagedConnectionPool` instance. 
+
+The `ManagedConnectionPoolUtility` class defines utility methods for the `ManagedConnectionPool` instance. 
+
+[[_pool_mcp_implementation]]
+=== Implementation
+
+
+There are three different implementations of the `ManagedConnectionPool` interface. `SemaphoreArrayListManagedConnectionPool` which uses an `ArrayList` to hold the ``ConnectionListener``s. `SemaphoreConcurrentLinkedQueueManagedConnectionPool` which uses a `ConcurrentLinkedQueue` to hold the ``ConnectionListener``s. `SemaphoreConcurrentLinkedQueueManagedConnectionPool` also uses a `ConcurrentHashMap` to keep track of the internal status of each of the ``ConnectionListener``s.
+Last, a `LeakDumperManagedConnectionPool` which extends ``SemaphoreArrayListManagedConnectionPool``, but reports any leaks upon shutdown. 
+
+`getConnection(Subject, ConnectionRequestInfo)` provides a ``ConnectionListener``.
+The method requires a lock in order to obtain a listener, using the specified timeout value.
+If a listener is avaiable in the pool then it is matched against the `ManagedConnectionFactory` to verify it is valid, and returned - otherwise it is destroyed.
+If no listener is available then a new listener is created and returned.
+In the latter case both prefill and a capacity increase is scheduled in order to prefill to the minimum size, and increase the pool by the specified capacity policy. 
+
+`returnConnection(ConnectionListener, boolean, boolean)` returns a `ConnectionListener` into the pool. 
+
+`flush(FlushMode)` flushes the ``ConnectionListener``s according to the mode.
+Any listeners marked as bad will be destroyed.
+Prefill is scheduled at the end in order to maintain the minimum pool size. 
+
+`removeIdleConnections` is invoked from the idle remover in order to decrement the pool to the desired size based on the `CapacityDecrementer` policy.
+If any listeners are destroyed the pool is either scheduled for prefill, or for removal through `emptyManagedConnectionPool` if empty. 
+
+`shutdown` shuts the instance down.
+All listeners are removed.
+This is done using synchronization such that any components having a reference will be notified through an error. 
+
+`fillTo(int)` fills the pool to the specified size.
+The pool filler component uses this method. 
+
+`increaseCapacity(Subject, ConnectionRequestInfo)` increases the pool based on the `CapacityIncrementer` policy.
+The capacity filler component uses this method. 
+
+`validateConnections` validates that the listeners are valid according to ``ValidatingManagedConnectionFactory``.
+Any invalid listeners are destroyed and prefill scheduled.
+The connection validator component uses this method. 
+
+`detachConnectionListener` disassociates the connections attached to the `ManagedConnection` such that it can be reused in another request through ``DissociatableManagedConnection``. 
+
+[IMPORTANT]`====
+        The ConnectionListener` implements ``java.lang.Comparable``, so `ConnectionListener.used()` must
+        be called before returning it to the data structure controlling the free connections. There may be a time interval between the call
+        and the actual return.
+      
+====

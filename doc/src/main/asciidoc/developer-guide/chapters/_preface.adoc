@@ -1,0 +1,140 @@
+
+:sectnums!:
+
+[preface]
+= Preface
+
+[[_about]]
+== About IronJacamar
+
+
+The goal of the IronJacamar project is to provide an implementation of the Java Connector Architecture 1.7 specification.
+
+The specification can be found here: http://www.jcp.org/en/jsr/detail?id=322.
+
+The IronJacamar project is licensed under the GNU LESSER GENERAL PUBLIC LICENSE 2.1 (LGPL 2.1) license.
+
+[[_whythename]]
+== Why IronJacamar ?
+
+
+The Java EE Connector Architecture container can be viewed as a foundation inside an application server as it provides
+connectivity to the other containers such that they can communicate with EISes.
+Iron is often used as foundation in building houses too.
+
+The Jacamar bird family which lives in Central and South America are glossy elegant birds with long bills  and tails.
+Why we picked the Jacamar family is left as an exercise for the reader :)
+
+[[_versions]]
+== Versions
+
+
+This section contains the highlights of the IronJacamar releases.
+A full description of each release can be found through our issue tracking system at http://issues.jboss.org/browse/JBJCA. 
+
+
+[[_versions_ironjacamar20]]
+=== IronJacamar 2.0
+
+ * New architecture
+ * Focus on EE 6+ interaction patterns
+ * Similar configuration to IronJacamar 1.x deployments
+ * High amount of reuse of IronJacamar 1.x components
+
+[[_versions_ironjacamar12]]
+=== IronJacamar 1.2
+
+
+Highlights as compared to IronJacamar 1.1: 
+
+* Support for graceful shutdown of `ConnectionManager` and `WorkManager`
+* Support for connectable ``XAResource``s
+* Support tracking of connection handles across transaction boundaries
+* Additional statistics for pools
+* Event tracer for easier debugging
+
+
+[[_versions_ironjacamar11]]
+=== IronJacamar 1.1
+
+
+Highlights as compared to IronJacamar 1.0: 
+
+* Java EE Connector Architecture 1.7 certified (standalone / Java EE7)
+* Lazy connection manager (JCA chapter 7.16)
+* Distributed work manager (JCA chapter 10.3.11)
+* Advanced pool capacity policies and flush strategies
+* Enhanced Arquillian integration
+* Eclipse development plugin
+* Enterprise Information System testing server
+* Resource adapter information tool
+* Migration tools
+
+
+[[_versions_ironjacamar10]]
+=== IronJacamar 1.0
+
+
+Highlights as compared to previous Java EE Connector Architecture containers inside JBoss Application Server: 
+
+* Java EE Connector Architecture 1.6 certified (standalone / Java EE6)
+* POJO container environment
+* New configuration schemas which focuses on usability
+* Fast XML and annotation parsing for quick deployment
+* Reauthentication support
+* Prefill support for security backed domains
+* Support for pool flushing strategies
+* Embedded environment for ease of development with Arquillian and ShrinkWrap integration
+* New management and statistics integration for components
+* Code generator for resource adapters
+* Validator tool for resource adapters
+
+
+[[_theteam]]
+== The team
+
+
+Jesper Pedersen acts as the lead for the IronJacamar project.
+He can be reached at jesper (dot) pedersen (at) ironjacamar (dot) org. 
+
+Stefano Maestri is a core developer on the IronJacamar project.
+He can be reached at stefano (dot) maestri (at) ironjacamar (dot) org. 
+
+Lin Gao is a core developer on the IronJacamar project.
+He can be reached at lin (dot) gao (at) ironjacamar (dot) org. 
+
+Tom Jenkinson is an advocate for the IronJacamar project.
+He can be reached at tom.jenkinson (at) ironjacamar (dot) org.
+
+Johnaton Lee helps out in the IronJacamar community with identifying issues, and fixing them.
+He can be reached at johnathonlee (at) ironjacamar (dot) org. 
+
+Tyronne Wickramarathne helps out in the IronJacamar community with identifying issues, and fixing them.
+He can be reached at tyronne (at) ironjacamar (dot) org. 
+
+[[_thanksto]]
+== Thanks to
+
+
+Adrian Brock, Carlo de Wolf, Gurkan Erdogdu, Bruno Georges, Paul Gier, Jason Greene, Stefan Guilhen,
+Jonathan Halliday, Søren Hilmer, Ales Justin, Vicky Kak,  Aslak Knutsen, Sacha Labourey, Mark Little,
+Alexey Loubyansky,  Patrick MacDonald, Scott Marlow, Shelly McGowan, Andrig Miller, Marcus Moyses,
+John O'Hara, Weston Price, Andrew Lee Rubinger, Heiko Rupp, Anil Saldhana, Scott Stark, Clebert Suconic, Andy Taylor,
+Vladimir Vasilev, Vladimir Rastseluev, Jeff Zhang, Tyronne Wickramarathne, Dimitris Andreadis,
+Jeremy Whiting, Yang Yong and Leslie York.
+
+[[_license]]
+== License
+
+
+Copyright (C) 2014 Red Hat, Inc.
+and others.
+
+The text of and illustrations in this document are licensed by Red Hat under a Creative Commons Attribution–Share Alike 3.0 Unported license ("CC-BY-SA").
+
+An explanation of CC-BY-SA is available at  http://creativecommons.org/licenses/by-sa/3.0/.
+In accordance with CC-BY-SA, if you distribute this document or an adaptation of it, you must provide the URL for the original version.
+
+Red Hat, as the licensor of this document, waives the right to enforce,  and agrees not to assert, Section 4d of CC-BY-SA to the fullest extent  permitted by applicable law.
+
+:sectnums:

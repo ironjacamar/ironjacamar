@@ -1,0 +1,140 @@
+= Releases
+:doctype: book
+:sectnums:
+:toc: left
+:icons: font
+:experimental:
+:sourcedir: .
+
+
+The chapter describes the various releases and their exit criteria.
+
+[[_releases_overview]]
+== Overview
+
+
+Each release is labelled with a version number and an identifier.
+
+[source]
+----
+
+ironjacamar-<major>.<minor>.<patch>[.<identifier>]
+----
+
+
+where
+
+* Major: The major version number. Signifies major changes in the implementation.
+* Minor: The minor version number. Signifies functional changes to a major version.
+* Patch: The patch version number. Signifies a binary compatible change to a minor version.
+* {empty}
+** None / Final: Stable release
+** CR: Candidate for Release quality. The implementation is functional complete.
+** Beta: Beta quality. The implementation is almost functional complete.
+** Alpha: Alpha quality. The implementation is a snapshot of the development.
+
+
+[[_releases_versioning]]
+== Versioning
+
+
+Each release will contain a version number which relates to the  feature branch where it was created.
+
+[[_releases_versioning_major]]
+=== Major
+
+
+A Major version identifier signifies major changes in the implementation such as a change in the architecture.
+
+The features between major versions can be a lot different, and therefore feature regressions may appear.
+
+A Major version will most likely also mean updates to the configuration and required metadata files for deployments.
+
+[[_releases_versioning_minor]]
+=== Minor
+
+
+A Minor version identifier signifies functional changes to a Major release.
+
+This means that new features have been added to the Major release, and hence may have new configuration options and integration points.
+
+The release is binary compatible to the previous releases -  for example `1.0` vs. ``1.1``.
+
+[[_releases_versioning_patch]]
+=== Patch
+
+
+A Patch version identifier signifies a binary compatible update to one or more components in a Minor release.
+
+This means that one or more bug fixes to existing components have been integrated in the branch in question.
+
+The release is binary compatible to the previous releases -  for example `1.0.0` vs. ``1.0.1``.
+
+[[_releases_identifiers]]
+== Identifiers
+
+
+Each release will contain an identifier which relates to the release quality.
+
+[[_releases_alpha]]
+=== Alpha releases
+
+
+An Alpha release is a snapshot of the main development branch which likely will contain new features.
+
+[WARNING]
+====
+        Alpha releases are NOT production quality
+      
+====
+
+
+An Alpha release are made each month (time-boxed) unless the branch is using an identifier as  Beta or higher.
+
+The exit criteria for an Alpha release is that the main test suite is passing.
+
+[[_releases_beta]]
+=== Beta releases
+
+
+A Beta release contains major features that are considered almost functional complete.
+This doesn't mean however that all aspects of each feature is complete and therefore not all options will be active.
+
+[WARNING]
+====
+        Beta releases are NOT production quality
+      
+====
+
+
+A Beta release will be made once one or more features are almost functional complete and therefore Beta releases aren't time-boxed, but feature-boxed instead.
+
+The exit criteria for a Beta release is that all test suites are passing.
+
+[[_releases_cr]]
+=== Candidate for Release releases
+
+
+A Candidate for Release is considered functional complete and candidate for being  promoted to a Final release.
+
+[WARNING]
+====
+        Candidate for Release releases are NOT production quality
+      
+====
+
+
+A Candidate for Release focuses on functionality, but they are time-boxed to a maximum of two weeks between each release.
+
+The exit criteria for a Candidate for Release release is that all test suites are passing.
+
+[[_releases_final]]
+=== Final releases
+
+
+A Final release is considered feature complete and stable.
+
+Typically only one Final release will be released from each branch, unless critical or blocker issues are found in the release.
+Patch releases will be available from our source control system as tags.
+
+The exit criteria for a Final release is that all test suites are passing.

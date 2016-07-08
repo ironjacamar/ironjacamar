@@ -1,0 +1,176 @@
+[[_issuetracking]]
+= Issue tracking
+:doctype: book
+:sectnums:
+:toc: left
+:icons: font
+:experimental:
+:sourcedir: .
+
+[[_location]]
+== Location
+
+IronJacamar 2.x series is using Github issue tracker located at https://github.com/ironjacamar/ironjacamar/issues
+
+There is also a JIRA issue tracking for bugs impacting older releases. It is located at http://issues.jboss.org/browse/JBJCA
+
+[NOTE]
+====
+For further informations on how Jira issue tracking is organized and how to use it please refer to 1.x documentation
+====
+
+[[_labels]]
+== Labels
+
+Github issue tracking uses a label based system to tag issues. IronJacamar are using different labels to identify:
+
+ * Black labels: Components impacted by the issue
+ * Yellow labels: Issue category
+ * Blue labels: Issue priority
+ * Violet labels: rejecting reasons
+
+[[_components]]
+== Components (black labels)
+
+
+The project is divided into the following components:
+
+.Project components
+[cols="1,1", frame="all", options="header"]
+|===
+| Label name
+| Description
+
+|API
+|Public API
+
+|Build
+|The build environment for the project.
+
+|Common
+|Common interfaces and classes that are shared between multiple components.
+
+|Core
+|The core implementation of the project.
+
+|Documentation
+|The documentation (Users Guide / Developers Guide) for the project.
+
+|Deployer
+|The deployers for the project.
+
+|Embedded
+|The embedded IronJacamar container.
+
+|JDBC
+|A JDBC resource adapter.
+
+|Performance
+|Performance related work.
+
+|Standalone
+|The standalone IronJacamar distribution.
+
+|Test Suite
+|The IronJacamar test suite.
+
+|Tools
+|Tools used related work.
+
+|Validator
+|The resource adapter validator.
+|===
+
+[[_categories]]
+== Categories (yellow labels)
+
+
+The system contains the following categoies:
+
+.Issues categories
+[cols="1,1", frame="all", options="header"]
+|===
+| Label name
+| Description
+
+|Feature Request
+|Request for a feature made by the community.
+
+|Bug
+|Software defect in the project.
+
+|Task
+|Development task created by a member of the team.
+
+|Release
+|Issue which holds informations about a release.
+
+|Component Update
+|Identifies a thirdparty library dependency.
+|===
+
+
+[[_priorities]]
+== Priorities (blue labels)
+
+
+All issues are assigned one of the following priorities:
+
+.Issues Priorities
+[cols="1,1", frame="all", options="header"]
+|===
+| Label name
+| Description
+
+|Blocker
+|An issue that needs to be fixed before the release.
+
+|Critical
+|An issue that is critical for the release.
+
+|Major
+|The default priority for an issue.
+
+|Minor
+|An issue that is optional for a release.
+|===
+
+[[_rejecting]]
+== Rejecting reasons (violet labels)
+
+
+When an issue is rejected it's closed and tagged with one of this labels. A comment should explain why it have been rejected.
+
+.Rejecting reasons
+[cols="1,1", frame="all", options="header"]
+|===
+| Label name
+| Description
+
+|wontfix
+|The issue will not be fixed because it's not a bug and described behaviour is expected,
+
+|duplicated
+|The issue is duplicated. A link to original issue is provided in closing comment.
+
+|cannot reproduce
+|The issue is not reproducible with provided information and description.
+
+[[_lifecycle]]
+== Life cycle
+
+
+All issues folows the following life cycle:
+
+.JIRA Lifecycle
+[cols="1,1", frame="all", options="header"]
+|===
+| Lifecycle
+| Description
+
+|Open
+|An issue currently not implemented.
+
+|Closed
+|An issue that has been resolved. It will be included in target release.
+|===
