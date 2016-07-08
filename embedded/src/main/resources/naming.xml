@@ -6,6 +6,7 @@
                  factoryClass="java.util.concurrent.Executors">
       <parameter>2</parameter>
     </constructor>
+    <destroy method="shutdown"/>
   </bean>
 
   <bean name="NamingBeanImpl" class="org.jnp.server.NamingBeanImpl">
