@@ -20,12 +20,7 @@
  */
 
 import org.asciidoctor.gradle.AsciidoctorTask
-/*
- * Hibernate, Relational Persistence for Idiomatic Java
- *
- * License: GNU Lesser General Public License (LGPL), version 2.1 or later.
- * See the lgpl.txt file in the root directory or <http://www.gnu.org/licenses/lgpl-2.1.html>.
- */
+
 buildscript {
     repositories {
         mavenCentral()
@@ -38,9 +33,9 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.2'
-        classpath 'org.asciidoctor:asciidoctorj-pdf:1.5.0-alpha.11'
-        classpath 'org.asciidoctor:asciidoctorj-epub3:1.5.0-alpha.6'
+        classpath libraries.asciidoctor
+        classpath libraries.asciidoctorjpdf
+        classpath libraries.asciidoctorjepub3
     }
 }
 

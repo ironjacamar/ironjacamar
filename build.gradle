@@ -88,7 +88,10 @@ ext {
     shrinkwrap_descriptors_ant: "org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-ant:2.0.0-alpha-5",
     shrinkwrap_descriptors_metadata_parser: "org.jboss.shrinkwrap.descriptors:shrinkwrap-descriptors-metadata-parser:2.0.0-alpha-5",
     transaction_spec: "org.jboss.spec.javax.transaction:jboss-transaction-api_1.2_spec:1.0.0.Final",
-    validation_spec: "javax.validation:validation-api:1.1.0.Final"
+    validation_spec: "javax.validation:validation-api:1.1.0.Final",
+    asciidoctor:  "org.asciidoctor:asciidoctor-gradle-plugin:1.5.2",
+    asciidoctorjpdf: "org.asciidoctor:asciidoctorj-pdf:1.5.0-alpha.11",
+    asciidoctorjepub3: "org.asciidoctor:asciidoctorj-epub3:1.5.0-alpha.6"
   ]
 }
 
@@ -350,10 +353,32 @@ def distributionDoc = copySpec {
   include '**/*'
 }
 
+def distributionDevelDocHtml = copySpec {
+  from rootProject.file('doc/build/developer-guide/html5/')
+  into 'system/root.war/developer-guide/'
+  include '**/*'
+}
+def distributionUserDocHtml = copySpec {
+  from rootProject.file('doc/build/user-guide/html5/')
+  into 'system/root.war/user-guide/'
+  include '**/*'
+}
+
+
+def distributionDocOther = copySpec {
+  from rootProject.file('doc/build/')
+  into 'doc'
+  exclude '**/html5/**'
+}
+
+
+
 distributions {
   main {
     contents {
-      with distributionSJC, distributionSchemas, distributionLib, distributionDependencies, distributionJetty, distributionConsole, distributionCodeGen, distributionTracer, distributionValidator, distributionDoc
+      with distributionSJC, distributionSchemas, distributionLib, distributionDependencies,
+              distributionJetty, distributionConsole, distributionCodeGen, distributionTracer, distributionValidator,
+              distributionDoc, distributionDocOther, distributionDevelDocHtml, distributionUserDocHtml
     }
   }
 }
