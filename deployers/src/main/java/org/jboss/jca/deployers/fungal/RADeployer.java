@@ -39,9 +39,9 @@ import org.jboss.jca.core.spi.rar.ResourceAdapterRepository;
 import org.jboss.jca.deployers.DeployersLogger;
 import org.jboss.jca.deployers.common.CommonDeployment;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
+import java.io.*;
+import java.net.*;
+import java.nio.file.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -116,7 +116,7 @@ public final class RADeployer extends AbstractFungalRADeployer implements Deploy
       ClassLoader oldTCCL = SecurityActions.getThreadContextClassLoader();
       try
       {
-         File f = new File(url.toURI());
+         File f = getFileFromUrl(url);
 
          if (!f.exists())
             throw new IOException("Archive " + url.toExternalForm() + " doesnt exists");
@@ -214,6 +214,32 @@ public final class RADeployer extends AbstractFungalRADeployer implements Deploy
       {
          SecurityActions.setThreadContextClassLoader(oldTCCL);
       }
+   }
+   
+   /**
+    * Get File object of URL who locate a rar resource directly or a jar including rar
+    * @param url
+    * @return a File object pointing of rar resources
+    */
+   protected File getFileFromUrl(URL url) throws URISyntaxException, IOException{
+     if (url.toExternalForm().startsWith("jar")){
+       return getFileFromJar(url);
+     }
+     return new File(url.toURI());
+   }
+   
+   /**
+    * Get file object of a rar resource located in jar file. 
+    * @param url
+    * @return a temporary copy File of rar resource
+    */
+   protected File getFileFromJar(URL url) throws URISyntaxException, IOException{
+     String[] urlSplits = url.toURI().toString().split("/");
+     String rarName = urlSplits[urlSplits.length-1];
+     InputStream in = getClass().getResourceAsStream("/" + rarName);
+     File copy = new File(SecurityActions.getSystemProperty("iron.jacamar.home"), rarName);
+     Files.copy(in, Paths.get(copy.toURI()));
+     return copy;
    }
 
    /**
