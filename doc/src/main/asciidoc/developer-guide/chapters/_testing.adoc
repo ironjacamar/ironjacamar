@@ -1,10 +1,5 @@
+[[_testing]]
 = Testing
-:doctype: book
-:sectnums:
-:toc: left
-:icons: font
-:experimental:
-:sourcedir: .
 
 [[_testinggoals]]
 == Overall goals
@@ -12,120 +7,53 @@
 
 The overall goals of our test environment is to execute tests that ensures that we have full coverage of the JCA specification as well as our implementation.
 
-The full test suite is executed using
+The full test suite every time you build the project
 
 [source]
 ----
-
-ant test
+./gradlew --info
 ----
+
+You can run just testsuite w/o remake a full build
+[source]
+---
+./gradlew test --info
+---
+
+There is few special tests running multiple instance of embedded environment excluded by default build. You can run also them with
+
+[source]
+---
+./ghradlew test --info -PmiTest=true
+---
 
 
 A single test case can be executed using
 
 [source]
 ----
-
-ant -Dmodule=embedded -Dtest=org.jboss.jca.embedded.unit.ShrinkWrapTestCase one-test
+./gradlew --info test --tests <testname>
 ----
 
 
-where `-Dmodule` specifies which module to execute the test case in.
-This parameter defaults to ``core``.
-The `-Dtest` parameter specifies the test case itself.
-
-You can also execute all test cases of a single module using
+where <testname> is a fully qualified name of test class
+Note you can also use * operator to filter test name
 
 [source]
 ----
 
-ant -Dmodule=embedded module-test
+./gradlew --info test --tests *JGroups*
 ----
 
-
-where `-Dmodule` specifies which module to execute the test cases in.
-This parameter defaults to ``core``.
-
-The build script does not fail in case of test errors or failure.
-
-You can control the behavior by using the `junit.haltonerror` and `junit.haltonfailure`  properties in the main `build.xml` file.
-Default value for both is ``no``. 
-
-You can of course change them statically in the `build.xml` file or temporary using ``-Djunit.haltonerror=yes``.
-There are other `jnuit.*` properties defined in the main `build.xml` that can be controlled in the same way. 
-
-[[_spectest]]
-=== Specification
-
-
-The purpose of the specification tests is to test our implementation against the actual specification text.
-
-Each test can only depend on:
-
-* The official Java Connector Architecture API (javax.resource)
-* Interfaces and classes in the test suite that extends/implements  the official API
-
-
-The test cases should be created in such a way such that they are easily identified by chapter, section and paragraph.
-For example:
+You can also run test in debug mode and attach your favorite remote debugger on port 5005 running
 
 [source]
 ----
 
-org.jboss.jca.core.spec.chaper10.section3
+./gradlew --info -Dtest.debug
 ----
 
-[[_jbinterfacetest]]
-=== IronJacamar specific interfaces
-
-
-The purpose of the IronJacamar specific interfaces tests is to test our specific interfaces.
-
-Each test can depend on:
-
-* The official Java Connector Architecture API (javax.resource)
-* The IronJacamar specific APIs (org.jboss.jca.xxx.api)
-* Interfaces and classes in the test suite that extends/implements these APIs
-
-
-The test cases lives in a package that have a meaningful name of the component it tests.
-For example:
-
-[source]
-----
-
-org.jboss.jca.core.workmanager
-----
-
-
-These test cases can use both the embedded JCA environment or be implemented as standard POJO based JUnit test cases.
-
-[[_jbimpltest]]
-=== IronJacamar specific implementation
-
-
-The purpose of the IronJacamar specific implementation tests is to test our specific implementation.
-These tests should cover all methods are not exposed through the interface.
-
-Each test can depend on:
-
-* The official Java Connector Architecture API (javax.resource)
-* The IronJacamar specific APIs (org.jboss.jca.xxx.api)
-* The IronJacamar specific implementation (org.jboss.jca.xxx.yyy)
-* Interfaces and classes in the test suite
-
-
-The test cases lives in a package that have a meaningful name of the component it tests.
-For example:
-
-[source]
-----
-
-org.jboss.jca.core.workmanager
-----
-
-
-These test cases can use both the embedded JCA environment or be implemented as standard POJO based JUnit test cases.
+Of course you can combine above options for example to debug a single test case.
 
 [[_style]]
 == Testing principle and style
@@ -169,7 +97,152 @@ The resource adapters represent the <<given>>
  phase is verified by assertion. 
 
 Note that some tests consider an exception a normal output condition using the JUnit 4.x  `@Exception(expected = "SomeClass.class")` annotation to identify and verify this situation.
- 
+
+This kind of tests run inside our embedded environment and creating deployment descriptor with our builder.
+Few custom annotation make embedded environment start/deploy/undeploy/stop in test calsses very simple and human readable.
+A test class look like this:
+
+[source]
+----
+
+package org.ironjacamar.core.workmanager;
+
+import org.ironjacamar.embedded.Configuration;
+import org.ironjacamar.embedded.Deployment;
+import org.ironjacamar.embedded.dsl.resourceadapters20.api.ResourceAdaptersDescriptor;
+import org.ironjacamar.embedded.junit4.AllChecks;
+import org.ironjacamar.embedded.junit4.IronJacamar;
+import org.ironjacamar.embedded.junit4.PostCondition;
+import org.ironjacamar.embedded.junit4.PreCondition;
+import org.ironjacamar.rars.ResourceAdapterFactory;
+import org.ironjacamar.rars.wm.WorkConnection;
+import org.ironjacamar.rars.wm.WorkConnectionFactory;
+
+import javax.annotation.Resource;
+
+import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import static org.junit.Assert.assertNotNull;
+
+/**
+ * Basic WorkManager test case
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ */
+@RunWith(IronJacamar.class)
+@Configuration(full = true)
+@PreCondition(condition = AllChecks.class)
+@PostCondition(condition = AllChecks.class)
+public class WorkManagerTestCase
+{
+   /** The user transaction */
+   @Resource(mappedName = "java:/eis/WorkConnectionFactory")
+   private WorkConnectionFactory wcf;
+
+   /**
+    * The resource adapter
+    * @throws Throwable In case of an error
+    */
+   @Deployment(order = 1)
+   private ResourceAdapterArchive createResourceAdapter() throws Throwable
+   {
+      return ResourceAdapterFactory.createWorkRar();
+   }
+
+   /**
+    * The activation
+    * @throws Throwable In case of an error
+    */
+   @Deployment(order = 2)
+   private ResourceAdaptersDescriptor createActivation() throws Throwable
+   {
+      return ResourceAdapterFactory.createWorkDeployment(null);
+   }
+
+   /**
+    * Deployment
+    * @throws Throwable In case of an error
+    */
+   @Test
+   public void testDeployment() throws Throwable
+   {
+      assertNotNull(wcf);
+
+      WorkConnection wc = wcf.getConnection();
+      assertNotNull(wc);
+
+      wc.close();
+   }
+}
+
+----
+
+While ResourceAdapterFactory methods invoked like this
+
+[source]
+----
+
+ /**
+    * Create the work.rar
+    *
+    * @return The resource adapter archive
+    */
+   public static ResourceAdapterArchive createWorkRar()
+   {
+      org.jboss.shrinkwrap.descriptor.api.connector16.ConnectorDescriptor raXml = Descriptors
+            .create(org.jboss.shrinkwrap.descriptor.api.connector16.ConnectorDescriptor.class, "ra.xml").version("1.6");
+
+      org.jboss.shrinkwrap.descriptor.api.connector16.ResourceadapterType rt = raXml.getOrCreateResourceadapter()
+            .resourceadapterClass(WorkResourceAdapter.class.getName());
+      org.jboss.shrinkwrap.descriptor.api.connector16.OutboundResourceadapterType ort = rt
+            .getOrCreateOutboundResourceadapter().transactionSupport("NoTransaction").reauthenticationSupport(false);
+      org.jboss.shrinkwrap.descriptor.api.connector16.ConnectionDefinitionType cdt = ort.createConnectionDefinition()
+            .managedconnectionfactoryClass(WorkManagedConnectionFactory.class.getName())
+            .connectionfactoryInterface(WorkConnectionFactory.class.getName())
+            .connectionfactoryImplClass(WorkConnectionFactoryImpl.class.getName())
+            .connectionInterface(WorkConnection.class.getName())
+            .connectionImplClass(WorkConnectionImpl.class.getName());
+
+      ResourceAdapterArchive raa = ShrinkWrap.create(ResourceAdapterArchive.class, "work.rar");
+
+      JavaArchive ja = ShrinkWrap.create(JavaArchive.class, "work.jar");
+      ja.addPackages(true, WorkConnection.class.getPackage());
+
+      raa.addAsLibrary(ja);
+      raa.addAsManifestResource(new StringAsset(raXml.exportAsString()), "ra.xml");
+
+      return raa;
+   }
+
+   /**
+    * Create the work.rar deployment
+    *
+    * @param bc The BootstrapContext name; <code>null</code> if default
+    * @return The resource adapter descriptor
+    */
+   public static ResourceAdaptersDescriptor createWorkDeployment(String bc)
+   {
+      ResourceAdaptersDescriptor dashRaXml = Descriptors.create(ResourceAdaptersDescriptor.class, "work-ra.xml");
+
+      ResourceAdapterType dashRaXmlRt = dashRaXml.createResourceAdapter().archive("work.rar");
+      if (bc != null)
+         dashRaXmlRt.bootstrapContext(bc);
+      ConnectionDefinitionsType dashRaXmlCdst = dashRaXmlRt.getOrCreateConnectionDefinitions();
+      org.ironjacamar.embedded.dsl.resourceadapters20.api.ConnectionDefinitionType dashRaXmlCdt = dashRaXmlCdst
+            .createConnectionDefinition().className(WorkManagedConnectionFactory.class.getName())
+            .jndiName("java:/eis/WorkConnectionFactory").id("WorkConnectionFactory");
+
+      org.ironjacamar.embedded.dsl.resourceadapters20.api.PoolType dashRaXmlPt = dashRaXmlCdt.getOrCreatePool()
+            .minPoolSize(0).initialPoolSize(0).maxPoolSize(10);
+
+      return dashRaXml;
+   }
+   
+----
+
+
 
 [[_unit]]
 === Unit Tests
@@ -227,54 +300,8 @@ Checkstyle is a tool that verifies that the formatting of the source code in the
 This allows for easier readability and a consistent feel of the project.
 
 The goal is to have zero errors in the report.
-The checkstyle report is generated using
+The checkstyle report is generated on every build and can ve find under each module's build directory
 
-[source]
-----
-
-ant checkstyle
-----
-
-
-The report is generated into
-
-[source]
-----
-
-reports/checkstyle
-----
-
-
-The home of checkstyle is located here: http://checkstyle.sourceforge.net/.
-
-[[_findbugs]]
-=== Findbugs
-
-
-Findbugs is a tool that scans your project for bugs and provides reports based on its findings.
-
-This tool helps lower of the number of bugs found in the IronJacamar project.
-
-The goal is to have zero errors in the report and as few exclusions in the filter as possible.
-The findbugs report is generated using
-
-[source]
-----
-
-ant findbugs
-----
-
-
-The report is generated into
-
-[source]
-----
-
-reports/findbugs
-----
-
-
-The home of findbugs is located here: http://findbugs.sourceforge.net/.
 
 [[_jacoco]]
 === JaCoCo
@@ -285,13 +312,7 @@ JaCoCo generates a test suite matrix for your project which helps you identify w
 The reports that the tool provides makes sure that the IronJacamar project has the correct test coverage.
 
 The goal is to have as high code coverage as possible in all areas.
-The JaCoco report is generated using
-
-[source]
-----
-
-ant jacoco
-----
+The JaCoco report is generated at every build
 
 
 The report is generated into
@@ -299,40 +320,11 @@ The report is generated into
 [source]
 ----
 
-reports/jacoco
+testsuite/build/reports/jacoco
 ----
 
 
 The home of JaCoCo is located here: http://www.eclemma.org/jacoco/.
-
-[[_tattletale]]
-=== Tattletale
-
-
-Tattletale generates reports about different quality matrix of the dependencies within the project.
-
-The reports that the tool provides makes sure that the IronJacamar project doesn't for example have cyclic dependencies within the project.
-
-The goal is to have as no issues flagged by the tool.
-The Tattletale reports are generated using
-
-[source]
-----
-
-ant tattletale
-----
-
-
-The reports are generated into
-
-[source]
-----
-
-reports/tattletale
-----
-
-
-The home of Tattletale is located here: http://www.jboss.org/tattletale.
 
 [[_performance]]
 == Performance testing
@@ -465,101 +457,4 @@ More information is available at http://oprofile.sourceforge.net/doc/index.html.
 [[_performance_test_suite]]
 === Performance test suite
 
-
-IronJacamar features a basic performance test suite that tests interaction with a transaction manager. 
-
-The test suite is executed by 
-
-[source]
-----
-
-ant perf-test
-----
-
-
-which will run the tests, and output its data into the generated JUnit output. 
-
-The setup of the performance test suite is controlled in the 
-
-[source]
-----
-
-org.jboss.jca.core.tx.perf.Performance
-----
-
-
-class, where the following settings can be altered 
-
-* CLIENTS: The number of clients in each run
-* POOL_SIZES: The pool size in each run
-* DO_RAMP_UP: Should ramp up be performed
-* RAMP_UP_ITERATIONS: The number of iterations that the ramp-up should perform
-* TRANSACTIONS_PER_CLIENT: The number of transactions each client should perform
-* STATISTICS: Should statistics be enabled
-* RECORD_ENLISTMENT_TRACES: Should enlistment be recorded
-* USE_TRANSACTION_FOR_NOTRANSACTION: Use a transaction for NoTransaction scenario
-* USE_CCM: Register connections with the cached connection manager
-* TX_BEGIN_DURATION: The number of milliseconds spent in the resource during tx.begin()
-* TX_COMMIT_DURATION: The number of milliseconds spent in the resource during tx.commit()
-* MCP_IMPL: The implementation class of ManagedConnectionPool
-
-A report can be generated using 
-
-[source]
-----
-
-org.jboss.jca.core.tx.perf.PerfReport
-----
-
-
-which takes 3 arguments; output from NoopTS run, output from Narayana/MEM run and Narayana/FILE run. 
-
-The data is presented on the console, and a GNU plot script is generated. 
-
-The GNU plot can be generated using 
-
-[source]
-----
-
-gnuplot perf.plot
-----
-
-
-which will generate a `perf.png` file with the graphs. 
-
-Performance reports can be averaged using 
-
-[source]
-----
-
-org.jboss.jca.core.tx.perf.AvgReport
-----
-
-
-which takes the .dat files from the `PerfReport` applications and generates a `perf-avg.dat` and a `perf-avg.plot` file. 
-
-There is integration with JProfiler through the 
-
-[source]
-----
-
-ant jprofiler
-----
-
-
-task.
-It is required to define the installation directory and the session id before the task is executed. 
-
-The Bash scripts ``perf-jprofiler.sh``, `perf-flightrecorder.sh` and `perf-perf.sh` are located in `core/src/test/resource` and can be used as a template for command line based runs, like 
-
-[source]
-----
-
-ant prepare-test        
-cp core/src/test/resource/perf-logging.properties build/core/test/logging.properties
-cp core/src/test/resource/perf-perf.sh .
-./perf-perf.sh
-----
-
-
-as an example for running the Linux perf script. 
+TODO

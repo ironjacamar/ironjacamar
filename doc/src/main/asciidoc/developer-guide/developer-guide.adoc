@@ -3,7 +3,6 @@
 ifndef::ebook-format[:leveloffset: 1]
 ifndef::imagesdir[:imagesdir: images]
 
-include::chapters/_chapter-one.adoc[]
 
 include::chapters/_preface.adoc[]
 include::chapters/_introduction.adoc[]
@@ -11,9 +10,4 @@ include::chapters/_building.adoc[]
 include::chapters/_releases.adoc[]
 include::chapters/_issuetracking.adoc[]
 include::chapters/_testing.adoc[]
-include::chapters/_metadata.adoc[]
-include::chapters/_deployers.adoc[]
-include::chapters/_cm.adoc[]
-include::chapters/_pool.adoc[]
 include::chapters/_standalone.adoc[]
-include::chapters/_licenses.adoc[]

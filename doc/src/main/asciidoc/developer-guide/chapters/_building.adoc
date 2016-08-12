@@ -1,10 +1,3 @@
-= Building
-:doctype: book
-:sectnums:
-:toc: left
-:icons: font
-:experimental:
-:sourcedir: .
 
 [[_prerequisites]]
 == Prerequisites
@@ -146,7 +139,7 @@ git checkout -b <feature_name>
 ----
 
 
-Once you are done you will need to rebase your work with the latest master 
+Once you are done you will need to rebase your work with the latest master.
 
 [source]
 ----
@@ -158,6 +151,16 @@ git rebase -i upstream/master
 
 You will need to resolve any conflicts of course.
 Note, that all pull requests must be rebased against upstream master in order to get merged. 
+
+Please verify you are able to build the project, all tests pass and the checkstyle is respected. Just run
+
+[source]
+----
+
+./gradlew --info
+----
+
+It should build w/o any error.
 
 Then push the feature to your repository 
 
@@ -183,3 +186,5 @@ If your feature / bug-fix applies to multiple branches you will need to submit m
 
 Remember your commit message should contain the issue ID and its description previously created in our issue tracker.
 Please refer to issue tracking chapter of this document for more information on how to create and manage issues.
+
+Then your PR will be reviewed and merged if everything is ok, commented to be refined otherwise.

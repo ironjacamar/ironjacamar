@@ -1,11 +1,5 @@
 [[_issuetracking]]
 = Issue tracking
-:doctype: book
-:sectnums:
-:toc: left
-:icons: font
-:experimental:
-:sourcedir: .
 
 [[_location]]
 == Location
@@ -135,6 +129,7 @@ All issues are assigned one of the following priorities:
 |An issue that is optional for a release.
 |===
 
+
 [[_rejecting]]
 == Rejecting reasons (violet labels)
 
@@ -155,6 +150,8 @@ When an issue is rejected it's closed and tagged with one of this labels. A comm
 
 |cannot reproduce
 |The issue is not reproducible with provided information and description.
+|===
+
 
 [[_lifecycle]]
 == Life cycle

@@ -1,10 +1,6 @@
+[[_standalone]]
 = Standalone
-:doctype: book
-:sectnums:
-:toc: left
-:icons: font
-:experimental:
-:sourcedir: .
+
 
 [[_standaloneoverview]]
 == Overview

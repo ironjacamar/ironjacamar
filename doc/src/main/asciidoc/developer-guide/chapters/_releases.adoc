@@ -1,10 +1,6 @@
+
+[[_releases]]
 = Releases
-:doctype: book
-:sectnums:
-:toc: left
-:icons: font
-:experimental:
-:sourcedir: .
 
 
 The chapter describes the various releases and their exit criteria.
