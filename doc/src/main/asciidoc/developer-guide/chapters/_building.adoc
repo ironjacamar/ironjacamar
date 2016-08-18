@@ -127,10 +127,11 @@ For a complete list of available tasks and their description just run
 [[_creating_a_patch]]
 == Creating a patch
 
+**NOTE: A prerequisite to submit a patch through github Pull Request is to sign Contribution Licence Agreement here: https://cla.jboss.org/contributions/index.seam**
 
-Our user guide explains in the "I would like to implement a feature" section how to get  started on a writing a new feature or submitting a patch to the project. 
+Our user guide explains in the "I would like to implement a feature" section how to get  started on a writing a new feature or submitting a patch to the project.
 
-You should develop your feature on a Git branch using 
+You should develop your feature on a Git branch using
 
 [source]
 ----
@@ -150,7 +151,7 @@ git rebase -i upstream/master
 
 
 You will need to resolve any conflicts of course.
-Note, that all pull requests must be rebased against upstream master in order to get merged. 
+Note, that all pull requests must be rebased against upstream master in order to get merged.
 
 Please verify you are able to build the project, all tests pass and the checkstyle is respected. Just run
 
@@ -162,7 +163,7 @@ Please verify you are able to build the project, all tests pass and the checksty
 
 It should build w/o any error.
 
-Then push the feature to your repository 
+Then push the feature to your repository
 
 [source]
 ----
@@ -171,7 +172,7 @@ git push origin <feature_name>
 ----
 
 
-Go to your account on GitHub.com and submit a pull request via the "Pull request" button 
+Go to your account on GitHub.com and submit a pull request via the "Pull request" button
 
 [source]
 ----
@@ -180,11 +181,28 @@ https://www.github.com/<your_account>/ironjacamar
 ----
 
 
-Remember to select the correct branch, fill in the subject with a short description of the feature, and fill in the description with the full description of the feature. 
+Remember to select the correct branch, fill in the subject with a short description of the feature, and fill in the description with the full description of the feature.
 
 If your feature / bug-fix applies to multiple branches you will need to submit multiple pull requests - one pull request per branch.
 
 Remember your commit message should contain the issue ID and its description previously created in our issue tracker.
 Please refer to issue tracking chapter of this document for more information on how to create and manage issues.
 
-Then your PR will be reviewed and merged if everything is ok, commented to be refined otherwise.
+== Continuous Integration
+
+When you send a PR Travis CI (https://travis-ci.org) will automatically build the project.
+
+During the build, Travis update the status of the commits to one of:
+
+* a warning that the build is still running.
+* that the pull request should be merged with caution because the build failed.
+* that the pull request can be merged safely because the build was successful.
+
+Travis CI builds a pull request when it is first opened, and when commits are added to the pull request .
+
+== Code review and merging
+
+Finally your PR will be reviewed by a core developer and merged if everything is ok, commented to be refined otherwise.
+
+Don't forget PR and issues are not forums and you will be encouraged discussing design and details through forums, while issue/PRs comments
+should be used only for specific details or referring to specific line of code.

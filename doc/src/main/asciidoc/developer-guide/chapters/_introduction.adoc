@@ -138,3 +138,12 @@ IronJacamar - the application server - contains
   and creates the MessageEndpoint instances.
 * MessageEndpoint: The MessageEndpoint contains the actual message from the Enterprise Information System (EIS)
   which the application uses. This could for example be a message driven Enterprise JavaBean (EJB/MDB).
+
+== Project resources
+
+* Web site: http://www.ironjacamar.org
+* Users forum: https://groups.google.com/forum/#!forum/ironjacamar-users
+* developers forum: https://groups.google.com/forum/#!forum/ironjacamar-developers
+* Issue tracker: https://github.com/ironjacamar/ironjacamar/issues
+* Source code: https://github.com/ironjacamar/ironjacamar
+* IRC channel: #ironjacamar on freenode.net
