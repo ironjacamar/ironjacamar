@@ -582,7 +582,7 @@ public class WorkWrapper implements Runnable
    {
       StringBuilder buffer = new StringBuilder(100);
       buffer.append("WorkWrapper@").append(Integer.toHexString(System.identityHashCode(this)));
-      buffer.append("[workManger=").append(workManager);
+      buffer.append("[workManager=").append(workManager);
       buffer.append(" work=").append(work);
 
       if (executionContext != null && executionContext.getXid() != null)
