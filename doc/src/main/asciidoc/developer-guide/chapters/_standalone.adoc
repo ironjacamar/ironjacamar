@@ -10,28 +10,28 @@ The standalone IronJacamar container implements Chapter 3 Section 5 of the  JCA 
 
 The standalone container has the following layout:
 
-*``$IRON_JACAMAR_HOME/bin/``
+* ``$IRON_JACAMAR_HOME/bin/``
 + 
 contains the run scripts and the SJC kernel.
-*``$IRON_JACAMAR_HOME/config/``
+* ``$IRON_JACAMAR_HOME/config/``
 + 
 contains the configuration of the container.
-*``$IRON_JACAMAR_HOME/deploy/``
+* ``$IRON_JACAMAR_HOME/deploy/``
 + 
 contains the user deployments.
-*``$IRON_JACAMAR_HOME/doc/``
+* ``$IRON_JACAMAR_HOME/doc/``
 + 
 contains the documentation.
-*``$IRON_JACAMAR_HOME/lib/``
+* ``$IRON_JACAMAR_HOME/lib/``
 + 
 contains all the libraries used by the container.
-*``$IRON_JACAMAR_HOME/log/``
+* ``$IRON_JACAMAR_HOME/log/``
 + 
 contains the log files.
-*``$IRON_JACAMAR_HOME/system/``
+* ``$IRON_JACAMAR_HOME/system/``
 + 
 contains system deployments files.
-*``$IRON_JACAMAR_HOME/tmp/``
+* ``$IRON_JACAMAR_HOME/tmp/``
 + 
 contains temporary files.
 
