@@ -104,7 +104,7 @@ Lin Gao is a core developer on the IronJacamar project.
 He can be reached at lin (dot) gao (at) ironjacamar (dot) org. 
 
 Tom Jenkinson is an advocate for the IronJacamar project.
-He can be reached at tom.jenkinson (at) ironjacamar (dot) org.
+He can be reached at tom (dot) jenkinson (at) ironjacamar (dot) org.
 
 Johnaton Lee helps out in the IronJacamar community with identifying issues, and fixing them.
 He can be reached at johnathonlee (at) ironjacamar (dot) org. 

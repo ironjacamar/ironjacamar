@@ -16,7 +16,7 @@ For further informations on how Jira issue tracking is organized and how to use 
 [[_labels]]
 == Labels
 
-Github issue tracking uses a label based system to tag issues. IronJacamar are using different labels to identify:
+Github issue tracking uses a label based system to tag issues. IronJacamar is using different labels to identify:
 
  * Black labels: Components impacted by the issue
  * Yellow labels: Issue category
@@ -134,7 +134,7 @@ All issues are assigned one of the following priorities:
 == Rejecting reasons (violet labels)
 
 
-When an issue is rejected it's closed and tagged with one of this labels. A comment should explain why it have been rejected.
+When an issue is rejected it's closed and tagged with one of these labels. A comment should explain why it has been rejected.
 
 .Rejecting reasons
 [cols="1,1", frame="all", options="header"]
@@ -157,7 +157,7 @@ When an issue is rejected it's closed and tagged with one of this labels. A comm
 == Life cycle
 
 
-All issues folows the following life cycle:
+All issues have the following life cycle:
 
 .JIRA Lifecycle
 [cols="1,1", frame="all", options="header"]

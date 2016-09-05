@@ -85,7 +85,7 @@ An Alpha release is a snapshot of the main development branch which likely will 
 ====
 
 
-An Alpha release are made each month (time-boxed) unless the branch is using an identifier as  Beta or higher.
+An Alpha release is made each month (time-boxed) unless the branch is using an identifier as  Beta or higher.
 
 The exit criteria for an Alpha release is that the main test suite is passing.
 

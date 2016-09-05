@@ -5,9 +5,9 @@
 == Overall goals
 
 
-The overall goals of our test environment is to execute tests that ensures that we have full coverage of the JCA specification as well as our implementation.
+The overall goals of our test environment is to execute tests that ensure that we have full coverage of the JCA specification as well as our implementation.
 
-The full test suite every time you build the project
+The full test suite runs every time you build the project.
 
 [source]
 ----
@@ -59,7 +59,7 @@ Of course you can combine above options for example to debug a single test case.
 == Testing principle and style
 
 
-Our tests follows the Behavior Driven Development (BDD) technique.
+Our tests follow the Behavior Driven Development (BDD) technique.
 In BDD you focus on specifying the behaviors of a class and write code (tests) that verify that behavior. 
 
 You may be thinking that BDD sounds awfully similar to Test Driven Development (TDD).  In some ways they are similar: they both encourage writing the tests first and to provide full coverage of the  code.
@@ -86,7 +86,7 @@ We are using two different kind of tests:
 === Integration Tests
 
 
-The integration tests simulate a real condition using a particular deployment artifacts packaged as  resource adapters. 
+The integration tests simulate a real condition using particular deployment artifacts packaged as resource adapters.
 
 The resource adapters are created using either the main build environment or by using  http://community.jboss.org/wiki/ShrinkWrap[ShrinkWrap].
 Using resource adapters within the test cases will allow you to debug both the resource adapters themself or the JCA container. 
@@ -300,7 +300,7 @@ Checkstyle is a tool that verifies that the formatting of the source code in the
 This allows for easier readability and a consistent feel of the project.
 
 The goal is to have zero errors in the report.
-The checkstyle report is generated on every build and can ve find under each module's build directory
+The checkstyle report is generated on every build and can be found under each module's build directory.
 
 
 [[_jacoco]]
@@ -330,7 +330,7 @@ The home of JaCoCo is located here: http://www.eclemma.org/jacoco/.
 == Performance testing
 
 
-Performance testing can identify areas that needs to be improved or completely replaced.
+Performance testing can identify areas that need to be improved or completely replaced.
 
 === JProfiler
 
@@ -378,6 +378,17 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora-$basearch
 
 
 Install:
+
+[source]
+----
+
+dnf install -y oprofile oprofile-jit
+dnf install -y yum-plugin-auto-update-debug-info
+dnf install -y java-1.6.0-openjdk-debuginfo
+----
+
+
+If you are using Fedora 21 or older, you need to use yum instead of dnf to install OProfile:
 
 [source]
 ----
