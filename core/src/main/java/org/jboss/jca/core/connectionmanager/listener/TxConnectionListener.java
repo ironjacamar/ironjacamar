@@ -172,7 +172,7 @@ public class TxConnectionListener extends AbstractConnectionListener
          else
          {
             StringTokenizer st = new StringTokenizer(value, ",");
-            while (doDelistResource && st.hasMoreTokens())
+            while (doSetRollbackOnly && st.hasMoreTokens())
             {
                if (getPool().getName().equals(st.nextToken()))
                   doSetRollbackOnly = false;
