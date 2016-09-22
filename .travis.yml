@@ -15,3 +15,11 @@ addons:
   apt:
     packages:
       - oracle-java8-installer
+
+notifications:
+  hipchat:
+    rooms:
+      - jcjbF5FLXtiI8PSnD00giy61qiN7nnuY4PlGtrpQ@ironjacamar
+    template:
+      - '%{repository}#%{build_number} (%{branch} - %{commit} : %{author}): %{message}'
+    format: html
