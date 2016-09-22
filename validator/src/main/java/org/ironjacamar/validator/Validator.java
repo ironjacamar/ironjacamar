@@ -22,6 +22,33 @@
 
 package org.ironjacamar.validator;
 
+import org.ironjacamar.validator.rules.ao.AOConfigProperties;
+import org.ironjacamar.validator.rules.ao.AOConstructor;
+import org.ironjacamar.validator.rules.ao.AONull;
+import org.ironjacamar.validator.rules.ao.AORAA;
+import org.ironjacamar.validator.rules.as.AS;
+import org.ironjacamar.validator.rules.as.ASConfigProperties;
+import org.ironjacamar.validator.rules.as.ASConstructor;
+import org.ironjacamar.validator.rules.as.ASNull;
+import org.ironjacamar.validator.rules.cf.CFConstructor;
+import org.ironjacamar.validator.rules.cf.CFNull;
+import org.ironjacamar.validator.rules.cf.CFReferenceable;
+import org.ironjacamar.validator.rules.cf.CFSerializable;
+import org.ironjacamar.validator.rules.mc.MC;
+import org.ironjacamar.validator.rules.mc.MCGetMetaData;
+import org.ironjacamar.validator.rules.mcf.MCF;
+import org.ironjacamar.validator.rules.mcf.MCFConfigProperties;
+import org.ironjacamar.validator.rules.mcf.MCFConstructor;
+import org.ironjacamar.validator.rules.mcf.MCFEquals;
+import org.ironjacamar.validator.rules.mcf.MCFHashCode;
+import org.ironjacamar.validator.rules.mcf.MCFNull;
+import org.ironjacamar.validator.rules.ra.RA;
+import org.ironjacamar.validator.rules.ra.RAConfigProperties;
+import org.ironjacamar.validator.rules.ra.RAConstructor;
+import org.ironjacamar.validator.rules.ra.RAEquals;
+import org.ironjacamar.validator.rules.ra.RAHashCode;
+import org.ironjacamar.validator.rules.ra.RANull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -39,46 +66,46 @@ public class Validator
     * as we may want to externalize them into a
     * properties file
     */
-   private static final String[] CLASS_RULES = {
-      "MCFNull",
-      "MCF",
-      "MCFConstructor",
-      "MCFHashCode",
-      "MCFEquals",
-      "MCFConfigProperties",
-      "MC",
-      "MCGetMetaData",
-      "RANull",
-      "RA",
-      "RAConstructor",
-      "RAHashCode",
-      "RAEquals",
-      "RAConfigProperties",
-      "CFConstructor",
-      "CFNull",
-      "CFSerializable",
-      "CFReferenceable",
-      "ASNull",
-      "AS",
-      "ASConstructor",
-      "ASConfigProperties",
-      "AONull",
-      "AOConstructor",
-      "AOConfigProperties",
-      "AORAA"
+   private static final Rule[] CLASS_RULES = {
+      new MCFNull(),
+      new MCF(),
+      new MCFConstructor(),
+      new MCFHashCode(),
+      new MCFEquals(),
+      new MCFConfigProperties(),
+      new MC(),
+      new MCGetMetaData(),
+      new RANull(),
+      new RA(),
+      new RAConstructor(),
+      new RAHashCode(),
+      new RAEquals(),
+      new RAConfigProperties(),
+      new CFConstructor(),
+      new CFNull(),
+      new CFSerializable(),
+      new CFReferenceable(),
+      new ASNull(),
+      new AS(),
+      new ASConstructor(),
+      new ASConfigProperties(),
+      new AONull(),
+      new AOConstructor(),
+      new AOConfigProperties(),
+      new AORAA()
    };
 
-   private static final String[] OBJECT_RULES = {
-      "MCGetMetaData",
+   private static final Rule[] OBJECT_RULES = {
+      new MCGetMetaData(),
    };
 
-   private static String[] allRules;
+   private static Rule[] allRules;
    static
    {
-      List<String> arrayList = new ArrayList<String>();
+      List<Rule> arrayList = new ArrayList<>();
       arrayList.addAll(Arrays.asList(CLASS_RULES));
       arrayList.addAll(Arrays.asList(OBJECT_RULES));
-      allRules = arrayList.toArray(new String[CLASS_RULES.length + OBJECT_RULES.length]);
+      allRules = arrayList.toArray(new Rule[CLASS_RULES.length + OBJECT_RULES.length]);
    };
 
    /**
@@ -109,24 +136,21 @@ public class Validator
       if (objects == null || objects.isEmpty())
          return null;
 
-      List<Rule> rules = extractRules(allRules);
-
-      return execRulesOnValidates(objects, rules);
+      return execRulesOnValidates(objects);
    }
 
    /**
     * exec rules
     * @param objects to be validated
-    * @param rules used for validation
     * @return The list of failures; an Empty list if no errors
     */
-   private List<Failure> execRulesOnValidates(List<Validate> objects, List<Rule> rules)
+   private List<Failure> execRulesOnValidates(List<Validate> objects)
    {
       ResourceBundle resourceBundle = getResourceBundle();
 
       List<Failure> result = null;
 
-      for (Rule rule : rules)
+      for (Rule rule : allRules)
       {
          for (Validate obj : objects)
          {
@@ -136,7 +160,7 @@ public class Validator
             {
                if (result == null)
                {
-                  result = new LinkedList<Failure>();
+                  result = new LinkedList<>();
                }
                result.addAll(failures);
             }
@@ -144,30 +168,5 @@ public class Validator
       }
 
       return result;
-   }
-
-   /**
-    * @param rulesNameArray the rules name array
-    * @return the list of {@link Rule} instances for given rules names
-    */
-   private List<Rule> extractRules(String[] rulesNameArray)
-   {
-      List<Rule> rules = new ArrayList<Rule>(rulesNameArray.length);
-
-      for (int i = 0; i < rulesNameArray.length; i++)
-      {
-         try
-         {
-            Class clz = Class.forName(rulesNameArray[i], true, SecurityActions.getClassLoader(Validator.class));
-            Rule rule = (Rule) clz.newInstance();
-
-            rules.add(rule);
-         }
-         catch (Throwable t)
-         {
-            throw new IllegalArgumentException(rulesNameArray[i], t);
-         }
-      }
-      return rules;
    }
 }
