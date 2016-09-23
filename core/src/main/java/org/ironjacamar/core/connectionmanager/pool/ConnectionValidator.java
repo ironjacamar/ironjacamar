@@ -20,6 +20,8 @@
  */
 package org.ironjacamar.core.connectionmanager.pool;
 
+import org.ironjacamar.core.CoreLogger;
+
 import java.util.Comparator;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -33,12 +35,18 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.jboss.logging.Logger;
+
 /**
  * Connection validator
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 public class ConnectionValidator
 {
+   /** The logger */
+   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class,
+         ConnectionValidator.class.getName());
+
    /** Thread name */
    private static final String THREAD_NAME = "IronJacamar ConnectionValidator";
    
@@ -252,19 +260,18 @@ public class ConnectionValidator
          }
          catch (InterruptedException e)
          {
-            /*
-              TODO
-              if (!shutdown.get())
-                 logger.returningConnectionValidatorInterrupted();
-            */
+
+            if (!shutdown.get())
+               log.returningConnectionValidatorInterrupted();
+
          }
          catch (RuntimeException e)
          {
-            //TODO: logger.connectionValidatorIgnoredUnexpectedRuntimeException(e);
+            log.connectionValidatorIgnoredUnexpectedRuntimeException(e);
          }
          catch (Exception e)
          {
-            //TODO: logger.connectionValidatorIgnoredUnexpectedError(e);
+            log.connectionValidatorIgnoredUnexpectedError(e);
          }         
          finally
          {

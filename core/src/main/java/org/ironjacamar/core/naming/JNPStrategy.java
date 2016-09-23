@@ -22,6 +22,7 @@
 package org.ironjacamar.core.naming;
 
 //import org.ironjacamar.core.CoreBundle;
+import org.ironjacamar.core.CoreBundle;
 import org.ironjacamar.core.CoreLogger;
 import org.ironjacamar.core.spi.naming.JndiStrategy;
 
@@ -39,6 +40,7 @@ import javax.naming.StringRefAddr;
 import javax.resource.Referenceable;
 
 import org.jboss.logging.Logger;
+import org.jboss.logging.Messages;
 //import org.jboss.logging.Messages;
 
 /**
@@ -53,7 +55,7 @@ public class JNPStrategy implements JndiStrategy
    private static boolean trace = log.isTraceEnabled();
    
    /** The bundle */
-   //private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
+   private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
    
    private static ConcurrentMap<String, Object> objs = new ConcurrentHashMap<String, Object>();
 
@@ -62,6 +64,7 @@ public class JNPStrategy implements JndiStrategy
    private String jndiProtocol;
 
    private String jndiHost;
+
 
    /**
     * Constructor
@@ -112,7 +115,7 @@ public class JNPStrategy implements JndiStrategy
 
          if (objs.putIfAbsent(qualifiedName(jndiName, className), o) != null)
          {
-            //TODO : throw new Exception(bundle.deploymentFailedSinceJndiNameHasDeployed(className, jndiName));
+            throw new NamingException(bundle.deploymentFailedSinceJndiNameHasDeployed(className, jndiName));
          }
 
          if (o instanceof Referenceable)

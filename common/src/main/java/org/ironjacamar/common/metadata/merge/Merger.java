@@ -20,6 +20,7 @@
  */
 package org.ironjacamar.common.metadata.merge;
 
+import org.ironjacamar.common.CommonBundle;
 import org.ironjacamar.common.api.metadata.common.TransactionSupportEnum;
 import org.ironjacamar.common.api.metadata.ds.CommonDataSource;
 import org.ironjacamar.common.api.metadata.ds.DataSource;
@@ -51,6 +52,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.jboss.logging.Messages;
+
 /**
  *
  * A Merger.
@@ -60,6 +63,8 @@ import java.util.Map.Entry;
  */
 public class Merger
 {
+   private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
+
    /**
     *
     * Merge ironJacamar's properties with connector's one returning a List of COnnector's properties
@@ -308,7 +313,7 @@ public class Merger
             return newConnector.merge(connector);
          }
          else
-            throw new IllegalArgumentException("version= " + connector.getVersion().name());
+            throw new IllegalArgumentException(bundle.wrongVersion(connector.getVersion().name()));
       }
 
    }

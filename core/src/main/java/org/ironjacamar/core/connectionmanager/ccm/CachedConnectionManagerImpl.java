@@ -21,6 +21,7 @@
 
 package org.ironjacamar.core.connectionmanager.ccm;
 
+import org.ironjacamar.core.CoreBundle;
 import org.ironjacamar.core.CoreLogger;
 import org.ironjacamar.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.ironjacamar.core.connectionmanager.Credential;
@@ -49,6 +50,7 @@ import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 
 import org.jboss.logging.Logger;
+import org.jboss.logging.Messages;
 
 /**
  * CacheConnectionManager.
@@ -60,6 +62,9 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, 
                                                            CachedConnectionManager.class.getName());
+
+   /** The bundle */
+   private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
 
    /** Synchronization key */
    private static final String CLOSE_CONNECTION_SYNCHRONIZATION = "CLOSE_CONNECTION_SYNCHRONIZATION";
@@ -296,7 +301,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
 
       if (debug && closeAll(context) && error)
       {
-         throw new ResourceException(); //bundle.someConnectionsWereNotClosed());
+         throw new ResourceException(bundle.someConnectionsWereNotClosed());
       }
 
       context.clear();
@@ -587,23 +592,23 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
          {
             if (exception != null)
             {
-               //log.closingConnection(connectionHandle, exception);
+               log.closingConnection(connectionHandle, exception);
             }
             else
             {
-               //log.closingConnection(connectionHandle);
+               log.closingConnection(connectionHandle);
             }
 
             m.invoke(connectionHandle, new Object[]{});
          }
          catch (Throwable t)
          {
-            //log.closingConnectionThrowable(t);
+            log.closingConnectionThrowable(t);
          }
       }
       catch (NoSuchMethodException nsme)
       {
-         //log.closingConnectionNoClose(connectionHandle.getClass().getName());
+         log.closingConnectionNoClose(connectionHandle.getClass().getName());
       }
    }
 

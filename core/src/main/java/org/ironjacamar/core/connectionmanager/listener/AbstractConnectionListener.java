@@ -22,6 +22,8 @@
 package org.ironjacamar.core.connectionmanager.listener;
 
 import org.ironjacamar.common.api.metadata.common.FlushStrategy;
+import org.ironjacamar.core.CoreBundle;
+import org.ironjacamar.core.CoreLogger;
 import org.ironjacamar.core.api.connectionmanager.pool.FlushMode;
 import org.ironjacamar.core.connectionmanager.ConnectionManager;
 import org.ironjacamar.core.connectionmanager.Credential;
@@ -39,6 +41,9 @@ import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionEvent;
 import javax.resource.spi.ManagedConnection;
 
+import org.jboss.logging.Logger;
+import org.jboss.logging.Messages;
+
 /**
  * The abstract connection listener
  * 
@@ -46,6 +51,15 @@ import javax.resource.spi.ManagedConnection;
  */
 public abstract class AbstractConnectionListener implements ConnectionListener, ConnectableResourceListener
 {
+   /**
+    * The core Logger
+    */
+   private static CoreLogger log = Logger
+         .getMessageLogger(CoreLogger.class, AbstractConnectionListener.class.getName());
+
+   /** The bundle */
+   private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
+
    /** The connection manager */
    protected ConnectionManager cm;
    
@@ -166,6 +180,26 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
     */
    public void connectionErrorOccurred(ConnectionEvent event)
    {
+      if (getState() == IN_USE)
+      {
+         if (event != null)
+         {
+            Exception cause = event.getException();
+            if (cause == null)
+            {
+               cause = new Exception(bundle.noExceptionWasReported());
+            }
+
+            log.connectionErrorOccurred(this, cause);
+         }
+         else
+         {
+            Exception cause = new Exception(bundle.noExceptionWasReported());
+            log.unknownConnectionErrorOccurred(this, cause);
+         }
+      }
+
+
       Object connection = event.getConnectionHandle();
 
       removeConnection(connection);
@@ -182,6 +216,11 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
       }
 
       clearConnections();
+
+      if (event != null && event.getSource() != getManagedConnection())
+      {
+         log.notifiedErrorDifferentManagedConnection();
+      }
       
       haltCatchFire();
       

@@ -247,4 +247,43 @@ public interface CommonBundle
     */
    @Message(id = 10077, value = "Wrong annotation type: %s")
    public String wrongAnnotationType(Object annotation);
+
+   /**
+    * AnnotationClass should be an annotation
+    * @return The value
+    */
+   @Message(id = 10078, value = "AnnotationClass should be an annotation")
+   public String annotationClassShouldBeAnnotation();
+
+   /**
+    * Repository cannot be null
+    * @return The value
+    */
+   @Message(id = 10079, value = "repository cannot be null")
+   public String repositoryNull();
+
+   /**
+    * fullQualifiedName should be one of...
+    * @return The value
+    */
+   @Message(id = 10080, value = "fullQualifiedName should be one of "
+         + "javax.resource.spi.security.PasswordCredential; org.ietf.jgss.GSSCredential;"
+         + " javax.resource.spi.security.GenericCredential")
+   public String fullQualifiedName();
+
+   /**
+    * Wrong version
+    * @param version The version
+    * @return The value
+    */
+   @Message(id = 10081, value = "version= %s")
+   public String wrongVersion(Object version);
+
+   /**
+    * no annotation scanner
+    *
+    * @return The value
+    */
+   @Message(id = 10082, value = "Unable to find an annotation scanner implementation")
+   public String noAnnotationScanner();
 }

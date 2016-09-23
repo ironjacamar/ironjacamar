@@ -20,6 +20,7 @@
  */
 package org.ironjacamar.common.metadata.common;
 
+import org.ironjacamar.common.CommonBundle;
 import org.ironjacamar.common.api.metadata.common.Extension;
 import org.ironjacamar.common.api.validator.ValidateException;
 
@@ -27,6 +28,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import org.jboss.logging.Messages;
 
 /**
  * An extension
@@ -38,6 +41,8 @@ public class ExtensionImpl extends AbstractMetadata implements Extension
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = -6275984008991105644L;
+
+   private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
 
    private String className;
 
@@ -171,7 +176,7 @@ public class ExtensionImpl extends AbstractMetadata implements Extension
    public void validate() throws ValidateException
    {
       if (this.className == null || className.trim().length() == 0)
-         throw new ValidateException("class-name is required in " + this.getClass().getCanonicalName());
+         throw new ValidateException(bundle.missingClassName(this.getClass().getCanonicalName()));
    }
 
    @Override

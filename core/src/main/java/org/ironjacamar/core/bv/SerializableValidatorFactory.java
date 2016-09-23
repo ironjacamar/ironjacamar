@@ -141,7 +141,7 @@ public class SerializableValidatorFactory implements ValidatorFactory, Serializa
    /**
     * Read the object - Nothing is read as the validator factory is transient.
     * A new instance is created
-    * @param out The output stream
+    * @param in The input stream
     * @exception IOException Thrown if an error occurs
     */
    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException

@@ -322,8 +322,10 @@ public abstract class AbstractResourceAdapterDeployer
          deployment.activate();
       
          if (!deploymentRepository.registerDeployment(deployment))
-            throw new DeployException("Not registered");
-      
+            throw new DeployException(bundle.unableToRegister(deployment.getIdentifier(), deployment.getName()));
+
+         log.deployed(archiveName);
+
          return deployment;
       }
       catch (DeployException de)
@@ -332,7 +334,7 @@ public abstract class AbstractResourceAdapterDeployer
       }
       catch (Exception e)
       {
-         throw new DeployException(e.getMessage(), e);
+         throw new DeployException(bundle.deploymentFailed(archiveName), e);
       }
    }
 
@@ -410,7 +412,7 @@ public abstract class AbstractResourceAdapterDeployer
       }
       catch (Throwable t)
       {
-         throw new DeployException("createResourceAdapter", t);
+         throw new DeployException(bundle.unableToCreateResourceAdapter(raClz), t);
       }
    }
 
@@ -420,7 +422,7 @@ public abstract class AbstractResourceAdapterDeployer
     * @param connector The metadata
     * @param cd The connection definition
     * @param transactionSupport The transaction support level
-    * @throws DeployException Thrown if the resource adapter cant be created
+    * @throws DeployException Thrown if the connection definition cant be created
     */
    protected void
       createConnectionDefinition(DeploymentBuilder builder,
@@ -522,7 +524,7 @@ public abstract class AbstractResourceAdapterDeployer
       }
       catch (Throwable t)
       {
-         throw new DeployException("createConnectionDefinition", t);
+         throw new DeployException(bundle.unableToCreateConnectionDefinition(cd.getId(), cd.getJndiName()), t);
       }
    }
 
@@ -531,7 +533,7 @@ public abstract class AbstractResourceAdapterDeployer
     * @param builder The deployment builder
     * @param connector The metadata
     * @param ao The admin object
-    * @throws DeployException Thrown if the resource adapter cant be created
+    * @throws DeployException Thrown if the admin object cant be created
     */
    protected void createAdminObject(DeploymentBuilder builder, Connector connector, AdminObject ao)
       throws DeployException
@@ -559,7 +561,7 @@ public abstract class AbstractResourceAdapterDeployer
       }
       catch (Throwable t)
       {
-         throw new DeployException("createAdminObject", t);
+         throw new DeployException(bundle.unableToCreateAdminObject(ao.getId(), ao.getJndiName()), t);
       }
    }
 
@@ -697,7 +699,9 @@ public abstract class AbstractResourceAdapterDeployer
                   }
                   else
                   {
-                     throw t;
+                     throw new DeployException(bundle.unableToInject(o.getClass().getName(),
+                           cp.getConfigPropertyName().getValue(),
+                           value.toString()), t);
                   }
                }
             }
@@ -825,7 +829,7 @@ public abstract class AbstractResourceAdapterDeployer
          }
          catch (Throwable t)
          {
-            throw new DeployException("associateResourceAdapter", t);
+            throw new DeployException(bundle.unableToAssociate(object.getClass().getName()), t);
          }
       }
    }
@@ -1266,9 +1270,10 @@ public abstract class AbstractResourceAdapterDeployer
                {
                   groups.add(Class.forName(clz, true, deployment.getClassLoader()));
                }
-               catch (Exception e)
+               catch (ClassNotFoundException e)
                {
-                  throw new DeployException(e.getMessage(), e);
+                  throw new DeployException(bundle.unableToLoadBeanValidationGroup(clz, deployment.getIdentifier()),
+                        e);
                }
             }
          
@@ -1276,34 +1281,23 @@ public abstract class AbstractResourceAdapterDeployer
 
             if (deployment.getResourceAdapter() != null)
             {
-               try
-               {
-                  Set f = v.validate(deployment.getResourceAdapter().getResourceAdapter(),
-                                     groups.toArray(new Class<?>[groups.size()]));
-                  if (!f.isEmpty())
-                     failures.addAll(f);
-               }
-               catch (Exception e)
-               {
-                  throw new DeployException(e.getMessage(), e);
-               }
+
+               Set f = v.validate(deployment.getResourceAdapter().getResourceAdapter(),
+                     groups.toArray(new Class<?>[groups.size()]));
+               if (!f.isEmpty())
+                  failures.addAll(f);
+
             }
             if (deployment.getConnectionFactories() != null)
             {
                for (org.ironjacamar.core.api.deploymentrepository.ConnectionFactory cf :
                        deployment.getConnectionFactories())
                {
-                  try
-                  {
-                     Set f = v.validate(cf.getConnectionFactory(),
-                                        groups.toArray(new Class<?>[groups.size()]));
-                     if (!f.isEmpty())
-                        failures.addAll(f);
-                  }
-                  catch (Exception e)
-                  {
-                     throw new DeployException(e.getMessage(), e);
-                  }
+
+                  Set f = v.validate(cf.getConnectionFactory(), groups.toArray(new Class<?>[groups.size()]));
+                  if (!f.isEmpty())
+                     failures.addAll(f);
+
                }
             }
             if (deployment.getAdminObjects() != null)
@@ -1311,24 +1305,18 @@ public abstract class AbstractResourceAdapterDeployer
                for (org.ironjacamar.core.api.deploymentrepository.AdminObject ao :
                        deployment.getAdminObjects())
                {
-                  try
-                  {
-                     Set f = v.validate(ao.getAdminObject(),
-                                        groups.toArray(new Class<?>[groups.size()]));
-                     if (!f.isEmpty())
-                        failures.addAll(f);
-                  }
-                  catch (Exception e)
-                  {
-                     throw new DeployException(e.getMessage(), e);
-                  }
+
+                  Set f = v.validate(ao.getAdminObject(), groups.toArray(new Class<?>[groups.size()]));
+                  if (!f.isEmpty())
+                     failures.addAll(f);
+
                }
             }
          
             if (!failures.isEmpty())
             {
-               throw new DeployException("Violation for " + deployment.getIdentifier(),
-                                         new ConstraintViolationException(failures));
+               throw new DeployException(bundle.violationOfValidationRule(deployment.getIdentifier()),
+                     new ConstraintViolationException(failures));
             }
          }
          finally

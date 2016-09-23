@@ -426,8 +426,8 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
                boolean added = false;
                if (listeners.size() < pool.getConfiguration().getMaxSize())
                {
-                              /*if (trace)
-                                 log.trace("Capacity fill: cl=" + cl);*/
+                  if (log.isTraceEnabled())
+                     log.trace("Capacity fill: cl=" + cl);
 
                   listeners.add(cl);
                   created++;
@@ -446,7 +446,7 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
             }
             catch (ResourceException re)
             {
-               //log.unableFillPool(re);
+               log.unableFillPool(pool.getConfiguration().getId(), re);
                return;
             }
          }
@@ -477,8 +477,6 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
    {
       if (size <= 0)
          return;
-
-      //TODO: trace and debug here
 
       if (pool.getLogger().isTraceEnabled())
       {
@@ -528,7 +526,6 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
                                                Tracer.isRecordCallstacks() ?
                                                new Throwable("CALLSTACK") : null);
 
-            //TODO:Trace
             boolean added = false;
 
             if (listeners.size() < size)
@@ -540,8 +537,6 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
 
             if (!added)
             {
-               //TODO: Trace
-
                if (Tracer.isEnabled())
                   Tracer.destroyConnectionListener(pool.getConfiguration().getId(), this, cl,
                                                    false, false, false, false,
@@ -613,7 +608,7 @@ public class DefaultManagedConnectionPool extends AbstractManagedConnectionPool
       }
       else
       {
-         // TODO: log
+         log.validateOnMatchNonCompliantManagedConnectionFactory(mcf.getClass().getName());
       }
 
       if (anyDestroyed)

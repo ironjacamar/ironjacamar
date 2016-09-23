@@ -20,6 +20,7 @@
  */
 package org.ironjacamar.common.annotations.repository.jandex;
 
+import org.ironjacamar.common.CommonBundle;
 import org.ironjacamar.common.spi.annotations.repository.Annotation;
 
 import java.lang.reflect.Field;
@@ -29,6 +30,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jboss.logging.Logger;
+import org.jboss.logging.Messages;
 
 /**
  * An AnnotationImpl.
@@ -39,6 +41,7 @@ import org.jboss.logging.Logger;
 public class AnnotationImpl implements Annotation
 {
    private static Logger log = Logger.getLogger(AnnotationImpl.class);
+   private static CommonBundle bundle = Messages.getBundle(CommonBundle.class);
    private String className;
    private ClassLoader cl;
    private List<String> parameterTypes;
@@ -83,7 +86,7 @@ public class AnnotationImpl implements Annotation
       }
       else
       {
-         throw new IllegalArgumentException("annotationClass should be an annotation");
+         throw new IllegalArgumentException(bundle.annotationClassShouldBeAnnotation());
       }
    }
    
