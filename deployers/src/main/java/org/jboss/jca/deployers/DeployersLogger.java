@@ -194,4 +194,14 @@ public interface DeployersLogger extends BasicLogger
    @LogMessage(level = INFO)
    @Message(id = 20019, value = "Changed TransactionSupport for %s")
    public void changedTransactionSupport(String jndiName);
+
+   /**
+    * Connection Properties for DataSource is empty.
+    *
+    * @param jndiName The JNDI name
+    * @param connURL  The connection URL
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 20020, value = "Connection Properties for DataSource: '%s' is empty, try to use driver-class: '%s' and connection-url: '%s' to connect database")
+   public void connectionPropertiesEmpty(String jndiName, String driverClass, String connURL);
 }
