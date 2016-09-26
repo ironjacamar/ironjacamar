@@ -756,6 +756,9 @@ public abstract class AbstractDsDeployer
          pp.prefill(subject, null, false);
       }
 
+      if (ds.getDataSourceClass() != null && ds.getConnectionProperties().isEmpty() && ds.getConnectionUrl() != null)
+          getLogger().connectionPropertiesEmpty(jndiName, ds.getDriverClass(), ds.getConnectionUrl());
+
       // ConnectionFactory
       return mcf.createConnectionFactory(cm);
    }

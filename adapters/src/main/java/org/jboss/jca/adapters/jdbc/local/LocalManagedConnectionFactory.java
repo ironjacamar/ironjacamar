@@ -104,7 +104,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       if (dataSourceClass == null && connectionURL == null && driverClass != null)
          throw new ResourceException(bundle.connectionURLNull());
 
-      if (dataSourceClass != null && connectionProps.size() == 0)
+      if (dataSourceClass != null && connectionProps.size() == 0 && (driverClass == null || connectionURL == null))
           throw new ResourceException(bundle.nonConnectionPropertyDefinedForDatasource(dataSourceClass));
 
       return super.createConnectionFactory(cm);
@@ -308,7 +308,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
       Connection con = null;
       try
       {
-         if (dataSourceClass != null)
+         if (dataSourceClass != null && !copy.isEmpty())
          {
             DataSource d = getDataSource();
             con = d.getConnection(copy.getProperty("user"), copy.getProperty("password"));
