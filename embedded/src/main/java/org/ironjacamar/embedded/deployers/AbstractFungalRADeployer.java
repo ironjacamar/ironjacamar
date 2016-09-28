@@ -95,7 +95,7 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
     */
    protected boolean isRarFile(URL url)
    {
-      if (url != null && url.toExternalForm().endsWith(".rar"))
+      if (url != null && url.toExternalForm().endsWith(".rar") && !url.toExternalForm().startsWith("jar"))
          return true;
 
       return false;
@@ -108,7 +108,7 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
     */
    protected boolean isRarDirectory(URL url)
    {
-      if (url != null && url.toExternalForm().endsWith(".rar/"))
+      if (url != null && url.toExternalForm().endsWith(".rar/") && !url.toExternalForm().startsWith("jar"))
          return true;
 
       return false;
