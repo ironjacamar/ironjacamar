@@ -318,6 +318,9 @@ public abstract class AbstractDsDeployer
                         jndis.add(jndiName);
                         cms.add(cm[0]);
                         mgts.add(mgtDataSource);
+
+                        log.debugf("Adding management datasource: %s", mgtDataSource);
+                        getManagementRepository().getDataSources().add(mgtDataSource);
                      }
                      catch (Throwable t)
                      {
@@ -378,6 +381,9 @@ public abstract class AbstractDsDeployer
                         cms.add(cm[0]);
                         recoveryModules.add(recovery[0]);
                         mgts.add(mgtDataSource);
+
+                        log.debugf("Adding management datasource: %s", mgtDataSource);
+                        getManagementRepository().getDataSources().add(mgtDataSource);
                      }
                      catch (Throwable t)
                      {
@@ -615,9 +621,6 @@ public abstract class AbstractDsDeployer
 
       if (mcf instanceof Statistics)
          mgtDs.setStatistics(((Statistics)mcf).getStatistics());
-
-      log.debugf("Adding management datasource: %s", mgtDs);
-      getManagementRepository().getDataSources().add(mgtDs);
 
       // Flush strategy
       FlushStrategy flushStrategy = FlushStrategy.FAILING_CONNECTION_ONLY;
@@ -892,9 +895,6 @@ public abstract class AbstractDsDeployer
 
       if (mcf instanceof Statistics)
          mgtDs.setStatistics(((Statistics)mcf).getStatistics());
-
-      log.debugf("Adding management datasource: %s", mgtDs);
-      getManagementRepository().getDataSources().add(mgtDs);
 
       // Flush strategy
       FlushStrategy flushStrategy = FlushStrategy.FAILING_CONNECTION_ONLY;
