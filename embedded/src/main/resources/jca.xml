@@ -256,6 +256,9 @@
     <property name="SubjectFactory"><inject bean="DefaultSubjectFactory"/></property>
     <property name="ClassLoaderPlugin"><inject bean="DefaulClassLoaderPlugin"/></property>
     <property name="BeanValidation"><inject bean="BeanValidation"/></property>
+    <property name="ArchiveValidation">true</property>
+    <property name="ArchiveValidationFailOnError">true</property>
+    <property name="ArchiveValidationFailOnWarn">true</property>
     <depends>ClassLoaderDeployer</depends>
     <depends>ConnectionValidator</depends>
     <depends>IdleConnectionRemover</depends>

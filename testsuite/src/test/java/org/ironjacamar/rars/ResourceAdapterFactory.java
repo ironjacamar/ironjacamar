@@ -62,6 +62,7 @@ import org.ironjacamar.rars.wm.WorkConnectionFactory;
 import org.ironjacamar.rars.wm.WorkConnectionFactoryImpl;
 import org.ironjacamar.rars.wm.WorkConnectionImpl;
 import org.ironjacamar.rars.wm.WorkManagedConnectionFactory;
+import org.ironjacamar.rars.wm.WorkManagedConnectionFactoryNoHashCode;
 import org.ironjacamar.rars.wm.WorkResourceAdapter;
 
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
@@ -413,6 +414,39 @@ public class ResourceAdapterFactory
    }
 
    /**
+    * Create the work.rar
+    *
+    * @return The resource adapter archive
+    */
+   public static ResourceAdapterArchive createWorkRarMCFNoHashCode()
+   {
+      org.jboss.shrinkwrap.descriptor.api.connector16.ConnectorDescriptor raXml = Descriptors
+            .create(org.jboss.shrinkwrap.descriptor.api.connector16.ConnectorDescriptor.class, "ra.xml").version("1.6");
+
+      org.jboss.shrinkwrap.descriptor.api.connector16.ResourceadapterType rt = raXml.getOrCreateResourceadapter()
+            .resourceadapterClass(WorkResourceAdapter.class.getName());
+      org.jboss.shrinkwrap.descriptor.api.connector16.OutboundResourceadapterType ort = rt
+            .getOrCreateOutboundResourceadapter().transactionSupport("NoTransaction").reauthenticationSupport(false);
+      org.jboss.shrinkwrap.descriptor.api.connector16.ConnectionDefinitionType cdt = ort.createConnectionDefinition()
+            .managedconnectionfactoryClass(WorkManagedConnectionFactoryNoHashCode.class.getName())
+            .connectionfactoryInterface(WorkConnectionFactory.class.getName())
+            .connectionfactoryImplClass(WorkConnectionFactoryImpl.class.getName())
+            .connectionInterface(WorkConnection.class.getName())
+            .connectionImplClass(WorkConnectionImpl.class.getName());
+
+      ResourceAdapterArchive raa = ShrinkWrap.create(ResourceAdapterArchive.class, "work.rar");
+
+      JavaArchive ja = ShrinkWrap.create(JavaArchive.class, "work.jar");
+      ja.addPackages(true, WorkConnection.class.getPackage());
+
+      raa.addAsLibrary(ja);
+      raa.addAsManifestResource(new StringAsset(raXml.exportAsString()), "ra.xml");
+
+      return raa;
+   }
+
+
+   /**
     * Create the work.rar deployment
     *
     * @param bc The BootstrapContext name; <code>null</code> if default
@@ -435,6 +469,31 @@ public class ResourceAdapterFactory
 
       return dashRaXml;
    }
+
+   /**
+    * Create the work.rar deployment
+    *
+    * @param bc The BootstrapContext name; <code>null</code> if default
+    * @return The resource adapter descriptor
+    */
+   public static ResourceAdaptersDescriptor createWorkDeploymentMCFNoHashCode(String bc)
+   {
+      ResourceAdaptersDescriptor dashRaXml = Descriptors.create(ResourceAdaptersDescriptor.class, "work-ra.xml");
+
+      ResourceAdapterType dashRaXmlRt = dashRaXml.createResourceAdapter().archive("work.rar");
+      if (bc != null)
+         dashRaXmlRt.bootstrapContext(bc);
+      ConnectionDefinitionsType dashRaXmlCdst = dashRaXmlRt.getOrCreateConnectionDefinitions();
+      org.ironjacamar.embedded.dsl.resourceadapters20.api.ConnectionDefinitionType dashRaXmlCdt = dashRaXmlCdst
+            .createConnectionDefinition().className(WorkManagedConnectionFactoryNoHashCode.class.getName())
+            .jndiName("java:/eis/WorkConnectionFactory").id("WorkConnectionFactory");
+
+      org.ironjacamar.embedded.dsl.resourceadapters20.api.PoolType dashRaXmlPt = dashRaXmlCdt.getOrCreatePool()
+            .minPoolSize(0).initialPoolSize(0).maxPoolSize(10);
+
+      return dashRaXml;
+   }
+
 
    /**
     * Create the unified-security.rar
