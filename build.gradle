@@ -308,6 +308,13 @@ def distributionCodeGen = copySpec {
   include '**/*'
 }
 
+def distributionRarInfo = copySpec {
+  from rootProject.file('rarinfo/src/dist/resources/')
+  into 'doc/rarinfo'
+  include '**/*'
+}
+
+
 def distributionSchemas = copySpec {
   from rootProject.file('common/src/main/resources/')
   into 'doc'
@@ -377,8 +384,8 @@ distributions {
   main {
     contents {
       with distributionSJC, distributionSchemas, distributionLib, distributionDependencies,
-              distributionJetty, distributionConsole, distributionCodeGen, distributionTracer, distributionValidator,
-              distributionDoc, distributionDocOther, distributionDevelDocHtml, distributionUserDocHtml
+              distributionJetty, distributionConsole, distributionCodeGen, distributionRarInfo, distributionTracer,
+              distributionValidator, distributionDoc, distributionDocOther, distributionDevelDocHtml, distributionUserDocHtml
     }
   }
 }
