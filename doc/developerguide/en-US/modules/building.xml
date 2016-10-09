@@ -152,6 +152,10 @@ ant &lt;target&gt;
         <para>Builds the JAR archives in the distribution and runs all the test cases.</para>
       </listitem>
       <listitem>
+        <para>checkstyle</para>
+        <para>Runs checkstyle, do this before committing your changes.</para>
+      </listitem>
+      <listitem>
         <para>module-test</para>
         <para>Builds the JAR archives in the distribution and runs all the test cases for the specified
         module (<code>-Dmodule=&lt;modulename&gt;</code>).</para>
