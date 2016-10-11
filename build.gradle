@@ -370,6 +370,11 @@ def distributionUserDocHtml = copySpec {
   into 'system/root.war/user-guide/'
   include '**/*'
 }
+def distributionApiJavaDoc = copySpec {
+  from rootProject.file('api/build/docs/javadoc')
+  into 'system/root.war/api'
+  include '**/*'
+}
 
 
 def distributionDocOther = copySpec {
@@ -380,12 +385,15 @@ def distributionDocOther = copySpec {
 
 
 
+
+
 distributions {
   main {
     contents {
       with distributionSJC, distributionSchemas, distributionLib, distributionDependencies,
               distributionJetty, distributionConsole, distributionCodeGen, distributionRarInfo, distributionTracer,
-              distributionValidator, distributionDoc, distributionDocOther, distributionDevelDocHtml, distributionUserDocHtml
+              distributionValidator, distributionDoc, distributionDocOther, distributionDevelDocHtml,
+              distributionUserDocHtml, distributionApiJavaDoc
     }
   }
 }
