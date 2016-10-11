@@ -19,6 +19,8 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
+def baseName = "ironjacamar-web"
+
 dependencies {
   compile(libraries.fungal) {
     transitive = false
@@ -101,7 +103,7 @@ jar {
   manifest {
     attributes("Implementation-Title" : "IronJacamar Web")
   }
-  baseName = "ironjacamar-web"
+  baseName = baseName
   dependsOn classes
 }
 
@@ -121,3 +123,32 @@ javadoc {
      }   
   }
 }
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Publishing
+publishing {
+  publications {
+    mavenJava(MavenPublication) {
+      from components.java
+
+      groupId 'org.ironjacamar'
+      artifactId baseName
+      version rootProject.version
+
+
+    }
+    // http://issues.gradle.org/browse/GRADLE-2966
+    // Once ^^ is resolved:
+    //		1) Move hibernate-testing module into hibernate-core tests
+    //		2) Define a second publication on hibernate-core for publishing the testing jar
+    // We could kind of do this now, but it would just be the jar.  Every module would still need
+    // to duplicate the testing dependencies.  Well, on second thought, we could centralize the
+    // testing dependencies here within the subprojects block
+  }
+}
+model {
+  tasks.generatePomFileForMavenJavaPublication {
+    destination = file( "build/generated-pom.xml" )
+  }
+}
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
