@@ -35,6 +35,9 @@ import java.util.List;
 public class CopyUtil
 {
 
+   private CopyUtil() {
+   }
+
    /**
     *
     * clone a list of IdDecoratedMetadata and deep into the elements

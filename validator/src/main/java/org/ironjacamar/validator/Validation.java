@@ -69,6 +69,9 @@ public class Validation
 
    private static final int OTHER = 2;
 
+   private Validation() {
+   }
+
    /**
     * validate
     * @param url The url

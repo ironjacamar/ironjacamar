@@ -31,6 +31,9 @@ import java.security.PrivilegedAction;
  */
 class SecurityActions
 {
+   private SecurityActions() {
+   }
+
    /**
     * Get a system property
     * @param name The property name

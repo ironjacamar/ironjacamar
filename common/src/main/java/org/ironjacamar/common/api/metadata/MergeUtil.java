@@ -36,6 +36,9 @@ import java.util.Set;
  */
 public class MergeUtil
 {
+   private MergeUtil() {
+   }
+
    /**
     *
     * Merge to List. The results is the union of the two arrays. Element present in left and right List

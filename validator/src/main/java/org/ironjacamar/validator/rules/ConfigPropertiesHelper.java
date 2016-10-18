@@ -71,6 +71,9 @@ public class ConfigPropertiesHelper
       WARNING_TYPES.add(short.class);
    }
 
+   private ConfigPropertiesHelper() {
+   }
+
    /**
     * validate ConfigProperties type
     *

@@ -677,6 +677,9 @@ public class Merger
     */
    protected static class ConfigPropertyFactory
    {
+      private ConfigPropertyFactory() {
+      }
+
       /**
        *
        * create a config property from a prototype

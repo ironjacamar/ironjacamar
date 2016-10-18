@@ -39,6 +39,9 @@ class Util
 {
    private static final Logger log = Logger.getLogger(Util.class);
 
+   private Util() {
+   }
+
    /**
     * Create a subcontext including any intermediate contexts.
     * @param ctx the parent JNDI Context under which value will be bound
