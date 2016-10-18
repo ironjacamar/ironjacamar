@@ -394,7 +394,7 @@ public class WorkManagerCoordinator
       try
       {
          // Create a new instance
-         WorkManager template = null;
+         WorkManager template;
          if (name != null)
          {
             template = workmanagers.get(name);

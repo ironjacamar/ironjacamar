@@ -311,7 +311,7 @@ public class WorkWrapper implements Runnable
          try
          {
             // Security context
-            org.ironjacamar.core.spi.security.SecurityContext sc = null;
+            org.ironjacamar.core.spi.security.SecurityContext sc;
 
             // Setup callback handler
             CallbackHandler cbh = null;
@@ -324,7 +324,7 @@ public class WorkWrapper implements Runnable
                cbh = securityIntegration.createCallbackHandler();
 
             // Subjects for execution environment
-            Subject executionSubject = null;
+            Subject executionSubject;
             Subject serviceSubject = null;
          
             if (trace)

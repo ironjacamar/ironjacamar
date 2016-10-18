@@ -94,7 +94,7 @@ public class ConnectableXAResourceWrapperStatImpl extends XAResourceWrapperStatI
     */
    public Object getConnection() throws Exception
    {
-      Object result = null;
+      Object result;
 
       if (cr1 != null)
       {

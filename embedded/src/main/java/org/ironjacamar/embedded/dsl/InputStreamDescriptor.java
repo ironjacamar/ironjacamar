@@ -75,7 +75,7 @@ public class InputStreamDescriptor implements Descriptor
       {
          StringBuilder sb = new StringBuilder();
 
-         int read = 0;
+         int read;
          while ((read = is.read()) != -1)
          {
             sb = sb.append((char)read);
@@ -110,7 +110,7 @@ public class InputStreamDescriptor implements Descriptor
 
       try
       {
-         int read = 0;
+         int read;
          while ((read = is.read()) != -1)
          {
             output.write(read);

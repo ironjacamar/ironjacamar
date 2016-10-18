@@ -81,7 +81,7 @@ public class RarFileExtractorDeployer extends AbstractFungalRADeployer implement
          if (!f.exists())
             throw new IOException("Archive " + url.toExternalForm() + " doesnt exists");
 
-         File root = null;
+         File root;
          if (f.isFile())
          {
             FileUtil fileUtil = new FileUtil();

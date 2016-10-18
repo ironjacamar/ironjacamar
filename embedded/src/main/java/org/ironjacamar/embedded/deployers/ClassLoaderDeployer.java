@@ -93,7 +93,7 @@ public class ClassLoaderDeployer extends AbstractFungalRADeployer implements Clo
       try
       {
          URL[] urls = getUrls(archive);
-         KernelClassLoader cl = null;
+         KernelClassLoader cl;
          if (parentFirst)
          {
             cl = ClassLoaderFactory.create(ClassLoaderFactory.TYPE_PARENT_FIRST, urls, parent);

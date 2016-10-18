@@ -579,7 +579,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
    {
       try
       {
-         Throwable exception = null;
+         Throwable exception;
 
          synchronized (connectionStackTraces)
          {

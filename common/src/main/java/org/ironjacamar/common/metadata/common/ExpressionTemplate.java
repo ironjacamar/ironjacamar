@@ -80,7 +80,7 @@ public class ExpressionTemplate
          {
             dv = -1;
          }
-         String systemProperty = null;
+         String systemProperty;
          String defaultValue = null;
          String s = template.substring(from + 2, to);
          if ("/".equals(s))

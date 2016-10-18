@@ -176,7 +176,7 @@ public class TransactionIntegrationImpl implements TransactionIntegration
                                                            String jndiName, ConnectableResource cr,
                                                            XAResourceStatistics xastat)
    {
-      LocalXAResource result = null;
+      LocalXAResource result;
       if (xastat != null && xastat.isEnabled())
       {
          result = new LocalConnectableXAResourceStatImpl(productName, productVersion, jndiName, cr, xastat);
@@ -198,7 +198,7 @@ public class TransactionIntegrationImpl implements TransactionIntegration
                                                            String jndiName, ManagedConnection mc,
                                                            XAResourceStatistics xastat)
    {
-      LocalXAResource result = null;
+      LocalXAResource result;
       if (xastat != null && xastat.isEnabled())
       {
          result = new LocalConnectableXAResourceStatImpl(productName, productVersion, jndiName,
@@ -223,7 +223,7 @@ public class TransactionIntegrationImpl implements TransactionIntegration
                                                 String jndiName,
                                                 XAResourceStatistics xastat)
    {
-      LocalXAResource result = null;
+      LocalXAResource result;
       if (xastat != null && xastat.isEnabled())
       {
          result = new LocalXAResourceStatImpl(productName, productVersion, jndiName, xastat);

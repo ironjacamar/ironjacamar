@@ -368,7 +368,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    protected org.ironjacamar.core.connectionmanager.listener.ConnectionListener getConnectionListener(
          Credential credential) throws ResourceException
    {
-      org.ironjacamar.core.connectionmanager.listener.ConnectionListener result = null;
+      org.ironjacamar.core.connectionmanager.listener.ConnectionListener result;
       Exception failure = null;
 
       // First attempt
@@ -494,7 +494,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       if (connection == null)
          throw new ResourceException();
 
-      Credential credential = null;
+      Credential credential;
       if (getSubjectFactory() == null || cmConfiguration.getSecurityDomain() == null)
       {
          credential = new Credential(null, cri);
