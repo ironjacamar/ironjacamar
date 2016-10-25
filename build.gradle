@@ -22,6 +22,7 @@ import org.apache.tools.ant.filters.*;
 
 defaultTasks 'build'
 
+
 version = "2.0.0-SNAPSHOT"
 // Dependencies
 
@@ -98,9 +99,32 @@ ext {
 // Java version
 ext.javaLanguageLevel = "1.8"
 
+buildscript {
+  repositories {
+    mavenCentral()
+    mavenLocal()
+    jcenter()
+
+    maven {
+      name 'jboss-nexus'
+      url "http://repository.jboss.org/nexus/content/groups/public/"
+    }
+    maven {
+      name "jboss-snapshots"
+      url "http://snapshots.jboss.org/maven2/"
+    }
+  }
+  dependencies {
+    classpath 'org.hibernate.build.gradle:gradle-maven-publish-auth:2.0.1' 
+  }
+}
+
 allprojects {
   apply plugin: 'distribution'
   apply plugin: 'jacoco'
+  apply plugin: 'maven-publish'
+  apply plugin: 'maven-publish-auth'
+
 
   repositories {
     mavenCentral()
@@ -108,6 +132,7 @@ allprojects {
     mavenCentral name: "jboss-nexus", artifactUrls: ["http://repository.jboss.org/nexus/content/groups/public/"]
     mavenCentral name: "jboss-snapshots", artifactUrls: ["http://snapshots.jboss.org/maven2/"]
     mavenCentral name: "fungal", artifactUrls: ["http://jesperpedersen.github.io/fungal/maven2/"]
+
   }
 
   jacoco {
@@ -120,6 +145,8 @@ buildscript {
     mavenCentral()
     mavenLocal()
     mavenCentral name: "jboss-nexus", artifactUrls: ["http://repository.jboss.org/nexus/content/groups/public/"]
+    mavenCentral name: "jboss-snapshots", artifactUrls: ["http://snapshots.jboss.org/maven2/"]
+
   }
 }
 
@@ -128,6 +155,14 @@ subprojects { subProject ->
   apply plugin: 'java'
   apply plugin: 'checkstyle'
   apply plugin: 'eclipse'
+  apply plugin: 'maven-publish'
+  repositories {
+    mavenCentral()
+    mavenLocal()
+    mavenCentral name: "jboss-nexus", artifactUrls: ["http://repository.jboss.org/nexus/content/groups/public/"]
+    mavenCentral name: "jboss-snapshots", artifactUrls: ["http://snapshots.jboss.org/maven2/"]
+
+  }
 
   configurations {
     apiVizTool {
@@ -232,6 +267,8 @@ subprojects { subProject ->
     doLast {
       aptDumpDir.delete()
     }
+
+
   }
 
   // for the time being eat the annoying output from running the annotation processors
