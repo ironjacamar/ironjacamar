@@ -151,6 +151,9 @@ public class IronJacamarXmlDeployer extends AbstractFungalRADeployer implements 
       i.setClassLoaderPlugin(classLoaderPlugin);
       i.setBeanValidation(beanValidation);
       i.setDefaultPoolType(defaultPoolType);
+      i.setArchiveValidation(archiveValidation);
+      i.setArchiveValidationFailOnWarn(archiveValidationFailOnWarn);
+      i.setArchiveValidationFailOnError(archiveValidationFailOnError);
       return i;
    }
 

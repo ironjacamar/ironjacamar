@@ -22,11 +22,13 @@
 package org.ironjacamar.deployers;
 
 import org.jboss.logging.BasicLogger;
+import org.jboss.logging.annotations.Cause;
 import org.jboss.logging.annotations.LogMessage;
 import org.jboss.logging.annotations.Message;
 import org.jboss.logging.annotations.MessageLogger;
 
 import static org.jboss.logging.Logger.Level.INFO;
+import static org.jboss.logging.Logger.Level.WARN;
 
 /**
  * The deployers logger.
@@ -61,5 +63,24 @@ public interface DeployersLogger extends BasicLogger
    @LogMessage(level = INFO)
    @Message(id = 20003, value = "Changed TransactionSupport for %s")
    public void changedTransactionSupport(String jndiName);
+
+   /**
+    * Validation report failure
+    * @param detail The details
+    * @param t The exception
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 20004, value = "Failure during validation report generation: %s")
+   public void validationReportFailure(String detail, @Cause Throwable t);
+
+   /**
+    * Invalid archive
+    * @param archive The archive
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 2005, value = "Invalid archive: %s")
+   public void validationInvalidArchive(String archive);
+
+
 
 }

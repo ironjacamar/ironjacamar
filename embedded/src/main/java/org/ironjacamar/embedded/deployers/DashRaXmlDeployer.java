@@ -171,6 +171,9 @@ public class DashRaXmlDeployer extends AbstractFungalRADeployer implements Clone
       d.setClassLoaderPlugin(classLoaderPlugin);
       d.setBeanValidation(beanValidation);
       d.setDefaultPoolType(defaultPoolType);
+      d.setArchiveValidation(archiveValidation);
+      d.setArchiveValidationFailOnWarn(archiveValidationFailOnWarn);
+      d.setArchiveValidationFailOnError(archiveValidationFailOnError);
       return d;
    }
 

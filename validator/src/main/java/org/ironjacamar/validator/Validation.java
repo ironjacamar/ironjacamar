@@ -225,7 +225,7 @@ public class Validation
          validateClasses.addAll(createActivationSpec(c, failures, validator.getResourceBundle(), cl));
          validateClasses.addAll(createAdminObject(c, failures, validator.getResourceBundle(), cl));
 
-         if (validateClassesInPackage(root))
+         if (root != null && validateClassesInPackage(root))
          {
             Failure failure = new Failure(Severity.WARNING, "20.2",
                                           validator.getResourceBundle().getString("pak.cip"));
@@ -268,7 +268,8 @@ public class Validation
             }
             else
             {
-               throw new ValidatorException(c.getEisType().getValue(), failures, validator.getResourceBundle());
+               String eisType = c.getEisType() != null ? c.getEisType().getValue() : "unknown Eis Type";
+               throw new ValidatorException(eisType, failures, validator.getResourceBundle());
             }
 
             exitCode = FAIL;

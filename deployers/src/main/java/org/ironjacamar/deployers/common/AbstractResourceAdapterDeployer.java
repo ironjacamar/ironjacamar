@@ -65,6 +65,14 @@ import org.ironjacamar.core.spi.transaction.recovery.XAResourceRecovery;
 import org.ironjacamar.core.util.Injection;
 import org.ironjacamar.deployers.DeployersBundle;
 import org.ironjacamar.deployers.DeployersLogger;
+import org.ironjacamar.validator.Failure;
+import org.ironjacamar.validator.FailureHelper;
+import org.ironjacamar.validator.Key;
+import org.ironjacamar.validator.Severity;
+import org.ironjacamar.validator.Validate;
+import org.ironjacamar.validator.ValidateClass;
+import org.ironjacamar.validator.Validator;
+import org.ironjacamar.validator.ValidatorException;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -82,7 +90,6 @@ import java.util.regex.Pattern;
 import javax.resource.spi.ResourceAdapterAssociation;
 import javax.resource.spi.TransactionSupport;
 import javax.validation.ConstraintViolationException;
-import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
 import org.jboss.logging.Messages;
@@ -128,6 +135,18 @@ public abstract class AbstractResourceAdapterDeployer
 
    /** The default pool type */
    protected String defaultPoolType;
+
+   /** archiveValidation option */
+   protected boolean archiveValidation;
+
+   /** archiveValidation FailOnWarn option */
+   protected boolean archiveValidationFailOnWarn;
+
+   /** archiveValidation FailOnError option */
+   protected boolean archiveValidationFailOnError;
+
+   /** List of objs needing a validation */
+   private List<Validate> validationObj = new ArrayList<>();
    
    /**
     * Constructor
@@ -145,6 +164,9 @@ public abstract class AbstractResourceAdapterDeployer
       this.classLoaderPlugin = null;
       this.beanValidation = null;
       this.defaultPoolType = null;
+      this.archiveValidation = false;
+      this.archiveValidationFailOnError = false;
+      this.archiveValidationFailOnWarn = false;
    }
 
    /**
@@ -237,7 +259,34 @@ public abstract class AbstractResourceAdapterDeployer
    {
       this.defaultPoolType = v;
    }
-   
+
+   /**
+    * Set the archive validation option
+    * @param archiveValidation the boolean setting the config option
+    */
+   public void setArchiveValidation(boolean archiveValidation)
+   {
+      this.archiveValidation = archiveValidation;
+   }
+
+   /**
+    * Set the fail on warn option
+    * @param archiveValidationFailOnWarn the boolean setting the config option
+    */
+   public void setArchiveValidationFailOnWarn(boolean archiveValidationFailOnWarn)
+   {
+      this.archiveValidationFailOnWarn = archiveValidationFailOnWarn;
+   }
+
+   /**
+    * Set the fail on error option
+    * @param archiveValidationFailOnError the boolean setting the config option
+    */
+   public void setArchiveValidationFailOnError(boolean archiveValidationFailOnError)
+   {
+      this.archiveValidationFailOnError = archiveValidationFailOnError;
+   }
+
    /**
     * Register a metadata instance with the repository
     * @param name The name
@@ -316,6 +365,27 @@ public abstract class AbstractResourceAdapterDeployer
 
          Deployment deployment = builder.build();
 
+         Set<Failure> failures = new HashSet<>();
+         failures = validateArchive(validationObj, failures);
+
+         if (archiveValidationFailOnWarn &&
+               (hasFailuresLevel(failures, Severity.WARNING) || hasFailuresLevel(failures, Severity.ERROR)) ||
+               (archiveValidationFailOnError && hasFailuresLevel(failures, Severity.ERROR)))
+         {
+            Validator v = new Validator();
+            throw new ValidatorException(printFailuresLog(v, failures), failures,
+                  v.getResourceBundle());
+         }
+         else
+         {
+            if (failures != null && failures.size() > 0)
+            {
+               log.validationInvalidArchive(root.getName());
+            }
+
+            printFailuresLog(new Validator(), failures);
+         }
+
          if (is16(deployment.getMetadata()))
             verifyBeanValidation(deployment);
 
@@ -389,6 +459,8 @@ public abstract class AbstractResourceAdapterDeployer
          javax.resource.spi.ResourceAdapter resourceAdapter =
             (javax.resource.spi.ResourceAdapter)clz.newInstance();
 
+         validationObj.add(new ValidateClass(Key.RESOURCE_ADAPTER, clz, configProperties));
+
          Collection<org.ironjacamar.core.api.deploymentrepository.ConfigProperty> dcps =
             injectConfigProperties(resourceAdapter, configProperties, overrides, builder.getClassLoader());
 
@@ -402,7 +474,6 @@ public abstract class AbstractResourceAdapterDeployer
             ti = transactionIntegration;
          }
          bootstrapContext.setResourceAdapter(resourceAdapter);
-
          builder.resourceAdapter(new ResourceAdapterImpl(resourceAdapter, bootstrapContext, dcps,
                statisticsPlugin, productName, productVersion,
                createInboundMapping(ira, builder.getClassLoader()),
@@ -439,8 +510,12 @@ public abstract class AbstractResourceAdapterDeployer
          javax.resource.spi.ManagedConnectionFactory mcf =
             (javax.resource.spi.ManagedConnectionFactory)clz.newInstance();
 
+         Collection<org.ironjacamar.common.api.metadata.spec.ConfigProperty> configProperties =
+               findConfigProperties(mcfClass, connector);
+         validationObj.add(new ValidateClass(Key.MANAGED_CONNECTION_FACTORY, clz, configProperties));
+
          Collection<org.ironjacamar.core.api.deploymentrepository.ConfigProperty> dcps =
-            injectConfigProperties(mcf, findConfigProperties(mcfClass, connector), cd.getConfigProperties(),
+            injectConfigProperties(mcf, configProperties, cd.getConfigProperties(),
                                    builder.getClassLoader());
 
          if (mcf instanceof TransactionSupport)
@@ -518,7 +593,9 @@ public abstract class AbstractResourceAdapterDeployer
 
          // Create ConnectionFactory
          Object cf = mcf.createConnectionFactory(cm);
-         
+
+         validationObj.add(new ValidateClass(Key.CONNECTION_FACTORY, cf.getClass()));
+
          builder.connectionFactory(new ConnectionFactoryImpl(cd.getJndiName(), cf, dcps, cd, cm, dpool,
                                                              statisticsPlugin, recovery, jndiStrategy));
       }
@@ -544,11 +621,14 @@ public abstract class AbstractResourceAdapterDeployer
          Class<?> clz = Class.forName(aoClass, true, builder.getClassLoader());
 
          Object adminObject = clz.newInstance();
+         Collection<org.ironjacamar.common.api.metadata.spec.ConfigProperty> configProperties = findConfigProperties(
+               aoClass, connector);
 
-         Collection<org.ironjacamar.core.api.deploymentrepository.ConfigProperty> dcps =
-            injectConfigProperties(adminObject, findConfigProperties(aoClass, connector), ao.getConfigProperties(),
-                                   builder.getClassLoader());
-         
+         Collection<org.ironjacamar.core.api.deploymentrepository.ConfigProperty> dcps = injectConfigProperties(
+               adminObject, configProperties, ao.getConfigProperties(), builder.getClassLoader());
+
+         validationObj.add(new ValidateClass(Key.ADMIN_OBJECT, clz, configProperties));
+
          org.ironjacamar.core.spi.statistics.StatisticsPlugin statisticsPlugin = null;
          if (adminObject instanceof org.ironjacamar.core.spi.statistics.Statistics)
             statisticsPlugin = ((org.ironjacamar.core.spi.statistics.Statistics)adminObject).getStatistics();
@@ -1140,6 +1220,7 @@ public abstract class AbstractResourceAdapterDeployer
                   requiredConfigProperties.add(rcp.getConfigPropertyName().getValue());
                }
             }
+            validationObj.add(new ValidateClass(Key.ACTIVATION_SPEC, clz, as.getConfigProperties()));
 
             ActivationSpecImpl asi = new ActivationSpecImpl(clzName, configProperties, requiredConfigProperties);
             if (!result.containsKey(type))
@@ -1257,7 +1338,7 @@ public abstract class AbstractResourceAdapterDeployer
          try
          {
             vf = beanValidation.getValidatorFactory();
-            Validator v = vf.getValidator();
+            javax.validation.Validator v = vf.getValidator();
 
             Collection<String> l = deployment.getActivation().getBeanValidationGroups();
             if (l == null || l.isEmpty())
@@ -1382,8 +1463,107 @@ public abstract class AbstractResourceAdapterDeployer
    }
 
    /**
+    * validate archive
+    *
+    * @param archiveValidationObjs archiveValidation archiveValidation classes and/or to validate.
+    * @param failures failures failures original list of failures
+    * @return The list of failures gotten with all new failures added. Null in case of no failures
+    * or if validation is not run according to archiveValidation Setting. It returns null also if
+    * the concrete implementation of this class set validateClasses instance variable to flase and the list of
+    * archiveValidation contains one or more instance of {@link ValidateClass} type
+    */
+   public Set<Failure> validateArchive(List<Validate> archiveValidationObjs, Set<Failure> failures)
+   {
+      // Archive validation
+      if (!archiveValidation)
+      {
+         return null;
+      }
+
+      for (Validate validate : archiveValidationObjs)
+      {
+         if (!(validate instanceof Validate))
+            return null;
+      }
+
+      org.ironjacamar.validator.Validator validator = new org.ironjacamar.validator.Validator();
+      List<Failure> partialFailures = validator.validate(archiveValidationObjs);
+
+      if (partialFailures != null)
+      {
+         if (failures == null)
+         {
+            failures = new HashSet<>();
+         }
+         failures.addAll(partialFailures);
+      }
+
+      return failures;
+   }
+
+   /**
+    * Check for failures at a certain level
+    * @param failures failures failures The failures
+    * @param severity severity severity The level
+    * @return True if a failure is found with the specified severity; otherwise false
+    */
+   protected boolean hasFailuresLevel(Collection<Failure> failures, int severity)
+   {
+      if (failures != null)
+      {
+         for (Failure failure : failures)
+         {
+            if (failure.getSeverity() == severity)
+            {
+               return true;
+            }
+         }
+      }
+      return false;
+   }
+
+
+   /**
+    * print Failures into Log files.
+    *
+    * @param validator validator validator validator instance used to run validation rules
+    * @param failures failures failures the list of Failures to be printed
+    * @param fhInput fhInput fhInput optional parameter. Normally used only for test or in case of
+    *   FailureHelper already present in context
+    * @return the error Text
+    *
+    */
+   public String printFailuresLog(Validator validator, Collection<Failure> failures, FailureHelper... fhInput)
+   {
+      String errorText = "";
+      FailureHelper fh = null;
+      if (fhInput.length == 0)
+         fh = new FailureHelper(failures);
+      else
+         fh = fhInput[0];
+
+      if (failures != null && failures.size() > 0)
+      {
+         errorText = fh.asText(validator.getResourceBundle());
+      }
+      return errorText;
+   }
+
+   /**
     * Get the logger
     * @return The value
     */
    protected abstract DeployersLogger getLogger();
+
+   /**
+    *
+    * get The directory where write error reports
+    *
+    * @return the directory as {@link File}
+    */
+   protected File getReportDirectory()
+   {
+      return new File(SecurityActions.getSystemProperty("ironjacamar.home"), "/log/");
+   }
+
 }

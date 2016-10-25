@@ -23,6 +23,7 @@ package org.ironjacamar.validator;
 
 import org.ironjacamar.common.api.metadata.spec.ConfigProperty;
 
+import java.util.Collection;
 import java.util.List;
 
 
@@ -37,7 +38,7 @@ public class ValidateClass implements Validate
    private final Key key;
 
    /** config-property */
-   private final List<? extends ConfigProperty> configProperties;
+   private final Collection<? extends ConfigProperty> configProperties;
 
    /** Clazz */
    private Class<?> clazz;
@@ -67,7 +68,7 @@ public class ValidateClass implements Validate
     */
    public ValidateClass(Key key,
                         Class<?> clazz,
-                        List<? extends ConfigProperty> configProperties)
+                        Collection<? extends ConfigProperty> configProperties)
    {
       this.key = key;
       this.clazz = clazz;
@@ -123,7 +124,7 @@ public class ValidateClass implements Validate
     * Get the list of config properties
     * @return The list
     */
-   public List<? extends ConfigProperty> getConfigProperties()
+   public Collection<? extends ConfigProperty> getConfigProperties()
    {
       return configProperties;
    }

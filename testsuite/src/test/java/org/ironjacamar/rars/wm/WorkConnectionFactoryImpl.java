@@ -26,6 +26,7 @@ import javax.naming.Reference;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionManager;
+import javax.resource.spi.ManagedConnectionFactory;
 
 /**
  * WorkConnectionFactoryImpl
@@ -41,7 +42,7 @@ public class WorkConnectionFactoryImpl implements WorkConnectionFactory
    private Reference reference;
 
    /** ManagedConnectionFactory */
-   private WorkManagedConnectionFactory mcf;
+   private ManagedConnectionFactory mcf;
 
    /** ConnectionManager */
    private ConnectionManager connectionManager;
@@ -59,7 +60,7 @@ public class WorkConnectionFactoryImpl implements WorkConnectionFactory
     * @param mcf ManagedConnectionFactory
     * @param cxManager ConnectionManager
     */
-   public WorkConnectionFactoryImpl(WorkManagedConnectionFactory mcf, ConnectionManager cxManager)
+   public WorkConnectionFactoryImpl(ManagedConnectionFactory mcf, ConnectionManager cxManager)
    {
       this.mcf = mcf;
       this.connectionManager = cxManager;

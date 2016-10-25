@@ -52,4 +52,14 @@ class SecurityActions
          }
       });
    }
+
+   /**
+    * Get a system property
+    * @param name The property name
+    * @return The property value
+    */
+   static String getSystemProperty(final String name)
+   {
+      return AccessController.doPrivileged((PrivilegedAction<String>) () -> System.getProperty(name));
+   }
 }
