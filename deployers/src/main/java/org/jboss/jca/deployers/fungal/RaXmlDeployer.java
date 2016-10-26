@@ -37,6 +37,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +59,7 @@ import com.github.fungal.spi.deployers.Deployment;
  * The -ra.xml deployer for JCA/SJC
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public final class RaXmlDeployer extends AbstractFungalRADeployer
+public class RaXmlDeployer extends AbstractFungalRADeployer
    implements
       Deployer,
       DeployerPhases
@@ -89,7 +90,7 @@ public final class RaXmlDeployer extends AbstractFungalRADeployer
     */
    public boolean accepts(URL url)
    {
-      if (url == null || !url.toExternalForm().endsWith("-ra.xml"))
+      if (url == null || url.toExternalForm().startsWith("jar") || !url.toExternalForm().endsWith("-ra.xml"))
          return false;
 
       return true;
@@ -169,7 +170,7 @@ public final class RaXmlDeployer extends AbstractFungalRADeployer
       InputStream is = null;
       try
       {
-         File f = new File(url.toURI());
+         File f = getFileFromUrl(url);
 
          if (!f.exists())
             throw new IOException("Archive " + url.toExternalForm() + " doesnt exists");
@@ -221,9 +222,40 @@ public final class RaXmlDeployer extends AbstractFungalRADeployer
                // Ignore
             }
          }
-
+         
+         cleanTemporaryFiles(url);
          SecurityActions.setThreadContextClassLoader(oldTCCL);
       }
+   }
+   
+   /**
+    * Get File object of URL who locate xml resource
+    * @param url url of the archive
+    * @return a File object pointing of xml resource
+    * @throws URISyntaxException Thrown if the resource adapter cant be found
+    * @throws IOException Thrown if the resource adapter cant be accessible
+    */
+   protected File getFileFromUrl(URL url) throws URISyntaxException, IOException
+   {
+      return new File(url.toURI());
+   }
+   
+   /**
+    * Get IronJacamar Home directory
+    * @return a String object
+    */
+   protected String getIronJacamarHome()
+   {
+      return SecurityActions.getSystemProperty("iron.jacamar.home");
+   }
+   
+   /**
+    * Clean all potential temporary files
+    * @param url url of the archive
+    * @throws DeployException Thrown if the resource cant be cleaned
+    */
+   protected void cleanTemporaryFiles(URL url) throws DeployException
+   {
    }
 
    /**
