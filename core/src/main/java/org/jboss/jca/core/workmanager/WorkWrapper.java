@@ -226,7 +226,14 @@ public class WorkWrapper implements Runnable
       }
       catch (Throwable t)
       {
-         exception = new WorkCompletedException(t.getMessage(), t);
+         if (t instanceof WorkCompletedException)
+         {
+            exception = (WorkCompletedException) t;
+         }
+         else
+         {
+            exception = new WorkCompletedException(t.getMessage(), t);
+         }
 
          cancel();
       } 
