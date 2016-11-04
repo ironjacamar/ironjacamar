@@ -26,6 +26,7 @@ import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
+import org.jboss.jca.core.api.management.ManagedEnlistmentTrace;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionState;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
@@ -116,7 +117,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    protected Boolean tracking;
 
    /** Enlistment trace */
-   protected Boolean enlistmentTrace;
+   protected ManagedEnlistmentTrace enlistmentTrace;
 
    /**
     * Creates a new instance of connection manager.
@@ -425,7 +426,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
     * Get enlistment trace
     * @return The value
     */
-   public Boolean getEnlistmentTrace()
+   public ManagedEnlistmentTrace getEnlistmentTrace()
    {
       return enlistmentTrace;
    }
@@ -434,7 +435,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
     * Set the enlistment trace flag
     * @param v The value
     */
-   public void setEnlistmentTrace(Boolean v)
+   public void setEnlistmentTrace(ManagedEnlistmentTrace v)
    {
       this.enlistmentTrace = v;
 

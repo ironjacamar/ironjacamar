@@ -87,7 +87,7 @@ public interface Defaults
    /**
     * ENLISTMENT_TRACE
     */
-   public static final Boolean ENLISTMENT_TRACE = null;
+   public static final Boolean ENLISTMENT_TRACE = false;
    
    // POOL
 

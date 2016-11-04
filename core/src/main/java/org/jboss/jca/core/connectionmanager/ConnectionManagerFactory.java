@@ -24,6 +24,7 @@ package org.jboss.jca.core.connectionmanager;
 
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
+import org.jboss.jca.core.api.management.ManagedEnlistmentTrace;
 import org.jboss.jca.core.connectionmanager.notx.NoTxConnectionManagerImpl;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.tx.TxConnectionManagerImpl;
@@ -154,7 +155,7 @@ public class ConnectionManagerFactory
                                                   final boolean enlistment,
                                                   final boolean connectable,
                                                   final Boolean tracking,
-                                                  final Boolean enlistmentTrace,
+                                                  final ManagedEnlistmentTrace enlistmentTrace,
                                                   final FlushStrategy flushStrategy,
                                                   final Integer allocationRetry,
                                                   final Long allocationRetryWaitMillis,
@@ -240,7 +241,7 @@ public class ConnectionManagerFactory
                               boolean enlistment,
                               boolean connectable,
                               Boolean tracking,
-                              Boolean enlistmentTrace,
+                              ManagedEnlistmentTrace enlistmentTrace,
                               FlushStrategy flushStrategy,
                               Integer allocationRetry,
                               Long allocationRetryWaitMillis,
