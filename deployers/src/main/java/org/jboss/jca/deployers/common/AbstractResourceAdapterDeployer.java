@@ -43,6 +43,7 @@ import org.jboss.jca.common.metadata.spec.ConfigPropertyImpl;
 import org.jboss.jca.core.api.bootstrap.CloneableBootstrapContext;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
+import org.jboss.jca.core.api.management.DataSource;
 import org.jboss.jca.core.bootstrapcontext.BootstrapContextCoordinator;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
@@ -1641,7 +1642,12 @@ public abstract class AbstractResourceAdapterDeployer
 
                                     if (connectionDefinition != null)
                                        enlistmentTrace = connectionDefinition.isEnlistmentTrace();
-                                    
+
+                                    org.jboss.jca.core.api.management.ConnectionManager mgtCM =
+                                            new org.jboss.jca.core.api.management.ConnectionManager(connectionDefinition.getJndiName());
+
+                                    mgtCM.setEnlistmentTrace(enlistmentTrace);
+                                    mgtConnector.getConnectionManagers().add(mgtCM);
                                     cm = cmf.createTransactional(tsl, pool,
                                                                  getSubjectFactory(securityDomain), securityDomain,
                                                                  useCCM, getCachedConnectionManager(),
@@ -1649,7 +1655,7 @@ public abstract class AbstractResourceAdapterDeployer
                                                                  enlistment,
                                                                  connectable,
                                                                  tracking,
-                                                                 enlistmentTrace,
+                                                                 mgtCM,
                                                                  flushStrategy,
                                                                  allocationRetry, allocationRetryWaitMillis,
                                                                  getTransactionIntegration(),

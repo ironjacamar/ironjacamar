@@ -641,6 +641,7 @@ public abstract class AbstractDsDeployer
       boolean connectable = ds.isConnectable() == null ? false : ds.isConnectable().booleanValue();
       Boolean tracking = ds.isTracking();
       Boolean enlistmentTrace = ds.isEnlistmentTrace();
+      mgtDs.setEnlistmentTrace(enlistmentTrace);
 
       // Select the correct connection manager
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
@@ -651,7 +652,7 @@ public abstract class AbstractDsDeployer
          cm = cmf.createTransactional(TransactionSupportLevel.LocalTransaction, pool, 
                                       getSubjectFactory(securityDomain), securityDomain,
                                       ds.isUseCcm(), getCachedConnectionManager(),
-                                      true, true, connectable, tracking, enlistmentTrace,
+                                      true, true, connectable, tracking, mgtDs,
                                       flushStrategy,
                                       allocationRetry, allocationRetryWaitMillis,
                                       getTransactionIntegration(),
@@ -925,15 +926,17 @@ public abstract class AbstractDsDeployer
 
       boolean connectable = ds.isConnectable() == null ? false : ds.isConnectable().booleanValue();
       Boolean tracking = ds.isTracking();
+
       Boolean enlistmentTrace = ds.isEnlistmentTrace();
+      mgtDs.setEnlistmentTrace(enlistmentTrace);
 
       // Select the correct connection manager
       TransactionSupportLevel tsl = TransactionSupportLevel.XATransaction;
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       ConnectionManager cm =
-         cmf.createTransactional(tsl, pool, getSubjectFactory(securityDomain), securityDomain,
+              cmf.createTransactional(tsl, pool, getSubjectFactory(securityDomain), securityDomain,
                                  ds.isUseCcm(), getCachedConnectionManager(),
-                                 true, true, connectable, tracking, enlistmentTrace,
+                                 true, true, connectable, tracking, mgtDs,
                                  flushStrategy,
                                  allocationRetry, allocationRetryWaitMillis,
                                  getTransactionIntegration(), interleaving,

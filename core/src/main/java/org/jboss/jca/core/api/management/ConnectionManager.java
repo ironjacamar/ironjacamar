@@ -32,35 +32,23 @@ import java.util.List;
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  * @author <a href="mailto:jeff.zhang@ironjacamar.org">Jeff Zhang</a> 
  */
-public class Connector
+public class ConnectionManager implements ManagedEnlistmentTrace
 {
    /** The unique id */
    private String uniqueId;
 
-   /** The resource adapter instance */
-   private ResourceAdapter resourceAdapter;
 
-   /** The connection factories */
-   private List<ConnectionFactory> connectionFactories;
-
-   /** The admin objects */
-   private List<AdminObject> adminObjects;
-
-   /** The connection managers */
-   private List<ConnectionManager> connectionManagers;
+   /** The enlistment trace */
+   private WeakReference<Boolean> enlistmentTrace;
 
 
    /**
     * Constructor
     * @param uniqueId The unique id
     */
-   public Connector(String uniqueId)
+   public ConnectionManager(String uniqueId)
    {
       this.uniqueId = uniqueId;
-      this.resourceAdapter = null;
-      this.connectionFactories = null;
-      this.adminObjects = null;
-      this.connectionManagers = null;
    }
 
    /**
@@ -76,56 +64,22 @@ public class Connector
     * Get the resource adapter
     * @return The value
     */
-   public ResourceAdapter getResourceAdapter()
-   {
-      return resourceAdapter;
+
+   @Override
+   public Boolean getEnlistmentTrace() {
+      if (enlistmentTrace == null)
+         return null;
+
+      return enlistmentTrace.get();
    }
 
    /**
-    * Set the resource adapter
-    * @param ra The value
+    * Set the enlistmentTrace
+    * @param enlistmentTrace The enlistmentTrace module
     */
-   public void setResourceAdapter(ResourceAdapter ra)
-   {
-      this.resourceAdapter = ra;
+   public void setEnlistmentTrace(Boolean enlistmentTrace) {
+      this.enlistmentTrace = new WeakReference<Boolean>(enlistmentTrace);
    }
-
-   /**
-    * Get the list of connection factories
-    * @return The value
-    */
-   public List<ConnectionFactory> getConnectionFactories()
-   {
-      if (connectionFactories == null)
-         connectionFactories = new ArrayList<ConnectionFactory>(1);
-
-      return connectionFactories;
-   }
-
-   /**
-    * Get the list of admin objects
-    * @return The value
-    */
-   public List<AdminObject> getAdminObjects()
-   {
-      if (adminObjects == null)
-         adminObjects = new ArrayList<AdminObject>(1);
-
-      return adminObjects;
-   }
-
-   /**
-    * Get the list of connection managers
-    * @return The value
-    */
-   public List<ConnectionManager> getConnectionManagers()
-   {
-      if (connectionManagers == null)
-         connectionManagers = new ArrayList<ConnectionManager>(1);
-
-      return connectionManagers;
-   }
-
 
    /**
     * String representation
@@ -138,10 +92,7 @@ public class Connector
 
       sb.append("Connector@").append(Integer.toHexString(System.identityHashCode(this)));
       sb.append("[uniqueId=").append(uniqueId);
-      sb.append(" resourceAdapter=").append(resourceAdapter);
-      sb.append(" connectionFactories=").append(connectionFactories);
-      sb.append(" adminObjects=").append(adminObjects);
-      sb.append(" connectionManagers=").append(connectionManagers);
+      sb.append(" enlistmentTrace=").append(getEnlistmentTrace());
       sb.append("]");
 
       return sb.toString();

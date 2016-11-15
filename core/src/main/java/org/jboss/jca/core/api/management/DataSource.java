@@ -33,8 +33,7 @@ import java.lang.ref.WeakReference;
  * 
  * @author <a href="mailto:jeff.zhang@ironjacamar.org">Jeff Zhang</a> 
  */
-public class DataSource
-{   
+public class DataSource implements ManagedEnlistmentTrace {
    /** xa datasource or not */
    private boolean xa;
    
@@ -49,7 +48,11 @@ public class DataSource
 
    /** The statistics */
    private WeakReference<StatisticsPlugin> statistics;
-   
+
+   /** The enlistment trace */
+   private WeakReference<Boolean> enlistmentTrace;
+
+
    /**
     * Constructor
     * @param xa datasource is xa or not
@@ -150,6 +153,7 @@ public class DataSource
       return statistics.get();
    }
 
+
    /**
     * Set the statistics
     * @param v The statistics module
@@ -157,6 +161,29 @@ public class DataSource
    public void setStatistics(StatisticsPlugin v)
    {
       this.statistics = new WeakReference<StatisticsPlugin>(v);
+   }
+
+   /**
+    * Get the enlistmentTrace instance.
+    *
+    * Note, that the value may be <code>null</code> if the enlistmentTrace module was
+    * undeployed and this object wasn't cleared up correctly.
+    * @return The instance
+     */
+   @Override
+   public Boolean getEnlistmentTrace() {
+      if (enlistmentTrace == null)
+         return null;
+
+      return enlistmentTrace.get();
+   }
+
+   /**
+    * Set the enlistmentTrace
+    * @param enlistmentTrace The enlistmentTrace module
+    */
+   public void setEnlistmentTrace(Boolean enlistmentTrace) {
+      this.enlistmentTrace = new WeakReference<Boolean>(enlistmentTrace);
    }
 
    /**
@@ -173,6 +200,7 @@ public class DataSource
       sb.append(" pool=").append(getPool());
       sb.append(" poolconfiguration=").append(getPoolConfiguration());
       sb.append(" statistics=").append(getStatistics());
+      sb.append(" enlistmentTrace=").append(getEnlistmentTrace());
       sb.append("]");
 
       return sb.toString();

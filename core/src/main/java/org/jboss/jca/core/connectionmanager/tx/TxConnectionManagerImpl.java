@@ -755,8 +755,9 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
       }
 
       ConnectionListener cli = new TxConnectionListener(this, mc, getPool(), mcp,
-                                                        getFlushStrategy(), getTracking(), getEnlistmentTrace(),
-                                                        xaResource, explicitXAResourceTimeout);
+              getFlushStrategy(), getTracking(),
+              getEnlistmentTrace().getEnlistmentTrace(),
+              xaResource, explicitXAResourceTimeout);
       mc.addConnectionEventListener(cli);
       return cli;
    }
