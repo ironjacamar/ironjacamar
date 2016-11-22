@@ -58,6 +58,7 @@ import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 
+import org.jboss.jca.core.tx.jbossts.XAResourceWrapperStatImpl;
 import org.jboss.logging.Logger;
 import org.jboss.logging.Messages;
 
@@ -711,7 +712,10 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
             {
                XAResource xar = mc.getXAResource();
 
-               if (!(xar instanceof org.jboss.jca.core.spi.transaction.xa.XAResourceWrapper))
+               if (!(xar instanceof org.jboss.jca.core.spi.transaction.xa.XAResourceWrapper) ||
+                       (getXAResourceStatistics() != null &&
+                               getXAResourceStatistics().isEnabled() &&
+                               !(xar instanceof XAResourceWrapperStatImpl)))
                {
                   xaResource = txIntegration.createXAResourceWrapper(xar, padXid,
                                                                      isSameRMOverride,
