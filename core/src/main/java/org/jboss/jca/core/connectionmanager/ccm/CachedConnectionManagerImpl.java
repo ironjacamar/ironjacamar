@@ -277,7 +277,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
       LinkedList<KeyConnectionAssociation> stack = currentObjects.get();
       KeyConnectionAssociation oldKey = stack.removeLast();
 
-     log.tracef("popped object: %s", oldKey);
+      log.tracef("popped object: %s", oldKey);
 
       if (Tracer.isEnabled())
          Tracer.popCCMContext(oldKey.toString(), new Throwable("CALLSTACK"));

@@ -22,7 +22,6 @@
 
 package org.jboss.jca.core.api.management;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -291,7 +291,7 @@ public class TxConnectionListener extends AbstractConnectionListener
          if (!txConnectionManager.isAllowMarkedForRollback())
          {
             String error = "Transaction " + threadTx + " is not active " + TxUtils.getStatusAsString(status);
-            log.tracef("%s cl=%s",error, this);
+            log.tracef("%s cl=%s", error, this);
 
             throw new IllegalStateException(error);
          }
@@ -339,7 +339,7 @@ public class TxConnectionListener extends AbstractConnectionListener
          // Get the synchronizer
          try
          {
-            log.tracef("Get synchronizer %s threadTx=%s",this, threadTx);
+            log.tracef("Get synchronizer %s threadTx=%s", this, threadTx);
 
             synchronizer =
                TransactionSynchronizer.getRegisteredSynchronizer(threadTx,
@@ -1083,7 +1083,7 @@ public class TxConnectionListener extends AbstractConnectionListener
                   }
                   else
                   {
-                     if(log.isTraceEnabled())
+                     if (log.isTraceEnabled())
                          log.tracef("Non-uncommitted transaction for %s (%s)", TxConnectionListener.this,
                                    currentTx != null ? TxUtils.getStatusAsString(currentTx.getStatus()) : "None");
                   }
@@ -1187,7 +1187,7 @@ public class TxConnectionListener extends AbstractConnectionListener
                   else
                   {
                      if (log.isTraceEnabled())
-                        log.tracef( new Exception("Connection across boundary"), "ConnectionListener=%s",
+                        log.tracef(new Exception("Connection across boundary"), "ConnectionListener=%s",
                                    TxConnectionListener.this);
                   }
                }
