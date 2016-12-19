@@ -286,7 +286,8 @@ public class XADataSourceImpl extends DataSourceAbstractImpl implements XaDataSo
          sb.append(" ").append(XaDataSource.Attribute.MCP).append("=\"").append(mcp).append("\"");
 
       if (enlistmentTrace != null)
-         sb.append(" ").append(XaDataSource.Attribute.ENLISTMENT_TRACE).append("=\"").append(enlistmentTrace).append("\"");
+         sb.append(" ").append(XaDataSource.Attribute.ENLISTMENT_TRACE).append("=\"").append(enlistmentTrace)
+               .append("\"");
 
       sb.append(">");
 

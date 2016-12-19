@@ -33,7 +33,8 @@ import java.lang.ref.WeakReference;
  * 
  * @author <a href="mailto:jeff.zhang@ironjacamar.org">Jeff Zhang</a> 
  */
-public class DataSource implements ManagedEnlistmentTrace {
+public class DataSource implements ManagedEnlistmentTrace
+{
    /** xa datasource or not */
    private boolean xa;
    
@@ -171,7 +172,8 @@ public class DataSource implements ManagedEnlistmentTrace {
     * @return The instance
      */
    @Override
-   public Boolean getEnlistmentTrace() {
+   public Boolean getEnlistmentTrace()
+   {
       if (enlistmentTrace == null)
          return null;
 
@@ -182,7 +184,8 @@ public class DataSource implements ManagedEnlistmentTrace {
     * Set the enlistmentTrace
     * @param enlistmentTrace The enlistmentTrace module
     */
-   public void setEnlistmentTrace(Boolean enlistmentTrace) {
+   public void setEnlistmentTrace(Boolean enlistmentTrace)
+   {
       this.enlistmentTrace = new WeakReference<Boolean>(enlistmentTrace);
    }
 

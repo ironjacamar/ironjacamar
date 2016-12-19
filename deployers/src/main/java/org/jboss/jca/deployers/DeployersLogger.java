@@ -199,9 +199,11 @@ public interface DeployersLogger extends BasicLogger
     * Connection Properties for DataSource is empty.
     *
     * @param jndiName The JNDI name
+    * @param driverClass The driver class
     * @param connURL  The connection URL
     */
    @LogMessage(level = WARN)
-   @Message(id = 20020, value = "Connection Properties for DataSource: '%s' is empty, try to use driver-class: '%s' and connection-url: '%s' to connect database")
+   @Message(id = 20020, value = "Connection Properties for DataSource: '%s' is empty, try to use driver-class: '%s' and"
+         + " connection-url: '%s' to connect database")
    public void connectionPropertiesEmpty(String jndiName, String driverClass, String connURL);
 }

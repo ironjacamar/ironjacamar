@@ -43,7 +43,6 @@ import org.jboss.jca.common.metadata.spec.ConfigPropertyImpl;
 import org.jboss.jca.core.api.bootstrap.CloneableBootstrapContext;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
-import org.jboss.jca.core.api.management.DataSource;
 import org.jboss.jca.core.bootstrapcontext.BootstrapContextCoordinator;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionManagerFactory;
@@ -169,8 +168,8 @@ public abstract class AbstractResourceAdapterDeployer
     * @param archiveValidation archiveValidation archiveValidation classes and/or to validate.
     * @param failures failures failures original list of failures
     * @return The list of failures gotten with all new failures added. Null in case of no failures
-    * or if validation is not run according to {@link #getArchiveValidation()} Setting. It returns null also if
-    * the concrete implementation of this class set validateClasses instance variable to flase and the list of
+    * or if validation is not run according to {@link Configuration#getArchiveValidation()} Setting. It returns null
+    * also if the concrete implementation of this class set validateClasses instance variable to flase and the list of
     * archiveValidation contains one or more instance of {@link ValidateClass} type
     */
    public Set<Failure> validateArchive(URL url, List<Validate> archiveValidation, Set<Failure> failures)
@@ -1644,7 +1643,8 @@ public abstract class AbstractResourceAdapterDeployer
                                        enlistmentTrace = connectionDefinition.isEnlistmentTrace();
 
                                     org.jboss.jca.core.api.management.ConnectionManager mgtCM =
-                                            new org.jboss.jca.core.api.management.ConnectionManager(connectionDefinition.getJndiName());
+                                            new org.jboss.jca.core.api.management.ConnectionManager(
+                                                  connectionDefinition.getJndiName());
 
                                     mgtCM.setEnlistmentTrace(enlistmentTrace);
                                     mgtConnector.getConnectionManagers().add(mgtCM);
