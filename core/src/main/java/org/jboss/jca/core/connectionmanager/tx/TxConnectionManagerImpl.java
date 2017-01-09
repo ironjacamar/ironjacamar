@@ -717,7 +717,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
                                getXAResourceStatistics().isEnabled() &&
                                !(xar instanceof XAResourceWrapperStatImpl)))
                {
-                  if (xar instanceof org.jboss.jca.core.spi.transaction.xa.XAResourceWrapper)
+                  if (!(xar instanceof org.jboss.jca.core.spi.transaction.xa.XAResourceWrapper))
                   {
                      xaResource = txIntegration
                            .createXAResourceWrapper(xar, padXid, isSameRMOverride, eisProductName, eisProductVersion,
