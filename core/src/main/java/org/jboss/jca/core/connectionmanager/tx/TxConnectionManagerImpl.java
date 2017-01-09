@@ -717,11 +717,19 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
                                getXAResourceStatistics().isEnabled() &&
                                !(xar instanceof XAResourceWrapperStatImpl)))
                {
-                  xaResource = txIntegration.createXAResourceWrapper(xar, padXid,
-                                                                     isSameRMOverride,
-                                                                     eisProductName, eisProductVersion,
-                                                                     getJndiName(), txIntegration.isFirstResource(mc),
-                                                                     getXAResourceStatistics());
+                  if (!(xar instanceof org.jboss.jca.core.spi.transaction.xa.XAResourceWrapper))
+                  {
+                     xaResource = txIntegration
+                           .createXAResourceWrapper(xar, padXid, isSameRMOverride, eisProductName, eisProductVersion,
+                                 getJndiName(), txIntegration.isFirstResource(mc), getXAResourceStatistics());
+                  }
+                  else
+                  {
+                     xaResource = txIntegration
+                           .createXAResourceWrapper(xar, padXid, isSameRMOverride, eisProductName, eisProductVersion,
+                                 ((org.jboss.jca.core.spi.transaction.xa.XAResourceWrapper) xar).getJndiName(),
+                                 txIntegration.isFirstResource(mc), getXAResourceStatistics());
+                  }
                }
                else
                {
