@@ -92,6 +92,18 @@ public class SecurityImpl implements Security
    /**
     * {@inheritDoc}
     */
+   public String resolveSecurityDomain()
+   {
+      if (securityDomainManaged != null && !securityDomainManaged.trim().equals(""))
+      {
+         return securityDomainManaged;
+      }
+      return securityDomainAndApplicationManaged;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
    public void validate() throws ValidateException
    {
       if (securityDomainManaged != null && !securityDomainManaged.trim().equals(""))

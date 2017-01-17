@@ -72,6 +72,14 @@ public interface Callback extends Serializable
    public String mapGroup(String name);
 
    /**
+    * Applies all mappings in the array of {@code Callback} objects.
+    *
+    * @param callbacks an array of callbacks that will be mapped
+    * @return the new array of mapped callbacks
+    */
+   public javax.security.auth.callback.Callback[] mapCallbacks(javax.security.auth.callback.Callback[] callbacks);
+
+   /**
     * Start
     * @exception Throwable Thrown if an error occurs
     */

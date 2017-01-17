@@ -34,7 +34,7 @@ import java.util.Map;
  * @author <a href="stefano.maestri@ironjacamar.org">Stefano Maestri</a>
  *
  */
-public interface Credential extends JCAMetadata, ValidatableMetadata
+public interface Credential extends JCAMetadata, ValidatableMetadata, SecurityMetadata
 {
    /**
     * Get the userName.

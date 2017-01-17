@@ -456,8 +456,7 @@ public class WorkManagerImpl implements WorkManager
 
          final CountDownLatch completedLatch = new CountDownLatch(1);
 
-         wrapper = new WorkWrapper(this, securityIntegration, work, execContext, workListener, null, completedLatch,
-                                   System.currentTimeMillis());
+         wrapper = createWorkWrapper(securityIntegration, work, execContext, workListener, null, completedLatch);
 
          setup(wrapper, workListener);
 
@@ -560,8 +559,7 @@ public class WorkManagerImpl implements WorkManager
 
          final CountDownLatch startedLatch = new CountDownLatch(1);
 
-         wrapper = new WorkWrapper(this, securityIntegration, work, execContext, workListener, startedLatch, null,
-                                   System.currentTimeMillis());
+         wrapper = createWorkWrapper(securityIntegration, work, execContext, workListener, startedLatch, null);
 
          setup(wrapper, workListener);
 
@@ -662,8 +660,7 @@ public class WorkManagerImpl implements WorkManager
             execContext = new ExecutionContext();
          }
 
-         wrapper = new WorkWrapper(this, securityIntegration, work, execContext, workListener, null, null,
-                                   System.currentTimeMillis());
+         wrapper = createWorkWrapper(securityIntegration, work, execContext, workListener, null, null);
 
          setup(wrapper, workListener);
 
@@ -721,6 +718,14 @@ public class WorkManagerImpl implements WorkManager
          if (wrapper != null)
             checkWorkCompletionException(wrapper);
       }
+   }
+
+   protected WorkWrapper createWorkWrapper(SecurityIntegration securityIntegration, Work work,
+         ExecutionContext executionContext, WorkListener workListener, CountDownLatch startedLatch,
+         CountDownLatch completedLatch)
+   {
+      return new WorkWrapper(this, securityIntegration, work, executionContext, workListener,
+            startedLatch, completedLatch, System.currentTimeMillis());
    }
 
    /**

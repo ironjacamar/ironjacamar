@@ -26,15 +26,10 @@ import org.jboss.jca.core.CoreLogger;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.security.Principal;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.UnsupportedCallbackException;
-import javax.security.auth.message.callback.CallerPrincipalCallback;
-import javax.security.auth.message.callback.GroupPrincipalCallback;
 
 import org.jboss.logging.Logger;
 import org.jboss.security.auth.callback.JASPICallbackHandler;
@@ -85,75 +80,7 @@ public class PicketBoxCallbackHandler implements CallbackHandler, Serializable
       {
          if (mappings != null)
          {
-            List<javax.security.auth.callback.Callback> l =
-               new ArrayList<javax.security.auth.callback.Callback>(callbacks.length);
-
-            for (int i = 0; i < callbacks.length; i++)
-            {
-               javax.security.auth.callback.Callback callback = callbacks[i];
-
-               if (callback instanceof CallerPrincipalCallback)
-               {
-                  CallerPrincipalCallback callerPrincipalCallback = (CallerPrincipalCallback)callback;
-                  String name = null;
-                  Principal p = null;
-
-                  Principal callerPrincipal = callerPrincipalCallback.getPrincipal();
-                  if (callerPrincipal != null)
-                     name = callerPrincipal.getName();
-
-                  if (name == null && callerPrincipalCallback.getName() != null)
-                     name = callerPrincipalCallback.getName();
-
-                  if (name != null)
-                     p = mappings.mapPrincipal(name);
-
-                  if (p != null)
-                  {
-                     l.add(new CallerPrincipalCallback(callerPrincipalCallback.getSubject(), p));
-                  }
-                  else
-                  {
-                     l.add(callback);
-                  }
-               }
-               else if (callback instanceof GroupPrincipalCallback)
-               {
-                  GroupPrincipalCallback groupPrincipalCallback = (GroupPrincipalCallback)callback;
-
-                  if (groupPrincipalCallback.getGroups() != null && groupPrincipalCallback.getGroups().length > 0)
-                  {
-                     List<String> gs = new ArrayList<String>(groupPrincipalCallback.getGroups().length);
-
-                     for (String g : groupPrincipalCallback.getGroups())
-                     {
-                        String s = mappings.mapGroup(g);
-
-                        if (s != null)
-                        {
-                           gs.add(s);
-                        }
-                        else
-                        {
-                           gs.add(g);
-                        }
-                     }
-
-                     l.add(new GroupPrincipalCallback(groupPrincipalCallback.getSubject(),
-                                                      gs.toArray(new String[gs.size()])));
-                  }
-                  else
-                  {
-                     l.add(callback);
-                  }
-               }
-               else
-               {
-                  l.add(callback);
-               }
-            }
-
-            callbacks = l.toArray(new javax.security.auth.callback.Callback[l.size()]);
+            callbacks = mappings.mapCallbacks(callbacks);
          }
 
          JASPICallbackHandler jaspi = new JASPICallbackHandler();

@@ -82,10 +82,10 @@ public class WorkWrapper implements Runnable
    private WorkListener workListener;   
 
    /** The work manager */
-   private WorkManagerImpl workManager;
+   protected WorkManagerImpl workManager;
 
    /** The security integration */
-   private SecurityIntegration securityIntegration;
+   protected SecurityIntegration securityIntegration;
 
    /** The start time */
    private long startTime;
@@ -423,6 +423,13 @@ public class WorkWrapper implements Runnable
          throw new WorkException(bundle.securityContextSetupFailedSinceCallbackSecurityWasNull());
       }
    
+      runWork(ctx);
+
+      log.tracef("Started work: %s", this);  
+   }
+
+   protected void runWork(ExecutionContext ctx) throws WorkCompletedException
+   {
       if (ctx != null)
       {
          Xid xid = ctx.getXid();
@@ -431,8 +438,6 @@ public class WorkWrapper implements Runnable
             workManager.getXATerminator().startWork(work, xid);
          }
       }
-
-      log.tracef("Started work: %s", this);  
    }
 
    /**

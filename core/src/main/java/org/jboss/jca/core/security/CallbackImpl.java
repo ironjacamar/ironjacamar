@@ -42,7 +42,7 @@ import org.jboss.logging.Logger;
  * 
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class CallbackImpl implements Callback
+public class CallbackImpl extends AbstractCallback implements Callback
 {
    /** Serial version uid */
    private static final long serialVersionUID = 1L;

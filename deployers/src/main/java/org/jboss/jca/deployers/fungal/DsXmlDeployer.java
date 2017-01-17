@@ -22,6 +22,7 @@
 
 package org.jboss.jca.deployers.fungal;
 
+import org.jboss.jca.common.api.metadata.common.Credential;
 import org.jboss.jca.common.api.metadata.ds.DataSource;
 import org.jboss.jca.common.api.metadata.ds.DataSources;
 import org.jboss.jca.common.api.metadata.ds.Driver;
@@ -489,22 +490,23 @@ public class DsXmlDeployer extends AbstractDsDeployer implements Deployer
    }
 
    @Override
-   protected SubjectFactory getSubjectFactory(String securityDomain)
+   protected SubjectFactory getSubjectFactory(Credential credential)
       throws org.jboss.jca.deployers.common.DeployException
    {
-      log.tracef("getSubjectFactory(%s)", securityDomain);
+      log.tracef("getSubjectFactory(%s)",  credential);
 
-      if (securityDomain == null || securityDomain.trim().equals(""))
+      if (credential == null || credential.getSecurityDomain() == null ||
+            credential.getSecurityDomain().trim().equals(""))
          return null;
 
       try
       {
-         return kernel.getBean(securityDomain, SubjectFactory.class);
+         return kernel.getBean(credential.getSecurityDomain(), SubjectFactory.class);
       }
       catch (Throwable t)
       {
          throw new org.jboss.jca.deployers.common.DeployException("Error during loookup of security domain: " +
-                                                                  securityDomain, t);
+                                                                  credential.getSecurityDomain(), t);
       }
    }
 

@@ -27,6 +27,7 @@ import org.jboss.jca.common.api.metadata.common.Credential;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.metadata.common.Security;
+import org.jboss.jca.common.api.metadata.common.SecurityMetadata;
 import org.jboss.jca.common.api.metadata.common.TimeOut;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.common.Validation;
@@ -333,7 +334,7 @@ public abstract class AbstractResourceAdapterDeployer
          cbc.setResourceAdapter(resourceAdapter);
 
          if (cb != null)
-            ((org.jboss.jca.core.api.workmanager.WorkManager)cbc.getWorkManager()).setCallbackSecurity(cb);
+            setCallbackSecurity((org.jboss.jca.core.api.workmanager.WorkManager)cbc.getWorkManager(), cb);
 
          resourceAdapter.start(cbc);
       }
@@ -341,6 +342,17 @@ public abstract class AbstractResourceAdapterDeployer
       {
          throw new DeployException(bundle.unableToStartResourceAdapter(resourceAdapter.getClass().getName()), t);
       }
+   }
+
+   /**
+    * Sets the call back security info in this rar work manager before starting the resource adapter.
+    *
+    * @param workManager the work manager that will be used by the resource adapter
+    * @param cb          the security callback
+    */
+   protected void setCallbackSecurity(org.jboss.jca.core.api.workmanager.WorkManager workManager, Callback cb)
+   {
+      workManager.setCallbackSecurity(cb);
    }
 
    /**
@@ -1596,7 +1608,7 @@ public abstract class AbstractResourceAdapterDeployer
                                  if (tsl == TransactionSupportLevel.NoTransaction)
                                  {
                                     cm = cmf.createNonTransactional(tsl, pool,
-                                                                    getSubjectFactory(securityDomain),
+                                                                    getSubjectFactory(security),
                                                                     securityDomain,
                                                                     useCCM, getCachedConnectionManager(),
                                                                     sharable,
@@ -1649,8 +1661,8 @@ public abstract class AbstractResourceAdapterDeployer
                                     mgtCM.setEnlistmentTrace(enlistmentTrace);
                                     mgtConnector.getConnectionManagers().add(mgtCM);
                                     cm = cmf.createTransactional(tsl, pool,
-                                                                 getSubjectFactory(securityDomain), securityDomain,
-                                                                 useCCM, getCachedConnectionManager(),
+                                                                 getSubjectFactory(security),
+                                                                 securityDomain, useCCM, getCachedConnectionManager(),
                                                                  sharable,
                                                                  enlistment,
                                                                  connectable,
@@ -1665,10 +1677,10 @@ public abstract class AbstractResourceAdapterDeployer
                                     if (tsl == TransactionSupportLevel.XATransaction)
                                     {
                                        isXA = true;
-
-                                       String recoverSecurityDomain = securityDomain;
+                                       SecurityMetadata recoverSecurityMetadata = security;
                                        String recoverUser = null;
                                        String recoverPassword = null;
+                                       String recoverSecurityDomain = securityDomain;
                                        if (recoveryMD == null || recoveryMD.getNoRecovery() == null ||
                                            !recoveryMD.getNoRecovery())
                                        {
@@ -1685,7 +1697,10 @@ public abstract class AbstractResourceAdapterDeployer
                                           if (credential != null)
                                           {
                                              if (credential.getSecurityDomain() != null)
+                                             {
+                                                recoverSecurityMetadata = credential;
                                                 recoverSecurityDomain = credential.getSecurityDomain();
+                                             }
                                              
                                              recoverUser = credential.getUserName();
                                              recoverPassword = credential.getPassword();
@@ -1700,7 +1715,7 @@ public abstract class AbstractResourceAdapterDeployer
                                           if ((recoverUser != null && !recoverUser.trim().equals("") &&
                                                recoverPassword != null && !recoverPassword.trim().equals("")) ||
                                               (recoverSecurityDomain != null &&
-                                               !recoverSecurityDomain.trim().equals("")))
+                                                    !recoverSecurityDomain.trim().equals("")))
                                           {
                                              RecoveryPlugin plugin = null;
                                              if (recoveryMD != null && recoveryMD.getRecoverPlugin() != null &&
@@ -1757,7 +1772,7 @@ public abstract class AbstractResourceAdapterDeployer
                                                                             recoverUser,
                                                                             recoverPassword,
                                                                             recoverSecurityDomain,
-                                                                            getSubjectFactory(recoverSecurityDomain),
+                                                                            getSubjectFactory(recoverSecurityMetadata),
                                                                             plugin,
                                                                             xastat);
                                           }
@@ -1868,7 +1883,7 @@ public abstract class AbstractResourceAdapterDeployer
                                        if (pool instanceof PrefillPool)
                                        {
                                           PrefillPool pp = (PrefillPool)pool;
-                                          SubjectFactory subjectFactory = getSubjectFactory(securityDomain);
+                                          SubjectFactory subjectFactory = getSubjectFactory(security);
                                           Subject subject = null;
                                              
                                           if (subjectFactory != null)
@@ -2078,11 +2093,12 @@ public abstract class AbstractResourceAdapterDeployer
 
    /**
     * Get a subject factory
-    * @param securityDomain The security domain
+    * @param securityMetadata The security metadata: contains the security domain and any other necessary information
+    *                         for returning the subject factory
     * @return The subject factory; must return <code>null</code> if security domain isn't defined
     * @exception DeployException Thrown if the security domain can't be resolved
     */
-   protected abstract SubjectFactory getSubjectFactory(String securityDomain) throws DeployException;
+   protected abstract SubjectFactory getSubjectFactory(SecurityMetadata securityMetadata) throws DeployException;
 
    /**
     * Create a subject
@@ -2190,7 +2206,7 @@ public abstract class AbstractResourceAdapterDeployer
     * @param ws The WorkManager security settings
     * @return The value
     */
-   private Callback createCallback(WorkManagerSecurity ws)
+   protected Callback createCallback(WorkManagerSecurity ws)
    {
       if (ws != null)
       {
