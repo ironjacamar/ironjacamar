@@ -325,7 +325,8 @@ public class DataSourceImpl extends DataSourceAbstractImpl implements DataSource
          sb.append(" ").append(DataSource.Attribute.MCP).append("=\"").append(mcp).append("\"");
 
       if (enlistmentTrace != null)
-         sb.append(" ").append(DataSource.Attribute.ENLISTMENT_TRACE).append("=\"").append(enlistmentTrace).append("\"");
+         sb.append(" ").append(DataSource.Attribute.ENLISTMENT_TRACE).append("=\"").append(enlistmentTrace)
+               .append("\"");
 
       sb.append(">");
 

@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2016, Red Hat Inc, and individual contributors
+ * Copyright 2017, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -20,16 +20,20 @@
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
 
-package org.jboss.jca.core.api.management;
+package org.jboss.jca.common.api.metadata.common;
 
 /**
- * Created by maeste on 11/10/16.
+ * @author Flavia Rainone
  */
-public interface ManagedEnlistmentTrace
+public interface SecurityMetadata
 {
-   /**
-    * Gets enlistment trace
-    * @return {@code true} if enlistment trace is enabled
+  /**
+    *
+    * Get the security domain for security-domain security management
+    *
+    * @return the security-domain to use
     */
-   Boolean getEnlistmentTrace();
+   public String resolveSecurityDomain();
+
+
 }

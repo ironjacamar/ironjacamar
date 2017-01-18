@@ -333,7 +333,7 @@ public class HtmlAdaptorServlet extends HttpServlet
 
          argList.add(value);
 
-         log.tracef("%s=%s",name, value);
+         log.tracef("%s=%s", name, value);
       }
 
       String[] args = new String[argList.size()];

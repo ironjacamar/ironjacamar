@@ -48,7 +48,7 @@ import org.jboss.logging.Logger;
  * 
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class DefaultCallback implements Callback
+public class DefaultCallback extends AbstractCallback implements Callback
 {
    /** Serial version uid */
    private static final long serialVersionUID = 1L;

@@ -571,13 +571,15 @@ public abstract class AbstractDsDeployer
       }
 
       // Security
+      Credential credential = null;
       String securityDomain = null;
       if (ds.getSecurity() != null)
       {
          if (ds.getSecurity().getReauthPlugin() != null)
          {
             strategy = PoolStrategy.REAUTH;
-            securityDomain = ds.getSecurity().getSecurityDomain();
+            credential = ds.getSecurity();
+            securityDomain = credential.getSecurityDomain();
             isCRI = false;
          }
          else if (ds.getSecurity().getSecurityDomain() != null)
@@ -592,7 +594,8 @@ public abstract class AbstractDsDeployer
                pc.setMinSize(0);
                isCRI = true;
             }
-            securityDomain = ds.getSecurity().getSecurityDomain();
+            credential = ds.getSecurity();
+            securityDomain = credential.getSecurityDomain();
          }
       }
 
@@ -650,7 +653,7 @@ public abstract class AbstractDsDeployer
       if (ds.isJTA())
       {
          cm = cmf.createTransactional(TransactionSupportLevel.LocalTransaction, pool, 
-                                      getSubjectFactory(securityDomain), securityDomain,
+                                      getSubjectFactory(credential), securityDomain,
                                       ds.isUseCcm(), getCachedConnectionManager(),
                                       true, true, connectable, tracking, mgtDs,
                                       flushStrategy,
@@ -661,7 +664,7 @@ public abstract class AbstractDsDeployer
       else
       {
          cm = cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool, 
-                                         getSubjectFactory(securityDomain), securityDomain,
+                                         getSubjectFactory(credential), securityDomain,
                                          ds.isUseCcm(), getCachedConnectionManager(),
                                          true, true, connectable, tracking,
                                          flushStrategy, allocationRetry, allocationRetryWaitMillis);
@@ -763,7 +766,7 @@ public abstract class AbstractDsDeployer
       if (pool instanceof PrefillPool)
       {
          PrefillPool pp = (PrefillPool)pool;
-         SubjectFactory subjectFactory = getSubjectFactory(securityDomain);
+         SubjectFactory subjectFactory = getSubjectFactory(credential);
          Subject subject = null;
 
          if (subjectFactory != null)
@@ -839,13 +842,15 @@ public abstract class AbstractDsDeployer
       }
 
       // Security
+      Credential credential = null;
       String securityDomain = null;
       if (ds.getSecurity() != null)
       {
          if (ds.getSecurity().getReauthPlugin() != null)
          {
             strategy = PoolStrategy.REAUTH;
-            securityDomain = ds.getSecurity().getSecurityDomain();
+            credential = ds.getSecurity();
+            securityDomain = credential.getSecurityDomain();
             isCRI = false;
          }
          else if (ds.getSecurity().getSecurityDomain() != null)
@@ -860,7 +865,8 @@ public abstract class AbstractDsDeployer
                pc.setMinSize(0);
                isCRI = true;
             }
-            securityDomain = ds.getSecurity().getSecurityDomain();
+            credential = ds.getSecurity();
+            securityDomain = credential.getSecurityDomain();
          }
       }
 
@@ -934,7 +940,7 @@ public abstract class AbstractDsDeployer
       TransactionSupportLevel tsl = TransactionSupportLevel.XATransaction;
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       ConnectionManager cm =
-              cmf.createTransactional(tsl, pool, getSubjectFactory(securityDomain), securityDomain,
+              cmf.createTransactional(tsl, pool, getSubjectFactory(credential), securityDomain,
                                  ds.isUseCcm(), getCachedConnectionManager(),
                                  true, true, connectable, tracking, mgtDs,
                                  flushStrategy,
@@ -1028,17 +1034,21 @@ public abstract class AbstractDsDeployer
       }
 
       Recovery recoveryMD = ds.getRecovery();
-      String defaultSecurityDomain = null;
+      Credential defaultCredential = null;
       String defaultUserName = null;
       String defaultPassword = null;
+      String defaultSecurityDomain = null;
+
 
       if (ds.getSecurity() != null)
       {
-         defaultSecurityDomain = ds.getSecurity().getSecurityDomain();
-         defaultUserName = ds.getSecurity().getUserName();
-         defaultPassword = ds.getSecurity().getPassword();
+         defaultCredential = ds.getSecurity();
+         defaultSecurityDomain = defaultCredential.getSecurityDomain();
+         defaultUserName = defaultCredential.getUserName();
+         defaultPassword = defaultCredential.getPassword();
       }
 
+      Credential recoverCredential = defaultCredential;
       String recoverSecurityDomain = defaultSecurityDomain;
       String recoverUser = defaultUserName;
       String recoverPassword = defaultPassword;
@@ -1054,17 +1064,17 @@ public abstract class AbstractDsDeployer
          // user name, password. Keep a seperate reference to the security-domain
          enableRecovery = true;
 
-         Credential credential = recoveryMD != null ? recoveryMD.getCredential() : null;
-         if (credential != null)
+         recoverCredential = recoveryMD != null ? recoveryMD.getCredential() : null;
+         if (recoverCredential != null)
          {
-            if (credential.getSecurityDomain() != null)
-               recoverSecurityDomain = credential.getSecurityDomain();
+            if (recoverCredential.getSecurityDomain() != null)
+               recoverSecurityDomain = recoverCredential.getSecurityDomain();
 
-            if (credential.getUserName() != null)
-               recoverUser = credential.getUserName();
+            if (recoverCredential.getUserName() != null)
+               recoverUser = recoverCredential.getUserName();
 
-            if (credential.getPassword() != null)
-               recoverPassword = credential.getPassword();
+            if (recoverCredential.getPassword() != null)
+               recoverPassword = recoverCredential.getPassword();
          }
 
          if (log.isDebugEnabled())
@@ -1121,7 +1131,7 @@ public abstract class AbstractDsDeployer
                                                                     recoverUser,
                                                                     recoverPassword,
                                                                     recoverSecurityDomain,
-                                                                    getSubjectFactory(recoverSecurityDomain),
+                                                                    getSubjectFactory(recoverCredential),
                                                                     plugin,
                                                                     xastat);
          }
@@ -1147,7 +1157,7 @@ public abstract class AbstractDsDeployer
       if (pool instanceof PrefillPool)
       {
          PrefillPool pp = (PrefillPool)pool;
-         SubjectFactory subjectFactory = getSubjectFactory(securityDomain);
+         SubjectFactory subjectFactory = getSubjectFactory(credential);
          Subject subject = null;
 
          if (subjectFactory != null)
@@ -1419,11 +1429,12 @@ public abstract class AbstractDsDeployer
 
    /**
     * Get a subject factory
-    * @param securityDomain The security domain
-    * @return The subject factory; must return <code>null</code> if security domain isn't defined
-    * @exception DeployException Thrown if the security domain can't be resolved
+    * @param credential The security credential
+    * @return The subject factory; must return <code>null</code> if credential security isn't enabled or if credential
+    *         is {@code null}
+    * @exception DeployException Thrown if the security info can't be resolved
     */
-   protected abstract SubjectFactory getSubjectFactory(String securityDomain) throws DeployException;
+   protected abstract SubjectFactory getSubjectFactory(Credential credential) throws DeployException;
 
    /**
     * Get the logger

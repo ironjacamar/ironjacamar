@@ -143,6 +143,12 @@ public class CredentialImpl implements Credential
    }
 
    @Override
+   public final String resolveSecurityDomain()
+   {
+      return getSecurityDomain();
+   }
+
+   @Override
    public void validate() throws ValidateException
    {
       if (userName != null)

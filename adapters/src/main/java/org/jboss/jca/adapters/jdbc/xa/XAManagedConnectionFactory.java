@@ -45,14 +45,14 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import static java.security.AccessController.doPrivileged;
+
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnection;
 import javax.security.auth.Subject;
 import javax.sql.XAConnection;
 import javax.sql.XADataSource;
-
-import static java.security.AccessController.doPrivileged;
 
 /**
  * XAManagedConnectionFactory

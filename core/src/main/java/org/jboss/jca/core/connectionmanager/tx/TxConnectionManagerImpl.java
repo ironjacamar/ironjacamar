@@ -34,6 +34,7 @@ import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.core.spi.transaction.TransactionTimeoutConfiguration;
 import org.jboss.jca.core.spi.transaction.TxUtils;
 import org.jboss.jca.core.spi.transaction.XAResourceStatistics;
+import org.jboss.jca.core.tx.jbossts.XAResourceWrapperStatImpl;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -58,7 +59,6 @@ import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 
-import org.jboss.jca.core.tx.jbossts.XAResourceWrapperStatImpl;
 import org.jboss.logging.Logger;
 import org.jboss.logging.Messages;
 

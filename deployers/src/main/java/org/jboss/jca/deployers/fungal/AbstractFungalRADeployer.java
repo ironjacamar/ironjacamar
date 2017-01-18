@@ -22,6 +22,7 @@
 
 package org.jboss.jca.deployers.fungal;
 
+import org.jboss.jca.common.api.metadata.common.SecurityMetadata;
 import org.jboss.jca.common.api.metadata.resourceadapter.Activation;
 import org.jboss.jca.common.api.metadata.spec.ConfigProperty;
 import org.jboss.jca.common.api.metadata.spec.Connector;
@@ -698,8 +699,9 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
    }
 
    @Override
-   protected SubjectFactory getSubjectFactory(String securityDomain) throws DeployException
+   protected SubjectFactory getSubjectFactory(SecurityMetadata securityMetadata) throws DeployException
    {
+      final String securityDomain = securityMetadata == null ? null : securityMetadata.resolveSecurityDomain();
       log.tracef("getSubjectFactory(%s)", securityDomain);
 
       if (securityDomain == null || securityDomain.trim().equals(""))

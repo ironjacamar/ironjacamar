@@ -23,8 +23,6 @@
 package org.jboss.jca.core.api.management;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Represents a connector instance
@@ -66,7 +64,8 @@ public class ConnectionManager implements ManagedEnlistmentTrace
     */
 
    @Override
-   public Boolean getEnlistmentTrace() {
+   public Boolean getEnlistmentTrace()
+   {
       if (enlistmentTrace == null)
          return null;
 
@@ -77,7 +76,8 @@ public class ConnectionManager implements ManagedEnlistmentTrace
     * Set the enlistmentTrace
     * @param enlistmentTrace The enlistmentTrace module
     */
-   public void setEnlistmentTrace(Boolean enlistmentTrace) {
+   public void setEnlistmentTrace(Boolean enlistmentTrace)
+   {
       this.enlistmentTrace = new WeakReference<Boolean>(enlistmentTrace);
    }
 
