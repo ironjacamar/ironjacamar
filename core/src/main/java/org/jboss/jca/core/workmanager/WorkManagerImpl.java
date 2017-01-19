@@ -720,6 +720,17 @@ public class WorkManagerImpl implements WorkManager
       }
    }
 
+   /**
+    * Crestes a wrapper for work
+    *
+    * @param securityIntegration the security integration
+    * @param work                the work
+    * @param executionContext    the execution context
+    * @param workListener        the work listener
+    * @param startedLatch        latch that will be notified when work starts execution. Can be null.
+    * @param completedLatch      latch that will be notified when work completes execution. Can be null.
+    * @return the created work wrapper
+    */
    protected WorkWrapper createWorkWrapper(SecurityIntegration securityIntegration, Work work,
          ExecutionContext executionContext, WorkListener workListener, CountDownLatch startedLatch,
          CountDownLatch completedLatch)
