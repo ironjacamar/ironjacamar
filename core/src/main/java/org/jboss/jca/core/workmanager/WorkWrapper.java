@@ -220,7 +220,7 @@ public class WorkWrapper implements Runnable
          if (startedLatch != null)
             startedLatch.countDown();
 
-         work.run();
+         runWork();
 
          end();
       }
@@ -422,14 +422,7 @@ public class WorkWrapper implements Runnable
          fireWorkContextSetupFailed(securityContext);
          throw new WorkException(bundle.securityContextSetupFailedSinceCallbackSecurityWasNull());
       }
-   
-      runWork(ctx);
 
-      log.tracef("Started work: %s", this);  
-   }
-
-   protected void runWork(ExecutionContext ctx) throws WorkCompletedException
-   {
       if (ctx != null)
       {
          Xid xid = ctx.getXid();
@@ -438,6 +431,18 @@ public class WorkWrapper implements Runnable
             workManager.getXATerminator().startWork(work, xid);
          }
       }
+
+      log.tracef("Started work: %s", this);  
+   }
+
+   /**
+    * Runs the work.
+    *
+    * @throws WorkCompletedException if there is an error completing work execution
+    */
+   protected void runWork() throws WorkCompletedException
+   {
+      work.run();
    }
 
    /**
