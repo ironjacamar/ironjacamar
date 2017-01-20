@@ -1608,7 +1608,8 @@ public abstract class AbstractResourceAdapterDeployer
                                  if (tsl == TransactionSupportLevel.NoTransaction)
                                  {
                                     cm = cmf.createNonTransactional(tsl, pool,
-                                                                    getSubjectFactory(security),
+                                                                    getSubjectFactory(security,
+                                                                          connectionDefinition.getJndiName()),
                                                                     securityDomain,
                                                                     useCCM, getCachedConnectionManager(),
                                                                     sharable,
@@ -1661,7 +1662,8 @@ public abstract class AbstractResourceAdapterDeployer
                                     mgtCM.setEnlistmentTrace(enlistmentTrace);
                                     mgtConnector.getConnectionManagers().add(mgtCM);
                                     cm = cmf.createTransactional(tsl, pool,
-                                                                 getSubjectFactory(security),
+                                                                 getSubjectFactory(security,
+                                                                       connectionDefinition.getJndiName()),
                                                                  securityDomain, useCCM, getCachedConnectionManager(),
                                                                  sharable,
                                                                  enlistment,
@@ -1772,7 +1774,8 @@ public abstract class AbstractResourceAdapterDeployer
                                                                             recoverUser,
                                                                             recoverPassword,
                                                                             recoverSecurityDomain,
-                                                                            getSubjectFactory(recoverSecurityMetadata),
+                                                                            getSubjectFactory(recoverSecurityMetadata,
+                                                                                  connectionDefinition.getJndiName()),
                                                                             plugin,
                                                                             xastat);
                                           }
@@ -1883,7 +1886,8 @@ public abstract class AbstractResourceAdapterDeployer
                                        if (pool instanceof PrefillPool)
                                        {
                                           PrefillPool pp = (PrefillPool)pool;
-                                          SubjectFactory subjectFactory = getSubjectFactory(security);
+                                          SubjectFactory subjectFactory = getSubjectFactory(security,
+                                                connectionDefinition.getJndiName());
                                           Subject subject = null;
                                              
                                           if (subjectFactory != null)
@@ -2095,10 +2099,11 @@ public abstract class AbstractResourceAdapterDeployer
     * Get a subject factory
     * @param securityMetadata The security metadata: contains the security domain and any other necessary information
     *                         for returning the subject factory
+    * @param jndiName optionally used for authentication context matching
     * @return The subject factory; must return <code>null</code> if security domain isn't defined
     * @exception DeployException Thrown if the security domain can't be resolved
     */
-   protected abstract SubjectFactory getSubjectFactory(SecurityMetadata securityMetadata) throws DeployException;
+   protected abstract SubjectFactory getSubjectFactory(SecurityMetadata securityMetadata, String jndiName) throws DeployException;
 
    /**
     * Create a subject

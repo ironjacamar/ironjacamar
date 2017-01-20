@@ -490,7 +490,7 @@ public class DsXmlDeployer extends AbstractDsDeployer implements Deployer
    }
 
    @Override
-   protected SubjectFactory getSubjectFactory(Credential credential)
+   protected SubjectFactory getSubjectFactory(Credential credential, String jndiName)
       throws org.jboss.jca.deployers.common.DeployException
    {
       log.tracef("getSubjectFactory(%s)",  credential);
