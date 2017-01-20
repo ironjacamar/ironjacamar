@@ -317,7 +317,7 @@ public class WorkWrapper implements Runnable
 
             // Setup callback handler
             CallbackHandler cbh = null;
-            if (workManager.getCallbackSecurity() != null && workManager.getCallbackSecurity().isMappingRequired())
+            if (workManager.getCallbackSecurity() != null)
             {
                cbh = securityIntegration.createCallbackHandler(workManager.getCallbackSecurity());
             }
