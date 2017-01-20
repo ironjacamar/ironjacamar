@@ -699,7 +699,7 @@ public abstract class AbstractFungalRADeployer extends AbstractResourceAdapterDe
    }
 
    @Override
-   protected SubjectFactory getSubjectFactory(SecurityMetadata securityMetadata) throws DeployException
+   protected SubjectFactory getSubjectFactory(SecurityMetadata securityMetadata, String jndiName) throws DeployException
    {
       final String securityDomain = securityMetadata == null ? null : securityMetadata.resolveSecurityDomain();
       log.tracef("getSubjectFactory(%s)", securityDomain);

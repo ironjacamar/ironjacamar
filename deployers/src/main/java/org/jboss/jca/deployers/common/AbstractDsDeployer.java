@@ -653,7 +653,7 @@ public abstract class AbstractDsDeployer
       if (ds.isJTA())
       {
          cm = cmf.createTransactional(TransactionSupportLevel.LocalTransaction, pool, 
-                                      getSubjectFactory(credential), securityDomain,
+                                      getSubjectFactory(credential, ds.getJndiName()), securityDomain,
                                       ds.isUseCcm(), getCachedConnectionManager(),
                                       true, true, connectable, tracking, mgtDs,
                                       flushStrategy,
@@ -664,7 +664,7 @@ public abstract class AbstractDsDeployer
       else
       {
          cm = cmf.createNonTransactional(TransactionSupportLevel.NoTransaction, pool, 
-                                         getSubjectFactory(credential), securityDomain,
+                                         getSubjectFactory(credential, ds.getJndiName()), securityDomain,
                                          ds.isUseCcm(), getCachedConnectionManager(),
                                          true, true, connectable, tracking,
                                          flushStrategy, allocationRetry, allocationRetryWaitMillis);
@@ -766,7 +766,7 @@ public abstract class AbstractDsDeployer
       if (pool instanceof PrefillPool)
       {
          PrefillPool pp = (PrefillPool)pool;
-         SubjectFactory subjectFactory = getSubjectFactory(credential);
+         SubjectFactory subjectFactory = getSubjectFactory(credential, ds.getJndiName());
          Subject subject = null;
 
          if (subjectFactory != null)
@@ -940,7 +940,7 @@ public abstract class AbstractDsDeployer
       TransactionSupportLevel tsl = TransactionSupportLevel.XATransaction;
       ConnectionManagerFactory cmf = new ConnectionManagerFactory();
       ConnectionManager cm =
-              cmf.createTransactional(tsl, pool, getSubjectFactory(credential), securityDomain,
+              cmf.createTransactional(tsl, pool, getSubjectFactory(credential, ds.getJndiName()), securityDomain,
                                  ds.isUseCcm(), getCachedConnectionManager(),
                                  true, true, connectable, tracking, mgtDs,
                                  flushStrategy,
@@ -1131,7 +1131,8 @@ public abstract class AbstractDsDeployer
                                                                     recoverUser,
                                                                     recoverPassword,
                                                                     recoverSecurityDomain,
-                                                                    getSubjectFactory(recoverCredential),
+                                                                    getSubjectFactory(recoverCredential,
+                                                                          ds.getJndiName()),
                                                                     plugin,
                                                                     xastat);
          }
@@ -1157,7 +1158,7 @@ public abstract class AbstractDsDeployer
       if (pool instanceof PrefillPool)
       {
          PrefillPool pp = (PrefillPool)pool;
-         SubjectFactory subjectFactory = getSubjectFactory(credential);
+         SubjectFactory subjectFactory = getSubjectFactory(credential, ds.getJndiName());
          Subject subject = null;
 
          if (subjectFactory != null)
@@ -1430,11 +1431,12 @@ public abstract class AbstractDsDeployer
    /**
     * Get a subject factory
     * @param credential The security credential
+    * @param jndiName optionally used for authentication context matching
     * @return The subject factory; must return <code>null</code> if credential security isn't enabled or if credential
     *         is {@code null}
     * @exception DeployException Thrown if the security info can't be resolved
     */
-   protected abstract SubjectFactory getSubjectFactory(Credential credential) throws DeployException;
+   protected abstract SubjectFactory getSubjectFactory(Credential credential, String jndiName) throws DeployException;
 
    /**
     * Get the logger
