@@ -339,14 +339,19 @@ public class PreparedStatementTestCase
                prep.execute();
             }
          };
+         long start = System.currentTimeMillis();
          t.execute();
          Thread.sleep(100);
 
          prep.cancel();
 
          SQLException e = (SQLException)t.getException();
+         long end = System.currentTimeMillis();
          assertNotNull(e);
          assertEquals(ErrorCode.STATEMENT_WAS_CANCELED, e.getErrorCode());
+         final long duration = end - start;
+         assertTrue("Should not have to wait so long: " + duration,
+                 duration < 10000);  // make sure we didn't have to wait until the statement was completed
       }
       catch (SQLException e)
       {
