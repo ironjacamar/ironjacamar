@@ -26,6 +26,7 @@ import org.jboss.jca.adapters.jdbc.spi.ExceptionSorter;
 
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.util.*;
 
 import org.jboss.logging.Logger;
 
@@ -48,13 +49,46 @@ public class DB2ExceptionSorter implements ExceptionSorter, Serializable
    /** The serialVersionUID */
    private static final long serialVersionUID = -4724550353693159378L;
 
+   private boolean consider99999Fatal = false;
+
+   private Set<String> fatalSet = null;
+
    /**
     * Constructor
     */
    public DB2ExceptionSorter() 
    {
+      fatalSet = new HashSet<>();
    }
-   
+
+   /**
+    *
+    * set via <config-property name="Consider99999Fatal">TRUE/FALSE</>
+    *
+    * Consider DB2's -99999 error code fatal. This is regardless of Fatal99999Messages.
+    * @param value The value
+    */
+   public void setConsider99999Fatal(String value)
+   {
+      consider99999Fatal = Boolean.parseBoolean(value);
+   }
+
+   /**
+    *
+    * set via <config-property name="Fatal99999Messages">Connection is closed, Connection reset</>
+    *
+    * Which -99999 are considered fatal
+    * @param messages The messages to be considered fatal
+    */
+   public void setFatal99999Messages(String messages)
+   {
+      StringTokenizer st = new StringTokenizer(messages, ",");
+      while (st.hasMoreTokens())
+      {
+         fatalSet.add(st.nextToken().toUpperCase());
+      }
+   }
+
    /**
     * {@inheritDoc}
     */
@@ -70,6 +104,21 @@ public class DB2ExceptionSorter implements ExceptionSorter, Serializable
       else if (code == 4499)
       {
          isFatal = true;
+      }
+      else if (code == 99999 && consider99999Fatal)
+      {
+         isFatal = true;
+      }
+      else if (code == 99999 && !consider99999Fatal && !fatalSet.isEmpty())
+      {
+         final String errorText = (e.getMessage()).toUpperCase();
+         for (String message : fatalSet)
+         {
+            if (message.equalsIgnoreCase(errorText))
+            {
+               isFatal = true;
+            }
+         }
       }
       
       logger.tracef("Evaluated SQL error code %d isException returned %b", code,  isFatal);
