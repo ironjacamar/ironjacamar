@@ -112,14 +112,14 @@
   <property name="javac.encoding" value="utf-8" />
 
   <property name="junit.printsummary" value="yes" />
-  <property name="junit.haltonerror" value="no" />
-  <property name="junit.haltonfailure" value="no" />
+  <property name="junit.haltonerror" value="yes" />
+  <property name="junit.haltonfailure" value="yes" />
   <property name="junit.fork" value="yes" />
   <property name="junit.timeout" value="60000" />
   <property name="junit.jvm" value="" />
   <property name="junit.jvm.options" value="-Xms128m -Xmx512m -XX:MaxPermSize=256m -Djava.net.preferIPv4Stack=true" />
-  <property name="junit.batchtest.haltonerror" value="no" />
-  <property name="junit.batchtest.haltonfailure" value="no" />
+  <property name="junit.batchtest.haltonerror" value="yes" />
+  <property name="junit.batchtest.haltonfailure" value="yes" />
   <property name="junit.batchtest.fork" value="yes" />
 
   <!-- ================================= 
@@ -552,7 +552,7 @@
   <!-- ================================= 
        Target: test
        ================================= -->
-  <target name="test" depends="prepare-test">
+  <target name="test" depends="clean,checkstyle,prepare-test">
     <ant dir="common" inheritRefs="true" target="test"/>
     <ant dir="core" inheritRefs="true" target="test"/>
     <ant dir="embedded" inheritRefs="true" target="test"/>
@@ -727,7 +727,7 @@
     <mkdir dir="${reports.dir}/checkstyle" />
 
     <checkstyle config="${tools.dir}/checkstyle/checkstyle.xml"
-                failOnViolation="false"
+                failOnViolation="true"
                 classpathref="checkstyle.lib.path.id">
       <fileset dir="${basedir}">
         <include name="**/*.java"/>
