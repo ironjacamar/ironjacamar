@@ -29,9 +29,9 @@ import org.jboss.jca.core.tx.rars.txlog.TxLogConnectionFactory;
 import org.jboss.jca.core.tx.rars.txlog.TxLogConnectionFactoryImpl;
 import org.jboss.jca.core.tx.rars.txlog.TxLogConnectionImpl;
 import org.jboss.jca.core.tx.rars.txlog.TxLogManagedConnectionFactory;
-import org.jboss.jca.embedded.dsl.resourceadapters11.api.ConnectionDefinitionsType;
-import org.jboss.jca.embedded.dsl.resourceadapters11.api.ResourceAdapterType;
-import org.jboss.jca.embedded.dsl.resourceadapters11.api.ResourceAdaptersDescriptor;
+import org.jboss.jca.embedded.dsl.resourceadapters13.api.ConnectionDefinitionsType;
+import org.jboss.jca.embedded.dsl.resourceadapters13.api.ResourceAdapterType;
+import org.jboss.jca.embedded.dsl.resourceadapters13.api.ResourceAdaptersDescriptor;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -112,12 +112,12 @@ public class TwoConnectionsLocalCCMTestCase
       dashRaXmlRt.transactionSupport("LocalTransaction");
 
       ConnectionDefinitionsType dashRaXmlCdst = dashRaXmlRt.getOrCreateConnectionDefinitions();
-      org.jboss.jca.embedded.dsl.resourceadapters11.api.ConnectionDefinitionType dashRaXmlCdt =
+      org.jboss.jca.embedded.dsl.resourceadapters13.api.ConnectionDefinitionType dashRaXmlCdt =
          dashRaXmlCdst.createConnectionDefinition()
             .className(TxLogManagedConnectionFactory.class.getName())
-            .jndiName("java:/eis/TxLogConnectionFactory").poolName("TxLog");
+            .jndiName("java:/eis/TxLogConnectionFactory").poolName("TxLog").enlistmentTrace(true);
 
-      org.jboss.jca.embedded.dsl.resourceadapters11.api.PoolType dashRaXmlPt = dashRaXmlCdt.getOrCreatePool()
+      org.jboss.jca.embedded.dsl.resourceadapters13.api.PoolType dashRaXmlPt = dashRaXmlCdt.getOrCreatePool()
          .minPoolSize(0).initialPoolSize(0).maxPoolSize(10);
 
       return dashRaXml;
