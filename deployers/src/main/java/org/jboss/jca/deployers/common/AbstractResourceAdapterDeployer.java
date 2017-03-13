@@ -1607,17 +1607,11 @@ public abstract class AbstractResourceAdapterDeployer
                                  // Select the correct connection manager
                                  if (tsl == TransactionSupportLevel.NoTransaction)
                                  {
-                                    cm = cmf.createNonTransactional(tsl, pool,
-                                                                    getSubjectFactory(security,
-                                                                          connectionDefinition.getJndiName()),
-                                                                    securityDomain,
-                                                                    useCCM, getCachedConnectionManager(),
-                                                                    sharable,
-                                                                    enlistment,
-                                                                    connectable,
-                                                                    tracking,
-                                                                    flushStrategy,
-                                                                    allocationRetry, allocationRetryWaitMillis);
+                                    cm = cmf.createNonTransactional(tsl, pool, getSubjectFactory(security,
+                                          connectionDefinition != null ? connectionDefinition.getJndiName() : null),
+                                          securityDomain, useCCM, getCachedConnectionManager(), sharable, enlistment,
+                                          connectable, tracking, flushStrategy, allocationRetry,
+                                          allocationRetryWaitMillis);
                                  }
                                  else
                                  {
@@ -1628,42 +1622,49 @@ public abstract class AbstractResourceAdapterDeployer
                                     Boolean padXid = Defaults.PAD_XID;
                                     Recovery recoveryMD = null;
                                     Boolean enlistmentTrace = Defaults.ENLISTMENT_TRACE;
+                                    String jndiName = null;
                                     
-                                    if (connectionDefinition != null && connectionDefinition.isXa())
+                                    if (connectionDefinition != null)
                                     {
-                                       XaPool xaPool = (XaPool)connectionDefinition.getPool();
-
-                                       if (xaPool != null)
+                                       jndiName = connectionDefinition.getJndiName();
+                                       enlistmentTrace = connectionDefinition.isEnlistmentTrace();
+                                       if (connectionDefinition.isXa())
                                        {
-                                          interleaving = xaPool.isInterleaving();
-                                          isSameRMOverride = xaPool.isSameRmOverride();
-                                          wrapXAResource = xaPool.isWrapXaResource();
-                                          padXid = xaPool.isPadXid();
+                                          XaPool xaPool = (XaPool) connectionDefinition.getPool();
+
+                                          if (xaPool != null)
+                                          {
+                                             interleaving = xaPool.isInterleaving();
+                                             isSameRMOverride = xaPool.isSameRmOverride();
+                                             wrapXAResource = xaPool.isWrapXaResource();
+                                             padXid = xaPool.isPadXid();
+                                          }
+
+                                          TimeOut timeout = connectionDefinition.getTimeOut();
+                                          if (timeout != null)
+                                          {
+                                             xaResourceTimeout = timeout.getXaResourceTimeout();
+                                          }
+
+                                          recoveryMD = connectionDefinition.getRecovery();
                                        }
 
-                                       TimeOut timeout = connectionDefinition.getTimeOut();
-                                       if (timeout != null)
-                                       {
-                                          xaResourceTimeout = timeout.getXaResourceTimeout();
-                                       }
-                                       
-                                       recoveryMD = connectionDefinition.getRecovery();
+
                                     }
 
-                                    pool.setInterleaving(interleaving.booleanValue());
-
-                                    if (connectionDefinition != null)
-                                       enlistmentTrace = connectionDefinition.isEnlistmentTrace();
-
                                     org.jboss.jca.core.api.management.ConnectionManager mgtCM =
-                                            new org.jboss.jca.core.api.management.ConnectionManager(
-                                                  connectionDefinition.getJndiName());
+                                          new org.jboss.jca.core.api.management.ConnectionManager(
+                                                jndiName);
 
                                     mgtCM.setEnlistmentTrace(enlistmentTrace);
                                     mgtConnector.getConnectionManagers().add(mgtCM);
+
+                                    pool.setInterleaving(interleaving.booleanValue());
+
+
                                     cm = cmf.createTransactional(tsl, pool,
                                                                  getSubjectFactory(security,
-                                                                       connectionDefinition.getJndiName()),
+                                                                       jndiName),
                                                                  securityDomain, useCCM, getCachedConnectionManager(),
                                                                  sharable,
                                                                  enlistment,
@@ -1887,7 +1888,7 @@ public abstract class AbstractResourceAdapterDeployer
                                        {
                                           PrefillPool pp = (PrefillPool)pool;
                                           SubjectFactory subjectFactory = getSubjectFactory(security,
-                                                connectionDefinition.getJndiName());
+                                                connectionDefinition != null ? connectionDefinition.getJndiName() : null);
                                           Subject subject = null;
                                              
                                           if (subjectFactory != null)
