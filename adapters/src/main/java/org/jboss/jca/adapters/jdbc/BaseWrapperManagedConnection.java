@@ -347,10 +347,13 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
          jdbcAutoCommit = true;
          if (jdbcAutoCommit != underlyingAutoCommit)
          {
-            try {
+            try
+            {
                con.setAutoCommit(jdbcAutoCommit);
                underlyingAutoCommit = jdbcAutoCommit;
-            } catch (SQLException e) {
+            }
+            catch (SQLException e)
+            {
                mcf.log.errorResettingAutoCommit(mcf.getJndiName(), e);
             }
          }
