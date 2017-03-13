@@ -552,7 +552,7 @@
   <!-- ================================= 
        Target: test
        ================================= -->
-  <target name="test" depends="clean,checkstyle,prepare-test">
+  <target name="test" depends="clean,prepare-test">
     <ant dir="common" inheritRefs="true" target="test"/>
     <ant dir="core" inheritRefs="true" target="test"/>
     <ant dir="embedded" inheritRefs="true" target="test"/>
@@ -727,7 +727,7 @@
     <mkdir dir="${reports.dir}/checkstyle" />
 
     <checkstyle config="${tools.dir}/checkstyle/checkstyle.xml"
-                failOnViolation="true"
+                failOnViolation="false"
                 classpathref="checkstyle.lib.path.id">
       <fileset dir="${basedir}">
         <include name="**/*.java"/>

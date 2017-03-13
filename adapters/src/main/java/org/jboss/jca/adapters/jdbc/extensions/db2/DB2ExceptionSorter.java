@@ -26,7 +26,9 @@ import org.jboss.jca.adapters.jdbc.spi.ExceptionSorter;
 
 import java.io.Serializable;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.jboss.logging.Logger;
 
@@ -58,7 +60,7 @@ public class DB2ExceptionSorter implements ExceptionSorter, Serializable
     */
    public DB2ExceptionSorter() 
    {
-      fatalSet = new HashSet<>();
+      fatalSet = new HashSet<String>();
    }
 
    /**

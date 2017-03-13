@@ -78,7 +78,7 @@ public class PicketBoxCallbackHandler implements CallbackHandler, Serializable
 
       if (callbacks != null && callbacks.length > 0)
       {
-         if (mappings != null && mappings.isMappingRequired() )
+         if (mappings != null && mappings.isMappingRequired())
          {
             callbacks = mappings.mapCallbacks(callbacks);
          }
