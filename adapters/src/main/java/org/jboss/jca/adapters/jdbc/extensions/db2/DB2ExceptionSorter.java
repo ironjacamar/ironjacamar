@@ -111,10 +111,10 @@ public class DB2ExceptionSorter implements ExceptionSorter, Serializable
       }
       else if (code == 99999 && !consider99999Fatal && !fatalSet.isEmpty())
       {
-         final String errorText = (e.getMessage()).toUpperCase();
+         final String errorText = e.getMessage().trim();
          for (String message : fatalSet)
          {
-            if (message.equalsIgnoreCase(errorText))
+            if (errorText.contains(message))
             {
                isFatal = true;
             }
