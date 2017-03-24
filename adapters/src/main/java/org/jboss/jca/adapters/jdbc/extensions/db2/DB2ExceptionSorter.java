@@ -87,7 +87,7 @@ public class DB2ExceptionSorter implements ExceptionSorter, Serializable
       StringTokenizer st = new StringTokenizer(messages, ",");
       while (st.hasMoreTokens())
       {
-         fatalSet.add(st.nextToken().trim().toUpperCase());
+         fatalSet.add(st.nextToken().toUpperCase());
       }
    }
 
@@ -113,10 +113,10 @@ public class DB2ExceptionSorter implements ExceptionSorter, Serializable
       }
       else if (code == 99999 && !consider99999Fatal && !fatalSet.isEmpty())
       {
-         final String errorText = e.getMessage().trim().toUpperCase();
+         final String errorText = (e.getMessage()).toUpperCase();
          for (String message : fatalSet)
          {
-            if (errorText.contains(message))
+            if (message.equalsIgnoreCase(errorText))
             {
                isFatal = true;
             }
