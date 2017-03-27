@@ -345,16 +345,6 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
       synchronized (stateLock)
       {
          jdbcAutoCommit = true;
-         if (jdbcAutoCommit != underlyingAutoCommit)
-         {
-            try {
-               con.setAutoCommit(jdbcAutoCommit);
-               underlyingAutoCommit = jdbcAutoCommit;
-            } catch (SQLException e) {
-               mcf.log.warnf(e, "Error resetting auto-commit for: %s", mcf.getJndiName());
-            }
-         }
-
          jdbcReadOnly = readOnly;
          if (jdbcTransactionIsolation != transactionIsolation)
          {
