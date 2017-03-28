@@ -51,6 +51,7 @@ import org.jboss.logging.Messages;
 
 import org.jgroups.Channel;
 import org.jgroups.MembershipListener;
+import org.jgroups.Message;
 import org.jgroups.View;
 import org.jgroups.blocks.MethodCall;
 import org.jgroups.blocks.MethodLookup;
@@ -547,8 +548,13 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
 
          return null;
       }
+      // Set request optiuons.
+      // Note we are settings OOB flag for for the sync calls, to avoid the deadlocks.
+      // The only diff to regular messages is that OOB RPCs are not ordered, but we don't need this anyway
+      // as we're sending the next RPC only *after* we've received the response(s).
+      RequestOptions opts = new RequestOptions(ResponseMode.GET_ALL, timeout).setFlags(Message.Flag.OOB);
 
-      RequestOptions opts = new RequestOptions(ResponseMode.GET_ALL, timeout);
+      //RequestOptions opts = new RequestOptions(ResponseMode.GET_ALL, timeout);
       try
       {
          switch (request)
