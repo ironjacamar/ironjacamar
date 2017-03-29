@@ -61,13 +61,14 @@ public class DB2ExceptionSorter implements ExceptionSorter, Serializable
    public DB2ExceptionSorter() 
    {
       fatalSet = new HashSet<String>();
+      fatalSet.add("CONNECTION IS CLOSED");
    }
 
    /**
     *
     * set via <config-property name="Consider99999Fatal">TRUE/FALSE</>
     *
-    * Consider DB2's -99999 error code fatal. This is regardless of Fatal99999Messages.
+    * Consider DB2's -99999 error code fatal, regardless of the associated message.
     * @param value The value
     */
    public void setConsider99999Fatal(String value)
@@ -79,7 +80,7 @@ public class DB2ExceptionSorter implements ExceptionSorter, Serializable
     *
     * set via <config-property name="Fatal99999Messages">Connection is closed, Connection reset</>
     *
-    * Which -99999 are considered fatal
+    * Which -99999 are considered fatal. "Connection is closed" is the default message.
     * @param messages The messages to be considered fatal
     */
    public void setFatal99999Messages(String messages)
