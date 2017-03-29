@@ -130,6 +130,93 @@ public class LazyAssociationXATransactionInterleavingTestCase extends LazyTestBa
    }
 
    /**
+    * Enlistment without transaction
+    * @exception Throwable Thrown if case of an error
+    */
+   @Test
+   public void testEnlistmentWithoutTransaction() throws Throwable
+   {
+      assertNotNull(connectionFactory);
+      assertNotNull(userTransaction);
+
+      boolean status = true;
+
+      LazyConnection lc1 = null;
+      try
+      {
+         lc1 = connectionFactory.getConnection();
+
+         assertTrue(lc1.isManagedConnectionSet());
+
+         lc1.closeManagedConnection();
+
+         assertFalse(lc1.isManagedConnectionSet());
+
+         lc1.associate();
+
+         assertTrue(lc1.isManagedConnectionSet());
+
+         assertFalse(lc1.isEnlisted());
+         assertTrue(lc1.enlist());
+         assertFalse(lc1.isEnlisted());
+
+         userTransaction.begin();
+
+         assertTrue(lc1.enlist());
+         assertTrue(lc1.isEnlisted());
+      }
+      catch (Throwable t)
+      {
+         log.error(t.getMessage(), t);
+         status = false;
+         fail("Throwable:" + t.getMessage());
+      }
+      finally
+      {
+         if (status)
+         {
+            userTransaction.commit();
+         }
+         else
+         {
+            if (lc1 != null)
+               lc1.close();
+            userTransaction.rollback();
+         }
+      }
+
+      LazyConnection lc2 = null;
+      try
+      {
+         // enlist after transaction commit
+         assertTrue(lc1.enlist());
+         assertFalse(lc1.isEnlisted());
+
+         lc2 = connectionFactory.getConnection();
+
+         lc2.associate();
+
+         assertTrue(lc2.isManagedConnectionSet());
+
+         // enlist
+         assertTrue(lc2.enlist());
+         assertFalse(lc2.isEnlisted());
+      }
+      catch (Throwable t)
+      {
+         log.error(t.getMessage(), t);
+         status = false;
+         fail("Throwable:" + t.getMessage());
+      }
+      finally
+      {
+         lc1.close();
+         if (lc2 != null)
+            lc1.close();
+      }
+   }
+
+   /**
     * Two connections - one managed connection - without enlistment
     * @exception Throwable Thrown if case of an error
     */
