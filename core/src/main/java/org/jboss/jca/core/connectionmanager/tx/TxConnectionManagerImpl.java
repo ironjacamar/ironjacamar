@@ -815,6 +815,11 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
 
                if (lock == null)
                {
+                  if (!isTransactional())
+                  {
+                     log.tracef("No transaction, no need to lazy enlist: %s", this);
+                     return;
+                  }
                   if (cl != null)
                   {
                      if (trace)
