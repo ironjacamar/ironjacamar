@@ -1081,6 +1081,7 @@ public abstract class BaseWrapperManagedConnectionFactory
             Connection c = null;
             try
             {
+               mc.checkTransaction(); // this prevents connection validator from opening a transaction (JBJCA-1338)
                c = mc.getRealConnection();
                SQLException e = isValidConnection(c);
 
