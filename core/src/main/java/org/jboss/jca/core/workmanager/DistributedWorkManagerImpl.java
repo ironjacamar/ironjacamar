@@ -49,7 +49,7 @@ import org.jboss.logging.Messages;
  *
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class DistributedWorkManagerImpl extends WorkManagerImpl implements DistributedWorkManager
+public class   DistributedWorkManagerImpl extends WorkManagerImpl implements DistributedWorkManager
 {
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class,

@@ -374,6 +374,7 @@ public class WorkManagerCoordinator
          WorkManager wm = activeWorkmanagers.get(id);
          if (wm instanceof DistributedWorkManager)
          {
+
             DistributedWorkManager dwm = (DistributedWorkManager)wm;
             if (dwm.getTransport() != null)
                dwm.getTransport().register(new Address(wm.getId(), wm.getName(), dwm.getTransport().getId()));
