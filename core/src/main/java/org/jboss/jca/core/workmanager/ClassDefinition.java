@@ -24,6 +24,8 @@ package org.jboss.jca.core.workmanager;
 
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * A definition of a class
@@ -42,6 +44,36 @@ public class ClassDefinition implements Serializable
 
    /** The data */
    private byte[] data;
+
+
+   private static final String NAME = "NAME";
+   private static final String SVU = "SVU";
+   private static final String DATA = "DATA";
+
+
+   /**
+    * create an instance from a Map
+    * @param map the map
+    * @return the instance
+    */
+   public static ClassDefinition fromMap(Map<String, Object> map)
+   {
+      return new ClassDefinition((String) map.get(NAME), (Long) map.get(SVU), (byte[]) map.get(DATA));
+
+   }
+
+   /**
+    * return a map representing the instance
+    * @return the map
+    */
+   public Map<String, Object> toMap()
+   {
+      Map<String, Object> returnMap = new LinkedHashMap<String, Object>(3);
+      returnMap.put(NAME, this.getName());
+      returnMap.put(SVU, this.getSerialVersionUID());
+      returnMap.put(DATA, this.getData());
+      return returnMap;
+   }
 
    /**
     * Constructor

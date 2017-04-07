@@ -25,6 +25,7 @@ package org.jboss.jca.core.workmanager;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A class bundle
@@ -37,6 +38,37 @@ public class ClassBundle implements Serializable
 
    /** The definitions */
    private List<ClassDefinition> definitions;
+
+
+   /**
+    * create an instance from a Map
+    * @param mapList list of map reperesenting ClassDefinition
+    * @return the instance
+    */
+   public static ClassBundle fromListOfMaps(List<Map<String, Object>> mapList)
+   {
+      ArrayList<ClassDefinition> listOfDefinitions = new ArrayList<ClassDefinition>(mapList.size());
+      for (Map<String, Object> classDefinitionMap : mapList)
+      {
+         listOfDefinitions.add(ClassDefinition.fromMap(classDefinitionMap));
+      }
+      return new ClassBundle(listOfDefinitions);
+
+   }
+
+   /**
+    * return a list maps representing classDefinitions of this instance
+    * @return the list of maps
+    */
+   public List<Map<String, Object>> toListOfMaps()
+   {
+      ArrayList<Map<String, Object>> returnList = new ArrayList<Map<String, Object>>(this.getDefinitions().size());
+      for (ClassDefinition classDefinition : this.getDefinitions())
+      {
+         returnList.add(classDefinition.toMap());
+      }
+      return returnList;
+   }
 
    /**
     * Constructor

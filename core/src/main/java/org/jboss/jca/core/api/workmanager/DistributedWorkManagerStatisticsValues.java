@@ -23,6 +23,8 @@
 package org.jboss.jca.core.api.workmanager;
 
 import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * The JBoss distributed work manager statistics values
@@ -55,6 +57,50 @@ public class DistributedWorkManagerStatisticsValues implements Serializable
 
    /** StartWork: Rejected */
    private int startWorkRejected;
+
+
+
+   private static final String SUCCESSFUL = "SUCCESSFUL";
+   private static final String FAILED = "FAILED";
+   private static final String DO_WORK_ACCEPTED = "DO_WORK_ACCEPTED";
+   private static final String DO_WORK_REJECTED = "DO_WORK_REJECTED";
+   private static final String SCHEDULE_WORK_ACCEPTED = "SCHEDULE_WORK_ACCEPTED";
+   private static final String SCHEDULE_WORK_REJECTED = "SCHEDULE_WORK_REJECTED";
+   private static final String START_WORK_ACCEPTED = "START_WORK_ACCEPTED";
+   private static final String START_WORK_REJECTED = "START_WORK_REJECTED";
+
+   /**
+    * create an instance from a Map
+    * @param map the map
+    * @return the instance
+    */
+   public static DistributedWorkManagerStatisticsValues fromMap(Map<String, Integer> map)
+   {
+      return new DistributedWorkManagerStatisticsValues(map.get(SUCCESSFUL), map.get(FAILED), map.get(DO_WORK_ACCEPTED),
+            map.get(DO_WORK_REJECTED), map.get(SCHEDULE_WORK_ACCEPTED), map.get(SCHEDULE_WORK_REJECTED),
+            map.get(START_WORK_ACCEPTED), map.get(START_WORK_REJECTED));
+
+   }
+
+   /**
+    * return a map representing the instance
+    * @return the map
+    */
+   public Map<String, Integer> toMap()
+   {
+      Map<String, Integer> returnMap = new LinkedHashMap<String, Integer>(8);
+      returnMap.put(SUCCESSFUL, this.getWorkSuccessful());
+      returnMap.put(FAILED, this.getWorkFailed());
+      returnMap.put(DO_WORK_ACCEPTED, this.getDoWorkAccepted());
+      returnMap.put(DO_WORK_REJECTED, this.getDoWorkRejected());
+      returnMap.put(SCHEDULE_WORK_ACCEPTED, this.getScheduleWorkAccepted());
+      returnMap.put(SCHEDULE_WORK_ACCEPTED, this.getScheduleWorkRejected());
+      returnMap.put(START_WORK_ACCEPTED, this.getStartWorkAccepted());
+      returnMap.put(START_WORK_REJECTED, this.getStartWorkRejected());
+      return returnMap;
+   }
+
+
 
    /**
     * Constructor

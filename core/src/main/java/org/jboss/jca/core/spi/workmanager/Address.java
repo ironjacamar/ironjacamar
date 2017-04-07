@@ -23,6 +23,8 @@
 package org.jboss.jca.core.spi.workmanager;
 
 import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Defines an address of a WorkManager
@@ -40,6 +42,34 @@ public final class Address implements Comparable<Address>, Serializable
 
    /** The id of the Transport */
    private String transportId;
+
+   private static final String ID = "ID";
+   private static final String NAME = "NAME";
+   private static final String TRANSPORT_ID = "TRANSPORT_ID";
+
+   /**
+    * create an instance from a Map
+    * @param map the map
+    * @return the instance
+    */
+   public static Address fromMap(Map<String, String> map)
+   {
+      return new Address(map.get(ID), map.get(NAME), map.get(TRANSPORT_ID));
+
+   }
+
+   /**
+    * return a map representing the instance
+    * @return the map
+    */
+   public Map<String, String> toMap()
+   {
+      Map<String, String> returnMap = new LinkedHashMap<String, String>(3);
+      returnMap.put(ID, this.getWorkManagerId());
+      returnMap.put(NAME, this.getWorkManagerName());
+      returnMap.put(TRANSPORT_ID, this.getTransportId());
+      return returnMap;
+   }
 
    /**
     * Constructor

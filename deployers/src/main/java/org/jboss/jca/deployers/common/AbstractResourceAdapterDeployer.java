@@ -1888,7 +1888,9 @@ public abstract class AbstractResourceAdapterDeployer
                                        {
                                           PrefillPool pp = (PrefillPool)pool;
                                           SubjectFactory subjectFactory = getSubjectFactory(security,
-                                                connectionDefinition != null ? connectionDefinition.getJndiName() : null);
+                                                connectionDefinition != null ?
+                                                      connectionDefinition.getJndiName() :
+                                                      null);
                                           Subject subject = null;
                                              
                                           if (subjectFactory != null)
@@ -2098,11 +2100,12 @@ public abstract class AbstractResourceAdapterDeployer
 
    /**
     * Get a subject factory
+    *
     * @param securityMetadata The security metadata: contains the security domain and any other necessary information
     *                         for returning the subject factory
-    * @param jndiName optionally used for authentication context matching
+    * @param jndiName         optionally used for authentication context matching
     * @return The subject factory; must return <code>null</code> if security domain isn't defined
-    * @exception DeployException Thrown if the security domain can't be resolved
+    * @throws DeployException Thrown if the security domain can't be resolved
     */
    protected abstract SubjectFactory getSubjectFactory(SecurityMetadata securityMetadata, String jndiName)
          throws DeployException;
