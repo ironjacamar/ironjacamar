@@ -58,7 +58,7 @@ public class DB2ExceptionSorter implements ExceptionSorter, Serializable
     */
    public DB2ExceptionSorter() 
    {
-      fatalSet = new HashSet<>();
+      fatalSet = new HashSet<String>();
       fatalSet.add("CONNECTION IS CLOSED");
    }
 
