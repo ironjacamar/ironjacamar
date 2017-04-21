@@ -506,6 +506,12 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
     */
    public boolean checkValid()
    {
+      try {
+         checkTransaction(); // this prevents connection validator from opening a transaction (JBJCA-1338)
+      } catch (SQLException e) {
+         return false;
+      }
+
       SQLException e = mcf.isValidConnection(con);
 
       if (e == null)
