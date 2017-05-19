@@ -770,6 +770,7 @@ public class   DistributedWorkManagerImpl extends WorkManagerImpl implements Dis
    public org.jboss.jca.core.api.workmanager.WorkManager clone() throws CloneNotSupportedException
    {
       DistributedWorkManagerImpl wm = (DistributedWorkManagerImpl)super.clone();
+      wm.listeners = Collections.synchronizedList(new ArrayList<NotificationListener>(3));
       wm.setPolicy(getPolicy());
       wm.setSelector(getSelector());
       wm.setTransport(getTransport());
@@ -777,21 +778,7 @@ public class   DistributedWorkManagerImpl extends WorkManagerImpl implements Dis
       wm.setDoWorkDistributionEnabled(isDoWorkDistributionEnabled());
       wm.setStartWorkDistributionEnabled(isStartWorkDistributionEnabled());
       wm.setScheduleWorkDistributionEnabled(isScheduleWorkDistributionEnabled());
-
-      DistributedWorkManagerStatisticsImpl dwmsi = new DistributedWorkManagerStatisticsImpl();
-      wm.setDistributedStatistics(dwmsi);
       
-      if (getPolicy() != null && getPolicy() instanceof NotificationListener)
-         wm.listeners.add((NotificationListener)getPolicy());
-
-      if (getSelector() != null && getSelector() instanceof NotificationListener)
-         wm.listeners.add((NotificationListener)getSelector());
-
-      if (getTransport() != null && getTransport() instanceof NotificationListener)
-         wm.listeners.add((NotificationListener)getTransport());
-
-      wm.listeners.add((NotificationListener)dwmsi);
-
       return wm;
    }
 
@@ -806,7 +793,7 @@ public class   DistributedWorkManagerImpl extends WorkManagerImpl implements Dis
       sb.append(" transport=").append(transport);
       sb.append(" distributedStatisticsEnabled=").append(distributedStatisticsEnabled);
       sb.append(" distributedStatistics=").append(distributedStatistics);
-      sb.append(" listeners=").append(listeners);
+      sb.append(" listeners(").append(listeners.hashCode()).append("=").append(listeners);
       sb.append(" doWorkDistributionEnabled=").append(doWorkDistributionEnabled);
       sb.append(" startWorkDistributionEnabled=").append(startWorkDistributionEnabled);
       sb.append(" scheduleWorkDistributionEnabled=").append(scheduleWorkDistributionEnabled);
