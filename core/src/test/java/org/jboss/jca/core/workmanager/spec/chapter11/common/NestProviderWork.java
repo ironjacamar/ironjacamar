@@ -22,6 +22,7 @@
 
 package org.jboss.jca.core.workmanager.spec.chapter11.common;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
 
 import javax.resource.spi.work.Work;
@@ -53,6 +54,8 @@ public class NestProviderWork extends UniversalProviderWork
    private WorkAdapter wa;
 
    private CyclicBarrier barrier = null;
+
+   private CountDownLatch startLatch;
    
    /**
     * Constructor.
@@ -95,7 +98,11 @@ public class NestProviderWork extends UniversalProviderWork
             if (nestDo)
                workManager.doWork(nestWork, WorkManager.INDEFINITE, null, wa);
             else
+            {
+               if (startLatch != null)
+                  startLatch.await();
                workManager.startWork(nestWork, WorkManager.INDEFINITE, null, wa);
+            }
          }
       }
       catch (Throwable e)
@@ -146,5 +153,15 @@ public class NestProviderWork extends UniversalProviderWork
    {
       barrier = bar;
    }
+
+   /**
+    * setter
+    * @param latch - new latch value
+    */
+   public void setStartLatch(CountDownLatch latch)
+   {
+      startLatch = latch;
+   }
+
 
 }

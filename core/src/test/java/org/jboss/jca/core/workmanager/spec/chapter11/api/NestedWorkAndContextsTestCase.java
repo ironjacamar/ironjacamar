@@ -29,6 +29,7 @@ import org.jboss.jca.core.workmanager.spec.chapter11.common.SecurityContextCusto
 import org.jboss.jca.core.workmanager.spec.chapter11.common.TransactionContextCustom;
 import org.jboss.jca.core.workmanager.spec.chapter11.common.UnsupportedContext;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
 
 import javax.resource.spi.work.HintsContext;
@@ -185,7 +186,11 @@ public class NestedWorkAndContextsTestCase
       workA.setBarrier(barrier);
       workB.setBarrier(barrier);
 
+      CountDownLatch latch = new CountDownLatch(1);
+      workA.setStartLatch(latch);
+
       workManager.startWork(workA, WorkManager.INDEFINITE, null, wa);
+      latch.countDown();
       barrier.await();
       assertNotNull(wa.getException());
    }
