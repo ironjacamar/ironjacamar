@@ -869,19 +869,14 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
       // We need to destroy some connections
       if (destroy != null) 
       {
-         for (ConnectionListenerWrapper clw : destroy) 
-         {
-            log.tracef("Destroying flushed connection %s", clw.getConnectionListener());
-
+         destroy.parallelStream().forEach(clw -> {
             if (Tracer.isEnabled())
                Tracer.destroyConnectionListener(pool.getName(), this, clw.getConnectionListener(),
-                                                false, false, false, true, false, false, false,
-                                                Tracer.isRecordCallstacks() ?
-                                                new Throwable("CALLSTACK") : null);
-                     
+                       false, false, false, true, false, false, false,
+                       Tracer.isRecordCallstacks() ?
+                               new Throwable("CALLSTACK") : null);
             doDestroy(clw);
-            clw = null;
-         }
+         });
       }
 
       // Trigger prefill
