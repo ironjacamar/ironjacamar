@@ -61,6 +61,21 @@ import org.jboss.logging.Messages;
  */
 public abstract class AbstractConnectionManager implements ConnectionManager
 {
+   /** Empty graceful shutdown call back */
+   private static final GracefulCallback EMPTY_CALL_BACK = new GracefulCallback()
+   {
+      @Override public void cancel()
+      {
+         // do nothing
+      }
+
+      @Override public void done()
+      {
+         // do nothing
+      }
+   };
+
+
    /** Log instance */
    private final CoreLogger log;
 
@@ -94,8 +109,8 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    /** Graceful job */
    private ScheduledFuture scheduledGraceful;
 
-   /** Graceful call back */
-   private GracefulCallback gracefulCallback;
+   /** Graceful call back. A non-null value indicates shutdown is prepared but has not started. */
+   private volatile GracefulCallback gracefulCallback;
 
    /** Cached connection manager */
    private CachedConnectionManager cachedConnectionManager;
@@ -249,8 +264,11 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    {
       shutdown.set(true);
 
+      // use gracefulCallback as an indicator that shutdown is prepared and not started, for that reason this field
+      // will never be null after preparation and before shutdown (this prevents adding an extra field,
+      // shutdownPrepared, or having to replace shutdown by a state field)
       if (gracefulCallback == null) 
-         gracefulCallback = cb;
+         gracefulCallback = cb == null ? EMPTY_CALL_BACK : cb;
 
       if (pool != null)
          pool.prepareShutdown();
@@ -269,17 +287,34 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       else
       {
          if (pool != null && pool.isIdle())
+         {
+            synchronized (this)
+            {
+               // skip shutdown if there is another thread already taking care of it
+               if (gracefulCallback == null)
+                  return;
+            }
             shutdown();
+         }
       }
    }
 
    /**
     * {@inheritDoc}
     */
-   public synchronized void shutdown()
+   public void shutdown()
    {
       getLogger().debugf("%s: shutdown", jndiName);
-      shutdown.set(true);
+      final GracefulCallback gracefulCallback;
+      final ScheduledExecutorService scheduledExecutorService;
+      synchronized (this)
+      {
+         shutdown.set(true);
+         gracefulCallback = this.gracefulCallback;
+         this.gracefulCallback = null;
+         scheduledExecutorService = this.scheduledExecutorService;
+         this.scheduledExecutorService = null;
+      }
 
       if (pool != null)
          pool.shutdown();
@@ -291,13 +326,11 @@ public abstract class AbstractConnectionManager implements ConnectionManager
 
          scheduledGraceful = null;
          scheduledExecutorService.shutdownNow();
-         scheduledExecutorService = null;
       }
 
       if (gracefulCallback != null)
       {
          gracefulCallback.done();
-         gracefulCallback = null;
       }
    }
 
@@ -721,7 +754,15 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       }
 
       if (shutdown.get() && pool.isIdle())
+      {
+         synchronized (this)
+         {
+            // skip shutdown if there is another thread already taking care of it
+            if (gracefulCallback == null)
+               return;
+         }
          shutdown();
+      }
    }
 
    /**
