@@ -49,7 +49,7 @@ public interface AdminObject extends JCAMetadata
    public String getClassName();
 
    /**
-    * Get the jndiName.
+    * Get the jndiName.k
     *
     * @return the jndiName.
     */
