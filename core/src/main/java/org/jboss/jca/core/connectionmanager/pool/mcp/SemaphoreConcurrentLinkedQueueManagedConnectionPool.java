@@ -34,6 +34,7 @@ import org.jboss.jca.core.connectionmanager.pool.idle.IdleRemover;
 import org.jboss.jca.core.connectionmanager.pool.validator.ConnectionValidator;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
@@ -558,13 +559,13 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
     */
    public void flush()
    {
-      flush(false);
+      flush(false, new ArrayList<ConnectionListener>(1));
    }
 
    /**
     * {@inheritDoc}
     */
-   public void flush(boolean kill)
+   public void flush(boolean kill, Collection<ConnectionListener> toDestroy)
    {
       ArrayList<ConnectionListenerWrapper> destroy = null;
       synchronized (cls)
@@ -642,8 +643,7 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
          {
             log.tracef("Destroying flushed connection %s", clw.getConnectionListener());
 
-            doDestroy(clw);
-            clw = null;
+            toDestroy.add(clw.connectionListener);
          }
       }
 
@@ -737,6 +737,8 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
     */
    public void shutdown()
    {
+      final Collection<ConnectionListener> toDestroy;
+
       if(log.isTraceEnabled())
          log.tracef("Shutdown - Pool: %s MCP: %s", pool.getName(), Integer.toHexString(System.identityHashCode(this)));
 
@@ -753,7 +755,8 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
          }
       }
 
-      flush(true);
+      toDestroy = new ArrayList<ConnectionListener>();
+      flush(true, toDestroy);
    }
 
    /**
@@ -1123,6 +1126,16 @@ public class SemaphoreConcurrentLinkedQueueManagedConnectionPool implements Mana
                statistics.setInUsedCount(checkedOutSize.get());
          }
       }
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void connectionListenerDestroyed(ConnectionListener cl)
+   {
+
+      if (statistics.isEnabled())
+         statistics.deltaDestroyedCount();
    }
 
    /**

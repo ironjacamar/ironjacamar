@@ -21,14 +21,6 @@
  */
 package org.jboss.jca.core.connectionmanager.listener;
 
-import org.jboss.jca.common.api.metadata.common.FlushStrategy;
-import org.jboss.jca.core.CoreBundle;
-import org.jboss.jca.core.CoreLogger;
-import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
-import org.jboss.jca.core.connectionmanager.ConnectionManager;
-import org.jboss.jca.core.connectionmanager.pool.api.Pool;
-import org.jboss.jca.core.spi.transaction.ConnectableResourceListener;
-
 import java.util.Iterator;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -38,6 +30,13 @@ import javax.resource.spi.ConnectionEvent;
 import javax.resource.spi.ManagedConnection;
 import javax.transaction.SystemException;
 
+import org.jboss.jca.common.api.metadata.common.FlushStrategy;
+import org.jboss.jca.core.CoreBundle;
+import org.jboss.jca.core.CoreLogger;
+import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
+import org.jboss.jca.core.connectionmanager.ConnectionManager;
+import org.jboss.jca.core.connectionmanager.pool.api.Pool;
+import org.jboss.jca.core.spi.transaction.ConnectableResourceListener;
 import org.jboss.logging.Messages;
 
 /**
@@ -355,12 +354,14 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
 
       if (flushStrategy == FlushStrategy.IDLE_CONNECTIONS)
       {
-         pool.flush();
+         pool.flush(false);
       }
       else if (flushStrategy == FlushStrategy.ENTIRE_POOL)
       {
          pool.flush(true);
+
       }
+
    }
    
    
@@ -406,6 +407,33 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
    }
 
    /**
+    * {@inheritDoc}
+    */
+   public void destroy()
+   {
+      if (getState() == ConnectionState.DESTROYED)
+      {
+         log.tracef("ManagedConnection is already destroyed %s", this);
+         return;
+      }
+
+      setState(ConnectionState.DESTROYED);
+
+      final ManagedConnection mc = getManagedConnection();
+      try
+      {
+         mc.destroy();
+      }
+      catch (Throwable t)
+      {
+         if (log.isDebugEnabled())
+            log.debug("Exception destroying ManagedConnection " + this, t);
+      }
+
+      mc.removeConnectionEventListener(this);
+   }
+
+    /**
     * Compare
     * @param o The other object
     * @return 0 if equal; -1 if less than based on lastUse; otherwise 1

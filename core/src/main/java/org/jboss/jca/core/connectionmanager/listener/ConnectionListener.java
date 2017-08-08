@@ -150,4 +150,9 @@ public interface ConnectionListener extends org.jboss.jca.core.api.connectionman
     *           milliseconds.
     */
    public void setLastValidatedTime(long lastValidated);
+
+   /**
+    * Destroys this connection listener and its managed connection.
+    */
+   public void destroy();
 }

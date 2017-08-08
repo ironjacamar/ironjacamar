@@ -35,6 +35,8 @@ import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactor
 import org.jboss.jca.core.connectionmanager.transaction.LockKey;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -353,46 +355,66 @@ public abstract class AbstractPool implements Pool
    /**
     * {@inheritDoc}
     */
-   public synchronized void flush(boolean kill)
+   public void flush(boolean kill)
    {
-      log.debug(poolName + ": flush(" + kill + ")");
-
-      Set<ManagedConnectionPool> clearMcpPools = new HashSet<ManagedConnectionPool>();
-      int size = mcpPools.size();
-
-      Iterator<ManagedConnectionPool> it = mcpPools.values().iterator();
-      while (it.hasNext())
+      final Collection<ConnectionListener> removedConnectionListeners = new ArrayList<ConnectionListener>();
+      synchronized (this)
       {
-         ManagedConnectionPool mcp = it.next();
-         try
-         {
-            mcp.flush(kill);
-         }
-         catch (Exception e)
-         {
-            // Should not happen
-            log.trace("MCP.flush: " + e.getMessage(), e);
-         }
+         log.debug(poolName + ": flush(" + kill + ")");
 
-         boolean isPrefill = (this instanceof PrefillPool) && (poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) && poolConfiguration.getMinSize() > 0;
-         if (mcp.isEmpty() && !isPrefill && size > 1)
-            clearMcpPools.add(mcp);
-      }
+         Set<ManagedConnectionPool> clearMcpPools = new HashSet<ManagedConnectionPool>();
+         int size = mcpPools.size();
 
-      if (clearMcpPools.size() > 0)
-      {
-         for (ManagedConnectionPool mcp : clearMcpPools)
+         Iterator<ManagedConnectionPool> it = mcpPools.values().iterator();
+         while (it.hasNext())
          {
+            ManagedConnectionPool mcp = it.next();
             try
             {
-               mcp.shutdown();
+               mcp.flush(kill, removedConnectionListeners);
             }
             catch (Exception e)
             {
                // Should not happen
-               log.trace("MCP.shutdown: " + e.getMessage(), e);
+               log.trace("MCP.flush: " + e.getMessage(), e);
             }
-            mcpPools.values().remove(mcp);
+            boolean isPrefill = (this instanceof PrefillPool) && (poolConfiguration.isPrefill() || poolConfiguration.isStrictMin()) && poolConfiguration.getMinSize() > 0;
+
+            if (mcp.isEmpty() && !isPrefill && size > 1)
+                     clearMcpPools.add(mcp);
+         }
+
+         if (clearMcpPools.size() > 0)
+         {
+            for (ManagedConnectionPool mcp : clearMcpPools)
+            {
+               if (mcp.isEmpty())
+               {
+                  try
+                  {
+                     mcp.shutdown();
+                  }
+                  catch (Exception e)
+                  {
+                     // Should not happen
+                     log.trace("MCP.shutdown: " + e.getMessage(), e);
+                  }
+
+                  mcpPools.values().remove(mcp);
+               }
+            }
+
+            log.tracef("%s: mcpPools=%s", getName(), mcpPools);
+         }
+      }
+
+      if (removedConnectionListeners != null)
+      {
+         for (ConnectionListener cl : removedConnectionListeners)
+         {
+            log.tracef("Destroying flushed connection %s", cl);
+
+            cl.destroy();
          }
       }
    }
