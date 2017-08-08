@@ -221,4 +221,9 @@ public interface ConnectionListener extends org.jboss.jca.core.api.connectionman
     * @return <code>True</code> if supported, otherwise <code>false</code>
     */
    public boolean supportsLazyEnlistment();
+
+   /**
+    * Destroys this connection listener and its managed connection.
+    */
+   public void destroy();
 }
