@@ -28,6 +28,8 @@ import org.jboss.jca.core.connectionmanager.listener.ConnectionListenerFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.idle.IdleConnectionRemovalSupport;
 
+import java.util.Collection;
+
 import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnectionFactory;
@@ -112,9 +114,10 @@ public interface ManagedConnectionPool extends IdleConnectionRemovalSupport
    /**
     * Flush
     * @param kill Kill all connections
+    * @param toDestroy list of connection listeners to be destroyed
     */
-   public void flush(boolean kill);
-   
+   public void flush(boolean kill, Collection<ConnectionListener> toDestroy);
+
    /**
     * Shutdown
     */
@@ -136,4 +139,9 @@ public interface ManagedConnectionPool extends IdleConnectionRemovalSupport
     * @return The module
     */
    public ManagedConnectionPoolStatistics getStatistics();
+
+   /**
+    * Notify that a connection listener belonging to this pool was destroyed.
+    */
+   public void connectionListenerDestroyed(ConnectionListener cl);
 }

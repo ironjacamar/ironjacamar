@@ -34,6 +34,7 @@ import org.jboss.jca.core.connectionmanager.pool.idle.IdleRemover;
 import org.jboss.jca.core.connectionmanager.pool.validator.ConnectionValidator;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
@@ -43,6 +44,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 import javax.resource.ResourceException;
+import javax.resource.cci.Connection;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnection;
 import javax.resource.spi.ManagedConnectionFactory;
@@ -373,7 +375,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                      if (statistics.isEnabled())
                         statistics.setInUsedCount(checkedOut.size());
 
-                     doDestroy(cl);
+
+                     cl.destroy();
                      cl = null;
                   }
                   catch (Throwable t)
@@ -388,7 +391,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                      if (statistics.isEnabled())
                         statistics.setInUsedCount(checkedOut.size());
 
-                     doDestroy(cl);
+                     cl.destroy();
                      cl = null;
                   }
 
@@ -443,7 +446,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                      checkedOut.remove(cl);
                   }
 
-                  doDestroy(cl);
+                  cl.destroy();
                }
 
                if (statistics.isEnabled())
@@ -569,7 +572,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       {
          log.tracef("Destroying returned connection %s", cl);
 
-         doDestroy(cl);
+         cl.destroy();
          cl = null;
       }
    }
@@ -579,15 +582,16 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
     */
    public void flush()
    {
-      flush(false);
+      flush(false, new ArrayList<ConnectionListener>(1));
    }
 
    /**
     * {@inheritDoc}
     */
-   public void flush(boolean kill)
+   public void flush(boolean kill, Collection<ConnectionListener> toDestroy)
    {
       ArrayList<ConnectionListener> destroy = null;
+
 
       synchronized (cls)
       {
@@ -639,8 +643,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          {
             log.tracef("Destroying flushed connection %s", cl);
 
-            doDestroy(cl);
-            cl = null;
+            toDestroy.add(cl);
          }
       }
 
@@ -700,7 +703,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
          {
             log.tracef("Destroying timedout connection %s", cl);
 
-            doDestroy(cl);
+            cl.destroy();
             cl = null;
          }
 
@@ -738,19 +741,32 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    public void shutdown()
    {
       log.tracef("Shutdown - Pool: %s MCP: %s", pool.getName(), Integer.toHexString(System.identityHashCode(this)));
-
-      IdleRemover.getInstance().unregisterPool(this);
-      ConnectionValidator.getInstance().unregisterPool(this);
-
-      if (checkedOut.size() > 0)
+      final Collection<ConnectionListener> toDestroy;
+      synchronized (this)
       {
-         for (ConnectionListener cl : checkedOut)
-         {
-            log.destroyingActiveConnection(pool.getName(), cl.getManagedConnection());
-         }
-      }
+         if (log.isTraceEnabled())
+            log.tracef("Shutdown - Pool: %s MCP: %s", pool.getName(), Integer.toHexString(System.identityHashCode(
+                  this)));
 
-      flush(true);
+         IdleRemover.getInstance().unregisterPool(this);
+         ConnectionValidator.getInstance().unregisterPool(this);
+
+         if (checkedOut.size() > 0)
+         {
+            for (ConnectionListener cl : checkedOut)
+            {
+               log.destroyingActiveConnection(pool.getName(), cl.getManagedConnection());
+
+            }
+         }
+
+         toDestroy = new ArrayList<ConnectionListener>();
+         flush(true, toDestroy);
+      }
+      for (ConnectionListener cl : toDestroy)
+      {
+         cl.destroy();
+      }
    }
 
    /**
@@ -876,34 +892,15 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    }
 
    /**
-    * Destroy a connection
-    *
-    * @param cl the connection to destroy
+    * {@inheritDoc}
     */
-   void doDestroy(ConnectionListener cl)
+   public void connectionListenerDestroyed(ConnectionListener cl)
    {
-      if (cl.getState() == ConnectionState.DESTROYED)
-      {
-         log.tracef("ManagedConnection is already destroyed %s", cl);
-
-         return;
-      }
 
       if (statistics.isEnabled())
          statistics.deltaDestroyedCount();
       cl.setState(ConnectionState.DESTROYED);
 
-      ManagedConnection mc = cl.getManagedConnection();
-      try
-      {
-         mc.destroy();
-      }
-      catch (Throwable t)
-      {
-         log.debug("Exception destroying ManagedConnection " + cl, t);
-      }
-
-      mc.removeConnectionEventListener(cl);
    }
 
    /**
@@ -972,7 +969,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                      {
                         if (cl.getState() != ConnectionState.DESTROY)
                         {
-                           doDestroy(cl);
+
+                           cl.destroy();
                            cl = null;
                            destroyed = true;
                            anyDestroyed = true;
@@ -983,6 +981,19 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                   {
                      log.backgroundValidationNonCompliantManagedConnectionFactory();
                   }
+               }
+               catch (ResourceException re)
+               {
+                  if (cl != null)
+                  {
+
+                     cl.destroy();
+                     cl = null;
+                     destroyed = true;
+                     anyDestroyed = true;
+                  }
+
+                  log.connectionValidatorIgnoredUnexpectedError(re);
                }
                finally
                {

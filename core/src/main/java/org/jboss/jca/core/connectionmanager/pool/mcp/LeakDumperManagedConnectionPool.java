@@ -113,8 +113,7 @@ public class LeakDumperManagedConnectionPool extends SemaphoreArrayListManagedCo
    /**
     * {@inheritDoc}
     */
-   @Override
-   void doDestroy(ConnectionListener cl)
+   public void connectionListenerDestroyed(ConnectionListener cl)
    {
       if (tracker.containsKey(cl))
       {
@@ -128,8 +127,7 @@ public class LeakDumperManagedConnectionPool extends SemaphoreArrayListManagedCo
          tracker.remove(cl);
          times.remove(cl);
       }
-
-      super.doDestroy(cl);
+      super.connectionListenerDestroyed(cl);
    }
 
    /**
