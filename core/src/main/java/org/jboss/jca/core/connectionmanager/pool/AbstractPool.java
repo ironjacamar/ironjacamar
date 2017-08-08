@@ -505,55 +505,72 @@ public abstract class AbstractPool implements Pool
    /**
     * {@inheritDoc}
     */
-   public synchronized void flush(FlushMode mode)
+   public void flush(FlushMode mode)
    {
-      log.debugf("%s: flush(%s)", poolName, mode);
-
-      Set<ManagedConnectionPool> clearMcpPools = new HashSet<ManagedConnectionPool>();
-      int size = mcpPools.size();
-
-      Iterator<ManagedConnectionPool> it = mcpPools.values().iterator();
-      while (it.hasNext())
+      final Collection<ConnectionListener> removedConnectionListeners = new ArrayList<ConnectionListener>();
+      synchronized (this)
       {
-         ManagedConnectionPool mcp = it.next();
-         try
+         log.debugf("%s: flush(%s)", poolName, mode);
+
+         Set<ManagedConnectionPool> clearMcpPools = new HashSet<ManagedConnectionPool>();
+         int size = mcpPools.size();
+
+         Iterator<ManagedConnectionPool> it = mcpPools.values().iterator();
+         while (it.hasNext())
          {
-            mcp.flush(mode);
-         }
-         catch (Exception e)
-         {
-            // Should not happen
-            log.trace("MCP.flush: " + e.getMessage(), e);
+            ManagedConnectionPool mcp = it.next();
+            try
+            {
+               mcp.flush(mode, removedConnectionListeners);
+            }
+            catch (Exception e)
+            {
+               // Should not happen
+               log.trace("MCP.flush: " + e.getMessage(), e);
+            }
+
+            if (mcp.isEmpty() && !isPrefill() && size > 1)
+               clearMcpPools.add(mcp);
          }
 
-         if (mcp.isEmpty() && !isPrefill() && size > 1)
-            clearMcpPools.add(mcp);
+         if (clearMcpPools.size() > 0)
+         {
+            for (ManagedConnectionPool mcp : clearMcpPools)
+            {
+               if (mcp.isEmpty())
+               {
+                  try
+                  {
+                     mcp.shutdown();
+                  }
+                  catch (Exception e)
+                  {
+                     // Should not happen
+                     log.trace("MCP.shutdown: " + e.getMessage(), e);
+                  }
+
+                  if (Tracer.isEnabled())
+                     Tracer.destroyManagedConnectionPool(getName(), mcp);
+
+                  mcpPools.values().remove(mcp);
+               }
+            }
+
+            log.tracef("%s: mcpPools=%s", getName(), mcpPools);
+         }
       }
 
-      if (clearMcpPools.size() > 0)
+      if (removedConnectionListeners != null)
       {
-         for (ManagedConnectionPool mcp : clearMcpPools)
+         for (ConnectionListener cl : removedConnectionListeners)
          {
-            if (mcp.isEmpty())
-            {
-               try
-               {
-                  mcp.shutdown();
-               }
-               catch (Exception e)
-               {
-                  // Should not happen
-                  log.trace("MCP.shutdown: " + e.getMessage(), e);
-               }
+            log.tracef("Destroying flushed connection %s", cl);
 
-               if (Tracer.isEnabled())
-                  Tracer.destroyManagedConnectionPool(getName(), mcp);
-                     
-               mcpPools.values().remove(mcp);
-            }
+            if (Tracer.isEnabled())
+               Tracer.destroyConnectionListener(getName(), cl.getManagedConnectionPool(), cl, false, false, false, true,
+                     false, false, false, Tracer.isRecordCallstacks() ? new Throwable("CALLSTACK") : null);
+            cl.destroy();
          }
-
-         log.tracef("%s: mcpPools=%s", getName(), mcpPools);
       }
    }
 

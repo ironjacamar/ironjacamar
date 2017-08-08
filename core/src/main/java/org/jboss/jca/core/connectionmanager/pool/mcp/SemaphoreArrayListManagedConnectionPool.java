@@ -40,6 +40,7 @@ import org.jboss.jca.core.connectionmanager.pool.validator.ConnectionValidator;
 import org.jboss.jca.core.tracer.Tracer;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
@@ -48,6 +49,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 import javax.resource.ResourceException;
+import javax.resource.cci.Connection;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.DissociatableManagedConnection;
 import javax.resource.spi.ManagedConnection;
@@ -441,7 +443,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                                                          Tracer.isRecordCallstacks() ?
                                                          new Throwable("CALLSTACK") : null);
                      
-                     doDestroy(cl);
+                     cl.destroy();
                      cl = null;
                   }
                   catch (Throwable t)
@@ -463,7 +465,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                                                          Tracer.isRecordCallstacks() ?
                                                          new Throwable("CALLSTACK") : null);
                      
-                     doDestroy(cl);
+                     cl.destroy();
                      cl = null;
                   }
 
@@ -540,7 +542,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                                                       Tracer.isRecordCallstacks() ?
                                                       new Throwable("CALLSTACK") : null);
                      
-                  doDestroy(cl);
+                  cl.destroy();
                }
 
                pool.getLock().release();
@@ -756,7 +758,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                                              Tracer.isRecordCallstacks() ?
                                              new Throwable("CALLSTACK") : null);
                      
-         doDestroy(cl);
+         cl.destroy();
          cl = null;
       }
    }
@@ -764,10 +766,9 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    /**
     * {@inheritDoc}
     */
-   public void flush(FlushMode mode)
+   public void flush(FlushMode mode, Collection<ConnectionListener> toDestroy)
    {
       ArrayList<ConnectionListener> keep = null;
-      ArrayList<ConnectionListener> destroy = null;
 
       synchronized (cls)
       {
@@ -788,10 +789,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                   pool.getInternalStatistics().deltaTotalUsageTime(System.currentTimeMillis() -
                                                                    cl.getLastCheckedOutTime());
 
-               if (destroy == null)
-                  destroy = new ArrayList<ConnectionListener>(1);
-
-               destroy.add(cl);
+               toDestroy.add(cl);
 
                ConnectionListener present = clPermits.remove(cl);
                if (present != null)
@@ -843,15 +841,12 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
             if (kill)
             {
-               if (destroy == null)
-                  destroy = new ArrayList<ConnectionListener>(1);
-
                if (pool.getInternalStatistics().isEnabled())
                   pool.getInternalStatistics().deltaTotalPoolTime(System.currentTimeMillis() -
                                                                   cl.getLastReturnedTime());
 
                cl.setState(ConnectionState.DESTROY);
-               destroy.add(cl);
+               toDestroy.add(cl);
             }
             else
             {
@@ -864,24 +859,6 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
          if (keep != null)
             cls.addAll(keep);
-      }
-
-      // We need to destroy some connections
-      if (destroy != null)
-      {
-         for (ConnectionListener cl : destroy)
-         {
-            log.tracef("Destroying flushed connection %s", cl);
-
-            if (Tracer.isEnabled())
-               Tracer.destroyConnectionListener(pool.getName(), this, cl, false, false, false, true, false,
-                                                false, false,
-                                                Tracer.isRecordCallstacks() ?
-                                                new Throwable("CALLSTACK") : null);
-                     
-            doDestroy(cl);
-            cl = null;
-         }
       }
 
       // Trigger prefill
@@ -996,7 +973,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                                                 Tracer.isRecordCallstacks() ?
                                                 new Throwable("CALLSTACK") : null);
                      
-            doDestroy(cl);
+            cl.destroy();
             cl = null;
          }
 
@@ -1031,26 +1008,36 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    /**
     * {@inheritDoc}
     */
-   public synchronized void shutdown()
+   public void shutdown()
    {
-      if (log.isTraceEnabled())
-         log.tracef("Shutdown - Pool: %s MCP: %s", pool.getName(), Integer.toHexString(System.identityHashCode(this)));
-
-      IdleRemover.getInstance().unregisterPool(this);
-      ConnectionValidator.getInstance().unregisterPool(this);
-
-      if (checkedOut.size() > 0)
+      final Collection<ConnectionListener> toDestroy;
+      synchronized (this)
       {
-         for (ConnectionListener cl : checkedOut)
+         if (log.isTraceEnabled())
+            log.tracef("Shutdown - Pool: %s MCP: %s", pool.getName(), Integer.toHexString(System.identityHashCode(
+                  this)));
+
+         IdleRemover.getInstance().unregisterPool(this);
+         ConnectionValidator.getInstance().unregisterPool(this);
+
+         if (checkedOut.size() > 0)
          {
-            log.destroyingActiveConnection(pool.getName(), cl.getManagedConnection());
+            for (ConnectionListener cl : checkedOut)
+            {
+               log.destroyingActiveConnection(pool.getName(), cl.getManagedConnection());
 
-            if (Tracer.isEnabled())
-               Tracer.clearConnectionListener(pool.getName(), this, cl);
+               if (Tracer.isEnabled())
+                  Tracer.clearConnectionListener(pool.getName(), this, cl);
+            }
          }
-      }
 
-      flush(FlushMode.ALL);
+         toDestroy = new ArrayList<ConnectionListener>();
+         flush(FlushMode.ALL, toDestroy);
+      }
+      for (ConnectionListener cl : toDestroy)
+      {
+         cl.destroy();
+      }
    }
 
    /**
@@ -1140,7 +1127,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                                                             Tracer.isRecordCallstacks() ?
                                                             new Throwable("CALLSTACK") : null);
                      
-                        doDestroy(cl);
+                        cl.destroy();
                         return;
                      }
                   }
@@ -1232,7 +1219,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                                                                Tracer.isRecordCallstacks() ?
                                                                new Throwable("CALLSTACK") : null);
                      
-                           doDestroy(cl);
+                           cl.destroy();
                            return;
                         }
                      }
@@ -1292,35 +1279,12 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
    }
 
    /**
-    * Destroy a connection
-    *
-    * @param cl the connection to destroy
+    * {@inheritDoc}
     */
-   void doDestroy(ConnectionListener cl)
+   public void connectionListenerDestroyed(ConnectionListener cl)
    {
-      if (cl.getState() == ConnectionState.DESTROYED)
-      {
-         log.tracef("ManagedConnection is already destroyed %s", cl);
-
-         return;
-      }
-
       if (pool.getInternalStatistics().isEnabled())
          pool.getInternalStatistics().deltaDestroyedCount();
-      cl.setState(ConnectionState.DESTROYED);
-
-      ManagedConnection mc = cl.getManagedConnection();
-      try
-      {
-         mc.destroy();
-      }
-      catch (Throwable t)
-      {
-         if (debug)
-            log.debug("Exception destroying ManagedConnection " + cl, t);
-      }
-
-      mc.removeConnectionEventListener(cl);
    }
 
    /**
@@ -1416,7 +1380,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                                                                Tracer.isRecordCallstacks() ?
                                                                new Throwable("CALLSTACK") : null);
                      
-                           doDestroy(cl);
+                           cl.destroy();
                            cl = null;
                            destroyed = true;
                            anyDestroyed = true;
@@ -1442,7 +1406,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                                                          Tracer.isRecordCallstacks() ?
                                                          new Throwable("CALLSTACK") : null);
                      
-                     doDestroy(cl);
+                     cl.destroy();
                      cl = null;
                      destroyed = true;
                      anyDestroyed = true;
