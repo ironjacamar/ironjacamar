@@ -81,7 +81,7 @@ public class PoolByCriNoTxDeploymentAllInvalidIdleConnectionsFlushTestCase exten
       c.fail();
       Thread.sleep(1000);
       //Pool "A" should be flushed and 1 of 2 idle connections in Pool "B" too
-      assertEquals(pool.getManagedConnectionPools().size(), 1);
+      assertEquals(1, pool.getManagedConnectionPools().size());
       checkStatistics(ps, 4, 1, 2, 3);
 
       assertFalse(c2.isDetached());
