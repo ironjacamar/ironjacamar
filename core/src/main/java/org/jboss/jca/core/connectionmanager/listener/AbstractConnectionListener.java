@@ -32,6 +32,8 @@ import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.spi.transaction.ConnectableResourceListener;
 import org.jboss.jca.core.tracer.Tracer;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -475,19 +477,39 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
       }
       else if (flushStrategy == FlushStrategy.INVALID_IDLE_CONNECTIONS)
       {
-         managedConnectionPool.flush(FlushMode.INVALID);
+         Collection<ConnectionListener> toDestroy = new ArrayList<ConnectionListener>();
+         managedConnectionPool.flush(FlushMode.INVALID, toDestroy);
+         for (ConnectionListener connectionListener: toDestroy)
+         {
+            connectionListener.destroy();
+         }
       }
       else if (flushStrategy == FlushStrategy.IDLE_CONNECTIONS)
       {
-         managedConnectionPool.flush(FlushMode.IDLE);
+         Collection<ConnectionListener> toDestroy = new ArrayList<ConnectionListener>();
+         managedConnectionPool.flush(FlushMode.IDLE, toDestroy);
+         for (ConnectionListener connectionListener: toDestroy)
+         {
+            connectionListener.destroy();
+         }
       }
       else if (flushStrategy == FlushStrategy.GRACEFULLY)
       {
-         managedConnectionPool.flush(FlushMode.GRACEFULLY);
+         Collection<ConnectionListener> toDestroy = new ArrayList<ConnectionListener>();
+         managedConnectionPool.flush(FlushMode.GRACEFULLY, toDestroy);
+         for (ConnectionListener connectionListener: toDestroy)
+         {
+            connectionListener.destroy();
+         }
       }
       else if (flushStrategy == FlushStrategy.ENTIRE_POOL)
       {
-         managedConnectionPool.flush(FlushMode.ALL);
+         Collection<ConnectionListener> toDestroy = new ArrayList<ConnectionListener>();
+         managedConnectionPool.flush(FlushMode.ALL, toDestroy);
+         for (ConnectionListener connectionListener: toDestroy)
+         {
+            connectionListener.destroy();
+         }
       }
       else if (flushStrategy == FlushStrategy.ALL_INVALID_IDLE_CONNECTIONS)
       {
@@ -592,6 +614,35 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
     */   
    public void handleClosed(Object h)
    {
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void destroy()
+   {
+      if (getState() == ConnectionState.DESTROYED)
+      {
+         log.tracef("ManagedConnection is already destroyed %s", this);
+         return;
+      }
+
+      getManagedConnectionPool().connectionListenerDestroyed(this);
+
+      setState(ConnectionState.DESTROYED);
+
+      final ManagedConnection mc = getManagedConnection();
+      try
+      {
+         mc.destroy();
+      }
+      catch (Throwable t)
+      {
+         if (log.isDebugEnabled())
+            log.debug("Exception destroying ManagedConnection " + this, t);
+      }
+
+      mc.removeConnectionEventListener(this);
    }
 
    /**

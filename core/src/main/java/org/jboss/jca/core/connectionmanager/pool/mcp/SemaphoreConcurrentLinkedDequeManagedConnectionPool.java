@@ -40,6 +40,7 @@ import org.jboss.jca.core.connectionmanager.pool.validator.ConnectionValidator;
 import org.jboss.jca.core.tracer.Tracer;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
@@ -448,7 +449,8 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
                                                          Tracer.isRecordCallstacks() ?
                                                          new Throwable("CALLSTACK") : null);
                      
-                     doDestroy(clw);
+                     removeConnectionListenerFromPool(clw);
+                     clw.getConnectionListener().destroy();
                      clw = null;
                   } 
                   catch (Throwable t) 
@@ -468,7 +470,8 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
                                                          Tracer.isRecordCallstacks() ?
                                                          new Throwable("CALLSTACK") : null);
                      
-                     doDestroy(clw);
+                     removeConnectionListenerFromPool(clw);
+                     clw.getConnectionListener().destroy();
                      clw = null;
                   }
 
@@ -542,7 +545,8 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
                                                       Tracer.isRecordCallstacks() ?
                                                       new Throwable("CALLSTACK") : null);
                      
-                  doDestroy(clw);
+                  removeConnectionListenerFromPool(clw);
+                  clw.getConnectionListener().destroy();
                }
 
                pool.getLock().release();
@@ -729,7 +733,8 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
                                              Tracer.isRecordCallstacks() ?
                                              new Throwable("CALLSTACK") : null);
                      
-         doDestroy(clw);
+         removeConnectionListenerFromPool(clw);
+         clw.getConnectionListener().destroy();
          clw = null;
       }
 
@@ -742,7 +747,7 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
    /**
     * {@inheritDoc}
     */
-   public void flush(FlushMode mode) 
+   public void flush(FlushMode mode, Collection<ConnectionListener> toDestroy)
    {
       ArrayList<ConnectionListenerWrapper> destroy = null;
 
@@ -869,14 +874,12 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
       // We need to destroy some connections
       if (destroy != null) 
       {
-         destroy.parallelStream().forEach(clw -> {
-            if (Tracer.isEnabled())
-               Tracer.destroyConnectionListener(pool.getName(), this, clw.getConnectionListener(),
-                       false, false, false, true, false, false, false,
-                       Tracer.isRecordCallstacks() ?
-                               new Throwable("CALLSTACK") : null);
-            doDestroy(clw);
-         });
+         for (ConnectionListenerWrapper clw : destroy)
+         {
+            removeConnectionListenerFromPool(clw);
+            toDestroy.add(clw.getConnectionListener());
+            clw = null;
+         }
       }
 
       // Trigger prefill
@@ -1000,7 +1003,8 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
                                                 Tracer.isRecordCallstacks() ?
                                                 new Throwable("CALLSTACK") : null);
                      
-            doDestroy(clw);
+            removeConnectionListenerFromPool(clw);
+            clw.getConnectionListener().destroy();
             clw = null;
          }
 
@@ -1035,18 +1039,17 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
    /**
     * {@inheritDoc}
     */
-   public void shutdown() 
+   public void shutdown()
    {
       if (log.isTraceEnabled())
-         log.tracef("Shutdown - Pool: %s MCP: %s", pool.getName(),
-               Integer.toHexString(System.identityHashCode(this)));
+         log.tracef("Shutdown - Pool: %s MCP: %s", pool.getName(), Integer.toHexString(System.identityHashCode(this)));
 
       IdleRemover.getInstance().unregisterPool(this);
       ConnectionValidator.getInstance().unregisterPool(this);
 
-      if (checkedOutSize.get() > 0) 
+      if (checkedOutSize.get() > 0)
       {
-         for (Entry<ConnectionListener, ConnectionListenerWrapper> entry : cls.entrySet()) 
+         for (Entry<ConnectionListener, ConnectionListenerWrapper> entry : cls.entrySet())
          {
             if (entry.getValue().isCheckedOut())
                log.destroyingActiveConnection(pool.getName(), entry.getKey().getManagedConnection());
@@ -1057,7 +1060,12 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
          }
       }
 
-      flush(FlushMode.ALL);
+      final Collection<ConnectionListener> toDestroy = new ArrayList<ConnectionListener>();
+      flush(FlushMode.ALL, toDestroy);
+      for (ConnectionListener cl : toDestroy)
+      {
+         cl.destroy();
+      }
    }
 
    /**
@@ -1155,7 +1163,9 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
                                                             Tracer.isRecordCallstacks() ?
                                                             new Throwable("CALLSTACK") : null);
                      
-                        doDestroy(new ConnectionListenerWrapper(cl, false, false));
+                        ConnectionListenerWrapper clw = new ConnectionListenerWrapper(cl, false, false);
+                        removeConnectionListenerFromPool(clw);
+                        clw.getConnectionListener().destroy();
                         return;
                      }
                   }
@@ -1239,7 +1249,9 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
                                                                Tracer.isRecordCallstacks() ?
                                                                new Throwable("CALLSTACK") : null);
                      
-                           doDestroy(new ConnectionListenerWrapper(cl, false, false));
+                           ConnectionListenerWrapper clw = new ConnectionListenerWrapper(cl, false, false);
+                           removeConnectionListenerFromPool(clw);
+                           clw.getConnectionListener().destroy();
                            return;
                         }
                      } 
@@ -1335,41 +1347,12 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
    }
 
    /**
-    * Destroy a connection
-    * 
-    * @param clw
-    *            the connection to destroy
+    * {@inheritDoc}
     */
-   private void doDestroy(ConnectionListenerWrapper clw) 
+   public void connectionListenerDestroyed(ConnectionListener cl)
    {
-      if (clw != null) 
-      {
-         removeConnectionListenerFromPool(clw);
-         
-         if (clw.getConnectionListener().getState() == ConnectionState.DESTROYED) 
-         {
-            log.tracef("ManagedConnection is already destroyed %s", clw.getConnectionListener());
-            return;
-         }
-
-         if (pool.getInternalStatistics().isEnabled())
-            pool.getInternalStatistics().deltaDestroyedCount();
-
-         clw.getConnectionListener().setState(ConnectionState.DESTROYED);
-         poolSize.decrementAndGet();
-
-         ManagedConnection mc = clw.getConnectionListener().getManagedConnection();
-         try
-         {
-            mc.destroy();
-         }
-         catch (Throwable t)
-         {
-            log.debugf(t, "Exception destroying ManagedConnection %s", clw.getConnectionListener());
-         }
-
-         mc.removeConnectionEventListener(clw.getConnectionListener());
-      }
+      if (pool.getInternalStatistics().isEnabled())
+         pool.getInternalStatistics().deltaDestroyedCount();
    }
 
    /**
@@ -1391,6 +1374,8 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
             clw.setCheckedOut(false);
             checkedOutSize.decrementAndGet();
          }
+         // update pool size
+         poolSize.decrementAndGet();
       }
    }
    
@@ -1473,7 +1458,8 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
                                                                Tracer.isRecordCallstacks() ?
                                                                new Throwable("CALLSTACK") : null);
                      
-                           doDestroy(clw);
+                           removeConnectionListenerFromPool(clw);
+                           clw.getConnectionListener().destroy();
                            clw = null;
                            destroyed = true;
                            anyDestroyed = true;
@@ -1501,7 +1487,8 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
                                                          Tracer.isRecordCallstacks() ?
                                                          new Throwable("CALLSTACK") : null);
                      
-                     doDestroy(clw);
+                     removeConnectionListenerFromPool(clw);
+                     clw.getConnectionListener().destroy();
                      clw = null;
                      destroyed = true;
                      anyDestroyed = true;
