@@ -34,7 +34,7 @@
   <property name="name" value="ironjacamar"/>
   <property name="major" value="1"/>
   <property name="minor" value="4"/>
-  <property name="patch" value="6"/>
+  <property name="patch" value="7"/>
   <property name="type" value="Final"/>
 
   <condition property="organisation" value="org.jboss.ironjacamar.jdk8">
@@ -1433,7 +1433,6 @@ mvn install:install-file -Dfile=$PWD/@{artifact}.@{extension} -DpomFile=@{artifa
   </macrodef>
 
   <target name="nexus-base">
-    <fail message="Nexus requires JDK7" if="HAVE_JDK_1.8"/>
     <delete file="${target.dir}/deploy.sh"/>
     <delete file="${target.dir}/install.sh"/>
 
