@@ -202,9 +202,12 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
             // No timeout
             if (timeout == -1)
                return -1;
+            // No remaining transaction timeout. This is a very rare case but possible to happen.
+            if (timeout == 0)
+               throw new SQLException(bundle.transactionCannotProceed("No remaining transaction timeout"));
             // Round up to the nearest second
             long result = timeout / 1000;
-            if ((result % 1000) != 0)
+            if ((timeout % 1000) != 0)
                ++result;
             return (int) result;
          }
