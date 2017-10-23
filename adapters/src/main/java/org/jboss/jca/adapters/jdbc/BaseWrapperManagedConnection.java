@@ -412,14 +412,15 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
     */
    protected void unlock()
    {
-      if (tryLock < 0)
-         return;
-
-      if (trace)
-         dumpLockInformation(false);
-
-      if (lock.isHeldByCurrentThread())
-         lock.unlock();
+      try
+      {
+         if (trace)
+            dumpLockInformation(false);
+      } finally
+      {
+         if (lock.isHeldByCurrentThread())
+            lock.unlock();
+      }
    }
 
    /**
