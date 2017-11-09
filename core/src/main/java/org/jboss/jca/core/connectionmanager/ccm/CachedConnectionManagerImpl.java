@@ -686,6 +686,14 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
        */
       public void beforeCompletion()
       {
+         // No-action
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public void afterCompletion(int status)
+      {
          closing.set(true);
 
          for (Iterator<Object> i = connections.iterator(); i.hasNext();)
@@ -694,14 +702,6 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
          }
 
          connections.clear();
-      }
-
-      /**
-       * {@inheritDoc}
-       */
-      public void afterCompletion(int status)
-      {
-         // No-action
       }
    }
 
