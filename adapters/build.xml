@@ -42,7 +42,8 @@
            deprecation="${javac.deprecation}"
            optimize="${javac.optimize}"
            excludes="**/jdk6/**,**/jdk7/**,**/mail/**"
-           includeAntRuntime="false">
+           includeAntRuntime="false"
+ 	       encoding="${javac.encoding}">
       <compilerarg value="-Xlint"/>
     </javac> 
   </target>
@@ -55,7 +56,8 @@
            deprecation="${javac.deprecation}"
            optimize="${javac.optimize}"
            includes="**/mail/**"
-           includeAntRuntime="false">
+           includeAntRuntime="false"
+ 	       encoding="${javac.encoding}">
       <compilerarg value="-Xlint"/>
     </javac> 
   </target>
@@ -68,7 +70,8 @@
            deprecation="${javac.deprecation}"
            optimize="${javac.optimize}"
            includes="**/jdk6/**"
-           includeAntRuntime="false">
+           includeAntRuntime="false"
+ 	       encoding="${javac.encoding}">
       <compilerarg value="-Xlint"/>
     </javac> 
   </target>
@@ -81,7 +84,8 @@
            deprecation="${javac.deprecation}"
            optimize="${javac.optimize}"
            includes="**/jdk7/**"
-           includeAntRuntime="false">
+           includeAntRuntime="false"
+ 	       encoding="${javac.encoding}">
       <compilerarg value="-Xlint"/>
     </javac> 
   </target>

@@ -55,7 +55,8 @@
            deprecation="${javac.deprecation}"
            includes="**/cli/**, **/ant/**, **/maven/**"
            optimize="${javac.optimize}"
-           includeAntRuntime="false">
+           includeAntRuntime="false"
+ 	       encoding="${javac.encoding}">
       <compilerarg value="-Xlint"/>
     </javac> 
   </target>
