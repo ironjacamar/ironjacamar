@@ -41,7 +41,7 @@
            deprecation="${javac.deprecation}"
            optimize="${javac.optimize}"
            includeAntRuntime="false"
- 	       encoding="${javac.encoding}">
+           encoding="${javac.encoding}">
       <compilerarg value="-proc:none"/>
     </javac> 
 
