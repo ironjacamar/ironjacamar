@@ -43,7 +43,7 @@
            optimize="${javac.optimize}"
            excludes="**/jdk6/**,**/jdk7/**,**/mail/**"
            includeAntRuntime="false"
- 	       encoding="${javac.encoding}">
+           encoding="${javac.encoding}">
       <compilerarg value="-Xlint"/>
     </javac> 
   </target>
@@ -57,7 +57,7 @@
            optimize="${javac.optimize}"
            includes="**/mail/**"
            includeAntRuntime="false"
- 	       encoding="${javac.encoding}">
+           encoding="${javac.encoding}">
       <compilerarg value="-Xlint"/>
     </javac> 
   </target>
@@ -71,7 +71,7 @@
            optimize="${javac.optimize}"
            includes="**/jdk6/**"
            includeAntRuntime="false"
- 	       encoding="${javac.encoding}">
+           encoding="${javac.encoding}">
       <compilerarg value="-Xlint"/>
     </javac> 
   </target>
@@ -85,7 +85,7 @@
            optimize="${javac.optimize}"
            includes="**/jdk7/**"
            includeAntRuntime="false"
- 	       encoding="${javac.encoding}">
+           encoding="${javac.encoding}">
       <compilerarg value="-Xlint"/>
     </javac> 
   </target>
@@ -202,7 +202,7 @@
       <sysproperty key="test.dir" value="${test.dir}"/>
       <sysproperty key="xb.builder.useUnorderedSequence" value="true"/>
       <sysproperty key="java.naming.factory.initial" value="org.jnp.interfaces.LocalOnlyContextFactory"/>
-    	<sysproperty key="java.naming.factory.url.pkgs" value="org.jboss.naming:org.jnp.interfaces"/>
+      <sysproperty key="java.naming.factory.url.pkgs" value="org.jboss.naming:org.jnp.interfaces"/>
 
       
       <classpath>
@@ -261,7 +261,7 @@
         <pathelement location="${build.adapters.dir}"/>
         <fileset dir="${target.dir}" includes="*.jar"/>
         <fileset dir="${build.adapters.dir}" includes="*.jar"/>
-	     <fileset dir="${lib.dir}/common" includes="*.jar" />
+        <fileset dir="${lib.dir}/common" includes="*.jar" />
         <fileset dir="${lib.dir}/embedded" includes="*.jar" />
         <fileset dir="${lib.dir}/arquillian" includes="*.jar" />
         <fileset dir="${lib.dir}/sjc" includes="*.jar" />
@@ -286,8 +286,8 @@
     <mkdir dir="${build.adapters.dir}/test" />
 
     <path id="adapters.test.lib.path.id">
-	<path refid="test.lib.path.id"/>
-	<pathelement location="${target.dir}/${name}-jdbc.jar"/>		
+    <path refid="test.lib.path.id"/>
+      <pathelement location="${target.dir}/${name}-jdbc.jar"/>        
     </path>
     <javac srcdir="src/test"
            destdir="${build.adapters.dir}/test"
@@ -306,12 +306,12 @@
     <copy todir="${build.adapters.dir}">
       <fileset dir="src/test/resources"/>
     </copy>
-  	
+      
     <copy todir="${build.adapters.dir}/">
       <fileset dir="${target.dir}">
         <include name="jdbc-local.rar"/>
         <include name="jdbc-xa.rar"/>
-	<include name="${name}-jdbc.jar"/>
+        <include name="${name}-jdbc.jar"/>
       </fileset>
     </copy>
   </target>
