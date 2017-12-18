@@ -39,7 +39,8 @@
            deprecation="${javac.deprecation}"
            includes="**/fungal/**"
            optimize="${javac.optimize}"
-           includeAntRuntime="false">
+           includeAntRuntime="false"
+    	   encoding="${javac.encoding}">
       <compilerarg value="-Xlint"/>
       <compilerarg value="-AgeneratedTranslationFilesPath=${build.deployers.dir}/impl"/>
       <compilerarg value="-AtranslationFilesPath=${build.deployers.dir}/impl"/>
