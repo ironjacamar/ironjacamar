@@ -36,6 +36,7 @@ import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.connectionmanager.ccm.CachedConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
+import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.spi.transaction.ConnectableResourceListener;
 import org.jboss.logging.Messages;
 
@@ -416,6 +417,8 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
          log.tracef("ManagedConnection is already destroyed %s", this);
          return;
       }
+
+      ((ManagedConnectionPool) internalManagedPoolContext).connectionListenerDestroyed(this);
 
       setState(ConnectionState.DESTROYED);
 
