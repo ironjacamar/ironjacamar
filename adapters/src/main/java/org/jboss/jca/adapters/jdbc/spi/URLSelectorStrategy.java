@@ -56,6 +56,14 @@ public interface URLSelectorStrategy
    public void fail(String url);
 
    /**
+    * URL was accepted - potentially mark it as active
+    * @param url
+    */
+   public default void success(String url) {
+	   // DO NOTHING
+   }
+
+   /**
     * Reset the plugin
     */
    public void reset();
