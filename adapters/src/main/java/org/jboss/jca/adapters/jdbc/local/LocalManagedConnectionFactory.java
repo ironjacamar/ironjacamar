@@ -363,7 +363,9 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
 
          try
          {
-            return createLocalManagedConnection(url, props, copy);
+            LocalManagedConnection con = createLocalManagedConnection(url, props, copy);
+            urlSelector.success(url);
+            return con;
          }
          catch (Exception e)
          {

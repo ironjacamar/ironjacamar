@@ -36,6 +36,7 @@ public class URLSelector implements URLSelectorStrategy
    private List<String> urls;
    private String currentUrl;
    private int currentIndex;
+   private int triesCounter;
    
    /**
     * Constructor
@@ -64,13 +65,14 @@ public class URLSelector implements URLSelectorStrategy
       if (currentUrl != null)
          return true;
 
-      if (currentIndex < urls.size())
+      if (triesCounter < urls.size())
       {
          return true;
       }
       else
       {
          currentIndex = 0;
+         triesCounter = 0;
          return false;
       }
    }
@@ -83,7 +85,8 @@ public class URLSelector implements URLSelectorStrategy
       if (currentUrl != null)
          return currentUrl;
 
-      currentUrl = urls.get(currentIndex++);
+      triesCounter++;
+      currentUrl = urls.get((currentIndex++)%urls.size());
       return currentUrl;
    }
 
@@ -94,6 +97,14 @@ public class URLSelector implements URLSelectorStrategy
    {
       if (currentUrl != null && currentUrl.equals(url))
          currentUrl = null;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public void success(String url)
+   {
+      triesCounter = 0;
    }
 
    /**
