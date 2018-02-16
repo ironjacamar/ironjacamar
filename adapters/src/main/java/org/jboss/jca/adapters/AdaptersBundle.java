@@ -362,5 +362,14 @@ public interface AdaptersBundle
     */
    @Message(id = 31103, value = "At least one connection property must be defined for datasource-class: %s")
    public String nonConnectionPropertyDefinedForDatasource(String cls);
+
+   /**
+    * A wrapped connection is being associated with a non-null managed connection while still locked
+    * by another thread. This will only happen if there is a locked thread using
+    * that wrapped connection with a previously associated managed connection. (see JBJCA-1367)
+    * @return The value
+    */
+   @Message(id = 31104, value = "Wrapped connection is still in use by another thread")
+   public String wrappedConnectionInUse();
 }
 
