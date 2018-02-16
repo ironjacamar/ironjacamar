@@ -112,16 +112,21 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    void setManagedConnection(final BaseWrapperManagedConnection mc)
    {
       this.mc = mc;
-      this.lockCount = 0;
 
       if (mc != null)
       {
          trackStatements = mc.getTrackStatements();
+         // This will only work because JDBC wrapped connections are not returned to a pool;
+         // only the mc inside the WrappedConnection is returned to the pool.
+         // That means the only moment this method is called with a non-null mc is
+         // during WrappedConnection creation
+         if (lockCount > 0) {
+            throw new IllegalStateException(bundle.wrappedConnectionInUse());
+         }
       }
       else
       {
-         // Reset lockedMC reference once the connection is returned to the pool
-         lockedMC = null;
+         // do not reset lockedMC reference once the connection is returned to the pool (JBJCA-1367)
          closed = true;
       }
    }
