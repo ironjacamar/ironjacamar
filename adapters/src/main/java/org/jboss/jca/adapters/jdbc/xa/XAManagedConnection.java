@@ -25,7 +25,9 @@ package org.jboss.jca.adapters.jdbc.xa;
 import org.jboss.jca.adapters.jdbc.BaseWrapperManagedConnection;
 
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.resource.ResourceException;
 import javax.resource.spi.LocalTransaction;
@@ -52,7 +54,9 @@ public class XAManagedConnection extends BaseWrapperManagedConnection implements
 
    /** The Xid */
    protected Xid currentXid;
-   
+
+   /** Indicates if this connection has already been requested to end and has failed the attempt. See JBJCA-1368 */
+   private Set<Xid> failedToEndXids = null;
    /**
     * Constructor
     * @param mcf The managed connection factory
@@ -298,7 +302,14 @@ public class XAManagedConnection extends BaseWrapperManagedConnection implements
          {
             if (isFailedXA(e.errorCode))
             {
-               broadcastConnectionError(e);
+               if (failedToEndXids == null) {
+                  this.failedToEndXids = new HashSet<>();
+               }
+               // only broadcast the error if it hasn't been broadcast before
+               if (this.failedToEndXids.add(xid))
+               {
+                  broadcastConnectionError(e);
+               }
             }
 
             throw e;
