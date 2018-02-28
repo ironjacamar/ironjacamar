@@ -728,14 +728,13 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
          log.tracef("Destroying returned connection %s", cl);
 
          if (Tracer.isEnabled())
-            Tracer.destroyConnectionListener(pool.getName(), this, clw.getConnectionListener(),
+            Tracer.destroyConnectionListener(pool.getName(), this, cl,
                                              true, false, false, false, false, false, false,
                                              Tracer.isRecordCallstacks() ?
                                              new Throwable("CALLSTACK") : null);
                      
          removeConnectionListenerFromPool(clw);
-         clw.getConnectionListener().destroy();
-         clw = null;
+         cl.destroy();
       }
 
       if (releasePermit)
