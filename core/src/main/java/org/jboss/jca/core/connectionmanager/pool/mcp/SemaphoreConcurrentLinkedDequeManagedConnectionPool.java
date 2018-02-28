@@ -732,12 +732,13 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
             log.trace("Destroying returned connection " + cl);
 
          if (Tracer.isEnabled())
-            Tracer.destroyConnectionListener(pool.getName(), this, clw.getConnectionListener(),
+            Tracer.destroyConnectionListener(pool.getName(), this, cl,
                                              true, false, false, false, false, false, false,
                                              Tracer.isRecordCallstacks() ?
                                              new Throwable("CALLSTACK") : null);
                      
-         doDestroy(clw);
+
+         doDestroy(clw, cl);
          clw = null;
       }
 
@@ -1359,19 +1360,31 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
    /**
     * Destroy a connection
     * 
-    * @param clw
-    *            the connection to destroy
+    * @param clw the connection to destroy
     */
-   private void doDestroy(ConnectionListenerWrapper clw) 
+   private void doDestroy(ConnectionListenerWrapper clw)
    {
-      if (clw != null) 
+      doDestroy(clw, clw.getConnectionListener());
+   }
+
+   /**
+    * Destroy a connection
+    *
+    * @param clw the connection to destroy
+    * @param cl  the connection listener
+    */
+   private void doDestroy(ConnectionListenerWrapper clw, ConnectionListener cl)
+   {
+      if (clw != null)
       {
          removeConnectionListenerFromPool(clw);
+      }
+      if (cl != null) {
          
-         if (clw.getConnectionListener().getState() == ConnectionState.DESTROYED) 
+         if (cl.getState() == ConnectionState.DESTROYED)
          {
             if (trace)
-               log.trace("ManagedConnection is already destroyed " + clw.getConnectionListener());
+               log.trace("ManagedConnection is already destroyed " + cl);
 
             return;
          }
@@ -1379,20 +1392,20 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
          if (pool.getInternalStatistics().isEnabled())
             pool.getInternalStatistics().deltaDestroyedCount();
 
-         clw.getConnectionListener().setState(ConnectionState.DESTROYED);
+         cl.setState(ConnectionState.DESTROYED);
          poolSize.decrementAndGet();
 
-         ManagedConnection mc = clw.getConnectionListener().getManagedConnection();
+         ManagedConnection mc = cl.getManagedConnection();
          try 
          {
             mc.destroy();
          }
          catch (Throwable t) 
          {
-            log.debugf(t, "Exception destroying ManagedConnection %s", clw.getConnectionListener());
+            log.debugf(t, "Exception destroying ManagedConnection %s", cl);
          }
 
-         mc.removeConnectionEventListener(clw.getConnectionListener());
+         mc.removeConnectionEventListener(cl);
       }
    }
 
