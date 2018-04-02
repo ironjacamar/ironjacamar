@@ -97,6 +97,7 @@ public class PrefillTestCase
 
       PoolConfiguration config = new PoolConfiguration();
       config.setMinSize(10);
+      config.setInitialSize(0);
       config.setPrefill(false);
 
       PoolFactory pf = new PoolFactory();
