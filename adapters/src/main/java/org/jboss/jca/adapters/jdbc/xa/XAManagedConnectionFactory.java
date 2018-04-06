@@ -70,7 +70,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
    private String xaDataSourceProperties;
 
    /** THe XA properties */
-   protected final Map<String, String> xaProps = Collections.synchronizedMap(new HashMap<String, String>());
+   protected final Map<String, String> xaProps;
 
    private Boolean isSameRMOverrideValue;
 
@@ -83,10 +83,27 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
    /**
     * Constructor
     */
+   public XAManagedConnectionFactory(Map<String, String> xaDataSourceProps)
+   {
+      this.xads = null;
+      this.xadsSelector = null;
+      this.xaProps = xaDataSourceProps == null? Collections.emptyMap(): Collections.unmodifiableMap(xaDataSourceProps);
+   }
+
+   /**
+    * Constructor.
+    * @deprecated this constructor internally requires the use of synchronized map instance.
+    * This type of map can cause deadlocks when comparing two connection factories. For that reason, prefer to use
+    * {@link #XAManagedConnectionFactory(Map)} instead.
+    */
+   @Deprecated
    public XAManagedConnectionFactory()
    {
       this.xads = null;
       this.xadsSelector = null;
+      // this constructor sets xaDataSourceProps map with a synchronized map instance, which can lead to deadlock
+      // when comparing two connection factories
+      xaProps = Collections.synchronizedMap(new HashMap<String, String>());
    }
 
    /**
@@ -138,7 +155,12 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
     * Set the XADataSourceProperties value.
     * @param xaDataSourceProperties The new XADataSourceProperties value.
     * @exception ResourceException Thrown in case of an error
+    * @deprecated this method requires the internal usage of a synchronized map, and will only work with
+    * objects created using the deprecated {@link #XAManagedConnectionFactory()} constructor. Because this
+    * can lead to a deadlock when comparing two instances of this class, prefer to define the data source
+    * properties at the {@link #XAManagedConnectionFactory(Map)} constructor instead.
     */
+   @Deprecated
    public void setXADataSourceProperties(String xaDataSourceProperties) throws ResourceException
    {
       this.xaDataSourceProperties = xaDataSourceProperties;
