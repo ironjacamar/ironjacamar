@@ -91,7 +91,7 @@ public class MySQLValidConnectionChecker implements ValidConnectionChecker, Seri
             else
             {
                log.warn("Unexpected error", e);
-               return new SQLException("Ping failed: " + e.toString());
+               return new SQLException("Ping failed: " + e.toString(), e);
             }
          }
       }
@@ -113,7 +113,7 @@ public class MySQLValidConnectionChecker implements ValidConnectionChecker, Seri
             else
             {
                log.warn("Unexpected error", e);
-               return new SQLException("SELECT 1 failed: " + e.toString());
+               return new SQLException("SELECT 1 failed: " + e.toString(), e);
             }
          }
          finally
