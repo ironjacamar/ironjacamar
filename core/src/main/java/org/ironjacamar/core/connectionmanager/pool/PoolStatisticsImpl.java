@@ -666,8 +666,11 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
     */
    public void setEnabled(boolean v)
    {
-      enabled.set(v);
-      clear();
+      if (enabled.get() != v)
+      {
+         enabled.set(v);
+         clear();
+      }
    }
 
    /**
