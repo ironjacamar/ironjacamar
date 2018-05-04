@@ -1064,7 +1064,9 @@ public abstract class AbstractDsDeployer
          // user name, password. Keep a seperate reference to the security-domain
          enableRecovery = true;
 
-         recoverCredential = recoveryMD != null ? recoveryMD.getCredential() : null;
+         if (recoveryMD != null) {
+            recoverCredential = recoveryMD.getCredential();
+         }
          if (recoverCredential != null)
          {
             if (recoverCredential.getSecurityDomain() != null)
