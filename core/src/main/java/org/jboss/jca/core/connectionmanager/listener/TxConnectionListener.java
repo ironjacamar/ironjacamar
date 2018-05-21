@@ -991,7 +991,7 @@ public class TxConnectionListener extends AbstractConnectionListener
                                                   TxConnectionListener.this, currentTx.toString(), false,
                                                   !TxConnectionListener.this.isTrackByTx());
 
-               if (!disableFailedtoEnlist)
+               if (recordEnlist)
                {
                   enlistError = failedToEnlist;
                }
@@ -1018,7 +1018,7 @@ public class TxConnectionListener extends AbstractConnectionListener
                                                getManagedConnectionPool(),
                                                TxConnectionListener.this, currentTx.toString(), false,
                                                !TxConnectionListener.this.isTrackByTx());
-         }
+            }
 
          synchronized (this)
          {
