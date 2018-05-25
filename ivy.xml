@@ -197,6 +197,7 @@
     <dependency org="org.picketbox" name="picketbox" rev="${version.jboss.picketbox}" conf="as,common,ironjacamar-depchain,ironjacamar-core-impl"/>
     <dependency org="org.slf4j" name="jcl-over-slf4j" rev="${version.slf4j}" conf="common,ironjacamar-depchain"/>
     <dependency org="org.slf4j" name="slf4j-api" rev="${version.slf4j}" conf="common,ironjacamar-depchain"/>
+    <dependency org="org.wildfly.transaction" name="wildfly-transaction-client" rev="${version.wildfly.transaction.client}" conf="as,common,ironjacamar-core-impl"/>
   </dependencies>
 
 </ivy-module>
