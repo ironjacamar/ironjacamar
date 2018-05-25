@@ -45,5 +45,6 @@
 	<classpathentry kind="lib" path="/ironjacamar-parent/target/ironjacamar-embedded.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ironjacamar-arquillian"/>
 	<classpathentry kind="lib" path="/ironjacamar-parent/lib/arquillian/arquillian-test-api.jar"/>
+	<classpathentry kind="lib" path="/ironjacamar-parent/lib/common/wildfly-transaction-client.jar"/>
 	<classpathentry kind="output" path="eclipse-target/classes"/>
 </classpath>

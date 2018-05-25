@@ -175,6 +175,7 @@
   <property name="version.slf4j" value="1.6.1"/>
   <property name="version.transaction.api" value="1.0.0.Final"/>
   <property name="version.validation-api" value="1.1.0.Final"/>
+  <property name="version.wildfly.transaction.client" value="1.0.3.Final"/>
 
   <!-- ================================= 
        Paths              

@@ -35,6 +35,8 @@ import org.jboss.jca.core.spi.transaction.TransactionTimeoutConfiguration;
 import org.jboss.jca.core.spi.transaction.TxUtils;
 import org.jboss.jca.core.spi.transaction.XAResourceStatistics;
 import org.jboss.jca.core.tx.jbossts.XAResourceWrapperStatImpl;
+import org.wildfly.transaction.client.AbstractTransaction;
+import org.wildfly.transaction.client.ContextTransactionManager;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -371,7 +373,7 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
    /**
     * Gets time left.
     * @param errorRollback error rollback
-    * @return time left
+    * @return time left in ms
     * @throws RollbackException if exception
     */
    public long getTimeLeftBeforeTransactionTimeout(boolean errorRollback) throws RollbackException
@@ -386,7 +388,15 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
          return ((TransactionTimeoutConfiguration)transactionManager).
             getTimeLeftBeforeTransactionTimeout(errorRollback);  
       }
-      
+
+      if (transactionManager instanceof ContextTransactionManager)
+      {
+         AbstractTransaction transaction = ((ContextTransactionManager) transactionManager).getTransaction();
+         if (transaction != null) {
+            return transaction.getEstimatedRemainingTime() * 1000;
+         }
+      }
+
       return -1;
    }
 
