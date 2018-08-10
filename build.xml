@@ -34,7 +34,7 @@
   <property name="name" value="ironjacamar"/>
   <property name="major" value="1"/>
   <property name="minor" value="4"/>
-  <property name="patch" value="11"/>
+  <property name="patch" value="12"/>
   <property name="type" value="Final"/>
 
   <condition property="organisation" value="org.jboss.ironjacamar.jdk8">
@@ -1601,7 +1601,6 @@ VERSION=${version}
   </target>
 
   <target name="nexus" depends="clean,artifacts,nexus-base" unless="as">
-    <fail message="Nexus requires JDK7" if="HAVE_JDK_1.8"/>
     <ivy:retrieve pattern="${lib.dir}/[conf]/[artifact].[ext]" 
                   conf="${name}-as,${name}-codegenerator,${name}-deployers-fungal,${name}-embedded,${name}-arquillian-embedded,${name}-arquillian-embedded-byteman,${name}-spec-api,${name}-test-eis,${name}-validator-ant,${name}-validator-cli,jdbc-local,jdbc-xa"
                   sync="true"/>
