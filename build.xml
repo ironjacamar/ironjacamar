@@ -1494,7 +1494,7 @@ VERSION=${version}
       <mapping conf="${name}-common-impl" scope="runtime"/>
       <dependency artifact="${name}-common-api" scope="runtime"/>
       <dependency artifact="${name}-common-spi" scope="runtime"/>
-      <dependency artifact="${name}-spec-api" scope="runtime"/>
+      <dependency artifact="${name}-spec-api" scope="provided"/>
     </ivy:makepom>
 
     <deploy-file file="deploy.sh" artifact="${name}-common-impl" extension="jar"/>
@@ -1525,7 +1525,7 @@ VERSION=${version}
                  templatefile="${tools.dir}/mvn/pom.template"
                  printIvyInfo="false">
       <mapping conf="${name}-core-api" scope="runtime"/>
-      <dependency artifact="${name}-spec-api" scope="runtime"/>
+      <dependency artifact="${name}-spec-api" scope="provided"/>
     </ivy:makepom>
 
     <deploy-file file="deploy.sh" artifact="${name}-core-api" extension="jar"/>
@@ -1543,7 +1543,7 @@ VERSION=${version}
       <mapping conf="${name}-core-impl" scope="runtime"/>
       <dependency artifact="${name}-common-impl" scope="runtime"/>
       <dependency artifact="${name}-core-api" scope="runtime"/>
-      <dependency artifact="${name}-spec-api" scope="runtime"/>
+      <dependency artifact="${name}-spec-api" scope="provided"/>
     </ivy:makepom>
 
     <deploy-file file="deploy.sh" artifact="${name}-core-impl" extension="jar"/>
@@ -1577,7 +1577,7 @@ VERSION=${version}
       <dependency artifact="${name}-common-api" scope="runtime"/>
       <dependency artifact="${name}-common-impl" scope="runtime"/>
       <dependency artifact="${name}-common-spi" scope="runtime"/>
-      <dependency artifact="${name}-spec-api" scope="runtime"/>
+      <dependency artifact="${name}-spec-api" scope="provided"/>
     </ivy:makepom>
 
     <deploy-file file="deploy.sh" artifact="${name}-validator" extension="jar"/>
@@ -1667,7 +1667,7 @@ mvn install:install-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depc
       <dependency artifact="${name}-common-impl" scope="runtime"/>
       <dependency artifact="${name}-core-api" scope="runtime"/>
       <dependency artifact="${name}-core-impl" scope="runtime"/>
-      <dependency artifact="${name}-spec-api" scope="runtime"/>
+      <dependency artifact="${name}-spec-api" scope="provided"/>
       <dependency artifact="${name}-validator" scope="runtime"/>
     </ivy:makepom>
 
@@ -1887,7 +1887,7 @@ VERSION=${version}
       <mapping conf="${name}-common-impl" scope="runtime"/>
       <dependency artifact="${name}-common-api" scope="runtime"/>
       <dependency artifact="${name}-common-spi" scope="runtime"/>
-      <dependency artifact="${name}-spec-api" scope="runtime"/>
+      <dependency artifact="${name}-spec-api" scope="provided"/>
     </ivy:makepom>
 
     <deploy-file file="deploy.sh" artifact="${name}-common-impl" extension="jar"/>
@@ -1918,7 +1918,7 @@ VERSION=${version}
                  templatefile="${tools.dir}/mvn/pom.8.template"
                  printIvyInfo="false">
       <mapping conf="${name}-core-api" scope="runtime"/>
-      <dependency artifact="${name}-spec-api" scope="runtime"/>
+      <dependency artifact="${name}-spec-api" scope="provided"/>
     </ivy:makepom>
 
     <deploy-file file="deploy.sh" artifact="${name}-core-api" extension="jar"/>
@@ -1936,7 +1936,7 @@ VERSION=${version}
       <mapping conf="${name}-core-impl" scope="runtime"/>
       <dependency artifact="${name}-common-impl" scope="runtime"/>
       <dependency artifact="${name}-core-api" scope="runtime"/>
-      <dependency artifact="${name}-spec-api" scope="runtime"/>
+      <dependency artifact="${name}-spec-api" scope="provided"/>
     </ivy:makepom>
 
     <deploy-file file="deploy.sh" artifact="${name}-core-impl" extension="jar"/>
@@ -1970,7 +1970,7 @@ VERSION=${version}
       <dependency artifact="${name}-common-api" scope="runtime"/>
       <dependency artifact="${name}-common-impl" scope="runtime"/>
       <dependency artifact="${name}-common-spi" scope="runtime"/>
-      <dependency artifact="${name}-spec-api" scope="runtime"/>
+      <dependency artifact="${name}-spec-api" scope="provided"/>
     </ivy:makepom>
 
     <deploy-file file="deploy.sh" artifact="${name}-validator" extension="jar"/>
@@ -2061,7 +2061,7 @@ mvn install:install-file -Dfile=$PWD/${name}-depchain.xml -DpomFile=${name}-depc
       <dependency artifact="${name}-common-impl" scope="runtime"/>
       <dependency artifact="${name}-core-api" scope="runtime"/>
       <dependency artifact="${name}-core-impl" scope="runtime"/>
-      <dependency artifact="${name}-spec-api" scope="runtime"/>
+      <dependency artifact="${name}-spec-api" scope="provided"/>
       <dependency artifact="${name}-validator" scope="runtime"/>
     </ivy:makepom>
 
