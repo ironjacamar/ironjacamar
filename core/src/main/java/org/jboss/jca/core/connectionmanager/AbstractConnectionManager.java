@@ -633,6 +633,14 @@ public abstract class AbstractConnectionManager implements ConnectionManager
       catch (Throwable t)
       {
          disconnectManagedConnection(cl);
+         // We should be in DESTROY or DESTROYED here for this case
+         if (cl.getState().equals(ConnectionState.NORMAL)) {
+            log.tracef("Wrong state for %s in %s", cl, this);
+            cl.setState(ConnectionState.DESTROY);
+         }
+
+         // Nuke it
+         returnManagedConnection(cl, true);
          throw new ResourceException(bundle.uncheckedThrowableInManagedConnectionReconnected(cl), t);
       }
    }
