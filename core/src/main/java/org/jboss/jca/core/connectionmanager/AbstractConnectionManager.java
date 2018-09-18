@@ -964,14 +964,95 @@ public abstract class AbstractConnectionManager implements ConnectionManager
     */
    protected void reconnectManagedConnection(ConnectionListener cl) throws ResourceException
    {
+
+      Throwable failure = null;
+
+      // First attempt
+      boolean isInterrupted = Thread.interrupted();
+      boolean innerIsInterrupted = false;
+      boolean reconnected = false;
       try
       {
          managedConnectionReconnected(cl);
+         reconnected = true;
       }
-      catch (Throwable t)
+      catch (ResourceException e)
       {
+         failure = e;
+
+         // Retry?
+         if (allocationRetry != 0 || e instanceof RetryableException)
+         {
+            int to = allocationRetry;
+
+            if (allocationRetry == 0 && e instanceof RetryableException)
+               to = 1;
+
+            for (int i = 0; i < to; i++)
+            {
+               if (shutdown.get())
+               {
+                  throw new ResourceException(bundle.connectionManagerIsShutdown(jndiName));
+               }
+
+               log.tracef("%s: Attempting allocation retry on cl reconnection (%s)", cl);
+
+               if (Thread.currentThread().isInterrupted())
+               {
+                  Thread.interrupted();
+                  innerIsInterrupted = true;
+               }
+
+               try
+               {
+                  if (allocationRetryWaitMillis != 0)
+                  {
+                     Thread.sleep(allocationRetryWaitMillis);
+                  }
+
+                  managedConnectionReconnected(cl);
+                  reconnected = true;
+               }
+               catch (ResourceException re)
+               {
+                  failure = re;
+               }
+               catch (InterruptedException ie)
+               {
+                  failure = ie;
+                  innerIsInterrupted = true;
+               }
+            }
+         }
+      }
+      catch (Throwable e)
+      {
+         failure = e;
+      }
+      finally
+      {
+         if (isInterrupted || innerIsInterrupted)
+         {
+            Thread.currentThread().interrupt();
+
+            if (innerIsInterrupted)
+               throw new ResourceException(bundle.getManagedConnectionRetryWaitInterrupted(jndiName), failure);
+         }
+      }
+
+      if (failure != null && reconnected == false) {
+         // If we get here all retries failed, throw the lastest failure
          disconnectManagedConnection(cl);
-         throw new ResourceException(bundle.uncheckedThrowableInManagedConnectionReconnected(cl), t);
+         // We should be in DESTROY or DESTROYED here for this case
+         if (cl.getState().equals(ConnectionState.NORMAL)) {
+            log.tracef("Wrong state for %s in %s", cl, this);
+            cl.setState(ConnectionState.DESTROY);
+         }
+
+         // Nuke it
+         returnManagedConnection(cl, true);
+         throw new ResourceException(bundle.uncheckedThrowableInManagedConnectionReconnected(cl), failure);
+
       }
    }
 
