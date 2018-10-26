@@ -26,6 +26,8 @@ import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import org.jboss.jca.adapters.jdbc.spi.ClassLoaderPlugin;
+
 /**
  * WrappedConnectionFactory.
  * 
@@ -43,7 +45,7 @@ public interface WrappedConnectionFactory
     * @return The wrapped connection
     */
    WrappedConnection createWrappedConnection(BaseWrapperManagedConnection mc, boolean spy, String jndiName,
-                                             boolean doLocking);
+                                             boolean doLocking, ClassLoaderPlugin clp);
 
    /**
     * Create a cached prepared statement

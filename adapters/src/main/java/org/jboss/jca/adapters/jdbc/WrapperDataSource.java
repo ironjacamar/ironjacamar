@@ -22,6 +22,7 @@
 
 package org.jboss.jca.adapters.jdbc;
 
+import org.jboss.jca.adapters.jdbc.spi.ClassLoaderPlugin;
 import org.jboss.jca.core.spi.transaction.TransactionTimeoutConfiguration;
 import org.jboss.jca.core.spi.transaction.TxUtils;
 
@@ -65,15 +66,18 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
    private boolean initialized = false;
    private ConnectionRequestInfo defaultCRI;
 
+   private final ClassLoaderPlugin classLoaderPlugin;
+
    /**
     * Constructor
     * @param mcf The managed connection factory
     * @param cm The connection manager
     */
-   protected WrapperDataSource(final BaseWrapperManagedConnectionFactory mcf, final ConnectionManager cm)
-   {
+   protected WrapperDataSource(BaseWrapperManagedConnectionFactory mcf,
+         ConnectionManager cm, ClassLoaderPlugin classLoaderPlugin) {
       this.mcf = mcf;
       this.cm = cm;
+      this.classLoaderPlugin = classLoaderPlugin;
       
       if (mcf.getUserName() != null)
       {
@@ -129,8 +133,10 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
     */
    public Connection getConnection() throws SQLException
    {
+      ClassLoader tccl = SecurityActions.getThreadContextClassLoader();
       try
       {
+         SecurityActions.setThreadContextClassLoader(classLoaderPlugin.getClassLoader());
          if (mcf.getSpy().booleanValue())
             spyLogger.debugf("%s [%s] getConnection()",
                              mcf.getJndiName(), Constants.SPY_LOGGER_PREFIX_DATASOURCE);
@@ -145,6 +151,10 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
       {
          throw new SQLException(re);
       }
+      finally
+      {
+         SecurityActions.setThreadContextClassLoader(tccl);
+      }
    }
 
    /**
@@ -152,9 +162,11 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
     */
    public Connection getConnection(String user, String password) throws SQLException
    {
+      ClassLoader tccl = SecurityActions.getThreadContextClassLoader();
       ConnectionRequestInfo cri = new WrappedConnectionRequestInfo(user, password);
       try
       {
+         SecurityActions.setThreadContextClassLoader(classLoaderPlugin.getClassLoader());
          if (mcf.getSpy().booleanValue())
             spyLogger.debugf("%s [%s] getConnection(%s, ****)",
                              mcf.getJndiName(), Constants.SPY_LOGGER_PREFIX_DATASOURCE, user);
@@ -168,6 +180,10 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
       catch (ResourceException re)
       {
          throw new SQLException(re);
+      }
+      finally
+      {
+         SecurityActions.setThreadContextClassLoader(tccl);
       }
    }
 

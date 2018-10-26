@@ -27,6 +27,7 @@ import org.jboss.jca.adapters.jdbc.WrappedCallableStatement;
 import org.jboss.jca.adapters.jdbc.WrappedConnection;
 import org.jboss.jca.adapters.jdbc.WrappedPreparedStatement;
 import org.jboss.jca.adapters.jdbc.WrappedStatement;
+import org.jboss.jca.adapters.jdbc.spi.ClassLoaderPlugin;
 
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
@@ -50,9 +51,9 @@ public class WrappedConnectionJDK8 extends WrappedConnection
     * @param jndiName The jndi name
     * @param doLocking Do locking
     */
-   public WrappedConnectionJDK8(BaseWrapperManagedConnection mc, boolean spy, String jndiName, boolean doLocking)
+   public WrappedConnectionJDK8(BaseWrapperManagedConnection mc, boolean spy, String jndiName, boolean doLocking, ClassLoaderPlugin clp)
    {
-      super(mc, spy, jndiName, doLocking);
+      super(mc, spy, jndiName, doLocking, clp);
    }
 
    /**

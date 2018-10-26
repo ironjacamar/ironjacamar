@@ -51,6 +51,55 @@ class SecurityActions
       });
    }
 
+   static ClassLoader getThreadContextClassLoader()
+   {
+      if (System.getSecurityManager() == null)
+         return Thread.currentThread().getContextClassLoader();
+
+      return AccessController.doPrivileged(new PrivilegedAction<ClassLoader>()
+      {
+         public ClassLoader run()
+         {
+            return Thread.currentThread().getContextClassLoader();
+         }
+      });
+   }
+
+   /**
+    * Set the context classloader.
+    * @param cl classloader
+    */
+   static void setThreadContextClassLoader(final ClassLoader cl)
+   {
+      if (System.getSecurityManager() == null)
+      {
+         Thread.currentThread().setContextClassLoader(cl);
+      }
+      else
+      {
+         AccessController.doPrivileged(new PrivilegedAction<Object>()
+         {
+            public Object run()
+            {
+               Thread.currentThread().setContextClassLoader(cl);
+
+               return null;
+            }
+         });
+      }
+   }
+
+   static <T> T executeInTccl(ClassLoader classLoader, Producer<T> producer) throws Exception
+   {
+      ClassLoader tccl = SecurityActions.getThreadContextClassLoader();
+      try {
+         SecurityActions.setThreadContextClassLoader(classLoader);
+         return producer.produce();
+      } finally {
+         SecurityActions.setThreadContextClassLoader(tccl);
+      }
+   }
+
    /**
     * Get a system property
     * @param name The property name
@@ -87,5 +136,9 @@ class SecurityActions
             return t.getStackTrace();
          }
       });
+   }
+
+   static interface Producer<T> {
+      T produce() throws Exception;
    }
 }
