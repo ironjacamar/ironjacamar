@@ -297,7 +297,7 @@ public abstract class BaseWrapperManagedConnectionFactory
       if (getURLDelimiter() != null && !getURLDelimiter().trim().equals(""))
          log.haDetected(getJndiName());
 
-      return new WrapperDataSource(this, cm);
+      return new WrapperDataSource(this, cm, getClassLoaderPlugin());
    }
 
    /**

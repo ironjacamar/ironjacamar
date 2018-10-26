@@ -1194,7 +1194,8 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
       WrappedConnection lc = WRAPPED_CONNECTION_FACTORY.createWrappedConnection(this,
                                                                                 mcf.getSpy().booleanValue(),
                                                                                 mcf.getJndiName(),
-                                                                                mcf.isDoLocking());
+                                                                                mcf.isDoLocking(),
+                                                                                mcf.getClassLoaderPlugin());
       synchronized (handles)
       {
          handles.add(lc);

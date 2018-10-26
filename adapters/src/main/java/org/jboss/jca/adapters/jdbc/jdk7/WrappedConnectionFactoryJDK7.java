@@ -27,6 +27,7 @@ import org.jboss.jca.adapters.jdbc.CachedCallableStatement;
 import org.jboss.jca.adapters.jdbc.CachedPreparedStatement;
 import org.jboss.jca.adapters.jdbc.WrappedConnection;
 import org.jboss.jca.adapters.jdbc.WrappedConnectionFactory;
+import org.jboss.jca.adapters.jdbc.spi.ClassLoaderPlugin;
 
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
@@ -55,9 +56,9 @@ public class WrappedConnectionFactoryJDK7 implements WrappedConnectionFactory
     * @return The result
     */
    public WrappedConnection createWrappedConnection(BaseWrapperManagedConnection mc, boolean spy, String jndiName,
-                                                    boolean doLocking)
+                                                    boolean doLocking, ClassLoaderPlugin clp)
    {
-      return new WrappedConnectionJDK7(mc, spy, jndiName, doLocking);
+      return new WrappedConnectionJDK7(mc, spy, jndiName, doLocking, clp);
    }
 
    /**

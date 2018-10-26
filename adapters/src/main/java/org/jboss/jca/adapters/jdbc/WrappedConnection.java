@@ -23,6 +23,7 @@
 package org.jboss.jca.adapters.jdbc;
 
 import org.jboss.jca.adapters.AdaptersLogger;
+import org.jboss.jca.adapters.jdbc.spi.ClassLoaderPlugin;
 
 import java.sql.Array;
 import java.sql.Blob;
@@ -89,6 +90,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    /** Do locking */
    protected final boolean doLocking;
    
+   private final ClassLoaderPlugin classLoaderPlugin;
+
    /**
     * Constructor
     * @param mc The managed connection
@@ -97,12 +100,13 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     * @param doLocking Do locking
     */
    public WrappedConnection(final BaseWrapperManagedConnection mc, boolean spy, String jndiName,
-                            final boolean doLocking)
+                            final boolean doLocking, ClassLoaderPlugin classLoaderPlugin)
    {
       setManagedConnection(mc);
       setSpy(spy);
       setJndiName(jndiName);
       this.doLocking = doLocking;
+      this.classLoaderPlugin = classLoaderPlugin;
    }
 
    /**
@@ -348,7 +352,13 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
             if (spy)
                spyLogger.debugf("%s [%s] createStatement()", jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
 
-            return wrapStatement(mc.getRealConnection().createStatement(), spy, jndiName, doLocking);
+            Statement stmt = SecurityActions.executeInTccl(classLoaderPlugin.getClassLoader(), new SecurityActions.Producer<Statement>() {
+               public Statement produce() throws Exception {
+                  return mc.getRealConnection().createStatement();
+               }
+            });
+
+            return wrapStatement(stmt, spy, jndiName, doLocking);
          }
          catch (Throwable t)
          {
@@ -379,8 +389,12 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
                                 jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                 resultSetType, resultSetConcurrency);
 
-            return wrapStatement(mc.getRealConnection().createStatement(resultSetType, resultSetConcurrency),
-                                 spy, jndiName, doLocking);
+            Statement stmt = SecurityActions.executeInTccl(classLoaderPlugin.getClassLoader(), new SecurityActions.Producer<Statement>() {
+               public Statement produce() throws Exception {
+                  return mc.getRealConnection().createStatement(resultSetType, resultSetConcurrency);
+               }
+            });
+            return wrapStatement(stmt, spy, jndiName, doLocking);
          }
          catch (Throwable t)
          {
@@ -412,9 +426,12 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
                                 jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                 resultSetType, resultSetConcurrency, resultSetHoldability);
 
-            return wrapStatement(mc.getRealConnection()
-                                 .createStatement(resultSetType, resultSetConcurrency, resultSetHoldability),
-                                 spy, jndiName, doLocking);
+            Statement stmt = SecurityActions.executeInTccl(classLoaderPlugin.getClassLoader(), new SecurityActions.Producer<Statement>() {
+               public Statement produce() throws Exception {
+                  return mc.getRealConnection().createStatement(resultSetType, resultSetConcurrency, resultSetHoldability);
+               }
+            });
+            return wrapStatement(stmt, spy, jndiName, doLocking);
          }
          catch (Throwable t)
          {
@@ -456,9 +473,13 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
                spyLogger.debugf("%s [%s] prepareStatement(%s)",
                                 jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION, sql);
 
-            return wrapPreparedStatement(mc.prepareStatement(sql, ResultSet.TYPE_FORWARD_ONLY,
-                                                             ResultSet.CONCUR_READ_ONLY),
-                                         spy, jndiName, doLocking);
+            PreparedStatement stmt = SecurityActions.executeInTccl(classLoaderPlugin.getClassLoader(), new SecurityActions.Producer<PreparedStatement>() {
+               public PreparedStatement produce() throws Exception {
+                  return mc.prepareStatement(sql, ResultSet.TYPE_FORWARD_ONLY,
+                        ResultSet.CONCUR_READ_ONLY);
+               }
+            });
+            return wrapPreparedStatement(stmt, spy, jndiName, doLocking);
          }
          catch (Throwable t)
          {
@@ -490,8 +511,12 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
                                 jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                 sql, resultSetType, resultSetConcurrency);
 
-            return wrapPreparedStatement(mc.prepareStatement(sql, resultSetType, resultSetConcurrency),
-                                         spy, jndiName, doLocking);
+            PreparedStatement stmt = SecurityActions.executeInTccl(classLoaderPlugin.getClassLoader(), new SecurityActions.Producer<PreparedStatement>() {
+               public PreparedStatement produce() throws Exception {
+                  return mc.prepareStatement(sql, resultSetType, resultSetConcurrency);
+               }
+            });
+            return wrapPreparedStatement(stmt, spy, jndiName, doLocking);
          }
          catch (Throwable t)
          {
@@ -523,10 +548,13 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
                                 jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                 sql, resultSetType, resultSetConcurrency, resultSetHoldability);
 
-            return wrapPreparedStatement(mc.getRealConnection()
-                                         .prepareStatement(sql, resultSetType,
-                                                           resultSetConcurrency, resultSetHoldability),
-                                         spy, jndiName, doLocking);
+            PreparedStatement stmt = SecurityActions.executeInTccl(classLoaderPlugin.getClassLoader(), new SecurityActions.Producer<PreparedStatement>() {
+               public PreparedStatement produce() throws Exception {
+                  return mc.getRealConnection().prepareStatement(sql, resultSetType,
+                        resultSetConcurrency, resultSetHoldability);
+               }
+            });
+            return wrapPreparedStatement(stmt, spy, jndiName, doLocking);
          }
          catch (Throwable t)
          {
@@ -557,8 +585,12 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
                                 jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                 sql, autoGeneratedKeys);
 
-            return wrapPreparedStatement(mc.getRealConnection().prepareStatement(sql, autoGeneratedKeys),
-                                         spy, jndiName, doLocking);
+            PreparedStatement stmt = SecurityActions.executeInTccl(classLoaderPlugin.getClassLoader(), new SecurityActions.Producer<PreparedStatement>() {
+               public PreparedStatement produce() throws Exception {
+                  return mc.getRealConnection().prepareStatement(sql, autoGeneratedKeys);
+               }
+            });
+            return wrapPreparedStatement(stmt, spy, jndiName, doLocking);
          }
          catch (Throwable t)
          {
@@ -589,8 +621,12 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
                                 , jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                 sql, Arrays.toString(columnIndexes));
 
-            return wrapPreparedStatement(mc.getRealConnection().prepareStatement(sql, columnIndexes),
-                                         spy, jndiName, doLocking);
+            PreparedStatement stmt = SecurityActions.executeInTccl(classLoaderPlugin.getClassLoader(), new SecurityActions.Producer<PreparedStatement>() {
+               public PreparedStatement produce() throws Exception {
+                  return mc.getRealConnection().prepareStatement(sql, columnIndexes);
+               }
+            });
+            return wrapPreparedStatement(stmt, spy, jndiName, doLocking);
          }
          catch (Throwable t)
          {
@@ -621,8 +657,12 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
                                 jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                 sql, Arrays.toString(columnNames));
 
-            return wrapPreparedStatement(mc.getRealConnection().prepareStatement(sql, columnNames),
-                                         spy, jndiName, doLocking);
+            PreparedStatement stmt = SecurityActions.executeInTccl(classLoaderPlugin.getClassLoader(), new SecurityActions.Producer<PreparedStatement>() {
+               public PreparedStatement produce() throws Exception {
+                  return mc.getRealConnection().prepareStatement(sql, columnNames);
+               }
+            });
+            return wrapPreparedStatement(stmt, spy, jndiName, doLocking);
          }
          catch (Throwable t)
          {
@@ -663,8 +703,12 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
             if (spy)
                spyLogger.debugf("%s [%s] prepareCall(%s)", jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION, sql);
 
-            return wrapCallableStatement(mc.prepareCall(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY),
-                                         spy, jndiName, doLocking);
+            CallableStatement stmt = SecurityActions.executeInTccl(classLoaderPlugin.getClassLoader(), new SecurityActions.Producer<CallableStatement>() {
+               public CallableStatement produce() throws Exception {
+                  return mc.prepareCall(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+               }
+            });
+            return wrapCallableStatement(stmt, spy, jndiName, doLocking);
          }
          catch (Throwable t)
          {
@@ -695,8 +739,12 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
                                 jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                 sql, resultSetType, resultSetConcurrency);
 
-            return wrapCallableStatement(mc.prepareCall(sql, resultSetType, resultSetConcurrency),
-                                         spy, jndiName, doLocking);
+            CallableStatement stmt = SecurityActions.executeInTccl(classLoaderPlugin.getClassLoader(), new SecurityActions.Producer<CallableStatement>() {
+               public CallableStatement produce() throws Exception {
+                  return mc.prepareCall(sql, resultSetType, resultSetConcurrency);
+               }
+            });
+            return wrapCallableStatement(stmt, spy, jndiName, doLocking);
          }
          catch (Throwable t)
          {
@@ -728,9 +776,13 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
                                 jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION,
                                 sql, resultSetType, resultSetConcurrency, resultSetHoldability);
 
-            return wrapCallableStatement(mc.getRealConnection()
-                                         .prepareCall(sql, resultSetType, resultSetConcurrency, resultSetHoldability),
-                                         spy, jndiName, doLocking);
+            CallableStatement stmt = SecurityActions.executeInTccl(classLoaderPlugin.getClassLoader(), new SecurityActions.Producer<CallableStatement>() {
+               public CallableStatement produce() throws Exception {
+                  return mc.getRealConnection()
+                        .prepareCall(sql, resultSetType, resultSetConcurrency, resultSetHoldability);
+               }
+            });
+            return wrapCallableStatement(stmt, spy, jndiName, doLocking);
          }
          catch (Throwable t)
          {
@@ -760,7 +812,11 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
                spyLogger.debugf("%s [%s] nativeSQL(%s)",
                                 jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION, sql);
 
-            return mc.getRealConnection().nativeSQL(sql);
+            return SecurityActions.executeInTccl(classLoaderPlugin.getClassLoader(), new SecurityActions.Producer<String>() {
+               public String produce() throws Exception {
+                  return mc.getRealConnection().nativeSQL(sql);
+               }
+            });
          }
          catch (Throwable t)
          {
