@@ -134,6 +134,7 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
    public Connection getConnection() throws SQLException
    {
       ClassLoader tccl = SecurityActions.getThreadContextClassLoader();
+      mcf.setOriginalTCCLn(tccl);
       try
       {
          SecurityActions.setThreadContextClassLoader(classLoaderPlugin.getClassLoader());
