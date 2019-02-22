@@ -250,6 +250,8 @@ public abstract class BaseWrapperManagedConnectionFactory
    /** Connection listener plugin */
    private ConnectionListener connectionListenerPlugin;
 
+   private ClassLoader originalTCCL;
+
    /**
     * Constructor
     */
@@ -920,7 +922,8 @@ public abstract class BaseWrapperManagedConnectionFactory
       {
          try
          {
-            clz = Class.forName(connectionListenerClassName, true, 
+
+            clz = Class.forName(connectionListenerClassName, true,
                                 SecurityActions.getClassLoader(BaseWrapperManagedConnectionFactory.class));
             usedCl = SecurityActions.getClassLoader(BaseWrapperManagedConnectionFactory.class);
          }
@@ -975,7 +978,16 @@ public abstract class BaseWrapperManagedConnectionFactory
       try
       {
          if (connectionListenerClassName != null && connectionListenerPlugin == null)
-            loadConnectionListenerPlugin();
+         {
+            ClassLoader tccl = SecurityActions.getThreadContextClassLoader();
+            try {
+               SecurityActions.setThreadContextClassLoader(originalTCCL);
+               loadConnectionListenerPlugin();
+            } finally {
+               SecurityActions.setThreadContextClassLoader(tccl);
+            }
+
+         }
 
          return connectionListenerPlugin;
       }
@@ -1681,5 +1693,15 @@ public abstract class BaseWrapperManagedConnectionFactory
    public final void setClassLoaderPlugin(ClassLoaderPlugin clPlugin)
    {
       this.classLoaderPlugin = clPlugin;
+   }
+
+   /**
+    * Set the originalTCCL.
+    *
+    * @param clPlugin The clPlugin to set.
+    */
+   public final void setOriginalTCCLn(ClassLoader cl)
+   {
+      this.originalTCCL = cl;
    }
 }
