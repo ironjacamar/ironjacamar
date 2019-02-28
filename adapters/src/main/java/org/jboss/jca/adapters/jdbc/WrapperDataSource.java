@@ -137,7 +137,13 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
       mcf.setOriginalTCCLn(tccl);
       try
       {
-         SecurityActions.setThreadContextClassLoader(classLoaderPlugin.getClassLoader());
+         try {
+            SecurityActions.setThreadContextClassLoader(classLoaderPlugin.getClassLoader());
+         } catch(Throwable t)
+         {
+            //just ignore
+
+         }
          if (mcf.getSpy().booleanValue())
             spyLogger.debugf("%s [%s] getConnection()",
                              mcf.getJndiName(), Constants.SPY_LOGGER_PREFIX_DATASOURCE);
