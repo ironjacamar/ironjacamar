@@ -137,6 +137,21 @@ public class EndpointImpl implements Endpoint
       if (is16 && bvEnabled)
       {
          ClassLoader oldTCCL = SecurityActions.getThreadContextClassLoader();
+         Validator validator = null;
+         try
+         {
+            SecurityActions.setThreadContextClassLoader(SecurityActions.getClassLoader(EndpointImpl.class));
+            validator = BeanValidationUtil.createValidator();
+         }
+          catch (RuntimeException re)
+         {
+            throw new ResourceException(bundle.validationException(), re);
+         }
+         finally
+         {
+            SecurityActions.setThreadContextClassLoader(oldTCCL);
+         }
+         oldTCCL = SecurityActions.getThreadContextClassLoader();
          try
          {
             SecurityActions.setThreadContextClassLoader(SecurityActions.getClassLoader(rar.getClass()));
@@ -162,7 +177,6 @@ public class EndpointImpl implements Endpoint
             if (groups.isEmpty())
                groups.add(Default.class);
 
-            Validator validator = BeanValidationUtil.createValidator();
             Class[] vargs = groups.toArray(new Class[groups.size()]);
 
             Set errors = validator.validate(spec, vargs);
