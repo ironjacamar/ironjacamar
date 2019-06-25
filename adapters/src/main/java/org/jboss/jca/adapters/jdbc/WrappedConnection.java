@@ -1961,6 +1961,18 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       return mc.getXAResource();
    }
 
+   @Override
+   public boolean isWrapperFor(Class<?> iface) throws SQLException {
+      checkStatus();
+      return super.isWrapperFor(iface);
+   }
+
+   @Override
+   public <T> T unwrap(Class<T> iface) throws SQLException {
+      checkStatus();
+      return super.unwrap(iface);
+   }
+
    /**
     * {@inheritDoc}
     */

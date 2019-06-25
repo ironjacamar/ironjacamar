@@ -26,6 +26,7 @@ import org.jboss.jca.adapters.ArquillianJCATestUtils;
 import org.jboss.jca.embedded.dsl.InputStreamDescriptor;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
@@ -41,6 +42,7 @@ import org.junit.runner.RunWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Test cases for wrapper
@@ -155,5 +157,53 @@ public class WrapperTestCase
       assertTrue(c.isWrapperFor(org.h2.jdbc.JdbcConnection.class));
 
       c.close();
+   }
+
+   /**
+    * c.isWrapperFor() on closed connection should not throw NPE.
+    *
+    * https://issues.jboss.org/browse/JBJCA-1389
+    */
+   @Test
+   public void testIsWrapperForClosedConnection() throws Throwable
+   {
+      assertNotNull(ds);
+      Connection c = ds.getConnection();
+      assertNotNull(c);
+
+      assertTrue(c.isWrapperFor(org.h2.jdbc.JdbcConnection.class));
+
+      c.close();
+
+      try {
+         c.isWrapperFor(org.h2.jdbc.JdbcConnection.class);
+         fail("SQLException was expected.");
+      } catch (Exception e) {
+         assertTrue(e instanceof SQLException);
+      }
+   }
+
+   /**
+    * c.unwrap() on closed connection should not throw NPE.
+    *
+    * https://issues.jboss.org/browse/JBJCA-1389
+    */
+   @Test
+   public void testUnwrapClosedConnection() throws Throwable
+   {
+      assertNotNull(ds);
+      Connection c = ds.getConnection();
+      assertNotNull(c);
+
+      assertNotNull(c.unwrap(org.h2.jdbc.JdbcConnection.class));
+
+      c.close();
+
+      try {
+         c.unwrap(org.h2.jdbc.JdbcConnection.class);
+         fail("SQLException was expected.");
+      } catch (Exception e) {
+         assertTrue(e instanceof SQLException);
+      }
    }
 }
