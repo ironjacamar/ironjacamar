@@ -2027,14 +2027,14 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    protected SQLException checkException(Throwable t) throws SQLException
    {
-      Throwable result = null;
-      if (t instanceof AbstractMethodError)
+      Throwable result = t;
+      if (result instanceof AbstractMethodError)
       {
-         t = new SQLFeatureNotSupportedException(bundle.methodNotImplemented(), t);
+         result = new SQLFeatureNotSupportedException(bundle.methodNotImplemented(), result);
       }
 
       if (mc != null)
-         result = mc.connectionError(t);
+         result = mc.connectionError(result);
 
       if (result instanceof SQLException)
       {
