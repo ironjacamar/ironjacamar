@@ -210,6 +210,25 @@ public abstract class PoolTestCaseAbstract
    }
 
    /**
+    *
+    * Checks statistics
+    *
+    * @param ps PoolStatistics implementation
+    *
+    * @param available count
+    * @param inUse count
+    * @param active count
+    * @param destroyed count
+    * @param blockingCount count
+    */
+   public void checkStatistics(PoolStatistics ps, int available, int inUse, int active, int destroyed, int blockingCount)
+   {
+      checkStatistics(ps, available, inUse, active, destroyed);
+      assertEquals("BlockingCount value is " + ps.getBlockingFailureCount() + " but expected value is " + blockingCount,
+              ps.getBlockingFailureCount(), blockingCount);
+   }
+
+   /**
     * 
     * checkConfiguration
     * @param cmClass class, implementing ConnectionManager in configuration

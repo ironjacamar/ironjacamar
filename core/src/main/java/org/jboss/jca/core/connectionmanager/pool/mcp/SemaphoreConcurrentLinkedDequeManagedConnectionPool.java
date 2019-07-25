@@ -565,6 +565,9 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
          } 
          else 
          {
+            if (pool.getInternalStatistics().isEnabled())
+               pool.getInternalStatistics().deltaBlockingFailureCount();
+
             // We timed out
             throw new ResourceException(
                bundle.noMManagedConnectionsAvailableWithinConfiguredBlockingTimeout(
