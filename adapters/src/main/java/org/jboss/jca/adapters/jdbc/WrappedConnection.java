@@ -1970,6 +1970,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    @Override
    public <T> T unwrap(Class<T> iface) throws SQLException {
       checkStatus();
+      mc.checkTransaction();
       return super.unwrap(iface);
    }
 
