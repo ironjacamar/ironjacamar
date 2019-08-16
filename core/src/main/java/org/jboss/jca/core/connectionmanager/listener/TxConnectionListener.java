@@ -911,8 +911,9 @@ public class TxConnectionListener extends AbstractConnectionListener
          {
             this.failedToEnlist = null;
          }
-
-         log.tracef("%s: Constructor", toString());
+         if (log.isTraceEnabled()) {
+            log.tracef("%s: Constructor", toString());
+         }
       }
 
       /**
