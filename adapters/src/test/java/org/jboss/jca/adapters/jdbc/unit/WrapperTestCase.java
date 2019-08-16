@@ -40,6 +40,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -205,5 +206,25 @@ public class WrapperTestCase
       } catch (Exception e) {
          assertTrue(e instanceof SQLException);
       }
+   }
+
+   /**
+    * Tests that autoCommit is propogated to the underlying connection.
+    */
+   @Test
+   public void testAutoCommit() throws Throwable
+   {
+      assertNotNull(ds);
+      Connection c = ds.getConnection();
+      assertTrue(c.getAutoCommit());
+      c.setAutoCommit(false);
+      assertNotNull(c);
+
+      org.h2.jdbc.JdbcConnection c2 = c.unwrap(org.h2.jdbc.JdbcConnection.class);
+      assertNotNull(c2);
+
+      assertFalse(c2.getAutoCommit());
+
+      c.close();
    }
 }
