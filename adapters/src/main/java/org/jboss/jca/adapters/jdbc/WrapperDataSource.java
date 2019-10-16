@@ -160,6 +160,7 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
       }
       finally
       {
+         mcf.setOriginalTCCLn(null); // fix for WFLY-12676 memory leak
          SecurityActions.setThreadContextClassLoader(tccl);
       }
    }
