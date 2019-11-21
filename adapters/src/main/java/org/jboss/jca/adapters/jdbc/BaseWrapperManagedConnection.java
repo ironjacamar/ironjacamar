@@ -337,6 +337,9 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
          {
             WrappedConnection lc = i.next();
             lc.setManagedConnection(null);
+            // JBJCA-1396 close handles to this connection, otherwise ds.getConnection() will return this instance
+            // again, even though it'll have been already destroyed.
+            closeHandle(lc);
          }
          handles.clear();
       }
