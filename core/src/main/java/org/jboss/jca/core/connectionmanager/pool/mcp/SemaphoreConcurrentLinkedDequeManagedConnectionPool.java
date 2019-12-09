@@ -1222,7 +1222,8 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
                   {
                      try 
                      {
-                        ConnectionListener cl = createConnectionEventListener(subject, cri);
+                        // this increments pool size
+                        final ConnectionListener cl = createConnectionEventListener(subject, cri);
 
                         if (Tracer.isEnabled())
                            Tracer.createConnectionListener(pool.getName(), this, cl, cl.getManagedConnection(),
@@ -1230,31 +1231,28 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
                                                            Tracer.isRecordCallstacks() ?
                                                            new Throwable("CALLSTACK") : null);
 
-                        boolean added = false;
+                        final ConnectionListenerWrapper clw = new ConnectionListenerWrapper(cl, false, false);
+                        // we need to add clw before checking for pool size; if we exceeded pool size, removing wihtouth
+                        // adding will cause pool size to not be decremented at removeConnectionListenerFromPool
+                        cls.put(cl, clw);
+                        clq.addLast(cls.get(cl));
+
                         // We have to add 1, since poolSize is already incremented
-                        if (!isSize(poolConfiguration.getMaxSize() + 1))
+                        if (isSize(poolConfiguration.getMaxSize() + 1))
                         {
-                           log.tracef("Capacity fill: cl=%s", cl);
-
-                           cls.put(cl, new ConnectionListenerWrapper(cl, false, false));
-                           clq.addLast(cls.get(cl));
-
-                           created++;
-                           added = true;
-                        }
-
-                        if (!added)
-                        {
+                           // maximum size of pool is reached, destroy the connection, remove it, and return
                            if (Tracer.isEnabled())
                               Tracer.destroyConnectionListener(pool.getName(), this, cl, false, false, true, false,
                                                                false, false, true,
                                                                Tracer.isRecordCallstacks() ?
                                                                new Throwable("CALLSTACK") : null);
-                     
-                           ConnectionListenerWrapper clw = new ConnectionListenerWrapper(cl, false, false);
+
                            removeConnectionListenerFromPool(clw);
                            clw.getConnectionListener().destroy();
                            return;
+                        } else {
+                           log.tracef("Capacity fill: cl=%s", cl);
+                           created++;
                         }
                      } 
                      catch (ResourceException re) 
