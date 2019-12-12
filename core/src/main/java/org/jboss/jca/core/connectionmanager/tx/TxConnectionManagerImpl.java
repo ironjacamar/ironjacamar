@@ -572,39 +572,6 @@ public class TxConnectionManagerImpl extends AbstractConnectionManager implement
       }
    }
 
-   /**
-    * {@inheritDoc}
-    */
-   protected void managedConnectionDisconnected(ConnectionListener cl) throws ResourceException
-   {
-      Throwable throwable = null;
-      try
-      {
-         cl.delist();
-      }
-      catch (Throwable t)
-      {
-         throwable = t;
-      }
-
-      //if there are no more handles and tx is complete, we can return to pool.
-      if (cl.isManagedConnectionFree())
-      {
-         log.tracef("Disconnected isManagedConnectionFree=true cl=%s", cl);
-
-         returnManagedConnection(cl, false);
-      }
-      else
-      {
-         log.tracef("Disconnected isManagedConnectionFree=false cl=%s", cl);
-      }
-
-      // Rethrow the error
-      if (throwable != null)
-      {
-         throw new ResourceException(bundle.couldNotDelistResourceThenTransactionRollback(), throwable);  
-      }      
-   }
 
    /**
     * {@inheritDoc}
