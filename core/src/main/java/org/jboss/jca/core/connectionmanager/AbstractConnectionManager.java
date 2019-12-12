@@ -1089,18 +1089,40 @@ public abstract class AbstractConnectionManager implements ConnectionManager
    }
 
    /**
-    * For polymorphism.
-    * <p>
-    *
-    * Do not invoke directly, use disconnectManagedConnection
-    * which does the relevent exception handling
+    * 
     * @param cl connection listener
     * @throws ResourceException for exception
     */
    protected void managedConnectionDisconnected(ConnectionListener cl) throws ResourceException
    {
-      //Nothing as default
-   }
+       Throwable throwable = null;
+       try
+       {
+          cl.delist();
+       }
+       catch (Throwable t)
+       {
+          throwable = t;
+       }
+ 
+       //if there are no more handles and tx is complete, we can return to pool.
+       if (cl.isManagedConnectionFree())
+       {
+          log.tracef("Disconnected isManagedConnectionFree=true cl=%s", cl);
+ 
+          returnManagedConnection(cl, false);
+       }
+       else
+       {
+          log.tracef("Disconnected isManagedConnectionFree=false cl=%s", cl);
+       }
+ 
+       // Rethrow the error
+       if (throwable != null)
+       {
+          throw new ResourceException(bundle.couldNotDelistResourceThenTransactionRollback(), throwable);  
+       }      
+    }
 
    /**
     * Register connection with connection listener.
