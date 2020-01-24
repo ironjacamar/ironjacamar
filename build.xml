@@ -80,7 +80,7 @@
   <!-- ================================= 
        Repositories              
        ================================= -->
-  <property name="central.repo" value="http://repo1.maven.org/maven2"/>
+  <property name="central.repo" value="https://repo1.maven.org/maven2"/>
   <property name="jboss.repo" value="https://repository.jboss.org/nexus/content/groups/public/"/>
   <property name="snapshots.repo" value="https://repository.jboss.org/nexus/content/repositories/snapshots/"/>
   <property name="fungal.repo" value="http://jesperpedersen.github.com/fungal/maven2"/>
