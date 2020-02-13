@@ -42,6 +42,7 @@ import org.jboss.logging.Logger;
  * 
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
+ * @author Flavia Rainone
  */
 public class ConnectionValidator
 {
@@ -256,33 +257,46 @@ public class ConnectionValidator
          
          try
          {
-            lock.lock();
-            
+
+
             while (!shutdown.get())
             {
-               boolean result = instance.condition.await(instance.interval, TimeUnit.MILLISECONDS);
-               
-               if (logger.isTraceEnabled())
+               try
                {
-                  logger.trace("Result of await: " + result);
+                  lock.lock();
+
+                  boolean result = instance.condition.await(instance.interval, TimeUnit.MILLISECONDS);
+
+                  if (logger.isTraceEnabled())
+                  {
+                     logger.trace("Result of await: " + result);
+                  }
+
+                  if (logger.isDebugEnabled())
+                  {
+                     logger.debug("Notifying pools, interval: " + interval);
+                  }
+               } finally {
+                  lock.unlock();
                }
-               
-               if (logger.isDebugEnabled())
-               {
-                  logger.debug("Notifying pools, interval: " + interval);  
-               }
-     
+
                for (ManagedConnectionPool mcp : registeredPools)
                {
                   mcp.validateConnections();
                }
 
-               next = System.currentTimeMillis() + interval;
-               
-               if (next < 0)
-               {
-                  next = Long.MAX_VALUE;  
-               }              
+               try {
+                  lock.lock();
+                  next = System.currentTimeMillis() + interval;
+
+                  if (next < 0)
+                  {
+                     next = Long.MAX_VALUE;
+                  }
+               } finally {
+                  lock.unlock();
+               }
+
             }            
          }
          catch (InterruptedException e)
