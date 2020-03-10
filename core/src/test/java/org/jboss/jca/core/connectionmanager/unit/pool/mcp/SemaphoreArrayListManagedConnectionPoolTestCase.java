@@ -35,14 +35,14 @@ import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.capacity.ExplicitCapacity;
 import org.jboss.jca.core.connectionmanager.pool.capacity.SizeIncrementer;
 import org.jboss.jca.core.connectionmanager.pool.capacity.WatermarkDecrementer;
-import org.jboss.jca.core.connectionmanager.pool.mcp.SemaphoreConcurrentLinkedDequeManagedConnectionPool;
+import org.jboss.jca.core.connectionmanager.pool.mcp.SemaphoreArrayListManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.pool.strategy.OnePool;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class SemaphoreConcurrentLinkedDequeManagedConnectionPoolTestCase
+public class SemaphoreArrayListManagedConnectionPoolTestCase
 {
    private static final int POOL_SIZE = 5;
    boolean fail = false;
@@ -60,13 +60,13 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPoolTestCase
    }
 
    /*
-    * Failing validation causes SemaphoreConcurrentLinkedDequeManagedConnectionPool#removeConnectionListenerFromPool
+    * Failing validation causes SemaphoreArrayListManagedConnectionPool#removeConnectionListenerFromPool
     * to be called twice during getConnection call.
     * See https://issues.jboss.org/browse/JBJCA-1385 for details.
     */
    @Test public void testRemovingTheSameConnectionTwice() throws Exception
    {
-      SemaphoreConcurrentLinkedDequeManagedConnectionPool mcp = new SemaphoreConcurrentLinkedDequeManagedConnectionPool();
+      SemaphoreArrayListManagedConnectionPool mcp = new SemaphoreArrayListManagedConnectionPool();
       mcp.initialize(mcf, cm, null, null, poolConfig, pool);
 
       while (mcp.getActive() != POOL_SIZE)
@@ -96,7 +96,7 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPoolTestCase
       pool.setCapacity(new ExplicitCapacity(sizeIncrementer, watermarkDecrementer));
       poolConfig.setPrefill(false);
       poolConfig.setStrictMin(false);
-      SemaphoreConcurrentLinkedDequeManagedConnectionPool mcp = new SemaphoreConcurrentLinkedDequeManagedConnectionPool();
+      SemaphoreArrayListManagedConnectionPool mcp = new SemaphoreArrayListManagedConnectionPool();
       mcp.initialize(mcf, cm, null, null, poolConfig, pool);
 
       // notice sizeIncrementer.size is 4, but we expect 3 as the final pool size result after increaseCapacity
@@ -124,11 +124,10 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPoolTestCase
 
    @Test public void testFillTo() throws Exception
    {
-      final SizeIncrementer sizeIncrementer = new SizeIncrementer();
       pool.setCapacity(null);
       poolConfig.setPrefill(true);
       poolConfig.setStrictMin(true);
-      SemaphoreConcurrentLinkedDequeManagedConnectionPool mcp = new SemaphoreConcurrentLinkedDequeManagedConnectionPool();
+      SemaphoreArrayListManagedConnectionPool mcp = new SemaphoreArrayListManagedConnectionPool();
       mcp.initialize(mcf, cm, null, null, poolConfig, pool);
 
       ConnectionRequestInfo connectionRequestInfo = new TestConnectionRequestInfo();
