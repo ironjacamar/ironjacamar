@@ -1113,7 +1113,7 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
       while (!pool.isFull())
       {
          // Get a permit - avoids a race when the pool is nearly full
-         // Also avoids unnessary fill checking when all connections are
+         // Also avoids unnecessary fill checking when all connections are
          // checked out
          try 
          {
@@ -1138,7 +1138,8 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
                   // Create a connection to fill the pool
                   try 
                   {
-                     ConnectionListener cl = createConnectionEventListener(defaultSubject, defaultCri);
+                     // this increments pool size
+                     final ConnectionListener cl = createConnectionEventListener(defaultSubject, defaultCri);
 
                      if (Tracer.isEnabled())
                         Tracer.createConnectionListener(pool.getName(), this, cl, cl.getManagedConnection(),
@@ -1146,30 +1147,25 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
                                                         Tracer.isRecordCallstacks() ?
                                                         new Throwable("CALLSTACK") : null);
 
-                     boolean added = false;
+                     final ConnectionListenerWrapper clw = new ConnectionListenerWrapper(cl, false, false);
+                     // we need to add clw before checking for pool size; if we exceeded pool size, removing without
+                     // adding will cause pool size to not be decremented at removeConnectionListenerFromPool
+                     cls.put(cl, clw);
+                     clq.addLast(cls.get(cl));
+
                      // We have to add 1, since poolSize is already incremented
-                     if (!isSize(size + 1))
-                     {
-                        log.tracef("Filling pool cl=%s", cl);
-
-                        cls.put(cl, new ConnectionListenerWrapper(cl, false, false));
-                        clq.addLast(cls.get(cl));
-                        added = true;
-                     }
-
-                     if (!added)
+                     if (isSize(size + 1))
                      {
                         if (Tracer.isEnabled())
                            Tracer.destroyConnectionListener(pool.getName(), this, cl, false, false, false, false,
-                                                            false, true, false,
-                                                            Tracer.isRecordCallstacks() ?
-                                                            new Throwable("CALLSTACK") : null);
-                     
-                        ConnectionListenerWrapper clw = new ConnectionListenerWrapper(cl, false, false);
+                                 false, true, false,
+                                 Tracer.isRecordCallstacks() ?
+                                       new Throwable("CALLSTACK") : null);
                         removeConnectionListenerFromPool(clw);
                         clw.getConnectionListener().destroy();
                         return;
                      }
+                     log.tracef("Filling pool cl=%s", cl);
                   }
                   catch (ResourceException re) 
                   {
@@ -1232,7 +1228,7 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
                                                            new Throwable("CALLSTACK") : null);
 
                         final ConnectionListenerWrapper clw = new ConnectionListenerWrapper(cl, false, false);
-                        // we need to add clw before checking for pool size; if we exceeded pool size, removing wihtouth
+                        // we need to add clw before checking for pool size; if we exceeded pool size, removing without
                         // adding will cause pool size to not be decremented at removeConnectionListenerFromPool
                         cls.put(cl, clw);
                         clq.addLast(cls.get(cl));
