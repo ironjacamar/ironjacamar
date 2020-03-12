@@ -127,6 +127,8 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPoolTestCase
       final SizeIncrementer sizeIncrementer = new SizeIncrementer();
       pool.setCapacity(null);
       poolConfig.setPrefill(true);
+      // prevent pool filler thread from running in parallel with the test, fillTo was not designed to be run concurrently
+      poolConfig.setMinSize(0);
       poolConfig.setStrictMin(true);
       SemaphoreConcurrentLinkedDequeManagedConnectionPool mcp = new SemaphoreConcurrentLinkedDequeManagedConnectionPool();
       mcp.initialize(mcf, cm, null, null, poolConfig, pool);
