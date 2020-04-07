@@ -314,7 +314,6 @@ public class ConnectionValidator
          }         
          finally
          {
-            lock.unlock();  
             SecurityActions.setThreadContextClassLoader(oldTccl);
          }
       }
