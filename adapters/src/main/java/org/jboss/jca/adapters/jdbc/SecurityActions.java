@@ -22,6 +22,7 @@
 
 package org.jboss.jca.adapters.jdbc;
 
+import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
@@ -136,6 +137,40 @@ class SecurityActions
             return t.getStackTrace();
          }
       });
+   }
+
+   /**
+    * Get the method
+    * @param c The class
+    * @param name The name
+    * @param params The parameters
+    * @return The method
+    * @exception NoSuchMethodException If a matching method is not found.
+    */
+   static Method getMethod(final Class<?> c, final String name, final Class<?>... params)
+       throws NoSuchMethodException
+   {
+      if (System.getSecurityManager() == null)
+         return c.getMethod(name, params);
+
+      Method result = AccessController.doPrivileged(new PrivilegedAction<Method>()
+      {
+         public Method run()
+         {
+            try
+            {
+               return c.getMethod(name, params);
+            } catch (NoSuchMethodException e)
+            {
+               return null;
+            }
+         }
+      });
+
+      if (result != null)
+         return result;
+
+      throw new NoSuchMethodException();
    }
 
    static interface Producer<T> {

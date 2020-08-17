@@ -25,6 +25,7 @@ package org.jboss.jca.adapters.jdbc;
 import org.jboss.jca.adapters.AdaptersLogger;
 import org.jboss.jca.adapters.jdbc.spi.ClassLoaderPlugin;
 
+import java.lang.reflect.Method;
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.CallableStatement;
@@ -107,6 +108,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       setJndiName(jndiName);
       this.doLocking = doLocking;
       this.classLoaderPlugin = classLoaderPlugin;
+
+      sqlConnectionNotifyRequestBegin();
    }
 
    /**
@@ -313,6 +316,8 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       }
       mc = null;
       dataSource = null;
+
+      sqlConnectionNotifyRequestEnd();
    }
 
    /**
@@ -2129,5 +2134,66 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    AdaptersLogger getLogger()
    {
       return log;
+   }
+
+   private void sqlConnectionNotifyRequestBegin()
+   {
+      sqlConnectionNotify("beginRequest");
+   }
+
+   private void sqlConnectionNotifyRequestEnd()
+   {
+      sqlConnectionNotify("endRequest");
+   }
+
+   private void sqlConnectionNotify(String methodName)
+   {
+
+      try
+      {
+         Class<?> sqlConnection = getSqlConnection();
+         Method method = SecurityActions.getMethod(sqlConnection, methodName, new Class<?>[] {});
+         method.invoke(this);
+         if (spy)
+         {
+            spyLogger.debugf("java.sql.Connection#%s has been invoked", methodName);
+         }
+      } catch (Throwable t)
+      {
+         if (spy)
+         {
+            spyLogger.debugf("Unable to invoke java.sql.Connection#%s: %s", methodName, t.getMessage());
+         }
+      }
+   }
+
+   private Class<?> getSqlConnection() throws SQLException
+   {
+      Class<?> sqlConnection = null;
+
+      if (sqlConnection == null)
+      {
+         try
+         {
+            sqlConnection = Class.forName("java.sql.Connection", true,
+                    SecurityActions.getClassLoader(getClass()));
+         } catch (Throwable t)
+         {
+            // Ignore
+         }
+      }
+
+      if (sqlConnection == null)
+      {
+         try
+         {
+            ClassLoader tccl = org.jboss.jca.adapters.jdbc.SecurityActions.getThreadContextClassLoader();
+            sqlConnection = Class.forName("java.sql.Connection", true, tccl);
+         } catch (Throwable t)
+         {
+            throw new SQLException("Cannot resolve java.sql.Connection", t);
+         }
+      }
+      return sqlConnection;
    }
 }
