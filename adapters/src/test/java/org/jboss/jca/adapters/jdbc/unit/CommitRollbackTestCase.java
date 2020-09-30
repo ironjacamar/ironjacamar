@@ -32,6 +32,7 @@ import java.sql.Connection;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
+import javax.transaction.HeuristicMixedException;
 import javax.transaction.RollbackException;
 import javax.transaction.TransactionManager;
 
@@ -119,7 +120,8 @@ public class CommitRollbackTestCase
 
          tm.commit();
       }
-      catch (RollbackException re)
+      //FIXME was RollbackException double check
+      catch (HeuristicMixedException re)
       {
          // Expected
       }

@@ -11,7 +11,7 @@
     </security>
   </datasource>
   <drivers>
-      <driver name="h2" module="h2.jar">
+      <driver name="h2" module="h2-VERSION.jar">
       </driver>
   </drivers>
 </datasources>
