@@ -25,7 +25,9 @@ package org.jboss.jca.adapters.jdbc.unit;
 import org.jboss.jca.adapters.ArquillianJCATestUtils;
 import org.jboss.jca.embedded.dsl.InputStreamDescriptor;
 
+import java.io.ByteArrayInputStream;
 import java.sql.Connection;
+import java.util.Scanner;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
@@ -73,8 +75,10 @@ public class H2DynamicDriverTestCase
    public static Descriptor createDescriptor() throws Exception
    {
       ClassLoader cl = Thread.currentThread().getContextClassLoader();
+      String h2Version = System.getProperty("version.com.h2database");
+      String descriptor = new Scanner(cl.getResourceAsStream("h2-dynamic-driver-ds.xml")).useDelimiter("\\A").next().replace("VERSION", h2Version);
       InputStreamDescriptor isd = new InputStreamDescriptor("h2-dynamic-driver-ds.xml",
-                                                            cl.getResourceAsStream("h2-dynamic-driver-ds.xml"));
+              new ByteArrayInputStream(descriptor.getBytes()));
       return isd;
    }
 

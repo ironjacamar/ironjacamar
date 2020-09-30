@@ -36,6 +36,9 @@ import javax.transaction.TransactionManager;
 
 import org.jboss.logging.Logger;
 
+
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -50,6 +53,8 @@ public class DeadlockTestCase
    private static Embedded embedded;
    private static TransactionManager tm;
 
+   private static ResourceAdapterArchive jdbcLocal;
+
    /**
     * Deadlock with database enabled
     * @exception Throwable If an error occurs
@@ -59,10 +64,9 @@ public class DeadlockTestCase
    {
       Context context = null;
 
-      URL jdbc = DeadlockTestCase.class.getClassLoader().getResource("jdbc-local.rar");
       URL deadlock = DeadlockTestCase.class.getClassLoader().getResource("deadlock-ds.xml");
 
-      embedded.deploy(jdbc);      
+      embedded.deploy(jdbcLocal);
       embedded.deploy(deadlock);
 
       tm.begin();
@@ -97,7 +101,7 @@ public class DeadlockTestCase
          }
 
          embedded.undeploy(deadlock);
-         embedded.undeploy(jdbc);
+         embedded.undeploy(jdbcLocal);
       }
    }
 
@@ -110,10 +114,9 @@ public class DeadlockTestCase
    {
       Context context = null;
 
-      URL jdbc = DeadlockTestCase.class.getClassLoader().getResource("jdbc-local.rar");
       URL deadlock = DeadlockTestCase.class.getClassLoader().getResource("deadlock-ds.xml");
 
-      embedded.deploy(jdbc);      
+      embedded.deploy(jdbcLocal);
       embedded.deploy(deadlock);
 
       tm.begin();
@@ -149,7 +152,7 @@ public class DeadlockTestCase
             log.info("Completed rollback in testDeadlockDBDisabled");
          }
 
-         embedded.undeploy(jdbc);
+         embedded.undeploy(jdbcLocal);
       }
    }
 
@@ -160,6 +163,9 @@ public class DeadlockTestCase
    @BeforeClass
    public static void before() throws Throwable
    {
+      jdbcLocal = ShrinkWrap.create(ResourceAdapterArchive.class, "jdbc-local.rar");
+      jdbcLocal.addAsManifestResource("jdbc/local/META-INF/ra.xml", "ra.xml");
+
       // Create and set an embedded JCA instance
       embedded = EmbeddedFactory.create();
 
@@ -168,6 +174,7 @@ public class DeadlockTestCase
 
       // Transaction Manager
       tm = embedded.lookup("RealTransactionManager", TransactionManager.class);
+
    }
 
    /**

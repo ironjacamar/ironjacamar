@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ * IronJacamar, a Java EE Connector Architecture implementation
+ * Copyright 2020, Red Hat Inc, and individual contributors
+ * as indicated by the @author tags. See the copyright.txt file in the
+ * distribution for a full listing of individual contributors.
+ *
+ * This is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation; either version 2.1 of
+ * the License, or (at your option) any later version.
+ *
+ * This software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this software; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+ * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.jboss</groupId>
+        <artifactId>jboss-parent</artifactId>
+	<version>37</version>
+    </parent>
+
+
+    <groupId>org.jboss.ironjacamar</groupId>
+    <artifactId>ironjacamar-parent</artifactId>
+
+    <version>1.4.36.Final-SNAPSHOT</version>
+
+    <packaging>pom</packaging>
+
+    <name>IronJacamar: Parent</name>
+    <description>IronJacamar: Parent Aggregator</description>
+
+    <licenses>
+        <license>
+            <name>GNU Lesser General Public License v2.1 or later</name>
+            <url>http://repository.jboss.org/licenses/lgpl-2.1.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    
+    
+
+    <modules>
+        <module>adapters</module>
+	    <module>api</module>
+        <module>as</module>
+        <module>codegenerator</module>
+        <module>common</module>
+	    <module>core</module>
+        <module>deployers</module>
+         <!--<module>eclipse</module>-->
+        <module>eis</module>
+        <module>embedded</module>
+        <module>sjc</module>
+        <module>validator</module>
+        <module>web</module>
+    </modules>
+
+    <properties>
+	    <ironjacamar.groupId>${project.groupId}</ironjacamar.groupId>
+	    <ironjacamar.version>${project.version}</ironjacamar.version>
+
+        <version.com.github.fungal>0.11.0.Final</version.com.github.fungal>
+        <version.com.h2database>1.3.173</version.com.h2database>
+        <version.jakarta.validation>2.0.2</version.jakarta.validation>
+        <version.junit>4.12</version.junit>
+        <version.org.apache.ant>1.8.1</version.org.apache.ant>
+        <version.org.apache.maven>3.5.4</version.org.apache.maven>
+        <version.org.jboss.arquillian.core>1.0.2.Final</version.org.jboss.arquillian.core>
+        <version.org.jboss.arquillian.extension.byteman>1.0.0.Alpha4</version.org.jboss.arquillian.extension.byteman>
+        <version.org.eclipse.jetty>8.1.3.v20120416</version.org.eclipse.jetty>
+        <version.org.glassfish.el>3.0.1-b11</version.org.glassfish.el>
+        <version.org.hibernate.validator>6.0.20.Final</version.org.hibernate.validator>
+        <version.org.jboss.byteman>4.0.8</version.org.jboss.byteman>
+        <version.org.jboss.common>2.2.17.GA</version.org.jboss.common>
+        <version.org.jboss.jandex>2.1.3.Final</version.org.jboss.jandex>
+        <version.org.jboss.jboss-transaction-spi>7.6.0.Final</version.org.jboss.jboss-transaction-spi>
+        <version.org.jboss.logging.jboss-logging>3.1.3.GA</version.org.jboss.logging.jboss-logging>
+        <version.org.jboss.logging-processor>1.1.0.Final</version.org.jboss.logging-processor>
+        <version.org.jboss.logging.jboss-logging-tools>2.2.1.Final</version.org.jboss.logging.jboss-logging-tools>
+        <version.org.jboss.logmanager>1.5.0.Final</version.org.jboss.logmanager>
+        <version.org.jboss.naming>5.0.3.GA</version.org.jboss.naming>
+        <version.org.jboss.narayana>5.10.5.Final</version.org.jboss.narayana>
+        <version.org.jboss.shrinkwrap>1.2.6</version.org.jboss.shrinkwrap>
+        <version.org.jboss.shrinkwrap.descriptors>2.0.0-alpha-5</version.org.jboss.shrinkwrap.descriptors>
+        <version.org.jboss.spec.javax.el.jboss-el-api_3.0_spec>2.0.0.Final</version.org.jboss.spec.javax.el.jboss-el-api_3.0_spec>
+        <version.org.jboss.spec.javax.jms.jboss-jms-api_2.0_spec>2.0.0.Final</version.org.jboss.spec.javax.jms.jboss-jms-api_2.0_spec>
+        <version.org.jboss.spec.javax.resource.jboss-connector-api_1.7_spec>2.0.0.Final</version.org.jboss.spec.javax.resource.jboss-connector-api_1.7_spec>
+        <version.org.jboss.spec.javax.security.auth.message.jboss-jaspi-api_1.1_spec>2.0.1.Final</version.org.jboss.spec.javax.security.auth.message.jboss-jaspi-api_1.1_spec>
+        <version.org.jboss.spec.javax.transaction.jboss-transaction-api_1.3_spec>2.0.0.Final</version.org.jboss.spec.javax.transaction.jboss-transaction-api_1.3_spec>
+        <version.org.jboss.stdio>1.1.0.Final</version.org.jboss.stdio>
+        <version.org.jboss.threads>2.4.0.Final</version.org.jboss.threads>
+        <version.org.jgroups>3.2.7.Final</version.org.jgroups>
+        <version.org.mockito>2.18.0</version.org.mockito>
+        <version.org.picketbox>5.0.3.Final</version.org.picketbox>
+        <version.org.wildfly.common>1.3.0.Final</version.org.wildfly.common>
+        <version.org.wildfly.transaction.client>1.1.13.Final</version.org.wildfly.transaction.client>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>${ironjacamar.groupId}</groupId>
+                <artifactId>ironjacamar-api</artifactId>
+                <version>${ironjacamar.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${ironjacamar.groupId}</groupId>
+                <artifactId>ironjacamar-arquillian-embedded</artifactId>
+                <version>${ironjacamar.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${ironjacamar.groupId}</groupId>
+                <artifactId>ironjacamar-common-api</artifactId>
+                <version>${ironjacamar.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${ironjacamar.groupId}</groupId>
+                <artifactId>ironjacamar-common-impl</artifactId>
+                <version>${ironjacamar.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${ironjacamar.groupId}</groupId>
+                <artifactId>ironjacamar-common-spi</artifactId>
+                <version>${ironjacamar.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${ironjacamar.groupId}</groupId>
+                <artifactId>ironjacamar-core-api</artifactId>
+                <version>${ironjacamar.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${ironjacamar.groupId}</groupId>
+                <artifactId>ironjacamar-core-impl</artifactId>
+                <version>${ironjacamar.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${ironjacamar.groupId}</groupId>
+                <artifactId>ironjacamar-deployers-common</artifactId>
+                <version>${ironjacamar.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${ironjacamar.groupId}</groupId>
+                <artifactId>ironjacamar-deployers-fungal</artifactId>
+                <version>${ironjacamar.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${ironjacamar.groupId}</groupId>
+                <artifactId>ironjacamar-embedded</artifactId>
+                <version>${ironjacamar.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${ironjacamar.groupId}</groupId>
+                <artifactId>ironjacamar-validator</artifactId>
+                <version>${ironjacamar.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.fungal</groupId>
+                <artifactId>fungal</artifactId>
+                <version>${version.com.github.fungal}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>${version.com.h2database}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.validation</groupId>
+                <artifactId>jakarta.validation-api</artifactId>
+                <version>${version.jakarta.validation}</version>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${version.junit}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.ant</groupId>
+                <artifactId>ant</artifactId>
+                <version>${version.org.apache.ant}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-plugin-api</artifactId>
+                <version>${version.org.apache.maven}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-server</artifactId>
+                <version>${version.org.eclipse.jetty}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-webapp</artifactId>
+                <version>${version.org.eclipse.jetty}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish</groupId>
+                <artifactId>javax.el</artifactId>
+                <version>${version.org.glassfish.el}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate.validator</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>${version.org.hibernate.validator}</version>
+                <exclusions>
+                    <!-- TODO remove this exclusion once this supports Jakarta Validation -->
+                    <!-- Superceded by jakarta.validation:jakarta.validation-api -->
+                    <exclusion>
+                        <groupId>javax.validation</groupId>
+                        <artifactId>validation-api</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss</groupId>
+                <artifactId>jboss-common-core</artifactId>
+                <version>${version.org.jboss.common}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.jboss.logging</groupId>
+                        <artifactId>jboss-logging-spi</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss</groupId>
+                <artifactId>jandex</artifactId>
+                <version>${version.org.jboss.jandex}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss</groupId>
+                <artifactId>jboss-transaction-spi</artifactId>
+                <version>${version.org.jboss.jboss-transaction-spi}</version>
+                <exclusions>
+                    <!-- TODO remove this exclusion once this supports Jakarta Transactions 1.3 -->
+                    <!-- superseded by org.jboss.spec.javax.transaction:jboss-transaction-api_1.3_spec -->
+                    <exclusion>
+                        <groupId>org.jboss.spec.javax.transaction</groupId>
+                        <artifactId>jboss-transaction-api_1.2_spec</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.arquillian.container</groupId>
+                <artifactId>arquillian-container-test-spi</artifactId>
+                <version>${version.org.jboss.arquillian.core}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.arquillian.core</groupId>
+                <artifactId>arquillian-core-api</artifactId>
+                <version>${version.org.jboss.arquillian.core}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.arquillian.extension</groupId>
+                <artifactId>arquillian-extension-byteman</artifactId>
+                <version>${version.org.jboss.arquillian.extension.byteman}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.arquillian.junit</groupId>
+                <artifactId>arquillian-junit-container</artifactId>
+                <version>${version.org.jboss.arquillian.core}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.arquillian.junit</groupId>
+                <artifactId>arquillian-junit-core</artifactId>
+                <version>${version.org.jboss.arquillian.core}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.arquillian.test</groupId>
+                <artifactId>arquillian-test-api</artifactId>
+                <version>${version.org.jboss.arquillian.core}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.arquillian.testenricher</groupId>
+                <artifactId>arquillian-testenricher-resource</artifactId>
+                <version>${version.org.jboss.arquillian.core}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.byteman</groupId>
+                <artifactId>byteman</artifactId>
+                <version>${version.org.jboss.byteman}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.logging</groupId>
+                <artifactId>jboss-logging</artifactId>
+                <version>${version.org.jboss.logging.jboss-logging}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.logging</groupId>
+                <artifactId>jboss-logging-annotations</artifactId>
+                <version>${version.org.jboss.logging.jboss-logging-tools}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.logging</groupId>
+                <artifactId>jboss-logging-processor</artifactId>
+                <version>${version.org.jboss.logging-processor}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.logmanager</groupId>
+                <artifactId>jboss-logmanager</artifactId>
+                <version>${version.org.jboss.logmanager}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.naming</groupId>
+                <artifactId>jnpserver</artifactId>
+                <version>${version.org.jboss.naming}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.narayana.jta</groupId>
+                <artifactId>narayana-jta</artifactId>
+                <version>${version.org.jboss.narayana}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.narayana.jts</groupId>
+                <artifactId>narayana-jts-integration</artifactId>
+                <version>${version.org.jboss.narayana}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.shrinkwrap</groupId>
+                <artifactId>shrinkwrap-api</artifactId>
+                <version>${version.org.jboss.shrinkwrap}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+                <artifactId>shrinkwrap-descriptors-ant</artifactId>
+                <version>${version.org.jboss.shrinkwrap.descriptors}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.shrinkwrap.descriptors</groupId>
+                <artifactId>shrinkwrap-descriptors-api-base</artifactId>
+                <version>${version.org.jboss.shrinkwrap.descriptors}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.spec.javax.el</groupId>
+                <artifactId>jboss-el-api_3.0_spec</artifactId>
+                <version>${version.org.jboss.spec.javax.el.jboss-el-api_3.0_spec}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.spec.javax.jms</groupId>
+                <artifactId>jboss-jms-api_2.0_spec</artifactId>
+                <version>${version.org.jboss.spec.javax.jms.jboss-jms-api_2.0_spec}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.spec.javax.resource</groupId>
+                <artifactId>jboss-connector-api_1.7_spec</artifactId>
+                <version>${version.org.jboss.spec.javax.resource.jboss-connector-api_1.7_spec}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.spec.javax.security.auth.message</groupId>
+                <artifactId>jboss-jaspi-api_1.1_spec</artifactId>
+                <version>${version.org.jboss.spec.javax.security.auth.message.jboss-jaspi-api_1.1_spec}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.spec.javax.transaction</groupId>
+                <artifactId>jboss-transaction-api_1.3_spec</artifactId>
+                <version>${version.org.jboss.spec.javax.transaction.jboss-transaction-api_1.3_spec}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.stdio</groupId>
+                <artifactId>jboss-stdio</artifactId>
+                <version>${version.org.jboss.stdio}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.threads</groupId>
+                <artifactId>jboss-threads</artifactId>
+                <version>${version.org.jboss.threads}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jgroups</groupId>
+                <artifactId>jgroups</artifactId>
+                <version>${version.org.jgroups}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>${version.org.mockito}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.picketbox</groupId>
+                <artifactId>picketbox</artifactId>
+                <version>${version.org.picketbox}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wildfly.common</groupId>
+                <artifactId>wildfly-common</artifactId>
+                <version>${version.org.wildfly.common}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wildfly.transaction</groupId>
+                <artifactId>wildfly-transaction-client</artifactId>
+                <version>${version.org.wildfly.transaction.client}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>*</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>
