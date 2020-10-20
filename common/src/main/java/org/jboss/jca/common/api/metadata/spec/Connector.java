@@ -141,7 +141,11 @@ public interface Connector
       /**
        * 1.7
        */
-      V_17("1.7");
+      V_17("1.7"),
+      /**
+       * 2.0
+       */
+      V_20("2.0");
 
       private String name;
 

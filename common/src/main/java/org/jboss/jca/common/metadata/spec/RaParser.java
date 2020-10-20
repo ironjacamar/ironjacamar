@@ -111,7 +111,21 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                break;
             }
             case START_ELEMENT : {
-               if ("1.7".equals(reader.getAttributeValue(null, "version")))
+               if ("2.0".equals(reader.getAttributeValue(null, "version")))
+               {
+                  switch (Tag.forName(reader.getLocalName()))
+                  {
+                     case CONNECTOR:
+                     {
+                        connector = parseConnector20(reader);
+                        break;
+                     }
+                     default:
+                        throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
+                  }
+
+               }
+               else if ("1.7".equals(reader.getAttributeValue(null, "version")))
                {
                   switch (Tag.forName(reader.getLocalName()))
                   {
@@ -514,6 +528,102 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                      resourceadapterVersion = elementAsXsdString(reader);
                   }
                      break;
+                  case RESOURCEADAPTER : {
+                     resourceadapter = parseResourceAdapter(reader);
+                     break;
+                  }
+                  case REQUIRED_WORK_CONTEXT : {
+                     requiredWorkContext.add(elementAsXsdString(reader));
+                     break;
+                  }
+                  case DESCRIPTION : {
+                     description.add(elementAsLocalizedXsdString(reader));
+                     break;
+                  }
+                  case DISPLAY_NAME : {
+                     displayName.add(elementAsLocalizedXsdString(reader));
+                     break;
+                  }
+                  case ICON : {
+                     icon.add(parseIcon(reader));
+                     break;
+                  }
+                  default :
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
+               }
+               break;
+            }
+         }
+      }
+      throw new ParserException(bundle.unexpectedEndOfDocument());
+   }
+
+   private Connector parseConnector20(XMLStreamReader reader) throws XMLStreamException, ParserException
+   {
+      boolean metadataComplete = Boolean.valueOf(reader.getAttributeValue(null,
+          XML.Connector17Attribute.METADATA_COMPLETE.getLocalName()));;
+      LicenseType license = null;
+      String id = reader.getAttributeValue(null, XML.IdAttribute.ID.getLocalName());;
+      ArrayList<Icon> icon = new ArrayList<Icon>();
+      ArrayList<LocalizedXsdString> description = new ArrayList<LocalizedXsdString>();
+      ArrayList<LocalizedXsdString> displayName = new ArrayList<LocalizedXsdString>();
+      XsdString eisType = NULL_XSDSTRING;
+      ResourceAdapter resourceadapter = null;
+      XsdString vendorName = NULL_XSDSTRING;
+      XsdString moduleName = null;
+      ArrayList<XsdString> requiredWorkContext = new ArrayList<XsdString>();
+      XsdString resourceadapterVersion = NULL_XSDSTRING;
+      while (reader.hasNext())
+      {
+         switch (reader.nextTag())
+         {
+            case END_ELEMENT : {
+               if (Tag.forName(reader.getLocalName()) == Tag.CONNECTOR)
+               {
+                  //trimming collections
+                  icon.trimToSize();
+                  description.trimToSize();
+                  displayName.trimToSize();
+                  requiredWorkContext.trimToSize();
+                  //building and returning object
+                  return new ConnectorImpl(Version.V_20, moduleName,
+                      vendorName, eisType, resourceadapterVersion,
+                      license, resourceadapter, requiredWorkContext, metadataComplete,
+                      description, displayName, icon, id);
+               }
+               else
+               {
+                  if (XML.Connector17Tag.forName(reader.getLocalName()) == XML.Connector17Tag.UNKNOWN)
+                  {
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
+                  }
+               }
+               break;
+            }
+            case START_ELEMENT : {
+
+               switch (XML.Connector17Tag.forName(reader.getLocalName()))
+               {
+                  case MODULE_NAME : {
+                     moduleName = elementAsXsdString(reader);
+                     break;
+                  }
+                  case VENDOR_NAME : {
+                     vendorName = elementAsXsdString(reader);
+                     break;
+                  }
+                  case EIS_TYPE : {
+                     eisType = elementAsXsdString(reader);
+                     break;
+                  }
+                  case LICENSE : {
+                     license = parseLicense(reader);
+                     break;
+                  }
+                  case RESOURCEADAPTER_VERSION : {
+                     resourceadapterVersion = elementAsXsdString(reader);
+                  }
+                  break;
                   case RESOURCEADAPTER : {
                      resourceadapter = parseResourceAdapter(reader);
                      break;
