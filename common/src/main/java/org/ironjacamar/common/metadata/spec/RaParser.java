@@ -97,7 +97,21 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                break;
             }
             case START_ELEMENT : {
-               if ("1.7".equals(reader.getAttributeValue(null, XML.ATTRIBUTE_VERSION)))
+               if ("2.0".equals(reader.getAttributeValue(null, XML.ATTRIBUTE_VERSION)))
+               {
+                  switch (Tag.forName(reader.getLocalName()))
+                  {
+                     case CONNECTOR:
+                     {
+                        connector = parseConnector20(reader);
+                        break;
+                     }
+                     default:
+                        throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
+                  }
+
+               }
+               else if ("1.7".equals(reader.getAttributeValue(null, XML.ATTRIBUTE_VERSION)))
                {
                   switch (reader.getLocalName())
                   {
@@ -575,6 +589,104 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                      break;
                   }
                   default :
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
+               }
+               break;
+            }
+         }
+      }
+      throw new ParserException(bundle.unexpectedEndOfDocument());
+   }
+
+   private Connector parseConnector20(XMLStreamReader reader) throws XMLStreamException, ParserException {
+      boolean metadataComplete = Boolean.valueOf(reader.getAttributeValue(null,
+              XML.ATTRIBUTE_METADATA_COMPLETE));
+      LicenseType license = null;
+      String id = reader.getAttributeValue(null, XML.ATTRIBUTE_ID);
+      ArrayList<Icon> icon = new ArrayList<Icon>();
+      ArrayList<LocalizedXsdString> description = new ArrayList<LocalizedXsdString>();
+      ArrayList<LocalizedXsdString> displayName = new ArrayList<LocalizedXsdString>();
+      XsdString eisType = NULL_XSDSTRING;
+      ResourceAdapter resourceadapter = null;
+      XsdString vendorName = NULL_XSDSTRING;
+      XsdString moduleName = null;
+      ArrayList<XsdString> requiredWorkContext = new ArrayList<XsdString>();
+      XsdString resourceadapterVersion = NULL_XSDSTRING;
+      while (reader.hasNext()) {
+         switch (reader.nextTag()) {
+            case END_ELEMENT: {
+               if (XML.ELEMENT_CONNECTOR.equals(reader.getLocalName())) {
+                  //trimming collections
+                  icon.trimToSize();
+                  description.trimToSize();
+                  displayName.trimToSize();
+                  requiredWorkContext.trimToSize();
+                  //building and returning object
+                  return new ConnectorImpl(Version.V_20, moduleName, vendorName, eisType, resourceadapterVersion,
+                          license, resourceadapter, requiredWorkContext, metadataComplete,
+                          description, displayName, icon, id);
+               } else {
+                  switch (reader.getLocalName()) {
+                     case XML.ELEMENT_MODULE_NAME:
+                     case XML.ELEMENT_VENDOR_NAME:
+                     case XML.ELEMENT_EIS_TYPE:
+                     case XML.ELEMENT_LICENSE:
+                     case XML.ELEMENT_RESOURCEADAPTER_VERSION:
+                     case XML.ELEMENT_RESOURCEADAPTER:
+                     case XML.ELEMENT_REQUIRED_WORK_CONTEXT:
+                     case XML.ELEMENT_DESCRIPTION:
+                     case XML.ELEMENT_DISPLAY_NAME:
+                     case XML.ELEMENT_ICON:
+                        break;
+                     default:
+                        throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
+                  }
+               }
+               break;
+            }
+            case START_ELEMENT: {
+               switch (reader.getLocalName()) {
+                  case XML.ELEMENT_MODULE_NAME: {
+                     moduleName = elementAsXsdString(reader);
+                     break;
+                  }
+                  case XML.ELEMENT_VENDOR_NAME: {
+                     vendorName = elementAsXsdString(reader);
+                     break;
+                  }
+                  case XML.ELEMENT_EIS_TYPE: {
+                     eisType = elementAsXsdString(reader);
+                     break;
+                  }
+                  case XML.ELEMENT_LICENSE: {
+                     license = parseLicense(reader);
+                     break;
+                  }
+                  case XML.ELEMENT_RESOURCEADAPTER_VERSION: {
+                     resourceadapterVersion = elementAsXsdString(reader);
+                  }
+                  break;
+                  case XML.ELEMENT_RESOURCEADAPTER: {
+                     resourceadapter = parseResourceAdapter(reader);
+                     break;
+                  }
+                  case XML.ELEMENT_REQUIRED_WORK_CONTEXT: {
+                     requiredWorkContext.add(elementAsXsdString(reader));
+                     break;
+                  }
+                  case XML.ELEMENT_DESCRIPTION: {
+                     description.add(elementAsLocalizedXsdString(reader));
+                     break;
+                  }
+                  case XML.ELEMENT_DISPLAY_NAME: {
+                     displayName.add(elementAsLocalizedXsdString(reader));
+                     break;
+                  }
+                  case XML.ELEMENT_ICON: {
+                     icon.add(parseIcon(reader));
+                     break;
+                  }
+                  default:
                      throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
                }
                break;
