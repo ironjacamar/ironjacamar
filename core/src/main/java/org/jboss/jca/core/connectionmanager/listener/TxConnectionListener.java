@@ -998,7 +998,7 @@ public class TxConnectionListener extends AbstractConnectionListener
                }
                else
                {
-                  enlistError = new Throwable("Failed to enlist");
+                  enlistError = null;
                }
             }
             else
