@@ -1201,7 +1201,7 @@ public abstract class AbstractResourceAdapterDeployer
             // ResourceAdapter
             if (cmd.getVersion() != Version.V_10)
             {
-               if (cmd.getVersion() == Version.V_16 || cmd.getVersion() == Version.V_17)
+               if (cmd.getVersion() == Version.V_16 || cmd.getVersion() == Version.V_17 || cmd.getVersion() == Version.V_20)
                {
                   if (cmd.getRequiredWorkContexts() != null && cmd.getRequiredWorkContexts().size() > 0)
                   {
@@ -1970,7 +1970,8 @@ public abstract class AbstractResourceAdapterDeployer
          {
             // Bean validation
             if (getConfiguration().getBeanValidation() && (cmd.getVersion() == Version.V_16 || 
-                                                           cmd.getVersion() == Version.V_17))
+                                                           cmd.getVersion() == Version.V_17 ||
+                                                           cmd.getVersion() == Version.V_20))
             {
                List<Class> groupsClasses = null;
 
@@ -2291,7 +2292,7 @@ public abstract class AbstractResourceAdapterDeployer
       if (cmd == null)
          return true;
 
-      if (cmd.getVersion() == Version.V_16 || cmd.getVersion() == Version.V_17)
+      if (cmd.getVersion() == Version.V_16 || cmd.getVersion() == Version.V_17 || cmd.getVersion() == Version.V_20)
       {
          if (!cmd.isMetadataComplete())
             return true;
