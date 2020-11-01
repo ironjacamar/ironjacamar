@@ -582,7 +582,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
          Connector raXml = mdr.getResourceAdapter(id);
          if (raXml != null)
          {
-            return (raXml.getVersion() == Version.V_16 || raXml.getVersion() == Version.V_17);
+            return (raXml.getVersion() == Version.V_16 || raXml.getVersion() == Version.V_17 || raXml.getVersion() == Version.V_20);
          }
       }
       catch (Throwable t)
