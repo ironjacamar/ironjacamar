@@ -120,7 +120,7 @@ public class Annotations
       throws Exception
    {
       // Process annotations
-      if (connector == null || (connector.getVersion() == Version.V_16 || connector.getVersion() == Version.V_17))
+      if (connector == null || (connector.getVersion() == Version.V_16 || connector.getVersion() == Version.V_17 || connector.getVersion() == Version.V_20))
       {
          boolean isMetadataComplete = false;
          if (connector != null)
@@ -472,7 +472,7 @@ public class Annotations
       if (conAnnotation != null && conAnnotation.version() != null && !conAnnotation.version().trim().equals(""))
          resourceadapterVersion = new XsdString(conAnnotation.version(), null);
 
-      return new ConnectorImpl(Version.V_17, new XsdString("", null), vendorName, eisType, resourceadapterVersion,
+      return new ConnectorImpl(Version.V_20, new XsdString("", null), vendorName, eisType, resourceadapterVersion,
                                license, resourceAdapter,
                                requiredWorkContexts, false, descriptions, displayNames, icons, null);
    }

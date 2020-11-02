@@ -558,7 +558,7 @@ public class ConnectorImpl extends AbstractMetadata implements Connector
       {
          sb.append("<").append("connector");
          sb.append(" " + XML.ATTRIBUTE_VERSION + "=\"" + version + "\"");
-         if (version == Version.V_16 || version == Version.V_17)
+         if (version == Version.V_16 || version == Version.V_17 || version == Version.V_20)
             sb.append(" " + XML.ATTRIBUTE_METADATA_COMPLETE + "=\"" + metadataComplete + "\"");
          if (id != null)
             sb.append(" id=\"" + id + "\"");

@@ -1317,7 +1317,8 @@ public abstract class AbstractResourceAdapterDeployer
    {
       if (connector == null ||
           connector.getVersion() == Connector.Version.V_16 ||
-          connector.getVersion() == Connector.Version.V_17)
+          connector.getVersion() == Connector.Version.V_17 ||
+          connector.getVersion() == Connector.Version.V_20)
          return true;
 
       return false;
