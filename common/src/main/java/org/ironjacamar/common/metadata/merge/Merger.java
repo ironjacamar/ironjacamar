@@ -286,6 +286,15 @@ public class Merger
                                                                    inboundResourceadapter, adminobjects,
                                                                    securityPermissions, id);
 
+         if (connector.getVersion() == Version.V_20)
+         {
+            Connector newConnector = new ConnectorImpl(Version.V_20, moduleName, vendorName, eisType,
+                    resourceadapterVersion,
+                    license, resourceadapter, null,
+                    false, description, displayNames, icons, id);
+
+            return newConnector.merge(connector);
+         }
          if (connector.getVersion() == Version.V_17)
          {
             Connector newConnector = new ConnectorImpl(Version.V_17, moduleName, vendorName, eisType,
