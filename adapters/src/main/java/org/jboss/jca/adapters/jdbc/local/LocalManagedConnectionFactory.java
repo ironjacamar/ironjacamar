@@ -311,16 +311,35 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
          if (dataSourceClass != null && !copy.isEmpty())
          {
             DataSource d = getDataSource();
-            con = d.getConnection(copy.getProperty("user"), copy.getProperty("password"));
-            if (con == null)
-               throw new ResourceException(bundle.unableToCreateConnectionFromDataSource());
+
+            ClassLoader tccl = SecurityActions.getThreadContextClassLoader();
+            SecurityActions.setThreadContextClassLoader(d.getClass().getClassLoader());
+            try
+            {
+               con = d.getConnection(copy.getProperty("user"), copy.getProperty("password"));
+               if (con == null)
+                  throw new ResourceException(bundle.unableToCreateConnectionFromDataSource());
+            }
+            finally
+            {
+               SecurityActions.setThreadContextClassLoader(tccl);
+            }
          }
          else if (driverClass != null)
          {
             Driver d = getDriver(url);
-            con = d.connect(url, copy);
-            if (con == null)
-               throw new ResourceException(bundle.wrongDriverClass(d.getClass().getName(), url));
+            ClassLoader tccl = SecurityActions.getThreadContextClassLoader();
+            SecurityActions.setThreadContextClassLoader(d.getClass().getClassLoader());
+            try
+            {
+               con = d.connect(url, copy);
+               if (con == null)
+                  throw new ResourceException(bundle.wrongDriverClass(d.getClass().getName(), url));
+            }
+            finally
+            {
+               SecurityActions.setThreadContextClassLoader(tccl);
+            }
          }
          else
          {
