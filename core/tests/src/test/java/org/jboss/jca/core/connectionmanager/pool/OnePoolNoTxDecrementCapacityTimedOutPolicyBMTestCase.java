@@ -28,6 +28,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.extension.byteman.api.BMRule;
 import org.jboss.arquillian.extension.byteman.api.BMRules;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
+import org.junit.Ignore;
 
 import static org.junit.Assert.assertEquals;
 
@@ -55,6 +56,8 @@ import static org.junit.Assert.assertEquals;
          condition = "decrementCounter(\"counter\")>0", 
          action = "RETURN true")
       })
+@Ignore
+//TODO after https://issues.redhat.com/browse/BYTEMAN-402
 public class OnePoolNoTxDecrementCapacityTimedOutPolicyBMTestCase extends
       OnePoolNoTxDecrementCapacityPolicyTestCaseAbstract
 {

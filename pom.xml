@@ -73,11 +73,12 @@
         <version.com.github.fungal>0.11.0.Final</version.com.github.fungal>
         <version.com.h2database>1.3.173</version.com.h2database>
         <version.jakarta.validation>2.0.2</version.jakarta.validation>
+        <version.jakarta.xml.bind>3.0.0</version.jakarta.xml.bind>
         <version.junit>4.12</version.junit>
         <version.org.apache.ant>1.8.1</version.org.apache.ant>
         <version.org.apache.maven>3.5.4</version.org.apache.maven>
         <version.org.jboss.arquillian.core>1.0.2.Final</version.org.jboss.arquillian.core>
-        <version.org.jboss.arquillian.extension.byteman>1.0.0.Alpha4</version.org.jboss.arquillian.extension.byteman>
+        <version.org.jboss.arquillian.extension.byteman>1.1.0</version.org.jboss.arquillian.extension.byteman>
         <version.org.eclipse.jetty>8.1.3.v20120416</version.org.eclipse.jetty>
         <version.org.glassfish.el>3.0.1-b11</version.org.glassfish.el>
         <version.org.hibernate.validator>6.0.20.Final</version.org.hibernate.validator>
@@ -93,6 +94,7 @@
         <version.org.jboss.narayana>5.10.5.Final</version.org.jboss.narayana>
         <version.org.jboss.shrinkwrap>1.2.6</version.org.jboss.shrinkwrap>
         <version.org.jboss.shrinkwrap.descriptors>2.0.0-alpha-5</version.org.jboss.shrinkwrap.descriptors>
+        <version.org.jboss.spec.javax.annotation.jboss-annotations-api_1.3_spec>2.0.1.Final</version.org.jboss.spec.javax.annotation.jboss-annotations-api_1.3_spec>
         <version.org.jboss.spec.javax.el.jboss-el-api_3.0_spec>2.0.0.Final</version.org.jboss.spec.javax.el.jboss-el-api_3.0_spec>
         <version.org.jboss.spec.javax.jms.jboss-jms-api_2.0_spec>2.0.0.Final</version.org.jboss.spec.javax.jms.jboss-jms-api_2.0_spec>
         <version.org.jboss.spec.javax.resource.jboss-connector-api_1.7_spec>2.0.0.Final</version.org.jboss.spec.javax.resource.jboss-connector-api_1.7_spec>
@@ -179,6 +181,11 @@
                 <groupId>jakarta.validation</groupId>
                 <artifactId>jakarta.validation-api</artifactId>
                 <version>${version.jakarta.validation}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>${version.jakarta.xml.bind}</version>
             </dependency>
             <dependency>
                 <groupId>junit</groupId>
@@ -343,6 +350,11 @@
                 <version>${version.org.jboss.shrinkwrap.descriptors}</version>
             </dependency>
             <dependency>
+                <groupId>org.jboss.spec.javax.annotation</groupId>
+                <artifactId>jboss-annotations-api_1.3_spec</artifactId>
+                <version>${version.org.jboss.spec.javax.annotation.jboss-annotations-api_1.3_spec}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.jboss.spec.javax.el</groupId>
                 <artifactId>jboss-el-api_3.0_spec</artifactId>
                 <version>${version.org.jboss.spec.javax.el.jboss-el-api_3.0_spec}</version>
@@ -410,4 +422,19 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <configuration>
+                        <reuseForks>false</reuseForks>
+                        <argLine>-Djdk.attach.allowAttachSelf=true</argLine>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>
