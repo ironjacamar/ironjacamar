@@ -29,6 +29,7 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.extension.byteman.api.BMRule;
 import org.jboss.arquillian.extension.byteman.api.BMRules;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
+import org.junit.Ignore;
 
 import static org.junit.Assert.*;
 
@@ -74,7 +75,8 @@ import static org.junit.Assert.*;
          targetLocation = "EXIT",
          action = "signalWake(\"filled\", true)")
       })
-
+@Ignore
+//TODO after https://issues.redhat.com/browse/BYTEMAN-402
 public class OnePoolNoTxDeploymentPrefilledEntirePoolFlushBMTestCase extends OnePoolNoTxTestCaseAbstract
 {
 

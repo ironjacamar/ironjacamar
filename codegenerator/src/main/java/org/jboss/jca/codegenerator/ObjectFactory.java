@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.codegenerator;
 
-import javax.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.annotation.XmlRegistry;
 
 /**
  * A ObjectFactory.

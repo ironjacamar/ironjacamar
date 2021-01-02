@@ -44,6 +44,7 @@ import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -61,7 +62,9 @@ import static org.junit.Assert.fail;
 @BMRule(name = "Verify BaseWrapperManagedConnection receives the error",
            targetClass = "BaseWrapperManagedConnection",
            targetMethod = "connectionError",
-           action = "flag(\"exceptionThrown\"); org.junit.Assert.assertEquals(\"DESIRED ERROR\", $1.getMessage())")  
+           action = "flag(\"exceptionThrown\"); org.junit.Assert.assertEquals(\"DESIRED ERROR\", $1.getMessage())")
+@Ignore
+//TODO after https://issues.redhat.com/browse/BYTEMAN-402
 public class CheckedExceptionBMTestCase
 {
 

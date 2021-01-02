@@ -333,7 +333,7 @@ public class MCFTestCase extends TestCaseAbstract
          //when
          embedded.deploy(archive);
          assertThat(directory.listFiles().length, is(1));
-         assertThat(directory.listFiles()[0].getName(), is("mcf_property_wrong.rar.log"));
+         assertThat(directory.listFiles()[0].getName(), is("mcf_property_wrong.log"));
          input = new BufferedReader(new FileReader(directory.listFiles()[0]));
          assertThat(input.readLine(), is("Severity: WARNING"));
          assertThat(input.readLine(), is("Section: 20.7"));

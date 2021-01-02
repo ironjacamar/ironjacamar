@@ -5,7 +5,7 @@
 
   <container qualifier="dev" default="true">
     <configuration>
-      <property name="javaVmArguments">-Xbootclasspath/a:${java.home}/../lib/tools.jar</property>
+	    <property name="javaVmArguments">-Djdk.attach.allowAttachSelf=true</property>
     </configuration>
   </container>
 
