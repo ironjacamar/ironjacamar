@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2008-2010, Red Hat Inc, and individual contributors
+ * Copyright 2008-2020, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -1941,16 +1941,16 @@ public abstract class AbstractResourceAdapterDeployer
               (hasFailuresLevel(failures, Severity.WARNING) || hasFailuresLevel(failures, Severity.ERROR))) ||
              (getConfiguration().getArchiveValidationFailOnError() && hasFailuresLevel(failures, Severity.ERROR)))
          {
-            throw new ValidatorException(printFailuresLog(url.getPath(), new Validator(), failures, null), failures);
+            throw new ValidatorException(printFailuresLog(deploymentName, new Validator(), failures, null), failures);
          }
          else
          {
             if (failures != null && failures.size() > 0)
             {
-               log.validationInvalidArchive(url.toExternalForm());
+               log.validationInvalidArchive(deploymentName);
+               final String errorMessage = printFailuresLog(deploymentName, new Validator(), failures, null);
+               log.warn(errorMessage);
             }
-
-            printFailuresLog(url.getPath(), new Validator(), failures, null);
          }
 
          if (cmd != null)
@@ -2056,13 +2056,14 @@ public abstract class AbstractResourceAdapterDeployer
              (getConfiguration().getArchiveValidationFailOnError() && hasFailuresLevel(failures, Severity.ERROR)))
          {
             throw new DeployException(bundle.deploymentFailed(url.toExternalForm()),
-                                      new ValidatorException(printFailuresLog(url.getPath(), new Validator(),
+                                      new ValidatorException(printFailuresLog(deploymentName, new Validator(),
                                          failures, null), failures));
          }
          else
          {
-            printFailuresLog(url.getPath(), new Validator(), failures, null);
-            throw new DeployException(bundle.deploymentFailed(url.toExternalForm()), t);
+            final String errorMessage = printFailuresLog(deploymentName, new Validator(), failures, null);
+            log.warn(errorMessage);
+            throw new DeployException(bundle.deploymentFailed(deploymentName), t);
          }
       }
    }
