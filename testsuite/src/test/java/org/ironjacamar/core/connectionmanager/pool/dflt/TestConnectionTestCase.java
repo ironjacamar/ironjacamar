@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2016, Red Hat Inc, and individual contributors
+ * Copyright 2021, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -113,7 +113,7 @@ public class TestConnectionTestCase
 
       DefaultPool defaultPool = (DefaultPool)p.getPool();
       
-      assertTrue(defaultPool.testConnection());      
+      defaultPool.testConnection();
    }
 
    /**
@@ -141,6 +141,6 @@ public class TestConnectionTestCase
 
       DefaultPool defaultPool = (DefaultPool)p.getPool();
       
-      assertTrue(defaultPool.testConnection(new TestConnectionRequestInfo(), sf.createSubject("")));      
+      defaultPool.testConnection(new TestConnectionRequestInfo(), sf.createSubject(""));
    }
 }

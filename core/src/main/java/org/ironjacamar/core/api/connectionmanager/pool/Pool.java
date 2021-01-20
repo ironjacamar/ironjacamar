@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2015, Red Hat Inc, and individual contributors
+ * Copyright 2021, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -21,6 +21,7 @@
 
 package org.ironjacamar.core.api.connectionmanager.pool;
 
+import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.security.auth.Subject;
 
@@ -66,15 +67,13 @@ public interface Pool
 
    /**
     * Test if a connection can be obtained
-    * @return True if it was possible to get a connection; otherwise false
     */
-   public boolean testConnection();
+   public void testConnection() throws ResourceException;
 
    /**
     * Test if a connection can be obtained
     * @param cri Optional connection request info object
     * @param subject Optional subject
-    * @return True if it was possible to get a connection; otherwise false
     */
-   public boolean testConnection(ConnectionRequestInfo cri, Subject subject);
+   public void testConnection(ConnectionRequestInfo cri, Subject subject) throws ResourceException;
 }

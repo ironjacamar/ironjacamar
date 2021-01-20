@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2014, Red Hat Inc, and individual contributors
+ * Copyright 2021, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -221,6 +221,13 @@ public interface CoreBundle
    @Message(id = 353, value = "Unabled to enlist resource, see the previous warnings.")
    public String unableToEnlist();
 
+   //POOL (600)
+
+   @Message(id = 660, value = "Pool is shutting down")
+   public String poolIsShuttingDown();
+
+   @Message(id = 661, value = "Pool is full")
+   public String poolIsFull();
 
    // NAMING (700)
 

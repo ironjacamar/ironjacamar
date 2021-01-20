@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2015, Red Hat Inc, and individual contributors
+ * Copyright 2021, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -22,6 +22,7 @@
 package org.ironjacamar.core.connectionmanager.pool;
 
 import org.ironjacamar.common.api.metadata.common.FlushStrategy;
+import org.ironjacamar.core.CoreBundle;
 import org.ironjacamar.core.api.connectionmanager.pool.FlushMode;
 import org.ironjacamar.core.api.connectionmanager.pool.PoolConfiguration;
 import org.ironjacamar.core.api.connectionmanager.pool.PoolStatistics;
@@ -49,6 +50,7 @@ import javax.transaction.Transaction;
 import javax.transaction.xa.XAResource;
 
 import org.jboss.logging.Logger;
+import org.jboss.logging.Messages;
 
 import static org.ironjacamar.core.connectionmanager.listener.ConnectionListener.DESTROY;
 
@@ -61,6 +63,8 @@ public abstract class AbstractPool implements Pool
 {
    /** The logger */
    private static Logger log = Logger.getLogger(AbstractPool.class);
+
+   private CoreBundle bundle = Messages.getBundle(CoreBundle.class);
 
    /**
     * The connection manager
@@ -601,45 +605,43 @@ public abstract class AbstractPool implements Pool
    /**
     * {@inheritDoc}
     */
-   public boolean testConnection()
+   public void testConnection() throws ResourceException
    {
-      return internalTestConnection(getPrefillCredential());
+      internalTestConnection(getPrefillCredential());
    }
 
    /**
     * {@inheritDoc}
     */
-   public boolean testConnection(ConnectionRequestInfo cri, Subject subject)
+   public void testConnection(ConnectionRequestInfo cri, Subject subject) throws ResourceException
    {
-      return internalTestConnection(new Credential(subject, cri));
+      internalTestConnection(new Credential(subject, cri));
    }
 
    /**
     * Test if a connection can be obtained
     * @param credential The credential
-    * @return True if possible; otherwise false
     */
-   protected boolean internalTestConnection(Credential credential)
+   protected void internalTestConnection(Credential credential) throws ResourceException
    {
-      boolean result = false;
       boolean kill = false;
       ConnectionListener cl = null;
 
       if (isShutdown())
-         return false;
+         throw new ResourceException(bundle.poolIsShuttingDown());
 
       if (isFull())
-         return false;
+         throw new ResourceException(bundle.poolIsFull());
 
       try
       {
          ManagedConnectionPool mcp = getManagedConnectionPool(credential);
          cl = mcp.getConnectionListener();
-         result = true;
       }
       catch (Throwable t)
       {
          kill = true;
+         throw new ResourceException(t);
       }
       finally
       {
@@ -655,8 +657,6 @@ public abstract class AbstractPool implements Pool
             }
          }
       }
-
-      return result;
    }
 
    /**
