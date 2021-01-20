@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2008-2009, Red Hat Inc, and individual contributors
+ * Copyright 2021, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -71,17 +71,17 @@ public class PoolByCri extends AbstractPool
    /**
     * {@inheritDoc}
     */
-   public boolean testConnection()
+   public void testConnection() throws ResourceException
    {
-      return false;
+      throw new ResourceException();
    }
 
    /**
     * {@inheritDoc}
     */
-   public boolean testConnection(ConnectionRequestInfo cri, Subject subject)
+   public void testConnection(ConnectionRequestInfo cri, Subject subject) throws ResourceException
    {
-      return internalTestConnection(cri, null);
+      internalTestConnection(cri, null);
    }
 
    /**
