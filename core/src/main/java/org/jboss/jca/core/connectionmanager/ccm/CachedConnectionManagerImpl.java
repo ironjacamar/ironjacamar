@@ -376,7 +376,7 @@ public class CachedConnectionManagerImpl implements CachedConnectionManager
       CopyOnWriteArrayList<ConnectionRecord> conns = cmToConnectionsMap.get(cm);
 
       // Can happen if connections are "passed" between contexts
-      if (conns == null)
+      if (conns == null || conns.isEmpty())
          return; 
 
       // Note iterator of CopyOnWriteArrayList does not support remove method
