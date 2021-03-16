@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2013, Red Hat Inc, and individual contributors
+ * Copyright 2021, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -1022,12 +1022,12 @@ public abstract class AbstractPool implements Pool
    /**
     * {@inheritDoc}
     */
-   public abstract boolean testConnection();
+   public abstract void testConnection() throws ResourceException;
 
    /**
     * {@inheritDoc}
     */
-   public abstract boolean testConnection(ConnectionRequestInfo cri, Subject subject);
+   public abstract void testConnection(ConnectionRequestInfo cri, Subject subject) throws ResourceException;
 
    /**
     * Test if a connection can be obtained
@@ -1035,22 +1035,21 @@ public abstract class AbstractPool implements Pool
     * @param cri Optional CRI
     * @return True if possible; otherwise false
     */
-   protected boolean internalTestConnection(ConnectionRequestInfo cri, Subject subject)
+   protected void internalTestConnection(ConnectionRequestInfo cri, Subject subject) throws ResourceException
    {
       log.debugf("%s: testConnection(%s, %s) (%s)", poolName, cri, subject,
                  Integer.toHexString(System.identityHashCode(subject)));
 
       log.debugf("%s:   Statistics=%s", poolName, statistics);
 
-      boolean result = false;
       boolean kill = false;
       ConnectionListener cl = null;
 
       if (shutdown.get())
-         return false;
+         throw new ResourceException(bundle.poolIsShuttingDown());
 
       if (isFull())
-         return false;
+         throw new ResourceException(bundle.poolIsFull());
 
       try
       {
@@ -1065,11 +1064,11 @@ public abstract class AbstractPool implements Pool
          ManagedConnectionPool mcp = getManagedConnectionPool(key, subject, cri);
 
          cl = mcp.getConnection(subject, cri);
-         result = true;
       }
       catch (Throwable t)
       {
          kill = true;
+         throw new ResourceException(t);
       }
       finally
       {
@@ -1085,8 +1084,6 @@ public abstract class AbstractPool implements Pool
             }
          }
       }
-
-      return result;
    }
 
    /**

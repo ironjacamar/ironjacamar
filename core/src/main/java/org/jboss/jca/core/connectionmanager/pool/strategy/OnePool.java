@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2011, Red Hat Inc, and individual contributors
+ * Copyright 2021, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -27,6 +27,7 @@ import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.pool.AbstractPrefillPool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 
+import javax.resource.ResourceException;
 import javax.resource.spi.ConnectionRequestInfo;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.security.auth.Subject;
@@ -88,17 +89,17 @@ public class OnePool extends AbstractPrefillPool
    /**
     * {@inheritDoc}
     */
-   public boolean testConnection()
+   public void testConnection() throws ResourceException
    {
-      return internalTestConnection(null, null);
+      internalTestConnection(null, null);
    }
 
    /**
     * {@inheritDoc}
     */
-   public boolean testConnection(ConnectionRequestInfo cri, Subject subject)
+   public void testConnection(ConnectionRequestInfo cri, Subject subject) throws ResourceException
    {
-      return internalTestConnection(null, null);
+      internalTestConnection(null, null);
    }
 
    /**

@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2011, Red Hat Inc, and individual contributors
+ * Copyright 2021, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -32,6 +32,7 @@ import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
 import org.jboss.jca.core.security.DefaultSubjectFactory;
 import org.jboss.jca.core.spi.security.SubjectFactory;
 
+import javax.resource.ResourceException;
 import javax.resource.spi.ManagedConnectionFactory;
 import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
 
@@ -68,7 +69,7 @@ public class TestConnectionTestCase
                                     FlushStrategy.FAILING_CONNECTION_ONLY,
                                     null, null);
 
-      assertTrue(pool.testConnection());      
+      pool.testConnection();
    }
 
    /**
@@ -88,7 +89,15 @@ public class TestConnectionTestCase
          pf.create(PoolStrategy.POOL_BY_CRI, mcf, config, false, true,
                    org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactory.DEFAULT_IMPLEMENTATION);
 
-      assertFalse(pool.testConnection());
+      boolean resourceException = false;
+      try
+      {
+         pool.testConnection();
+      }
+      catch (ResourceException e) {
+         resourceException = true;
+      }
+      assertTrue(resourceException);
    }
 
    /**
@@ -116,7 +125,7 @@ public class TestConnectionTestCase
                                     FlushStrategy.FAILING_CONNECTION_ONLY,
                                     null, null);
 
-      assertTrue(pool.testConnection());      
+      pool.testConnection();
    }
 
    /**
@@ -136,7 +145,15 @@ public class TestConnectionTestCase
          pf.create(PoolStrategy.POOL_BY_SUBJECT_AND_CRI, mcf, config, false, true,
                    org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactory.DEFAULT_IMPLEMENTATION);
 
-      assertFalse(pool.testConnection());
+      boolean resourceException = false;
+      try
+      {
+         pool.testConnection();
+      }
+      catch (ResourceException e) {
+         resourceException = true;
+      }
+      assertTrue(resourceException);
    }
 
    /**
@@ -156,6 +173,14 @@ public class TestConnectionTestCase
          pf.create(PoolStrategy.REAUTH, mcf, config, false, true,
                    org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactory.DEFAULT_IMPLEMENTATION);
 
-      assertFalse(pool.testConnection());
+      boolean resourceException = false;
+      try
+      {
+         pool.testConnection();
+      }
+      catch (ResourceException e) {
+         resourceException = true;
+      }
+      assertTrue(resourceException);
    }
 }
