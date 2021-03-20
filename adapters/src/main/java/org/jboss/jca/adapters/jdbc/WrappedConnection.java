@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2010, Red Hat Inc, and individual contributors
+ * Copyright 2021, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -47,7 +47,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 
 import javax.resource.ResourceException;
@@ -314,10 +316,10 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
             mc.errorHandle(this);
          }
       }
+      sqlConnectionNotifyRequestEnd();
+
       mc = null;
       dataSource = null;
-
-      sqlConnectionNotifyRequestEnd();
    }
 
    /**
@@ -2136,38 +2138,48 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       return log;
    }
 
+   private static Optional<Method> beginRequestNotifyMethod;
+   private static Optional<Method> endRequestNotifyMethod;
+
    private void sqlConnectionNotifyRequestBegin()
    {
-      sqlConnectionNotify("beginRequest");
+      if (beginRequestNotifyMethod == null)
+      {
+         beginRequestNotifyMethod = lookupNotifyMethod("beginRequest");
+      }
+      if (beginRequestNotifyMethod.isPresent())
+      {
+         invokeNotifyMethod(beginRequestNotifyMethod.get());
+      }
    }
+
 
    private void sqlConnectionNotifyRequestEnd()
    {
-      sqlConnectionNotify("endRequest");
+      if (endRequestNotifyMethod == null)
+      {
+         endRequestNotifyMethod = lookupNotifyMethod("endRequest");
+      }
+      if (endRequestNotifyMethod.isPresent())
+      {
+         invokeNotifyMethod(endRequestNotifyMethod.get());
+      }
    }
 
-   private void sqlConnectionNotify(String methodName)
+   private Optional<Method> lookupNotifyMethod(String methodName)
    {
-
       try
       {
          Class<?> sqlConnection = getSqlConnection();
          Method method = SecurityActions.getMethod(sqlConnection, methodName, new Class<?>[] {});
-         method.invoke(this);
-         if (spy)
-         {
-            spyLogger.debugf("java.sql.Connection#%s has been invoked", methodName);
-         }
-      } catch (Throwable t)
+         return Optional.of(method);
+      } catch (Throwable e)
       {
-         if (spy)
-         {
-            spyLogger.debugf("Unable to invoke java.sql.Connection#%s: %s", methodName, t.getMessage());
-         }
+         return Optional.empty();
       }
    }
 
-   private Class<?> getSqlConnection() throws SQLException
+   private Class<?> getSqlConnection() throws Throwable
    {
       Class<?> sqlConnection = null;
 
@@ -2176,7 +2188,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          try
          {
             sqlConnection = Class.forName("java.sql.Connection", true,
-                    SecurityActions.getClassLoader(getClass()));
+                SecurityActions.getClassLoader(getClass()));
          } catch (Throwable t)
          {
             // Ignore
@@ -2191,9 +2203,31 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
             sqlConnection = Class.forName("java.sql.Connection", true, tccl);
          } catch (Throwable t)
          {
-            throw new SQLException("Cannot resolve java.sql.Connection", t);
+            if (spy)
+            {
+               spyLogger.debugf("Cannot resolve java.sql.Connection", t);
+            }
+            throw t;
          }
       }
       return sqlConnection;
+   }
+
+   private void invokeNotifyMethod(Method method)
+   {
+      try
+      {
+         method.invoke(mc.getRealConnection());
+         if (spy)
+         {
+            spyLogger.debugf("java.sql.Connection#%s has been invoked", method.getName());
+         }
+      } catch (Throwable t)
+      {
+         if (spy)
+         {
+            spyLogger.debugf("Unable to invoke java.sql.Connection#%s: %s", method.getName(), t.getMessage());
+         }
+      }
    }
 }
