@@ -25,6 +25,7 @@ package org.jboss.jca.adapters.jdbc;
 import org.jboss.jca.adapters.AdaptersLogger;
 import org.jboss.jca.adapters.jdbc.spi.ClassLoaderPlugin;
 
+import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Method;
 import java.sql.Array;
 import java.sql.Blob;
@@ -93,6 +94,9 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    
    private final ClassLoaderPlugin classLoaderPlugin;
 
+   private boolean isBeginRequestBeatenPath, isBeginRequestImplemented;
+   private boolean isEndRequestBeatenPath, isEndRequestImplemented;
+   private MethodHandle requestBegin,requestEnd;
    /**
     * Constructor
     * @param mc The managed connection
@@ -110,6 +114,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       this.classLoaderPlugin = classLoaderPlugin;
 
       sqlConnectionNotifyRequestBegin();
+      
    }
 
    /**
@@ -2138,32 +2143,57 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
 
    private void sqlConnectionNotifyRequestBegin()
    {
-      sqlConnectionNotify("beginRequest");
+       if (!isBeginRequestBeatenPath)
+       {
+          isBeginRequestBeatenPath = true;
+          requestBegin = getNativeRepresentation("beginRequest");
+          isBeginRequestImplemented = requestBegin != null;
+       }
+       if (isBeginRequestImplemented)
+          invokeExact(requestBegin, "beginRequest");
    }
 
    private void sqlConnectionNotifyRequestEnd()
    {
-      sqlConnectionNotify("endRequest");
+       if (!isEndRequestBeatenPath)
+       {
+          isEndRequestBeatenPath = true;
+          requestEnd = getNativeRepresentation("endRequest");
+          isEndRequestImplemented = requestEnd != null;
+       }
+       if (isEndRequestImplemented)
+          invokeExact(requestEnd, "endRequest");
    }
 
-   private void sqlConnectionNotify(String methodName)
+   private MethodHandle getNativeRepresentation(String methodName)
    {
+      try {
+         Class<?> sqlConnection = getSqlConnection();
+         MethodHandle mh = SecurityActions.getMethodHandle(sqlConnection, methodName);
+         if (mh == null)
+            return null;
+         Connection conn = mc.getRealConnection();
+         mh.bindTo(conn);
+         return mh;
+      } catch (SQLException e)
+      {
+         if (spy)
+            spyLogger.debugf("Unable to invoke java.sql.Connection#%s: %s", methodName, e.getMessage());
+         return null;
+      }
+   }
 
+   private void invokeExact(MethodHandle mh, String methodName)
+   {
       try
       {
-         Class<?> sqlConnection = getSqlConnection();
-         Method method = SecurityActions.getMethod(sqlConnection, methodName, new Class<?>[] {});
-         method.invoke(this);
+         mh.invokeExact();
          if (spy)
-         {
             spyLogger.debugf("java.sql.Connection#%s has been invoked", methodName);
-         }
       } catch (Throwable t)
       {
          if (spy)
-         {
             spyLogger.debugf("Unable to invoke java.sql.Connection#%s: %s", methodName, t.getMessage());
-         }
       }
    }
 
