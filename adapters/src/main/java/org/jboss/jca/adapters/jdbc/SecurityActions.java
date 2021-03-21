@@ -22,9 +22,15 @@
 
 package org.jboss.jca.adapters.jdbc;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+
+import static java.lang.invoke.MethodHandles.publicLookup;
+import static java.lang.invoke.MethodType.methodType;
 
 /**
  * Privileged Blocks
@@ -171,6 +177,46 @@ class SecurityActions
          return result;
 
       throw new NoSuchMethodException();
+   }
+
+   /**
+    * Get the void return no arguments signature MethodHandle
+    * @param c The class
+    * @param name Method name
+    * @return The method Handle or, null if the virtual method does not exist
+    */
+   static MethodHandle getMethodHandle(final Class<?> c, final String name)
+   {
+      if (System.getSecurityManager() == null)
+      {
+         MethodHandles.Lookup lookup = publicLookup();
+         MethodType type = methodType(Void.class);
+         try
+         {
+            return lookup.findVirtual(c, name, type);
+         } catch (NoSuchMethodException|IllegalAccessException e)
+         {
+            return null;
+         }
+      }
+      else
+      {
+         return AccessController.doPrivileged(new PrivilegedAction<MethodHandle>()
+         {
+            public MethodHandle run()
+            {
+               try
+               {
+                  MethodHandles.Lookup lookup = publicLookup();
+                  MethodType type = methodType(Void.class);
+                  return lookup.findVirtual(c, name, type);
+               } catch (NoSuchMethodException|IllegalAccessException e)
+               {
+                  return null;
+               }
+            }
+         });
+      }
    }
 
    static interface Producer<T> {
