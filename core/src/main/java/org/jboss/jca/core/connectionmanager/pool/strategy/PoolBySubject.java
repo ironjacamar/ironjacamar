@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2021, Red Hat Inc, and individual contributors
+ * Copyright 2008-2009, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -78,25 +78,32 @@ public class PoolBySubject extends AbstractPrefillPool
    /**
     * {@inheritDoc}
     */
-   public void testConnection() throws ResourceException
+   public boolean testConnection()
    {
+      try
+      {
          ConnectionManager cm = getConnectionManager();
          ManagedConnectionFactory mcf = getManagedConnectionFactory();
        
          Subject subject = createSubject(cm.getSubjectFactory(), cm.getSecurityDomain(), mcf, cm.getJndiName());
   
          if (subject != null)
-            internalTestConnection(null, subject);
-         else
-            throw new ResourceException("Subject is null");
+            return internalTestConnection(null, subject);
+      }
+      catch (Throwable t)
+      {
+         log.debugf(t, "Error during testConnection: %s", t.getMessage());
+      }
+
+      return false;
    }
 
    /**
     * {@inheritDoc}
     */
-   public void testConnection(ConnectionRequestInfo cri, Subject subject) throws ResourceException
+   public boolean testConnection(ConnectionRequestInfo cri, Subject subject)
    {
-      internalTestConnection(null, subject);
+      return internalTestConnection(null, subject);
    }
 
    /**
