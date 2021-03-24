@@ -48,6 +48,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
@@ -94,9 +95,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    
    private final ClassLoaderPlugin classLoaderPlugin;
 
-   private boolean isBeginRequestBeatenPath, isBeginRequestImplemented;
-   private boolean isEndRequestBeatenPath, isEndRequestImplemented;
-   private MethodHandle requestBegin,requestEnd;
+   private Optional<MethodHandle> requestBegin,requestEnd;
    /**
     * Constructor
     * @param mc The managed connection
@@ -2143,51 +2142,46 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
 
    private void sqlConnectionNotifyRequestBegin()
    {
-       if (!isBeginRequestBeatenPath)
-       {
-          isBeginRequestBeatenPath = true;
-          requestBegin = getNativeRepresentation("beginRequest");
-          isBeginRequestImplemented = requestBegin != null;
-       }
-       if (isBeginRequestImplemented)
-          invokeExact(requestBegin, "beginRequest");
+      if (requestBegin == null)
+      {
+         requestBegin = lookupNotifyMethod("beginRequest");
+      }
+      if (requestBegin.isPresent())
+         invokeNotifyMethod(requestBegin.get(), "beginRequest");
    }
 
    private void sqlConnectionNotifyRequestEnd()
    {
-       if (!isEndRequestBeatenPath)
-       {
-          isEndRequestBeatenPath = true;
-          requestEnd = getNativeRepresentation("endRequest");
-          isEndRequestImplemented = requestEnd != null;
-       }
-       if (isEndRequestImplemented)
-          invokeExact(requestEnd, "endRequest");
+      if (requestEnd == null)
+      {
+         requestEnd = lookupNotifyMethod("endRequest");
+      }
+      if (requestEnd.isPresent())
+         invokeNotifyMethod(requestEnd.get(), "endRequest");
    }
 
-   private MethodHandle getNativeRepresentation(String methodName)
+   private Optional<MethodHandle> lookupNotifyMethod(String methodName)
    {
       try {
          Class<?> sqlConnection = getSqlConnection();
          MethodHandle mh = SecurityActions.getMethodHandle(sqlConnection, methodName);
          if (mh == null)
-            return null;
-         Connection conn = mc.getRealConnection();
-         mh.bindTo(conn);
-         return mh;
+            return Optional.empty();
+         else
+            return Optional.of(mh);
       } catch (SQLException e)
       {
          if (spy)
             spyLogger.debugf("Unable to invoke java.sql.Connection#%s: %s", methodName, e.getMessage());
-         return null;
+         return Optional.empty();
       }
    }
 
-   private void invokeExact(MethodHandle mh, String methodName)
+   private void invokeNotifyMethod(MethodHandle mh, String methodName)
    {
       try
       {
-         mh.invokeExact();
+         mh.invokeExact(mc.getRealConnection());
          if (spy)
             spyLogger.debugf("java.sql.Connection#%s has been invoked", methodName);
       } catch (Throwable t)
@@ -2217,7 +2211,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       {
          try
          {
-            ClassLoader tccl = org.jboss.jca.adapters.jdbc.SecurityActions.getThreadContextClassLoader();
+            ClassLoader tccl = SecurityActions.getThreadContextClassLoader();
             sqlConnection = Class.forName("java.sql.Connection", true, tccl);
          } catch (Throwable t)
          {
