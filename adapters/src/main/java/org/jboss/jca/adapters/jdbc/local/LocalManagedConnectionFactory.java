@@ -313,7 +313,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
             DataSource d = getDataSource();
 
             ClassLoader tccl = SecurityActions.getThreadContextClassLoader();
-            SecurityActions.setThreadContextClassLoader(d.getClass().getClassLoader());
+            SecurityActions.setThreadContextClassLoader(SecurityActions.getClassLoader(d.getClass()));
             try
             {
                con = d.getConnection(copy.getProperty("user"), copy.getProperty("password"));
@@ -329,7 +329,7 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
          {
             Driver d = getDriver(url);
             ClassLoader tccl = SecurityActions.getThreadContextClassLoader();
-            SecurityActions.setThreadContextClassLoader(d.getClass().getClassLoader());
+            SecurityActions.setThreadContextClassLoader(SecurityActions.getClassLoader(d.getClass()));
             try
             {
                con = d.connect(url, copy);
