@@ -95,7 +95,6 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    
    private final ClassLoaderPlugin classLoaderPlugin;
 
-   private Optional<MethodHandle> requestBegin,requestEnd;
    /**
     * Constructor
     * @param mc The managed connection
@@ -317,11 +316,10 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          {
             mc.errorHandle(this);
          }
+         sqlConnectionNotifyRequestEnd();
       }
       mc = null;
       dataSource = null;
-
-      sqlConnectionNotifyRequestEnd();
    }
 
    /**
@@ -2142,22 +2140,26 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
 
    private void sqlConnectionNotifyRequestBegin()
    {
-      if (requestBegin == null)
+      Optional<MethodHandle> mh = mc.getEndRequestNotify();
+      if (mh == null)
       {
-         requestBegin = lookupNotifyMethod("beginRequest");
+         mh = lookupNotifyMethod("beginRequest");
+         mc.setBeginRequestNotify(mh);
       }
-      if (requestBegin.isPresent())
-         invokeNotifyMethod(requestBegin.get(), "beginRequest");
+      if (mh.isPresent())
+         invokeNotifyMethod(mh.get(), "beginRequest");
    }
 
    private void sqlConnectionNotifyRequestEnd()
    {
-      if (requestEnd == null)
+      Optional<MethodHandle> mh = mc.getEndRequestNotify();
+      if (mh == null)
       {
-         requestEnd = lookupNotifyMethod("endRequest");
+         mh = lookupNotifyMethod("endRequest");
+         mc.setEndRequestNotify(mh);
       }
-      if (requestEnd.isPresent())
-         invokeNotifyMethod(requestEnd.get(), "endRequest");
+      if (mh.isPresent())
+         invokeNotifyMethod(mh.get(), "endRequest");
    }
 
    private Optional<MethodHandle> lookupNotifyMethod(String methodName)

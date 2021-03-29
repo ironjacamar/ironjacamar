@@ -30,6 +30,7 @@ import org.jboss.jca.core.spi.transaction.ConnectableResource;
 import org.jboss.jca.core.spi.transaction.ConnectableResourceListener;
 
 import java.io.PrintWriter;
+import java.lang.invoke.MethodHandle;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -39,6 +40,7 @@ import java.sql.Statement;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -132,6 +134,9 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
 
    /** Metadata */
    protected ManagedConnectionMetaData metadata;
+
+   /** optional implementations on the driver*/
+   private Optional<MethodHandle> requestBegin,requestEnd;
 
    static
    {
@@ -1222,6 +1227,25 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
       return lc;
    }
 
+   protected Optional<MethodHandle> getEndRequestNotify()
+   {
+      return requestEnd;
+   }
+
+   protected void setEndRequestNotify(Optional<MethodHandle> endRequest)
+   {
+      requestEnd = endRequest;
+   }
+
+   protected Optional<MethodHandle> getBeginRequestNotify()
+   {
+      return requestBegin;
+   }
+
+   protected void setBeginRequestNotify(Optional<MethodHandle> beginRequest)
+   {
+      requestBegin = beginRequest;
+   }
 
    /**
     * Returns true if the underlying connection is handled by an XA resource manager
