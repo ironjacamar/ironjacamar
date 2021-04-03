@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2011, Red Hat Inc, and individual contributors
+ * Copyright 2021, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -366,17 +366,17 @@ public class LegacyDsParser extends AbstractParser
                   
                   case VALID_CONNECTION_CHECKER : {
                      String classname = elementAsString(reader);
-                     validConnectionChecker = new Extension(classname, null);
+                     validConnectionChecker = new Extension(classname, null, null);
                      break;
                   }
                   case EXCEPTION_SORTER : {
                      String classname = elementAsString(reader);
-                     exceptionSorter = new Extension(classname, null);
+                     exceptionSorter = new Extension(classname, null, null);
                      break;
                   }
                   case STALE_CONNECTION_CHECKER : {
                      String classname = elementAsString(reader);
-                     staleConnectionChecker = new Extension(classname, null);
+                     staleConnectionChecker = new Extension(classname, null, null);
                      break;
                   }
 
@@ -596,17 +596,17 @@ public class LegacyDsParser extends AbstractParser
                {
                   case VALID_CONNECTION_CHECKER : {
                      String classname = elementAsString(reader);
-                     validConnectionChecker = new Extension(classname, null);
+                     validConnectionChecker = new Extension(classname, null, null);
                      break;
                   }
                   case EXCEPTION_SORTER : {
                      String classname = elementAsString(reader);
-                     exceptionSorter = new Extension(classname, null);
+                     exceptionSorter = new Extension(classname, null, null);
                      break;
                   }
                   case STALE_CONNECTION_CHECKER : {
                      String classname = elementAsString(reader);
-                     staleConnectionChecker = new Extension(classname, null);
+                     staleConnectionChecker = new Extension(classname, null, null);
                      break;
                   }
                   case SECURITY_DOMAIN :

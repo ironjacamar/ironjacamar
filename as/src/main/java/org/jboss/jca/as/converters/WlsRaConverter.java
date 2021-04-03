@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2011, Red Hat Inc, and individual contributors
+ * Copyright 2021, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -210,7 +210,7 @@ public class WlsRaConverter
          String inc = "org.jboss.jca.core.connectionmanager.pool.capacity.SizeIncrementer";
          Map<String, String> configProps = new HashMap<String, String>();
          configProps.put("Size", myCdProps.getPoolParams().getCapacityIncrement().toString());
-         capacity = new Capacity(new Extension(inc, configProps), null);
+         capacity = new Capacity(new Extension(inc, null, configProps), null);
       }
       int initialCapacity = 0;
       int maxCapacity = 0;

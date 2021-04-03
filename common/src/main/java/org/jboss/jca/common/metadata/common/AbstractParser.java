@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2008, Red Hat Inc, and individual contributors
+ * Copyright 2021, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -803,7 +803,7 @@ public abstract class AbstractParser
                      throw new ParserException(bundle.missingClassName(enclosingTag));
                   }
 
-                  return new Extension(className, properties);
+                  return new Extension(className, null, properties);
                }
                else
                {
