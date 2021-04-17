@@ -62,7 +62,7 @@ cd $IRON_JACAMAR_HOME/bin
 
     <para>The IronJacamar/SJC uses the Fungal kernel for its run-time environment.</para>
 
-    <para>The homepage for the Fungal is <ulink url="http://jesperpedersen.github.com/fungal">http://jesperpedersen.github.com/fungal</ulink></para>.
+    <para>The homepage for the Fungal is <ulink url="https://jesperpedersen.github.io/fungal">https://jesperpedersen.github.io/fungal</ulink></para>.
 
     <para>SJC is short for "Simple JCA Container".</para>
   </section>
