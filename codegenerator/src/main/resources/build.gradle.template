@@ -18,7 +18,7 @@ repositories {
   mavenRepo name: 'jboss-nexus', url: "http://repository.jboss.org/nexus/content/groups/public/"
   mavenRepo name: "jboss-snapshots", url: "http://snapshots.jboss.org/maven2/"
   mavenCentral()
-  mavenRepo name: 'fungal', url: "http://jesperpedersen.github.com/fungal/maven2/"
+  mavenRepo name: 'fungal', url: "https://jesperpedersen.github.io/fungal/maven2/"
 }
 dependencies {
   compile 'org.jboss.ironjacamar:ironjacamar-spec-api:@IJ_VERSION@'
