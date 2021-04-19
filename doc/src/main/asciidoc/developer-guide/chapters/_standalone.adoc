@@ -60,6 +60,6 @@ $$.$$
 
 The IronJacamar/SJC uses the Fungal kernel for its run-time environment.
 
-The homepage for the Fungal is http://jesperpedersen.github.com/fungal
+The homepage for the Fungal is https://jesperpedersen.github.io/fungal
 
 SJC is short for "Simple JCA Container".
