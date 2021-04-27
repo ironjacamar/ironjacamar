@@ -43,6 +43,9 @@ public class Semaphore extends java.util.concurrent.Semaphore
    /** Statistics */
    private PoolStatisticsImpl statistics;
 
+   /** 1 represents current thread */
+   private static final int CURRENT_THREAD = 1;
+
    /**
     * Constructor
     * @param maxSize The maxumum size
@@ -63,7 +66,12 @@ public class Semaphore extends java.util.concurrent.Semaphore
    public boolean tryAcquire(long timeout, TimeUnit unit) throws InterruptedException
    {
       if (statistics.isEnabled())
-         statistics.setMaxWaitCount(getQueueLength());
+      {
+         if (availablePermits() == 0)
+            statistics.setMaxWaitCount(getQueueLength() + CURRENT_THREAD);
+         else
+            statistics.setMaxWaitCount(getQueueLength());
+      }
 
       boolean result = super.tryAcquire(timeout, unit);
 
