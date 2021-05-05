@@ -29,6 +29,7 @@ import org.jboss.logging.annotations.Message;
 import org.jboss.logging.annotations.MessageLogger;
 
 import static org.jboss.logging.Logger.Level.ERROR;
+import static org.jboss.logging.Logger.Level.WARN;
 
 /**
  * The common logger.
@@ -70,4 +71,8 @@ public interface CommonLogger extends BasicLogger
    @Message(id = 10004, value = "More than one @Connector was found but the correct one " +
             "wasn't defined in the ra.xml metadata")
    public void moreThanOneConnector();
+
+   @LogMessage(level = WARN)
+   @Message(id = 10005, value = "Datasource pools with allow-multiple-users cannot be prefilled. Prefill setting will be ignored.")
+   public void warnPrefillNotAllowedWithMultipleUsers();
 }
