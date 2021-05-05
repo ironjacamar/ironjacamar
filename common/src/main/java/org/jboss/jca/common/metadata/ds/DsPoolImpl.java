@@ -21,12 +21,15 @@
  */
 package org.jboss.jca.common.metadata.ds;
 
+import org.jboss.jca.common.CommonLogger;
 import org.jboss.jca.common.api.metadata.Defaults;
 import org.jboss.jca.common.api.metadata.common.Capacity;
 import org.jboss.jca.common.api.metadata.common.Extension;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.common.api.metadata.ds.DsPool;
 import org.jboss.jca.common.api.validator.ValidateException;
+
+import org.jboss.logging.Logger;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -50,6 +53,8 @@ public class DsPoolImpl extends org.jboss.jca.common.metadata.common.PoolImpl im
     * connection-listener
     */
    protected Extension connectionListener;
+
+   private static CommonLogger log = Logger.getMessageLogger(CommonLogger.class, DsXaPoolImpl.class.getName());
 
    /**
     * Create a new PoolImpl.
@@ -75,6 +80,8 @@ public class DsPoolImpl extends org.jboss.jca.common.metadata.common.PoolImpl im
       super(minPoolSize, initialPoolSize, maxPoolSize, prefill, useStrictMin, flushStrategy, capacity, fair);
       this.allowMultipleUsers = allowMultipleUsers;
       this.connectionListener = connectionListener;
+
+      checkAllowMultipleUsersPrefill();
    }
 
    /**
@@ -233,4 +240,13 @@ public class DsPoolImpl extends org.jboss.jca.common.metadata.common.PoolImpl im
       
       return sb.toString();
    }
+
+   private void checkAllowMultipleUsersPrefill()
+   {
+      if (this.allowMultipleUsers && this.prefill)
+      {
+         log.warnPrefillNotAllowedWithMultipleUsers();
+      }
+   }
+
 }

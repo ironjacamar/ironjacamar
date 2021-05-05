@@ -21,12 +21,15 @@
  */
 package org.jboss.jca.common.metadata.ds;
 
+import org.jboss.jca.common.CommonLogger;
 import org.jboss.jca.common.api.metadata.Defaults;
 import org.jboss.jca.common.api.metadata.common.Capacity;
 import org.jboss.jca.common.api.metadata.common.Extension;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.common.api.metadata.ds.DsXaPool;
 import org.jboss.jca.common.api.validator.ValidateException;
+
+import org.jboss.logging.Logger;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -48,6 +51,8 @@ public class DsXaPoolImpl extends org.jboss.jca.common.metadata.common.XaPoolImp
     * connection-listener
     */
    protected final Extension connectionListener;
+
+   private static CommonLogger log = Logger.getMessageLogger(CommonLogger.class, DsXaPoolImpl.class.getName());
 
    /**
     * Create a new XaPoolImpl.
@@ -83,6 +88,8 @@ public class DsXaPoolImpl extends org.jboss.jca.common.metadata.common.XaPoolImp
 
       this.allowMultipleUsers = allowMultipleUsers;
       this.connectionListener = connectionListener;
+
+      this.checkAllowMultipleUsersPrefill();
    }
 
    /**
@@ -270,4 +277,13 @@ public class DsXaPoolImpl extends org.jboss.jca.common.metadata.common.XaPoolImp
       
       return sb.toString();
    }
+
+   private void checkAllowMultipleUsersPrefill()
+   {
+      if (this.allowMultipleUsers && this.prefill)
+      {
+         log.warnPrefillNotAllowedWithMultipleUsers();
+      }
+   }
+
 }
