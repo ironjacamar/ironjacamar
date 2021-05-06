@@ -1565,8 +1565,6 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
     */
    public void clear()
    {
-      this.createdCount.set(0);
-      this.destroyedCount.set(0);
       this.maxCreationTime.set(Long.MIN_VALUE);
       this.maxGetTime.set(Long.MIN_VALUE);
       this.maxPoolTime.set(Long.MIN_VALUE);
@@ -1583,7 +1581,6 @@ public class PoolStatisticsImpl implements PoolStatistics, XAResourceStatistics
       this.totalPoolTimeInvocations.set(0L);
       this.totalUsageTime.set(0L);
       this.totalUsageTimeInvocations.set(0L);
-      this.inUseCount.set(0);
       this.blockingFailureCount.set(0);
       this.waitCount.set(0);
 
