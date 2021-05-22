@@ -2140,7 +2140,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
 
    private void sqlConnectionNotifyRequestBegin()
    {
-      Optional<MethodHandle> mh = mc.getEndRequestNotify();
+      Optional<MethodHandle> mh = mc.getBeginRequestNotify();
       if (mh == null)
       {
          mh = lookupNotifyMethod("beginRequest");
