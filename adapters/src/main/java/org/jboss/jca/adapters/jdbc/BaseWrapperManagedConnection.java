@@ -368,6 +368,8 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
          }
       }
 
+      connectionNotifyRequestEnd();
+
       if (isActive)
       {
          throw new ResourceException(bundle.activeLocks());
@@ -1210,6 +1212,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
 
          if (handles.size() == 1)
          {
+            connectionNotifyRequestBegin();
             if (mcf.getConnectionListenerPlugin() != null)
             {
                try
@@ -1252,4 +1255,57 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
     * @return The value
     */
    public abstract boolean isXA();
+
+   private void connectionNotifyRequestBegin()
+   {
+      Optional<MethodHandle> mh = getBeginRequestNotify();
+      if (mh == null)
+      {
+         mh = lookupNotifyMethod("beginRequest");
+         setBeginRequestNotify(mh);
+      }
+      if (mh.isPresent())
+         invokeNotifyMethod(mh.get(), "beginRequest");
+   }
+
+   private void connectionNotifyRequestEnd()
+   {
+      Optional<MethodHandle> mh = getEndRequestNotify();
+      if (mh == null)
+      {
+         mh = lookupNotifyMethod("endRequest");
+         setEndRequestNotify(mh);
+      }
+      if (mh.isPresent())
+         invokeNotifyMethod(mh.get(), "endRequest");
+   }
+
+   private Optional<MethodHandle> lookupNotifyMethod(String methodName)
+   {
+      try
+      {
+         Class<?> connection = con.getClass();
+         MethodHandle mh = SecurityActions.getMethodHandle(connection, methodName);
+         if (mh == null)
+            return Optional.empty();
+         else
+            return Optional.of(mh);
+      } catch (Exception e)
+      {
+         getLog().debugf("Unable to invoke %s#%s: %s", con.getClass(), methodName, e.getMessage());
+         return Optional.empty();
+      }
+   }
+
+   private void invokeNotifyMethod(MethodHandle mh, String methodName)
+   {
+      try
+      {
+         mh.invokeExact(getRealConnection());
+         getLog().debugf("java.sql.Connection#%s has been invoked", methodName);
+      } catch (Throwable t)
+      {
+         getLog().debugf("Unable to invoke java.sql.Connection#%s: %s", methodName, t.getMessage());
+      }
+   }
 }

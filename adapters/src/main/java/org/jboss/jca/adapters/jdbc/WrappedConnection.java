@@ -110,9 +110,6 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
       setJndiName(jndiName);
       this.doLocking = doLocking;
       this.classLoaderPlugin = classLoaderPlugin;
-
-      sqlConnectionNotifyRequestBegin();
-      
    }
 
    /**
@@ -316,7 +313,6 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          {
             mc.errorHandle(this);
          }
-         sqlConnectionNotifyRequestEnd();
       }
       mc = null;
       dataSource = null;
@@ -2136,90 +2132,5 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
    AdaptersLogger getLogger()
    {
       return log;
-   }
-
-   private void sqlConnectionNotifyRequestBegin()
-   {
-      Optional<MethodHandle> mh = mc.getBeginRequestNotify();
-      if (mh == null)
-      {
-         mh = lookupNotifyMethod("beginRequest");
-         mc.setBeginRequestNotify(mh);
-      }
-      if (mh.isPresent())
-         invokeNotifyMethod(mh.get(), "beginRequest");
-   }
-
-   private void sqlConnectionNotifyRequestEnd()
-   {
-      Optional<MethodHandle> mh = mc.getEndRequestNotify();
-      if (mh == null)
-      {
-         mh = lookupNotifyMethod("endRequest");
-         mc.setEndRequestNotify(mh);
-      }
-      if (mh.isPresent())
-         invokeNotifyMethod(mh.get(), "endRequest");
-   }
-
-   private Optional<MethodHandle> lookupNotifyMethod(String methodName)
-   {
-      try {
-         Class<?> sqlConnection = getSqlConnection();
-         MethodHandle mh = SecurityActions.getMethodHandle(sqlConnection, methodName);
-         if (mh == null)
-            return Optional.empty();
-         else
-            return Optional.of(mh);
-      } catch (SQLException e)
-      {
-         if (spy)
-            spyLogger.debugf("Unable to invoke java.sql.Connection#%s: %s", methodName, e.getMessage());
-         return Optional.empty();
-      }
-   }
-
-   private void invokeNotifyMethod(MethodHandle mh, String methodName)
-   {
-      try
-      {
-         mh.invokeExact(mc.getRealConnection());
-         if (spy)
-            spyLogger.debugf("java.sql.Connection#%s has been invoked", methodName);
-      } catch (Throwable t)
-      {
-         if (spy)
-            spyLogger.debugf("Unable to invoke java.sql.Connection#%s: %s", methodName, t.getMessage());
-      }
-   }
-
-   private Class<?> getSqlConnection() throws SQLException
-   {
-      Class<?> sqlConnection = null;
-
-      if (sqlConnection == null)
-      {
-         try
-         {
-            sqlConnection = Class.forName("java.sql.Connection", true,
-                    SecurityActions.getClassLoader(getClass()));
-         } catch (Throwable t)
-         {
-            // Ignore
-         }
-      }
-
-      if (sqlConnection == null)
-      {
-         try
-         {
-            ClassLoader tccl = SecurityActions.getThreadContextClassLoader();
-            sqlConnection = Class.forName("java.sql.Connection", true, tccl);
-         } catch (Throwable t)
-         {
-            throw new SQLException("Cannot resolve java.sql.Connection", t);
-         }
-      }
-      return sqlConnection;
    }
 }
