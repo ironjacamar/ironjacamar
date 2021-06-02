@@ -112,6 +112,8 @@ public abstract class BaseWrapperManagedConnectionFactory
    /** The bundle */
    protected static AdaptersBundle bundle = Messages.getBundle(AdaptersBundle.class);
 
+   private static boolean copyGssCredentials;
+
    /** The resource adapter */
    private JDBCResourceAdapter jdbcRA;
 
@@ -257,6 +259,19 @@ public abstract class BaseWrapperManagedConnectionFactory
    private ConnectionListener connectionListenerPlugin;
 
    private ClassLoader originalTCCL;
+
+   static
+   {
+      String c = SecurityActions.getSystemProperty("ironjacamar.jdbc.kerberos.copygsscredentials");
+      if (c != null)
+      {
+         copyGssCredentials = Boolean.valueOf(c);
+      }
+      else
+      {
+         copyGssCredentials = false;
+      }
+   }
 
    /**
     * Constructor
@@ -1545,9 +1560,12 @@ public abstract class BaseWrapperManagedConnectionFactory
                         pass = password;
                   }
 
-                  props.setProperty("user", (user == null) ? "" : user);
-                  props.setProperty("password", (pass == null) ? "" : pass);
-               
+                  if (copyGssCredentials)
+                  {
+                     props.setProperty("user", (user == null) ? "" : user);
+                     props.setProperty("password", (pass == null) ? "" : pass);
+                  }
+
                   return Boolean.TRUE;
                }
             }
