@@ -184,7 +184,20 @@ class SecurityActions
       }
    }
 
-   static interface Producer<T> {
+   static MethodHandle getMethodHandleInClassHierarchy(Class<?> targetClass, String methodName)
+       throws NoSuchMethodException
+   {
+      MethodHandle mh = null;
+      while (targetClass != null)
+      {
+         mh = getMethodHandle(targetClass, methodName);
+         targetClass = (mh != null ? null /* found a method */ : targetClass.getSuperclass());
+      }
+      return mh;
+   }
+
+   static interface Producer<T>
+   {
       T produce() throws Exception;
    }
 }

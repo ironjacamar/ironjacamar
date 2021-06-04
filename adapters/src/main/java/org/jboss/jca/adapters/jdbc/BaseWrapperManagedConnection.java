@@ -28,6 +28,7 @@ import org.jboss.jca.adapters.jdbc.spi.reauth.ReauthPlugin;
 import org.jboss.jca.adapters.jdbc.util.ReentrantLock;
 import org.jboss.jca.core.spi.transaction.ConnectableResource;
 import org.jboss.jca.core.spi.transaction.ConnectableResourceListener;
+import org.jboss.jca.core.connectionmanager.pool.mcp.NotifyingManagedConnection;
 
 import java.io.PrintWriter;
 import java.lang.invoke.MethodHandle;
@@ -66,7 +67,7 @@ import org.jboss.logging.Messages;
  * @author <a href="mailto:wprice@redhat.com">Weston Price</a>
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public abstract class BaseWrapperManagedConnection implements ManagedConnection, ConnectableResource
+public abstract class BaseWrapperManagedConnection implements NotifyingManagedConnection, ConnectableResource
 {
    private static final WrappedConnectionFactory WRAPPED_CONNECTION_FACTORY;
 
@@ -367,8 +368,6 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
             }
          }
       }
-
-      connectionNotifyRequestEnd();
 
       if (isActive)
       {
@@ -1212,7 +1211,6 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
 
          if (handles.size() == 1)
          {
-            connectionNotifyRequestBegin();
             if (mcf.getConnectionListenerPlugin() != null)
             {
                try
@@ -1256,7 +1254,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
     */
    public abstract boolean isXA();
 
-   private void connectionNotifyRequestBegin()
+   public void notifyRequestBegin()
    {
       Optional<MethodHandle> mh = getBeginRequestNotify();
       if (mh == null)
@@ -1268,7 +1266,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
          invokeNotifyMethod(mh.get(), "beginRequest");
    }
 
-   private void connectionNotifyRequestEnd()
+   public void notifyRequestEnd()
    {
       Optional<MethodHandle> mh = getEndRequestNotify();
       if (mh == null)
@@ -1284,8 +1282,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
    {
       try
       {
-         Class<?> connection = con.getClass();
-         MethodHandle mh = SecurityActions.getMethodHandle(connection, methodName);
+         MethodHandle mh = SecurityActions.getMethodHandleInClassHierarchy(con.getClass(), methodName);
          if (mh == null)
             return Optional.empty();
          else
@@ -1301,7 +1298,7 @@ public abstract class BaseWrapperManagedConnection implements ManagedConnection,
    {
       try
       {
-         mh.invokeExact(getRealConnection());
+         mh.invoke(getRealConnection());
          getLog().debugf("java.sql.Connection#%s has been invoked", methodName);
       } catch (Throwable t)
       {
