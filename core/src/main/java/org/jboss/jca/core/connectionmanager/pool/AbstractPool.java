@@ -37,6 +37,7 @@ import org.jboss.jca.core.connectionmanager.pool.capacity.DefaultCapacity;
 import org.jboss.jca.core.connectionmanager.pool.capacity.TimedOutDecrementer;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPoolFactory;
+import org.jboss.jca.core.connectionmanager.pool.mcp.NotifyingManagedConnection;
 import org.jboss.jca.core.connectionmanager.transaction.LockKey;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 import org.jboss.jca.core.tracer.Tracer;
@@ -601,7 +602,11 @@ public abstract class AbstractPool implements Pool
 
       if (trackByTransaction == null || transactionKey == null)
       {
-         return getSimpleConnection(subject, cri, mcp);
+         cl = getSimpleConnection(subject, cri, mcp);
+         if(cl.getManagedConnection() instanceof NotifyingManagedConnection){
+            ((NotifyingManagedConnection)cl.getManagedConnection()).notifyRequestBegin();
+         }
+         return cl;
       }
 
       // Transaction old connections
@@ -611,6 +616,9 @@ public abstract class AbstractPool implements Pool
       if (cl == null)
       {
          cl = getTransactionNewConnection(trackByTransaction, mcp, subject, cri);
+         if(cl.getManagedConnection() instanceof NotifyingManagedConnection){
+            ((NotifyingManagedConnection)cl.getManagedConnection()).notifyRequestBegin();
+         }
       }
 
       return cl;
@@ -831,6 +839,11 @@ public abstract class AbstractPool implements Pool
    public void returnConnection(ConnectionListener cl, boolean kill) throws ResourceException
    {
       cl.setTrackByTx(false);
+
+      if(cl.getManagedConnection() instanceof NotifyingManagedConnection){
+         ((NotifyingManagedConnection)cl.getManagedConnection()).notifyRequestEnd();
+      }
+
       //Get connection listener pool
       ManagedConnectionPool mcp = cl.getManagedConnectionPool();
 
