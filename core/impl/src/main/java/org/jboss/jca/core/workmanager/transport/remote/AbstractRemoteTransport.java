@@ -648,24 +648,21 @@ public abstract class AbstractRemoteTransport<T> implements Transport
          nodes.put(logicalAddress, physicalAddress);
 
          WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
-         Set<Address> ownLogicalAddresses = this.getAddresses(this.getOwnAddress());
-         for (Address ownLogicalAddress : ownLogicalAddresses)
-         {
-            DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(ownLogicalAddress);
+         DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(logicalAddress);
 
-            if (dwm != null)
+         if (dwm != null)
+         {
+            Collection<NotificationListener> copy =
+               new ArrayList<NotificationListener>(dwm.getNotificationListeners());
+            for (NotificationListener nl : copy)
             {
-               Collection<NotificationListener> copy =
-                   new ArrayList<NotificationListener>(dwm.getNotificationListeners());
-               for (NotificationListener nl : copy)
-               {
-                  nl.join(logicalAddress);
-               }
-            } else
-            {
-               WorkManagerEventQueue wmeq = WorkManagerEventQueue.getInstance();
-               wmeq.addEvent(new WorkManagerEvent(WorkManagerEvent.TYPE_JOIN, logicalAddress));
+               nl.join(logicalAddress);
             }
+         }
+         else
+         {
+            WorkManagerEventQueue wmeq = WorkManagerEventQueue.getInstance();
+            wmeq.addEvent(new WorkManagerEvent(WorkManagerEvent.TYPE_JOIN, logicalAddress));
          }
       }
    }
@@ -879,23 +876,21 @@ public abstract class AbstractRemoteTransport<T> implements Transport
       log.tracef("LOCAL_UPDATE_SHORTRUNNING_FREE(%s, %d)", logicalAddress, freeCount);
 
       WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
-      Set<Address> ownLogicalAddresses = this.getAddresses(this.getOwnAddress());
-      for (Address ownLogicalAddress : ownLogicalAddresses) {
-         DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(ownLogicalAddress);
-         if (dwm != null)
+      DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(logicalAddress);
+
+      if (dwm != null)
+      {
+         Collection<NotificationListener> copy =
+            new ArrayList<NotificationListener>(dwm.getNotificationListeners());
+         for (NotificationListener nl : copy)
          {
-            Collection<NotificationListener> copy =
-                    new ArrayList<NotificationListener>(dwm.getNotificationListeners());
-            for (NotificationListener nl : copy)
-            {
-               nl.updateShortRunningFree(logicalAddress, freeCount);
-            }
+            nl.updateShortRunningFree(logicalAddress, freeCount);
          }
-         else
-         {
-            WorkManagerEventQueue wmeq = WorkManagerEventQueue.getInstance();
-            wmeq.addEvent(new WorkManagerEvent(WorkManagerEvent.TYPE_UPDATE_SHORT_RUNNING, logicalAddress, freeCount));
-         }
+      }
+      else
+      {
+         WorkManagerEventQueue wmeq = WorkManagerEventQueue.getInstance();
+         wmeq.addEvent(new WorkManagerEvent(WorkManagerEvent.TYPE_UPDATE_SHORT_RUNNING, logicalAddress, freeCount));
       }
    }
 
@@ -910,24 +905,21 @@ public abstract class AbstractRemoteTransport<T> implements Transport
       log.tracef("LOCAL_UPDATE_LONGRUNNING_FREE(%s, %d)", logicalAddress, freeCount);
 
       WorkManagerCoordinator wmc = WorkManagerCoordinator.getInstance();
-      Set<Address> ownLogicalAddresses = this.getAddresses(this.getOwnAddress());
-      for (Address ownLogicalAddress : ownLogicalAddresses)
-      {
-         DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(ownLogicalAddress);
+      DistributedWorkManager dwm = wmc.resolveDistributedWorkManager(logicalAddress);
 
-         if (dwm != null)
+      if (dwm != null)
+      {
+         Collection<NotificationListener> copy =
+            new ArrayList<NotificationListener>(dwm.getNotificationListeners());
+         for (NotificationListener nl : copy)
          {
-            Collection<NotificationListener> copy =
-                new ArrayList<NotificationListener>(dwm.getNotificationListeners());
-            for (NotificationListener nl : copy)
-            {
-               nl.updateLongRunningFree(logicalAddress, freeCount);
-            }
-         } else
-         {
-            WorkManagerEventQueue wmeq = WorkManagerEventQueue.getInstance();
-            wmeq.addEvent(new WorkManagerEvent(WorkManagerEvent.TYPE_UPDATE_LONG_RUNNING, logicalAddress, freeCount));
+            nl.updateLongRunningFree(logicalAddress, freeCount);
          }
+      }
+      else
+      {
+         WorkManagerEventQueue wmeq = WorkManagerEventQueue.getInstance();
+         wmeq.addEvent(new WorkManagerEvent(WorkManagerEvent.TYPE_UPDATE_LONG_RUNNING, logicalAddress, freeCount));
       }
    }
 

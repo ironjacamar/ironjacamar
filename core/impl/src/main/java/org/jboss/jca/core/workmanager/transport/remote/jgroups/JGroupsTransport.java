@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2021, Red Hat Inc, and individual contributors
+ * Copyright 2012, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -90,8 +90,6 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
    private String clusterName;
 
    private RpcDispatcher disp;
-
-   private volatile View currentView;
 
    private boolean initialized;
 
@@ -645,11 +643,7 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
     */
    public void initialize() throws Throwable
    {
-      synchronized (this)
-      {
-         initialized = true;
-         updateView();
-      }
+      initialized = true;
    }
 
    /**
@@ -1102,54 +1096,47 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
          log.tracef("viewAccepted called w/ physicalAdresses=%s", nodes.values());
          log.tracef("viewAccepted called w/ members=%s", view.getMembers());
          log.tracef("viewAccepted called w/ channels=%s", channel);
+
       }
 
       synchronized (this)
       {
-         currentView = view;
-         if (initialized)
+         List<org.jgroups.Address> physicalAddresses = new ArrayList<org.jgroups.Address>(nodes.values().size());
+         physicalAddresses.addAll(nodes.values());
+         for (org.jgroups.Address physicalAddress : physicalAddresses)
          {
-            updateView();
-         }
-      }
-   }
-
-   private void updateView()
-   {
-      List<org.jgroups.Address> physicalAddresses = new ArrayList<org.jgroups.Address>(nodes.values().size());
-      physicalAddresses.addAll(nodes.values());
-      for (org.jgroups.Address physicalAddress : physicalAddresses)
-      {
-         if (physicalAddress != null && !currentView.containsMember(physicalAddress))
-         {
-            leave(physicalAddress);
-         }
-      }
-      for (org.jgroups.Address address : currentView.getMembers())
-      {
-         if (channel != null && !channel.getAddress().equals(address) && !nodes.containsValue(address))
-         {
-            try
+            if (physicalAddress != null && !view.containsMember(physicalAddress))
             {
-               Set<org.jboss.jca.core.spi.workmanager.Address> logicalAddresses =
-                   (Set<org.jboss.jca.core.spi.workmanager.Address>) sendMessage(address, Request.GET_WORKMANAGERS);
-
-               if (logicalAddresses != null && logicalAddresses.size() > 0)
+               leave(physicalAddress);
+            }
+         }
+         for (org.jgroups.Address address : view.getMembers())
+         {
+            if (channel != null && !channel.getAddress().equals(address) && !nodes.containsValue(address))
+            {
+               try
                {
-                  for (org.jboss.jca.core.spi.workmanager.Address logicalAddress : logicalAddresses)
+                  Set<org.jboss.jca.core.spi.workmanager.Address> logicalAddresses =
+                     (Set<org.jboss.jca.core.spi.workmanager.Address>)sendMessage(address, Request.GET_WORKMANAGERS);
+
+                  if (logicalAddresses != null && logicalAddresses.size() > 0)
                   {
-                     join(logicalAddress, address);
+                     for (org.jboss.jca.core.spi.workmanager.Address logicalAddress : logicalAddresses)
+                     {
+                        join(logicalAddress, address);
 
-                     Long shortRunning = getShortRunningFree(logicalAddress);
-                     Long longRunning = getLongRunningFree(logicalAddress);
-
-                     localUpdateShortRunningFree(logicalAddress, shortRunning);
-                     localUpdateLongRunningFree(logicalAddress, longRunning);
+                        Long shortRunning = getShortRunningFree(logicalAddress);
+                        Long longRunning = getLongRunningFree(logicalAddress);
+                     
+                        localUpdateShortRunningFree(logicalAddress, shortRunning);
+                        localUpdateLongRunningFree(logicalAddress, longRunning);
+                     }
                   }
                }
-            } catch (Throwable t)
-            {
-               log.error("ViewAccepted: " + t.getMessage(), t);
+               catch (Throwable t)
+               {
+                  log.error("ViewAccepted: " + t.getMessage(), t);
+               }
             }
          }
       }

@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2021, Red Hat Inc, and individual contributors
+ * Copyright 2012, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -58,7 +58,19 @@ public class PingTime extends AbstractSelector
     */
    public Address selectDistributedWorkManager(Address own, DistributableWork work)
    {
-      Map<Address, Long> selectionMap = getSelectionMap(work);
+      /*
+        TODO
+      String value = getWorkManager(work);
+      if (value != null)
+      {
+         if (trace)
+            log.tracef("WorkManager: %s", value);
+
+         return value;
+      }
+      */
+
+      Map<Address, Long> selectionMap = getSelectionMap(own.getWorkManagerId(), work);
       Address result = null;
       long pingTime = Long.MAX_VALUE;
 

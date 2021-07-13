@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2021, Red Hat Inc, and individual contributors
+ * Copyright 2012, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -22,8 +22,6 @@
 
 package org.jboss.jca.core.workmanager.unit;
 
-import org.jboss.arquillian.container.test.api.Deployment;
-import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.jca.arquillian.embedded.Configuration;
 import org.jboss.jca.arquillian.embedded.Inject;
 import org.jboss.jca.core.api.workmanager.DistributedWorkManager;
@@ -39,13 +37,12 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
-import org.junit.runner.RunWith;
 
 import org.junit.runner.RunWith;
 
 
 /**
- * DistributedWorkManagerSocketMJVMTestCase.
+ * DistributedWorkManagerJGroupsMJVMTestCase.
  *
  * Tests for the JBoss specific distributed work manager functionality.
  *
@@ -53,9 +50,30 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Arquillian.class)
 @Configuration(autoActivate = false)
-
-public class DistributedWorkManagerSocketTestCase extends AbstractDistributedWorkManagerTest
+public class DistributedWorkManagerJGroupsMJVMTestCase extends AbstractDistributedWorkManagerTest
 {
+   /** injected DistributedWorkManager */
+   @Inject(name = "DistributedWorkManagerJGroups")
+   protected DistributedWorkManager dwm;
+
+   @Inject(name = "DistributedBootstrapContextJGroups")
+   private BootstrapContext dbc;
+
+   /**
+    * {@inheritDoc}
+    */
+   protected DistributedWorkManager getDistributedWorkManager()
+   {
+      return dwm;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   protected BootstrapContext getBootstrapContext()
+   {
+      return dbc;
+   }
 
    // --------------------------------------------------------------------------------||
    // Deployments --------------------------------------------------------------------||
@@ -69,8 +87,8 @@ public class DistributedWorkManagerSocketTestCase extends AbstractDistributedWor
    public static InputStreamDescriptor createDistributedWorkManagerDeployment()
    {
       ClassLoader cl = Thread.currentThread().getContextClassLoader();
-      InputStreamDescriptor isd = new InputStreamDescriptor("dwm-socket.xml",
-                                                            cl.getResourceAsStream("dwm-socket.xml"));
+      InputStreamDescriptor isd = new InputStreamDescriptor("dwm-jgroups.xml",
+                                                            cl.getResourceAsStream("dwm-jgroups.xml"));
       return isd;
    }
 
@@ -97,25 +115,17 @@ public class DistributedWorkManagerSocketTestCase extends AbstractDistributedWor
     * Define the activation deployment
     * @return The deployment archive
     */
-   @Deployment(name = "ACT1", order = 3)
-   public static InputStreamDescriptor createActivationDeployment1()
+   @Deployment(name = "ACT", order = 3)
+   public static InputStreamDescriptor createActivationDeployment()
    {
       ClassLoader cl = Thread.currentThread().getContextClassLoader();
-      InputStreamDescriptor isd = new InputStreamDescriptor("dwm-bc1-ra.xml",
-              cl.getResourceAsStream("dwm-bc1-ra.xml"));
+      InputStreamDescriptor isd = new InputStreamDescriptor("dwm-bc-jgroups-ra.xml",
+                                                            cl.getResourceAsStream("dwm-bc-jgroups-ra.xml"));
       return isd;
    }
 
-   /**
-    * Define the activation deployment
-    * @return The deployment archive
-    */
-   @Deployment(name = "ACT2", order = 4)
-   public static InputStreamDescriptor createActivationDeployment2()
-   {
-      ClassLoader cl = Thread.currentThread().getContextClassLoader();
-      InputStreamDescriptor isd = new InputStreamDescriptor("dwm-bc2-ra.xml",
-              cl.getResourceAsStream("dwm-bc2-ra.xml"));
-      return isd;
-   }
+   // --------------------------------------------------------------------------------||
+   // Tests --------------------------------------------------------------------------||
+   // --------------------------------------------------------------------------------||
+
 }

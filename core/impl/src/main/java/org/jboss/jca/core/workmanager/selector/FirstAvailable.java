@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2021, Red Hat Inc, and individual contributors
+ * Copyright 2012, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -60,7 +60,20 @@ public class FirstAvailable extends AbstractSelector
    {
       log.tracef("Own: %s, Work: %s", own, work);
 
-      Map<Address, Long> selectionMap = getSelectionMap(work);
+      /*
+        TODO
+
+      String value = getWorkManager(work);
+      if (value != null)
+      {
+         if (trace)
+            log.tracef("WorkManager: %s", value);
+
+         return value;
+      }
+      */
+
+      Map<Address, Long> selectionMap = getSelectionMap(own.getWorkManagerId(), work);
       // No sorting needed
 
       log.tracef("SelectionMap: %s", selectionMap);
@@ -76,7 +89,7 @@ public class FirstAvailable extends AbstractSelector
                if (free != null && free.longValue() > 0)
                {
                   log.tracef("WorkManager: %s", id);
-
+                  
                   return id;
                }
             }

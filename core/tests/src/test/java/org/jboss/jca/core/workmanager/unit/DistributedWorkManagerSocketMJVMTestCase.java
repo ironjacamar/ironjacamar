@@ -1,6 +1,6 @@
 /*
- * JBoss, Home of Professional Open Source.
- * Copyright 2021, Red Hat Middleware LLC, and individual contributors
+ * IronJacamar, a Java EE Connector Architecture implementation
+ * Copyright 2012, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -42,16 +42,39 @@ import org.junit.runner.RunWith;
 
 
 /**
- * DistributedWorkManagerJGroupsTestCase.
+ * DistributedWorkManagerSocketMJVMTestCase.
  *
  * Tests for the JBoss specific distributed work manager functionality.
  *
- * @author <a href="mailto:jesper.pedersen@jboss.org">Jesper Pedersen</a>
+ * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
 @RunWith(Arquillian.class)
 @Configuration(autoActivate = false)
-public class DistributedWorkManagerJGroupsTestCase extends AbstractDistributedWorkManagerTest
+public class DistributedWorkManagerSocketMJVMTestCase extends AbstractDistributedWorkManagerTest
 {
+   /** injected DistributedWorkManager */
+   @Inject(name = "DistributedWorkManagerSocket")
+   protected DistributedWorkManager dwm;
+
+   @Inject(name = "DistributedBootstrapContextSocket")
+   private BootstrapContext dbc;
+
+   /**
+    * {@inheritDoc}
+    */
+   protected DistributedWorkManager getDistributedWorkManager()
+   {
+      return dwm;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   protected BootstrapContext getBootstrapContext()
+   {
+      return dbc;
+   }
+
    // --------------------------------------------------------------------------------||
    // Deployments --------------------------------------------------------------------||
    // --------------------------------------------------------------------------------||
@@ -64,8 +87,8 @@ public class DistributedWorkManagerJGroupsTestCase extends AbstractDistributedWo
    public static InputStreamDescriptor createDistributedWorkManagerDeployment()
    {
       ClassLoader cl = Thread.currentThread().getContextClassLoader();
-      InputStreamDescriptor isd = new InputStreamDescriptor("dwm-jgroups.xml",
-              cl.getResourceAsStream("dwm-jgroups.xml"));
+      InputStreamDescriptor isd = new InputStreamDescriptor("dwm-socket.xml",
+                                                            cl.getResourceAsStream("dwm-socket.xml"));
       return isd;
    }
 
@@ -77,7 +100,7 @@ public class DistributedWorkManagerJGroupsTestCase extends AbstractDistributedWo
    public static ResourceAdapterArchive createArchiveDeployment()
    {
       ResourceAdapterArchive raa =
-              ShrinkWrap.create(ResourceAdapterArchive.class, "work.rar");
+         ShrinkWrap.create(ResourceAdapterArchive.class, "work.rar");
 
       JavaArchive ja = ShrinkWrap.create(JavaArchive.class, UUID.randomUUID().toString() + ".jar");
       ja.addPackage(WorkConnectionFactory.class.getPackage());
@@ -92,30 +115,12 @@ public class DistributedWorkManagerJGroupsTestCase extends AbstractDistributedWo
     * Define the activation deployment
     * @return The deployment archive
     */
-   @Deployment(name = "ACT1", order = 3)
+   @Deployment(name = "ACT", order = 3)
    public static InputStreamDescriptor createActivationDeployment1()
    {
       ClassLoader cl = Thread.currentThread().getContextClassLoader();
-      InputStreamDescriptor isd = new InputStreamDescriptor("dwm-bc1-ra.xml",
-              cl.getResourceAsStream("dwm-bc1-ra.xml"));
+      InputStreamDescriptor isd = new InputStreamDescriptor("dwm-bc-socket-ra.xml",
+                                                            cl.getResourceAsStream("dwm-bc-socket-ra.xml"));
       return isd;
    }
-
-   /**
-    * Define the activation deployment
-    * @return The deployment archive
-    */
-   @Deployment(name = "ACT2", order = 4)
-   public static InputStreamDescriptor createActivationDeployment2()
-   {
-      ClassLoader cl = Thread.currentThread().getContextClassLoader();
-      InputStreamDescriptor isd = new InputStreamDescriptor("dwm-bc2-ra.xml",
-              cl.getResourceAsStream("dwm-bc2-ra.xml"));
-      return isd;
-   }
-
-   // --------------------------------------------------------------------------------||
-   // Tests --------------------------------------------------------------------------||
-   // --------------------------------------------------------------------------------||
-
 }

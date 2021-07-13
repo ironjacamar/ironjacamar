@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2021, Red Hat Inc, and individual contributors
+ * Copyright 2012, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -23,12 +23,12 @@
 package org.jboss.jca.core.workmanager.selector;
 
 import org.jboss.jca.core.CoreLogger;
-import org.jboss.jca.core.api.workmanager.WorkManager;
 import org.jboss.jca.core.spi.workmanager.Address;
 import org.jboss.jca.core.spi.workmanager.selector.Selector;
 import org.jboss.jca.core.workmanager.WorkManagerUtil;
 import org.jboss.jca.core.workmanager.notification.AbstractNotificationListener;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.resource.spi.work.DistributableWork;
@@ -57,8 +57,9 @@ public abstract class AbstractSelector extends AbstractNotificationListener impl
     * @param work The work instance
     * @return The selection map
     */
-   protected Map<Address, Long> getSelectionMap(DistributableWork work)
+   protected Map<Address, Long> getSelectionMap(String wmId, DistributableWork work)
    {
+      log.tracef("getSelectionMap(%s, %s)", wmId, work);
       log.tracef("ShortRunning: %s", shortRunning);
       log.tracef("LongRunning: %s", longRunning);
 
@@ -66,11 +67,14 @@ public abstract class AbstractSelector extends AbstractNotificationListener impl
 
       if (WorkManagerUtil.isLongRunning(work))
       {
-         return longRunning;
-      } else
-      {
-         return shortRunning;
+         if (longRunning.get(wmId) != null)
+            sorted = new HashMap<Address, Long>(longRunning.get(wmId));
       }
+
+      if (sorted == null && shortRunning.get(wmId) != null)
+         sorted = new HashMap<Address, Long>(shortRunning.get(wmId));
+
+      return sorted;
    }
 
    /**
