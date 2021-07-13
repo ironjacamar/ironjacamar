@@ -38,6 +38,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 
 
@@ -50,6 +51,8 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Arquillian.class)
 @Configuration(autoActivate = false)
+//TODO
+@Ignore
 public class DistributedWorkManagerJGroupsMJVMTestCase extends AbstractDistributedWorkManagerTest
 {
    /** injected DistributedWorkManager */
