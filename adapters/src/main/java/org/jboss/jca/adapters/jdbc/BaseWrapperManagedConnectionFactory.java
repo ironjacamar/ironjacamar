@@ -1560,7 +1560,7 @@ public abstract class BaseWrapperManagedConnectionFactory
                         pass = password;
                   }
 
-                  if (copyGssCredentials)
+                  if (cri != null || userName != null || copyGssCredentials)
                   {
                      props.setProperty("user", (user == null) ? "" : user);
                      props.setProperty("password", (pass == null) ? "" : pass);
