@@ -991,15 +991,7 @@ public class TxConnectionListener extends AbstractConnectionListener
                                                   getManagedConnectionPool(),
                                                   TxConnectionListener.this, currentTx.toString(), false,
                                                   !TxConnectionListener.this.isTrackByTx());
-
-               if (recordEnlist)
-               {
-                  enlistError = failedToEnlist;
-               }
-               else
-               {
-                  enlistError = null;
-               }
+               enlistError = failedToEnlist;
             }
             else
             {
@@ -1025,7 +1017,7 @@ public class TxConnectionListener extends AbstractConnectionListener
          {
             if (enlistError != null)
             {
-               if (log.isTraceEnabled())
+               if (recordEnlist && log.isTraceEnabled())
                {
                   log.trace("Failed to enlist resource " + TxConnectionListener.this, enlistError);
                }
