@@ -902,15 +902,9 @@ public class TxConnectionListener extends AbstractConnectionListener
          {
             this.recordEnlist = !disableFailedtoEnlist;
          }
-         
-         if (this.recordEnlist)
-         {
-            this.failedToEnlist = new Throwable("Unabled to enlist resource, see the previous warnings.");
-         }
-         else
-         {
-            this.failedToEnlist = null;
-         }
+
+         this.failedToEnlist = new Throwable("Unabled to enlist resource, see the previous warnings.");
+
          if (log.isTraceEnabled()) {
             log.tracef("%s: Constructor", toString());
          }
