@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2010, Red Hat Inc, and individual contributors
+ * Copyright 2021, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -99,6 +99,8 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
 
    /** FIFO / FILO */
    private boolean fifo;
+
+   private boolean poolValidationLoggingEnabled;
    
    /**
     * Copy of the maximum size from the pooling parameters.
@@ -160,6 +162,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
       this.pool = p;
       this.fifo = p.isFIFO();
       this.log = pool.getLogger();
+      this.poolValidationLoggingEnabled = !PoolConfiguration.getPoolsWithDisabledValidationLogging().contains(pool.getName());
       this.debug = log.isDebugEnabled();
       this.cls = new ArrayList<ConnectionListener>(this.maxSize);
       this.supportsLazyAssociation = null;
@@ -425,7 +428,10 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                      }
                      else
                      {
-                        log.destroyingConnectionNotValidated(cl);
+                        if(poolValidationLoggingEnabled)
+                        {
+                           log.destroyingConnectionNotValidated(cl);
+                        }
                      }
 
                      synchronized (cls)

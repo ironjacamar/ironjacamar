@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2015, Red Hat Inc, and individual contributors
+ * Copyright 2021, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -130,6 +130,8 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
    /** Last used */
    private long lastUsed;
 
+   private boolean poolValidationLoggingEnabled = true;
+
    /**
     * Constructor
     */
@@ -164,6 +166,7 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
       this.pool = p;
       this.fifo = p.isFIFO();
       this.log = pool.getLogger();
+      this.poolValidationLoggingEnabled = !PoolConfiguration.getPoolsWithDisabledValidationLogging().contains(pool.getName());
       this.debug = log.isDebugEnabled();
       this.clq = new ConcurrentLinkedDeque<ConnectionListenerWrapper>();
       this.cls = new ConcurrentHashMap<ConnectionListener, ConnectionListenerWrapper>();
@@ -434,7 +437,10 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
                      }
                      else
                      {
-                        log.destroyingConnectionNotValidated(clw.getConnectionListener());
+                        if (poolValidationLoggingEnabled)
+                        {
+                           log.destroyingConnectionNotValidated(clw.getConnectionListener());
+                        }
                      }
 
                      if (pool.getInternalStatistics().isEnabled())

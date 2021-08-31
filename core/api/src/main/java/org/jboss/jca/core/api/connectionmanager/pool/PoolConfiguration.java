@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2008-2009, Red Hat Inc, and individual contributors
+ * Copyright 2021, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -22,6 +22,9 @@
 
 package org.jboss.jca.core.api.connectionmanager.pool;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -31,8 +34,32 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class PoolConfiguration
-{
+public class PoolConfiguration {
+   private static List<String> poolsWithDisabledValidationLogging;
+
+   static {
+      String value = org.jboss.jca.core.api.connectionmanager.pool.SecurityActions.getSystemProperty("ironjacamar.disable_enlistment_trace");
+
+      if (value != null && !value.trim().equals("")) {
+         try {
+            poolsWithDisabledValidationLogging = Arrays.asList(value.split(","));
+         } catch (Throwable t) {
+            //Ignore invalid parameter
+            poolsWithDisabledValidationLogging = Collections.emptyList();
+         }
+      }
+      else
+      {
+         poolsWithDisabledValidationLogging = Collections.emptyList();
+      }
+
+   }
+
+   public static List<String> getPoolsWithDisabledValidationLogging()
+   {
+      return poolsWithDisabledValidationLogging;
+   }
+
    /** Minumum size of the pool */
    private AtomicInteger minSize;
 
@@ -71,6 +98,8 @@ public class PoolConfiguration
 
    /** Fairness of semaphore permits, default true */
    private AtomicBoolean fair;
+
+   private boolean validationLoggingEnabled = true;
 
    /**
     * Constructor

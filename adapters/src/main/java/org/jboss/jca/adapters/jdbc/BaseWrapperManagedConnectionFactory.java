@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2010, Red Hat Inc, and individual contributors
+ * Copyright 2021, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -47,8 +47,11 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
@@ -114,6 +117,20 @@ public abstract class BaseWrapperManagedConnectionFactory
 
    private static boolean copyGssCredentials;
 
+   static
+   {
+      String c = SecurityActions.getSystemProperty("ironjacamar.jdbc.kerberos.copygsscredentials");
+
+      if (c != null)
+      {
+         copyGssCredentials = Boolean.valueOf(c);
+      }
+      else
+      {
+         copyGssCredentials = false;
+      }
+   }
+
    /** The resource adapter */
    private JDBCResourceAdapter jdbcRA;
 
@@ -134,6 +151,8 @@ public abstract class BaseWrapperManagedConnectionFactory
 
    /** Query timeout enabled */
    protected boolean doQueryTimeout = false;
+
+   protected boolean poolValidationLoggingEnabled = true;
 
    /**
     * The variable <code>newConnectionSQL</code> holds an SQL
@@ -259,19 +278,6 @@ public abstract class BaseWrapperManagedConnectionFactory
    private ConnectionListener connectionListenerPlugin;
 
    private ClassLoader originalTCCL;
-
-   static
-   {
-      String c = SecurityActions.getSystemProperty("ironjacamar.jdbc.kerberos.copygsscredentials");
-      if (c != null)
-      {
-         copyGssCredentials = Boolean.valueOf(c);
-      }
-      else
-      {
-         copyGssCredentials = false;
-      }
-   }
 
    /**
     * Constructor
@@ -1172,7 +1178,7 @@ public abstract class BaseWrapperManagedConnectionFactory
                c = mc.getRealConnection();
                SQLException e = isValidConnection(c);
 
-               if (e != null)
+               if (e != null && poolValidationLoggingEnabled)
                {
                   log.invalidConnection(c.toString(), e);
                   invalid.add(mc);
@@ -1437,6 +1443,10 @@ public abstract class BaseWrapperManagedConnectionFactory
       }
 
       return false;
+   }
+
+   public void setPoolValidationLoggingEnabled(boolean poolValidationLoggingEnabled) {
+      this.poolValidationLoggingEnabled = poolValidationLoggingEnabled;
    }
 
    /**
