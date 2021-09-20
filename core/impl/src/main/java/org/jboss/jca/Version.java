@@ -32,7 +32,7 @@ public class Version
    public static final String PROJECT = "WildFly/IronJacamar"; 
    
    /** The version */
-   public static final String VERSION = "@VERSION@";
+   public static final String VERSION = Version.class.getPackage().getImplementationVersion();
    
    /** Full version */
    public static final String FULL_VERSION = PROJECT + " " + VERSION;
