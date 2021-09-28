@@ -75,7 +75,7 @@
         <version.jakarta.validation>2.0.2</version.jakarta.validation>
         <version.jakarta.xml.bind>3.0.0</version.jakarta.xml.bind>
         <version.junit>4.12</version.junit>
-        <version.org.apache.ant>1.8.1</version.org.apache.ant>
+        <version.org.apache.ant>1.10.11</version.org.apache.ant>
         <version.org.apache.maven>3.5.4</version.org.apache.maven>
         <version.org.jboss.arquillian.core>1.0.2.Final</version.org.jboss.arquillian.core>
         <version.org.jboss.arquillian.extension.byteman>1.1.0</version.org.jboss.arquillian.extension.byteman>
