@@ -50,10 +50,11 @@
             <artifactId>ironjacamar-validator</artifactId>
         </dependency>
 
-	<!--<dependency>
-            <groupId>com.github.fungal</groupId>
-            <artifactId>fungal</artifactId>
-	</dependency>-->
+        <!--<dependency>
+                <groupId>com.github.fungal</groupId>
+                <artifactId>fungal</artifactId>
+        </dependency>-->
+
         <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>

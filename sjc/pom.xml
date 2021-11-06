@@ -45,12 +45,10 @@
         <dependency>
             <groupId>com.github.fungal</groupId>
             <artifactId>fungal</artifactId>
-            <version>${version.com.github.fungal}</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
-            <version>${version.org.hibernate.validator}</version>
             <exclusions>
                 <!-- TODO remove this exclusion once this supports Jakarta Validation -->
                 <!-- Superceded by jakarta.validation:jakarta.validation-api -->
@@ -71,7 +69,6 @@
         <dependency>
             <groupId>org.glassfish</groupId>
             <artifactId>javax.el</artifactId>
-            <version>3.0.1-b11</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.naming</groupId>

@@ -39,6 +39,7 @@
 
     <modules>
         <module>api</module>
+        <module>descriptors</module>
         <module>impl</module>
         <module>spi</module>
     </modules>
