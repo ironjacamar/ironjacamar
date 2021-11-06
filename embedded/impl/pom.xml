@@ -43,7 +43,7 @@
         </dependency>
         <dependency>
             <groupId>${ironjacamar.groupId}</groupId>
-            <artifactId>ironjacamar-common-impl</artifactId>
+            <artifactId>ironjacamar-common-descriptors</artifactId>
         </dependency>
 
         <dependency>

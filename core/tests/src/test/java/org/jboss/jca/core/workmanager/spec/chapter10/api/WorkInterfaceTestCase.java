@@ -21,6 +21,7 @@
  */
 package org.jboss.jca.core.workmanager.spec.chapter10.api;
 
+import com.arjuna.ats.jta.xa.XATxConverter;
 import org.jboss.jca.arquillian.embedded.Inject;
 import org.jboss.jca.core.workmanager.spec.chapter10.common.ShortRunningWork;
 import org.jboss.jca.core.workmanager.spec.chapter10.common.SynchronizedReleaseWork;
@@ -140,7 +141,7 @@ public class WorkInterfaceTestCase
        */
       public int getFormatId()
       {
-         return 0;
+         return XATxConverter.FORMAT_ID;
       }
       /**
        * {@inheritDoc}
