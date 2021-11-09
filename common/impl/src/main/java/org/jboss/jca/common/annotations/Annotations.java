@@ -243,34 +243,42 @@ public class Annotations
    {
       Connector connector = null;
       Collection<Annotation> values = annotationRepository.getAnnotation(javax.resource.spi.Connector.class);
-      if (values == null || values.size() == 0)
+      if (values != null)
       {
-         // JBJCA-240
-         if (xmlResourceAdapterClass == null || xmlResourceAdapterClass.equals(""))
+         if (values.size() == 1)
          {
-            log.noConnector();
-            throw new ValidateException(bundle.noConnectorDefined());
-         }
-      }
-      else if (values.size() == 1)
-      {
-         Annotation annotation = values.iterator().next();
-         String raClass = annotation.getClassName();
-         javax.resource.spi.Connector connectorAnnotation = (javax.resource.spi.Connector)annotation.getAnnotation();
+            Annotation annotation = values.iterator().next();
+            String raClass = annotation.getClassName();
+            javax.resource.spi.Connector connectorAnnotation = (javax.resource.spi.Connector)annotation.getAnnotation();
 
-         log.tracef("Processing: %s for %s", connectorAnnotation, raClass);
+            log.tracef("Processing: %s for %s", connectorAnnotation, raClass);
 
-         connector = attachConnector(raClass, classLoader, connectorAnnotation, connectionDefinitions,
+            connector = attachConnector(raClass, classLoader, connectorAnnotation, connectionDefinitions,
                                         configProperties, plainConfigProperties, inboundResourceadapter, adminObjs);
+         }
+         else if (values.size() == 0)
+         {
+            // JBJCA-240
+            if (xmlResourceAdapterClass == null || xmlResourceAdapterClass.equals(""))
+            {
+               log.noConnector();
+               throw new ValidateException(bundle.noConnectorDefined());
+            }
+         }
+         else
+         {
+            // JBJCA-240
+            if (xmlResourceAdapterClass == null || xmlResourceAdapterClass.equals(""))
+            {
+               log.moreThanOneConnector();
+               throw new ValidateException(bundle.moreThanOneConnectorDefined());
+            }
+         }
       }
       else
       {
-         // JBJCA-240
-         if (xmlResourceAdapterClass == null || xmlResourceAdapterClass.equals(""))
-         {
-            log.moreThanOneConnector();
-            throw new ValidateException(bundle.moreThanOneConnectorDefined());
-         }
+         connector = attachConnector(xmlResourceAdapterClass, classLoader, null, connectionDefinitions, null, null,
+                                     inboundResourceadapter, adminObjs);
       }
 
       return connector;
