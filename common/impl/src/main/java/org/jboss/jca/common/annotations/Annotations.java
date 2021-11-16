@@ -243,6 +243,7 @@ public class Annotations
    {
       Connector connector = null;
       Collection<Annotation> values = annotationRepository.getAnnotation(javax.resource.spi.Connector.class);
+      values = values != null ? values : Collections.emptyList();
       if (values != null)
       {
          if (values.size() == 1)
@@ -256,7 +257,7 @@ public class Annotations
             connector = attachConnector(raClass, classLoader, connectorAnnotation, connectionDefinitions,
                                         configProperties, plainConfigProperties, inboundResourceadapter, adminObjs);
          }
-         else if (values.size() == 0)
+         else if (values.isEmpty())
          {
             // JBJCA-240
             if (xmlResourceAdapterClass == null || xmlResourceAdapterClass.equals(""))
@@ -275,10 +276,10 @@ public class Annotations
             }
          }
       }
-      else
+      if (connector == null) // JBJCA-240 Combination: No @Connector or more than one but valid xmlResourceAdapterClass
       {
-         connector = attachConnector(xmlResourceAdapterClass, classLoader, null, connectionDefinitions, null, null,
-                                     inboundResourceadapter, adminObjs);
+          connector = attachConnector(xmlResourceAdapterClass, classLoader, null, connectionDefinitions, null, null,
+                  inboundResourceadapter, adminObjs);
       }
 
       return connector;
