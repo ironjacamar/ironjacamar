@@ -511,7 +511,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
             {
                Method m = methods[i];
 
-               if (m.getName().startsWith("set") && m.getParameterTypes().length == 1)
+               if (m.getName().startsWith("set") && m.getParameterCount() == 1)
                {
                   Class<?> parameterType = m.getParameterTypes()[0];
                   

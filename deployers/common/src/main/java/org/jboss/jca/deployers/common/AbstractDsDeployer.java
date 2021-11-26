@@ -1354,7 +1354,7 @@ public abstract class AbstractDsDeployer
          Method m = methods[i];
          SecurityActions.setAccessible(m);
 
-         if (m.getName().equals(methodName) && m.getParameterTypes().length == 1)
+         if (m.getName().equals(methodName) && m.getParameterCount() == 1)
          {
             m.invoke(o, value);
             found = true;

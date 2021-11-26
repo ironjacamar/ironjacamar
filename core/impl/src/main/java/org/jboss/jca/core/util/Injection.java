@@ -199,7 +199,7 @@ public class Injection
          for (int i = 0; i < methods.length; i++)
          {
             final Method method = methods[i];
-            if (methodName.equals(method.getName()) && method.getParameterTypes().length == 1)
+            if (methodName.equals(method.getName()) && method.getParameterCount() == 1)
             {
                if (propertyType == null || argumentMatches(propertyType, method.getParameterTypes()[0].getName()))
                {
