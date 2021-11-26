@@ -66,7 +66,7 @@ class EmbeddedJCAEnricher implements TestEnricher
     */
    public Object[] resolve(Method method)
    {
-      return new Object[method.getParameterTypes().length];
+      return new Object[method.getParameterCount()];
    }
 
    @SuppressWarnings("unchecked")
