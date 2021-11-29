@@ -65,6 +65,7 @@ import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -1528,13 +1529,11 @@ public class Main
                }
                else
                {
-                  if (!files[i].delete())
-                     throw new IOException("Could not delete " + files[i]);
+                  Files.delete(files[i].toPath());
                }
             }
          }
-         if (!f.delete())
-            throw new IOException("Could not delete " + f);
+         Files.delete(f.toPath());
       }
    }
 

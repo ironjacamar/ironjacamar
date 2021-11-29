@@ -32,6 +32,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
+import java.nio.file.Files;
 
 /**
  * A Utils.
@@ -141,16 +142,14 @@ public class Utils
       File path = new File(outDir, directory);
       if (!path.exists())
       {
-         if (!path.mkdirs())
-            throw new IOException("outdir can't be created");
+         Files.createDirectory(path.toPath());
       }
-      
+
       File file = new File(path.getAbsolutePath() + File.separatorChar + name);
 
       if (file.exists())
       {
-         if (!file.delete())
-            throw new IOException("there is exist file, please check");
+         Files.delete(file.toPath());
       }
 
       return new FileWriter(file);
@@ -168,16 +167,14 @@ public class Utils
       File path = new File(outDir);
       if (!path.exists())
       {
-         if (!path.mkdirs())
-            throw new IOException("outdir can't be created");
+         Files.createDirectory(path.toPath());
       }
-      
+
       File file = new File(path.getAbsolutePath() + File.separatorChar + name);
 
       if (file.exists())
       {
-         if (!file.delete())
-            throw new IOException("there is exist file, please check");
+         Files.delete(file.toPath());
       }
 
       return new FileWriter(file);
@@ -203,13 +200,11 @@ public class Utils
                } 
                else
                {
-                  if (!files[i].delete())
-                     throw new IOException("Could not delete " + files[i]);
+                  Files.delete(files[i].toPath());
                }
             }
          }
-         if (!f.delete())
-            throw new IOException("Could not delete " + f);
+         Files.delete(f.toPath());
       }
    }
    
@@ -226,8 +221,7 @@ public class Utils
       File path = new File(targetPath);
       if (!path.exists())
       {
-         if (!path.mkdirs())
-            throw new IOException("outdir can't be created");
+         Files.createDirectory(path.toPath());
       }
       File a = new File(sourcePath);
       String[] file = a.list(new FilenameFilter()
