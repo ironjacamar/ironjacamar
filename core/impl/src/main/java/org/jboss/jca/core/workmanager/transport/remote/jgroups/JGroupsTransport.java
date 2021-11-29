@@ -40,7 +40,6 @@ import java.util.Set;
 import javax.resource.spi.work.DistributableWork;
 import javax.resource.spi.work.WorkException;
 
-import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.workmanager.DistributedWorkManagerStatisticsValues;
 import org.jboss.jca.core.spi.workmanager.Address;
@@ -52,7 +51,6 @@ import org.jboss.jca.core.workmanager.transport.remote.ProtocolMessages.Request;
 import org.jboss.jca.core.workmanager.transport.remote.ProtocolMessages.ResponseValues;
 
 import org.jboss.logging.Logger;
-import org.jboss.logging.Messages;
 
 import org.jgroups.Channel;
 import org.jgroups.MembershipListener;
@@ -76,9 +74,6 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
 {
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, JGroupsTransport.class.getName());
-
-   /** The bundle */
-   private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
 
    /** The Channel used by this transport **/
    private Channel channel;
@@ -713,7 +708,6 @@ public class JGroupsTransport extends AbstractRemoteTransport<org.jgroups.Addres
       // as we're sending the next RPC only *after* we've received the response(s).
       RequestOptions opts = new RequestOptions(ResponseMode.GET_ALL, timeout).setFlags(Message.Flag.OOB);
 
-      //RequestOptions opts = new RequestOptions(ResponseMode.GET_ALL, timeout);
       try
       {
          switch (request)

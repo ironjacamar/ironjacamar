@@ -53,8 +53,6 @@ public class LegacyXaDataSourceImp implements XaDataSource
 {
 
    private XADataSourceImpl dsImpl = null;
-   
-   //private String driverClass;
 
    private String xaDataSourceClass;
 
@@ -117,8 +115,6 @@ public class LegacyXaDataSourceImp implements XaDataSource
    public LegacyXaDataSourceImp(String xaDataSourceClass, String driver,
          TransactionIsolation transactionIsolation, Map<String, String> xaDataSourceProperty)
    {
-      //this.connectionUrl = connectionUrl;
-      //this.driverClass = driverClass;
       this.xaDataSourceClass = xaDataSourceClass;
       this.driver = driver;
       if (xaDataSourceProperty != null)

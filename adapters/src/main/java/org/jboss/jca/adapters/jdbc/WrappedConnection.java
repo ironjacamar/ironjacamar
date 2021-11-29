@@ -25,8 +25,6 @@ package org.jboss.jca.adapters.jdbc;
 import org.jboss.jca.adapters.AdaptersLogger;
 import org.jboss.jca.adapters.jdbc.spi.ClassLoaderPlugin;
 
-import java.lang.invoke.MethodHandle;
-import java.lang.reflect.Method;
 import java.sql.Array;
 import java.sql.Blob;
 import java.sql.CallableStatement;
@@ -48,7 +46,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 

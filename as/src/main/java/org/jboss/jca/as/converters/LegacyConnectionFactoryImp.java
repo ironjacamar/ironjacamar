@@ -57,10 +57,6 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
    private TransactionSupportEnum transactionSupport;
    private List<ConnectionDefinition> connectionDefinitions;
    private List<AdminObject> adminObjects;
-   //private Map<String, String> configProperties;
-   //private List<String> beanValidationGroups;
-   //private String bootstrapContext;
-
 
    private TimeOutImpl timeOut = null;
    

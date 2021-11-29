@@ -865,7 +865,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Boolean connectable = Defaults.CONNECTABLE;
       Boolean tracking = Defaults.TRACKING;
       String mcp = Defaults.MCP;
-      Boolean fair = Defaults.FAIR;
       Boolean enlistmentTrace = Defaults.ENLISTMENT_TRACE;
 
       for (org.jboss.jca.common.api.metadata.ds.XaDataSource.Attribute attribute :
@@ -1056,7 +1055,6 @@ public class DsParser extends AbstractParser implements MetadataParser<DataSourc
       Boolean connectable = Defaults.CONNECTABLE;
       Boolean tracking = Defaults.TRACKING;
       String mcp = Defaults.MCP;
-      Boolean fair = Defaults.FAIR;
       Boolean enlistmentTrace = Defaults.ENLISTMENT_TRACE;
 
       for (org.jboss.jca.common.api.metadata.ds.DataSource.Attribute attribute :

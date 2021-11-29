@@ -22,10 +22,7 @@
 
 package org.jboss.jca.deployers.fungal.external;
 
-import org.jboss.jca.deployers.DeployersLogger;
 import org.jboss.jca.deployers.fungal.RAActivator;
-
-import org.jboss.logging.Logger;
 
 import com.github.fungal.api.Kernel;
 import com.github.fungal.api.deployer.MainDeployer;
@@ -37,9 +34,6 @@ import com.github.fungal.api.remote.Communicator;
  */
 public class LocalDeployer
 {
-   /** The logger */
-   private static DeployersLogger log = Logger.getMessageLogger(DeployersLogger.class, LocalDeployer.class.getName());
-
    private Kernel kernel;
    private Communicator communicator;
 

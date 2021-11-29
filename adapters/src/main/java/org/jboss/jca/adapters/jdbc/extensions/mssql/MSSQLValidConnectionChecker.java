@@ -29,7 +29,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.jboss.logging.Logger;
 /**
  * A MSSQLValidConnectionChecker.
  *
@@ -39,7 +38,6 @@ import org.jboss.logging.Logger;
 public class MSSQLValidConnectionChecker implements ValidConnectionChecker, Serializable
 {
    private static final String QUERY = "SELECT 1";
-   private static Logger log = Logger.getLogger(MSSQLValidConnectionChecker.class);
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 3995516551833725723L;

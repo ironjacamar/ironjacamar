@@ -28,7 +28,6 @@ import java.lang.annotation.Annotation;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
-import org.jboss.logging.Logger;
 
 /**
  * Arquillian {@link ResourceProvider} resource provider for Embedded
@@ -37,12 +36,6 @@ import org.jboss.logging.Logger;
  */
 class EmbeddedJCAEmbeddedResourceProvider implements ResourceProvider
 {
-   /** The logger */
-   private static Logger log = Logger.getLogger(EmbeddedJCAEmbeddedResourceProvider.class);
-
-   /** Trace logging */
-   private static boolean trace = log.isTraceEnabled();
-
    /** Embedded */
    @org.jboss.arquillian.core.api.annotation.Inject
    private Instance<Embedded> embeddedInst;

@@ -57,8 +57,6 @@ public class Server
 {
    private static Logger log = Logger.getLogger(Server.class);
 
-   private static MBeanServer mbeanServer = null;
-
    /**
     * Get the platform MBeanServer instance
     * @return The instance

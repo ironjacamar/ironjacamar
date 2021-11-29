@@ -132,7 +132,6 @@ public abstract class AbstractParser
    protected String elementAsString(XMLStreamReader reader) throws XMLStreamException
    {
       String elementtext = rawElementText(reader);
-      //return elementtext;
       return getSubstitutionValue(elementtext);
    }
 

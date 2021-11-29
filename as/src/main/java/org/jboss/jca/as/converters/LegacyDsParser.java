@@ -50,7 +50,6 @@ import org.jboss.logging.Logger;
  */
 public class LegacyDsParser extends AbstractParser
 {
-   private static final String DEFAULT_SECURITY_DOMAIN = "other";
    private static Logger log = Logger.getLogger(LegacyDsParser.class);
    
    /**
@@ -98,7 +97,6 @@ public class LegacyDsParser extends AbstractParser
          }
       }
       log.info("Skipping: " + reader.getLocalName());
-      //System.out.println("Skip parse " + reader.getLocalName());
    }
    
 
@@ -138,7 +136,6 @@ public class LegacyDsParser extends AbstractParser
                   break;
                }
                case CONNECTION_FACTORIES : {
-                  //throw new NotSupportedException();
                   notSupport(reader);
                   return null;
                }
@@ -211,8 +208,7 @@ public class LegacyDsParser extends AbstractParser
       String urlDelimiter = null;
       String urlSelectorStrategyClassName = null;
       String newConnectionSql = null;
-      
-      //String driverClass = null;
+
       String driver = "";
       
       String xaDataSourceClass = null;
@@ -223,15 +219,15 @@ public class LegacyDsParser extends AbstractParser
       String jndiName = null;
       Boolean spy = Defaults.SPY;
       Boolean useCcm = Defaults.USE_CCM;
-      
+
       Boolean jta = Defaults.JTA;
       String userName = null;
       String password = null;
-      
+
       Integer minPoolSize = null;
       Integer maxPoolSize = null;
       Boolean prefill = Defaults.PREFILL;
-      
+
       Long blockingTimeoutMillis = null;
       Long idleTimeoutMinutes = null;
       Boolean setTxQueryTimeout = Defaults.SET_TX_QUERY_TIMEOUT;
@@ -240,15 +236,14 @@ public class LegacyDsParser extends AbstractParser
       Long allocationRetryWaitMillis = null;
       Long useTryLock = null;
       Integer xaResourceTimeout = null;
-      
+
       Long preparedStatementsCacheSize = null;
       Boolean sharePreparedStatements = Defaults.SHARE_PREPARED_STATEMENTS;
       TrackStatementsEnum trackStatements = TrackStatementsEnum.FALSE;
       
       TransactionIsolation transactionIsolation = TransactionIsolation.TRANSACTION_NONE;
       String securityDomain = null;
-      //Extension reauthPlugin = null;
-      
+
       Boolean backgroundValidation = Defaults.BACKGROUND_VALIDATION;
       Long backgroundValidationMillis = null;
       Boolean useFastFail = Defaults.USE_FAST_FAIL;
@@ -257,16 +252,16 @@ public class LegacyDsParser extends AbstractParser
       Boolean validateOnMatch = Defaults.VALIDATE_ON_MATCH;
       Extension staleConnectionChecker = null;
       Extension exceptionSorter = null;
-      
+
       Boolean useStrictMin = Defaults.USE_STRICT_MIN;
       FlushStrategy flushStrategy = Defaults.FLUSH_STRATEGY;
-      
+
       Boolean isSameRmOverride = Defaults.IS_SAME_RM_OVERRIDE;
       Boolean interleaving = Defaults.INTERLEAVING;
       Boolean padXid = Defaults.PAD_XID;
       Boolean wrapXaDataSource = Defaults.WRAP_XA_RESOURCE;
       Boolean noTxSeparatePool = Defaults.NO_TX_SEPARATE_POOL;
-      
+
       String recoveryUsername = null;
       String recoveryPassword = null;
       Boolean noRecovery = Defaults.NO_RECOVERY;
@@ -525,11 +520,11 @@ public class LegacyDsParser extends AbstractParser
       Boolean jta = Defaults.JTA;
       String userName = null;
       String password = null;
-      
+
       Integer minPoolSize = null;
       Integer maxPoolSize = null;
       Boolean prefill = Defaults.PREFILL;
-      
+
       Long blockingTimeoutMillis = null;
       Long idleTimeoutMinutes = null;
       Long queryTimeout = null;
@@ -537,16 +532,15 @@ public class LegacyDsParser extends AbstractParser
       Long allocationRetryWaitMillis = null;
       Long useTryLock = null;
       Integer xaResourceTimeout = 0;
-      
+
       Long preparedStatementsCacheSize = null;
       Boolean sharePreparedStatements = Defaults.SHARE_PREPARED_STATEMENTS;
       TrackStatementsEnum trackStatements = TrackStatementsEnum.FALSE;
       Boolean setTxQueryTimeout = Defaults.SET_TX_QUERY_TIMEOUT;
-      
+
       TransactionIsolation transactionIsolation = TransactionIsolation.TRANSACTION_NONE;
       String securityDomain = null;
-      //Extension reauthPlugin = null;
-      
+
       Boolean backgroundValidation = Defaults.BACKGROUND_VALIDATION;
       Long backgroundValidationMillis = null;
       Boolean useFastFail = Defaults.USE_FAST_FAIL;
@@ -555,10 +549,10 @@ public class LegacyDsParser extends AbstractParser
       Boolean validateOnMatch = Defaults.VALIDATE_ON_MATCH;
       Extension staleConnectionChecker = null;
       Extension exceptionSorter = null;
-      
+
       Boolean useStrictMin = Defaults.USE_STRICT_MIN;
       FlushStrategy flushStrategy = Defaults.FLUSH_STRATEGY;
-      
+
       //elements reading
       while (reader.hasNext())
       {

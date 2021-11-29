@@ -47,11 +47,8 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
@@ -258,9 +255,6 @@ public abstract class BaseWrapperManagedConnectionFactory
    private ReauthPlugin reauthPlugin;
 
    private ClassLoaderPlugin classLoaderPlugin;
-
-   /** The JNDI name for the user transaction */
-   private String userTransactionJndiName;
 
    /** The statistics plugin */
    private JdbcStatisticsPlugin statisticsPlugin = new JdbcStatisticsPlugin();

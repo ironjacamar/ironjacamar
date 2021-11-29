@@ -31,8 +31,6 @@ import javax.resource.spi.endpoint.MessageEndpointFactory;
 import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.xa.XAResource;
 
-import org.jboss.logging.Logger;
-
 /**
  * ResourceAdapter implementation for JDBC
  *
@@ -40,9 +38,6 @@ import org.jboss.logging.Logger;
  */
 public class JDBCResourceAdapter implements ResourceAdapter
 {
-   /** The logger */
-   private static Logger log = Logger.getLogger(JDBCResourceAdapter.class);
-
    /** BootstrapContext */
    private BootstrapContext bc;
 

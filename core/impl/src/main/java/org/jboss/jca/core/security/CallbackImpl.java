@@ -22,7 +22,6 @@
 
 package org.jboss.jca.core.security;
 
-import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.spi.security.Callback;
 
 import java.io.IOException;
@@ -35,8 +34,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.jboss.logging.Logger;
-
 /**
  * An implementation of the callback SPI for explicit security settings
  * 
@@ -46,9 +43,6 @@ public class CallbackImpl extends AbstractCallback implements Callback
 {
    /** Serial version uid */
    private static final long serialVersionUID = 1L;
-
-   /** Log instance */
-   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, CallbackImpl.class.getName());
 
    /** Is mapping required */
    private boolean mappingRequired;
@@ -120,7 +114,7 @@ public class CallbackImpl extends AbstractCallback implements Callback
 
       if (groups != null)
       {
-         this.groups = Collections.synchronizedMap(new HashMap<String, String>(groups));;
+         this.groups = Collections.synchronizedMap(new HashMap<String, String>(groups));
       }
       else
       {

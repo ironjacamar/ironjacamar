@@ -28,7 +28,6 @@ import javax.naming.Context;
 import org.jboss.arquillian.core.api.Instance;
 import org.jboss.arquillian.test.api.ArquillianResource;
 import org.jboss.arquillian.test.spi.enricher.resource.ResourceProvider;
-import org.jboss.logging.Logger;
 
 /**
  * Arquillian {@link ResourceProvider} resource provider for a javax.naming.Context
@@ -37,12 +36,6 @@ import org.jboss.logging.Logger;
  */
 class EmbeddedJCAContextResourceProvider implements ResourceProvider
 {
-   /** The logger */
-   private static Logger log = Logger.getLogger(EmbeddedJCAContextResourceProvider.class);
-
-   /** Trace logging */
-   private static boolean trace = log.isTraceEnabled();
-
    /** Context */
    @org.jboss.arquillian.core.api.annotation.Inject
    private Instance<Context> contextInst;

@@ -454,7 +454,7 @@ public class TraceEvent
    {
       String[] raw = data.split("-");
 
-      String header = raw[0];
+      // String header = raw[0]; ignored
       String p = raw[1];
       String m = raw[2];
       long tid = Long.parseLong(raw[3]);

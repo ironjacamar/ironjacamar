@@ -22,7 +22,6 @@
 
 package org.jboss.jca.core.workmanager;
 
-import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.workmanager.DistributedWorkManager;
 import org.jboss.jca.core.api.workmanager.DistributedWorkManagerStatistics;
@@ -42,7 +41,6 @@ import javax.resource.spi.work.WorkException;
 import javax.resource.spi.work.WorkManager;
 
 import org.jboss.logging.Logger;
-import org.jboss.logging.Messages;
 
 /**
  * The distributed work manager implementation.
@@ -54,9 +52,6 @@ public class   DistributedWorkManagerImpl extends WorkManagerImpl implements Dis
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class,
                                                            DistributedWorkManagerImpl.class.getName());
-
-   /** The bundle */
-   private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
 
    /** Policy */
    private Policy policy;

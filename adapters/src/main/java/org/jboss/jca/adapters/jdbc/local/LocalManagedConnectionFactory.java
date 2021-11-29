@@ -531,19 +531,6 @@ public class LocalManagedConnectionFactory extends BaseWrapperManagedConnectionF
    }
 
    /**
-    * Is the properties equal
-    * @param other The other properties
-    * @return True if equal, otherwise false
-    */
-   private boolean isEqual(Properties other)
-   {
-      synchronized (connectionProps)
-      {
-         return connectionProps.equals(other);
-      }
-   }
-
-   /**
     * {@inheritDoc}
     */
    @Override

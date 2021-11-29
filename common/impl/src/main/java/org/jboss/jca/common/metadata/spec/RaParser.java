@@ -194,7 +194,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
    private Connector parseConnector10(XMLStreamReader reader) throws XMLStreamException, ParserException
    {
       LicenseType license = null;
-      String id = reader.getAttributeValue(null, XML.IdAttribute.ID.getLocalName());;
+      String id = reader.getAttributeValue(null, XML.IdAttribute.ID.getLocalName());
       ArrayList<Icon> icon = new ArrayList<Icon>();
       ArrayList<LocalizedXsdString> description = new ArrayList<LocalizedXsdString>();
       XsdString eisType = NULL_XSDSTRING;
@@ -293,7 +293,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
    private Connector parseConnector15(XMLStreamReader reader) throws XMLStreamException, ParserException
    {
       LicenseType license = null;
-      String id = reader.getAttributeValue(null, XML.IdAttribute.ID.getLocalName());;
+      String id = reader.getAttributeValue(null, XML.IdAttribute.ID.getLocalName());
       XsdString eisType = NULL_XSDSTRING;
       ResourceAdapter resourceadapter = null;
       XsdString vendorName = NULL_XSDSTRING;
@@ -371,9 +371,9 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
    private Connector parseConnector16(XMLStreamReader reader) throws XMLStreamException, ParserException
    {
       boolean metadataComplete = Boolean.valueOf(reader.getAttributeValue(null,
-            XML.Connector16Attribute.METADATA_COMPLETE.getLocalName()));;
+            XML.Connector16Attribute.METADATA_COMPLETE.getLocalName()));
       LicenseType license = null;
-      String id = reader.getAttributeValue(null, XML.IdAttribute.ID.getLocalName());;
+      String id = reader.getAttributeValue(null, XML.IdAttribute.ID.getLocalName());
       ArrayList<Icon> icon = new ArrayList<Icon>();
       ArrayList<LocalizedXsdString> description = new ArrayList<LocalizedXsdString>();
       ArrayList<LocalizedXsdString> displayName = new ArrayList<LocalizedXsdString>();
@@ -466,9 +466,9 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
    private Connector parseConnector17(XMLStreamReader reader) throws XMLStreamException, ParserException
    {
       boolean metadataComplete = Boolean.valueOf(reader.getAttributeValue(null,
-         XML.Connector17Attribute.METADATA_COMPLETE.getLocalName()));;
+         XML.Connector17Attribute.METADATA_COMPLETE.getLocalName()));
       LicenseType license = null;
-      String id = reader.getAttributeValue(null, XML.IdAttribute.ID.getLocalName());;
+      String id = reader.getAttributeValue(null, XML.IdAttribute.ID.getLocalName());
       ArrayList<Icon> icon = new ArrayList<Icon>();
       ArrayList<LocalizedXsdString> description = new ArrayList<LocalizedXsdString>();
       ArrayList<LocalizedXsdString> displayName = new ArrayList<LocalizedXsdString>();
@@ -561,9 +561,9 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
    private Connector parseConnector20(XMLStreamReader reader) throws XMLStreamException, ParserException
    {
       boolean metadataComplete = Boolean.valueOf(reader.getAttributeValue(null,
-          XML.Connector17Attribute.METADATA_COMPLETE.getLocalName()));;
+          XML.Connector17Attribute.METADATA_COMPLETE.getLocalName()));
       LicenseType license = null;
-      String id = reader.getAttributeValue(null, XML.IdAttribute.ID.getLocalName());;
+      String id = reader.getAttributeValue(null, XML.IdAttribute.ID.getLocalName());
       ArrayList<Icon> icon = new ArrayList<Icon>();
       ArrayList<LocalizedXsdString> description = new ArrayList<LocalizedXsdString>();
       ArrayList<LocalizedXsdString> displayName = new ArrayList<LocalizedXsdString>();
@@ -1554,7 +1554,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
 
    private LicenseType parseLicense(XMLStreamReader reader) throws XMLStreamException, ParserException
    {
-      String id = reader.getAttributeValue(null, XML.IdAttribute.ID.getLocalName());;
+      String id = reader.getAttributeValue(null, XML.IdAttribute.ID.getLocalName());
       boolean licenseRequired = false;
       String lrid = null;
       ArrayList<LocalizedXsdString> description = new ArrayList<LocalizedXsdString>();

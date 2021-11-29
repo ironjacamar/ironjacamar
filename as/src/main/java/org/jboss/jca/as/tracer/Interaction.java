@@ -34,9 +34,6 @@ public class Interaction
    /** Thread */
    private long thread;
    
-   /** Connection listener */
-   private String connectionListener;
-   
    /** Start time */
    private long startTime;
 

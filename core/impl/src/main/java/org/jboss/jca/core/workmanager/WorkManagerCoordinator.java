@@ -286,7 +286,6 @@ public class WorkManagerCoordinator
       }
       catch (Throwable t)
       {
-         //throw new IllegalStateException("The WorkManager couldn't be created: " + name);
       }
 
       return null;
@@ -346,7 +345,6 @@ public class WorkManagerCoordinator
       }
       catch (Throwable t)
       {
-         //throw new IllegalStateException("The WorkManager couldn't be created: " + name);
       }
 
       return null;

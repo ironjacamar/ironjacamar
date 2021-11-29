@@ -22,10 +22,7 @@
 
 package org.jboss.jca.core.workmanager;
 
-import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.spi.workmanager.Address;
-
-import org.jboss.logging.Logger;
 
 /**
  * A WorkManager event
@@ -33,10 +30,6 @@ import org.jboss.logging.Logger;
  */
 public class WorkManagerEvent
 {
-   /** The logger */
-   private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class,
-                                                           WorkManagerEvent.class.getName());
-
    /** JOIN */
    public static final int TYPE_JOIN = 0;
 

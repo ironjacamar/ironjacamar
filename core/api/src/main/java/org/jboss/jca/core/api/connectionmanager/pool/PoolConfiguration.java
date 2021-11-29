@@ -99,8 +99,6 @@ public class PoolConfiguration {
    /** Fairness of semaphore permits, default true */
    private AtomicBoolean fair;
 
-   private boolean validationLoggingEnabled = true;
-
    /**
     * Constructor
     */
