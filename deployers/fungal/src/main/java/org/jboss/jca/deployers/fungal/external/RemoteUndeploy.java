@@ -27,6 +27,7 @@ import org.jboss.jca.deployers.fungal.RAActivator;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Files;
 
 import com.github.fungal.api.deployer.MainDeployer;
 import com.github.fungal.api.remote.Command;
@@ -94,9 +95,8 @@ public class RemoteUndeploy implements Command
          if (deployment.exists())
          {
             mainDeployer.undeploy(deployment.toURI().toURL());
-            
-            if (!deployment.delete())
-               throw new IOException("Deployment couldn't be deleted");
+
+            Files.delete(deployment.toPath());
          }
       }
       catch (Throwable t)

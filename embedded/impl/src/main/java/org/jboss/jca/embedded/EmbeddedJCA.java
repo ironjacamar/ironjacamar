@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -457,13 +458,11 @@ class EmbeddedJCA implements Embedded
                }
                else
                {
-                  if (!files[i].delete())
-                     throw new IOException("Could not delete " + files[i]);
+                  Files.delete(files[i].toPath());
                }
             }
          }
-         if (!f.delete())
-            throw new IOException("Could not delete " + f);
+         Files.delete(f.toPath());
       }
    }
 }

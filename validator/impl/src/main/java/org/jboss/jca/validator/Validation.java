@@ -47,6 +47,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedList;
@@ -578,13 +579,11 @@ public class Validation
                }
                else
                {
-                  if (!files[i].delete())
-                     throw new IOException("Could not delete " + files[i]);
+                  Files.delete(files[i].toPath());
                }
             }
          }
-         if (!f.delete())
-            throw new IOException("Could not delete " + f);
+         Files.delete(f.toPath());
       }
    }
 

@@ -30,6 +30,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 
 /**
  * The AS upgrader application - updates the IronJacamar distribution inside
@@ -340,13 +341,11 @@ public class Main
                } 
                else
                {
-                  if (!files[i].delete())
-                     throw new IOException("Could not delete " + files[i]);
+                  Files.delete(files[i].toPath());
                }
             }
          }
-         if (!f.delete())
-            throw new IOException("Could not delete " + f);
+         Files.delete(f.toPath());
       }
    }
 
