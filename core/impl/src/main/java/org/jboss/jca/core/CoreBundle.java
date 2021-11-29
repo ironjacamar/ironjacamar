@@ -25,8 +25,6 @@ package org.jboss.jca.core;
 import org.jboss.logging.annotations.Message;
 import org.jboss.logging.annotations.MessageBundle;
 
-import javax.resource.ResourceException;
-
 /**
  * The core bundle.
  *

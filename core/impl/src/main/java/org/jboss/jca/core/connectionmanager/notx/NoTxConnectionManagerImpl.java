@@ -22,7 +22,6 @@
 
 package org.jboss.jca.core.connectionmanager.notx;
 
-import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.connectionmanager.AbstractConnectionManager;
 import org.jboss.jca.core.connectionmanager.ConnectionRecord;
@@ -39,7 +38,6 @@ import javax.resource.spi.ManagedConnection;
 import javax.transaction.SystemException;
 
 import org.jboss.logging.Logger;
-import org.jboss.logging.Messages;
 
 /**
  * Non transactional connection manager implementation.
@@ -52,9 +50,6 @@ public class NoTxConnectionManagerImpl extends AbstractConnectionManager impleme
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, NoTxConnectionManager.class.getName());
 
-   /** The bundle */
-   private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
- 
    /** Serial version uid */
    private static final long serialVersionUID = 1L;
 

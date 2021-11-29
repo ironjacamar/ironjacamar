@@ -23,7 +23,6 @@
 package org.jboss.jca.adapters.jdbc.extensions.oracle;
 
 import org.jboss.jca.adapters.jdbc.spi.ValidConnectionChecker;
-import org.jboss.logging.Logger;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -40,8 +39,6 @@ import java.sql.SQLException;
 public class OracleLegacyValidConnectionChecker implements ValidConnectionChecker, Serializable
 {
    private static final long serialVersionUID = 1937054230333286884L;
-
-   private static Logger log = Logger.getLogger(OracleLegacyValidConnectionChecker.class);
 
    /**
     * Constructor

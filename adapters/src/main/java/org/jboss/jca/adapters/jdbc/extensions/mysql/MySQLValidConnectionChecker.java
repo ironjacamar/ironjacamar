@@ -31,8 +31,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.jboss.logging.Logger;
-
 /**
  * Implements check valid connection sql Requires MySQL driver 3.1.8 or later.
  * This should work on just about any version of the database itself but will
@@ -46,8 +44,6 @@ import org.jboss.logging.Logger;
  */
 public class MySQLValidConnectionChecker implements ValidConnectionChecker, Serializable
 {
-   private static Logger log = Logger.getLogger(MySQLValidConnectionChecker.class);
-
    private static final long serialVersionUID = 1323747853035005642L;
 
    /**

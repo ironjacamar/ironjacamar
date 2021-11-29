@@ -68,7 +68,7 @@ public @interface AuthenticationMechanism
        * <code>javax.resource.spi.security.GenericCredential</code>
        */
       GenericCredential 
-   };
+   }
 
    /**
     * The authentication-mechanismType specifies an authentication

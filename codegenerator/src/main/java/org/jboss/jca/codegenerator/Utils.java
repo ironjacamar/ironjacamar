@@ -279,7 +279,6 @@ public class Utils
             }
             catch (IOException e)
             {
-               ;
             }
          }
          if (to != null)
@@ -290,7 +289,6 @@ public class Utils
             }
             catch (IOException e)
             {
-               ;
             }
          }
       }

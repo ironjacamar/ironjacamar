@@ -38,7 +38,6 @@ import org.jboss.arquillian.container.spi.client.protocol.metadata.ProtocolMetaD
 import org.jboss.arquillian.core.api.InstanceProducer;
 import org.jboss.arquillian.core.api.annotation.ApplicationScoped;
 import org.jboss.arquillian.core.api.annotation.Inject;
-import org.jboss.logging.Logger;
 import org.jboss.shrinkwrap.api.Archive;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
@@ -50,12 +49,6 @@ import org.jboss.shrinkwrap.descriptor.api.Descriptor;
  */
 class EmbeddedJCAContainer implements DeployableContainer<EmbeddedJCAContainerConfiguration>
 {
-   /** The logger */
-   private static Logger log = Logger.getLogger(EmbeddedJCAContainer.class);
-
-   /** Trace logging */
-   private static boolean trace = log.isTraceEnabled();
-
    /** EmbeddedJCA */
    private Embedded embedded;
 

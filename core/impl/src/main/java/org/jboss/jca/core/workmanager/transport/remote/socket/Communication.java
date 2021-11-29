@@ -80,7 +80,6 @@ public class Communication implements Runnable
    public void run()
    {
       WorkObjectInputStream wois = null;
-      ObjectOutputStream oos = null;
       Serializable returnValue = null;
       Response response = null;
       try

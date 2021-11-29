@@ -22,7 +22,6 @@
 
 package org.jboss.jca.core.workmanager.selector;
 
-import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.spi.workmanager.Address;
 
@@ -31,7 +30,6 @@ import java.util.Map;
 import javax.resource.spi.work.DistributableWork;
 
 import org.jboss.logging.Logger;
-import org.jboss.logging.Messages;
 
 /**
  * The max free threads selector
@@ -42,9 +40,6 @@ public class MaxFreeThreads extends AbstractSelector
 {
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, MaxFreeThreads.class.getName());
-
-   /** The bundle */
-   private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
 
     /**
     * Constructor

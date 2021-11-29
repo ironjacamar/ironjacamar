@@ -63,7 +63,6 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
    private PrintWriter logger;
    private Reference reference;
 
-   private boolean initialized = false;
    private ConnectionRequestInfo defaultCRI;
 
    private final ClassLoaderPlugin classLoaderPlugin;

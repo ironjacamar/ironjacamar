@@ -26,7 +26,6 @@ import org.jboss.arquillian.container.spi.ContainerRegistry;
 import org.jboss.arquillian.container.spi.client.container.DeployableContainer;
 import org.jboss.arquillian.core.api.annotation.Observes;
 import org.jboss.arquillian.test.spi.event.suite.BeforeClass;
-import org.jboss.logging.Logger;
 
 /**
  * Observer for the @BeforeClass annotation
@@ -35,12 +34,6 @@ import org.jboss.logging.Logger;
  */
 class EmbeddedJCAObserver
 {
-   /** The logger */
-   private static Logger log = Logger.getLogger(EmbeddedJCAObserver.class);
-
-   /** Trace logging */
-   private static boolean trace = log.isTraceEnabled();
-
    /**
     * Constructor
     */

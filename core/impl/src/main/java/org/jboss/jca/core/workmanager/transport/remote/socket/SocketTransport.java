@@ -22,7 +22,6 @@
 
 package org.jboss.jca.core.workmanager.transport.remote.socket;
 
-import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.spi.workmanager.Address;
 import org.jboss.jca.core.workmanager.transport.remote.AbstractRemoteTransport;
@@ -42,7 +41,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.resource.spi.work.WorkException;
 
 import org.jboss.logging.Logger;
-import org.jboss.logging.Messages;
 
 /**
  * The socket transport
@@ -53,9 +51,6 @@ public class SocketTransport extends AbstractRemoteTransport<String> implements 
 {
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, SocketTransport.class.getName());
-
-   /** The bundle */
-   private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
 
    /** The bind address */
    private String host;

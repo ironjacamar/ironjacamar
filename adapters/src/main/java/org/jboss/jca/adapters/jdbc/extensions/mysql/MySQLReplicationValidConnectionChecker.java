@@ -31,8 +31,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.jboss.logging.Logger;
-
 /**
  * <p>This class is an implementation of ValidConnectionChecker for MySQL
  * ReplicatedDriver. It supports both isValid and ping methods on the
@@ -48,8 +46,6 @@ import org.jboss.logging.Logger;
  */
 public class MySQLReplicationValidConnectionChecker implements ValidConnectionChecker, Serializable
 {
-   private static Logger log = Logger.getLogger(MySQLReplicationValidConnectionChecker.class);
-
    /**
     * Serial version ID
     */

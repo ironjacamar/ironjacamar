@@ -877,7 +877,7 @@ public class Merger
          private Prototype(String name, String type, String description)
          {
             this.localName = new XsdString(name, null);
-            this.localType = new XsdString(type, null);;
+            this.localType = new XsdString(type, null);
             this.description.add(new LocalizedXsdString(description, null));
          }
 

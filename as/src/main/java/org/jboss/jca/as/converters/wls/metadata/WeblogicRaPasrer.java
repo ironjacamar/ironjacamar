@@ -166,10 +166,6 @@ public class WeblogicRaPasrer extends AbstractParser implements MetadataParser<W
    {
       String nativeLibdir = null;
       String jndiName = null;
-      //Boolean eaoa = false;
-      //Boolean egac = false;
-      //WorkManager wm = null;
-      //ConnectorWorkManager cwm = null;
       ResourceAdapterSecurity ras = null;
       ConfigProperties props = null;
       AdminObjects aos = null;
@@ -742,8 +738,6 @@ public class WeblogicRaPasrer extends AbstractParser implements MetadataParser<W
 
    private PoolParams parsePoolParams(XMLStreamReader reader) throws XMLStreamException, ParserException
    {
-      //String noMapped = null;
-
       Integer initialCapacity = null;
       Integer maxCapacity = null;
       Integer shrinkFrequencySeconds = null;
@@ -813,7 +807,6 @@ public class WeblogicRaPasrer extends AbstractParser implements MetadataParser<W
                   case IGNORE_IN_USE_CONNECTION_ENABLED : 
                   case MATCH_CONNECTIONS_SUPPORTED : 
                   case USE_FIRST_AVAILABLE : {
-                     //noMapped = elementAsString(reader);
                      break;
                   }
                   default :
@@ -829,10 +822,6 @@ public class WeblogicRaPasrer extends AbstractParser implements MetadataParser<W
    private ResourceAdapterSecurity parseResourceAdapaterSecurity(XMLStreamReader reader)
       throws XMLStreamException, ParserException
    {
-      //AnonPrincipal dpn = null;
-      //AnonPrincipal mapn = null;
-      //AnonPrincipalCaller rapn = null;
-      //AnonPrincipalCaller rwapn = null;
       SecurityWorkContext swc = null;
             
       while (reader.hasNext())

@@ -168,7 +168,6 @@ public class Main
       JAXBContext context = JAXBContext.newInstance("org.jboss.jca.codegenerator");
       Unmarshaller unmarshaller = context.createUnmarshaller();
       Definition def = (Definition)unmarshaller.unmarshal(new File(defxml));
-      //System.out.println(def.getVersion());
 
       return def;
    }

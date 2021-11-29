@@ -47,7 +47,6 @@ import org.jboss.logging.Logger;
  */
 public class LegacyCfParser extends AbstractParser
 {
-   private static final String DEFAULT_SECURITY_DOMAIN = "other";
    private static Logger log = Logger.getLogger(LegacyCfParser.class);
    
    /**
@@ -255,7 +254,6 @@ public class LegacyCfParser extends AbstractParser
 
       Integer allocationRetry = null;
       Long allocationRetryWaitMillis = null;
-      //Integer xaResourceTimeout = null;
 
       Boolean backgroundValidation = Defaults.BACKGROUND_VALIDATION;
       Long backgroundValidationMillis = null;

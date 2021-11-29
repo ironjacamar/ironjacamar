@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.resource.spi.ActivationSpec;;
+import javax.resource.spi.ActivationSpec;
 
 /**
  * An ActivationSpec class must implement the ActivationSpec interface 

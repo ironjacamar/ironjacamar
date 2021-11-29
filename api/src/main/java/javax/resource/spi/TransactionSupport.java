@@ -67,7 +67,7 @@ public interface TransactionSupport extends java.io.Serializable
        * @since 1.6
        */
       XATransaction 
-   };
+   }
 
    /**
     * Get the level of transaction support, supported by the 

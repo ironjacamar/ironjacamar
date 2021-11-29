@@ -22,7 +22,6 @@
 
 package org.jboss.jca.core.workmanager.policy;
 
-import org.jboss.jca.core.CoreBundle;
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.workmanager.DistributedWorkManager;
 import org.jboss.jca.core.workmanager.WorkManagerUtil;
@@ -30,7 +29,6 @@ import org.jboss.jca.core.workmanager.WorkManagerUtil;
 import javax.resource.spi.work.DistributableWork;
 
 import org.jboss.logging.Logger;
-import org.jboss.logging.Messages;
 
 /**
  * The always distribute policy
@@ -41,9 +39,6 @@ public class Always extends AbstractPolicy
 {
    /** The logger */
    private static CoreLogger log = Logger.getMessageLogger(CoreLogger.class, Always.class.getName());
-
-   /** The bundle */
-   private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
 
    /**
     * Constructor

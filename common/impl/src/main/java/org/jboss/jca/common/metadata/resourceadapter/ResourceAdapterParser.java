@@ -63,7 +63,6 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
    {
 
       XMLStreamReader reader = null;
-      Activations adapters = null;
 
       XMLInputFactory inputFactory = XMLInputFactory.newInstance();
       reader = inputFactory.createXMLStreamReader(xmlInputStream);

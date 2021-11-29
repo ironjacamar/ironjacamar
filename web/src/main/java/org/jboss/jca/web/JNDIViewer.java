@@ -42,7 +42,6 @@ import com.github.fungal.api.util.JMX;
 public class JNDIViewer
 {
    private static Logger log = Logger.getLogger(JNDIViewer.class);
-   private static boolean trace = log.isTraceEnabled();
    private static final String NEW_LINE = SecurityActions.getSystemProperty("line.separator");
 
    /** The MBean server */

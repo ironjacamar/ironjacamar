@@ -29,7 +29,6 @@ import org.jboss.jca.common.api.metadata.spec.AuthenticationMechanism;
 import org.jboss.jca.common.api.metadata.spec.ConfigProperty;
 import org.jboss.jca.common.api.metadata.spec.ConnectionDefinition;
 import org.jboss.jca.common.api.metadata.spec.Connector;
-import org.jboss.jca.common.api.metadata.spec.Connector.Version;
 import org.jboss.jca.common.api.metadata.spec.Icon;
 import org.jboss.jca.common.api.metadata.spec.LicenseType;
 import org.jboss.jca.common.api.metadata.spec.LocalizedXsdString;
@@ -304,7 +303,7 @@ public class ConnectorImpl implements Connector
          LicenseType newLicense = this.license == null ? input.license : this.license.merge(input.license);
          List<LocalizedXsdString> newDescriptions = MergeUtil.mergeList(this.description, input.description);
          List<LocalizedXsdString> newDisplayNames = MergeUtil.mergeList(this.displayName, input.displayName);
-         XsdString newVendorName = XsdString.isNull(this.vendorName) ? input.vendorName : this.vendorName;;
+         XsdString newVendorName = XsdString.isNull(this.vendorName) ? input.vendorName : this.vendorName;
          ResourceAdapter newResourceadapter = this.resourceadapter == null
                ? (ResourceAdapter) input.resourceadapter
                : ((ResourceAdapter) this.resourceadapter).merge((ResourceAdapter) input.resourceadapter);

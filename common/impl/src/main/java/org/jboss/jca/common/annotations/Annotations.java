@@ -98,7 +98,7 @@ public class Annotations
    private enum Metadatas
    {
       RA, ACTIVATION_SPEC, MANAGED_CONN_FACTORY, ADMIN_OBJECT, PLAIN;
-   };
+   }
 
    /**
     * Constructor

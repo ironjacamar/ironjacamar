@@ -30,8 +30,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.jboss.logging.Logger;
-
 /**
  * A SybaseValidConnectionChecker.
  *
@@ -42,9 +40,6 @@ public class SybaseValidConnectionChecker implements ValidConnectionChecker, Ser
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = 4179707462244257791L;
-
-   /** The logger */
-   private static Logger log = Logger.getLogger(SybaseValidConnectionChecker.class);
 
    /** The VALID_QUERY */
    private static final String VALID_QUERY = "SELECT getdate()";

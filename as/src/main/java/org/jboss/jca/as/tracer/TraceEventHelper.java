@@ -541,9 +541,6 @@ public class TraceEventHelper
       if (explicit != null)
          return explicit;
 
-      //if (ignoreIncomplete)
-      //   return TraceEventStatus.GREEN;
-      
       if (gotCl)
          return TraceEventStatus.RED;
 
