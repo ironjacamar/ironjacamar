@@ -47,33 +47,29 @@
 
         <dependency>
             <groupId>${ironjacamar.groupId}</groupId>
-            <artifactId>ironjacamar-api-jakarta</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>${ironjacamar.groupId}</groupId>
             <artifactId>ironjacamar-common-api-jakarta</artifactId>
         </dependency>
         <dependency>
             <groupId>${ironjacamar.groupId}</groupId>
             <artifactId>ironjacamar-common-spi-jakarta</artifactId>
         </dependency>
-
         <dependency>
             <groupId>${ironjacamar.groupId}</groupId>
             <artifactId>ironjacamar-core-api-jakarta</artifactId>
         </dependency>
 
-
         <dependency>
             <groupId>jakarta.security.auth.message</groupId>
             <artifactId>jakarta.security.auth.message-api</artifactId>
         </dependency>
-
         <dependency>
             <groupId>jakarta.annotation</groupId>
             <artifactId>jakarta.annotation-api</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>jakarta.resource</groupId>
+            <artifactId>jakarta.resource-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>jakarta.transaction</groupId>
             <artifactId>jakarta.transaction-api</artifactId>
@@ -82,13 +78,10 @@
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
         </dependency>
-
-
         <dependency>
             <groupId>org.jboss</groupId>
             <artifactId>jboss-transaction-spi-jakarta</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.wildfly.transaction</groupId>
             <artifactId>wildfly-transaction-client-jakarta</artifactId>

@@ -42,7 +42,6 @@
 
     <modules>
         <module>adapters</module>
-        <module>api</module>
         <module>as</module>
         <module>codegenerator</module>
         <module>common</module>
