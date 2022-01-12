@@ -1343,7 +1343,7 @@ public class Main
 
          for (Method m : methods)
          {
-            if (m.getName().startsWith("set") && m.getParameterTypes().length == 1
+            if (m.getName().startsWith("set") && m.getParameterCount() == 1
                   && isValidType(m.getParameterTypes()[0]))
             {
                String name = m.getName().substring(3);
