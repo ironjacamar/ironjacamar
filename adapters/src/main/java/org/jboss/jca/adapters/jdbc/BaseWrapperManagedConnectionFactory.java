@@ -1172,9 +1172,12 @@ public abstract class BaseWrapperManagedConnectionFactory
                c = mc.getRealConnection();
                SQLException e = isValidConnection(c);
 
-               if (e != null && poolValidationLoggingEnabled)
+               if (e != null)
                {
-                  log.invalidConnection(c.toString(), e);
+                  if(poolValidationLoggingEnabled)
+                  {
+                     log.invalidConnection(c.toString(), e);
+                  }
                   invalid.add(mc);
                }
             }
