@@ -99,12 +99,6 @@
             <groupId>org.jboss.shrinkwrap</groupId>
             <artifactId>shrinkwrap-api</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>com.github.fungal</groupId>
-            <artifactId>fungal</artifactId>
-        </dependency>
-
     </dependencies>
 
 </project>
