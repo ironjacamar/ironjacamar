@@ -67,10 +67,6 @@
             <artifactId>jboss-connector-api_1.7_spec</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.github.fungal</groupId>
-            <artifactId>fungal</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.jboss.spec.javax.transaction</groupId>
             <artifactId>jboss-transaction-api_1.3_spec</artifactId>
         </dependency>
