@@ -350,7 +350,7 @@ public abstract class CommonIronJacamarParser extends AbstractParser
     * @throws ParserException ParserException
     * @throws ValidateException ValidateException
     */
-   protected ConnectionDefinition parseConnectionDefinitions(XMLStreamReader reader, Boolean isXA)
+   protected ConnectionDefinition parseConnectionDefinitions(XMLStreamReader reader, Boolean isXA, boolean elytron)
       throws XMLStreamException, ParserException, ValidateException
    {
       Map<String, String> configProperties = new HashMap<String, String>();
@@ -470,7 +470,11 @@ public abstract class CommonIronJacamarParser extends AbstractParser
                      break;
                   }
                   case SECURITY : {
-                     security = parseSecuritySettings(reader);
+                     if(elytron) {
+                        security = parseElytronSecuritySettings(reader);
+                     } else {
+                        security = parseSecuritySettings(reader);
+                     }
                      break;
                   }
                   case TIMEOUT : {

@@ -131,4 +131,100 @@ public interface Activations extends JCAMetadata
       }
 
    }
+
+   public enum Version
+   {
+      /**
+       * Unknown
+       */
+      UNKNOWN(null),
+      /**
+       * 1.0
+       */
+      V_10("1.0"),
+      /**
+       * 1.1
+       */
+      V_11("1.1"),
+      /**
+       * 1.2
+       */
+      V_12("1.2"),
+      /**
+       * 1.3
+       */
+      V_13("1.3"),
+      /**
+       * 1.4
+       */
+      V_14("1.4");
+
+      private String name;
+
+      /**
+       * Constructor
+       * @param name a name
+       */
+      Version(String name)
+      {
+         this.name = name;
+      }
+
+      /**
+       * Get the name
+       * @return The value
+       */
+      public String getLocalName()
+      {
+         return name;
+      }
+
+      /**
+       * {@inheritDoc}
+       */
+      public String toString()
+      {
+         return name;
+      }
+
+      private static final Map<String, Activations.Version> MAP;
+
+      static
+      {
+         final Map<String, Activations.Version> map = new HashMap<String, Activations.Version>();
+         for (Activations.Version element : values())
+         {
+            final String name = element.getLocalName();
+            if (name != null)
+               map.put(name, element);
+         }
+         MAP = map;
+      }
+
+      /**
+       * Set the value
+       * @param v The name
+       * @return The value
+       */
+      Activations.Version value(String v)
+      {
+         name = v;
+         return this;
+      }
+
+      /**
+       *
+       * Static method to get enum instance given localName XsdString
+       *
+       * @param localName a XsdString used as localname (typically tag name as defined in xsd)
+       * @return the enum instance
+       */
+      public static Activations.Version forName(String localName)
+      {
+         final Activations.Version element = MAP.get(localName);
+         return element == null ? UNKNOWN.value(localName) : element;
+      }
+   }
+
+   public Version CURRENT_VERSION = Version.V_14;
 }

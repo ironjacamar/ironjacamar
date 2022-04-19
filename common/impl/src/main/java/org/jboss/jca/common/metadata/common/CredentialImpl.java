@@ -47,6 +47,8 @@ public class CredentialImpl implements Credential
 
    private final String securityDomain;
 
+   private final boolean isElytronEnabled;
+
    /**
     * Create a new SecurityImpl.
     *
@@ -57,10 +59,25 @@ public class CredentialImpl implements Credential
     */
    public CredentialImpl(String userName, String password, String securityDomain) throws ValidateException
    {
+      this(userName, password, securityDomain, false);
+   }
+
+   /**
+    * Create a new SecurityImpl.
+    *
+    * @param userName userName
+    * @param password password
+    * @param securityDomain securityDomain
+    * @param isElytronEnabled isElytronEnabled
+    * @throws ValidateException ValidateException
+    */
+   public CredentialImpl(String userName, String password, String securityDomain, boolean isElytronEnabled) throws ValidateException
+   {
       super();
       this.userName = userName;
       this.password = password;
       this.securityDomain = securityDomain;
+      this.isElytronEnabled = isElytronEnabled;
       this.validate();
    }
 
@@ -146,6 +163,11 @@ public class CredentialImpl implements Credential
    public final String resolveSecurityDomain()
    {
       return getSecurityDomain();
+   }
+
+   @Override
+   public boolean isElytronEnabled() {
+      return isElytronEnabled;
    }
 
    @Override

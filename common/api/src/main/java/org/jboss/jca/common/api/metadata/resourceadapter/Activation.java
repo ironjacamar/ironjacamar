@@ -252,7 +252,9 @@ public interface Activation extends JCAMetadata
       /** id attribute
        *
        */
-      ID("id");
+      ID("id"),
+
+      VERSION("version");
 
       private String name;
 

@@ -23,6 +23,7 @@ package org.jboss.jca.common.metadata.resourceadapter;
 
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.resourceadapter.Activation;
+import org.jboss.jca.common.api.metadata.resourceadapter.Activations;
 import org.jboss.jca.common.api.metadata.resourceadapter.AdminObject;
 import org.jboss.jca.common.api.metadata.resourceadapter.ConnectionDefinition;
 import org.jboss.jca.common.api.metadata.resourceadapter.WorkManager;
@@ -43,6 +44,8 @@ public class ActivationImpl implements Activation
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = 1L;
+
+   private Activations.Version version;
 
    /** transactionSupport **/
    protected TransactionSupportEnum transactionSupport;
@@ -82,6 +85,7 @@ public class ActivationImpl implements Activation
    /**
     * Constructor
     *
+    * @param version version
     * @param id The id
     * @param archive archive
     * @param transactionSupport transactionSupport
@@ -92,11 +96,12 @@ public class ActivationImpl implements Activation
     * @param bootstrapContext bootstrapContext
     * @param workmanager workmanager
     */
-   public ActivationImpl(String id, String archive, TransactionSupportEnum transactionSupport,
+   public ActivationImpl(Activations.Version version, String id, String archive, TransactionSupportEnum transactionSupport,
                          List<ConnectionDefinition> connectionDefinitions, List<AdminObject> adminObjects,
                          Map<String, String> configProperties, List<String> beanValidationGroups,
                          String bootstrapContext, WorkManager workmanager)
    {
+      this.version = version;
       this.id = id;
       this.archive = archive;
       this.transactionSupport = transactionSupport;
@@ -344,6 +349,11 @@ public class ActivationImpl implements Activation
       else
       {
          sb.append("<ironjacamar");
+      }
+
+      if(version != null && version != Activations.Version.UNKNOWN)
+      {
+         sb.append(" ").append("version=\"" + version + "\"");
       }
 
       if (id != null)

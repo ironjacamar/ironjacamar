@@ -48,6 +48,8 @@ public class SecurityImpl implements Security
 
    private boolean applicationManaged;
 
+   private boolean elytronEnabled;
+
    /**
     * Constructor
     *
@@ -59,9 +61,25 @@ public class SecurityImpl implements Security
    public SecurityImpl(String securityDomainManaged,
                        String securityDomainAndApplicationManaged, boolean applicationManaged) throws ValidateException
    {
+      this(securityDomainManaged, securityDomainAndApplicationManaged, applicationManaged, false);
+   }
+
+   /**
+    * Constructor
+    *
+    * @param securityDomainManaged securityDomainManaged
+    * @param securityDomainAndApplicationManaged securityDomainAndApplicationManaged
+    * @param applicationManaged applicationManagedS
+    * @param isElytronEnabled isElytronEnabled
+    * @throws ValidateException ValidateException
+    */
+   public SecurityImpl(String securityDomainManaged,
+                       String securityDomainAndApplicationManaged, boolean applicationManaged, boolean isElytronEnabled) throws ValidateException
+   {
       this.securityDomainManaged = securityDomainManaged;
       this.securityDomainAndApplicationManaged = securityDomainAndApplicationManaged;
       this.applicationManaged = applicationManaged;
+      this.elytronEnabled = isElytronEnabled;
       this.validate();
    }
 
@@ -87,6 +105,14 @@ public class SecurityImpl implements Security
    public boolean isApplication()
    {
       return applicationManaged;
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public boolean isElytronEnabled() {
+      return elytronEnabled;
    }
 
    /**
@@ -193,6 +219,10 @@ public class SecurityImpl implements Security
       if (applicationManaged)
       {
          sb.append("<").append(Security.Tag.APPLICATION).append("/>");
+      }
+      if (elytronEnabled)
+      {
+         sb.append("<").append(Tag.ELYTRON).append("/>");
       }
       else if (securityDomainManaged != null)
       {

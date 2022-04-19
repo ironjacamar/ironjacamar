@@ -24,6 +24,7 @@ package org.jboss.jca.common.metadata.ironjacamar;
 import org.jboss.jca.common.CommonBundle;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.resourceadapter.Activation;
+import org.jboss.jca.common.api.metadata.resourceadapter.Activations;
 import org.jboss.jca.common.api.metadata.resourceadapter.AdminObject;
 import org.jboss.jca.common.api.metadata.resourceadapter.ConnectionDefinition;
 import org.jboss.jca.common.api.metadata.resourceadapter.WorkManager;
@@ -97,7 +98,8 @@ public class IronJacamarParser extends CommonIronJacamarParser implements Metada
                switch (Tag.forName(reader.getLocalName()))
                {
                   case IRONJACAMAR : {
-                     ironJacamar = parseIronJacamar(reader);
+                     Activations.Version version = Activations.Version.forName(reader.getAttributeValue(null, "version"));
+                     ironJacamar = parseIronJacamar(reader, version);
                      break;
                   }
                   default :
@@ -119,7 +121,7 @@ public class IronJacamarParser extends CommonIronJacamarParser implements Metada
 
    }
 
-   private Activation parseIronJacamar(XMLStreamReader reader) throws XMLStreamException, ParserException,
+   private Activation parseIronJacamar(XMLStreamReader reader, Activations.Version version) throws XMLStreamException, ParserException,
       ValidateException
    {
       ArrayList<ConnectionDefinition> connectionDefinitions = null;
@@ -130,6 +132,7 @@ public class IronJacamarParser extends CommonIronJacamarParser implements Metada
       HashMap<String, String> configProperties = null;
       WorkManager workManager = null;
       Boolean isXA = null;
+      boolean elytron = version.compareTo(Activations.Version.V_13) > 0;
 
       while (reader.hasNext())
       {
@@ -139,7 +142,7 @@ public class IronJacamarParser extends CommonIronJacamarParser implements Metada
                if (Tag.forName(reader.getLocalName()) == Tag.IRONJACAMAR)
                {
                   return new 
-                     ActivationImpl(null, null, transactionSupport, connectionDefinitions, adminObjects,
+                     ActivationImpl(version, null, null, transactionSupport, connectionDefinitions, adminObjects,
                                     configProperties, beanValidationGroups, bootstrapContext, workManager);
                }
                else
@@ -169,7 +172,7 @@ public class IronJacamarParser extends CommonIronJacamarParser implements Metada
                   case CONNECTION_DEFINITION : {
                      if (connectionDefinitions == null)
                         connectionDefinitions = new ArrayList<ConnectionDefinition>();
-                     connectionDefinitions.add(parseConnectionDefinitions(reader, isXA));
+                     connectionDefinitions.add(parseConnectionDefinitions(reader, isXA, elytron));
                      break;
                   }
                   case WORKMANAGER : {

@@ -26,6 +26,7 @@ import org.jboss.jca.common.api.metadata.common.Capacity;
 import org.jboss.jca.common.api.metadata.common.Pool;
 import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
+import org.jboss.jca.common.api.metadata.resourceadapter.Activations;
 import org.jboss.jca.common.api.metadata.resourceadapter.AdminObject;
 import org.jboss.jca.common.api.metadata.resourceadapter.ConnectionDefinition;
 import org.jboss.jca.common.api.metadata.resourceadapter.WorkManager;
@@ -139,7 +140,7 @@ public class LegacyConnectionFactoryImp implements TxConnectionFactory
       
       connectionDefinitions = new ArrayList<ConnectionDefinition>();
       connectionDefinitions.add(connDef);
-      raImpl = new ActivationImpl("ID", rarName, transactionSupport, connectionDefinitions, adminObjects,
+      raImpl = new ActivationImpl(Activations.Version.UNKNOWN, "ID", rarName, transactionSupport, connectionDefinitions, adminObjects,
                                   rarConfigProperty, null, null, workmanager);
    }
    
