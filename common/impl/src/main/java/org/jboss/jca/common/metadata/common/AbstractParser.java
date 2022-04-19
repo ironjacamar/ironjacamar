@@ -545,6 +545,65 @@ public abstract class AbstractParser
       throw new ParserException(bundle.unexpectedEndOfDocument());
    }
 
+   protected Security parseElytronSecuritySettings(XMLStreamReader reader) throws XMLStreamException, ParserException,
+           ValidateException
+   {
+
+      String securityDomain = null;
+      String securityDomainAndApplication = null;
+      boolean application = Defaults.APPLICATION_MANAGED_SECURITY;
+      boolean elytronEnabled = false;
+
+      while (reader.hasNext())
+      {
+         switch (reader.nextTag())
+         {
+            case END_ELEMENT : {
+               if (DataSource.Tag.forName(reader.getLocalName()) == DataSource.Tag.SECURITY)
+               {
+
+                  return new SecurityImpl(securityDomain, securityDomainAndApplication,
+                          application, elytronEnabled);
+               }
+               else
+               {
+                  if (Security.Tag.forName(reader.getLocalName()) == Security.Tag.UNKNOWN)
+                  {
+                     throw new ParserException(bundle.unexpectedEndTag(reader.getLocalName()));
+                  }
+               }
+               break;
+            }
+            case START_ELEMENT : {
+               switch (Security.Tag.forName(reader.getLocalName()))
+               {
+
+                  case SECURITY_DOMAIN : {
+                     securityDomain = elementAsString(reader);
+                     break;
+                  }
+                  case SECURITY_DOMAIN_AND_APPLICATION : {
+                     securityDomainAndApplication = elementAsString(reader);
+                     break;
+                  }
+                  case APPLICATION : {
+                     application = elementAsBoolean(reader);
+                     break;
+                  }
+                  case ELYTRON : {
+                     elytronEnabled = elementAsBoolean(reader);
+                     break;
+                  }
+                  default :
+                     throw new ParserException(bundle.unexpectedElement(reader.getLocalName()));
+               }
+               break;
+            }
+         }
+      }
+      throw new ParserException(bundle.unexpectedEndOfDocument());
+   }
+
    /**
     * System property substitution
     * @param input The input string

@@ -102,10 +102,11 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
          }
          case START_ELEMENT : {
 
+            Activations.Version version = Activations.Version.forName(reader.getAttributeValue(null, "version"));
             switch (Tag.forName(reader.getLocalName()))
             {
                case RESOURCE_ADAPTERS : {
-                  adapters = parseResourceAdapters(reader);
+                  adapters = parseResourceAdapters(reader, version);
                   break;
                }
                default :
@@ -122,7 +123,7 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
 
    }
 
-   private Activations parseResourceAdapters(XMLStreamReader reader) throws XMLStreamException, ParserException,
+   private Activations parseResourceAdapters(XMLStreamReader reader, Activations.Version version) throws XMLStreamException, ParserException,
       ValidateException
    {
       ArrayList<org.jboss.jca.common.api.metadata.resourceadapter.Activation> resourceAdapters =
@@ -135,7 +136,7 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
                if (Tag.forName(reader.getLocalName()) == Tag.RESOURCE_ADAPTERS)
                {
                   resourceAdapters.trimToSize();
-                  return new ActivationsImpl(resourceAdapters);
+                  return new ActivationsImpl(version, resourceAdapters);
                }
                else
                {
@@ -150,7 +151,7 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
                switch (Activations.Tag.forName(reader.getLocalName()))
                {
                   case RESOURCE_ADAPTER : {
-                     resourceAdapters.add(parseResourceAdapter(reader));
+                     resourceAdapters.add(parseResourceAdapter(reader, version));
                      break;
                   }
                   default :
@@ -164,7 +165,7 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
    }
 
    private org.jboss.jca.common.api.metadata.resourceadapter.Activation
-   parseResourceAdapter(XMLStreamReader reader) throws XMLStreamException, ParserException,
+   parseResourceAdapter(XMLStreamReader reader, Activations.Version version) throws XMLStreamException, ParserException,
       ValidateException
    {
       List<ConnectionDefinition> connectionDefinitions = null;
@@ -177,6 +178,7 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
       HashMap<String, String> configProperties = null;
       WorkManager workmanager = null;
       Boolean isXA = null;
+      boolean elytron = version.compareTo(Activations.Version.V_13 )> 0;
 
       int attributeSize = reader.getAttributeCount();
       for (int i = 0; i < attributeSize; i++)
@@ -186,6 +188,9 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
          {
             case ID : {
                id = attributeAsString(reader, attribute.getLocalName());
+               break;
+            }
+            case VERSION: {
                break;
             }
             default :
@@ -200,7 +205,7 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
             case END_ELEMENT : {
                if (Activations.Tag.forName(reader.getLocalName()) == Activations.Tag.RESOURCE_ADAPTER)
                {
-                  return new ActivationImpl(id, archive, transactionSupport, connectionDefinitions, adminObjects,
+                  return new ActivationImpl(version, id, archive, transactionSupport, connectionDefinitions, adminObjects,
                                             configProperties, beanValidationGroups, bootstrapContext, workmanager);
                }
                else
@@ -231,7 +236,7 @@ public class ResourceAdapterParser extends CommonIronJacamarParser implements Me
                   case CONNECTION_DEFINITION : {
                      if (connectionDefinitions == null)
                         connectionDefinitions = new ArrayList<ConnectionDefinition>();
-                     connectionDefinitions.add(parseConnectionDefinitions(reader, isXA));
+                     connectionDefinitions.add(parseConnectionDefinitions(reader, isXA, elytron));
                      break;
                   }
                   case BEAN_VALIDATION_GROUP : {

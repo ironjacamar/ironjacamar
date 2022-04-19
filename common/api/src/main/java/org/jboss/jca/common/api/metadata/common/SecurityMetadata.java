@@ -35,5 +35,7 @@ public interface SecurityMetadata
     */
    public String resolveSecurityDomain();
 
+   public boolean isElytronEnabled();
+
 
 }

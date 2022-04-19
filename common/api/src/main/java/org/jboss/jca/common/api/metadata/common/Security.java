@@ -89,7 +89,12 @@ public interface Security extends JCAMetadata, ValidatableMetadata, SecurityMeta
       /**
        * application
        */
-      APPLICATION("application");
+      APPLICATION("application"),
+
+      /**
+       * Elytron enabled
+       */
+      ELYTRON("elytron");
 
       private String name;
 
