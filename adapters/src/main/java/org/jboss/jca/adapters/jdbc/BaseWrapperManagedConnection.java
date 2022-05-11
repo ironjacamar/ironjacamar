@@ -38,12 +38,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Savepoint;
 import java.sql.Statement;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -338,9 +333,9 @@ public abstract class BaseWrapperManagedConnection implements NotifyingManagedCo
 
       synchronized (handles)
       {
-         for (Iterator<WrappedConnection> i = handles.iterator(); i.hasNext();)
+         List<WrappedConnection> handlesCopy = new ArrayList<>(handles);
+         for (WrappedConnection lc : handlesCopy)
          {
-            WrappedConnection lc = i.next();
             lc.setManagedConnection(null);
             // JBJCA-1396 close handles to this connection, otherwise ds.getConnection() will return this instance
             // again, even though it'll have been already destroyed.
