@@ -17,7 +17,7 @@
   <property name="junit.fork" value="yes" />
   <property name="junit.timeout" value="60000" />
   <property name="junit.jvm" value="" />
-  <property name="junit.jvm.options" value="-Xms128m -Xmx512m -XX:MaxPermSize=256m" />
+  <property name="junit.jvm.options" value="-Xms128m -Xmx512m" />
   <property name="junit.batchtest.haltonerror" value="no" />
   <property name="junit.batchtest.haltonfailure" value="no" />
   <property name="junit.batchtest.fork" value="yes" />

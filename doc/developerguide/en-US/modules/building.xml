@@ -52,7 +52,7 @@ export PATH
       <para>You may need to set the memory settings for the Apache Ant process like</para>
 
       <programlisting>
-ANT_OPTS="$ANT_OPTS -Xms128m -Xmx512m -XX:MaxPermSize=256m"
+ANT_OPTS="$ANT_OPTS -Xms128m -Xmx512m"
 export ANT_OPTS
       </programlisting>
     </section>
