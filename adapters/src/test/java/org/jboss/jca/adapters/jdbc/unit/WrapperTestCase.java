@@ -227,4 +227,16 @@ public class WrapperTestCase
 
       c.close();
    }
+
+   /**
+    * Tests that the closed information is represented correctly
+    */
+   @Test
+   public void testIsClosed() throws Throwable {
+      assertNotNull(ds);
+      Connection c = ds.getConnection();
+      assertFalse(c.isClosed());
+      c.close();
+      assertTrue(c.isClosed());
+   }
 }
