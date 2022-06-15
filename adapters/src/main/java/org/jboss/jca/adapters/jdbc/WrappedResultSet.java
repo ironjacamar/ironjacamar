@@ -4778,7 +4778,7 @@ public abstract class WrappedResultSet extends JBossWrapper implements ResultSet
          spyLogger.debugf("%s [%s] isClosed()",
                           jndiName, Constants.SPY_LOGGER_PREFIX_RESULTSET);
       
-      if (resultSet == null)
+      if (resultSet == null || closed.get())
          return true;
 
       try

@@ -46,6 +46,7 @@ import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -132,9 +133,13 @@ public class PreparedStatementTestCase
       // Drop
       st.execute("DROP TABLE Employees");
 
+      assertFalse(rs.isClosed());
       rs.close();
+      assertTrue(rs.isClosed());
       pstmt.close();
+      assertFalse(st.isClosed());
       st.close();
+      assertTrue(st.isClosed());
       c.close();
    }
 
