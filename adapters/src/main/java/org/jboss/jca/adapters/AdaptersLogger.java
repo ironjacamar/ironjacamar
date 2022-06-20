@@ -323,4 +323,14 @@ public interface AdaptersLogger extends BasicLogger
    @LogMessage(level = WARN)
    @Message(id = 30060, value = "Error checking state")
    public void errorCheckingState(@Cause Throwable t);
+
+
+   /**
+    * Auto commit reset
+    * @param msg The message
+    * @param t The throwable
+    */
+   @LogMessage(level = WARN)
+   @Message(id = 30061, value = "Error resetting auto-commit for: %s")
+   public void errorResettingAutoCommit(String msg, @Cause Throwable t);
 }
