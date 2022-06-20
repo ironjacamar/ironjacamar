@@ -112,8 +112,13 @@ public abstract class BaseWrapperManagedConnection implements NotifyingManagedCo
    /** Ignore in managed auto commit calls */
    protected static boolean ignoreInManagedAutoCommitCalls = false;
 
+   protected static boolean setAutoCommitOnCleanup = true;
+
    /** Underlying auto-commit */
    protected boolean underlyingAutoCommit = true;
+
+   // See JBAS-5678
+   private boolean shouldRollbackOnDestroy = false;
 
    /** JDBC read-only */
    protected boolean jdbcReadOnly;
@@ -164,6 +169,11 @@ public abstract class BaseWrapperManagedConnection implements NotifyingManagedCo
       String ignAutoCommit = SecurityActions.getSystemProperty("ironjacamar.jdbc.ignoreautocommit");
       if (ignAutoCommit != null)
          ignoreInManagedAutoCommitCalls = Boolean.valueOf(ignAutoCommit);
+
+      //see JBJCA-1431
+      String setAutoCommitOnCleanupString = SecurityActions.getSystemProperty("ironjacamar.jdbc.setautocommitoncleanup");
+      if (setAutoCommitOnCleanupString != null)
+         setAutoCommitOnCleanup = Boolean.valueOf(setAutoCommitOnCleanupString);
    }
 
    /**
@@ -348,6 +358,16 @@ public abstract class BaseWrapperManagedConnection implements NotifyingManagedCo
       synchronized (stateLock)
       {
          jdbcAutoCommit = true;
+         shouldRollbackOnDestroy = !underlyingAutoCommit;
+         if (setAutoCommitOnCleanup && (jdbcAutoCommit != underlyingAutoCommit))
+         {
+            try {
+               con.setAutoCommit(jdbcAutoCommit);
+               underlyingAutoCommit = jdbcAutoCommit;
+            } catch (SQLException e) {
+               mcf.log.errorResettingAutoCommit(mcf.getJndiName(), e);
+            }
+         }
          jdbcReadOnly = readOnly;
          if (jdbcTransactionIsolation != transactionIsolation)
          {
@@ -481,7 +501,7 @@ public abstract class BaseWrapperManagedConnection implements NotifyingManagedCo
       try
       {
          // See JBAS-5678
-         if (!underlyingAutoCommit)
+         if (shouldRollbackOnDestroy)
             con.rollback();
       }
       catch (SQLException ignored)
