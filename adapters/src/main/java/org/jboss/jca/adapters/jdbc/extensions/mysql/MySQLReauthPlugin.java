@@ -53,11 +53,49 @@ public class MySQLReauthPlugin implements ReauthPlugin
 
       try
       {
-         mysqlConnection = Class.forName("com.mysql.jdbc.Connection", true, cl);
+         mysqlConnection = Class.forName("com.mysql.cj.jdbc.JdbcConnection", true, cl);
       }
-      catch (Throwable t) 
+      catch (Throwable t)
       {
          // Ignore
+      }
+
+      if (mysqlConnection == null)
+      {
+         try
+         {
+            mysqlConnection = Class.forName("com.mysql.cj.jdbc.JdbcConnection", true,
+                    SecurityActions.getClassLoader(getClass()));
+         }
+         catch (Throwable t)
+         {
+            // Ignore
+         }
+      }
+
+      if (mysqlConnection == null)
+      {
+         try
+         {
+            ClassLoader tccl = SecurityActions.getThreadContextClassLoader();
+            mysqlConnection = Class.forName("com.mysql.cj.jdbc.JdbcConnection", true, tccl);
+         }
+         catch (Throwable t)
+         {
+            // Ignore
+         }
+      }
+
+      if (mysqlConnection == null)
+      {
+         try
+         {
+            mysqlConnection = Class.forName("com.mysql.jdbc.Connection", true, cl);
+         }
+         catch (Throwable t)
+         {
+            // Ignore
+         }
       }
 
       if (mysqlConnection == null)
@@ -82,7 +120,7 @@ public class MySQLReauthPlugin implements ReauthPlugin
          }
          catch (Throwable t) 
          {
-            throw new SQLException("Cannot resolve com.mysql.jdbc.Connection", t);
+            throw new SQLException("Cannot resolve MySQL connection class", t);
          }
       }
 
@@ -92,7 +130,7 @@ public class MySQLReauthPlugin implements ReauthPlugin
       }
       catch (Throwable t)
       {
-         throw new SQLException("Cannot resolve com.mysql.jdbc.Connection changeUser method", t);
+         throw new SQLException("Cannot resolve MySQL connection changeUser method", t);
       }
    }
 
