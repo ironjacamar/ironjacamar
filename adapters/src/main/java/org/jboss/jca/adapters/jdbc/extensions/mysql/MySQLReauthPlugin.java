@@ -82,7 +82,7 @@ public class MySQLReauthPlugin implements ReauthPlugin
          }
          catch (Throwable t) 
          {
-            throw new SQLException("Cannot resolve com.mysq.jdbc.Connection", t);
+            throw new SQLException("Cannot resolve com.mysql.jdbc.Connection", t);
          }
       }
 
@@ -92,7 +92,7 @@ public class MySQLReauthPlugin implements ReauthPlugin
       }
       catch (Throwable t)
       {
-         throw new SQLException("Cannot resolve com.mysq.jdbc.Connection changeUser method", t);
+         throw new SQLException("Cannot resolve com.mysql.jdbc.Connection changeUser method", t);
       }
    }
 
