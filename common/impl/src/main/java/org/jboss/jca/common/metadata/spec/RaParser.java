@@ -111,7 +111,7 @@ public class RaParser extends AbstractParser implements MetadataParser<Connector
                break;
             }
             case START_ELEMENT : {
-               if ("2.0".equals(reader.getAttributeValue(null, "version")))
+               if ("2.0".equals(reader.getAttributeValue(null, "version") || "2.1".equals(reader.getAttributeValue(null, "version")))
                {
                   switch (Tag.forName(reader.getLocalName()))
                   {
