@@ -60,7 +60,7 @@ public class DefaultAdminObjectTestCase extends AnnotationsTestBase
    protected void checkConnector(Connector connector)
    {
       assertTrue(connector instanceof ConnectorImpl);
-      assertEquals(connector.getVersion(), javax.resource.spi.Connector.class.getCanonicalName().startsWith("jakarta.") ? Version.V_20 : Version.V_17);
+      assertEquals(connector.getVersion(), javax.resource.spi.Connector.class.getCanonicalName().startsWith("jakarta.") ? Version.V_21 : Version.V_17);
 
       ConnectorImpl con = (ConnectorImpl) connector;
 

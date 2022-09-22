@@ -1126,7 +1126,7 @@ public class Main
       if (cmd == null)
          return true;
 
-      if (cmd.getVersion() == Version.V_16 || cmd.getVersion() == Version.V_17 || cmd.getVersion() == Version.V_20)
+      if (cmd.getVersion() == Version.V_16 || cmd.getVersion() == Version.V_17 || cmd.getVersion() == Version.V_20 || cmd.getVersion() == Version.V_21)
       {
          if (!cmd.isMetadataComplete())
             return true;

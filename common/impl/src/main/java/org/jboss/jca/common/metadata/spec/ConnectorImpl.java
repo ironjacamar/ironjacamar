@@ -557,7 +557,7 @@ public class ConnectorImpl implements Connector
       {
          sb.append("<").append("connector");
          sb.append(" " + XML.Connector17Attribute.VERSION + "=\"" + version + "\"");
-         if (version == Version.V_16 || version == Version.V_17|| version == Version.V_20)
+         if (version == Version.V_16 || version == Version.V_17|| version == Version.V_20 || version == Version.V_21)
             sb.append(" " + XML.Connector17Attribute.METADATA_COMPLETE + "=\"" + metadataComplete + "\"");
          if (id != null)
             sb.append(" id=\"" + id + "\"");

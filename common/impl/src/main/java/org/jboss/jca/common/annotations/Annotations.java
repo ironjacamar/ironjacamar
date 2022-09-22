@@ -119,7 +119,7 @@ public class Annotations
       throws Exception
    {
       // Process annotations
-      if (connector == null || (connector.getVersion() == Version.V_16 || connector.getVersion() == Version.V_17 || connector.getVersion() == Version.V_20))
+      if (connector == null || (connector.getVersion() == Version.V_16 || connector.getVersion() == Version.V_17 || connector.getVersion() == Version.V_20 || connector.getVersion() == Version.V_21))
       {
          boolean isMetadataComplete = false;
          if (connector != null)
@@ -470,7 +470,7 @@ public class Annotations
 
       // In an EE 9 server this class may have been bytecode transformed to use the EE 9 connector APIs.
       // Check for that and if it has occurred use the EE 9 version enum instead of EE 8
-      Version connectorVersion = javax.resource.spi.Connector.class.getCanonicalName().startsWith("jakarta.") ? Version.V_20 : Version.V_17;
+      Version connectorVersion = javax.resource.spi.Connector.class.getCanonicalName().startsWith("jakarta.") ? Version.V_21 : Version.V_17;
 
       return new ConnectorImpl(connectorVersion, new XsdString("", null), vendorName, eisType, resourceadapterVersion,
                                license, resourceAdapter,
