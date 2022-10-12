@@ -903,7 +903,14 @@ public class TxConnectionListener extends AbstractConnectionListener
             this.recordEnlist = !disableFailedtoEnlist;
          }
 
-         this.failedToEnlist = new Throwable("Unabled to enlist resource, see the previous warnings.");
+         if (this.recordEnlist)
+         {
+            this.failedToEnlist = new Throwable("Unabled to enlist resource, see the previous warnings.");
+         }
+         else
+         {
+            this.failedToEnlist = null;
+         }
 
          if (log.isTraceEnabled()) {
             log.tracef("%s: Constructor", toString());
@@ -975,10 +982,11 @@ public class TxConnectionListener extends AbstractConnectionListener
       public boolean enlist()
       {
          log.tracef("Enlisting resource %s", TxConnectionListener.this);
+         boolean enlistResult;
          try
          {
             XAResource resource = getXAResource();
-            if (!currentTx.enlistResource(resource))
+            if (!(enlistResult = currentTx.enlistResource(resource)))
             {
                if (Tracer.isEnabled())
                   Tracer.enlistConnectionListener(getPool() != null ? getPool().getName() : null, 
@@ -999,35 +1007,34 @@ public class TxConnectionListener extends AbstractConnectionListener
          catch (Throwable t)
          {
             enlistError = t;
+            enlistResult = false;
 
             if (Tracer.isEnabled())
                Tracer.enlistConnectionListener(getPool() != null ? getPool().getName() : null,
                                                getManagedConnectionPool(),
                                                TxConnectionListener.this, currentTx.toString(), false,
                                                !TxConnectionListener.this.isTrackByTx());
-            }
+         }
+
+         if (recordEnlist && enlistError != null && log.isTraceEnabled())
+         {
+            log.trace("Failed to enlist resource " + TxConnectionListener.this, enlistError);
+         }
 
          synchronized (this)
          {
-            if (enlistError != null)
+            if (! enlistResult)
             {
-               if (recordEnlist && log.isTraceEnabled())
-               {
-                  log.trace("Failed to enlist resource " + TxConnectionListener.this, enlistError);
-               }
-
                setTrackByTx(false);
                transactionSynchronization = null;
-
-               return false;
             }
-
-            enlisted = true;
-
-            log.tracef("Enlisted resource %s", TxConnectionListener.this);
-
-            return true;
+            else
+            {
+               enlisted = true;
+               log.tracef("Enlisted resource %s", TxConnectionListener.this);
+            }
          }
+         return enlistResult;
       }
 
       /**
