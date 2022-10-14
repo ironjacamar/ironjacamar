@@ -22,14 +22,11 @@
 
 package org.jboss.jca.adapters.jdbc.extensions.mysql;
 
-import org.jboss.jca.adapters.jdbc.spi.ValidConnectionChecker;
+import org.jboss.jca.adapters.jdbc.CheckValidConnectionSQL;
 
-import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import org.jboss.logging.Logger;
 
@@ -44,17 +41,20 @@ import org.jboss.logging.Logger;
  * @author Jim Moran
  * @version $Revision: 78074 $
  */
-public class MySQLValidConnectionChecker implements ValidConnectionChecker, Serializable
+public class MySQLValidConnectionChecker extends CheckValidConnectionSQL
 {
    private static Logger log = Logger.getLogger(MySQLValidConnectionChecker.class);
 
    private static final long serialVersionUID = 1323747853035005642L;
+
+   private static final String QUERY = "SELECT 1";
 
    /**
     * Constructor
     */
    public MySQLValidConnectionChecker()
    {
+      super(QUERY);
    }
 
    /**
@@ -96,45 +96,7 @@ public class MySQLValidConnectionChecker implements ValidConnectionChecker, Seri
       }
       else
       {
-         Statement stmt = null;
-         ResultSet rs = null;
-         try
-         {
-            stmt = c.createStatement();
-            rs = stmt.executeQuery("SELECT 1");
-         }
-         catch (Exception e)
-         {
-            if (e instanceof SQLException)
-            {
-               return (SQLException) e;
-            }
-            else
-            {
-               return new SQLException("SELECT 1 failed: " + e.toString(), e);
-            }
-         }
-         finally
-         {
-            try
-            {
-               if (rs != null)
-                  rs.close();
-            }
-            catch (SQLException ignore)
-            {
-               // Ignore
-            }
-            try
-            {
-               if (stmt != null)
-                  stmt.close();
-            }
-            catch (SQLException ignore)
-            {
-               // Ignore
-            }
-         }
+         return super.isValidConnection(c);
       }
 
       return null;
