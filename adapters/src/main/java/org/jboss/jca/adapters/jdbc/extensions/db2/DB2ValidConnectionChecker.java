@@ -22,12 +22,7 @@
 
 package org.jboss.jca.adapters.jdbc.extensions.db2;
 
-import org.jboss.jca.adapters.jdbc.spi.ValidConnectionChecker;
-
-import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
+import org.jboss.jca.adapters.jdbc.CheckValidConnectionSQL;
 
 /**
  * A DB2ValidConnectionChecker.
@@ -35,7 +30,7 @@ import java.sql.Statement;
  * @author <a href="wprice@redhat.com">Weston Price</a>
  * @version $Revision: 71554 $
  */
-public class DB2ValidConnectionChecker implements ValidConnectionChecker, Serializable
+public class DB2ValidConnectionChecker extends CheckValidConnectionSQL
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = -1256537245822198702L;
@@ -48,39 +43,6 @@ public class DB2ValidConnectionChecker implements ValidConnectionChecker, Serial
     */
    public DB2ValidConnectionChecker()
    {
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public SQLException isValidConnection(final Connection c)
-   {
-      SQLException theResult = null;
-      Statement s = null;
-
-      try
-      {
-         s = c.createStatement();
-         s.execute(VALID_QUERY);
-      }
-      catch (SQLException e)
-      {
-         theResult = e;
-      }
-      finally
-      {
-         try
-         {
-            if (s != null)
-               s.close();
-         }
-         catch (SQLException e)
-         {
-            // Ignore
-         }
-      }
-
-      return theResult;
+      super(VALID_QUERY);
    }
 }
