@@ -22,12 +22,7 @@
 
 package org.jboss.jca.adapters.jdbc.extensions.mssql;
 
-import org.jboss.jca.adapters.jdbc.spi.ValidConnectionChecker;
-
-import java.io.Serializable;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
+import org.jboss.jca.adapters.jdbc.CheckValidConnectionSQL;
 
 /**
  * A MSSQLValidConnectionChecker.
@@ -35,7 +30,7 @@ import java.sql.Statement;
  * @author <a href="wprice@redhat.com">Weston Price</a>
  * @version $Revision: 85945 $
  */
-public class MSSQLValidConnectionChecker implements ValidConnectionChecker, Serializable
+public class MSSQLValidConnectionChecker extends CheckValidConnectionSQL
 {
    private static final String QUERY = "SELECT 1";
 
@@ -47,41 +42,6 @@ public class MSSQLValidConnectionChecker implements ValidConnectionChecker, Seri
     */
    public MSSQLValidConnectionChecker()
    {
-   }
-
-   /**
-    * {@inheritDoc}
-    */
-   @Override
-   public SQLException isValidConnection(final Connection c)
-   {
-      SQLException sqe = null;
-      Statement stmt = null;
-
-      try
-      {
-         stmt = c.createStatement();
-         stmt.execute(QUERY);
-      }
-      catch (SQLException e)
-      {
-         sqe = e;
-      }
-      finally
-      {
-         try
-         {
-            if (stmt != null)
-            {
-               stmt.close();
-            }
-         }
-         catch (SQLException e)
-         {
-            // Nothing
-         }
-      }
-
-      return sqe;
+      super(QUERY);
    }
 }
