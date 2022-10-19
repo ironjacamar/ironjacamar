@@ -224,6 +224,9 @@ public abstract class BaseWrapperManagedConnectionFactory
    /** Query timeout */
    protected Integer queryTimeout = Integer.valueOf(0);
 
+   /** Validation query timeout */
+   protected Integer validationQueryTimeout = Integer.valueOf(0);
+
    /**
     * The variable <code>urlDelimiter</code> holds the url delimiter
     * information to be used for HA DS configuration .
@@ -692,6 +695,25 @@ public abstract class BaseWrapperManagedConnectionFactory
    {
       if (timeout != null)
          queryTimeout = timeout;
+   }
+
+   /**
+    * Get the validation query timeout
+    * @return The value
+    */
+   public Integer getValidationQueryTimeout()
+   {
+      return validationQueryTimeout;
+   }
+
+   /**
+    * Set the validation query timeout
+    * @param timeout The value
+    */
+   public void setValidationQueryTimeout(Integer timeout)
+   {
+      if (timeout != null)
+         validationQueryTimeout = timeout;
    }
 
    /**
@@ -1378,7 +1400,6 @@ public abstract class BaseWrapperManagedConnectionFactory
             if (o != null && o instanceof ValidConnectionChecker)
             {
                connectionChecker = (ValidConnectionChecker)o;
-               return connectionChecker.isValidConnection(c);
             }
             else
             {
@@ -1397,6 +1418,11 @@ public abstract class BaseWrapperManagedConnectionFactory
       if (checkValidConnectionSQL != null)
       {
          connectionChecker = new CheckValidConnectionSQL(checkValidConnectionSQL);
+      }
+
+      if (connectionChecker != null)
+      {
+         connectionChecker.setQueryTimeout(validationQueryTimeout);
          return connectionChecker.isValidConnection(c);
       }
 

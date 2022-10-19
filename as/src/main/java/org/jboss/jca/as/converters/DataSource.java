@@ -155,6 +155,13 @@ public interface DataSource extends ConnectionFactory
    public Long getUseTryLock();
 
    /**
+    * Get the validationQueryTimeout.
+    *
+    * @return the validationQueryTimeout.
+    */
+   public Long getValidationQueryTimeout();
+
+   /**
    *
    * A Tag.
    */
@@ -283,7 +290,11 @@ public interface DataSource extends ConnectionFactory
       /**
       * useTryLock tag
       */
-      USE_TRY_LOCK("use-try-lock");
+      USE_TRY_LOCK("use-try-lock"),
+      /**
+       * validationQueryTimeout tag
+       */
+      VALIDATION_QUERY_TIMEOUT("validation-query-timeout");
 
       private final String name;
 

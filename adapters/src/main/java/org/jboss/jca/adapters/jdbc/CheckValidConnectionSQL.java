@@ -104,6 +104,8 @@ public class CheckValidConnectionSQL implements ValidConnectionChecker, Serializ
          return e;
       }
    }
+
+   @Override
    public void setQueryTimeout(int queryTimeout)
    {
       this.queryTimeout = queryTimeout;
