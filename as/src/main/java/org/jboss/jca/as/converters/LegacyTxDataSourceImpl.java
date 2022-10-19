@@ -159,11 +159,11 @@ public class LegacyTxDataSourceImpl implements LocalTxDataSource
     */
    public LegacyTxDataSourceImpl buildTimeOut(Long blockingTimeoutMillis, Long idleTimeoutMinutes,
          Integer allocationRetry, Long allocationRetryWaitMillis, Integer xaResourceTimeout, 
-         Boolean setTxQueryTimeout, Long queryTimeout, Long useTryLock) throws Exception
+         Boolean setTxQueryTimeout, Long queryTimeout, Long useTryLock, Long validationQueryTimeout) throws Exception
    {
       timeOut = new TimeOutImpl(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry,
             allocationRetryWaitMillis, xaResourceTimeout, setTxQueryTimeout,
-            queryTimeout, useTryLock);
+            queryTimeout, useTryLock, validationQueryTimeout);
       return this;
    }
    
@@ -482,6 +482,12 @@ public class LegacyTxDataSourceImpl implements LocalTxDataSource
    public boolean isNoTxSeparatePools()
    {
       return false;
+   }
+
+   @Override
+   public Long getValidationQueryTimeout()
+   {
+      return this.timeOut.getValidationQueryTimeout();
    }
 
 }
