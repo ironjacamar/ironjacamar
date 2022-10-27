@@ -27,6 +27,7 @@ import org.jboss.jca.adapters.jdbc.classloading.TCClassLoaderPlugin;
 import org.jboss.jca.adapters.jdbc.spi.URLXASelectorStrategy;
 import org.jboss.jca.adapters.jdbc.spi.XAData;
 import org.jboss.jca.adapters.jdbc.util.Injection;
+import org.jboss.jca.common.metadata.merge.Merger;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -181,7 +182,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
 
             for (Map.Entry<Object, Object> entry : p.entrySet())
             {
-               xaProps.put((String)entry.getKey(), (String)entry.getValue());
+               xaProps.put((String)entry.getKey(), Merger.decodeConfigProperty((String)entry.getValue()));
             }
          }
          catch (IOException ioe)

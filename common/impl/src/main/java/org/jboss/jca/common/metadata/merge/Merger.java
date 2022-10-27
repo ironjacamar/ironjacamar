@@ -62,6 +62,8 @@ import java.util.Map.Entry;
  */
 public class Merger
 {
+   public static final String ENCODED_SEMICOLON = "#semicolon#";
+
    /**
    *
    * Merge ironJacamar's properties with connector's one returning a List of COnnector's properties
@@ -422,7 +424,7 @@ public class Merger
                      {
                         valueBuf.append(xaConfigProperty.getKey());
                         valueBuf.append("=");
-                        valueBuf.append(xaConfigProperty.getValue());
+                        valueBuf.append(encodeConfigProperty(xaConfigProperty.getValue()));
                         valueBuf.append(";");
                      }
                      configProperties.add(ConfigPropertyFactory.createConfigProperty(prototype, valueBuf.toString()));
@@ -716,6 +718,40 @@ public class Merger
       {
          return null;
       }
+   }
+
+   /**
+    * Encodes a config property.
+    * Replaces all occurences of ';' with {@link #ENCODED_SEMICOLON}.
+    *
+    * @param propertyValue a property value
+    * @return the encoded property value
+    */
+   public static String encodeConfigProperty(String propertyValue)
+   {
+      if (propertyValue == null)
+      {
+         return null;
+      }
+
+      return propertyValue.replace(";", ENCODED_SEMICOLON);
+   }
+
+   /**
+    * Decodes a config property.
+    * Replaces all occurences of  {@link #ENCODED_SEMICOLON} with ';'.
+    *
+    * @param encodedValue an encoded property value
+    * @return the original property value
+    */
+   public static String decodeConfigProperty(String encodedValue)
+   {
+      if (encodedValue == null)
+      {
+         return null;
+      }
+
+      return encodedValue.replace(ENCODED_SEMICOLON, ";");
    }
 
    /**
