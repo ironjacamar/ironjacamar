@@ -33,7 +33,7 @@ Bugs and features are tracked within the IronJacamar Jira project at https://iss
 ## Contributions
 
 All new features and enhancements should be submitted to _main_ branch.
-Our contribution guide will guide you through the steps for getting started on the IronJacamar project and will go through how to format and submit your first PR.
+Our [contribution guide](https://github.com/ironjacamar/ironjacamar/blob/main/CONTRIBUTING.md) will guide you through the steps for getting started on the IronJacamar project and will go through how to format and submit your first PR.
 
 
 ## Get Help
