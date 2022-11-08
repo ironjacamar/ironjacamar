@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2014, Red Hat Inc, and individual contributors
+ * Copyright 2022, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -37,20 +37,22 @@ import org.jboss.jca.common.api.metadata.resourceadapter.Activations;
 import org.jboss.jca.common.api.metadata.resourceadapter.AdminObject;
 import org.jboss.jca.common.api.metadata.resourceadapter.ConnectionDefinition;
 import org.jboss.jca.common.metadata.XMLParserTestBase;
+import org.junit.BeforeClass;
 
 import java.util.List;
 import java.util.Map;
 
-import org.junit.BeforeClass;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
- * A ResourceAdapterParser12TestCase.
+ * A ResourceAdapterParser14TestCase.
  *
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public class ResourceAdapterParser13TestCase extends XMLParserTestBase
+public class ResourceAdapterParser14TestCase extends XMLParserTestBase
 {
    /**
    *
@@ -61,11 +63,11 @@ public class ResourceAdapterParser13TestCase extends XMLParserTestBase
    public static void beforeClass()
    {
       parser = new ResourceAdapterParser();
-      parsedFileName = "resource-adapter/unit/complex-13-ra.xml";
+      parsedFileName = "resource-adapter/unit/complex-14-ra.xml";
    }
 
    /**
-    * checks, if all ResourceAdapters 1.3 properties set correctly
+    * checks, if all ResourceAdapters 1.4 properties set correctly
     * 
     * @param result of parsing
     */
@@ -130,6 +132,7 @@ public class ResourceAdapterParser13TestCase extends XMLParserTestBase
 
       Security cs = cd.getSecurity();
       assertTrue(cs.isApplication());
+      assertTrue(cs.isElytronEnabled());
       assertEquals(null, cs.getSecurityDomain());
       assertEquals(null, cs.getSecurityDomainAndApplication());
 

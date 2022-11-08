@@ -22,6 +22,7 @@
 package org.jboss.jca.as.rarinfo;
 
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
+import org.jboss.jca.common.api.metadata.resourceadapter.Activations;
 import org.jboss.jca.common.api.metadata.resourceadapter.AdminObject;
 import org.jboss.jca.common.api.metadata.resourceadapter.ConnectionDefinition;
 import org.jboss.jca.common.metadata.resourceadapter.ActivationImpl;
@@ -71,7 +72,7 @@ public class RaImpl
     */
    public void buildResourceAdapterImpl()  throws Exception
    {
-      raImpl = new ActivationImpl(null, rarName, transactionSupport, connectionDefinitions, adminObjects,
+      raImpl = new ActivationImpl(Activations.Version.UNKNOWN, null, rarName, transactionSupport, connectionDefinitions, adminObjects,
                                   raConfigProperties, null, null, null);
    }
    

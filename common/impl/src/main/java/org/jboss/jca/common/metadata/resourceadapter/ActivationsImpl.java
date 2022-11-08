@@ -38,15 +38,18 @@ public class ActivationsImpl implements Activations
 
    /** The serialVersionUID */
    private static final long serialVersionUID = 1L;
+
+   private Version version;
+
    private final ArrayList<Activation> activations;
 
    /**
     * Constructor
     * @param activations activations
     */
-   public ActivationsImpl(List<Activation> activations)
+   public ActivationsImpl(Version version, List<Activation> activations)
    {
-      super();
+      this.version = version;
       if (activations != null)
       {
          this.activations = new ArrayList<Activation>(activations.size());
@@ -103,7 +106,15 @@ public class ActivationsImpl implements Activations
       StringBuilder sb = new StringBuilder(1024);
 
       sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-      sb.append("<resource-adapters>");
+      if(version != null)
+      {
+         sb.append("<resource-adapters version=\"" + version + "\">");
+      }
+      else
+      {
+         sb.append("<resource-adapters>");
+      }
+
 
       if (activations != null && activations.size() > 0)
       {

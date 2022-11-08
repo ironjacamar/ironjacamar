@@ -1,6 +1,6 @@
 /*
  * IronJacamar, a Java EE Connector Architecture implementation
- * Copyright 2014, Red Hat Inc, and individual contributors
+ * Copyright 2022, Red Hat Inc, and individual contributors
  * as indicated by the @author tags. See the copyright.txt file in the
  * distribution for a full listing of individual contributors.
  *
@@ -19,38 +19,34 @@
  * Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
  * 02110-1301 USA, or see the FSF site: http://www.fsf.org.
  */
-package org.jboss.jca.common.metadata.resourceadapter;
+package org.jboss.jca.common.metadata.ironjacamar;
 
 import org.jboss.jca.common.api.metadata.JCAMetadata;
 import org.jboss.jca.common.api.metadata.common.Credential;
 import org.jboss.jca.common.api.metadata.common.Extension;
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
-import org.jboss.jca.common.api.metadata.common.Pool;
 import org.jboss.jca.common.api.metadata.common.Recovery;
 import org.jboss.jca.common.api.metadata.common.Security;
 import org.jboss.jca.common.api.metadata.common.TimeOut;
 import org.jboss.jca.common.api.metadata.common.TransactionSupportEnum;
 import org.jboss.jca.common.api.metadata.common.Validation;
 import org.jboss.jca.common.api.metadata.common.XaPool;
-import org.jboss.jca.common.api.metadata.resourceadapter.Activation;
-import org.jboss.jca.common.api.metadata.resourceadapter.Activations;
 import org.jboss.jca.common.api.metadata.resourceadapter.AdminObject;
 import org.jboss.jca.common.api.metadata.resourceadapter.ConnectionDefinition;
 import org.jboss.jca.common.metadata.XMLParserTestBase;
+import org.jboss.jca.common.metadata.resourceadapter.ActivationImpl;
+import org.junit.BeforeClass;
 
 import java.util.List;
 import java.util.Map;
 
-import org.junit.BeforeClass;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
-import static org.junit.Assert.*;
-
-/**
- * A ResourceAdapterParser12TestCase.
- *
- * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
- */
-public class ResourceAdapterParser13TestCase extends XMLParserTestBase
+public class IronJacamarComplexParser14TestCase extends XMLParserTestBase
 {
    /**
    *
@@ -60,26 +56,21 @@ public class ResourceAdapterParser13TestCase extends XMLParserTestBase
    @BeforeClass
    public static void beforeClass()
    {
-      parser = new ResourceAdapterParser();
-      parsedFileName = "resource-adapter/unit/complex-13-ra.xml";
+      parser = new IronJacamarParser();
+      parsedFileName = "ironjacamar/unit/ironjacamar14-all.xml";
    }
 
    /**
-    * checks, if all ResourceAdapters 1.3 properties set correctly
-    * 
+    *
+    * checks, if all IronJacamars 1.4 properties set correctly
+    * {inheritDoc}
     * @param result of parsing
     */
    @Override
    public void checkMetadata(JCAMetadata result)
    {
-      Activations ras = (Activations) result;
-      assertNotNull(ras);
-      List<Activation> lrs = ras.getActivations();
-      assertEquals(5, lrs.size());
 
-      ActivationImpl ra = (ActivationImpl) lrs.get(0);
-      assertEquals("ID1", ra.getId());
-      assertEquals("some.rar", ra.getArchive());
+      ActivationImpl ra = (ActivationImpl) result;
       assertEquals("someContext", ra.getBootstrapContext());
       List<String> bvg = ra.getBeanValidationGroups();
       assertEquals(2, bvg.size());
@@ -103,7 +94,6 @@ public class ResourceAdapterParser13TestCase extends XMLParserTestBase
       assertTrue(cd.isEnlistment());
       assertTrue(cd.isUseCcm());
       assertFalse(cd.isUseJavaContext());
-      assertTrue(cd.isConnectable());
 
       cp = cd.getConfigProperties();
       assertEquals(2, cp.size());
@@ -111,9 +101,12 @@ public class ResourceAdapterParser13TestCase extends XMLParserTestBase
       assertEquals(cp.get("Property4"), "2");
 
       assertTrue(cd.isXa());
+      assertNotNull(cd.getPool());
+      assertTrue(cd.getPool() instanceof XaPool);
+
       XaPool xaPool = (XaPool) cd.getPool();
       assertEquals(1, (int) xaPool.getMinPoolSize());
-      assertEquals(5, (int) xaPool.getInitialPoolSize());
+      assertEquals(2, (int) xaPool.getInitialPoolSize());
       assertEquals(5, (int) xaPool.getMaxPoolSize());
       assertTrue(xaPool.isPrefill());
       assertTrue(xaPool.isFair());
@@ -121,7 +114,15 @@ public class ResourceAdapterParser13TestCase extends XMLParserTestBase
       assertEquals(xaPool.getFlushStrategy(), FlushStrategy.IDLE_CONNECTIONS);
       assertNotNull(xaPool.getCapacity());
       assertNotNull(xaPool.getCapacity().getIncrementer());
+      assertNotNull(xaPool.getCapacity().getIncrementer().getClassName());
+      assertEquals("ic", xaPool.getCapacity().getIncrementer().getClassName());
+      assertNotNull(xaPool.getCapacity().getIncrementer().getConfigPropertiesMap());
+      assertEquals(2, xaPool.getCapacity().getIncrementer().getConfigPropertiesMap().size());
       assertNotNull(xaPool.getCapacity().getDecrementer());
+      assertNotNull(xaPool.getCapacity().getDecrementer().getClassName());
+      assertEquals("dc", xaPool.getCapacity().getDecrementer().getClassName());
+      assertNotNull(xaPool.getCapacity().getDecrementer().getConfigPropertiesMap());
+      assertEquals(2, xaPool.getCapacity().getDecrementer().getConfigPropertiesMap().size());
       assertTrue(xaPool.isSameRmOverride());
       assertTrue(xaPool.isInterleaving());
       assertTrue(xaPool.isNoTxSeparatePool());
@@ -129,6 +130,7 @@ public class ResourceAdapterParser13TestCase extends XMLParserTestBase
       assertFalse(xaPool.isWrapXaResource());
 
       Security cs = cd.getSecurity();
+      assertTrue(cs.isElytronEnabled());
       assertTrue(cs.isApplication());
       assertEquals(null, cs.getSecurityDomain());
       assertEquals(null, cs.getSecurityDomainAndApplication());
@@ -170,7 +172,6 @@ public class ResourceAdapterParser13TestCase extends XMLParserTestBase
       assertFalse(cd.isEnlistment());
       assertFalse(cd.isUseCcm());
       assertTrue(cd.isUseJavaContext());
-      assertFalse(cd.isConnectable());
 
       cp = cd.getConfigProperties();
       assertEquals(0, cp.size());
@@ -181,9 +182,9 @@ public class ResourceAdapterParser13TestCase extends XMLParserTestBase
       assertEquals(0, (int) xaPool.getMinPoolSize());
       assertEquals(20, (int) xaPool.getMaxPoolSize());
       assertFalse(xaPool.isPrefill());
-      assertFalse(xaPool.isFair());
       assertFalse(xaPool.isUseStrictMin());
       assertEquals(xaPool.getFlushStrategy(), FlushStrategy.ENTIRE_POOL);
+      assertNull(xaPool.getCapacity());
       assertFalse(xaPool.isSameRmOverride());
       //default for boolean-presenceType
       assertFalse(xaPool.isInterleaving());
@@ -222,7 +223,6 @@ public class ResourceAdapterParser13TestCase extends XMLParserTestBase
       assertTrue(cd.isEnlistment());
       assertTrue(cd.isUseCcm());
       assertTrue(cd.isUseJavaContext());
-      assertFalse(cd.isConnectable());
 
       cp = cd.getConfigProperties();
       assertEquals(0, cp.size());
@@ -233,8 +233,9 @@ public class ResourceAdapterParser13TestCase extends XMLParserTestBase
       assertEquals(0, (int) xaPool.getMinPoolSize());
       assertEquals(20, (int) xaPool.getMaxPoolSize());
       assertFalse(xaPool.isPrefill());
-      assertTrue(xaPool.isFair());
+      assertFalse(xaPool.isFair());
       assertEquals(xaPool.getFlushStrategy(), FlushStrategy.FAILING_CONNECTION_ONLY);
+      assertNull(xaPool.getCapacity());
       assertEquals(null, xaPool.isSameRmOverride());
       //default for boolean-presenceType
       assertFalse(xaPool.isInterleaving());
@@ -282,148 +283,7 @@ public class ResourceAdapterParser13TestCase extends XMLParserTestBase
 
       cp = ao.getConfigProperties();
       assertEquals(0, cp.size());
-      
-      //resource adapter 2
-      ra = (ActivationImpl) lrs.get(1);
-      assertEquals("ID2", ra.getId());
-      assertEquals("some2.rar", ra.getArchive());
-      assertEquals(null, ra.getBootstrapContext());
-      assertEquals(null, ra.getBeanValidationGroups());
-      assertEquals(null, ra.getConfigProperties());
-      assertEquals(ra.getTransactionSupport(), TransactionSupportEnum.NoTransaction);
-      
-      cds = ra.getConnectionDefinitions();
-      assertEquals(1, cds.size());
-      //conn-def 1
-      cd = cds.get(0);
-      assertEquals(null, cd.getClassName());
-      assertEquals("java:jboss/name8", cd.getJndiName());
-      assertEquals(null, cd.getPoolName());
-      //default values
-      assertTrue(cd.isEnabled());
-      assertTrue(cd.isSharable());
-      assertTrue(cd.isEnlistment());
-      assertTrue(cd.isUseCcm());
-      assertTrue(cd.isUseJavaContext());
-      
-      assertFalse(cd.isXa());
-      Pool pool = cd.getPool();
-      assertEquals(1, (int) pool.getMinPoolSize());
-      assertEquals(5, (int) pool.getInitialPoolSize());
-      assertEquals(5, (int) pool.getMaxPoolSize());
-      assertTrue(pool.isPrefill());
-      assertTrue(pool.isFair());
-      assertTrue(pool.isUseStrictMin());
-      assertEquals(pool.getFlushStrategy(), FlushStrategy.IDLE_CONNECTIONS);
-      assertNotNull(pool.getCapacity());
-      assertNotNull(pool.getCapacity().getIncrementer());
-      assertNotNull(pool.getCapacity().getDecrementer());
-      
-      assertEquals(null, cd.getSecurity());
-      assertEquals(null, cd.getTimeOut());
-      assertEquals(null, cd.getValidation());
-      assertEquals(null, cd.getRecovery());
 
-      aos = ra.getAdminObjects();
-      assertEquals(2, aos.size());
-      //admin object 1
-      ao = aos.get(0);
-      assertEquals("Class6", ao.getClassName());
-      assertEquals("java:jboss/name6", ao.getJndiName());
-      assertEquals("Pool6", ao.getPoolName());
-      assertFalse(ao.isEnabled());
-      assertTrue(ao.isUseJavaContext());
-
-      cp = ao.getConfigProperties();
-      assertEquals(2, cp.size());
-      assertEquals(cp.get("Property9"), ".");
-      assertEquals(cp.get("Property0"), "");
-
-      //admin object 2
-      ao = aos.get(1);
-      assertEquals(null, ao.getClassName());
-      assertEquals("java:jboss/name7", ao.getJndiName());
-      assertEquals(null, ao.getPoolName());
-      //default values
-      assertTrue(ao.isEnabled());
-      assertTrue(ao.isUseJavaContext());
-
-      cp = ao.getConfigProperties();
-      assertEquals(0, cp.size());
-      
-      //resource adapter 3
-      ra = (ActivationImpl) lrs.get(2);
-      assertEquals(null, ra.getId());
-      assertEquals("some1.rar", ra.getArchive());
-      assertEquals(null, ra.getBootstrapContext());
-      assertEquals(null, ra.getBeanValidationGroups());
-      assertEquals(null, ra.getConfigProperties());
-      assertEquals(ra.getTransactionSupport(), TransactionSupportEnum.LocalTransaction);
-      
-      cds = ra.getConnectionDefinitions();
-      assertEquals(1, cds.size());
-      //conn-def 1
-      cd = cds.get(0);
-      assertEquals(null, cd.getClassName());
-      assertEquals("java:jboss/name9", cd.getJndiName());
-      assertEquals(null, cd.getPoolName());
-      //default values
-      assertTrue(cd.isEnabled());
-      assertTrue(cd.isSharable());
-      assertTrue(cd.isEnlistment());
-      assertTrue(cd.isUseCcm());
-      assertTrue(cd.isUseJavaContext());
-      
-      assertFalse(cd.isXa());
-      Pool cpool = cd.getPool();
-      assertFalse(cpool.isPrefill());
-      assertTrue(cpool.isFair());
-      assertFalse(cpool.isUseStrictMin());
-      //default values
-      assertEquals(0, (int) cpool.getMinPoolSize());
-      assertEquals(20, (int) cpool.getMaxPoolSize());
-      assertEquals(cpool.getFlushStrategy(), FlushStrategy.FAILING_CONNECTION_ONLY);
-
-      assertEquals(null, cd.getSecurity());
-      assertEquals(null, cd.getTimeOut());
-      assertEquals(null, cd.getValidation());
-      assertEquals(null, cd.getRecovery());
-
-      assertEquals(null, ra.getAdminObjects());
-
-      //resource adapter 4
-      ra = (ActivationImpl) lrs.get(3);
-      assertEquals(null, ra.getId());
-      assertEquals("some3.rar", ra.getArchive());
-      assertEquals(null, ra.getBootstrapContext());
-      assertEquals(null, ra.getBeanValidationGroups());
-      assertEquals(null, ra.getConfigProperties());
-      assertEquals(null, ra.getTransactionSupport());
-      
-      assertEquals(null, ra.getConnectionDefinitions());
-      
-      aos = ra.getAdminObjects();
-      assertEquals(1, aos.size());
-      //admin object 1
-      ao = aos.get(0);
-      assertEquals(null, ao.getClassName());
-      assertEquals("java:jboss/name9", ao.getJndiName());
-      assertEquals(null, ao.getPoolName());
-      //default values
-      assertTrue(ao.isEnabled());
-      assertTrue(ao.isUseJavaContext());
-      
-      //resource adapter 5
-      ra = (ActivationImpl) lrs.get(4);
-      assertEquals(null, ra.getId());
-      assertEquals("some4.rar", ra.getArchive());
-      assertEquals(null, ra.getBootstrapContext());
-      assertEquals(null, ra.getBeanValidationGroups());
-      assertEquals(null, ra.getConfigProperties());
-      assertEquals(null, ra.getTransactionSupport());
-      
-      assertEquals(null, ra.getConnectionDefinitions());
-      assertEquals(null, ra.getAdminObjects());
    }
 
 }
