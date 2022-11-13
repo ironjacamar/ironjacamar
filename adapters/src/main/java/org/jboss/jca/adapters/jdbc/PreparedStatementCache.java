@@ -234,6 +234,11 @@ public class PreparedStatementCache implements CacheListener<CachedPreparedState
       }
    }
 
+   void flush()
+   {
+      cache.flush();
+   }
+
    /**
     * {@inheritDoc}
     */

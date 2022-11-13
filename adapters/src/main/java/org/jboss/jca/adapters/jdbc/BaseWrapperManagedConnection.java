@@ -1290,6 +1290,15 @@ public abstract class BaseWrapperManagedConnection implements NotifyingManagedCo
       }
       if (mh.isPresent())
          invokeNotifyMethod(mh.get(), "endRequest");
+      flushPreparedStatementCache();
+   }
+
+   private void flushPreparedStatementCache()
+   {
+      if(psCache != null)
+      {
+         psCache.flush();
+      }
    }
 
    private Optional<MethodHandle> lookupNotifyMethod(String methodName)
