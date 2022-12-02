@@ -29,7 +29,7 @@
     <parent>
         <groupId>org.jboss.ironjacamar</groupId>
         <artifactId>ironjacamar-parent</artifactId>
-        <version>1.5.10.Final-SNAPSHOT</version>
+        <version>1.5.11.Final-SNAPSHOT</version>
     </parent>
 
     <artifactId>ironjacamar-ee-9-parent</artifactId>
