@@ -41,6 +41,7 @@ import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 import org.jboss.shrinkwrap.descriptor.api.Descriptor;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -54,6 +55,7 @@ import static org.junit.Assert.fail;
  */
 @RunWith(Arquillian.class)
 @Configuration(autoActivate = false)
+@Ignore
 public class BytemanBMTestCase
 {
    // --------------------------------------------------------------------------------||
