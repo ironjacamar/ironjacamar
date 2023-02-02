@@ -59,7 +59,6 @@
 	    <module>core</module>
         <module>deployers</module>
          <!--<module>eclipse</module>-->
-        <module>ee-9</module>
         <module>eis</module>
         <module>embedded</module>
         <module>sjc</module>
