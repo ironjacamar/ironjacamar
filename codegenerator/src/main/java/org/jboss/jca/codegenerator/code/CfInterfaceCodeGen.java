@@ -68,9 +68,9 @@ public class CfInterfaceCodeGen extends AbstractCodeGen
       out.write("import java.io.Serializable;");
       writeEol(out);
       writeEol(out);
-      out.write("import javax.resource.Referenceable;");
+      out.write("import jakarta.resource.Referenceable;");
       writeEol(out);
-      out.write("import javax.resource.ResourceException;");
+      out.write("import jakarta.resource.ResourceException;");
       writeEol(out);
       writeEol(out);
    }

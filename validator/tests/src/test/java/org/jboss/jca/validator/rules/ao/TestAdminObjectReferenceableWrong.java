@@ -23,10 +23,10 @@ package org.jboss.jca.validator.rules.ao;
 
 import java.io.Serializable;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ConfigProperty;
-import javax.resource.spi.ResourceAdapter;
-import javax.resource.spi.ResourceAdapterAssociation;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ConfigProperty;
+import jakarta.resource.spi.ResourceAdapter;
+import jakarta.resource.spi.ResourceAdapterAssociation;
 
 /**
  * An AdminObject with wrong property
@@ -63,7 +63,7 @@ public class TestAdminObjectReferenceableWrong implements ResourceAdapterAssocia
    /**
     * {@inheritDoc}
     *
-    * @see javax.resource.spi.ResourceAdapterAssociation#getResourceAdapter()
+    * @see jakarta.resource.spi.ResourceAdapterAssociation#getResourceAdapter()
     */
    @Override
    public ResourceAdapter getResourceAdapter()
@@ -74,7 +74,7 @@ public class TestAdminObjectReferenceableWrong implements ResourceAdapterAssocia
    /**
     * {@inheritDoc}
     *
-    * @see javax.resource.spi.ResourceAdapterAssociation#setResourceAdapter(javax.resource.spi.ResourceAdapter)
+    * @see jakarta.resource.spi.ResourceAdapterAssociation#setResourceAdapter(jakarta.resource.spi.ResourceAdapter)
     */
    @Override
    public void setResourceAdapter(ResourceAdapter ra) throws ResourceException

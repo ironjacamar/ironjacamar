@@ -38,7 +38,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.naming.InitialContext;
-import javax.resource.spi.ActivationSpec;
+import jakarta.resource.spi.ActivationSpec;
 
 import org.jboss.logging.Logger;
 
@@ -111,7 +111,7 @@ public class PureInflowTestCase
 
          ic = new InitialContext();
 
-         Set<String> ids = raRepository.getResourceAdapters(javax.jms.MessageListener.class);
+         Set<String> ids = raRepository.getResourceAdapters(jakarta.jms.MessageListener.class);
 
          assertNotNull(ids);
          assertEquals(1, ids.size());

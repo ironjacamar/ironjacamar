@@ -65,7 +65,7 @@ public class ManageThreadTestCase
    public void testWorkManagerHasThreadPools() throws Throwable
    {
       assertNotNull(workManager);
-      assertTrue(workManager instanceof javax.resource.spi.work.WorkManager);
+      assertTrue(workManager instanceof jakarta.resource.spi.work.WorkManager);
       BlockingExecutor shortRunning = workManager.getShortRunningThreadPool();
       assertNotNull(shortRunning);
 

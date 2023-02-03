@@ -143,14 +143,14 @@ public class Ra10XmlGen extends RaXmlGen
       else
       {
          writeIndent(out, indent);
-         out.write("<connectionfactory-interface>javax.resource.cci.ConnectionFactory</connectionfactory-interface>");
+         out.write("<connectionfactory-interface>jakarta.resource.cci.ConnectionFactory</connectionfactory-interface>");
          writeEol(out);
          writeIndent(out, indent);
          out.write("<connectionfactory-impl-class>" + def.getRaPackage() + "." + 
             def.getMcfDefs().get(0).getCciConnFactoryClass() + "</connectionfactory-impl-class>");
          writeEol(out);
          writeIndent(out, indent);
-         out.write("<connection-interface>javax.resource.cci.Connection</connection-interface>");
+         out.write("<connection-interface>jakarta.resource.cci.Connection</connection-interface>");
          writeEol(out);
          writeIndent(out, indent);
          out.write("<connection-impl-class>" + def.getRaPackage() + "." + 

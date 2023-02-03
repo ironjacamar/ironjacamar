@@ -28,14 +28,14 @@ import org.jboss.jca.core.workmanager.rars.dwm.WorkResourceAdapter;
 
 import java.io.Serializable;
 
-import javax.annotation.Resource;
-import javax.resource.spi.BootstrapContext;
-import javax.resource.spi.ResourceAdapter;
-import javax.resource.spi.ResourceAdapterAssociation;
-import javax.resource.spi.work.DistributableWork;
-import javax.resource.spi.work.Work;
-import javax.resource.spi.work.WorkCompletedException;
-import javax.resource.spi.work.WorkException;
+import jakarta.annotation.Resource;
+import jakarta.resource.spi.BootstrapContext;
+import jakarta.resource.spi.ResourceAdapter;
+import jakarta.resource.spi.ResourceAdapterAssociation;
+import jakarta.resource.spi.work.DistributableWork;
+import jakarta.resource.spi.work.Work;
+import jakarta.resource.spi.work.WorkCompletedException;
+import jakarta.resource.spi.work.WorkException;
 
 import org.jboss.logging.Logger;
 
@@ -105,7 +105,7 @@ public abstract class AbstractDistributedWorkManagerTest
       try
       {
          assertNotNull(wc.getWorkManager());
-         assertTrue(wc.getWorkManager() instanceof javax.resource.spi.work.DistributableWorkManager);
+         assertTrue(wc.getWorkManager() instanceof jakarta.resource.spi.work.DistributableWorkManager);
 
          DistributedWorkManager dwm = (DistributedWorkManager)wc.getWorkManager();
 
@@ -152,7 +152,7 @@ public abstract class AbstractDistributedWorkManagerTest
       try
       {
          assertNotNull(wc.getWorkManager());
-         assertTrue(wc.getWorkManager() instanceof javax.resource.spi.work.DistributableWorkManager);
+         assertTrue(wc.getWorkManager() instanceof jakarta.resource.spi.work.DistributableWorkManager);
 
          dwm = (DistributedWorkManager)wc.getWorkManager();
 
@@ -175,7 +175,7 @@ public abstract class AbstractDistributedWorkManagerTest
 
    /**
     * Test that the used distributed work managers are an instance of the
-    * <code>javax.resource.spi.work.DistributableWorkManager</code> interface
+    * <code>jakarta.resource.spi.work.DistributableWorkManager</code> interface
     * @throws Throwable throwable exception
     */
    @Test
@@ -184,7 +184,7 @@ public abstract class AbstractDistributedWorkManagerTest
       log.infof("DWM: %s", getDistributedWorkManager());
 
       assertNotNull(getDistributedWorkManager());
-      assertTrue(getDistributedWorkManager() instanceof javax.resource.spi.work.DistributableWorkManager);
+      assertTrue(getDistributedWorkManager() instanceof jakarta.resource.spi.work.DistributableWorkManager);
    }
 
    // --------------------------------------------------------------------------------||

@@ -25,8 +25,8 @@ package org.jboss.jca.core.spi.rar;
 import java.util.Map;
 import java.util.Set;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ActivationSpec;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ActivationSpec;
 
 /**
  * An activation representation

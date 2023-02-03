@@ -22,7 +22,7 @@
 
 package org.jboss.jca.core.workmanager.spec.chapter11.common;
 
-import javax.resource.spi.work.WorkContext;
+import jakarta.resource.spi.work.WorkContext;
 /**
  * UnsupportedWorkContext.
  */

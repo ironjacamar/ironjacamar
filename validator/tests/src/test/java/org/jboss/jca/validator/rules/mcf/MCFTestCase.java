@@ -36,7 +36,7 @@ import com.github.fungal.spi.deployers.DeployException;
 
 import org.junit.Test;
 
-import javax.resource.spi.ResourceAdapter;
+import jakarta.resource.spi.ResourceAdapter;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -88,7 +88,7 @@ public class MCFTestCase extends TestCaseAbstract
          final Failure failureRA =
                new Failure(Severity.ERROR,
                      "6.5.3.2",
-                     "The class must implement the javax.resource.spi.ManagedConnectionFactory interface.",
+                     "The class must implement the jakarta.resource.spi.ManagedConnectionFactory interface.",
                      TestManagedConnectionFactoryWrong.class
                      .getName());
          assertThat(dve.getFailures(), notNullValue());

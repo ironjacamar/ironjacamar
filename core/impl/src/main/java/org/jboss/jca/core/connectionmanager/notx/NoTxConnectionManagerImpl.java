@@ -33,9 +33,9 @@ import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 
 import java.util.Collection;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ManagedConnection;
-import javax.transaction.SystemException;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ManagedConnection;
+import jakarta.transaction.SystemException;
 
 import org.jboss.logging.Logger;
 

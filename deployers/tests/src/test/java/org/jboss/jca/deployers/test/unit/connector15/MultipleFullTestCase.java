@@ -27,7 +27,7 @@ import org.jboss.jca.deployers.test.rars.inout.SimpleAdminObject1;
 import org.jboss.jca.deployers.test.rars.inout.SimpleConnectionFactory;
 import org.jboss.jca.deployers.test.rars.inout.SimpleConnectionFactory1;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;

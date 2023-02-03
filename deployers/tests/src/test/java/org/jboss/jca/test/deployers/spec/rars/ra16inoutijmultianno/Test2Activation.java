@@ -21,8 +21,8 @@
  */
 package org.jboss.jca.test.deployers.spec.rars.ra16inoutijmultianno;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.endpoint.MessageEndpointFactory;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.endpoint.MessageEndpointFactory;
 
 /**
  * TestActivation

@@ -100,19 +100,19 @@ public class CciConnFactoryCodeGen extends AbstractCodeGen
       out.write("import javax.naming.Reference;");
       writeEol(out);
       writeEol(out);
-      out.write("import javax.resource.ResourceException;");
+      out.write("import jakarta.resource.ResourceException;");
       writeEol(out);
-      out.write("import javax.resource.cci.Connection;");
+      out.write("import jakarta.resource.cci.Connection;");
       writeEol(out);
-      out.write("import javax.resource.cci.ConnectionFactory;");
+      out.write("import jakarta.resource.cci.ConnectionFactory;");
       writeEol(out);
-      out.write("import javax.resource.cci.ConnectionSpec;");
+      out.write("import jakarta.resource.cci.ConnectionSpec;");
       writeEol(out);
-      out.write("import javax.resource.cci.RecordFactory;");
+      out.write("import jakarta.resource.cci.RecordFactory;");
       writeEol(out);
-      out.write("import javax.resource.cci.ResourceAdapterMetaData;");
+      out.write("import jakarta.resource.cci.ResourceAdapterMetaData;");
       writeEol(out);
-      out.write("import javax.resource.spi.ConnectionManager;");
+      out.write("import jakarta.resource.spi.ConnectionManager;");
       writeEol(out);
       writeEol(out);
       if (def.getMcfDefs().size() != 1)
@@ -282,7 +282,7 @@ public class CciConnFactoryCodeGen extends AbstractCodeGen
       out.write(" * @throws ResourceException Failed to create a RecordFactory");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @throws javax.resource.NotSupportedException Operation not supported");
+      out.write(" * @throws jakarta.resource.NotSupportedException Operation not supported");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");

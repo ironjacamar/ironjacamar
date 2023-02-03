@@ -37,17 +37,17 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.annotation.Resource;
-import javax.resource.spi.BootstrapContext;
-import javax.resource.spi.ResourceAdapter;
-import javax.resource.spi.work.SecurityContext;
-import javax.resource.spi.work.Work;
-import javax.resource.spi.work.WorkContext;
-import javax.resource.spi.work.WorkContextProvider;
+import jakarta.annotation.Resource;
+import jakarta.resource.spi.BootstrapContext;
+import jakarta.resource.spi.ResourceAdapter;
+import jakarta.resource.spi.work.SecurityContext;
+import jakarta.resource.spi.work.Work;
+import jakarta.resource.spi.work.WorkContext;
+import jakarta.resource.spi.work.WorkContextProvider;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.message.callback.CallerPrincipalCallback;
-import javax.security.auth.message.callback.GroupPrincipalCallback;
+import jakarta.security.auth.message.callback.CallerPrincipalCallback;
+import jakarta.security.auth.message.callback.GroupPrincipalCallback;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;

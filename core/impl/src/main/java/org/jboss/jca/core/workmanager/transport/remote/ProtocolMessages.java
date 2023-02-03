@@ -27,8 +27,8 @@ import org.jboss.jca.core.workmanager.ClassBundle;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import javax.resource.spi.work.DistributableWork;
-import javax.resource.spi.work.WorkException;
+import jakarta.resource.spi.work.DistributableWork;
+import jakarta.resource.spi.work.WorkException;
 
 /**
  * A ProtocolMessages.

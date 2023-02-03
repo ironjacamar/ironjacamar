@@ -24,7 +24,7 @@ package org.jboss.jca.core.spi.workmanager.policy;
 
 import org.jboss.jca.core.api.workmanager.DistributedWorkManager;
 
-import javax.resource.spi.work.DistributableWork;
+import jakarta.resource.spi.work.DistributableWork;
 
 /**
  * The policy interface defines how the distributed work manager to

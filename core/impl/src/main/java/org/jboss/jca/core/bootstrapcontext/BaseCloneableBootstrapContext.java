@@ -33,13 +33,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.Timer;
 
-import javax.resource.spi.ResourceAdapter;
-import javax.resource.spi.XATerminator;
-import javax.resource.spi.work.HintsContext;
-import javax.resource.spi.work.SecurityContext;
-import javax.resource.spi.work.TransactionContext;
-import javax.resource.spi.work.WorkContext;
-import javax.transaction.TransactionSynchronizationRegistry;
+import jakarta.resource.spi.ResourceAdapter;
+import jakarta.resource.spi.XATerminator;
+import jakarta.resource.spi.work.HintsContext;
+import jakarta.resource.spi.work.SecurityContext;
+import jakarta.resource.spi.work.TransactionContext;
+import jakarta.resource.spi.work.WorkContext;
+import jakarta.transaction.TransactionSynchronizationRegistry;
 
 /**
  * The base implementation of the cloneable bootstrap context

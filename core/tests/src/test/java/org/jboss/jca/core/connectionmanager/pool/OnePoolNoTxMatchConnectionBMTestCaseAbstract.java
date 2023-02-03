@@ -47,7 +47,7 @@ public abstract class OnePoolNoTxMatchConnectionBMTestCaseAbstract extends OnePo
    @BMRule(name = "Throw exception on matchConnection", 
       targetClass = "org.jboss.jca.core.connectionmanager.rar.SimpleManagedConnectionFactory", 
       targetMethod = "matchManagedConnections", 
-      action = " throw new javax.resource.ResourceException()")
+      action = " throw new jakarta.resource.ResourceException()")
    public void testExceptionOnMatchConnection() throws Throwable
    {
       test();

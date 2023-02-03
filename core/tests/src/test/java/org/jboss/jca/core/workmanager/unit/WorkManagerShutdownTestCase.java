@@ -28,7 +28,7 @@ import org.jboss.jca.core.api.workmanager.WorkManagerStatistics;
 
 import java.util.concurrent.CountDownLatch;
 
-import javax.resource.spi.work.Work;
+import jakarta.resource.spi.work.Work;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.logging.Logger;

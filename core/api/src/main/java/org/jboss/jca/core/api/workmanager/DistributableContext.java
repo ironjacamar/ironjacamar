@@ -22,7 +22,7 @@
 
 package org.jboss.jca.core.api.workmanager;
 
-import javax.resource.spi.work.WorkContext;
+import jakarta.resource.spi.work.WorkContext;
 
 /**
  * Properties for distribution of work instances

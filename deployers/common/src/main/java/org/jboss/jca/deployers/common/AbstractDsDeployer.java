@@ -76,11 +76,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.ResourceAdapter;
-import javax.resource.spi.ResourceAdapterAssociation;
-import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
-import javax.resource.spi.security.PasswordCredential;
+import jakarta.resource.spi.ManagedConnectionFactory;
+import jakarta.resource.spi.ResourceAdapter;
+import jakarta.resource.spi.ResourceAdapterAssociation;
+import jakarta.resource.spi.TransactionSupport.TransactionSupportLevel;
+import jakarta.resource.spi.security.PasswordCredential;
 import javax.security.auth.Subject;
 
 import org.jboss.logging.Messages;
@@ -1180,7 +1180,7 @@ public abstract class AbstractDsDeployer
     * @throws DeployException DeployException Thrown if the resource adapter cant be started
     */
    @SuppressWarnings("unchecked")
-   protected void startContext(javax.resource.spi.ResourceAdapter resourceAdapter, String bootstrapContextIdentifier)
+   protected void startContext(jakarta.resource.spi.ResourceAdapter resourceAdapter, String bootstrapContextIdentifier)
       throws DeployException
    {
       try
@@ -1246,7 +1246,7 @@ public abstract class AbstractDsDeployer
     * @return The key
     */
    protected abstract String
-   registerResourceAdapterToResourceAdapterRepository(javax.resource.spi.ResourceAdapter instance);
+   registerResourceAdapterToResourceAdapterRepository(jakarta.resource.spi.ResourceAdapter instance);
 
    /**
     * Create Mcf for xads

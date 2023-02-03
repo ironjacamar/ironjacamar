@@ -47,8 +47,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
-import javax.resource.spi.work.DistributableWork;
-import javax.resource.spi.work.WorkException;
+import jakarta.resource.spi.work.DistributableWork;
+import jakarta.resource.spi.work.WorkException;
 
 import org.jboss.logging.Logger;
 

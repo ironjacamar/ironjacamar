@@ -21,8 +21,8 @@
  */
 package org.jboss.jca.core.connectionmanager.common;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.LocalTransaction;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.LocalTransaction;
 
 /**
  * Mock local transaction.

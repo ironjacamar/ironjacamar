@@ -32,10 +32,10 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Set;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.security.PasswordCredential;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ConnectionRequestInfo;
+import jakarta.resource.spi.ManagedConnectionFactory;
+import jakarta.resource.spi.security.PasswordCredential;
 import javax.security.auth.Subject;
 
 import org.jboss.logging.Logger;

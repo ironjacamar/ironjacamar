@@ -25,8 +25,8 @@ package org.jboss.jca.core.connectionmanager.pool;
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.pool.api.PrefillPool;
 
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.ManagedConnectionFactory;
+import jakarta.resource.spi.ConnectionRequestInfo;
+import jakarta.resource.spi.ManagedConnectionFactory;
 import javax.security.auth.Subject;
 
 /**

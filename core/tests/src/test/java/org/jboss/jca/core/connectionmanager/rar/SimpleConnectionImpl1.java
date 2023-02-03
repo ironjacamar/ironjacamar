@@ -23,7 +23,7 @@ package org.jboss.jca.core.connectionmanager.rar;
 
 import java.util.logging.Logger;
 
-import javax.resource.spi.ConnectionRequestInfo;
+import jakarta.resource.spi.ConnectionRequestInfo;
 
 /**
  * SimpleConnectionImpl

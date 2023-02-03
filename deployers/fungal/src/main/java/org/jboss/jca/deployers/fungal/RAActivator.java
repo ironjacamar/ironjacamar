@@ -428,7 +428,7 @@ public final class RAActivator extends AbstractFungalRADeployer implements Deplo
             {
                try
                {
-                  javax.resource.spi.ResourceAdapter instance = rar.getResourceAdapter(deployment);
+                  jakarta.resource.spi.ResourceAdapter instance = rar.getResourceAdapter(deployment);
                   if (clz.equals(instance.getClass().getName()))
                      return true;
                }

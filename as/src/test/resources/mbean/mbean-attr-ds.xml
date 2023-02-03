@@ -6,7 +6,7 @@
        <track-connection-by-tx/>
        <rar-name>activemq-ra.rar</rar-name>
 
-       <connection-definition>javax.jms.QueueConnectionFactory</connection-definition>
+       <connection-definition>jakarta.jms.QueueConnectionFactory</connection-definition>
 
        <ServerUrl>vm://localhost</ServerUrl>
        <!--
@@ -23,7 +23,7 @@
        <attribute name="JNDIName">activemq/queue/outbound</attribute>
        <depends optional-attribute-name="RARName">jboss.jca:service=RARDeployment,name='activemq-ra.rar'</depends>
 
-       <attribute name="Type">javax.jms.Queue</attribute>
+       <attribute name="Type">jakarta.jms.Queue</attribute>
        <attribute name="Properties">PhysicalName=queue.outbound</attribute>
     </mbean> 
 

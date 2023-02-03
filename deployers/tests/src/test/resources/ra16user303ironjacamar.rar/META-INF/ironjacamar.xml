@@ -7,7 +7,7 @@
 
   <bean-validation-groups>
     <bean-validation-group>org.jboss.jca.test.deployers.spec.rars.ra16user303ironjacamar.CheckCase</bean-validation-group>
-    <bean-validation-group>javax.validation.groups.Default</bean-validation-group>
+    <bean-validation-group>jakarta.validation.groups.Default</bean-validation-group>
   </bean-validation-groups>
   
   <config-property name="MyStringProperty">XMLOVERRIDE</config-property>

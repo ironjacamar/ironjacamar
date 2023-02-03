@@ -23,7 +23,7 @@ package org.jboss.jca.test.deployers.spec.rars.ra16inoutijmultianno;
 
 import java.io.Serializable;
 
-import javax.resource.Referenceable;
+import jakarta.resource.Referenceable;
 
 /**
  * Test1AdminObjectInterface

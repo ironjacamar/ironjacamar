@@ -23,8 +23,8 @@ package org.jboss.jca.test.deployers.spec.rars.ra16inoutnora;
 
 import org.jboss.jca.test.deployers.spec.rars.BaseResourceAdapter;
 
-import javax.resource.spi.Connector;
-import javax.resource.spi.TransactionSupport;
+import jakarta.resource.spi.Connector;
+import jakarta.resource.spi.TransactionSupport;
 
 /**
  * TestResourceAdapter

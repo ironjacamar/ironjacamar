@@ -84,9 +84,9 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ManagedConnection;
-import javax.resource.spi.ManagedConnectionFactory;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ManagedConnection;
+import jakarta.resource.spi.ManagedConnectionFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -502,7 +502,7 @@ public class Main
                   //ResourceAdapterAssociation
                   hasResourceAdapterAssociation(out, mcfClassName, cl);
                   
-                  //ManagedConnectionFactory implements javax.resource.spi.TransactionSupport
+                  //ManagedConnectionFactory implements jakarta.resource.spi.TransactionSupport
                   hasMcfTransactionSupport(out, mcfClassName, cl);
                   
                   //DissociatableManagedConnection
@@ -843,7 +843,7 @@ public class Main
          out.print("  Validating: ");
          Class<?> clazz = Class.forName(classname, true, cl);
 
-         if (hasInterface(clazz, "javax.resource.spi.ValidatingManagedConnectionFactory"))
+         if (hasInterface(clazz, "jakarta.resource.spi.ValidatingManagedConnectionFactory"))
          {
             out.println("Yes");
          }
@@ -874,7 +874,7 @@ public class Main
          out.print("  Association: ");
          Class<?> clazz = Class.forName(classname, true, cl);
 
-         if (hasInterface(clazz, "javax.resource.spi.ResourceAdapterAssociation"))
+         if (hasInterface(clazz, "jakarta.resource.spi.ResourceAdapterAssociation"))
          {
             out.println("Yes");
          }
@@ -907,7 +907,7 @@ public class Main
          Class<?> mcfClz = Class.forName(classname, true, cl);
          ManagedConnectionFactory mcf = (ManagedConnectionFactory)mcfClz.newInstance();
 
-         if (hasInterface(mcf.getClass(),  "javax.resource.spi.TransactionSupport"))
+         if (hasInterface(mcf.getClass(),  "jakarta.resource.spi.TransactionSupport"))
          {
             out.println("Yes");
          } 
@@ -958,7 +958,7 @@ public class Main
          
          mcClz = mcf.createManagedConnection(null, null); 
 
-         if (hasInterface(mcClz.getClass(), "javax.resource.spi." + mcClassName))
+         if (hasInterface(mcClz.getClass(), "jakarta.resource.spi." + mcClassName))
          {
             out.println("Yes");
          }
@@ -1057,10 +1057,10 @@ public class Main
    
    private static boolean isCCI(String cfi, Class<?> clazz, String mcfClassName, URLClassLoader cl) throws Exception
    { 
-      if (cfi.equals("javax.resource.cci.ConnectionFactory"))
+      if (cfi.equals("jakarta.resource.cci.ConnectionFactory"))
          return true;
       
-      if (hasInterface(clazz, "javax.resource.cci.ConnectionFactory"))
+      if (hasInterface(clazz, "jakarta.resource.cci.ConnectionFactory"))
          return true;
       
       Class mcfClazz = Class.forName(mcfClassName, true, cl);
@@ -1069,12 +1069,12 @@ public class Main
                      
       Class rt = m.getReturnType();
          
-      if (rt.isAssignableFrom(javax.resource.cci.ConnectionFactory.class))
+      if (rt.isAssignableFrom(jakarta.resource.cci.ConnectionFactory.class))
          return true;
  
       Object mcfInstance = mcfClazz.newInstance();
       Object result = m.invoke(mcfInstance, (Object[])null);
-      if (result instanceof javax.resource.cci.ConnectionFactory)
+      if (result instanceof jakarta.resource.cci.ConnectionFactory)
          return true;
       
       return false;

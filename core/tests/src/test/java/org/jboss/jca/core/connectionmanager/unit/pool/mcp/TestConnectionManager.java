@@ -22,9 +22,9 @@
 
 package org.jboss.jca.core.connectionmanager.unit.pool.mcp;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionEvent;
-import javax.resource.spi.ManagedConnection;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ConnectionEvent;
+import jakarta.resource.spi.ManagedConnection;
 
 import org.jboss.jca.common.api.metadata.common.FlushStrategy;
 import org.jboss.jca.core.CoreLogger;

@@ -29,9 +29,9 @@ import org.jboss.jca.embedded.dsl.InputStreamDescriptor;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import javax.sql.DataSource;
-import javax.transaction.UserTransaction;
+import jakarta.transaction.UserTransaction;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;

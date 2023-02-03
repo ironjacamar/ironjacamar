@@ -28,7 +28,7 @@ import org.jboss.jca.test.eis.rars.echo.EchoConnectionFactory;
 
 import java.util.UUID;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;

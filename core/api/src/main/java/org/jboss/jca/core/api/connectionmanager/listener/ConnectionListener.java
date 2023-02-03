@@ -21,8 +21,8 @@
  */
 package org.jboss.jca.core.api.connectionmanager.listener;
 
-import javax.resource.spi.ConnectionEventListener;
-import javax.resource.spi.ManagedConnection;
+import jakarta.resource.spi.ConnectionEventListener;
+import jakarta.resource.spi.ManagedConnection;
 
 /**
  * Connection listener.

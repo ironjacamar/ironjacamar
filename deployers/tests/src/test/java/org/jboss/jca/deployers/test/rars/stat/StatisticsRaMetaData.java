@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.deployers.test.rars.stat;
 
-import javax.resource.cci.ResourceAdapterMetaData;
+import jakarta.resource.cci.ResourceAdapterMetaData;
 
 /**
  * StatisticsRaMetaData

@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.core.tx.jbossts;
 
-import javax.transaction.SystemException;
+import jakarta.transaction.SystemException;
 
 /**
  * UserTransactionListener implementation

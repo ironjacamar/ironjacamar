@@ -36,7 +36,7 @@ import org.jboss.jca.deployers.test.rars.anno.AnnoMessageListener;
 import org.jboss.jca.deployers.test.rars.anno.AnnoMessageListener1;
 import org.jboss.jca.deployers.test.rars.anno.AnnoResourceAdapter;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;

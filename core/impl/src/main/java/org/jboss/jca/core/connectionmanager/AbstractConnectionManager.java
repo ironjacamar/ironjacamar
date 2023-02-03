@@ -42,15 +42,15 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.ManagedConnection;
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.RetryableException;
-import javax.resource.spi.security.PasswordCredential;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ConnectionRequestInfo;
+import jakarta.resource.spi.ManagedConnection;
+import jakarta.resource.spi.ManagedConnectionFactory;
+import jakarta.resource.spi.RetryableException;
+import jakarta.resource.spi.security.PasswordCredential;
 import javax.security.auth.Subject;
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.Transaction;
 
 import org.jboss.logging.Messages;
 
@@ -531,7 +531,7 @@ public abstract class AbstractConnectionManager implements ConnectionManager
     * Gets managed connection factory.
     * @return managed connection factory
     */
-   public javax.resource.spi.ManagedConnectionFactory getManagedConnectionFactory()
+   public jakarta.resource.spi.ManagedConnectionFactory getManagedConnectionFactory()
    {
       if (pool == null)
       {

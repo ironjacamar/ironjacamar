@@ -33,7 +33,7 @@ import org.jboss.jca.core.workmanager.rars.wm.ContextRaMetaData;
 import org.jboss.jca.core.workmanager.rars.wm.ContextResourceAdapter;
 import org.jboss.jca.core.workmanager.spec.chapter10.common.AssociationWork;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;

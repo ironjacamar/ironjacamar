@@ -25,7 +25,7 @@ import org.jboss.jca.core.connectionmanager.ConnectionRecord;
 
 import java.util.Collection;
 
-import javax.transaction.SystemException;
+import jakarta.transaction.SystemException;
 
 
 /**

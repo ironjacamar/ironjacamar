@@ -37,7 +37,7 @@ import org.jboss.jca.deployers.test.unit.connector15.Activation15TestBase;
 import java.util.List;
 import java.util.Set;
 
-import javax.resource.spi.ActivationSpec;
+import jakarta.resource.spi.ActivationSpec;
 
 import static org.junit.Assert.*;
 

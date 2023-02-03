@@ -33,7 +33,7 @@ import com.github.fungal.spi.deployers.DeployException;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import javax.resource.spi.ResourceAdapter;
+import jakarta.resource.spi.ResourceAdapter;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -88,7 +88,7 @@ public class AnnoTestCase extends TestCaseAbstract
          }
 
          final Failure failureRA = new Failure(Severity.ERROR, "5.3.1", "A ResourceAdapter must implement "
-                                                                        + "the javax.resource.spi."
+                                                                        + "the jakarta.resource.spi."
                                                                         + "ResourceAdapter interface.",
                                                AnnoResourceAdapter1.class.getName());
          assertThat(dve.getFailures(), notNullValue());

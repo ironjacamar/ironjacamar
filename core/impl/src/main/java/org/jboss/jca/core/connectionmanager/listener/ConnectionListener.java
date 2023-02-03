@@ -24,9 +24,9 @@ package org.jboss.jca.core.connectionmanager.listener;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ManagedConnection;
-import javax.transaction.SystemException;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ManagedConnection;
+import jakarta.transaction.SystemException;
 
 /**
  * Connection listener.

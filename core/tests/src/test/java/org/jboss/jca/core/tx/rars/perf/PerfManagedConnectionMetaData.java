@@ -21,9 +21,9 @@
  */
 package org.jboss.jca.core.tx.rars.perf;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 
-import javax.resource.spi.ManagedConnectionMetaData;
+import jakarta.resource.spi.ManagedConnectionMetaData;
 
 /**
  * PerfManagedConnectionMetaData

@@ -23,9 +23,9 @@ package org.jboss.jca.core.connectionmanager.rar;
 
 import java.io.Serializable;
 
-import javax.resource.Referenceable;
-import javax.resource.ResourceException;
-import javax.resource.spi.ManagedConnectionFactory;
+import jakarta.resource.Referenceable;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ManagedConnectionFactory;
 
 /**
  * SimpleConnectionFactory

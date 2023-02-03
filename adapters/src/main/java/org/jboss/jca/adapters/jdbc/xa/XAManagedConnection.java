@@ -29,8 +29,8 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.LocalTransaction;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.LocalTransaction;
 import javax.sql.XAConnection;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;

@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.core.workmanager.rars.dwm;
 
-import javax.resource.cci.ResourceAdapterMetaData;
+import jakarta.resource.cci.ResourceAdapterMetaData;
 
 /**
  * WorkRaMetaData

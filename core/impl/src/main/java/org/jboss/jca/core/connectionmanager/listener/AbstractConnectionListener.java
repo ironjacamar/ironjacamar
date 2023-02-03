@@ -39,10 +39,10 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionEvent;
-import javax.resource.spi.ManagedConnection;
-import javax.transaction.SystemException;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ConnectionEvent;
+import jakarta.resource.spi.ManagedConnection;
+import jakarta.transaction.SystemException;
 
 import org.jboss.logging.Messages;
 
@@ -564,7 +564,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
     */
    public boolean supportsLazyAssociation()
    {
-      return managedConnection instanceof javax.resource.spi.DissociatableManagedConnection;
+      return managedConnection instanceof jakarta.resource.spi.DissociatableManagedConnection;
    }
 
    /**
@@ -572,7 +572,7 @@ public abstract class AbstractConnectionListener implements ConnectionListener, 
     */
    public boolean supportsLazyEnlistment()
    {
-      return managedConnection instanceof javax.resource.spi.LazyEnlistableManagedConnection;
+      return managedConnection instanceof jakarta.resource.spi.LazyEnlistableManagedConnection;
    }
 
    /**

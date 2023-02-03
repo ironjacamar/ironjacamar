@@ -28,10 +28,10 @@ import org.jboss.jca.core.workmanager.spec.chapter10.common.SynchronizedReleaseW
 import org.jboss.jca.core.workmanager.spec.chapter10.common.SynchronizedRunWork;
 import org.jboss.jca.core.workmanager.spec.chapter10.common.UnsynchronizedWork;
 
-import javax.resource.spi.work.ExecutionContext;
-import javax.resource.spi.work.WorkCompletedException;
-import javax.resource.spi.work.WorkException;
-import javax.resource.spi.work.WorkManager;
+import jakarta.resource.spi.work.ExecutionContext;
+import jakarta.resource.spi.work.WorkCompletedException;
+import jakarta.resource.spi.work.WorkException;
+import jakarta.resource.spi.work.WorkManager;
 import javax.transaction.xa.Xid;
 
 import org.jboss.arquillian.junit.Arquillian;

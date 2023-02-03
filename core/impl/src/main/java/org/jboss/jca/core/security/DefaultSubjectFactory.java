@@ -25,7 +25,7 @@ import org.jboss.jca.core.spi.security.SubjectFactory;
 
 import java.security.Principal;
 
-import javax.resource.spi.security.PasswordCredential;
+import jakarta.resource.spi.security.PasswordCredential;
 import javax.security.auth.Subject;
 
 /**

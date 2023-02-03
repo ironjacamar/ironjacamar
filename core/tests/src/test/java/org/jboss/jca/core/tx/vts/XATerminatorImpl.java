@@ -25,8 +25,8 @@ import org.jboss.jca.core.spi.transaction.xa.XATerminator;
 
 import java.io.Serializable;
 
-import javax.resource.spi.work.Work;
-import javax.resource.spi.work.WorkCompletedException;
+import jakarta.resource.spi.work.Work;
+import jakarta.resource.spi.work.WorkCompletedException;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;

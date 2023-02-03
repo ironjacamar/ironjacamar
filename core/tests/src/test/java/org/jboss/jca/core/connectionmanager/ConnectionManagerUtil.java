@@ -58,7 +58,7 @@ public class ConnectionManagerUtil
                for (Field field : fields)
                {
                   Class<?> fieldType = field.getType();
-                  if (fieldType.equals(javax.resource.spi.ConnectionManager.class) ||
+                  if (fieldType.equals(jakarta.resource.spi.ConnectionManager.class) ||
                       fieldType.equals(org.jboss.jca.core.connectionmanager.ConnectionManager.class))
                   {
                      field.setAccessible(true);
@@ -77,7 +77,7 @@ public class ConnectionManagerUtil
             for (Method method : methods)
             {
                Class<?> type = method.getReturnType();
-               if (type.equals(javax.resource.spi.ConnectionManager.class) ||
+               if (type.equals(jakarta.resource.spi.ConnectionManager.class) ||
                    type.equals(org.jboss.jca.core.connectionmanager.ConnectionManager.class))
                {
                   method.setAccessible(true);

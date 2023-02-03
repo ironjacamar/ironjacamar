@@ -21,8 +21,8 @@
  */
 package org.jboss.jca.core.api.connectionmanager.pool;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionRequestInfo;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ConnectionRequestInfo;
 import javax.security.auth.Subject;
 
 /**

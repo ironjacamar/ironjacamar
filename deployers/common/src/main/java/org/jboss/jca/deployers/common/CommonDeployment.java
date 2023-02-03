@@ -30,7 +30,7 @@ import org.jboss.jca.deployers.DeployersLogger;
 import java.net.URL;
 import java.util.Arrays;
 
-import javax.resource.spi.ResourceAdapter;
+import jakarta.resource.spi.ResourceAdapter;
 
 /**
  *

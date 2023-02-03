@@ -33,12 +33,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.resource.Referenceable;
-import javax.resource.spi.ResourceAdapterAssociation;
+import jakarta.resource.Referenceable;
+import jakarta.resource.spi.ResourceAdapterAssociation;
 
 /**
- * An AdminObject must implement javax.resource.Referenceable and java.io.Serializable 
- * interfaces if javax.resource.spi.ResourceAdapterAssociation is implemented Code
+ * An AdminObject must implement jakarta.resource.Referenceable and java.io.Serializable 
+ * interfaces if jakarta.resource.spi.ResourceAdapterAssociation is implemented Code
  */
 public class AORAA implements Rule
 {

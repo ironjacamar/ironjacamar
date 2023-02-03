@@ -13,7 +13,7 @@
 
   <!-- Transaction manager -->
   <bean name="TransactionManager"
-        interface="javax.transaction.TransactionManager" 
+        interface="jakarta.transaction.TransactionManager" 
         class="org.jboss.jca.core.tx.vts.TransactionManagerImpl">
     <property name="Registry"><inject bean="TxRegistry"/></property>
     <depends>NamingServer</depends>
@@ -21,7 +21,7 @@
 
   <!-- TransactionSynchronizationRegistry -->
   <bean name="TransactionSynchronizationRegistry"
-        interface="javax.transaction.TransactionSynchronizationRegistry" 
+        interface="jakarta.transaction.TransactionSynchronizationRegistry" 
         class="org.jboss.jca.core.tx.vts.TransactionSynchronizationRegistryImpl">
     <property name="Registry"><inject bean="TxRegistry"/></property>
     <depends>NamingServer</depends>
@@ -29,7 +29,7 @@
 
   <!-- UserTransaction -->
   <bean name="UserTransaction"
-        interface="javax.transaction.UserTransaction" 
+        interface="jakarta.transaction.UserTransaction" 
         class="org.jboss.jca.core.tx.vts.UserTransactionImpl">
     <property name="Registry"><inject bean="TxRegistry"/></property>
     <depends>NamingServer</depends>

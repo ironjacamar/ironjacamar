@@ -46,8 +46,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-import javax.annotation.Resource;
-import javax.resource.spi.ActivationSpec;
+import jakarta.annotation.Resource;
+import jakarta.resource.spi.ActivationSpec;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;

@@ -242,7 +242,7 @@
     </default-connection-properties>
     
     <connection-definition-group>
-      <connection-factory-interface>javax.resource.cci.ConnectionFactory</connection-factory-interface>
+      <connection-factory-interface>jakarta.resource.cci.ConnectionFactory</connection-factory-interface>
       
       <!-- Mapped (connection-definition-propertiesType) -->
       <default-connection-properties></default-connection-properties>

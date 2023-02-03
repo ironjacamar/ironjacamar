@@ -54,7 +54,7 @@ public class ConnectionFactory
     * @param cf The connection factory
     * @param mcf The managed connection factory instance
     */
-   public ConnectionFactory(Object cf, javax.resource.spi.ManagedConnectionFactory mcf)
+   public ConnectionFactory(Object cf, jakarta.resource.spi.ManagedConnectionFactory mcf)
    {
       this.connectionFactory = new WeakReference<Object>(cf);
       this.managedConnectionFactory = new ManagedConnectionFactory(mcf);

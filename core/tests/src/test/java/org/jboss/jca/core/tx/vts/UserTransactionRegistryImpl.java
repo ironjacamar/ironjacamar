@@ -29,7 +29,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.transaction.SystemException;
+import jakarta.transaction.SystemException;
 
 /**
  * UserTransactionRegistry implementation.

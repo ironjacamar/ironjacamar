@@ -23,8 +23,8 @@ package org.jboss.jca.validator.rules.anno;
 
 import java.io.Serializable;
 
-import javax.resource.Referenceable;
-import javax.resource.ResourceException;
+import jakarta.resource.Referenceable;
+import jakarta.resource.ResourceException;
 
 /**
  * AnnoConnectionFactory

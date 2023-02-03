@@ -36,10 +36,10 @@ import org.jboss.jca.embedded.dsl.resourceadapters11.api.ResourceAdaptersDescrip
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.annotation.Resource;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-import javax.transaction.UserTransaction;
+import jakarta.annotation.Resource;
+import jakarta.transaction.Transaction;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.UserTransaction;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;

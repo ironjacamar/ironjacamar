@@ -22,8 +22,8 @@
 
 package org.jboss.jca.core.connectionmanager.unit.pool.mcp;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionRequestInfo;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ConnectionRequestInfo;
 
 import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.ConnectionManager;

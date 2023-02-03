@@ -24,8 +24,8 @@ package org.jboss.jca.core.bv;
 
 import java.lang.annotation.ElementType;
 
-import javax.validation.Path;
-import javax.validation.TraversableResolver;
+import jakarta.validation.Path;
+import jakarta.validation.TraversableResolver;
 
 /**
  * JCATraversableResolver

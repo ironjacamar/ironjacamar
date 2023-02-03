@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.resource.spi.ManagedConnection;
+import jakarta.resource.spi.ManagedConnection;
 
 /**
  * ManagedConnectionFactory must have an equals implementation

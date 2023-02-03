@@ -22,9 +22,9 @@
 
 package org.jboss.jca.core.spi.rar;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ActivationSpec;
-import javax.resource.spi.endpoint.MessageEndpointFactory;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ActivationSpec;
+import jakarta.resource.spi.endpoint.MessageEndpointFactory;
 
 /**
  * An endpoint representation

@@ -22,7 +22,7 @@
 
 package org.jboss.jca.core.connectionmanager.pool.mcp;
 
-import javax.resource.spi.ConnectionRequestInfo;
+import jakarta.resource.spi.ConnectionRequestInfo;
 import javax.security.auth.Subject;
 
 /**

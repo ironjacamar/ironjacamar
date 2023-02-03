@@ -31,10 +31,10 @@ import org.jboss.jca.core.connectionmanager.pool.idle.IdleConnectionRemovalSuppo
 
 import java.util.Collection;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.ManagedConnection;
-import javax.resource.spi.ManagedConnectionFactory;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ConnectionRequestInfo;
+import jakarta.resource.spi.ManagedConnection;
+import jakarta.resource.spi.ManagedConnectionFactory;
 import javax.security.auth.Subject;
 
 /**

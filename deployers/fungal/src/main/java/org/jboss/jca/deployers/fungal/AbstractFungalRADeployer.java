@@ -50,8 +50,8 @@ import javax.management.DynamicMBean;
 import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-import javax.resource.spi.ResourceAdapter;
-import javax.transaction.TransactionManager;
+import jakarta.resource.spi.ResourceAdapter;
+import jakarta.transaction.TransactionManager;
 
 import com.github.fungal.api.Kernel;
 import com.github.fungal.api.util.Injection;

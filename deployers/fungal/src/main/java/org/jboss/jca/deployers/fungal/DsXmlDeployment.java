@@ -40,7 +40,7 @@ import java.util.List;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-import javax.resource.spi.ResourceAdapter;
+import jakarta.resource.spi.ResourceAdapter;
 
 import org.jboss.logging.Logger;
 

@@ -24,7 +24,7 @@ package org.jboss.jca.adapters.jdbc;
 
 import java.io.Serializable;
 
-import javax.resource.spi.ConnectionRequestInfo;
+import jakarta.resource.spi.ConnectionRequestInfo;
 
 /**
  * WrappedConnectionRequestInfo

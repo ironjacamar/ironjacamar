@@ -24,9 +24,9 @@ package org.jboss.jca.core.connectionmanager.unit.pool.mcp;
 
 import java.util.Set;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.ManagedConnection;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ConnectionRequestInfo;
+import jakarta.resource.spi.ManagedConnection;
 import javax.security.auth.Subject;
 
 import org.jboss.jca.core.connectionmanager.rar.SimpleConnection;

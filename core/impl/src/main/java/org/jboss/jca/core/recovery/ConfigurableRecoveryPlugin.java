@@ -27,7 +27,7 @@ import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
 
 import java.lang.reflect.Method;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 
 import org.jboss.logging.Logger;
 import org.jboss.logging.Messages;
@@ -158,11 +158,11 @@ public class ConfigurableRecoveryPlugin implements RecoveryPlugin
       {
          if (c != null)
          {
-            if (c instanceof javax.resource.cci.Connection)
+            if (c instanceof jakarta.resource.cci.Connection)
             {
                try
                {
-                  javax.resource.cci.Connection cci = (javax.resource.cci.Connection)c;
+                  jakarta.resource.cci.Connection cci = (jakarta.resource.cci.Connection)c;
                   cci.close();
                }
                catch (ResourceException re)

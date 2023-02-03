@@ -28,7 +28,7 @@ import org.jboss.jca.core.spi.transaction.usertx.UserTransactionListener;
 
 import java.util.Map;
 
-import javax.transaction.TransactionManager;
+import jakarta.transaction.TransactionManager;
 
 /**
  * CacheConnectionManager.

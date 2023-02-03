@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.core.connectionmanager.common;
 
-import javax.resource.spi.ConnectionRequestInfo;
+import jakarta.resource.spi.ConnectionRequestInfo;
 
 /**
  * Mock connection reqest info.

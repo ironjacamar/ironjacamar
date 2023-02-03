@@ -34,7 +34,7 @@
     <xa-transaction/>
     <rar-name>jms-ra.rar</rar-name>
     <connection-definition>org.jboss.resource.adapter.jms.JmsConnectionFactory</connection-definition>
-    <config-property name="SessionDefaultType" type="java.lang.String">javax.jms.Topic</config-property>
+    <config-property name="SessionDefaultType" type="java.lang.String">jakarta.jms.Topic</config-property>
     <config-property name="JmsProviderAdapterJNDI" type="java.lang.String">java:/DefaultJMSProvider</config-property>
     <security-domain-and-application>JmsXARealm</security-domain-and-application>
     <max-pool-size>20</max-pool-size>

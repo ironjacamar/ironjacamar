@@ -23,12 +23,12 @@ package org.jboss.jca.deployers.test.rars.anno;
 
 import java.util.logging.Logger;
 
-import javax.resource.spi.Activation;
-import javax.resource.spi.ActivationSpec;
-import javax.resource.spi.ConfigProperty;
-import javax.resource.spi.InvalidPropertyException;
-import javax.resource.spi.ResourceAdapter;
-import javax.validation.constraints.NotNull;
+import jakarta.resource.spi.Activation;
+import jakarta.resource.spi.ActivationSpec;
+import jakarta.resource.spi.ConfigProperty;
+import jakarta.resource.spi.InvalidPropertyException;
+import jakarta.resource.spi.ResourceAdapter;
+import jakarta.validation.constraints.NotNull;
 /**
  * AnnoActivationSpec
  *

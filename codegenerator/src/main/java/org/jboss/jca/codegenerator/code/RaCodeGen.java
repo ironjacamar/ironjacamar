@@ -225,42 +225,42 @@ public class RaCodeGen extends PropsCodeGen
       }
       importLogging(def, out);
       
-      out.write("import javax.resource.ResourceException;");
+      out.write("import jakarta.resource.ResourceException;");
       writeEol(out);
-      out.write("import javax.resource.spi.ActivationSpec;");
+      out.write("import jakarta.resource.spi.ActivationSpec;");
       writeEol(out);
       if (def.isUseAnnotation() && 
          def.getAuthenMechanisms() != null && def.getAuthenMechanisms().size() > 0)
       {
-         out.write("import javax.resource.spi.AuthenticationMechanism;");
+         out.write("import jakarta.resource.spi.AuthenticationMechanism;");
          writeEol(out);
-         out.write("import javax.resource.spi.AuthenticationMechanism.CredentialInterface;");
+         out.write("import jakarta.resource.spi.AuthenticationMechanism.CredentialInterface;");
          writeEol(out);
       }
-      out.write("import javax.resource.spi.BootstrapContext;");
+      out.write("import jakarta.resource.spi.BootstrapContext;");
       writeEol(out);
       if (def.isUseAnnotation())
       {
          importConfigProperty(def, out);
-         out.write("import javax.resource.spi.Connector;");
+         out.write("import jakarta.resource.spi.Connector;");
          writeEol(out);
       }
-      out.write("import javax.resource.spi.ResourceAdapter;");
+      out.write("import jakarta.resource.spi.ResourceAdapter;");
       writeEol(out);
-      out.write("import javax.resource.spi.ResourceAdapterInternalException;");
+      out.write("import jakarta.resource.spi.ResourceAdapterInternalException;");
       writeEol(out);
       if (def.isUseAnnotation() && 
          def.getSecurityPermissions() != null && def.getSecurityPermissions().size() > 0)
       {
-         out.write("import javax.resource.spi.SecurityPermission;");
+         out.write("import jakarta.resource.spi.SecurityPermission;");
          writeEol(out);
       }
       if (def.isUseAnnotation() && def.isSupportOutbound())
       {
-         out.write("import javax.resource.spi.TransactionSupport;");
+         out.write("import jakarta.resource.spi.TransactionSupport;");
          writeEol(out);
       }
-      out.write("import javax.resource.spi.endpoint.MessageEndpointFactory;");
+      out.write("import jakarta.resource.spi.endpoint.MessageEndpointFactory;");
       writeEol(out);
       writeEol(out);
       out.write("import javax.transaction.xa.XAResource;");

@@ -33,9 +33,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ActivationSpec;
-import javax.resource.spi.ResourceAdapter;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ActivationSpec;
+import jakarta.resource.spi.ResourceAdapter;
 
 import org.jboss.logging.Logger;
 import org.jboss.logging.Messages;

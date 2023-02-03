@@ -23,7 +23,7 @@ package org.jboss.jca.core.workmanager.spec.chapter10.common;
 
 import java.util.concurrent.CountDownLatch;
 
-import javax.resource.spi.work.Work;
+import jakarta.resource.spi.work.Work;
 
 /**
  * LongRunningWork

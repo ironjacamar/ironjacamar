@@ -27,7 +27,7 @@ import org.jboss.jca.core.spi.workmanager.Address;
 
 import java.util.Map;
 
-import javax.resource.spi.work.DistributableWork;
+import jakarta.resource.spi.work.DistributableWork;
 
 import org.jboss.logging.Logger;
 

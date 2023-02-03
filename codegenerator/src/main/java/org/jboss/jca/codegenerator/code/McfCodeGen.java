@@ -172,34 +172,34 @@ public class McfCodeGen extends PropsCodeGen
       writeEol(out);
       importLogging(def, out);
 
-      out.write("import javax.resource.ResourceException;");
+      out.write("import jakarta.resource.ResourceException;");
       writeEol(out);
       
       if (def.getMcfDefs().get(getNumOfMcf()).isUseCciConnection())
       {
-         out.write("import javax.resource.cci.Connection;");
+         out.write("import jakarta.resource.cci.Connection;");
          writeEol(out);
-         out.write("import javax.resource.cci.ConnectionFactory;");
+         out.write("import jakarta.resource.cci.ConnectionFactory;");
          writeEol(out);
       }
       
       if (def.isUseAnnotation())
       {
          importConfigProperty(def, out);
-         out.write("import javax.resource.spi.ConnectionDefinition;");
+         out.write("import jakarta.resource.spi.ConnectionDefinition;");
          writeEol(out);
       }
-      out.write("import javax.resource.spi.ConnectionManager;");
+      out.write("import jakarta.resource.spi.ConnectionManager;");
       writeEol(out);
-      out.write("import javax.resource.spi.ConnectionRequestInfo;");
+      out.write("import jakarta.resource.spi.ConnectionRequestInfo;");
       writeEol(out);
-      out.write("import javax.resource.spi.ManagedConnection;");
+      out.write("import jakarta.resource.spi.ManagedConnection;");
       writeEol(out);
-      out.write("import javax.resource.spi.ManagedConnectionFactory;");
+      out.write("import jakarta.resource.spi.ManagedConnectionFactory;");
       writeEol(out);
-      out.write("import javax.resource.spi.ResourceAdapter;");
+      out.write("import jakarta.resource.spi.ResourceAdapter;");
       writeEol(out);
-      out.write("import javax.resource.spi.ResourceAdapterAssociation;");
+      out.write("import jakarta.resource.spi.ResourceAdapterAssociation;");
       writeEol(out);
       writeEol(out);
       out.write("import javax.security.auth.Subject;");
@@ -253,7 +253,7 @@ public class McfCodeGen extends PropsCodeGen
       writeEol(out);
       writeIndent(out, indent);
       out.write(" * @return EIS-specific Connection Factory instance or " +
-         "javax.resource.cci.ConnectionFactory instance");
+         "jakarta.resource.cci.ConnectionFactory instance");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" * @throws ResourceException Generic exception");
@@ -286,7 +286,7 @@ public class McfCodeGen extends PropsCodeGen
       writeEol(out);
       writeIndent(out, indent);
       out.write(" * @return EIS-specific Connection Factory instance or " +
-         "javax.resource.cci.ConnectionFactory instance");
+         "jakarta.resource.cci.ConnectionFactory instance");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" * @throws ResourceException Generic exception");

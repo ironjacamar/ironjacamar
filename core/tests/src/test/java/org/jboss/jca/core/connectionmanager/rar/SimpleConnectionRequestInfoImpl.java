@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.core.connectionmanager.rar;
 
-import javax.resource.spi.ConnectionRequestInfo;
+import jakarta.resource.spi.ConnectionRequestInfo;
 
 /**
  * 

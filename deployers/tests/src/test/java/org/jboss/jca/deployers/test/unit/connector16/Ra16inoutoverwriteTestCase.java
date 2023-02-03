@@ -23,8 +23,8 @@
 package org.jboss.jca.deployers.test.unit.connector16;
 
 
-import javax.annotation.Resource;
-import javax.resource.cci.ConnectionFactory;
+import jakarta.annotation.Resource;
+import jakarta.resource.cci.ConnectionFactory;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;

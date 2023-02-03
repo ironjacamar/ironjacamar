@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.embedded.rars.simple;
 
-import javax.resource.cci.ResourceAdapterMetaData;
+import jakarta.resource.cci.ResourceAdapterMetaData;
 
 /**
  * TestRaMetaData

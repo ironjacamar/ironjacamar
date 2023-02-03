@@ -33,11 +33,11 @@ import java.security.PrivilegedAction;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ManagedConnection;
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.ValidatingManagedConnectionFactory;
-import javax.resource.spi.security.PasswordCredential;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ManagedConnection;
+import jakarta.resource.spi.ManagedConnectionFactory;
+import jakarta.resource.spi.ValidatingManagedConnectionFactory;
+import jakarta.resource.spi.security.PasswordCredential;
 import javax.security.auth.Subject;
 import javax.transaction.xa.XAResource;
 

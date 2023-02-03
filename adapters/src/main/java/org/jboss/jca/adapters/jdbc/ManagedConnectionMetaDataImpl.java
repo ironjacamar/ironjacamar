@@ -26,7 +26,7 @@ import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import javax.resource.spi.ManagedConnectionMetaData;
+import jakarta.resource.spi.ManagedConnectionMetaData;
 
 /**
  * Managed connection metadata

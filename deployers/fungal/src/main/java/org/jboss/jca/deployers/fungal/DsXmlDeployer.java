@@ -62,7 +62,7 @@ import javax.management.DynamicMBean;
 import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
-import javax.resource.spi.ManagedConnectionFactory;
+import jakarta.resource.spi.ManagedConnectionFactory;
 
 import org.jboss.logging.Logger;
 
@@ -606,21 +606,21 @@ public class DsXmlDeployer extends AbstractDsDeployer implements Deployer
    }
 
    @Override
-   protected javax.resource.spi.ResourceAdapter createRa(String uniqueId, ClassLoader cl)
+   protected jakarta.resource.spi.ResourceAdapter createRa(String uniqueId, ClassLoader cl)
       throws NotFoundException, Exception, DeployException
    {
       Connector md = mdr.getResourceAdapter(uniqueId);
       ResourceAdapter ra = md.getResourceadapter();
       List<? extends ConfigProperty> l = new ArrayList<ConfigProperty>();
 
-      javax.resource.spi.ResourceAdapter rar =
-         (javax.resource.spi.ResourceAdapter)initAndInject(ra.getResourceadapterClass(), l, cl);
+      jakarta.resource.spi.ResourceAdapter rar =
+         (jakarta.resource.spi.ResourceAdapter)initAndInject(ra.getResourceadapterClass(), l, cl);
 
       return rar;
    }
 
    @Override
-   protected String registerResourceAdapterToResourceAdapterRepository(javax.resource.spi.ResourceAdapter instance)
+   protected String registerResourceAdapterToResourceAdapterRepository(jakarta.resource.spi.ResourceAdapter instance)
    {
       return getResourceAdapterRepository().registerResourceAdapter(instance);
    }

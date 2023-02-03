@@ -32,7 +32,7 @@ import org.jboss.jca.validator.rules.ConfigPropertiesHelper;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.resource.spi.ActivationSpec;
+import jakarta.resource.spi.ActivationSpec;
 
 /**
  * An ActivationSpec must use the valid set of config-property-type

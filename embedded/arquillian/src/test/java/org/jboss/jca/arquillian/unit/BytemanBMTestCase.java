@@ -29,8 +29,8 @@ import org.jboss.jca.embedded.dsl.InputStreamDescriptor;
 
 import java.util.UUID;
 
-import javax.annotation.Resource;
-import javax.resource.ResourceException;
+import jakarta.annotation.Resource;
+import jakarta.resource.ResourceException;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.extension.byteman.api.BMRule;
@@ -109,7 +109,7 @@ public class BytemanBMTestCase
    @BMRule(name = "Throw exception on allocateConnection",
            targetClass = "org.jboss.jca.core.connectionmanager.AbstractConnectionManager",
            targetMethod = "allocateConnection",
-           action = "throw new javax.resource.ResourceException()")
+           action = "throw new jakarta.resource.ResourceException()")
    public void testByteman() throws Throwable
    {
       assertNotNull(connectionFactory);

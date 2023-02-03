@@ -71,7 +71,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
    private static Set<Class<?>> approvedTypes;
 
    /** Resource adapters */
-   private Map<String, WeakReference<javax.resource.spi.ResourceAdapter>> rars;
+   private Map<String, WeakReference<jakarta.resource.spi.ResourceAdapter>> rars;
 
    /** Ids */
    private Map<String, AtomicInteger> ids;
@@ -113,7 +113,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
     */
    public SimpleResourceAdapterRepository()
    {
-      this.rars = new HashMap<String, WeakReference<javax.resource.spi.ResourceAdapter>>();
+      this.rars = new HashMap<String, WeakReference<jakarta.resource.spi.ResourceAdapter>>();
       this.ids = new HashMap<String, AtomicInteger>();
       this.recovery = new HashMap<String, Boolean>();
       this.mdr = null;
@@ -141,7 +141,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
    /**
     * {@inheritDoc}
     */
-   public synchronized String registerResourceAdapter(javax.resource.spi.ResourceAdapter ra) 
+   public synchronized String registerResourceAdapter(jakarta.resource.spi.ResourceAdapter ra) 
    {
       if (ra == null)
          throw new IllegalArgumentException("ResourceAdapter is null");
@@ -157,7 +157,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
 
       String key = clzName + "#" + id.incrementAndGet();
 
-      rars.put(key, new WeakReference<javax.resource.spi.ResourceAdapter>(ra));
+      rars.put(key, new WeakReference<jakarta.resource.spi.ResourceAdapter>(ra));
 
       return key;
    }
@@ -180,7 +180,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
    /**
     * {@inheritDoc}
     */
-   public synchronized javax.resource.spi.ResourceAdapter getResourceAdapter(String uniqueId) throws NotFoundException
+   public synchronized jakarta.resource.spi.ResourceAdapter getResourceAdapter(String uniqueId) throws NotFoundException
    {
       if (uniqueId == null)
          throw new IllegalArgumentException("UniqueId is null");
@@ -191,7 +191,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
       if (!rars.containsKey(uniqueId))
          throw new NotFoundException(bundle.keyNotRegistered(uniqueId));
 
-      WeakReference<javax.resource.spi.ResourceAdapter> ra = rars.get(uniqueId);
+      WeakReference<jakarta.resource.spi.ResourceAdapter> ra = rars.get(uniqueId);
 
       if (ra.get() == null)
          throw new NotFoundException(bundle.keyNotRegistered(uniqueId));
@@ -220,17 +220,17 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
       
       Set<String> result = new HashSet<String>();
 
-      Iterator<Map.Entry<String, WeakReference<javax.resource.spi.ResourceAdapter>>> it = rars.entrySet().iterator();
+      Iterator<Map.Entry<String, WeakReference<jakarta.resource.spi.ResourceAdapter>>> it = rars.entrySet().iterator();
       while (it.hasNext())
       {
-         Map.Entry<String, WeakReference<javax.resource.spi.ResourceAdapter>> entry = it.next();
+         Map.Entry<String, WeakReference<jakarta.resource.spi.ResourceAdapter>> entry = it.next();
 
          String raKey = entry.getKey();
-         WeakReference<javax.resource.spi.ResourceAdapter> ra = entry.getValue();
+         WeakReference<jakarta.resource.spi.ResourceAdapter> ra = entry.getValue();
 
          if (ra.get() != null)
          {
-            javax.resource.spi.ResourceAdapter rar = ra.get();
+            jakarta.resource.spi.ResourceAdapter rar = ra.get();
             Connector md = null;
 
             Set<String> mdrKeys = mdr.getResourceAdapters();
@@ -307,7 +307,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
       if (!rars.containsKey(uniqueId))
          throw new NotFoundException(bundle.keyNotRegistered(uniqueId));
 
-      WeakReference<javax.resource.spi.ResourceAdapter> ra = rars.get(uniqueId);
+      WeakReference<jakarta.resource.spi.ResourceAdapter> ra = rars.get(uniqueId);
 
       if (ra.get() == null)
          throw new NotFoundException(bundle.keyNotRegistered(uniqueId));
@@ -341,7 +341,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
       if (!rars.containsKey(uniqueId))
          throw new NotFoundException(bundle.keyNotRegistered(uniqueId));
 
-      WeakReference<javax.resource.spi.ResourceAdapter> ra = rars.get(uniqueId);
+      WeakReference<jakarta.resource.spi.ResourceAdapter> ra = rars.get(uniqueId);
 
       if (ra.get() == null)
          throw new NotFoundException(bundle.keyNotRegistered(uniqueId));
@@ -349,7 +349,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
       if (mdr == null)
          throw new IllegalStateException("MDR is null");
       
-      javax.resource.spi.ResourceAdapter rar = ra.get();
+      jakarta.resource.spi.ResourceAdapter rar = ra.get();
       Connector md = null;
 
       Set<String> mdrKeys = mdr.getResourceAdapters();
@@ -433,7 +433,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
     * @exception IllegalAccessException Thrown if object access is inaccessible
     */
    private org.jboss.jca.core.spi.rar.MessageListener 
-   createMessageListener(javax.resource.spi.ResourceAdapter rar,
+   createMessageListener(jakarta.resource.spi.ResourceAdapter rar,
                          org.jboss.jca.common.api.metadata.spec.MessageListener ml)
       throws InstantiationException, IllegalAccessException
    {
@@ -538,7 +538,7 @@ public class SimpleResourceAdapterRepository implements ResourceAdapterRepositor
     * @param ra The resource adapter
     * @return The identifier
     */
-   private String getMDRIdentifier(javax.resource.spi.ResourceAdapter ra)
+   private String getMDRIdentifier(jakarta.resource.spi.ResourceAdapter ra)
    {
       for (String id : mdr.getResourceAdapters())
       {

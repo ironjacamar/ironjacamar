@@ -27,9 +27,9 @@ import org.jboss.jca.core.api.connectionmanager.pool.PoolConfiguration;
 import org.jboss.jca.core.connectionmanager.pool.AbstractPool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.ManagedConnectionFactory;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ConnectionRequestInfo;
+import jakarta.resource.spi.ManagedConnectionFactory;
 import javax.security.auth.Subject;
 
 import org.jboss.logging.Logger;

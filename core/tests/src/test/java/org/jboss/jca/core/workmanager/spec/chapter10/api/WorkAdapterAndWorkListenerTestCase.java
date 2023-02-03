@@ -29,9 +29,9 @@ import org.jboss.jca.core.workmanager.spec.chapter10.common.ShortRunningWork;
 
 import java.util.concurrent.CountDownLatch;
 
-import javax.resource.spi.work.Work;
-import javax.resource.spi.work.WorkManager;
-import javax.resource.spi.work.WorkRejectedException;
+import jakarta.resource.spi.work.Work;
+import jakarta.resource.spi.work.WorkManager;
+import jakarta.resource.spi.work.WorkRejectedException;
 
 import org.jboss.arquillian.junit.Arquillian;
 

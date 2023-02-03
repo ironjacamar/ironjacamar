@@ -39,12 +39,12 @@ import org.jboss.jca.embedded.EmbeddedFactory;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
-import javax.transaction.RollbackException;
-import javax.transaction.Status;
-import javax.transaction.TransactionManager;
+import jakarta.resource.spi.ConnectionRequestInfo;
+import jakarta.resource.spi.ManagedConnectionFactory;
+import jakarta.resource.spi.TransactionSupport.TransactionSupportLevel;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.Status;
+import jakarta.transaction.TransactionManager;
 import javax.transaction.xa.XAException;
 
 import org.jboss.logging.Logger;

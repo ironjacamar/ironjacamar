@@ -24,10 +24,10 @@ package org.jboss.jca.core.api.bootstrap;
 
 import org.jboss.jca.core.api.workmanager.WorkManager;
 
-import javax.resource.spi.BootstrapContext;
-import javax.resource.spi.ResourceAdapter;
-import javax.resource.spi.XATerminator;
-import javax.transaction.TransactionSynchronizationRegistry;
+import jakarta.resource.spi.BootstrapContext;
+import jakarta.resource.spi.ResourceAdapter;
+import jakarta.resource.spi.XATerminator;
+import jakarta.transaction.TransactionSynchronizationRegistry;
 
 /**
  * The cloneable bootstrap context interface which defines

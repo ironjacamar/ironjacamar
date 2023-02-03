@@ -28,7 +28,7 @@
          <connection-definition>
             <managedconnectionfactory-class>org.jboss.jca.validator.rules.ra.TestManagedConnectionFactory</managedconnectionfactory-class>
 
-            <connectionfactory-interface>javax.resource.spi.ManagedConnection</connectionfactory-interface>
+            <connectionfactory-interface>jakarta.resource.spi.ManagedConnection</connectionfactory-interface>
             <connectionfactory-impl-class>org.jboss.jca.validator.rules.ra.TestManagedConnection</connectionfactory-impl-class>
             <connection-interface>org.jboss.jca.validator.rules.base.TestConnectionInterface</connection-interface>
             <connection-impl-class>org.jboss.jca.validator.rules.base.TestConnection</connection-impl-class>

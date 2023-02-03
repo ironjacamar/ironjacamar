@@ -144,9 +144,9 @@ public class CfCodeGen extends AbstractCodeGen
       out.write("import javax.naming.Reference;");
       writeEol(out);
       writeEol(out);
-      out.write("import javax.resource.ResourceException;");
+      out.write("import jakarta.resource.ResourceException;");
       writeEol(out);
-      out.write("import javax.resource.spi.ConnectionManager;");
+      out.write("import jakarta.resource.spi.ConnectionManager;");
       writeEol(out);
       writeEol(out);
    }

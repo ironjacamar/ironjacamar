@@ -30,10 +30,10 @@ import org.jboss.jca.core.workmanager.notification.AbstractNotificationListener;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.resource.spi.work.DistributableWork;
-import javax.resource.spi.work.HintsContext;
-import javax.resource.spi.work.WorkContext;
-import javax.resource.spi.work.WorkContextProvider;
+import jakarta.resource.spi.work.DistributableWork;
+import jakarta.resource.spi.work.HintsContext;
+import jakarta.resource.spi.work.WorkContext;
+import jakarta.resource.spi.work.WorkContextProvider;
 
 /**
  * An abstract policy

@@ -24,7 +24,7 @@ package org.jboss.jca.core.security.reauth.ra.cri;
 
 import java.io.Serializable;
 
-import javax.resource.spi.ConnectionRequestInfo;
+import jakarta.resource.spi.ConnectionRequestInfo;
 
 import org.jboss.logging.Logger;
 

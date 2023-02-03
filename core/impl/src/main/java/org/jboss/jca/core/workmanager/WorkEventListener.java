@@ -26,8 +26,8 @@ import org.jboss.jca.core.api.workmanager.StatisticsExecutor;
 import org.jboss.jca.core.spi.workmanager.Address;
 import org.jboss.jca.core.spi.workmanager.transport.Transport;
 
-import javax.resource.spi.work.WorkAdapter;
-import javax.resource.spi.work.WorkEvent;
+import jakarta.resource.spi.work.WorkAdapter;
+import jakarta.resource.spi.work.WorkEvent;
 
 
 /**

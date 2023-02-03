@@ -28,11 +28,11 @@ import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.resource.spi.work.DistributableWork;
-import javax.resource.spi.work.HintsContext;
-import javax.resource.spi.work.Work;
-import javax.resource.spi.work.WorkContext;
-import javax.resource.spi.work.WorkContextProvider;
+import jakarta.resource.spi.work.DistributableWork;
+import jakarta.resource.spi.work.HintsContext;
+import jakarta.resource.spi.work.Work;
+import jakarta.resource.spi.work.WorkContext;
+import jakarta.resource.spi.work.WorkContextProvider;
 
 /**
  * Utility methods for the WorkManager

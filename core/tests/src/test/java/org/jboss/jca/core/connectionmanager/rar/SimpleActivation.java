@@ -21,8 +21,8 @@
  */
 package org.jboss.jca.core.connectionmanager.rar;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.endpoint.MessageEndpointFactory;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.endpoint.MessageEndpointFactory;
 
 /**
  * SimpleActivation

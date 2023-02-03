@@ -112,7 +112,7 @@
 				<description xml:lang="en-US" id="ID181">description16</description>
 				<description xml:lang="de" id="ID183">description17</description>
 				<authentication-mechanism-type id="ID185">authentication-mechanism-type0</authentication-mechanism-type>
-				<credential-interface id="ID187">javax.resource.spi.security.PasswordCredential</credential-interface>
+				<credential-interface id="ID187">jakarta.resource.spi.security.PasswordCredential</credential-interface>
 			</authentication-mechanism>
 			<authentication-mechanism id="ID189">
 				<description xml:lang="en-US" id="ID191">description18</description>

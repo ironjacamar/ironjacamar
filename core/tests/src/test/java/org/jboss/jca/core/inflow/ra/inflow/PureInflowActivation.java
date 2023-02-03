@@ -23,8 +23,8 @@ package org.jboss.jca.core.inflow.ra.inflow;
 
 import org.jboss.jca.core.inflow.ra.PureInflowResourceAdapter;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.endpoint.MessageEndpointFactory;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.endpoint.MessageEndpointFactory;
 
 /**
  * PureInflowActivation

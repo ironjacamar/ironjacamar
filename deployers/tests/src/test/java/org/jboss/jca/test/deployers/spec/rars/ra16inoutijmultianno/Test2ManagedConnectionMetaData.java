@@ -23,9 +23,9 @@ package org.jboss.jca.test.deployers.spec.rars.ra16inoutijmultianno;
 
 import java.util.logging.Logger;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 
-import javax.resource.spi.ManagedConnectionMetaData;
+import jakarta.resource.spi.ManagedConnectionMetaData;
 
 /**
  * Test2ManagedConnectionMetaData

@@ -33,24 +33,24 @@ package org.jboss.jca.common.api.metadata.spec;
  *        contract.
  *        The possible values are:
  *
- *        javax.resource.spi.security.PasswordCredential
+ *        jakarta.resource.spi.security.PasswordCredential
  *        org.ietf.jgss.GSSCredential
- *        javax.resource.spi.security.GenericCredential
+ *        jakarta.resource.spi.security.GenericCredential
  */
 public enum CredentialInterfaceEnum
 {
    /**
-    * enum instance representing javax.resource.spi.security.PasswordCredential
+    * enum instance representing jakarta.resource.spi.security.PasswordCredential
     */
-   PasswordCredential("javax.resource.spi.security.PasswordCredential"),
+   PasswordCredential("jakarta.resource.spi.security.PasswordCredential"),
    /**
     * enum instance representing org.ietf.jgss.GSSCredentia
     */
    GSSCredential("org.ietf.jgss.GSSCredential"),
    /**
-    * enum instance representing javax.resource.spi.security.GenericCredential
+    * enum instance representing jakarta.resource.spi.security.GenericCredential
     */
-   GenericCredential("javax.resource.spi.security.GenericCredential");
+   GenericCredential("jakarta.resource.spi.security.GenericCredential");
 
    private final String fullQualifiedName;
 
@@ -66,13 +66,13 @@ public enum CredentialInterfaceEnum
     * @param fullQualifiedName the full qualified name of supported Credential interface
     * @return the corresponding enum instance
     * @throws IllegalArgumentException in case the fullQualifiedName isn't one of the supported interfaces:
-    *        javax.resource.spi.security.PasswordCredential
+    *        jakarta.resource.spi.security.PasswordCredential
     *        org.ietf.jgss.GSSCredential
-    *        javax.resource.spi.security.GenericCredential
+    *        jakarta.resource.spi.security.GenericCredential
     */
    public static CredentialInterfaceEnum forName(String fullQualifiedName) throws IllegalArgumentException
    {
-      if ("javax.resource.spi.security.PasswordCredential".equals(fullQualifiedName))
+      if ("jakarta.resource.spi.security.PasswordCredential".equals(fullQualifiedName))
       {
          return PasswordCredential;
       }
@@ -80,15 +80,15 @@ public enum CredentialInterfaceEnum
       {
          return GSSCredential;
       }
-      else if ("javax.resource.spi.security.GenericCredential".equals(fullQualifiedName))
+      else if ("jakarta.resource.spi.security.GenericCredential".equals(fullQualifiedName))
       {
          return GenericCredential;
       }
       else
       {
          throw new IllegalArgumentException("fullQualifiedName should be one of "
-               + "javax.resource.spi.security.PasswordCredential;" + " org.ietf.jgss.GSSCredential;"
-               + "javax.resource.spi.security.GenericCredential");
+               + "jakarta.resource.spi.security.PasswordCredential;" + " org.ietf.jgss.GSSCredential;"
+               + "jakarta.resource.spi.security.GenericCredential");
       }
    }
 

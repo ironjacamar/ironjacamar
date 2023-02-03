@@ -34,8 +34,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionRequestInfo;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ConnectionRequestInfo;
 import javax.security.auth.Subject;
 
 import org.jboss.logging.Logger;

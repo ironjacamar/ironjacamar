@@ -25,9 +25,9 @@ package org.jboss.jca.core.inflow.support;
 import java.lang.reflect.Method;
 import java.util.concurrent.CountDownLatch;
 
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.resource.spi.endpoint.MessageEndpoint;
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
+import jakarta.resource.spi.endpoint.MessageEndpoint;
 
 import org.jboss.logging.Logger;
 

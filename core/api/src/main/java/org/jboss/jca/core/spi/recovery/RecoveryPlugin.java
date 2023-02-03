@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.core.spi.recovery;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 
 /**
  * Defines the contract for an XA recovery plugin.
@@ -57,7 +57,7 @@ public interface RecoveryPlugin
     *
     * @param c The connection instance
     * @exception ResourceException Thrown in case of an error
-    * @see javax.resource.cci.Connection
+    * @see jakarta.resource.cci.Connection
     */
    public void close(Object c) throws ResourceException;
 }

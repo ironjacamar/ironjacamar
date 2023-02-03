@@ -35,10 +35,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-import javax.resource.spi.work.DistributableWork;
-import javax.resource.spi.work.Work;
-import javax.resource.spi.work.WorkException;
-import javax.resource.spi.work.WorkManager;
+import jakarta.resource.spi.work.DistributableWork;
+import jakarta.resource.spi.work.Work;
+import jakarta.resource.spi.work.WorkException;
+import jakarta.resource.spi.work.WorkManager;
 
 import org.jboss.logging.Logger;
 

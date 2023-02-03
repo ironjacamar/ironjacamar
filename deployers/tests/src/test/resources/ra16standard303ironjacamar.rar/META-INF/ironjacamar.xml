@@ -4,7 +4,7 @@
   <bean-validation-groups>
     <bean-validation-group>org.jboss.jca.test.deployers.spec.rars.ra16standard303ironjacamar.FirstStep</bean-validation-group>
     <bean-validation-group>org.jboss.jca.test.deployers.spec.rars.ra16standard303ironjacamar.SecondStep</bean-validation-group>
-    <bean-validation-group>javax.validation.groups.Default</bean-validation-group>
+    <bean-validation-group>jakarta.validation.groups.Default</bean-validation-group>
   </bean-validation-groups>
   <connection-definitions>
    <connection-definition class-name="org.jboss.jca.test.deployers.spec.rars.ra16standard303ironjacamar.TestManagedConnectionFactory"

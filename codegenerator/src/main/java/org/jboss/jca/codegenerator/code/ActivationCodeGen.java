@@ -161,9 +161,9 @@ public class ActivationCodeGen extends AbstractCodeGen
       out.write("import " + def.getRaPackage() + "." + def.getRaClass() + ";");
       writeEol(out);
       writeEol(out);
-      out.write("import javax.resource.ResourceException;");
+      out.write("import jakarta.resource.ResourceException;");
       writeEol(out);
-      out.write("import javax.resource.spi.endpoint.MessageEndpointFactory;");
+      out.write("import jakarta.resource.spi.endpoint.MessageEndpointFactory;");
       writeEol(out);
       writeEol(out);
    }

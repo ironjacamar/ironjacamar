@@ -30,14 +30,14 @@ import org.jboss.jca.core.workmanager.spec.chapter11.common.TransactionContextCu
 import org.jboss.jca.core.workmanager.spec.chapter11.common.UniversalProviderWork;
 import org.jboss.jca.core.workmanager.spec.chapter11.common.UnsupportedContext;
 
-import javax.resource.spi.BootstrapContext;
-import javax.resource.spi.work.ExecutionContext;
-import javax.resource.spi.work.HintsContext;
-import javax.resource.spi.work.SecurityContext;
-import javax.resource.spi.work.TransactionContext;
-import javax.resource.spi.work.WorkCompletedException;
-import javax.resource.spi.work.WorkManager;
-import javax.resource.spi.work.WorkRejectedException;
+import jakarta.resource.spi.BootstrapContext;
+import jakarta.resource.spi.work.ExecutionContext;
+import jakarta.resource.spi.work.HintsContext;
+import jakarta.resource.spi.work.SecurityContext;
+import jakarta.resource.spi.work.TransactionContext;
+import jakarta.resource.spi.work.WorkCompletedException;
+import jakarta.resource.spi.work.WorkManager;
+import jakarta.resource.spi.work.WorkRejectedException;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.threads.QueueExecutor;

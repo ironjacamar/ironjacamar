@@ -24,9 +24,9 @@ package org.jboss.jca.validator.rules.anno;
 import javax.naming.NamingException;
 import javax.naming.Reference;
 
-import javax.resource.spi.AdministeredObject;
-import javax.resource.spi.ResourceAdapter;
-import javax.resource.spi.ResourceAdapterAssociation;
+import jakarta.resource.spi.AdministeredObject;
+import jakarta.resource.spi.ResourceAdapter;
+import jakarta.resource.spi.ResourceAdapterAssociation;
 
 /**
  * AnnoAdminObjectImpl

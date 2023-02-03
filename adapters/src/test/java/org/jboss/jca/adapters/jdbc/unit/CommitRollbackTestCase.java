@@ -30,11 +30,11 @@ import org.jboss.jca.embedded.dsl.InputStreamDescriptor;
 
 import java.sql.Connection;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import javax.sql.DataSource;
-import javax.transaction.HeuristicMixedException;
-import javax.transaction.RollbackException;
-import javax.transaction.TransactionManager;
+import jakarta.transaction.HeuristicMixedException;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.TransactionManager;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;

@@ -40,8 +40,8 @@ import org.jboss.jca.core.workmanager.spec.chapter11.common.UnsupportedContext;
 import org.jboss.jca.embedded.Embedded;
 
 import javax.naming.Context;
-import javax.resource.spi.work.SecurityContext;
-import javax.resource.spi.work.TransactionContext;
+import jakarta.resource.spi.work.SecurityContext;
+import jakarta.resource.spi.work.TransactionContext;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;

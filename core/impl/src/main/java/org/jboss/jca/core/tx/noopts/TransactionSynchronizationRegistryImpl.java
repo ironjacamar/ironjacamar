@@ -25,9 +25,9 @@ import java.io.Serializable;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.transaction.Status;
-import javax.transaction.Synchronization;
-import javax.transaction.TransactionSynchronizationRegistry;
+import jakarta.transaction.Status;
+import jakarta.transaction.Synchronization;
+import jakarta.transaction.TransactionSynchronizationRegistry;
 
 /**
  * A transaction synchronization registry implementation

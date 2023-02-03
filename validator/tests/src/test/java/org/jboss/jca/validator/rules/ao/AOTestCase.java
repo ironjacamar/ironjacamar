@@ -36,7 +36,7 @@ import com.github.fungal.spi.deployers.DeployException;
 
 import org.junit.Test;
 
-import javax.resource.spi.ResourceAdapter;
+import jakarta.resource.spi.ResourceAdapter;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -90,8 +90,8 @@ public class AOTestCase extends TestCaseAbstract
          final Failure failureRA =
                new Failure(Severity.ERROR,
                      "13.4.2.3",
-                     "An AdminObject must implement javax.resource.Referenceable and java.io.Serializable "
-                           + "interfaces if javax.resource.spi.ResourceAdapterAssociation is implemented Code",
+                     "An AdminObject must implement jakarta.resource.Referenceable and java.io.Serializable "
+                           + "interfaces if jakarta.resource.spi.ResourceAdapterAssociation is implemented Code",
                      org.jboss.jca.validator.rules.ao.TestAdminObjectSerializableWrong.class.getCanonicalName());
          assertThat(dve.getFailures(), notNullValue());
          //FIXME validator.properties not transformed
@@ -143,8 +143,8 @@ public class AOTestCase extends TestCaseAbstract
          final Failure failureRA =
                new Failure(Severity.ERROR,
                      "13.4.2.3",
-                     "An AdminObject must implement javax.resource.Referenceable and java.io.Serializable "
-                           + "interfaces if javax.resource.spi.ResourceAdapterAssociation is implemented Code",
+                     "An AdminObject must implement jakarta.resource.Referenceable and java.io.Serializable "
+                           + "interfaces if jakarta.resource.spi.ResourceAdapterAssociation is implemented Code",
                      org.jboss.jca.validator.rules.ao.TestAdminObjectReferenceableWrong.class.getCanonicalName());
          assertThat(dve.getFailures(), notNullValue());
          //FIXME validator.properties not transformed

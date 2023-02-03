@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.test.deployers.spec.rars.ra16inoutijmultianno;
 
-import javax.resource.spi.ConfigProperty;
+import jakarta.resource.spi.ConfigProperty;
 
 /**
  * 

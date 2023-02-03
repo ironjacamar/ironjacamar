@@ -21,9 +21,9 @@
  */
 package org.jboss.jca.deployers.test.rars.lazy;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 
-import javax.resource.spi.ManagedConnectionMetaData;
+import jakarta.resource.spi.ManagedConnectionMetaData;
 
 import org.jboss.logging.Logger;
 

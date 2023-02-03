@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.core.connectionmanager.rar;
 
-import javax.resource.cci.ResourceAdapterMetaData;
+import jakarta.resource.cci.ResourceAdapterMetaData;
 
 /**
  * SimpleRaMetaData

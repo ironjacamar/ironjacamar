@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.resource.cci.ConnectionFactory;
+import jakarta.resource.cci.ConnectionFactory;
 
 /**
  * A ConnectionFactory must have a default constructor

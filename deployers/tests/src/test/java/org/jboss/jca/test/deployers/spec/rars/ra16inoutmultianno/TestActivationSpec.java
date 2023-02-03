@@ -23,7 +23,7 @@ package org.jboss.jca.test.deployers.spec.rars.ra16inoutmultianno;
 
 import org.jboss.jca.test.deployers.spec.rars.BaseActivationSpec;
 
-import javax.resource.spi.Activation;
+import jakarta.resource.spi.Activation;
 
 /**
  * TestActivationSpec

@@ -23,8 +23,8 @@ package org.jboss.jca.test.deployers.spec.rars.ra16inoutijmultianno;
 
 import java.io.Serializable;
 
-import javax.resource.Referenceable;
-import javax.resource.ResourceException;
+import jakarta.resource.Referenceable;
+import jakarta.resource.ResourceException;
 
 /**
  * TestConnectionFactory

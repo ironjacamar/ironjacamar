@@ -31,8 +31,8 @@ import java.security.PrivilegedAction;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.security.PasswordCredential;
+import jakarta.resource.spi.ManagedConnectionFactory;
+import jakarta.resource.spi.security.PasswordCredential;
 import javax.security.auth.Subject;
 
 /**

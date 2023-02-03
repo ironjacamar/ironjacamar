@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.core.security.reauth.ra.cri;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 
 /**
  * ReauthConnection

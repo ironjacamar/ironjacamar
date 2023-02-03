@@ -27,8 +27,8 @@ import org.jboss.jca.core.workmanager.spec.chapter11.common.ContextWorkAdapter;
 import org.jboss.jca.core.workmanager.spec.chapter11.common.TransactionContextCustom;
 import org.jboss.jca.core.workmanager.spec.chapter11.common.UniversalProviderWork;
 
-import javax.resource.spi.work.WorkContextErrorCodes;
-import javax.resource.spi.work.WorkManager;
+import jakarta.resource.spi.work.WorkContextErrorCodes;
+import jakarta.resource.spi.work.WorkManager;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.logging.Logger;

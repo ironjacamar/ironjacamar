@@ -38,8 +38,8 @@ import java.net.Socket;
 import java.util.Arrays;
 import java.util.Set;
 
-import javax.resource.spi.work.DistributableWork;
-import javax.resource.spi.work.WorkException;
+import jakarta.resource.spi.work.DistributableWork;
+import jakarta.resource.spi.work.WorkException;
 
 import org.jboss.logging.Logger;
 import org.jboss.logging.Messages;

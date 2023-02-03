@@ -24,7 +24,7 @@ package org.jboss.jca.core.connectionmanager.pool;
 import org.jboss.jca.core.connectionmanager.listener.ConnectionListener;
 import org.jboss.jca.core.connectionmanager.rar.SimpleManagedConnectionFactory;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.extension.byteman.api.BMRule;
@@ -60,7 +60,7 @@ public class OnePoolNoTxBMTestCase extends PoolTestCaseAbstract
    @BMRule(name = "Throw exception on getConnection", 
    targetClass = "org.jboss.jca.core.connectionmanager.pool.AbstractPool", 
    targetMethod = "getConnection", 
-   action = " throw new javax.resource.ResourceException()")
+   action = " throw new jakarta.resource.ResourceException()")
    public  void testGetConnection() throws Throwable
    {
       AbstractPool pool = getPool();

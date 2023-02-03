@@ -38,7 +38,7 @@
       <inbound-resourceadapter>
          <messageadapter>
             <messagelistener>
-               <messagelistener-type>javax.jms.MessageListener</messagelistener-type>
+               <messagelistener-type>jakarta.jms.MessageListener</messagelistener-type>
                <activationspec>
                   <activationspec-class>org.jboss.jca.core.inflow.ra.inflow.PureInflowActivationSpec</activationspec-class>
                   <config-property>

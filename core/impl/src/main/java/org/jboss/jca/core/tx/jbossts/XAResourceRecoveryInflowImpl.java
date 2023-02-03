@@ -23,10 +23,10 @@ package org.jboss.jca.core.tx.jbossts;
 
 import org.jboss.jca.core.CoreLogger;
 
-import javax.resource.NotSupportedException;
-import javax.resource.ResourceException;
-import javax.resource.spi.ActivationSpec;
-import javax.resource.spi.ResourceAdapter;
+import jakarta.resource.NotSupportedException;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ActivationSpec;
+import jakarta.resource.spi.ResourceAdapter;
 import javax.transaction.xa.XAResource;
 
 import org.jboss.logging.Logger;

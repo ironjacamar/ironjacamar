@@ -32,9 +32,9 @@ import org.jboss.jca.core.workmanager.spec.chapter11.common.UnsupportedContext;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
 
-import javax.resource.spi.work.HintsContext;
-import javax.resource.spi.work.TransactionContext;
-import javax.resource.spi.work.WorkManager;
+import jakarta.resource.spi.work.HintsContext;
+import jakarta.resource.spi.work.TransactionContext;
+import jakarta.resource.spi.work.WorkManager;
 
 import org.jboss.arquillian.junit.Arquillian;
 

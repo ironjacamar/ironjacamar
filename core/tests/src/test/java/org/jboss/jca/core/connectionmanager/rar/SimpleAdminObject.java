@@ -23,7 +23,7 @@ package org.jboss.jca.core.connectionmanager.rar;
 
 import java.io.Serializable;
 
-import javax.resource.Referenceable;
+import jakarta.resource.Referenceable;
 
 /**
  * SimpleAdminObject

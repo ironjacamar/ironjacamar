@@ -28,14 +28,14 @@ import java.util.Set;
 
 import java.util.logging.Logger;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionManager;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.ManagedConnection;
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.ResourceAdapter;
-import javax.resource.spi.ResourceAdapterAssociation;
-import javax.resource.spi.ValidatingManagedConnectionFactory;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ConnectionManager;
+import jakarta.resource.spi.ConnectionRequestInfo;
+import jakarta.resource.spi.ManagedConnection;
+import jakarta.resource.spi.ManagedConnectionFactory;
+import jakarta.resource.spi.ResourceAdapter;
+import jakarta.resource.spi.ResourceAdapterAssociation;
+import jakarta.resource.spi.ValidatingManagedConnectionFactory;
 
 import javax.security.auth.Subject;
 
@@ -120,7 +120,7 @@ public class SimpleManagedConnectionFactory
     * Creates a Connection Factory instance. 
     *
     * @param cxManager ConnectionManager to be associated with created EIS connection factory instance
-    * @return EIS-specific Connection Factory instance or javax.resource.cci.ConnectionFactory instance
+    * @return EIS-specific Connection Factory instance or jakarta.resource.cci.ConnectionFactory instance
     * @throws ResourceException Generic exception
     */
    public Object createConnectionFactory(ConnectionManager cxManager) throws ResourceException
@@ -132,7 +132,7 @@ public class SimpleManagedConnectionFactory
    /**
     * Creates a Connection Factory instance. 
     *
-    * @return EIS-specific Connection Factory instance or javax.resource.cci.ConnectionFactory instance
+    * @return EIS-specific Connection Factory instance or jakarta.resource.cci.ConnectionFactory instance
     * @throws ResourceException Generic exception
     */
    public Object createConnectionFactory() throws ResourceException

@@ -93,20 +93,20 @@ public class CciConnCodeGen extends AbstractCodeGen
 
       writeEol(out);
       writeEol(out);
-      out.write("import javax.resource.ResourceException;");
+      out.write("import jakarta.resource.ResourceException;");
       writeEol(out);
       writeEol(out);
-      out.write("import javax.resource.cci.Connection;");
+      out.write("import jakarta.resource.cci.Connection;");
       writeEol(out);
-      out.write("import javax.resource.cci.ConnectionMetaData;");
+      out.write("import jakarta.resource.cci.ConnectionMetaData;");
       writeEol(out);
-      out.write("import javax.resource.cci.ConnectionSpec;");
+      out.write("import jakarta.resource.cci.ConnectionSpec;");
       writeEol(out);
-      out.write("import javax.resource.cci.Interaction;");
+      out.write("import jakarta.resource.cci.Interaction;");
       writeEol(out);
-      out.write("import javax.resource.cci.LocalTransaction;");
+      out.write("import jakarta.resource.cci.LocalTransaction;");
       writeEol(out);
-      out.write("import javax.resource.cci.ResultSetInfo;");
+      out.write("import jakarta.resource.cci.ResultSetInfo;");
       writeEol(out);
       writeEol(out);
    }
@@ -227,7 +227,7 @@ public class CciConnCodeGen extends AbstractCodeGen
       out.write(" * @throws ResourceException Failed to return a LocalTransaction");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @throws javax.resource.NotSupportedException Demarcation of Resource manager ");
+      out.write(" * @throws jakarta.resource.NotSupportedException Demarcation of Resource manager ");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");
@@ -316,7 +316,7 @@ public class CciConnCodeGen extends AbstractCodeGen
       out.write(" * @throws ResourceException Failed to get ResultSet related information");
       writeEol(out);
       writeIndent(out, indent);
-      out.write(" * @throws javax.resource.NotSupportedException ResultSet functionality is not supported");
+      out.write(" * @throws jakarta.resource.NotSupportedException ResultSet functionality is not supported");
       writeEol(out);
       writeIndent(out, indent);
       out.write(" */");

@@ -25,11 +25,11 @@ import java.io.Serializable;
 
 import javax.naming.NamingException;
 import javax.naming.Reference;
-import javax.resource.Referenceable;
-import javax.resource.ResourceException;
-import javax.resource.spi.ConfigProperty;
-import javax.resource.spi.ResourceAdapter;
-import javax.resource.spi.ResourceAdapterAssociation;
+import jakarta.resource.Referenceable;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ConfigProperty;
+import jakarta.resource.spi.ResourceAdapter;
+import jakarta.resource.spi.ResourceAdapterAssociation;
 
 /**
  * A bAse correct AdminObject
@@ -64,7 +64,7 @@ public class BaseAdminObjectRA implements ResourceAdapterAssociation, Referencea
    /**
     * {@inheritDoc}
     *
-    * @see javax.resource.spi.ResourceAdapterAssociation#getResourceAdapter()
+    * @see jakarta.resource.spi.ResourceAdapterAssociation#getResourceAdapter()
     */
    @Override
    public ResourceAdapter getResourceAdapter()
@@ -75,7 +75,7 @@ public class BaseAdminObjectRA implements ResourceAdapterAssociation, Referencea
    /**
     * {@inheritDoc}
     *
-    * @see javax.resource.spi.ResourceAdapterAssociation#setResourceAdapter(javax.resource.spi.ResourceAdapter)
+    * @see jakarta.resource.spi.ResourceAdapterAssociation#setResourceAdapter(jakarta.resource.spi.ResourceAdapter)
     */
    @Override
    public void setResourceAdapter(ResourceAdapter ra) throws ResourceException
@@ -85,7 +85,7 @@ public class BaseAdminObjectRA implements ResourceAdapterAssociation, Referencea
    /**
     * {@inheritDoc}
     *
-    * @see javax.resource.Referenceable#setReference(javax.naming.Reference)
+    * @see jakarta.resource.Referenceable#setReference(javax.naming.Reference)
     */
    @Override
    public void setReference(Reference reference)

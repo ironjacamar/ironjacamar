@@ -174,21 +174,21 @@ public class AoImplCodeGen extends PropsCodeGen
          out.write("import javax.naming.Reference;");
          writeEol(out);
          writeEol(out);
-         out.write("import javax.resource.Referenceable;");
+         out.write("import jakarta.resource.Referenceable;");
          writeEol(out);
       }
       if (def.isUseAnnotation())
       {
-         out.write("import javax.resource.spi.AdministeredObject;");
+         out.write("import jakarta.resource.spi.AdministeredObject;");
          writeEol(out);
-         out.write("import javax.resource.spi.ConfigProperty;");
+         out.write("import jakarta.resource.spi.ConfigProperty;");
          writeEol(out);
       }
       if (def.isAdminObjectImplRaAssociation())
       {
-         out.write("import javax.resource.spi.ResourceAdapter;");
+         out.write("import jakarta.resource.spi.ResourceAdapter;");
          writeEol(out);
-         out.write("import javax.resource.spi.ResourceAdapterAssociation;");
+         out.write("import jakarta.resource.spi.ResourceAdapterAssociation;");
          writeEol(out);
       }
       writeEol(out);

@@ -66,7 +66,7 @@ public class ConnSpecCodeGen extends AbstractCodeGen
 
       writeEol(out);
       writeEol(out);
-      out.write("import javax.resource.cci.ConnectionSpec ;");
+      out.write("import jakarta.resource.cci.ConnectionSpec ;");
       writeEol(out);
       writeEol(out);
    }

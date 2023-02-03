@@ -23,8 +23,8 @@ package org.jboss.jca.deployers.test.rars.anno.variants;
 
 import org.jboss.jca.deployers.test.rars.anno.AnnoAdminObject;
 
-import javax.resource.spi.AdministeredObject;
-import javax.resource.spi.ConfigProperty;
+import jakarta.resource.spi.AdministeredObject;
+import jakarta.resource.spi.ConfigProperty;
 
 /**
  * AnnoAdminObjectImpl

@@ -6,10 +6,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.resource.spi.ConnectionEvent;
-import javax.resource.spi.ConnectionEventListener;
-import javax.resource.spi.ManagedConnection;
-import javax.resource.spi.security.PasswordCredential;
+import jakarta.resource.spi.ConnectionEvent;
+import jakarta.resource.spi.ConnectionEventListener;
+import jakarta.resource.spi.ManagedConnection;
+import jakarta.resource.spi.security.PasswordCredential;
 import javax.security.auth.Subject;
 
 public class LocalManagedConnectionTestCase {

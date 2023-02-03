@@ -23,7 +23,7 @@ package org.jboss.jca.test.deployers.spec.rars.ra16standard303ironjacamar;
 
 import org.jboss.jca.test.deployers.spec.rars.BaseManagedConnectionFactory;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * TestManagedConnectionFactory

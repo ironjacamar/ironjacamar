@@ -29,8 +29,8 @@ import org.jboss.jca.core.workmanager.spec.chapter10.common.CallbackCount;
 import org.jboss.jca.core.workmanager.spec.chapter10.common.MyWorkAdapter;
 import org.jboss.jca.core.workmanager.spec.chapter10.common.SimpleWork;
 
-import javax.resource.spi.work.Work;
-import javax.resource.spi.work.WorkRejectedException;
+import jakarta.resource.spi.work.Work;
+import jakarta.resource.spi.work.WorkRejectedException;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.logging.Logger;

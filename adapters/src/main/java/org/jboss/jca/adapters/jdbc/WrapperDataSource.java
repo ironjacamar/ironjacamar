@@ -33,13 +33,13 @@ import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 
 import javax.naming.Reference;
-import javax.resource.Referenceable;
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionManager;
-import javax.resource.spi.ConnectionRequestInfo;
+import jakarta.resource.Referenceable;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ConnectionManager;
+import jakarta.resource.spi.ConnectionRequestInfo;
 import javax.sql.DataSource;
-import javax.transaction.RollbackException;
-import javax.transaction.Status;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.Status;
 
 import org.jboss.logging.Logger;
 

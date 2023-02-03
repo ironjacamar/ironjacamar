@@ -29,7 +29,7 @@ import java.io.ByteArrayInputStream;
 import java.sql.Connection;
 import java.util.Scanner;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import javax.sql.DataSource;
 
 import org.jboss.arquillian.container.test.api.Deployment;

@@ -45,10 +45,10 @@ import java.util.StringTokenizer;
 
 import static java.security.AccessController.doPrivileged;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionManager;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.ManagedConnection;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ConnectionManager;
+import jakarta.resource.spi.ConnectionRequestInfo;
+import jakarta.resource.spi.ManagedConnection;
 import javax.security.auth.Subject;
 import javax.sql.DataSource;
 

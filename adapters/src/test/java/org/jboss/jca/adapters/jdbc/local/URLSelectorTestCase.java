@@ -21,8 +21,8 @@
  */
 package org.jboss.jca.adapters.jdbc.local;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.security.PasswordCredential;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.security.PasswordCredential;
 import javax.security.auth.Subject;
 
 import org.jboss.jca.adapters.jdbc.jdk8.WrappedConnectionJDK8;

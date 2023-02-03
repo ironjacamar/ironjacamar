@@ -26,7 +26,7 @@ import org.jboss.jca.deployers.test.rars.stat.StatisticsAdminObject;
 import org.jboss.jca.deployers.test.rars.stat.StatisticsConnectionFactory;
 import org.jboss.jca.embedded.dsl.InputStreamDescriptor;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;

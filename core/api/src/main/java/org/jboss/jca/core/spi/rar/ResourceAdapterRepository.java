@@ -25,7 +25,7 @@ package org.jboss.jca.core.spi.rar;
 import java.util.List;
 import java.util.Set;
 
-import javax.resource.spi.ResourceAdapter;
+import jakarta.resource.spi.ResourceAdapter;
 
 /**
  * The SPI for the resource adapter repository

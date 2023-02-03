@@ -39,11 +39,11 @@ import org.jboss.jca.embedded.EmbeddedFactory;
 
 import java.net.URL;
 
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
+import jakarta.resource.spi.ManagedConnectionFactory;
+import jakarta.resource.spi.TransactionSupport.TransactionSupportLevel;
 import javax.security.auth.Subject;
-import javax.transaction.RollbackException;
-import javax.transaction.TransactionManager;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.TransactionManager;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

@@ -23,8 +23,8 @@ package org.jboss.jca.test.deployers.spec.rars.ra16standard303ironjacamar;
 
 import org.jboss.jca.test.deployers.spec.rars.BaseResourceAdapter;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 /**
  * TestResourceAdapter
  * @author <a href="mailto:jeff.zhang@ironjacamar.org">Jeff Zhang</a>

@@ -27,7 +27,7 @@ import org.jboss.jca.embedded.dsl.InputStreamDescriptor;
 
 import java.sql.Connection;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import javax.sql.DataSource;
 
 import org.jboss.arquillian.container.test.api.Deployment;

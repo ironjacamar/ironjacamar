@@ -23,7 +23,7 @@ package org.jboss.jca.core.recovery;
 
 import org.jboss.jca.core.spi.recovery.RecoveryPlugin;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 
 /**
  * Marker recovery plugin to let the recovery subsystem know that the ValidatingManagedConnectionFactory

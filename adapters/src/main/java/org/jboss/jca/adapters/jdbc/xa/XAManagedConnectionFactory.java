@@ -48,9 +48,9 @@ import java.util.StringTokenizer;
 
 import static java.security.AccessController.doPrivileged;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.ManagedConnection;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ConnectionRequestInfo;
+import jakarta.resource.spi.ManagedConnection;
 import javax.security.auth.Subject;
 import javax.sql.XAConnection;
 import javax.sql.XADataSource;
@@ -394,7 +394,7 @@ public class XAManagedConnectionFactory extends BaseWrapperManagedConnectionFact
     * {@inheritDoc}
     */
    public ManagedConnection createManagedConnection(final Subject subject, final ConnectionRequestInfo cri)
-      throws javax.resource.ResourceException
+      throws jakarta.resource.ResourceException
    {
       if (urlProperty != null && !urlProperty.trim().equals("") && xadsSelector == null)
          initSelector();

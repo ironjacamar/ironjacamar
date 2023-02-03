@@ -101,7 +101,7 @@
                 <description lang="en">a
                 </description>
                 <authentication-mechanism-type id="ID025A">type</authentication-mechanism-type>
-                <credential-interface id="ID025B">javax.resource.spi.security.PasswordCredential</credential-interface>
+                <credential-interface id="ID025B">jakarta.resource.spi.security.PasswordCredential</credential-interface>
             </authentication-mechanism>
             <authentication-mechanism id="ID027">
                 <description>
@@ -110,7 +110,7 @@
                 </description>
                 <authentication-mechanism-type>
                 </authentication-mechanism-type>
-                <credential-interface>javax.resource.spi.security.GenericCredential</credential-interface>
+                <credential-interface>jakarta.resource.spi.security.GenericCredential</credential-interface>
             </authentication-mechanism>
             <reauthentication-support id="ID028">false</reauthentication-support>
         </outbound-resourceadapter>

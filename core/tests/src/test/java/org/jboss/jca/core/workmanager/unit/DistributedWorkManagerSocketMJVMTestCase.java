@@ -30,7 +30,7 @@ import org.jboss.jca.embedded.dsl.InputStreamDescriptor;
 
 import java.util.UUID;
 
-import javax.resource.spi.BootstrapContext;
+import jakarta.resource.spi.BootstrapContext;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;

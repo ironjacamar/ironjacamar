@@ -35,7 +35,7 @@ import org.jboss.jca.embedded.dsl.ironjacamar13.api.ConnectionDefinitionType;
 import org.jboss.jca.embedded.dsl.ironjacamar13.api.ConnectionDefinitionsType;
 import org.jboss.jca.embedded.dsl.ironjacamar13.api.IronjacamarDescriptor;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;

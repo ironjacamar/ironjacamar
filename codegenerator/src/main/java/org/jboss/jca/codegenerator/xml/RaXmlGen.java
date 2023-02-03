@@ -309,7 +309,7 @@ public abstract class RaXmlGen extends AbstractXmlGen
          else
          {
             writeIndent(out, indent + 2);
-            out.write("<connectionfactory-interface>javax.resource.cci.ConnectionFactory" +
+            out.write("<connectionfactory-interface>jakarta.resource.cci.ConnectionFactory" +
                "</connectionfactory-interface>");
             writeEol(out);
             writeIndent(out, indent + 2);
@@ -317,7 +317,7 @@ public abstract class RaXmlGen extends AbstractXmlGen
                def.getMcfDefs().get(num).getCciConnFactoryClass() + "</connectionfactory-impl-class>");
             writeEol(out);
             writeIndent(out, indent + 2);
-            out.write("<connection-interface>javax.resource.cci.Connection</connection-interface>");
+            out.write("<connection-interface>jakarta.resource.cci.Connection</connection-interface>");
             writeEol(out);
             writeIndent(out, indent + 2);
             out.write("<connection-impl-class>" + def.getRaPackage() + "." +
@@ -348,7 +348,7 @@ public abstract class RaXmlGen extends AbstractXmlGen
             if (def.getAuthenMechanisms().get(i).getCredentialInterface().equals("GSSCredential"))
                out.write("org.ietf.jgss.GSSCredential");
             else
-               out.write("javax.resource.spi.security." + def.getAuthenMechanisms().get(i).getCredentialInterface());
+               out.write("jakarta.resource.spi.security." + def.getAuthenMechanisms().get(i).getCredentialInterface());
             out.write("</credential-interface>");
             writeEol(out);
             writeIndent(out, indent + 1);

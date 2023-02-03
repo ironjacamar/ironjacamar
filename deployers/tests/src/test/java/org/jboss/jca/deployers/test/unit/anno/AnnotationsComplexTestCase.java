@@ -69,7 +69,7 @@ public class AnnotationsComplexTestCase extends AnnotationsTestBase
    protected void checkConnector(Connector connector)
    {
       assertTrue(connector instanceof ConnectorImpl);
-      assertEquals(connector.getVersion(), javax.resource.spi.Connector.class.getCanonicalName().startsWith("jakarta.") ? Version.V_21 : Version.V_17);
+      assertEquals(connector.getVersion(), jakarta.resource.spi.Connector.class.getCanonicalName().startsWith("jakarta.") ? Version.V_21 : Version.V_17);
 
       ConnectorImpl con = (ConnectorImpl) connector;
       assertEquals(null, con.getId());
@@ -201,8 +201,8 @@ public class AnnotationsComplexTestCase extends AnnotationsTestBase
 
       List<String> wcs = con.getRequiredWorkContexts();
       assertEquals(2, wcs.size());
-      assertTrue(wcs.contains("javax.resource.spi.work.TransactionContext"));
-      assertTrue(wcs.contains("javax.resource.spi.work.HintsContext"));
+      assertTrue(wcs.contains("jakarta.resource.spi.work.TransactionContext"));
+      assertTrue(wcs.contains("jakarta.resource.spi.work.HintsContext"));
 
    }
 

@@ -113,7 +113,7 @@ public class AoInterfaceCodeGen extends AbstractCodeGen
          out.write("import java.io.Serializable;");
          writeEol(out);
          writeEol(out);
-         out.write("import javax.resource.Referenceable;");
+         out.write("import jakarta.resource.Referenceable;");
          writeEol(out);
       }
       writeEol(out);

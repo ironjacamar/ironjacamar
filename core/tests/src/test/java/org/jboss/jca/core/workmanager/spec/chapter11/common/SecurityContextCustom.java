@@ -22,7 +22,7 @@
 
 package org.jboss.jca.core.workmanager.spec.chapter11.common;
 
-import javax.resource.spi.work.SecurityContext;
+import jakarta.resource.spi.work.SecurityContext;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 

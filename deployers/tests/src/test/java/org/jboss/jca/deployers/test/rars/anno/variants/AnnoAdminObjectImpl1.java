@@ -33,9 +33,9 @@ import java.io.Serializable;
 import javax.naming.NamingException;
 import javax.naming.Reference;
 
-import javax.resource.spi.AdministeredObject;
-import javax.resource.spi.ConfigProperty;
-import javax.resource.spi.ResourceAdapter;
+import jakarta.resource.spi.AdministeredObject;
+import jakarta.resource.spi.ConfigProperty;
+import jakarta.resource.spi.ResourceAdapter;
 
 /**
  * AnnoAdminObjectImpl

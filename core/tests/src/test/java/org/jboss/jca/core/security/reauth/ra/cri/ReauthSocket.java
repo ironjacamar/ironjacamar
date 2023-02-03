@@ -28,7 +28,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 
 import org.jboss.logging.Logger;
 

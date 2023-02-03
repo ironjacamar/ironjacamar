@@ -21,10 +21,10 @@
  */
 package org.jboss.jca.core.workmanager.spec.chapter11.common;
 
-import javax.resource.spi.work.Work;
-import javax.resource.spi.work.WorkAdapter;
-import javax.resource.spi.work.WorkEvent;
-import javax.resource.spi.work.WorkException;
+import jakarta.resource.spi.work.Work;
+import jakarta.resource.spi.work.WorkAdapter;
+import jakarta.resource.spi.work.WorkEvent;
+import jakarta.resource.spi.work.WorkException;
 
 import static org.junit.Assert.*;
 

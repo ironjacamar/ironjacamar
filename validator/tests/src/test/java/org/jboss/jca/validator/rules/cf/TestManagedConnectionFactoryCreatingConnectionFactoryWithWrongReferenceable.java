@@ -23,8 +23,8 @@ package org.jboss.jca.validator.rules.cf;
 
 import org.jboss.jca.validator.rules.base.BaseManagedConnectionFactory;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionManager;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ConnectionManager;
 
 /**
  * TestManagedConnectionFactoryCreatingNullConnectionFactory
@@ -41,7 +41,7 @@ public class TestManagedConnectionFactoryCreatingConnectionFactoryWithWrongRefer
     * {@inheritDoc}
     *
     * @see org.jboss.jca.validator.rules.base.BaseManagedConnectionFactory#createConnectionFactory
-    * (javax.resource.spi.ConnectionManager)
+    * (jakarta.resource.spi.ConnectionManager)
     */
    @Override
    public Object createConnectionFactory(ConnectionManager cxManager) throws ResourceException

@@ -22,8 +22,8 @@
 
 package org.jboss.jca.core.spi.transaction;
 
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.SystemException;
 
 /**
  * The interface to implementated by a transaction manager

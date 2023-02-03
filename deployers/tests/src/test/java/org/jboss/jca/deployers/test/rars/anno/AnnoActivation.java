@@ -22,8 +22,8 @@
 package org.jboss.jca.deployers.test.rars.anno;
 
 
-import javax.resource.ResourceException;
-import javax.resource.spi.endpoint.MessageEndpointFactory;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.endpoint.MessageEndpointFactory;
 
 /**
  * AnnoActivation

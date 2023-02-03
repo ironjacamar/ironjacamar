@@ -22,7 +22,7 @@
 
 package org.jboss.jca.core.workmanager.spec.chapter11.common;
 
-import javax.resource.spi.work.HintsContext;
+import jakarta.resource.spi.work.HintsContext;
 
 /**
  * HintContextCustom.

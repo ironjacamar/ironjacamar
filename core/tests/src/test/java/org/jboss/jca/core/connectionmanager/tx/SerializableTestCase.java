@@ -37,8 +37,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.net.URL;
 
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
+import jakarta.resource.spi.ManagedConnectionFactory;
+import jakarta.resource.spi.TransactionSupport.TransactionSupportLevel;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

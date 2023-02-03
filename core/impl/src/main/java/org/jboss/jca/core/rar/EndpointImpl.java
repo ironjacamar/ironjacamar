@@ -36,13 +36,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ActivationSpec;
-import javax.resource.spi.ResourceAdapter;
-import javax.resource.spi.endpoint.MessageEndpointFactory;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validator;
-import javax.validation.groups.Default;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ActivationSpec;
+import jakarta.resource.spi.ResourceAdapter;
+import jakarta.resource.spi.endpoint.MessageEndpointFactory;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validator;
+import jakarta.validation.groups.Default;
 
 import org.jboss.logging.Logger;
 import org.jboss.logging.Messages;

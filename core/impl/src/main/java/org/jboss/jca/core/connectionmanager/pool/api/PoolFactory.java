@@ -29,7 +29,7 @@ import org.jboss.jca.core.connectionmanager.pool.strategy.PoolBySubject;
 import org.jboss.jca.core.connectionmanager.pool.strategy.PoolBySubjectAndCri;
 import org.jboss.jca.core.connectionmanager.pool.strategy.ReauthPool;
 
-import javax.resource.spi.ManagedConnectionFactory;
+import jakarta.resource.spi.ManagedConnectionFactory;
 
 /**
  * The pool factory. 

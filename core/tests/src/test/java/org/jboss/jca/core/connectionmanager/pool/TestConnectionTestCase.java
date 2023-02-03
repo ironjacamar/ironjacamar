@@ -32,9 +32,9 @@ import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
 import org.jboss.jca.core.security.DefaultSubjectFactory;
 import org.jboss.jca.core.spi.security.SubjectFactory;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ManagedConnectionFactory;
+import jakarta.resource.spi.TransactionSupport.TransactionSupportLevel;
 
 import org.junit.Test;
 

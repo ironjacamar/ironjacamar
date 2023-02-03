@@ -68,7 +68,7 @@ public class RaMetaCodeGen extends AbstractCodeGen
       out.write("package " + def.getRaPackage() + ";");
       writeEol(out);
       writeEol(out);
-      out.write("import javax.resource.cci.ResourceAdapterMetaData;");
+      out.write("import jakarta.resource.cci.ResourceAdapterMetaData;");
       writeEol(out);
       writeEol(out);
    }

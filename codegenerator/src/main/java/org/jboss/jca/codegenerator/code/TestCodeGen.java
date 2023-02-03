@@ -94,7 +94,7 @@ public class TestCodeGen extends AbstractCodeGen
       out.write("import java.util.UUID;");
       writeEol(out);
       importLogging(def, out);
-      out.write("import javax.annotation.Resource;");
+      out.write("import jakarta.annotation.Resource;");
       writeEol(out);
       writeEol(out);
       out.write("import org.jboss.arquillian.container.test.api.Deployment;");
@@ -223,7 +223,7 @@ public class TestCodeGen extends AbstractCodeGen
          writeEol(out);
          writeIndent(out, indent);
          if (def.getMcfDefs().get(num).isUseCciConnection())
-            out.write("private javax.resource.cci.ConnectionFactory");
+            out.write("private jakarta.resource.cci.ConnectionFactory");
          else
             out.write("private " + def.getMcfDefs().get(num).getCfInterfaceClass());
          out.write(" connectionFactory" + (num + 1) + ";");
@@ -269,7 +269,7 @@ public class TestCodeGen extends AbstractCodeGen
       writeEol(out);
       writeIndent(out, indent + 1);
       if (def.getMcfDefs().get(num - 1).isUseCciConnection())
-         out.write("javax.resource.cci.Connection");
+         out.write("jakarta.resource.cci.Connection");
       else
          out.write(def.getMcfDefs().get(num - 1).getConnInterfaceClass());
       out.write(" connection" + num + " = connectionFactory" + num + ".getConnection();");
@@ -339,7 +339,7 @@ public class TestCodeGen extends AbstractCodeGen
          writeEol(out);
          writeIndent(out, indent + 1);
          if (def.getMcfDefs().get(num - 1).isUseCciConnection())
-            out.write("javax.resource.cci.Connection");
+            out.write("jakarta.resource.cci.Connection");
          else
             out.write(def.getMcfDefs().get(num - 1).getConnInterfaceClass());
          out.write(" connection" + num + " = connectionFactory" + num + ".getConnection();");

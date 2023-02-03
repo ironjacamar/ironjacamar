@@ -29,7 +29,7 @@ import org.jboss.jca.core.spi.transaction.local.LocalResourceException;
 import org.jboss.jca.core.spi.transaction.local.LocalXAException;
 import org.jboss.jca.core.spi.transaction.local.LocalXAResource;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;

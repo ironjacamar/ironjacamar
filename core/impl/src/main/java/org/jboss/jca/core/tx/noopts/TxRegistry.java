@@ -25,7 +25,7 @@ import java.io.Serializable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import javax.transaction.SystemException;
+import jakarta.transaction.SystemException;
 
 /**
  * The transaction registry

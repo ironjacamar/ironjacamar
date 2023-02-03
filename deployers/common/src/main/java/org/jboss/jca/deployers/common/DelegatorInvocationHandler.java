@@ -62,9 +62,9 @@ public class DelegatorInvocationHandler implements InvocationHandler
       {
          this.reference = (Reference)args[0];
 
-         if (delegate instanceof javax.resource.Referenceable)
+         if (delegate instanceof jakarta.resource.Referenceable)
          {
-            ((javax.resource.Referenceable)delegate).setReference(this.reference);
+            ((jakarta.resource.Referenceable)delegate).setReference(this.reference);
          }
 
          return null;

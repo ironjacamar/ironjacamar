@@ -28,10 +28,10 @@ import org.jboss.jca.core.workmanager.spec.chapter10.common.SimpleWork;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javax.resource.spi.BootstrapContext;
-import javax.resource.spi.UnavailableException;
-import javax.resource.spi.work.WorkException;
-import javax.resource.spi.work.WorkManager;
+import jakarta.resource.spi.BootstrapContext;
+import jakarta.resource.spi.UnavailableException;
+import jakarta.resource.spi.work.WorkException;
+import jakarta.resource.spi.work.WorkManager;
 
 import org.jboss.arquillian.junit.Arquillian;
 

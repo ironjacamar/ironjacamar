@@ -35,10 +35,10 @@ import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolFactory;
 import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
 
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
+import jakarta.resource.spi.ManagedConnectionFactory;
+import jakarta.resource.spi.TransactionSupport.TransactionSupportLevel;
 import javax.security.auth.Subject;
-import javax.transaction.TransactionManager;
+import jakarta.transaction.TransactionManager;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;

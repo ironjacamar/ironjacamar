@@ -32,8 +32,8 @@ import org.jboss.jca.embedded.dsl.resourceadapters12.api.ConnectionDefinitionsTy
 import org.jboss.jca.embedded.dsl.resourceadapters12.api.ResourceAdapterType;
 import org.jboss.jca.embedded.dsl.resourceadapters12.api.ResourceAdaptersDescriptor;
 
-import javax.annotation.Resource;
-import javax.transaction.UserTransaction;
+import jakarta.annotation.Resource;
+import jakarta.transaction.UserTransaction;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;

@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.core.spi.transaction.local;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 
 /**
  * LocalResourceException.

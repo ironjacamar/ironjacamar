@@ -30,8 +30,8 @@ import org.jboss.jca.core.spi.graceful.GracefulShutdown;
 import org.jboss.jca.core.spi.security.SubjectFactory;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ManagedConnection;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ManagedConnection;
 
 /**
  * Internal connection manager contract.

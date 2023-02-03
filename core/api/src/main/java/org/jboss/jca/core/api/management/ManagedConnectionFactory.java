@@ -38,7 +38,7 @@ import java.util.List;
 public class ManagedConnectionFactory
 {
    /** The object instance */
-   private WeakReference<javax.resource.spi.ManagedConnectionFactory> instance;
+   private WeakReference<jakarta.resource.spi.ManagedConnectionFactory> instance;
 
    /** The config property's */
    private List<ConfigProperty> configProperties;
@@ -47,9 +47,9 @@ public class ManagedConnectionFactory
     * Constructor
     * @param mcf The managed connection factory instance
     */
-   public ManagedConnectionFactory(javax.resource.spi.ManagedConnectionFactory mcf)
+   public ManagedConnectionFactory(jakarta.resource.spi.ManagedConnectionFactory mcf)
    {
-      this.instance = new WeakReference<javax.resource.spi.ManagedConnectionFactory>(mcf);
+      this.instance = new WeakReference<jakarta.resource.spi.ManagedConnectionFactory>(mcf);
       this.configProperties = null;
    }
 
@@ -60,7 +60,7 @@ public class ManagedConnectionFactory
     * undeployed and this object wasn't cleared up correctly.
     * @return The instance
     */
-   public javax.resource.spi.ManagedConnectionFactory getManagedConnectionFactory()
+   public jakarta.resource.spi.ManagedConnectionFactory getManagedConnectionFactory()
    {
       return instance.get();
    }

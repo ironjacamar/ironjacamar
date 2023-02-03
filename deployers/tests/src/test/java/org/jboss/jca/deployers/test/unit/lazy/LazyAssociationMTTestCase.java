@@ -27,7 +27,7 @@ import org.jboss.jca.deployers.test.rars.lazy.LazyConnectionFactory;
 
 import java.util.concurrent.CountDownLatch;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.logging.Logger;

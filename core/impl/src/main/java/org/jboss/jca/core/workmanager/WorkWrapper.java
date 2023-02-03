@@ -34,21 +34,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
-import javax.resource.spi.work.ExecutionContext;
-import javax.resource.spi.work.TransactionContext;
-import javax.resource.spi.work.Work;
-import javax.resource.spi.work.WorkCompletedException;
-import javax.resource.spi.work.WorkContext;
-import javax.resource.spi.work.WorkContextErrorCodes;
-import javax.resource.spi.work.WorkContextLifecycleListener;
-import javax.resource.spi.work.WorkEvent;
-import javax.resource.spi.work.WorkException;
-import javax.resource.spi.work.WorkListener;
+import jakarta.resource.spi.work.ExecutionContext;
+import jakarta.resource.spi.work.TransactionContext;
+import jakarta.resource.spi.work.Work;
+import jakarta.resource.spi.work.WorkCompletedException;
+import jakarta.resource.spi.work.WorkContext;
+import jakarta.resource.spi.work.WorkContextErrorCodes;
+import jakarta.resource.spi.work.WorkContextLifecycleListener;
+import jakarta.resource.spi.work.WorkEvent;
+import jakarta.resource.spi.work.WorkException;
+import jakarta.resource.spi.work.WorkListener;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.message.callback.CallerPrincipalCallback;
-import javax.security.auth.message.callback.GroupPrincipalCallback;
+import jakarta.security.auth.message.callback.CallerPrincipalCallback;
+import jakarta.security.auth.message.callback.GroupPrincipalCallback;
 import javax.transaction.xa.Xid;
 
 import org.jboss.logging.Logger;
@@ -276,7 +276,7 @@ public class WorkWrapper implements Runnable
       {
          long duration = System.currentTimeMillis() - startTime;
          if (duration < 0)
-            duration = javax.resource.spi.work.WorkManager.UNKNOWN;
+            duration = jakarta.resource.spi.work.WorkManager.UNKNOWN;
 
          WorkEvent event = new WorkEvent(workManager, WorkEvent.WORK_STARTED, work, null, duration);
          workListener.workStarted(event);
@@ -304,8 +304,8 @@ public class WorkWrapper implements Runnable
       fireWorkContextSetupComplete(ctx);
       
       // Security setup
-      javax.resource.spi.work.SecurityContext securityContext = 
-         getWorkContext(javax.resource.spi.work.SecurityContext.class);
+      jakarta.resource.spi.work.SecurityContext securityContext = 
+         getWorkContext(jakarta.resource.spi.work.SecurityContext.class);
       if (securityContext != null && workManager.getCallbackSecurity() != null)
       {
          log.tracef("Setting security context: %s", securityContext);

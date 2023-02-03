@@ -38,7 +38,7 @@ import java.net.Socket;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import javax.resource.spi.work.WorkException;
+import jakarta.resource.spi.work.WorkException;
 
 import org.jboss.logging.Logger;
 

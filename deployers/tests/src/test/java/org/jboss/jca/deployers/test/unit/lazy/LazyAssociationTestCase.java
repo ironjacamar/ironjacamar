@@ -25,7 +25,7 @@ package org.jboss.jca.deployers.test.unit.lazy;
 import org.jboss.jca.deployers.test.rars.lazy.LazyConnection;
 import org.jboss.jca.deployers.test.rars.lazy.LazyConnectionFactory;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.logging.Logger;

@@ -37,8 +37,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.resource.spi.work.DistributableWork;
-import javax.resource.spi.work.WorkException;
+import jakarta.resource.spi.work.DistributableWork;
+import jakarta.resource.spi.work.WorkException;
 
 import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.workmanager.DistributedWorkManagerStatisticsValues;

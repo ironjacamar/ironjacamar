@@ -25,9 +25,9 @@ import java.io.Serializable;
 
 import javax.naming.NamingException;
 import javax.naming.Reference;
-import javax.resource.Referenceable;
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionManager;
+import jakarta.resource.Referenceable;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ConnectionManager;
 
 /**
  * RetryConnectionFactory

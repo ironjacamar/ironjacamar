@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.resource.spi.ManagedConnection;
+import jakarta.resource.spi.ManagedConnection;
 
 /**
  * Must provide an implementation of the ManagedConnection interface.

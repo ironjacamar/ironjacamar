@@ -23,14 +23,14 @@ package org.jboss.jca.core.connectionmanager.common;
 
 import javax.naming.NamingException;
 import javax.naming.Reference;
-import javax.resource.ResourceException;
-import javax.resource.cci.Connection;
-import javax.resource.cci.ConnectionFactory;
-import javax.resource.cci.ConnectionSpec;
-import javax.resource.cci.RecordFactory;
-import javax.resource.cci.ResourceAdapterMetaData;
-import javax.resource.spi.ConnectionManager;
-import javax.resource.spi.ManagedConnectionFactory;
+import jakarta.resource.ResourceException;
+import jakarta.resource.cci.Connection;
+import jakarta.resource.cci.ConnectionFactory;
+import jakarta.resource.cci.ConnectionSpec;
+import jakarta.resource.cci.RecordFactory;
+import jakarta.resource.cci.ResourceAdapterMetaData;
+import jakarta.resource.spi.ConnectionManager;
+import jakarta.resource.spi.ManagedConnectionFactory;
 
 /**
  * Mock connection factory.

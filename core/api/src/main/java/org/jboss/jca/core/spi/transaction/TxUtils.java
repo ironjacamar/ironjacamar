@@ -21,9 +21,9 @@
  */
 package org.jboss.jca.core.spi.transaction;
 
-import javax.transaction.Status;
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
+import jakarta.transaction.Status;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.Transaction;
 
 /**
  * Helper methods for transaction status and textual representation
@@ -127,7 +127,7 @@ public class TxUtils
     * 
     * @param status The status index
     * @return status as String or "STATUS_INVALID(value)"
-    * @see javax.transaction.Status
+    * @see jakarta.transaction.Status
     */
    public static String getStatusAsString(int status)
    {

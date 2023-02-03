@@ -305,7 +305,7 @@ public abstract class PropsCodeGen extends AbstractCodeGen
    {
       if (getConfigProps(def).size() > 0)
       {
-         out.write("import javax.resource.spi.ConfigProperty;");
+         out.write("import jakarta.resource.spi.ConfigProperty;");
          writeEol(out);
       }
    }

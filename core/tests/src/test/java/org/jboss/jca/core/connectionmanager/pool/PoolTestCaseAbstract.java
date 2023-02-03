@@ -38,8 +38,8 @@ import org.jboss.jca.embedded.dsl.ironjacamar11.api.IronjacamarDescriptor;
 
 import java.util.logging.Logger;
 
-import javax.annotation.Resource;
-import javax.resource.spi.ConnectionManager;
+import jakarta.annotation.Resource;
+import jakarta.resource.spi.ConnectionManager;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.shrinkwrap.api.ShrinkWrap;

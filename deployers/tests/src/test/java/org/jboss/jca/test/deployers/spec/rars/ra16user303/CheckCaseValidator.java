@@ -21,8 +21,8 @@
  */
 package org.jboss.jca.test.deployers.spec.rars.ra16user303;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 /**
  * 

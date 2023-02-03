@@ -25,9 +25,9 @@ package org.jboss.jca.core.workmanager.spec.chapter11.common;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.resource.spi.work.Work;
-import javax.resource.spi.work.WorkContext;
-import javax.resource.spi.work.WorkContextProvider;
+import jakarta.resource.spi.work.Work;
+import jakarta.resource.spi.work.WorkContext;
+import jakarta.resource.spi.work.WorkContextProvider;
 
 /**
  * UniversalProviderWork allows to add contexts

@@ -32,7 +32,7 @@ import com.github.fungal.spi.deployers.DeployException;
 
 import org.junit.Test;
 
-import javax.resource.spi.ResourceAdapter;
+import jakarta.resource.spi.ResourceAdapter;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -131,7 +131,7 @@ public class CFTestCase extends TestCaseAbstract
          final Failure failureRA =
                new Failure(Severity.ERROR,
                      "17.5.1.1",
-                     "ConnectionFactory must implement javax.resource.Referenceable",
+                     "ConnectionFactory must implement jakarta.resource.Referenceable",
                      ConnectionFactoryWithWrongReferenceable.class.getName());
          assertThat(dve.getFailures(), notNullValue());
          //FIXME validator.properties not transformed

@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.core.connectionmanager.pool.mcp;
 
-import javax.resource.spi.ManagedConnection;
+import jakarta.resource.spi.ManagedConnection;
 
 public interface NotifyingManagedConnection extends ManagedConnection {
 

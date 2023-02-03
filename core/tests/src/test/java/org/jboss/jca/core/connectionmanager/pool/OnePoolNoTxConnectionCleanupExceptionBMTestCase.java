@@ -47,7 +47,7 @@ import static org.junit.Assert.assertEquals;
 @BMRule(name = "throw exception in cleanup()", 
    targetClass = "SimpleManagedConnection", 
    targetMethod = "cleanup", 
-   action = "throw new javax.resource.ResourceException()")
+   action = "throw new jakarta.resource.ResourceException()")
 @Ignore
 //TODO after https://issues.redhat.com/browse/BYTEMAN-402
 public class OnePoolNoTxConnectionCleanupExceptionBMTestCase extends OnePoolNoTxTestCaseAbstract

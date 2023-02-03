@@ -21,8 +21,8 @@
  */
 package org.jboss.jca.core.spi.transaction.xa;
 
-import javax.resource.spi.work.Work;
-import javax.resource.spi.work.WorkCompletedException;
+import jakarta.resource.spi.work.Work;
+import jakarta.resource.spi.work.WorkCompletedException;
 import javax.transaction.xa.Xid;
 
 /**
@@ -31,7 +31,7 @@ import javax.transaction.xa.Xid;
  * @author <a href="abrock@redhat.com">Adrian Brock</a>
  * @author <a href="jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface XATerminator extends javax.resource.spi.XATerminator
+public interface XATerminator extends jakarta.resource.spi.XATerminator
 {
    /**
     * Invoked for transaction inflow of work

@@ -32,7 +32,7 @@ import org.jboss.jca.core.connectionmanager.pool.api.PoolStrategy;
 import org.jboss.jca.core.spi.security.SubjectFactory;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 import javax.security.auth.Subject;
 
 import org.junit.Test;

@@ -36,7 +36,7 @@ import javax.naming.Name;
 import javax.naming.NamingException;
 import javax.naming.Reference;
 import javax.naming.StringRefAddr;
-import javax.resource.Referenceable;
+import jakarta.resource.Referenceable;
 
 import org.jboss.logging.Logger;
 import org.jboss.logging.Messages;

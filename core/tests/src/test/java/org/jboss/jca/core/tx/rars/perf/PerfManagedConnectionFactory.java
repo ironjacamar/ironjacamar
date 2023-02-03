@@ -24,11 +24,11 @@ package org.jboss.jca.core.tx.rars.perf;
 import java.io.PrintWriter;
 import java.util.Set;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionManager;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.ManagedConnection;
-import javax.resource.spi.ManagedConnectionFactory;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ConnectionManager;
+import jakarta.resource.spi.ConnectionRequestInfo;
+import jakarta.resource.spi.ManagedConnection;
+import jakarta.resource.spi.ManagedConnectionFactory;
 
 import javax.security.auth.Subject;
 
@@ -80,7 +80,7 @@ public class PerfManagedConnectionFactory implements ManagedConnectionFactory
     * Creates a Connection Factory instance. 
     *
     * @param cxManager ConnectionManager to be associated with created EIS connection factory instance
-    * @return EIS-specific Connection Factory instance or javax.resource.cci.ConnectionFactory instance
+    * @return EIS-specific Connection Factory instance or jakarta.resource.cci.ConnectionFactory instance
     * @throws ResourceException Generic exception
     */
    public Object createConnectionFactory(ConnectionManager cxManager) throws ResourceException
@@ -91,7 +91,7 @@ public class PerfManagedConnectionFactory implements ManagedConnectionFactory
    /**
     * Creates a Connection Factory instance. 
     *
-    * @return EIS-specific Connection Factory instance or javax.resource.cci.ConnectionFactory instance
+    * @return EIS-specific Connection Factory instance or jakarta.resource.cci.ConnectionFactory instance
     * @throws ResourceException Generic exception
     */
    public Object createConnectionFactory() throws ResourceException

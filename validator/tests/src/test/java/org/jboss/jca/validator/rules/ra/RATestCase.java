@@ -36,7 +36,7 @@ import com.github.fungal.spi.deployers.DeployException;
 
 import org.junit.Test;
 
-import javax.resource.spi.ResourceAdapter;
+import jakarta.resource.spi.ResourceAdapter;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -92,7 +92,7 @@ public class RATestCase extends TestCaseAbstract
          }
 
          final Failure failureRA =
-               new Failure(Severity.ERROR, "5.3.1", "A ResourceAdapter must implement " + "the javax.resource.spi."
+               new Failure(Severity.ERROR, "5.3.1", "A ResourceAdapter must implement " + "the jakarta.resource.spi."
                      + "ResourceAdapter interface.", TestResourceAdapterWrong.class.getName());
          assertThat(dve.getFailures(), notNullValue());
          //FIXME validator.properties transformation doesn't work

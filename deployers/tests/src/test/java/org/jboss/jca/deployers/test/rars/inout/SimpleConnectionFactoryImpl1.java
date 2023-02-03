@@ -26,9 +26,9 @@ import java.util.logging.Logger;
 import javax.naming.NamingException;
 import javax.naming.Reference;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionManager;
-import javax.resource.spi.ManagedConnectionFactory;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ConnectionManager;
+import jakarta.resource.spi.ManagedConnectionFactory;
 
 
 /**

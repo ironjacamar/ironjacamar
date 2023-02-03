@@ -23,7 +23,7 @@ package org.jboss.jca.validator.rules.anno;
 
 import java.io.Serializable;
 
-import javax.resource.Referenceable;
+import jakarta.resource.Referenceable;
 
 /**
  * AnnoAdminObject

@@ -28,7 +28,7 @@ import org.jboss.jca.core.api.connectionmanager.pool.PoolStatistics;
 import org.jboss.jca.core.connectionmanager.rar.SimpleConnection;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 
 import static org.junit.Assert.*;
 

@@ -24,12 +24,12 @@ package org.jboss.jca.core.connectionmanager.pool.retry;
 import java.io.PrintWriter;
 import java.util.Set;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionManager;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.ManagedConnection;
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.RetryableUnavailableException;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ConnectionManager;
+import jakarta.resource.spi.ConnectionRequestInfo;
+import jakarta.resource.spi.ManagedConnection;
+import jakarta.resource.spi.ManagedConnectionFactory;
+import jakarta.resource.spi.RetryableUnavailableException;
 import javax.security.auth.Subject;
 
 import org.jboss.logging.Logger;

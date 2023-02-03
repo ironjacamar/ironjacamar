@@ -24,7 +24,7 @@ package org.jboss.jca.core.spi.connectionmanager;
 
 import java.util.Set;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 
 /**
  * ComponentStack.

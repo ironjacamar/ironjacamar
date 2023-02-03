@@ -26,7 +26,7 @@ import org.jboss.jca.core.CoreLogger;
 import org.jboss.jca.core.api.workmanager.DistributedWorkManager;
 import org.jboss.jca.core.workmanager.WorkManagerUtil;
 
-import javax.resource.spi.work.DistributableWork;
+import jakarta.resource.spi.work.DistributableWork;
 
 import org.jboss.logging.Logger;
 

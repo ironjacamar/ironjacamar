@@ -27,8 +27,8 @@ import org.jboss.jca.core.connectionmanager.ConnectionManager;
 import org.jboss.jca.core.connectionmanager.pool.api.Pool;
 import org.jboss.jca.core.connectionmanager.pool.mcp.ManagedConnectionPool;
 
-import javax.resource.spi.ConnectionEvent;
-import javax.resource.spi.ManagedConnection;
+import jakarta.resource.spi.ConnectionEvent;
+import jakarta.resource.spi.ManagedConnection;
 
 import org.jboss.logging.Logger;
 

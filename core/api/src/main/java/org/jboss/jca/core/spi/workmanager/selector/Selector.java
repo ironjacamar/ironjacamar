@@ -24,7 +24,7 @@ package org.jboss.jca.core.spi.workmanager.selector;
 
 import org.jboss.jca.core.spi.workmanager.Address;
 
-import javax.resource.spi.work.DistributableWork;
+import jakarta.resource.spi.work.DistributableWork;
 
 /**
  * The selector interface defines how a node is selected when a

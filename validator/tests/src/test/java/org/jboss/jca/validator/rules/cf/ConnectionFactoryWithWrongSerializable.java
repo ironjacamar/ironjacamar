@@ -23,7 +23,7 @@ package org.jboss.jca.validator.rules.cf;
 
 import javax.naming.NamingException;
 import javax.naming.Reference;
-import javax.resource.Referenceable;
+import jakarta.resource.Referenceable;
 
 /**
  * ConnectionFactoryWithWrongConstructor
@@ -38,7 +38,7 @@ public class ConnectionFactoryWithWrongSerializable implements Referenceable
    /**
     * {@inheritDoc}
     *
-    * @see javax.resource.Referenceable#setReference(javax.naming.Reference)
+    * @see jakarta.resource.Referenceable#setReference(javax.naming.Reference)
     */
    @Override
    public void setReference(Reference reference)

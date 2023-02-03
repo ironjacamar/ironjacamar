@@ -23,7 +23,7 @@ package org.jboss.jca.deployers.test.rars.stat;
 
 import java.io.Serializable;
 
-import javax.resource.Referenceable;
+import jakarta.resource.Referenceable;
 
 /**
  * StatisticsAdminObject

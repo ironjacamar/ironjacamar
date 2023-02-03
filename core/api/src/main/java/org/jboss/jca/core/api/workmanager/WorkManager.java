@@ -27,14 +27,14 @@ import org.jboss.jca.core.spi.security.Callback;
 import org.jboss.jca.core.spi.security.SecurityIntegration;
 import org.jboss.jca.core.spi.transaction.xa.XATerminator;
 
-import javax.resource.spi.ResourceAdapter;
+import jakarta.resource.spi.ResourceAdapter;
 
 import org.jboss.threads.BlockingExecutor;
 
 /**
  * The JBoss specific work manager interface
  */
-public interface WorkManager extends javax.resource.spi.work.WorkManager, GracefulShutdown, Cloneable
+public interface WorkManager extends jakarta.resource.spi.work.WorkManager, GracefulShutdown, Cloneable
 {
    /**
     * Get the unique id of the work manager

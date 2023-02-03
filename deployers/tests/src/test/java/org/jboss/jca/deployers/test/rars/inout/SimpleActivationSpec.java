@@ -23,9 +23,9 @@ package org.jboss.jca.deployers.test.rars.inout;
 
 import java.util.logging.Logger;
 
-import javax.resource.spi.ActivationSpec;
-import javax.resource.spi.InvalidPropertyException;
-import javax.resource.spi.ResourceAdapter;
+import jakarta.resource.spi.ActivationSpec;
+import jakarta.resource.spi.InvalidPropertyException;
+import jakarta.resource.spi.ResourceAdapter;
 
 /**
  * SimpleActivationSpec

@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.validator.rules.base;
 
-import javax.resource.spi.ConfigProperty;
+import jakarta.resource.spi.ConfigProperty;
 
 /**
  * A bAse correct AdminObject

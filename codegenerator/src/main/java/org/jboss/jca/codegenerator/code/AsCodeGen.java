@@ -171,18 +171,18 @@ public class AsCodeGen extends PropsCodeGen
       
       if (def.isUseAnnotation())
       {
-         out.write("import javax.resource.spi.Activation;");
+         out.write("import jakarta.resource.spi.Activation;");
          writeEol(out);
       }
-      out.write("import javax.resource.spi.ActivationSpec;");
+      out.write("import jakarta.resource.spi.ActivationSpec;");
       writeEol(out);
       if (def.isUseAnnotation())
       {
          importConfigProperty(def, out);
       }
-      out.write("import javax.resource.spi.InvalidPropertyException;");
+      out.write("import jakarta.resource.spi.InvalidPropertyException;");
       writeEol(out);
-      out.write("import javax.resource.spi.ResourceAdapter;");
+      out.write("import jakarta.resource.spi.ResourceAdapter;");
       writeEol(out);
       
       if (def.isUseAnnotation())
@@ -191,7 +191,7 @@ public class AsCodeGen extends PropsCodeGen
          {
             if (getConfigProps(def).get(i).isRequired())
             {
-               out.write("import javax.validation.constraints.NotNull;");
+               out.write("import jakarta.validation.constraints.NotNull;");
                break;
             }
          }

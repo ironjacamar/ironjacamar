@@ -28,8 +28,8 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.security.auth.message.callback.CallerPrincipalCallback;
-import javax.security.auth.message.callback.GroupPrincipalCallback;
+import jakarta.security.auth.message.callback.CallerPrincipalCallback;
+import jakarta.security.auth.message.callback.GroupPrincipalCallback;
 
 
 /**

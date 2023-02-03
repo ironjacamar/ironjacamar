@@ -76,11 +76,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.resource.spi.Activation;
-import javax.resource.spi.AdministeredObject;
-import javax.resource.spi.ConnectionDefinitions;
-import javax.resource.spi.TransactionSupport;
-import javax.resource.spi.work.WorkContext;
+import jakarta.resource.spi.Activation;
+import jakarta.resource.spi.AdministeredObject;
+import jakarta.resource.spi.ConnectionDefinitions;
+import jakarta.resource.spi.TransactionSupport;
+import jakarta.resource.spi.work.WorkContext;
 
 import org.jboss.logging.Logger;
 import org.jboss.logging.Messages;
@@ -163,14 +163,14 @@ public class Annotations
          throw new ValidateException(bundle.annotationRepositoryNull());
       /* Process
          -------
-         javax.resource.spi.Activation
-         javax.resource.spi.AdministeredObject
-         javax.resource.spi.AuthenticationMechanism
-         javax.resource.spi.ConfigProperty
-         javax.resource.spi.ConnectionDefinition
-         javax.resource.spi.ConnectionDefinitions
-         javax.resource.spi.Connector
-         javax.resource.spi.SecurityPermission
+         jakarta.resource.spi.Activation
+         jakarta.resource.spi.AdministeredObject
+         jakarta.resource.spi.AuthenticationMechanism
+         jakarta.resource.spi.ConfigProperty
+         jakarta.resource.spi.ConnectionDefinition
+         jakarta.resource.spi.ConnectionDefinitions
+         jakarta.resource.spi.Connector
+         jakarta.resource.spi.SecurityPermission
       */
 
       // @ConfigProperty
@@ -242,14 +242,14 @@ public class Annotations
       throws Exception
    {
       Connector connector = null;
-      Collection<Annotation> values = annotationRepository.getAnnotation(javax.resource.spi.Connector.class);
+      Collection<Annotation> values = annotationRepository.getAnnotation(jakarta.resource.spi.Connector.class);
       if (values != null)
       {
          if (values.size() == 1)
          {
             Annotation annotation = values.iterator().next();
             String raClass = annotation.getClassName();
-            javax.resource.spi.Connector connectorAnnotation = (javax.resource.spi.Connector)annotation.getAnnotation();
+            jakarta.resource.spi.Connector connectorAnnotation = (jakarta.resource.spi.Connector)annotation.getAnnotation();
 
             log.tracef("Processing: %s for %s", connectorAnnotation, raClass);
 
@@ -298,7 +298,7 @@ public class Annotations
     * @exception Exception Thrown if an error occurs
     */
    private Connector attachConnector(String raClass, ClassLoader classLoader,
-                                     javax.resource.spi.Connector conAnnotation,
+                                     jakarta.resource.spi.Connector conAnnotation,
                                      ArrayList<ConnectionDefinition> connectionDefinitions,
                                      ArrayList<ConfigProperty> configProperties,
                                      ArrayList<ConfigProperty> plainConfigProperties,
@@ -470,7 +470,7 @@ public class Annotations
 
       // In an EE 9 server this class may have been bytecode transformed to use the EE 9 connector APIs.
       // Check for that and if it has occurred use the EE 9 version enum instead of EE 8
-      Version connectorVersion = javax.resource.spi.Connector.class.getCanonicalName().startsWith("jakarta.") ? Version.V_21 : Version.V_17;
+      Version connectorVersion = jakarta.resource.spi.Connector.class.getCanonicalName().startsWith("jakarta.") ? Version.V_21 : Version.V_17;
 
       return new ConnectorImpl(connectorVersion, new XsdString("", null), vendorName, eisType, resourceadapterVersion,
                                license, resourceAdapter,
@@ -478,7 +478,7 @@ public class Annotations
    }
 
    private ArrayList<SecurityPermission> processSecurityPermissions(
-         javax.resource.spi.SecurityPermission[] securityPermissionAnotations)
+         jakarta.resource.spi.SecurityPermission[] securityPermissionAnotations)
    {
       ArrayList<SecurityPermission> securityPermissions = null;
       if (securityPermissionAnotations != null)
@@ -486,7 +486,7 @@ public class Annotations
          if (securityPermissionAnotations.length != 0)
          {
             securityPermissions = new ArrayList<SecurityPermission>(securityPermissionAnotations.length);
-            for (javax.resource.spi.SecurityPermission securityPermission : securityPermissionAnotations)
+            for (jakarta.resource.spi.SecurityPermission securityPermission : securityPermissionAnotations)
             {
                ArrayList<LocalizedXsdString> desc = null;
                if (securityPermission.description() != null && securityPermission.description().length > 0)
@@ -512,13 +512,13 @@ public class Annotations
    }
 
    private ArrayList<AuthenticationMechanism> processAuthenticationMechanism(
-         javax.resource.spi.AuthenticationMechanism[] authMechanismAnnotations)
+         jakarta.resource.spi.AuthenticationMechanism[] authMechanismAnnotations)
    {
       ArrayList<AuthenticationMechanism> authenticationMechanisms = null;
       if (authMechanismAnnotations != null)
       {
          authenticationMechanisms = new ArrayList<AuthenticationMechanism>(authMechanismAnnotations.length);
-         for (javax.resource.spi.AuthenticationMechanism authMechanismAnnotation : authMechanismAnnotations)
+         for (jakarta.resource.spi.AuthenticationMechanism authMechanismAnnotation : authMechanismAnnotations)
          {
             ArrayList<LocalizedXsdString> descriptions = null;
             if (authMechanismAnnotation.description() != null && authMechanismAnnotation.description().length != 0)
@@ -600,7 +600,7 @@ public class Annotations
       if (cds.value() != null)
       {
          connectionDefinitions = new ArrayList<ConnectionDefinition>(cds.value().length);
-         for (javax.resource.spi.ConnectionDefinition cd : cds.value())
+         for (jakarta.resource.spi.ConnectionDefinition cd : cds.value())
          {
             connectionDefinitions.add(attachConnectionDefinition(mcf, cd, classLoader,
                                                                  configProperty, plainConfigProperty));
@@ -628,7 +628,7 @@ public class Annotations
       ArrayList<ConnectionDefinition> connectionDefinitions = null;
 
       Collection<Annotation> values = annotationRepository
-         .getAnnotation(javax.resource.spi.ConnectionDefinition.class);
+         .getAnnotation(jakarta.resource.spi.ConnectionDefinition.class);
       if (values != null)
       {
          connectionDefinitions = new ArrayList<ConnectionDefinition>(values.size());
@@ -661,8 +661,8 @@ public class Annotations
       ArrayList<? extends ConfigProperty> plainConfigProperty)
       throws Exception
    {
-      javax.resource.spi.ConnectionDefinition cd =
-         (javax.resource.spi.ConnectionDefinition) annotation.getAnnotation();
+      jakarta.resource.spi.ConnectionDefinition cd =
+         (jakarta.resource.spi.ConnectionDefinition) annotation.getAnnotation();
 
       log.tracef("Processing: %s", annotation);
 
@@ -680,7 +680,7 @@ public class Annotations
     * @return The updated metadata
     * @exception Exception Thrown if an error occurs
     */
-   private ConnectionDefinition attachConnectionDefinition(String mcf, javax.resource.spi.ConnectionDefinition cd,
+   private ConnectionDefinition attachConnectionDefinition(String mcf, jakarta.resource.spi.ConnectionDefinition cd,
                                                            ClassLoader classLoader,
                                                            ArrayList<? extends ConfigProperty> configProperties,
                                                            ArrayList<? extends ConfigProperty> plainConfigProperties)
@@ -742,13 +742,13 @@ public class Annotations
       throws Exception
    {
       Map<Metadatas, ArrayList<ConfigProperty>> valueMap = null;
-      Collection<Annotation> values = annotationRepository.getAnnotation(javax.resource.spi.ConfigProperty.class);
+      Collection<Annotation> values = annotationRepository.getAnnotation(jakarta.resource.spi.ConfigProperty.class);
       if (values != null)
       {
          valueMap = new HashMap<Annotations.Metadatas, ArrayList<ConfigProperty>>();
          for (Annotation annotation : values)
          {
-            javax.resource.spi.ConfigProperty configPropertyAnnotation = (javax.resource.spi.ConfigProperty) annotation
+            jakarta.resource.spi.ConfigProperty configPropertyAnnotation = (jakarta.resource.spi.ConfigProperty) annotation
                   .getAnnotation();
 
             log.tracef("Processing: %s", configPropertyAnnotation);
@@ -780,7 +780,7 @@ public class Annotations
             String attachedClassName = annotation.getClassName();
             Class attachedClass = Class.forName(attachedClassName, true, classLoader);
 
-            if (hasInterface(attachedClass, "javax.resource.spi.ResourceAdapter"))
+            if (hasInterface(attachedClass, "jakarta.resource.spi.ResourceAdapter"))
             {
                ConfigProperty cfgMeta = new ConfigPropertyImpl(descriptions, configPropertyName,
                                                                configPropertyType,
@@ -802,7 +802,7 @@ public class Annotations
                                                                configPropertySupportsDynamicUpdates,
                                                                configPropertyConfidential, null, false,
                                                                attachedClassName, null, null, null);
-               if (hasInterface(attachedClass, "javax.resource.spi.ManagedConnectionFactory"))
+               if (hasInterface(attachedClass, "jakarta.resource.spi.ManagedConnectionFactory"))
                {
                   if (valueMap.get(Metadatas.MANAGED_CONN_FACTORY) == null)
                   {
@@ -810,7 +810,7 @@ public class Annotations
                   }
                   valueMap.get(Metadatas.MANAGED_CONN_FACTORY).add(cfgMeta);
                }
-               else if (hasInterface(attachedClass, "javax.resource.spi.ActivationSpec"))
+               else if (hasInterface(attachedClass, "jakarta.resource.spi.ActivationSpec"))
                {
                   if (hasNotNull(annotationRepository, annotation))
                   {
@@ -1303,7 +1303,7 @@ public class Annotations
     */
    private boolean hasNotNull(AnnotationRepository annotationRepository, Annotation annotation)
    {
-      Collection<Annotation> values = annotationRepository.getAnnotation(javax.validation.constraints.NotNull.class);
+      Collection<Annotation> values = annotationRepository.getAnnotation(jakarta.validation.constraints.NotNull.class);
 
       if (values == null || values.size() == 0)
          return false;

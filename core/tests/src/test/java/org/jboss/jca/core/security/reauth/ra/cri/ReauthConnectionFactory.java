@@ -23,8 +23,8 @@ package org.jboss.jca.core.security.reauth.ra.cri;
 
 import java.io.Serializable;
 
-import javax.resource.Referenceable;
-import javax.resource.ResourceException;
+import jakarta.resource.Referenceable;
+import jakarta.resource.ResourceException;
 
 /**
  * ReauthConnectionFactory

@@ -21,8 +21,8 @@
  */
 package org.jboss.jca.deployers.test.rars.lazy;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.LocalTransaction;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.LocalTransaction;
 
 import org.jboss.logging.Logger;
 

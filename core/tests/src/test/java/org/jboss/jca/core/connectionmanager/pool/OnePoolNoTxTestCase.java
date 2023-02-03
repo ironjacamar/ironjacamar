@@ -31,7 +31,7 @@ import org.jboss.jca.core.connectionmanager.rar.SimpleManagedConnectionFactory;
 
 import java.util.Locale;
 
-import javax.resource.spi.ManagedConnection;
+import jakarta.resource.spi.ManagedConnection;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.shrinkwrap.api.spec.ResourceAdapterArchive;

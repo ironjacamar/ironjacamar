@@ -97,17 +97,17 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ActivationSpec;
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.ResourceAdapterAssociation;
-import javax.resource.spi.TransactionSupport;
-import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
-import javax.resource.spi.ValidatingManagedConnectionFactory;
-import javax.resource.spi.security.PasswordCredential;
-import javax.resource.spi.work.WorkContext;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ActivationSpec;
+import jakarta.resource.spi.ManagedConnectionFactory;
+import jakarta.resource.spi.ResourceAdapterAssociation;
+import jakarta.resource.spi.TransactionSupport;
+import jakarta.resource.spi.TransactionSupport.TransactionSupportLevel;
+import jakarta.resource.spi.ValidatingManagedConnectionFactory;
+import jakarta.resource.spi.security.PasswordCredential;
+import jakarta.resource.spi.work.WorkContext;
 import javax.security.auth.Subject;
-import javax.transaction.TransactionManager;
+import jakarta.transaction.TransactionManager;
 
 import org.jboss.logging.Messages;
 
@@ -320,7 +320,7 @@ public abstract class AbstractResourceAdapterDeployer
     * @throws DeployException DeployException Thrown if the resource adapter cant be started
     */
    @SuppressWarnings("unchecked")
-   protected void startContext(javax.resource.spi.ResourceAdapter resourceAdapter,
+   protected void startContext(jakarta.resource.spi.ResourceAdapter resourceAdapter,
                                String bootstrapContextIdentifier, String bootstrapContextName,
                                Callback cb)
       throws DeployException
@@ -362,7 +362,7 @@ public abstract class AbstractResourceAdapterDeployer
     * @throws DeployException DeployException Thrown if the resource adapter cant be started
     */
    @SuppressWarnings("unchecked")
-   protected void associateResourceAdapter(javax.resource.spi.ResourceAdapter resourceAdapter, Object object)
+   protected void associateResourceAdapter(jakarta.resource.spi.ResourceAdapter resourceAdapter, Object object)
       throws DeployException
    {
       if (resourceAdapter != null && object != null)
@@ -728,7 +728,7 @@ public abstract class AbstractResourceAdapterDeployer
     * @throws DeployException DeployException in case of error
     */
    protected Set<Failure> initActivationSpec(ClassLoader cl, Connector cmd,
-                                             javax.resource.spi.ResourceAdapter resourceAdapter,
+                                             jakarta.resource.spi.ResourceAdapter resourceAdapter,
                                              List<Validate> archiveValidationObjects,
                                              List<Object> beanValidationObjects,
                                              Set<Failure> failures, URL url,
@@ -820,7 +820,7 @@ public abstract class AbstractResourceAdapterDeployer
    protected Set<Failure> initAdminObject(Connector cmd, ClassLoader cl, List<Validate> archiveValidationObjects,
                                           List<Object> beanValidationObjects, Set<Failure> failures,
                                           URL url, String deploymentName, boolean activateDeployment,
-                                          javax.resource.spi.ResourceAdapter resourceAdapter,
+                                          jakarta.resource.spi.ResourceAdapter resourceAdapter,
                                           List<org.jboss.jca.common.api.metadata.resourceadapter.AdminObject> aosAct,
                                           List<Object> aos, List<String> aoJndiNames,
                                           org.jboss.jca.core.api.management.Connector mgtConnector)
@@ -925,7 +925,7 @@ public abstract class AbstractResourceAdapterDeployer
                                  if (ao instanceof ResourceAdapterAssociation)
                                  {
                                     if (ao instanceof Serializable &&
-                                        ao instanceof javax.resource.Referenceable)
+                                        ao instanceof jakarta.resource.Referenceable)
                                     {
                                        adminObjectVerified = true;
                                     }
@@ -945,7 +945,7 @@ public abstract class AbstractResourceAdapterDeployer
                                           {
                                              for (Class<?> interfaceClass : is)
                                              {
-                                                if (!interfaceClass.equals(javax.resource.Referenceable.class) &&
+                                                if (!interfaceClass.equals(jakarta.resource.Referenceable.class) &&
                                                     !interfaceClass.equals(ResourceAdapterAssociation.class) &&
                                                     !interfaceClass.equals(java.io.Serializable.class) &&
                                                     !interfaceClass.equals(java.io.Externalizable.class))
@@ -960,7 +960,7 @@ public abstract class AbstractResourceAdapterDeployer
                                        }
 
                                        interfaces.add(java.io.Serializable.class);
-                                       interfaces.add(javax.resource.Referenceable.class);
+                                       interfaces.add(jakarta.resource.Referenceable.class);
                                        
                                        ao = Proxy.newProxyInstance(SecurityActions.getClassLoader(ao.getClass()),
                                                                    interfaces.toArray(new Class<?>[interfaces.size()]),
@@ -1157,7 +1157,7 @@ public abstract class AbstractResourceAdapterDeployer
          org.jboss.jca.core.api.management.Connector mgtConnector =
             new org.jboss.jca.core.api.management.Connector(mgtUniqueId);
 
-         javax.resource.spi.ResourceAdapter resourceAdapter = null;
+         jakarta.resource.spi.ResourceAdapter resourceAdapter = null;
          Map<String, String> raConfigProperties = null;
          String resourceAdapterKey = null;
          String bootstrapContextIdentifier = null;
@@ -1241,10 +1241,10 @@ public abstract class AbstractResourceAdapterDeployer
                         String raClz = ra.getResourceadapterClass();
                         Object or = initAndInject(raClz, ra.getConfigProperties(), cl);
 
-                        if (or == null || !(or instanceof javax.resource.spi.ResourceAdapter))
+                        if (or == null || !(or instanceof jakarta.resource.spi.ResourceAdapter))
                            throw new DeployException(bundle.invalidResourceAdapter(raClz));
 
-                        resourceAdapter = (javax.resource.spi.ResourceAdapter)or;
+                        resourceAdapter = (jakarta.resource.spi.ResourceAdapter)or;
 
                         if (activation != null)
                            raConfigProperties = activation.getConfigProperties();
@@ -1804,7 +1804,7 @@ public abstract class AbstractResourceAdapterDeployer
                                  archiveValidationObjects.add(new ValidateObject(Key.CONNECTION_FACTORY, cf));
 
                                  if (cf != null && cf instanceof Serializable &&
-                                     cf instanceof javax.resource.Referenceable)
+                                     cf instanceof jakarta.resource.Referenceable)
                                  {
                                     String jndiName;
                                     if (connectionDefinition != null)
@@ -2332,7 +2332,7 @@ public abstract class AbstractResourceAdapterDeployer
     * @return The key
     */
    protected abstract String
-   registerResourceAdapterToResourceAdapterRepository(javax.resource.spi.ResourceAdapter instance);
+   registerResourceAdapterToResourceAdapterRepository(jakarta.resource.spi.ResourceAdapter instance);
 
    /**
     * Set recovery mode for a resource adapter in the ResourceAdapterRepository

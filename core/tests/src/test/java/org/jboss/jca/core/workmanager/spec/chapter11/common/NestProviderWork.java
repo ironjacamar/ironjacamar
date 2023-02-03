@@ -25,9 +25,9 @@ package org.jboss.jca.core.workmanager.spec.chapter11.common;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
 
-import javax.resource.spi.work.Work;
-import javax.resource.spi.work.WorkAdapter;
-import javax.resource.spi.work.WorkManager;
+import jakarta.resource.spi.work.Work;
+import jakarta.resource.spi.work.WorkAdapter;
+import jakarta.resource.spi.work.WorkManager;
 
 /**
  * NestProviderWork allows to add contexts and nested works

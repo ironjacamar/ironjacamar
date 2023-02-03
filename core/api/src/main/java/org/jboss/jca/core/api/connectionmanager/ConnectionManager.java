@@ -24,12 +24,12 @@ package org.jboss.jca.core.api.connectionmanager;
 
 import org.jboss.jca.core.api.connectionmanager.listener.ConnectionListener;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.LazyAssociatableConnectionManager;
-import javax.resource.spi.LazyEnlistableConnectionManager;
-import javax.resource.spi.ManagedConnection;
-import javax.resource.spi.ManagedConnectionFactory;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ConnectionRequestInfo;
+import jakarta.resource.spi.LazyAssociatableConnectionManager;
+import jakarta.resource.spi.LazyEnlistableConnectionManager;
+import jakarta.resource.spi.ManagedConnection;
+import jakarta.resource.spi.ManagedConnectionFactory;
 
 /**
  * The JBoss specific connection manager interface.
@@ -37,7 +37,7 @@ import javax.resource.spi.ManagedConnectionFactory;
  * @author <a href="mailto:gurkanerdogdu@yahoo.com">Gurkan Erdogdu</a>
  * @author <a href="mailto:jesper.pedersen@ironjacamar.org">Jesper Pedersen</a>
  */
-public interface ConnectionManager extends javax.resource.spi.ConnectionManager,
+public interface ConnectionManager extends jakarta.resource.spi.ConnectionManager,
                                            LazyAssociatableConnectionManager,
                                            LazyEnlistableConnectionManager
 {

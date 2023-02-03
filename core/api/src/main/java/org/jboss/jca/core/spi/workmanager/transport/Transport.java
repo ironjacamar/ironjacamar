@@ -25,8 +25,8 @@ package org.jboss.jca.core.spi.workmanager.transport;
 import org.jboss.jca.core.api.workmanager.DistributedWorkManagerStatisticsValues;
 import org.jboss.jca.core.spi.workmanager.Address;
 
-import javax.resource.spi.work.DistributableWork;
-import javax.resource.spi.work.WorkException;
+import jakarta.resource.spi.work.DistributableWork;
+import jakarta.resource.spi.work.WorkException;
 
 /**
  * The transport interface defines the methods for the physical transport

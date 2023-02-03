@@ -31,8 +31,8 @@ import org.jboss.jca.core.connectionmanager.tx.TxConnectionManagerImpl;
 import org.jboss.jca.core.spi.security.SubjectFactory;
 import org.jboss.jca.core.spi.transaction.TransactionIntegration;
 
-import javax.resource.spi.TransactionSupport.TransactionSupportLevel;
-import javax.transaction.TransactionManager;
+import jakarta.resource.spi.TransactionSupport.TransactionSupportLevel;
+import jakarta.transaction.TransactionManager;
 
 /**
  * The connection manager factory.

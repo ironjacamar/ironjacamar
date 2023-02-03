@@ -49,7 +49,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 import javax.transaction.xa.XAResource;
 
 import org.jboss.logging.Logger;

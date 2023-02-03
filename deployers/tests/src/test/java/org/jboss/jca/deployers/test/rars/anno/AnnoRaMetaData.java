@@ -21,7 +21,7 @@
  */
 package org.jboss.jca.deployers.test.rars.anno;
 
-import javax.resource.cci.ResourceAdapterMetaData;
+import jakarta.resource.cci.ResourceAdapterMetaData;
 
 /**
  * AnnoRaMetaData

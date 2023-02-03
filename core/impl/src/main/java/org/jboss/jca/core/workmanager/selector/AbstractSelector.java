@@ -31,7 +31,7 @@ import org.jboss.jca.core.workmanager.notification.AbstractNotificationListener;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.resource.spi.work.DistributableWork;
+import jakarta.resource.spi.work.DistributableWork;
 
 import org.jboss.logging.Logger;
 

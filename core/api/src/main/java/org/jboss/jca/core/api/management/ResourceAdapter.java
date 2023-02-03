@@ -37,7 +37,7 @@ import java.util.List;
 public class ResourceAdapter
 {
    /** The object instance */
-   private WeakReference<javax.resource.spi.ResourceAdapter> instance;
+   private WeakReference<jakarta.resource.spi.ResourceAdapter> instance;
 
    /** The config property's */
    private List<ConfigProperty> configProperties;
@@ -46,9 +46,9 @@ public class ResourceAdapter
     * Constructor
     * @param ra The resource adapter instance
     */
-   public ResourceAdapter(javax.resource.spi.ResourceAdapter ra)
+   public ResourceAdapter(jakarta.resource.spi.ResourceAdapter ra)
    {
-      this.instance = new WeakReference<javax.resource.spi.ResourceAdapter>(ra);
+      this.instance = new WeakReference<jakarta.resource.spi.ResourceAdapter>(ra);
       this.configProperties = null;
    }
 
@@ -59,7 +59,7 @@ public class ResourceAdapter
     * undeployed and this object wasn't cleared up correctly.
     * @return The instance
     */
-   public javax.resource.spi.ResourceAdapter getResourceAdapter()
+   public jakarta.resource.spi.ResourceAdapter getResourceAdapter()
    {
       return instance.get();
    }

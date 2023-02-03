@@ -29,13 +29,13 @@ import org.jboss.jca.core.spi.workmanager.transport.Transport;
 
 import java.util.Collection;
 
-import javax.resource.spi.work.Work;
-import javax.resource.spi.work.WorkException;
+import jakarta.resource.spi.work.Work;
+import jakarta.resource.spi.work.WorkException;
 
 /**
  * The JBoss specific distributed work manager interface
  */
-public interface DistributedWorkManager extends javax.resource.spi.work.DistributableWorkManager, WorkManager
+public interface DistributedWorkManager extends jakarta.resource.spi.work.DistributableWorkManager, WorkManager
 {
    /**
     * Get the policy

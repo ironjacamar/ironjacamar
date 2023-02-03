@@ -22,8 +22,8 @@
 
 package org.jboss.jca.core.workmanager.spec.chapter11.common;
 
-import javax.resource.spi.work.TransactionContext;
-import javax.resource.spi.work.WorkContextLifecycleListener;
+import jakarta.resource.spi.work.TransactionContext;
+import jakarta.resource.spi.work.WorkContextLifecycleListener;
 
 import org.jboss.logging.Logger;
 

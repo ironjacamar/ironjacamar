@@ -41,12 +41,12 @@
         <authentication-mechanism id="ID030">
             <description id="ID031">something</description>
             <authentication-mechanism-type id="ID032">BasicPassword</authentication-mechanism-type>
-            <credential-interface id="ID033">javax.resource.spi.security.PasswordCredential</credential-interface>
+            <credential-interface id="ID033">jakarta.resource.spi.security.PasswordCredential</credential-interface>
         </authentication-mechanism>
         <authentication-mechanism id="ID034">
             <description id="ID035">something</description>
             <authentication-mechanism-type id="ID036">Kerbv5</authentication-mechanism-type>
-            <credential-interface id="ID037">javax.resource.spi.security.GenericCredential</credential-interface>
+            <credential-interface id="ID037">jakarta.resource.spi.security.GenericCredential</credential-interface>
         </authentication-mechanism>
         <reauthentication-support id="ID038">true</reauthentication-support>
         <security-permission id="ID039">

@@ -79,10 +79,10 @@ public class McMetaCodeGen extends AbstractCodeGen
       writeEol(out);
       writeEol(out);
       importLogging(def, out);
-      out.write("import javax.resource.ResourceException;");
+      out.write("import jakarta.resource.ResourceException;");
       writeEol(out);
       writeEol(out);
-      out.write("import javax.resource.spi.ManagedConnectionMetaData;");
+      out.write("import jakarta.resource.spi.ManagedConnectionMetaData;");
       writeEol(out);
       writeEol(out);
    }

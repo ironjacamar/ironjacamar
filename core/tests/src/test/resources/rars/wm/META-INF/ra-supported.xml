@@ -33,8 +33,8 @@
    <vendor-name>Red Hat Inc</vendor-name>
    <eis-type>Test RA</eis-type>
    <resourceadapter-version>0.1</resourceadapter-version>
-   <required-work-context>javax.resource.spi.work.TransactionContext</required-work-context>
-   <required-work-context>javax.resource.spi.work.SecurityContext</required-work-context>
+   <required-work-context>jakarta.resource.spi.work.TransactionContext</required-work-context>
+   <required-work-context>jakarta.resource.spi.work.SecurityContext</required-work-context>
    <resourceadapter>
       <resourceadapter-class>org.jboss.jca.core.workmanager.rars.wm.UnsupportedContextResourceAdapter</resourceadapter-class>
       <outbound-resourceadapter>

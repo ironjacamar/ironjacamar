@@ -27,12 +27,12 @@ import org.jboss.jca.core.workmanager.spec.chapter10.common.ShortRunningWork;
 import org.jboss.jca.core.workmanager.spec.chapter10.common.SimpleWork;
 import org.jboss.jca.embedded.dsl.InputStreamDescriptor;
 
-import javax.resource.spi.work.ExecutionContext;
-import javax.resource.spi.work.Work;
-import javax.resource.spi.work.WorkCompletedException;
-import javax.resource.spi.work.WorkException;
-import javax.resource.spi.work.WorkManager;
-import javax.resource.spi.work.WorkRejectedException;
+import jakarta.resource.spi.work.ExecutionContext;
+import jakarta.resource.spi.work.Work;
+import jakarta.resource.spi.work.WorkCompletedException;
+import jakarta.resource.spi.work.WorkException;
+import jakarta.resource.spi.work.WorkManager;
+import jakarta.resource.spi.work.WorkRejectedException;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
