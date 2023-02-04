@@ -45,36 +45,36 @@ public class ActivationImpl implements Activation
    private static final long serialVersionUID = 1L;
 
    /** transactionSupport **/
-   protected TransactionSupportEnum transactionSupport;
+   protected final TransactionSupportEnum transactionSupport;
 
    /**
     *  configProperties
     */
-   protected Map<String, String> configProperties;
+   protected final Map<String, String> configProperties;
 
    /**
     *  adminObjects
     */
-   protected List<AdminObject> adminObjects;
+   protected final List<AdminObject> adminObjects;
 
    /**
     *  connectionDefinitions
     */
-   protected List<ConnectionDefinition> connectionDefinitions;
+   protected final List<ConnectionDefinition> connectionDefinitions;
 
    /**
     *  beanValidationGroups
     */
-   protected List<String> beanValidationGroups;
+   protected final List<String> beanValidationGroups;
 
    /** bootstrapContext **/
-   protected String bootstrapContext;
+   protected final String bootstrapContext;
 
    /** archive */
-   protected String archive;
+   protected final String archive;
 
    /** id */
-   protected String id;
+   protected final String id;
 
    /** workmanager */
    protected WorkManager workmanager;
