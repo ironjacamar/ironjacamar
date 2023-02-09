@@ -245,7 +245,7 @@ public class ActivationImpl implements Activation
    }
 
    @Override
-   public int hashCode()
+   public synchronized int hashCode()
    {
       final int prime = 31;
       int result = 1;
@@ -262,7 +262,7 @@ public class ActivationImpl implements Activation
    }
 
    @Override
-   public boolean equals(Object obj)
+   public synchronized boolean equals(Object obj)
    {
       if (this == obj)
          return true;
@@ -333,7 +333,7 @@ public class ActivationImpl implements Activation
    }
 
    @Override
-   public String toString()
+   public synchronized String toString()
    {
       StringBuilder sb = new StringBuilder(1024);
 
