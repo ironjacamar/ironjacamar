@@ -617,7 +617,7 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
     */
    public void returnConnection(ConnectionListener cl, boolean kill) 
    {
-      returnConnection(cl, kill, true);
+      returnConnection(cl, kill, !kill);
    }
 
    /**
