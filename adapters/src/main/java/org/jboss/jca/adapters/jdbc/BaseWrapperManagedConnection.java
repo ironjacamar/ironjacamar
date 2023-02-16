@@ -298,7 +298,14 @@ public abstract class BaseWrapperManagedConnection implements NotifyingManagedCo
     */
    public void cleanup() throws ResourceException
    {
+      clearThreads();
+      resetProperties();
+   }
+
+   private void clearThreads() throws ResourceException
+   {
       boolean isActive = false;
+      shouldRollbackOnDestroy = !underlyingAutoCommit;
 
       if (lock.hasQueuedThreads())
       {
@@ -335,10 +342,14 @@ public abstract class BaseWrapperManagedConnection implements NotifyingManagedCo
          {
             mcf.log.lockOwnedWithoutOwner();
          }
-         
+
          // Double-check
          if (lock.isLocked())
             isActive = true;
+         if (isActive)
+         {
+            throw new ResourceException(bundle.activeLocks());
+         }
       }
 
       synchronized (handles)
@@ -353,12 +364,13 @@ public abstract class BaseWrapperManagedConnection implements NotifyingManagedCo
          }
          handles.clear();
       }
+   }
 
+   private void resetProperties(){
       // Reset all the properties we know about to defaults.
       synchronized (stateLock)
       {
          jdbcAutoCommit = true;
-         shouldRollbackOnDestroy = !underlyingAutoCommit;
          if (setAutoCommitOnCleanup && (jdbcAutoCommit != underlyingAutoCommit))
          {
             try {
@@ -381,11 +393,6 @@ public abstract class BaseWrapperManagedConnection implements NotifyingManagedCo
                mcf.log.transactionIsolationReset(mcf.getJndiName(), e);
             }
          }
-      }
-
-      if (isActive)
-      {
-         throw new ResourceException(bundle.activeLocks());
       }
    }
 
@@ -497,7 +504,8 @@ public abstract class BaseWrapperManagedConnection implements NotifyingManagedCo
          destroyed = true;
       }
 
-      cleanup();
+      clearThreads();
+
       try
       {
          // See JBAS-5678
@@ -509,6 +517,7 @@ public abstract class BaseWrapperManagedConnection implements NotifyingManagedCo
          if (getLog().isTraceEnabled())
             getLog().trace("Ignored error during rollback: ", ignored);
       }
+
       try
       {
          con.close();
