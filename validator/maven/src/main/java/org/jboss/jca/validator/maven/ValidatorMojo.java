@@ -21,6 +21,8 @@
  */
 package org.jboss.jca.validator.maven;
 
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
 import org.jboss.jca.validator.Validation;
 
 import java.io.File;
@@ -35,6 +37,7 @@ import org.apache.maven.plugin.MojoFailureException;
  * @author Jeff Zhang
  * @version $Revision: $
  */
+@Mojo(name = "validate", defaultPhase = LifecyclePhase.VALIDATE)
 public class ValidatorMojo extends AbstractMojo
 {
    /** output directory */
@@ -68,6 +71,13 @@ public class ValidatorMojo extends AbstractMojo
       try 
       {
          SecurityActions.setThreadContextClassLoader(SecurityActions.getClassLoader(ValidatorMojo.class));
+
+         if (getRarFile() == null) {
+            throw new MojoExecutionException("rarFile cannot be null");
+         }
+         if (getOutputDir() == null) {
+            throw new MojoExecutionException("outputDir cannot be null");
+         }
 
          Validation.validate(getRarFile().toURI().toURL(), 
             getOutputDir(), getClasspath());
