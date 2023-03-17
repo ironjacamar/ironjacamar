@@ -840,7 +840,7 @@ public abstract class AbstractPool implements Pool
    {
       cl.setTrackByTx(false);
 
-      if(cl.getManagedConnection() instanceof NotifyingManagedConnection){
+      if(!kill && cl.getManagedConnection() instanceof NotifyingManagedConnection){
          ((NotifyingManagedConnection)cl.getManagedConnection()).notifyRequestEnd();
       }
 
