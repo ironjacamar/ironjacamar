@@ -204,6 +204,12 @@ public class LazyManagedConnection implements ManagedConnection, DissociatableMa
    public void destroy() throws ResourceException
    {
       log.trace("destroy()");
+
+      if (connection != null)
+      {
+         connection.setManagedConnection(null);
+         connection = null;
+      }
    }
 
    /**
