@@ -28,7 +28,7 @@
     <parent>
         <groupId>org.jboss.ironjacamar</groupId>
         <artifactId>ironjacamar-validator-parent</artifactId>
-        <version>1.5.11.Final</version>
+        <version>1.5.11.SP1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
