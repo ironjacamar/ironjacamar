@@ -28,7 +28,7 @@
     <parent>
         <groupId>org.jboss.ironjacamar</groupId>
         <artifactId>ironjacamar-parent</artifactId>
-        <version>1.5.3.SP3</version>
+        <version>1.5.3.SP4</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
