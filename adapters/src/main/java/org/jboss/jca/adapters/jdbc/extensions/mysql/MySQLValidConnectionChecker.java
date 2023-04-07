@@ -22,11 +22,14 @@
 
 package org.jboss.jca.adapters.jdbc.extensions.mysql;
 
-import org.jboss.jca.adapters.jdbc.CheckValidConnectionSQL;
+import org.jboss.jca.adapters.jdbc.spi.ValidConnectionChecker;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * Implements check valid connection sql Requires MySQL driver 3.1.8 or later.
@@ -39,18 +42,15 @@ import java.sql.SQLException;
  * @author Jim Moran
  * @version $Revision: 78074 $
  */
-public class MySQLValidConnectionChecker extends CheckValidConnectionSQL
+public class MySQLValidConnectionChecker implements ValidConnectionChecker, Serializable
 {
    private static final long serialVersionUID = 1323747853035005642L;
-
-   private static final String QUERY = "SELECT 1";
 
    /**
     * Constructor
     */
    public MySQLValidConnectionChecker()
    {
-      super(QUERY);
    }
 
    /**
@@ -92,7 +92,45 @@ public class MySQLValidConnectionChecker extends CheckValidConnectionSQL
       }
       else
       {
-         return super.isValidConnection(c);
+         Statement stmt = null;
+         ResultSet rs = null;
+         try
+         {
+            stmt = c.createStatement();
+            rs = stmt.executeQuery("SELECT 1");
+         }
+         catch (Exception e)
+         {
+            if (e instanceof SQLException)
+            {
+               return (SQLException) e;
+            }
+            else
+            {
+               return new SQLException("SELECT 1 failed: " + e.toString(), e);
+            }
+         }
+         finally
+         {
+            try
+            {
+               if (rs != null)
+                  rs.close();
+            }
+            catch (SQLException ignore)
+            {
+               // Ignore
+            }
+            try
+            {
+               if (stmt != null)
+                  stmt.close();
+            }
+            catch (SQLException ignore)
+            {
+               // Ignore
+            }
+         }
       }
 
       return null;

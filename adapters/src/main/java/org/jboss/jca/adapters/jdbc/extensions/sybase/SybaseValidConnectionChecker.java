@@ -22,7 +22,13 @@
 
 package org.jboss.jca.adapters.jdbc.extensions.sybase;
 
-import org.jboss.jca.adapters.jdbc.CheckValidConnectionSQL;
+import org.jboss.jca.adapters.jdbc.spi.ValidConnectionChecker;
+
+import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * A SybaseValidConnectionChecker.
@@ -30,7 +36,7 @@ import org.jboss.jca.adapters.jdbc.CheckValidConnectionSQL;
  * @author <a href="wprice@redhat.com">Weston Price</a>
  * @version $Revision: 85945 $
  */
-public class SybaseValidConnectionChecker extends CheckValidConnectionSQL
+public class SybaseValidConnectionChecker implements ValidConnectionChecker, Serializable
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = 4179707462244257791L;
@@ -43,6 +49,50 @@ public class SybaseValidConnectionChecker extends CheckValidConnectionSQL
     */
    public SybaseValidConnectionChecker()
    {
-      super(VALID_QUERY);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   public SQLException isValidConnection(Connection c)
+   {
+      SQLException sqe = null;
+      Statement s = null;
+      ResultSet rs = null;
+
+      try
+      {
+         s = c.createStatement();
+         rs = s.executeQuery(VALID_QUERY);
+      }
+      catch (SQLException e)
+      {
+         sqe = e;
+      }
+      finally
+      {
+         try
+         {
+            if (rs != null)
+               rs.close();
+         }
+         catch (SQLException ignore)
+         {
+            // Nothing
+         }
+
+         try
+         {
+            if (s != null)
+               s.close();
+         }
+         catch (SQLException ignore)
+         {
+            // Nothing
+         }
+      }
+
+      return sqe;
    }
 }
