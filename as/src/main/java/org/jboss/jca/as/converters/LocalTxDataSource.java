@@ -199,11 +199,7 @@ public interface LocalTxDataSource extends NoTxDataSource
       /**
       * useTryLock tag
       */
-      USE_TRY_LOCK("use-try-lock"),
-      /**
-       * validationQueryTimeout tag
-       */
-      VALIDATION_QUERY_TIMEOUT("validation-query-timeout");
+      USE_TRY_LOCK("use-try-lock");
 
       private final String name;
 

@@ -40,9 +40,4 @@ public interface ValidConnectionChecker
     * @return Exception when not valid, null when valid
     */
    SQLException isValidConnection(Connection c);
-
-   default void setQueryTimeout(int timeout)
-   {
-      // nothing to do here
-   }
 }

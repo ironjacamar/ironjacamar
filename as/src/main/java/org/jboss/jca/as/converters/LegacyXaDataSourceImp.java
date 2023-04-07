@@ -167,11 +167,11 @@ public class LegacyXaDataSourceImp implements XaDataSource
    public LegacyXaDataSourceImp buildTimeOut(Long blockingTimeoutMillis, Long idleTimeoutMinutes, 
          Integer allocationRetry, Long allocationRetryWaitMillis, Integer xaResourceTimeout, 
          Boolean setTxQueryTimeout, Long queryTimeout,
-         Long useTryLock, Long validationQueryTimeout) throws Exception
+         Long useTryLock) throws Exception
    {
       timeOut = new TimeOutImpl(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry,
             allocationRetryWaitMillis, xaResourceTimeout, setTxQueryTimeout,
-            queryTimeout, useTryLock, validationQueryTimeout);
+            queryTimeout, useTryLock);
       return this;
    }
    
@@ -509,12 +509,6 @@ public class LegacyXaDataSourceImp implements XaDataSource
    public Integer getXaResourceTimeout()
    {
       return this.timeOut.getXaResourceTimeout();
-   }
-
-   @Override
-   public Long getValidationQueryTimeout()
-   {
-      return this.timeOut.getValidationQueryTimeout();
    }
 
    @Override

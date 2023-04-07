@@ -236,7 +236,6 @@ public class LegacyDsParser extends AbstractParser
       Long allocationRetryWaitMillis = null;
       Long useTryLock = null;
       Integer xaResourceTimeout = null;
-      Long validationQueryTimeout = null;
 
       Long preparedStatementsCacheSize = null;
       Boolean sharePreparedStatements = Defaults.SHARE_PREPARED_STATEMENTS;
@@ -278,8 +277,7 @@ public class LegacyDsParser extends AbstractParser
                   LegacyXaDataSourceImp xaDsImpl = new LegacyXaDataSourceImp(xaDataSourceClass,
                         driver, transactionIsolation, xaDataSourceProperty);
                   xaDsImpl.buildTimeOut(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry, 
-                        allocationRetryWaitMillis, xaResourceTimeout, setTxQueryTimeout, queryTimeout, useTryLock,
-                        validationQueryTimeout);
+                        allocationRetryWaitMillis, xaResourceTimeout, setTxQueryTimeout, queryTimeout, useTryLock);
                   xaDsImpl.buildDsSecurity(userName, password, securityDomain, null);
                   xaDsImpl.buildStatement(sharePreparedStatements, preparedStatementsCacheSize, trackStatements);
                   xaDsImpl.buildValidation(backgroundValidation, backgroundValidationMillis, useFastFail, 
@@ -430,10 +428,6 @@ public class LegacyDsParser extends AbstractParser
                      queryTimeout = elementAsLong(reader);
                      break;
                   }
-                  case VALIDATION_QUERY_TIMEOUT : {
-                     validationQueryTimeout = elementAsLong(reader);
-                     break;
-                  }
                   case SET_TX_QUERY_TIMEOUT : {
                      setTxQueryTimeout = elementAsBoolean(reader);
                      break;
@@ -538,7 +532,6 @@ public class LegacyDsParser extends AbstractParser
       Long allocationRetryWaitMillis = null;
       Long useTryLock = null;
       Integer xaResourceTimeout = 0;
-      Long validationQueryTimeout = null;
 
       Long preparedStatementsCacheSize = null;
       Boolean sharePreparedStatements = Defaults.SHARE_PREPARED_STATEMENTS;
@@ -571,8 +564,7 @@ public class LegacyDsParser extends AbstractParser
                   LegacyTxDataSourceImpl txDsImpl = new LegacyTxDataSourceImpl(connectionUrl, 
                         driverClass, dataSourceClass, driver, transactionIsolation, connectionProperties);
                   txDsImpl.buildTimeOut(blockingTimeoutMillis, idleTimeoutMinutes, allocationRetry, 
-                        allocationRetryWaitMillis, xaResourceTimeout, setTxQueryTimeout, queryTimeout, useTryLock,
-                        validationQueryTimeout);
+                        allocationRetryWaitMillis, xaResourceTimeout, setTxQueryTimeout, queryTimeout, useTryLock);
                   txDsImpl.buildDsSecurity(userName, password, securityDomain, null);
                   txDsImpl.buildStatement(sharePreparedStatements, preparedStatementsCacheSize, trackStatements);
                   txDsImpl.buildValidation(backgroundValidation, backgroundValidationMillis, useFastFail, 
@@ -697,10 +689,6 @@ public class LegacyDsParser extends AbstractParser
                   }
                   case QUERY_TIMEOUT : {
                      queryTimeout = elementAsLong(reader);
-                     break;
-                  }
-                  case VALIDATION_QUERY_TIMEOUT : {
-                     validationQueryTimeout = elementAsLong(reader);
                      break;
                   }
                   case SET_TX_QUERY_TIMEOUT : {

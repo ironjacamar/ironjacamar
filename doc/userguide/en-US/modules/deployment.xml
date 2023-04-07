@@ -1731,13 +1731,6 @@ copy postgres-xa-ds.xml ironjacamar-1.2.0.Final\deploy
                   does not invoke the setter. In seconds
                 </entry>
               </row>
-              <row>
-                <entry><code>validation-query-timeout</code></entry>
-                <entry>
-                  The validation query timeout in seconds. Default is zero which
-                  does not invoke the setter.
-                </entry>
-              </row>
             </tbody>
           </tgroup>
         </table>

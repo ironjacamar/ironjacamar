@@ -260,11 +260,7 @@ public interface XaDataSource extends DataSource, CommonXa
       /**
       * noRecovery tag
       */
-      NO_RECOVER("no_recover"),
-      /**
-       * validationQueryTimeout tag
-       */
-      VALIDATION_QUERY_TIMEOUT("validation-query-timeout");
+      NO_RECOVER("no_recover");
 
       private final String name;
 

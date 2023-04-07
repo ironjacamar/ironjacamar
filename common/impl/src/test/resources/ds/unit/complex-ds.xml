@@ -118,9 +118,6 @@
       <allocation-retry-wait-millis>
         3000
       </allocation-retry-wait-millis>
-      <validation-query-timeout>
-        110
-      </validation-query-timeout>
     </timeout>
     <statement>
       <prepared-statement-cache-size>
