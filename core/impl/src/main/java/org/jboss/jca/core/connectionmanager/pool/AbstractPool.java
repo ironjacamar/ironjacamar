@@ -44,8 +44,10 @@ import org.jboss.jca.core.tracer.Tracer;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -53,6 +55,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 import jakarta.resource.ResourceException;
 import jakarta.resource.spi.ConnectionRequestInfo;
@@ -85,6 +88,24 @@ public abstract class AbstractPool implements Pool
 
    /** The bundle */
    private static CoreBundle bundle = Messages.getBundle(CoreBundle.class);
+
+   private static int subjectExpirationTimeout = 0;
+
+   static
+   {
+      String value = SecurityActions.getSystemProperty("ironjacamar.pool_key_expiration_timeout");
+      if (value != null && !value.trim().equals(""))
+      {
+         try
+         {
+            subjectExpirationTimeout = Integer.valueOf(value);
+         }
+         catch (Throwable t)
+         {
+            subjectExpirationTimeout = 0;
+         }
+      }
+   }
    
    /** The managed connection pools, maps key --> pool */
    private final ConcurrentMap<Object, ManagedConnectionPool> mcpPools =
@@ -128,6 +149,8 @@ public abstract class AbstractPool implements Pool
 
    /** No lazy enlistment available */
    private AtomicBoolean noLazyEnlistmentAvailable;
+
+   private final HashMap<Object, Long> keyCreationTimestamp = new LinkedHashMap<>();
    
    /**
     * Create a new base pool.
@@ -279,6 +302,29 @@ public abstract class AbstractPool implements Pool
          boolean separateNoTx) throws ResourceException;
 
    /**
+    * This check is performed only if expiration of pool based on subject is enabled
+    * It is intended to be used when system is secured by Kubernetes, it's purpose is to remove all the pools
+    * associated with given key after configured expiration interval (Kubernetes creates new keys eagerly because of
+    * the new tokens being a part of subject private data, for details see the discussion in JBJCA-1411)
+    */
+   private void checkExpiration(Object newKey)
+   {
+      if (subjectExpirationTimeout > 0)
+      {
+         final long currentTime = System.currentTimeMillis();
+         List<Object> expiredKeys = keyCreationTimestamp.entrySet().stream()
+                 .filter(entry -> (currentTime - entry.getValue() > subjectExpirationTimeout))
+                 .map(entry -> entry.getKey())
+                 .collect(Collectors.toList());
+         for (Object key : expiredKeys)
+         {
+            mcpPools.remove(key);
+         }
+         keyCreationTimestamp.put(newKey, System.currentTimeMillis());
+      }
+   }
+
+   /**
     * Determine the correct pool for this request,
     * creates a new one when necessary.
     *
@@ -305,6 +351,8 @@ public abstract class AbstractPool implements Pool
                {
                   ManagedConnectionPoolFactory mcpf = new ManagedConnectionPoolFactory();
                   ManagedConnectionPool newMcp = mcpf.create(mcpClass, mcf, cm, subject, cri, poolConfiguration, this);
+
+                  checkExpiration(key);
 
                   mcp = mcpPools.putIfAbsent(key, newMcp);
                   if (mcp == null)
