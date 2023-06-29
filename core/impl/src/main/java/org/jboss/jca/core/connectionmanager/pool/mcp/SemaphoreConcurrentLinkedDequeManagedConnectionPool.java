@@ -1478,7 +1478,7 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
                      log.backgroundValidationNonCompliantManagedConnectionFactory();
                   }
                } 
-               catch (Exception re)
+               catch (ResourceException re) 
                {
                   if (cl != null) 
                   {
@@ -1509,8 +1509,10 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
                   {
                      synchronized (cls)
                      {
-                         if(cl != null && cls.containsKey(cl)) {
+                         if(cl != null) {
                              returnForFrequencyCheck(cl);
+                         } else {
+                             log.debug(" connection listener is not properly setup. ");
                          }
                      }
                   }
