@@ -1383,6 +1383,7 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
       if (w != null) {
          poolSize.decrementAndGet();
       }
+      prefill();
       return w;
 }
    

@@ -765,6 +765,7 @@ public class SemaphoreArrayListManagedConnectionPool implements ManagedConnectio
                      
          cl.destroy();
          cl = null;
+         prefill();
       }
    }
 
