@@ -42,7 +42,7 @@ public  class OnePoolNoTxMatchConnectionBMTestCase extends OnePoolNoTxMatchConne
    @Deployment
    public static ResourceAdapterArchive deployment()
    {
-      return createNoTxDeployment(getPrefilledIJ(null));
+      return createNoTxDeployment(getPrefilledIJ(null, 0));
    }
 
    @Override

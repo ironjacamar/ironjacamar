@@ -46,10 +46,15 @@ public class OnePoolNoTxTestCaseAbstract extends PoolTestCaseAbstract
     */
    public static IronjacamarDescriptor getPrefilledIJ(FlushStrategy fs)
    {
+      return getPrefilledIJ(fs, 2);
+   }
+
+   public static IronjacamarDescriptor getPrefilledIJ(FlushStrategy fs, int minPoolSize)
+   {
       IronjacamarDescriptor ij = getBasicIJXml(SimpleManagedConnectionFactory.class.getName());
       ConnectionDefinitionType ijCdt = ij.getOrCreateConnectionDefinitions().getOrCreateConnectionDefinition();
       PoolType pool = ijCdt.removePool().getOrCreatePool();
-      pool.minPoolSize(2).maxPoolSize(5).prefill(true);
+      pool.minPoolSize(minPoolSize).maxPoolSize(5).prefill(true);
       if (fs != null)
       {
          pool.flushStrategy(fs.getName());
