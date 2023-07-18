@@ -22,7 +22,12 @@
 
 package org.jboss.jca.adapters.jdbc.extensions.postgres;
 
-import org.jboss.jca.adapters.jdbc.CheckValidConnectionSQL;
+import org.jboss.jca.adapters.jdbc.spi.ValidConnectionChecker;
+
+import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  * A PostgreSQLValidConnectionChecker.
@@ -30,18 +35,53 @@ import org.jboss.jca.adapters.jdbc.CheckValidConnectionSQL;
  * @author <a href="wprice@redhat.com">Weston Price</a>
  * @version $Revision: 71554 $
  */
-public class PostgreSQLValidConnectionChecker extends CheckValidConnectionSQL
+public class PostgreSQLValidConnectionChecker implements ValidConnectionChecker, Serializable
 {
    /** The serialVersionUID */
    private static final long serialVersionUID = 4867167301823753925L;
-
-   private static final String QUERY = "";
 
    /**
     * Constructor
     */
    public PostgreSQLValidConnectionChecker()
    {
-      super(QUERY);
+   }
+
+   /**
+    * {@inheritDoc}
+    */
+   public SQLException isValidConnection(Connection c)
+   {
+      Statement stmt = null;
+      SQLException sqe = null;
+
+      try
+      {
+         stmt = c.createStatement();
+         stmt.execute("");
+      }
+      catch (Exception e)
+      {
+         if (e instanceof SQLException)
+         {
+            sqe = (SQLException)e;
+         }
+      }
+      finally
+      {
+         if (stmt != null)
+         {
+            try
+            {
+               stmt.close();
+            }
+            catch (SQLException e)
+            {
+               // Ignore
+            }
+         }
+      }
+
+      return sqe;
    }
 }

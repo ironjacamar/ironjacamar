@@ -39,31 +39,13 @@ public class CheckValidConnectionSQL implements ValidConnectionChecker, Serializ
 {
    private static final long serialVersionUID = -222752863430216887L;
 
-   private static final String VALIDATION_QUERY_TIMEOUT = "ironjacamar.validation_query_timeout";
-
    private String sql;
-
-   private int queryTimeout;
 
    /**
     * Constructor
     */
    public CheckValidConnectionSQL()
    {
-      String value = SecurityActions.getSystemProperty(VALIDATION_QUERY_TIMEOUT);
-
-      if (value != null && !value.trim().equals(""))
-      {
-         try
-         {
-            queryTimeout = Integer.valueOf(value);
-         }
-         catch (Throwable t)
-         {
-            // defaults to 0 which means no timeout
-            queryTimeout = 0;
-         }
-      }
    }
 
    /**
@@ -72,7 +54,6 @@ public class CheckValidConnectionSQL implements ValidConnectionChecker, Serializ
     */
    public CheckValidConnectionSQL(String sql)
    {
-      this();
       this.sql = sql;
    }
 
@@ -90,7 +71,6 @@ public class CheckValidConnectionSQL implements ValidConnectionChecker, Serializ
          Statement s = c.createStatement();
          try
          {
-            s.setQueryTimeout(queryTimeout);
             s.execute(sql);
             return null;
          }
@@ -103,9 +83,5 @@ public class CheckValidConnectionSQL implements ValidConnectionChecker, Serializ
       {
          return e;
       }
-   }
-   public void setQueryTimeout(int queryTimeout)
-   {
-      this.queryTimeout = queryTimeout;
    }
 }
