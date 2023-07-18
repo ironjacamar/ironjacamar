@@ -56,13 +56,6 @@ public interface TimeOut extends org.jboss.jca.common.api.metadata.common.TimeOu
     */
    public Long getUseTryLock();
 
-   /**
-    * Get the validationQueryTimeout.
-    *
-    * @return the validationQueryTimeout.
-    */
-   public Long getValidationQueryTimeout();
-
 
    /**
    *
@@ -109,11 +102,7 @@ public interface TimeOut extends org.jboss.jca.common.api.metadata.common.TimeOu
       /**
       * allocationRetryWaitMillis tag
       */
-      ALLOCATION_RETRY_WAIT_MILLIS("allocation-retry-wait-millis"),
-      /**
-       * validationQueryTimeout tag
-       */
-      VALIDATION_QUERY_TIMEOUT("validation-query-timeout");
+      ALLOCATION_RETRY_WAIT_MILLIS("allocation-retry-wait-millis");
 
       private String name;
 
