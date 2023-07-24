@@ -214,7 +214,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          lock();
       try
       {
-         checkStatus();
+         checkStatus(true);
 
          if (spy)
             spyLogger.debugf("%s [%s] setReadOnly(%s)",
@@ -234,7 +234,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    public boolean isReadOnly() throws SQLException
    {
-      checkStatus();
+      checkStatus(false);
 
       if (spy)
          spyLogger.debugf("%s [%s] isReadOnly()", jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
@@ -839,7 +839,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          lock();
       try
       {
-         checkStatus();
+         checkStatus(true);
 
          if (spy)
             spyLogger.debugf("%s [%s] setAutoCommit(%s)",
@@ -863,7 +863,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          lock();
       try
       {
-         checkStatus();
+         checkStatus(false);
 
          if (spy)
             spyLogger.debugf("%s [%s] getAutoCommit()", jndiName, Constants.SPY_LOGGER_PREFIX_CONNECTION);
@@ -1063,7 +1063,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          lock();
       try
       {
-         checkStatus();
+         checkStatus(false);
          try
          {
             if (spy)
@@ -1093,7 +1093,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          lock();
       try
       {
-         checkStatus();
+         checkStatus(false);
 
          if (spy)
             spyLogger.debugf("%s [%s] getTransactionIsolation()",
@@ -1629,7 +1629,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
          lock();
       try
       {
-         checkStatus();
+         checkStatus(false);
          try
          {
             if (spy)
@@ -1963,13 +1963,13 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
 
    @Override
    public boolean isWrapperFor(Class<?> iface) throws SQLException {
-      checkStatus();
+      checkStatus(false);
       return super.isWrapperFor(iface);
    }
 
    @Override
    public <T> T unwrap(Class<T> iface) throws SQLException {
-      checkStatus();
+      checkStatus(false);
       mc.checkTransaction();
       return super.unwrap(iface);
    }
@@ -1988,7 +1988,7 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     */
    protected void checkTransaction() throws SQLException
    {
-      checkStatus();
+      checkStatus(true);
       mc.checkTransaction();
    }
 
@@ -2008,13 +2008,14 @@ public abstract class WrappedConnection extends JBossWrapper implements Connecti
     *
     * @exception SQLException if an error occurs
     */
-   protected void checkStatus() throws SQLException
+   protected void checkStatus(final boolean checkActiveTransaction) throws SQLException
    {
       if (closed)
          throw new SQLException(bundle.connectionClosed());
       if (mc == null)
          throw new SQLException(bundle.connectionNotAssociated(this.toString()));
-      checkTransactionActive();
+      if (checkActiveTransaction)
+         checkTransactionActive();
    }
 
    /**
