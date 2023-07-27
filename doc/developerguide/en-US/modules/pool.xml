@@ -297,8 +297,8 @@
       <para>
         There are three different implementations of the <code>ManagedConnectionPool</code> interface. <code>SemaphoreArrayListManagedConnectionPool</code>
         which uses an <code>ArrayList</code> to hold the <code>ConnectionListener</code>s.
-        <code>SemaphoreConcurrentLinkedQueueManagedConnectionPool</code> which uses a <code>ConcurrentLinkedQueue</code>
-        to hold the <code>ConnectionListener</code>s. <code>SemaphoreConcurrentLinkedQueueManagedConnectionPool</code> also uses a <code>ConcurrentHashMap</code>
+        <code>SemaphoreConcurrentLinkedDequeManagedConnectionPool</code> which uses a <code>ConcurrentLinkedQueue</code>
+        to hold the <code>ConnectionListener</code>s. <code>SemaphoreConcurrentLinkedDequeManagedConnectionPool</code> also uses a <code>ConcurrentHashMap</code>
         to keep track of the internal status of each of the <code>ConnectionListener</code>s.
         Last, a <code>LeakDumperManagedConnectionPool</code> which extends <code>SemaphoreArrayListManagedConnectionPool</code>, but reports any leaks upon
         shutdown.

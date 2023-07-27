@@ -55,7 +55,7 @@ public class ManagedConnectionPoolFactory
    /** Deprecated implementations */
    private static final String[] DEPRECATED_IMPLEMENTATIONS = new String[] {
       "org.jboss.jca.core.connectionmanager.pool.mcp.ArrayBlockingQueueManagedConnectionPool",
-      "org.jboss.jca.core.connectionmanager.pool.mcp.SemaphoreConcurrentLinkedQueueManagedConnectionPool"
+      "org.jboss.jca.core.connectionmanager.pool.mcp.SemaphoreConcurrentLinkedDequeManagedConnectionPool"
    };
    
    /** Default class definition */

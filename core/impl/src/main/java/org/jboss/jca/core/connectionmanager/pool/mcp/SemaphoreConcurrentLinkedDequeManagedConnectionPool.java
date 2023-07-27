@@ -1691,7 +1691,7 @@ public class SemaphoreConcurrentLinkedDequeManagedConnectionPool implements Mana
    {
       StringBuilder sb = new StringBuilder();
 
-      sb.append("SemaphoreConcurrentLinkedQueueManagedConnectionPool@");
+      sb.append("SemaphoreConcurrentLinkedDequeManagedConnectionPool@");
       sb.append(Integer.toHexString(System.identityHashCode(this)));
       sb.append("[pool=").append(pool.getName());
       sb.append("]");

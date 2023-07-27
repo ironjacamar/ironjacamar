@@ -338,7 +338,7 @@
     <Bug code="DLS,NP,BC,RCN"/>
   </Match>
   <Match>
-    <Class name="org.jboss.jca.core.connectionmanager.pool.mcp.SemaphoreConcurrentLinkedQueueManagedConnectionPool"/>
+    <Class name="org.jboss.jca.core.connectionmanager.pool.mcp.SemaphoreConcurrentLinkedDequeManagedConnectionPool"/>
     <Bug code="BC,JLM,RCN,REC"/>
   </Match>
   <Match>
