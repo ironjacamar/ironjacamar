@@ -31,6 +31,8 @@ import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
+import java.sql.SQLTimeoutException;
+import java.sql.SQLTransactionRollbackException;
 
 import javax.naming.Reference;
 import jakarta.resource.Referenceable;
@@ -227,7 +229,7 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
                return -1;
             // No remaining transaction timeout. This is a very rare case but possible to happen.
             if (timeout == 0)
-               throw new SQLException(bundle.transactionCannotProceed("No remaining transaction timeout"));
+               throw new SQLTimeoutException(bundle.transactionCannotProceed("No remaining transaction timeout"));
             // Round up to the nearest second
             long result = timeout / 1000;
             if ((timeout % 1000) != 0)
@@ -239,7 +241,7 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
       }
       catch (RollbackException e)
       {
-         throw new SQLException(e);
+         throw new SQLTransactionRollbackException(e);
       }
    }
 
@@ -268,7 +270,12 @@ public class WrapperDataSource extends JBossWrapper implements Referenceable, Da
          if (status != Status.STATUS_ACTIVE && status != Status.STATUS_PREPARING &&
              status != Status.STATUS_PREPARED && status != Status.STATUS_COMMITTING)
          {
-            throw new SQLException(bundle.transactionCannotProceed(TxUtils.getStatusAsString(status)));
+            String transactionCannotProceed = bundle.transactionCannotProceed(TxUtils.getStatusAsString(status));
+            if (status == Status.STATUS_ROLLEDBACK) {
+              throw new SQLTransactionRollbackException(transactionCannotProceed);
+            } else {
+              throw new SQLException(transactionCannotProceed);
+            }
          }
       }
       catch (SQLException se)
